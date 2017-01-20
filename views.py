@@ -1,0 +1,340 @@
+from django.shortcuts import render
+from django.http import HttpResponse
+
+
+#login imports
+from django.shortcuts import render_to_response
+from django.http import HttpResponseRedirect
+from django.contrib import auth
+from django.views.decorators import csrf
+from django.template import RequestContext, loader
+from django.shortcuts import render
+from django.urls import reverse
+
+# Importing all the classes from the models
+from .models import customers
+from .models import customers_campus
+from .models import group_permissions
+from .models import groups
+from .models import list_of_countries_states
+from .models import list_of_countries
+from .models import list_of_titles
+from .models import organisations_campus
+from .models import organisations
+from .models import project_customers
+from .models import project_groups
+from .models import project_history
+from .models import project_stages
+from .models import project_tasks
+from .models import project
+from .models import stages
+from .models import tasks_actions
+from .models import tasks_customers
+from .models import tasks_history
+from .models import tasks
+from .models import user_groups
+
+
+#TESTING IMPORT FOR RAW SQL
+from django.db import connection
+
+#Import Django's users
+from django.contrib.auth.models import User
+
+# Create your views here.
+def index(request):
+	"""
+	The index page determines if a particular user has logged in. It will
+	follow the following steps
+	
+	Method
+	~~~~~~
+	1.) If there is a user logged in, if not, send them to login
+	2.) Find out if this user should be in the system, if not send them to
+		invalid view
+	3.) If survived this far the user will be sent to "Active Projects"
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect("/nearbeach/login")
+	
+
+	return HttpResponseRedirect("/nearbeach/login")
+
+
+
+def active_projects(request):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect("/nearbeach/login")
+	
+	
+	#Get username_id from User
+	current_user = User.objects.get(username = request.user.get_username())
+	
+	
+	
+	#Setup connection to the database and query it
+	cursor = connection.cursor()
+	
+	cursor.execute("""
+	SELECT 
+	  project.project_id AS "project_id"
+	, '' AS "task_id"
+	, project.project_name AS "description"
+	, project.project_end_date AS "end_date"
+
+	from 
+	  project left join project_tasks
+		on project.project_id = project_tasks.project_id
+		and project_tasks.is_deleted = 'FALSE'
+	, project_groups
+	, user_groups
+
+	where 1 = 1
+	and project.project_status IN ('New','Open')
+	and project.project_status IN ('New','Open')
+	and project.project_id = project_groups.project_id_id
+	and project_groups.groups_id_id = user_groups.group_id_id
+	and user_groups.username_id = %s
+
+	UNION
+
+	select 
+	  project_tasks.project_id AS `Project ID`
+	, tasks.tasks_id AS `Task ID`
+	, tasks.task_short_description AS `Description`
+	, tasks.task_end_date AS `End Date` 
+
+	from 
+	  tasks left join project_tasks
+		on tasks.tasks_id = project_tasks.task_id 
+		and project_tasks.is_deleted = "FALSE"
+	, tasks_groups
+	, user_groups
+
+	where 1 = 1
+	and tasks.task_status in ('New','Open')
+	and tasks.tasks_id = tasks_groups.tasks_id_id
+	and tasks_groups.groups_id_id = user_groups.group_id_id
+	and user_groups.username_id = %s
+	
+	UNION
+	
+	select 
+	 project_tasks.project_id AS `Project ID`
+	, tasks.tasks_id AS `Task ID`
+	, tasks.task_short_description AS `Description`
+	, tasks.task_end_date AS `End Date` 
+	
+	from 
+	  tasks left join project_tasks
+		on tasks.tasks_id = project_tasks.task_id 
+		and project_tasks.is_deleted = "FALSE"
+
+
+	where 1 = 1
+	and tasks.task_status in ('New','Open')
+	and tasks.task_assigned_to_id = %s
+	""", [current_user.id, current_user.id, current_user.id])
+	active_projects_results = namedtuplefetchall(cursor)
+	
+	#Load the template
+	t = loader.get_template('nearbeach/active_projects.html')
+	
+	#context
+	c = {
+		'active_projects_results': active_projects_results,
+	}
+	
+	return HttpResponse(t.render(c, request))
+	
+
+	
+def project_information(request, project_id):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect("/nearbeach/login")
+		
+	#Query the database for project information
+	project_information_results = project.objects.get(pk = project_id)
+	project_history_results = project_history.objects.filter(project_id = project_id, is_deleted = 'FALSE')
+	
+	
+	#Query the database for associated task information
+	cursor = connection.cursor()
+	cursor.execute("""
+		SELECT 
+		  tasks.tasks_id
+		, tasks.task_short_description
+		, tasks.task_end_date
+		FROM tasks
+			JOIN project_tasks
+			ON tasks.tasks_id = project_tasks.task_id
+			AND project_tasks.is_deleted = 'FALSE'
+			AND project_id = %s
+		""", [project_id])
+	associated_tasks_results = namedtuplefetchall(cursor)
+	
+	
+	
+	#Load the template
+	t = loader.get_template('nearbeach/project_information.html')
+	
+	#context
+	c = {
+		'project_information_results': project_information_results,
+		'project_history_results': project_history_results,
+		'associated_tasks_results': associated_tasks_results,
+	}
+	
+	return HttpResponse(t.render(c, request))
+
+
+def project_history_submit(request, project_id):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect("/nearbeach/login")
+		
+	#Obtain the value from the textarea
+	project_history_text = request.POST.get("history_text", '')
+	
+	#Check to see if there is data - if blank just reload the page (we have gone too far)
+	if project_history_text is not None:
+		#First we need to get the project_id and customer_id database connections
+		project_id_connection = project.objects.get(pk = project_id)
+		
+		#Get username_id from User
+		current_user = User.objects.get(username = request.user.get_username())
+		
+		#Submitting the data.
+		data = project_history(project_id = project_id_connection, user_id = current_user, project_history = project_history_text)
+		data.save()
+	
+	#Return to that exact page again, user reverse to reverse engineer the 
+	#exact URL
+	return HttpResponseRedirect(reverse('project_information',args=(project_id,)))
+
+def task_history_submit(request, task_id):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect("/nearbeach/login")
+	
+	#Obtain the value from the textarea
+	task_history_text = request.POST.get("history_text", '')
+	
+	#Check to see if there is data - if blank just reload the page (we have gone too far)
+	if task_history_text is not None:
+		#First we need to get the task_id and customer id database connections
+		tasks_id_connection = tasks.objects.get(pk = task_id)
+		
+		#Get username_id from User
+		current_user = User.objects.get(username = request.user.get_username())
+		
+		#Submit the data
+		data = tasks_history(tasks_id = tasks_id_connection, user_id = current_user, task_history = task_history_text)
+		data.save()
+	#Return to that exact page again, user reverse to reverse engineer the
+	#exact URL
+	return HttpResponseRedirect(reverse('task_information',args=(task_id,)))
+	
+
+def login(request):
+	return render(request, 'nearbeach/login.html', {})
+
+def auth_view(request):
+	#Obtain the values from the login form
+	username = request.POST.get('username', '')
+	password = request.POST.get('password', '')
+	
+	#check the user's details
+	user = auth.authenticate(username = username, password = password)
+	
+	if user is not None:
+		auth.login(request, user)
+		return HttpResponseRedirect('/nearbeach/active_projects')
+	else:
+		return HttpResponseRedirect('/nearbeach/invalid')
+	
+
+def logout(request):
+	#log the user out and go to login page
+	auth.logout(request)
+	return HttpResponseRedirect("/nearbeach/login")
+	
+
+def invalid(request):
+	return render(request, 'nearbeach/invalid.html', {})
+
+ 
+def task_information(request, task_id):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect("/nearbeach/login")
+		
+	#Gather needed information about the task
+	task_information_results = tasks.objects.get(pk = task_id)
+	task_history_results = tasks_history.objects.filter(tasks_id = task_id)
+	
+	#Load the template
+	t = loader.get_template('nearbeach/task_information.html')
+	
+	#Query the database for associated project information
+	cursor = connection.cursor()
+	cursor.execute("""
+		SELECT 
+		  project.project_id
+		, project.project_name
+		, project.project_end_date
+		FROM project
+			JOIN project_tasks
+			ON project.project_id = project_tasks.project_id
+			AND project_tasks.is_deleted = 'FALSE'
+			AND project_tasks.task_id = '0'
+		""")
+	associated_project_results = namedtuplefetchall(cursor)
+	
+	#context
+	c = {
+		'task_information_results': task_information_results,
+		'task_history_results': task_history_results,
+		'associated_project_results': associated_project_results,
+	}
+	
+	return HttpResponse(t.render(c, request))
+	
+	#return render(request, 'nearbeach/task_information.html', {})
+
+
+"""
+The following function helps change the cursor's results into useable
+SQL that the html templates can read.
+"""
+from collections import namedtuple
+
+def namedtuplefetchall(cursor):
+    "Return all rows from a cursor as a namedtuple"
+    desc = cursor.description
+    nt_result = namedtuple('Result', [col[0] for col in desc])
+    return [nt_result(*row) for row in cursor.fetchall()]
+
+
