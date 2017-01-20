@@ -1,0 +1,23 @@
+<html>
+<style>
+	.login_form {
+		width:300px;
+		height:150px;
+		position:fixed;
+		margin-left:-150px; /* half of width */
+		margin-top:-150px;  /* half of height */
+		top:50%;
+		left:50%;
+	}
+</style>
+
+<body>
+	<form action="/nearbeach/auth_view" method="post" class="login_form">
+		{% csrf_token %}
+		<input type="text" name="username" value="" id="username" placeholder="Username">
+		<input type="password" name="password" value="" id="password" placeholder="Password" >
+		<br />
+		<input type="submit" value="Login" />
+	</form>
+</body>
+</html>

@@ -1,0 +1,68 @@
+{% extends "./template.html" %}
+{% block content %}
+<html>
+<head>
+<title>Task Information</title>
+</head>
+<body>
+{% if task_information_results %}
+	<h2>Task Information - TASK{{ task_information_results.tasks_id }}</h2>
+	<table>
+	<tr><td>{{ task_information_results.task_short_description }}</td></tr>
+	<tr><td>{{ task_information_results.task_long_description }}</td></tr>
+	<tr><td> ---------------- </td></tr>
+	<tr><td>Organisation</td><td>{{ task_information_results.organisation_id }}</td></tr>
+	<tr><td>Start Date</td><td>{{ task_information_results.task_start_date }}</td></tr>
+	<tr><td>End Date</td><td>{{ task_information_results.task_end_date }}</td></tr>
+	<tr><td>Task assigned to</td><td>{{ task_information_results.task_assigned_to }}</td></tr>
+	<tr><td>Task Status</td><td>{{ task_information_results.task_status }}</td></tr>
+	</table>
+	
+	<br/>
+	<h3>Task History</h3>
+	{# Task history submission #}
+	<form action="{% url 'task_history_submit' task_information_results.tasks_id %}" method="post" class="history_submit">
+		{% csrf_token %}
+		<textarea name="history_text" id = "history_text" placeholder="Please type update here and then hit the submit button"></textarea>
+		<br />
+		<input type="submit" value="Submit"/>
+	</form>
+	
+	{# Displaying all the previous project history #}
+	{% if task_history_results %}
+		{% for task_history_row in task_history_results %}
+			<p>{{ task_history_row.username }} - {{ task_history_row.audit_date }}<br />
+			<textarea readonly>{{ task_history_row.task_history }}</textarea>
+			</p>
+		{% endfor %}
+	{% else %}
+		<p>Currently no history.</p>
+	{% endif %}
+	
+	<br />
+		<h3>Associated Projects</h3>
+	{% if associated_project_results %}
+		<table>
+		<tr><td>Project Id</td><td>Project Name</td><td>End Date</td></tr>
+		{% for associated_project_row in associated_project_results %}
+			<tr>
+			<td><a href="/nearbeach/project_information/{{ associated_project_row.project_id }}">{{ associated_project_row.project_id }}</a></td>
+			<td>{{ associated_project_row.project_name }}</td>
+			<td>{{ associated_project_row.project_end_date }}</td>
+			</tr>
+		{% endfor %}
+		
+		</table>
+	{% else %}
+		<p>There are no associated tasks</p>
+	{% endif %}
+	
+	
+{% else %}
+	<h3>Task Information</h3>
+	<p>I am sorry, the project either does not exist or you do no have access.</p>
+{% endif %}
+</body>
+</html>
+
+{% endblock %}

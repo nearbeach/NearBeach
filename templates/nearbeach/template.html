@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>NearBeach Pre-Alpha</title>
+	<style>
+		.menu {
+			Z-INDEX: 1000;
+		}
+			
+		.menu > ul {
+			background: #efefef;
+			padding: 0px 10px;
+			list-style: none;
+			position: relative;
+		}
+
+		.menu ul:after {
+			content: "";
+			clear: both;
+			display: block;
+		}
+
+		.menu > ul > li {
+			float: left;
+		}
+
+		.menu > ul > li:hover > .submenu {
+			display: block;
+		}
+
+		.menu > ul > li > a {
+			display: block;
+			padding: 15px 20px;
+			color: #757575;
+			text-decoration: none;
+		}
+
+		.submenu {
+			display: none;
+			list-style: none;
+			position: relative;
+			background: #efefef;
+			padding: 0px 10px;
+		}
+
+		.submenu > li {
+			float: none;
+			border-top: 1px solid #fff;
+			border-bottom: 1px solid #fff;
+			
+		}
+
+		.submenu > li > a {
+			display: block;
+			padding: 15px 20px;
+			color: #757575;
+			text-decoration: none;
+		}					
+	</style>
+
+</head>
+<body>
+	<nav class="menu">
+		<ul>
+			<li><a href="#">Main Menu</a>
+				<ul class="submenu">
+					<li><a href="{% url 'active_projects' %}">Active Projects</a></li>
+					<li><a href="#">Organisations</a></li>
+					<li><a href="#">Contacts</a></li>
+					<li><a href="#">Logout</a></li>
+				</ul>
+			</li>
+			<li><a href="#">New Item</a>
+				<ul class="submenu">
+					<li><a href="#">Active Projects</a></li>
+					<li><a href="#">Organisations</a></li>
+					<li><a href="#">Contacts</a></li>
+				</ul>
+			</li>
+			<li><a href="#">Search</a>
+				<ul class="submenu">
+					<li><a href="#">Search Projects/Tasks</a></li>
+					<li><a href="#">Search Organisations/Projects</a></li>
+				</ul>
+			</li>
+		</ul>
+	</nav>
+	
+	
+	{% if user.is_authenticated %}
+		{% block content %}
+		{% endblock %}
+	{% else %}
+			<h1>Permission denied</h1>
+			<p>You currently do not have permission to view this page!</p>
+
+	{% endif %}
+</body>
+</html>
