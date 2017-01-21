@@ -1,0 +1,18 @@
+{% extends "./template.html" %}
+{% block content %}
+<h1>New Project</h1>
+<form action="{% url 'new_project_submit' %} method="post" class="new_project_submit">
+	{% csrf_token %}
+	<table>
+		<tr>
+			<td><label>Project Name:</label></td>
+			<td><input id="project_name" type="text" maxlength="255"></td>
+		</tr>
+		<tr>
+			<td><label>Project Description</label></td>
+			<td><textarea id="proejct_description"></textarea></td>
+		</tr>
+	</table>
+</form>
+
+{% endblock %}

@@ -174,6 +174,30 @@ def invalid(request):
 	return render(request, 'NearBeach/invalid.html', {})
 
 
+def login(request):
+	return render(request, 'NearBeach/login.html', {})
+	
+
+def logout(request):
+	#log the user out and go to login page
+	auth.logout(request)
+	return HttpResponseRedirect(reverse('login'))
+
+
+def new_project(request):
+	return render(request, 'NearBeach/new_project.html', {})
+
+def new_project_submit(request):
+	##ADD CODE##
+	return
+
+def new_task(request):
+	return render(request, 'NearBeach/new_task.html', {})
+
+def new_task_submit(request):
+	##ADD CODE##
+	return
+	
 def project_history_submit(request, project_id):
 	"""
 	If the user is not logged in, we want to send them to the login page.
@@ -246,16 +270,6 @@ def project_information(request, project_id):
 	
 	return HttpResponse(t.render(c, request))
 
-
-def login(request):
-	return render(request, 'NearBeach/login.html', {})
-	
-
-def logout(request):
-	#log the user out and go to login page
-	auth.logout(request)
-	return HttpResponseRedirect(reverse('login'))
-	
 
 def task_history_submit(request, task_id):
 	"""

@@ -21,10 +21,17 @@ urlpatterns = [
 	url(r'^task_history_submit/(?P<task_id>[0-9]+)/', views.task_history_submit, name='task_history_submit'),
 	
 	#Login URLS
-	url(r'^login', views.login, name='Login'),
-	url(r'^auth_view', views.auth_view, name='Authentication'),
-	url(r'^logout', views.logout, name='Logout'),
-	url(r'^invalid', views.invalid, name='Invalid Login'),
+	url(r'^login', views.login, name='login'),
+	url(r'^auth_view', views.auth_view, name='authentication'),
+	url(r'^logout', views.logout, name='logout'),
+	url(r'^invalid', views.invalid, name='invalid_login'),
+	
+	
+	#New Items
+	url(r'^new_project', views.new_project, name='new_project'),
+	url(r'^new_project_submit', views.new_project_submit, name='new_project_submit'),
+	url(r'^new_task', views.new_task, name='new_task'),
+	url(r'^new_task_submit', views.new_task_submit, name='new_task_submit'),
 	
 	
 
