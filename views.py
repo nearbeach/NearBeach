@@ -41,27 +41,9 @@ from django.db import connection
 #Import Django's users
 from django.contrib.auth.models import User
 
+
+
 # Create your views here.
-def index(request):
-	"""
-	The index page determines if a particular user has logged in. It will
-	follow the following steps
-	
-	Method
-	~~~~~~
-	1.) If there is a user logged in, if not, send them to login
-	2.) Find out if this user should be in the system, if not send them to
-		invalid view
-	3.) If survived this far the user will be sent to "Active Projects"
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect("/nearbeach/login")
-	
-
-	return HttpResponseRedirect("/nearbeach/login")
-
-
-
 def active_projects(request):
 	"""
 	If the user is not logged in, we want to send them to the login page.
@@ -69,7 +51,7 @@ def active_projects(request):
 	the index page
 	"""
 	if not request.user.is_authenticated:
-		return HttpResponseRedirect("/nearbeach/login")
+		return HttpResponseRedirect(reverse('login'))
 	
 	
 	#Get username_id from User
@@ -143,7 +125,7 @@ def active_projects(request):
 	active_projects_results = namedtuplefetchall(cursor)
 	
 	#Load the template
-	t = loader.get_template('nearbeach/active_projects.html')
+	t = loader.get_template('NearBeach/active_projects.html')
 	
 	#context
 	c = {
@@ -153,6 +135,73 @@ def active_projects(request):
 	return HttpResponse(t.render(c, request))
 	
 
+def auth_view(request):
+	#Obtain the values from the login form
+	username = request.POST.get('username', '')
+	password = request.POST.get('password', '')
+	
+	#check the user's details
+	user = auth.authenticate(username = username, password = password)
+	
+	if user is not None:
+		auth.login(request, user)
+		return HttpResponseRedirect(reverse('active_projects'))
+	else:
+		return HttpResponseRedirect(reverse('invalid_login'))
+
+
+def index(request):
+	"""
+	The index page determines if a particular user has logged in. It will
+	follow the following steps
+	
+	Method
+	~~~~~~
+	1.) If there is a user logged in, if not, send them to login
+	2.) Find out if this user should be in the system, if not send them to
+		invalid view
+	3.) If survived this far the user will be sent to "Active Projects"
+	"""
+	if not request.user.is_authenticated:
+		#return HttpResponseRedirect("/NearBeach/login")
+		return HttpResponseRedirect(reverse('login'))
+	
+
+	return HttpResponseRedirect(reverse('login'))
+
+
+def invalid(request):
+	return render(request, 'NearBeach/invalid.html', {})
+
+
+def project_history_submit(request, project_id):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect(reverse('login'))
+		
+	#Obtain the value from the textarea
+	project_history_text = request.POST.get("history_text", '')
+	
+	#Check to see if there is data - if blank just reload the page (we have gone too far)
+	if project_history_text is not None:
+		#First we need to get the project_id and customer_id database connections
+		project_id_connection = project.objects.get(pk = project_id)
+		
+		#Get username_id from User
+		current_user = User.objects.get(username = request.user.get_username())
+		
+		#Submitting the data.
+		data = project_history(project_id = project_id_connection, user_id = current_user, project_history = project_history_text)
+		data.save()
+	
+	#Return to that exact page again, user reverse to reverse engineer the 
+	#exact URL
+	return HttpResponseRedirect(reverse('project_information',args=(project_id,)))
+
 	
 def project_information(request, project_id):
 	"""
@@ -161,7 +210,7 @@ def project_information(request, project_id):
 	the index page
 	"""
 	if not request.user.is_authenticated:
-		return HttpResponseRedirect("/nearbeach/login")
+		return HttpResponseRedirect(reverse('login'))
 		
 	#Query the database for project information
 	project_information_results = project.objects.get(pk = project_id)
@@ -186,7 +235,7 @@ def project_information(request, project_id):
 	
 	
 	#Load the template
-	t = loader.get_template('nearbeach/project_information.html')
+	t = loader.get_template('NearBeach/project_information.html')
 	
 	#context
 	c = {
@@ -198,33 +247,15 @@ def project_information(request, project_id):
 	return HttpResponse(t.render(c, request))
 
 
-def project_history_submit(request, project_id):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect("/nearbeach/login")
-		
-	#Obtain the value from the textarea
-	project_history_text = request.POST.get("history_text", '')
+def login(request):
+	return render(request, 'NearBeach/login.html', {})
 	
-	#Check to see if there is data - if blank just reload the page (we have gone too far)
-	if project_history_text is not None:
-		#First we need to get the project_id and customer_id database connections
-		project_id_connection = project.objects.get(pk = project_id)
-		
-		#Get username_id from User
-		current_user = User.objects.get(username = request.user.get_username())
-		
-		#Submitting the data.
-		data = project_history(project_id = project_id_connection, user_id = current_user, project_history = project_history_text)
-		data.save()
+
+def logout(request):
+	#log the user out and go to login page
+	auth.logout(request)
+	return HttpResponseRedirect(reverse('login'))
 	
-	#Return to that exact page again, user reverse to reverse engineer the 
-	#exact URL
-	return HttpResponseRedirect(reverse('project_information',args=(project_id,)))
 
 def task_history_submit(request, task_id):
 	"""
@@ -233,7 +264,7 @@ def task_history_submit(request, task_id):
 	the index page
 	"""
 	if not request.user.is_authenticated:
-		return HttpResponseRedirect("/nearbeach/login")
+		return HttpResponseRedirect(reverse('login'))
 	
 	#Obtain the value from the textarea
 	task_history_text = request.POST.get("history_text", '')
@@ -252,34 +283,6 @@ def task_history_submit(request, task_id):
 	#Return to that exact page again, user reverse to reverse engineer the
 	#exact URL
 	return HttpResponseRedirect(reverse('task_information',args=(task_id,)))
-	
-
-def login(request):
-	return render(request, 'nearbeach/login.html', {})
-
-def auth_view(request):
-	#Obtain the values from the login form
-	username = request.POST.get('username', '')
-	password = request.POST.get('password', '')
-	
-	#check the user's details
-	user = auth.authenticate(username = username, password = password)
-	
-	if user is not None:
-		auth.login(request, user)
-		return HttpResponseRedirect('/nearbeach/active_projects')
-	else:
-		return HttpResponseRedirect('/nearbeach/invalid')
-	
-
-def logout(request):
-	#log the user out and go to login page
-	auth.logout(request)
-	return HttpResponseRedirect("/nearbeach/login")
-	
-
-def invalid(request):
-	return render(request, 'nearbeach/invalid.html', {})
 
  
 def task_information(request, task_id):
@@ -289,14 +292,14 @@ def task_information(request, task_id):
 	the index page
 	"""
 	if not request.user.is_authenticated:
-		return HttpResponseRedirect("/nearbeach/login")
+		return HttpResponseRedirect(reverse('login'))
 		
 	#Gather needed information about the task
 	task_information_results = tasks.objects.get(pk = task_id)
 	task_history_results = tasks_history.objects.filter(tasks_id = task_id)
 	
 	#Load the template
-	t = loader.get_template('nearbeach/task_information.html')
+	t = loader.get_template('NearBeach/task_information.html')
 	
 	#Query the database for associated project information
 	cursor = connection.cursor()
@@ -322,9 +325,9 @@ def task_information(request, task_id):
 	
 	return HttpResponse(t.render(c, request))
 	
-	#return render(request, 'nearbeach/task_information.html', {})
 
 
+# Extra functionality
 """
 The following function helps change the cursor's results into useable
 SQL that the html templates can read.
