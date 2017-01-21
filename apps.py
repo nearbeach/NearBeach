@@ -3,5 +3,5 @@ from __future__ import unicode_literals
 from django.apps import AppConfig
 
 
-class NearbeachConfig(AppConfig):
-    name = 'nearbeach'
+class NearBeachConfig(AppConfig):
+    name = 'NearBeach'
