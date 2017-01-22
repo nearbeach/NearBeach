@@ -165,8 +165,10 @@ def index(request):
 	if not request.user.is_authenticated:
 		#return HttpResponseRedirect("/NearBeach/login")
 		return HttpResponseRedirect(reverse('login'))
+	else:
+		return HttpResponseRedirect(reverse('active_projects'))
 	
-
+	#Default
 	return HttpResponseRedirect(reverse('login'))
 
 
@@ -185,7 +187,18 @@ def logout(request):
 
 
 def new_project(request):
-	return render(request, 'NearBeach/new_project.html', {})
+	organisation_results = organisations.objects.all()
+	
+	#Load the template
+	t = loader.get_template('NearBeach/new_project.html')
+	
+	#context
+	c = {
+		'organisation_results': organisation_results,
+	}
+	
+	return HttpResponse(t.render(c, request))
+
 
 def new_project_submit(request):
 	##ADD CODE##
