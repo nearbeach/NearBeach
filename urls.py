@@ -25,6 +25,7 @@ urlpatterns = [
 	url(r'^auth_view', views.auth_view, name='authentication'),
 	url(r'^logout', views.logout, name='logout'),
 	url(r'^invalid', views.invalid, name='invalid_login'),
+	url(r'^logout', views.logout, name='logout'),
 	
 	
 	#New Items
