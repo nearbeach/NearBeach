@@ -277,3 +277,4 @@ class user_groups(models.Model):
 		db_table = "user_groups"	
 		
 
+	
