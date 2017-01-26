@@ -187,27 +187,71 @@ def logout(request):
 
 
 def new_project(request):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect(reverse('login'))
+	
+	#Obtain the groups the user is associated with
+	current_user = User.objects.get(username = request.user.get_username())
+	groups_results = user_groups.objects.filter(username_id = current_user.id, is_deleted = 'FALSE')
+	
+	#Obtain all the organisations	
 	organisation_results = organisations.objects.all()
+	
+	#Grab the counts for the SQL Outputs for validation
+	groups_count = groups_results.count()
+	organisations_count = organisation_results.count()
 	
 	#Load the template
 	t = loader.get_template('NearBeach/new_project.html')
 	
 	#context
 	c = {
+		'groups_results': groups_results,
+		'groups_count': groups_results.count(),
 		'organisation_results': organisation_results,
+		'organisation_counts': organisation_results.count(),
 	}
 	
 	return HttpResponse(t.render(c, request))
 
 
 def new_project_submit(request):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect(reverse('login'))
+	
 	##ADD CODE##
 	return
 
 def new_task(request):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect(reverse('login'))
+	
 	return render(request, 'NearBeach/new_task.html', {})
 
 def new_task_submit(request):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect(reverse('login'))
+	
 	##ADD CODE##
 	return
 	

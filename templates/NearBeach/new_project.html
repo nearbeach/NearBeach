@@ -1,22 +1,32 @@
 {% extends "./template.html" %}
 {% block content %}
 <h1>New Project</h1>
-<form action="{% url 'new_project_submit' %} method="post" class="new_project_submit">
-	{% csrf_token %}
-	<input id="project_name" type="text" maxlength="255" placeholder="Project Name"><br />
-	<textarea id="proejct_description" placeholder="Project Description"></textarea><br />
-	<datalist id="organisations_list"><br />
-	{% for organisation_row in organisation_results %}
-		<option value="{{ organisation_row.organisation_name }}">
-	{% endfor %}
-	</datalist>
-	<input id="organisation_name" type="text" list="organisations_list" placeholder="Organisation"><br />
-	<input id="project_start_date" type="datetime" placeholder="Start Date and Time"><br />
-	<input id="project_end_date" type="datetime" placeholder="End Date and Time"><br />
-</form>
-	
-After here we will assign this project to a person. From there we can assign tasks to the project :)<br />
-We will also need to assign contacts to the project. This can be done using a simple list functionality. :) We can assign multiple contacts to the one project. I am thinking having a simple input with a list of selected contacts already in a listbox. This can be done in JAVASCRIPT I think. I will have to determine this.<br />
-However that said - if we are able to send the user strait to the created project we will not need to worry about contacts.<br />
-We will need to program in which group(s) we are assigning the project to.
+{% if groups_count == 0 or organisations_count == 0 %}
+	<p><b>ERROR - </b>the following conditions are  not met;</p>
+	<ul>
+	{% if groups_count == 0 %}
+		<li>Your user is not associated with any groups. Please see your Group Admin User</li>
+	{% elif organisations_count == 0 %}
+		<li>You currently have no organisations in the system. Please create one first.</li>
+	{% endif %}
+	</ul>
+{% else %}
+	<form action="{% url 'new_project_submit' %} method="post" class="new_project_submit">
+		{% csrf_token %}
+		<input id="project_name" type="text" maxlength="255" placeholder="Project Name"><br />
+		<textarea id="proejct_description" placeholder="Project Description"></textarea><br />
+		<datalist id="organisations_list"><br />
+		{% for organisation_row in organisation_results %}
+			<option value="{{ organisation_row.organisation_name }}">
+		{% endfor %}
+		</datalist>
+		<input id="organisation_name" type="text" list="organisations_list" placeholder="Organisation"><br />
+		<input id="project_start_date" type="datetime" placeholder="Start Date and Time"><br />
+		<input id="project_end_date" type="datetime" placeholder="End Date and Time"><br />
+		
+		<h4>Assign Project to Groups</h4>
+		<input id="select_groups" type="text" list="group_list" placeholder="Group Name"><input id="add_group" type="button"><br />
+		
+	</form>
+{% endif %}
 {% endblock %}
