@@ -41,6 +41,9 @@ from django.db import connection
 #Import Django's users
 from django.contrib.auth.models import User
 
+#Import forms
+from .forms import new_project_form
+
 
 
 # Create your views here.
@@ -195,29 +198,40 @@ def new_project(request):
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
 	
-	#Obtain the groups the user is associated with
-	current_user = User.objects.get(username = request.user.get_username())
-	groups_results = user_groups.objects.filter(username_id = current_user.id, is_deleted = 'FALSE')
+	if request.method == 'POST':
+		#User has already sent data, now save it
+		if new_project_form.is_valid():
+			#ADD CODE TO SAVE
+			#Redirect user to new active_projects?
+			#TEMP CODE
+			return HttpResponseRedirect(reverse('active_projects'))
+			#END TEMP CODE
 	
-	#Obtain all the organisations	
-	organisation_results = organisations.objects.all()
-	
-	#Grab the counts for the SQL Outputs for validation
-	groups_count = groups_results.count()
-	organisations_count = organisation_results.count()
-	
-	#Load the template
-	t = loader.get_template('NearBeach/new_project.html')
-	
-	#context
-	c = {
-		'groups_results': groups_results,
-		'groups_count': groups_results.count(),
-		'organisation_results': organisation_results,
-		'organisation_counts': organisation_results.count(),
-	}
-	
-	return HttpResponse(t.render(c, request))
+	else:				
+		#Obtain the groups the user is associated with
+		current_user = User.objects.get(username = request.user.get_username())
+		groups_results = user_groups.objects.filter(username_id = current_user.id, is_deleted = 'FALSE')
+		
+		#Obtain all the organisations	
+		organisation_results = organisations.objects.all()
+		
+		#Grab the counts for the SQL Outputs for validation
+		groups_count = groups_results.count()
+		organisations_count = organisation_results.count()
+		
+		#Load the template
+		t = loader.get_template('NearBeach/new_project.html')
+		
+		#context
+		c = {
+			'groups_results': groups_results,
+			'groups_count': groups_results.count(),
+			'organisation_results': organisation_results,
+			'organisation_counts': organisation_results.count(),
+			'new_project_form': new_project_form(),
+		}
+		
+		return HttpResponse(t.render(c, request))
 
 
 def new_project_submit(request):

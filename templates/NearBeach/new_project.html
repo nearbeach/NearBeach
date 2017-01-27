@@ -11,22 +11,12 @@
 	{% endif %}
 	</ul>
 {% else %}
-	<form action="{% url 'new_project_submit' %} method="post" class="new_project_submit">
+	<form action="{% url 'new_project' %} method="post" class="new_project_submit">
 		{% csrf_token %}
-		<input id="project_name" type="text" maxlength="255" placeholder="Project Name"><br />
-		<textarea id="proejct_description" placeholder="Project Description"></textarea><br />
-		<datalist id="organisations_list"><br />
-		{% for organisation_row in organisation_results %}
-			<option value="{{ organisation_row.organisation_name }}">
-		{% endfor %}
-		</datalist>
-		<input id="organisation_name" type="text" list="organisations_list" placeholder="Organisation"><br />
-		<input id="project_start_date" type="datetime" placeholder="Start Date and Time"><br />
-		<input id="project_end_date" type="datetime" placeholder="End Date and Time"><br />
-		
-		<h4>Assign Project to Groups</h4>
-		<input id="select_groups" type="text" list="group_list" placeholder="Group Name"><input id="add_group" type="button"><br />
-		
+		<table>
+		{{ new_project_form.as_table }}
+		<tr><td><input type="submit" value="Submit" /></td></tr>
+		</table>
 	</form>
 {% endif %}
 {% endblock %}
