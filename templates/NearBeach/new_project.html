@@ -14,89 +14,107 @@
 	<form action={% url 'new_project' %} method="post" class="new_project_submit">
 		{% csrf_token %}
 		<table>
-		{{ new_project_form.as_table }}
+			{{ new_project_form.as_table }}
+			
+			<tr>
+				<td>
+					<h4>Project Start Date</h4>
+				</td>
+				<td>
+					<select class="datetimepicker" id="start_date_day">
+						{% for day in set_days %}
+							<option value="{{ day }}">{{ day }}</option>
+						{% endfor %}
+					</select> - 
+					
+					<select class="datetimepicker" id="start_date_month">
+						{% for month in set_months %}
+							<option value="{{ month }}">{{ month }}</option>
+						{% endfor %}
+					</select> - 
+
+					<select class="datetimepicker" id="start_date_year">
+						{% for year in set_years %}
+							<option value="{{ year }}">{{ year }}</option>
+						{% endfor %}
+					</select>	
+				</td>
+			</tr>		
+			<tr>
+				<td>		
+					<h4>Project Start Time:</h4>
+				</td>
+				<td>
+					<select class="datetimepicker" id="start_date_hour">
+						{% for hour in set_hours %}
+							<option value="{{ hour }}">{{ hour }}</option>
+						{% endfor %}
+					</select>:
+
+					<select class="datetimepicker" id="start_date_minute">
+						{% for minute in set_minutes %}
+							<option value="{{ minute }}">{{ minute }}</option>
+						{% endfor %}
+					</select>
+					
+					<select class="datetimepicker" id="start_date_meridiem">
+						{% for meridiem in set_meridiems %}
+							<option value="{{ meridiem }}">{{ meridiem }}</option>
+						{% endfor %}
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					
+					<h4>Project Finish Date</h4>
+				</td>
+				<td>
+					<select class="datetimepicker" id="finish_date_day">
+						{% for day in set_days %}
+							<option value="{{ day }}">{{ day }}</option>
+						{% endfor %}
+					</select> - 
+					
+					<select class="datetimepicker" id="finish_date_month">
+						{% for month in set_months %}
+							<option value="{{ month }}">{{ month }}</option>
+						{% endfor %}
+					</select> - 
+
+					<select class="datetimepicker" id="finish_date_year">
+						{% for year in set_years %}
+							<option value="{{ year }}">{{ year }}</option>
+						{% endfor %}
+					</select>
+				</td>	
+			</tr>
+			<tr>
+				<td>
+					<h4>Project Finish Time</h4>
+				</td>
+				<td>
+					<select class="datetimepicker" id="finish_date_hour">
+						{% for hour in set_hours %}
+							<option value="{{ hour }}">{{ hour }}</option>
+						{% endfor %}
+					</select>:
+					
+					<select class="datetimepicker" id="finish_date_minute">
+						{% for minute in set_minutes %}
+							<option value="{{ minute }}">{{ minute }}</option>
+						{% endfor %}
+					</select>
+					
+					<select class="datetimepicker" id="finish_date_meridiem">
+						{% for meridiem in set_meridiems %}
+							<option value="{{ meridiem }}">{{ meridiem }}</option>
+						{% endfor %}
+					</select>
+				</td>
+			</tr>
 		</table>
-		<h4>Project Start Date</h4>
-		
-		<select class="datetimepicker" id="start_date_day">
-			{% for day in set_days %}
-				<option value="{{ day }}">{{ day }}</option>
-			{% endfor %}
-		</select> - 
-		
-		<select class="datetimepicker" id="start_date_month">
-			{% for month in set_months %}
-				<option value="{{ month }}">{{ month }}</option>
-			{% endfor %}
-		</select> - 
-
-		<select class="datetimepicker" id="start_date_year">
-			{% for year in set_years %}
-				<option value="{{ year }}">{{ year }}</option>
-			{% endfor %}
-		</select>
-		
-
-		
-		
-		<h4>Project Start Time</h4>
-		<select class="datetimepicker" id="start_date_hour">
-			{% for hour in set_hours %}
-				<option value="{{ hour }}">{{ hour }}</option>
-			{% endfor %}
-		</select>:
-		
-		<select class="datetimepicker" id="start_date_minute">
-			{% for minute in set_minutes %}
-				<option value="{{ minute }}">{{ minute }}</option>
-			{% endfor %}
-		</select>
-		
-		<select class="datetimepicker" id="start_date_meridiem">
-			{% for meridiem in set_meridiems %}
-				<option value="{{ meridiem }}">{{ meridiem }}</option>
-			{% endfor %}
-		</select>
-		
-		<h4>Project Finish Date</h4>
-		
-		<select class="datetimepicker" id="finish_date_day">
-			{% for day in set_days %}
-				<option value="{{ day }}">{{ day }}</option>
-			{% endfor %}
-		</select> - 
-		
-		<select class="datetimepicker" id="finish_date_month">
-			{% for month in set_months %}
-				<option value="{{ month }}">{{ month }}</option>
-			{% endfor %}
-		</select> - 
-
-		<select class="datetimepicker" id="finish_date_year">
-			{% for year in set_years %}
-				<option value="{{ year }}">{{ year }}</option>
-			{% endfor %}
-		</select>
-		
-		
-		<h4>Project Finish Time</h4>
-		<select class="datetimepicker" id="finish_date_hour">
-			{% for hour in set_hours %}
-				<option value="{{ hour }}">{{ hour }}</option>
-			{% endfor %}
-		</select>:
-		
-		<select class="datetimepicker" id="finish_date_minute">
-			{% for minute in set_minutes %}
-				<option value="{{ minute }}">{{ minute }}</option>
-			{% endfor %}
-		</select>
-		
-		<select class="datetimepicker" id="finish_date_meridiem">
-			{% for meridiem in set_meridiems %}
-				<option value="{{ meridiem }}">{{ meridiem }}</option>
-			{% endfor %}
-		</select>
+		<h2>Assigned to Group(s)</h2>
 	</form>
 {% endif %}
 {% endblock %}

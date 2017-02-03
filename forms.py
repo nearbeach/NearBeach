@@ -13,5 +13,4 @@ class new_project_form(forms.Form):
 	project_name = forms.CharField(max_length = 255)
 	project_description = forms.CharField(widget = forms.Textarea)
 	organisations_id = forms.ModelChoiceField(label = "Organisation", widget = forms.Select, queryset = organisations_results)
-	#project_start_date = forms.DateTimeField(widget = forms.DateTimeInput)
-	#project_end_date = forms.DateTimeField(widget = forms.DateTimeInput)
+
