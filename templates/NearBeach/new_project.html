@@ -1,12 +1,13 @@
 {% extends "./template.html" %}
 {% block content %}
 <h1>New Project</h1>
-{% if groups_count == 0 or organisations_count == 0 %}
+{% if groups_count == 0 or organisation_counts == 0 %}
 	<p><b>ERROR - </b>the following conditions are  not met;</p>
 	<ul>
 	{% if groups_count == 0 %}
 		<li>Your user is not associated with any groups. Please see your Group Admin User</li>
-	{% elif organisations_count == 0 %}
+	{% endif %}
+	{% if organisation_counts == 0 %}
 		<li>You currently have no organisations in the system. Please create one first.</li>
 	{% endif %}
 	</ul>
@@ -115,6 +116,14 @@
 			</tr>
 		</table>
 		<h2>Assigned to Group(s)</h2>
+		<p>Please select the appropriate groups to assign this project to</p>
+		<select multiple>
+			{% for group_row in groups_results %}
+				<option value="{{ group_row.group_id }}">{{ group_row.group_name }}</option>
+			{% endfor %}
+		</select>
+		<p>When finished. Please click the submit button</p>
+		<input type="submit" value="Submit New Project"/>
 	</form>
 {% endif %}
 {% endblock %}

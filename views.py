@@ -210,21 +210,34 @@ def new_project(request):
 	else:				
 		#Obtain the groups the user is associated with
 		current_user = User.objects.get(username = request.user.get_username())
-		groups_results = user_groups.objects.filter(username_id = current_user.id, is_deleted = 'FALSE')
+		#groups_count = user_groups.objects.filter(username_id = current_user.id, is_deleted = 'FALSE').count()
+		cursor = connection.cursor()
+	
+		cursor.execute("""
+		SELECT DISTINCT
+		  groups.group_id
+		, groups.group_name
+
+		FROM 
+		  user_groups join groups
+			on user_groups.group_id_id = groups.group_id
+
+		WHERE 1=1
+		AND user_groups.is_deleted = "FALSE"
+		AND user_groups.username_id = %s
+		""", [current_user.id])
+		groups_results = namedtuplefetchall(cursor)
+		
 		
 		#Obtain all the organisations	
 		organisation_results = organisations.objects.all()
-		
-		#Grab the counts for the SQL Outputs for validation
-		groups_count = groups_results.count()
-		organisations_count = organisation_results.count()
 		
 		#Load the template
 		t = loader.get_template('NearBeach/new_project.html')
 		
 		#Construct the sets
 		set_hours = ['01',	'02',	'03',	'04',	'05',	'06',	'07',	'08',	'09',	'10',	'11',	'12',]
-		set_minutes = ['00',	'01',	'02',	'03',	'04',	'05',	'06',	'07',	'08',	'09',	'10',	'11',	'12',	'13',	'14',	'15',	'16',	'17',	'18',	'19',	'20',	'21',	'22',	'23',	'24',	'25',	'26',	'27',	'28',	'29',	'30',	'31',	'32',	'33',	'34',	'35',	'36',	'37',	'38',	'39',	'40',	'41',	'42',	'43',	'44',	'45',	'46',	'47',	'48',	'49',	'50',	'51',	'52',	'53',	'54',	'55',	'56',	'57',	'58',	'59',]
+		set_minutes = ['00',	'05',	'10',	'15',	'20',	'25',	'30',	'35',	'40',	'45',	'50',	'55',]
 		set_meridiems = ['AM','PM',]
 		
 		set_days = ['01',	'02',	'03',	'04',	'05',	'06',	'07',	'08',	'09',	'10',	'11',	'12',	'13',	'14',	'15',	'16',	'17',	'18',	'19',	'20',	'21',	'22',	'23',	'24',	'25',	'26',	'27',	'28',	'29',	'30',	'31',]
@@ -234,7 +247,7 @@ def new_project(request):
 		#context
 		c = {
 			'groups_results': groups_results,
-			'groups_count': groups_results.count(),
+			'groups_count': len(groups_results),	#use len for the named tuple
 			'organisation_results': organisation_results,
 			'organisation_counts': organisation_results.count(),
 			'new_project_form': new_project_form(),
