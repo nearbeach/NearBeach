@@ -12,7 +12,7 @@
 	{% endif %}
 	</ul>
 {% else %}
-	<form action={% url 'new_project' %} method="post" class="new_project_submit">
+	<form action={% url 'new_project_submit' %} method="post" class="new_project_submit">
 		{% csrf_token %}
 		<table>
 			{{ new_project_form.as_table }}
