@@ -43,7 +43,7 @@ from django.contrib.auth.models import User
 
 #Import forms
 from .forms import new_project_form
-
+from .forms import new_organisation_form
 
 
 # Create your views here.
@@ -187,6 +187,30 @@ def logout(request):
 	#log the user out and go to login page
 	auth.logout(request)
 	return HttpResponseRedirect(reverse('login'))
+
+
+def new_organisation(request):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect(reverse('login'))
+		
+	#Load the template
+	t = loader.get_template('NearBeach/new_organisation.html')
+
+	#context
+	c = {
+		'new_organisation_form': new_organisation_form(),		
+	}
+	
+	return HttpResponse(t.render(c, request))
+	
+
+def new_organisation_submit(request):
+	return
 
 
 def new_project(request):

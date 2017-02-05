@@ -14,3 +14,8 @@ class new_project_form(forms.Form):
 	project_description = forms.CharField(widget = forms.Textarea)
 	organisations_id = forms.ModelChoiceField(label = "Organisation", widget = forms.Select, queryset = organisations_results)
 
+class new_organisation_form(forms.Form):
+	organisation_name = forms.CharField(max_length = 255)
+	organisation_website = forms.CharField(max_length = 255)
+	organisation_email = forms.CharField(max_length = 255)
+

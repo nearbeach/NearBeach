@@ -1,0 +1,11 @@
+{% extends "./template.html" %}
+{% block content %}
+<h1>New Organisation</h1>
+<form action={% url 'new_organisation_submit' %} method="post" class="new_organisation_submit">
+	{% csrf_token %}
+	<table>
+		{{ new_organisation_form.as_table }}
+	</table>
+</form>
+
+{% endblock %}
