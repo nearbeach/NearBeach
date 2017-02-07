@@ -35,8 +35,11 @@ from .models import tasks
 from .models import user_groups
 
 
-#TESTING IMPORT FOR RAW SQL
+#For Importing RAW SQL
 from django.db import connection
+
+#For the forms
+from django.db import models
 
 #Import Django's users
 from django.contrib.auth.models import User
@@ -190,56 +193,36 @@ def logout(request):
 
 
 def new_organisation(request):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-		
-	#Load the template
+	if request.method == 'POST':
+		form = new_organisation_form(request.POST)
+		if form.is_valid():
+			organisation_name = form.cleaned_data['organisation_name']
+			organisation_email = form.cleaned_data['organisation_email']
+			organisation_website = form.cleaned_data['organisation_website']
+			
+			p = organisations(organisation_name = organisation_name, organisation_email = organisation_email, organisation_website = organisation_website)
+			save_results = p.save()
+		return HttpResponseRedirect('active_projects')
+	else:
+		form = new_organisation_form()
+	
+	#load template
 	t = loader.get_template('NearBeach/new_organisation.html')
-
+	
 	#context
 	c = {
-		'new_organisation_form': new_organisation_form(),		
+		'new_organisation_form': new_organisation_form(),
 	}
 	
 	return HttpResponse(t.render(c, request))
+	#render_to_response('NearBeach/new_organisation.html', {'new_organisation_form': form}, context_instance = RequestContext(request))
 	
 
-def new_organisation_submit(request):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
-	#TEMP CODE$
-	print("Saving Organisation")
-	#TEMP CODE#
-	
-	if request.method == 'POST':
-		#Create a form instance and populate it with data from the request
-		form = new_organisation_form(request.POST)
 		
-		#Make sure the form is valid
-		if form.is_valid():
-			new_organisation = organisation()
-			new_organisation.organisation_name = form.cleaned_data['organisation_name']
-			new_organisation.organisation_website = form.cleaned_data['organisation_website']
-			new_organisation.organisation_email = form.cleaned_data['organisation_email']
-			save_information = new_organisation.save()
-			
-			#TEMP CODE#
-			print(save_information.organisation_id)
-			#TEMP CODE#
-			
-	return
-			
+		
+	
+
+		
 
 def new_project(request):
 	"""
