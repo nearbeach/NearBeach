@@ -201,8 +201,19 @@ def new_organisation(request):
 			organisation_website = form.cleaned_data['organisation_website']
 			
 			p = organisations(organisation_name = organisation_name, organisation_email = organisation_email, organisation_website = organisation_website)
+			
+			"""
+			IMPORTANT!! BUG HERE!!!
+			There is no validaion process what so ever! Please read bug 55
+			"""
 			save_results = p.save()
-		return HttpResponseRedirect('active_projects')
+			return HttpResponseRedirect(reverse(organisation, args=(save_results.organisations_id)))
+			#return HttpResponseRedirect(reverse('organisations', kwargs = {'organisations_id': save_results.organisations_id }))
+		
+		#If form is not valid, return to new_organisation_form.
+		#Should I print something on the page?
+		print("There was an error!")
+		return HttpResponseRedirect(reverse('new_organisation'))
 	else:
 		form = new_organisation_form()
 	
@@ -215,14 +226,8 @@ def new_organisation(request):
 	}
 	
 	return HttpResponse(t.render(c, request))
-	#render_to_response('NearBeach/new_organisation.html', {'new_organisation_form': form}, context_instance = RequestContext(request))
-	
 
-		
-		
 	
-
-		
 
 def new_project(request):
 	"""
@@ -377,7 +382,12 @@ def new_task_submit(request):
 	
 	##ADD CODE##
 	return
-	
+
+def organisation(request, organisations_id):
+	return
+
+
+
 def project_history_submit(request, project_id):
 	"""
 	If the user is not logged in, we want to send them to the login page.
@@ -425,7 +435,7 @@ def project_information(request, project_id):
 	cursor = connection.cursor()
 	cursor.execute("""
 		SELECT 
-		  tasks.tasks_id
+		  tasks.tasks_informationid
 		, tasks.task_short_description
 		, tasks.task_end_date
 		FROM tasks
@@ -450,7 +460,9 @@ def project_information(request, project_id):
 	
 	return HttpResponse(t.render(c, request))
 
-
+def search_organisations(request):
+	return
+	
 def task_history_submit(request, task_id):
 	"""
 	If the user is not logged in, we want to send them to the login page.

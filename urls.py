@@ -35,7 +35,9 @@ urlpatterns = [
 	url(r'^new_task_submit', views.new_task_submit, name='new_task_submit'),
 	url(r'^new_organisation', views.new_organisation, name='new_organisation'),
 	
-	
+	#Organisation
+	url(r'^organisation/(?P<organisations_id>[0-9]+)/', views.organisation, name='organisation'),
+	url(r'^search_organisations', views.search_organisations, name='search_organisations'),
 	
 	
 
