@@ -210,8 +210,36 @@ def new_organisation(request):
 	
 
 def new_organisation_submit(request):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect(reverse('login'))
+	
+	#TEMP CODE$
+	print("Saving Organisation")
+	#TEMP CODE#
+	
+	if request.method == 'POST':
+		#Create a form instance and populate it with data from the request
+		form = new_organisation_form(request.POST)
+		
+		#Make sure the form is valid
+		if form.is_valid():
+			new_organisation = organisation()
+			new_organisation.organisation_name = form.cleaned_data['organisation_name']
+			new_organisation.organisation_website = form.cleaned_data['organisation_website']
+			new_organisation.organisation_email = form.cleaned_data['organisation_email']
+			save_information = new_organisation.save()
+			
+			#TEMP CODE#
+			print(save_information.organisation_id)
+			#TEMP CODE#
+			
 	return
-
+			
 
 def new_project(request):
 	"""
