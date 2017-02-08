@@ -200,14 +200,14 @@ def new_organisation(request):
 			organisation_email = form.cleaned_data['organisation_email']
 			organisation_website = form.cleaned_data['organisation_website']
 			
-			p = organisations(organisation_name = organisation_name, organisation_email = organisation_email, organisation_website = organisation_website)
+			submit_form = organisations(organisation_name = organisation_name, organisation_email = organisation_email, organisation_website = organisation_website)
 			
 			"""
 			IMPORTANT!! BUG HERE!!!
 			There is no validaion process what so ever! Please read bug 55
 			"""
-			save_results = p.save()
-			return HttpResponseRedirect(reverse(organisation, args=(save_results.organisations_id)))
+			submit_form.save()
+			return HttpResponseRedirect(reverse(organisation, args=(submit_form.organisations_id)))
 			#return HttpResponseRedirect(reverse('organisations', kwargs = {'organisations_id': save_results.organisations_id }))
 		
 		#If form is not valid, return to new_organisation_form.
