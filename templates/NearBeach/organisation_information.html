@@ -1,0 +1,8 @@
+{% extends "./template.html" %}
+{% block content %}
+<h1>{{ organisation_results.organisation_name }}</h1>
+<p>Website: <input id="organisation_website" type="text" value="{{ organisation_results.organisation_website }}"></p>
+
+<h3>Organisation Campus'</h3>
+<button>New Campus</button>
+{% endblock %}

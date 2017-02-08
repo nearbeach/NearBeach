@@ -16,6 +16,6 @@ class new_project_form(forms.Form):
 
 class new_organisation_form(forms.Form):
 	organisation_name = forms.CharField(max_length = 255)
-	organisation_website = forms.CharField(max_length = 255)
+	organisation_website = forms.URLField(max_length = 255)
 	organisation_email = forms.EmailField(max_length = 255)
 

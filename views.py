@@ -207,8 +207,7 @@ def new_organisation(request):
 			There is no validaion process what so ever! Please read bug 55
 			"""
 			submit_form.save()
-			return HttpResponseRedirect(reverse(organisation, args=(submit_form.organisations_id)))
-			#return HttpResponseRedirect(reverse('organisations', kwargs = {'organisations_id': save_results.organisations_id }))
+			return HttpResponseRedirect(reverse(organisation_information, args={submit_form.organisations_id}))
 		
 		#If form is not valid, return to new_organisation_form.
 		#Should I print something on the page?
@@ -238,127 +237,94 @@ def new_project(request):
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
 	
+	if request.method == "POST":
+		form = new_project_form(request.POST)
+		if form.is_valid():
+			project_name = form.cleaned_data['project_name']
+			project_description = form.cleaned_data['project_description']
+			organisations_id = form.cleaned_data['organisations_id']
+			
+			#Calendar values
+			start_date_year = form.cleaned_data['start_date_year']
+			start_date_month = form.cleaned_data['start_date_month']
+			start_date_day = form.cleaned_data['start_date_day']
+			start_date_hour = form.cleaned_data['start_date_hour']
+			start_date_minute = form.cleaned_data['start_date_minute']
+			start_date_meridiem = form.cleaned_data['start_date_meridiem']
+			
+			finish_date_year = form.cleaned_data['finish_date_year']
+			finish_date_month = form.cleaned_data['finish_date_month']
+			finish_date_day = form.cleaned_data['finish_date_day']
+			finish_date_hour = form.cleaned_data['finish_date_hour']
+			finish_date_minute = form.cleaned_data['finish_date_minute']
+			finish_date_meridiem = form.cleaned_data['finish_date_meridiem']			
+			
+			#Create the final start/end date fields
+			project_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day, start_date_hour, start_date_minute)
+			project_end_date = datetime.datetime(finish_date_year, finish_date_month, finish_date_day, finish_date_hour, finish_date_minute)
+			
+			submit_form = project(project_name = project_name, project_description = project_description, organisations_id = organisations_id, project_start_date = project_start_date, project_end_date = project_end_date)
+			
+			#Submit the data
+			submit_form.save()
+			
+			return HttpResponseRedirect(reverse(project_information, args={submit_form.pk}))
+	
+	else:
+		#Obtain the groups the user is associated with
+		current_user = User.objects.get(username = request.user.get_username())
+		#groups_count = user_groups.objects.filter(username_id = current_user.id, is_deleted = 'FALSE').count()
+		cursor = connection.cursor()
 
-	#Obtain the groups the user is associated with
-	current_user = User.objects.get(username = request.user.get_username())
-	#groups_count = user_groups.objects.filter(username_id = current_user.id, is_deleted = 'FALSE').count()
-	cursor = connection.cursor()
+		cursor.execute("""
+		SELECT DISTINCT
+		  groups.group_id
+		, groups.group_name
 
-	cursor.execute("""
-	SELECT DISTINCT
-	  groups.group_id
-	, groups.group_name
+		FROM 
+		  user_groups join groups
+			on user_groups.group_id_id = groups.group_id
 
-	FROM 
-	  user_groups join groups
-		on user_groups.group_id_id = groups.group_id
-
-	WHERE 1=1
-	AND user_groups.is_deleted = "FALSE"
-	AND user_groups.username_id = %s
-	""", [current_user.id])
-	groups_results = namedtuplefetchall(cursor)
-	
-	
-	#Obtain all the organisations	
-	organisation_results = organisations.objects.all()
-	
-	#Load the template
-	t = loader.get_template('NearBeach/new_project.html')
-	
-	#Construct the sets
-	set_hours = ['01',	'02',	'03',	'04',	'05',	'06',	'07',	'08',	'09',	'10',	'11',	'12',]
-	set_minutes = ['00',	'05',	'10',	'15',	'20',	'25',	'30',	'35',	'40',	'45',	'50',	'55',]
-	set_meridiems = ['AM','PM',]
-	
-	set_days = ['01',	'02',	'03',	'04',	'05',	'06',	'07',	'08',	'09',	'10',	'11',	'12',	'13',	'14',	'15',	'16',	'17',	'18',	'19',	'20',	'21',	'22',	'23',	'24',	'25',	'26',	'27',	'28',	'29',	'30',	'31',]
-	set_months = ['January',	'February',	'March',	'April',	'May',	'June',	'July',	'August',	'September',	'October',	'November',	'December',]
-	set_years = ['2010',	'2011',	'2012',	'2013',	'2014',	'2015',	'2016',	'2017',	'2018',	'2019',	'2020',	'2021',	'2022',	'2023',	'2024',	'2025',	'2026',	'2027',	'2028',	'2029',	'2030',	'2031',	'2032',	'2033',	'2034',	'2035',	'2036',	'2037',	'2038',	'2039',	'2040',	'2041',	'2042',	'2043',	'2044',	'2045',]
-	
-	#context
-	c = {
-		'groups_results': groups_results,
-		'groups_count': len(groups_results),	#use len for the named tuple
-		'organisation_results': organisation_results,
-		'organisation_counts': organisation_results.count(),
-		'new_project_form': new_project_form(),
+		WHERE 1=1
+		AND user_groups.is_deleted = "FALSE"
+		AND user_groups.username_id = %s
+		""", [current_user.id])
+		groups_results = namedtuplefetchall(cursor)
 		
-		'set_hours': set_hours,
-		'set_minutes': set_minutes,
-		'set_meridiems': set_meridiems,
-		'set_days': set_days,
-		'set_months': set_months,
-		'set_years': set_years,			
-	}
-	
+		
+		#Obtain all the organisations	
+		organisation_results = organisations.objects.all()
+		
+		#Load the template
+		t = loader.get_template('NearBeach/new_project.html')
+		
+		#Construct the sets
+		set_hours = ['01',	'02',	'03',	'04',	'05',	'06',	'07',	'08',	'09',	'10',	'11',	'12',]
+		set_minutes = ['00',	'05',	'10',	'15',	'20',	'25',	'30',	'35',	'40',	'45',	'50',	'55',]
+		set_meridiems = ['AM','PM',]
+		
+		set_days = ['01',	'02',	'03',	'04',	'05',	'06',	'07',	'08',	'09',	'10',	'11',	'12',	'13',	'14',	'15',	'16',	'17',	'18',	'19',	'20',	'21',	'22',	'23',	'24',	'25',	'26',	'27',	'28',	'29',	'30',	'31',]
+		set_months = ['January',	'February',	'March',	'April',	'May',	'June',	'July',	'August',	'September',	'October',	'November',	'December',]
+		set_years = ['2010',	'2011',	'2012',	'2013',	'2014',	'2015',	'2016',	'2017',	'2018',	'2019',	'2020',	'2021',	'2022',	'2023',	'2024',	'2025',	'2026',	'2027',	'2028',	'2029',	'2030',	'2031',	'2032',	'2033',	'2034',	'2035',	'2036',	'2037',	'2038',	'2039',	'2040',	'2041',	'2042',	'2043',	'2044',	'2045',]
+		
+		#context
+		c = {
+			'groups_results': groups_results,
+			'groups_count': len(groups_results),	#use len for the named tuple
+			'organisation_results': organisation_results,
+			'organisation_counts': organisation_results.count(),
+			'new_project_form': new_project_form(),
+			
+			'set_hours': set_hours,
+			'set_minutes': set_minutes,
+			'set_meridiems': set_meridiems,
+			'set_days': set_days,
+			'set_months': set_months,
+			'set_years': set_years,			
+		}
+		
 	return HttpResponse(t.render(c, request))
 
-
-def new_project_submit(request):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
-	if request.method == 'POST':
-			
-		#Obtain the fields of data from the form
-		id_project_name = request.POST.get("id_project_name", '')
-		id_project_description = request.POST.get("id_project_description", '')
-		id_organisations_id = request.POST.get("id_organisations_id", '')
-		
-		#Collect the dates
-		"""
-		id_start_date = datetime.datetime(request.POST.get("start_date_year",''),
-											request.POST.get("start_date_month",''),
-											request.POST.get("start_date_day",''),
-											request.POST.get("start_date_hour",''),
-											request.POST.get("start_date_minute",''),
-											)
-		id_end_date = datetime.datetime(request.POST.get("end_date_year",''),
-											request.POST.get("end_date_month",''),
-											request.POST.get("end_date_day",''),
-											request.POST.get("end_date_hour",''),
-											request.POST.get("end_date_minute",''),
-											)
-											"""
-		
-		data = project(project_name = id_project_name,
-						project_description = id_project_description,
-						organisation_id = id_organisations_id,
-						#project_start_date = id_start_date,
-						#project_end_date = id_end_date,
-						#project_status = "New"
-						)
-		
-		save_results = data.save()
-			
-	
-	return
-	
-	"""
-		#Obtain the value from the textarea
-	project_history_text = request.POST.get("history_text", '')
-	
-	#Check to see if there is data - if blank just reload the page (we have gone too far)
-	if project_history_text is not None:
-		#First we need to get the project_id and customer_id database connections
-		project_id_connection = project.objects.get(pk = project_id)
-		
-		#Get username_id from User
-		current_user = User.objects.get(username = request.user.get_username())
-		
-		#Submitting the data.
-		data = project_history(project_id = project_id_connection, user_id = current_user, project_history = project_history_text)
-		data.save()
-	
-	#Return to that exact page again, user reverse to reverse engineer the 
-	#exact URL
-	return HttpResponseRedirect(reverse('project_information',args=(project_id,)))
-	"""
 
 def new_task(request):
 	"""
@@ -383,10 +349,28 @@ def new_task_submit(request):
 	##ADD CODE##
 	return
 
-def organisation(request, organisations_id):
-	return
-
-
+def organisation_information(request, organisations_id):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect(reverse('login'))
+	
+	
+	#Query the database for organisation information
+	organisation_results = organisations.objects.get(pk = organisations_id)
+	
+	#Loaed the template
+	t = loader.get_template('NearBeach/organisation_information.html')
+	
+	c = {
+		'organisation_results': organisation_results,
+	}
+	
+	return HttpResponse(t.render(c, request))
+	
 
 def project_history_submit(request, project_id):
 	"""
@@ -435,7 +419,7 @@ def project_information(request, project_id):
 	cursor = connection.cursor()
 	cursor.execute("""
 		SELECT 
-		  tasks.tasks_informationid
+		  tasks.tasks_id
 		, tasks.task_short_description
 		, tasks.task_end_date
 		FROM tasks

@@ -30,13 +30,12 @@ urlpatterns = [
 	
 	#New Items
 	url(r'^new_project', views.new_project, name='new_project'),
-	url(r'^new_project_submit', views.new_project_submit, name='new_project_submit'),
 	url(r'^new_task', views.new_task, name='new_task'),
 	url(r'^new_task_submit', views.new_task_submit, name='new_task_submit'),
 	url(r'^new_organisation', views.new_organisation, name='new_organisation'),
 	
 	#Organisation
-	url(r'^organisation/(?P<organisations_id>[0-9]+)/', views.organisation, name='organisation'),
+	url(r'^organisation_information/(?P<organisations_id>[0-9]+)/', views.organisation_information, name='organisation_information'),
 	url(r'^search_organisations', views.search_organisations, name='search_organisations'),
 	
 	
