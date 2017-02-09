@@ -48,6 +48,9 @@ from django.contrib.auth.models import User
 from .forms import new_project_form
 from .forms import new_organisation_form
 
+#Import datetime
+import datetime
+
 
 # Create your views here.
 def active_projects(request):
@@ -245,82 +248,69 @@ def new_project(request):
 			organisations_id = form.cleaned_data['organisations_id']
 			
 			#Calendar values
-			start_date_year = form.cleaned_data['start_date_year']
-			start_date_month = form.cleaned_data['start_date_month']
-			start_date_day = form.cleaned_data['start_date_day']
-			start_date_hour = form.cleaned_data['start_date_hour']
-			start_date_minute = form.cleaned_data['start_date_minute']
-			start_date_meridiem = form.cleaned_data['start_date_meridiem']
+			start_date_year = int(form.cleaned_data['start_date_year'])
+			start_date_month = int(form.cleaned_data['start_date_month'])
+			start_date_day = int(form.cleaned_data['start_date_day'])
+			start_date_hour = int(form.cleaned_data['start_date_hour'])
+			start_date_minute = int(form.cleaned_data['start_date_minute'])
+			start_date_meridiems = form.cleaned_data['start_date_meridiems']
 			
-			finish_date_year = form.cleaned_data['finish_date_year']
-			finish_date_month = form.cleaned_data['finish_date_month']
-			finish_date_day = form.cleaned_data['finish_date_day']
-			finish_date_hour = form.cleaned_data['finish_date_hour']
-			finish_date_minute = form.cleaned_data['finish_date_minute']
-			finish_date_meridiem = form.cleaned_data['finish_date_meridiem']			
+			finish_date_year = int(form.cleaned_data['finish_date_year'])
+			finish_date_month = int(form.cleaned_data['finish_date_month'])
+			finish_date_day = int(form.cleaned_data['finish_date_day'])
+			finish_date_hour = int(form.cleaned_data['finish_date_hour'])
+			finish_date_minute = int(form.cleaned_data['finish_date_minute'])
+			finish_date_meridiems = form.cleaned_data['finish_date_meridiems']
+			
+			"""
+			Time is tricky. So I am following the simple rules;
+			12:** AM will have the hour changed to 0
+			1:** AM will not have the hour changed
+			12:** PM will not have the hour changed
+			1:** PM will have the hour changed by adding 12
+			
+			From these simple points, I have constructed the following 
+			if statements to take control of the correct hour.
+			"""
+			if start_date_meridiems == "AM":
+				if start_date_hour == 12:
+					start_date_hour = 0
+			else:
+				if start_date_hour > 12:
+					start_date_hour = start_date_hour + 12
+			
+			if finish_date_meridiems == "AM":
+				if finish_date_hour == 12:
+					finish_date_hour = 0
+			else:
+				if finish_date_hour > 12:
+					finish_date_hour = finish_date_hour + 12
+			
 			
 			#Create the final start/end date fields
 			project_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day, start_date_hour, start_date_minute)
 			project_end_date = datetime.datetime(finish_date_year, finish_date_month, finish_date_day, finish_date_hour, finish_date_minute)
 			
-			submit_form = project(project_name = project_name, project_description = project_description, organisations_id = organisations_id, project_start_date = project_start_date, project_end_date = project_end_date)
+			submit_project = project(project_name = project_name, project_description = project_description, organisations_id = organisations_id, project_start_date = project_start_date, project_end_date = project_end_date)
 			
 			#Submit the data
-			submit_form.save()
+			submit_project.save()
 			
-			return HttpResponseRedirect(reverse(project_information, args={submit_form.pk}))
+			#Now to connected the newly created to groups
+			#for row_count in organisations_id.count():
+			#	submit_organisation = project_groups(project_id_id = submit_project.pk, groups_id_id = row.pk)
+			#	submit_organisation.save()
+			
+			
+			return HttpResponseRedirect(reverse(project_information, args={submit_project.pk}))
 	
 	else:
-		#Obtain the groups the user is associated with
-		current_user = User.objects.get(username = request.user.get_username())
-		#groups_count = user_groups.objects.filter(username_id = current_user.id, is_deleted = 'FALSE').count()
-		cursor = connection.cursor()
-
-		cursor.execute("""
-		SELECT DISTINCT
-		  groups.group_id
-		, groups.group_name
-
-		FROM 
-		  user_groups join groups
-			on user_groups.group_id_id = groups.group_id
-
-		WHERE 1=1
-		AND user_groups.is_deleted = "FALSE"
-		AND user_groups.username_id = %s
-		""", [current_user.id])
-		groups_results = namedtuplefetchall(cursor)
-		
-		
-		#Obtain all the organisations	
-		organisation_results = organisations.objects.all()
-		
 		#Load the template
 		t = loader.get_template('NearBeach/new_project.html')
 		
-		#Construct the sets
-		set_hours = ['01',	'02',	'03',	'04',	'05',	'06',	'07',	'08',	'09',	'10',	'11',	'12',]
-		set_minutes = ['00',	'05',	'10',	'15',	'20',	'25',	'30',	'35',	'40',	'45',	'50',	'55',]
-		set_meridiems = ['AM','PM',]
-		
-		set_days = ['01',	'02',	'03',	'04',	'05',	'06',	'07',	'08',	'09',	'10',	'11',	'12',	'13',	'14',	'15',	'16',	'17',	'18',	'19',	'20',	'21',	'22',	'23',	'24',	'25',	'26',	'27',	'28',	'29',	'30',	'31',]
-		set_months = ['January',	'February',	'March',	'April',	'May',	'June',	'July',	'August',	'September',	'October',	'November',	'December',]
-		set_years = ['2010',	'2011',	'2012',	'2013',	'2014',	'2015',	'2016',	'2017',	'2018',	'2019',	'2020',	'2021',	'2022',	'2023',	'2024',	'2025',	'2026',	'2027',	'2028',	'2029',	'2030',	'2031',	'2032',	'2033',	'2034',	'2035',	'2036',	'2037',	'2038',	'2039',	'2040',	'2041',	'2042',	'2043',	'2044',	'2045',]
-		
 		#context
 		c = {
-			'groups_results': groups_results,
-			'groups_count': len(groups_results),	#use len for the named tuple
-			'organisation_results': organisation_results,
-			'organisation_counts': organisation_results.count(),
-			'new_project_form': new_project_form(),
-			
-			'set_hours': set_hours,
-			'set_minutes': set_minutes,
-			'set_meridiems': set_meridiems,
-			'set_days': set_days,
-			'set_months': set_months,
-			'set_years': set_years,			
+			'new_project_form': new_project_form(),		
 		}
 		
 	return HttpResponse(t.render(c, request))
