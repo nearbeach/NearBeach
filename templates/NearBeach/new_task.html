@@ -1,19 +1,19 @@
 {% extends "./template.html" %}
 {% block content %}
-<h1>New Project</h1>
-<form action={% url 'new_project' %} method="post" class="new_project">
+<h1>New Task</h1>
+<form action={% url 'new_task' %} method="post" class="new_task">
 	{% csrf_token %}
 	<table>
-		{{ new_project_form.as_table }}
+		{{ new_task_form.as_table }}
 	</table>
 	<h2>Assigned to Group(s)</h2>
-	<p>Please select the appropriate groups to assign this project to</p>
+	<p>Please select the appropriate groups to assign this task to</p>
 	<select multiple required name="assigned_to_groups" id="assigned_to_groups">
 	{% for group_row in groups_results %}
 		<option value = "{{ group_row.group_id }}">{{ group_row.group_name }}</option>
 	{% endfor %}
 	</select>
 	<br />
-	<input type="submit" value="Submit new project">
+	<input type="submit" value="Submit new task">
 </form>
 {% endblock %}

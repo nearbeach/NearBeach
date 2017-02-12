@@ -31,15 +31,18 @@ urlpatterns = [
 	#New Items
 	url(r'^new_project', views.new_project, name='new_project'),
 	url(r'^new_task', views.new_task, name='new_task'),
-	url(r'^new_task_submit', views.new_task_submit, name='new_task_submit'),
 	url(r'^new_organisation', views.new_organisation, name='new_organisation'),
+	url(r'^new_customer', views.new_customer, name='new_customer'),
 	
 	#Organisation
 	url(r'^organisation_information/(?P<organisations_id>[0-9]+)/', views.organisation_information, name='organisation_information'),
 	url(r'^search_organisations', views.search_organisations, name='search_organisations'),
+	url(r'^customer_information/(?P<customer_id>[0-9]+)/', views.customer_information, name='customer_information'),
 	
-	
-
+	#Search Items
+	url(r'^search_customers', views.search_customers, name='search_customers'),
+	url(r'^search_organisations', views.search_organisations, name='search_organisations'),
+	url(r'^search_projects_tasks', views.search_projects_tasks, name='search_projects_tasks'),
 	
 
 ]

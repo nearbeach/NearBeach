@@ -64,8 +64,8 @@
 			<li><a href="#">Main Menu</a>
 				<ul class="submenu">
 					<li><a href="{% url 'active_projects' %}">Active Projects</a></li>
-					<li><a href="#">Organisations</a></li>
-					<li><a href="#">Contacts</a></li>
+					<li><a href="{% url 'search_organisations' %}">Organisations</a></li>
+					<li><a href="{% url 'search_customers' %}">Customers</a></li>
 					<li><a href="{% url 'logout' %}">Logout</a></li>
 				</ul>
 			</li>
@@ -74,13 +74,7 @@
 					<li><a href="{% url 'new_project' %}">New Project</a></li>
 					<li><a href="{% url 'new_task' %}">New Task</a></li>
 					<li><a href="{% url 'new_organisation' %}">New Organisation</a></li>
-					<li><a href="#">New Contacts</a></li>
-				</ul>
-			</li>
-			<li><a href="#">Search</a>
-				<ul class="submenu">
-					<li><a href="#">Search Projects/Tasks</a></li>
-					<li><a href="#">Search Organisations/Projects</a></li>
+					<li><a href="{% url 'new_customer' %}">New Customer</a></li>
 				</ul>
 			</li>
 		</ul>

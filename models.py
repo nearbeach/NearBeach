@@ -136,7 +136,7 @@ class project(models.Model):
 	organisations_id = models.ForeignKey('organisations', on_delete = models.CASCADE,)
 	project_start_date = models.DateTimeField()
 	project_end_date = models.DateTimeField()
-	project_status = models.CharField(max_length = 15, choices = PROJECT_STATUS_CHOICE)
+	project_status = models.CharField(max_length = 15, choices = PROJECT_STATUS_CHOICE, default = 'New')
 	
 	def __str__(self):
 		return self.project_name
@@ -215,11 +215,11 @@ class tasks(models.Model):
 	tasks_id = models.AutoField(primary_key = True)
 	task_short_description = models.CharField(max_length = 255)
 	task_long_description = models.TextField()
-	organisation_id = models.ForeignKey('organisations', on_delete = models.CASCADE,)
+	organisations_id = models.ForeignKey('organisations', on_delete = models.CASCADE,)
 	task_start_date = models.DateTimeField(auto_now = True) 
 	task_end_date = models.DateTimeField()
-	task_assigned_to = models.ForeignKey(User,)
-	task_status = models.CharField(max_length = 15, choices = PROJECT_STATUS_CHOICE)
+	task_assigned_to = models.ForeignKey(User, null = True, blank = True)
+	task_status = models.CharField(max_length = 15, choices = PROJECT_STATUS_CHOICE, default = 'New')
 	
 	def __str__(self):
 		return self.task_short_description
