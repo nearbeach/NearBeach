@@ -685,8 +685,9 @@ def search_organisations(request):
 	#Query the database for organisations
 	cursor = connection.cursor()
 	cursor.execute("""
-		SELECT 
-		  organisations.organisation_name
+		SELECT DISTINCT
+		  organisations.organisations_id
+		, organisations.organisation_name
 		, organisations.organisation_website
 		, organisations.organisation_email
 		FROM organisations
