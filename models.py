@@ -5,7 +5,6 @@ from django.db import models, connection
 #Import Django's users
 from django.contrib.auth.models import User
 
-
 #ENUM choices
 IS_DELETED_CHOICE = (
 	('TRUE','TRUE'),
