@@ -36,6 +36,7 @@ urlpatterns = [
 	#Organisation
 	url(r'^organisation_information/(?P<organisations_id>[0-9]+)/', views.organisation_information, name='organisation_information'),
 	url(r'^search_organisations', views.search_organisations, name='search_organisations'),
+	url(r'^new_campus/(?P<organisations_id>[0-9]+)/', views.new_campus, name='new_campus'),
 	url(r'^customer_information/(?P<customer_id>[0-9]+)/', views.customer_information, name='customer_information'),
 	
 	#Search Items

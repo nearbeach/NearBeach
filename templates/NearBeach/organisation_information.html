@@ -4,5 +4,5 @@
 <p>Website: <input id="organisation_website" type="text" value="{{ organisation_results.organisation_website }}"></p>
 
 <h3>Organisation Campus'</h3>
-<button>New Campus</button>
+<a href="{% url 'new_campus' organisation_results.organisations_id %}">New Campus</a>
 {% endblock %}

@@ -51,12 +51,15 @@ from .forms import new_task_form
 from .forms import new_customer_form
 from .forms import search_customers_form
 from .forms import search_organisations_form
+from .forms import new_campus_form
 
 #Import datetime
 import datetime
 
 
 # Create your views here.
+
+
 def active_projects(request):
 	"""
 	If the user is not logged in, we want to send them to the login page.
@@ -217,6 +220,27 @@ def logout(request):
 	#log the user out and go to login page
 	auth.logout(request)
 	return HttpResponseRedirect(reverse('login'))
+
+
+def new_campus(request, organisations_id):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect(reverse('login'))
+	
+	#load template
+	t = loader.get_template('NearBeach/new_campus.html')
+	
+	#context
+	c = {
+		'organisations_id': organisations_id,
+		'new_campus_form': new_campus_form(),
+	}
+	
+	return HttpResponse(t.render(c, request))	
 
 
 def new_customer(request):

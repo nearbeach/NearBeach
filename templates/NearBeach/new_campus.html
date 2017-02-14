@@ -1,0 +1,11 @@
+{% extends "./template.html" %}
+{% block content %}
+<h1>New Campus</h1>
+<form action={% url 'new_campus' organisations_id %} method="post" class="new_campus">
+	{% csrf_token %}
+	<table>
+		{{ new_campus_form.as_table }}
+	</table>
+	<input type="submit" value="Submit new task">
+</form>
+{% endblock %}
