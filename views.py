@@ -50,6 +50,8 @@ from .forms import new_project_form
 from .forms import new_organisation_form
 from .forms import new_task_form
 from .forms import new_customer_form
+from .forms import search_customers_form
+from .forms import search_organisations_form
 
 #Import datetime
 import datetime
@@ -654,9 +656,51 @@ def search_organisations(request):
 	#Load the template
 	t = loader.get_template('NearBeach/search_organisations.html')
 	
+	
+	"""
+	We will use the following varable to help filterer our database
+	results. ***WrTIE BETTER TOO TIRED TO DESCRIBE THIS!!!***
+	"""
+	search_organisations_results = ''
+	
+	#Define if the page is loading in POST
+	if request.method == "POST":
+		form = search_organisations_form(request.POST)
+		if form.is_valid():
+			search_organisations_results = form.cleaned_data['search_organisations']
+	
+	"""
+	This is where the magic happens. I will remove all spaces and replace
+	them with a wild card. This will be used to search the concatenated
+	first and last name fields
+	"""	
+	search_organisations_like = '%'
+	
+	for split_row in search_organisations_results.split(' '):
+		search_organisations_like+=split_row
+		search_organisations_like+='%'
+	
+	#Now search the organisations
+	#organisations_results = organisations.objects.filter(organisation_name__contains = search_organisations_like)
+	
+	#Query the database for organisations
+	cursor = connection.cursor()
+	cursor.execute("""
+		SELECT 
+		  organisations.organisation_name
+		, organisations.organisation_website
+		, organisations.organisation_email
+		FROM organisations
+		WHERE 1=1
+		AND organisations.organisation_name LIKE %s
+		""", [search_organisations_like])
+	organisations_results = namedtuplefetchall(cursor)
+	
+	
 	#context
 	c = {
-
+		'search_organisations_form': search_organisations_form(initial={'search_organisations': search_organisations_results}),
+		'organisations_results': organisations_results,
 	}
 	
 	return HttpResponse(t.render(c, request))

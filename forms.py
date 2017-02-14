@@ -194,5 +194,15 @@ class new_task_form(forms.Form):
 	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
 	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+	
+	
+class search_customers_form(forms.Form):
+	#Just have a simple search field
+	search_customers = forms.CharField(max_length = 255, required = False)
+
+class search_organisations_form(forms.Form):
+	#Just have a simple search field
+	search_organisations = forms.CharField(max_length = 255, required = False)
+
 
 
