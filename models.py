@@ -68,7 +68,7 @@ class list_of_countries(models.Model):
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	
 	def __str__(self):
-		return self.country_name
+		return self.country_name.encode('utf8')
 	
 	class Meta:
 		db_table = "list_of_countries"
@@ -81,7 +81,7 @@ class list_of_countries_states(models.Model):
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	
 	def __str__(self):
-		return self.state
+		return self.state.encode('utf8')
 	
 	class Meta:
 		db_table = "list_of_countries_states"
