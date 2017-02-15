@@ -166,6 +166,30 @@ def auth_view(request):
 		return HttpResponseRedirect(reverse('invalid_login'))
 
 
+def campus_information(request, campus_information):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect(reverse('login'))
+		
+	#Get the data required
+	campus_results = organisations_campus.objects.get(pk = campus_information)
+	
+	
+	#Load the template
+	t = loader.get_template('NearBeach/campus_information.html')
+	
+	#context
+	c = {
+		'campus_results': campus_results,
+	}
+	
+	return HttpResponse(t.render(c, request))	
+
+
 def customer_information(request, customer_id):
 	"""
 	If the user is not logged in, we want to send them to the login page.
@@ -243,13 +267,13 @@ def new_campus(request, organisations_id):
 			campus_suburb = form.cleaned_data['campus_suburb']
 			campus_state_id = form.cleaned_data['campus_state_id']
 			campus_country_id = form.cleaned_data['campus_country_id']
-			organisation_number = int(organisations_id)
 			
+			organisation = organisations.objects.get(organisations_id = organisations_id)
 
 			#BUG - some simple validation should go here?
 			
 			#Submitting the data
-			submit_form = organisations_campus(organisations_id = 1, campus_nickname = campus_nickname, campus_phone = campus_phone, campus_fax = campus_fax, campus_address1 = campus_address1, campus_address2 = campus_address2, campus_address3 = campus_address3, campus_suburb = campus_suburb, campus_state_id = campus_state_id, campus_country_id = campus_country_id)
+			submit_form = organisations_campus(organisations_id = organisation, campus_nickname = campus_nickname, campus_phone = campus_phone, campus_fax = campus_fax, campus_address1 = campus_address1, campus_address2 = campus_address2, campus_address3 = campus_address3, campus_suburb = campus_suburb, campus_state_id = campus_state_id, campus_country_id = campus_country_id)
 			submit_form.save()
 			
 			return HttpResponseRedirect(reverse(organisation_information, args={organisations_id}))
@@ -590,12 +614,14 @@ def organisation_information(request, organisations_id):
 	
 	#Query the database for organisation information
 	organisation_results = organisations.objects.get(pk = organisations_id)
+	campus_results = organisations_campus.objects.filter(organisations_id = organisations_id)
 	
 	#Loaed the template
 	t = loader.get_template('NearBeach/organisation_information.html')
 	
 	c = {
 		'organisation_results': organisation_results,
+		'campus_results': campus_results,
 	}
 	
 	return HttpResponse(t.render(c, request))
