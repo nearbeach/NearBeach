@@ -231,14 +231,40 @@ def new_campus(request, organisations_id):
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
 	
-	#load template
-	t = loader.get_template('NearBeach/new_campus.html')
-	
-	#context
-	c = {
-		'organisations_id': organisations_id,
-		'new_campus_form': new_campus_form(),
-	}
+	if request.method == 'POST':
+		form = new_campus_form(request.POST)
+		if form.is_valid():
+			campus_nickname = form.cleaned_data['campus_nickname']
+			campus_phone = form.cleaned_data['campus_phone']
+			campus_fax = form.cleaned_data['campus_fax']
+			campus_address1 = form.cleaned_data['campus_address1']
+			campus_address2 = form.cleaned_data['campus_address2']
+			campus_address3 = form.cleaned_data['campus_address3']
+			campus_suburb = form.cleaned_data['campus_suburb']
+			campus_state_id = form.cleaned_data['campus_state_id']
+			campus_country_id = form.cleaned_data['campus_country_id']
+			organisation_number = int(organisations_id)
+			
+
+			#BUG - some simple validation should go here?
+			
+			#Submitting the data
+			submit_form = organisations_campus(organisations_id = 1, campus_nickname = campus_nickname, campus_phone = campus_phone, campus_fax = campus_fax, campus_address1 = campus_address1, campus_address2 = campus_address2, campus_address3 = campus_address3, campus_suburb = campus_suburb, campus_state_id = campus_state_id, campus_country_id = campus_country_id)
+			submit_form.save()
+			
+			return HttpResponseRedirect(reverse(organisation_information, args={organisations_id}))
+		else:
+			print form.errors
+			return HttpResponseRedirect(reverse(new_campus, args={organisations_id}))
+	else:
+		#load template
+		t = loader.get_template('NearBeach/new_campus.html')
+
+		#context
+		c = {
+			'organisations_id': organisations_id,
+			'new_campus_form': new_campus_form(),
+		}
 	
 	return HttpResponse(t.render(c, request))	
 

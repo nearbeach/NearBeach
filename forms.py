@@ -4,6 +4,7 @@ from django import forms
 from .models import organisations
 from .models import list_of_titles
 from .models import list_of_countries
+from .models import list_of_countries_states
 
 #Import Django's users
 from django.contrib.auth.models import User
@@ -135,17 +136,18 @@ MERIDIEMS_CHOICES = (
 class new_campus_form(forms.Form):
 	#Get data for choice boxes
 	countries_results = list_of_countries.objects.all()
+	state_results = list_of_countries_states.objects.all()
 	
 	#Fields
 	campus_nickname = forms.CharField(max_length = 255)
-	campus_phone = forms.RegexField(regex=r'^\+?1?\d{9,15}$', error_message = ("Please use a correct standard of phone number."))
-	campus_fax = forms.RegexField(regex=r'^\+?1?\d{9,15}$', error_message = ("Please use a correct standard of phone number."))
-	campus_country_id = forms.ModelChoiceField(label = "Organisation", widget = forms.Select, queryset = countries_results)
-	campus_address1 = forms.CharField(max_length = 255)
-	campus_address2 = forms.CharField(max_length = 255)
-	campus_address3 = forms.CharField(max_length = 255)
-	campus_suburb = forms.CharField(max_length = 255) #BUG
-	campus_state_id = forms.CharField(max_length = 255)
+	campus_phone = forms.CharField(max_length = 255)
+	campus_fax = forms.CharField(max_length = 255)
+	campus_country_id = forms.ModelChoiceField(label = "Country", widget = forms.Select, queryset = countries_results)
+	campus_address1 = forms.CharField(max_length = 255, required = False)
+	campus_address2 = forms.CharField(max_length = 255, required = False)
+	campus_address3 = forms.CharField(max_length = 255, required = False)
+	campus_suburb = forms.CharField(max_length = 255, required = False)
+	campus_state_id = forms.ModelChoiceField(label = "States", widget = forms.Select, queryset = state_results)
 
 
 class new_customer_form(forms.Form):
