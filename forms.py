@@ -216,6 +216,9 @@ class new_task_form(forms.Form):
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
 
 
+class project_history_form(forms.Form):
+	project_history_text = forms.CharField(widget=forms.Textarea)
+
 	
 class search_customers_form(forms.Form):
 	#Just have a simple search field
@@ -224,6 +227,9 @@ class search_customers_form(forms.Form):
 class search_organisations_form(forms.Form):
 	#Just have a simple search field
 	search_organisations = forms.CharField(max_length = 255, required = False)
+	
+class task_history_form(forms.Form):
+	task_history_text = forms.CharField(widget=forms.Textarea)
 
 
 

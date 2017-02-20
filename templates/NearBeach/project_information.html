@@ -20,9 +20,9 @@
 	<br />
 	<h3>Project History</h3>
 	{# Project history submission #}
-	<form action="{% url 'project_history_submit' project_information_results.project_id %}" method="post" class="history_submit">
+	<form action="{% url 'project_information' project_information_results.project_id %}" method="post" class="history_submit">
 		{% csrf_token %}
-		<textarea name="history_text" id = "history_text" placeholder="Please type update here and then hit the submit button"></textarea>
+		{{ project_history_form.project_history_text }}
 		<br />
 		<input type="submit" value="Submit"/>
 	</form>
@@ -30,7 +30,7 @@
 	{# Displaying all the previous project history #}
 	{% if project_history_results %}
 		{% for project_history_row in project_history_results %}
-			<p>{{ project_history_row.username }} - {{ project_history_row.audit_date }}<br />
+			<p>{{ project_history_row.user_infomation }} - {{ project_history_row.user_id }} - {{ project_history_row.audit_date }}<br />
 			<textarea readonly>{{ project_history_row.project_history }}</textarea>
 			</p>
 		{% endfor %}

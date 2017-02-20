@@ -52,6 +52,8 @@ from .forms import new_customer_form
 from .forms import search_customers_form
 from .forms import search_organisations_form
 from .forms import new_campus_form
+from .forms import project_history_form
+from .forms import task_history_form
 
 #Import datetime
 import datetime
@@ -627,35 +629,6 @@ def organisation_information(request, organisations_id):
 	return HttpResponse(t.render(c, request))
 	
 
-def project_history_submit(request, project_id):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-		
-	#Obtain the value from the textarea
-	project_history_text = request.POST.get("history_text", '')
-	
-	#Check to see if there is data - if blank just reload the page (we have gone too far)
-	if project_history_text is not None:
-		#First we need to get the project_id and customer_id database connections
-		project_id_connection = project.objects.get(pk = project_id)
-		
-		#Get username_id from User
-		current_user = User.objects.get(username = request.user.get_username())
-		
-		#Submitting the data.
-		data = project_history(project_id = project_id_connection, user_id = current_user, project_history = project_history_text)
-		data.save()
-	
-	#Return to that exact page again, user reverse to reverse engineer the 
-	#exact URL
-	return HttpResponseRedirect(reverse('project_information',args=(project_id,)))
-
-	
 def project_information(request, project_id):
 	"""
 	If the user is not logged in, we want to send them to the login page.
@@ -664,7 +637,22 @@ def project_information(request, project_id):
 	"""
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
-		
+	
+	#Define if the page is loading in POST
+	if request.method == "POST":
+		form = project_history_form(request.POST)
+		if form.is_valid():
+			project_history_text = form.cleaned_data['project_history_text']
+			current_user = User.objects.get(username = request.user.get_username())
+			project_id_connection = project.objects.get(pk = project_id)
+			
+			data = project_history(project_id = project_id_connection, user_id = current_user, project_history = project_history_text, user_infomation = current_user.id)
+			data.save()
+	"""
+	After the project has been submitted, we want to reload the whole
+	page again. Hence we only have the if statements for submitting the
+	data and no else statements.
+	"""
 	#Query the database for project information
 	project_information_results = project.objects.get(pk = project_id)
 	project_history_results = project_history.objects.filter(project_id = project_id, is_deleted = 'FALSE')
@@ -685,8 +673,6 @@ def project_information(request, project_id):
 		""", [project_id])
 	associated_tasks_results = namedtuplefetchall(cursor)
 	
-	
-	
 	#Load the template
 	t = loader.get_template('NearBeach/project_information.html')
 	
@@ -695,6 +681,7 @@ def project_information(request, project_id):
 		'project_information_results': project_information_results,
 		'project_history_results': project_history_results,
 		'associated_tasks_results': associated_tasks_results,
+		'project_history_form': project_history_form(),
 	}
 	
 	return HttpResponse(t.render(c, request))
@@ -801,35 +788,7 @@ def search_projects_tasks(request):
 	return HttpResponse(t.render(c, request))
 	
 
-	
-def task_history_submit(request, task_id):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
-	#Obtain the value from the textarea
-	task_history_text = request.POST.get("history_text", '')
-	
-	#Check to see if there is data - if blank just reload the page (we have gone too far)
-	if task_history_text is not None:
-		#First we need to get the task_id and customer id database connections
-		tasks_id_connection = tasks.objects.get(pk = task_id)
-		
-		#Get username_id from User
-		current_user = User.objects.get(username = request.user.get_username())
-		
-		#Submit the data
-		data = tasks_history(tasks_id = tasks_id_connection, user_id = current_user, task_history = task_history_text)
-		data.save()
-	#Return to that exact page again, user reverse to reverse engineer the
-	#exact URL
-	return HttpResponseRedirect(reverse('task_information',args=(task_id,)))
 
- 
 def task_information(request, task_id):
 	"""
 	If the user is not logged in, we want to send them to the login page.
@@ -838,7 +797,23 @@ def task_information(request, task_id):
 	"""
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
-		
+	
+	
+	#Define if the page is loading in POST
+	if request.method == "POST":
+		form = task_history_form(request.POST)
+		if form.is_valid():
+			task_history_text = form.cleaned_data['task_history_text']
+			current_user = User.objects.get(username = request.user.get_username())
+			task_id_connection = tasks.objects.get(pk = task_id)
+			
+			data = tasks_history(tasks_id = task_id_connection, user_id = current_user, task_history = task_history_text, user_infomation = current_user.id)
+			data.save()
+	"""
+	After the project has been submitted, we want to reload the whole
+	page again. Hence we only have the if statements for submitting the
+	data and no else statements.
+	"""	
 	#Gather needed information about the task
 	task_information_results = tasks.objects.get(pk = task_id)
 	task_history_results = tasks_history.objects.filter(tasks_id = task_id)
@@ -866,6 +841,7 @@ def task_information(request, task_id):
 		'task_information_results': task_information_results,
 		'task_history_results': task_history_results,
 		'associated_project_results': associated_project_results,
+		'task_history_form': task_history_form(),
 	}
 	
 	return HttpResponse(t.render(c, request))

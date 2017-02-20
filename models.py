@@ -168,7 +168,8 @@ class project_groups(models.Model):
 class project_history(models.Model):
 	project_history_id = models.AutoField(primary_key = True)
 	project_id = models.ForeignKey('project', on_delete = models.CASCADE,)
-	user_id = models.ForeignKey(User, on_delete = models.CASCADE)
+	user_id = models.ForeignKey(User, on_delete = models.CASCADE, null = True)
+	user_infomation = models.CharField(max_length = 255)
 	project_history = models.TextField()
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	audit_date = models.DateTimeField(auto_now = True)	
@@ -257,7 +258,8 @@ class tasks_groups(models.Model):
 class tasks_history(models.Model):
 	tasks_history_id = models.AutoField(primary_key = True)
 	tasks_id = models.ForeignKey('tasks', on_delete = models.CASCADE,)
-	user_id = models.ForeignKey(User, on_delete = models.CASCADE,)	
+	user_id = models.ForeignKey(User, on_delete = models.CASCADE,)
+	user_infomation = models.CharField(max_length = 255)	
 	task_history = models.TextField()
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	audit_date = models.DateTimeField(auto_now = True)	
