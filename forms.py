@@ -232,4 +232,3 @@ class task_history_form(forms.Form):
 	task_history_text = forms.CharField(widget=forms.Textarea)
 
 
-
