@@ -133,6 +133,7 @@ MERIDIEMS_CHOICES = (
 )
 
 
+
 class new_campus_form(forms.Form):
 	#Get data for choice boxes
 	countries_results = list_of_countries.objects.all()
@@ -153,11 +154,14 @@ class new_campus_form(forms.Form):
 class new_customer_form(forms.Form):
 	#Get data for choice boxes
 	titles_results = list_of_titles.objects.all()
+	organisations_results = organisations.objects.all()
 	
 	customer_title = forms.ModelChoiceField(label = 'Title', widget = forms.Select, queryset = titles_results)
 	customer_first_name = forms.CharField(max_length = 50)
 	customer_last_name = forms.CharField(max_length = 50)
 	customer_email = forms.EmailField(max_length = 200)
+	
+	organisations_id = forms.ModelChoiceField(label = "Organisation", widget = forms.Select, queryset = organisations_results)
 
 
 class new_organisation_form(forms.Form):
