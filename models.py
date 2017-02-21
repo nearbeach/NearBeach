@@ -25,6 +25,7 @@ class customers(models.Model):
 	customer_first_name = models.CharField(max_length = 50)
 	customer_last_name = models.CharField(max_length = 50)
 	customer_email = models.CharField(max_length = 200)
+	organisations_id = models.ForeignKey('organisations', on_delete = models.CASCADE,)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	
 	def __str__(self):

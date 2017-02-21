@@ -312,21 +312,14 @@ def new_customer(request):
 			customer_last_name = form.cleaned_data['customer_last_name']
 			customer_email = form.cleaned_data['customer_email']
 			
-			submit_form = customers(customer_title = customer_title, customer_first_name = customer_first_name, customer_last_name = customer_last_name, customer_email = customer_email)
+			organisations_id = form.cleaned_data['organisations_id']
+			
+			submit_form = customers(customer_title = customer_title, customer_first_name = customer_first_name, customer_last_name = customer_last_name, customer_email = customer_email, organisations_id = organisations_id)
 			
 			#BUG - no validation process to see if there exists a customer already :(
 			submit_form.save()
 			
-			#Submit customer to an organisation
-			#BUG MISSING FEATURE!!
-			
-			
 			return HttpResponseRedirect(reverse(customer_information, args={submit_form.customer_id}))
-		
-		#If form is not valid, return to new_organisation_form.
-		#Should I print something on the page?
-		print("There was an error!")
-		return HttpResponseRedirect(reverse('new_organisation'))
 	else:
 		form = new_customer_form()
 	
@@ -696,12 +689,53 @@ def search_customers(request):
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
 	
+	
 	#Load the template
 	t = loader.get_template('NearBeach/search_customers.html')
 	
+	"""
+	We will use the POST varable to help filter the results from the 
+	database. The results will then appear below
+	"""
+	search_customers_results = ''
+	
+	#Define if the page is loading in POST
+	if request.method == "POST":
+		form = search_customers_form(request.POST)
+		if form.is_valid():
+			search_customers_results = form.cleaned_data['search_customers']
+	
+	"""
+	This is where the magic happens. I will remove all spaces and replace
+	them with a wild card. This will be used to search the concatenated
+	first and last name fields
+	"""	
+	search_customers_like = '%'
+	
+	for split_row in search_customers_results.split(' '):
+		search_customers_like+=split_row
+		search_customers_like+='%'
+	
+	#Query the database for organisations
+	cursor = connection.cursor()
+	cursor.execute("""
+		SELECT DISTINCT
+		  customers.customer_id
+		, customers.customer_first_name
+		, customers.customer_last_name
+		, organisations.organisation_name
+
+		FROM customers JOIN organisations
+			ON customers.organisations_id_id = organisations.organisations_id
+		WHERE 1=1
+		AND UPPER(customers.customer_first_name || ' ' || customers.customer_last_name) LIKE %s
+		""", [search_customers_like])
+	customers_results = namedtuplefetchall(cursor)
+	
 	#context
 	c = {
-
+		'search_customers_form': search_customers_form(initial={ 'search_customers': search_customers_results }),
+		'customers_results': customers_results,		
 	}
 	
 	return HttpResponse(t.render(c, request))
