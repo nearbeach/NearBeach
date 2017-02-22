@@ -470,12 +470,18 @@ def new_project(request):
 		, [current_user.id])
 		groups_results = namedtuplefetchall(cursor)
 		
+		#Setup dates for initalising
+		today = datetime.datetime.now()
+		next_week = today + datetime.timedelta(days=31)
+		
+		
+		
 		#Load the template
 		t = loader.get_template('NearBeach/new_project.html')
 		
 		#context
 		c = {
-			'new_project_form': new_project_form(),
+			'new_project_form': new_project_form(initial={'start_date_year':today.year, 'start_date_month':today.month,'start_date_day':today.day,'start_date_hour':today.hour,}),
 			'groups_results': groups_results,
 		}
 		

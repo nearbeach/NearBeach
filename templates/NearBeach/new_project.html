@@ -1,7 +1,7 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
-<script type="text/javascript" src="{% static 'NearBeach/javascript/Search_Active_Projects.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <h1>New Project</h1>
 <form action={% url 'new_project' %} method="post" class="new_project">
 	{% csrf_token %}
