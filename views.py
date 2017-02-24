@@ -474,14 +474,31 @@ def new_project(request):
 		today = datetime.datetime.now()
 		next_week = today + datetime.timedelta(days=31)
 		
+		"""
+		We need to do some basic formulations with the hour and and minutes.
+		For the hour we need to find all those who are in the PM and
+		change both the hour and meridiem accordingly.
+		For the minute, we have to create it in 5 minute blocks.
+		"""
+		hour = today.hour
+		minute = int(5*round(today.minute/5.0))
+		meridiems = 'AM'
 		
+		if hour > 12:
+			hour = hour - 12
+			meridiems = 'PM'
+		elif hour == 0:
+			hour = 12
+		
+			
 		
 		#Load the template
 		t = loader.get_template('NearBeach/new_project.html')
 		
 		#context
 		c = {
-			'new_project_form': new_project_form(initial={'start_date_year':today.year, 'start_date_month':today.month,'start_date_day':today.day,'start_date_hour':today.hour,}),
+			'new_project_form': new_project_form(initial={'start_date_year':today.year, 'start_date_month':today.month,'start_date_day':today.day,'start_date_hour':hour,'start_date_minute':minute,'start_date_meridiems':meridiems,
+														'finish_date_year':next_week.year, 'finish_date_month':next_week.month,'finish_date_day':next_week.day,'finish_date_hour':hour,'finish_date_minute':minute,'finish_date_meridiems':meridiems,}),
 			'groups_results': groups_results,
 		}
 		
@@ -591,12 +608,35 @@ def new_task(request):
 		, [current_user.id])
 		groups_results = namedtuplefetchall(cursor)
 
+		#Setup dates for initalising
+		today = datetime.datetime.now()
+		next_week = today + datetime.timedelta(days=31)
+		
+		
+		
+		"""
+		We need to do some basic formulations with the hour and and minutes.
+		For the hour we need to find all those who are in the PM and
+		change both the hour and meridiem accordingly.
+		For the minute, we have to create it in 5 minute blocks.
+		"""
+		hour = today.hour
+		minute = int(5*round(today.minute/5.0))
+		meridiems = 'AM'
+		
+		if hour > 12:
+			hour = hour - 12
+			meridiems = 'PM'
+		elif hour == 0:
+			hour = 12
+
 
 		#Loaed the template
 		t = loader.get_template('NearBeach/new_task.html')
 		
 		c = {
-			'new_task_form': new_task_form(),
+			'new_task_form': new_task_form(initial={'start_date_year':today.year, 'start_date_month':today.month,'start_date_day':today.day,'start_date_hour':hour,'start_date_minute':minute,'start_date_meridiems':meridiems,
+														'finish_date_year':next_week.year, 'finish_date_month':next_week.month,'finish_date_day':next_week.day,'finish_date_hour':hour,'finish_date_minute':minute,'finish_date_meridiems':meridiems,}),
 			'groups_results': groups_results,
 		}
 	
