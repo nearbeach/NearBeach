@@ -45,9 +45,15 @@ function fix_dates(year_element, month_element, day_element) {
 	 if (month_element.value == 2) {
 		max_day = 28;
 		
+		//Hide/Unhide the unrequired dates
+		day_element[28].hidden = true; //29th
+		day_element[29].hidden = true; //30th
+		day_element[30].hidden = true; //31th
+		
 		// If the year can be divided by 4 cleanly, it is a leap year
 		if (parseInt(year_element.value/4) == parseInt(year_element.value)/4.0) {
 			max_day = 29;
+			day_element[28].hidden = false; //29th
 		}
 		
 		// Exception is on the centruary year, is not a leap year
@@ -58,6 +64,7 @@ function fix_dates(year_element, month_element, day_element) {
 		// Unless it falls on a millenium year
 		if (parseInt(year_element.value/1000) == parseInt(year_element.value)/1000.0) {
 			max_day = 29;
+			day_element[28].hidden = false; //29th
 		}
 		
 		// nwo check to see if the day value exceeds the max value
@@ -77,9 +84,20 @@ function fix_dates(year_element, month_element, day_element) {
 		(month_element.value == 6) ||
 		(month_element.value == 9) ||
 		(month_element.value == 11)) {
-	if (day_element.value > 30) {
+		if (day_element.value > 30) {
 				day_element.value = 30;
 			}
+		
+		//Hide/Unhide the unrequired dates
+		day_element[28].hidden = false; //29th
+		day_element[29].hidden = false; //30th
+		day_element[30].hidden = true; //31th
+	} else {
+		//The rest of the months have 31 days
+		//Hide/Unhide the unrequired dates
+		day_element[28].hidden = false; //29th
+		day_element[29].hidden = false; //30th
+		day_element[30].hidden = false; //31th
 	}	
 } 
 
@@ -87,5 +105,4 @@ function fix_dates(year_element, month_element, day_element) {
 function initiate_dates() {
 	check_start_date();
 	check_end_date();
-	alert("Page initiated");
 }

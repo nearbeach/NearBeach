@@ -2,6 +2,7 @@
 {% block content %}
 {% load static %}
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
+<body onload="initiate_dates();">
 <h1>New Task</h1>
 <form action={% url 'new_task' %} method="post" class="new_task">
 	{% csrf_token %}
@@ -11,11 +12,12 @@
 	<h2>Assigned to Group(s)</h2>
 	<p>Please select the appropriate groups to assign this task to</p>
 	<select multiple required name="assigned_to_groups" id="assigned_to_groups">
-	{% for group_row in groups_results %}
+	{% for group_row in groups_results %}55 	NearBeac 	Nearbeac 	robotichead@gmail.com 	CONF 	--- 	New Organisations not being check in system 
 		<option value = "{{ group_row.group_id }}">{{ group_row.group_name }}</option>
 	{% endfor %}
 	</select>
 	<br />
 	<input type="submit" value="Submit new task">
 </form>
+</body>
 {% endblock %}

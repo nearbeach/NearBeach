@@ -2,17 +2,23 @@ from django import forms
 
 #Import from Models
 from .models import organisations
+from .models import organisations_campus
 from .models import list_of_titles
 from .models import list_of_countries
 from .models import list_of_countries_states
 
-#Import Django's users
-from django.contrib.auth.models import User
+#Import ModelForm
+from django.forms import ModelForm
+
+#Used for login
+from django.contrib.auth import authenticate, get_user_model, login, logout
 
 #Import extra
 import datetime
 
 #Global Variables
+User = get_user_model
+
 #Setup drop down box options
 YEAR_CHOICES = (
 	('2010','2010'),
@@ -132,6 +138,27 @@ MERIDIEMS_CHOICES = (
 	('PM','PM'),
 )
 
+class campus_information_form(ModelForm):
+	class Meta:
+		model = organisations_campus
+		fields = '__all__'
+
+
+class login_form(forms.Form):
+	username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'login'}))
+	password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'password'}))
+	
+	def clean(self):
+		#Get login data
+		username = self.cleaned_data.get("username")
+		password = self.cleaned_data.get("password")
+		
+		#Checking authentication
+		if username and password:
+			user = authenticate(username=username, password=password)
+			if ((not user) or (not user.check_password(password)) or (not user.is_active)):
+				raise forms.ValidationError("The login details are incorrect")
+		return super(login_form, self).clean()
 
 
 class new_campus_form(forms.Form):
@@ -166,7 +193,7 @@ class new_customer_form(forms.Form):
 
 class new_organisation_form(forms.Form):
 	organisation_name = forms.CharField(max_length = 255)
-	organisation_website = forms.URLField(max_length = 255)
+	organisation_website = forms.URLField(max_length = 255, initial='http://')
 	organisation_email = forms.EmailField(max_length = 255)
 
 class new_project_form(forms.Form):
@@ -195,9 +222,6 @@ class new_project_form(forms.Form):
 
 
 class new_task_form(forms.Form):
-
-
-
 	#Get data for choice boxes
 	organisations_results = organisations.objects.all()
 	
