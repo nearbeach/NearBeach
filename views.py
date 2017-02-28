@@ -49,6 +49,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 #Import forms
+from .forms import customer_information_form
 from .forms import login_form
 from .forms import new_project_form
 from .forms import new_organisation_form
@@ -176,7 +177,8 @@ def campus_information(request, campus_information):
 	
 	#context
 	c = {
-		'campus_information_form': campus_information_form(),		
+		'campus_results': campus_results,
+		'campus_information_form': campus_information_form(instance=campus_results),		
 	}
 	
 	return HttpResponse(t.render(c, request))	
@@ -191,12 +193,15 @@ def customer_information(request, customer_id):
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
 	
+	#Get the instance
+	customer_results = customers.objects.get(pk = customer_id)
+	
 	#load template
 	t = loader.get_template('NearBeach/customer_information.html')
 	
 	#context
 	c = {
-		
+		'customer_information_form': customer_information_form(instance=customer_results),
 	}
 	
 	return HttpResponse(t.render(c, request))	

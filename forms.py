@@ -1,6 +1,7 @@
 from django import forms
 
 #Import from Models
+from .models import customers
 from .models import organisations
 from .models import organisations_campus
 from .models import list_of_titles
@@ -141,6 +142,11 @@ MERIDIEMS_CHOICES = (
 class campus_information_form(ModelForm):
 	class Meta:
 		model = organisations_campus
+		fields = '__all__'
+		
+class customer_information_form(ModelForm):
+	class Meta:
+		model = customers
 		fields = '__all__'
 
 
