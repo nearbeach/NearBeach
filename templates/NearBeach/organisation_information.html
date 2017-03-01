@@ -16,4 +16,15 @@
 {% endfor %}
 </table>
 <h3>Organisation Contacts</h3>
+<table>
+<tr><td>Name</td><td>Email</td></tr>
+{% for customer in customers_results %}
+	<tr>
+	<td><a href="{% url 'customer_information' customer.customer_id %}">{{ customer.customer_first_name }} {{ customer.customer_last_name }}</a></td>
+	<td>{{ customer.customer_email }}</td>
+	
+	
+	</tr>
+{% endfor %}
+</table>
 {% endblock %}

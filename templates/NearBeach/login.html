@@ -9,15 +9,28 @@
 		top:50%;
 		left:50%;
 	}
+	
+	.login_button {
+	    background-color: #4CAF50;
+		color: white;
+		padding: 14px 20px;
+		margin: 8px 0;
+		border: none;
+		cursor: pointer;
+		width: 100%;
+		height:45px;	
+	}
 </style>
 
 <body>
-	<form action="{% url 'authentication' %}" method="post" class="login_form">
+	<form action="{% url 'login' %}" method="post" class="login_form">
 		{% csrf_token %}
-		<input type="text" name="username" value="" id="username" placeholder="Username">
-		<input type="password" name="password" value="" id="password" placeholder="Password" >
-		<br />
-		<input type="submit" value="Login" />
+		<table>
+		<tr><td>{{ login_form.username }}</td></tr>
+		<tr><td>{{ login_form.password }}</td></tr>
+		<tr><td><input type="submit" value="Login" class="login_button" /></td></tr>
+		</table>
+		
 	</form>
 </body>
 </html>

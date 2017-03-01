@@ -1,4 +1,9 @@
 {% extends "./template.html" %}
 {% block content %}
 <h1>Customer Information</h1>
+<table>
+{{ customer_information_form.as_table }}
+</table>
+
+<h2>Campus Contact Information</h2>
 {% endblock %}

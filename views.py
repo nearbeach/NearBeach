@@ -35,6 +35,10 @@ from .models import tasks
 from .models import user_groups
 
 
+#Used for login
+#from django.contrib.auth import authenticate, get_user_model, login, logout
+
+
 #For Importing RAW SQL
 from django.db import connection
 
@@ -45,6 +49,8 @@ from django.db import models
 from django.contrib.auth.models import User
 
 #Import forms
+from .forms import customer_information_form
+from .forms import login_form
 from .forms import new_project_form
 from .forms import new_organisation_form
 from .forms import new_task_form
@@ -54,6 +60,7 @@ from .forms import search_organisations_form
 from .forms import new_campus_form
 from .forms import project_history_form
 from .forms import task_history_form
+from .forms import campus_information_form
 
 #Import datetime
 import datetime
@@ -153,21 +160,6 @@ def active_projects(request):
 	return HttpResponse(t.render(c, request))
 	
 
-def auth_view(request):
-	#Obtain the values from the login form
-	username = request.POST.get('username', '')
-	password = request.POST.get('password', '')
-	
-	#check the user's details
-	user = auth.authenticate(username = username, password = password)
-	
-	if user is not None:
-		auth.login(request, user)
-		return HttpResponseRedirect(reverse('active_projects'))
-	else:
-		return HttpResponseRedirect(reverse('invalid_login'))
-
-
 def campus_information(request, campus_information):
 	"""
 	If the user is not logged in, we want to send them to the login page.
@@ -180,13 +172,13 @@ def campus_information(request, campus_information):
 	#Get the data required
 	campus_results = organisations_campus.objects.get(pk = campus_information)
 	
-	
 	#Load the template
 	t = loader.get_template('NearBeach/campus_information.html')
 	
 	#context
 	c = {
 		'campus_results': campus_results,
+		'campus_information_form': campus_information_form(instance=campus_results),		
 	}
 	
 	return HttpResponse(t.render(c, request))	
@@ -201,12 +193,15 @@ def customer_information(request, customer_id):
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
 	
+	#Get the instance
+	customer_results = customers.objects.get(pk = customer_id)
+	
 	#load template
 	t = loader.get_template('NearBeach/customer_information.html')
 	
 	#context
 	c = {
-		
+		'customer_information_form': customer_information_form(instance=customer_results),
 	}
 	
 	return HttpResponse(t.render(c, request))	
@@ -225,7 +220,6 @@ def index(request):
 	3.) If survived this far the user will be sent to "Active Projects"
 	"""
 	if not request.user.is_authenticated:
-		#return HttpResponseRedirect("/NearBeach/login")
 		return HttpResponseRedirect(reverse('login'))
 	else:
 		return HttpResponseRedirect(reverse('active_projects'))
@@ -234,12 +228,32 @@ def index(request):
 	return HttpResponseRedirect(reverse('login'))
 
 
-def invalid(request):
-	return render(request, 'NearBeach/invalid.html', {})
-
-
 def login(request):
-	return render(request, 'NearBeach/login.html', {})
+	#POST
+	if request.method == 'POST':
+		form = login_form(request.POST)
+		if form.is_valid():
+			username = form.cleaned_data.get("username")
+			password = form.cleaned_data.get("password")
+			user = auth.authenticate(username=username, password=password)
+			auth.login(request, user)
+			
+			#Just double checking. :)
+			if request.user.is_authenticated:
+				return HttpResponseRedirect(reverse('active_projects'))
+	
+	#load template
+	t = loader.get_template('NearBeach/login.html')
+
+	#context
+	c = {
+		'login_form': login_form(),
+	}
+
+	return HttpResponse(t.render(c, request))	
+
+	
+	#return render(request, 'NearBeach/login.html', {})
 	
 
 def logout(request):
@@ -470,12 +484,35 @@ def new_project(request):
 		, [current_user.id])
 		groups_results = namedtuplefetchall(cursor)
 		
+		#Setup dates for initalising
+		today = datetime.datetime.now()
+		next_week = today + datetime.timedelta(days=31)
+		
+		"""
+		We need to do some basic formulations with the hour and and minutes.
+		For the hour we need to find all those who are in the PM and
+		change both the hour and meridiem accordingly.
+		For the minute, we have to create it in 5 minute blocks.
+		"""
+		hour = today.hour
+		minute = int(5*round(today.minute/5.0))
+		meridiems = 'AM'
+		
+		if hour > 12:
+			hour = hour - 12
+			meridiems = 'PM'
+		elif hour == 0:
+			hour = 12
+		
+			
+		
 		#Load the template
 		t = loader.get_template('NearBeach/new_project.html')
 		
 		#context
 		c = {
-			'new_project_form': new_project_form(),
+			'new_project_form': new_project_form(initial={'start_date_year':today.year, 'start_date_month':today.month,'start_date_day':today.day,'start_date_hour':hour,'start_date_minute':minute,'start_date_meridiems':meridiems,
+														'finish_date_year':next_week.year, 'finish_date_month':next_week.month,'finish_date_day':next_week.day,'finish_date_hour':hour,'finish_date_minute':minute,'finish_date_meridiems':meridiems,}),
 			'groups_results': groups_results,
 		}
 		
@@ -585,12 +622,35 @@ def new_task(request):
 		, [current_user.id])
 		groups_results = namedtuplefetchall(cursor)
 
+		#Setup dates for initalising
+		today = datetime.datetime.now()
+		next_week = today + datetime.timedelta(days=31)
+		
+		
+		
+		"""
+		We need to do some basic formulations with the hour and and minutes.
+		For the hour we need to find all those who are in the PM and
+		change both the hour and meridiem accordingly.
+		For the minute, we have to create it in 5 minute blocks.
+		"""
+		hour = today.hour
+		minute = int(5*round(today.minute/5.0))
+		meridiems = 'AM'
+		
+		if hour > 12:
+			hour = hour - 12
+			meridiems = 'PM'
+		elif hour == 0:
+			hour = 12
+
 
 		#Loaed the template
 		t = loader.get_template('NearBeach/new_task.html')
 		
 		c = {
-			'new_task_form': new_task_form(),
+			'new_task_form': new_task_form(initial={'start_date_year':today.year, 'start_date_month':today.month,'start_date_day':today.day,'start_date_hour':hour,'start_date_minute':minute,'start_date_meridiems':meridiems,
+														'finish_date_year':next_week.year, 'finish_date_month':next_week.month,'finish_date_day':next_week.day,'finish_date_hour':hour,'finish_date_minute':minute,'finish_date_meridiems':meridiems,}),
 			'groups_results': groups_results,
 		}
 	
@@ -610,6 +670,8 @@ def organisation_information(request, organisations_id):
 	#Query the database for organisation information
 	organisation_results = organisations.objects.get(pk = organisations_id)
 	campus_results = organisations_campus.objects.filter(organisations_id = organisations_id)
+	customers_results = customers.objects.filter(organisations_id = organisation_results)
+	
 	
 	#Loaed the template
 	t = loader.get_template('NearBeach/organisation_information.html')
@@ -617,6 +679,7 @@ def organisation_information(request, organisations_id):
 	c = {
 		'organisation_results': organisation_results,
 		'campus_results': campus_results,
+		'customers_results': customers_results,
 	}
 	
 	return HttpResponse(t.render(c, request))
