@@ -162,8 +162,15 @@ class login_form(forms.Form):
 		#Checking authentication
 		if username and password:
 			user = authenticate(username=username, password=password)
-			if ((not user) or (not user.check_password(password)) or (not user.is_active)):
+			if ((not user) or (not user.check_password(password)))
 				raise forms.ValidationError("The login details are incorrect")
+			elif (not user.is_active):
+				raise forms.ValidationError("Please contact your system administrator. Your account has been disabled")
+			""" BUG BUG BUG
+			Currently we need to know if the user has been setup in the system at all. We will use this
+			if, elif rows to find out exactly why the user can not log in!
+			https://nearbeach.tk/bugzilla/show_bug.cgi?id=72
+			"""
 		return super(login_form, self).clean()
 
 
