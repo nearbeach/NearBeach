@@ -229,9 +229,21 @@ def index(request):
 
 
 def login(request):
+	"""
+	For some reason I can not use the varable "login_form" here as it is already being used.
+	Instead I will use the work form.
+	
+	The form is declared at the start and filled with either the POST data OR nothing. If this
+	process is called in POST, then the form will be checked and if it passes the checks, the
+	user will be logged in.
+	
+	If the form is not in POST (aka GET) OR fails the checks, then it will create the form with
+	the relevant errors.
+	"""
+	form = login_form(request.POST or None)
+	
 	#POST
-	if request.method == 'POST':
-		form = login_form(request.POST)
+	if request.method == 'POST':	
 		if form.is_valid():
 			username = form.cleaned_data.get("username")
 			password = form.cleaned_data.get("password")
@@ -247,13 +259,10 @@ def login(request):
 
 	#context
 	c = {
-		'login_form': login_form(),
+		'login_form': form,
 	}
 
-	return HttpResponse(t.render(c, request))	
-
-	
-	#return render(request, 'NearBeach/login.html', {})
+	return HttpResponse(t.render(c, request))
 	
 
 def logout(request):
