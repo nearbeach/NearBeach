@@ -26,9 +26,14 @@
 	<form action="{% url 'login' %}" method="post" class="login_form">
 		{% csrf_token %}
 		<table>
-		<tr><td>{{ login_form.username }}</td></tr>
-		<tr><td>{{ login_form.password }}</td></tr>
-		<tr><td><input type="submit" value="Login" class="login_button" /></td></tr>
+			{% if login_form.non_field_errors %}
+				{% for error in login_form.non_field_errors %}
+					<tr><td>{{ error }}</td></td>
+				{% endfor %}
+			{% endif %}
+			<tr><td>{{ login_form.username }}</td></tr>
+			<tr><td>{{ login_form.password }}</td></tr>
+			<tr><td><input type="submit" value="Login" class="login_button" /></td></tr>
 		</table>
 		
 	</form>
