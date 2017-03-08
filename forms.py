@@ -7,6 +7,7 @@ from .models import organisations_campus
 from .models import list_of_titles
 from .models import list_of_countries
 from .models import list_of_countries_states
+from .models import user_groups
 
 #Import ModelForm
 from django.forms import ModelForm
@@ -162,15 +163,19 @@ class login_form(forms.Form):
 		#Checking authentication
 		if username and password:
 			user = authenticate(username=username, password=password)
+			"""
+			The following bunch of if, else if statements will return errors if the following
+			cases are met
+			-- Login is not valid
+			-- Login is currently not active
+			-- If the user does not have groups associated with them
+			"""
 			if ((not user) or (not user.check_password(password))):
 				raise forms.ValidationError("The login details are incorrect")
 			elif (not user.is_active):
 				raise forms.ValidationError("Please contact your system administrator. Your account has been disabled")
-			""" BUG BUG BUG
-			Currently we need to know if the user has been setup in the system at all. We will use this
-			if, elif rows to find out exactly why the user can not log in!
-			https://nearbeach.tk/bugzilla/show_bug.cgi?id=72
-			"""
+			elif (user_groups.objects.filter(username_id=user.id, is_deleted='FALSE').count() == 0):
+				raise forms.ValidationError("Please contact your system administrator. Your account has no group access")
 		return super(login_form, self).clean()
 
 
