@@ -3,7 +3,6 @@
 }
 	
 .menu > ul {
-	position: absolute; #Hopefully fixes bug 40 (https://nearbeach.tk/bugzilla/show_bug.cgi?id=40)
 	background: #efefef;
 	padding: 0px 10px;
 	list-style: none;
@@ -21,6 +20,7 @@
 }
 
 .menu > ul > li:hover > .submenu {
+	position: absolute;
 	display: block;
 }
 
