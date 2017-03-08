@@ -103,6 +103,7 @@ class organisations(models.Model):
 	organisation_name = models.CharField(max_length = 255)
 	organisation_website = models.CharField(max_length = 50)
 	organisation_email = models.CharField(max_length = 100)
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	
 	def __str__(self):
 		return self.organisation_name

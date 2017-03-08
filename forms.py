@@ -199,7 +199,7 @@ class new_campus_form(forms.Form):
 class new_customer_form(forms.Form):
 	#Get data for choice boxes
 	titles_results = list_of_titles.objects.all()
-	organisations_results = organisations.objects.all()
+	organisations_results = organisations.objects.filter(is_deleted='FALSE')
 	
 	customer_title = forms.ModelChoiceField(label = 'Title', widget = forms.Select, queryset = titles_results)
 	customer_first_name = forms.CharField(max_length = 50)
@@ -216,7 +216,7 @@ class new_organisation_form(forms.Form):
 
 class new_project_form(forms.Form):
 	#Get data for choice boxes
-	organisations_results = organisations.objects.all()
+	organisations_results = organisations.objects.filter(is_deleted='FALSE')
 	
 	
 	project_name = forms.CharField(max_length = 255)
@@ -241,7 +241,7 @@ class new_project_form(forms.Form):
 
 class new_task_form(forms.Form):
 	#Get data for choice boxes
-	organisations_results = organisations.objects.all()
+	organisations_results = organisations.objects.filter(is_deleted='FALSE')
 	
 	task_short_description = forms.CharField(max_length = 255)
 	task_long_description = forms.CharField(widget = forms.Textarea)

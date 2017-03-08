@@ -496,6 +496,8 @@ def new_project(request):
 		, [current_user.id])
 		groups_results = namedtuplefetchall(cursor)
 		
+		organisations_results = organisations.objects.filter(is_deleted='FALSE')
+		
 		#Setup dates for initalising
 		today = datetime.datetime.now()
 		next_week = today + datetime.timedelta(days=31)
@@ -526,6 +528,7 @@ def new_project(request):
 			'new_project_form': new_project_form(initial={'start_date_year':today.year, 'start_date_month':today.month,'start_date_day':today.day,'start_date_hour':hour,'start_date_minute':minute,'start_date_meridiems':meridiems,
 														'finish_date_year':next_week.year, 'finish_date_month':next_week.month,'finish_date_day':next_week.day,'finish_date_hour':hour,'finish_date_minute':minute,'finish_date_meridiems':meridiems,}),
 			'groups_results': groups_results,
+			'organisations_count': organisations_results.count(),
 		}
 		
 	return HttpResponse(t.render(c, request))
