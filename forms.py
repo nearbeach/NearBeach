@@ -162,7 +162,7 @@ class login_form(forms.Form):
 		#Checking authentication
 		if username and password:
 			user = authenticate(username=username, password=password)
-			if ((not user) or (not user.check_password(password)))
+			if ((not user) or (not user.check_password(password))):
 				raise forms.ValidationError("The login details are incorrect")
 			elif (not user.is_active):
 				raise forms.ValidationError("Please contact your system administrator. Your account has been disabled")
