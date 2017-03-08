@@ -41,6 +41,7 @@ from .models import user_groups
 
 #For Importing RAW SQL
 from django.db import connection
+from django.db.models import Q
 
 #For the forms
 from django.db import models
@@ -361,35 +362,67 @@ def new_customer(request):
 
 
 def new_organisation(request):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect(reverse('login'))
+		
+		
+	"""
+	To stop duplicates in the system, the code will quickly check to see if
+	there is already a company that has either one of the following;
+	-- same name
+	-- same website
+	-- same contact email.
+	
+	If one of these conditions are met then the user will be returned to the
+	form and shown the possible duplicates. If the user accepts this, then
+	the organisation is created.	
+	"""
+	form = new_organisation_form(request.POST or None)
+	duplicate_results = None
 	if request.method == 'POST':
-		form = new_organisation_form(request.POST)
 		if form.is_valid():
 			organisation_name = form.cleaned_data['organisation_name']
 			organisation_email = form.cleaned_data['organisation_email']
 			organisation_website = form.cleaned_data['organisation_website']
 			
-			submit_form = organisations(organisation_name = organisation_name, organisation_email = organisation_email, organisation_website = organisation_website)
+			duplicate_results = organisations.objects.filter(Q(organisation_name=organisation_name) | Q(organisation_email=organisation_email) | Q(organisation_website=organisation_website))
+			
 			
 			"""
-			IMPORTANT!! BUG HERE!!!
-			There is no validaion process what so ever! Please read bug 55
+			If the user has clicked that they accept the duplicate OR if there
+			are NO duplicates, just make the organisation :)
 			"""
-			submit_form.save()
-			return HttpResponseRedirect(reverse(organisation_information, args={submit_form.organisations_id}))
-		
-		#If form is not valid, return to new_organisation_form.
-		#Should I print something on the page?
-		print("There was an error!")
-		return HttpResponseRedirect(reverse('new_organisation'))
-	else:
-		form = new_organisation_form()
-	
+			if ((duplicate_results.count() == 0) or (request.POST.get("save_duplicate"))):
+				#Save the form data
+				submit_form = organisations(organisation_name = organisation_name, organisation_email = organisation_email, organisation_website = organisation_website)
+				submit_form.save()
+				return HttpResponseRedirect(reverse(organisation_information, args={submit_form.organisations_id}))
+
+	"""
+	Now that we have determined if the organisations should be saved or not
+	we are left with the only options;
+	1.) There was no organisation to save
+	2.) there was a duplicate organisation and we are asking the user about it
+	"""
 	#load template
 	t = loader.get_template('NearBeach/new_organisation.html')
 	
+	#Define the duplication count
+	duplication_count = 0;
+	if not duplicate_results == None:
+		duplication_count = duplicate_results.count()
+		
+	
 	#context
 	c = {
-		'new_organisation_form': new_organisation_form(),
+		'new_organisation_form': form,
+		'duplicate_results': duplicate_results,
+		'duplication_count': duplication_count,
 	}
 	
 	return HttpResponse(t.render(c, request))
