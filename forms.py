@@ -8,7 +8,7 @@ from .models import list_of_titles
 from .models import list_of_countries
 from .models import list_of_countries_states
 from .models import user_groups
-
+from .models import project
 #Import ModelForm
 from django.forms import ModelForm
 
@@ -262,9 +262,34 @@ class new_task_form(forms.Form):
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
 
 
-class project_history_form(forms.Form):
-	project_history_text = forms.CharField(widget=forms.Textarea)
 
+class project_information_form(ModelForm):
+	"""
+	Project information will need to abide by the stricked laws of the new
+	project datetime edits!!
+	"""
+	start_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+	start_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+	start_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+	start_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
+	start_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
+	start_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+	
+	finish_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
+	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
+	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+	project_history_text = forms.CharField(widget=forms.Textarea)
+	class Meta:
+		model = project
+		fields = {
+			'project_name',
+			'project_description',
+			'organisations_id', #Turnthis to a label
+			'project_status',
+		}
 	
 class search_customers_form(forms.Form):
 	#Just have a simple search field

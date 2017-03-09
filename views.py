@@ -23,6 +23,7 @@ from .models import organisations
 from .models import project_customers
 from .models import project_groups
 from .models import project_history
+
 from .models import project_stages
 from .models import project_tasks
 from .models import project
@@ -33,6 +34,7 @@ from .models import tasks_groups
 from .models import tasks_history
 from .models import tasks
 from .models import user_groups
+
 
 
 #Used for login
@@ -59,9 +61,10 @@ from .forms import new_customer_form
 from .forms import search_customers_form
 from .forms import search_organisations_form
 from .forms import new_campus_form
-from .forms import project_history_form
+#from .forms import project_history_form
 from .forms import task_history_form
 from .forms import campus_information_form
+from .forms import project_information_form
 
 #Import datetime
 import datetime
@@ -509,7 +512,7 @@ def new_project(request):
 	
 	else:
 		#Obtain the groups the user is associated with
-		current_user = User.objects.get()
+		current_user = request.user
 		cursor = connection.cursor()
 
 		cursor.execute(
@@ -742,16 +745,29 @@ def project_information(request, project_id):
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
 	
-	#Define if the page is loading in POST
+	"""
+	If the page is in POST, it could mean that the user has done either
+	-- Updated the project information
+	-- Added some history to the project
+	-- Done both
+	We will apply all changes.
+	"""
+	form = project_information_form(request.POST or None)
 	if request.method == "POST":
-		form = project_history_form(request.POST)
+		#form = project_history_form(request.POST)
 		if form.is_valid():
+			"""
+			SECTION NEEDS UPDATING!!
+			~~~~~~~~~~~~~~~~~~~~~~~~
+			I am restructuring this section to include ALL fields!!!
+			"""
 			project_history_text = form.cleaned_data['project_history_text']
 			current_user = User.objects.get(username = request.user.get_username())
 			project_id_connection = project.objects.get(pk = project_id)
-			
+			"""
 			data = project_history(project_id = project_id_connection, user_id = current_user, project_history = project_history_text, user_infomation = current_user.id)
 			data.save()
+			"""
 	"""
 	After the project has been submitted, we want to reload the whole
 	page again. Hence we only have the if statements for submitting the
@@ -785,7 +801,7 @@ def project_information(request, project_id):
 		'project_information_results': project_information_results,
 		'project_history_results': project_history_results,
 		'associated_tasks_results': associated_tasks_results,
-		'project_history_form': project_history_form(),
+		'project_history_form': form, #The naming conventions will need to change!!!
 	}
 	
 	return HttpResponse(t.render(c, request))

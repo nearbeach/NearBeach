@@ -22,7 +22,8 @@
 	{# Project history submission #}
 	<form action="{% url 'project_information' project_information_results.project_id %}" method="post" class="history_submit">
 		{% csrf_token %}
-		{{ project_history_form.project_history_text }}
+		<table>{{ project_history_form.as_table }}</table>
+		
 		<br />
 		<input type="submit" value="Submit"/>
 	</form>
