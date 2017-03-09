@@ -281,14 +281,12 @@ class project_information_form(ModelForm):
 	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
 	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
-	project_history_text = forms.CharField(widget=forms.Textarea)
+	project_history_text = forms.CharField(widget=forms.Textarea, required = False)
 	class Meta:
 		model = project
 		fields = {
 			'project_name',
 			'project_description',
-			'organisations_id', #Turnthis to a label
-			'project_status',
 		}
 	
 class search_customers_form(forms.Form):

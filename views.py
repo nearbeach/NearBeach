@@ -744,40 +744,59 @@ def project_information(request, project_id):
 	"""
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
-	
-	"""
-	If the page is in POST, it could mean that the user has done either
-	-- Updated the project information
-	-- Added some history to the project
-	-- Done both
-	We will apply all changes.
-	"""
-	form = project_information_form(request.POST or None)
-	if request.method == "POST":
-		#form = project_history_form(request.POST)
-		if form.is_valid():
-			"""
-			SECTION NEEDS UPDATING!!
-			~~~~~~~~~~~~~~~~~~~~~~~~
-			I am restructuring this section to include ALL fields!!!
-			"""
-			project_history_text = form.cleaned_data['project_history_text']
-			current_user = User.objects.get(username = request.user.get_username())
-			project_id_connection = project.objects.get(pk = project_id)
-			"""
-			data = project_history(project_id = project_id_connection, user_id = current_user, project_history = project_history_text, user_infomation = current_user.id)
-			data.save()
-			"""
-	"""
-	After the project has been submitted, we want to reload the whole
-	page again. Hence we only have the if statements for submitting the
-	data and no else statements.
-	"""
-	#Query the database for project information
-	project_information_results = project.objects.get(pk = project_id)
+
+
+
+	#Obtain the required data
+	project_results = project.objects.get(project_id = project_id)
 	project_history_results = project_history.objects.filter(project_id = project_id, is_deleted = 'FALSE')
 	
+	"""
+	The 24 hours to 12 hours formula.
+	00:00 means that it is 12:00 AM - change required for hour
+	01:00 means that it is 01:00 AM - no change required
+	12:00 means that it is 12:00 PM - change required for meridiem
+	13:00 means that it is 01:00 PM - change required for hour and meridiem
+	"""
+	start_hour = project_results.project_start_date.hour
+	start_meridiem = u'AM'
+	if start_hour == 0:
+		start_hour = 12
+	elif start_hour == 12:
+		start_meridiem = u'PM'
+	elif start_hour > 12:
+		start_hour = start_hour - 12
+		start_meridiem = u'PM'
 	
+	end_hour = project_results.project_end_date.hour
+	end_meridiem = u'AM'
+	if end_hour == 0:
+		end_hour = 12
+	elif end_hour == 12:
+		end_meridiem = u'PM'
+	elif end_hour > 12:
+		end_hour = end_hour - 12
+		end_meridiem = u'PM'
+
+	
+	#Setup the initial data for the form
+	initial = {
+		'project_name': project_results.project_name,
+		'project_description': project_results.project_description,
+		'start_date_year': project_results.project_start_date.year,
+		'start_date_month': project_results.project_start_date.month,
+		'start_date_day': project_results.project_start_date.day,
+		'start_date_hour': start_hour,
+		'start_date_minute': project_results.project_start_date.minute,
+		'start_date_meridiems': start_meridiem,
+		'finish_date_year': project_results.project_end_date.year,
+		'finish_date_month': project_results.project_end_date.month,
+		'finish_date_day': project_results.project_end_date.day,
+		'finish_date_hour': end_hour,
+		'finish_date_minute': project_results.project_end_date.minute,
+		'finish_date_meridiems': end_meridiem,
+	}
+
 	#Query the database for associated task information
 	cursor = connection.cursor()
 	cursor.execute("""
@@ -792,16 +811,17 @@ def project_information(request, project_id):
 			AND project_id = %s
 		""", [project_id])
 	associated_tasks_results = namedtuplefetchall(cursor)
+
 	
 	#Load the template
 	t = loader.get_template('NearBeach/project_information.html')
 	
 	#context
 	c = {
-		'project_information_results': project_information_results,
-		'project_history_results': project_history_results,
+		'project_information_form': project_information_form(initial=initial),
+		'project_results': project_results,
 		'associated_tasks_results': associated_tasks_results,
-		'project_history_form': form, #The naming conventions will need to change!!!
+		'project_history_results': project_history_results,
 	}
 	
 	return HttpResponse(t.render(c, request))
