@@ -33,7 +33,7 @@
 
 
 <h3>Associated Tasks</h3>
-<a href="#">Associate Task</a>
+<a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
 {% if associated_tasks_results %}
 		<table>
 		<tr><td>Task Id</td><td>Short Description</td><td>End Date</td></tr>

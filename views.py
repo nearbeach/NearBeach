@@ -61,10 +61,10 @@ from .forms import new_customer_form
 from .forms import search_customers_form
 from .forms import search_organisations_form
 from .forms import new_campus_form
-#from .forms import project_history_form
 from .forms import task_history_form
 from .forms import campus_information_form
 from .forms import project_information_form
+from .forms import search_tasks_form
 
 #Import datetime
 import datetime
@@ -169,7 +169,32 @@ def associated_projects(request, task_id):
 
 
 def associated_tasks(request, project_id):
-	return
+	"""
+	We want the ability for the user to assign any task to the current
+	project that their group owns. The user will have the ability to
+	check to see if they want only new or open, or if they would like
+	to see closed tasks too.
+	"""
+	search_tasks = search_tasks_form()
+	
+	#POST
+	if request.method == "POST":
+		#TO DO! EXTRACT POST AND FILTER RESULTS!!!
+		tasks_results = tasks.objects.get()
+	else:
+		tasks_results = tasks.objects.get()
+	
+	#Load the template
+	t = loader.get_template('NearBeach/associated_tasks.html')
+	
+	#context
+	c = {
+		'tasks_results': tasks_results,
+		'search_tasks': search_tasks,
+		'project_id': project_id,
+	}
+	
+	return HttpResponse(t.render(c, request))
 
 
 def campus_information(request, campus_information):

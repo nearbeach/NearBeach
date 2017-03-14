@@ -1,0 +1,22 @@
+{% extends "./template.html" %}
+{% block content %}
+<h1>Associate Tasks</h1>
+<form action={% url 'associated_tasks' project_id %} method="post" class="associated_tasks">
+	{% csrf_token %}
+	<table>
+		{{ search_tasks }}
+	</table>
+	<input hidden type="submit">
+</form>
+
+<table>
+	<tr>
+		<td>Task Short Description</td>
+		<td>Organisation</td>
+		<td>Task End Date</td>
+		<td>Task Assigned To</td>
+		<td>Task Status</td>
+	</tr>
+
+</table>
+{% endblock %}

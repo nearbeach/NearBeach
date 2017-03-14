@@ -140,6 +140,11 @@ MERIDIEMS_CHOICES = (
 	('PM','PM'),
 )
 
+#Include closed option
+INCLUDE_CLOSED = {
+	('INCLUDE_CLOSED','Include Closed?'),
+}
+
 class campus_information_form(ModelForm):
 	class Meta:
 		model = organisations_campus
@@ -296,6 +301,11 @@ class search_customers_form(forms.Form):
 class search_organisations_form(forms.Form):
 	#Just have a simple search field
 	search_organisations = forms.CharField(max_length = 255, required = False)
+	
+class search_tasks_form(forms.Form):
+	search_customers = forms.CharField(max_length = 255, required = False)
+	include_closed = forms.MultipleChoiceField(widget = forms.CheckboxSelectMultiple,
+												choices = INCLUDE_CLOSED)
 	
 class task_history_form(forms.Form):
 	task_history_text = forms.CharField(widget=forms.Textarea)
