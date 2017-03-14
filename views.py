@@ -164,6 +164,14 @@ def active_projects(request):
 	return HttpResponse(t.render(c, request))
 	
 
+def associated_projects(request, task_id):
+	return
+
+
+def associated_tasks(request, project_id):
+	return
+
+
 def campus_information(request, campus_information):
 	"""
 	If the user is not logged in, we want to send them to the login page.
@@ -907,6 +915,20 @@ def project_information(request, project_id):
 	}
 	
 	return HttpResponse(t.render(c, request))
+
+
+def resolve_project(request, project_id):
+	project_update = project.objects.get(project_id = project_id)
+	project_update.project_status = 'Resolved'
+	project_update.save()
+	return HttpResponseRedirect(reverse('active_projects'))
+
+
+def resolve_task(request, task_id):
+	task_update = task.object.get(task_id = task_id)
+	task_update.task_status = 'Resolved'
+	task_update.save()
+	return HttpResponseRedirect(reverse('active_projects'))	
 
 
 def search_customers(request):

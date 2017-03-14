@@ -43,6 +43,13 @@ urlpatterns = [
 	url(r'^search_organisations', views.search_organisations, name='search_organisations'),
 	url(r'^search_projects_tasks', views.search_projects_tasks, name='search_projects_tasks'),
 	
+	#Associated tasks/projects
+	url(r'^associated_tasks/(?P<task_id>[0-9]+)/', views.associated_tasks, name='associated_tasks'),
+	url(r'^associated_projects/(?P<project_id>[0-9]+)/', views.associated_projects, name='associated_projects'),
+	
+	#Resolve tasks/projects
+	url(r'^resolve_task/(?P<task_id>[0-9]+)/', views.resolve_task, name='resolve_task'),
+	url(r'^resolve_project/(?P<project_id>[0-9]+)/', views.resolve_project, name='resolve_project'),
 
 ]
 

@@ -8,6 +8,11 @@
 {{ project_information_form.as_table }}
 </table>
 <input type="submit" value="Save"/>
+{% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
+	<input type="button" onclick="location.href='{% url 'resolve_project' project_results.project_id %}'" value="Resolve Project">
+{% elif project_results.project_stauts == 'Resolved' %}
+	<input type="button" onclick="location.href='{% url 'active_projects' %}'" value="Reactive Project">
+{% endif %}
 </form>
 <h3>Project History</h3>
 {% if project_history_results %}
@@ -22,8 +27,8 @@
 
 <h3>Missing fields</h3>
 <p>
-{{ project_information.organisations_id.organisation_name }}<br />
-{{ project_information.project_status }}
+{{ project_results.organisations_id.organisation_name }}<br />
+{{ project_results.project_status }}
 </p>
 
 
