@@ -163,6 +163,22 @@ def active_projects(request):
 	
 	return HttpResponse(t.render(c, request))
 	
+	
+def associate(request, project_id, task_id, project_or_task):
+	#Submit the data
+	submit_result = project_tasks(
+								project_id_id = project_id, 
+								task_id_id = task_id)
+	submit_result.save()
+	
+	
+	#Once we assign them together, we go back to the original
+	if project_or_task == "P":
+		return HttpResponseRedirect(reverse('project_information', args = {project_id} ))
+	else:
+		return HttpResponseRedirect(reverse('task_information', args = {task_id}))
+		
+
 
 def associated_projects(request, task_id):
 	return
@@ -180,9 +196,9 @@ def associated_tasks(request, project_id):
 	#POST
 	if request.method == "POST":
 		#TO DO! EXTRACT POST AND FILTER RESULTS!!!
-		tasks_results = tasks.objects.get()
+		tasks_results = tasks.objects.filter()
 	else:
-		tasks_results = tasks.objects.get()
+		tasks_results = tasks.objects.filter()
 	
 	#Load the template
 	t = loader.get_template('NearBeach/associated_tasks.html')
