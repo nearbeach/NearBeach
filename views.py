@@ -799,7 +799,12 @@ def project_information(request, project_id):
 	"""
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
-		
+	
+	"""
+	There are two buttons on the project information page. Both will come
+	here. Both will save the data, however only one of them will resolve
+	this project.
+	"""
 	#Get the data from the form if the information has been submitted
 	if request.method == "POST":
 		form = project_information_form(request.POST)
@@ -855,6 +860,11 @@ def project_information(request, project_id):
 			project_results.project_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day, start_date_hour, start_date_minute)
 			project_results.project_end_date = datetime.datetime(finish_date_year, finish_date_month, finish_date_day, finish_date_hour, finish_date_minute)
 			
+			#Check to make sure the resolve button was hit
+			if 'Resolve' in request.POST:
+				#Well, we have to now resolve the data
+				project_results.project_status = 'Resolved'
+			
 			project_results.save()
 			
 			#Now save the new project history.
@@ -874,12 +884,14 @@ def project_information(request, project_id):
 									user_infomation = current_user.id
 									)
 				data.save()
+			
+
 	else:
 		#If the method is not POST then we have to define project_results
 		project_results = project.objects.get(project_id = project_id)
 
+
 	#Obtain the required data
-	
 	project_history_results = project_history.objects.filter(project_id = project_id, is_deleted = 'FALSE')
 	
 	"""
@@ -931,7 +943,7 @@ def project_information(request, project_id):
 	#Query the database for associated task information
 	cursor = connection.cursor()
 	cursor.execute("""
-		SELECT 
+		SELECT DISTINCT
 		  tasks.tasks_id
 		, tasks.task_short_description
 		, tasks.task_end_date

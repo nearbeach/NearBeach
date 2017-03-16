@@ -49,8 +49,8 @@ urlpatterns = [
 	url(r'^associate/(?P<project_id>[0-9]+)/(?P<task_id>[0-9]+)/(?P<project_or_task>[P,T])', views.associate, name='associate'),
 	
 	#Resolve tasks/projects
-	url(r'^resolve_task/(?P<task_id>[0-9]+)/', views.resolve_task, name='resolve_task'),
-	url(r'^resolve_project/(?P<project_id>[0-9]+)/', views.resolve_project, name='resolve_project'),
+	#url(r'^resolve_task/(?P<task_id>[0-9]+)/', views.resolve_task, name='resolve_task'),
+	#url(r'^resolve_project/(?P<project_id>[0-9]+)/', views.resolve_project, name='resolve_project'),
 
 ]
 

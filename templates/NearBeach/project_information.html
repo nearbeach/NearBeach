@@ -5,13 +5,19 @@
 <form action="{% url 'project_information' project_results.project_id %}" method="POST">
 {% csrf_token %}
 <table>
-{{ project_information_form.as_table }}
+<tr><td>{{ project_information_form.project_name }}</td></tr>
+<tr><td>{{ project_information_form.project_description }}</td></tr>
+<tr><td>Organisation - {{ project_results.organisation_name }}</td></tr>
+<tr><td>Project Status - {{ project_results.project_status }}</td></tr>
+<tr><td>Project Start Date</td><td>{{ project_information_form.start_date_year }}{{ project_information_form.start_date_month }}{{ project_information_form.start_date_day }}</td></tr>
+<tr><td>Project Start Time</td><td>{{ project_information_form.start_date_hour }}:{{ project_information_form.start_date_minute }} {{ project_information_form.start_date_meridiems }}</td></tr>
+<tr><td>Project finish Date</td><td>{{ project_information_form.finish_date_year }}{{ project_information_form.finish_date_month }}{{ project_information_form.finish_date_day }}</td></tr>
+<tr><td>Project finish Date</td><td>{{ project_information_form.finish_date_hour }}:{{ project_information_form.finish_date_minute }}{{ project_information_form.finish_date_meridiems }}</td></tr>
+<tr><td>{{ project_information_form.project_history_text }}</td></tr>
 </table>
-<input type="submit" value="Save"/>
+<input type="submit" name="Save" value="Save"/>
 {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
-	<input type="button" onclick="location.href='{% url 'resolve_project' project_results.project_id %}'" value="Resolve Project">
-{% elif project_results.project_stauts == 'Resolved' %}
-	<input type="button" onclick="location.href='{% url 'active_projects' %}'" value="Reactive Project">
+	<input type="submit" name="Resolve" value="Resolve Project"/>
 {% endif %}
 </form>
 <h3>Project History</h3>
@@ -24,13 +30,6 @@
 {% else %}
 	<p>Currently no history</p>
 {% endif %}
-
-<h3>Missing fields</h3>
-<p>
-{{ project_results.organisations_id.organisation_name }}<br />
-{{ project_results.project_status }}
-</p>
-
 
 <h3>Associated Tasks</h3>
 <a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
