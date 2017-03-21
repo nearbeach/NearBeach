@@ -9,6 +9,7 @@ from .models import list_of_countries
 from .models import list_of_countries_states
 from .models import user_groups
 from .models import project
+from .models import tasks
 #Import ModelForm
 from django.forms import ModelForm
 
@@ -286,7 +287,7 @@ class project_information_form(ModelForm):
 	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
 	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
-	project_history_text = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Please update any history here and then click on the save button'}), required = False)
+	project_history_text = forms.CharField(widget=forms.Textarea, required = False)
 	class Meta:
 		model = project
 		fields = {
@@ -306,8 +307,32 @@ class search_tasks_form(forms.Form):
 	search_customers = forms.CharField(max_length = 255, required = False)
 	include_closed = forms.MultipleChoiceField(widget = forms.CheckboxSelectMultiple,
 												choices = INCLUDE_CLOSED)
+
+
+class task_information_form(ModelForm):
+	start_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+	start_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+	start_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+	start_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
+	start_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
+	start_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
 	
+	finish_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
+	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
+	task_history_text = forms.CharField(widget=forms.Textarea, required = False)
+	
+	class Meta:
+		model = tasks
+		fields = {
+				'task_short_description',
+				'task_long_description',
+		}
+
+"""	
 class task_history_form(forms.Form):
 	task_history_text = forms.CharField(widget=forms.Textarea)
-
+"""
 
