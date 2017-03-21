@@ -61,7 +61,7 @@ from .forms import new_customer_form
 from .forms import search_customers_form
 from .forms import search_organisations_form
 from .forms import new_campus_form
-from .forms import task_history_form
+from .forms import task_information_form
 from .forms import campus_information_form
 from .forms import project_information_form
 from .forms import search_tasks_form
@@ -708,7 +708,8 @@ def new_task(request):
 	
 	else:
 		#Obtain the groups the user is associated with
-		current_user = User.objects.get()
+		#current_user = request.user
+		current_user = User.objects.get(username = request.user)
 		cursor = connection.cursor()
 
 		cursor.execute(
@@ -799,12 +800,7 @@ def project_information(request, project_id):
 	"""
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
-	
-	"""
-	There are two buttons on the project information page. Both will come
-	here. Both will save the data, however only one of them will resolve
-	this project.
-	"""
+		
 	#Get the data from the form if the information has been submitted
 	if request.method == "POST":
 		form = project_information_form(request.POST)
@@ -860,11 +856,6 @@ def project_information(request, project_id):
 			project_results.project_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day, start_date_hour, start_date_minute)
 			project_results.project_end_date = datetime.datetime(finish_date_year, finish_date_month, finish_date_day, finish_date_hour, finish_date_minute)
 			
-			#Check to make sure the resolve button was hit
-			if 'Resolve' in request.POST:
-				#Well, we have to now resolve the data
-				project_results.project_status = 'Resolved'
-			
 			project_results.save()
 			
 			#Now save the new project history.
@@ -884,14 +875,12 @@ def project_information(request, project_id):
 									user_infomation = current_user.id
 									)
 				data.save()
-			
-
 	else:
 		#If the method is not POST then we have to define project_results
 		project_results = project.objects.get(project_id = project_id)
 
-
 	#Obtain the required data
+	
 	project_history_results = project_history.objects.filter(project_id = project_id, is_deleted = 'FALSE')
 	
 	"""
@@ -943,7 +932,7 @@ def project_information(request, project_id):
 	#Query the database for associated task information
 	cursor = connection.cursor()
 	cursor.execute("""
-		SELECT DISTINCT
+		SELECT 
 		  tasks.tasks_id
 		, tasks.task_short_description
 		, tasks.task_end_date
@@ -1136,28 +1125,73 @@ def task_information(request, task_id):
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
 	
-	
-	#Define if the page is loading in POST
-	if request.method == "POST":
-		form = task_history_form(request.POST)
-		if form.is_valid():
-			task_history_text = form.cleaned_data['task_history_text']
-			current_user = User.objects.get(username = request.user.get_username())
-			task_id_connection = tasks.objects.get(pk = task_id)
-			
-			data = tasks_history(tasks_id = task_id_connection, user_id = current_user, task_history = task_history_text, user_infomation = current_user.id)
-			data.save()
 	"""
-	After the project has been submitted, we want to reload the whole
-	page again. Hence we only have the if statements for submitting the
-	data and no else statements.
-	"""	
-	#Gather needed information about the task
-	task_information_results = tasks.objects.get(pk = task_id)
-	task_history_results = tasks_history.objects.filter(tasks_id = task_id)
+	There are two buttons on the task information page. Both will come
+	here. Both will save the data, however only one of them will resolve
+	the task.
+	"""
+	#Get the data from the form
+	if request.method == "POST":
+		form = project_information_form(request.POST)
+		if form.is_valid():
+			#Define the data we will edit
+			task_results = tasks.objects.get(tasks_id = task_id)
+			
+			#Extract all the information from the form and save
+			#TO BE WRITTEN!
+	else:
+		#If the method is not POST then we have to define task_results
+		task_results = tasks.objects.get(tasks_id = task_id)
 	
-	#Load the template
-	t = loader.get_template('NearBeach/task_information.html')
+	
+	#Obtain required data
+	task_history_results = tasks_history.objects.filter(tasks_id = task_id) #Will need to remove all IS_DELETED=TRUE
+	
+	"""
+	The 24 hours to 12 hours formula.
+	00:00 means that it is 12:00 AM - change required for hour
+	01:00 means that it is 01:00 AM - no change required
+	12:00 means that it is 12:00 PM - change required for meridiem
+	13:00 means that it is 01:00 PM - change required for hour and meridiem
+	"""
+	start_hour = task_results.task_start_date.hour
+	start_meridiem = u'AM'
+	if start_hour == 0:
+		start_hour = 12
+	elif start_hour == 12:
+		start_meridiem = u'PM'
+	elif start_hour > 12:
+		start_hour = start_hour - 12
+		start_meridiem = u'PM'
+	
+	end_hour = task_results.task_end_date.hour
+	end_meridiem = u'AM'
+	if end_hour == 0:
+		end_hour = 12
+	elif end_hour == 12:
+		end_meridiem = u'PM'
+	elif end_hour > 12:
+		end_hour = end_hour - 12
+		end_meridiem = u'PM'
+		
+	#Setup the initial
+	initial = {
+		'task_short_description': task_results.task_short_description,
+		'task_long_description': task_results.task_long_description,
+		'start_date_year': task_results.task_start_date.year,
+		'start_date_month': task_results.task_start_date.month,
+		'start_date_day': task_results.task_start_date.day,
+		'start_date_hour': start_hour,
+		'start_date_minute': task_results.task_start_date.minute,
+		'start_date_meridiems': start_meridiem,
+		'finish_date_year': task_results.task_end_date.year,
+		'finish_date_month': task_results.task_end_date.month,
+		'finish_date_day': task_results.task_end_date.day,
+		'finish_date_hour': end_hour,
+		'finish_date_minute': task_results.task_end_date.minute,
+		'finish_date_meridiems': end_meridiem,		
+	}
+	
 	
 	#Query the database for associated project information
 	cursor = connection.cursor()
@@ -1174,16 +1208,21 @@ def task_information(request, task_id):
 		""")
 	associated_project_results = namedtuplefetchall(cursor)
 	
+	
+	#Load the template
+	t = loader.get_template('NearBeach/task_information.html')
+
 	#context
 	c = {
-		'task_information_results': task_information_results,
-		'task_history_results': task_history_results,
+		'task_results': task_results,
+		'task_information_form': task_information_form(initial=initial),
 		'associated_project_results': associated_project_results,
-		'task_history_form': task_history_form(),
+		'task_history_results': task_history_results,
 	}
-	
+
 	return HttpResponse(t.render(c, request))
-	
+
+
 
 
 # Extra functionality
@@ -1198,5 +1237,3 @@ def namedtuplefetchall(cursor):
     desc = cursor.description
     nt_result = namedtuple('Result', [col[0] for col in desc])
     return [nt_result(*row) for row in cursor.fetchall()]
-
-
