@@ -16,7 +16,7 @@ urlpatterns = [
     
     #Obtaining project and task information
 	url(r'^project_information/(?P<project_id>[0-9]+)/', views.project_information, name='project_information'),
-	url(r'^project_information/(?P<project_id>[0-9]+)/(?P<task_id>[0-9]+)', views.project_information, name='project_information'),
+	#url(r'^project_information/(?P<project_id>[0-9]+)/(?P<task_id>[0-9]+)', views.project_information, name='project_information'),
 	url(r'^task_information/(?P<task_id>[0-9]+)', views.task_information, name='task_information'),
 	
 

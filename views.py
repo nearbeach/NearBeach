@@ -61,7 +61,7 @@ from .forms import new_customer_form
 from .forms import search_customers_form
 from .forms import search_organisations_form
 from .forms import new_campus_form
-from .forms import task_history_form
+from .forms import task_information_form
 from .forms import campus_information_form
 from .forms import project_information_form
 from .forms import search_tasks_form
@@ -1126,7 +1126,7 @@ def search_projects_tasks(request):
 	return HttpResponse(t.render(c, request))
 	
 
-
+def task_information(request, task_id):
 	"""
 	If the user is not logged in, we want to send them to the login page.
 	This function should be in ALL webpage requests except for login and

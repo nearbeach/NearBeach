@@ -1,11 +1,24 @@
 {% extends "./template.html" %}
 {% block content %}
 <div>
-	<h1>Task information - TASK{{ task_results.task_id }}</h1>
-	<div>
-		<table>
-			{{ task_information_form.as_table }}
-		</table>
-	</div>
+	<h1>Task information - TASK{{ task_results.tasks_id }}</h1>
+	<form action="{% url 'task_information' task_results.tasks_id %}" method="POST">
+		{% csrf_token %}
+		<div>{{ task_information_form.task_short_description }}</div>
+		<div>{{ task_information_form.task_long_description }}</div>
+		<div>Task Start Date - {{ task_information_form.start_date_year }}/{{ task_information_form.start_date_month }}/{{ task_information_form.start_date_day }}</div>
+		<div>Task Start Time - {{ task_information_form.start_date_hour }}:{{ task_information_form.start_date_minute }} {{ task_information_form.start_date_meridiems }}</div>
+		<div>Task finish Date - {{ task_information_form.finish_date_year }}/{{ task_information_form.finish_date_month }}/{{ task_information_form.finish_date_day }}</div>
+		<div>Task finish Time - {{ task_information_form.finish_date_hour }}:{{ task_information_form.finish_date_minute }} {{ task_information_form.finish_date_meridiems }}</div>
+		<h2>Task History</h2>
+		<div>{{ task_information_form.task_history_text }}</div>
+		
+		<div>
+			<input type="submit" name="Save" value="Save"/>
+			{% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
+				<input type="submit" name="Resolve" value="Resolve Project"/>
+			{% endif %}
+		</div>
+	</form>
 </div>
 {% endblock %}

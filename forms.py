@@ -9,6 +9,7 @@ from .models import list_of_countries
 from .models import list_of_countries_states
 from .models import user_groups
 from .models import project
+from .models import tasks
 #Import ModelForm
 from django.forms import ModelForm
 
@@ -320,6 +321,7 @@ class task_information_form(ModelForm):
 	finish_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
 	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
 	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
+	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
 	task_history_text = forms.CharField(widget=forms.Textarea, required = False)
 	
 	class Meta:
