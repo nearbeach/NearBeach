@@ -1127,7 +1127,6 @@ def search_projects_tasks(request):
 	
 
 
-def task_information(request, task_id):
 	"""
 	If the user is not logged in, we want to send them to the login page.
 	This function should be in ALL webpage requests except for login and
@@ -1136,28 +1135,73 @@ def task_information(request, task_id):
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
 	
-	
-	#Define if the page is loading in POST
-	if request.method == "POST":
-		form = task_history_form(request.POST)
-		if form.is_valid():
-			task_history_text = form.cleaned_data['task_history_text']
-			current_user = User.objects.get(username = request.user.get_username())
-			task_id_connection = tasks.objects.get(pk = task_id)
-			
-			data = tasks_history(tasks_id = task_id_connection, user_id = current_user, task_history = task_history_text, user_infomation = current_user.id)
-			data.save()
 	"""
-	After the project has been submitted, we want to reload the whole
-	page again. Hence we only have the if statements for submitting the
-	data and no else statements.
-	"""	
-	#Gather needed information about the task
-	task_information_results = tasks.objects.get(pk = task_id)
-	task_history_results = tasks_history.objects.filter(tasks_id = task_id)
+	There are two buttons on the task information page. Both will come
+	here. Both will save the data, however only one of them will resolve
+	the task.
+	"""
+	#Get the data from the form
+	if request.method == "POST":
+		form = project_information_form(request.POST)
+		if form.is_valid():
+			#Define the data we will edit
+			task_results = tasks.objects.get(tasks_id = task_id)
+			
+			#Extract all the information from the form and save
+			#TO BE WRITTEN!
+	else:
+		#If the method is not POST then we have to define task_results
+		task_results = tasks.objects.get(tasks_id = task_id)
 	
-	#Load the template
-	t = loader.get_template('NearBeach/task_information.html')
+	
+	#Obtain required data
+	task_history_results = tasks_history.objects.filter(tasks_id = task_id) #Will need to remove all IS_DELETED=TRUE
+	
+	"""
+	The 24 hours to 12 hours formula.
+	00:00 means that it is 12:00 AM - change required for hour
+	01:00 means that it is 01:00 AM - no change required
+	12:00 means that it is 12:00 PM - change required for meridiem
+	13:00 means that it is 01:00 PM - change required for hour and meridiem
+	"""
+	start_hour = task_results.task_start_date.hour
+	start_meridiem = u'AM'
+	if start_hour == 0:
+		start_hour = 12
+	elif start_hour == 12:
+		start_meridiem = u'PM'
+	elif start_hour > 12:
+		start_hour = start_hour - 12
+		start_meridiem = u'PM'
+	
+	end_hour = task_results.task_end_date.hour
+	end_meridiem = u'AM'
+	if end_hour == 0:
+		end_hour = 12
+	elif end_hour == 12:
+		end_meridiem = u'PM'
+	elif end_hour > 12:
+		end_hour = end_hour - 12
+		end_meridiem = u'PM'
+		
+	#Setup the initial
+	initial = {
+		'task_short_description': task_results.task_short_description,
+		'task_long_description': task_results.task_long_description,
+		'start_date_year': task_results.task_start_date.year,
+		'start_date_month': task_results.task_start_date.month,
+		'start_date_day': task_results.task_start_date.day,
+		'start_date_hour': start_hour,
+		'start_date_minute': task_results.task_start_date.minute,
+		'start_date_meridiems': start_meridiem,
+		'finish_date_year': task_results.task_end_date.year,
+		'finish_date_month': task_results.task_end_date.month,
+		'finish_date_day': task_results.task_end_date.day,
+		'finish_date_hour': end_hour,
+		'finish_date_minute': task_results.task_end_date.minute,
+		'finish_date_meridiems': end_meridiem,		
+	}
+	
 	
 	#Query the database for associated project information
 	cursor = connection.cursor()
@@ -1174,14 +1218,18 @@ def task_information(request, task_id):
 		""")
 	associated_project_results = namedtuplefetchall(cursor)
 	
+	
+	#Load the template
+	t = loader.get_template('NearBeach/task_information.html')
+
 	#context
 	c = {
-		'task_information_results': task_information_results,
-		'task_history_results': task_history_results,
+		'task_results': task_results,
+		'task_information_form': task_information_form(initial=initial),
 		'associated_project_results': associated_project_results,
-		'task_history_form': task_history_form(),
+		'task_history_results': task_history_results,
 	}
-	
+
 	return HttpResponse(t.render(c, request))
 	
 
