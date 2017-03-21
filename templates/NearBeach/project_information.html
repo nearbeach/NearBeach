@@ -1,5 +1,8 @@
 {% extends "./template.html" %}
 {% block content %}
+{% load static %}
+<script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
+<body onload="initiate_dates();">
 <h1>Project Information - PRO{{ project_results.project_id }}</h1>
 
 <form action="{% url 'project_information' project_results.project_id %}" method="POST">
@@ -48,4 +51,5 @@
 {% else %}
 	<p>Currently no associated history.</p>
 {% endif %}
+</body>
 {% endblock %}
