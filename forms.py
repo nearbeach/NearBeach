@@ -147,6 +147,13 @@ INCLUDE_CLOSED = {
 }
 
 class campus_information_form(ModelForm):
+	campus_phone = forms.CharField(required=False)
+	campus_fax = forms.CharField(required=False)
+	campus_address1 = forms.CharField(required=False)
+	campus_address2 = forms.CharField(required=False)
+	campus_address3 = forms.CharField(required=False)
+	campus_suburb = forms.CharField(required=False)
+	
 	class Meta:
 		model = organisations_campus
 		fields = '__all__'

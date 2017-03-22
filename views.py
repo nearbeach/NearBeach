@@ -247,8 +247,33 @@ def campus_information(request, campus_information):
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
 		
-	#Get the data required
-	campus_results = organisations_campus.objects.get(pk = campus_information)
+	
+	#If instance is in POST
+	if request.method == "POST":
+		form = campus_information_form(request.POST)
+		if form.is_valid():
+			campus_results = organisations_campus.objects.get(pk = campus_information)
+			
+			#Save all the data
+			campus_results.organisations_id = form.cleaned_data['organisations_id']
+			campus_results.campus_nickname = form.cleaned_data['campus_nickname']
+			campus_results.campus_phone = form.cleaned_data['campus_phone']
+			campus_results.campus_fax = form.cleaned_data['campus_fax']
+			campus_results.campus_address1 = form.cleaned_data['campus_address1']
+			campus_results.campus_address2 = form.cleaned_data['campus_address2']
+			campus_results.campus_address3 = form.cleaned_data['campus_address3']
+			campus_results.campus_suburb = form.cleaned_data['campus_suburb']
+			campus_results.campus_state_id = form.cleaned_data['campus_state_id']
+			campus_results.campus_country_id = form.cleaned_data['campus_country_id']
+			
+			campus_results.save()
+	else:
+		campus_results = organisations_campus.objects.get(pk = campus_information)
+
+	#Get Data
+	### BUG BUG BUG
+	customers_campus = customers_campus.objects.filter(campus_id = campus_stuff)
+	### BUG BUG BUG
 	
 	#Load the template
 	t = loader.get_template('NearBeach/campus_information.html')
@@ -256,7 +281,8 @@ def campus_information(request, campus_information):
 	#context
 	c = {
 		'campus_results': campus_results,
-		'campus_information_form': campus_information_form(instance=campus_results),		
+		'campus_information_form': campus_information_form(instance=campus_results),
+		'customers_campus': customers_campus,	
 	}
 	
 	return HttpResponse(t.render(c, request))	
