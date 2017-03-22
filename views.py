@@ -65,6 +65,7 @@ from .forms import task_information_form
 from .forms import campus_information_form
 from .forms import project_information_form
 from .forms import search_tasks_form
+from .forms import search_projects_form
 
 #Import datetime
 import datetime
@@ -181,8 +182,32 @@ def associate(request, project_id, task_id, project_or_task):
 
 
 def associated_projects(request, task_id):
-	return
-
+	"""
+	We want the ability for the user to assign any project to the current
+	task that their group owns. The user will have the ability to
+	check to see if they want only new or open, or if they would like
+	to see closed tasks too.
+	"""
+	search_projects = search_projects_form()
+	
+	#POST
+	if request.method == "POST":
+		#TO DO! EXTRACT POST AND FILTER RESULTS!!!
+		projects_results = project.objects.filter()
+	else:
+		projects_results = project.objects.filter()
+	
+	#Load the template
+	t = loader.get_template('NearBeach/associated_projects.html')
+	
+	#context
+	c = {
+		'projects_results': projects_results,
+		'search_projects': search_projects,
+		'task_id': task_id,
+	}
+	
+	return HttpResponse(t.render(c, request))
 
 def associated_tasks(request, project_id):
 	"""
@@ -249,12 +274,16 @@ def customer_information(request, customer_id):
 	#Get the instance
 	customer_results = customers.objects.get(pk = customer_id)
 	
+	#Get Data
+	campus_results = customers_campus.objects.filter(customer_id = customer_id)
+	
 	#load template
 	t = loader.get_template('NearBeach/customer_information.html')
 	
 	#context
 	c = {
 		'customer_information_form': customer_information_form(instance=customer_results),
+		'campus_results': campus_results,
 	}
 	
 	return HttpResponse(t.render(c, request))	
@@ -374,7 +403,7 @@ def new_campus(request, organisations_id):
 	return HttpResponse(t.render(c, request))	
 
 
-def new_customer(request):
+def new_customer(request, organisations_id):
 	"""
 	If the user is not logged in, we want to send them to the login page.
 	This function should be in ALL webpage requests except for login and
@@ -402,12 +431,20 @@ def new_customer(request):
 	else:
 		form = new_customer_form()
 	
+	
+	
 	#load template
 	t = loader.get_template('NearBeach/new_customer.html')
+
+	initial = {
+		'organisations_id': organisations_id,
+	}
+
 	
 	#context
 	c = {
-		'new_customer_form': new_customer_form(),
+		'new_customer_form': new_customer_form(initial=initial),
+		'organisations_id': organisations_id,
 	}
 	
 	return HttpResponse(t.render(c, request))
@@ -1140,19 +1177,85 @@ def task_information(request, task_id):
 	here. Both will save the data, however only one of them will resolve
 	the task.
 	"""
+	#Define the data we will edit
+	task_results = tasks.objects.get(tasks_id = task_id)
+	
 	#Get the data from the form
 	if request.method == "POST":
-		form = project_information_form(request.POST)
+		form = task_information_form(request.POST)
 		if form.is_valid():
-			#Define the data we will edit
-			task_results = tasks.objects.get(tasks_id = task_id)
-			
 			#Extract all the information from the form and save
-			#TO BE WRITTEN!
-	else:
-		#If the method is not POST then we have to define task_results
-		task_results = tasks.objects.get(tasks_id = task_id)
-	
+			task_results.task_short_description = form.cleaned_data['task_short_description']
+			task_results.task_long_description = form.cleaned_data['task_long_description']
+
+			
+			#Calendar values
+			start_date_year = int(form.cleaned_data['start_date_year'])
+			start_date_month = int(form.cleaned_data['start_date_month'])
+			start_date_day = int(form.cleaned_data['start_date_day'])
+			start_date_hour = int(form.cleaned_data['start_date_hour'])
+			start_date_minute = int(form.cleaned_data['start_date_minute'])
+			start_date_meridiems = form.cleaned_data['start_date_meridiems']
+			
+			finish_date_year = int(form.cleaned_data['finish_date_year'])
+			finish_date_month = int(form.cleaned_data['finish_date_month'])
+			finish_date_day = int(form.cleaned_data['finish_date_day'])
+			finish_date_hour = int(form.cleaned_data['finish_date_hour'])
+			finish_date_minute = int(form.cleaned_data['finish_date_minute'])
+			finish_date_meridiems = form.cleaned_data['finish_date_meridiems']
+			
+			"""
+			Time is tricky. So I am following the simple rules;
+			12:** AM will have the hour changed to 0
+			1:** AM will not have the hour changed
+			12:** PM will not have the hour changed
+			1:** PM will have the hour changed by adding 12
+			
+			From these simple points, I have constructed the following 
+			if statements to take control of the correct hour.
+			"""
+			if start_date_meridiems == "AM":
+				if start_date_hour == 12:
+					start_date_hour = 0
+			else:
+				if start_date_hour > 12:
+					start_date_hour = start_date_hour + 12
+			
+			if finish_date_meridiems == "AM":
+				if finish_date_hour == 12:
+					finish_date_hour = 0
+			else:
+				if finish_date_hour > 12:
+					finish_date_hour = finish_date_hour + 12
+			
+			
+			#Create the final start/end date fields
+			task_results.task_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day, start_date_hour, start_date_minute)
+			task_results.task_end_date = datetime.datetime(finish_date_year, finish_date_month, finish_date_day, finish_date_hour, finish_date_minute)
+			
+			#Check to make sure the resolve button was hit
+			if 'Resolve' in request.POST:
+				#Well, we have to now resolve the data
+				task_results.task_status = 'Resolved'
+			
+			task_results.save()
+			
+			#Now save the new project history.
+			task_history_text_results = form.cleaned_data['task_history_text']
+			
+			if not task_history_text_results == '':
+				current_user = User.objects.get(username = request.user.get_username())
+				
+				task_id_connection = tasks.objects.get(tasks_id = task_id)
+				
+				data = tasks_history(
+									tasks_id = task_id_connection, 
+									user_id = current_user, 
+									task_history = task_history_text_results, 
+									user_infomation = current_user.id
+									)
+				data.save()
+
 	
 	#Obtain required data
 	task_history_results = tasks_history.objects.filter(tasks_id = task_id) #Will need to remove all IS_DELETED=TRUE
@@ -1214,8 +1317,8 @@ def task_information(request, task_id):
 			JOIN project_tasks
 			ON project.project_id = project_tasks.project_id
 			AND project_tasks.is_deleted = 'FALSE'
-			AND project_tasks.task_id = '0'
-		""")
+			AND project_tasks.task_id = %s
+		""", [task_id])
 	associated_project_results = namedtuplefetchall(cursor)
 	
 	

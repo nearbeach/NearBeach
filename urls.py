@@ -16,9 +16,8 @@ urlpatterns = [
     
     #Obtaining project and task information
 	url(r'^project_information/(?P<project_id>[0-9]+)/', views.project_information, name='project_information'),
-	#url(r'^project_information/(?P<project_id>[0-9]+)/(?P<task_id>[0-9]+)', views.project_information, name='project_information'),
 	url(r'^task_information/(?P<task_id>[0-9]+)', views.task_information, name='task_information'),
-	
+
 
 	#Login URLS
 	url(r'^login', views.login, name='login'),
@@ -29,7 +28,7 @@ urlpatterns = [
 	url(r'^new_project', views.new_project, name='new_project'),
 	url(r'^new_task', views.new_task, name='new_task'),
 	url(r'^new_organisation', views.new_organisation, name='new_organisation'),
-	url(r'^new_customer', views.new_customer, name='new_customer'),
+	url(r'^new_customer/(?P<organisations_id>[0-9]+)/', views.new_customer, name='new_customer'),
 	
 	#Organisation
 	url(r'^organisation_information/(?P<organisations_id>[0-9]+)/', views.organisation_information, name='organisation_information'),
@@ -47,11 +46,6 @@ urlpatterns = [
 	url(r'^associated_tasks/(?P<project_id>[0-9]+)/', views.associated_tasks, name='associated_tasks'),
 	url(r'^associated_projects/(?P<task_id>[0-9]+)/', views.associated_projects, name='associated_projects'),
 	url(r'^associate/(?P<project_id>[0-9]+)/(?P<task_id>[0-9]+)/(?P<project_or_task>[P,T])', views.associate, name='associate'),
-	
-	#Resolve tasks/projects
-	#url(r'^resolve_task/(?P<task_id>[0-9]+)/', views.resolve_task, name='resolve_task'),
-	#url(r'^resolve_project/(?P<project_id>[0-9]+)/', views.resolve_project, name='resolve_project'),
-
 ]
 
 

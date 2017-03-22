@@ -29,7 +29,7 @@
 		{% if task_history_results %}
 			{% for row in task_history_results %}
 				<p>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.audit_date }}<br />
-				<textarea readonly>{{ row.project_history }}</textarea>
+				<textarea readonly>{{ row.task_history }}</textarea>
 				</p>
 			{% endfor %}
 		{% else %}
@@ -45,8 +45,8 @@
 				{% for associated_project_row in associated_project_results %}
 					<tr>
 					<td><a href="{% url 'project_information' associated_project_row.project_id %}">{{ associated_project_row.project_id }}</a></td>
-					<td>{{ associated_project_row.task_short_description }}</td>
-					<td>{{ associated_project_row.task_end_date }}</td>
+					<td>{{ associated_project_row.project_name }}</td>
+					<td>{{ associated_project_row.project_end_date }}</td>
 					</tr>
 				{% endfor %}
 				

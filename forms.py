@@ -304,9 +304,15 @@ class search_organisations_form(forms.Form):
 	search_organisations = forms.CharField(max_length = 255, required = False)
 	
 class search_tasks_form(forms.Form):
-	search_customers = forms.CharField(max_length = 255, required = False)
+	search_tasks = forms.CharField(max_length = 255, required = False)
 	include_closed = forms.MultipleChoiceField(widget = forms.CheckboxSelectMultiple,
 												choices = INCLUDE_CLOSED)
+
+
+class search_projects_form(forms.Form):
+	search_projects = forms.CharField(max_length = 255, required = False)
+	include_closed = forms.MultipleChoiceField(widget = forms.CheckboxSelectMultiple,
+												choices = INCLUDE_CLOSED)											
 	
 class task_information_form(ModelForm):
 	start_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))

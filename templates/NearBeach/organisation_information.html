@@ -16,6 +16,7 @@
 {% endfor %}
 </table>
 <h3>Organisation Contacts</h3>
+<a href="{% url 'new_customer' organisation_results.organisations_id%}">New Customer</a>
 <table>
 <tr><td>Name</td><td>Email</td></tr>
 {% for customer in customers_results %}

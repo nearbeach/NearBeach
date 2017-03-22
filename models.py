@@ -125,6 +125,9 @@ class organisations_campus(models.Model):
 	campus_country_id = models.ForeignKey('list_of_countries', on_delete = models.CASCADE,)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	
+	def __str__(self):
+		return self.campus_nickname
+	
 	class Meta:
 		db_table = "organisations_campus"
 
