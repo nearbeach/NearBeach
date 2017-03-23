@@ -271,9 +271,8 @@ def campus_information(request, campus_information):
 		campus_results = organisations_campus.objects.get(pk = campus_information)
 
 	#Get Data
-	### BUG BUG BUG
-	customers_campus = customers_campus.objects.filter(campus_id = campus_stuff)
-	### BUG BUG BUG
+	customer_campus_results = customers_campus.objects.filter(campus_id = campus_information)
+
 	
 	#Load the template
 	t = loader.get_template('NearBeach/campus_information.html')
@@ -282,7 +281,7 @@ def campus_information(request, campus_information):
 	c = {
 		'campus_results': campus_results,
 		'campus_information_form': campus_information_form(instance=campus_results),
-		'customers_campus': customers_campus,	
+		'customer_campus_results': customer_campus_results,	
 	}
 	
 	return HttpResponse(t.render(c, request))	
@@ -908,15 +907,13 @@ def project_information(request, project_id):
 				if start_date_hour == 12:
 					start_date_hour = 0
 			else:
-				if start_date_hour > 12:
-					start_date_hour = start_date_hour + 12
+				start_date_hour = start_date_hour + 12
 			
 			if finish_date_meridiems == "AM":
 				if finish_date_hour == 12:
 					finish_date_hour = 0
 			else:
-				if finish_date_hour > 12:
-					finish_date_hour = finish_date_hour + 12
+				finish_date_hour = finish_date_hour + 12
 			
 			
 			#Create the final start/end date fields
@@ -1244,15 +1241,13 @@ def task_information(request, task_id):
 				if start_date_hour == 12:
 					start_date_hour = 0
 			else:
-				if start_date_hour > 12:
-					start_date_hour = start_date_hour + 12
+				start_date_hour = start_date_hour + 12
 			
 			if finish_date_meridiems == "AM":
 				if finish_date_hour == 12:
 					finish_date_hour = 0
 			else:
-				if finish_date_hour > 12:
-					finish_date_hour = finish_date_hour + 12
+				finish_date_hour = finish_date_hour + 12
 			
 			
 			#Create the final start/end date fields

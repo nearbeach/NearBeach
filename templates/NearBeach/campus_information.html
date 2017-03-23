@@ -14,16 +14,16 @@
 </div>
 <h2>Campus Contacts</h2>
 <a href="#">Add Campus Contact</a>
-{% if customers_campus %}
+{% if customer_campus_results %}
 	<table>
 		<tr><td>First Name</td><td>Last Name</td><td>Email</td><td>Phone</td><td>Fax</td></tr>
-		{% for row in customers_campus %}
+		{% for row in customer_campus_results %}
 			<tr>
-				<td>{{ row.campus_id }}</td>
-				<td>{{ row.id.customer_last_name }}</td>
+				<td>{{ row.customer_id.customer_first_name }}</td>
+				<td>{{ row.customer_id.customer_last_name }}</td>
 				<td>{{ row.customer_id.customer_email }}</td>
-				<td>{{ row.campus_id }}</td>
-				<td>{{ row.fax }}</td>
+				<td>{{ row.customer_phone }}</td>
+				<td>{{ row.customer_fax }}</td>
 			</tr>
 		{% endfor %}
 	</table>
