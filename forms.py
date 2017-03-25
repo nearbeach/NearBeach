@@ -10,6 +10,7 @@ from .models import list_of_countries_states
 from .models import user_groups
 from .models import project
 from .models import tasks
+from .models import customers_campus
 #Import ModelForm
 from django.forms import ModelForm
 
@@ -145,6 +146,14 @@ MERIDIEMS_CHOICES = (
 INCLUDE_CLOSED = {
 	('INCLUDE_CLOSED','Include Closed?'),
 }
+
+
+class customer_campus_form(ModelForm):
+
+	class Meta:
+		model = customers_campus
+		fields = '__all__'
+
 
 class campus_information_form(ModelForm):
 	campus_phone = forms.CharField(required=False)

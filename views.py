@@ -287,6 +287,29 @@ def campus_information(request, campus_information):
 	return HttpResponse(t.render(c, request))	
 
 
+def customers_campus_information(request, customer_campus_id, customer_or_org):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect(reverse('login'))
+	
+	#Get Data
+	#results = customers_campus
+		
+	#Load template
+	t = loader.get_template('NearBeach/customer_campus.html')
+	
+	#context
+	c = {
+	
+	}
+	
+	return HttpResponse(t.render(c, request))
+
+
 def customer_information(request, customer_id):
 	"""
 	If the user is not logged in, we want to send them to the login page.
