@@ -1,4 +1,22 @@
 {% extends "./template.html" %}
 {% block content %}
-<h1>Customer Campus<h1>
+<h1>Customer Campus</h1>
+<div>
+	<form action="{% url 'customers_campus_information' customer_campus_id customer_or_org %}" method="POST">
+		{% csrf_token %}
+		<div>First Name - {{ customer_campus_results.customer_id.customer_first_name }}</div>
+		<div>Last Name - {{ customer_campus_results.customer_id.customer_last_name }}</div>
+		<div>Email - {{ customer_campus_results.customer_id.customer_email }}</div>
+		<div>Customer phone - {{ customer_campus_form.customer_phone }}</div>
+		<div>Customer fax - {{ customer_campus_form.customer_fax }}</div>
+		<div>Organisation - <a href="{% url 'organisation_information' customer_campus_results.campus_id.organisations_id.organisations_id  %}">{{ customer_campus_results.campus_id.organisations_id }}</a></div>
+		<div>Campus - <a href="{% url 'campus_information' customer_campus_results.campus_id.id %}">{{ customer_campus_results.campus_id }}</a></div>
+		<div>Suburb - {{ customer_campus_results.campus_id.campus_suburb_id }}</div>
+		<div>State - {{ customer_campus_results.campus_id.campus_state_id }}</div>
+		<div>Country - {{ customer_campus_results.campus_id.campus_country_id }}</div>
+		
+		<input type="submit" name="Save" value="Save and Return"/>
+	</form>
+
+</div>
 {% endblock %}

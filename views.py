@@ -66,6 +66,7 @@ from .forms import campus_information_form
 from .forms import project_information_form
 from .forms import search_tasks_form
 from .forms import search_projects_form
+from .forms import customer_campus_form
 
 #Import datetime
 import datetime
@@ -295,16 +296,49 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
 	"""
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
+		
+	#IF method is post
+	if request.method == "POST":
+		form = customer_campus_form(request.POST)
+		if form.is_valid():
+			#Save the data
+			save_data = customers_campus.objects.get(id = customer_campus_id)
+			
+			save_data.customer_phone = form.cleaned_data['customer_phone']
+			save_data.customer_fax = form.cleaned_data['customer_fax']
+			
+			save_data.save()
+			
+			"""
+			Now direct the user back to where they were from. The default
+			will be the customer information
+			"""
+			if customer_or_org == "CAMP":
+				return HttpResponseRedirect(reverse('campus_information', save_data.campus_id))
+			else:
+				return HttpResponseRedirect(reverse('campus_information', save_data.campus_id))
+
+
 	
 	#Get Data
-	#results = customers_campus
-		
+	customer_campus_results = customers_campus.objects.get(id = customer_campus_id)
+	
+	#Setup the initial results
+	initial = {
+		'customer_phone': customer_campus_results.customer_phone,
+		'customer_fax': customer_campus_results.customer_fax,
+	}
+	
+	
 	#Load template
 	t = loader.get_template('NearBeach/customer_campus.html')
 	
 	#context
 	c = {
-	
+		'customer_campus_form': customer_campus_form(initial=initial),
+		'customer_campus_results': customer_campus_results,
+		'customer_campus_id': customer_campus_id,
+		'customer_or_org': customer_or_org,
 	}
 	
 	return HttpResponse(t.render(c, request))
@@ -384,7 +418,7 @@ def login(request):
 			
 			#Just double checking. :)
 			if request.user.is_authenticated:
-				return HttpResponseRedirect(reverse('active_projects'))
+					return HttpResponseRedirect(reverse('active_projects'))
 	
 	#load template
 	t = loader.get_template('NearBeach/login.html')
