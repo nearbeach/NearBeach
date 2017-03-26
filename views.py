@@ -849,7 +849,7 @@ def new_task(request):
 	
 	else:
 		#Obtain the groups the user is associated with
-		current_user = User.objects.get()
+		current_user = User.objects.filter()
 		cursor = connection.cursor()
 
 		cursor.execute(
