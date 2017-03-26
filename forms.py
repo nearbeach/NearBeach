@@ -149,10 +149,15 @@ INCLUDE_CLOSED = {
 
 
 class customer_campus_form(ModelForm):
-
+	customer_phone = forms.CharField(max_length = 11, required = False)
+	customer_fax = forms.CharField(max_length = 11, required = False)
+	
 	class Meta:
 		model = customers_campus
-		fields = '__all__'
+		fields = { 
+					'customer_phone', 
+					'customer_fax' 
+				}
 
 
 class campus_information_form(ModelForm):

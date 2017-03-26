@@ -296,6 +296,7 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
 	"""
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
+
 		
 	#IF method is post
 	if request.method == "POST":
@@ -308,15 +309,15 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
 			save_data.customer_fax = form.cleaned_data['customer_fax']
 			
 			save_data.save()
-			
+					
 			"""
 			Now direct the user back to where they were from. The default
 			will be the customer information
 			"""
 			if customer_or_org == "CAMP":
-				return HttpResponseRedirect(reverse('campus_information', save_data.campus_id))
+				return HttpResponseRedirect(reverse('campus_information', args = { save_data.campus_id.id } ))
 			else:
-				return HttpResponseRedirect(reverse('campus_information', save_data.campus_id))
+				return HttpResponseRedirect(reverse('customer_information', args = { save_data.customer_id.customer_id } ))
 
 
 	
@@ -352,11 +353,30 @@ def customer_information(request, customer_id):
 	"""
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
+		
+	if request.method == "POST":
+		#If we are adding a new campus
+		if 'add_campus_submit' in request.POST:
+			#Obtain the id of the campus_id
+			campus_id_results = request.POST.get("add_campus_select")
+			
+			#Get the SQL Instances
+			customer_instance = customers.objects.get(customer_id = customer_id)
+			campus_instances = organisations_campus.objects.get(id = campus_id_results)
+			
+			#Save the new campus
+			submit_campus = customers_campus(customer_id = customer_instance,	campus_id = campus_instances,	customer_phone = '', customer_fax = '')
+			submit_campus.save()
+			
+			#Go to the form.
+			return HttpResponseRedirect(reverse('customers_campus_information', args={submit_campus.id,'CUST'}))
 	
 	#Get the instance
 	customer_results = customers.objects.get(pk = customer_id)
-	
-	#Get Data
+	add_campus_results = organisations_campus.objects.filter(organisations_id = customer_results.organisations_id)
+
+
+	#The campus the customer is associated to
 	campus_results = customers_campus.objects.filter(customer_id = customer_id)
 	
 	#load template
@@ -366,6 +386,8 @@ def customer_information(request, customer_id):
 	c = {
 		'customer_information_form': customer_information_form(instance=customer_results),
 		'campus_results': campus_results,
+		'add_campus_results': add_campus_results,
+		'customer_id': customer_id,
 	}
 	
 	return HttpResponse(t.render(c, request))	

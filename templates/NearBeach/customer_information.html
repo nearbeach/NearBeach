@@ -6,7 +6,20 @@
 </table>
 
 <h2>Campus Contact Information</h2>
-<a href="#">Add campus</a>
+<div>
+	{% if add_campus_results %}
+		<form action={% url 'customer_information' customer_id %} method="post" class="customer_information">>
+			{% csrf_token %}
+			<select name="add_campus_select">
+				<option value="---------"> ---------</option>
+				{% for row in add_campus_results %}
+					<option value="{{ row.id }}">{{ row.campus_nickname }}</option>
+				{% endfor %}
+			</select>
+			<input type="submit" name="add_campus_submit" value="Add Campus">			
+		</form>
+	{% endif %}
+</div>
 {% if campus_results %}
 	<table>
 		<tr><td>Campus nickname</td><td>Contact's Phone</td><td>Contact's Fax</td><td>Campus Suburb</td><td>Campus State</td><td>Campus Country</td></tr>
