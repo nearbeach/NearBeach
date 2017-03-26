@@ -1,45 +1,42 @@
 {% extends "./template.html" %}
 {% block content %}
-<html>
-<head>
-<title>Project Information</title>
-</head>
-<body>
-{% if project_information_results %}
-	<h2>Project Information - PRO{{ project_information_results.project_id }}</h2>
-	<table>
-		<tr><td><label>Project Description</label></td><td>{{ project_information_results.project_description }}</td></tr>
-		<tr><td><label>Organisation Id</label></td><td>{{ project_information_results.organisation_id }}</td></tr>
-		<tr><td><label>Project Start Date</label></td><td>{{ project_information_results.project_start_date }}</td></tr>
-		<tr><td><label>Project End Date</label></td><td>{{ project_information_results.project_end_date }}</td></tr>
-		<tr><td><label>Project Status</label></td><td>{{ project_information_results.project_status }}</td></tr>
-	</table>
-	
-	<br />
-	<br />
-	<br />
-	<h3>Project History</h3>
-	{# Project history submission #}
-	<form action="{% url 'project_information' project_information_results.project_id %}" method="post" class="history_submit">
-		{% csrf_token %}
-		{{ project_history_form.project_history_text }}
-		<br />
-		<input type="submit" value="Submit"/>
-	</form>
-	
-	{# Displaying all the previous project history #}
-	{% if project_history_results %}
-		{% for project_history_row in project_history_results %}
-			<p>{{ project_history_row.user_infomation }} - {{ project_history_row.user_id }} - {{ project_history_row.audit_date }}<br />
-			<textarea readonly>{{ project_history_row.project_history }}</textarea>
-			</p>
-		{% endfor %}
-	{% else %}
-		<p>Currently no history.</p>
-	{% endif %}
-	
-	<h3>Associated Tasks</h3>
-	{% if associated_tasks_results %}
+{% load static %}
+<script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
+<body onload="initiate_dates();">
+<h1>Project Information - PRO{{ project_results.project_id }}</h1>
+
+<form action="{% url 'project_information' project_results.project_id %}" method="POST">
+{% csrf_token %}
+<table>
+<tr><td>{{ project_information_form.project_name }}</td></tr>
+<tr><td>{{ project_information_form.project_description }}</td></tr>
+<tr><td>Organisation - {{ project_results.organisation_name }}</td></tr>
+<tr><td>Project Status - {{ project_results.project_status }}</td></tr>
+<tr><td>Project Start Date</td><td>{{ project_information_form.start_date_year }}{{ project_information_form.start_date_month }}{{ project_information_form.start_date_day }}</td></tr>
+<tr><td>Project Start Time</td><td>{{ project_information_form.start_date_hour }}:{{ project_information_form.start_date_minute }} {{ project_information_form.start_date_meridiems }}</td></tr>
+<tr><td>Project finish Date</td><td>{{ project_information_form.finish_date_year }}{{ project_information_form.finish_date_month }}{{ project_information_form.finish_date_day }}</td></tr>
+<tr><td>Project finish Date</td><td>{{ project_information_form.finish_date_hour }}:{{ project_information_form.finish_date_minute }}{{ project_information_form.finish_date_meridiems }}</td></tr>
+<tr><td>{{ project_information_form.project_history_text }}</td></tr>
+</table>
+<input type="submit" name="Save" value="Save"/>
+{% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
+	<input type="submit" name="Resolve" value="Resolve Project"/>
+{% endif %}
+</form>
+<h3>Project History</h3>
+{% if project_history_results %}
+	{% for row in project_history_results %}
+		<p>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.audit_date }}<br />
+		<textarea readonly>{{ row.project_history }}</textarea>
+		</p>
+	{% endfor %}
+{% else %}
+	<p>Currently no history</p>
+{% endif %}
+
+<h3>Associated Tasks</h3>
+<a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
+{% if associated_tasks_results %}
 		<table>
 		<tr><td>Task Id</td><td>Short Description</td><td>End Date</td></tr>
 		{% for associated_task_row in associated_tasks_results %}
@@ -51,14 +48,8 @@
 		{% endfor %}
 		
 		</table>
-	{% else %}
-		<p>There are no associated tasks</p>
-	{% endif %}
 {% else %}
-	<h3>Project Information</h3>
-	<p>I am sorry, the project either does not exist or you do no have access.</p>
+	<p>Currently no associated history.</p>
 {% endif %}
 </body>
-</html>
-
 {% endblock %}

@@ -7,7 +7,10 @@ from .models import organisations_campus
 from .models import list_of_titles
 from .models import list_of_countries
 from .models import list_of_countries_states
-
+from .models import user_groups
+from .models import project
+from .models import tasks
+from .models import customers_campus
 #Import ModelForm
 from django.forms import ModelForm
 
@@ -139,7 +142,32 @@ MERIDIEMS_CHOICES = (
 	('PM','PM'),
 )
 
+#Include closed option
+INCLUDE_CLOSED = {
+	('INCLUDE_CLOSED','Include Closed?'),
+}
+
+
+class customer_campus_form(ModelForm):
+	customer_phone = forms.CharField(max_length = 11, required = False)
+	customer_fax = forms.CharField(max_length = 11, required = False)
+	
+	class Meta:
+		model = customers_campus
+		fields = { 
+					'customer_phone', 
+					'customer_fax' 
+				}
+
+
 class campus_information_form(ModelForm):
+	campus_phone = forms.CharField(required=False)
+	campus_fax = forms.CharField(required=False)
+	campus_address1 = forms.CharField(required=False)
+	campus_address2 = forms.CharField(required=False)
+	campus_address3 = forms.CharField(required=False)
+	campus_suburb = forms.CharField(required=False)
+	
 	class Meta:
 		model = organisations_campus
 		fields = '__all__'
@@ -162,8 +190,19 @@ class login_form(forms.Form):
 		#Checking authentication
 		if username and password:
 			user = authenticate(username=username, password=password)
-			if ((not user) or (not user.check_password(password)) or (not user.is_active)):
+			"""
+			The following bunch of if, else if statements will return errors if the following
+			cases are met
+			-- Login is not valid
+			-- Login is currently not active
+			-- If the user does not have groups associated with them
+			"""
+			if ((not user) or (not user.check_password(password))):
 				raise forms.ValidationError("The login details are incorrect")
+			elif (not user.is_active):
+				raise forms.ValidationError("Please contact your system administrator. Your account has been disabled")
+			elif (user_groups.objects.filter(username_id=user.id, is_deleted='FALSE').count() == 0):
+				raise forms.ValidationError("Please contact your system administrator. Your account has no group access")
 		return super(login_form, self).clean()
 
 
@@ -187,7 +226,7 @@ class new_campus_form(forms.Form):
 class new_customer_form(forms.Form):
 	#Get data for choice boxes
 	titles_results = list_of_titles.objects.all()
-	organisations_results = organisations.objects.all()
+	organisations_results = organisations.objects.filter(is_deleted='FALSE')
 	
 	customer_title = forms.ModelChoiceField(label = 'Title', widget = forms.Select, queryset = titles_results)
 	customer_first_name = forms.CharField(max_length = 50)
@@ -204,7 +243,7 @@ class new_organisation_form(forms.Form):
 
 class new_project_form(forms.Form):
 	#Get data for choice boxes
-	organisations_results = organisations.objects.all()
+	organisations_results = organisations.objects.filter(is_deleted='FALSE')
 	
 	
 	project_name = forms.CharField(max_length = 255)
@@ -229,7 +268,7 @@ class new_project_form(forms.Form):
 
 class new_task_form(forms.Form):
 	#Get data for choice boxes
-	organisations_results = organisations.objects.all()
+	organisations_results = organisations.objects.filter(is_deleted='FALSE')
 	
 	task_short_description = forms.CharField(max_length = 255)
 	task_long_description = forms.CharField(widget = forms.Textarea)
@@ -250,9 +289,32 @@ class new_task_form(forms.Form):
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
 
 
-class project_history_form(forms.Form):
-	project_history_text = forms.CharField(widget=forms.Textarea)
 
+class project_information_form(ModelForm):
+	"""
+	Project information will need to abide by the stricked laws of the new
+	project datetime edits!!
+	"""
+	start_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+	start_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+	start_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+	start_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
+	start_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
+	start_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+	
+	finish_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
+	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
+	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+	project_history_text = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Please update any history here and then click on the save button'}), required = False)
+	class Meta:
+		model = project
+		fields = {
+			'project_name',
+			'project_description',
+		}
 	
 class search_customers_form(forms.Form):
 	#Just have a simple search field
@@ -262,7 +324,38 @@ class search_organisations_form(forms.Form):
 	#Just have a simple search field
 	search_organisations = forms.CharField(max_length = 255, required = False)
 	
-class task_history_form(forms.Form):
-	task_history_text = forms.CharField(widget=forms.Textarea)
+class search_tasks_form(forms.Form):
+	search_tasks = forms.CharField(max_length = 255, required = False)
+	include_closed = forms.MultipleChoiceField(widget = forms.CheckboxSelectMultiple,
+												choices = INCLUDE_CLOSED)
+
+
+class search_projects_form(forms.Form):
+	search_projects = forms.CharField(max_length = 255, required = False)
+	include_closed = forms.MultipleChoiceField(widget = forms.CheckboxSelectMultiple,
+												choices = INCLUDE_CLOSED)											
+	
+class task_information_form(ModelForm):
+	start_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+	start_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+	start_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+	start_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
+	start_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
+	start_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+	
+	finish_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
+	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
+	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+	task_history_text = forms.CharField(widget=forms.Textarea, required = False)
+	
+	class Meta:
+		model = tasks
+		fields = {
+				'task_short_description',
+				'task_long_description',
+		}
 
 

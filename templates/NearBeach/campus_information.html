@@ -1,11 +1,33 @@
 {% extends "./template.html" %}
 {% block content %}
 <h1>Campus Information - {{ campus_results.campus_nickname }}</h1>
-<table>
-{{ campus_information_form.as_table }}
-</table>
-
+<div>
+	<form action={% url 'campus_information' campus_results.id %} method="post" class="campus_information">
+		{% csrf_token %}
+		<table>
+			{{ campus_information_form.as_table }}
+		</table>
+		<div>
+			<input type="submit" value="Save">
+		</div>
+	</form>
+</div>
 <h2>Campus Contacts</h2>
-
-
+<a href="#">Add Campus Contact</a>
+{% if customer_campus_results %}
+	<table>
+		<tr><td>First Name</td><td>Last Name</td><td>Email</td><td>Phone</td><td>Fax</td></tr>
+		{% for row in customer_campus_results %}
+			<tr>
+				<td><a href="{% url 'customers_campus_information' row.id 'CAMP' %}">{{ row.customer_id.customer_first_name }}</td>
+				<td>{{ row.customer_id.customer_last_name }}</a></td>
+				<td>{{ row.customer_id.customer_email }}</td>
+				<td>{{ row.customer_phone }}</td>
+				<td>{{ row.customer_fax }}</td>
+			</tr>
+		{% endfor %}
+	</table>
+{% else %}
+	<p>There are no customers at this campus</p>
+{% endif %}
 {% endblock %}

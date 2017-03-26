@@ -23,6 +23,7 @@ from .models import organisations
 from .models import project_customers
 from .models import project_groups
 from .models import project_history
+
 from .models import project_stages
 from .models import project_tasks
 from .models import project
@@ -35,12 +36,14 @@ from .models import tasks
 from .models import user_groups
 
 
+
 #Used for login
 #from django.contrib.auth import authenticate, get_user_model, login, logout
 
 
 #For Importing RAW SQL
 from django.db import connection
+from django.db.models import Q
 
 #For the forms
 from django.db import models
@@ -58,9 +61,12 @@ from .forms import new_customer_form
 from .forms import search_customers_form
 from .forms import search_organisations_form
 from .forms import new_campus_form
-from .forms import project_history_form
-from .forms import task_history_form
+from .forms import task_information_form
 from .forms import campus_information_form
+from .forms import project_information_form
+from .forms import search_tasks_form
+from .forms import search_projects_form
+from .forms import customer_campus_form
 
 #Import datetime
 import datetime
@@ -159,6 +165,79 @@ def active_projects(request):
 	
 	return HttpResponse(t.render(c, request))
 	
+	
+def associate(request, project_id, task_id, project_or_task):
+	#Submit the data
+	submit_result = project_tasks(
+								project_id_id = project_id, 
+								task_id_id = task_id)
+	submit_result.save()
+	
+	
+	#Once we assign them together, we go back to the original
+	if project_or_task == "P":
+		return HttpResponseRedirect(reverse('project_information', args = {project_id} ))
+	else:
+		return HttpResponseRedirect(reverse('task_information', args = {task_id}))
+		
+
+
+def associated_projects(request, task_id):
+	"""
+	We want the ability for the user to assign any project to the current
+	task that their group owns. The user will have the ability to
+	check to see if they want only new or open, or if they would like
+	to see closed tasks too.
+	"""
+	search_projects = search_projects_form()
+	
+	#POST
+	if request.method == "POST":
+		#TO DO! EXTRACT POST AND FILTER RESULTS!!!
+		projects_results = project.objects.filter()
+	else:
+		projects_results = project.objects.filter()
+	
+	#Load the template
+	t = loader.get_template('NearBeach/associated_projects.html')
+	
+	#context
+	c = {
+		'projects_results': projects_results,
+		'search_projects': search_projects,
+		'task_id': task_id,
+	}
+	
+	return HttpResponse(t.render(c, request))
+
+def associated_tasks(request, project_id):
+	"""
+	We want the ability for the user to assign any task to the current
+	project that their group owns. The user will have the ability to
+	check to see if they want only new or open, or if they would like
+	to see closed tasks too.
+	"""
+	search_tasks = search_tasks_form()
+	
+	#POST
+	if request.method == "POST":
+		#TO DO! EXTRACT POST AND FILTER RESULTS!!!
+		tasks_results = tasks.objects.filter()
+	else:
+		tasks_results = tasks.objects.filter()
+	
+	#Load the template
+	t = loader.get_template('NearBeach/associated_tasks.html')
+	
+	#context
+	c = {
+		'tasks_results': tasks_results,
+		'search_tasks': search_tasks,
+		'project_id': project_id,
+	}
+	
+	return HttpResponse(t.render(c, request))
+
 
 def campus_information(request, campus_information):
 	"""
@@ -169,8 +248,32 @@ def campus_information(request, campus_information):
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
 		
-	#Get the data required
-	campus_results = organisations_campus.objects.get(pk = campus_information)
+	
+	#If instance is in POST
+	if request.method == "POST":
+		form = campus_information_form(request.POST)
+		if form.is_valid():
+			campus_results = organisations_campus.objects.get(pk = campus_information)
+			
+			#Save all the data
+			campus_results.organisations_id = form.cleaned_data['organisations_id']
+			campus_results.campus_nickname = form.cleaned_data['campus_nickname']
+			campus_results.campus_phone = form.cleaned_data['campus_phone']
+			campus_results.campus_fax = form.cleaned_data['campus_fax']
+			campus_results.campus_address1 = form.cleaned_data['campus_address1']
+			campus_results.campus_address2 = form.cleaned_data['campus_address2']
+			campus_results.campus_address3 = form.cleaned_data['campus_address3']
+			campus_results.campus_suburb = form.cleaned_data['campus_suburb']
+			campus_results.campus_state_id = form.cleaned_data['campus_state_id']
+			campus_results.campus_country_id = form.cleaned_data['campus_country_id']
+			
+			campus_results.save()
+	else:
+		campus_results = organisations_campus.objects.get(pk = campus_information)
+
+	#Get Data
+	customer_campus_results = customers_campus.objects.filter(campus_id = campus_information)
+
 	
 	#Load the template
 	t = loader.get_template('NearBeach/campus_information.html')
@@ -178,10 +281,68 @@ def campus_information(request, campus_information):
 	#context
 	c = {
 		'campus_results': campus_results,
-		'campus_information_form': campus_information_form(instance=campus_results),		
+		'campus_information_form': campus_information_form(instance=campus_results),
+		'customer_campus_results': customer_campus_results,	
 	}
 	
 	return HttpResponse(t.render(c, request))	
+
+
+def customers_campus_information(request, customer_campus_id, customer_or_org):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect(reverse('login'))
+
+		
+	#IF method is post
+	if request.method == "POST":
+		form = customer_campus_form(request.POST)
+		if form.is_valid():
+			#Save the data
+			save_data = customers_campus.objects.get(id = customer_campus_id)
+			
+			save_data.customer_phone = form.cleaned_data['customer_phone']
+			save_data.customer_fax = form.cleaned_data['customer_fax']
+			
+			save_data.save()
+					
+			"""
+			Now direct the user back to where they were from. The default
+			will be the customer information
+			"""
+			if customer_or_org == "CAMP":
+				return HttpResponseRedirect(reverse('campus_information', args = { save_data.campus_id.id } ))
+			else:
+				return HttpResponseRedirect(reverse('customer_information', args = { save_data.customer_id.customer_id } ))
+
+
+	
+	#Get Data
+	customer_campus_results = customers_campus.objects.get(id = customer_campus_id)
+	
+	#Setup the initial results
+	initial = {
+		'customer_phone': customer_campus_results.customer_phone,
+		'customer_fax': customer_campus_results.customer_fax,
+	}
+	
+	
+	#Load template
+	t = loader.get_template('NearBeach/customer_campus.html')
+	
+	#context
+	c = {
+		'customer_campus_form': customer_campus_form(initial=initial),
+		'customer_campus_results': customer_campus_results,
+		'customer_campus_id': customer_campus_id,
+		'customer_or_org': customer_or_org,
+	}
+	
+	return HttpResponse(t.render(c, request))
 
 
 def customer_information(request, customer_id):
@@ -192,9 +353,31 @@ def customer_information(request, customer_id):
 	"""
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
+		
+	if request.method == "POST":
+		#If we are adding a new campus
+		if 'add_campus_submit' in request.POST:
+			#Obtain the id of the campus_id
+			campus_id_results = request.POST.get("add_campus_select")
+			
+			#Get the SQL Instances
+			customer_instance = customers.objects.get(customer_id = customer_id)
+			campus_instances = organisations_campus.objects.get(id = campus_id_results)
+			
+			#Save the new campus
+			submit_campus = customers_campus(customer_id = customer_instance,	campus_id = campus_instances,	customer_phone = '', customer_fax = '')
+			submit_campus.save()
+			
+			#Go to the form.
+			return HttpResponseRedirect(reverse('customers_campus_information', args={submit_campus.id,'CUST'}))
 	
 	#Get the instance
 	customer_results = customers.objects.get(pk = customer_id)
+	add_campus_results = organisations_campus.objects.filter(organisations_id = customer_results.organisations_id)
+
+
+	#The campus the customer is associated to
+	campus_results = customers_campus.objects.filter(customer_id = customer_id)
 	
 	#load template
 	t = loader.get_template('NearBeach/customer_information.html')
@@ -202,6 +385,9 @@ def customer_information(request, customer_id):
 	#context
 	c = {
 		'customer_information_form': customer_information_form(instance=customer_results),
+		'campus_results': campus_results,
+		'add_campus_results': add_campus_results,
+		'customer_id': customer_id,
 	}
 	
 	return HttpResponse(t.render(c, request))	
@@ -228,6 +414,8 @@ def index(request):
 	return HttpResponseRedirect(reverse('login'))
 
 
+
+
 def login(request):
 	"""
 	For some reason I can not use the varable "login_form" here as it is already being used.
@@ -252,7 +440,7 @@ def login(request):
 			
 			#Just double checking. :)
 			if request.user.is_authenticated:
-				return HttpResponseRedirect(reverse('active_projects'))
+					return HttpResponseRedirect(reverse('active_projects'))
 	
 	#load template
 	t = loader.get_template('NearBeach/login.html')
@@ -262,8 +450,9 @@ def login(request):
 		'login_form': form,
 	}
 
-	return HttpResponse(t.render(c, request))
-	
+	return HttpResponse(t.render(c, request))	
+
+
 
 def logout(request):
 	#log the user out and go to login page
@@ -318,7 +507,7 @@ def new_campus(request, organisations_id):
 	return HttpResponse(t.render(c, request))	
 
 
-def new_customer(request):
+def new_customer(request, organisations_id):
 	"""
 	If the user is not logged in, we want to send them to the login page.
 	This function should be in ALL webpage requests except for login and
@@ -346,47 +535,87 @@ def new_customer(request):
 	else:
 		form = new_customer_form()
 	
+	
+	
 	#load template
 	t = loader.get_template('NearBeach/new_customer.html')
+
+	initial = {
+		'organisations_id': organisations_id,
+	}
+
 	
 	#context
 	c = {
-		'new_customer_form': new_customer_form(),
+		'new_customer_form': new_customer_form(initial=initial),
+		'organisations_id': organisations_id,
 	}
 	
 	return HttpResponse(t.render(c, request))
 
 
 def new_organisation(request):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect(reverse('login'))
+		
+		
+	"""
+	To stop duplicates in the system, the code will quickly check to see if
+	there is already a company that has either one of the following;
+	-- same name
+	-- same website
+	-- same contact email.
+	
+	If one of these conditions are met then the user will be returned to the
+	form and shown the possible duplicates. If the user accepts this, then
+	the organisation is created.	
+	"""
+	form = new_organisation_form(request.POST or None)
+	duplicate_results = None
 	if request.method == 'POST':
-		form = new_organisation_form(request.POST)
 		if form.is_valid():
 			organisation_name = form.cleaned_data['organisation_name']
 			organisation_email = form.cleaned_data['organisation_email']
 			organisation_website = form.cleaned_data['organisation_website']
 			
-			submit_form = organisations(organisation_name = organisation_name, organisation_email = organisation_email, organisation_website = organisation_website)
+			duplicate_results = organisations.objects.filter(Q(organisation_name=organisation_name) | Q(organisation_email=organisation_email) | Q(organisation_website=organisation_website))
+			
 			
 			"""
-			IMPORTANT!! BUG HERE!!!
-			There is no validaion process what so ever! Please read bug 55
+			If the user has clicked that they accept the duplicate OR if there
+			are NO duplicates, just make the organisation :)
 			"""
-			submit_form.save()
-			return HttpResponseRedirect(reverse(organisation_information, args={submit_form.organisations_id}))
-		
-		#If form is not valid, return to new_organisation_form.
-		#Should I print something on the page?
-		print("There was an error!")
-		return HttpResponseRedirect(reverse('new_organisation'))
-	else:
-		form = new_organisation_form()
-	
+			if ((duplicate_results.count() == 0) or (request.POST.get("save_duplicate"))):
+				#Save the form data
+				submit_form = organisations(organisation_name = organisation_name, organisation_email = organisation_email, organisation_website = organisation_website)
+				submit_form.save()
+				return HttpResponseRedirect(reverse(organisation_information, args={submit_form.organisations_id}))
+
+	"""
+	Now that we have determined if the organisations should be saved or not
+	we are left with the only options;
+	1.) There was no organisation to save
+	2.) there was a duplicate organisation and we are asking the user about it
+	"""
 	#load template
 	t = loader.get_template('NearBeach/new_organisation.html')
 	
+	#Define the duplication count
+	duplication_count = 0;
+	if not duplicate_results == None:
+		duplication_count = duplicate_results.count()
+		
+	
 	#context
 	c = {
-		'new_organisation_form': new_organisation_form(),
+		'new_organisation_form': form,
+		'duplicate_results': duplicate_results,
+		'duplication_count': duplication_count,
 	}
 	
 	return HttpResponse(t.render(c, request))
@@ -453,7 +682,13 @@ def new_project(request):
 			project_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day, start_date_hour, start_date_minute)
 			project_end_date = datetime.datetime(finish_date_year, finish_date_month, finish_date_day, finish_date_hour, finish_date_minute)
 			
-			submit_project = project(project_name = project_name, project_description = project_description, organisations_id = organisations_id, project_start_date = project_start_date, project_end_date = project_end_date, project_status = 'New')
+			submit_project = project(
+									project_name = project_name, 
+									project_description = project_description, 
+									organisations_id = organisations_id, 
+									project_start_date = project_start_date, 
+									project_end_date = project_end_date, 
+									project_status = 'New')
 			
 			#Submit the data
 			submit_project.save()
@@ -473,7 +708,7 @@ def new_project(request):
 	
 	else:
 		#Obtain the groups the user is associated with
-		current_user = User.objects.get()
+		current_user = request.user
 		cursor = connection.cursor()
 
 		cursor.execute(
@@ -492,6 +727,8 @@ def new_project(request):
 		"""
 		, [current_user.id])
 		groups_results = namedtuplefetchall(cursor)
+		
+		organisations_results = organisations.objects.filter(is_deleted='FALSE')
 		
 		#Setup dates for initalising
 		today = datetime.datetime.now()
@@ -523,6 +760,7 @@ def new_project(request):
 			'new_project_form': new_project_form(initial={'start_date_year':today.year, 'start_date_month':today.month,'start_date_day':today.day,'start_date_hour':hour,'start_date_minute':minute,'start_date_meridiems':meridiems,
 														'finish_date_year':next_week.year, 'finish_date_month':next_week.month,'finish_date_day':next_week.day,'finish_date_hour':hour,'finish_date_minute':minute,'finish_date_meridiems':meridiems,}),
 			'groups_results': groups_results,
+			'organisations_count': organisations_results.count(),
 		}
 		
 	return HttpResponse(t.render(c, request))
@@ -703,30 +941,148 @@ def project_information(request, project_id):
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
 	
-	#Define if the page is loading in POST
+	"""
+	There are two buttons on the project information page. Both will come
+	here. Both will save the data, however only one of them will resolve
+	this project.
+	"""
+	#Get the data from the form if the information has been submitted
 	if request.method == "POST":
-		form = project_history_form(request.POST)
+		form = project_information_form(request.POST)
 		if form.is_valid():
-			project_history_text = form.cleaned_data['project_history_text']
-			current_user = User.objects.get(username = request.user.get_username())
-			project_id_connection = project.objects.get(pk = project_id)
+			#Define the data we will edit
+			project_results = project.objects.get(project_id = project_id)
 			
-			data = project_history(project_id = project_id_connection, user_id = current_user, project_history = project_history_text, user_infomation = current_user.id)
-			data.save()
-	"""
-	After the project has been submitted, we want to reload the whole
-	page again. Hence we only have the if statements for submitting the
-	data and no else statements.
-	"""
-	#Query the database for project information
-	project_information_results = project.objects.get(pk = project_id)
+			project_results.project_name = form.cleaned_data['project_name']
+			project_results.project_description = form.cleaned_data['project_description']
+
+			
+			#Calendar values
+			start_date_year = int(form.cleaned_data['start_date_year'])
+			start_date_month = int(form.cleaned_data['start_date_month'])
+			start_date_day = int(form.cleaned_data['start_date_day'])
+			start_date_hour = int(form.cleaned_data['start_date_hour'])
+			start_date_minute = int(form.cleaned_data['start_date_minute'])
+			start_date_meridiems = form.cleaned_data['start_date_meridiems']
+			
+			finish_date_year = int(form.cleaned_data['finish_date_year'])
+			finish_date_month = int(form.cleaned_data['finish_date_month'])
+			finish_date_day = int(form.cleaned_data['finish_date_day'])
+			finish_date_hour = int(form.cleaned_data['finish_date_hour'])
+			finish_date_minute = int(form.cleaned_data['finish_date_minute'])
+			finish_date_meridiems = form.cleaned_data['finish_date_meridiems']
+			
+			"""
+			Time is tricky. So I am following the simple rules;
+			12:** AM will have the hour changed to 0
+			1:** AM will not have the hour changed
+			12:** PM will not have the hour changed
+			1:** PM will have the hour changed by adding 12
+			
+			From these simple points, I have constructed the following 
+			if statements to take control of the correct hour.
+			"""
+			if start_date_meridiems == "AM":
+				if start_date_hour == 12:
+					start_date_hour = 0
+			else:
+				start_date_hour = start_date_hour + 12
+			
+			if finish_date_meridiems == "AM":
+				if finish_date_hour == 12:
+					finish_date_hour = 0
+			else:
+				finish_date_hour = finish_date_hour + 12
+			
+			
+			#Create the final start/end date fields
+			project_results.project_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day, start_date_hour, start_date_minute)
+			project_results.project_end_date = datetime.datetime(finish_date_year, finish_date_month, finish_date_day, finish_date_hour, finish_date_minute)
+			
+			#Check to make sure the resolve button was hit
+			if 'Resolve' in request.POST:
+				#Well, we have to now resolve the data
+				project_results.project_status = 'Resolved'
+			
+			project_results.save()
+			
+			#Now save the new project history.
+			project_history_text_results = form.cleaned_data['project_history_text']
+			
+			if not project_history_text_results == '':
+				current_user = User.objects.get(username = request.user.get_username())
+				
+				### TEMP SOLUTION ###
+				project_id_connection = project.objects.get(pk = project_id)
+				### END TEMP SOLUTION ###
+				
+				data = project_history(
+									project_id = project_id_connection, 
+									user_id = current_user, 
+									project_history = project_history_text_results, 
+									user_infomation = current_user.id
+									)
+				data.save()
+			
+
+	else:
+		#If the method is not POST then we have to define project_results
+		project_results = project.objects.get(project_id = project_id)
+
+
+	#Obtain the required data
 	project_history_results = project_history.objects.filter(project_id = project_id, is_deleted = 'FALSE')
 	
+	"""
+	The 24 hours to 12 hours formula.
+	00:00 means that it is 12:00 AM - change required for hour
+	01:00 means that it is 01:00 AM - no change required
+	12:00 means that it is 12:00 PM - change required for meridiem
+	13:00 means that it is 01:00 PM - change required for hour and meridiem
+	"""
+	start_hour = project_results.project_start_date.hour
+	start_meridiem = u'AM'
+	if start_hour == 0:
+		start_hour = 12
+	elif start_hour == 12:
+		start_meridiem = u'PM'
+	elif start_hour > 12:
+		start_hour = start_hour - 12
+		start_meridiem = u'PM'
 	
+	end_hour = project_results.project_end_date.hour
+	end_meridiem = u'AM'
+	if end_hour == 0:
+		end_hour = 12
+	elif end_hour == 12:
+		end_meridiem = u'PM'
+	elif end_hour > 12:
+		end_hour = end_hour - 12
+		end_meridiem = u'PM'
+
+	
+	#Setup the initial data for the form
+	initial = {
+		'project_name': project_results.project_name,
+		'project_description': project_results.project_description,
+		'start_date_year': project_results.project_start_date.year,
+		'start_date_month': project_results.project_start_date.month,
+		'start_date_day': project_results.project_start_date.day,
+		'start_date_hour': start_hour,
+		'start_date_minute': project_results.project_start_date.minute,
+		'start_date_meridiems': start_meridiem,
+		'finish_date_year': project_results.project_end_date.year,
+		'finish_date_month': project_results.project_end_date.month,
+		'finish_date_day': project_results.project_end_date.day,
+		'finish_date_hour': end_hour,
+		'finish_date_minute': project_results.project_end_date.minute,
+		'finish_date_meridiems': end_meridiem,
+	}
+
 	#Query the database for associated task information
 	cursor = connection.cursor()
 	cursor.execute("""
-		SELECT 
+		SELECT DISTINCT
 		  tasks.tasks_id
 		, tasks.task_short_description
 		, tasks.task_end_date
@@ -737,19 +1093,34 @@ def project_information(request, project_id):
 			AND project_id = %s
 		""", [project_id])
 	associated_tasks_results = namedtuplefetchall(cursor)
+
 	
 	#Load the template
 	t = loader.get_template('NearBeach/project_information.html')
 	
 	#context
 	c = {
-		'project_information_results': project_information_results,
-		'project_history_results': project_history_results,
+		'project_information_form': project_information_form(initial=initial),
+		'project_results': project_results,
 		'associated_tasks_results': associated_tasks_results,
-		'project_history_form': project_history_form(),
+		'project_history_results': project_history_results,
 	}
 	
 	return HttpResponse(t.render(c, request))
+
+
+def resolve_project(request, project_id):
+	project_update = project.objects.get(project_id = project_id)
+	project_update.project_status = 'Resolved'
+	project_update.save()
+	return HttpResponseRedirect(reverse('active_projects'))
+
+
+def resolve_task(request, task_id):
+	task_update = task.object.get(task_id = task_id)
+	task_update.task_status = 'Resolved'
+	task_update.save()
+	return HttpResponseRedirect(reverse('active_projects'))	
 
 
 def search_customers(request):
@@ -894,7 +1265,6 @@ def search_projects_tasks(request):
 	return HttpResponse(t.render(c, request))
 	
 
-
 def task_information(request, task_id):
 	"""
 	If the user is not logged in, we want to send them to the login page.
@@ -904,28 +1274,137 @@ def task_information(request, task_id):
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
 	
-	
-	#Define if the page is loading in POST
-	if request.method == "POST":
-		form = task_history_form(request.POST)
-		if form.is_valid():
-			task_history_text = form.cleaned_data['task_history_text']
-			current_user = User.objects.get(username = request.user.get_username())
-			task_id_connection = tasks.objects.get(pk = task_id)
-			
-			data = tasks_history(tasks_id = task_id_connection, user_id = current_user, task_history = task_history_text, user_infomation = current_user.id)
-			data.save()
 	"""
-	After the project has been submitted, we want to reload the whole
-	page again. Hence we only have the if statements for submitting the
-	data and no else statements.
-	"""	
-	#Gather needed information about the task
-	task_information_results = tasks.objects.get(pk = task_id)
-	task_history_results = tasks_history.objects.filter(tasks_id = task_id)
+	There are two buttons on the task information page. Both will come
+	here. Both will save the data, however only one of them will resolve
+	the task.
+	"""
+	#Define the data we will edit
+	task_results = tasks.objects.get(tasks_id = task_id)
 	
-	#Load the template
-	t = loader.get_template('NearBeach/task_information.html')
+	#Get the data from the form
+	if request.method == "POST":
+		form = task_information_form(request.POST)
+		if form.is_valid():
+			#Extract all the information from the form and save
+			task_results.task_short_description = form.cleaned_data['task_short_description']
+			task_results.task_long_description = form.cleaned_data['task_long_description']
+
+			
+			#Calendar values
+			start_date_year = int(form.cleaned_data['start_date_year'])
+			start_date_month = int(form.cleaned_data['start_date_month'])
+			start_date_day = int(form.cleaned_data['start_date_day'])
+			start_date_hour = int(form.cleaned_data['start_date_hour'])
+			start_date_minute = int(form.cleaned_data['start_date_minute'])
+			start_date_meridiems = form.cleaned_data['start_date_meridiems']
+			
+			finish_date_year = int(form.cleaned_data['finish_date_year'])
+			finish_date_month = int(form.cleaned_data['finish_date_month'])
+			finish_date_day = int(form.cleaned_data['finish_date_day'])
+			finish_date_hour = int(form.cleaned_data['finish_date_hour'])
+			finish_date_minute = int(form.cleaned_data['finish_date_minute'])
+			finish_date_meridiems = form.cleaned_data['finish_date_meridiems']
+			
+			"""
+			Time is tricky. So I am following the simple rules;
+			12:** AM will have the hour changed to 0
+			1:** AM will not have the hour changed
+			12:** PM will not have the hour changed
+			1:** PM will have the hour changed by adding 12
+			
+			From these simple points, I have constructed the following 
+			if statements to take control of the correct hour.
+			"""
+			if start_date_meridiems == "AM":
+				if start_date_hour == 12:
+					start_date_hour = 0
+			else:
+				start_date_hour = start_date_hour + 12
+			
+			if finish_date_meridiems == "AM":
+				if finish_date_hour == 12:
+					finish_date_hour = 0
+			else:
+				finish_date_hour = finish_date_hour + 12
+			
+			
+			#Create the final start/end date fields
+			task_results.task_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day, start_date_hour, start_date_minute)
+			task_results.task_end_date = datetime.datetime(finish_date_year, finish_date_month, finish_date_day, finish_date_hour, finish_date_minute)
+			
+			#Check to make sure the resolve button was hit
+			if 'Resolve' in request.POST:
+				#Well, we have to now resolve the data
+				task_results.task_status = 'Resolved'
+			
+			task_results.save()
+			
+			#Now save the new project history.
+			task_history_text_results = form.cleaned_data['task_history_text']
+			
+			if not task_history_text_results == '':
+				current_user = User.objects.get(username = request.user.get_username())
+				
+				task_id_connection = tasks.objects.get(tasks_id = task_id)
+				
+				data = tasks_history(
+									tasks_id = task_id_connection, 
+									user_id = current_user, 
+									task_history = task_history_text_results, 
+									user_infomation = current_user.id
+									)
+				data.save()
+
+	
+	#Obtain required data
+	task_history_results = tasks_history.objects.filter(tasks_id = task_id) #Will need to remove all IS_DELETED=TRUE
+	
+	"""
+	The 24 hours to 12 hours formula.
+	00:00 means that it is 12:00 AM - change required for hour
+	01:00 means that it is 01:00 AM - no change required
+	12:00 means that it is 12:00 PM - change required for meridiem
+	13:00 means that it is 01:00 PM - change required for hour and meridiem
+	"""
+	start_hour = task_results.task_start_date.hour
+	start_meridiem = u'AM'
+	if start_hour == 0:
+		start_hour = 12
+	elif start_hour == 12:
+		start_meridiem = u'PM'
+	elif start_hour > 12:
+		start_hour = start_hour - 12
+		start_meridiem = u'PM'
+	
+	end_hour = task_results.task_end_date.hour
+	end_meridiem = u'AM'
+	if end_hour == 0:
+		end_hour = 12
+	elif end_hour == 12:
+		end_meridiem = u'PM'
+	elif end_hour > 12:
+		end_hour = end_hour - 12
+		end_meridiem = u'PM'
+		
+	#Setup the initial
+	initial = {
+		'task_short_description': task_results.task_short_description,
+		'task_long_description': task_results.task_long_description,
+		'start_date_year': task_results.task_start_date.year,
+		'start_date_month': task_results.task_start_date.month,
+		'start_date_day': task_results.task_start_date.day,
+		'start_date_hour': start_hour,
+		'start_date_minute': task_results.task_start_date.minute,
+		'start_date_meridiems': start_meridiem,
+		'finish_date_year': task_results.task_end_date.year,
+		'finish_date_month': task_results.task_end_date.month,
+		'finish_date_day': task_results.task_end_date.day,
+		'finish_date_hour': end_hour,
+		'finish_date_minute': task_results.task_end_date.minute,
+		'finish_date_meridiems': end_meridiem,		
+	}
+	
 	
 	#Query the database for associated project information
 	cursor = connection.cursor()
@@ -938,18 +1417,22 @@ def task_information(request, task_id):
 			JOIN project_tasks
 			ON project.project_id = project_tasks.project_id
 			AND project_tasks.is_deleted = 'FALSE'
-			AND project_tasks.task_id = '0'
-		""")
+			AND project_tasks.task_id = %s
+		""", [task_id])
 	associated_project_results = namedtuplefetchall(cursor)
 	
+	
+	#Load the template
+	t = loader.get_template('NearBeach/task_information.html')
+
 	#context
 	c = {
-		'task_information_results': task_information_results,
-		'task_history_results': task_history_results,
+		'task_results': task_results,
+		'task_information_form': task_information_form(initial=initial),
 		'associated_project_results': associated_project_results,
-		'task_history_form': task_history_form(),
+		'task_history_results': task_history_results,
 	}
-	
+
 	return HttpResponse(t.render(c, request))
 	
 

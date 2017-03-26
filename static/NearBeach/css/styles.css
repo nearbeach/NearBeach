@@ -20,6 +20,7 @@
 }
 
 .menu > ul > li:hover > .submenu {
+	position: absolute;
 	display: block;
 }
 

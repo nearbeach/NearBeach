@@ -103,6 +103,7 @@ class organisations(models.Model):
 	organisation_name = models.CharField(max_length = 255)
 	organisation_website = models.CharField(max_length = 50)
 	organisation_email = models.CharField(max_length = 100)
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	
 	def __str__(self):
 		return self.organisation_name
@@ -123,6 +124,9 @@ class organisations_campus(models.Model):
 	campus_state_id = models.ForeignKey('list_of_countries_states', on_delete = models.CASCADE,)
 	campus_country_id = models.ForeignKey('list_of_countries', on_delete = models.CASCADE,)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
+	
+	def __str__(self):
+		return self.campus_nickname
 	
 	class Meta:
 		db_table = "organisations_campus"
@@ -174,6 +178,9 @@ class project_history(models.Model):
 	project_history = models.TextField()
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	audit_date = models.DateTimeField(auto_now = True)	
+
+	def __str__(self):
+		return self.state.encode('utf8')
 	
 	class Meta:
 		db_table = "project_history"

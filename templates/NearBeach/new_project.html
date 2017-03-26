@@ -4,6 +4,9 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <body onload="initiate_dates();">
 <h1>New Project</h1>
+{% if organisations_count == 0 %}
+	<a href="{% url 'new_organisation' %}">Can you please create an organisation first.</a>
+{% else %}
 <form action={% url 'new_project' %} method="post" class="new_project">
 	{% csrf_token %}
 	<table>
@@ -19,5 +22,7 @@
 	<br />
 	<input type="submit" value="Submit new project">
 </form>
+{% endif %}
 </body>
+
 {% endblock %}
