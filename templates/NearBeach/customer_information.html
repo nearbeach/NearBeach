@@ -1,5 +1,7 @@
 {% extends "./template.html" %}
 {% block content %}
+{% load static %}
+<script type="text/javascript" src="{% static 'NearBeach/javascript/customer_information.js' %}"></script>
 <h1>Customer Information</h1>
 <table>
 {{ customer_information_form.as_table }}
@@ -10,13 +12,13 @@
 	{% if add_campus_results %}
 		<form action={% url 'customer_information' customer_id %} method="post" class="customer_information">>
 			{% csrf_token %}
-			<select name="add_campus_select">
+			<select name="add_campus_select" id="id_add_cammpus_select" onchange="enable_disable_add_campus()">
 				<option value="---------"> ---------</option>
 				{% for row in add_campus_results %}
 					<option value="{{ row.id }}">{{ row.campus_nickname }}</option>
 				{% endfor %}
 			</select>
-			<input type="submit" name="add_campus_submit" value="Add Campus">			
+			<input type="submit" name="add_campus_submit" value="Add Campus" disabled id="id_add_cammpus_submit">			
 		</form>
 	{% endif %}
 </div>
