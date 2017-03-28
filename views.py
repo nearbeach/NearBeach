@@ -67,6 +67,8 @@ from .forms import project_information_form
 from .forms import search_tasks_form
 from .forms import search_projects_form
 from .forms import customer_campus_form
+from .forms import search_form
+
 
 #Import datetime
 import datetime
@@ -247,33 +249,52 @@ def campus_information(request, campus_information):
 	"""
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
-		
+	
+	
+	#Obtain data (before POST if statement as it is used insude)
+	campus_results = organisations_campus.objects.get(pk = campus_information)	
 	
 	#If instance is in POST
 	if request.method == "POST":
-		form = campus_information_form(request.POST)
-		if form.is_valid():
-			campus_results = organisations_campus.objects.get(pk = campus_information)
+		if 'add_customer_submit' in request.POST:
+			#Obtain the ID of the customer
+			customer_results = int(request.POST.get("add_customer_select"))
 			
-			#Save all the data
-			campus_results.organisations_id = form.cleaned_data['organisations_id']
-			campus_results.campus_nickname = form.cleaned_data['campus_nickname']
-			campus_results.campus_phone = form.cleaned_data['campus_phone']
-			campus_results.campus_fax = form.cleaned_data['campus_fax']
-			campus_results.campus_address1 = form.cleaned_data['campus_address1']
-			campus_results.campus_address2 = form.cleaned_data['campus_address2']
-			campus_results.campus_address3 = form.cleaned_data['campus_address3']
-			campus_results.campus_suburb = form.cleaned_data['campus_suburb']
-			campus_results.campus_state_id = form.cleaned_data['campus_state_id']
-			campus_results.campus_country_id = form.cleaned_data['campus_country_id']
+			#Get the SQL Instances
+			customer_instance = customers.objects.get(customer_id = customer_results)
+			campus_instances = organisations_campus.objects.get(id = campus_information)
 			
-			campus_results.save()
-	else:
-		campus_results = organisations_campus.objects.get(pk = campus_information)
+			#Save the new campus
+			submit_campus = customers_campus(customer_id = customer_instance,	campus_id = campus_instances,	customer_phone = '', customer_fax = '')
+			submit_campus.save()
+			
+			#Go to the form.
+			return HttpResponseRedirect(reverse('customers_campus_information', args={submit_campus.id,'CAMP'}))
+			
+		else:
+			#Other save button must have been pressed	
+			form = campus_information_form(request.POST)
+			if form.is_valid():
+				
+				#Save all the data
+				campus_results.organisations_id = form.cleaned_data['organisations_id']
+				campus_results.campus_nickname = form.cleaned_data['campus_nickname']
+				campus_results.campus_phone = form.cleaned_data['campus_phone']
+				campus_results.campus_fax = form.cleaned_data['campus_fax']
+				campus_results.campus_address1 = form.cleaned_data['campus_address1']
+				campus_results.campus_address2 = form.cleaned_data['campus_address2']
+				campus_results.campus_address3 = form.cleaned_data['campus_address3']
+				campus_results.campus_suburb = form.cleaned_data['campus_suburb']
+				campus_results.campus_state_id = form.cleaned_data['campus_state_id']
+				campus_results.campus_country_id = form.cleaned_data['campus_country_id']
+				
+				campus_results.save()
+		
 
 	#Get Data
 	customer_campus_results = customers_campus.objects.filter(campus_id = campus_information)
-
+	add_customers_results = customers.objects.filter(organisations_id = campus_results.organisations_id)
+	
 	
 	#Load the template
 	t = loader.get_template('NearBeach/campus_information.html')
@@ -282,7 +303,8 @@ def campus_information(request, campus_information):
 	c = {
 		'campus_results': campus_results,
 		'campus_information_form': campus_information_form(instance=campus_results),
-		'customer_campus_results': customer_campus_results,	
+		'customer_campus_results': customer_campus_results,
+		'add_customers_results': add_customers_results,	
 	}
 	
 	return HttpResponse(t.render(c, request))	
@@ -1121,6 +1143,40 @@ def resolve_task(request, task_id):
 	task_update.task_status = 'Resolved'
 	task_update.save()
 	return HttpResponseRedirect(reverse('active_projects'))	
+
+
+def search(request):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect(reverse('login'))
+	
+	"""
+	Method
+	~~~~~~
+	If the method is post, we will define the SQL in there with the appropriate
+	filters. If it is NOT - then we will do a blanked filter search.
+	This really need better wording.
+	"""
+	
+	if request.method == "POST":
+		print("we will rock you")
+	else:
+		print("maybe not")	
+	
+	#Load the template
+	t = loader.get_template('NearBeach/search.html')
+	
+	#context
+	c = {
+
+	}
+	
+	return HttpResponse(t.render(c, request))
+	
 
 
 def search_customers(request):

@@ -38,6 +38,7 @@
 			<tr><td>{{ login_form.username }}</td></tr>
 			<tr><td>{{ login_form.password }}</td></tr>
 			<tr><td><input type="submit" value="Login" class="login_button" /></td></tr>
+			<tr><td><a href="{% url 'password_reset' %}">Forgotten Password</a></td></tr>
 		</table>
 		
 	</form>

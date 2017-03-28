@@ -10,7 +10,7 @@
 <h2>Campus Contact Information</h2>
 <div>
 	{% if add_campus_results %}
-		<form action={% url 'customer_information' customer_id %} method="post" class="customer_information">>
+		<form action={% url 'customer_information' customer_id %} method="post" class="customer_information">
 			{% csrf_token %}
 			<select name="add_campus_select" id="id_add_cammpus_select" onchange="enable_disable_add_campus()">
 				<option value="---------"> ---------</option>

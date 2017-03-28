@@ -9,6 +9,9 @@ from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
 
+#Forgotten password features
+from django.contrib.auth import views as auth_views
+
 from . import views
 
 urlpatterns = [
@@ -51,11 +54,16 @@ urlpatterns = [
 	url(r'^associated_projects/(?P<task_id>[0-9]+)/', views.associated_projects, name='associated_projects'),
 	url(r'^associate/(?P<project_id>[0-9]+)/(?P<task_id>[0-9]+)/(?P<project_or_task>[P,T])', views.associate, name='associate'),
 
-	#Reset password
-	url(r'^admin/password_reset/$', auth_views.password_reset, name='admin_password_reset'),
-	url(r'^admin/password_reset/done/$', auth_views.password_reset_done, name='password_reset_done'),
+	#Forgotten Passwords
+	url(r'^password_reset/$', auth_views.password_reset, name='password_reset'),
+	url(r'^password_reset/done/$', auth_views.password_reset_done, name='password_reset_done'),
 	url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$', auth_views.password_reset_confirm, name='password_reset_confirm'),
 	url(r'^reset/done/$', auth_views.password_reset_complete, name='password_reset_complete'),
+	
+	
+	#Search
+	url(r'^search', views.search, name='search'),
+
 ]
 
 

@@ -315,6 +315,11 @@ class project_information_form(ModelForm):
 			'project_name',
 			'project_description',
 		}
+
+
+class search_form(forms.Form):
+	#Just have a simple search field
+	search_for = forms.CharField(max_length = 255, required = False)
 	
 class search_customers_form(forms.Form):
 	#Just have a simple search field

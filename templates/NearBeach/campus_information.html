@@ -1,5 +1,7 @@
 {% extends "./template.html" %}
 {% block content %}
+{% load static %}
+<script type="text/javascript" src="{% static 'NearBeach/javascript/campus_information.js' %}"></script>
 <h1>Campus Information - {{ campus_results.campus_nickname }}</h1>
 <div>
 	<form action={% url 'campus_information' campus_results.id %} method="post" class="campus_information">
@@ -13,21 +15,36 @@
 	</form>
 </div>
 <h2>Campus Contacts</h2>
-<a href="#">Add Campus Contact</a>
-{% if customer_campus_results %}
-	<table>
-		<tr><td>First Name</td><td>Last Name</td><td>Email</td><td>Phone</td><td>Fax</td></tr>
-		{% for row in customer_campus_results %}
-			<tr>
-				<td><a href="{% url 'customers_campus_information' row.id 'CAMP' %}">{{ row.customer_id.customer_first_name }}</td>
-				<td>{{ row.customer_id.customer_last_name }}</a></td>
-				<td>{{ row.customer_id.customer_email }}</td>
-				<td>{{ row.customer_phone }}</td>
-				<td>{{ row.customer_fax }}</td>
-			</tr>
-		{% endfor %}
-	</table>
-{% else %}
-	<p>There are no customers at this campus</p>
-{% endif %}
+<div>
+	{% if add_customers_results %}
+		<form action={% url 'campus_information' campus_results.id %} method="POST" class="campus_information">
+			{% csrf_token %}
+			<select name="add_customer_select" id="id_add_customer_select" onchange="enable_disable_add_customer()">
+				<option value="---------"> ---------</option>
+				{% for row in add_customers_results %}
+					<option value="{{ row.customer_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
+				{% endfor %}
+			</select>
+			<input type="submit" name="add_customer_submit" value="Add Customer" disabled id="id_add_customer_submit">	
+		</form>
+	{% endif %}
+</div>
+<div>
+	{% if customer_campus_results %}
+		<table>
+			<tr><td>First Name</td><td>Last Name</td><td>Email</td><td>Phone</td><td>Fax</td></tr>
+			{% for row in customer_campus_results %}
+				<tr>
+					<td><a href="{% url 'customers_campus_information' row.id 'CAMP' %}">{{ row.customer_id.customer_first_name }}</td>
+					<td>{{ row.customer_id.customer_last_name }}</a></td>
+					<td>{{ row.customer_id.customer_email }}</td>
+					<td>{{ row.customer_phone }}</td>
+					<td>{{ row.customer_fax }}</td>
+				</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+		<p>There are no customers at this campus</p>
+	{% endif %}
+</div>
 {% endblock %}
