@@ -1170,9 +1170,10 @@ def search(request):
 	#Load the template
 	t = loader.get_template('NearBeach/search.html')
 	
+	
 	#context
 	c = {
-
+		'search_form': search_form()
 	}
 	
 	return HttpResponse(t.render(c, request))
