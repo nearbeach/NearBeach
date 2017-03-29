@@ -35,7 +35,8 @@ from .models import tasks_history
 from .models import tasks
 from .models import user_groups
 
-
+#Import Settings file to obtain secret key
+from django.conf import settings
 
 #Used for login
 #from django.contrib.auth import authenticate, get_user_model, login, logout
@@ -452,6 +453,19 @@ def login(request):
 	"""
 	form = login_form(request.POST or None)
 	
+	
+	"""
+	The reCAPTCHA keys are kept in the settings files. If they are not present
+	in the file, then the captcha will not shwo.
+	"""
+	RECAPTCHA_SITE_KEY = ''
+	RECAPTCHA_SECRET_KEY = ''
+	
+	if settings.RECAPTCHA_SITE_KEY and settings.RECAPTCHA_SECRET_KEY:
+		RECAPTCHA_SITE_KEY = settings.RECAPTCHA_SITE_KEY
+		RECAPTCHA_SECRET_KEY = settings.RECAPTCHA_SECRET_KEY
+	
+	
 	#POST
 	if request.method == 'POST':	
 		if form.is_valid():
@@ -466,10 +480,14 @@ def login(request):
 	
 	#load template
 	t = loader.get_template('NearBeach/login.html')
+	
 
+		
 	#context
 	c = {
 		'login_form': form,
+		'RECAPTCHA_SITE_KEY': RECAPTCHA_SITE_KEY,
+		#'RECAPTCHA_SECRET_KEY': RECAPTCHA_SECRET_KEY,
 	}
 
 	return HttpResponse(t.render(c, request))	

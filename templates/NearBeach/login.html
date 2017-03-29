@@ -25,6 +25,7 @@
 		width: 150px;
 	}
 </style>
+<script src='https://www.google.com/recaptcha/api.js'></script>
 
 <body>
 	<form action="{% url 'login' %}" method="post" class="login_form">
@@ -37,6 +38,9 @@
 			{% endif %}
 			<tr><td>{{ login_form.username }}</td></tr>
 			<tr><td>{{ login_form.password }}</td></tr>
+			{% if not RECAPTCHA_SITE_KEY == '' %}
+				<tr><td><div class="g-recaptcha" data-sitekey="6Lcv3RoUAAAAAFenoH1EBSjXPz6KeD9Z_ogr1CGr"></div></td></tr>
+			{% endif %}
 			<tr><td><input type="submit" value="Login" class="login_button" /></td></tr>
 			<tr><td><a href="{% url 'password_reset' %}">Forgotten Password</a></td></tr>
 		</table>
