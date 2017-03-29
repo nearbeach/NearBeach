@@ -1154,26 +1154,68 @@ def search(request):
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
 	
-	"""
-	Method
-	~~~~~~
-	If the method is post, we will define the SQL in there with the appropriate
-	filters. If it is NOT - then we will do a blanked filter search.
-	This really need better wording.
-	"""
-	
-	if request.method == "POST":
-		print("we will rock you")
-	else:
-		print("maybe not")	
-	
 	#Load the template
 	t = loader.get_template('NearBeach/search.html')
 	
+	"""
+	We will use the POST varable to help filter the results from the 
+	database. The results will then appear below
+	"""
+	search_results = ''
 	
+	#Define if the page is loading in POST
+	if request.method == "POST":
+		form = search_form(request.POST)
+		if form.is_valid():
+			search_results = form.cleaned_data['search_for']
+
+			
+	"""
+	This is where the magic happens. I will remove all spaces and replace
+	them with a wild card. This will be used to search the concatenated
+	first and last name fields
+	"""	
+	search_like = '%'
+	
+	for split_row in search_results.split(' '):
+		search_like+=split_row
+		search_like+='%'
+	
+	#Query the database for organisations
+	cursor = connection.cursor()
+	cursor.execute("""
+		SELECT DISTINCT
+		*
+		FROM project
+		WHERE 1=1
+		AND (
+			project.project_id like %s
+			or project.project_name like %s
+			or project.project_description like %s
+			)
+		""", [search_like, search_like, search_like])
+	project_results = namedtuplefetchall(cursor)
+	
+	#Get list of tasks
+	cursor.execute("""
+		SELECT DISTINCT
+		*
+		FROM tasks
+		WHERE 1=1
+		AND (
+			tasks.tasks_id like %s
+			or tasks.task_short_description like %s
+			or tasks.task_long_description like %s
+		)
+	""", [search_like, search_like, search_like])
+	task_results = namedtuplefetchall(cursor)
+
+
 	#context
 	c = {
-		'search_form': search_form()
+		'search_form': search_form(initial={ 'search_for': search_results }),
+		'project_results': project_results,
+		'task_results': task_results,
 	}
 	
 	return HttpResponse(t.render(c, request))
