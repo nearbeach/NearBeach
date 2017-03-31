@@ -454,18 +454,6 @@ def login(request):
 	form = login_form(request.POST or None)
 	
 	
-	"""
-	The reCAPTCHA keys are kept in the settings files. If they are not present
-	in the file, then the captcha will not shwo.
-	"""
-	RECAPTCHA_SITE_KEY = ''
-	RECAPTCHA_SECRET_KEY = ''
-	
-	if settings.RECAPTCHA_SITE_KEY and settings.RECAPTCHA_SECRET_KEY:
-		RECAPTCHA_SITE_KEY = settings.RECAPTCHA_SITE_KEY
-		RECAPTCHA_SECRET_KEY = settings.RECAPTCHA_SECRET_KEY
-	
-	
 	#POST
 	if request.method == 'POST':	
 		if form.is_valid():
@@ -477,6 +465,8 @@ def login(request):
 			#Just double checking. :)
 			if request.user.is_authenticated:
 					return HttpResponseRedirect(reverse('active_projects'))
+		else:
+			print(form.errors)
 	
 	#load template
 	t = loader.get_template('NearBeach/login.html')
@@ -486,8 +476,6 @@ def login(request):
 	#context
 	c = {
 		'login_form': form,
-		'RECAPTCHA_SITE_KEY': RECAPTCHA_SITE_KEY,
-		#'RECAPTCHA_SECRET_KEY': RECAPTCHA_SECRET_KEY,
 	}
 
 	return HttpResponse(t.render(c, request))	

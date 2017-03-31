@@ -25,8 +25,7 @@
 		width: 150px;
 	}
 </style>
-<script src='https://www.google.com/recaptcha/api.js'></script>
-
+<script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
 <body>
 	<form action="{% url 'login' %}" method="post" class="login_form">
 		{% csrf_token %}
