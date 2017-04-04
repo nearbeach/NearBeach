@@ -40,7 +40,9 @@ from django.conf import settings
 
 #Used for login
 #from django.contrib.auth import authenticate, get_user_model, login, logout
-
+import urllib
+import urllib2
+import json
 
 #For Importing RAW SQL
 from django.db import connection
@@ -453,15 +455,62 @@ def login(request):
 	"""
 	form = login_form(request.POST or None)
 	
+	#reCAPTCHA
+	RECAPTCHA_PUBLIC_KEY = ''
+	RECAPTCHA_PRIVATE_KEY = ''
+	if hasattr(settings,'RECAPTCHA_PUBLIC_KEY') and hasattr(settings,'RECAPTCHA_PRIVATE_KEY'):
+		RECAPTCHA_PUBLIC_KEY = settings.RECAPTCHA_PUBLIC_KEY
+		RECAPTCHA_PRIVATE_KEY = settings.RECAPTCHA_PRIVATE_KEY
+
 	
 	#POST
 	if request.method == 'POST':	
 		if form.is_valid():
+			"""
+			Method
+			~~~~~~
+			1.) Collect the variables
+			2.) IF reCAPTCHA is enabled, then process login through that
+				statement
+				IF it is not, proceed to verify login
+			3.) If it all fails, it will just go back to the login screen.
+			"""
 			username = form.cleaned_data.get("username")
 			password = form.cleaned_data.get("password")
-			user = auth.authenticate(username=username, password=password)
-			auth.login(request, user)
 			
+			if hasattr(settings,'RECAPTCHA_PUBLIC_KEY') and hasattr(settings,'RECAPTCHA_PRIVATE_KEY'):
+				"""
+				As the Google documentation states. I have to send the request back to
+				the given URL. It gives back a JSON object, which will contain the
+				success results.
+				
+				Method
+				~~~~~~
+				1.) Collect the variables
+				2.) With the data - encode the variables into URL format
+				3.) Send the request to the given URL
+				4.) The response will open and store the response from GOOGLE
+				5.) The results will contain the JSON Object
+				"""
+				recaptcha_response = request.POST.get('g-recaptcha-response')
+				url = 'https://www.google.com/recaptcha/api/siteverify'
+				values = {
+					'secret': RECAPTCHA_PRIVATE_KEY,
+					'response': recaptcha_response
+				}
+				data = urllib.urlencode(values)
+				req = urllib2.Request(url, data)
+				response = urllib2.urlopen(req)
+				result = json.load(response)
+				
+				#Check to see if the user is a robot. Success = human
+				if result['success']:
+					user = auth.authenticate(username=username, password=password)
+					auth.login(request, user)
+			else:
+				user = auth.authenticate(username=username, password=password)
+				auth.login(request, user)
+					
 			#Just double checking. :)
 			if request.user.is_authenticated:
 					return HttpResponseRedirect(reverse('active_projects'))
@@ -476,6 +525,7 @@ def login(request):
 	#context
 	c = {
 		'login_form': form,
+		'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
 	}
 
 	return HttpResponse(t.render(c, request))	

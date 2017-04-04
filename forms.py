@@ -23,9 +23,6 @@ import datetime
 #Global Variables
 User = get_user_model
 
-#reCAPTCHA
-from captcha.fields import ReCaptchaField
-
 #Settings
 from django.conf import settings
 
@@ -190,14 +187,8 @@ class customer_information_form(ModelForm):
 class login_form(forms.Form):
 	username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'login'}))
 	password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'password'}))
-	
-	
-	if hasattr(settings,'RECAPTCHA_PUBLIC_KEY') and hasattr(settings,'RECAPTCHA_PRIVATE_KEY'):
-		captcha = ReCaptchaField(
-			public_key = settings.RECAPTCHA_PUBLIC_KEY,
-			private_key = settings.RECAPTCHA_PRIVATE_KEY,
-		)
-	
+
+
 	def clean(self):
 		#Get login data
 		username = self.cleaned_data.get("username")
