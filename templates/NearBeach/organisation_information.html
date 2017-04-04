@@ -10,7 +10,7 @@
 {% for campus in campus_results %}
 	<tr>
 	<td><a href="{% url 'campus_information' campus.pk %}">{{ campus.campus_nickname }}</a></td>
-	<td>{{ campus.campus_country_id }} - {{ campus.campus_state_id }}</td>
+	<td>{{ campus.campus_country_id }} - {{ campus.campus_region_id }}</td>
 	<td>{{ campus.campus_address1 }}<br />{{ campus.campus_address2 }}<br />{{ campus.campus_address3 }}{{ campus.campus_suburb }}</td>
 	</tr>
 {% endfor %}

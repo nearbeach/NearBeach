@@ -12,7 +12,7 @@
 		<div>Organisation - <a href="{% url 'organisation_information' customer_campus_results.campus_id.organisations_id.organisations_id  %}">{{ customer_campus_results.campus_id.organisations_id }}</a></div>
 		<div>Campus - <a href="{% url 'campus_information' customer_campus_results.campus_id.id %}">{{ customer_campus_results.campus_id }}</a></div>
 		<div>Suburb - {{ customer_campus_results.campus_id.campus_suburb_id }}</div>
-		<div>State - {{ customer_campus_results.campus_id.campus_state_id }}</div>
+		<div>State [update section in javascript] - {{ customer_campus_results.campus_id.campus_state_id }}</div>
 		<div>Country - {{ customer_campus_results.campus_id.campus_country_id }}</div>
 		
 		<input type="submit" name="Save" value="Save and Return"/>

@@ -2,9 +2,11 @@
 {% block content %}
 {% load static %}
 <script type="text/javascript" src="{% static 'NearBeach/javascript/campus_information.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/check_regions.js' %}"></script>
+<body onload="check_regions()">
 <h1>Campus Information - {{ campus_results.campus_nickname }}</h1>
 <div>
-	<form action={% url 'campus_information' campus_results.id %} method="post" class="campus_information">
+	<form action="{% url 'campus_information' campus_results.id %}" method="post" class="campus_information">
 		{% csrf_token %}
 		<table>
 			{{ campus_information_form.as_table }}
@@ -47,4 +49,5 @@
 		<p>There are no customers at this campus</p>
 	{% endif %}
 </div>
+</body>
 {% endblock %}

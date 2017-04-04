@@ -5,7 +5,7 @@ from .models import customers
 from .models import customers_campus
 from .models import group_permissions
 from .models import groups
-from .models import list_of_countries_states
+from .models import list_of_countries_regions
 from .models import list_of_countries
 from .models import list_of_titles
 from .models import organisations_campus
@@ -32,7 +32,7 @@ admin.site.register(customers)
 admin.site.register(customers_campus)
 admin.site.register(group_permissions)
 admin.site.register(groups)
-admin.site.register(list_of_countries_states)
+admin.site.register(list_of_countries_regions)
 admin.site.register(list_of_countries)
 admin.site.register(list_of_titles)
 admin.site.register(organisations_campus)

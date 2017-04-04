@@ -15,7 +15,7 @@ from .models import customers
 from .models import customers_campus
 from .models import group_permissions
 from .models import groups
-from .models import list_of_countries_states
+from .models import list_of_countries_regions
 from .models import list_of_countries
 from .models import list_of_titles
 from .models import organisations_campus
@@ -288,7 +288,7 @@ def campus_information(request, campus_information):
 				campus_results.campus_address2 = form.cleaned_data['campus_address2']
 				campus_results.campus_address3 = form.cleaned_data['campus_address3']
 				campus_results.campus_suburb = form.cleaned_data['campus_suburb']
-				campus_results.campus_state_id = form.cleaned_data['campus_state_id']
+				campus_results.campus_region_id = form.cleaned_data['campus_region_id']
 				campus_results.campus_country_id = form.cleaned_data['campus_country_id']
 				
 				campus_results.save()
@@ -557,7 +557,7 @@ def new_campus(request, organisations_id):
 			campus_address2 = form.cleaned_data['campus_address2']
 			campus_address3 = form.cleaned_data['campus_address3']
 			campus_suburb = form.cleaned_data['campus_suburb']
-			campus_state_id = form.cleaned_data['campus_state_id']
+			campus_region_id = form.cleaned_data['campus_region_id']
 			campus_country_id = form.cleaned_data['campus_country_id']
 			
 			organisation = organisations.objects.get(organisations_id = organisations_id)
@@ -565,7 +565,7 @@ def new_campus(request, organisations_id):
 			#BUG - some simple validation should go here?
 			
 			#Submitting the data
-			submit_form = organisations_campus(organisations_id = organisation, campus_nickname = campus_nickname, campus_phone = campus_phone, campus_fax = campus_fax, campus_address1 = campus_address1, campus_address2 = campus_address2, campus_address3 = campus_address3, campus_suburb = campus_suburb, campus_state_id = campus_state_id, campus_country_id = campus_country_id)
+			submit_form = organisations_campus(organisations_id = organisation, campus_nickname = campus_nickname, campus_phone = campus_phone, campus_fax = campus_fax, campus_address1 = campus_address1, campus_address2 = campus_address2, campus_address3 = campus_address3, campus_suburb = campus_suburb, campus_region_id = campus_region_id, campus_country_id = campus_country_id)
 			submit_form.save()
 			
 			return HttpResponseRedirect(reverse(organisation_information, args={organisations_id}))

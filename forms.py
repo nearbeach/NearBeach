@@ -6,7 +6,7 @@ from .models import organisations
 from .models import organisations_campus
 from .models import list_of_titles
 from .models import list_of_countries
-from .models import list_of_countries_states
+from .models import list_of_countries_regions
 from .models import user_groups
 from .models import project
 from .models import tasks
@@ -216,7 +216,7 @@ class login_form(forms.Form):
 class new_campus_form(forms.Form):
 	#Get data for choice boxes
 	countries_results = list_of_countries.objects.all()
-	state_results = list_of_countries_states.objects.all()
+	regions_results = list_of_countries_regions.objects.all()
 	
 	#Fields
 	campus_nickname = forms.CharField(max_length = 255)
@@ -227,7 +227,7 @@ class new_campus_form(forms.Form):
 	campus_address2 = forms.CharField(max_length = 255, required = False)
 	campus_address3 = forms.CharField(max_length = 255, required = False)
 	campus_suburb = forms.CharField(max_length = 255, required = False)
-	campus_state_id = forms.ModelChoiceField(label = "States", widget = forms.Select, queryset = state_results)
+	campus_region_id = forms.ModelChoiceField(label = "Regions", widget = forms.Select, queryset = regions_results)
 
 
 class new_customer_form(forms.Form):
