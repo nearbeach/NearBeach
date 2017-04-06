@@ -1,4 +1,6 @@
+from __future__ import unicode_literals
 from django import forms
+
 
 #Import from Models
 from .models import customers
@@ -16,6 +18,10 @@ from django.forms import ModelForm
 
 #Used for login
 from django.contrib.auth import authenticate, get_user_model, login, logout
+
+#SQL
+from django.db import connection
+
 
 #Import extra
 import datetime
@@ -148,6 +154,7 @@ MERIDIEMS_CHOICES = (
 	('PM','PM'),
 )
 
+
 #Include closed option
 INCLUDE_CLOSED = {
 	('INCLUDE_CLOSED','Include Closed?'),
@@ -167,21 +174,29 @@ class customer_campus_form(ModelForm):
 
 
 class campus_information_form(ModelForm):
+	#SQL
+	region_results = list_of_countries_regions.objects.all()
+
+	#Fields
 	campus_phone = forms.CharField(required=False)
 	campus_fax = forms.CharField(required=False)
 	campus_address1 = forms.CharField(required=False)
 	campus_address2 = forms.CharField(required=False)
 	campus_address3 = forms.CharField(required=False)
 	campus_suburb = forms.CharField(required=False)
-	
+
 	class Meta:
 		model = organisations_campus
 		fields = '__all__'
-		
+		exclude = ['campus_region_id', 'campus_country_id']
+
+
+
 class customer_information_form(ModelForm):
 	class Meta:
 		model = customers
 		fields = '__all__'
+
 
 
 class login_form(forms.Form):
@@ -369,5 +384,6 @@ class task_information_form(ModelForm):
 				'task_short_description',
 				'task_long_description',
 		}
+
 
 

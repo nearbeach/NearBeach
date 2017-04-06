@@ -2,14 +2,33 @@
 {% block content %}
 {% load static %}
 <script type="text/javascript" src="{% static 'NearBeach/javascript/campus_information.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/check_regions.js' %}"></script>
-<body onload="check_regions()">
+<body onload="on_page_load('{{ campus_results.campus_country_id_id }}', '{{ campus_results.campus_region_id }}')">
 <h1>Campus Information - {{ campus_results.campus_nickname }}</h1>
+<h3>{{ campus_results.campus_region_id }}</h3>
 <div>
 	<form action="{% url 'campus_information' campus_results.id %}" method="post" class="campus_information">
 		{% csrf_token %}
+
 		<table>
 			{{ campus_information_form.as_table }}
+
+			<tr><td>Country:</td><td>
+				<select id="campus_country_id" name="campus_country_id" onchange="country_changed()">
+					{% for row in countries_results %}
+						<option value="{{ row.country_id }}">{{ row.country_name }}</option>
+					{% endfor %}
+				</select>
+			</td></tr>
+
+			<tr><td>Campus {{ campus_results.campus_region_id.region_type }}:</td><td>
+				<select id="campus_region_id" name="campus_region_id">
+					<option value="---------">---------</option>
+					{% for row in countries_regions_results %}
+						<option value="{{ row.region_id }}" country_id="{{ row.country_id_id }}">{{ row.region_name }}</option>
+					{% endfor %}
+				</select>
+			</td></tr>
+
 		</table>
 		<div>
 			<input type="submit" value="Save">

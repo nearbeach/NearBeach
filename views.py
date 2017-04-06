@@ -297,6 +297,8 @@ def campus_information(request, campus_information):
 	#Get Data
 	customer_campus_results = customers_campus.objects.filter(campus_id = campus_information)
 	add_customers_results = customers.objects.filter(organisations_id = campus_results.organisations_id)
+	countries_regions_results = list_of_countries_regions.objects.all()
+	countries_results = list_of_countries.objects.all()
 	
 	
 	#Load the template
@@ -307,7 +309,9 @@ def campus_information(request, campus_information):
 		'campus_results': campus_results,
 		'campus_information_form': campus_information_form(instance=campus_results),
 		'customer_campus_results': customer_campus_results,
-		'add_customers_results': add_customers_results,	
+		'add_customers_results': add_customers_results,
+		'countries_regions_results': countries_regions_results,
+		'countries_results': countries_results,
 	}
 	
 	return HttpResponse(t.render(c, request))	
