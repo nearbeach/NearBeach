@@ -237,7 +237,7 @@ class new_campus_form(forms.Form):
 	campus_nickname = forms.CharField(max_length = 255)
 	campus_phone = forms.CharField(max_length = 255, required = False)
 	campus_fax = forms.CharField(max_length = 255, required = False)
-	campus_country_id = forms.ModelChoiceField(label = "Country", widget = forms.Select, queryset = countries_results)
+	campus_country_id = forms.ModelChoiceField(label = "Country", widget = forms.Select, queryset = countries_results, attrs={"onChange":'country_changed()'})
 	campus_address1 = forms.CharField(max_length = 255, required = False)
 	campus_address2 = forms.CharField(max_length = 255, required = False)
 	campus_address3 = forms.CharField(max_length = 255, required = False)
