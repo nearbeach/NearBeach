@@ -278,7 +278,10 @@ def campus_information(request, campus_information):
 			#Other save button must have been pressed	
 			form = campus_information_form(request.POST)
 			if form.is_valid():
-				
+				#SQL instance
+				campus_region_instance = list_of_countries_regions.objects.get(region_id = int(request.POST.get('campus_region_id')))
+				campus_country_instance = list_of_countries.objects.get(country_id = request.POST.get('campus_country_id'))
+
 				#Save all the data
 				campus_results.organisations_id = form.cleaned_data['organisations_id']
 				campus_results.campus_nickname = form.cleaned_data['campus_nickname']
@@ -288,8 +291,10 @@ def campus_information(request, campus_information):
 				campus_results.campus_address2 = form.cleaned_data['campus_address2']
 				campus_results.campus_address3 = form.cleaned_data['campus_address3']
 				campus_results.campus_suburb = form.cleaned_data['campus_suburb']
-				campus_results.campus_region_id = form.cleaned_data['campus_region_id']
-				campus_results.campus_country_id = form.cleaned_data['campus_country_id']
+				#campus_results.campus_region_id = list_of_countries_regions.objects.get(region_id=form.cleaned_data['campus_region_id'])
+				#campus_results.campus_country_id = list_of_countries.objects.get(country_id=form.cleaned_data['campus_country_id'])
+				campus_results.campus_region_id = campus_region_instance
+				campus_results.campus_country_id = campus_country_instance
 				
 				campus_results.save()
 		
