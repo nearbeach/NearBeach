@@ -278,7 +278,10 @@ def campus_information(request, campus_information):
 			#Other save button must have been pressed	
 			form = campus_information_form(request.POST)
 			if form.is_valid():
-				
+				#SQL instance
+				campus_region_instance = list_of_countries_regions.objects.get(region_id = int(request.POST.get('campus_region_id')))
+				campus_country_instance = list_of_countries.objects.get(country_id = request.POST.get('campus_country_id'))
+
 				#Save all the data
 				campus_results.organisations_id = form.cleaned_data['organisations_id']
 				campus_results.campus_nickname = form.cleaned_data['campus_nickname']
@@ -288,8 +291,10 @@ def campus_information(request, campus_information):
 				campus_results.campus_address2 = form.cleaned_data['campus_address2']
 				campus_results.campus_address3 = form.cleaned_data['campus_address3']
 				campus_results.campus_suburb = form.cleaned_data['campus_suburb']
-				campus_results.campus_region_id = form.cleaned_data['campus_region_id']
-				campus_results.campus_country_id = form.cleaned_data['campus_country_id']
+				#campus_results.campus_region_id = list_of_countries_regions.objects.get(region_id=form.cleaned_data['campus_region_id'])
+				#campus_results.campus_country_id = list_of_countries.objects.get(country_id=form.cleaned_data['campus_country_id'])
+				campus_results.campus_region_id = campus_region_instance
+				campus_results.campus_country_id = campus_country_instance
 				
 				campus_results.save()
 		
@@ -576,15 +581,21 @@ def new_campus(request, organisations_id):
 		else:
 			print form.errors
 			return HttpResponseRedirect(reverse(new_campus, args={organisations_id}))
-	else:
-		#load template
-		t = loader.get_template('NearBeach/new_campus.html')
 
-		#context
-		c = {
-			'organisations_id': organisations_id,
-			'new_campus_form': new_campus_form(),
-		}
+	#SQL
+	countries_results = list_of_countries.objects.all()
+	countries_regions_results = list_of_countries_regions.objects.all()
+
+	#load template
+	t = loader.get_template('NearBeach/new_campus.html')
+
+	#context
+	c = {
+		'organisations_id': organisations_id,
+		'new_campus_form': new_campus_form(),
+		'countries_results': countries_results,
+		'countries_regions_results': countries_regions_results,
+	}
 	
 	return HttpResponse(t.render(c, request))	
 
@@ -839,8 +850,19 @@ def new_project(request):
 		
 		#context
 		c = {
-			'new_project_form': new_project_form(initial={'start_date_year':today.year, 'start_date_month':today.month,'start_date_day':today.day,'start_date_hour':hour,'start_date_minute':minute,'start_date_meridiems':meridiems,
-														'finish_date_year':next_week.year, 'finish_date_month':next_week.month,'finish_date_day':next_week.day,'finish_date_hour':hour,'finish_date_minute':minute,'finish_date_meridiems':meridiems,}),
+			'new_project_form': new_project_form(initial={
+														'start_date_year':today.year,
+														'start_date_month':today.month,
+														'start_date_day':today.day,
+														'start_date_hour':hour,
+														'start_date_minute':minute,
+														'start_date_meridiems':meridiems,
+														'finish_date_year':next_week.year,
+														'finish_date_month':next_week.month,
+														'finish_date_day':next_week.day,
+														'finish_date_hour':hour,
+														'finish_date_minute':minute,
+														'finish_date_meridiems':meridiems,}),
 			'groups_results': groups_results,
 			'organisations_count': organisations_results.count(),
 		}

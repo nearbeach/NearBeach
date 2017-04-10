@@ -43,7 +43,7 @@ function on_page_load(country, region) {
         }
 
         //Enable or disable region due to country
-        var country_id = campus_region_select[2].getAttribute("country_id");
+        var country_id = campus_region_select[i].getAttribute("country_id");
         if (country_id.toLowerCase() == country.toLowerCase()) {
             campus_region_select[i].disabled = false;
         } else {
