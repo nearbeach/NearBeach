@@ -230,19 +230,19 @@ class login_form(forms.Form):
 
 class new_campus_form(forms.Form):
 	#Get data for choice boxes
-	countries_results = list_of_countries.objects.all()
-	regions_results = list_of_countries_regions.objects.all()
+	#countries_results = list_of_countries.objects.all()
+	#regions_results = list_of_countries_regions.objects.all()
 	
 	#Fields
 	campus_nickname = forms.CharField(max_length = 255)
 	campus_phone = forms.CharField(max_length = 255, required = False)
 	campus_fax = forms.CharField(max_length = 255, required = False)
-	campus_country_id = forms.ModelChoiceField(label = "Country", widget = forms.Select(attrs={"onChange":'country_changed()'}), queryset = countries_results)
+	#campus_country_id = forms.ModelChoiceField(label = "Country", widget = forms.Select(attrs={"onChange":'country_changed()'}), queryset = countries_results)
 	campus_address1 = forms.CharField(max_length = 255, required = False)
 	campus_address2 = forms.CharField(max_length = 255, required = False)
 	campus_address3 = forms.CharField(max_length = 255, required = False)
 	campus_suburb = forms.CharField(max_length = 255, required = False)
-	campus_region_id = forms.ModelChoiceField(label = "Regions", widget = forms.Select, queryset = regions_results)
+	#campus_region_id = forms.ModelChoiceField(label = "Regions", widget = forms.Select, queryset = regions_results)
 
 
 class new_customer_form(forms.Form):

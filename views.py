@@ -581,15 +581,21 @@ def new_campus(request, organisations_id):
 		else:
 			print form.errors
 			return HttpResponseRedirect(reverse(new_campus, args={organisations_id}))
-	else:
-		#load template
-		t = loader.get_template('NearBeach/new_campus.html')
 
-		#context
-		c = {
-			'organisations_id': organisations_id,
-			'new_campus_form': new_campus_form(),
-		}
+	#SQL
+	countries_results = list_of_countries.objects.all()
+	countries_regions_results = list_of_countries_regions.objects.all()
+
+	#load template
+	t = loader.get_template('NearBeach/new_campus.html')
+
+	#context
+	c = {
+		'organisations_id': organisations_id,
+		'new_campus_form': new_campus_form(),
+		'countries_results': countries_results,
+		'countries_regions_results': countries_regions_results,
+	}
 	
 	return HttpResponse(t.render(c, request))	
 
@@ -844,8 +850,19 @@ def new_project(request):
 		
 		#context
 		c = {
-			'new_project_form': new_project_form(initial={'start_date_year':today.year, 'start_date_month':today.month,'start_date_day':today.day,'start_date_hour':hour,'start_date_minute':minute,'start_date_meridiems':meridiems,
-														'finish_date_year':next_week.year, 'finish_date_month':next_week.month,'finish_date_day':next_week.day,'finish_date_hour':hour,'finish_date_minute':minute,'finish_date_meridiems':meridiems,}),
+			'new_project_form': new_project_form(initial={
+														'start_date_year':today.year,
+														'start_date_month':today.month,
+														'start_date_day':today.day,
+														'start_date_hour':hour,
+														'start_date_minute':minute,
+														'start_date_meridiems':meridiems,
+														'finish_date_year':next_week.year,
+														'finish_date_month':next_week.month,
+														'finish_date_day':next_week.day,
+														'finish_date_hour':hour,
+														'finish_date_minute':minute,
+														'finish_date_meridiems':meridiems,}),
 			'groups_results': groups_results,
 			'organisations_count': organisations_results.count(),
 		}
