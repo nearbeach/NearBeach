@@ -3,9 +3,17 @@ from django.conf.urls import url
 from django.conf.urls import include, url
 from django.contrib import admin
 
+from django.contrib.auth import views as auth_views
+
 #The following two imports are for the static files
 from django.conf import settings
 from django.conf.urls.static import static
+
+#Forgotten password features
+from django.contrib.auth import views as auth_views
+
+#Password reset
+from django.contrib.auth.views import password_reset, password_reset_done, password_reset_confirm, password_reset_complete
 
 from . import views
 
@@ -48,6 +56,17 @@ urlpatterns = [
 	url(r'^associated_tasks/(?P<project_id>[0-9]+)/', views.associated_tasks, name='associated_tasks'),
 	url(r'^associated_projects/(?P<task_id>[0-9]+)/', views.associated_projects, name='associated_projects'),
 	url(r'^associate/(?P<project_id>[0-9]+)/(?P<task_id>[0-9]+)/(?P<project_or_task>[P,T])', views.associate, name='associate'),
+
+	#Forgotten Passwords
+	url(r'^password_reset/$', password_reset, {'post_reset_redirect': 'password_reset_done', 'template_name': 'NearBeach/password_reset.html'}, name='password_reset'),
+	url(r'^password_reset/done/$', password_reset_done, { 'template_name': 'NearBeach/password_reset_done.html' }, name='password_reset_done'),
+	url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$', password_reset_confirm, { 'post_reset_redirect': 'password_reset_complete', 'template_name': 'NearBeach/reset.html' }, name='password_reset_confirm'),
+	url(r'^reset/done/$', password_reset_complete, { 'template_name': 'NearBeach/reset_done.html' }, name='password_reset_complete'),
+	
+	
+	#Search
+	url(r'^search', views.search, name='search'),
+
 ]
 
 

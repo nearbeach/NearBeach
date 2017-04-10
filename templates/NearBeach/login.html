@@ -25,7 +25,6 @@
 		width: 150px;
 	}
 </style>
-
 <body>
 	<form action="{% url 'login' %}" method="post" class="login_form">
 		{% csrf_token %}
@@ -37,7 +36,12 @@
 			{% endif %}
 			<tr><td>{{ login_form.username }}</td></tr>
 			<tr><td>{{ login_form.password }}</td></tr>
+			{% if not RECAPTCHA_SITE_KEY == '' %}
+				<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+				<tr><td><div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_PUBLIC_KEY }}"></div></td></tr>
+			{% endif %}
 			<tr><td><input type="submit" value="Login" class="login_button" /></td></tr>
+			<tr><td><a href="{% url 'password_reset' %}">Forgotten Password</a></td></tr>
 		</table>
 		
 	</form>

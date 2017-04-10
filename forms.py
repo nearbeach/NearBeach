@@ -1,4 +1,6 @@
+from __future__ import unicode_literals
 from django import forms
+
 
 #Import from Models
 from .models import customers
@@ -6,7 +8,7 @@ from .models import organisations
 from .models import organisations_campus
 from .models import list_of_titles
 from .models import list_of_countries
-from .models import list_of_countries_states
+from .models import list_of_countries_regions
 from .models import user_groups
 from .models import project
 from .models import tasks
@@ -17,11 +19,21 @@ from django.forms import ModelForm
 #Used for login
 from django.contrib.auth import authenticate, get_user_model, login, logout
 
+#SQL
+from django.db import connection
+
+
 #Import extra
 import datetime
 
 #Global Variables
 User = get_user_model
+
+#Settings
+from django.conf import settings
+
+
+
 
 #Setup drop down box options
 YEAR_CHOICES = (
@@ -142,6 +154,7 @@ MERIDIEMS_CHOICES = (
 	('PM','PM'),
 )
 
+
 #Include closed option
 INCLUDE_CLOSED = {
 	('INCLUDE_CLOSED','Include Closed?'),
@@ -161,27 +174,36 @@ class customer_campus_form(ModelForm):
 
 
 class campus_information_form(ModelForm):
+	#SQL
+	region_results = list_of_countries_regions.objects.all()
+
+	#Fields
 	campus_phone = forms.CharField(required=False)
 	campus_fax = forms.CharField(required=False)
 	campus_address1 = forms.CharField(required=False)
 	campus_address2 = forms.CharField(required=False)
 	campus_address3 = forms.CharField(required=False)
 	campus_suburb = forms.CharField(required=False)
-	
+
 	class Meta:
 		model = organisations_campus
 		fields = '__all__'
-		
+		exclude = ['campus_region_id', 'campus_country_id']
+
+
+
 class customer_information_form(ModelForm):
 	class Meta:
 		model = customers
 		fields = '__all__'
 
 
+
 class login_form(forms.Form):
 	username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'login'}))
 	password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'password'}))
-	
+
+
 	def clean(self):
 		#Get login data
 		username = self.cleaned_data.get("username")
@@ -208,19 +230,19 @@ class login_form(forms.Form):
 
 class new_campus_form(forms.Form):
 	#Get data for choice boxes
-	countries_results = list_of_countries.objects.all()
-	state_results = list_of_countries_states.objects.all()
+	#countries_results = list_of_countries.objects.all()
+	#regions_results = list_of_countries_regions.objects.all()
 	
 	#Fields
 	campus_nickname = forms.CharField(max_length = 255)
 	campus_phone = forms.CharField(max_length = 255, required = False)
 	campus_fax = forms.CharField(max_length = 255, required = False)
-	campus_country_id = forms.ModelChoiceField(label = "Country", widget = forms.Select, queryset = countries_results)
+	#campus_country_id = forms.ModelChoiceField(label = "Country", widget = forms.Select(attrs={"onChange":'country_changed()'}), queryset = countries_results)
 	campus_address1 = forms.CharField(max_length = 255, required = False)
 	campus_address2 = forms.CharField(max_length = 255, required = False)
 	campus_address3 = forms.CharField(max_length = 255, required = False)
 	campus_suburb = forms.CharField(max_length = 255, required = False)
-	campus_state_id = forms.ModelChoiceField(label = "States", widget = forms.Select, queryset = state_results)
+	#campus_region_id = forms.ModelChoiceField(label = "Regions", widget = forms.Select, queryset = regions_results)
 
 
 class new_customer_form(forms.Form):
@@ -315,6 +337,11 @@ class project_information_form(ModelForm):
 			'project_name',
 			'project_description',
 		}
+
+
+class search_form(forms.Form):
+	#Just have a simple search field
+	search_for = forms.CharField(max_length = 255, required = False)
 	
 class search_customers_form(forms.Form):
 	#Just have a simple search field
@@ -357,5 +384,6 @@ class task_information_form(ModelForm):
 				'task_short_description',
 				'task_long_description',
 		}
+
 
 

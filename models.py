@@ -64,7 +64,7 @@ class group_permissions(models.Model):
 		db_table = "group_permissions"
 
 class list_of_countries(models.Model):
-	country_id = models.AutoField(primary_key = True)
+	country_id = models.CharField(primary_key = True, max_length = 2)
 	country_name = models.CharField(max_length = 50)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	
@@ -75,17 +75,18 @@ class list_of_countries(models.Model):
 		db_table = "list_of_countries"
 
 
-class list_of_countries_states(models.Model):
-	campus_state_id = models.AutoField(primary_key = True)
+class list_of_countries_regions(models.Model):
+	region_id = models.AutoField(primary_key = True)
 	country_id = models.ForeignKey('list_of_countries', on_delete = models.CASCADE,)
-	state = models.CharField(max_length = 50)
+	region_name = models.CharField(max_length = 150)
+	region_type = models.CharField(max_length = 80, null=True)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	
 	def __str__(self):
-		return self.state.encode('utf8')
+		return self.region_name.encode('utf8')
 	
 	class Meta:
-		db_table = "list_of_countries_states"
+		db_table = "list_of_countries_regions"
 
 class list_of_titles(models.Model):
 	title_id = models.AutoField(primary_key = True)
@@ -121,7 +122,7 @@ class organisations_campus(models.Model):
 	campus_address2 = models.CharField(max_length = 255, null=True)
 	campus_address3 = models.CharField(max_length = 255, null=True)
 	campus_suburb = models.CharField(max_length = 50)
-	campus_state_id = models.ForeignKey('list_of_countries_states', on_delete = models.CASCADE,)
+	campus_region_id = models.ForeignKey('list_of_countries_regions', on_delete = models.CASCADE,)
 	campus_country_id = models.ForeignKey('list_of_countries', on_delete = models.CASCADE,)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	
@@ -180,7 +181,7 @@ class project_history(models.Model):
 	audit_date = models.DateTimeField(auto_now = True)	
 
 	def __str__(self):
-		return self.state.encode('utf8')
+		return self.region.encode('utf8')
 	
 	class Meta:
 		db_table = "project_history"

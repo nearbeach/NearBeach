@@ -15,7 +15,7 @@ from .models import customers
 from .models import customers_campus
 from .models import group_permissions
 from .models import groups
-from .models import list_of_countries_states
+from .models import list_of_countries_regions
 from .models import list_of_countries
 from .models import list_of_titles
 from .models import organisations_campus
@@ -35,11 +35,14 @@ from .models import tasks_history
 from .models import tasks
 from .models import user_groups
 
-
+#Import Settings file to obtain secret key
+from django.conf import settings
 
 #Used for login
 #from django.contrib.auth import authenticate, get_user_model, login, logout
-
+import urllib
+import urllib2
+import json
 
 #For Importing RAW SQL
 from django.db import connection
@@ -67,6 +70,8 @@ from .forms import project_information_form
 from .forms import search_tasks_form
 from .forms import search_projects_form
 from .forms import customer_campus_form
+from .forms import search_form
+
 
 #Import datetime
 import datetime
@@ -247,33 +252,59 @@ def campus_information(request, campus_information):
 	"""
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(reverse('login'))
-		
+	
+	
+	#Obtain data (before POST if statement as it is used insude)
+	campus_results = organisations_campus.objects.get(pk = campus_information)	
 	
 	#If instance is in POST
 	if request.method == "POST":
-		form = campus_information_form(request.POST)
-		if form.is_valid():
-			campus_results = organisations_campus.objects.get(pk = campus_information)
+		if 'add_customer_submit' in request.POST:
+			#Obtain the ID of the customer
+			customer_results = int(request.POST.get("add_customer_select"))
 			
-			#Save all the data
-			campus_results.organisations_id = form.cleaned_data['organisations_id']
-			campus_results.campus_nickname = form.cleaned_data['campus_nickname']
-			campus_results.campus_phone = form.cleaned_data['campus_phone']
-			campus_results.campus_fax = form.cleaned_data['campus_fax']
-			campus_results.campus_address1 = form.cleaned_data['campus_address1']
-			campus_results.campus_address2 = form.cleaned_data['campus_address2']
-			campus_results.campus_address3 = form.cleaned_data['campus_address3']
-			campus_results.campus_suburb = form.cleaned_data['campus_suburb']
-			campus_results.campus_state_id = form.cleaned_data['campus_state_id']
-			campus_results.campus_country_id = form.cleaned_data['campus_country_id']
+			#Get the SQL Instances
+			customer_instance = customers.objects.get(customer_id = customer_results)
+			campus_instances = organisations_campus.objects.get(id = campus_information)
 			
-			campus_results.save()
-	else:
-		campus_results = organisations_campus.objects.get(pk = campus_information)
+			#Save the new campus
+			submit_campus = customers_campus(customer_id = customer_instance,	campus_id = campus_instances,	customer_phone = '', customer_fax = '')
+			submit_campus.save()
+			
+			#Go to the form.
+			return HttpResponseRedirect(reverse('customers_campus_information', args={submit_campus.id,'CAMP'}))
+			
+		else:
+			#Other save button must have been pressed	
+			form = campus_information_form(request.POST)
+			if form.is_valid():
+				#SQL instance
+				campus_region_instance = list_of_countries_regions.objects.get(region_id = int(request.POST.get('campus_region_id')))
+				campus_country_instance = list_of_countries.objects.get(country_id = request.POST.get('campus_country_id'))
+
+				#Save all the data
+				campus_results.organisations_id = form.cleaned_data['organisations_id']
+				campus_results.campus_nickname = form.cleaned_data['campus_nickname']
+				campus_results.campus_phone = form.cleaned_data['campus_phone']
+				campus_results.campus_fax = form.cleaned_data['campus_fax']
+				campus_results.campus_address1 = form.cleaned_data['campus_address1']
+				campus_results.campus_address2 = form.cleaned_data['campus_address2']
+				campus_results.campus_address3 = form.cleaned_data['campus_address3']
+				campus_results.campus_suburb = form.cleaned_data['campus_suburb']
+				#campus_results.campus_region_id = list_of_countries_regions.objects.get(region_id=form.cleaned_data['campus_region_id'])
+				#campus_results.campus_country_id = list_of_countries.objects.get(country_id=form.cleaned_data['campus_country_id'])
+				campus_results.campus_region_id = campus_region_instance
+				campus_results.campus_country_id = campus_country_instance
+				
+				campus_results.save()
+		
 
 	#Get Data
 	customer_campus_results = customers_campus.objects.filter(campus_id = campus_information)
-
+	add_customers_results = customers.objects.filter(organisations_id = campus_results.organisations_id)
+	countries_regions_results = list_of_countries_regions.objects.all()
+	countries_results = list_of_countries.objects.all()
+	
 	
 	#Load the template
 	t = loader.get_template('NearBeach/campus_information.html')
@@ -282,7 +313,10 @@ def campus_information(request, campus_information):
 	c = {
 		'campus_results': campus_results,
 		'campus_information_form': campus_information_form(instance=campus_results),
-		'customer_campus_results': customer_campus_results,	
+		'customer_campus_results': customer_campus_results,
+		'add_customers_results': add_customers_results,
+		'countries_regions_results': countries_regions_results,
+		'countries_results': countries_results,
 	}
 	
 	return HttpResponse(t.render(c, request))	
@@ -430,24 +464,77 @@ def login(request):
 	"""
 	form = login_form(request.POST or None)
 	
+	#reCAPTCHA
+	RECAPTCHA_PUBLIC_KEY = ''
+	RECAPTCHA_PRIVATE_KEY = ''
+	if hasattr(settings,'RECAPTCHA_PUBLIC_KEY') and hasattr(settings,'RECAPTCHA_PRIVATE_KEY'):
+		RECAPTCHA_PUBLIC_KEY = settings.RECAPTCHA_PUBLIC_KEY
+		RECAPTCHA_PRIVATE_KEY = settings.RECAPTCHA_PRIVATE_KEY
+
+	
 	#POST
 	if request.method == 'POST':	
 		if form.is_valid():
+			"""
+			Method
+			~~~~~~
+			1.) Collect the variables
+			2.) IF reCAPTCHA is enabled, then process login through that
+				statement
+				IF it is not, proceed to verify login
+			3.) If it all fails, it will just go back to the login screen.
+			"""
 			username = form.cleaned_data.get("username")
 			password = form.cleaned_data.get("password")
-			user = auth.authenticate(username=username, password=password)
-			auth.login(request, user)
 			
+			if hasattr(settings,'RECAPTCHA_PUBLIC_KEY') and hasattr(settings,'RECAPTCHA_PRIVATE_KEY'):
+				"""
+				As the Google documentation states. I have to send the request back to
+				the given URL. It gives back a JSON object, which will contain the
+				success results.
+				
+				Method
+				~~~~~~
+				1.) Collect the variables
+				2.) With the data - encode the variables into URL format
+				3.) Send the request to the given URL
+				4.) The response will open and store the response from GOOGLE
+				5.) The results will contain the JSON Object
+				"""
+				recaptcha_response = request.POST.get('g-recaptcha-response')
+				url = 'https://www.google.com/recaptcha/api/siteverify'
+				values = {
+					'secret': RECAPTCHA_PRIVATE_KEY,
+					'response': recaptcha_response
+				}
+				data = urllib.urlencode(values)
+				req = urllib2.Request(url, data)
+				response = urllib2.urlopen(req)
+				result = json.load(response)
+				
+				#Check to see if the user is a robot. Success = human
+				if result['success']:
+					user = auth.authenticate(username=username, password=password)
+					auth.login(request, user)
+			else:
+				user = auth.authenticate(username=username, password=password)
+				auth.login(request, user)
+					
 			#Just double checking. :)
 			if request.user.is_authenticated:
 					return HttpResponseRedirect(reverse('active_projects'))
+		else:
+			print(form.errors)
 	
 	#load template
 	t = loader.get_template('NearBeach/login.html')
+	
 
+		
 	#context
 	c = {
 		'login_form': form,
+		'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
 	}
 
 	return HttpResponse(t.render(c, request))	
@@ -479,7 +566,7 @@ def new_campus(request, organisations_id):
 			campus_address2 = form.cleaned_data['campus_address2']
 			campus_address3 = form.cleaned_data['campus_address3']
 			campus_suburb = form.cleaned_data['campus_suburb']
-			campus_state_id = form.cleaned_data['campus_state_id']
+			campus_region_id = form.cleaned_data['campus_region_id']
 			campus_country_id = form.cleaned_data['campus_country_id']
 			
 			organisation = organisations.objects.get(organisations_id = organisations_id)
@@ -487,22 +574,28 @@ def new_campus(request, organisations_id):
 			#BUG - some simple validation should go here?
 			
 			#Submitting the data
-			submit_form = organisations_campus(organisations_id = organisation, campus_nickname = campus_nickname, campus_phone = campus_phone, campus_fax = campus_fax, campus_address1 = campus_address1, campus_address2 = campus_address2, campus_address3 = campus_address3, campus_suburb = campus_suburb, campus_state_id = campus_state_id, campus_country_id = campus_country_id)
+			submit_form = organisations_campus(organisations_id = organisation, campus_nickname = campus_nickname, campus_phone = campus_phone, campus_fax = campus_fax, campus_address1 = campus_address1, campus_address2 = campus_address2, campus_address3 = campus_address3, campus_suburb = campus_suburb, campus_region_id = campus_region_id, campus_country_id = campus_country_id)
 			submit_form.save()
 			
 			return HttpResponseRedirect(reverse(organisation_information, args={organisations_id}))
 		else:
 			print form.errors
 			return HttpResponseRedirect(reverse(new_campus, args={organisations_id}))
-	else:
-		#load template
-		t = loader.get_template('NearBeach/new_campus.html')
 
-		#context
-		c = {
-			'organisations_id': organisations_id,
-			'new_campus_form': new_campus_form(),
-		}
+	#SQL
+	countries_results = list_of_countries.objects.all()
+	countries_regions_results = list_of_countries_regions.objects.all()
+
+	#load template
+	t = loader.get_template('NearBeach/new_campus.html')
+
+	#context
+	c = {
+		'organisations_id': organisations_id,
+		'new_campus_form': new_campus_form(),
+		'countries_results': countries_results,
+		'countries_regions_results': countries_regions_results,
+	}
 	
 	return HttpResponse(t.render(c, request))	
 
@@ -757,8 +850,19 @@ def new_project(request):
 		
 		#context
 		c = {
-			'new_project_form': new_project_form(initial={'start_date_year':today.year, 'start_date_month':today.month,'start_date_day':today.day,'start_date_hour':hour,'start_date_minute':minute,'start_date_meridiems':meridiems,
-														'finish_date_year':next_week.year, 'finish_date_month':next_week.month,'finish_date_day':next_week.day,'finish_date_hour':hour,'finish_date_minute':minute,'finish_date_meridiems':meridiems,}),
+			'new_project_form': new_project_form(initial={
+														'start_date_year':today.year,
+														'start_date_month':today.month,
+														'start_date_day':today.day,
+														'start_date_hour':hour,
+														'start_date_minute':minute,
+														'start_date_meridiems':meridiems,
+														'finish_date_year':next_week.year,
+														'finish_date_month':next_week.month,
+														'finish_date_day':next_week.day,
+														'finish_date_hour':hour,
+														'finish_date_minute':minute,
+														'finish_date_meridiems':meridiems,}),
 			'groups_results': groups_results,
 			'organisations_count': organisations_results.count(),
 		}
@@ -1121,6 +1225,83 @@ def resolve_task(request, task_id):
 	task_update.task_status = 'Resolved'
 	task_update.save()
 	return HttpResponseRedirect(reverse('active_projects'))	
+
+
+def search(request):
+	"""
+	If the user is not logged in, we want to send them to the login page.
+	This function should be in ALL webpage requests except for login and
+	the index page
+	"""
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect(reverse('login'))
+	
+	#Load the template
+	t = loader.get_template('NearBeach/search.html')
+	
+	"""
+	We will use the POST varable to help filter the results from the 
+	database. The results will then appear below
+	"""
+	search_results = ''
+	
+	#Define if the page is loading in POST
+	if request.method == "POST":
+		form = search_form(request.POST)
+		if form.is_valid():
+			search_results = form.cleaned_data['search_for']
+
+			
+	"""
+	This is where the magic happens. I will remove all spaces and replace
+	them with a wild card. This will be used to search the concatenated
+	first and last name fields
+	"""	
+	search_like = '%'
+	
+	for split_row in search_results.split(' '):
+		search_like+=split_row
+		search_like+='%'
+	
+	#Query the database for organisations
+	cursor = connection.cursor()
+	cursor.execute("""
+		SELECT DISTINCT
+		*
+		FROM project
+		WHERE 1=1
+		AND (
+			project.project_id like %s
+			or project.project_name like %s
+			or project.project_description like %s
+			)
+		""", [search_like, search_like, search_like])
+	project_results = namedtuplefetchall(cursor)
+	
+	#Get list of tasks
+	cursor.execute("""
+		SELECT DISTINCT
+		*
+		FROM tasks
+		WHERE 1=1
+		AND (
+			tasks.tasks_id like %s
+			or tasks.task_short_description like %s
+			or tasks.task_long_description like %s
+		)
+	""", [search_like, search_like, search_like])
+	task_results = namedtuplefetchall(cursor)
+
+
+	#context
+	c = {
+		'search_form': search_form(initial={ 'search_for': search_results }),
+		'project_results': project_results,
+		'task_results': task_results,
+	}
+	
+	return HttpResponse(t.render(c, request))
+	
 
 
 def search_customers(request):
