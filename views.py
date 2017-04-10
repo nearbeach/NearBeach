@@ -9,6 +9,7 @@ from django.views.decorators import csrf
 from django.template import RequestContext, loader
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 # Importing all the classes from the models
 from .models import customers
@@ -79,22 +80,11 @@ import datetime
 
 # Create your views here.
 
-
+@login_required(login_url='login')
 def active_projects(request):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
-	
 	#Get username_id from User
 	current_user = User.objects.get(username = request.user.get_username())
-	
-	
-	
+
 	#Setup connection to the database and query it
 	cursor = connection.cursor()
 	
@@ -170,7 +160,7 @@ def active_projects(request):
 	
 	return HttpResponse(t.render(c, request))
 	
-	
+@login_required(login_url='login')
 def associate(request, project_id, task_id, project_or_task):
 	#Submit the data
 	submit_result = project_tasks(
@@ -186,7 +176,7 @@ def associate(request, project_id, task_id, project_or_task):
 		return HttpResponseRedirect(reverse('task_information', args = {task_id}))
 		
 
-
+@login_required(login_url='login')
 def associated_projects(request, task_id):
 	"""
 	We want the ability for the user to assign any project to the current
@@ -215,6 +205,8 @@ def associated_projects(request, task_id):
 	
 	return HttpResponse(t.render(c, request))
 
+
+@login_required(login_url='login')
 def associated_tasks(request, project_id):
 	"""
 	We want the ability for the user to assign any task to the current
@@ -243,7 +235,7 @@ def associated_tasks(request, project_id):
 	
 	return HttpResponse(t.render(c, request))
 
-
+@login_required(login_url='login')
 def campus_information(request, campus_information):
 	"""
 	If the user is not logged in, we want to send them to the login page.
@@ -322,6 +314,7 @@ def campus_information(request, campus_information):
 	return HttpResponse(t.render(c, request))	
 
 
+@login_required(login_url='login')
 def customers_campus_information(request, customer_campus_id, customer_or_org):
 	"""
 	If the user is not logged in, we want to send them to the login page.
@@ -379,6 +372,7 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
 	return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
 def customer_information(request, customer_id):
 	"""
 	If the user is not logged in, we want to send them to the login page.
@@ -427,6 +421,7 @@ def customer_information(request, customer_id):
 	return HttpResponse(t.render(c, request))	
 
 
+@login_required(login_url='login')
 def index(request):
 	"""
 	The index page determines if a particular user has logged in. It will
@@ -546,7 +541,7 @@ def logout(request):
 	auth.logout(request)
 	return HttpResponseRedirect(reverse('login'))
 
-
+@login_required(login_url='login')
 def new_campus(request, organisations_id):
 	"""
 	If the user is not logged in, we want to send them to the login page.
@@ -599,7 +594,7 @@ def new_campus(request, organisations_id):
 	
 	return HttpResponse(t.render(c, request))	
 
-
+@login_required(login_url='login')
 def new_customer(request, organisations_id):
 	"""
 	If the user is not logged in, we want to send them to the login page.
@@ -646,17 +641,8 @@ def new_customer(request, organisations_id):
 	
 	return HttpResponse(t.render(c, request))
 
-
+@login_required(login_url='login')
 def new_organisation(request):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-		
-		
 	"""
 	To stop duplicates in the system, the code will quickly check to see if
 	there is already a company that has either one of the following;
@@ -714,16 +700,8 @@ def new_organisation(request):
 	return HttpResponse(t.render(c, request))
 
 	
-
+@login_required(login_url='login')
 def new_project(request):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
 	if request.method == "POST":
 		form = new_project_form(request.POST)
 		if form.is_valid():
@@ -869,16 +847,8 @@ def new_project(request):
 		
 	return HttpResponse(t.render(c, request))
 
-
+@login_required(login_url='login')
 def new_task(request):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
 	#Define if the page is loading in POST
 	if request.method == "POST":
 		form = new_task_form(request.POST)
@@ -1007,17 +977,8 @@ def new_task(request):
 	
 	return HttpResponse(t.render(c, request))
 
-
+@login_required(login_url='login')
 def organisation_information(request, organisations_id):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
-	
 	#Query the database for organisation information
 	organisation_results = organisations.objects.get(pk = organisations_id)
 	campus_results = organisations_campus.objects.filter(organisations_id = organisations_id)
@@ -1036,15 +997,8 @@ def organisation_information(request, organisations_id):
 	return HttpResponse(t.render(c, request))
 	
 
+@login_required(login_url='login')
 def project_information(request, project_id):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
 	"""
 	There are two buttons on the project information page. Both will come
 	here. Both will save the data, however only one of them will resolve
@@ -1213,6 +1167,7 @@ def project_information(request, project_id):
 	return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
 def resolve_project(request, project_id):
 	project_update = project.objects.get(project_id = project_id)
 	project_update.project_status = 'Resolved'
@@ -1220,6 +1175,7 @@ def resolve_project(request, project_id):
 	return HttpResponseRedirect(reverse('active_projects'))
 
 
+@login_required(login_url='login')
 def resolve_task(request, task_id):
 	task_update = task.object.get(task_id = task_id)
 	task_update.task_status = 'Resolved'
@@ -1227,15 +1183,8 @@ def resolve_task(request, task_id):
 	return HttpResponseRedirect(reverse('active_projects'))	
 
 
+@login_required(login_url='login')
 def search(request):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
 	#Load the template
 	t = loader.get_template('NearBeach/search.html')
 	
@@ -1303,17 +1252,8 @@ def search(request):
 	return HttpResponse(t.render(c, request))
 	
 
-
+@login_required(login_url='login')
 def search_customers(request):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
-	
 	#Load the template
 	t = loader.get_template('NearBeach/search_customers.html')
 	
@@ -1364,15 +1304,8 @@ def search_customers(request):
 	
 	return HttpResponse(t.render(c, request))
 
+@login_required(login_url='login')
 def search_organisations(request):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
 	#Load the template
 	t = loader.get_template('NearBeach/search_organisations.html')
 	
@@ -1425,16 +1358,10 @@ def search_organisations(request):
 	}
 	
 	return HttpResponse(t.render(c, request))
-	
+
+
+@login_required(login_url='login')
 def search_projects_tasks(request):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
 	#Load the template
 	t = loader.get_template('NearBeach/search_projects_and_tasks.html')
 	
@@ -1446,15 +1373,8 @@ def search_projects_tasks(request):
 	return HttpResponse(t.render(c, request))
 	
 
+@login_required(login_url='login')
 def task_information(request, task_id):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
 	"""
 	There are two buttons on the task information page. Both will come
 	here. Both will save the data, however only one of them will resolve
