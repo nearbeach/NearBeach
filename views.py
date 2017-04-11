@@ -2,14 +2,13 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 #login imports
-from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.contrib import auth
-from django.views.decorators import csrf
 from django.template import RequestContext, loader
-from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+
+
 
 # Importing all the classes from the models
 from .models import customers
@@ -554,6 +553,11 @@ def new_campus(request, organisations_id):
 	if request.method == 'POST':
 		form = new_campus_form(request.POST)
 		if form.is_valid():
+			#Get instances
+			region_instance = list_of_countries_regions.objects.get(region_id = request.POST.get('campus_region_id'))
+			country_instance = list_of_countries.objects.get(country_id = request.POST.get('campus_country_id'))
+
+
 			campus_nickname = form.cleaned_data['campus_nickname']
 			campus_phone = form.cleaned_data['campus_phone']
 			campus_fax = form.cleaned_data['campus_fax']
@@ -561,8 +565,8 @@ def new_campus(request, organisations_id):
 			campus_address2 = form.cleaned_data['campus_address2']
 			campus_address3 = form.cleaned_data['campus_address3']
 			campus_suburb = form.cleaned_data['campus_suburb']
-			campus_region_id = form.cleaned_data['campus_region_id']
-			campus_country_id = form.cleaned_data['campus_country_id']
+			campus_region_id = region_instance
+			campus_country_id = country_instance
 			
 			organisation = organisations.objects.get(organisations_id = organisations_id)
 
@@ -983,7 +987,7 @@ def organisation_information(request, organisations_id):
 	organisation_results = organisations.objects.get(pk = organisations_id)
 	campus_results = organisations_campus.objects.filter(organisations_id = organisations_id)
 	customers_results = customers.objects.filter(organisations_id = organisation_results)
-	
+
 	
 	#Loaed the template
 	t = loader.get_template('NearBeach/organisation_information.html')
