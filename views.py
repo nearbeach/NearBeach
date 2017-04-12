@@ -1,8 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 
 #login imports
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.contrib import auth
 from django.template import RequestContext, loader
 from django.urls import reverse
@@ -11,29 +11,7 @@ from django.contrib.auth.decorators import login_required
 
 
 # Importing all the classes from the models
-from .models import customers
-from .models import customers_campus
-from .models import group_permissions
-from .models import groups
-from .models import list_of_countries_regions
-from .models import list_of_countries
-from .models import list_of_titles
-from .models import organisations_campus
-from .models import organisations
-from .models import project_customers
-from .models import project_groups
-from .models import project_history
-
-from .models import project_stages
-from .models import project_tasks
-from .models import project
-from .models import stages
-from .models import tasks_actions
-from .models import tasks_customers
-from .models import tasks_groups
-from .models import tasks_history
-from .models import tasks
-from .models import user_groups
+from .models import *
 
 #Import Settings file to obtain secret key
 from django.conf import settings
@@ -46,7 +24,7 @@ import json
 
 #For Importing RAW SQL
 from django.db import connection
-from django.db.models import Q
+from django.db.models import Q, Min
 
 #For the forms
 from django.db import models
@@ -54,23 +32,8 @@ from django.db import models
 #Import Django's users
 from django.contrib.auth.models import User
 
-#Import forms
-from .forms import customer_information_form
-from .forms import login_form
-from .forms import new_project_form
-from .forms import new_organisation_form
-from .forms import new_task_form
-from .forms import new_customer_form
-from .forms import search_customers_form
-from .forms import search_organisations_form
-from .forms import new_campus_form
-from .forms import task_information_form
-from .forms import campus_information_form
-from .forms import project_information_form
-from .forms import search_tasks_form
-from .forms import search_projects_form
-from .forms import customer_campus_form
-from .forms import search_form
+#Import everything from forms
+from .forms import *
 
 
 #Import datetime
@@ -82,7 +45,8 @@ import datetime
 @login_required(login_url='login')
 def active_projects(request):
 	#Get username_id from User
-	current_user = User.objects.get(username = request.user.get_username())
+	current_user = request.user
+
 
 	#Setup connection to the database and query it
 	cursor = connection.cursor()
@@ -442,7 +406,28 @@ def index(request):
 	return HttpResponseRedirect(reverse('login'))
 
 
+@login_required(login_url='login')
+def is_admin(request):
+	"""
+	We will determine if the user is an administrator. Then we
+	will return
+	"""
+	current_user = request.user
+	results = user_groups.objects.filter(username_id = current_user.id).aggregate(Min('user_group_permission'))
 
+	#ADMIN
+	if results.values()[0] == 1:
+		request.session['IS_ADMIN'] = 'TRUE'
+	else:
+		request.session['IS_ADMIN'] = 'FALSE'
+
+	#Group Admin
+	if results.values()[0] == 2:
+		request.session['IS_GROUP_ADMIN'] = 'TRUE'
+	else:
+		request.session['IS_GROUP_ADMIN'] = 'FALSE'
+
+	return
 
 def login(request):
 	"""
@@ -510,9 +495,15 @@ def login(request):
 				if result['success']:
 					user = auth.authenticate(username=username, password=password)
 					auth.login(request, user)
+
+					is_admin(request)
+
+
 			else:
 				user = auth.authenticate(username=username, password=password)
 				auth.login(request, user)
+
+				is_admin(request)
 					
 			#Just double checking. :)
 			if request.user.is_authenticated:
@@ -927,7 +918,7 @@ def new_task(request):
 	
 	else:
 		#Obtain the groups the user is associated with
-		current_user = User.objects.get(id = request.user.id)
+		current_user = request.user
 		cursor = connection.cursor()
 
 		cursor.execute(
@@ -1003,6 +994,36 @@ def organisation_information(request, organisations_id):
 
 @login_required(login_url='login')
 def project_information(request, project_id):
+	"""
+	We need to determine if the user has access to any of the groups that
+	this project is associated to. We will do a simple count(*) SQL QUERY
+	that will determine this.
+	"""
+	current_user = request.user
+
+	# Setup connection to the database and query it
+	cursor = connection.cursor()
+
+	cursor.execute("""
+		SELECT COUNT(*)
+		FROM
+		  project_groups
+		, user_groups
+		
+		WHERE 1=1
+		AND project_groups.groups_id_id = user_groups.group_id_id
+		AND project_groups.is_deleted = 'FALSE'
+		AND user_groups.is_deleted = 'FALSE'
+		AND user_groups.username_id = %s
+		AND project_groups.project_id_id = %s
+	""", [current_user.id, project_id])
+	has_permission = cursor.fetchall()
+
+	if not has_permission[0][0] == 1 and not request.session['IS_ADMIN'] == 'TRUE':
+		# Send them to 404!!
+		raise Http404
+
+
 	"""
 	There are two buttons on the project information page. Both will come
 	here. Both will save the data, however only one of them will resolve
@@ -1089,7 +1110,8 @@ def project_information(request, project_id):
 
 	else:
 		#If the method is not POST then we have to define project_results
-		project_results = project.objects.get(project_id = project_id)
+		#project_results = project.objects.get(project_id = project_id)
+		project_results = get_object_or_404(project,project_id = project_id)
 
 
 	#Obtain the required data
@@ -1380,12 +1402,42 @@ def search_projects_tasks(request):
 @login_required(login_url='login')
 def task_information(request, task_id):
 	"""
+	We need to determine if the user has access to any of the groups that
+	this task is associated to. We will do a simple count(*) SQL QUERY
+	that will determine this.
+	"""
+	current_user = request.user
+
+	# Setup connection to the database and query it
+	cursor = connection.cursor()
+
+	cursor.execute("""
+		SELECT COUNT(*)
+		FROM
+		  tasks_groups
+		, user_groups
+		WHERE 1=1
+		AND tasks_groups.groups_id_id = user_groups.group_id_id
+		AND tasks_groups.is_deleted = 'FALSE'
+		AND user_groups.is_deleted = 'FALSE'
+		AND user_groups.username_id = %s
+		AND tasks_groups.tasks_id_id = %s
+	""", [current_user.id, task_id])
+	has_permission = cursor.fetchall()
+
+	if not has_permission[0][0] == 1 and not request.session['IS_ADMIN'] == 'TRUE':
+		# Send them to 404!!
+		raise Http404
+
+
+	"""
 	There are two buttons on the task information page. Both will come
 	here. Both will save the data, however only one of them will resolve
 	the task.
 	"""
 	#Define the data we will edit
-	task_results = tasks.objects.get(tasks_id = task_id)
+	#task_results = tasks.objects.get(tasks_id = task_id)
+	task_results = get_object_or_404(tasks, tasks_id = task_id)
 	
 	#Get the data from the form
 	if request.method == "POST":
