@@ -56,3 +56,34 @@ select option:disabled {
 	color: #757575;
 	text-decoration: none;
 }
+
+.search {
+     border-radius: 5px;
+     width: 99%;
+     height: 25px;
+}
+
+table {
+    width: 100%;
+}
+
+table tr:nth-child(even) {
+    background-color: #C0C0C0;
+}
+
+table .header {
+    background-color: #E18A07;
+    height: 40px;
+}
+
+table .title {
+    border-radius: 5px;
+    width: 99%;
+    height: 25px;
+}
+
+.task_short_description {
+    border-radius: 5px;
+    width: 99%;
+    height: 25px;
+}

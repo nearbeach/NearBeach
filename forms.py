@@ -363,6 +363,8 @@ class search_projects_form(forms.Form):
 												choices = INCLUDE_CLOSED)											
 	
 class task_information_form(ModelForm):
+	task_short_description = forms.CharField(max_length=255, widget=forms.TextInput(attrs={"class":'task_short_description'}))
+
 	start_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
 	start_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
 	start_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))

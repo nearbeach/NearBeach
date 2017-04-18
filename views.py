@@ -1501,7 +1501,7 @@ def task_information(request, task_id):
 			task_history_text_results = form.cleaned_data['task_history_text']
 			
 			if not task_history_text_results == '':
-				current_user = User.objects.get(username = request.user.get_username())
+				current_user = request.user
 				
 				task_id_connection = tasks.objects.get(tasks_id = task_id)
 				
