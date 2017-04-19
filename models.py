@@ -19,6 +19,15 @@ PROJECT_STATUS_CHOICE = (
 )
 
 #List of tables - in alphabetical order
+class costs(models.Model):
+	cost_id = models.AutoField(primary_key = True)
+	project_id = models.ForeignKey('project', on_delete=models.CASCADE, blank=True, null=True)
+	task_id = models.ForeignKey('tasks', on_delete=models.CASCADE, blank=True, null=True)
+	cost_description = models.CharField(max_length=255, )
+	cost_amount = models.DecimalField(max_digits=19, decimal_places=2)
+	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
+
+
 class customers(models.Model):
 	customer_id = models.AutoField(primary_key = True)
 	customer_title = models.ForeignKey('list_of_titles', on_delete = models.CASCADE,)

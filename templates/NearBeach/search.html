@@ -13,7 +13,7 @@
 <div>
 	<h3>Projects</h3>
 	<table>
-		<tr><td>Project ID</td><td>Project Name</td><td>Organisation</td><td>Project Status</td><td>Project End Date</td></tr>
+		<tr class="header"><td>Project ID</td><td>Project Name</td><td>Organisation</td><td>Project Status</td><td>Project End Date</td></tr>
 		{% for row in project_results %}
 			<tr>
 			<td><a href="{% url 'project_information' row.project_id %}">PRO{{ row.project_id }}</a></td>
@@ -28,7 +28,7 @@
 <div>
 	<h3>Tasks</h3>
 	<table>
-		<tr><td>Task ID</td><td>Task Description</td><td>Organisation</td><td>Task Status</td><td>Task End Date</td></tr>
+		<tr class="header"><td>Task ID</td><td>Task Description</td><td>Organisation</td><td>Task Status</td><td>Task End Date</td></tr>
 		{% for row in task_results %}
 			<tr>
 			<td><a href="{% url 'task_information' row.tasks_id %}">TASK{{ row.tasks_id }}</a></td>
