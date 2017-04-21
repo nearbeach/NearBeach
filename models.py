@@ -27,6 +27,12 @@ class costs(models.Model):
 	cost_amount = models.DecimalField(max_digits=19, decimal_places=2)
 	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
 
+	def __str__(self):
+		return str(self.cost_description) + ' - $' + self.cost_amount
+
+	class Meta:
+		db_table = "costs"
+
 
 class customers(models.Model):
 	customer_id = models.AutoField(primary_key = True)
@@ -51,6 +57,24 @@ class customers_campus(models.Model):
 	
 	class Meta:
 		db_table = "customers_campus"
+
+class documents(models.Model):
+	document_id = models.AutoField(primary_key=True)
+	project_id = models.ForeignKey('project', on_delete=models.CASCADE, blank=True, null=True)
+	task_id = models.ForeignKey('tasks', on_delete=models.CASCADE, blank=True, null=True)
+	document_description = models.CharField(max_length=255)
+	document_location = models.TextField() #Will contain drive locations & URLs
+	document_folder_id = models.ForeignKey('document_folders', on_delete=models.CASCADE, blank=True, null=True)
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
+
+
+class document_folders(models.Model):
+	document_folder_id = models.AutoField(primary_key=True)
+	project_id = models.ForeignKey('project', on_delete=models.CASCADE, blank=True, null=True)
+	task_id = models.ForeignKey('tasks', on_delete=models.CASCADE, blank=True, null=True)
+	document_folder_description = models.CharField(max_length=255)
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
+
 
 class groups(models.Model):
 	group_id = models.AutoField(primary_key = True)

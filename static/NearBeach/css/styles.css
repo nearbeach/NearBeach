@@ -68,11 +68,11 @@ table {
 }
 
 table tr:nth-child(even) {
-    background-color: #C0C0C0;
+    background-color: #efefef;
 }
 
 table .header {
-    background-color: #E18A07;
+    background-color: #3194AD;
     height: 40px;
 }
 

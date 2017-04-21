@@ -6,6 +6,7 @@ from .models import *
 admin.site.register(costs)
 admin.site.register(customers)
 admin.site.register(customers_campus)
+admin.site.register(documents)
 admin.site.register(group_permissions)
 admin.site.register(groups)
 admin.site.register(list_of_countries_regions)
