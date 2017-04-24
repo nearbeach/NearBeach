@@ -1093,7 +1093,7 @@ def project_information(request, project_id):
 			project_history_text_results = form.cleaned_data['project_history_text']
 			
 			if not project_history_text_results == '':
-				current_user = User.objects.get(username = request.user.get_username())
+				current_user = request.user
 				
 				### TEMP SOLUTION ###
 				project_id_connection = project.objects.get(pk = project_id)

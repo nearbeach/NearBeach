@@ -65,6 +65,13 @@ select option:disabled {
 
 table {
     width: 100%;
+
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    hyphens: auto;
 }
 
 table tr:nth-child(even) {
@@ -86,4 +93,17 @@ table .title {
     border-radius: 5px;
     width: 99%;
     height: 25px;
+}
+
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: none; /* If you want to remove the border as well */
+    background-color: #e6ffff;
+    -webkit-border-radius: 20px;
+   -moz-border-radius: 20px;
+   border-radius: 20px;
+
 }
