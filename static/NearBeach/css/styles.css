@@ -107,3 +107,9 @@ select {
    border-radius: 20px;
 
 }
+
+.landing_page {
+	position: relative;
+	max-width: 1200px;
+	margin: auto;
+}
