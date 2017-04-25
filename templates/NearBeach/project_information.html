@@ -3,53 +3,100 @@
 {% load static %}
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <body onload="initiate_dates();">
-<h1>Project Information - PRO{{ project_results.project_id }}</h1>
+	<div class="div_content">
+		<div class="div_header">
+			<h1>Project Information - PRO{{ project_results.project_id }}</h1>
+		</div>
+		<div class="div_sub_content">
+			<form action="{% url 'project_information' project_results.project_id %}" method="POST">
+				{% csrf_token %}
+				{{ project_information_form.project_name }}<br/>
+				{{ project_information_form.project_description }}<br/>
+				Organisation - {{ project_results.organisation_name }}<br/>
+				Project Status - {{ project_results.project_status }}<br/>
+				Project Start - {{ project_information_form.start_date_year }}{{ project_information_form.start_date_month }}{{ project_information_form.start_date_day }} @ {{ project_information_form.start_date_hour }}:{{ project_information_form.start_date_minute }} {{ project_information_form.start_date_meridiems }}<br/>
+				Project Finish - {{ project_information_form.finish_date_year }}{{ project_information_form.finish_date_month }}{{ project_information_form.finish_date_day }} @ {{ project_information_form.finish_date_hour }}:{{ project_information_form.finish_date_minute }}{{ project_information_form.finish_date_meridiems }}<br/><br/>
+				{{ project_information_form.project_history_text }}
+				<input type="submit" name="Save" value="Save"/>
+				{% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
+					<input type="submit" name="Resolve" value="Resolve Project"/>
+				{% endif %}
+			</form>
+		</div>
+	</div>
+	<br/>
+	<div class="div_content">
+		<div class="div_header">
+			<h3>Project History</h3>
+		</div>
+		<div class="div_sub_content" style="display: none;>
+			{% if project_history_results %}
+				{% for row in project_history_results %}
+					<p>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.audit_date }}<br />
+					<textarea readonly>{{ row.project_history }}</textarea>
+					</p>
+				{% endfor %}
+			{% else %}
+				<p>Currently no history</p>
+			{% endif %}
+		</div>
+	</div>
+	<br/>
+	<div class="div_content">
+		<div class="div_header">
+			<h3>Associated Tasks</h3>
+		</div>
+		<div class="div_sub_content" style="display: none;>
+			<a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
+			{% if associated_tasks_results %}
+					<table>
+					<tr><td>Task Id</td><td>Short Description</td><td>End Date</td></tr>
+					{% for associated_task_row in associated_tasks_results %}
+						<tr>
+						<td><a href="{% url 'task_information' associated_task_row.tasks_id %}">{{ associated_task_row.tasks_id }}</a></td>
+						<td>{{ associated_task_row.task_short_description }}</td>
+						<td>{{ associated_task_row.task_end_date }}</td>
+						</tr>
+					{% endfor %}
 
-<form action="{% url 'project_information' project_results.project_id %}" method="POST">
-{% csrf_token %}
-<table>
-<tr><td>{{ project_information_form.project_name }}</td></tr>
-<tr><td>{{ project_information_form.project_description }}</td></tr>
-<tr><td>Organisation - {{ project_results.organisation_name }}</td></tr>
-<tr><td>Project Status - {{ project_results.project_status }}</td></tr>
-<tr><td>Project Start Date</td><td>{{ project_information_form.start_date_year }}{{ project_information_form.start_date_month }}{{ project_information_form.start_date_day }}</td></tr>
-<tr><td>Project Start Time</td><td>{{ project_information_form.start_date_hour }}:{{ project_information_form.start_date_minute }} {{ project_information_form.start_date_meridiems }}</td></tr>
-<tr><td>Project finish Date</td><td>{{ project_information_form.finish_date_year }}{{ project_information_form.finish_date_month }}{{ project_information_form.finish_date_day }}</td></tr>
-<tr><td>Project finish Date</td><td>{{ project_information_form.finish_date_hour }}:{{ project_information_form.finish_date_minute }}{{ project_information_form.finish_date_meridiems }}</td></tr>
-<tr><td>{{ project_information_form.project_history_text }}</td></tr>
-</table>
-<input type="submit" name="Save" value="Save"/>
-{% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
-	<input type="submit" name="Resolve" value="Resolve Project"/>
-{% endif %}
-</form>
-<h3>Project History</h3>
-{% if project_history_results %}
-	{% for row in project_history_results %}
-		<p>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.audit_date }}<br />
-		<textarea readonly>{{ row.project_history }}</textarea>
-		</p>
-	{% endfor %}
-{% else %}
-	<p>Currently no history</p>
-{% endif %}
-
-<h3>Associated Tasks</h3>
-<a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
-{% if associated_tasks_results %}
-		<table>
-		<tr><td>Task Id</td><td>Short Description</td><td>End Date</td></tr>
-		{% for associated_task_row in associated_tasks_results %}
-			<tr>
-			<td><a href="{% url 'task_information' associated_task_row.tasks_id %}">{{ associated_task_row.tasks_id }}</a></td>
-			<td>{{ associated_task_row.task_short_description }}</td>
-			<td>{{ associated_task_row.task_end_date }}</td>
-			</tr>
-		{% endfor %}
-		
-		</table>
-{% else %}
-	<p>Currently no associated history.</p>
-{% endif %}
+					</table>
+			{% else %}
+				<p>Currently no associated history.</p>
+			{% endif %}
+		</div>
+	</div>
+	<br/>
+	<div class="div_content">
+		<div class="div_header">
+			<h3>Project Contacts</h3>
+		</div>
+		<div class="div_sub_content" style="display: none;>
+			{% if project_customers_results %}
+				<table>
+					<tr>
+						<td></td>
+					</tr>
+				</table>
+			{% endif %}
+		</div>
+	</div>
+	<br/>
+	<div class="div_content">
+		<div class="div_header">
+			<h3>Project Costs</h3>
+		</div>
+		<div class="div_sub_content" style="display: none;>
+			[Content to contain ability to add in extra costs]
+		</div>
+	</div>
+	<br/>
+	<div class="div_content">
+		<div class="div_header">
+			<h3>Project Documents</h3>
+		</div>
+		<div class="div_sub_content" style="display: none;">
+			[Content to contain all documents + folder systems]
+		</div>
+	</div>
 </body>
 {% endblock %}

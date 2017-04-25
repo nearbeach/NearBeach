@@ -9,7 +9,7 @@
 	<input hidden type="submit">
 </form>
 <table>
-<tr><td>Customer Name</td><td>Organisation</td></tr>
+<tr class="header"><td>Customer Name</td><td>Organisation</td></tr>
 {% for customer in customers_results %}
 	<tr>
 		<td><a href="{% url 'customer_information' customer.customer_id %}">{{ customer.customer_first_name }} {{ customer.customer_last_name }}</td>

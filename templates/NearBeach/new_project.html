@@ -3,26 +3,50 @@
 {% load static %}
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <body onload="initiate_dates();">
-<h1>New Project</h1>
-{% if organisations_count == 0 %}
-	<a href="{% url 'new_organisation' %}">Can you please create an organisation first.</a>
-{% else %}
 <form action={% url 'new_project' %} method="post" class="new_project">
 	{% csrf_token %}
-	<table>
-		{{ new_project_form.as_table }}
-	</table>
-	<h2>Assigned to Group(s)</h2>
-	<p>Please select the appropriate groups to assign this project to</p>
-	<select multiple required name="assigned_to_groups" id="assigned_to_groups">
-	{% for group_row in groups_results %}
-		<option value = "{{ group_row.group_id }}">{{ group_row.group_name }}</option>
-	{% endfor %}
-	</select>
-	<br />
-	<input type="submit" value="Submit new project">
-</form>
-{% endif %}
+	<div class="div_content">
+		<div class="div_header">
+			<h1>New Project</h1>
+		</div>
+		<div class="div_sub_content">
+			{% if organisations_count == 0 %}
+				<a href="{% url 'new_organisation' %}">Can you please create an organisation first.</a>
+			{% else %}
+				<table>
+					<tr class="header"><td width="150px">Field</td><td>Input</td></tr>
+					<tr><td>Project Name</td><td>{{ new_project_form.project_name }}</td></tr>
+					<tr><td>Project Description</td><td>{{ new_project_form.project_description }}</td></tr>
+					<tr><td>Organisation</td><td>{{ new_project_form.organisations_id }}</td></tr>
+					<tr><td>Project Start</td><td>{{ new_project_form.start_date_year }}/{{ new_project_form.start_date_month }}/{{ new_project_form.start_date_day }}<br/>
+						{{ new_project_form.start_date_hour }}:{{ new_project_form.start_date_minute }} {{ new_project_form.start_date_meridiems }}</td></tr>
+					<tr><td>Project Finish</td><td>{{ new_project_form.finish_date_year }}/{{ new_project_form.finish_date_month }}/{{ new_project_form.finish_date_day }}<br/>
+						{{ new_project_form.finish_date_hour }}:{{ new_project_form.finish_date_minute }} {{ new_project_form.finish_date_meridiems }}</td></tr>
+				</table>
+		</div>
+	</div>
+	<br/>
+	<div class="div_content">
+		<div class="div_header">
+			<h2>Assigned to Group(s)</h2>
+		</div>
+		<div class="div_sub_content">
+			<p>Please select the appropriate groups to assign this project to</p>
+			<select multiple required name="assigned_to_groups" id="assigned_to_groups" style="width: 50%; height: 120px;">
+			{% for group_row in groups_results %}
+				<option value = "{{ group_row.group_id }}">{{ group_row.group_name }}</option>
+			{% endfor %}
+			</select>
+			<br />
+			<input type="submit" value="Submit new project">
+			</form>
+			{% endif %}
+		</div>
+	</div>
+
+
+			</div>
+		</div>
 </body>
 
 {% endblock %}

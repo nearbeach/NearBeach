@@ -113,3 +113,29 @@ select {
 	max-width: 1200px;
 	margin: auto;
 }
+
+textarea {
+    width: 99%;
+    height: 160px;
+}
+
+
+.div_content {
+    border-style: solid;
+    border: 1px;
+    border-radius: 15px 15px 0px 0px;
+    border-color: #A7E5F0;
+}
+
+.div_header {
+    border-style: solid;
+    border-radius: 15px 15px 0px 0px;
+    border-color: #A7E5F0;
+    background-color: #A7E5F0;
+}
+
+.div_sub_content {
+    border-style: solid;
+    border-radius: 0px 0px 15px 15px;
+    border-color: #A7E5F0;
+}

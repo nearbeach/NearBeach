@@ -1116,6 +1116,7 @@ def project_information(request, project_id):
 
 	#Obtain the required data
 	project_history_results = project_history.objects.filter(project_id = project_id, is_deleted = 'FALSE')
+	project_customers_results = project_customers.objects.filter(project_id = project_id, is_deleted = 'FALSE')
 	
 	"""
 	The 24 hours to 12 hours formula.
@@ -1188,6 +1189,7 @@ def project_information(request, project_id):
 		'project_results': project_results,
 		'associated_tasks_results': associated_tasks_results,
 		'project_history_results': project_history_results,
+		'project_customers_results': project_customers_results,
 	}
 	
 	return HttpResponse(t.render(c, request))
