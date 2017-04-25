@@ -1116,7 +1116,7 @@ def project_information(request, project_id):
 
 	#Obtain the required data
 	project_history_results = project_history.objects.filter(project_id = project_id, is_deleted = 'FALSE')
-	project_customers_results = project_customers.objects.filter(project_id = project_id, is_deleted = 'FALSE')
+
 	
 	"""
 	The 24 hours to 12 hours formula.
@@ -1179,6 +1179,24 @@ def project_information(request, project_id):
 		""", [project_id])
 	associated_tasks_results = namedtuplefetchall(cursor)
 
+	cursor.execute("""
+		SELECT DISTINCT
+		  customers.customer_first_name
+		, customers.customer_last_name
+		, project_customers.customer_description
+		, customers.customer_email
+		, customers_campus_information.campus_nickname
+		, customers_campus_information.customer_phone
+		FROM
+		  customers LEFT JOIN 
+			(SELECT * FROM customers_campus join organisations_campus ON customers_campus.campus_id_id = organisations_campus.id) as customers_campus_information
+			ON customers.customer_id = customers_campus_information.customer_id_id
+		, project_customers
+		WHERE 1=1
+		AND customers.customer_id = project_customers.customer_id_id
+		AND project_customers.project_id_id = %s
+	""", [project_id])
+	project_customers_results = namedtuplefetchall(cursor)
 	
 	#Load the template
 	t = loader.get_template('NearBeach/project_information.html')

@@ -187,6 +187,7 @@ class project_customers(models.Model):
 	project_customers_id = models.AutoField(primary_key = True)
 	project_id = models.ForeignKey('project', on_delete = models.CASCADE,)
 	customer_id = models.ForeignKey('customers', on_delete = models.CASCADE,)
+	customer_description = models.CharField(max_length=255, null=True, blank=True)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	audit_date = models.DateTimeField(auto_now = True)
 	
