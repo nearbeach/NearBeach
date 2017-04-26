@@ -1,21 +1,27 @@
 {% extends "./template.html" %}
 {% block content %}
-<h1>Search Customers</h1>
-<form action={% url 'search_customers' %} method="post" class="search_customers">
-	{% csrf_token %}
-	<table>
-		{{ search_customers_form.search_customers }}
-	</table>
-	<input hidden type="submit">
-</form>
-<table>
-<tr class="header"><td>Customer Name</td><td>Organisation</td></tr>
-{% for customer in customers_results %}
-	<tr>
-		<td><a href="{% url 'customer_information' customer.customer_id %}">{{ customer.customer_first_name }} {{ customer.customer_last_name }}</td>
-		<td>{{ customer.customer_first_name }}</td>
-	</tr>
-{% endfor %}
-</table>
+<div class="div_content">
+	<div class="div_header">
+		<h1>Search Customers</h1>
+	</div>
+	<div class="div_sub_content">
+		<form action={% url 'search_customers' %} method="post" class="search_customers">
+			{% csrf_token %}
+			<table>
+				{{ search_customers_form.search_customers }}
+			</table>
+			<input hidden type="submit">
+		</form>
+		<table>
+		<tr class="header"><td width="30%">Customer Name</td><td>Organisation</td></tr>
+		{% for customer in customers_results %}
+			<tr>
+				<td><a href="{% url 'customer_information' customer.customer_id %}">{{ customer.customer_first_name }} {{ customer.customer_last_name }}</td>
+				<td>{{ customer.customer_first_name }}</td>
+			</tr>
+		{% endfor %}
+		</table>
+	</div>
+</div>
 {% endblock %}
 

@@ -2,41 +2,49 @@
 {% block content %}
 {% load static %}
 <script type="text/javascript" src="{% static 'NearBeach/javascript/search_active_projects.js' %}"></script>
-<h1>Active Projects</h1>
+<div class="div_content">
+	<div class="div_header">
+		<h1>Active Projects</h1>
+	</div>
+	<div class="div_sub_content">
+		{% if active_projects_results %}
+			<input type="text" id="Search_Active_Projects" onkeyup="Search_Active_Projects()" placeholder="Search for Active Projects" class="search">
+			<table id="Active_Projects_Table">
+			<tr class="header">
+				<th style="width: 10%;">Project</th>
+				<th style="width: 10%;">Task</th>
+				<th style="width: 70%;">Description</th>
+				<th style="width: 10%;">End Date</th>
+			</tr>
 
-{% if active_projects_results %}
-	<input type="text" id="Search_Active_Projects" onkeyup="Search_Active_Projects()" placeholder="Search for Active Projects" class="search">
-	<table id="Active_Projects_Table">
-	<tr class="header">
-		<th style="width: 10%;">Project</th>
-		<th style="width: 10%;">Task</th>
-		<th style="width: 70%;">Description</th>
-		<th style="width: 10%;">End Date</th>
-	</tr>
-	
-	{% for row in active_projects_results %}
-		<tr>
-			{% if row.0 == None %}
-				<td> - </td>
-			{% else %}
-				<td><a href="{% url 'project_information' row.0 %}">PRO{{ row.0 }}</a></td>
-			{% endif %}
-			
-			{% if row.1 == "" %}
-				<td> - </td>
-			{% else %}
-				<td><a href="{% url 'task_information' row.1 %}">TASK{{ row.1 }}</a></td>
-			{% endif %}
-			
-			<td>{{ row.2 }}</td>
-			<td>{{ row.3 }}</td>
-		</tr>
-	{% endfor %}
-	</table>
-	
+			{% for row in active_projects_results %}
+				<tr>
+					{% if row.0 == None %}
+						<td> - </td>
+					{% else %}
+						<td><a href="{% url 'project_information' row.0 %}">PRO{{ row.0 }}</a></td>
+					{% endif %}
 
-{% else %}
-	<p>Sorry, but there seems to be no data :(</p>
-{% endif %}
+					{% if row.1 == "" %}
+						<td> - </td>
+					{% else %}
+						<td><a href="{% url 'task_information' row.1 %}">TASK{{ row.1 }}</a></td>
+					{% endif %}
+
+					<td>{{ row.2 }}</td>
+					<td>{{ row.3 }}</td>
+				</tr>
+			{% endfor %}
+			</table>
+
+
+		{% else %}
+			<p>Sorry, but there seems to be no data :(</p>
+		{% endif %}
+	</div>
+</div>
+
+
+
 
 {% endblock %}
