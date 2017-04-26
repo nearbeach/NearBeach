@@ -53,7 +53,7 @@
 				<a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
 				{% if associated_tasks_results %}
 						<table>
-						<tr><td>Task Id</td><td>Short Description</td><td>End Date</td></tr>
+						<tr class="header"><td>Task Id</td><td>Short Description</td><td>End Date</td></tr>
 						{% for associated_task_row in associated_tasks_results %}
 							<tr>
 							<td><a href="{% url 'task_information' associated_task_row.tasks_id %}">{{ associated_task_row.tasks_id }}</a></td>

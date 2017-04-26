@@ -282,7 +282,9 @@ class tasks_actions(models.Model):
 
 class tasks_customers(models.Model):
 	tasks_customers_id = models.AutoField(primary_key = True)
-	customer_id = models.ForeignKey('customers', on_delete = models.CASCADE,)	
+	tasks_id = models.ForeignKey('tasks', on_delete=models.CASCADE, )
+	customer_id = models.ForeignKey('customers', on_delete = models.CASCADE,)
+	customers_description = models.CharField(max_length=155, null=True, blank=True)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	audit_date = models.DateTimeField(auto_now = True)	
 	

@@ -1080,11 +1080,9 @@ def project_information(request, project_id):
 			
 			project_results.save()
 
-			print("HELLO WORLD!")
+
 			if 'add_customer_submit' in request.POST:
 				#The user has tried adding a customer
-				print("Add customer has been submitted")
-				#customer_id = form.cleaned_data['add_customer_select']
 				customer_id = int(request.POST.get("add_customer_select"))
 
 				submit_customer = project_customers(
@@ -1531,13 +1529,15 @@ def task_information(request, task_id):
 				if start_date_hour == 12:
 					start_date_hour = 0
 			else:
-				start_date_hour = start_date_hour + 12
+				if start_date_hour > 12:
+					start_date_hour = start_date_hour + 12
 			
 			if finish_date_meridiems == "AM":
 				if finish_date_hour == 12:
 					finish_date_hour = 0
 			else:
-				finish_date_hour = finish_date_hour + 12
+				if finish_date_hour > 12:
+					finish_date_hour = finish_date_hour + 12
 			
 			
 			#Create the final start/end date fields
@@ -1550,7 +1550,21 @@ def task_information(request, task_id):
 				task_results.task_status = 'Resolved'
 			
 			task_results.save()
-			
+
+			if 'add_customer_submit' in request.POST:
+				#The user has tried adding a customer
+				customer_id = int(request.POST.get("add_customer_select"))
+
+				tasks_instance = tasks.objects.get(pk = task_id)
+				customers_instance = customers.objects.get(pk = customer_id)
+
+				submit_customer = tasks_customers(
+					tasks_id = tasks.objects.get(pk = task_id),
+					customer_id = customers.objects.get(pk = customer_id)
+				)
+
+				submit_customer.save()
+
 			#Now save the new project history.
 			task_history_text_results = form.cleaned_data['task_history_text']
 			
@@ -1631,7 +1645,54 @@ def task_information(request, task_id):
 			AND project_tasks.task_id = %s
 		""", [task_id])
 	associated_project_results = namedtuplefetchall(cursor)
-	
+
+
+	cursor.execute("""
+		SELECT DISTINCT
+		  customers.customer_first_name
+		, customers.customer_last_name
+		, tasks_customers.customers_description
+		, customers.customer_email
+		, customers_campus_information.campus_nickname
+		, customers_campus_information.customer_phone
+		FROM
+		  customers LEFT JOIN 
+			(SELECT * FROM customers_campus join organisations_campus ON customers_campus.campus_id_id = organisations_campus.id) as customers_campus_information
+			ON customers.customer_id = customers_campus_information.customer_id_id
+		, tasks_customers
+		WHERE 1=1
+		AND customers.customer_id = tasks_customers.customer_id_id
+		AND tasks_customers.tasks_id_id = %s
+	""", [task_id])
+	tasks_customers_results = namedtuplefetchall(cursor)
+
+	#task_customers_results
+	cursor.execute("""
+		SELECT DISTINCT 
+		  customers.customer_id
+		, customers.customer_first_name || ' ' || customers.customer_last_name AS customer_name
+		
+		FROM
+		  tasks 
+		, organisations LEFT JOIN customers
+			ON organisations.organisations_id = customers.organisations_id_id
+		
+		WHERE 1=1
+		AND tasks.organisations_id_id = organisations.organisations_id
+		
+		AND customers.customer_id NOT IN (SELECT DISTINCT tasks_customers.customer_id_id
+					FROM tasks_customers
+					WHERE 1=1
+					AND tasks_customers.tasks_id_id = tasks.tasks_id
+					AND tasks_customers.is_deleted = 'FALSE')
+		
+		
+		-- LINKS --
+		AND organisations.organisations_id = %s
+		AND tasks.tasks_id = %s
+		-- END LINKS --	
+	""", [task_results.organisations_id_id, task_id])
+	new_customers_results = namedtuplefetchall(cursor)
 	
 	#Load the template
 	t = loader.get_template('NearBeach/task_information.html')
@@ -1642,6 +1703,8 @@ def task_information(request, task_id):
 		'task_information_form': task_information_form(initial=initial),
 		'associated_project_results': associated_project_results,
 		'task_history_results': task_history_results,
+		'tasks_customers_results': tasks_customers_results,
+		'new_customers_results': new_customers_results,
 	}
 
 	return HttpResponse(t.render(c, request))

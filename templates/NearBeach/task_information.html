@@ -3,6 +3,7 @@
 {% load static %}
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/expand_sections.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/task_information.js' %}"></script>
 <body onload="initiate_dates();">
 	<form action="{% url 'task_information' task_results.tasks_id %}" method="POST">
 		{% csrf_token %}
@@ -50,7 +51,7 @@
 				<a href="{% url 'associated_projects' task_results.tasks_id %}">Associate Project</a>
 				{% if associated_project_results %}
 						<table>
-							<tr><td>Project Id</td><td>project Name</td><td>End Date</td></tr>
+							<tr class="header"><td>Project Id</td><td>project Name</td><td>End Date</td></tr>
 							{% for associated_project_row in associated_project_results %}
 								<tr>
 								<td><a href="{% url 'project_information' associated_project_row.project_id %}">{{ associated_project_row.project_id }}</a></td>
@@ -67,10 +68,42 @@
 		<br/>
 		<div class="div_content">
 			<div class="div_header" onclick="hide_unhide('task_customers')">
-				<h3>task_customers</h3>
+				<h3>Task's Customers</h3>
 			</div>
 			<div class="div_sub_content" id="task_customers" style="display: none;">
-				[INSERT CONTENT]
+				{% if new_customers_results %}
+					<select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" >
+						<option value="---------" selected>---------</option>
+						{% for row in new_customers_results %}
+							<option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
+						{% endfor %}
+					</select>
+					<input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Project" disabled="disabled">
+				{% endif %}
+				{% if tasks_customers_results %}
+
+					<table>
+						<tr class="header">
+							<td>Customer Name</td>
+							<td>Customer Description</td>
+							<td>Customer Email</td>
+							<td>Customer Campus</td>
+							<td>Customer Phone</td>
+						</tr>
+						{% for row in tasks_customers_results %}
+							<tr>
+								<td>{{ row.customer_first_name }} {{ row.customer_last_name }}</td>
+								<td>{{ row.customer_description }}</td>
+								<td>{{ row.customer_email }}</td>
+								<td>{{ row.campus_nickname }}</td>
+								<td>{{ row.customer_phone }}</td>
+							</tr>
+						{% endfor %}
+					</table>
+
+				{% else %}
+					<br/>There are currently no customers associated to this task.
+				{% endif %}
 			</div>
 		</div>
 		<br/>
