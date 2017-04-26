@@ -200,15 +200,6 @@ def associated_tasks(request, project_id):
 
 @login_required(login_url='login')
 def campus_information(request, campus_information):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
-	
 	#Obtain data (before POST if statement as it is used insude)
 	campus_results = organisations_campus.objects.get(pk = campus_information)	
 	
@@ -1088,6 +1079,20 @@ def project_information(request, project_id):
 				project_results.project_status = 'Resolved'
 			
 			project_results.save()
+
+			print("HELLO WORLD!")
+			if 'add_customer_submit' in request.POST:
+				#The user has tried adding a customer
+				print("Add customer has been submitted")
+				#customer_id = form.cleaned_data['add_customer_select']
+				customer_id = int(request.POST.get("add_customer_select"))
+
+				submit_customer = project_customers(
+					project_id = project.objects.get(pk = project_id),
+					customer_id = customers.objects.get(pk = customer_id)
+				)
+
+				submit_customer.save()
 			
 			#Now save the new project history.
 			project_history_text_results = form.cleaned_data['project_history_text']
@@ -1197,6 +1202,34 @@ def project_information(request, project_id):
 		AND project_customers.project_id_id = %s
 	""", [project_id])
 	project_customers_results = namedtuplefetchall(cursor)
+
+	cursor.execute("""
+		SELECT DISTINCT 
+		  customers.customer_id
+		, customers.customer_first_name || ' ' || customers.customer_last_name AS customer_name
+		
+		FROM
+		  project 
+		, organisations LEFT JOIN customers
+			ON organisations.organisations_id = customers.organisations_id_id
+		
+		WHERE 1=1
+		AND project.organisations_id_id = organisations.organisations_id
+		
+		AND customers.customer_id NOT IN (SELECT DISTINCT project_customers.customer_id_id
+					FROM project_customers
+					WHERE 1=1
+					AND project_customers.project_id_id = project.project_id
+					AND project_customers.is_deleted = 'FALSE')
+		
+		
+		-- LINKS --
+		AND organisations.organisations_id = %s
+		AND project.project_id = %s
+		-- END LINKS --
+	""", [project_results.organisations_id_id, project_id])
+	new_customers_results = namedtuplefetchall(cursor)
+
 	
 	#Load the template
 	t = loader.get_template('NearBeach/project_information.html')
@@ -1208,6 +1241,7 @@ def project_information(request, project_id):
 		'associated_tasks_results': associated_tasks_results,
 		'project_history_results': project_history_results,
 		'project_customers_results': project_customers_results,
+		'new_customers_results': new_customers_results,
 	}
 	
 	return HttpResponse(t.render(c, request))

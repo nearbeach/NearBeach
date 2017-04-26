@@ -5,9 +5,9 @@ function enable_disable_add_customer() {
 	 * need to disable the add campus button. If not, we need to 
 	 * re-enable it again.
 	 */
-	var id_add_customer_select = document.getElementById("add_customer_select");
-	var id_add_customer_submit = document.getElementById("add_customer_submit");
-	
+	var id_add_customer_select = document.getElementById("id_add_customer_select");
+	var id_add_customer_submit = document.getElementById("id_add_customer_submit");
+
 	if (id_add_customer_select.selectedIndex==0) {
 		id_add_customer_submit.disabled = true;
 	} else {

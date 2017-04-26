@@ -2,58 +2,100 @@
 {% block content %}
 {% load static %}
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/expand_sections.js' %}"></script>
 <body onload="initiate_dates();">
-	<div>
-		<h1>Task information - TASK{{ task_results.tasks_id }}</h1>
-		<form action="{% url 'task_information' task_results.tasks_id %}" method="POST">
-			{% csrf_token %}
-			<div>{{ task_information_form.task_short_description }}</div>
-			<div>{{ task_information_form.task_long_description }}</div>
-			<div>Task Start Date - {{ task_information_form.start_date_year }}/{{ task_information_form.start_date_month }}/{{ task_information_form.start_date_day }}</div>
-			<div>Task Start Time - {{ task_information_form.start_date_hour }}:{{ task_information_form.start_date_minute }} {{ task_information_form.start_date_meridiems }}</div>
-			<div>Task finish Date - {{ task_information_form.finish_date_year }}/{{ task_information_form.finish_date_month }}/{{ task_information_form.finish_date_day }}</div>
-			<div>Task finish Time - {{ task_information_form.finish_date_hour }}:{{ task_information_form.finish_date_minute }} {{ task_information_form.finish_date_meridiems }}</div>
+	<form action="{% url 'task_information' task_results.tasks_id %}" method="POST">
+		{% csrf_token %}
+		<div class="div_content">
+			<div class="div_header">
+				<h1>Task information - TASK{{ task_results.tasks_id }}</h1>
+			</div>
+			<div class="div_sub_content">
+				{{ task_information_form.task_short_description }}<br/>
+				{{ task_information_form.task_long_description }}<br/>
+				Task Start - {{ task_information_form.start_date_year }}/{{ task_information_form.start_date_month }}/{{ task_information_form.start_date_day }} @ {{ task_information_form.start_date_hour }}:{{ task_information_form.start_date_minute }} {{ task_information_form.start_date_meridiems }}<br/>
+				Task finish Date - {{ task_information_form.finish_date_year }}/{{ task_information_form.finish_date_month }}/{{ task_information_form.finish_date_day }} @ {{ task_information_form.finish_date_hour }}:{{ task_information_form.finish_date_minute }} {{ task_information_form.finish_date_meridiems }}<br/>
+				<br/>
+				{{ task_information_form.task_history_text }}<br/>
 
-			<div>{{ task_information_form.task_history_text }}</div>
-			
-			<div>
 				<input type="submit" name="Save" value="Save"/>
 				{% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
 					<input type="submit" name="Resolve" value="Resolve Project"/>
 				{% endif %}
 			</div>
-		</form>
-	</div>
-	<div>
-		<h2>Task History</h2>
-		{% if task_history_results %}
-			{% for row in task_history_results %}
-				<p>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.audit_date }}<br />
-				<textarea readonly>{{ row.task_history }}</textarea>
-				</p>
-			{% endfor %}
-		{% else %}
-			<p>Currently no history</p>
-		{% endif %}
-	</div>
-	<div>
-		<h2>Associated Projects</h2>
-		<a href="{% url 'associated_projects' task_results.tasks_id %}">Associate Project</a>
-		{% if associated_project_results %}
-				<table>
-				<tr><td>Project Id</td><td>project Name</td><td>End Date</td></tr>
-				{% for associated_project_row in associated_project_results %}
-					<tr>
-					<td><a href="{% url 'project_information' associated_project_row.project_id %}">{{ associated_project_row.project_id }}</a></td>
-					<td>{{ associated_project_row.project_name }}</td>
-					<td>{{ associated_project_row.project_end_date }}</td>
-					</tr>
-				{% endfor %}
-				
-				</table>
-		{% else %}
-			<p>Currently no associated projects.</p>
-		{% endif %}
-	</div>
+		</div>
+		<br/>
+		<div class="div_content">
+			<div class="div_header" onclick="hide_unhide('task_history')">
+				<h3>Task History</h3>
+			</div>
+			<div class="div_sub_content" id="task_history" style="display: none;">
+				{% if task_history_results %}
+					{% for row in task_history_results %}
+						<p>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.audit_date }}<br />
+						<textarea readonly>{{ row.task_history }}</textarea>
+						</p>
+					{% endfor %}
+				{% else %}
+					<p>Currently no history</p>
+				{% endif %}
+			</div>
+		</div>
+		<br/>
+		<div class="div_content">
+			<div class="div_header" onclick="hide_unhide('associated_projects')">
+				<h3>Associated Projects</h3>
+			</div>
+			<div class="div_sub_content" id="associated_projects" style="display: none;">
+				<a href="{% url 'associated_projects' task_results.tasks_id %}">Associate Project</a>
+				{% if associated_project_results %}
+						<table>
+							<tr><td>Project Id</td><td>project Name</td><td>End Date</td></tr>
+							{% for associated_project_row in associated_project_results %}
+								<tr>
+								<td><a href="{% url 'project_information' associated_project_row.project_id %}">{{ associated_project_row.project_id }}</a></td>
+								<td>{{ associated_project_row.project_name }}</td>
+								<td>{{ associated_project_row.project_end_date }}</td>
+								</tr>
+							{% endfor %}
+						</table>
+				{% else %}
+					<p>Currently no associated projects.</p>
+				{% endif %}
+			</div>
+		</div>
+		<br/>
+		<div class="div_content">
+			<div class="div_header" onclick="hide_unhide('task_customers')">
+				<h3>task_customers</h3>
+			</div>
+			<div class="div_sub_content" id="task_customers" style="display: none;">
+				[INSERT CONTENT]
+			</div>
+		</div>
+		<br/>
+		<div class="div_content">
+			<div class="div_header" onclick="hide_unhide('task_costs')">
+				<h3>task_costs</h3>
+			</div>
+			<div class="div_sub_content" id="task_costs" style="display: none;">
+				[INSERT CONTENT]
+			</div>
+		</div>
+		<br/>
+		<div class="div_content">
+			<div class="div_header" onclick="hide_unhide('task_documents')">
+				<h3>task_documents</h3>
+			</div>
+			<div class="div_sub_content" id="task_documents" style="display: none;">
+				[INSERT CONTENT]
+			</div>
+		</div>
+	</form>
 </body>
+
+
+
+
+
 {% endblock %}
