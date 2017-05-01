@@ -73,7 +73,11 @@ class document_folders(models.Model):
 	project_id = models.ForeignKey('project', on_delete=models.CASCADE, blank=True, null=True)
 	task_id = models.ForeignKey('tasks', on_delete=models.CASCADE, blank=True, null=True)
 	document_folder_description = models.CharField(max_length=255)
+	parent_folder_id = models.ForeignKey('self', blank=True, null=True)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
+
+	def __str__(self):
+		return self.document_folder_description
 
 
 class groups(models.Model):
