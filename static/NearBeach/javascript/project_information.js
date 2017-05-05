@@ -14,3 +14,8 @@ function enable_disable_add_customer() {
 		add_customer_submit.disabled = false;
 	}
 }
+
+
+
+
+

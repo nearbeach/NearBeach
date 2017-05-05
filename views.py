@@ -1119,6 +1119,8 @@ def project_information(request, project_id):
 
 	#Obtain the required data
 	project_history_results = project_history.objects.filter(project_id = project_id, is_deleted = 'FALSE')
+	documents_results = documents.objects.filter(project_id = project_id, is_deleted = 'FALSE')
+	document_folders_results = document_folders.objects.filter(project_id = project_id, is_deleted = 'FALSE')
 
 	
 	"""
@@ -1240,6 +1242,8 @@ def project_information(request, project_id):
 		'project_history_results': project_history_results,
 		'project_customers_results': project_customers_results,
 		'new_customers_results': new_customers_results,
+		'documents_results': documents_results,
+		'document_folders_results': document_folders_results,
 	}
 	
 	return HttpResponse(t.render(c, request))

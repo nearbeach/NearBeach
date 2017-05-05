@@ -4,7 +4,14 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/expand_sections.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/project_information.js' %}"></script>
-<body onload="initiate_dates();">
+<script type="text/javascript" src="{% static 'NearBeach/javascript/render_documents.js' %}"></script>
+<script>
+	function on_page_load() {
+		initiate_dates();
+	}
+</script>
+
+<body onload="on_page_load();">
 	<form action="{% url 'project_information' project_results.project_id %}" method="POST">
 		<div class="div_content">
 			<div class="div_header">
