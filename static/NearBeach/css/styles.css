@@ -139,3 +139,7 @@ textarea {
     border-radius: 0px 0px 15px 15px;
     border-color: #A7E5F0;
 }
+
+.folder_sub_content {
+    padding-left: 20px;
+}

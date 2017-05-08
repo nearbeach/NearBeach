@@ -8,6 +8,12 @@
 <script>
 	function on_page_load() {
 		initiate_dates();
+		render_documents_code = render_documents({{ document_folders_results | safe }}, {{ documents_results | safe }}, null);
+
+		root_folder = document.getElementById("root_folder");
+		root_folder.innerHTML = render_documents_code;
+
+		alert(render_documents_code);
 	}
 </script>
 
@@ -129,7 +135,10 @@
 				<h3>Project Documents</h3>
 			</div>
 			<div class="div_sub_content" id="div_project_documents" style="display: none;">
-				[Content to contain all documents + folder systems]
+				[BUTTONS AND CONTENT]
+				<div id="root_folder">
+					[FOLDER CONTENT]
+				</div>
 			</div>
 		</div>
 	</form>

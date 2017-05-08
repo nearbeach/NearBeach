@@ -7,6 +7,7 @@ from django.contrib import auth
 from django.template import RequestContext, loader
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
 
 
 
@@ -1242,8 +1243,8 @@ def project_information(request, project_id):
 		'project_history_results': project_history_results,
 		'project_customers_results': project_customers_results,
 		'new_customers_results': new_customers_results,
-		'documents_results': documents_results,
-		'document_folders_results': document_folders_results,
+		'documents_results': serializers.serialize('json', documents_results),
+		'document_folders_results': serializers.serialize('json', document_folders_results),
 	}
 	
 	return HttpResponse(t.render(c, request))

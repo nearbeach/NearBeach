@@ -11,9 +11,9 @@ function render_documents(document_folders_results, documents_results, current_f
 	//alert(folder_results);
 
 	for (var i=0; i<folder_results.length; i++) {
-		content_string += '<div class="folder_content"><div class="folder_header">'
+		content_string += '<div class="folder_content"><div class="folder_header"><b>'
 		content_string += folder_results[i].fields.document_folder_description
-		content_string += '</div><div class="folder_sub_content">'
+		content_string += '</b></div><div class="folder_sub_content">'
 
 		content_string += render_documents(document_folders_results, documents_results, folder_results[i].pk)
 
