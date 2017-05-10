@@ -12,8 +12,6 @@
 
 		root_folder = document.getElementById("root_folder");
 		root_folder.innerHTML = render_documents_code;
-
-		alert(render_documents_code);
 	}
 </script>
 
@@ -136,6 +134,12 @@
 			</div>
 			<div class="div_sub_content" id="div_project_documents" style="display: none;">
 				[BUTTONS AND CONTENT]
+                <input type="file" name="myfile">
+                <ul>
+                    <li>Add Folder</li>
+                    <il>Add Document</il>
+
+                </ul>
 				<div id="root_folder">
 					[FOLDER CONTENT]
 				</div>

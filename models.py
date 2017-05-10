@@ -65,6 +65,7 @@ class documents(models.Model):
 	document_description = models.CharField(max_length=255)
 	document_location = models.TextField() #Will contain drive locations & URLs
 	document_folder_id = models.ForeignKey('document_folders', on_delete=models.CASCADE, blank=True, null=True)
+	image = models.FileField(null=True, blank=True)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 
