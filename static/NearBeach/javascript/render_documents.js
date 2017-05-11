@@ -17,6 +17,7 @@ function render_documents(document_folders_results, documents_results, current_f
 		content_string += '</b></div><div class="folder_sub_content">';
 
 		content_string += render_documents(document_folders_results, documents_results, folder_results[i].pk);
+		content_string += '</div>';
 
 
 		for (var j=0; j<doc_results.length; j++) {
@@ -25,7 +26,7 @@ function render_documents(document_folders_results, documents_results, current_f
 			content_string += '</div>';
 		}
 
-		content_string += '</div></div>'
+		content_string += '</div>'
 	}
 
 	return content_string

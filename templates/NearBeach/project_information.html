@@ -134,7 +134,9 @@
 			</div>
 			<div class="div_sub_content" id="div_project_documents" style="display: none;">
 				[BUTTONS AND CONTENT]
-                <input type="file" name="myfile">
+
+                <a hre="#" onclick="add_new_document()">Add New Document</a>
+
                 <ul>
                     <li>Add Folder</li>
                     <il>Add Document</il>
@@ -145,6 +147,26 @@
 				</div>
 			</div>
 		</div>
+    <div id="overlay_new_document" class="overlay_new_document">
+        <div>
+            <h1>New Document</h1>
+            <select id="upload_type">
+                <option id="upload">Upload Documentation</option>
+                <option id="link">Link Documentation</option>
+            </select>
+            <div id="overlay_upload">
+                <p>Please upload a file and press submit</p>
+                <input type="file" name="myfile">
+
+            </div>
+            <div id="overlay_link" hidden="True">
+                <p>Please include the URL to the cloud document</p>
+                <b>[CREATE A SIMPLE FORM FIELD]</b>
+            </div>
+            <button id="new_document" name="new_document">Submit</button>
+            <a href="#" onclick="add_new_document()">Cancel</a>
+        </div>
+    </div>
 	</form>
 </body>
 {% endblock %}
