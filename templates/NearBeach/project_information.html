@@ -16,7 +16,7 @@
 </script>
 
 <body onload="on_page_load();">
-	<form action="{% url 'project_information' project_results.project_id %}" method="POST">
+	<form action="{% url 'project_information' project_results.project_id %}" method="POST" enctype="multipart/form-data">
 		<div class="div_content">
 			<div class="div_header">
 				<h1>Project Information - PRO{{ project_results.project_id }}</h1>
@@ -156,13 +156,15 @@
             </select>
             <div id="overlay_upload">
                 <p>Please upload a file and press submit</p>
-                <input type="file" name="myfile">
+				{{ project_information_form.document }}
 
             </div>
             <div id="overlay_link" hidden="True">
                 <p>Please include the URL to the cloud document</p>
                 <b>[CREATE A SIMPLE FORM FIELD]</b>
+				{{ project_information_form.document_url_location }}
             </div>
+			{{ project_information_form.document_description }}
             <button id="new_document" name="new_document">Submit</button>
             <a href="#" onclick="add_new_document()">Cancel</a>
         </div>

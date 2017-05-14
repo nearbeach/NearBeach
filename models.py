@@ -63,9 +63,10 @@ class documents(models.Model):
 	project_id = models.ForeignKey('project', on_delete=models.CASCADE, blank=True, null=True)
 	task_id = models.ForeignKey('tasks', on_delete=models.CASCADE, blank=True, null=True)
 	document_description = models.CharField(max_length=255)
-	document_location = models.TextField() #Will contain drive locations & URLs
+	document_url_location = models.TextField(null=True, blank=True) #Will contain drive locations & URLs
+	document = models.FileField(upload_to='documents/', null=True, blank=True)
+	document_uploaded_audit = models.DateTimeField(auto_now_add=True)
 	document_folder_id = models.ForeignKey('document_folders', on_delete=models.CASCADE, blank=True, null=True)
-	image = models.FileField(null=True, blank=True)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 

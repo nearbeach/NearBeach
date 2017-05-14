@@ -9,6 +9,8 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 
+from django.core.files.storage import FileSystemStorage
+
 
 
 # Importing all the classes from the models
@@ -1023,7 +1025,7 @@ def project_information(request, project_id):
 	"""
 	#Get the data from the form if the information has been submitted
 	if request.method == "POST":
-		form = project_information_form(request.POST)
+		form = project_information_form(request.POST, request.FILES)
 		if form.is_valid():
 			#Define the data we will edit
 			project_results = project.objects.get(project_id = project_id)
@@ -1092,6 +1094,25 @@ def project_information(request, project_id):
 				)
 
 				submit_customer.save()
+
+			"""
+			If the user has submitted a new document. We only upload the document IF and ONLY IF the user
+			has selected the "Submit" button on the "New Document" dialog. We do not want to accidently
+			upload a document if we hit the "SAVE" button from a different location
+			"""
+			if 'new_document' in request.POST:
+				document = request.FILES['document']
+				document_description = request.POST.get("document_description")
+				document_url_location = request.POST.get("document_url_location")
+
+
+				submit_document = documents(
+					project_id=project.objects.get(pk=project_id),
+					document = document,
+					document_description = document_description,
+					document_url_location = document_url_location
+				)
+				submit_document.save()
 			
 			#Now save the new project history.
 			project_history_text_results = form.cleaned_data['project_history_text']
