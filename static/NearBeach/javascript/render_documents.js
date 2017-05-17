@@ -1,46 +1,38 @@
-function render_documents(document_folders_results, documents_results, current_folder) {
-	//alert(current_folder);
-	content_string = '';
+function render_folders(document_folders_results, current_folder) {
+	/*
+	Render folders function renders each folder. It is a recursive function.
+	Each folder it will render it will give an id of the folder number with
+	the suffix _folder
+	i.e 1_folder
+
+	Step 1
+	~~~~~~
+	We currently only want the folders for the current location.
+	 */
 	var folder_results = document_folders_results.filter(function(i, n) {
 		return (i.fields.parent_folder_id == current_folder);
 	});
-
-
-	//alert(folder_results);
-
+	/*
+	Step 2
+	~~~~~~
+	We will loop through each of the folder resules. Make sure that there are
+	no sub folders. If there are any sub folders we will call this function
+	recursovly with the sub folder information.
+	 */
+	var content_string = '';
 	for (var i=0; i<folder_results.length; i++) {
-		var doc_results = documents_results.filter(function(i, n) {
-			return (i.fields.document_folder_id == current_folder);
-	    });
-
-		content_string += '<div class="folder_content"><div class="folder_header"><b>';
+		content_string += '<div class="folder_content"><div class=""folder_header"><b>';
 		content_string += '<img src="/static/NearBeach/images/folder-icon-small.png" height="20px"> ';
 		content_string += folder_results[i].fields.document_folder_description;
-		content_string += '</b></div><div class="folder_sub_content">';
+		content_string += '</b></div><div class="folder_sub_content" id="'+ folder_results[i].pk + '_folder">';
 
-		content_string += render_documents(document_folders_results, documents_results, folder_results[i].pk);
+		content_string += render_folders(document_folders_results, folder_results[i].pk);
 		content_string += '</div>';
-
-
-		for (var j=0; j<doc_results.length; j++) {
-            content_string += '<div>-- ';
-
-            if (doc_results[j].fields.document) {
-                //The document has been uploaded
-                content_string += "<a href='";
-                content_string += doc_results[j].fields.document;
-                content_string += "' target='_blank'>";
-            } else {
-			    content_string += "<a href='";
-			    content_string += doc_results[j].fields.document_url_location;
-			    content_string += "' target='_blank'>";
-			}
-			content_string += doc_results[j].fields.document_description
-			content_string += "</a></div>";
-		}
-
-		content_string += '</div>'
 	}
+	return content_string;
 
-	return content_string
+}
+
+function render_documents(document_folders_results, current_folder) {
+
 }

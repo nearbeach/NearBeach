@@ -8,7 +8,7 @@
 <script>
 	function on_page_load() {
 		initiate_dates();
-		render_documents_code = render_documents({{ document_folders_results | safe }}, {{ documents_results | safe }}, null);
+		render_documents_code = render_folders({{ document_folders_results | safe }}, null);
 
 		root_folder = document.getElementById("root_folder");
 		root_folder.innerHTML = render_documents_code;
