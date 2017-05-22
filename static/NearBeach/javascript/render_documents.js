@@ -33,6 +33,22 @@ function render_folders(document_folders_results, current_folder) {
 
 }
 
-function render_documents(document_folders_results, current_folder) {
+function render_documents(document_results, site_url) {
+	for (var i=0; i<document_results.length; i++) {
+		var content_string = '<a href="';
+		content_string += site_url + document_results[i].fields.document;
+		content_string += '">';
+		content_string += document_results[i].fields.document_description;
+		content_string += '</a>';
 
+
+		if (document_results[i].fields.document_folder_id == null) {
+			destination_folder = document.getElementById("root_folder");
+		} else {
+			destination_folder = document.getElementById(document_results[i].fields.document_folder_id + "_folder");
+		}
+		destination_folder.innerHTML = destination_folder.innerHTML + '<br/>' + content_string;
+
+
+	}
 }

@@ -1266,6 +1266,7 @@ def project_information(request, project_id):
 		'new_customers_results': new_customers_results,
 		'documents_results': serializers.serialize('json', documents_results),
 		'document_folders_results': serializers.serialize('json', document_folders_results),
+		'media_url': settings.MEDIA_URL,
 	}
 	
 	return HttpResponse(t.render(c, request))
