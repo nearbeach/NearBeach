@@ -37,7 +37,7 @@ function render_documents(document_results, site_url) {
 	for (var i=0; i<document_results.length; i++) {
 		var content_string = '<a href="';
 		content_string += site_url + document_results[i].fields.document;
-		content_string += '">';
+		content_string += '" target="_blank">';
 		content_string += document_results[i].fields.document_description;
 		content_string += '</a>';
 
@@ -48,7 +48,27 @@ function render_documents(document_results, site_url) {
 			destination_folder = document.getElementById(document_results[i].fields.document_folder_id + "_folder");
 		}
 		destination_folder.innerHTML = destination_folder.innerHTML + '<br/>' + content_string;
-
-
 	}
+}
+
+function upload_or_link() {
+    overlay_upload = document.getElementById("overlay_upload");
+    overlay_link = document.getElementById("overlay_link");
+    upload_type = document.getElementById("upload_type");
+
+
+    if (upload_type.selectedIndex == 0) {
+        overlay_upload.style.visibility = "visible";
+        overlay_link.style.visibility = "hidden";
+    } else {
+        overlay_upload.style.visibility = "hidden";
+        overlay_link.style.visibility = "visible";
+    }
+
+    //Check to make sure if submit needs to be enabled
+    enable_submit()
+}
+
+function enable_submit() {
+
 }

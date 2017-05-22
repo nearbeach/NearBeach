@@ -334,7 +334,7 @@ class project_information_form(ModelForm):
 
 	document = forms.FileField(required=False)
 	document_url_location = forms.URLField(required=False)
-	document_description = forms.CharField(max_length=255, required=False)
+	document_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%'}))
 
 	class Meta:
 		model = project

@@ -154,7 +154,8 @@ textarea {
     z-index: 1000;
 }
 
-.overlay_new_document div {
+
+.overlay_content {
     width: 300px;
     margin: 100px auto;
     background-color: #fff;
