@@ -333,7 +333,7 @@ class project_information_form(ModelForm):
 	project_history_text = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Please update any history here and then click on the save button'}), required = False)
 
 	document = forms.FileField(required=False)
-	document_url_location = forms.URLField(required=False)
+	document_url_location = forms.URLField(required=False, widget=forms.TextInput(attrs={'placeholder':'https://example.com'}))
 	document_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%'}))
 
 	class Meta:

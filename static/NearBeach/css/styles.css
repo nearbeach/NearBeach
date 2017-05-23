@@ -163,3 +163,7 @@ textarea {
     padding: 15px;
     text-align: center;
 }
+
+.overlay_content div {
+    width: 100%;
+}

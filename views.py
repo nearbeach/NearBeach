@@ -1101,7 +1101,8 @@ def project_information(request, project_id):
 			upload a document if we hit the "SAVE" button from a different location
 			"""
 			if 'new_document' in request.POST:
-				document = request.FILES['document']
+				#document = request.FILES['document']
+				document = request.FILES.get('document')
 				document_description = request.POST.get("document_description")
 				document_url_location = request.POST.get("document_url_location")
 

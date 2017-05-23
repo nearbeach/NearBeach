@@ -150,14 +150,13 @@
                 <option id="upload">Upload Documentation</option>
                 <option id="link">Link Documentation</option>
             </select>
-            <div id="overlay_upload">
+            <div id="overlay_upload" style="display: block;">
                 <p>Please upload a file and press submit</p>
 				{{ project_information_form.document }}
 
             </div>
-            <div id="overlay_link" hidden="True">
+            <div id="overlay_link" style="display: none;">
                 <p>Please include the URL to the cloud document</p>
-                <b>[CREATE A SIMPLE FORM FIELD]</b>
 				{{ project_information_form.document_url_location }}
             </div>
 			<br/>
@@ -166,7 +165,7 @@
 				{{ project_information_form.document_description }}
 			</div>
 			<div>
-				<button id="new_document" name="new_document">Submit</button>
+				<button id="new_document" name="new_document" disabled>Submit</button>
 				<a href="#" onclick="add_new_document()">Cancel</a>
 			</div>
         </div>
