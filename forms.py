@@ -36,6 +36,9 @@ from django.conf import settings
 
 
 #Setup drop down box options
+NOTHING_CHOICE = (
+	('','-----'),
+)
 YEAR_CHOICES = (
 	('2010','2010'),
 	('2011','2011'),
@@ -334,7 +337,9 @@ class project_information_form(ModelForm):
 
 	document = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange':'enable_submit()'}))
 	document_url_location = forms.URLField(required=False, widget=forms.TextInput(attrs={'placeholder':'https://example.com', 'onChange':'enable_submit()'}))
-	document_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onChange':'enable_submit()'}))
+	document_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
+
+	document_folder_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
 
 	class Meta:
 		model = project
@@ -387,7 +392,9 @@ class task_information_form(ModelForm):
 
 	document = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange':'enable_submit()'}))
 	document_url_location = forms.URLField(required=False, widget=forms.TextInput(attrs={'placeholder':'https://example.com', 'onChange':'enable_submit()'}))
-	document_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onChange':'enable_submit()'}))
+	document_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
+
+	document_folder_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width': '100%', 'onkeyup': 'enable_submit()'}))
 
 	class Meta:
 		model = tasks

@@ -28,6 +28,25 @@ function render_folders(document_folders_results, current_folder) {
 
 		content_string += render_folders(document_folders_results, folder_results[i].pk);
 		content_string += '</div>';
+
+		/*
+		Minor step
+		~~~~~~~~~~
+		We are now adding the folder to the new_document_location select
+		*/
+		var new_document_location = document.getElementById("parent_folder_id");
+		var opt = document.createElement('option');
+		opt.value = folder_results[i].pk;
+		opt.innerHTML = folder_results[i].fields.document_folder_description;
+		new_document_location.appendChild(opt);
+
+		//Ok, I am cheating here.
+		var folder_location = document.getElementById("folder_location");
+		var opt2 = document.createElement('option');
+		opt2.value = folder_results[i].pk;
+		opt2.innerHTML = folder_results[i].fields.document_folder_description;
+		folder_location.appendChild(opt2);
+
 	}
 	return content_string;
 
@@ -36,6 +55,11 @@ function render_folders(document_folders_results, current_folder) {
 function add_new_document() {
 	new_document_dialog = document.getElementById("overlay_new_document");
 	new_document_dialog.style.visibility = (new_document_dialog.style.visibility == "visible") ? "hidden" : "visible";
+}
+
+function add_new_folder() {
+    new_folder_dialog = document.getElementById("overlay_new_folder");
+    new_folder_dialog.style.visibility = (new_folder_dialog.style.visibility == "visible") ? "hidden" : "visible";
 }
 
 function render_documents(document_results, site_url) {
@@ -90,7 +114,10 @@ function enable_submit() {
 	id_document = Boolean(document.getElementById("id_document").value != "");
 	id_document_url_location = Boolean(document.getElementById("id_document_url_location").value != "");
 	id_document_description = Boolean(document.getElementById("id_document_description").value != "");
+	id_new_folder = Boolean(document.getElementById("id_document_folder_description").value == "");
 
-	submit_button = document.getElementById("new_document");
-	submit_button.disabled = !Boolean((id_document && id_document_description) || (id_document_url_location && id_document_description));
+	new_document = document.getElementById("new_document");
+	new_folder = document.getElementById("new_folder");
+	new_document.disabled = !Boolean((id_document && id_document_description) || (id_document_url_location && id_document_description));
+	new_folder.disabled = id_new_folder;
 }

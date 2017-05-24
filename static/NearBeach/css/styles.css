@@ -154,6 +154,16 @@ textarea {
     z-index: 1000;
 }
 
+.overlay_new_folder {
+    visibility: hidden;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
 
 .overlay_content {
     width: 300px;
@@ -167,3 +177,4 @@ textarea {
 .overlay_content div {
     width: 100%;
 }
+

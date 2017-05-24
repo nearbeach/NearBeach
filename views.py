@@ -1063,13 +1063,15 @@ def project_information(request, project_id):
 				if start_date_hour == 12:
 					start_date_hour = 0
 			else:
-				start_date_hour = start_date_hour + 12
+				if start_date_hour < 12:
+					start_date_hour = start_date_hour + 12
 			
 			if finish_date_meridiems == "AM":
 				if finish_date_hour == 12:
 					finish_date_hour = 0
 			else:
-				finish_date_hour = finish_date_hour + 12
+				if finish_date_hour < 12:
+					finish_date_hour = finish_date_hour + 12
 			
 			
 			#Create the final start/end date fields
@@ -1106,14 +1108,39 @@ def project_information(request, project_id):
 				document_description = request.POST.get("document_description")
 				document_url_location = request.POST.get("document_url_location")
 
+				parent_folder_id = request.POST.get("parent_folder_id")
 
 				submit_document = documents(
 					project_id=project.objects.get(pk=project_id),
 					document = document,
 					document_description = document_description,
-					document_url_location = document_url_location
+					document_url_location = document_url_location,
+					#document_folder_id = parent_folder_instance,
 				)
-				submit_document.save()
+				try:
+					submit_document.document_folder_id = document_folders.objects.get(document_folder_id=int(parent_folder_id))
+					submit_document.save()
+				except:
+					submit_document.save()
+
+			"""
+			Fuck - someone wants to create a new folder...
+			"""
+			if 'new_folder' in request.POST:
+				document_folder_description = form.cleaned_data['document_folder_description']
+				folder_location = request.POST.get("folder_location")
+
+				print(document_folder_description)
+				submit_folder = document_folders(
+					project_id=project.objects.get(pk=project_id),
+					document_folder_description = document_folder_description,
+				)
+
+				try:
+					submit_folder.parent_folder_id = document_folders.objects.get(document_folder_id=int(folder_location))
+					submit_folder.save()
+				except:
+					submit_folder.save()
 			
 			#Now save the new project history.
 			project_history_text_results = form.cleaned_data['project_history_text']
@@ -1133,7 +1160,8 @@ def project_information(request, project_id):
 									)
 				data.save()
 			
-
+		else:
+			print(form.errors)
 	else:
 		#If the method is not POST then we have to define project_results
 		#project_results = project.objects.get(project_id = project_id)
@@ -1142,8 +1170,8 @@ def project_information(request, project_id):
 
 	#Obtain the required data
 	project_history_results = project_history.objects.filter(project_id = project_id, is_deleted = 'FALSE')
-	documents_results = documents.objects.filter(project_id = project_id, is_deleted = 'FALSE')
-	document_folders_results = document_folders.objects.filter(project_id = project_id, is_deleted = 'FALSE')
+	documents_results = documents.objects.filter(project_id = project_id, is_deleted = 'FALSE').order_by('document_description')
+	document_folders_results = document_folders.objects.filter(project_id = project_id, is_deleted = 'FALSE').order_by('document_folder_description')
 
 	
 	"""
@@ -1521,7 +1549,7 @@ def task_information(request, task_id):
 	
 	#Get the data from the form
 	if request.method == "POST":
-		form = task_information_form(request.POST)
+		form = task_information_form(request.POST, request.FILES)
 		if form.is_valid():
 			#Extract all the information from the form and save
 			task_results.task_short_description = form.cleaned_data['task_short_description']
@@ -1593,6 +1621,56 @@ def task_information(request, task_id):
 
 				submit_customer.save()
 
+			"""
+			If the user has submitted a new document. We only upload the document IF and ONLY IF the user
+			has selected the "Submit" button on the "New Document" dialog. We do not want to accidently
+			upload a document if we hit the "SAVE" button from a different location
+			"""
+			if 'new_document' in request.POST:
+				document = request.FILES.get('document')
+				document_description = request.POST.get("document_description")
+				document_url_location = request.POST.get("document_url_location")
+
+				parent_folder_id = request.POST.get("parent_folder_id")
+
+				print(document)
+
+				submit_document = documents(
+					task_id=tasks.objects.get(pk=task_id),
+					document = document,
+					document_description = document_description,
+					document_url_location = document_url_location,
+					#document_folder_id = parent_folder_instance,
+				)
+				try:
+					submit_document.document_folder_id = document_folders.objects.get(document_folder_id=int(parent_folder_id))
+					submit_document.save()
+				except:
+					submit_document.save()
+
+			"""
+			Fuck - someone wants to create a new folder...
+			"""
+			if 'new_folder' in request.POST:
+				document_folder_description = form.cleaned_data['document_folder_description']
+				folder_location = request.POST.get("folder_location")
+
+				print(document_folder_description)
+				submit_folder = document_folders(
+					task_id=tasks.objects.get(pk=task_id),
+					document_folder_description=document_folder_description,
+				)
+
+				try:
+					submit_folder.parent_folder_id = document_folders.objects.get(
+						document_folder_id=int(folder_location))
+					submit_folder.save()
+				except:
+					submit_folder.save()
+
+
+
+
 			#Now save the new project history.
 			task_history_text_results = form.cleaned_data['task_history_text']
 			
@@ -1612,8 +1690,8 @@ def task_information(request, task_id):
 	
 	#Obtain required data
 	task_history_results = tasks_history.objects.filter(tasks_id = task_id) #Will need to remove all IS_DELETED=TRUE
-	documents_results = documents.objects.filter(project_id = project_id, is_deleted = 'FALSE')
-	document_folders_results = document_folders.objects.filter(project_id = project_id, is_deleted = 'FALSE')
+	documents_results = documents.objects.filter(task_id = task_id, is_deleted = 'FALSE').order_by('document_description')
+	document_folders_results = document_folders.objects.filter(task_id = task_id, is_deleted = 'FALSE').order_by('document_folder_description')
 
 	"""
 	The 24 hours to 12 hours formula.

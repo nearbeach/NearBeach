@@ -4,8 +4,20 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/expand_sections.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/task_information.js' %}"></script>
-<body onload="initiate_dates();">
-	<form action="{% url 'task_information' task_results.tasks_id %}" method="POST">
+<script type="text/javascript" src="{% static 'NearBeach/javascript/render_documents.js' %}"></script>
+<script>
+	function on_page_load() {
+		initiate_dates();
+		render_documents_code = '<div id="_folder" class="folder_sub_content">' + render_folders({{ document_folders_results | safe }}, null) + '</div>';
+
+		root_folder = document.getElementById("root_folder");
+		root_folder.innerHTML = render_documents_code;
+
+        render_documents({{ documents_results | safe }}, {{ media_url }});
+	}
+</script>
+<body onload="on_page_load();">
+	<form action="{% url 'task_information' task_results.tasks_id %}" method="POST" enctype="multipart/form-data">
 		{% csrf_token %}
 		<div class="div_content">
 			<div class="div_header">
@@ -118,10 +130,59 @@
 		<br/>
 		<div class="div_content">
 			<div class="div_header" onclick="hide_unhide('task_documents')">
-				<h3>task_documents</h3>
+				<h3>Task Documents</h3>
 			</div>
 			<div class="div_sub_content" id="task_documents" style="display: none;">
-				[INSERT CONTENT]
+                <a href="#" onclick="add_new_document()">Upload New Document</a><br/>
+				<a href="#" onclick="add_new_folder()">Create New Folder</a>
+
+				<div id="root_folder">
+					It looks like there are no documents or folders
+				</div>
+			</div>
+		</div>
+		<div id="overlay_new_document" class="overlay_new_document">
+			<div class="overlay_content">
+				<h1>New Document</h1>
+				<select id="upload_type" onchange="upload_or_link()">
+					<option id="upload">Upload Documentation</option>
+					<option id="link">Link Documentation</option>
+				</select>
+				<div id="overlay_upload" style="display: block;">
+					<p>Please upload a file and press submit</p>
+					{{ task_information_form.document }}
+
+				</div>
+				<div id="overlay_link" style="display: none;">
+					<p>Please include the URL to the cloud document</p>
+					{{ task_information_form.document_url_location }}
+				</div>
+				<br/>
+				<div width="100%">
+					File Description<br/>
+					{{ task_information_form.document_description }}<br/>
+					Folder Location<br/>
+					<select id="parent_folder_id" name="parent_folder_id">
+						<option value="">-----</option>
+					</select>
+				</div>
+				<div>
+					<button id="new_document" name="new_document" disabled>Submit</button>
+					<a href="#" onclick="add_new_document()">Cancel</a>
+				</div>
+			</div>
+		</div>
+		<div id="overlay_new_folder" class="overlay_new_folder">
+			<div class="overlay_content">
+				<h1>New Folder</h1>
+				{{ task_information_form.document_folder_description }}<br/>
+				<select id="folder_location" name="parent_folder_id">
+					<option value="">-----</option>
+				</select>
+				<div>
+					<button id="new_folder" name="new_folder" disabled>Submit</button>
+					<a href="#" onclick="add_new_folder()">Cancel</a>
+				</div>
 			</div>
 		</div>
 	</form>
