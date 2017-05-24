@@ -15,10 +15,7 @@ function enable_disable_add_customer() {
 	}
 }
 
-function add_new_document() {
-	new_document_dialog = document.getElementById("overlay_new_document");
-	new_document_dialog.style.visibility = (new_document_dialog.style.visibility == "visible") ? "hidden" : "visible";
-}
+
 
 
 

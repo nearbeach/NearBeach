@@ -1612,7 +1612,9 @@ def task_information(request, task_id):
 	
 	#Obtain required data
 	task_history_results = tasks_history.objects.filter(tasks_id = task_id) #Will need to remove all IS_DELETED=TRUE
-	
+	documents_results = documents.objects.filter(project_id = project_id, is_deleted = 'FALSE')
+	document_folders_results = document_folders.objects.filter(project_id = project_id, is_deleted = 'FALSE')
+
 	"""
 	The 24 hours to 12 hours formula.
 	00:00 means that it is 12:00 AM - change required for hour
@@ -1733,10 +1735,13 @@ def task_information(request, task_id):
 		'task_history_results': task_history_results,
 		'tasks_customers_results': tasks_customers_results,
 		'new_customers_results': new_customers_results,
+        'documents_results': serializers.serialize('json', documents_results),
+        'document_folders_results': serializers.serialize('json', document_folders_results),
+        'media_url': settings.MEDIA_URL,
 	}
 
+
 	return HttpResponse(t.render(c, request))
-	
 
 
 # Extra functionality

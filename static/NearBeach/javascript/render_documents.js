@@ -33,6 +33,11 @@ function render_folders(document_folders_results, current_folder) {
 
 }
 
+function add_new_document() {
+	new_document_dialog = document.getElementById("overlay_new_document");
+	new_document_dialog.style.visibility = (new_document_dialog.style.visibility == "visible") ? "hidden" : "visible";
+}
+
 function render_documents(document_results, site_url) {
 	for (var i=0; i<document_results.length; i++) {
 		var content_string = '<a href="';
@@ -75,11 +80,17 @@ function upload_or_link() {
 }
 
 function enable_submit() {
-	upload_type = document.getElementById("upload_type");
+	/*
+	So I didn't like the spaghetti if statements left here. So I invented this simple
+	boolean way to disable and enable the submit button.
 
+	It works by checking to see if there are values in the required fields. It will
+	activate the button if either one of the two conditions is met. Simple.
+	 */
+	id_document = Boolean(document.getElementById("id_document").value != "");
+	id_document_url_location = Boolean(document.getElementById("id_document_url_location").value != "");
+	id_document_description = Boolean(document.getElementById("id_document_description").value != "");
 
-	id_document = document.getElementById("id_document");
-	id_document_url_location = id_document_url_location.getElementById("id_document_url_location");
-	id_document_description = document.getElementById("id_document_description");
-
+	submit_button = document.getElementById("new_document");
+	submit_button.disabled = !Boolean((id_document && id_document_description) || (id_document_url_location && id_document_description));
 }

@@ -332,9 +332,9 @@ class project_information_form(ModelForm):
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
 	project_history_text = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Please update any history here and then click on the save button'}), required = False)
 
-	document = forms.FileField(required=False)
-	document_url_location = forms.URLField(required=False, widget=forms.TextInput(attrs={'placeholder':'https://example.com'}))
-	document_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%'}))
+	document = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange':'enable_submit()'}))
+	document_url_location = forms.URLField(required=False, widget=forms.TextInput(attrs={'placeholder':'https://example.com', 'onChange':'enable_submit()'}))
+	document_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onChange':'enable_submit()'}))
 
 	class Meta:
 		model = project
@@ -384,7 +384,11 @@ class task_information_form(ModelForm):
 	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
 	task_history_text = forms.CharField(widget=forms.Textarea, required = False)
-	
+
+	document = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange':'enable_submit()'}))
+	document_url_location = forms.URLField(required=False, widget=forms.TextInput(attrs={'placeholder':'https://example.com', 'onChange':'enable_submit()'}))
+	document_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onChange':'enable_submit()'}))
+
 	class Meta:
 		model = tasks
 		fields = {
