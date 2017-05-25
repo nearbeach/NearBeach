@@ -1,32 +1,39 @@
 {% extends "./template.html" %}
 {% block content %}
-<h1>New Organisation</h1>
-<form action={% url 'new_organisation' %} method="post" class="new_organisation">
-	{% csrf_token %}
-	<table>
-		{{ new_organisation_form.as_table }}
-	</table>
-	{% if duplication_count == 0 %}
-	<input type="submit" name="save" value="Submit New Organisation">
-	{% else %}
-	<h2>Possible Duplication</h2>
-	<table>
-		<tr>
-			<td>Organisation Name</td>
-			<td>Organisation Website</td>
-			<td>Organisation Email</td>
-		</tr>
-		{% for row in duplicate_results %}
-			<tr>
-				<td>{{ row.organisation_name }}</td>
-				<td>{{ row.organisation_website }}</td>
-				<td>{{ row.organisation_email }}</td>			
-			</tr>
-		{% endfor %}
-	</table>
-	<input type="submit" name="save_duplicate" value="Yes Create Organisation">
-	<input type="button" onclick="location.href='{% url 'active_projects' %}'" value="No - Take me away">
-	{% endif %}
-</form>
+<div class="div_content">
+	<div class="div_header">
+		<h1>New Organisation</h1>
+	</div>
+	<div class="div_sub_content">
+		<form action={% url 'new_organisation' %} method="post" class="new_organisation">
+			{% csrf_token %}
+			<table>
+				<tr class="header"><td width="250px">Field</td><td>Input</td></tr>
+				{{ new_organisation_form.as_table }}
+			</table>
+			{% if duplication_count == 0 %}
+			<input type="submit" name="save" value="Submit New Organisation">
+			{% else %}
+			<h2>Possible Duplication</h2>
+			<table>
+				<tr>
+					<td>Organisation Name</td>
+					<td>Organisation Website</td>
+					<td>Organisation Email</td>
+				</tr>
+				{% for row in duplicate_results %}
+					<tr>
+						<td>{{ row.organisation_name }}</td>
+						<td>{{ row.organisation_website }}</td>
+						<td>{{ row.organisation_email }}</td>
+					</tr>
+				{% endfor %}
+			</table>
+			<input type="submit" name="save_duplicate" value="Yes Create Organisation">
+			<input type="button" onclick="location.href='{% url 'active_projects' %}'" value="No - Take me away">
+			{% endif %}
+		</form>
+	</div>
+</div>
 {% endblock %}
 

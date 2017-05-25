@@ -19,6 +19,21 @@ PROJECT_STATUS_CHOICE = (
 )
 
 #List of tables - in alphabetical order
+class costs(models.Model):
+	cost_id = models.AutoField(primary_key = True)
+	project_id = models.ForeignKey('project', on_delete=models.CASCADE, blank=True, null=True)
+	task_id = models.ForeignKey('tasks', on_delete=models.CASCADE, blank=True, null=True)
+	cost_description = models.CharField(max_length=255, )
+	cost_amount = models.DecimalField(max_digits=19, decimal_places=2)
+	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
+
+	def __str__(self):
+		return str(self.cost_description) + ' - $' + self.cost_amount
+
+	class Meta:
+		db_table = "costs"
+
+
 class customers(models.Model):
 	customer_id = models.AutoField(primary_key = True)
 	customer_title = models.ForeignKey('list_of_titles', on_delete = models.CASCADE,)
@@ -42,6 +57,30 @@ class customers_campus(models.Model):
 	
 	class Meta:
 		db_table = "customers_campus"
+
+class documents(models.Model):
+	document_id = models.AutoField(primary_key=True)
+	project_id = models.ForeignKey('project', on_delete=models.CASCADE, blank=True, null=True)
+	task_id = models.ForeignKey('tasks', on_delete=models.CASCADE, blank=True, null=True)
+	document_description = models.CharField(max_length=255)
+	document_url_location = models.TextField(null=True, blank=True) #Will contain drive locations & URLs
+	document = models.FileField(upload_to='documents/', null=True, blank=True)
+	document_uploaded_audit = models.DateTimeField(auto_now_add=True)
+	document_folder_id = models.ForeignKey('document_folders', on_delete=models.CASCADE, blank=True, null=True)
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
+
+
+class document_folders(models.Model):
+	document_folder_id = models.AutoField(primary_key=True)
+	project_id = models.ForeignKey('project', on_delete=models.CASCADE, blank=True, null=True)
+	task_id = models.ForeignKey('tasks', on_delete=models.CASCADE, blank=True, null=True)
+	document_folder_description = models.CharField(max_length=255)
+	parent_folder_id = models.ForeignKey('self', blank=True, null=True)
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
+
+	def __str__(self):
+		return self.document_folder_description
+
 
 class groups(models.Model):
 	group_id = models.AutoField(primary_key = True)
@@ -154,6 +193,7 @@ class project_customers(models.Model):
 	project_customers_id = models.AutoField(primary_key = True)
 	project_id = models.ForeignKey('project', on_delete = models.CASCADE,)
 	customer_id = models.ForeignKey('customers', on_delete = models.CASCADE,)
+	customer_description = models.CharField(max_length=255, null=True, blank=True)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	audit_date = models.DateTimeField(auto_now = True)
 	
@@ -248,7 +288,9 @@ class tasks_actions(models.Model):
 
 class tasks_customers(models.Model):
 	tasks_customers_id = models.AutoField(primary_key = True)
-	customer_id = models.ForeignKey('customers', on_delete = models.CASCADE,)	
+	tasks_id = models.ForeignKey('tasks', on_delete=models.CASCADE, )
+	customer_id = models.ForeignKey('customers', on_delete = models.CASCADE,)
+	customers_description = models.CharField(max_length=155, null=True, blank=True)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	audit_date = models.DateTimeField(auto_now = True)	
 	

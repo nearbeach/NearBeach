@@ -56,3 +56,125 @@ select option:disabled {
 	color: #757575;
 	text-decoration: none;
 }
+
+.search {
+     border-radius: 5px;
+     width: 99%;
+     height: 25px;
+}
+
+table {
+    width: 100%;
+
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    hyphens: auto;
+}
+
+table tr:nth-child(even) {
+    background-color: #efefef;
+}
+
+table .header {
+    background-color: #3194AD;
+    height: 40px;
+}
+
+table .title {
+    border-radius: 5px;
+    width: 99%;
+    height: 25px;
+}
+
+.task_short_description {
+    border-radius: 5px;
+    width: 99%;
+    height: 25px;
+}
+
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: none; /* If you want to remove the border as well */
+    background-color: #e6ffff;
+    -webkit-border-radius: 20px;
+   -moz-border-radius: 20px;
+   border-radius: 20px;
+
+}
+
+.landing_page {
+	position: relative;
+	max-width: 1200px;
+	margin: auto;
+}
+
+textarea {
+    width: 99%;
+    height: 160px;
+}
+
+
+.div_content {
+    border-style: solid;
+    border: 1px;
+    border-radius: 15px 15px 0px 0px;
+    border-color: #A7E5F0;
+}
+
+.div_header {
+    border-style: solid;
+    border-radius: 15px 15px 0px 0px;
+    border-color: #A7E5F0;
+    background-color: #A7E5F0;
+}
+
+.div_sub_content {
+    border-style: solid;
+    border-radius: 0px 0px 15px 15px;
+    border-color: #A7E5F0;
+}
+
+.folder_sub_content {
+    padding-left: 20px;
+}
+
+.overlay_new_document {
+    visibility: hidden;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+.overlay_new_folder {
+    visibility: hidden;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+
+.overlay_content {
+    width: 300px;
+    margin: 100px auto;
+    background-color: #fff;
+    border: 1px solid #000000;
+    padding: 15px;
+    text-align: center;
+}
+
+.overlay_content div {
+    width: 100%;
+}
+

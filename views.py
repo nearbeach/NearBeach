@@ -1,39 +1,20 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 
 #login imports
-from django.shortcuts import render_to_response
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.contrib import auth
-from django.views.decorators import csrf
 from django.template import RequestContext, loader
-from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from django.core import serializers
+
+from django.core.files.storage import FileSystemStorage
+
+
 
 # Importing all the classes from the models
-from .models import customers
-from .models import customers_campus
-from .models import group_permissions
-from .models import groups
-from .models import list_of_countries_regions
-from .models import list_of_countries
-from .models import list_of_titles
-from .models import organisations_campus
-from .models import organisations
-from .models import project_customers
-from .models import project_groups
-from .models import project_history
-
-from .models import project_stages
-from .models import project_tasks
-from .models import project
-from .models import stages
-from .models import tasks_actions
-from .models import tasks_customers
-from .models import tasks_groups
-from .models import tasks_history
-from .models import tasks
-from .models import user_groups
+from .models import *
 
 #Import Settings file to obtain secret key
 from django.conf import settings
@@ -46,7 +27,7 @@ import json
 
 #For Importing RAW SQL
 from django.db import connection
-from django.db.models import Q
+from django.db.models import Q, Min
 
 #For the forms
 from django.db import models
@@ -54,23 +35,8 @@ from django.db import models
 #Import Django's users
 from django.contrib.auth.models import User
 
-#Import forms
-from .forms import customer_information_form
-from .forms import login_form
-from .forms import new_project_form
-from .forms import new_organisation_form
-from .forms import new_task_form
-from .forms import new_customer_form
-from .forms import search_customers_form
-from .forms import search_organisations_form
-from .forms import new_campus_form
-from .forms import task_information_form
-from .forms import campus_information_form
-from .forms import project_information_form
-from .forms import search_tasks_form
-from .forms import search_projects_form
-from .forms import customer_campus_form
-from .forms import search_form
+#Import everything from forms
+from .forms import *
 
 
 #Import datetime
@@ -79,22 +45,12 @@ import datetime
 
 # Create your views here.
 
-
+@login_required(login_url='login')
 def active_projects(request):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
-	
 	#Get username_id from User
-	current_user = User.objects.get(username = request.user.get_username())
-	
-	
-	
+	current_user = request.user
+
+
 	#Setup connection to the database and query it
 	cursor = connection.cursor()
 	
@@ -170,7 +126,7 @@ def active_projects(request):
 	
 	return HttpResponse(t.render(c, request))
 	
-	
+@login_required(login_url='login')
 def associate(request, project_id, task_id, project_or_task):
 	#Submit the data
 	submit_result = project_tasks(
@@ -186,7 +142,7 @@ def associate(request, project_id, task_id, project_or_task):
 		return HttpResponseRedirect(reverse('task_information', args = {task_id}))
 		
 
-
+@login_required(login_url='login')
 def associated_projects(request, task_id):
 	"""
 	We want the ability for the user to assign any project to the current
@@ -215,6 +171,8 @@ def associated_projects(request, task_id):
 	
 	return HttpResponse(t.render(c, request))
 
+
+@login_required(login_url='login')
 def associated_tasks(request, project_id):
 	"""
 	We want the ability for the user to assign any task to the current
@@ -243,17 +201,8 @@ def associated_tasks(request, project_id):
 	
 	return HttpResponse(t.render(c, request))
 
-
+@login_required(login_url='login')
 def campus_information(request, campus_information):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
-	
 	#Obtain data (before POST if statement as it is used insude)
 	campus_results = organisations_campus.objects.get(pk = campus_information)	
 	
@@ -322,6 +271,7 @@ def campus_information(request, campus_information):
 	return HttpResponse(t.render(c, request))	
 
 
+@login_required(login_url='login')
 def customers_campus_information(request, customer_campus_id, customer_or_org):
 	"""
 	If the user is not logged in, we want to send them to the login page.
@@ -379,6 +329,7 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
 	return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
 def customer_information(request, customer_id):
 	"""
 	If the user is not logged in, we want to send them to the login page.
@@ -427,6 +378,7 @@ def customer_information(request, customer_id):
 	return HttpResponse(t.render(c, request))	
 
 
+@login_required(login_url='login')
 def index(request):
 	"""
 	The index page determines if a particular user has logged in. It will
@@ -448,7 +400,28 @@ def index(request):
 	return HttpResponseRedirect(reverse('login'))
 
 
+@login_required(login_url='login')
+def is_admin(request):
+	"""
+	We will determine if the user is an administrator. Then we
+	will return
+	"""
+	current_user = request.user
+	results = user_groups.objects.filter(username_id = current_user.id).aggregate(Min('user_group_permission'))
 
+	#ADMIN
+	if results.values()[0] == 1:
+		request.session['IS_ADMIN'] = 'TRUE'
+	else:
+		request.session['IS_ADMIN'] = 'FALSE'
+
+	#Group Admin
+	if results.values()[0] == 2:
+		request.session['IS_GROUP_ADMIN'] = 'TRUE'
+	else:
+		request.session['IS_GROUP_ADMIN'] = 'FALSE'
+
+	return
 
 def login(request):
 	"""
@@ -516,9 +489,15 @@ def login(request):
 				if result['success']:
 					user = auth.authenticate(username=username, password=password)
 					auth.login(request, user)
+
+					is_admin(request)
+
+
 			else:
 				user = auth.authenticate(username=username, password=password)
 				auth.login(request, user)
+
+				is_admin(request)
 					
 			#Just double checking. :)
 			if request.user.is_authenticated:
@@ -546,7 +525,7 @@ def logout(request):
 	auth.logout(request)
 	return HttpResponseRedirect(reverse('login'))
 
-
+@login_required(login_url='login')
 def new_campus(request, organisations_id):
 	"""
 	If the user is not logged in, we want to send them to the login page.
@@ -603,7 +582,7 @@ def new_campus(request, organisations_id):
 	
 	return HttpResponse(t.render(c, request))	
 
-
+@login_required(login_url='login')
 def new_customer(request, organisations_id):
 	"""
 	If the user is not logged in, we want to send them to the login page.
@@ -650,17 +629,8 @@ def new_customer(request, organisations_id):
 	
 	return HttpResponse(t.render(c, request))
 
-
+@login_required(login_url='login')
 def new_organisation(request):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-		
-		
 	"""
 	To stop duplicates in the system, the code will quickly check to see if
 	there is already a company that has either one of the following;
@@ -718,16 +688,8 @@ def new_organisation(request):
 	return HttpResponse(t.render(c, request))
 
 	
-
+@login_required(login_url='login')
 def new_project(request):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
 	if request.method == "POST":
 		form = new_project_form(request.POST)
 		if form.is_valid():
@@ -873,16 +835,8 @@ def new_project(request):
 		
 	return HttpResponse(t.render(c, request))
 
-
+@login_required(login_url='login')
 def new_task(request):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
 	#Define if the page is loading in POST
 	if request.method == "POST":
 		form = new_task_form(request.POST)
@@ -957,7 +911,7 @@ def new_task(request):
 	
 	else:
 		#Obtain the groups the user is associated with
-		current_user = User.objects.get(id = request.user.id)
+		current_user = request.user
 		cursor = connection.cursor()
 
 		cursor.execute(
@@ -1011,22 +965,13 @@ def new_task(request):
 	
 	return HttpResponse(t.render(c, request))
 
-
+@login_required(login_url='login')
 def organisation_information(request, organisations_id):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
-	
 	#Query the database for organisation information
 	organisation_results = organisations.objects.get(pk = organisations_id)
 	campus_results = organisations_campus.objects.filter(organisations_id = organisations_id)
 	customers_results = customers.objects.filter(organisations_id = organisation_results)
-	
+
 	
 	#Loaed the template
 	t = loader.get_template('NearBeach/organisation_information.html')
@@ -1040,15 +985,38 @@ def organisation_information(request, organisations_id):
 	return HttpResponse(t.render(c, request))
 	
 
+@login_required(login_url='login')
 def project_information(request, project_id):
 	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
+	We need to determine if the user has access to any of the groups that
+	this project is associated to. We will do a simple count(*) SQL QUERY
+	that will determine this.
 	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
+	current_user = request.user
+
+	# Setup connection to the database and query it
+	cursor = connection.cursor()
+
+	cursor.execute("""
+		SELECT COUNT(*)
+		FROM
+		  project_groups
+		, user_groups
+		
+		WHERE 1=1
+		AND project_groups.groups_id_id = user_groups.group_id_id
+		AND project_groups.is_deleted = 'FALSE'
+		AND user_groups.is_deleted = 'FALSE'
+		AND user_groups.username_id = %s
+		AND project_groups.project_id_id = %s
+	""", [current_user.id, project_id])
+	has_permission = cursor.fetchall()
+
+	if not has_permission[0][0] == 1 and not request.session['IS_ADMIN'] == 'TRUE':
+		# Send them to 404!!
+		raise Http404
+
+
 	"""
 	There are two buttons on the project information page. Both will come
 	here. Both will save the data, however only one of them will resolve
@@ -1056,7 +1024,7 @@ def project_information(request, project_id):
 	"""
 	#Get the data from the form if the information has been submitted
 	if request.method == "POST":
-		form = project_information_form(request.POST)
+		form = project_information_form(request.POST, request.FILES)
 		if form.is_valid():
 			#Define the data we will edit
 			project_results = project.objects.get(project_id = project_id)
@@ -1094,13 +1062,15 @@ def project_information(request, project_id):
 				if start_date_hour == 12:
 					start_date_hour = 0
 			else:
-				start_date_hour = start_date_hour + 12
+				if start_date_hour < 12:
+					start_date_hour = start_date_hour + 12
 			
 			if finish_date_meridiems == "AM":
 				if finish_date_hour == 12:
 					finish_date_hour = 0
 			else:
-				finish_date_hour = finish_date_hour + 12
+				if finish_date_hour < 12:
+					finish_date_hour = finish_date_hour + 12
 			
 			
 			#Create the final start/end date fields
@@ -1113,12 +1083,69 @@ def project_information(request, project_id):
 				project_results.project_status = 'Resolved'
 			
 			project_results.save()
+
+
+			if 'add_customer_submit' in request.POST:
+				#The user has tried adding a customer
+				customer_id = int(request.POST.get("add_customer_select"))
+
+				submit_customer = project_customers(
+					project_id = project.objects.get(pk = project_id),
+					customer_id = customers.objects.get(pk = customer_id)
+				)
+
+				submit_customer.save()
+
+			"""
+			If the user has submitted a new document. We only upload the document IF and ONLY IF the user
+			has selected the "Submit" button on the "New Document" dialog. We do not want to accidently
+			upload a document if we hit the "SAVE" button from a different location
+			"""
+			if 'new_document' in request.POST:
+				#document = request.FILES['document']
+				document = request.FILES.get('document')
+				document_description = request.POST.get("document_description")
+				document_url_location = request.POST.get("document_url_location")
+
+				parent_folder_id = request.POST.get("parent_folder_id")
+
+				submit_document = documents(
+					project_id=project.objects.get(pk=project_id),
+					document = document,
+					document_description = document_description,
+					document_url_location = document_url_location,
+					#document_folder_id = parent_folder_instance,
+				)
+				try:
+					submit_document.document_folder_id = document_folders.objects.get(document_folder_id=int(parent_folder_id))
+					submit_document.save()
+				except:
+					submit_document.save()
+
+			"""
+			Fuck - someone wants to create a new folder...
+			"""
+			if 'new_folder' in request.POST:
+				document_folder_description = form.cleaned_data['document_folder_description']
+				folder_location = request.POST.get("folder_location")
+
+				print(document_folder_description)
+				submit_folder = document_folders(
+					project_id=project.objects.get(pk=project_id),
+					document_folder_description = document_folder_description,
+				)
+
+				try:
+					submit_folder.parent_folder_id = document_folders.objects.get(document_folder_id=int(folder_location))
+					submit_folder.save()
+				except:
+					submit_folder.save()
 			
 			#Now save the new project history.
 			project_history_text_results = form.cleaned_data['project_history_text']
 			
 			if not project_history_text_results == '':
-				current_user = User.objects.get(username = request.user.get_username())
+				current_user = request.user
 				
 				### TEMP SOLUTION ###
 				project_id_connection = project.objects.get(pk = project_id)
@@ -1132,14 +1159,19 @@ def project_information(request, project_id):
 									)
 				data.save()
 			
-
+		else:
+			print(form.errors)
 	else:
 		#If the method is not POST then we have to define project_results
-		project_results = project.objects.get(project_id = project_id)
+		#project_results = project.objects.get(project_id = project_id)
+		project_results = get_object_or_404(project,project_id = project_id)
 
 
 	#Obtain the required data
 	project_history_results = project_history.objects.filter(project_id = project_id, is_deleted = 'FALSE')
+	documents_results = documents.objects.filter(project_id = project_id, is_deleted = 'FALSE').order_by('document_description')
+	document_folders_results = document_folders.objects.filter(project_id = project_id, is_deleted = 'FALSE').order_by('document_folder_description')
+
 	
 	"""
 	The 24 hours to 12 hours formula.
@@ -1202,6 +1234,52 @@ def project_information(request, project_id):
 		""", [project_id])
 	associated_tasks_results = namedtuplefetchall(cursor)
 
+	cursor.execute("""
+		SELECT DISTINCT
+		  customers.customer_first_name
+		, customers.customer_last_name
+		, project_customers.customer_description
+		, customers.customer_email
+		, customers_campus_information.campus_nickname
+		, customers_campus_information.customer_phone
+		FROM
+		  customers LEFT JOIN 
+			(SELECT * FROM customers_campus join organisations_campus ON customers_campus.campus_id_id = organisations_campus.id) as customers_campus_information
+			ON customers.customer_id = customers_campus_information.customer_id_id
+		, project_customers
+		WHERE 1=1
+		AND customers.customer_id = project_customers.customer_id_id
+		AND project_customers.project_id_id = %s
+	""", [project_id])
+	project_customers_results = namedtuplefetchall(cursor)
+
+	cursor.execute("""
+		SELECT DISTINCT 
+		  customers.customer_id
+		, customers.customer_first_name || ' ' || customers.customer_last_name AS customer_name
+		
+		FROM
+		  project 
+		, organisations LEFT JOIN customers
+			ON organisations.organisations_id = customers.organisations_id_id
+		
+		WHERE 1=1
+		AND project.organisations_id_id = organisations.organisations_id
+		
+		AND customers.customer_id NOT IN (SELECT DISTINCT project_customers.customer_id_id
+					FROM project_customers
+					WHERE 1=1
+					AND project_customers.project_id_id = project.project_id
+					AND project_customers.is_deleted = 'FALSE')
+		
+		
+		-- LINKS --
+		AND organisations.organisations_id = %s
+		AND project.project_id = %s
+		-- END LINKS --
+	""", [project_results.organisations_id_id, project_id])
+	new_customers_results = namedtuplefetchall(cursor)
+
 	
 	#Load the template
 	t = loader.get_template('NearBeach/project_information.html')
@@ -1212,11 +1290,17 @@ def project_information(request, project_id):
 		'project_results': project_results,
 		'associated_tasks_results': associated_tasks_results,
 		'project_history_results': project_history_results,
+		'project_customers_results': project_customers_results,
+		'new_customers_results': new_customers_results,
+		'documents_results': serializers.serialize('json', documents_results),
+		'document_folders_results': serializers.serialize('json', document_folders_results),
+		'media_url': settings.MEDIA_URL,
 	}
 	
 	return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
 def resolve_project(request, project_id):
 	project_update = project.objects.get(project_id = project_id)
 	project_update.project_status = 'Resolved'
@@ -1224,6 +1308,7 @@ def resolve_project(request, project_id):
 	return HttpResponseRedirect(reverse('active_projects'))
 
 
+@login_required(login_url='login')
 def resolve_task(request, task_id):
 	task_update = task.object.get(task_id = task_id)
 	task_update.task_status = 'Resolved'
@@ -1231,15 +1316,8 @@ def resolve_task(request, task_id):
 	return HttpResponseRedirect(reverse('active_projects'))	
 
 
+@login_required(login_url='login')
 def search(request):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
 	#Load the template
 	t = loader.get_template('NearBeach/search.html')
 	
@@ -1307,17 +1385,8 @@ def search(request):
 	return HttpResponse(t.render(c, request))
 	
 
-
+@login_required(login_url='login')
 def search_customers(request):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
-	
 	#Load the template
 	t = loader.get_template('NearBeach/search_customers.html')
 	
@@ -1368,15 +1437,8 @@ def search_customers(request):
 	
 	return HttpResponse(t.render(c, request))
 
+@login_required(login_url='login')
 def search_organisations(request):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
 	#Load the template
 	t = loader.get_template('NearBeach/search_organisations.html')
 	
@@ -1429,16 +1491,10 @@ def search_organisations(request):
 	}
 	
 	return HttpResponse(t.render(c, request))
-	
+
+
+@login_required(login_url='login')
 def search_projects_tasks(request):
-	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
 	#Load the template
 	t = loader.get_template('NearBeach/search_projects_and_tasks.html')
 	
@@ -1450,26 +1506,49 @@ def search_projects_tasks(request):
 	return HttpResponse(t.render(c, request))
 	
 
+@login_required(login_url='login')
 def task_information(request, task_id):
 	"""
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
+	We need to determine if the user has access to any of the groups that
+	this task is associated to. We will do a simple count(*) SQL QUERY
+	that will determine this.
 	"""
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(reverse('login'))
-	
+	current_user = request.user
+
+	# Setup connection to the database and query it
+	cursor = connection.cursor()
+
+	cursor.execute("""
+		SELECT COUNT(*)
+		FROM
+		  tasks_groups
+		, user_groups
+		WHERE 1=1
+		AND tasks_groups.groups_id_id = user_groups.group_id_id
+		AND tasks_groups.is_deleted = 'FALSE'
+		AND user_groups.is_deleted = 'FALSE'
+		AND user_groups.username_id = %s
+		AND tasks_groups.tasks_id_id = %s
+	""", [current_user.id, task_id])
+	has_permission = cursor.fetchall()
+
+	if not has_permission[0][0] == 1 and not request.session['IS_ADMIN'] == 'TRUE':
+		# Send them to 404!!
+		raise Http404
+
+
 	"""
 	There are two buttons on the task information page. Both will come
 	here. Both will save the data, however only one of them will resolve
 	the task.
 	"""
 	#Define the data we will edit
-	task_results = tasks.objects.get(tasks_id = task_id)
+	#task_results = tasks.objects.get(tasks_id = task_id)
+	task_results = get_object_or_404(tasks, tasks_id = task_id)
 	
 	#Get the data from the form
 	if request.method == "POST":
-		form = task_information_form(request.POST)
+		form = task_information_form(request.POST, request.FILES)
 		if form.is_valid():
 			#Extract all the information from the form and save
 			task_results.task_short_description = form.cleaned_data['task_short_description']
@@ -1505,13 +1584,15 @@ def task_information(request, task_id):
 				if start_date_hour == 12:
 					start_date_hour = 0
 			else:
-				start_date_hour = start_date_hour + 12
+				if start_date_hour > 12:
+					start_date_hour = start_date_hour + 12
 			
 			if finish_date_meridiems == "AM":
 				if finish_date_hour == 12:
 					finish_date_hour = 0
 			else:
-				finish_date_hour = finish_date_hour + 12
+				if finish_date_hour > 12:
+					finish_date_hour = finish_date_hour + 12
 			
 			
 			#Create the final start/end date fields
@@ -1524,12 +1605,76 @@ def task_information(request, task_id):
 				task_results.task_status = 'Resolved'
 			
 			task_results.save()
-			
+
+			if 'add_customer_submit' in request.POST:
+				#The user has tried adding a customer
+				customer_id = int(request.POST.get("add_customer_select"))
+
+				tasks_instance = tasks.objects.get(pk = task_id)
+				customers_instance = customers.objects.get(pk = customer_id)
+
+				submit_customer = tasks_customers(
+					tasks_id = tasks.objects.get(pk = task_id),
+					customer_id = customers.objects.get(pk = customer_id)
+				)
+
+				submit_customer.save()
+
+			"""
+			If the user has submitted a new document. We only upload the document IF and ONLY IF the user
+			has selected the "Submit" button on the "New Document" dialog. We do not want to accidently
+			upload a document if we hit the "SAVE" button from a different location
+			"""
+			if 'new_document' in request.POST:
+				document = request.FILES.get('document')
+				document_description = request.POST.get("document_description")
+				document_url_location = request.POST.get("document_url_location")
+
+				parent_folder_id = request.POST.get("parent_folder_id")
+
+				print(document)
+
+				submit_document = documents(
+					task_id=tasks.objects.get(pk=task_id),
+					document = document,
+					document_description = document_description,
+					document_url_location = document_url_location,
+					#document_folder_id = parent_folder_instance,
+				)
+				try:
+					submit_document.document_folder_id = document_folders.objects.get(document_folder_id=int(parent_folder_id))
+					submit_document.save()
+				except:
+					submit_document.save()
+
+			"""
+			Fuck - someone wants to create a new folder...
+			"""
+			if 'new_folder' in request.POST:
+				document_folder_description = form.cleaned_data['document_folder_description']
+				folder_location = request.POST.get("folder_location")
+
+				print(document_folder_description)
+				submit_folder = document_folders(
+					task_id=tasks.objects.get(pk=task_id),
+					document_folder_description=document_folder_description,
+				)
+
+				try:
+					submit_folder.parent_folder_id = document_folders.objects.get(
+						document_folder_id=int(folder_location))
+					submit_folder.save()
+				except:
+					submit_folder.save()
+
+
+
+
 			#Now save the new project history.
 			task_history_text_results = form.cleaned_data['task_history_text']
 			
 			if not task_history_text_results == '':
-				current_user = User.objects.get(username = request.user.get_username())
+				current_user = request.user
 				
 				task_id_connection = tasks.objects.get(tasks_id = task_id)
 				
@@ -1544,7 +1689,9 @@ def task_information(request, task_id):
 	
 	#Obtain required data
 	task_history_results = tasks_history.objects.filter(tasks_id = task_id) #Will need to remove all IS_DELETED=TRUE
-	
+	documents_results = documents.objects.filter(task_id = task_id, is_deleted = 'FALSE').order_by('document_description')
+	document_folders_results = document_folders.objects.filter(task_id = task_id, is_deleted = 'FALSE').order_by('document_folder_description')
+
 	"""
 	The 24 hours to 12 hours formula.
 	00:00 means that it is 12:00 AM - change required for hour
@@ -1605,7 +1752,54 @@ def task_information(request, task_id):
 			AND project_tasks.task_id = %s
 		""", [task_id])
 	associated_project_results = namedtuplefetchall(cursor)
-	
+
+
+	cursor.execute("""
+		SELECT DISTINCT
+		  customers.customer_first_name
+		, customers.customer_last_name
+		, tasks_customers.customers_description
+		, customers.customer_email
+		, customers_campus_information.campus_nickname
+		, customers_campus_information.customer_phone
+		FROM
+		  customers LEFT JOIN 
+			(SELECT * FROM customers_campus join organisations_campus ON customers_campus.campus_id_id = organisations_campus.id) as customers_campus_information
+			ON customers.customer_id = customers_campus_information.customer_id_id
+		, tasks_customers
+		WHERE 1=1
+		AND customers.customer_id = tasks_customers.customer_id_id
+		AND tasks_customers.tasks_id_id = %s
+	""", [task_id])
+	tasks_customers_results = namedtuplefetchall(cursor)
+
+	#task_customers_results
+	cursor.execute("""
+		SELECT DISTINCT 
+		  customers.customer_id
+		, customers.customer_first_name || ' ' || customers.customer_last_name AS customer_name
+		
+		FROM
+		  tasks 
+		, organisations LEFT JOIN customers
+			ON organisations.organisations_id = customers.organisations_id_id
+		
+		WHERE 1=1
+		AND tasks.organisations_id_id = organisations.organisations_id
+		
+		AND customers.customer_id NOT IN (SELECT DISTINCT tasks_customers.customer_id_id
+					FROM tasks_customers
+					WHERE 1=1
+					AND tasks_customers.tasks_id_id = tasks.tasks_id
+					AND tasks_customers.is_deleted = 'FALSE')
+		
+		
+		-- LINKS --
+		AND organisations.organisations_id = %s
+		AND tasks.tasks_id = %s
+		-- END LINKS --	
+	""", [task_results.organisations_id_id, task_id])
+	new_customers_results = namedtuplefetchall(cursor)
 	
 	#Load the template
 	t = loader.get_template('NearBeach/task_information.html')
@@ -1616,10 +1810,15 @@ def task_information(request, task_id):
 		'task_information_form': task_information_form(initial=initial),
 		'associated_project_results': associated_project_results,
 		'task_history_results': task_history_results,
+		'tasks_customers_results': tasks_customers_results,
+		'new_customers_results': new_customers_results,
+        'documents_results': serializers.serialize('json', documents_results),
+        'document_folders_results': serializers.serialize('json', document_folders_results),
+        'media_url': settings.MEDIA_URL,
 	}
 
+
 	return HttpResponse(t.render(c, request))
-	
 
 
 # Extra functionality

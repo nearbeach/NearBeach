@@ -36,6 +36,9 @@ from django.conf import settings
 
 
 #Setup drop down box options
+NOTHING_CHOICE = (
+	('','-----'),
+)
 YEAR_CHOICES = (
 	('2010','2010'),
 	('2011','2011'),
@@ -331,6 +334,13 @@ class project_information_form(ModelForm):
 	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
 	project_history_text = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Please update any history here and then click on the save button'}), required = False)
+
+	document = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange':'enable_submit()'}))
+	document_url_location = forms.URLField(required=False, widget=forms.TextInput(attrs={'placeholder':'https://example.com', 'onChange':'enable_submit()'}))
+	document_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
+
+	document_folder_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
+
 	class Meta:
 		model = project
 		fields = {
@@ -363,6 +373,8 @@ class search_projects_form(forms.Form):
 												choices = INCLUDE_CLOSED)											
 	
 class task_information_form(ModelForm):
+	task_short_description = forms.CharField(max_length=255, widget=forms.TextInput(attrs={"class":'task_short_description'}))
+
 	start_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
 	start_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
 	start_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
@@ -377,7 +389,13 @@ class task_information_form(ModelForm):
 	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
 	task_history_text = forms.CharField(widget=forms.Textarea, required = False)
-	
+
+	document = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange':'enable_submit()'}))
+	document_url_location = forms.URLField(required=False, widget=forms.TextInput(attrs={'placeholder':'https://example.com', 'onChange':'enable_submit()'}))
+	document_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
+
+	document_folder_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width': '100%', 'onkeyup': 'enable_submit()'}))
+
 	class Meta:
 		model = tasks
 		fields = {

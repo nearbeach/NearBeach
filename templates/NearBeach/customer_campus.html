@@ -1,22 +1,27 @@
 {% extends "./template.html" %}
 {% block content %}
-<h1>Customer Campus</h1>
-<div>
-	<form action="{% url 'customers_campus_information' customer_campus_id customer_or_org %}" method="POST">
-		{% csrf_token %}
-		<div>First Name - {{ customer_campus_results.customer_id.customer_first_name }}</div>
-		<div>Last Name - {{ customer_campus_results.customer_id.customer_last_name }}</div>
-		<div>Email - {{ customer_campus_results.customer_id.customer_email }}</div>
-		<div>Customer phone - {{ customer_campus_form.customer_phone }}</div>
-		<div>Customer fax - {{ customer_campus_form.customer_fax }}</div>
-		<div>Organisation - <a href="{% url 'organisation_information' customer_campus_results.campus_id.organisations_id.organisations_id  %}">{{ customer_campus_results.campus_id.organisations_id }}</a></div>
-		<div>Campus - <a href="{% url 'campus_information' customer_campus_results.campus_id.id %}">{{ customer_campus_results.campus_id }}</a></div>
-		<div>Suburb - {{ customer_campus_results.campus_id.campus_suburb_id }}</div>
-		<div>State [update section in javascript] - {{ customer_campus_results.campus_id.campus_state_id }}</div>
-		<div>Country - {{ customer_campus_results.campus_id.campus_country_id }}</div>
-		
-		<input type="submit" name="Save" value="Save and Return"/>
-	</form>
-
+<div class="div_content">
+	<div class="div_header">
+		<h1>Customer Campus</h1>
+	</div>
+	<div class="div_sub_content">
+		<form action="{% url 'customers_campus_information' customer_campus_id customer_or_org %}" method="POST">
+			{% csrf_token %}
+			<table>
+				<tr class="header"><td width="150px">Field</td><td>Input</td></tr>
+				<tr><td>First Name:</td><td>{{ customer_campus_results.customer_id.customer_first_name }}</td></tr>
+				<tr><td>Last Name:</td><td>{{ customer_campus_results.customer_id.customer_last_name }}</td></tr>
+				<tr><td>Email:</td><td>{{ customer_campus_results.customer_id.customer_email }}</td></tr>
+				<tr><td>Customer phone:</td><td>{{ customer_campus_form.customer_phone }}</td></tr>
+				<tr><td>Customer fax:</td><td>{{ customer_campus_form.customer_fax }}</td></tr>
+				<tr><td>Organisation:</td><td><a href="{% url 'organisation_information' customer_campus_results.campus_id.organisations_id.organisations_id  %}">{{ customer_campus_results.campus_id.organisations_id }}</a></td></tr>
+				<tr><td>Campus:</td><td><a href="{% url 'campus_information' customer_campus_results.campus_id.id %}">{{ customer_campus_results.campus_id }}</a></td></tr>
+				<tr><td>Suburb:</td><td>{{ customer_campus_results.campus_id.campus_suburb_id }}</td></tr>
+				<tr><td>State [update section in javascript]:</td><td>{{ customer_campus_results.campus_id.campus_state_id }}</td></tr>
+				<tr><td>Country:</td><td>{{ customer_campus_results.campus_id.campus_country_id }}</td></tr>
+			</table>
+			<input type="submit" name="Save" value="Save and Return"/>
+		</form>
+	</div>
 </div>
 {% endblock %}

@@ -7,16 +7,17 @@
 	
 </head>
 <body>
+	<div class="landing_page">
 	<nav class="menu">
 		<ul>
 			<li><a href="#">Main Menu</a>
 				<ul class="submenu">
-					<li><a href="{% url 'active_projects' %}">Active Projects</a></li>
 					<li><a href="{% url 'search_organisations' %}">Organisations</a></li>
 					<li><a href="{% url 'search_customers' %}">Customers</a></li>
 					<li><a href="{% url 'logout' %}">Logout</a></li>
 				</ul>
 			</li>
+			<li><a href="{% url 'active_projects' %}">Active Projects</a></li>
 			<li><a href="#">New Item</a>
 				<ul class="submenu">
 					<li><a href="{% url 'new_project' %}">New Project</a></li>
@@ -38,5 +39,6 @@
 			<p>You currently do not have permission to view this page!</p>
 
 	{% endif %}
+</div>
 </body>
 </html>
