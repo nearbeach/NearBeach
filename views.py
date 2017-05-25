@@ -542,7 +542,6 @@ def new_campus(request, organisations_id):
 			region_instance = list_of_countries_regions.objects.get(region_id = request.POST.get('campus_region_id'))
 			country_instance = list_of_countries.objects.get(country_id = request.POST.get('campus_country_id'))
 
-
 			campus_nickname = form.cleaned_data['campus_nickname']
 			campus_phone = form.cleaned_data['campus_phone']
 			campus_fax = form.cleaned_data['campus_fax']
