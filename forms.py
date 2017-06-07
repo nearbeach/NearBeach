@@ -191,7 +191,7 @@ class campus_information_form(ModelForm):
 	class Meta:
 		model = organisations_campus
 		fields = '__all__'
-		exclude = ['campus_region_id', 'campus_country_id']
+		exclude = ['campus_region_id', 'campus_country_id','organisations_id','is_deleted']
 
 
 
