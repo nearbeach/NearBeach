@@ -2,41 +2,52 @@
 {% block content %}
 {% load static %}
 <script type="text/javascript" src="{% static 'NearBeach/javascript/customer_information.js' %}"></script>
-<h1>Customer Information</h1>
-<table>
-{{ customer_information_form.as_table }}
-</table>
-
-<h2>Campus Contact Information</h2>
-<div>
-	{% if add_campus_results %}
-		<form action={% url 'customer_information' customer_id %} method="post" class="customer_information">
-			{% csrf_token %}
-			<select name="add_campus_select" id="id_add_cammpus_select" onchange="enable_disable_add_campus()">
-				<option value="---------"> ---------</option>
-				{% for row in add_campus_results %}
-					<option value="{{ row.id }}">{{ row.campus_nickname }}</option>
-				{% endfor %}
-			</select>
-			<input type="submit" name="add_campus_submit" value="Add Campus" disabled id="id_add_cammpus_submit">			
-		</form>
-	{% endif %}
-</div>
-{% if campus_results %}
-	<table>
-		<tr><td>Campus nickname</td><td>Contact's Phone</td><td>Contact's Fax</td><td>Campus Suburb</td><td>Campus Region</td><td>Campus Country</td></tr>
-		{% for row in campus_results %}
-			<tr>
-				<td><a href="{% url 'customers_campus_information' row.id 'CUST' %}">{{ row.campus_id }}</a></td>
-				<td>{{ row.customer_phone }}</td>
-				<td>{{ row.customer_fax }}</td>
-				<td>{{ row.campus_id.campus_suburb }}</td>
-				<td>{{ row.campus_id.campus_region_id }}</td>
-				<td>{{ row.campus_id.campus_country_id }}</td>
-			</tr>
-		{% endfor %}
-	</table>
-{% else %}
-	<p>There are currently no campuses</p>
-{% endif %}
+    <div class="div_content">
+        <div class="div_header">
+            <h1>Customer Information</h1>
+        </div>
+        <div class="div_sub_content">
+            <table>
+                <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
+                {{ customer_information_form.as_table }}
+            </table>
+        </div>
+    </div>
+    <br/>
+    <div class="div_content">
+        <div class="div_header">
+            <h1>Campus Contact Information</h1>
+        </div>
+        <div class="div_sub_content">
+            {% if add_campus_results %}
+                <form action={% url 'customer_information' customer_id %} method="post" class="customer_information">
+                    {% csrf_token %}
+                    <select name="add_campus_select" id="id_add_cammpus_select" onchange="enable_disable_add_campus()">
+                        <option value="---------"> ---------</option>
+                        {% for row in add_campus_results %}
+                            <option value="{{ row.id }}">{{ row.campus_nickname }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="submit" name="add_campus_submit" value="Add Campus" disabled id="id_add_cammpus_submit">
+                </form>
+            {% endif %}
+            {% if campus_results %}
+                <table>
+                    <tr class="header"><td>Campus nickname</td><td>Contact's Phone</td><td>Contact's Fax</td><td>Campus Suburb</td><td>Campus Region</td><td>Campus Country</td></tr>
+                    {% for row in campus_results %}
+                        <tr>
+                            <td><a href="{% url 'customers_campus_information' row.id 'CUST' %}">{{ row.campus_id }}</a></td>
+                            <td>{{ row.customer_phone }}</td>
+                            <td>{{ row.customer_fax }}</td>
+                            <td>{{ row.campus_id.campus_suburb }}</td>
+                            <td>{{ row.campus_id.campus_region_id }}</td>
+                            <td>{{ row.campus_id.campus_country_id }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <p>There are currently no campuses</p>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

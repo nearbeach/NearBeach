@@ -24,6 +24,9 @@
 				<h1>Task information - TASK{{ task_results.tasks_id }}</h1>
 			</div>
 			<div class="div_sub_content">
+                {% if task_results.task_status == 'Resolved' or task_results.task_status == 'Closed' %}
+                    <fieldset disabled="disabled">
+                {% endif %}
 				{{ task_information_form.task_short_description }}<br/>
 				{{ task_information_form.task_long_description }}<br/>
 				Task Start - {{ task_information_form.start_date_year }}/{{ task_information_form.start_date_month }}/{{ task_information_form.start_date_day }} @ {{ task_information_form.start_date_hour }}:{{ task_information_form.start_date_minute }} {{ task_information_form.start_date_meridiems }}<br/>
@@ -34,6 +37,8 @@
 				<input type="submit" name="Save" value="Save"/>
 				{% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
 					<input type="submit" name="Resolve" value="Resolve Project"/>
+                {% else %}
+                    </fieldset>
 				{% endif %}
 			</div>
 		</div>
@@ -60,7 +65,9 @@
 				<h3>Associated Projects</h3>
 			</div>
 			<div class="div_sub_content" id="associated_projects" style="display: none;">
-				<a href="{% url 'associated_projects' task_results.tasks_id %}">Associate Project</a>
+                {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
+				    <a href="{% url 'associated_projects' task_results.tasks_id %}">Associate Project</a>
+                {% endif %}
 				{% if associated_project_results %}
 						<table>
 							<tr class="header"><td>Project Id</td><td>project Name</td><td>End Date</td></tr>
@@ -84,13 +91,15 @@
 			</div>
 			<div class="div_sub_content" id="task_customers" style="display: none;">
 				{% if new_customers_results %}
-					<select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" >
-						<option value="---------" selected>---------</option>
-						{% for row in new_customers_results %}
-							<option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
-						{% endfor %}
-					</select>
-					<input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Project" disabled="disabled">
+                    {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
+                        <select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" >
+                            <option value="---------" selected>---------</option>
+                            {% for row in new_customers_results %}
+                                <option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Project" disabled="disabled">
+                    {% endif %}
 				{% endif %}
 				{% if tasks_customers_results %}
 
@@ -133,12 +142,14 @@
 				<h3>Task Documents</h3>
 			</div>
 			<div class="div_sub_content" id="task_documents" style="display: none;">
-                <a href="#" onclick="add_new_document()">Upload New Document</a><br/>
-				<a href="#" onclick="add_new_folder()">Create New Folder</a>
+                {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
+                    <a href="#" onclick="add_new_document()">Upload New Document</a><br/>
+                    <a href="#" onclick="add_new_folder()">Create New Folder</a>
 
-				<div id="root_folder">
-					It looks like there are no documents or folders
-				</div>
+                    <div id="root_folder">
+                        It looks like there are no documents or folders
+                    </div>
+                {% endif %}
 			</div>
 		</div>
 		<div id="overlay_new_document" class="overlay_new_document">
