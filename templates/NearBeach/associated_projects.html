@@ -1,28 +1,34 @@
 {% extends "./template.html" %}
 {% block content %}
-<h1>Associate Tasks</h1>
-<form action={% url 'associated_projects' task_id %} method="post" class="associated_projects">
-	{% csrf_token %}
-	<table>
-		{{ search_projects }}
-	</table>
-	<input hidden type="submit">
-</form>
+<div class="div_content">
+    <div class="div_header">
+        <h1>Associate Tasks</h1>
+    </div>
+    <div class="div_sub_content">
+        <form action={% url 'associated_projects' task_id %} method="post" class="associated_projects">
+            {% csrf_token %}
+            <table>
+                {{ search_projects }}
+            </table>
+            <input hidden type="submit">
+        </form>
+        <table>
+            <tr class="header">
+                <td>Project Name</td>
+                <td>Organisation</td>
+                <td>Project end date</td>
+                <td>Project Status</td>
+            </tr>
+            {% for project_row in projects_results %}
+                <tr>
+                    <td><a href="{% url 'associate' project_row.project_id task_id 'T' %}">{{ project_row.project_name }}</a></td>
+                    <td>{{ project_row.organisation_name }}</td>
+                    <td>{{ project_row.task_end_date }}</td>
+                    <td>{{ project_row.task_status }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
 
-<table>
-	<tr>
-		<td>Project Name</td>
-		<td>Organisation</td>
-		<td>Project end date</td>
-		<td>Project Status</td>
-	</tr>
-	{% for project_row in projects_results %}
-		<tr>
-			<td><a href="{% url 'associate' project_row.project_id task_id 'T' %}">{{ project_row.project_name }}</a></td>
-			<td>{{ project_row.organisation_name }}</td>
-			<td>{{ project_row.task_end_date }}</td>
-			<td>{{ project_row.task_status }}</td>
-		</tr>
-	{% endfor %}
-</table>
 {% endblock %}
