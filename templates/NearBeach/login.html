@@ -1,7 +1,6 @@
 <html>
 <style>
     .div_login_desktop {
-        margin: auto;
         position: fixed;
         top: 50%;
         left: 50%;
@@ -40,21 +39,33 @@
 
         //Get all sizes
         var screen_size = document.documentElement.clientWidth;
-        var form_login_width = form_login.clientWidth;
-        var form_login_height = form_login.clientHeight;
 
-        alert(form_login_width);
+
+        //alert(form_login_width);
 
         if (screen_size <= 800) {
             //Mobile view
             div_login.classList.remove("div_login_desktop");
             div_login.classList.add("div_login_mobile");
+
+            //Make sure we remove the margin left and right
+            var form_login_width = form_login.clientWidth;
+            var form_login_height = form_login.clientHeight;
+
+            div_login.style.marginLeft = 0;
+            div_login.style.marginTop = 0;
+
         } else {
             //Desktop view
             div_login.classList.remove("div_login_mobile");
             div_login.classList.add("div_login_desktop");
 
-            //We need to add some features depending how wide the form is
+            //Make sure that we center the div
+            var form_login_width = form_login.clientWidth;
+            var form_login_height = form_login.clientHeight;
+
+            div_login.style.marginLeft = -form_login_width/2;
+            div_login.style.marginTop = -form_login_height/2;
         }
     }
 </script>
@@ -62,7 +73,7 @@
     <div id="div_login">
         <form action="{% url 'login' %}" method="post" width="100%" id="form_login">
             {% csrf_token %}
-            <table>
+            <table width="100%">
                 {% if login_form.non_field_errors %}
                     {% for error in login_form.non_field_errors %}
                         <tr><td>{{ error }}</td></td>
