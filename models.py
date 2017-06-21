@@ -19,6 +19,29 @@ PROJECT_STATUS_CHOICE = (
 )
 
 #List of tables - in alphabetical order
+"""
+Contact History is a simple form that users will fill out every time they
+have some form of contact with the customer. This table will store both
+contact history for Customers and Organisations. The customer field in
+this instance is not required, and implies that the contact history is 
+applied to the organisation. The organisation field will fill out automatically
+when a user applies it to a customer. :)
+"""
+class contact_history(models.Model):
+	contact_history_id = models.AutoField(primary_key=True)
+	organisations_id = models.ForeignKey('organisations', on_delete=models.CASCADE, )
+	customer_id = models.ForeignKey('customers', on_delete = models.CASCADE, blank=True, null=True)
+	contact_type = models.ForeignKey('list_of_contact_types', on_delete=models.CASCADE,)
+	contact_date = models.DateField()
+	notes = models.TextField()
+	user_id = models.ForeignKey(User, on_delete = models.CASCADE, null = True)
+	audit_date = models.DateTimeField(auto_now = True)
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
+
+	class Meta:
+		db_table = "contact_history"
+
+
 class costs(models.Model):
 	cost_id = models.AutoField(primary_key = True)
 	project_id = models.ForeignKey('project', on_delete=models.CASCADE, blank=True, null=True)
@@ -57,6 +80,9 @@ class customers_campus(models.Model):
 	
 	class Meta:
 		db_table = "customers_campus"
+
+
+
 
 class documents(models.Model):
 	document_id = models.AutoField(primary_key=True)
@@ -107,6 +133,16 @@ class group_permissions(models.Model):
 	
 	class Meta:
 		db_table = "group_permissions"
+
+
+class list_of_contact_types(models.Model):
+	contact_type_id = models.AutoField(primary_key=True)
+	contact_type = models.CharField(max_length=10)
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
+
+	class Meta:
+		db_table = "list_of_contact_types"
+
 
 class list_of_countries(models.Model):
 	country_id = models.CharField(primary_key = True, max_length = 2)
