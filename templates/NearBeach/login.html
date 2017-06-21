@@ -1,14 +1,17 @@
 <html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-	.login_form {
-		width:300px;
-		height:150px;
-		position:fixed;
-		margin-left:-150px; /* half of width */
-		margin-top:-150px;  /* half of height */
-		top:50%;
-		left:50%;
-	}
+    .div_login_desktop {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+    }
+
+    .div_login_mobile {
+        width: 100%;
+        margin: auto;
+    }
+
 	
 	.login_button {
 	    background-color: #4CAF50;
@@ -20,30 +23,74 @@
 		width: 100%;
 		height:45px;	
 	}
-	
-	table {
-		width: 150px;
-	}
+
+
+    input {
+        width: 100%;
+        box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+    }
 </style>
-<body>
-	<form action="{% url 'login' %}" method="post" class="login_form">
-		{% csrf_token %}
-		<table>
-			{% if login_form.non_field_errors %}
-				{% for error in login_form.non_field_errors %}
-					<tr><td>{{ error }}</td></td>
-				{% endfor %}
-			{% endif %}
-			<tr><td>{{ login_form.username }}</td></tr>
-			<tr><td>{{ login_form.password }}</td></tr>
-			{% if not RECAPTCHA_SITE_KEY == '' %}
-				<script src="https://www.google.com/recaptcha/api.js" async defer></script>
-				<tr><td><div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_PUBLIC_KEY }}"></div></td></tr>
-			{% endif %}
-			<tr><td><input type="submit" value="Login" class="login_button" /></td></tr>
-			<tr><td><a href="{% url 'password_reset' %}">Forgotten Password</a></td></tr>
-		</table>
-		
-	</form>
+<script>
+    function responsive_login_screen() {
+        //Get all elements
+        var div_login = document.getElementById("div_login");
+        var form_login = document.getElementById("form_login");
+
+        //Get all sizes
+        var screen_size = document.documentElement.clientWidth;
+
+
+        //alert(form_login_width);
+
+        if (screen_size <= 800) {
+            //Mobile view
+            div_login.classList.remove("div_login_desktop");
+            div_login.classList.add("div_login_mobile");
+
+            //Make sure we remove the margin left and right
+            var form_login_width = form_login.clientWidth;
+            var form_login_height = form_login.clientHeight;
+
+            div_login.style.marginLeft = 0;
+            div_login.style.marginTop = 0;
+
+        } else {
+            //Desktop view
+            div_login.classList.remove("div_login_mobile");
+            div_login.classList.add("div_login_desktop");
+
+            //Make sure that we center the div
+            var form_login_width = form_login.clientWidth;
+            var form_login_height = form_login.clientHeight;
+
+            div_login.style.marginLeft = -form_login_width/2;
+            div_login.style.marginTop = -form_login_height/2;
+        }
+    }
+</script>
+<body onload="responsive_login_screen()" onresize="responsive_login_screen()">
+    <div id="div_login">
+        <form action="{% url 'login' %}" method="post" width="100%" id="form_login">
+            {% csrf_token %}
+            <table width="100%">
+                {% if login_form.non_field_errors %}
+                    {% for error in login_form.non_field_errors %}
+                        <tr><td>{{ error }}</td></td>
+                    {% endfor %}
+                {% endif %}
+                <tr><td>{{ login_form.username }}</td></tr>
+                <tr><td>{{ login_form.password }}</td></tr>
+                {% if not RECAPTCHA_SITE_KEY == '' %}
+                    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+                    <tr><td><div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_PUBLIC_KEY }}"></div></td></tr>
+                {% endif %}
+                <tr><td><input type="submit" value="Login" class="login_button" /></td></tr>
+                <tr><td><a href="{% url 'password_reset' %}">Forgotten Password</a></td></tr>
+            </table>
+
+        </form>
+    </div>
 </body>
 </html>

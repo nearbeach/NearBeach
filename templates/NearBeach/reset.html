@@ -1,32 +1,80 @@
-{% block content %}
-    {% if validlink %}
-        <p>Please enter your new password twice.<br />
-           So we can verify you typed it in correctly.</p>
-        <form action="" method="post">
-            <div style="display:none">
-                <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
-            </div>
-            <table>
-                <tr>
-                    <td>{{ form.new_password1.errors }}
-                        <label for="id_new_password1">New password:</label></td>
-                    <td>{{ form.new_password1 }}</td>
-                </tr>
-                <tr>
-                    <td>{{ form.new_password2.errors }}
-                        <label for="id_new_password2">Confirm password:</label></td>
-                    <td>{{ form.new_password2 }}</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td><input type="submit" value="Change my password" /></td>
-                </tr>
-            </table>
-        </form>
-    {% else %}
-        <h1>Password reset unsuccessful</h1>
-        <p>The password reset link was invalid, <br />
-        possibly because it has already been used. <br />
-        Please request a new password reset.</p>
-    {% endif %}
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<head>
+		<style>
+			.div_content {
+				border-style: solid;
+				border: 1px;
+				border-radius: 15px 15px 0px 0px;
+				border-color: #A7E5F0;
+			}
+
+			.div_header {
+				border-style: solid;
+				border-radius: 15px 15px 0px 0px;
+				border-color: #A7E5F0;
+				background-color: #A7E5F0;
+			}
+
+			.div_sub_content {
+				border-style: solid;
+				border-radius: 0px 0px 15px 15px;
+				border-color: #A7E5F0;
+			}
+
+			.landing_page {
+				position: relative;
+				max-width: 1200px;
+				margin: auto;
+			}
+		</style>
+
+	</head>
+	<body>
+        <div class="landing_page">
+            {% if validlink %}
+                <div class="div_content">
+                    <div class="div_header">
+                        <h1>Change Password</h1>
+                    </div>
+                    <div class="div_sub_content">
+                        <p>Please enter your new password twice.<br />
+                        So we can verify you typed it in correctly.</p>
+                        <form action="" method="post">
+                            <div style="display:none">
+                                <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
+                            </div>
+                            <table>
+                                <tr>
+                                    <td>{{ form.new_password1.errors }}
+                                        <label for="id_new_password1">New password:</label></td>
+                                    <td>{{ form.new_password1 }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{{ form.new_password2.errors }}
+                                        <label for="id_new_password2">Confirm password:</label></td>
+                                    <td>{{ form.new_password2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td><input type="submit" value="Change my password" /></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div class="div_content">
+                    <div class="div_header">
+                        <h1>Password reset unsuccessful</h1>
+                    </div>
+                    <div class="div_sub_content">
+                        <p>The password reset link was invalid, possibly because it has already been used. Please request a new password reset.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </body>
+</html>
+

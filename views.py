@@ -208,45 +208,42 @@ def campus_information(request, campus_information):
 	
 	#If instance is in POST
 	if request.method == "POST":
-		if 'add_customer_submit' in request.POST:
-			#Obtain the ID of the customer
-			customer_results = int(request.POST.get("add_customer_select"))
-			
-			#Get the SQL Instances
-			customer_instance = customers.objects.get(customer_id = customer_results)
-			campus_instances = organisations_campus.objects.get(id = campus_information)
-			
-			#Save the new campus
-			submit_campus = customers_campus(customer_id = customer_instance,	campus_id = campus_instances,	customer_phone = '', customer_fax = '')
-			submit_campus.save()
-			
-			#Go to the form.
-			return HttpResponseRedirect(reverse('customers_campus_information', args={submit_campus.id,'CAMP'}))
-			
-		else:
-			#Other save button must have been pressed	
-			form = campus_information_form(request.POST)
-			if form.is_valid():
-				#SQL instance
-				campus_region_instance = list_of_countries_regions.objects.get(region_id = int(request.POST.get('campus_region_id')))
-				campus_country_instance = list_of_countries.objects.get(country_id = request.POST.get('campus_country_id'))
+		#Other save button must have been pressed
+		form = campus_information_form(request.POST)
+		if form.is_valid():
+			#SQL instance
+			campus_region_instance = list_of_countries_regions.objects.get(region_id = int(request.POST.get('campus_region_id')))
+			campus_country_instance = list_of_countries.objects.get(country_id = request.POST.get('campus_country_id'))
 
-				#Save all the data
-				campus_results.organisations_id = form.cleaned_data['organisations_id']
-				campus_results.campus_nickname = form.cleaned_data['campus_nickname']
-				campus_results.campus_phone = form.cleaned_data['campus_phone']
-				campus_results.campus_fax = form.cleaned_data['campus_fax']
-				campus_results.campus_address1 = form.cleaned_data['campus_address1']
-				campus_results.campus_address2 = form.cleaned_data['campus_address2']
-				campus_results.campus_address3 = form.cleaned_data['campus_address3']
-				campus_results.campus_suburb = form.cleaned_data['campus_suburb']
-				#campus_results.campus_region_id = list_of_countries_regions.objects.get(region_id=form.cleaned_data['campus_region_id'])
-				#campus_results.campus_country_id = list_of_countries.objects.get(country_id=form.cleaned_data['campus_country_id'])
-				campus_results.campus_region_id = campus_region_instance
-				campus_results.campus_country_id = campus_country_instance
-				
-				campus_results.save()
-		
+			#Save all the data
+			campus_results.campus_nickname = form.cleaned_data['campus_nickname']
+			campus_results.campus_phone = form.cleaned_data['campus_phone']
+			campus_results.campus_fax = form.cleaned_data['campus_fax']
+			campus_results.campus_address1 = form.cleaned_data['campus_address1']
+			campus_results.campus_address2 = form.cleaned_data['campus_address2']
+			campus_results.campus_address3 = form.cleaned_data['campus_address3']
+			campus_results.campus_suburb = form.cleaned_data['campus_suburb']
+			campus_results.campus_region_id = campus_region_instance
+			campus_results.campus_country_id = campus_country_instance
+
+			campus_results.save()
+
+
+		if 'add_customer_submit' in request.POST:
+			# Obtain the ID of the customer
+			customer_results = int(request.POST.get("add_customer_select"))
+
+			# Get the SQL Instances
+			customer_instance = customers.objects.get(customer_id=customer_results)
+			campus_instances = organisations_campus.objects.get(id=campus_information)
+
+			# Save the new campus
+			submit_campus = customers_campus(customer_id=customer_instance, campus_id=campus_instances,
+											 customer_phone='', customer_fax='')
+			submit_campus.save()
+
+			# Go to the form.
+			return HttpResponseRedirect(reverse('customers_campus_information', args={submit_campus.id, 'CAMP'}))
 
 	#Get Data
 	customer_campus_results = customers_campus.objects.filter(campus_id = campus_information)

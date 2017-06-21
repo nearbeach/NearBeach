@@ -191,7 +191,7 @@ class campus_information_form(ModelForm):
 	class Meta:
 		model = organisations_campus
 		fields = '__all__'
-		exclude = ['campus_region_id', 'campus_country_id']
+		exclude = ['campus_region_id', 'campus_country_id','organisations_id','is_deleted']
 
 
 
@@ -203,8 +203,8 @@ class customer_information_form(ModelForm):
 
 
 class login_form(forms.Form):
-	username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'login'}))
-	password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'password'}))
+	username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'login', 'width': '100%'}))
+	password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'password', 'width': '100%'}))
 
 
 	def clean(self):
@@ -263,8 +263,8 @@ class new_customer_form(forms.Form):
 
 class new_organisation_form(forms.Form):
 	organisation_name = forms.CharField(max_length = 255)
-	organisation_website = forms.URLField(max_length = 255, initial='http://')
-	organisation_email = forms.EmailField(max_length = 255)
+	organisation_website = forms.URLField(max_length = 255, initial='https://', widget=forms.TextInput(attrs={'width': '99%'}))
+	organisation_email = forms.EmailField(max_length = 255, widget=forms.TextInput(attrs={'width': '99%'}))
 
 class new_project_form(forms.Form):
 	#Get data for choice boxes
@@ -288,6 +288,7 @@ class new_project_form(forms.Form):
 	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
 	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+
 	
 
 
@@ -320,6 +321,7 @@ class project_information_form(ModelForm):
 	Project information will need to abide by the stricked laws of the new
 	project datetime edits!!
 	"""
+
 	start_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
 	start_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
 	start_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))

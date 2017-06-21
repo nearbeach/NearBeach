@@ -1,4 +1,48 @@
-{% block content %}
-<p>Your password has been set.  You may go ahead and log in now.</p>
-<p><a href="{% url 'login' %}">Log in</a></p>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <head>
+        <style>
+            .div_content {
+                border-style: solid;
+                border: 1px;
+                border-radius: 15px 15px 0px 0px;
+                border-color: #A7E5F0;
+            }
+
+            .div_header {
+                border-style: solid;
+                border-radius: 15px 15px 0px 0px;
+                border-color: #A7E5F0;
+                background-color: #A7E5F0;
+            }
+
+            .div_sub_content {
+                border-style: solid;
+                border-radius: 0px 0px 15px 15px;
+                border-color: #A7E5F0;
+            }
+            .landing_page {
+                position: relative;
+                max-width: 1200px;
+                margin: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="landing_page">
+            <div class="div_content">
+                <div class="div_header">
+                    <h1>Password reset complete</h1>
+                </div>
+                <div class="div_sub_content">
+                    <p>Your password has been set.  You may go ahead and log in now.</p>
+                    <p><a href="{% url 'login' %}">Log in</a></p>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+
+
+

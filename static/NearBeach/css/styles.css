@@ -1,3 +1,26 @@
+input {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+
+
+input[type="text"] {
+    width: 99%;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+input[type="password"] {
+    width: 99%;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+
 select option:disabled {
     display:none;
 }
@@ -177,4 +200,5 @@ textarea {
 .overlay_content div {
     width: 100%;
 }
+
 

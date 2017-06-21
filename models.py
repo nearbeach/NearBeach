@@ -69,6 +69,9 @@ class documents(models.Model):
 	document_folder_id = models.ForeignKey('document_folders', on_delete=models.CASCADE, blank=True, null=True)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
+	class Meta:
+		db_table = "documents"
+
 
 class document_folders(models.Model):
 	document_folder_id = models.AutoField(primary_key=True)
@@ -80,6 +83,9 @@ class document_folders(models.Model):
 
 	def __str__(self):
 		return self.document_folder_description
+
+	class Meta:
+		db_table = "document_folder"
 
 
 class groups(models.Model):

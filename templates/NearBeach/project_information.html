@@ -24,19 +24,24 @@
 				<h1>Project Information - PRO{{ project_results.project_id }}</h1>
 			</div>
 			<div class="div_sub_content">
+                {% csrf_token %}
+                {% if project_results.project_status == 'Resolved' or project_results == 'Closed' %}
+                    <fieldset disabled="disabled">
+                {% endif %}
 
-					{% csrf_token %}
-					{{ project_information_form.project_name }}<br/>
-					{{ project_information_form.project_description }}<br/>
-					Organisation - {{ project_results.organisations_id.organisation_name }}<br/>
-					Project Status - {{ project_results.project_status }}<br/>
-					Project Start - {{ project_information_form.start_date_year }}{{ project_information_form.start_date_month }}{{ project_information_form.start_date_day }} @ {{ project_information_form.start_date_hour }}:{{ project_information_form.start_date_minute }} {{ project_information_form.start_date_meridiems }}<br/>
-					Project Finish - {{ project_information_form.finish_date_year }}{{ project_information_form.finish_date_month }}{{ project_information_form.finish_date_day }} @ {{ project_information_form.finish_date_hour }}:{{ project_information_form.finish_date_minute }}{{ project_information_form.finish_date_meridiems }}<br/><br/>
-					{{ project_information_form.project_history_text }}
-					<input type="submit" name="Save" value="Save"/>
-					{% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
-						<input type="submit" name="Resolve" value="Resolve Project"/>
-					{% endif %}
+                {{ project_information_form.project_name }}<br/>
+                {{ project_information_form.project_description }}<br/>
+                Organisation - {{ project_results.organisations_id.organisation_name }}<br/>
+                Project Status - {{ project_results.project_status }}<br/>
+                Project Start - {{ project_information_form.start_date_year }}{{ project_information_form.start_date_month }}{{ project_information_form.start_date_day }} @ {{ project_information_form.start_date_hour }}:{{ project_information_form.start_date_minute }} {{ project_information_form.start_date_meridiems }}<br/>
+                Project Finish - {{ project_information_form.finish_date_year }}{{ project_information_form.finish_date_month }}{{ project_information_form.finish_date_day }} @ {{ project_information_form.finish_date_hour }}:{{ project_information_form.finish_date_minute }}{{ project_information_form.finish_date_meridiems }}<br/><br/>
+                {{ project_information_form.project_history_text }}
+                <input type="submit" name="Save" value="Save"/>
+                {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
+                    <input type="submit" name="Resolve" value="Resolve Project"/>
+                {% else %}
+                    </fieldset>
+                {% endif %}
 
 			</div>
 		</div>
@@ -63,7 +68,9 @@
 				<h3>Associated Tasks</h3>
 			</div>
 			<div class="div_sub_content" id="div_associated_tasks" style="display: none;">
-				<a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
+                {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
+				    <a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
+                {% endif %}
 				{% if associated_tasks_results %}
 						<table>
 						<tr class="header"><td>Task Id</td><td>Short Description</td><td>End Date</td></tr>
@@ -88,13 +95,15 @@
 			</div>
 			<div class="div_sub_content" id="div_project_customers" style="display: none;">
 				{% if new_customers_results %}
-					<select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" >
-						<option value="---------" selected>---------</option>
-						{% for row in new_customers_results %}
-							<option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
-						{% endfor %}
-					</select>
-					<input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Project" disabled="disabled">
+                    {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
+                        <select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" >
+                            <option value="---------" selected>---------</option>
+                            {% for row in new_customers_results %}
+                                <option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Project" disabled="disabled">
+                    {% endif %}
 				{% endif %}
 				{% if project_customers_results %}
 					<table>
@@ -135,9 +144,10 @@
 				<h3>Project Documents</h3>
 			</div>
 			<div class="div_sub_content" id="div_project_documents" style="display: none;">
-                <a href="#" onclick="add_new_document()">Upload New Document</a><br/>
-				<a href="#" onclick="add_new_folder()">Create New Folder</a>
-
+                {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
+                    <a href="#" onclick="add_new_document()">Upload New Document</a><br/>
+                    <a href="#" onclick="add_new_folder()">Create New Folder</a>
+                {% endif %}
 				<div id="root_folder">
 					It looks like there are no documents or folders
 				</div>
