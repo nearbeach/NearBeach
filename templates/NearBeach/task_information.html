@@ -73,7 +73,7 @@
 							<tr class="header"><td>Project Id</td><td>project Name</td><td>End Date</td></tr>
 							{% for associated_project_row in associated_project_results %}
 								<tr>
-								<td><a href="{% url 'project_information' associated_project_row.project_id %}">{{ associated_project_row.project_id }}</a></td>
+								<td><a href="Project - {% url 'project_information' associated_project_row.project_id %}">{{ associated_project_row.project_id }}</a></td>
 								<td>{{ associated_project_row.project_name }}</td>
 								<td>{{ associated_project_row.project_end_date }}</td>
 								</tr>
