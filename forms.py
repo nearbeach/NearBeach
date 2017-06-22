@@ -9,6 +9,7 @@ from .models import organisations_campus
 from .models import list_of_titles
 from .models import list_of_countries
 from .models import list_of_countries_regions
+from .models import list_of_contact_types
 from .models import user_groups
 from .models import project
 from .models import tasks
@@ -188,6 +189,7 @@ class campus_information_form(ModelForm):
 	campus_address3 = forms.CharField(required=False)
 	campus_suburb = forms.CharField(required=False)
 
+
 	class Meta:
 		model = organisations_campus
 		fields = '__all__'
@@ -196,6 +198,20 @@ class campus_information_form(ModelForm):
 
 
 class customer_information_form(ModelForm):
+	# Get data for choice boxes
+	contact_type_results = list_of_contact_types.objects.filter(is_deleted='FALSE')
+
+	#The Fields
+	contact_type = forms.ModelChoiceField(label='Contact Type', widget=forms.Select, queryset=contact_type_results,empty_label=None)
+
+	start_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+	start_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+	start_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+
+	contact_history = forms.CharField(widget=forms.TextInput(attrs={'width': '99%'}), required=False)
+
+	contact_attachment = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange':'enable_submit()'}))
+
 	class Meta:
 		model = customers
 		fields = '__all__'

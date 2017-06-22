@@ -140,6 +140,9 @@ class list_of_contact_types(models.Model):
 	contact_type = models.CharField(max_length=10)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
+	def __str__(self):
+		return self.contact_type
+
 	class Meta:
 		db_table = "list_of_contact_types"
 
