@@ -208,13 +208,14 @@ class customer_information_form(ModelForm):
 	start_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
 	start_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
 
-	contact_history = forms.CharField(widget=forms.TextInput(attrs={'width': '99%'}), required=False)
+	contact_history = forms.CharField(widget=forms.TextInput(attrs={'width': '99%','height': '300px'}), required=False)
 
 	contact_attachment = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange':'enable_submit()'}))
 
 	class Meta:
 		model = customers
 		fields = '__all__'
+		exclude = ['is_deleted']
 
 
 

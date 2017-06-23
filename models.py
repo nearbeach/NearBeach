@@ -33,8 +33,8 @@ class contact_history(models.Model):
 	customer_id = models.ForeignKey('customers', on_delete = models.CASCADE, blank=True, null=True)
 	contact_type = models.ForeignKey('list_of_contact_types', on_delete=models.CASCADE,)
 	contact_date = models.DateField()
-	notes = models.TextField()
-	user_id = models.ForeignKey(User, on_delete = models.CASCADE, null = True)
+	contact_history = models.TextField()
+	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 	audit_date = models.DateTimeField(auto_now = True)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 

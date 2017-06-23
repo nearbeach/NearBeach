@@ -337,21 +337,70 @@ def customer_information(request, customer_id):
 		return HttpResponseRedirect(reverse('login'))
 		
 	if request.method == "POST":
-		#If we are adding a new campus
-		if 'add_campus_submit' in request.POST:
-			#Obtain the id of the campus_id
-			campus_id_results = request.POST.get("add_campus_select")
-			
-			#Get the SQL Instances
-			customer_instance = customers.objects.get(customer_id = customer_id)
-			campus_instances = organisations_campus.objects.get(id = campus_id_results)
-			
-			#Save the new campus
-			submit_campus = customers_campus(customer_id = customer_instance,	campus_id = campus_instances,	customer_phone = '', customer_fax = '')
-			submit_campus.save()
-			
-			#Go to the form.
-			return HttpResponseRedirect(reverse('customers_campus_information', args={submit_campus.id,'CUST'}))
+		#Save everything!
+		form = customer_information_form(request.POST)
+		if form.is_valid():
+			current_user = request.user
+
+			# Save the data
+			save_data = customers.objects.get(customer_id=customer_id)
+
+
+			save_data.customer_title = form.cleaned_data['customer_title']
+			save_data.customer_first_name = form.cleaned_data['customer_first_name']
+			save_data.customer_last_name = form.cleaned_data['customer_last_name']
+			save_data.customer_email = form.cleaned_data['customer_email']
+			save_data.organisation_id = form.cleaned_data['organisations_id']
+
+			save_data.save()
+
+			"""
+			If the user has written something in the contact section, we want to save it
+			"""
+			contact_history_notes = form.cleaned_data['contact_history']
+
+			if not contact_history_notes == '':
+				#Lets save some contact history
+				organisation_id = form.cleaned_data['organisations_id']
+				contact_type = form.cleaned_data['contact_type']
+
+				#Calendar values
+				start_date_year = int(form.cleaned_data['start_date_year'])
+				start_date_month = int(form.cleaned_data['start_date_month'])
+				start_date_day = int(form.cleaned_data['start_date_day'])
+
+				# Create the final start/end date fields
+				task_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day)
+
+				submit_history = contact_history(organisation_id=organisation_id
+												 , customer_id=save_data.customer_id
+												 , contact_type=contact_type
+												 , contact_date=task_start_date
+												 , contact_history=contact_history_notes
+												 , user_id=current_user.id)
+
+				submit_history.save()
+
+
+
+
+			#If we are adding a new campus
+			if 'add_campus_submit' in request.POST:
+				#Obtain the id of the campus_id
+				campus_id_results = request.POST.get("add_campus_select")
+
+				#Get the SQL Instances
+				customer_instance = customers.objects.get(customer_id = customer_id)
+				campus_instances = organisations_campus.objects.get(id = campus_id_results)
+
+				#Save the new campus
+				submit_campus = customers_campus(customer_id = customer_instance,	campus_id = campus_instances,	customer_phone = '', customer_fax = '')
+				submit_campus.save()
+
+				#Go to the form.
+				return HttpResponseRedirect(reverse('customers_campus_information', args={submit_campus.id,'CUST'}))
+		else:
+			print(form.errors)
 	
 	#Get the instance
 	customer_results = customers.objects.get(pk = customer_id)
