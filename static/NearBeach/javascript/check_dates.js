@@ -25,7 +25,7 @@ function check_start_date() {
 	var year_element = document.getElementById("id_start_date_year");
 	var month_element = document.getElementById("id_start_date_month");
 	var day_element = document.getElementById("id_start_date_day");
-	
+
 	fix_dates(year_element, month_element, day_element);
 }
 

@@ -34,6 +34,7 @@ class contact_history(models.Model):
 	contact_type = models.ForeignKey('list_of_contact_types', on_delete=models.CASCADE,)
 	contact_date = models.DateField()
 	contact_history = models.TextField()
+	contact_attachment= models.FileField(upload_to='contact_history/', null=True, blank=True)
 	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 	audit_date = models.DateTimeField(auto_now = True)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')

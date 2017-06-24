@@ -338,10 +338,8 @@ def customer_information(request, customer_id):
 		
 	if request.method == "POST":
 		#Save everything!
-		form = customer_information_form(request.POST)
+		form = customer_information_form(request.POST, request.FILES)
 		if form.is_valid():
-			current_user = request.user
-
 			# Save the data
 			save_data = customers.objects.get(customer_id=customer_id)
 
@@ -360,9 +358,14 @@ def customer_information(request, customer_id):
 			contact_history_notes = form.cleaned_data['contact_history']
 
 			if not contact_history_notes == '':
+				current_user = request.user
 				#Lets save some contact history
 				organisation_id = form.cleaned_data['organisations_id']
 				contact_type = form.cleaned_data['contact_type']
+
+
+				print(save_data.organisation_id)
+				#organisation_link = organisations.objects.get(organisations_id=organisation_id)
 
 				#Calendar values
 				start_date_year = int(form.cleaned_data['start_date_year'])
@@ -372,17 +375,23 @@ def customer_information(request, customer_id):
 				# Create the final start/end date fields
 				task_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day)
 
-				submit_history = contact_history(organisation_id=organisation_id
-												 , customer_id=save_data.customer_id
+				#documents
+				contact_attachment = request.FILES.get('contact_attachment')
+
+				organisations_id = form.cleaned_data['organisations_id']
+
+
+
+
+				submit_history = contact_history(organisations_id=organisations_id
+												 , customer_id=save_data
 												 , contact_type=contact_type
 												 , contact_date=task_start_date
 												 , contact_history=contact_history_notes
-												 , user_id=current_user.id)
+												 , user_id = current_user
+												 , contact_attachment=contact_attachment)
 
 				submit_history.save()
-
-
-
 
 			#If we are adding a new campus
 			if 'add_campus_submit' in request.POST:
@@ -405,20 +414,32 @@ def customer_information(request, customer_id):
 	#Get the instance
 	customer_results = customers.objects.get(pk = customer_id)
 	add_campus_results = organisations_campus.objects.filter(organisations_id = customer_results.organisations_id)
-
+	customer_contact_history = contact_history.objects.filter(customer_id=customer_id)
 
 	#The campus the customer is associated to
 	campus_results = customers_campus.objects.filter(customer_id = customer_id)
+
+
+	#Date required to initiate date
+	today = datetime.datetime.now()
 	
 	#load template
 	t = loader.get_template('NearBeach/customer_information.html')
 	
 	#context
 	c = {
-		'customer_information_form': customer_information_form(instance=customer_results),
+		'customer_information_form': customer_information_form(
+			instance=customer_results,
+			initial={
+				'start_date_year': today.year,
+				'start_date_month': today.month,
+				'start_date_day': today.day,
+		}),
 		'campus_results': campus_results,
 		'add_campus_results': add_campus_results,
 		'customer_id': customer_id,
+		'customer_contact_history': customer_contact_history,
+		'media_url': settings.MEDIA_URL,
 	}
 	
 	return HttpResponse(t.render(c, request))	
@@ -1017,6 +1038,10 @@ def organisation_information(request, organisations_id):
 	organisation_results = organisations.objects.get(pk = organisations_id)
 	campus_results = organisations_campus.objects.filter(organisations_id = organisations_id)
 	customers_results = customers.objects.filter(organisations_id = organisation_results)
+
+	#Forms
+	organisation_form = organisation_form()
+
 
 	
 	#Loaed the template

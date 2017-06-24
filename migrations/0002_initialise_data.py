@@ -28,7 +28,7 @@ def initialise_data(apps, schema_editor):
 
     # List of contact types
     list_of_contact_types = apps.get_model("NearBeach", "list_of_contact_types")
-    list_of_contact_types.objects.user(db_alias).bulk_create([
+    list_of_contact_types.objects.using(db_alias).bulk_create([
         list_of_contact_types(contact_type="Notes"),
         list_of_contact_types(contact_type="Phone"),
         list_of_contact_types(contact_type="Email"),

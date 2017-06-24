@@ -332,6 +332,26 @@ class new_task_form(forms.Form):
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
 
 
+class organisation_form(forms.Form):
+	# Get data for choice boxes
+	contact_type_results = list_of_contact_types.objects.filter(is_deleted='FALSE')
+
+	# The Fields
+	contact_type = forms.ModelChoiceField(label='Contact Type', widget=forms.Select, queryset=contact_type_results,
+										  empty_label=None)
+
+	start_date_year = forms.ChoiceField(choices=YEAR_CHOICES,
+										widget=forms.Select(attrs={"onChange": 'check_start_date()'}))
+	start_date_month = forms.ChoiceField(choices=MONTH_CHOICES,
+										 widget=forms.Select(attrs={"onChange": 'check_start_date()'}))
+	start_date_day = forms.ChoiceField(choices=DAY_CHOICES,
+									   widget=forms.Select(attrs={"onChange": 'check_start_date()'}))
+
+	contact_history = forms.CharField(widget=forms.TextInput(attrs={'width': '99%', 'height': '300px'}), required=False)
+	contact_attachment = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange': 'enable_submit()'}))
+
+
+
 
 class project_information_form(ModelForm):
 	"""

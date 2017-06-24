@@ -1,7 +1,9 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
+<script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/customer_information.js' %}"></script>
+<body onload="initiate_dates()">
     <form action="{% url 'customer_information' customer_id %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="div_content">
@@ -32,6 +34,18 @@
                 {{ customer_information_form.contact_attachment }}
                 <input type="submit" name="submit_contact" value="Submit Contact"/>
             </div>
+            {% if customer_contact_history %}
+                <div><h4>Contact History</h4></div>
+                {% for row in customer_contact_history %}
+                    <p>
+                        {{ row.contact_type }} - Submitted by {{ row.user_id }} on {{ row.contact_date }}<br/>
+                        <textarea readonly>{{ row.contact_history }}</textarea>
+                        {% if row.contact_attachment %}
+                            <a href="{{ media_url }}{{ row.contact_attachment }}" target="_blank">{{ row.contact_attachment }}</a>
+                        {% endif %}
+                    </p>
+                {% endfor %}
+            {% endif %}
         </div>
         <br/>
         <div class="div_content">
@@ -70,6 +84,6 @@
             </div>
         </div>
     </form>
-
+</body>
 
 {% endblock %}
