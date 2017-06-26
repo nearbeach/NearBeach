@@ -360,12 +360,8 @@ def customer_information(request, customer_id):
 			if not contact_history_notes == '':
 				current_user = request.user
 				#Lets save some contact history
-				organisation_id = form.cleaned_data['organisations_id']
 				contact_type = form.cleaned_data['contact_type']
 
-
-				print(save_data.organisation_id)
-				#organisation_link = organisations.objects.get(organisations_id=organisation_id)
 
 				#Calendar values
 				start_date_year = int(form.cleaned_data['start_date_year'])
@@ -377,11 +373,7 @@ def customer_information(request, customer_id):
 
 				#documents
 				contact_attachment = request.FILES.get('contact_attachment')
-
 				organisations_id = form.cleaned_data['organisations_id']
-
-
-
 
 				submit_history = contact_history(organisations_id=organisations_id
 												 , customer_id=save_data
@@ -1034,16 +1026,62 @@ def new_task(request):
 
 @login_required(login_url='login')
 def organisation_information(request, organisations_id):
+	# Get the data from the form if the information has been submitted
+	if request.method == "POST":
+		form = organisation_information_form(request.POST, request.FILES)
+		if form.is_valid():
+			# Define the data we will edit
+#			save_data = customers.objects.get(customer_id=customer_id)
+
+			save_data = organisations.objects.get(organisations_id=organisations_id)
+
+			#Extract it from website
+			save_data.organisation_name = form.cleaned_data['organisation_name']
+			save_data.organisation_website = form.cleaned_data['organisation_website']
+
+			#Save
+			save_data.save()
+
+			"""
+            If the user has written something in the contact section, we want to save it
+            """
+			contact_history_notes = form.cleaned_data['contact_history']
+
+			if not contact_history_notes == '':
+				current_user = request.user
+				# Lets save some contact history
+				#organisation_id = form.cleaned_data['organisations_id'] #Not going to work :( #organisations_results.organisations_id
+				contact_type = form.cleaned_data['contact_type']
+
+				# Calendar values
+				start_date_year = int(form.cleaned_data['start_date_year'])
+				start_date_month = int(form.cleaned_data['start_date_month'])
+				start_date_day = int(form.cleaned_data['start_date_day'])
+
+				# Create the final start/end date fields
+				task_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day)
+
+				# documents
+				contact_attachment = request.FILES.get('contact_attachment')
+
+				submit_history = contact_history(organisations_id=save_data
+												 , contact_type=contact_type
+												 , contact_date=task_start_date
+												 , contact_history=contact_history_notes
+												 , user_id=current_user
+												 , contact_attachment=contact_attachment)
+				submit_history.save()
+
 	#Query the database for organisation information
 	organisation_results = organisations.objects.get(pk = organisations_id)
 	campus_results = organisations_campus.objects.filter(organisations_id = organisations_id)
 	customers_results = customers.objects.filter(organisations_id = organisation_results)
-
-	#Forms
-	organisation_form = organisation_form()
+	organisation_contact_history = contact_history.objects.filter(organisations_id = organisations_id)
 
 
-	
+	#Date required to initiate date
+	today = datetime.datetime.now()
+
 	#Loaed the template
 	t = loader.get_template('NearBeach/organisation_information.html')
 	
@@ -1051,6 +1089,14 @@ def organisation_information(request, organisations_id):
 		'organisation_results': organisation_results,
 		'campus_results': campus_results,
 		'customers_results': customers_results,
+		'organisation_information_form': organisation_information_form(
+			instance=organisation_results,
+			initial={
+				'start_date_year': today.year,
+				'start_date_month': today.month,
+				'start_date_day': today.day,
+		}),
+		'organisation_contact_history': organisation_contact_history,
 	}
 	
 	return HttpResponse(t.render(c, request))

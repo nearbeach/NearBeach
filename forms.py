@@ -332,7 +332,7 @@ class new_task_form(forms.Form):
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
 
 
-class organisation_form(forms.Form):
+class organisation_information_form(ModelForm):
 	# Get data for choice boxes
 	contact_type_results = list_of_contact_types.objects.filter(is_deleted='FALSE')
 
@@ -349,6 +349,15 @@ class organisation_form(forms.Form):
 
 	contact_history = forms.CharField(widget=forms.TextInput(attrs={'width': '99%', 'height': '300px'}), required=False)
 	contact_attachment = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange': 'enable_submit()'}))
+
+	class Meta:
+		model = organisations
+		fields = {
+                'organisation_name',
+                'organisation_website',
+            }
+
+
 
 
 

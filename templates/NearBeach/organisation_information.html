@@ -1,50 +1,86 @@
 {% extends "./template.html" %}
 {% block content %}
-<div class="div_content">
-	<div class="div_header">
-		<h1>{{ organisation_results.organisation_name }}</h1>
-	</div>
-	<div class="div_sub_content">
-		<p>Website: <input id="organisation_website" type="text" value="{{ organisation_results.organisation_website }}"></p>
-	</div>
-</div>
-<br/>
-<div class="div_content">
-	<div class="div_header">
-		<h3>Organisation Campus'</h3>
-	</div>
-	<div class="div_sub_content">
-		<a href="{% url 'new_campus' organisation_results.organisations_id %}">New Campus</a>
-		<table>
-		<tr class="header"><td>Campus Nickname</td><td>Campus Location</td><td>Campus Address</td></tr>
-		{% for campus in campus_results %}
-			<tr>
-			<td><a href="{% url 'campus_information' campus.pk %}">{{ campus.campus_nickname }}</a></td>
-			<td>{{ campus.campus_country_id }} - {{ campus.campus_region_id }}</td>
-			<td>{{ campus.campus_address1 }}<br />{{ campus.campus_address2 }}<br />{{ campus.campus_address3 }}{{ campus.campus_suburb }}</td>
-			</tr>
-		{% endfor %}
-		</table>
-	</div>
-</div>
-<br/>
-<div class="div_content">
-	<div class="div_header">
-		<h3>Organisation Contacts</h3>
-	</div>
-	<div class="div_sub_content">
-		<a href="{% url 'new_customer' organisation_results.organisations_id%}">New Customer</a>
-		<table>
-		<tr class="header"><td>Name</td><td>Email</td></tr>
-		{% for customer in customers_results %}
-			<tr>
-			<td><a href="{% url 'customer_information' customer.customer_id %}">{{ customer.customer_first_name }} {{ customer.customer_last_name }}</a></td>
-			<td>{{ customer.customer_email }}</td>
+{% load static %}
+<script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
+<body onload="initiate_dates()">
+    <form action="{% url 'organisation_information' organisation_results.organisations_id %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="div_content">
+            <div class="div_header">
+                <h1>{{ organisation_results.organisation_name }}</h1>
+            </div>
+            <div class="div_sub_content">
+                <table>
+                    <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
+                    <tr><td>Organisation Name:</td><td>{{ organisation_information_form.organisation_name }}</td></tr>
+                    <tr><td>Website:</td><td>{{ organisation_information_form.organisation_website }}</td></tr>
+                </table>
+                <input type="submit" name="submit_contact" value="Update"/>
+            </div>
+        </div>
+        <br/>
+        <div class="div_content">
+            <div class="div_header">
+                <h3>Organisation Campus'</h3>
+            </div>
+            <div class="div_sub_content">
+                <a href="{% url 'new_campus' organisation_results.organisations_id %}">New Campus</a>
+                <table>
+                <tr class="header"><td>Campus Nickname</td><td>Campus Location</td><td>Campus Address</td></tr>
+                {% for campus in campus_results %}
+                    <tr>
+                    <td><a href="{% url 'campus_information' campus.pk %}">{{ campus.campus_nickname }}</a></td>
+                    <td>{{ campus.campus_country_id }} - {{ campus.campus_region_id }}</td>
+                    <td>{{ campus.campus_address1 }}<br />{{ campus.campus_address2 }}<br />{{ campus.campus_address3 }}{{ campus.campus_suburb }}</td>
+                    </tr>
+                {% endfor %}
+                </table>
+            </div>
+        </div>
+        <br/>
+        <div class="div_content">
+            <div class="div_header">
+                <h3>Organisation Contacts</h3>
+            </div>
+            <div class="div_sub_content">
+                <a href="{% url 'new_customer' organisation_results.organisations_id%}">New Customer</a>
+                <table>
+                <tr class="header"><td>Name</td><td>Email</td></tr>
+                {% for customer in customers_results %}
+                    <tr>
+                    <td><a href="{% url 'customer_information' customer.customer_id %}">{{ customer.customer_first_name }} {{ customer.customer_last_name }}</a></td>
+                    <td>{{ customer.customer_email }}</td>
 
 
-			</tr>
-		{% endfor %}
-		</table>
-	</div>
-</div>
+                    </tr>
+                {% endfor %}
+                </table>
+            </div>
+        </div>
+        <div class="div_content">
+            <div class="div_header">
+                <h1>Contact History</h1>
+            </div>
+            <div class="div_sub_content">
+                Contact Type {{  organisation_information_form.contact_type }}<br/>
+                Date {{ organisation_information_form.start_date_year }}/{{ organisation_information_form.start_date_month }}/{{ organisation_information_form.start_date_day }}
+                {{ organisation_information_form.contact_history }}
+                {{ organisation_information_form.contact_attachment }}
+                <input type="submit" name="submit_contact" value="Submit Contact"/>
+            </div>
+            {% if organisation_contact_history %}
+                <div><h4>Contact History</h4></div>
+                {% for row in organisation_contact_history %}
+                    <p>
+                        {{ row.contact_type }} - Submitted by {{ row.user_id }} on {{ row.contact_date }}<br/>
+                        <textarea readonly>{{ row.contact_history }}</textarea>
+                        {% if row.contact_attachment %}
+                            <a href="{{ media_url }}{{ row.contact_attachment }}" target="_blank">{{ row.contact_attachment }}</a>
+                        {% endif %}
+                    </p>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </form>
+</body>
 {% endblock %}
