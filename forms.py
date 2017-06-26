@@ -383,8 +383,8 @@ class organisation_information_form(ModelForm):
 	update_profile_picture = forms.ImageField(required=False, )
 
 	#Customer Documents
-	organisation_document_description = forms.CharField(max_length=255)
-	organisation_document = forms.FileField()
+	organisation_document_description = forms.CharField(max_length=255,required=False)
+	organisation_document = forms.FileField(required=False)
 
 	class Meta:
 		model = organisations

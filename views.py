@@ -1106,10 +1106,10 @@ def organisation_information(request, organisations_id):
 			organisation_document = request.FILES.get('organisation_document')
 			if not organisation_document == None:
 				organisation_document_description = form.cleaned_data['organisation_document_description']
-				document_save = organisation_document(
+				document_save = organisations_documents(
 					organisation_document_description=organisation_document_description,
 					organisation_document=organisation_document,
-					organisation_id=organisations_id,
+					organisation_id=save_data,
 				)
 				document_save.save()
 

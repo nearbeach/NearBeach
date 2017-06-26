@@ -243,7 +243,7 @@ class organisations_documents(models.Model):
 	audit_date = models.DateTimeField(auto_now=True)
 
 	class Meta:
-		db_table = "organisations_document"
+		db_table = "organisations_documents"
 
 
 class project(models.Model):
