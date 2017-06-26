@@ -13,6 +13,7 @@
             <div class="div_sub_content">
                 <table>
                     <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
+                    <tr><td><img src="{{ profile_picture }}"></td><td>{{ customer_information_form.update_profile_picture }}</td></tr>
                     <tr><td>Customer Title:</td><td>{{ customer_information_form.customer_title }}</td></tr>
                     <tr><td>Customer First Name:</td><td>{{ customer_information_form.customer_first_name }}</td></tr>
                     <tr><td>Customer Last Name:</td><td>{{ customer_information_form.customer_last_name }}</td></tr>
@@ -21,31 +22,6 @@
                 </table>
                 <input type="submit" name="update" value="Update Details"/>
             </div>
-        </div>
-        <br/>
-        <div class="div_content">
-            <div class="div_header">
-                <h1>Contact History</h1>
-            </div>
-            <div class="div_sub_content">
-                Contact Type {{  customer_information_form.contact_type }}<br/>
-                Date {{ customer_information_form.start_date_year }}/{{ customer_information_form.start_date_month }}/{{ customer_information_form.start_date_day }}
-                {{ customer_information_form.contact_history }}
-                {{ customer_information_form.contact_attachment }}
-                <input type="submit" name="submit_contact" value="Submit Contact"/>
-            </div>
-            {% if customer_contact_history %}
-                <div><h4>Contact History</h4></div>
-                {% for row in customer_contact_history %}
-                    <p>
-                        {{ row.contact_type }} - Submitted by {{ row.user_id }} on {{ row.contact_date }}<br/>
-                        <textarea readonly>{{ row.contact_history }}</textarea>
-                        {% if row.contact_attachment %}
-                            <a href="{{ media_url }}{{ row.contact_attachment }}" target="_blank">{{ row.contact_attachment }}</a>
-                        {% endif %}
-                    </p>
-                {% endfor %}
-            {% endif %}
         </div>
         <br/>
         <div class="div_content">
@@ -81,6 +57,45 @@
                 {% else %}
                     <p>There are currently no campuses</p>
                 {% endif %}
+            </div>
+        </div>
+        <br/>
+        <div class="div_content">
+            <div class="div_header">
+                <h1>Contact History</h1>
+            </div>
+            <div class="div_sub_content">
+                Contact Type {{  customer_information_form.contact_type }}<br/>
+                Date {{ customer_information_form.start_date_year }}/{{ customer_information_form.start_date_month }}/{{ customer_information_form.start_date_day }}
+                {{ customer_information_form.contact_history }}
+                {{ customer_information_form.contact_attachment }}
+                <input type="submit" name="submit_contact" value="Submit Contact"/>
+                {% if customer_contact_history %}
+                    <div><h4>Contact History</h4></div>
+                    {% for row in customer_contact_history %}
+                        <p>
+                            {{ row.contact_type }} - Submitted by {{ row.user_id }} on {{ row.contact_date }}<br/>
+                            <textarea readonly>{{ row.contact_history }}</textarea>
+                            {% if row.contact_attachment %}
+                                <a href="{{ media_url }}{{ row.contact_attachment }}" target="_blank">{{ row.contact_attachment }}</a>
+                            {% endif %}
+                        </p>
+                    {% endfor %}
+            {% endif %}
+            </div>
+        </div>
+        <br/>
+        <div class="div_content">
+            <div class="div_header">
+                <h4>Customer Documents</h4>
+            </div>
+            <div class="div_sub_content">
+                <table>
+                    <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
+                    <tr><td>Document Description:</td><td>{{ customer_information_form.customer_document_description }}</td></tr>
+                    <tr><td>Upload Document:</td><td>{{ customer_information_form.customer_document }}</td></tr>
+                </table>
+                <input type="submit" name="update" value="Upload Documents"/>
             </div>
         </div>
     </form>

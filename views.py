@@ -350,6 +350,11 @@ def customer_information(request, customer_id):
 			save_data.customer_email = form.cleaned_data['customer_email']
 			save_data.organisation_id = form.cleaned_data['organisations_id']
 
+			#Check to see if the picture has been updated
+			update_profile_picture = request.FILES.get('update_profile_picture')
+			if not update_profile_picture == None:
+				save_data.customer_profile_picture = update_profile_picture
+
 			save_data.save()
 
 			"""
@@ -382,8 +387,23 @@ def customer_information(request, customer_id):
 												 , contact_history=contact_history_notes
 												 , user_id = current_user
 												 , contact_attachment=contact_attachment)
-
 				submit_history.save()
+
+			"""
+			Document Uploads
+			"""
+			customer_document = request.FILES.get('customer_document')
+			if not customer_document == None:
+				customer_document_description = form.cleaned_data['customer_document_description']
+				document_save = customers_documents(
+					customer_document_description=customer_document_description,
+					customer_document=customer_document,
+					customer_id=save_data,
+				)
+				document_save.save()
+
+
+
 
 			#If we are adding a new campus
 			if 'add_campus_submit' in request.POST:
@@ -432,6 +452,7 @@ def customer_information(request, customer_id):
 		'customer_id': customer_id,
 		'customer_contact_history': customer_contact_history,
 		'media_url': settings.MEDIA_URL,
+		'profile_picture': customer_results.customer_profile_picture.url,
 	}
 	
 	return HttpResponse(t.render(c, request))	
@@ -1038,6 +1059,13 @@ def organisation_information(request, organisations_id):
 			#Extract it from website
 			save_data.organisation_name = form.cleaned_data['organisation_name']
 			save_data.organisation_website = form.cleaned_data['organisation_website']
+			#save_data.organisation_profile_picture = form.cleaned_data['update_profile_picture']
+
+			#Check to see if the picture has been updated
+			update_profile_picture = request.FILES.get('update_profile_picture')
+			if not update_profile_picture == None:
+				save_data.organisation_profile_picture = update_profile_picture
+
 
 			#Save
 			save_data.save()
@@ -1072,6 +1100,19 @@ def organisation_information(request, organisations_id):
 												 , contact_attachment=contact_attachment)
 				submit_history.save()
 
+			"""
+			Document Uploads
+			"""
+			organisation_document = request.FILES.get('organisation_document')
+			if not organisation_document == None:
+				organisation_document_description = form.cleaned_data['organisation_document_description']
+				document_save = organisation_document(
+					organisation_document_description=organisation_document_description,
+					organisation_document=organisation_document,
+					organisation_id=organisations_id,
+				)
+				document_save.save()
+
 	#Query the database for organisation information
 	organisation_results = organisations.objects.get(pk = organisations_id)
 	campus_results = organisations_campus.objects.filter(organisations_id = organisations_id)
@@ -1084,6 +1125,14 @@ def organisation_information(request, organisations_id):
 
 	#Loaed the template
 	t = loader.get_template('NearBeach/organisation_information.html')
+
+	#profile picture
+
+
+	try:
+		profile_picture = organisation_results.organisation_profile_picture.url
+	except:
+		profile_picture = ''
 	
 	c = {
 		'organisation_results': organisation_results,
@@ -1097,6 +1146,7 @@ def organisation_information(request, organisations_id):
 				'start_date_day': today.day,
 		}),
 		'organisation_contact_history': organisation_contact_history,
+		'profile_picture': profile_picture,
 	}
 	
 	return HttpResponse(t.render(c, request))

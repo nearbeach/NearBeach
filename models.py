@@ -64,6 +64,7 @@ class customers(models.Model):
 	customer_first_name = models.CharField(max_length = 50)
 	customer_last_name = models.CharField(max_length = 50)
 	customer_email = models.CharField(max_length = 200)
+	customer_profile_picture = models.ImageField(blank=True,null=True,upload_to='profile_pictures')
 	organisations_id = models.ForeignKey('organisations', on_delete = models.CASCADE,)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	
@@ -78,11 +79,23 @@ class customers_campus(models.Model):
 	campus_id = models.ForeignKey('organisations_campus', on_delete = models.CASCADE,)
 	customer_phone = models.CharField(max_length = 11)
 	customer_fax = models.CharField(max_length = 11)
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	
 	class Meta:
 		db_table = "customers_campus"
 
+"""
+Some customers will need specific documents uploaded to them. This is where that information is stored
+"""
+class customers_documents(models.Model):
+	customer_id = models.ForeignKey('customers', on_delete = models.CASCADE,)
+	customer_document_description = models.CharField(max_length=255)
+	customer_document = models.FileField(upload_to='customer_documents/')
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
+	audit_date = models.DateTimeField(auto_now=True)
 
+	class Meta:
+		db_table = "customers_documents"
 
 
 class documents(models.Model):
@@ -189,6 +202,7 @@ class organisations(models.Model):
 	organisation_name = models.CharField(max_length = 255)
 	organisation_website = models.CharField(max_length = 50)
 	organisation_email = models.CharField(max_length = 100)
+	organisation_profile_picture = models.ImageField(blank=True,null=True)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	
 	def __str__(self):
@@ -217,6 +231,19 @@ class organisations_campus(models.Model):
 	class Meta:
 		db_table = "organisations_campus"
 
+
+"""
+Some organisations will need specific documents uploaded to them. This is where that information is stored
+"""
+class organisations_documents(models.Model):
+	organisation_id = models.ForeignKey('organisations', on_delete=models.CASCADE, )
+	organisation_document_description = models.CharField(max_length=255)
+	organisation_document = models.FileField(upload_to='organisation_documents/')
+	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
+	audit_date = models.DateTimeField(auto_now=True)
+
+	class Meta:
+		db_table = "organisations_document"
 
 
 class project(models.Model):

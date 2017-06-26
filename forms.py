@@ -30,10 +30,6 @@ import datetime
 #Global Variables
 User = get_user_model
 
-#Settings
-from django.conf import settings
-
-
 
 
 #Setup drop down box options
@@ -164,6 +160,8 @@ INCLUDE_CLOSED = {
 	('INCLUDE_CLOSED','Include Closed?'),
 }
 
+#Global Variables
+MAX_PICTURE_SIZE = 1000 * 1024 #1Mb wow
 
 class customer_campus_form(ModelForm):
 	customer_phone = forms.CharField(max_length = 11, required = False)
@@ -212,10 +210,41 @@ class customer_information_form(ModelForm):
 
 	contact_attachment = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange':'enable_submit()'}))
 
+	update_profile_picture = forms.ImageField(required=False,)
+
+	#Customer Documents
+	customer_document_description = forms.CharField(max_length=255, required=False)
+	customer_document = forms.FileField(required=False)
+
 	class Meta:
 		model = customers
 		fields = '__all__'
 		exclude = ['is_deleted']
+
+	def clean_update_profile_picture(self):
+		profile_picture = self.cleaned_data['update_profile_picture']
+
+		try:
+			"""
+			We only want to limit pictures to being under 400kb
+			"""
+			picture_errors = ""
+
+			main, sub = profile_picture.content_type.split('/')
+			if not (main == 'image' and sub in ['jpeg','gif','png']):
+				picture_errors += 'Please use a JPEG, GIF or PNG image'
+
+			if len(profile_picture) > (MAX_PICTURE_SIZE): #400kb
+				picture_errors += '\nPicture profile exceeds 400kb'
+
+			if not picture_errors == "":
+				raise forms.ValidationError(picture_errors)
+
+		except AttributeError:
+			pass
+
+		return profile_picture
+
 
 
 
@@ -350,6 +379,13 @@ class organisation_information_form(ModelForm):
 	contact_history = forms.CharField(widget=forms.TextInput(attrs={'width': '99%', 'height': '300px'}), required=False)
 	contact_attachment = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange': 'enable_submit()'}))
 
+	#Profile picture
+	update_profile_picture = forms.ImageField(required=False, )
+
+	#Customer Documents
+	organisation_document_description = forms.CharField(max_length=255)
+	organisation_document = forms.FileField()
+
 	class Meta:
 		model = organisations
 		fields = {
@@ -357,9 +393,29 @@ class organisation_information_form(ModelForm):
                 'organisation_website',
             }
 
+	def clean_update_profile_picture(self):
+		profile_picture = self.cleaned_data['update_profile_picture']
 
+		try:
+			"""
+            We only want to limit pictures to being under 400kb
+            """
+			picture_errors = ""
 
+			main, sub = profile_picture.content_type.split('/')
+			if not (main == 'image' and sub in ['jpeg', 'gif', 'png']):
+				picture_errors += 'Please use a JPEG, GIF or PNG image'
 
+			if len(profile_picture) > (MAX_PICTURE_SIZE):  # 400kb
+				picture_errors += '\nPicture profile exceeds 400kb'
+
+			if not picture_errors == "":
+				raise forms.ValidationError(picture_errors)
+
+		except AttributeError:
+			pass
+
+		return profile_picture
 
 
 class project_information_form(ModelForm):
@@ -395,6 +451,8 @@ class project_information_form(ModelForm):
 			'project_name',
 			'project_description',
 		}
+
+
 
 
 class search_form(forms.Form):
