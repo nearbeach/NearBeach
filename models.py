@@ -212,11 +212,11 @@ class organisations_campus(models.Model):
 class organisation_customers_documents(models.Model):
 	document_id = models.AutoField(primary_key=True)
 	organisations_id = models.ForeignKey('organisations', on_delete = models.CASCADE,)
-	customer_id = models.ForeignKey('customers', on_delete = models.CASCADE,)
+	customer_id = models.ForeignKey('customers', on_delete = models.CASCADE,null=True,blank=True,)
 	document_description = models.CharField(max_length=255)
-	document_url_location = models.TextField(null=True, blank=True) #Will contain drive locations & URLs
 	document = models.FileField(upload_to='documents/', null=True, blank=True)
 	document_uploaded_audit = models.DateTimeField(auto_now_add=True)
+	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 	class Meta:
@@ -307,6 +307,7 @@ class project_tasks_documents(models.Model):
 	document = models.FileField(upload_to='documents/', null=True, blank=True)
 	document_uploaded_audit = models.DateTimeField(auto_now_add=True)
 	document_folder_id = models.ForeignKey('document_folders', on_delete=models.CASCADE, blank=True, null=True)
+	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 	class Meta:

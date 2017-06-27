@@ -381,7 +381,7 @@ def customer_information(request, customer_id):
 				contact_attachment = request.FILES.get('contact_attachment')
 				organisations_id = form.cleaned_data['organisations_id']
 
-				submit_history = contact_history(organisations_id=organisations_id
+				submit_history = contact_history(organisations_id=save_data.organisation_id
 												 , customer_id=save_data
 												 , contact_type=contact_type
 												 , contact_date=task_start_date
@@ -390,17 +390,18 @@ def customer_information(request, customer_id):
 												 , contact_attachment=contact_attachment)
 				submit_history.save()
 
+
 			"""
 			Document Uploads
 			"""
-			customer_document = request.FILES.get('customer_document')
-			if not customer_document == None:
-				customer_document_description = form.cleaned_data['customer_document_description']
-				document_save = customers_documents(
-					customer_document_description=customer_document_description,
-					customer_document=customer_document,
+			document = request.FILES.get('document')
+			if not document == None:
+				document_save = organisation_customers_documents(
+					organisations_id=save_data.organisation_id,
 					customer_id=save_data,
-					user_id=current_user
+					document_description = form.cleaned_data['document_description'],
+					document = form.cleaned_data['document'],
+					user_id = current_user,
 				)
 				document_save.save()
 
@@ -429,6 +430,7 @@ def customer_information(request, customer_id):
 	customer_results = customers.objects.get(pk = customer_id)
 	add_campus_results = organisations_campus.objects.filter(organisations_id = customer_results.organisations_id)
 	customer_contact_history = contact_history.objects.filter(customer_id=customer_id)
+	customer_document_results = organisation_customers_documents.objects.filter(customer_id=customer_id)
 
 
 	#The campus the customer is associated to
@@ -461,6 +463,7 @@ def customer_information(request, customer_id):
 		'customer_contact_history': customer_contact_history,
 		'media_url': settings.MEDIA_URL,
 		'profile_picture': profile_picture,
+		'customer_document_results': customer_document_results,
 	}
 	
 	return HttpResponse(t.render(c, request))	
@@ -1113,16 +1116,17 @@ def organisation_information(request, organisations_id):
 			"""
 			Document Uploads
 			"""
-			organisation_document = request.FILES.get('organisation_document')
-			if not organisation_document == None:
-				organisation_document_description = form.cleaned_data['organisation_document_description']
-				document_save = organisations_documents(
-					document_description=organisation_document_description,
-					organisation_document=organisation_document,
-					organisations_id=save_data,
-					user_id=current_user,
+			document = request.FILES.get('document')
+			if not document == None:
+				document_save = organisation_customers_documents(
+					organisations_id = save_data,
+					document_description = form.cleaned_data['document_description'],
+					document_url_location = '',
+					document = form.cleaned_data['document'],
+					user_id = current_user,
 				)
 				document_save.save()
+
 
 	#Query the database for organisation information
 	organisation_results = organisations.objects.get(pk = organisations_id)

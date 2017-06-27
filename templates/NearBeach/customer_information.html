@@ -92,10 +92,16 @@
             <div class="div_sub_content">
                 <table>
                     <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
-                    <tr><td>Document Description:</td><td>{{ customer_information_form.customer_document_description }}</td></tr>
-                    <tr><td>Upload Document:</td><td>{{ customer_information_form.customer_document }}</td></tr>
+                    <tr><td>Document Description:</td><td>{{ customer_information_form.document_description }}</td></tr>
+                    <tr><td>Upload Document:</td><td>{{ customer_information_form.document }}</td></tr>
                 </table>
                 <input type="submit" name="update" value="Upload Documents"/>
+                <br/>
+                {% if customer_document_results %}
+                    {% for row in customer_document_results %}
+
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
     </form>
