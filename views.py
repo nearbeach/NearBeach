@@ -431,6 +431,7 @@ def customer_information(request, customer_id):
 	add_campus_results = organisations_campus.objects.filter(organisations_id = customer_results.organisations_id)
 	customer_contact_history = contact_history.objects.filter(customer_id=customer_id)
 	customer_document_results = organisation_customers_documents.objects.filter(customer_id=customer_id)
+	#organisation_document_results = organisation_customers_documents.objects.filter(organisations_id=customer_results.organisations_id)
 
 
 	#The campus the customer is associated to
@@ -464,6 +465,7 @@ def customer_information(request, customer_id):
 		'media_url': settings.MEDIA_URL,
 		'profile_picture': profile_picture,
 		'customer_document_results': customer_document_results,
+		#'organisation_document_results': organisation_document_results,
 	}
 	
 	return HttpResponse(t.render(c, request))	
@@ -1121,7 +1123,6 @@ def organisation_information(request, organisations_id):
 				document_save = organisation_customers_documents(
 					organisations_id = save_data,
 					document_description = form.cleaned_data['document_description'],
-					document_url_location = '',
 					document = form.cleaned_data['document'],
 					user_id = current_user,
 				)
@@ -1133,6 +1134,7 @@ def organisation_information(request, organisations_id):
 	campus_results = organisations_campus.objects.filter(organisations_id = organisations_id)
 	customers_results = customers.objects.filter(organisations_id = organisation_results)
 	organisation_contact_history = contact_history.objects.filter(organisations_id = organisations_id)
+
 
 
 	#Date required to initiate date

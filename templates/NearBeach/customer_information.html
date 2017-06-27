@@ -98,8 +98,9 @@
                 <input type="submit" name="update" value="Upload Documents"/>
                 <br/>
                 {% if customer_document_results %}
+                    <h4>Customer Documents</h4>
                     {% for row in customer_document_results %}
-
+                        {{ row.document.url }}
                     {% endfor %}
                 {% endif %}
             </div>
