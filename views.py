@@ -340,6 +340,7 @@ def customer_information(request, customer_id):
 		#Save everything!
 		form = customer_information_form(request.POST, request.FILES)
 		if form.is_valid():
+			current_user = request.user
 			# Save the data
 			save_data = customers.objects.get(customer_id=customer_id)
 
@@ -363,7 +364,7 @@ def customer_information(request, customer_id):
 			contact_history_notes = form.cleaned_data['contact_history']
 
 			if not contact_history_notes == '':
-				current_user = request.user
+
 				#Lets save some contact history
 				contact_type = form.cleaned_data['contact_type']
 
@@ -399,6 +400,7 @@ def customer_information(request, customer_id):
 					customer_document_description=customer_document_description,
 					customer_document=customer_document,
 					customer_id=save_data,
+					user_id=current_user
 				)
 				document_save.save()
 
@@ -428,9 +430,15 @@ def customer_information(request, customer_id):
 	add_campus_results = organisations_campus.objects.filter(organisations_id = customer_results.organisations_id)
 	customer_contact_history = contact_history.objects.filter(customer_id=customer_id)
 
+
 	#The campus the customer is associated to
 	campus_results = customers_campus.objects.filter(customer_id = customer_id)
 
+
+	try:
+		profile_picture = customer_results.customer_profile_picture.url
+	except:
+		profile_picture = ''
 
 	#Date required to initiate date
 	today = datetime.datetime.now()
@@ -452,7 +460,7 @@ def customer_information(request, customer_id):
 		'customer_id': customer_id,
 		'customer_contact_history': customer_contact_history,
 		'media_url': settings.MEDIA_URL,
-		'profile_picture': customer_results.customer_profile_picture.url,
+		'profile_picture': profile_picture,
 	}
 	
 	return HttpResponse(t.render(c, request))	
@@ -1051,6 +1059,7 @@ def organisation_information(request, organisations_id):
 	if request.method == "POST":
 		form = organisation_information_form(request.POST, request.FILES)
 		if form.is_valid():
+			current_user = request.user
 			# Define the data we will edit
 #			save_data = customers.objects.get(customer_id=customer_id)
 
@@ -1070,13 +1079,14 @@ def organisation_information(request, organisations_id):
 			#Save
 			save_data.save()
 
+
 			"""
             If the user has written something in the contact section, we want to save it
             """
 			contact_history_notes = form.cleaned_data['contact_history']
 
 			if not contact_history_notes == '':
-				current_user = request.user
+
 				# Lets save some contact history
 				#organisation_id = form.cleaned_data['organisations_id'] #Not going to work :( #organisations_results.organisations_id
 				contact_type = form.cleaned_data['contact_type']
@@ -1107,9 +1117,10 @@ def organisation_information(request, organisations_id):
 			if not organisation_document == None:
 				organisation_document_description = form.cleaned_data['organisation_document_description']
 				document_save = organisations_documents(
-					organisation_document_description=organisation_document_description,
+					document_description=organisation_document_description,
 					organisation_document=organisation_document,
-					organisation_id=save_data,
+					organisations_id=save_data,
+					user_id=current_user,
 				)
 				document_save.save()
 
@@ -1276,7 +1287,7 @@ def project_information(request, project_id):
 
 				parent_folder_id = request.POST.get("parent_folder_id")
 
-				submit_document = documents(
+				submit_document = project_tasks_documents(
 					project_id=project.objects.get(pk=project_id),
 					document = document,
 					document_description = document_description,
@@ -1336,7 +1347,7 @@ def project_information(request, project_id):
 
 	#Obtain the required data
 	project_history_results = project_history.objects.filter(project_id = project_id, is_deleted = 'FALSE')
-	documents_results = documents.objects.filter(project_id = project_id, is_deleted = 'FALSE').order_by('document_description')
+	documents_results = project_tasks_documents.objects.filter(project_id = project_id, is_deleted = 'FALSE').order_by('document_description')
 	document_folders_results = document_folders.objects.filter(project_id = project_id, is_deleted = 'FALSE').order_by('document_folder_description')
 
 	
@@ -1801,7 +1812,7 @@ def task_information(request, task_id):
 
 				print(document)
 
-				submit_document = documents(
+				submit_document = project_tasks_documents(
 					task_id=tasks.objects.get(pk=task_id),
 					document = document,
 					document_description = document_description,
@@ -1856,7 +1867,7 @@ def task_information(request, task_id):
 	
 	#Obtain required data
 	task_history_results = tasks_history.objects.filter(tasks_id = task_id) #Will need to remove all IS_DELETED=TRUE
-	documents_results = documents.objects.filter(task_id = task_id, is_deleted = 'FALSE').order_by('document_description')
+	documents_results = project_tasks_documents.objects.filter(task_id = task_id, is_deleted = 'FALSE').order_by('document_description')
 	document_folders_results = document_folders.objects.filter(task_id = task_id, is_deleted = 'FALSE').order_by('document_folder_description')
 
 	"""
