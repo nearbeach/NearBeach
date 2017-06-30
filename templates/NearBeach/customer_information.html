@@ -100,7 +100,22 @@
                 {% if customer_document_results %}
                     <h4>Customer Documents</h4>
                     {% for row in customer_document_results %}
-                        {{ row.document.url }}
+                        {% if row.document_description == "" %}
+                            <a href="{{ request.META.HTTP_HOST }}{{ row.document.url }}">{{ row.document.name|slice:"10:" }}</a><br/>
+                        {%  else %}
+                            <a href="{{ request.META.HTTP_HOST }}{{ row.document.url }}">{{ row.document_description }}</a><br/>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                <br/>
+                {% if organisation_document_results %}
+                    <h4>Organisation Documents</h4>
+                    {% for row in organisation_document_results %}
+                        {% if row.document_description == "" %}
+                            <a href="{{ request.META.HTTP_HOST }}{{ row.document.url }}">{{ row.document.name|slice:"10:" }}</a><br/>
+                        {%  else %}
+                            <a href="{{ request.META.HTTP_HOST }}{{ row.document.url }}">{{ row.document_description }}</a><br/>
+                        {% endif %}
                     {% endfor %}
                 {% endif %}
             </div>
