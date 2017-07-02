@@ -163,6 +163,7 @@ INCLUDE_CLOSED = {
 #Global Variables
 MAX_PICTURE_SIZE = 1000 * 1024 #1Mb wow
 
+
 class customer_campus_form(ModelForm):
 	customer_phone = forms.CharField(max_length = 11, required = False)
 	customer_fax = forms.CharField(max_length = 11, required = False)

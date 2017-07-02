@@ -120,6 +120,25 @@
                 {% endif %}
             </div>
         </div>
+        <div class="div_content">
+            <div class="div_header">
+                <h3>Associated Projects & Tasks</h3>
+            </div>
+            <div class="div_sub_content">
+                <h4>Actions</h4>
+                <ul>
+                    <li>Create New Project</li>
+                    <li>Create New Task</li>
+                    <li><a href="{% url 'assign_customer_project_task' customer_id %}">Assign Existing Project or Task</a></li>
+                </ul>
+                <br/>
+                <h4>Assigned Projects</h4>
+                [LIST OF ASSIGNED PROJECTS]
+                <br/>
+                <h4>Assigned Tasks</h4>
+                [LIST OF ASSIGNED TASKS]
+            </div>
+        </div>
     </form>
 </body>
 

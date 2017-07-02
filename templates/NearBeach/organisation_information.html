@@ -118,6 +118,62 @@
                 <br/>
             </div>
         </div>
+
+        <br/>
+        <div class="div_content">
+            <div class="div_header">
+                <h3>Associated Projects & Tasks</h3>
+            </div>
+            <div class="div_sub_content">
+                <ul>
+                    <li>Create New Project</li>
+                    <li>Create New Task</li>
+                </ul>
+                <h4>Assigned Projects</h4>
+                {% if project_results %}
+                    <table>
+                        <tr class="header">
+                            <td>Project ID</td>
+                            <td>Project Name</td>
+                            <td>Project End Date</td>
+                            <td>Project Status</td>
+                        </tr>
+                        {% for row in project_results %}
+                            <tr>
+                                <td><a href="{% url 'project_information' row.project_id %}">PRO{{ row.project_id }}</a></td>
+                                <td>{{ row.project_name }}</td>
+                                <td>{{ row.project_end_date }}</td>
+                                <td>{{ row.project_status }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                    <p>There are no associated projects. Please create a new project</p>
+                {% endif %}
+                <br/>
+                <h4>Assigned Tasks</h4>
+                {% if task_results %}
+                    <table>
+                        <tr class="header">
+                            <td>Task ID</td>
+                            <td>Project Name</td>
+                            <td>Project End Date</td>
+                            <td>Project Status</td>
+                        </tr>
+                        {% for row in task_results %}
+                            <tr>
+                                <td><a href="{% url 'task_information' row.tasks_id %}">TASK{{ row.tasks_id }}</a></td>
+                                <td>{{ row.task_short_description }}</td>
+                                <td>{{ row.task_end_date }}</td>
+                                <td>{{ row.task_status }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                    <p>There are no associated tasks. Please create a new task</p>
+                {% endif %}
+            </div>
+        </div>
     </form>
 </body>
 {% endblock %}

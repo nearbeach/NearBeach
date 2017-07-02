@@ -125,7 +125,90 @@ def active_projects(request):
 	}
 	
 	return HttpResponse(t.render(c, request))
-	
+
+
+@login_required(login_url='login')
+def assign_customer_project_task(request,customer_id):
+	#Get username_id from User
+	current_user = request.user
+
+	if request.POST:
+
+		assign_projects = request.POST.getlist('project_checkbox')
+		assign_tasks = request.POST.getlist('task_checkbox')
+
+		"""
+		We will now assign these projects and tasks in bulk to the customer
+		"""
+		for row in assign_projects:
+			print("hello")
+			assign_save = project_customers(
+				project_id = row,
+				customer_id=current_user,
+				#Customer description will have to be programmed in at a later date
+			)
+
+			assign_save.save()
+
+
+
+
+	#Get Data
+	customer_results = customers.objects.get(customer_id=customer_id)
+
+	# Setup connection to the database and query it
+	cursor = connection.cursor()
+
+	cursor.execute("""
+		SELECT DISTINCT
+		  project.*
+		FROM
+		  user_groups
+		, project_groups
+		, project
+		WHERE 1=1
+		--USER_GROUPS CONDITIONS
+		AND user_groups.username_id = %s --INSERT FILTER HERE!
+		-- JOINS --
+		AND user_groups.group_id_id = project_groups.groups_id_id
+		AND project_groups.project_id_id = project.project_id
+		-- END JOINS --	
+	""", [current_user.id])
+	project_results = namedtuplefetchall(cursor)
+
+
+	cursor.execute("""
+		SELECT DISTINCT
+		tasks.*
+		FROM
+		user_groups
+		, tasks_groups
+		, tasks
+		WHERE 1=1
+		--USER_GROUPS CONDITIONS
+		AND user_groups.username_id = %s
+		-- JOINS --
+		AND user_groups.group_id_id = tasks_groups.groups_id_id
+		AND tasks_groups.tasks_id_id=tasks.tasks_id
+		-- END JOINS --
+	""", [current_user.id])
+	task_results = namedtuplefetchall(cursor)
+
+	# Load the template
+	t = loader.get_template('NearBeach/assign_customer_project_task.html')
+
+	# context
+	c = {
+		'project_results': project_results,
+		'task_results': task_results,
+		'customer_results': customer_results,
+	}
+
+	return HttpResponse(t.render(c, request))
+
+
+
+
 @login_required(login_url='login')
 def associate(request, project_id, task_id, project_or_task):
 	#Submit the data
@@ -1136,6 +1219,8 @@ def organisation_information(request, organisations_id):
 	organisation_contact_history = contact_history.objects.filter(organisations_id = organisations_id)
 	customer_document_results = organisation_customers_documents.objects.filter(organisations_id=organisations_id, customer_id__isnull=False)
 	organisation_document_results = organisation_customers_documents.objects.filter(organisations_id=organisations_id, customer_id__isnull=True)
+	project_results = project.objects.filter(organisations_id=organisations_id)
+	task_results = tasks.objects.filter(organisations_id=organisations_id)
 
 
 	#Date required to initiate date
@@ -1167,6 +1252,8 @@ def organisation_information(request, organisations_id):
 		'profile_picture': profile_picture,
 		'customer_document_results': customer_document_results,
 		'organisation_document_results': organisation_document_results,
+		'project_results': project_results,
+		'task_results': task_results,
 	}
 	
 	return HttpResponse(t.render(c, request))
