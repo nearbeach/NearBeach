@@ -39,7 +39,7 @@
                             {% endfor %}
                         </table>
                     {% else %}
-                        <p>Sorry. There are currently no projects for this organisation</p>
+                        <p>Sorry. There are currently no projects for this customer</p>
                     {% endif %}
                 </div>
             </div>
@@ -53,13 +53,13 @@
                         <table>
                             <tr class="header">
                                 <td>Assign</td>
-                                <td>Project Name</td>
-                                <td>Project End Date</td>
-                                <td>Project Status</td>
+                                <td>Task Name</td>
+                                <td>Task End Date</td>
+                                <td>Task Status</td>
                             </tr>
                             {% for row in task_results %}
                                 <tr>
-                                    <td><input type="checkbox" name="task_checkbox" value="{{ row.task_id }}">TASK{{ row.task_id }}</td>
+                                    <td><input type="checkbox" name="task_checkbox" value="{{ row.tasks_id }}">TASK{{ row.tasks_id }}</td>
                                     <td>{{ row.task_short_description }}</td>
                                     <td>{{ row.task_end_date }}</td>
                                     <td>{{ row.task_status }}</td>
@@ -67,7 +67,7 @@
                             {% endfor %}
                         </table>
                     {% else %}
-                        <p>Sorry. There are currently no tasks for this organisation.</p>
+                        <p>Sorry. There are currently no tasks for this customer.</p>
                     {% endif %}
                 </div>
             </div>

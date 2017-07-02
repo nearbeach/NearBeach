@@ -137,19 +137,34 @@ def assign_customer_project_task(request,customer_id):
 		assign_projects = request.POST.getlist('project_checkbox')
 		assign_tasks = request.POST.getlist('task_checkbox')
 
+		#Instance
+		customer_instance = customers.objects.get(customer_id=customer_id)
+
 		"""
 		We will now assign these projects and tasks in bulk to the customer
 		"""
 		for row in assign_projects:
-			print("hello")
+			project_instance = project.objects.get(project_id = row)
+
+			#Project customers
 			assign_save = project_customers(
-				project_id = row,
-				customer_id=current_user,
+				project_id = project_instance,
+				customer_id=customer_instance,
 				#Customer description will have to be programmed in at a later date
 			)
-
 			assign_save.save()
 
+		for row in assign_tasks:
+			task_instance = tasks.objects.get(tasks_id=row)
+
+			assign_save = tasks_customers(
+				tasks_id=task_instance,
+				customer_id=customer_instance,
+			)
+			assign_save.save()
+
+		#Now return to the customer's information
+		return HttpResponseRedirect(reverse('customer_information', args={customer_id}))
 
 
 
@@ -516,6 +531,34 @@ def customer_information(request, customer_id):
 	customer_document_results = organisation_customers_documents.objects.filter(customer_id=customer_id)
 	organisation_document_results = organisation_customers_documents.objects.filter(organisations_id=customer_results.organisations_id,customer_id__isnull=True)
 
+	# Setup connection to the database and query it
+	cursor = connection.cursor()
+
+	cursor.execute("""
+		SELECT DISTINCT
+		project.*
+		FROM
+		project_customers
+		, project
+		WHERE 1=1
+		AND project_customers.is_deleted='FALSE'
+		AND project_customers.project_id_id=project.project_id
+		AND project_customers.project_customers_id = %s
+	""", [customer_id])
+	project_results=namedtuplefetchall(cursor)
+
+	cursor.execute("""
+		SELECT DISTINCT
+		tasks.*
+		FROM
+		tasks_customers
+		, tasks
+		WHERE 1=1
+		AND tasks_customers.is_deleted='FALSE'
+		AND tasks_customers.tasks_id_id=tasks.tasks_id
+		AND tasks_customers.tasks_customers_id = %s
+		""", [customer_id])
+	task_results=namedtuplefetchall(cursor)
 
 	#The campus the customer is associated to
 	campus_results = customers_campus.objects.filter(customer_id = customer_id)
@@ -549,6 +592,8 @@ def customer_information(request, customer_id):
 		'profile_picture': profile_picture,
 		'customer_document_results': customer_document_results,
 		'organisation_document_results': organisation_document_results,
+		'project_results': project_results,
+		'task_results': task_results,
 	}
 	
 	return HttpResponse(t.render(c, request))	
