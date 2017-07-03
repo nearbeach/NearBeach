@@ -587,6 +587,7 @@ def customer_information(request, customer_id):
 		'campus_results': campus_results,
 		'add_campus_results': add_campus_results,
 		'customer_id': customer_id,
+		'organisations_id' : customer_results.organisations_id.organisations_id,
 		'customer_contact_history': customer_contact_history,
 		'media_url': settings.MEDIA_URL,
 		'profile_picture': profile_picture,
@@ -882,6 +883,7 @@ def new_organisation(request):
 				#Save the form data
 				submit_form = organisations(organisation_name = organisation_name, organisation_email = organisation_email, organisation_website = organisation_website)
 				submit_form.save()
+
 				return HttpResponseRedirect(reverse(organisation_information, args={submit_form.organisations_id}))
 
 	"""
@@ -910,13 +912,15 @@ def new_organisation(request):
 
 	
 @login_required(login_url='login')
-def new_project(request):
+
+def new_project(request, organisations_id='',customer_id=''):
+	print("Organisation ID = " + organisations_id + " - Customer ID = " + customer_id)
 	if request.method == "POST":
 		form = new_project_form(request.POST)
 		if form.is_valid():
 			project_name = form.cleaned_data['project_name']
 			project_description = form.cleaned_data['project_description']
-			organisations_id = form.cleaned_data['organisations_id']
+			organisations_id_form = form.cleaned_data['organisations_id']
 			
 			#Calendar values
 			start_date_year = int(form.cleaned_data['start_date_year'])
@@ -965,7 +969,7 @@ def new_project(request):
 			submit_project = project(
 									project_name = project_name, 
 									project_description = project_description, 
-									organisations_id = organisations_id, 
+									organisations_id = organisations_id_form,
 									project_start_date = project_start_date, 
 									project_end_date = project_end_date, 
 									project_status = 'New')
@@ -983,8 +987,25 @@ def new_project(request):
 			for row in assigned_to_groups:
 				submit_group = project_groups(project_id_id = submit_project.pk, groups_id_id = row)
 				submit_group.save()
-			
-			return HttpResponseRedirect(reverse(project_information, args={submit_project.pk}))
+
+
+			#If there is a customer id attached to this. Assign the project to the customer and go back to customer informaton
+			if not customer_id	== '':
+				customer_instance = customers.objects.get(customer_id=customer_id)
+				save_project_customers = project_customers(
+					project_id=submit_project,
+					customer_id=customer_instance,
+				)
+				save_project_customers.save()
+
+				#Lets go to customer information
+				return HttpResponseRedirect(reverse(customer_information, args={customer_id}))
+
+			#If there is an organisation id, send the user to organisation info. Otherwise back to project infomration
+			if not organisations_id == '':
+				return HttpResponseRedirect(reverse(organisation_information, args={organisations_id.organisations_id}))
+			else:
+				return HttpResponseRedirect(reverse(project_information, args={submit_project.pk}))
 	
 	else:
 		#Obtain the groups the user is associated with
@@ -1038,20 +1059,23 @@ def new_project(request):
 		#context
 		c = {
 			'new_project_form': new_project_form(initial={
-														'start_date_year':today.year,
-														'start_date_month':today.month,
-														'start_date_day':today.day,
-														'start_date_hour':hour,
-														'start_date_minute':minute,
-														'start_date_meridiems':meridiems,
-														'finish_date_year':next_week.year,
-														'finish_date_month':next_week.month,
-														'finish_date_day':next_week.day,
-														'finish_date_hour':hour,
-														'finish_date_minute':minute,
-														'finish_date_meridiems':meridiems,}),
+				'organisations_id':organisations_id,
+				'start_date_year':today.year,
+				'start_date_month':today.month,
+				'start_date_day':today.day,
+				'start_date_hour':hour,
+				'start_date_minute':minute,
+				'start_date_meridiems':meridiems,
+				'finish_date_year':next_week.year,
+				'finish_date_month':next_week.month,
+				'finish_date_day':next_week.day,
+				'finish_date_hour':hour,
+				'finish_date_minute':minute,
+				'finish_date_meridiems':meridiems,}),
 			'groups_results': groups_results,
 			'organisations_count': organisations_results.count(),
+			'organisations_id' : organisations_id,
+			'customer_id': customer_id,
 		}
 		
 	return HttpResponse(t.render(c, request))
