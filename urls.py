@@ -29,7 +29,9 @@ urlpatterns = [
 	url(r'^new_project/$', views.new_project, name='new_project'),
 	url(r'^new_project/(?P<organisations_id>[0-9]+)/$', views.new_project, name='new_project'),
 	url(r'^new_project/(?P<organisations_id>[0-9]+)/(?P<customer_id>[0-9]+)/$', views.new_project, name='new_project'),
-	url(r'^new_task', views.new_task, name='new_task'),
+	url(r'^new_task/$', views.new_task, name='new_task'),
+	url(r'^new_task/(?P<organisations_id>[0-9]+)/$', views.new_task, name='new_task'),
+	url(r'^new_task/(?P<organisations_id>[0-9]+)/(?P<customer_id>[0-9]+)/$', views.new_task, name='new_task'),
 	url(r'^new_organisation', views.new_organisation, name='new_organisation'),
 	url(r'^new_customer/(?P<organisations_id>[0-9]+)/', views.new_customer, name='new_customer'),
 	

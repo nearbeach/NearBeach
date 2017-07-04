@@ -1003,7 +1003,7 @@ def new_project(request, organisations_id='',customer_id=''):
 
 			#If there is an organisation id, send the user to organisation info. Otherwise back to project infomration
 			if not organisations_id == '':
-				return HttpResponseRedirect(reverse(organisation_information, args={organisations_id.organisations_id}))
+				return HttpResponseRedirect(reverse(organisation_information, args={organisations_id}))
 			else:
 				return HttpResponseRedirect(reverse(project_information, args={submit_project.pk}))
 	
@@ -1081,14 +1081,14 @@ def new_project(request, organisations_id='',customer_id=''):
 	return HttpResponse(t.render(c, request))
 
 @login_required(login_url='login')
-def new_task(request):
+def new_task(request,organisations_id='',customer_id=''):
 	#Define if the page is loading in POST
 	if request.method == "POST":
 		form = new_task_form(request.POST)
 		if form.is_valid():
 			task_short_description = form.cleaned_data['task_short_description']
 			task_long_description = form.cleaned_data['task_long_description']
-			organisations_id = form.cleaned_data['organisations_id']
+			organisations_id_form = form.cleaned_data['organisations_id']
 			
 			#Calendar values
 			start_date_year = int(form.cleaned_data['start_date_year'])
@@ -1135,7 +1135,14 @@ def new_task(request):
 			task_end_date = datetime.datetime(finish_date_year, finish_date_month, finish_date_day, finish_date_hour, finish_date_minute)
 			
 			
-			submit_task = tasks(task_short_description = task_short_description, task_long_description = task_long_description, organisations_id = organisations_id, task_start_date = task_start_date, task_end_date = task_end_date, task_status = 'New')
+			submit_task = tasks(
+				task_short_description = task_short_description,
+				task_long_description = task_long_description,
+				organisations_id = organisations_id_form,
+				task_start_date = task_start_date,
+				task_end_date = task_end_date,
+				task_status = 'New'
+			)
 			
 			#Submit the data
 			submit_task.save()
@@ -1150,8 +1157,32 @@ def new_task(request):
 			for row in assigned_to_groups:
 				submit_group = tasks_groups(tasks_id_id = submit_task.pk, groups_id_id = row)
 				submit_group.save()
-			
-			return HttpResponseRedirect(reverse(task_information, args={submit_task.pk}))
+
+			"""
+			If we have come from the customer information screen, you will notice that there are some extra
+			variables in the URL. If one of them is the customer_id, we will use that to assign the task
+			to the customer and then go back to that customer information page
+			"""
+			if not customer_id == '':
+				customer_instance = customers.objects.get(customer_id=customer_id)
+				save_tasks_customers = tasks_customers(
+					tasks_id=submit_task,
+					customer_id=customer_instance,
+				)
+				save_tasks_customers.save()
+
+				#Lets go back to the customer
+				return HttpResponseRedirect(reverse(customer_information, args={customer_id}))
+
+			"""
+			If we have come from an organisation information page, then there will be extra variables in 
+			the URL. We want to head back there. If we did not come from there then we will want to go
+			to the task information page
+			"""
+			if not organisations_id == '':
+				return HttpResponseRedirect(reverse(organisation_information, args={organisations_id}))
+			else:
+				return HttpResponseRedirect(reverse(task_information, args={submit_task.pk}))
 		return HttpResponseRedirect(reverse('new_task'))
 	
 	else:
@@ -1203,9 +1234,25 @@ def new_task(request):
 		t = loader.get_template('NearBeach/new_task.html')
 		
 		c = {
-			'new_task_form': new_task_form(initial={'start_date_year':today.year, 'start_date_month':today.month,'start_date_day':today.day,'start_date_hour':hour,'start_date_minute':minute,'start_date_meridiems':meridiems,
-														'finish_date_year':next_week.year, 'finish_date_month':next_week.month,'finish_date_day':next_week.day,'finish_date_hour':hour,'finish_date_minute':minute,'finish_date_meridiems':meridiems,}),
+			'new_task_form': new_task_form(
+				initial={
+					'start_date_year':today.year,
+					'start_date_month':today.month,
+					'start_date_day':today.day,
+					'start_date_hour':hour,
+					'start_date_minute':minute,
+					'start_date_meridiems':meridiems,
+					'finish_date_year':next_week.year,
+					'finish_date_month':next_week.month,
+					'finish_date_day':next_week.day,
+					'finish_date_hour':hour,
+					'finish_date_minute':minute,
+					'finish_date_meridiems':meridiems,
+					'organisations_id': organisations_id,
+				}),
 			'groups_results': groups_results,
+			'organisations_id': organisations_id,
+			'customer_id': customer_id,
 		}
 	
 	return HttpResponse(t.render(c, request))

@@ -126,8 +126,8 @@
             </div>
             <div class="div_sub_content">
                 <ul>
-                    <li>Create New Project</li>
-                    <li>Create New Task</li>
+                    <li><a href="{% url 'new_project' organisation_results.organisations_id %}">Create New Project</a></li>
+                    <li><a href="{% url 'new_task' organisation_results.organisations_id %}">Create New Task</a></li>
                 </ul>
                 <h4>Assigned Projects</h4>
                 {% if project_results %}
