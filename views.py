@@ -914,7 +914,6 @@ def new_organisation(request):
 @login_required(login_url='login')
 
 def new_project(request, organisations_id='',customer_id=''):
-	print("Organisation ID = " + organisations_id + " - Customer ID = " + customer_id)
 	if request.method == "POST":
 		form = new_project_form(request.POST)
 		if form.is_valid():
