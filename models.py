@@ -35,7 +35,7 @@ class contact_history(models.Model):
 	contact_date = models.DateField()
 	contact_history = models.TextField()
 	contact_attachment= models.FileField(upload_to='contact_history/', null=True, blank=True)
-	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 	audit_date = models.DateTimeField(auto_now = True)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
@@ -130,8 +130,8 @@ class list_of_amount_type(models.Model):
 	amount_type_id = models.AutoField(primary_key=True)
 	amount_type_description = models.CharField(max_length=20)
 	list_order = models.IntegerField(unique=True)
-	date_created = models.DateTimeField(auto_created=True)
-	date_modified = models.DateTimeField(auto_now_add=True)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
 	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
 
@@ -145,8 +145,8 @@ class list_of_currency(models.Model):
 	currency_description = models.CharField(max_length=20)
 	currency_short_description = models.CharField(max_length=4)
 	list_order = models.IntegerField(unique=True)
-	date_created = models.DateTimeField(auto_created=True)
-	date_modified = models.DateTimeField(auto_now_add=True)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
 	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
 
@@ -196,8 +196,8 @@ class list_of_opportunity_stage(models.Model):
 	opportunity_stage_id = models.AutoField(primary_key=True)
 	opportunity_stage_description = models.CharField(max_length=20)
 	list_order = models.IntegerField(unique=True)
-	date_created = models.DateTimeField(auto_created=True)
-	date_modified = models.DateTimeField(auto_now_add=True)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
 	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
 
@@ -209,8 +209,8 @@ class list_of_lead_source(models.Model):
 	lead_source_id = models.AutoField(primary_key=True)
 	lead_source_description = models.CharField(max_length=20)
 	list_order = models.IntegerField(unique=True)
-	date_created = models.DateTimeField(auto_created=True)
-	date_modified = models.DateTimeField(auto_now_add=True)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
 	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
 
@@ -243,9 +243,9 @@ class opportunity(models.Model):
 	opportunity_success_probability = models.IntegerField() #Between 0% and 100%
 	lead_source_id = models.ForeignKey('list_of_lead_source', on_delete=models.CASCADE)
 	opportunity_next_step = models.CharField(max_length=255)
-	date_created = models.DateTimeField(auto_created=True)
-	date_modified = models.DateTimeField(auto_now_add=True)
-	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
 
 	class Meta:
@@ -293,7 +293,7 @@ class organisation_customers_documents(models.Model):
 	document_description = models.CharField(max_length=255)
 	document = models.FileField(upload_to='documents/', null=True, blank=True)
 	document_uploaded_audit = models.DateTimeField(auto_now_add=True)
-	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 	class Meta:
@@ -384,7 +384,7 @@ class project_tasks_documents(models.Model):
 	document = models.FileField(upload_to='documents/', null=True, blank=True)
 	document_uploaded_audit = models.DateTimeField(auto_now_add=True)
 	document_folder_id = models.ForeignKey('document_folders', on_delete=models.CASCADE, blank=True, null=True)
-	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 	class Meta:
