@@ -852,6 +852,44 @@ def new_customer(request, organisations_id):
 	return HttpResponse(t.render(c, request))
 
 @login_required(login_url='login')
+def new_opportunity(request, organisation_id='', customer_id=''):
+	# load template
+	t = loader.get_template('NearBeach/new_opportunity.html')
+
+	# Setup dates for initalising
+	next_week = datetime.datetime.now() + datetime.timedelta(days=31)
+
+	"""
+	We need to do some basic formulations with the hour and and minutes.
+	For the hour we need to find all those who are in the PM and
+	change both the hour and meridiem accordingly.
+	For the minute, we have to create it in 5 minute blocks.
+	"""
+	hour = next_week.hour
+	minute = int(5 * round(next_week.minute / 5.0))
+	meridiems = 'AM'
+
+	if hour > 12:
+		hour = hour - 12
+		meridiems = 'PM'
+	elif hour == 0:
+		hour = 12
+
+
+	# context
+	c = {
+		'new_opportunity_form': new_opportunity_form(initial={
+				'finish_date_year':next_week.year,
+				'finish_date_month':next_week.month,
+				'finish_date_day':next_week.day,
+				'finish_date_hour':hour,
+				'finish_date_minute':minute,
+				'finish_date_meridiems':meridiems,}),
+	}
+
+	return HttpResponse(t.render(c, request))
+
+@login_required(login_url='login')
 def new_organisation(request):
 	"""
 	To stop duplicates in the system, the code will quickly check to see if
@@ -899,6 +937,8 @@ def new_organisation(request):
 	duplication_count = 0;
 	if not duplicate_results == None:
 		duplication_count = duplicate_results.count()
+
+
 		
 	
 	#context

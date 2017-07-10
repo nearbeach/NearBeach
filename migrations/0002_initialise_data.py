@@ -36,6 +36,20 @@ def initialise_data(apps, schema_editor):
 
     ])
 
+    list_of_opportunity_stage = apps.get_model("NearBeach", "list_of_opportunity_stage")
+    list_of_opportunity_stage.objects.using(db_alias).bulk_create([
+        list_of_opportunity_stage(list_order="1",opportunity_stage_description="Prospecting"),
+        list_of_opportunity_stage(list_order="2", opportunity_stage_description="Qualification"),
+        list_of_opportunity_stage(list_order="3", opportunity_stage_description="Needs Analysis"),
+        list_of_opportunity_stage(list_order="4", opportunity_stage_description="Value Proposition"),
+        list_of_opportunity_stage(list_order="5", opportunity_stage_description="Identifying Decision Makers"),
+        list_of_opportunity_stage(list_order="6", opportunity_stage_description="Perception Analysis"),
+        list_of_opportunity_stage(list_order="7", opportunity_stage_description="Proposal/Price Quote"),
+        list_of_opportunity_stage(list_order="8", opportunity_stage_description="Negotiation/Review"),
+        list_of_opportunity_stage(list_order="9", opportunity_stage_description="Closed Won"),
+        list_of_opportunity_stage(list_order="10", opportunity_stage_description="Closed Lost"),
+    ])
+
 
     # List of titles
     list_of_titles = apps.get_model("NearBeach", "list_of_titles")

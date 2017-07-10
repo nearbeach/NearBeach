@@ -1,0 +1,33 @@
+{% extends "./template.html" %}
+{% block content %}
+{% load static %}
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
+<body onload="check_end_date();">
+    <div class="div_content">
+        <div class="div_header">
+            <h2>New Opportunity</h2>
+        </div>
+        <div class="div_sub_content">
+            {% if organisations_count == 0 %}
+				<a href="{% url 'new_organisation' %}">Can you please create an organisation first.</a>
+            {% else %}
+                <table>
+                    <tr class="header"><td width="150px">Field</td><td>Input</td></tr>
+                    <tr><td>Opportunity Name</td><td>{{ new_opportunity_form.opportunity_name }}</td></tr>
+                    <tr><td>Opportunity Description</td><td>{{ new_opportunity_form.opportunity_description }}</td></tr>
+                    <tr><td>Organisation</td><td>{{ new_opportunity_form.organisations_id }}</td></tr>
+                    <tr><td>Customer</td><td>{{ new_opportunity_form.customer_id }}</td></tr>
+                    <tr><td>Opportunity Budget</td><td>{{ new_opportunity_form.opportunity_amount }}{{ new_opportunity_form.amount_type_id }}</td></tr>
+                    <tr><td>Opportunity Expected Closure</td><td>{{ new_opportunity_form.finish_date_year }} - {{ new_opportunity_form.finish_date_month }} - {{ new_opportunity_form.finish_date_day }}<br/>
+                        {{ new_opportunity_form.finish_date_hour }}:{{ new_opportunity_form.finish_date_minute }} {{ new_opportunity_form.finish_date_meridiems }}</td></tr>
+                    <tr><td>Stage of Opportunity</td><td>{{ new_opportunity_form.opportunity_stage_id }}</td></tr>
+                    <tr><td>Success Probability</td><td>{{ new_opportunity_form.opportunity_success_probability }}%</td></tr>
+                    <tr><td>Lead Source</td><td>{{ new_opportunity_form.lead_source_id }}</td></tr>
+                    <tr><td>Next Step?</td><td>{{ new_opportunity_form.next_step_description }}</td></tr>
+                </table>
+                <input type="submit" value="Submit Opportunity">
+            {%  endif %}
+        </div>
+    </div>
+</body>
+{% endblock %}

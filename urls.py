@@ -34,6 +34,10 @@ urlpatterns = [
 	url(r'^new_task/(?P<organisations_id>[0-9]+)/(?P<customer_id>[0-9]+)/$', views.new_task, name='new_task'),
 	url(r'^new_organisation', views.new_organisation, name='new_organisation'),
 	url(r'^new_customer/(?P<organisations_id>[0-9]+)/', views.new_customer, name='new_customer'),
+
+	url(r'^new_opportunity/$',views.new_opportunity,name='new_opportunity'),
+	url(r'^new_opportunity/(?P<organisations_id>[0-9]+)/$',views.new_opportunity,name='new_opportunity'),
+	url(r'^new_opportunity/(?P<organisations_id>[0-9]+)/(?P<customer_id>[0-9]+)/$',views.new_opportunity,name='new_opportunity'),
 	
 	#Organisation
 	url(r'^organisation_information/(?P<organisations_id>[0-9]+)/', views.organisation_information, name='organisation_information'),

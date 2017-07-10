@@ -8,8 +8,11 @@ from .models import organisations
 from .models import organisations_campus
 from .models import list_of_titles
 from .models import list_of_countries
+from .models import list_of_amount_type
 from .models import list_of_countries_regions
 from .models import list_of_contact_types
+from .models import list_of_opportunity_stage
+from .models import opportunity
 from .models import user_groups
 from .models import project
 from .models import tasks
@@ -308,6 +311,49 @@ class new_customer_form(forms.Form):
 	organisations_id = forms.ModelChoiceField(label = "Organisation", widget = forms.Select, queryset = organisations_results)
 
 
+class new_opportunity_form(ModelForm):
+	#Get data for choice boxes
+	opportunity_stage_results = list_of_opportunity_stage.objects.filter(is_deleted='FALSE')
+	amount_type_results = list_of_amount_type.objects.filter(is_deleted='FALSE')
+
+	opportunity_stage_id = forms.ModelChoiceField(
+		label="Opportunity Stage",
+		widget=forms.Select,
+		queryset=opportunity_stage_results,
+	)
+
+	amount_type_id = forms.ModelChoiceField(
+		label="Amount Type",
+		widget=forms.Select,
+		queryset=amount_type_results,
+	)
+
+	finish_date_year = forms.ChoiceField(
+		choices = YEAR_CHOICES,
+		widget=forms.Select(
+			attrs={"onChange":'check_end_date()'}
+		))
+	finish_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
+	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
+	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+
+	next_step_description = forms.CharField(max_length=255)
+
+	class Meta:
+		model = opportunity
+		fields = '__all__'
+
+
+		exclude = {
+			'opportunity_expected_close_date'
+			'date_created',
+			'date_modified',
+			'user_id',
+			'is_deleted'
+		}
+
 class new_organisation_form(forms.Form):
 	organisation_name = forms.CharField(max_length = 255)
 	organisation_website = forms.URLField(max_length = 255, initial='https://', widget=forms.TextInput(attrs={'width': '99%'}))
@@ -360,6 +406,7 @@ class new_task_form(forms.Form):
 	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
 	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+
 
 
 class organisation_information_form(ModelForm):

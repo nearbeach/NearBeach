@@ -135,8 +135,13 @@ class list_of_amount_type(models.Model):
 	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
 
+	def __str__(self):
+		return self.amount_type_description
+
 	class Meta:
 		db_table = "list_of_amount_type"
+		ordering = ['list_order']
+
 
 
 
@@ -201,8 +206,14 @@ class list_of_opportunity_stage(models.Model):
 	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
 
+	def __str__(self):
+		return self.opportunity_stage_description
+
 	class Meta:
 		db_table = "list_of_opportunity_stage"
+		ordering = ['list_order']
+
+
 
 
 class list_of_lead_source(models.Model):
@@ -242,7 +253,6 @@ class opportunity(models.Model):
 	opportunity_stage_id = models.ForeignKey('list_of_opportunity_stage', on_delete=models.CASCADE)
 	opportunity_success_probability = models.IntegerField() #Between 0% and 100%
 	lead_source_id = models.ForeignKey('list_of_lead_source', on_delete=models.CASCADE)
-	opportunity_next_step = models.CharField(max_length=255)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -250,6 +260,16 @@ class opportunity(models.Model):
 
 	class Meta:
 		db_table="opportunities"
+
+class opportunity_next_step(models.Model):
+	opportunity_id = models.ForeignKey('opportunity',on_delete=models.CASCADE)
+	next_step_description = models.CharField(max_length=255)
+	next_step_completed = models.BooleanField(default=False)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
+
 
 class organisations(models.Model):
 	organisations_id = models.AutoField(primary_key = True)
