@@ -856,6 +856,10 @@ def new_opportunity(request, organisation_id='', customer_id=''):
 	# load template
 	t = loader.get_template('NearBeach/new_opportunity.html')
 
+
+	#DATA
+	customer_results = customers.objects.all()
+
 	# Setup dates for initalising
 	next_week = datetime.datetime.now() + datetime.timedelta(days=31)
 
@@ -885,6 +889,9 @@ def new_opportunity(request, organisation_id='', customer_id=''):
 				'finish_date_hour':hour,
 				'finish_date_minute':minute,
 				'finish_date_meridiems':meridiems,}),
+		'customer_results': customer_results,
+		'organisation_id': organisation_id,
+		'customer_id': customer_id,
 	}
 
 	return HttpResponse(t.render(c, request))
