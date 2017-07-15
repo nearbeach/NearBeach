@@ -247,7 +247,7 @@ class opportunity(models.Model):
 	organisations_id = models.ForeignKey('organisations', on_delete=models.CASCADE)
 	customer_id = models.ForeignKey('customers', on_delete=models.CASCADE)
 	currency_id = models.ForeignKey('list_of_currency', on_delete=models.CASCADE)
-	opportunity_amount = models.IntegerField() #Turn into a number widget
+	opportunity_amount = models.DecimalField(max_digits=12,decimal_places=2) #Turn into a number widget
 	amount_type_id = models.ForeignKey('list_of_amount_type', on_delete=models.CASCADE)
 	opportunity_expected_close_date = models.DateField()
 	opportunity_stage_id = models.ForeignKey('list_of_opportunity_stage', on_delete=models.CASCADE)
