@@ -255,7 +255,7 @@ class opportunity(models.Model):
 	opportunity_name = models.CharField(max_length=255)
 	opportunity_description = models.TextField()
 	organisations_id = models.ForeignKey('organisations', on_delete=models.CASCADE)
-	customer_id = models.ForeignKey('customers', on_delete=models.CASCADE)
+	customer_id = models.ForeignKey('customers', on_delete=models.CASCADE, null=True,blank=True)
 	currency_id = models.ForeignKey('list_of_currency', on_delete=models.CASCADE)
 	opportunity_amount = models.DecimalField(max_digits=12,decimal_places=2) #Turn into a number widget
 	amount_type_id = models.ForeignKey('list_of_amount_type', on_delete=models.CASCADE)

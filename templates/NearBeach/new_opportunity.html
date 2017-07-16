@@ -32,8 +32,8 @@
                         <tr><td>Opportunity Description</td><td>{{ new_opportunity_form.opportunity_description }}</td></tr>
                         <tr><td>Organisation</td><td>{{ new_opportunity_form.organisations_id }}</td></tr>
                         <tr><td>Customer</td><td>
-                            <select id="customer_id" name="customer_id" required="True">
-                                <option value="---------" selected>---------</option>
+                            <select id="customer_id" name="customer_id">
+                                <option value="" selected>---------</option>
                                 {% for row in customer_results %}
                                     <option value="{{ row.customer_id }}" organisation_id="{{ row.organisations_id.organisations_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
                                 {% endfor %}

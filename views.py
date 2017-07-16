@@ -562,6 +562,7 @@ def customer_information(request, customer_id):
 
 	#The campus the customer is associated to
 	campus_results = customers_campus.objects.filter(customer_id = customer_id)
+	opportunity_results=opportunity.objects.filter(customer_id=customer_id)
 
 
 	try:
@@ -586,8 +587,7 @@ def customer_information(request, customer_id):
 		}),
 		'campus_results': campus_results,
 		'add_campus_results': add_campus_results,
-		'customer_id': customer_id,
-		'organisations_id' : customer_results.organisations_id.organisations_id,
+		'customer_results': customer_results,
 		'customer_contact_history': customer_contact_history,
 		'media_url': settings.MEDIA_URL,
 		'profile_picture': profile_picture,
@@ -595,6 +595,7 @@ def customer_information(request, customer_id):
 		'organisation_document_results': organisation_document_results,
 		'project_results': project_results,
 		'task_results': task_results,
+		'opportunity_results':opportunity_results,
 	}
 	
 	return HttpResponse(t.render(c, request))	
@@ -872,7 +873,6 @@ def new_opportunity(request, organisation_id='', customer_id=''):
 			"""
 			Some dropdown boxes will need to have instances made from the values.
 			"""
-			customer_instance = customers.objects.get(customer_id=request.POST.get('customer_id'))
 			stage_of_opportunity_instance = list_of_opportunity_stage.objects.get(opportunity_stage_id=request.POST.get('opportunity_stage'))
 			#Stage of Opportunity
 
@@ -925,10 +925,15 @@ def new_opportunity(request, organisation_id='', customer_id=''):
 				opportunity_success_probability=opportunity_success_probability,
 				lead_source_id=lead_source_id,
 				opportunity_expected_close_date=opportunity_end_date,
-				customer_id=customer_instance,
 				opportunity_stage_id=stage_of_opportunity_instance,
 				user_id=current_user,
 			)
+			if not request.POST.get('customer_id')=='':
+				customer_instace=customers.objects.get(customer_id = request.POST.get('customer_id'))
+				submit_opportunity.customer_id=customer_instace
+			else:
+				submit_opportunity.customer_id=None
+
 			#submit_opportunity.save()
 
 			submit_opportunity.save()
@@ -939,7 +944,7 @@ def new_opportunity(request, organisation_id='', customer_id=''):
 			if not next_step_description=="":
 				#Save the next step description
 				submit_next_step = opportunity_next_step(
-					opportunity_id=submit_opportunity,
+					opportunity_id=submit_opportunity.opportunity_id,
 					next_step_description=next_step_description,
 					user_id=current_user,
 				)

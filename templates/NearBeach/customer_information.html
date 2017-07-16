@@ -4,7 +4,7 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/customer_information.js' %}"></script>
 <body onload="initiate_dates()">
-    <form action="{% url 'customer_information' customer_id %}" method="POST" enctype="multipart/form-data">
+    <form action="{% url 'customer_information' customer_results.customer_id %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="div_content">
             <div class="div_header">
@@ -18,7 +18,7 @@
                     <tr><td>Customer First Name:</td><td>{{ customer_information_form.customer_first_name }}</td></tr>
                     <tr><td>Customer Last Name:</td><td>{{ customer_information_form.customer_last_name }}</td></tr>
                     <tr><td>Customer Email:</td><td>{{ customer_information_form.customer_email }}</td></tr>
-                    <tr><td>Customer's Organisation:</td><td>{{ customer_information_form.organisations_id }}</td></tr>
+                    <tr><td>Customer's Organisation:</td><td><a href="{% url 'organisation_information' customer_results.organisations_id.organisations_id %}">{{ customer_results.organisations_id }}</a></td></tr>
                 </table>
                 <input type="submit" name="update" value="Update Details"/>
             </div>
@@ -127,9 +127,9 @@
             <div class="div_sub_content">
                 <h4>Actions</h4>
                 <ul>
-                    <li><a href="{% url 'new_project' organisations_id customer_id %}">New Project</a></li>
-                    <li><a href="{% url 'new_task' organisations_id customer_id %}">Create New Task</a></li>
-                    <li><a href="{% url 'assign_customer_project_task' customer_id %}">Assign Existing Project or Task</a></li>
+                    <li><a href="{% url 'new_project' customer_results.organisations_id.organisations_id customer_results.customer_id %}">New Project</a></li>
+                    <li><a href="{% url 'new_task' customer_results.organisations_id.organisations_id customer_results.customer_id %}">Create New Task</a></li>
+                    <li><a href="{% url 'assign_customer_project_task' customer_results.customer_id %}">Assign Existing Project or Task</a></li>
                 </ul>
                 <br/>
                 <h4>Assigned Projects</h4>
@@ -175,6 +175,30 @@
                     {% else %}
                         <p>Sorry. There are currently no tasks for this customer.</p>
                     {% endif %}
+            </div>
+        </div>
+        <div class="div_content">
+            <div class="div_header">
+                <h2>Customer Opportunities</h2>
+            </div>
+            <div class="div_sub_content">
+                <a href="{% url 'new_opportunity' customer_results.organisations_id.organisations_id customer_results.customer_id %}">Add a new opportuninity</a>
+                {% if opportunity_results %}
+                    <table>
+                        <tr class="header">
+                            <td>Opportunity Name</td>
+                            <td>Opportunity Stage</td>
+                            <td>Opportunity End Date</td>
+                        </tr>
+                        {% for row in opportunity_results %}
+                            <tr>
+                                <td><a href="{% url 'opportunity_information' row.opportunity_id %}">{{ row.opportunity_name }}</a></td>
+                                <td>{{ row.opportunity_stage_id }}</td>
+                                <td>{{ row.opportunity_expected_close_date }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
             </div>
         </div>
     </form>
