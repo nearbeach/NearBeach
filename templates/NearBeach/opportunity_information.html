@@ -1,0 +1,31 @@
+{% extends "./template.html" %}
+{% block content %}
+{% load static %}
+<body>
+    <form action="{% url 'opportunity_information' opportunity_id %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="div_content">
+            <div class="div_header">
+                <h1>Opportunity Information</h1>
+            </div>
+            <div class="div_sub_content">
+                <table>
+                    <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
+                    {{ opportunity_information_form.as_table }}
+                    <tr><td>Lead Source:</td><td>{{ opportunity_results.lead_source_id }}</td></tr>
+                    <tr><td>Organisation:</td><td>{{ opportunity_results.organisations_id }}</td></tr>
+                    <tr><td>Customer:</td><td>
+                        <select>
+                            <option value="">-------</option>
+                            {% for row in customer_results %}
+                                <option value="row.customer_id">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td></tr>
+                </table>
+                <input type="submit" name="submit_contact" value="Update"/>
+            </div>
+        </div>
+    </form>
+</body>
+{% endblock %}

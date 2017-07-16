@@ -47,6 +47,7 @@ urlpatterns = [
 	url(r'^campus_information/(?P<campus_information>[0-9]+)/', views.campus_information, name='campus_information'),
 	url(r'^customers_campus_information/(?P<customer_campus_id>[0-9]+)/(?P<customer_or_org>["CUST","CAMP"]+)', views.customers_campus_information, name="customers_campus_information"),
 	url(r'^assign_customer_project_task/(?P<customer_id>[0-9]+)/', views.assign_customer_project_task, name='assign_customer_project_task'),
+	url(r'^opportunity_information/(?P<opportunity_id>[0-9]+)/', views.opportunity_information, name='opportunity_information'),
 
 
 	#Search Items

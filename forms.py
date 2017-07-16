@@ -414,6 +414,19 @@ class new_task_form(forms.Form):
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
 
 
+class opportunity_information_form(ModelForm):
+	class Meta:
+		model = opportunity
+		fields = '__all__'
+		exclude = {
+			'customer_id',
+			'organisations_id',
+			'lead_source_id',
+			'date_created',
+			'date_modified',
+			'user_id',
+			'is_deleted'
+		}
 
 class organisation_information_form(ModelForm):
 	# Get data for choice boxes

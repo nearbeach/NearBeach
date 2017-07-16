@@ -867,6 +867,7 @@ def new_opportunity(request, organisation_id='', customer_id=''):
 			amount_type_id = form.cleaned_data['amount_type_id']
 			opportunity_success_probability = form.cleaned_data['opportunity_success_probability']
 			lead_source_id = form.cleaned_data['lead_source_id']
+			next_step_description = form.cleaned_data['next_step_description']
 
 			"""
 			Some dropdown boxes will need to have instances made from the values.
@@ -930,15 +931,26 @@ def new_opportunity(request, organisation_id='', customer_id=''):
 			)
 			#submit_opportunity.save()
 
-			if not submit_opportunity.save():
-				print("\n\nDID NOT SAVE :(\n")
-
+			submit_opportunity.save()
 
 			"""
 			If the next step has words in it, save it to the database
 			"""
-			#ADD CODE
+			if not next_step_description=="":
+				#Save the next step description
+				submit_next_step = opportunity_next_step(
+					opportunity_id=submit_opportunity,
+					next_step_description=next_step_description,
+					user_id=current_user,
+				)
+				submit_next_step.save()
 
+
+			"""
+			Now we go to the opportunity information page so the user can start
+			inputting the require information (like documents), and tasks.
+			"""
+			return HttpResponseRedirect(reverse(opportunity_information, args={submit_opportunity.opportunity_id}))
 
 
 	# load template
@@ -1393,6 +1405,28 @@ def new_task(request,organisations_id='',customer_id=''):
 	
 	return HttpResponse(t.render(c, request))
 
+
+@login_required(login_url='login')
+def opportunity_information(request, opportunity_id):
+	#Data
+	opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
+	customer_results = customers.objects.filter(organisations_id=opportunity_results.organisations_id)
+
+	# Loaed the template
+	t = loader.get_template('NearBeach/opportunity_information.html')
+
+	c = {
+		'opportunity_id': opportunity_id,
+		'opportunity_information_form': opportunity_information_form(
+			instance=opportunity_results,
+		),
+		'opportunity_results':opportunity_results,
+		'customer_results': customer_results,
+	}
+
+	return HttpResponse(t.render(c, request))
+
+
 @login_required(login_url='login')
 def organisation_information(request, organisations_id):
 	# Get the data from the form if the information has been submitted
@@ -1473,6 +1507,7 @@ def organisation_information(request, organisations_id):
 	organisation_document_results = organisation_customers_documents.objects.filter(organisations_id=organisations_id, customer_id__isnull=True)
 	project_results = project.objects.filter(organisations_id=organisations_id)
 	task_results = tasks.objects.filter(organisations_id=organisations_id)
+	opportunity_results = opportunity.objects.filter(organisations_id=organisations_id)
 
 
 	#Date required to initiate date
@@ -1506,6 +1541,7 @@ def organisation_information(request, organisations_id):
 		'organisation_document_results': organisation_document_results,
 		'project_results': project_results,
 		'task_results': task_results,
+		'opportunity_results':opportunity_results,
 	}
 	
 	return HttpResponse(t.render(c, request))
