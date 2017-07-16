@@ -2,38 +2,62 @@
 {% block content %}
 {% load static %}
     <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/new_opportunity.js' %}"></script>
     <script type="text/javascript">
     function initialise() {
         check_end_date();
-        alert("PAGE LOADED");
+        update_customers();
     }
     </script>
 <body onload="initialise();">
-    <div class="div_content">
-        <div class="div_header">
-            <h2>New Opportunity</h2>
+    {% if organisation_id == '' and customer_id == '' %}
+        <form action="{% url 'new_opportunity' %}" method="post" class="new_opportunity">
+    {% elif not customer_id == '' %}
+        <form action="{% url 'new_opportunity' organisation_id customer_id %}" method="post" class="new_opportunity">
+    {% else %}
+        <form action="{% url 'new_opportunity' organisation_id %}" method="post" class="new_opportunity">
+    {% endif %}
+        {% csrf_token %}
+        <div class="div_content">
+            <div class="div_header">
+                <h2>New Opportunity</h2>
+            </div>
+            <div class="div_sub_content">
+                {% if organisations_count == 0 %}
+                    <a href="{% url 'new_organisation' %}">Can you please create an organisation first.</a>
+                {% else %}
+                    <table>
+                        <tr class="header"><td width="150px">Field</td><td>Input</td></tr>
+                        <tr><td>Opportunity Name</td><td>{{ new_opportunity_form.opportunity_name }}</td></tr>
+                        <tr><td>Opportunity Description</td><td>{{ new_opportunity_form.opportunity_description }}</td></tr>
+                        <tr><td>Organisation</td><td>{{ new_opportunity_form.organisations_id }}</td></tr>
+                        <tr><td>Customer</td><td>
+                            <select id="customer_id" name="customer_id" required="True">
+                                <option value="---------" selected>---------</option>
+                                {% for row in customer_results %}
+                                    <option value="{{ row.customer_id }}" organisation_id="{{ row.organisations_id.organisations_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td></tr>
+                        <tr><td>Opportunity Budget</td><td>{{ new_opportunity_form.currency_id }}{{ new_opportunity_form.opportunity_amount }}{{ new_opportunity_form.amount_type_id }}</td></tr>
+                        <tr><td>Opportunity Expected Closure</td><td>{{ new_opportunity_form.finish_date_year }} - {{ new_opportunity_form.finish_date_month }} - {{ new_opportunity_form.finish_date_day }}<br/>
+                            {{ new_opportunity_form.finish_date_hour }}:{{ new_opportunity_form.finish_date_minute }} {{ new_opportunity_form.finish_date_meridiems }}</td></tr>
+                        <tr><td>Stage of Opportunity</td><td>
+                            <select id="opportunity_stage" name="opportunity_stage" required="True" onchange="probability_update()">
+                                <option value="---------" selected disabled="disabled">---------</option>
+                                {% for row in opportunity_stage_results %}
+                                    <option value="{{ row.opportunity_stage_id }}" probability="{{ row.probability_success }}">{{ row.opportunity_stage_description }}</option>
+                                {% endfor %}
+                            </select>
+                        </td></tr>
+                        <tr><td>Success Probability</td><td>{{ new_opportunity_form.opportunity_success_probability }}%</td></tr>
+                        <tr><td>Lead Source</td><td>{{ new_opportunity_form.lead_source_id }}</td></tr>
+                        <tr><td>Next Step?</td><td>{{ new_opportunity_form.next_step_description }}</td></tr>
+                    </table>
+                    <input type="submit" value="Submit Opportunity">
+                {%  endif %}
+            </div>
         </div>
-        <div class="div_sub_content">
-            {% if organisations_count == 0 %}
-				<a href="{% url 'new_organisation' %}">Can you please create an organisation first.</a>
-            {% else %}
-                <table>
-                    <tr class="header"><td width="150px">Field</td><td>Input</td></tr>
-                    <tr><td>Opportunity Name</td><td>{{ new_opportunity_form.opportunity_name }}</td></tr>
-                    <tr><td>Opportunity Description</td><td>{{ new_opportunity_form.opportunity_description }}</td></tr>
-                    <tr><td>Organisation</td><td>{{ new_opportunity_form.organisations_id }}</td></tr>
-                    <tr><td>Customer</td><td><div id="CUSTOMER_ID_PLACEHOLDER">Placeholder for customer id. You should not be seeing this</div></td></tr>
-                    <tr><td>Opportunity Budget</td><td>{{ new_opportunity_form.currency_id }}{{ new_opportunity_form.opportunity_amount }}{{ new_opportunity_form.amount_type_id }}</td></tr>
-                    <tr><td>Opportunity Expected Closure</td><td>{{ new_opportunity_form.finish_date_year }} - {{ new_opportunity_form.finish_date_month }} - {{ new_opportunity_form.finish_date_day }}<br/>
-                        {{ new_opportunity_form.finish_date_hour }}:{{ new_opportunity_form.finish_date_minute }} {{ new_opportunity_form.finish_date_meridiems }}</td></tr>
-                    <tr><td>Stage of Opportunity</td><td>{{ new_opportunity_form.opportunity_stage_id }}</td></tr>
-                    <tr><td>Success Probability</td><td>{{ new_opportunity_form.opportunity_success_probability }}%</td></tr>
-                    <tr><td>Lead Source</td><td>{{ new_opportunity_form.lead_source_id }}</td></tr>
-                    <tr><td>Next Step?</td><td>{{ new_opportunity_form.next_step_description }}</td></tr>
-                </table>
-                <input type="submit" value="Submit Opportunity">
-            {%  endif %}
-        </div>
-    </div>
+    </form>
 </body>
 {% endblock %}

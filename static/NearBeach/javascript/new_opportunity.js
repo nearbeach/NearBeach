@@ -1,21 +1,6 @@
 /**
  * Created by luke on 11/07/17.
  */
-function create_customers() {
-    /*
-    Issue
-    ~~~~~
-    We need to create the dropdown menu
-
-    Method
-    ~~~~~~
-    1.) Connect to the div with id = 'CUSTOMER_ID_PLACEHOLDER'
-    2.) In a loop, replace the div with a select
-     */
-}
-
-
-
 function update_customers() {
     /*
     Issue
@@ -29,4 +14,40 @@ function update_customers() {
     1.) Extract out the Organisation ID from the organisation field
     2.) Loop through the customer fields and hide those who are not associated to the organisation
      */
+    var organisations_id = document.getElementById('id_organisations_id').value;
+    var customer_id = document.getElementById('customer_id');
+
+    // Set customer id to ------
+    customer_id.selectedIndex=0;
+
+    /*
+    Hide those values we do not want to see anymore
+     */
+    for (var i=1; i<customer_id.length; i++) {
+        var customer_org_id = customer_id[i].getAttribute("organisation_id")
+        if (customer_org_id == organisations_id) {
+            customer_id[i].disabled=false;
+        } else {
+            customer_id[i].disabled=true;
+        }
+    }
+}
+
+function probability_update() {
+    /*
+    Issue
+    ~~~~~
+    Extract the probability from the dropdown box and update it in the % input
+
+    Method
+    ~~~~~~
+    1.) Connect the varables to the required fields
+    2.) Extract the probability value from the dropdown box
+    3.) Apply it to the % input
+     */
+    var opportuniy_stage = document.getElementById("opportunity_stage");
+    var success_probability = document.getElementById("id_opportunity_success_probability");
+
+    success_probability.value = opportuniy_stage[opportuniy_stage.selectedIndex].getAttribute("probability");
+
 }

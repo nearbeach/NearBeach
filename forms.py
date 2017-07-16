@@ -315,11 +315,12 @@ class new_opportunity_form(ModelForm):
 	#Get data for choice boxes
 	opportunity_stage_results = list_of_opportunity_stage.objects.filter(is_deleted='FALSE')
 	amount_type_results = list_of_amount_type.objects.filter(is_deleted='FALSE')
+	organisaion_results = organisations.objects.filter(is_deleted='FALSE')
 
-	opportunity_stage_id = forms.ModelChoiceField(
-		label="Opportunity Stage",
-		widget=forms.Select,
-		queryset=opportunity_stage_results,
+	organisations_id = forms.ModelChoiceField(
+		label="Organisations",
+		queryset=organisaion_results,
+		widget=forms.Select(attrs={"onChange":'update_customers()'}),
 	)
 
 	amount_type_id = forms.ModelChoiceField(
@@ -339,7 +340,10 @@ class new_opportunity_form(ModelForm):
 	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
 
-	next_step_description = forms.CharField(max_length=255)
+	next_step_description = forms.CharField(
+		max_length=255,
+		required=False
+	)
 
 	class Meta:
 		model = opportunity
@@ -348,6 +352,7 @@ class new_opportunity_form(ModelForm):
 
 		exclude = {
 			'opportunity_expected_close_date',
+			'opportunity_stage_id',
 			'customer_id',
 			'date_created',
 			'date_modified',

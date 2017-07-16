@@ -853,12 +853,41 @@ def new_customer(request, organisations_id):
 
 @login_required(login_url='login')
 def new_opportunity(request, organisation_id='', customer_id=''):
+	#POST or None
+	if request.method=='POST':
+		form=new_opportunity_form(request.POST)
+		if form.is_valid():
+			#Start saving the data in the form
+			opportunity_name = form.cleaned_data['opportunity_name']
+			opportunity_description = form.cleaned_data['opportunity_description']
+			organisations_id = form.cleaned_data['organisations_id']
+			currency_id = form.cleaned_data['currency_id']
+			opportunity_amount = form.cleaned_data['opportunity_amount']
+			amount_type_id = form.cleaned_data['amount_type_id']
+			opportunity_success_probability = form.cleaned_data['opportunity_success_probability']
+			lead_source_id = form.cleaned_data['lead_source_id']
+
+			"""
+			Some dropdown boxes will need to have instances made from the values.
+			"""
+			#Customer
+			#End Date
+			#Stage of Opportunity
+
+			"""
+			If the next step has words in it, save it to the database
+			"""
+			#ADD CODE
+
+
+
 	# load template
 	t = loader.get_template('NearBeach/new_opportunity.html')
 
 
 	#DATA
 	customer_results = customers.objects.all()
+	opportunity_stage_results = list_of_opportunity_stage.objects.filter(is_deleted="FALSE")
 
 	# Setup dates for initalising
 	next_week = datetime.datetime.now() + datetime.timedelta(days=31)
@@ -892,6 +921,7 @@ def new_opportunity(request, organisation_id='', customer_id=''):
 		'customer_results': customer_results,
 		'organisation_id': organisation_id,
 		'customer_id': customer_id,
+		'opportunity_stage_results':opportunity_stage_results,
 	}
 
 	return HttpResponse(t.render(c, request))

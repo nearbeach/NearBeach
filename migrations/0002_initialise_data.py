@@ -26,6 +26,18 @@ def initialise_data(apps, schema_editor):
         group_permissions(role="Read Only"),
     ])
 
+    # List of amount types
+    list_of_amount_types = apps.get_model("NearBeach", "list_of_amount_types")
+    list_of_amount_types.objects.user(db_alias).bulk_create([
+        list_of_amount_types(amount_type_description="Fixed",list_order=0),
+        list_of_amount_types(amount_type_description="Per Contract",list_order=1),
+        list_of_amount_types(amount_type_description="Per Year",list_order=2),
+        list_of_amount_types(amount_type_description="Per Month",list_order=3),
+        list_of_amount_types(amount_type_description="Per Fortnight",list_order=4),
+        list_of_amount_types(amount_type_description="Per Day",list_order=5),
+        list_of_amount_types(amount_type_description="Per Hour",list_order=6),
+    ])
+
     # List of contact types
     list_of_contact_types = apps.get_model("NearBeach", "list_of_contact_types")
     list_of_contact_types.objects.using(db_alias).bulk_create([
@@ -38,16 +50,16 @@ def initialise_data(apps, schema_editor):
 
     list_of_opportunity_stage = apps.get_model("NearBeach", "list_of_opportunity_stage")
     list_of_opportunity_stage.objects.using(db_alias).bulk_create([
-        list_of_opportunity_stage(list_order="1",opportunity_stage_description="Prospecting"),
-        list_of_opportunity_stage(list_order="2", opportunity_stage_description="Qualification"),
-        list_of_opportunity_stage(list_order="3", opportunity_stage_description="Needs Analysis"),
-        list_of_opportunity_stage(list_order="4", opportunity_stage_description="Value Proposition"),
-        list_of_opportunity_stage(list_order="5", opportunity_stage_description="Identifying Decision Makers"),
-        list_of_opportunity_stage(list_order="6", opportunity_stage_description="Perception Analysis"),
-        list_of_opportunity_stage(list_order="7", opportunity_stage_description="Proposal/Price Quote"),
-        list_of_opportunity_stage(list_order="8", opportunity_stage_description="Negotiation/Review"),
-        list_of_opportunity_stage(list_order="9", opportunity_stage_description="Closed Won"),
-        list_of_opportunity_stage(list_order="10", opportunity_stage_description="Closed Lost"),
+        list_of_opportunity_stage(list_order="1",opportunity_stage_description="Prospecting",probabilty_success="10"),
+        list_of_opportunity_stage(list_order="2", opportunity_stage_description="Qualification",probabilty_success="20"),
+        list_of_opportunity_stage(list_order="3", opportunity_stage_description="Needs Analysis",probabilty_success="30"),
+        list_of_opportunity_stage(list_order="4", opportunity_stage_description="Value Proposition",probabilty_success="40"),
+        list_of_opportunity_stage(list_order="5", opportunity_stage_description="Identifying Decision Makers",probabilty_success="50"),
+        list_of_opportunity_stage(list_order="6", opportunity_stage_description="Perception Analysis",probabilty_success="60"),
+        list_of_opportunity_stage(list_order="7", opportunity_stage_description="Proposal/Price Quote",probabilty_success="70"),
+        list_of_opportunity_stage(list_order="8", opportunity_stage_description="Negotiation/Review",probabilty_success="80"),
+        list_of_opportunity_stage(list_order="9", opportunity_stage_description="Closed Won",probabilty_success="100"),
+        list_of_opportunity_stage(list_order="10", opportunity_stage_description="Closed Lost",probabilty_success="0"),
     ])
 
 

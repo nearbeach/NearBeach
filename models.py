@@ -155,6 +155,9 @@ class list_of_currency(models.Model):
 	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
 
+	def __str__(self):
+		return self.currency_description
+
 	class Meta:
 		db_table = "list_of_currency"
 
@@ -199,7 +202,11 @@ class list_of_countries_regions(models.Model):
 
 class list_of_opportunity_stage(models.Model):
 	opportunity_stage_id = models.AutoField(primary_key=True)
-	opportunity_stage_description = models.CharField(max_length=20)
+	opportunity_stage_description = models.CharField(max_length=50)
+	probability_success = models.DecimalField(
+		max_digits=3,
+		decimal_places=0,
+	)
 	list_order = models.IntegerField(unique=True)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
@@ -224,6 +231,9 @@ class list_of_lead_source(models.Model):
 	date_modified = models.DateTimeField(auto_now=True)
 	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
+
+	def __str__(self):
+		return self.lead_source_description
 
 	class Meta:
 		db_table = "list_of_lead_source"
