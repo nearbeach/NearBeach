@@ -857,6 +857,7 @@ def new_opportunity(request, organisation_id='', customer_id=''):
 	if request.method=='POST':
 		form=new_opportunity_form(request.POST)
 		if form.is_valid():
+			current_user = request.user
 			#Start saving the data in the form
 			opportunity_name = form.cleaned_data['opportunity_name']
 			opportunity_description = form.cleaned_data['opportunity_description']
@@ -870,9 +871,68 @@ def new_opportunity(request, organisation_id='', customer_id=''):
 			"""
 			Some dropdown boxes will need to have instances made from the values.
 			"""
-			#Customer
-			#End Date
+			customer_instance = customers.objects.get(customer_id=request.POST.get('customer_id'))
+			stage_of_opportunity_instance = list_of_opportunity_stage.objects.get(opportunity_stage_id=request.POST.get('opportunity_stage'))
 			#Stage of Opportunity
+
+			"""
+			Dealing with the End Date Fields
+			"""
+			finish_date_year = int(form.cleaned_data['finish_date_year'])
+			finish_date_month = int(form.cleaned_data['finish_date_month'])
+			finish_date_day = int(form.cleaned_data['finish_date_day'])
+			finish_date_hour = int(form.cleaned_data['finish_date_hour'])
+			finish_date_minute = int(form.cleaned_data['finish_date_minute'])
+			finish_date_meridiems = form.cleaned_data['finish_date_meridiems']
+
+
+			"""
+            Time is tricky. So I am following the simple rules;
+            12:** AM will have the hour changed to 0
+            1:** AM will not have the hour changed
+            12:** PM will not have the hour changed
+            1:** PM will have the hour changed by adding 12
+
+            From these simple points, I have constructed the following 
+            if statements to take control of the correct hour.
+            """
+			if finish_date_meridiems == "AM":
+				if finish_date_hour == 12:
+					finish_date_hour = 0
+			else:
+				if finish_date_hour > 12:
+					finish_date_hour = finish_date_hour + 12
+
+			opportunity_end_date = datetime.datetime(
+				finish_date_year,
+				finish_date_month,
+				finish_date_day,
+				finish_date_hour,
+				finish_date_minute
+			)
+
+			"""
+			SAVE THE DATA
+			"""
+			submit_opportunity = opportunity(
+				opportunity_name=opportunity_name,
+				opportunity_description=opportunity_description,
+				organisations_id=organisations_id,
+				currency_id=currency_id,
+				opportunity_amount=opportunity_amount,
+				amount_type_id=amount_type_id,
+				opportunity_success_probability=opportunity_success_probability,
+				lead_source_id=lead_source_id,
+				opportunity_expected_close_date=opportunity_end_date,
+				customer_id=customer_instance,
+				opportunity_stage_id=stage_of_opportunity_instance,
+				user_id=current_user,
+			)
+			#submit_opportunity.save()
+
+			if not submit_opportunity.save():
+				print("\n\nDID NOT SAVE :(\n")
+
 
 			"""
 			If the next step has words in it, save it to the database
