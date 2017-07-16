@@ -347,7 +347,8 @@ class new_opportunity_form(ModelForm):
 
 
 		exclude = {
-			'opportunity_expected_close_date'
+			'opportunity_expected_close_date',
+			'customer_id',
 			'date_created',
 			'date_modified',
 			'user_id',

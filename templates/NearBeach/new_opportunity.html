@@ -2,7 +2,13 @@
 {% block content %}
 {% load static %}
     <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
-<body onload="check_end_date();">
+    <script type="text/javascript">
+    function initialise() {
+        check_end_date();
+        alert("PAGE LOADED");
+    }
+    </script>
+<body onload="initialise();">
     <div class="div_content">
         <div class="div_header">
             <h2>New Opportunity</h2>
@@ -16,7 +22,7 @@
                     <tr><td>Opportunity Name</td><td>{{ new_opportunity_form.opportunity_name }}</td></tr>
                     <tr><td>Opportunity Description</td><td>{{ new_opportunity_form.opportunity_description }}</td></tr>
                     <tr><td>Organisation</td><td>{{ new_opportunity_form.organisations_id }}</td></tr>
-                    <tr><td>Customer</td><td>{{ new_opportunity_form.customer_id }}</td></tr>
+                    <tr><td>Customer</td><td><div id="CUSTOMER_ID_PLACEHOLDER">Placeholder for customer id. You should not be seeing this</div></td></tr>
                     <tr><td>Opportunity Budget</td><td>{{ new_opportunity_form.currency_id }}{{ new_opportunity_form.opportunity_amount }}{{ new_opportunity_form.amount_type_id }}</td></tr>
                     <tr><td>Opportunity Expected Closure</td><td>{{ new_opportunity_form.finish_date_year }} - {{ new_opportunity_form.finish_date_month }} - {{ new_opportunity_form.finish_date_day }}<br/>
                         {{ new_opportunity_form.finish_date_hour }}:{{ new_opportunity_form.finish_date_minute }} {{ new_opportunity_form.finish_date_meridiems }}</td></tr>
