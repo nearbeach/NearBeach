@@ -20,6 +20,7 @@ from django.template import RequestContext
 from .models import *
 from django.contrib.auth.models import User
 
+
 #Import Settings file to obtain secret key
 from django.conf import settings
 
@@ -35,9 +36,6 @@ from django.db.models import Q, Min
 
 #For the forms
 from django.db import models
-
-#Import Django's users
-from django.contrib.auth.models import User
 
 #Import everything from forms
 from .forms import *
@@ -1666,6 +1664,17 @@ def project_information(request, project_id):
 				)
 
 				submit_customer.save()
+
+			"""
+			If the user has added another user to the project
+			"""
+			if 'add_user_submit' in request.POST:
+				user_results = int(request.POST.get("add_user_select"))
+				User.objects.all()
+				submit_associate_user = assigned_users(
+					user_id=int(user_results),
+					project_id=project_id,
+				)
 
 			"""
 			If the user has submitted a new document. We only upload the document IF and ONLY IF the user
