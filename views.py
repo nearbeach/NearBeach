@@ -11,10 +11,14 @@ from django.core import serializers
 
 from django.core.files.storage import FileSystemStorage
 
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+
 
 
 # Importing all the classes from the models
 from .models import *
+from django.contrib.auth.models import User
 
 #Import Settings file to obtain secret key
 from django.conf import settings
@@ -1733,7 +1737,6 @@ def project_information(request, project_id):
 		#project_results = project.objects.get(project_id = project_id)
 		project_results = get_object_or_404(project,project_id = project_id)
 
-
 	#Obtain the required data
 	project_history_results = project_history.objects.filter(project_id = project_id, is_deleted = 'FALSE')
 	documents_results = project_tasks_documents.objects.filter(project_id = project_id, is_deleted = 'FALSE').order_by('document_description')
@@ -1847,7 +1850,34 @@ def project_information(request, project_id):
 	""", [project_results.organisations_id_id, project_id])
 	new_customers_results = namedtuplefetchall(cursor)
 
-	
+	cursor.execute("""
+			SELECT DISTINCT
+			  auth_user.id
+			, auth_user.username
+			, auth_user.first_name
+			, auth_user.last_name
+			, auth_user.first_name || ' ' || auth_user.last_name AS "Name"
+			, auth_user.email
+			FROM
+			  project_groups
+			, user_groups
+			, auth_user
+
+			WHERE 1=1
+
+			--AUTH_USER CONDITIONS
+			AND auth_user.is_active=1
+
+			--PROJECT_GROUPS CONDITIONS
+			AND project_groups.project_id_id=%s
+
+			-- JOINS --
+			AND project_groups.groups_id_id=user_groups.group_id_id
+			AND user_groups.username_id=auth_user.id
+			-- END JOINS --
+		""", [project_id])
+	users_results = namedtuplefetchall(cursor)
+
 	#Load the template
 	t = loader.get_template('NearBeach/project_information.html')
 	
@@ -1862,6 +1892,7 @@ def project_information(request, project_id):
 		'documents_results': serializers.serialize('json', documents_results),
 		'document_folders_results': serializers.serialize('json', document_folders_results),
 		'media_url': settings.MEDIA_URL,
+		'users_results': users_results,
 	}
 	
 	return HttpResponse(t.render(c, request))
@@ -2401,4 +2432,18 @@ def namedtuplefetchall(cursor):
     nt_result = namedtuple('Result', [col[0] for col in desc])
     return [nt_result(*row) for row in cursor.fetchall()]
 
+"""
+The following def are designed to help display a customer 404 and 500 pages
+"""
+def handler404(request):
+    response = render_to_response('404.html', {},
+                                  context_instance=RequestContext(request))
+    response.status_code = 404
+    return response
 
+
+def handler500(request):
+    response = render_to_response('500.html', {},
+                                  context_instance=RequestContext(request))
+    response.status_code = 500
+    return response

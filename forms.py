@@ -138,8 +138,8 @@ HOUR_CHOICES = (
 )
 
 MINUTE_CHOICES = (
-	('0','0'),
-	('5','5'),
+	('00','00'),
+	('05','05'),
 	('10','10'),
 	('15','15'),
 	('20','20'),
@@ -161,6 +161,10 @@ MERIDIEMS_CHOICES = (
 #Include closed option
 INCLUDE_CLOSED = {
 	('INCLUDE_CLOSED','Include Closed?'),
+}
+
+INCLUDE_DEACTIVATED = {
+	('INCLUDE_DEACTIVATED','Include Deactivated?'),
 }
 
 #Global Variables
@@ -533,17 +537,30 @@ class search_customers_form(forms.Form):
 class search_organisations_form(forms.Form):
 	#Just have a simple search field
 	search_organisations = forms.CharField(max_length = 255, required = False)
+
+
+class search_projects_form(forms.Form):
+	search_projects = forms.CharField(max_length = 255, required = False)
+	include_closed = forms.MultipleChoiceField(widget = forms.CheckboxSelectMultiple,
+												choices = INCLUDE_CLOSED)
 	
 class search_tasks_form(forms.Form):
 	search_tasks = forms.CharField(max_length = 255, required = False)
 	include_closed = forms.MultipleChoiceField(widget = forms.CheckboxSelectMultiple,
 												choices = INCLUDE_CLOSED)
 
+class search_users_form(forms.Form):
+	search_users = forms.CharField(
+		max_length=255,
+		required=False,
+	)
+	include_deactivated = forms.MultipleChoiceField(
+		widget=forms.CheckboxSelectMultiple,
+		choices=INCLUDE_DEACTIVATED
+	)
 
-class search_projects_form(forms.Form):
-	search_projects = forms.CharField(max_length = 255, required = False)
-	include_closed = forms.MultipleChoiceField(widget = forms.CheckboxSelectMultiple,
-												choices = INCLUDE_CLOSED)											
+
+
 	
 class task_information_form(ModelForm):
 	task_short_description = forms.CharField(max_length=255, widget=forms.TextInput(attrs={"class":'task_short_description'}))

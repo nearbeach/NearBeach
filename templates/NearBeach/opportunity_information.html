@@ -18,7 +18,7 @@
                         <select>
                             <option value="">-------</option>
                             {% for row in customer_results %}
-                                <option value="row.customer_id">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
+                                <option value="{{ row.customer_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
                             {% endfor %}
                         </select>
                     </td></tr>

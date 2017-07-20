@@ -95,7 +95,7 @@
 			</div>
 			<div class="div_sub_content" id="div_project_customers" style="display: none;">
 				{% if new_customers_results %}
-                    {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
+                    {% if project_results.project_status == 'New' or project_results.project_status == 'Open' %}
                         <select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" >
                             <option value="---------" selected>---------</option>
                             {% for row in new_customers_results %}
@@ -197,6 +197,34 @@
 				</div>
 			</div>
 		</div>
+        <br/>
+        <div class="div_content">
+            <div class="div_header">
+                <h4>Assigned Users</h4>
+            </div>
+            <div class="div_sub_content">
+                {% if users_results %}
+                    <select id="add_user_select" name="add_user_select" onchange="enable_disable_add_user()">
+                        <option value="------">-------</option>
+                        {% for row in users_results %}
+                            <option value="{{ row.id }}">{{ row.Name }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="submit" id="add_user_submit" name="add_user_submit" value="Add User" disabled="disabled"/>
+                {% endif %}
+                {% if assigned_users %}
+                    <table>
+                        <tr class="header">
+                            <td>Username</td>
+                            <td>First Name</td>
+                            <td>Last name</td>
+                        </tr>
+                    </table>
+                {% else %}
+                    <p>There are currently no staff members assigned to this project</p>
+                {% endif %}
+            </div>
+        </div>
 	</form>
 </body>
 {% endblock %}

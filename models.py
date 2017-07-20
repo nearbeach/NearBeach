@@ -19,6 +19,19 @@ PROJECT_STATUS_CHOICE = (
 )
 
 #List of tables - in alphabetical order
+class assigned_users(models.Model):
+	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+	project_id = models.ForeignKey('project',on_delete=models.CASCADE,blank=True,null=True)
+	task_id=models.ForeignKey('tasks',on_delete=models.CASCADE,blank=True,null=True)
+	opportunity_id=models.ForeignKey('opportunity',on_delete=models.CASCADE,blank=True,null=True)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
+
+	class Meta:
+		db_table="assigned_users"
+
+
 """
 Contact History is a simple form that users will fill out every time they
 have some form of contact with the customer. This table will store both

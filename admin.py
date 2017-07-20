@@ -3,6 +3,7 @@ from django.contrib import admin
 # Register your models here.
 from .models import *
 
+admin.site.register(assigned_users)
 admin.site.register(contact_history)
 admin.site.register(costs)
 admin.site.register(customers)
