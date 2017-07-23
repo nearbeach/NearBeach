@@ -31,11 +31,9 @@ import urllib2
 import json
 
 #For Importing RAW SQL
-from django.db import connection
 from django.db.models import Q, Min
 
-#For the forms
-from django.db import models
+
 
 #Import everything from forms
 from .forms import *
@@ -945,8 +943,9 @@ def new_opportunity(request, organisation_id='', customer_id=''):
 			"""
 			if not next_step_description=="":
 				#Save the next step description
+				opportunity_instance=opportunity.objects.get(opportunity_id=submit_opportunity.opportunity_id)
 				submit_next_step = opportunity_next_step(
-					opportunity_id=submit_opportunity.opportunity_id,
+					opportunity_id=opportunity_instance,
 					next_step_description=next_step_description,
 					user_id=current_user,
 				)
@@ -1667,14 +1666,18 @@ def project_information(request, project_id):
 
 			"""
 			If the user has added another user to the project
+			auth.models.User.objects.all() <-bug in the system,this is workaround
 			"""
 			if 'add_user_submit' in request.POST:
 				user_results = int(request.POST.get("add_user_select"))
-				User.objects.all()
+				user_instance = auth.models.User.objects.get(pk=user_results)
 				submit_associate_user = assigned_users(
-					user_id=int(user_results),
-					project_id=project_id,
+					user_id=user_instance,
+					project_id=project.objects.get(pk = project_id),
 				)
+				submit_associate_user.save()
+
+
 
 			"""
 			If the user has submitted a new document. We only upload the document IF and ONLY IF the user
@@ -1887,6 +1890,8 @@ def project_information(request, project_id):
 		""", [project_id])
 	users_results = namedtuplefetchall(cursor)
 
+	assigned_results = assigned_users.objects.filter(project_id=project_id)
+
 	#Load the template
 	t = loader.get_template('NearBeach/project_information.html')
 	
@@ -1902,6 +1907,12 @@ def project_information(request, project_id):
 		'document_folders_results': serializers.serialize('json', document_folders_results),
 		'media_url': settings.MEDIA_URL,
 		'users_results': users_results,
+		'assigned_results':assigned_results.values(
+			'user_id',
+			'user_id__username',
+			'user_id__first_name',
+			'user_id__last_name',
+		).distinct(),
 	}
 	
 	return HttpResponse(t.render(c, request))
@@ -2227,6 +2238,15 @@ def task_information(request, task_id):
 
 				submit_customer.save()
 
+			if 'add_user_submit' in request.POST:
+				user_results = int(request.POST.get("add_user_select"))
+				user_instance = auth.models.User.objects.get(pk=user_results)
+				submit_associate_user = assigned_users(
+					user_id=user_instance,
+					task_id=tasks.objects.get(tasks_id=task_id),
+				)
+				submit_associate_user.save()
+
 			"""
 			If the user has submitted a new document. We only upload the document IF and ONLY IF the user
 			has selected the "Submit" button on the "New Document" dialog. We do not want to accidently
@@ -2407,6 +2427,36 @@ def task_information(request, task_id):
 		-- END LINKS --	
 	""", [task_results.organisations_id_id, task_id])
 	new_customers_results = namedtuplefetchall(cursor)
+
+	cursor.execute("""
+				SELECT DISTINCT
+				  auth_user.id
+				, auth_user.username
+				, auth_user.first_name
+				, auth_user.last_name
+				, auth_user.first_name || ' ' || auth_user.last_name AS "Name"
+				, auth_user.email
+				FROM
+				  tasks_groups
+				, user_groups
+				, auth_user
+
+				WHERE 1=1
+
+				--AUTH_USER CONDITIONS
+				AND auth_user.is_active=1
+
+				--PROJECT_GROUPS CONDITIONS
+				AND tasks_groups.tasks_id_id=%s
+
+				-- JOINS --
+				AND tasks_groups.groups_id_id=user_groups.group_id_id
+				AND user_groups.username_id=auth_user.id
+				-- END JOINS --
+			""", [task_id])
+	users_results = namedtuplefetchall(cursor)
+
+	assigned_results = assigned_users.objects.filter(task_id=task_id)
 	
 	#Load the template
 	t = loader.get_template('NearBeach/task_information.html')
@@ -2422,6 +2472,13 @@ def task_information(request, task_id):
         'documents_results': serializers.serialize('json', documents_results),
         'document_folders_results': serializers.serialize('json', document_folders_results),
         'media_url': settings.MEDIA_URL,
+		'users_results': users_results,
+		'assigned_results':assigned_results.values(
+			'user_id',
+			'user_id__username',
+			'user_id__first_name',
+			'user_id__last_name',
+		).distinct(),
 	}
 
 
