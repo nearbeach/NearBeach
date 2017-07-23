@@ -169,7 +169,7 @@ class list_of_currency(models.Model):
 	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
 
 	def __str__(self):
-		return self.currency_description
+		return self.currency_description.encode('utf8')
 
 	class Meta:
 		db_table = "list_of_currency"
@@ -272,7 +272,7 @@ class opportunity(models.Model):
 	currency_id = models.ForeignKey('list_of_currency', on_delete=models.CASCADE)
 	opportunity_amount = models.DecimalField(max_digits=12,decimal_places=2) #Turn into a number widget
 	amount_type_id = models.ForeignKey('list_of_amount_type', on_delete=models.CASCADE)
-	opportunity_expected_close_date = models.DateField()
+	opportunity_expected_close_date = models.DateTimeField()
 	opportunity_stage_id = models.ForeignKey('list_of_opportunity_stage', on_delete=models.CASCADE)
 	opportunity_success_probability = models.IntegerField() #Between 0% and 100%
 	lead_source_id = models.ForeignKey('list_of_lead_source', on_delete=models.CASCADE)
@@ -292,6 +292,9 @@ class opportunity_next_step(models.Model):
 	date_modified = models.DateTimeField(auto_now=True)
 	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
+
+	class Meta:
+		db_table='opportunity_next_step'
 
 
 class organisations(models.Model):

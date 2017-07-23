@@ -11,7 +11,8 @@
             <div class="div_sub_content">
                 <table>
                     <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
-                    {{ opportunity_information_form.as_table }}
+                    <tr><td>Opportunity Name:</td><td>{{ opportunity_information_form.opportunity_name }}</td></tr>
+                    <tr><td>Opportunity Description:</td><td>{{ opportunity_information_form.opportunity_description }}</td></tr>
                     <tr><td>Lead Source:</td><td>{{ opportunity_results.lead_source_id }}</td></tr>
                     <tr><td>Organisation:</td><td>{{ opportunity_results.organisations_id }}</td></tr>
                     <tr><td>Customer:</td><td>
@@ -28,6 +29,19 @@
                             {% endfor %}
                         </select>
                     </td></tr>
+                    <tr><td>Opportunity Amount:</td><td>
+                        {{ opportunity_information_form.currency_id }}
+                        {{ opportunity_information_form.opportunity_amount }}
+                        {{ opportunity_information_form.amount_type_id }}
+                    </td></tr>
+                    <tr><td>Opportunity Expected Close Date:</td><td>
+                        {{ opportunity_information_form.finish_date_year }}
+                        {{ opportunity_information_form.finish_date_month }}
+                        {{ opportunity_information_form.finish_date_day }}
+                        @ {{ opportunity_information_form.finish_date_hour }}:{{ opportunity_information_form.finish_date_minute }}
+                        {{ opportunity_information_form.finish_date_meridiems }}</td></tr>
+                    <tr><td>Opportunity Stage:</td><td>{{ opportunity_information_form.opportunity_stage_id }}</td></tr>
+                    <tr><td>Opportunity Success Probability:</td><td>{{ opportunity_information_form.opportunity_success_probability }}</td></tr>
                 </table>
                 <input type="submit" name="submit_contact" value="Update"/>
             </div>
@@ -38,12 +52,32 @@
                 <h4>To Do</h4>
             </div>
             <div class="div_sub_content">
-                << add in the ability to create the next next step >><br/>
-                << add the list of next steps here >>
+                {{ opportunity_information_form.next_step }}
+                <input type="submit" name="submit_next_step" value="Add To Do"/>
+                {% if next_step_results %}
+                    <table>
+                        <tr class="header">
+                            <td>Next Step</td>
+                            <td width="20%">Completed</td>
+                        </tr>
+                        {% for row in next_step_results %}
+                            <tr>
+                                <td>{{ row.next_step_description }}</td>
+                                {% if row.next_step_completed == 0 %}
+                                    <td><a href="{% url 'next_step' row.id opportunity_results.opportunity_id %}">Click to Complete</a></td>
+                                {% else %}
+                                    <td>Completed</td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                    <p>There are currently no next steps</p>
+                {% endif %}
             </div>
         </div>
         <br/>
-        <div class="div_content">
+        <div class="div_content" style="display: none;">
             <div class="div_header">
                 <h3>Associated Projects & Tasks</h3>
             </div>

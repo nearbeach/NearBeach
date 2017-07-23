@@ -419,12 +419,26 @@ class new_task_form(forms.Form):
 
 
 class opportunity_information_form(ModelForm):
+	next_step=forms.CharField(
+		max_length=255,
+		required=False,
+	)
+
+	finish_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
+	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
+	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+
+
 	class Meta:
 		model = opportunity
 		fields = '__all__'
 		exclude = {
 			'customer_id',
 			'organisations_id',
+			'opportunity_expected_close_date',
 			'lead_source_id',
 			'date_created',
 			'date_modified',

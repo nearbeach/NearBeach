@@ -1413,10 +1413,115 @@ def new_task(request,organisations_id='',customer_id=''):
 
 
 @login_required(login_url='login')
+def next_step(request, next_step_id, opportunity_id):
+	next_step_save=opportunity_next_step.objects.get(id=next_step_id)
+	next_step_save.next_step_completed=1
+	next_step_save.save()
+
+	return HttpResponseRedirect(
+		reverse(
+			opportunity_information,
+			args={ opportunity_id }
+		)
+	)
+
+
+@login_required(login_url='login')
 def opportunity_information(request, opportunity_id):
+	if request.method == "POST":
+		form=opportunity_information_form(request.POST, request.FILES)
+		if form.is_valid():
+			current_user = request.user
+
+			save_opportunity=opportunity.objects.get(opportunity_id=opportunity_id)
+
+			#Save opportunity information
+			save_opportunity.opportunity_name=form.cleaned_data['opportunity_name']
+			save_opportunity.opportunity_description=form.cleaned_data['opportunity_description']
+			save_opportunity.opportunity_amount = form.cleaned_data['opportunity_amount']
+			save_opportunity.opportunity_success_probability = form.cleaned_data['opportunity_success_probability']
+
+			#Instance needed
+			save_opportunity.currency_id=list_of_currency.objects.get(currency_id=int(request.POST['currency_id']))
+			save_opportunity.amount_type_id=list_of_amount_type.objects.get(amount_type_id=int(request.POST['amount_type_id']))
+			save_opportunity.opportunity_stage_id=list_of_opportunity_stage.objects.get(opportunity_stage_id=int(request.POST['opportunity_stage_id']))
+
+			#DATE Stuff
+			finish_date_year = int(form.cleaned_data['finish_date_year'])
+			finish_date_month = int(form.cleaned_data['finish_date_month'])
+			finish_date_day = int(form.cleaned_data['finish_date_day'])
+			finish_date_hour = int(form.cleaned_data['finish_date_hour'])
+			finish_date_minute = int(form.cleaned_data['finish_date_minute'])
+			finish_date_meridiems = form.cleaned_data['finish_date_meridiems']
+
+			"""
+			Time is tricky. So I am following the simple rules;
+			12:** AM will have the hour changed to 0
+			1:** AM will not have the hour changed
+			12:** PM will not have the hour changed
+			1:** PM will have the hour changed by adding 12
+
+			From these simple points, I have constructed the following 
+			if statements to take control of the correct hour.
+			"""
+			if finish_date_meridiems == "AM":
+				if finish_date_hour == 12:
+					finish_date_hour = 0
+			else:
+				if finish_date_hour > 12:
+					finish_date_hour = finish_date_hour + 12
+
+			project_end_date = datetime.datetime(
+				finish_date_year,
+				finish_date_month,
+				finish_date_day,
+				finish_date_hour,
+				finish_date_minute
+			)
+
+			save_opportunity.save()
+
+
+			#Save the to-do if required
+			next_step = form.cleaned_data['next_step']
+			print(next_step)
+			if not next_step=='':
+				current_user=request.user
+				opportunity_instance=opportunity.objects.get(opportunity_id=opportunity_id)
+				save_next_step=opportunity_next_step(
+					opportunity_id=opportunity_instance,
+					next_step_description=next_step,
+					user_id=current_user,
+				)
+				save_next_step.save()
+		else:
+			print(form.errors)
+
+
 	#Data
 	opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
 	customer_results = customers.objects.filter(organisations_id=opportunity_results.organisations_id)
+	next_step_results = opportunity_next_step.objects.filter(opportunity_id=opportunity_id)
+
+	end_hour = opportunity_results.opportunity_expected_close_date.hour
+	end_meridiem = u'AM'
+	if end_hour == 0:
+		end_hour = 12
+	elif end_hour == 12:
+		end_meridiem = u'PM'
+	elif end_hour > 12:
+		end_hour = end_hour - 12
+		end_meridiem = u'PM'
+
+	#initial data
+	initial = {
+		'finish_date_year': opportunity_results.opportunity_expected_close_date.year,
+		'finish_date_month': opportunity_results.opportunity_expected_close_date.month,
+		'finish_date_day': opportunity_results.opportunity_expected_close_date.day,
+		'finish_date_hour': end_hour,
+		'finish_date_minute': opportunity_results.opportunity_expected_close_date.minute,
+		'finish_date_meridiems': end_meridiem,
+	}
 
 	# Loaed the template
 	t = loader.get_template('NearBeach/opportunity_information.html')
@@ -1425,9 +1530,11 @@ def opportunity_information(request, opportunity_id):
 		'opportunity_id': opportunity_id,
 		'opportunity_information_form': opportunity_information_form(
 			instance=opportunity_results,
+			initial=initial,
 		),
 		'opportunity_results':opportunity_results,
 		'customer_results': customer_results,
+		'next_step_results': next_step_results,
 	}
 
 	return HttpResponse(t.render(c, request))
