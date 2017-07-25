@@ -14,6 +14,8 @@
 		root_folder.innerHTML = render_documents_code;
 
         render_documents({{ documents_results | safe }}, {{ media_url }});
+
+        running_total();
 	}
 </script>
 
@@ -134,8 +136,37 @@
 			<div class="div_header" onclick="hide_unhide('div_project_costs')">
 				<h3>Project Costs</h3>
 			</div>
-			<div class="div_sub_content" id="div_project_costs" style="display: none;">
-				[Content to contain ability to add in extra costs]
+            <div class="div_sub_content" id="div_project_costs" style="display: none;">
+				<div>
+                    {{ project_information_form.cost_description }}
+                    {{ project_information_form.cost_amount }}
+                    <input type="submit" name="add_cost_submit" id="add_cost_submit" value="Add Cost to Task" disabled="disabled">
+                </div>
+                <br/>
+                {% if costs_results %}
+                    <table>
+                        <tr class="header">
+                            <td>Item</td>
+                            <td>Cost</td>
+                            <td>Running Total</td>
+                            <td>Delete</td>
+                        </tr>
+                        {% for row in costs_results %}
+                            <tr>
+                                <td>{{ row.cost_description }}</td>
+                                <td name="cost_amount">{{ row.cost_amount }}</td>
+                                <td name="running_total">--filled-by-javascript--</td>
+                                <td><a href="{% url 'delete_cost' row.cost_id row.project_id.project_id 'P' %}">Remove Cost</a></td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <td>GRAND TOTAL</td>
+                            <td id="grand_total">--fill out--</td>
+                        </tr>
+                    </table>
+                {% else %}
+                    <p>No costs associated with this task</p>
+                {% endif %}
 			</div>
 		</div>
 		<br/>

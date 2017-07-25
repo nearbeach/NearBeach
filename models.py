@@ -65,7 +65,7 @@ class costs(models.Model):
 	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
 
 	def __str__(self):
-		return str(self.cost_description) + ' - $' + self.cost_amount
+		return '$' + str(self.cost_amount)
 
 	class Meta:
 		db_table = "costs"

@@ -227,7 +227,10 @@ class customer_information_form(ModelForm):
 	class Meta:
 		model = customers
 		fields = '__all__'
-		exclude = ['is_deleted']
+		exclude = [
+			'is_deleted',
+			'organisations_id',
+		]
 
 	def clean_update_profile_picture(self):
 		profile_picture = self.cleaned_data['update_profile_picture']
@@ -530,6 +533,32 @@ class project_information_form(ModelForm):
 
 	document_folder_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
 
+	# Costs feature
+	cost_description = forms.CharField(
+		max_length=255,
+		required=False,
+		widget=forms.TextInput(
+			attrs={
+				'width': '70%',
+				'placeholder': 'Cost Description',
+				'onkeyup': 'enable_disable_add_cost()',
+			}
+		)
+	)
+	cost_amount = forms.DecimalField(
+		max_digits=19,
+		decimal_places=2,
+		required=False,
+		widget=forms.TextInput(
+			attrs={
+				'width': '30%',
+				'placeholder': '$0.00',
+				'onkeyup': 'enable_disable_add_cost()',
+			}
+		)
+	)
+
+
 	class Meta:
 		model = project
 		fields = {
@@ -599,6 +628,31 @@ class task_information_form(ModelForm):
 	document_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
 
 	document_folder_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width': '100%', 'onkeyup': 'enable_submit()'}))
+
+	#Costs feature
+	cost_description=forms.CharField(
+		max_length=255,
+		required=False,
+		widget=forms.TextInput(
+			attrs={
+				'width':'70%',
+				'placeholder': 'Cost Description',
+				'onkeyup': 'enable_disable_add_cost()',
+			}
+		)
+	)
+	cost_amount=forms.DecimalField(
+		max_digits=19,
+		decimal_places=2,
+		required=False,
+		widget=forms.TextInput(
+			attrs={
+				'width':'30%',
+				'placeholder':'$0.00',
+				'onkeyup': 'enable_disable_add_cost()',
+			}
+		)
+	)
 
 	class Meta:
 		model = tasks

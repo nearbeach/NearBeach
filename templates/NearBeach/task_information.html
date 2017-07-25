@@ -14,6 +14,8 @@
 		root_folder.innerHTML = render_documents_code;
 
         render_documents({{ documents_results | safe }}, {{ media_url }});
+
+        running_total();
 	}
 </script>
 <body onload="on_page_load();">
@@ -98,7 +100,7 @@
                                 <option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
                             {% endfor %}
                         </select>
-                        <input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Project" disabled="disabled">
+                        <input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Task" disabled="disabled">
                     {% endif %}
 				{% endif %}
 				{% if tasks_customers_results %}
@@ -130,11 +132,41 @@
 		<br/>
 		<div class="div_content">
 			<div class="div_header" onclick="hide_unhide('task_costs')">
-				<h3>task_costs</h3>
+				<h3>Task Costs</h3>
 			</div>
 			<div class="div_sub_content" id="task_costs" style="display: none;">
-				[INSERT CONTENT]
+				<div>
+                    {{ task_information_form.cost_description }}
+                    {{ task_information_form.cost_amount }}
+                    <input type="submit" name="add_cost_submit" id="add_cost_submit" value="Add Cost to Task" disabled="disabled">
+                </div>
+                <br/>
+                {% if costs_results %}
+                    <table>
+                        <tr class="header">
+                            <td>Item</td>
+                            <td>Cost</td>
+                            <td>Running Total</td>
+                            <td>Delete</td>
+                        </tr>
+                        {% for row in costs_results %}
+                            <tr>
+                                <td>{{ row.cost_description }}</td>
+                                <td name="cost_amount">{{ row.cost_amount }}</td>
+                                <td name="running_total">--filled-by-javascript--</td>
+                                <td><a href="{% url 'delete_cost' row.cost_id task_results.tasks_id 'T' %}">Remove Cost</a></td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <td>GRAND TOTAL</td>
+                            <td id="grand_total">--fill out--</td>
+                        </tr>
+                    </table>
+                {% else %}
+                    <p>No costs associated with this task</p>
+                {% endif %}
 			</div>
+
 		</div>
 		<br/>
 		<div class="div_content">

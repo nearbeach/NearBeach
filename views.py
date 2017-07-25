@@ -8,6 +8,7 @@ from django.template import RequestContext, loader
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
+from django.db.models import Sum
 
 from django.core.files.storage import FileSystemStorage
 
@@ -447,7 +448,6 @@ def customer_information(request, customer_id):
 			save_data.customer_first_name = form.cleaned_data['customer_first_name']
 			save_data.customer_last_name = form.cleaned_data['customer_last_name']
 			save_data.customer_email = form.cleaned_data['customer_email']
-			save_data.organisation_id = form.cleaned_data['organisations_id']
 
 			#Check to see if the picture has been updated
 			update_profile_picture = request.FILES.get('update_profile_picture')
@@ -456,10 +456,12 @@ def customer_information(request, customer_id):
 
 			save_data.save()
 
+
 			"""
 			If the user has written something in the contact section, we want to save it
 			"""
 			contact_history_notes = form.cleaned_data['contact_history']
+			print(contact_history_notes)
 
 			if not contact_history_notes == '':
 
@@ -477,16 +479,18 @@ def customer_information(request, customer_id):
 
 				#documents
 				contact_attachment = request.FILES.get('contact_attachment')
-				organisations_id = form.cleaned_data['organisations_id']
 
-				submit_history = contact_history(organisations_id=save_data.organisation_id
-												 , customer_id=save_data
-												 , contact_type=contact_type
-												 , contact_date=task_start_date
-												 , contact_history=contact_history_notes
-												 , user_id = current_user
-												 , contact_attachment=contact_attachment)
+				submit_history = contact_history(
+					organisations_id=save_data.organisations_id
+					, customer_id=save_data
+					, contact_type=contact_type
+					, contact_date=task_start_date
+					, contact_history=contact_history_notes
+					, user_id = current_user
+					, contact_attachment=contact_attachment)
 				submit_history.save()
+
+
 
 
 			"""
@@ -599,6 +603,20 @@ def customer_information(request, customer_id):
 	}
 	
 	return HttpResponse(t.render(c, request))	
+
+
+@login_required(login_url='login')
+def delete_cost(request, cost_id, location_id, project_or_task):
+	#Delete the cost
+	cost_save=costs.objects.get(pk=cost_id)
+	cost_save.is_deleted="TRUE"
+	cost_save.save()
+
+	#Once we assign them together, we go back to the original
+	if project_or_task == "P":
+		return HttpResponseRedirect(reverse('project_information', args = {location_id} ))
+	else:
+		return HttpResponseRedirect(reverse('task_information', args = {location_id}))
 
 
 @login_required(login_url='login')
@@ -1771,6 +1789,14 @@ def project_information(request, project_id):
 
 				submit_customer.save()
 
+			if 'add_cost_submit' in request.POST:
+				submit_cost=costs(
+					project_id=project.objects.get(pk=project_id),
+					cost_description=form.cleaned_data['cost_description'],
+					cost_amount=form.cleaned_data['cost_amount'],
+				)
+				submit_cost.save()
+
 			"""
 			If the user has added another user to the project
 			auth.models.User.objects.all() <-bug in the system,this is workaround
@@ -1860,7 +1886,7 @@ def project_information(request, project_id):
 	project_history_results = project_history.objects.filter(project_id = project_id, is_deleted = 'FALSE')
 	documents_results = project_tasks_documents.objects.filter(project_id = project_id, is_deleted = 'FALSE').order_by('document_description')
 	document_folders_results = document_folders.objects.filter(project_id = project_id, is_deleted = 'FALSE').order_by('document_folder_description')
-
+	costs_results = costs.objects.filter(project_id=project_id, is_deleted='FALSE')
 	
 	"""
 	The 24 hours to 12 hours formula.
@@ -2020,6 +2046,7 @@ def project_information(request, project_id):
 			'user_id__first_name',
 			'user_id__last_name',
 		).distinct(),
+		'costs_results': costs_results,
 	}
 	
 	return HttpResponse(t.render(c, request))
@@ -2354,6 +2381,18 @@ def task_information(request, task_id):
 				)
 				submit_associate_user.save()
 
+			if 'add_cost_submit' in request.POST:
+				#Extract information
+				cost_description=form.cleaned_data['cost_description']
+				cost_amount=form.cleaned_data['cost_amount']
+				#SAve
+				submit_cost = costs(
+					cost_description=cost_description,
+					cost_amount=cost_amount,
+					task_id=tasks.objects.get(tasks_id=task_id),
+				)
+				submit_cost.save()
+
 			"""
 			If the user has submitted a new document. We only upload the document IF and ONLY IF the user
 			has selected the "Submit" button on the "New Document" dialog. We do not want to accidently
@@ -2425,6 +2464,7 @@ def task_information(request, task_id):
 	task_history_results = tasks_history.objects.filter(tasks_id = task_id) #Will need to remove all IS_DELETED=TRUE
 	documents_results = project_tasks_documents.objects.filter(task_id = task_id, is_deleted = 'FALSE').order_by('document_description')
 	document_folders_results = document_folders.objects.filter(task_id = task_id, is_deleted = 'FALSE').order_by('document_folder_description')
+	costs_results=costs.objects.filter(task_id=task_id, is_deleted='FALSE')
 
 	"""
 	The 24 hours to 12 hours formula.
@@ -2468,7 +2508,7 @@ def task_information(request, task_id):
 		'finish_date_day': task_results.task_end_date.day,
 		'finish_date_hour': end_hour,
 		'finish_date_minute': task_results.task_end_date.minute,
-		'finish_date_meridiems': end_meridiem,		
+		'finish_date_meridiems': end_meridiem,
 	}
 	
 	
@@ -2564,7 +2604,7 @@ def task_information(request, task_id):
 	users_results = namedtuplefetchall(cursor)
 
 	assigned_results = assigned_users.objects.filter(task_id=task_id)
-	
+	running_total=0
 	#Load the template
 	t = loader.get_template('NearBeach/task_information.html')
 
@@ -2586,6 +2626,7 @@ def task_information(request, task_id):
 			'user_id__first_name',
 			'user_id__last_name',
 		).distinct(),
+		'costs_results': costs_results,
 	}
 
 
