@@ -201,6 +201,6 @@ textarea {
     width: 100%;
 }
 
-img {
-    max-height:160px;
-}
+
+
+#mapid { height: 680px; }

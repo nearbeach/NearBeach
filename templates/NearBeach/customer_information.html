@@ -1,6 +1,9 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
+<script src='https://api.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
+
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/customer_information.js' %}"></script>
 <body onload="initiate_dates()">
@@ -13,7 +16,7 @@
             <div class="div_sub_content">
                 <table>
                     <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
-                    <tr><td><img src="{{ profile_picture }}"></td><td>{{ customer_information_form.update_profile_picture }}</td></tr>
+                    <tr><td><img src="{{ profile_picture }}" height="160px"></td><td>{{ customer_information_form.update_profile_picture }}</td></tr>
                     <tr><td>Customer Title:</td><td>{{ customer_information_form.customer_title }}</td></tr>
                     <tr><td>Customer First Name:</td><td>{{ customer_information_form.customer_first_name }}</td></tr>
                     <tr><td>Customer Last Name:</td><td>{{ customer_information_form.customer_last_name }}</td></tr>
@@ -202,6 +205,19 @@
             </div>
         </div>
     </form>
+    <h1>Testing the map</h1>
+<div id='map' style='width: 800px; height: 600px;'></div>
+<script>
+    var MapboxClient = require('mapbox');
+var client = new MapboxClient('YOUR_ACCESS_TOKEN');
+alert("Stuff");
+
+mapboxgl.accessToken = 'pk.eyJ1Ijoicm9ib3RpY2hlYWQiLCJhIjoiY2o1bGtxNzNrMmVybjJxampmbjRtN2YyZSJ9.vljaOJpttEga2nIIR0WZQw';
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v9'
+});
+</script>
 </body>
 
 {% endblock %}
