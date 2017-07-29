@@ -1,9 +1,6 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
-<script src='https://api.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
-<link href='https://api.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
-
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/customer_information.js' %}"></script>
 <body onload="initiate_dates()">
@@ -205,19 +202,6 @@
             </div>
         </div>
     </form>
-    <h1>Testing the map</h1>
-<div id='map' style='width: 800px; height: 600px;'></div>
-<script>
-    var MapboxClient = require('mapbox');
-var client = new MapboxClient('YOUR_ACCESS_TOKEN');
-alert("Stuff");
-
-mapboxgl.accessToken = 'pk.eyJ1Ijoicm9ib3RpY2hlYWQiLCJhIjoiY2o1bGtxNzNrMmVybjJxampmbjRtN2YyZSJ9.vljaOJpttEga2nIIR0WZQw';
-var map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v9'
-});
-</script>
 </body>
 
 {% endblock %}
