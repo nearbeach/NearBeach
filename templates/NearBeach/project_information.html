@@ -14,6 +14,8 @@
 		root_folder.innerHTML = render_documents_code;
 
         render_documents({{ documents_results | safe }}, {{ media_url }});
+
+        running_total();
 	}
 </script>
 
@@ -62,7 +64,7 @@
 				{% endif %}
 			</div>
 		</div>
-		<br/>
+		<br/>none
 		<div class="div_content">
 			<div class="div_header" onclick="hide_unhide('div_associated_tasks')">
 				<h3>Associated Tasks</h3>
@@ -76,7 +78,7 @@
 						<tr class="header"><td>Task Id</td><td>Short Description</td><td>End Date</td></tr>
 						{% for associated_task_row in associated_tasks_results %}
 							<tr>
-							<td><a href="{% url 'task_information' associated_task_row.tasks_id %}">{{ associated_task_row.tasks_id }}</a></td>
+							<td><a href="Task - {% url 'task_information' associated_task_row.tasks_id %}">{{ associated_task_row.tasks_id }}</a></td>
 							<td>{{ associated_task_row.task_short_description }}</td>
 							<td>{{ associated_task_row.task_end_date }}</td>
 							</tr>
@@ -95,7 +97,7 @@
 			</div>
 			<div class="div_sub_content" id="div_project_customers" style="display: none;">
 				{% if new_customers_results %}
-                    {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
+                    {% if project_results.project_status == 'New' or project_results.project_status == 'Open' %}
                         <select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" >
                             <option value="---------" selected>---------</option>
                             {% for row in new_customers_results %}
@@ -134,8 +136,37 @@
 			<div class="div_header" onclick="hide_unhide('div_project_costs')">
 				<h3>Project Costs</h3>
 			</div>
-			<div class="div_sub_content" id="div_project_costs" style="display: none;">
-				[Content to contain ability to add in extra costs]
+            <div class="div_sub_content" id="div_project_costs" style="display: none;">
+				<div>
+                    {{ project_information_form.cost_description }}
+                    {{ project_information_form.cost_amount }}
+                    <input type="submit" name="add_cost_submit" id="add_cost_submit" value="Add Cost to Task" disabled="disabled">
+                </div>
+                <br/>
+                {% if costs_results %}
+                    <table>
+                        <tr class="header">
+                            <td>Item</td>
+                            <td>Cost</td>
+                            <td>Running Total</td>
+                            <td>Delete</td>
+                        </tr>
+                        {% for row in costs_results %}
+                            <tr>
+                                <td>{{ row.cost_description }}</td>
+                                <td name="cost_amount">{{ row.cost_amount }}</td>
+                                <td name="running_total">--filled-by-javascript--</td>
+                                <td><a href="{% url 'delete_cost' row.cost_id row.project_id.project_id 'P' %}">Remove Cost</a></td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <td>GRAND TOTAL</td>
+                            <td id="grand_total">--fill out--</td>
+                        </tr>
+                    </table>
+                {% else %}
+                    <p>No costs associated with this task</p>
+                {% endif %}
 			</div>
 		</div>
 		<br/>
@@ -197,6 +228,43 @@
 				</div>
 			</div>
 		</div>
+        <br/>
+        <div class="div_content">
+            <div class="div_header">
+                <h4>Assigned Users</h4>
+            </div>
+            <div class="div_sub_content">
+                {% if users_results %}
+                    <select id="add_user_select" name="add_user_select" onchange="enable_disable_add_user()">
+                        <option value="------">-------</option>
+                        {% for row in users_results %}
+                            <option value="{{ row.id }}">{{ row.Name }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="submit" id="add_user_submit" name="add_user_submit" value="Add User" disabled="disabled"/>
+                {% endif %}
+                {% if assigned_results %}
+                    <table>
+                        <tr class="header">
+                            <td>Username</td>
+                            <td>First Name</td>
+                            <td>Last name</td>
+                        </tr>
+                        {% if assigned_results %}
+                            {% for row in assigned_results %}
+                                <tr>
+                                    <td>{{ row.user_id__username }}</td>
+                                    <td>{{ row.user_id__first_name }}</td>
+                                    <td>{{ row.user_id__last_name }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </table>
+                {% else %}
+                    <p>There are currently no staff members assigned to this project</p>
+                {% endif %}
+            </div>
+        </div>
 	</form>
 </body>
 {% endblock %}

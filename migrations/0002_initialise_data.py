@@ -26,6 +26,85 @@ def initialise_data(apps, schema_editor):
         group_permissions(role="Read Only"),
     ])
 
+    # List of amount types
+    list_of_amount_type = apps.get_model("NearBeach", "list_of_amount_type")
+    list_of_amount_type.objects.using(db_alias).bulk_create([
+        list_of_amount_type(amount_type_description="Fixed",list_order=0),
+        list_of_amount_type(amount_type_description="Per Contract",list_order=1),
+        list_of_amount_type(amount_type_description="Per Year",list_order=2),
+        list_of_amount_type(amount_type_description="Per Month",list_order=3),
+        list_of_amount_type(amount_type_description="Per Fortnight",list_order=4),
+        list_of_amount_type(amount_type_description="Per Day",list_order=5),
+        list_of_amount_type(amount_type_description="Per Hour",list_order=6),
+    ])
+
+    list_of_currency=apps.get_model("NearBeach","list_of_currency")
+    list_of_currency.objects.using(db_alias).bulk_create([
+        list_of_currency(currency_description='Australian dollar', currency_short_description='AUD', list_order='1'),
+        list_of_currency(currency_description='Brazilian real', currency_short_description='BRL', list_order='2'),
+        list_of_currency(currency_description='Canadian dollar', currency_short_description='CAD', list_order='3'),
+        list_of_currency(currency_description='Euro', currency_short_description='EUR', list_order='4'),
+        list_of_currency(currency_description='Hong Kong dollar', currency_short_description='HKD', list_order='5'),
+        list_of_currency(currency_description='Indian rupee', currency_short_description='INR', list_order='6'),
+        list_of_currency(currency_description='Japanese yen', currency_short_description='JPY', list_order='7'),
+        list_of_currency(currency_description='Mexican peso', currency_short_description='MXN', list_order='8'),
+        list_of_currency(currency_description='New Zealand dollar', currency_short_description='NZD', list_order='9'),
+        list_of_currency(currency_description='Norwegian krone', currency_short_description='NOK', list_order='10'),
+        list_of_currency(currency_description='Pound sterling', currency_short_description='GBP', list_order='11'),
+        list_of_currency(currency_description='Renminbi', currency_short_description='CNY', list_order='12'),
+        list_of_currency(currency_description='Russian ruble', currency_short_description='RUB', list_order='13'),
+        list_of_currency(currency_description='Singapore dollar', currency_short_description='SGD', list_order='14'),
+        list_of_currency(currency_description='South African rand', currency_short_description='ZAR', list_order='15'),
+        list_of_currency(currency_description='South Korean won', currency_short_description='KRW', list_order='16'),
+        list_of_currency(currency_description='Swedish krona', currency_short_description='SEK', list_order='17'),
+        list_of_currency(currency_description='Swiss franc', currency_short_description='CHF', list_order='18'),
+        list_of_currency(currency_description='Turkish lira', currency_short_description='TRY', list_order='19'),
+        list_of_currency(currency_description='United States dollar', currency_short_description='USD',list_order='20'),
+    ])
+
+    list_of_lead_source=apps.get_model("NearBeach","list_of_lead_source")
+    list_of_lead_source.objects.using(db_alias).bulk_create([
+        list_of_lead_source(lead_source_description='Campaign', list_order='1'),
+        list_of_lead_source(lead_source_description='Cold Call', list_order='2'),
+        list_of_lead_source(lead_source_description='Conference', list_order='3'),
+        list_of_lead_source(lead_source_description='Direct Mail', list_order='4'),
+        list_of_lead_source(lead_source_description='Email', list_order='5'),
+        list_of_lead_source(lead_source_description='Employee', list_order='6'),
+        list_of_lead_source(lead_source_description='Existing Customer', list_order='7'),
+        list_of_lead_source(lead_source_description='Partner', list_order='8'),
+        list_of_lead_source(lead_source_description='Public Relations', list_order='9'),
+        list_of_lead_source(lead_source_description='Self Generated', list_order='10'),
+        list_of_lead_source(lead_source_description='Trade Show', list_order='11'),
+        list_of_lead_source(lead_source_description='Web Site', list_order='12'),
+        list_of_lead_source(lead_source_description='Word of mouth', list_order='13'),
+        list_of_lead_source(lead_source_description='Other', list_order='14'),
+    ])
+
+    # List of contact types
+    list_of_contact_types = apps.get_model("NearBeach", "list_of_contact_types")
+    list_of_contact_types.objects.using(db_alias).bulk_create([
+        list_of_contact_types(contact_type="Notes"),
+        list_of_contact_types(contact_type="Phone"),
+        list_of_contact_types(contact_type="Email"),
+        list_of_contact_types(contact_type="Appointment"),
+
+    ])
+
+    list_of_opportunity_stage = apps.get_model("NearBeach", "list_of_opportunity_stage")
+    list_of_opportunity_stage.objects.using(db_alias).bulk_create([
+        list_of_opportunity_stage(list_order="1",opportunity_stage_description="Prospecting",probability_success="10"),
+        list_of_opportunity_stage(list_order="2", opportunity_stage_description="Qualification",probability_success="20"),
+        list_of_opportunity_stage(list_order="3", opportunity_stage_description="Needs Analysis",probability_success="30"),
+        list_of_opportunity_stage(list_order="4", opportunity_stage_description="Value Proposition",probability_success="40"),
+        list_of_opportunity_stage(list_order="5", opportunity_stage_description="Identifying Decision Makers",probability_success="50"),
+        list_of_opportunity_stage(list_order="6", opportunity_stage_description="Perception Analysis",probability_success="60"),
+        list_of_opportunity_stage(list_order="7", opportunity_stage_description="Proposal/Price Quote",probability_success="70"),
+        list_of_opportunity_stage(list_order="8", opportunity_stage_description="Negotiation/Review",probability_success="80"),
+        list_of_opportunity_stage(list_order="9", opportunity_stage_description="Closed Won",probability_success="100"),
+        list_of_opportunity_stage(list_order="10", opportunity_stage_description="Closed Lost",probability_success="0"),
+    ])
+
+
     # List of titles
     list_of_titles = apps.get_model("NearBeach", "list_of_titles")
     list_of_titles.objects.using(db_alias).bulk_create([

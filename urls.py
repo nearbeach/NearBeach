@@ -26,10 +26,19 @@ urlpatterns = [
 	
 	
 	#New Items
-	url(r'^new_project', views.new_project, name='new_project'),
-	url(r'^new_task', views.new_task, name='new_task'),
+	url(r'^new_project/$', views.new_project, name='new_project'),
+	url(r'^new_project/(?P<organisations_id>[0-9]+)/$', views.new_project, name='new_project'),
+	url(r'^new_project/(?P<organisations_id>[0-9]+)/(?P<customer_id>[0-9]+)/$', views.new_project, name='new_project'),
+	url(r'^new_task/$', views.new_task, name='new_task'),
+	url(r'^new_task/(?P<organisations_id>[0-9]+)/$', views.new_task, name='new_task'),
+	url(r'^new_task/(?P<organisations_id>[0-9]+)/(?P<customer_id>[0-9]+)/$', views.new_task, name='new_task'),
 	url(r'^new_organisation', views.new_organisation, name='new_organisation'),
 	url(r'^new_customer/(?P<organisations_id>[0-9]+)/', views.new_customer, name='new_customer'),
+
+	url(r'^new_opportunity/$',views.new_opportunity,name='new_opportunity'),
+	url(r'^new_opportunity/(?P<organisation_id>[0-9]+)/$',views.new_opportunity,name='new_opportunity'),
+	url(r'^new_opportunity/(?P<organisation_id>[0-9]+)/(?P<customer_id>[0-9]+)/$',views.new_opportunity,name='new_opportunity'),
+	url(r'^next_step/(?P<next_step_id>[0-9]+)/(?P<opportunity_id>[0-9]+)',views.next_step,name="next_step"),
 	
 	#Organisation
 	url(r'^organisation_information/(?P<organisations_id>[0-9]+)/', views.organisation_information, name='organisation_information'),
@@ -38,17 +47,25 @@ urlpatterns = [
 	url(r'^customer_information/(?P<customer_id>[0-9]+)/', views.customer_information, name='customer_information'),
 	url(r'^campus_information/(?P<campus_information>[0-9]+)/', views.campus_information, name='campus_information'),
 	url(r'^customers_campus_information/(?P<customer_campus_id>[0-9]+)/(?P<customer_or_org>["CUST","CAMP"]+)', views.customers_campus_information, name="customers_campus_information"),
-	
-	
+	url(r'^assign_customer_project_task/(?P<customer_id>[0-9]+)/', views.assign_customer_project_task, name='assign_customer_project_task'),
+	url(r'^opportunity_information/(?P<opportunity_id>[0-9]+)/', views.opportunity_information, name='opportunity_information'),
+
+
 	#Search Items
 	url(r'^search_customers', views.search_customers, name='search_customers'),
 	url(r'^search_organisations', views.search_organisations, name='search_organisations'),
 	url(r'^search_projects_tasks', views.search_projects_tasks, name='search_projects_tasks'),
+
 	
 	#Associated tasks/projects
 	url(r'^associated_tasks/(?P<project_id>[0-9]+)/', views.associated_tasks, name='associated_tasks'),
 	url(r'^associated_projects/(?P<task_id>[0-9]+)/', views.associated_projects, name='associated_projects'),
 	url(r'^associate/(?P<project_id>[0-9]+)/(?P<task_id>[0-9]+)/(?P<project_or_task>[P,T])', views.associate, name='associate'),
+
+
+	#misc
+	url(r'^delete_cost/(?P<cost_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])', views.delete_cost,name='delete_cost'),
+
 
 	#Forgotten Passwords
 	url(r'^password_reset/$', password_reset, {'post_reset_redirect': 'password_reset_done', 'template_name': 'NearBeach/password_reset.html'}, name='password_reset'),

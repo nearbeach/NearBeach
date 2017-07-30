@@ -8,7 +8,11 @@ from .models import organisations
 from .models import organisations_campus
 from .models import list_of_titles
 from .models import list_of_countries
+from .models import list_of_amount_type
 from .models import list_of_countries_regions
+from .models import list_of_contact_types
+from .models import list_of_opportunity_stage
+from .models import opportunity
 from .models import user_groups
 from .models import project
 from .models import tasks
@@ -28,10 +32,6 @@ import datetime
 
 #Global Variables
 User = get_user_model
-
-#Settings
-from django.conf import settings
-
 
 
 
@@ -138,8 +138,8 @@ HOUR_CHOICES = (
 )
 
 MINUTE_CHOICES = (
-	('0','0'),
-	('5','5'),
+	('00','00'),
+	('05','05'),
 	('10','10'),
 	('15','15'),
 	('20','20'),
@@ -162,6 +162,13 @@ MERIDIEMS_CHOICES = (
 INCLUDE_CLOSED = {
 	('INCLUDE_CLOSED','Include Closed?'),
 }
+
+INCLUDE_DEACTIVATED = {
+	('INCLUDE_DEACTIVATED','Include Deactivated?'),
+}
+
+#Global Variables
+MAX_PICTURE_SIZE = 1000 * 1024 #1Mb wow
 
 
 class customer_campus_form(ModelForm):
@@ -188,6 +195,7 @@ class campus_information_form(ModelForm):
 	campus_address3 = forms.CharField(required=False)
 	campus_suburb = forms.CharField(required=False)
 
+
 	class Meta:
 		model = organisations_campus
 		fields = '__all__'
@@ -196,9 +204,58 @@ class campus_information_form(ModelForm):
 
 
 class customer_information_form(ModelForm):
+	# Get data for choice boxes
+	contact_type_results = list_of_contact_types.objects.filter(is_deleted='FALSE')
+
+	#The Fields
+	contact_type = forms.ModelChoiceField(label='Contact Type', widget=forms.Select, queryset=contact_type_results,empty_label=None)
+
+	start_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+	start_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+	start_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+
+	contact_history = forms.CharField(widget=forms.TextInput(attrs={'width': '99%','height': '300px'}), required=False)
+
+	contact_attachment = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange':'enable_submit()'}))
+
+	update_profile_picture = forms.ImageField(required=False,)
+
+	#Customer Documents
+	document_description = forms.CharField(max_length=255, required=False)
+	document = forms.FileField(required=False)
+
 	class Meta:
 		model = customers
 		fields = '__all__'
+		exclude = [
+			'is_deleted',
+			'organisations_id',
+		]
+
+	def clean_update_profile_picture(self):
+		profile_picture = self.cleaned_data['update_profile_picture']
+
+		try:
+			"""
+			We only want to limit pictures to being under 400kb
+			"""
+			picture_errors = ""
+
+			main, sub = profile_picture.content_type.split('/')
+			if not (main == 'image' and sub in ['jpeg','gif','png']):
+				picture_errors += 'Please use a JPEG, GIF or PNG image'
+
+			if len(profile_picture) > (MAX_PICTURE_SIZE): #400kb
+				picture_errors += '\nPicture profile exceeds 400kb'
+
+			if not picture_errors == "":
+				raise forms.ValidationError(picture_errors)
+
+		except AttributeError:
+			pass
+
+		return profile_picture
+
 
 
 
@@ -261,6 +318,55 @@ class new_customer_form(forms.Form):
 	organisations_id = forms.ModelChoiceField(label = "Organisation", widget = forms.Select, queryset = organisations_results)
 
 
+class new_opportunity_form(ModelForm):
+	#Get data for choice boxes
+	opportunity_stage_results = list_of_opportunity_stage.objects.filter(is_deleted='FALSE')
+	amount_type_results = list_of_amount_type.objects.filter(is_deleted='FALSE')
+	organisaion_results = organisations.objects.filter(is_deleted='FALSE')
+
+	organisations_id = forms.ModelChoiceField(
+		label="Organisations",
+		queryset=organisaion_results,
+		widget=forms.Select(attrs={"onChange":'update_customers()'}),
+	)
+
+	amount_type_id = forms.ModelChoiceField(
+		label="Amount Type",
+		widget=forms.Select,
+		queryset=amount_type_results,
+	)
+
+	finish_date_year = forms.ChoiceField(
+		choices = YEAR_CHOICES,
+		widget=forms.Select(
+			attrs={"onChange":'check_end_date()'}
+		))
+	finish_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
+	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
+	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+
+	next_step_description = forms.CharField(
+		max_length=255,
+		required=False
+	)
+
+	class Meta:
+		model = opportunity
+		fields = '__all__'
+
+
+		exclude = {
+			'opportunity_expected_close_date',
+			'opportunity_stage_id',
+			'customer_id',
+			'date_created',
+			'date_modified',
+			'user_id',
+			'is_deleted'
+		}
+
 class new_organisation_form(forms.Form):
 	organisation_name = forms.CharField(max_length = 255)
 	organisation_website = forms.URLField(max_length = 255, initial='https://', widget=forms.TextInput(attrs={'width': '99%'}))
@@ -315,6 +421,90 @@ class new_task_form(forms.Form):
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
 
 
+class opportunity_information_form(ModelForm):
+	next_step=forms.CharField(
+		max_length=255,
+		required=False,
+	)
+
+	finish_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
+	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
+	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+
+
+	class Meta:
+		model = opportunity
+		fields = '__all__'
+		exclude = {
+			'customer_id',
+			'organisations_id',
+			'opportunity_expected_close_date',
+			'lead_source_id',
+			'date_created',
+			'date_modified',
+			'user_id',
+			'is_deleted'
+		}
+
+class organisation_information_form(ModelForm):
+	# Get data for choice boxes
+	contact_type_results = list_of_contact_types.objects.filter(is_deleted='FALSE')
+
+	# The Fields
+	contact_type = forms.ModelChoiceField(label='Contact Type', widget=forms.Select, queryset=contact_type_results,
+										  empty_label=None)
+
+	start_date_year = forms.ChoiceField(choices=YEAR_CHOICES,
+										widget=forms.Select(attrs={"onChange": 'check_start_date()'}))
+	start_date_month = forms.ChoiceField(choices=MONTH_CHOICES,
+										 widget=forms.Select(attrs={"onChange": 'check_start_date()'}))
+	start_date_day = forms.ChoiceField(choices=DAY_CHOICES,
+									   widget=forms.Select(attrs={"onChange": 'check_start_date()'}))
+
+	contact_history = forms.CharField(widget=forms.TextInput(attrs={'width': '99%', 'height': '300px'}), required=False)
+	contact_attachment = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange': 'enable_submit()'}))
+
+	#Profile picture
+	update_profile_picture = forms.ImageField(required=False, )
+
+	#Customer Documents
+	document_description = forms.CharField(max_length=255,required=False)
+	document = forms.FileField(required=False)
+
+	class Meta:
+		model = organisations
+		fields = {
+                'organisation_name',
+                'organisation_website',
+            }
+
+	def clean_update_profile_picture(self):
+		profile_picture = self.cleaned_data['update_profile_picture']
+
+		try:
+			"""
+            We only want to limit pictures to being under 400kb
+            """
+			picture_errors = ""
+
+			main, sub = profile_picture.content_type.split('/')
+			if not (main == 'image' and sub in ['jpeg', 'gif', 'png']):
+				picture_errors += 'Please use a JPEG, GIF or PNG image'
+
+			if len(profile_picture) > (MAX_PICTURE_SIZE):  # 400kb
+				picture_errors += '\nPicture profile exceeds 400kb'
+
+			if not picture_errors == "":
+				raise forms.ValidationError(picture_errors)
+
+		except AttributeError:
+			pass
+
+		return profile_picture
+
 
 class project_information_form(ModelForm):
 	"""
@@ -343,12 +533,40 @@ class project_information_form(ModelForm):
 
 	document_folder_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
 
+	# Costs feature
+	cost_description = forms.CharField(
+		max_length=255,
+		required=False,
+		widget=forms.TextInput(
+			attrs={
+				'width': '70%',
+				'placeholder': 'Cost Description',
+				'onkeyup': 'enable_disable_add_cost()',
+			}
+		)
+	)
+	cost_amount = forms.DecimalField(
+		max_digits=19,
+		decimal_places=2,
+		required=False,
+		widget=forms.TextInput(
+			attrs={
+				'width': '30%',
+				'placeholder': '$0.00',
+				'onkeyup': 'enable_disable_add_cost()',
+			}
+		)
+	)
+
+
 	class Meta:
 		model = project
 		fields = {
 			'project_name',
 			'project_description',
 		}
+
+
 
 
 class search_form(forms.Form):
@@ -362,17 +580,30 @@ class search_customers_form(forms.Form):
 class search_organisations_form(forms.Form):
 	#Just have a simple search field
 	search_organisations = forms.CharField(max_length = 255, required = False)
+
+
+class search_projects_form(forms.Form):
+	search_projects = forms.CharField(max_length = 255, required = False)
+	include_closed = forms.MultipleChoiceField(widget = forms.CheckboxSelectMultiple,
+												choices = INCLUDE_CLOSED)
 	
 class search_tasks_form(forms.Form):
 	search_tasks = forms.CharField(max_length = 255, required = False)
 	include_closed = forms.MultipleChoiceField(widget = forms.CheckboxSelectMultiple,
 												choices = INCLUDE_CLOSED)
 
+class search_users_form(forms.Form):
+	search_users = forms.CharField(
+		max_length=255,
+		required=False,
+	)
+	include_deactivated = forms.MultipleChoiceField(
+		widget=forms.CheckboxSelectMultiple,
+		choices=INCLUDE_DEACTIVATED
+	)
 
-class search_projects_form(forms.Form):
-	search_projects = forms.CharField(max_length = 255, required = False)
-	include_closed = forms.MultipleChoiceField(widget = forms.CheckboxSelectMultiple,
-												choices = INCLUDE_CLOSED)											
+
+
 	
 class task_information_form(ModelForm):
 	task_short_description = forms.CharField(max_length=255, widget=forms.TextInput(attrs={"class":'task_short_description'}))
@@ -397,6 +628,31 @@ class task_information_form(ModelForm):
 	document_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
 
 	document_folder_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width': '100%', 'onkeyup': 'enable_submit()'}))
+
+	#Costs feature
+	cost_description=forms.CharField(
+		max_length=255,
+		required=False,
+		widget=forms.TextInput(
+			attrs={
+				'width':'70%',
+				'placeholder': 'Cost Description',
+				'onkeyup': 'enable_disable_add_cost()',
+			}
+		)
+	)
+	cost_amount=forms.DecimalField(
+		max_digits=19,
+		decimal_places=2,
+		required=False,
+		widget=forms.TextInput(
+			attrs={
+				'width':'30%',
+				'placeholder':'$0.00',
+				'onkeyup': 'enable_disable_add_cost()',
+			}
+		)
+	)
 
 	class Meta:
 		model = tasks
