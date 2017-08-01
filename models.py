@@ -26,6 +26,7 @@ class assigned_users(models.Model):
 	opportunity_id=models.ForeignKey('opportunity',on_delete=models.CASCADE,blank=True,null=True)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE)
 	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
 
 	class Meta:

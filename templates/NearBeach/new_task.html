@@ -16,14 +16,17 @@
 				<h1>New Task</h1>
 			</div>
 			<div class="div_sub_content">
-				<table>
-					<tr class="header"><td>Field</td><td>Input</td></tr>
-					<tr><td width="250px">Task Short Description:</td><td>{{ new_task_form.task_short_description }}</td></tr>
-					<tr><td>Task Long Description:</td><td>{{ new_task_form.task_long_description }}</td></tr>
-					<tr><td>Associated Organisation:</td><td>{{ new_task_form.organisations_id }}</td></tr>
-					<tr><td>Task Start:</td><td>{{ new_task_form.start_date_year }}/{{ new_task_form.start_date_month }}/{{ new_task_form.start_date_day }}<br/>{{ new_task_form.start_date_hour }}:{{ new_task_form.start_date_minute }} {{ new_task_form.start_date_meridiems }}</td></tr>
-					<tr><td>Task Finish:</td><td>{{ new_task_form.finish_date_year }}/{{ new_task_form.finish_date_month }}/{{ new_task_form.finish_date_day }}<br/>{{ new_task_form.finish_date_hour }}:{{ new_task_form.finish_date_minute }} {{ new_task_form.finish_date_meridiems }}</td></tr>
-				</table>
+                {% if organisations_count == 0 %}
+                    <a href="{% url 'new_organisation' %}">Can you please create an organisation first.</a>
+                {% else %}
+                    <table>
+                        <tr class="header"><td>Field</td><td>Input</td></tr>
+                        <tr><td width="250px">Task Short Description:</td><td>{{ new_task_form.task_short_description }}</td></tr>
+                        <tr><td>Task Long Description:</td><td>{{ new_task_form.task_long_description }}</td></tr>
+                        <tr><td>Associated Organisation:</td><td>{{ new_task_form.organisations_id }}</td></tr>
+                        <tr><td>Task Start:</td><td>{{ new_task_form.start_date_year }}/{{ new_task_form.start_date_month }}/{{ new_task_form.start_date_day }}<br/>{{ new_task_form.start_date_hour }}:{{ new_task_form.start_date_minute }} {{ new_task_form.start_date_meridiems }}</td></tr>
+                        <tr><td>Task Finish:</td><td>{{ new_task_form.finish_date_year }}/{{ new_task_form.finish_date_month }}/{{ new_task_form.finish_date_day }}<br/>{{ new_task_form.finish_date_hour }}:{{ new_task_form.finish_date_minute }} {{ new_task_form.finish_date_meridiems }}</td></tr>
+                    </table>
 			</div>
 		</div>
 		<br/>
@@ -41,6 +44,7 @@
 				<br />
 				<input type="submit" value="Submit new task">
 			</div>
+            {% endif %}
 		</div>
 	</form>
 </body>

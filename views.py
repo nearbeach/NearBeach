@@ -54,6 +54,10 @@ def active_projects(request):
 	, '' AS "task_id"
 	, project.project_name AS "description"
 	, project.project_end_date AS "end_date"
+	, organisations.organisation_name
+    , organisations.organisations_id
+
+
 
 	from 
 	  project left join project_tasks
@@ -61,6 +65,8 @@ def active_projects(request):
 		and project_tasks.is_deleted = 'FALSE'
 	, project_groups
 	, user_groups
+	, organisations
+	
 
 	where 1 = 1
 	and project.project_status IN ('New','Open')
@@ -68,6 +74,8 @@ def active_projects(request):
 	and project.project_id = project_groups.project_id_id
 	and project_groups.groups_id_id = user_groups.group_id_id
 	and user_groups.username_id = %s
+	and project.organisations_id_id=organisations.organisations_id
+
 
 	UNION
 
@@ -76,6 +84,8 @@ def active_projects(request):
 	, tasks.tasks_id AS `Task ID`
 	, tasks.task_short_description AS `Description`
 	, tasks.task_end_date AS `End Date` 
+	, organisations.organisation_name
+    , organisations.organisations_id
 
 	from 
 	  tasks left join project_tasks
@@ -83,13 +93,16 @@ def active_projects(request):
 		and project_tasks.is_deleted = "FALSE"
 	, tasks_groups
 	, user_groups
+	, organisations
+
 
 	where 1 = 1
 	and tasks.task_status in ('New','Open')
 	and tasks.tasks_id = tasks_groups.tasks_id_id
 	and tasks_groups.groups_id_id = user_groups.group_id_id
 	and user_groups.username_id = %s
-	
+	and tasks.organisations_id_id=organisations.organisations_id
+		
 	UNION
 	
 	select 
@@ -97,16 +110,21 @@ def active_projects(request):
 	, tasks.tasks_id AS `Task ID`
 	, tasks.task_short_description AS `Description`
 	, tasks.task_end_date AS `End Date` 
-	
+  	, organisations.organisation_name
+  	, organisations.organisations_id
+
 	from 
 	  tasks left join project_tasks
 		on tasks.tasks_id = project_tasks.task_id 
 		and project_tasks.is_deleted = "FALSE"
+    , organisations
+
 
 
 	where 1 = 1
 	and tasks.task_status in ('New','Open')
 	and tasks.task_assigned_to_id = %s
+	and tasks.organisations_id_id=organisations.organisations_id
 	""", [current_user.id, current_user.id, current_user.id])
 	active_projects_results = namedtuplefetchall(cursor)
 
@@ -1409,6 +1427,7 @@ def new_task(request, organisations_id='', customer_id=''):
                 }),
             'groups_results': groups_results,
             'organisations_id': organisations_id,
+            'organisations_count': organisations.objects.filter(is_deleted='FALSE').count(),
             'customer_id': customer_id,
         }
 

@@ -22,9 +22,9 @@
             {% for project_row in projects_results %}
                 <tr>
                     <td><a href="{% url 'associate' project_row.project_id task_id 'T' %}">{{ project_row.project_name }}</a></td>
-                    <td>{{ project_row.organisation_name }}</td>
-                    <td>{{ project_row.task_end_date }}</td>
-                    <td>{{ project_row.task_status }}</td>
+                    <td>{{ project_row.organisations_id }}</td>
+                    <td>{{ project_row.project_end_date }}</td>
+                    <td>{{ project_row.project_status }}</td>
                 </tr>
             {% endfor %}
         </table>
