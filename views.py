@@ -162,6 +162,7 @@ def assign_customer_project_task(request, customer_id):
             assign_save = project_customers(
                 project_id=project_instance,
                 customer_id=customer_instance,
+                change_user=request.user,
                 # Customer description will have to be programmed in at a later date
             )
             assign_save.save()
@@ -172,6 +173,7 @@ def assign_customer_project_task(request, customer_id):
             assign_save = tasks_customers(
                 tasks_id=task_instance,
                 customer_id=customer_instance,
+                change_user=request.user,
             )
             assign_save.save()
 
@@ -236,7 +238,9 @@ def associate(request, project_id, task_id, project_or_task):
     # Submit the data
     submit_result = project_tasks(
         project_id_id=project_id,
-        task_id_id=task_id)
+        task_id_id=task_id,
+        change_user=request.user,
+    )
     submit_result.save()
 
     # Once we assign them together, we go back to the original
@@ -331,6 +335,7 @@ def campus_information(request, campus_information):
             campus_results.campus_suburb = form.cleaned_data['campus_suburb']
             campus_results.campus_region_id = campus_region_instance
             campus_results.campus_country_id = campus_country_instance
+            campus_results.change_user=request.user
 
             campus_results.save()
 
@@ -342,9 +347,15 @@ def campus_information(request, campus_information):
             customer_instance = customers.objects.get(customer_id=customer_results)
             campus_instances = organisations_campus.objects.get(id=campus_information)
 
+
             # Save the new campus
-            submit_campus = customers_campus(customer_id=customer_instance, campus_id=campus_instances,
-                                             customer_phone='', customer_fax='')
+            submit_campus = customers_campus(
+                customer_id=customer_instance,
+                campus_id=campus_instances,
+                customer_phone='',
+                customer_fax='',
+                change_user=request.user,
+            )
             submit_campus.save()
 
             # Go to the form.
@@ -391,6 +402,7 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
 
             save_data.customer_phone = form.cleaned_data['customer_phone']
             save_data.customer_fax = form.cleaned_data['customer_fax']
+            save_data.change_user=request.user
 
             save_data.save()
 
@@ -448,6 +460,7 @@ def customer_information(request, customer_id):
             save_data.customer_first_name = form.cleaned_data['customer_first_name']
             save_data.customer_last_name = form.cleaned_data['customer_last_name']
             save_data.customer_email = form.cleaned_data['customer_email']
+            save_data.change_user=request.user
 
             # Check to see if the picture has been updated
             update_profile_picture = request.FILES.get('update_profile_picture')
@@ -478,13 +491,15 @@ def customer_information(request, customer_id):
                 contact_attachment = request.FILES.get('contact_attachment')
 
                 submit_history = contact_history(
-                    organisations_id=save_data.organisations_id
-                    , customer_id=save_data
-                    , contact_type=contact_type
-                    , contact_date=task_start_date
-                    , contact_history=contact_history_notes
-                    , user_id=current_user
-                    , contact_attachment=contact_attachment)
+                    organisations_id=save_data.organisations_id,
+                    customer_id=save_data,
+                    contact_type=contact_type,
+                    contact_date=task_start_date,
+                    contact_history=contact_history_notes,
+                    user_id=current_user,
+                    contact_attachment=contact_attachment,
+                    change_user = request.user,
+                )
                 submit_history.save()
 
             """
@@ -498,6 +513,7 @@ def customer_information(request, customer_id):
                     document_description=form.cleaned_data['document_description'],
                     document=form.cleaned_data['document'],
                     user_id=current_user,
+                    change_user=request.user,
                 )
                 document_save.save()
 
@@ -511,8 +527,13 @@ def customer_information(request, customer_id):
                 campus_instances = organisations_campus.objects.get(id=campus_id_results)
 
                 # Save the new campus
-                submit_campus = customers_campus(customer_id=customer_instance, campus_id=campus_instances,
-                                                 customer_phone='', customer_fax='')
+                submit_campus = customers_campus(
+                    customer_id=customer_instance,
+                    campus_id=campus_instances,
+                    customer_phone='',
+                    customer_fax='',
+                    change_user=request.user,
+                )
                 submit_campus.save()
 
                 # Go to the form.
@@ -602,6 +623,7 @@ def delete_cost(request, cost_id, location_id, project_or_task):
     # Delete the cost
     cost_save = costs.objects.get(pk=cost_id)
     cost_save.is_deleted = "TRUE"
+    cost_save.change_user=request.user
     cost_save.save()
 
     # Once we assign them together, we go back to the original
@@ -805,11 +827,19 @@ def new_campus(request, organisations_id):
             # BUG - some simple validation should go here?
 
             # Submitting the data
-            submit_form = organisations_campus(organisations_id=organisation, campus_nickname=campus_nickname,
-                                               campus_phone=campus_phone, campus_fax=campus_fax,
-                                               campus_address1=campus_address1, campus_address2=campus_address2,
-                                               campus_address3=campus_address3, campus_suburb=campus_suburb,
-                                               campus_region_id=campus_region_id, campus_country_id=campus_country_id)
+            submit_form = organisations_campus(
+                organisations_id=organisation,
+                campus_nickname=campus_nickname,
+                campus_phone=campus_phone,
+                campus_fax=campus_fax,
+                campus_address1=campus_address1,
+                campus_address2=campus_address2,
+                campus_address3=campus_address3,
+                campus_suburb=campus_suburb,
+                campus_region_id=campus_region_id,
+                campus_country_id=campus_country_id,
+                change_user = request.user,
+            )
             submit_form.save()
 
             return HttpResponseRedirect(reverse(organisation_information, args={organisations_id}))
@@ -853,11 +883,17 @@ def new_customer(request, organisations_id):
             customer_last_name = form.cleaned_data['customer_last_name']
             customer_email = form.cleaned_data['customer_email']
 
+
             organisations_id = form.cleaned_data['organisations_id']
 
-            submit_form = customers(customer_title=customer_title, customer_first_name=customer_first_name,
-                                    customer_last_name=customer_last_name, customer_email=customer_email,
-                                    organisations_id=organisations_id)
+            submit_form = customers(
+                customer_title=customer_title,
+                customer_first_name=customer_first_name,
+                customer_last_name=customer_last_name,
+                customer_email=customer_email,
+                organisations_id=organisations_id,
+                change_user=request.user,
+            )
 
             # BUG - no validation process to see if there exists a customer already :(
             submit_form.save()
@@ -957,6 +993,7 @@ def new_opportunity(request, organisation_id='', customer_id=''):
                 opportunity_expected_close_date=opportunity_end_date,
                 opportunity_stage_id=stage_of_opportunity_instance,
                 user_id=current_user,
+                change_user=request.user,
             )
             if not request.POST.get('customer_id') == '':
                 customer_instace = customers.objects.get(customer_id=request.POST.get('customer_id'))
@@ -978,6 +1015,7 @@ def new_opportunity(request, organisation_id='', customer_id=''):
                     opportunity_id=opportunity_instance,
                     next_step_description=next_step_description,
                     user_id=current_user,
+                    change_user=request.user,
                 )
                 submit_next_step.save()
 
@@ -1062,8 +1100,12 @@ def new_organisation(request):
 			"""
             if ((duplicate_results.count() == 0) or (request.POST.get("save_duplicate"))):
                 # Save the form data
-                submit_form = organisations(organisation_name=organisation_name, organisation_email=organisation_email,
-                                            organisation_website=organisation_website)
+                submit_form = organisations(
+                    organisation_name=organisation_name,
+                    organisation_email=organisation_email,
+                    organisation_website=organisation_website,
+                    change_user=request.user,
+                )
                 submit_form.save()
 
                 return HttpResponseRedirect(reverse(organisation_information, args={submit_form.organisations_id}))
@@ -1152,7 +1194,9 @@ def new_project(request, organisations_id='', customer_id=''):
                 organisations_id=organisations_id_form,
                 project_start_date=project_start_date,
                 project_end_date=project_end_date,
-                project_status='New')
+                project_status='New',
+                change_user=request.user,
+            )
 
             # Submit the data
             submit_project.save()
@@ -1165,7 +1209,11 @@ def new_project(request, organisations_id='', customer_id=''):
             assigned_to_groups = request.POST.get('assigned_to_groups')
 
             for row in assigned_to_groups:
-                submit_group = project_groups(project_id_id=submit_project.pk, groups_id_id=row)
+                submit_group = project_groups(
+                    project_id_id=submit_project.pk,
+                    groups_id_id=row,
+                    change_user = request.user,
+                )
                 submit_group.save()
 
             # If there is a customer id attached to this. Assign the project to the customer and go back to customer informaton
@@ -1174,6 +1222,7 @@ def new_project(request, organisations_id='', customer_id=''):
                 save_project_customers = project_customers(
                     project_id=submit_project,
                     customer_id=customer_instance,
+                    change_user=request.user,
                 )
                 save_project_customers.save()
 
@@ -1319,7 +1368,8 @@ def new_task(request, organisations_id='', customer_id=''):
                 organisations_id=organisations_id_form,
                 task_start_date=task_start_date,
                 task_end_date=task_end_date,
-                task_status='New'
+                task_status='New',
+                change_user = request.user,
             )
 
             # Submit the data
@@ -1333,7 +1383,11 @@ def new_task(request, organisations_id='', customer_id=''):
             assigned_to_groups = request.POST.get('assigned_to_groups')
 
             for row in assigned_to_groups:
-                submit_group = tasks_groups(tasks_id_id=submit_task.pk, groups_id_id=row)
+                submit_group = tasks_groups(
+                    tasks_id_id=submit_task.pk,
+                    groups_id_id=row,
+                    change_user=request.user,
+                )
                 submit_group.save()
 
             """
@@ -1346,6 +1400,7 @@ def new_task(request, organisations_id='', customer_id=''):
                 save_tasks_customers = tasks_customers(
                     tasks_id=submit_task,
                     customer_id=customer_instance,
+                    change_user=request.user,
                 )
                 save_tasks_customers.save()
 
@@ -1438,6 +1493,7 @@ def new_task(request, organisations_id='', customer_id=''):
 def next_step(request, next_step_id, opportunity_id):
     next_step_save = opportunity_next_step.objects.get(id=next_step_id)
     next_step_save.next_step_completed = 1
+    next_step.change_user=request.user
     next_step_save.save()
 
     return HttpResponseRedirect(
@@ -1462,6 +1518,7 @@ def opportunity_information(request, opportunity_id):
             save_opportunity.opportunity_description = form.cleaned_data['opportunity_description']
             save_opportunity.opportunity_amount = form.cleaned_data['opportunity_amount']
             save_opportunity.opportunity_success_probability = form.cleaned_data['opportunity_success_probability']
+            save_opportunity.change_user=request.user
 
             # Instance needed
             save_opportunity.currency_id = list_of_currency.objects.get(currency_id=int(request.POST['currency_id']))
@@ -1574,10 +1631,11 @@ def organisation_information(request, organisations_id):
 
             save_data = organisations.objects.get(organisations_id=organisations_id)
 
+
             # Extract it from website
             save_data.organisation_name = form.cleaned_data['organisation_name']
             save_data.organisation_website = form.cleaned_data['organisation_website']
-            # save_data.organisation_profile_picture = form.cleaned_data['update_profile_picture']
+            save_data.change_user=request.user
 
             # Check to see if the picture has been updated
             update_profile_picture = request.FILES.get('update_profile_picture')
@@ -1597,6 +1655,7 @@ def organisation_information(request, organisations_id):
                 # organisation_id = form.cleaned_data['organisations_id'] #Not going to work :( #organisations_results.organisations_id
                 contact_type = form.cleaned_data['contact_type']
 
+
                 # Calendar values
                 start_date_year = int(form.cleaned_data['start_date_year'])
                 start_date_month = int(form.cleaned_data['start_date_month'])
@@ -1608,12 +1667,15 @@ def organisation_information(request, organisations_id):
                 # documents
                 contact_attachment = request.FILES.get('contact_attachment')
 
-                submit_history = contact_history(organisations_id=save_data
-                                                 , contact_type=contact_type
-                                                 , contact_date=task_start_date
-                                                 , contact_history=contact_history_notes
-                                                 , user_id=current_user
-                                                 , contact_attachment=contact_attachment)
+                submit_history = contact_history(
+                    organisations_id=save_data,
+                    contact_type=contact_type,
+                    contact_date=task_start_date,
+                    contact_history=contact_history_notes,
+                    user_id=current_user,
+                    contact_attachment=contact_attachment,
+                    change_user=request.user,
+                )
                 submit_history.save()
 
             """
@@ -1626,6 +1688,7 @@ def organisation_information(request, organisations_id):
                     document_description=form.cleaned_data['document_description'],
                     document=form.cleaned_data['document'],
                     user_id=current_user,
+                    change_user=request.user,
                 )
                 document_save.save()
 
@@ -1775,6 +1838,7 @@ def project_information(request, project_id):
                 # Well, we have to now resolve the data
                 project_results.project_status = 'Resolved'
 
+            project_results.change_user=request.user
             project_results.save()
 
             if 'add_customer_submit' in request.POST:
@@ -1783,7 +1847,8 @@ def project_information(request, project_id):
 
                 submit_customer = project_customers(
                     project_id=project.objects.get(pk=project_id),
-                    customer_id=customers.objects.get(pk=customer_id)
+                    customer_id=customers.objects.get(pk=customer_id),
+                    change_user=request.user,
                 )
 
                 submit_customer.save()
@@ -1793,6 +1858,7 @@ def project_information(request, project_id):
                     project_id=project.objects.get(pk=project_id),
                     cost_description=form.cleaned_data['cost_description'],
                     cost_amount=form.cleaned_data['cost_amount'],
+                    change_user=request.user,
                 )
                 submit_cost.save()
 
@@ -1806,6 +1872,7 @@ def project_information(request, project_id):
                 submit_associate_user = assigned_users(
                     user_id=user_instance,
                     project_id=project.objects.get(pk=project_id),
+                    change_user=request.user,
                 )
                 submit_associate_user.save()
 
@@ -1827,11 +1894,13 @@ def project_information(request, project_id):
                     document=document,
                     document_description=document_description,
                     document_url_location=document_url_location,
-                    # document_folder_id = parent_folder_instance,
+                    change_user=request.user,
                 )
                 try:
                     submit_document.document_folder_id = document_folders.objects.get(
-                        document_folder_id=int(parent_folder_id))
+                        document_folder_id=int(parent_folder_id),
+                        change_user=request.user,
+                    )
                     submit_document.save()
                 except:
                     submit_document.save()
@@ -1847,11 +1916,14 @@ def project_information(request, project_id):
                 submit_folder = document_folders(
                     project_id=project.objects.get(pk=project_id),
                     document_folder_description=document_folder_description,
+                    change_user=request.user,
                 )
 
                 try:
                     submit_folder.parent_folder_id = document_folders.objects.get(
-                        document_folder_id=int(folder_location))
+                        document_folder_id=int(folder_location),
+                        change_user=request.user,
+                    )
                     submit_folder.save()
                 except:
                     submit_folder.save()
@@ -1870,7 +1942,8 @@ def project_information(request, project_id):
                     project_id=project_id_connection,
                     user_id=current_user,
                     project_history=project_history_text_results,
-                    user_infomation=current_user.id
+                    user_infomation=current_user.id,
+                    change_user = request.user,
                 )
                 data.save()
 
@@ -2056,14 +2129,16 @@ def project_information(request, project_id):
 def resolve_project(request, project_id):
     project_update = project.objects.get(project_id=project_id)
     project_update.project_status = 'Resolved'
+    project_update.change_user=request.user
     project_update.save()
     return HttpResponseRedirect(reverse('active_projects'))
 
 
 @login_required(login_url='login')
 def resolve_task(request, task_id):
-    task_update = task.object.get(task_id=task_id)
+    task_update = tasks.object.get(task_id=task_id)
     task_update.task_status = 'Resolved'
+    task_update.change_user=request.user
     task_update.save()
     return HttpResponseRedirect(reverse('active_projects'))
 
@@ -2364,7 +2439,8 @@ def task_information(request, task_id):
 
                 submit_customer = tasks_customers(
                     tasks_id=tasks.objects.get(pk=task_id),
-                    customer_id=customers.objects.get(pk=customer_id)
+                    customer_id=customers.objects.get(pk=customer_id),
+                    change_user=request.user,
                 )
 
                 submit_customer.save()
@@ -2375,6 +2451,7 @@ def task_information(request, task_id):
                 submit_associate_user = assigned_users(
                     user_id=user_instance,
                     task_id=tasks.objects.get(tasks_id=task_id),
+                    change_user=request.user,
                 )
                 submit_associate_user.save()
 
@@ -2387,6 +2464,7 @@ def task_information(request, task_id):
                     cost_description=cost_description,
                     cost_amount=cost_amount,
                     task_id=tasks.objects.get(tasks_id=task_id),
+                    change_user=request.user,
                 )
                 submit_cost.save()
 
@@ -2409,11 +2487,13 @@ def task_information(request, task_id):
                     document=document,
                     document_description=document_description,
                     document_url_location=document_url_location,
-                    # document_folder_id = parent_folder_instance,
+                    change_user=request.user,
                 )
                 try:
                     submit_document.document_folder_id = document_folders.objects.get(
-                        document_folder_id=int(parent_folder_id))
+                        document_folder_id=int(parent_folder_id),
+                        change_user=request.user,
+                    )
                     submit_document.save()
                 except:
                     submit_document.save()
@@ -2429,6 +2509,7 @@ def task_information(request, task_id):
                 submit_folder = document_folders(
                     task_id=tasks.objects.get(pk=task_id),
                     document_folder_description=document_folder_description,
+                    change_user=request.user,
                 )
 
                 try:
@@ -2450,7 +2531,8 @@ def task_information(request, task_id):
                     tasks_id=task_id_connection,
                     user_id=current_user,
                     task_history=task_history_text_results,
-                    user_infomation=current_user.id
+                    user_infomation=current_user.id,
+                    change_user=request.user,
                 )
                 data.save()
 
