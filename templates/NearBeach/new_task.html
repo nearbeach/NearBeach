@@ -31,21 +31,40 @@
 		</div>
 		<br/>
 		<div class="div_content">
-			<div class="div_header">
-				<h2>Assigned to Group(s)</h2>
-			</div>
-			<div class="div_sub_content">
-				<p>Please select the appropriate groups to assign this task to</p>
-				<select multiple required name="assigned_to_groups" id="assigned_to_groups" style="width: 50%; height: 120px;">
-				{% for group_row in groups_results %}55 	NearBeac 	Nearbeac 	robotichead@gmail.com 	CONF 	--- 	New Organisations not being check in system
-					<option value = "{{ group_row.group_id }}">{{ group_row.group_name }}</option>
-				{% endfor %}
-				</select>
-				<br />
-				<input type="submit" value="Submit new task">
-			</div>
-            {% endif %}
+		<div class="div_header">
+			<h2>Assigned to Group(s)</h2>
 		</div>
+		<div class="div_sub_content">
+			{% if groups_count == 1 %}
+				<p>Group already automatically choosen. Please click on "Submit"</p>
+			{% else %}
+				<p>Please select the appropriate groups to assign this project to - number {{ groups_count }}</p>
+			{% endif %}
+			<select multiple required name="assigned_to_groups" id="assigned_to_groups" style="width: 50%; height: 120px;">
+			{% for group_row in groups_results %}
+				<option value = "{{ group_row.group_id }}">{{ group_row.group_name }}</option>
+			{% endfor %}
+			</select>
+			<br />
+			<input type="submit" value="Submit new project">
+			{% if groups_count == 1 %}
+			<script>
+				/*
+				Method
+				~~~~~~
+				If the group_count == 1 we will use javascript to select
+				the only option and then hide the select statement. As it
+				will not be needed.
+				 */
+				var object=document.getElementById("assigned_to_groups");
+				object.options[0].selected=true;
+				object.style.display="none";
+
+			</script>
+			{% endif %}
+			{% endif %}
+		</div>
+	</div>
 	</form>
 </body>
 {% endblock %}

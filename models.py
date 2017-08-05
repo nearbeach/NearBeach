@@ -90,7 +90,7 @@ class customers(models.Model):
 	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	def __str__(self):
-		return str(self.customer_id) + ' - ' + self.customer_first_name + ' ' + self.customer_last_name
+		return str(self.customer_id) + ' - ' + self.customer_first_name.encode('utf8') + ' ' + self.customer_last_name.encode('utf8')
 	
 	class Meta:
 		db_table = "customers"
@@ -124,7 +124,7 @@ class document_folders(models.Model):
 	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	def __str__(self):
-		return self.document_folder_description
+		return self.document_folder_description.encode('utf8')
 
 	class Meta:
 		db_table = "document_folder"
@@ -138,7 +138,7 @@ class groups(models.Model):
 	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	def __str__(self):
-		return self.group_name
+		return self.group_name.encode('utf8')
 	
 	class Meta:
 		db_table = "groups"
@@ -147,7 +147,7 @@ class group_permissions(models.Model):
 	role = models.CharField(max_length = 15)
 	
 	def __str__(self):
-		return self.role
+		return self.role.encode('utf8')
 	
 	class Meta:
 		db_table = "group_permissions"
@@ -165,7 +165,7 @@ class list_of_amount_type(models.Model):
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 	def __str__(self):
-		return self.amount_type_description
+		return self.amount_type_description.encode('utf8')
 
 	class Meta:
 		db_table = "list_of_amount_type"
@@ -202,7 +202,7 @@ class list_of_contact_types(models.Model):
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 	def __str__(self):
-		return self.contact_type
+		return self.contact_type.encode('utf8')
 
 	class Meta:
 		db_table = "list_of_contact_types"
@@ -257,7 +257,7 @@ class list_of_opportunity_stage(models.Model):
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 	def __str__(self):
-		return self.opportunity_stage_description
+		return self.opportunity_stage_description.encode('utf8')
 
 	class Meta:
 		db_table = "list_of_opportunity_stage"
@@ -278,7 +278,7 @@ class list_of_lead_source(models.Model):
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 	def __str__(self):
-		return self.lead_source_description
+		return self.lead_source_description.encode('utf8')
 
 	class Meta:
 		db_table = "list_of_lead_source"
@@ -293,7 +293,7 @@ class list_of_titles(models.Model):
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 	def __str__(self):
-		return self.title
+		return self.title.encode('utf8')
 	
 	class Meta:
 		db_table = "list_of_titles"
@@ -350,7 +350,7 @@ class organisations(models.Model):
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 	def __str__(self):
-		return self.organisation_name
+		return self.organisation_name.encode('utf8')
 	
 	class Meta:
 		db_table = "organisations"
@@ -373,7 +373,7 @@ class organisations_campus(models.Model):
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 	def __str__(self):
-		return self.campus_nickname
+		return self.campus_nickname.encode('utf8')
 	
 	class Meta:
 		db_table = "organisations_campus"
@@ -410,7 +410,7 @@ class project(models.Model):
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	
 	def __str__(self):
-		return self.project_name
+		return self.project_name.encode('utf8')
 	
 	class Meta:
 		db_table = "project"
@@ -514,7 +514,7 @@ class stages(models.Model):
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 	def __str__(self):
-		return self.stage
+		return self.stage.encode('utf8')
 	
 	class Meta:
 		db_table = "stages"
@@ -535,7 +535,7 @@ class tasks(models.Model):
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	
 	def __str__(self):
-		return self.task_short_description
+		return self.task_short_description.encode('utf8')
 	
 	class Meta:
 		db_table = "tasks"

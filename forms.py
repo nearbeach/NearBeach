@@ -179,7 +179,7 @@ class customer_campus_form(ModelForm):
 		model = customers_campus
 		fields = { 
 					'customer_phone', 
-					'customer_fax' 
+					'customer_fax'
 				}
 
 
@@ -199,7 +199,13 @@ class campus_information_form(ModelForm):
 	class Meta:
 		model = organisations_campus
 		fields = '__all__'
-		exclude = ['campus_region_id', 'campus_country_id','organisations_id','is_deleted']
+		exclude = [
+			'campus_region_id',
+			'campus_country_id',
+			'organisations_id',
+			'is_deleted',
+			'change_user',
+		]
 
 
 
@@ -230,6 +236,7 @@ class customer_information_form(ModelForm):
 		exclude = [
 			'is_deleted',
 			'organisations_id',
+			'change_user',
 		]
 
 	def clean_update_profile_picture(self):
@@ -364,7 +371,8 @@ class new_opportunity_form(ModelForm):
 			'date_created',
 			'date_modified',
 			'user_id',
-			'is_deleted'
+			'is_deleted',
+			'change_user',
 		}
 
 class new_organisation_form(forms.Form):
@@ -446,7 +454,8 @@ class opportunity_information_form(ModelForm):
 			'date_created',
 			'date_modified',
 			'user_id',
-			'is_deleted'
+			'is_deleted',
+			'change_user',
 		}
 
 class organisation_information_form(ModelForm):

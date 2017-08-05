@@ -78,7 +78,7 @@
 						<tr class="header"><td>Task Id</td><td>Short Description</td><td>End Date</td></tr>
 						{% for associated_task_row in associated_tasks_results %}
 							<tr>
-							<td><a href="Task - {% url 'task_information' associated_task_row.tasks_id %}">{{ associated_task_row.tasks_id }}</a></td>
+							<td><a href="{% url 'task_information' associated_task_row.tasks_id %}">Task - {{ associated_task_row.tasks_id }}</a></td>
 							<td>{{ associated_task_row.task_short_description }}</td>
 							<td>{{ associated_task_row.task_end_date }}</td>
 							</tr>
