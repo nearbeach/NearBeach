@@ -49,7 +49,7 @@
 			<div class="div_header" onclick="hide_unhide('task_history')">
 				<h3>Task History</h3>
 			</div>
-			<div class="div_sub_content" id="task_history" style="display: none;">
+			<div class="div_sub_content" id="task_history">
 				{% if task_history_results %}
 					{% for row in task_history_results %}
 						<p>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.audit_date }}<br />
@@ -59,6 +59,34 @@
 				{% else %}
 					<p>Currently no history</p>
 				{% endif %}
+				<script>
+					/*
+					Auto size all the text areas inside the task_history
+
+					Method
+					~~~~~~
+					1.) Obtain the task_history div
+					2.) Find all textarea under it
+					3.) In a loop, adjust the size of the text areas by the scroll height + 1
+					4.) Hide the task_history div
+					  */
+					var text_history=document.getElementById("task_history");
+					var all_textareas=text_history.getElementsByTagName("textarea");
+					for (i=0; i<all_textareas.length; i++) {
+					    //Default height of 12px
+						all_textareas[i].style.height="12px";
+
+						//alert(all_textareas[i].rows)
+						//alert(all_textareas[i].scrollHeight)
+
+						if (all_textareas[i].rows*7<=all_textareas[i].scrollHeight) {
+						    all_textareas[i].style.height=all_textareas[i].scrollHeight+7+"px";
+						    alert("Changing heights");
+						}//*/
+					}
+					alert("Finished");
+
+				</script>
 			</div>
 		</div>
 		<br/>
