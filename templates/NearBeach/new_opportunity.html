@@ -5,8 +5,12 @@
     <script type="text/javascript" src="{% static 'NearBeach/javascript/new_opportunity.js' %}"></script>
     <script type="text/javascript">
     function initialise() {
-        check_end_date();
+        //Apply the customers and then apply the organisation and customers.
         update_customers();
+        apply_organisation_customer("{{ organisation_id }}","{{ customer_id }}");
+
+        //Update the date boxes.
+        check_end_date();
     }
     </script>
 <body onload="initialise();">

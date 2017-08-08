@@ -5,6 +5,7 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/expand_sections.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/project_information.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/render_documents.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
 <script>
 	function on_page_load() {
 		initiate_dates();
@@ -14,6 +15,9 @@
 		root_folder.innerHTML = render_documents_code;
 
         render_documents({{ documents_results | safe }}, {{ media_url }});
+
+        //Autoscale all textarea
+        autoscale_textarea();
 
         running_total();
 	}
@@ -52,10 +56,10 @@
 			<div class="div_header" onclick="hide_unhide('div_project_history')">
 				<h3>Project History</h3>
 			</div>
-			<div class="div_sub_content" id="div_project_history" style="display: none;">
+			<div class="div_sub_content" id="div_project_history">
 				{% if project_history_results %}
 					{% for row in project_history_results %}
-						<p>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.audit_date }}<br />
+						<p>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}<br />
 						<textarea readonly>{{ row.project_history }}</textarea>
 						</p>
 					{% endfor %}
@@ -69,7 +73,7 @@
 			<div class="div_header" onclick="hide_unhide('div_associated_tasks')">
 				<h3>Associated Tasks</h3>
 			</div>
-			<div class="div_sub_content" id="div_associated_tasks" style="display: none;">
+			<div class="div_sub_content" id="div_associated_tasks">
                 {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
 				    <a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
                 {% endif %}

@@ -139,6 +139,9 @@ select {
 
 textarea {
     width: 99%;
+    resize:vertical;
+    min-height: 12px;
+    max-height: 900px;
 }
 
 
