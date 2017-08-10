@@ -26,7 +26,7 @@
             <div class="div_sub_content">
                 <table>
                     <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
-                    <tr><td><img src="{{ profile_picture }}" height="160px"></td><td>{{ organisation_information_form.update_profile_picture }}</td></tr>
+                    <tr><td colspan="2"><img src="{{ profile_picture }}" height="160px"><br/> {{ organisation_information_form.update_profile_picture }}</td></tr>
                     <tr><td>Organisation Name:</td><td>{{ organisation_information_form.organisation_name }}</td></tr>
                     <tr><td>Website:</td><td>{{ organisation_information_form.organisation_website }}</td></tr>
                 </table>
@@ -74,7 +74,7 @@
         </div>
         <div class="div_content">
             <div class="div_header">
-                <h1>Contact History</h1>
+                <h3>Contact History</h3>
             </div>
             <div class="div_sub_content" id="div_contact_history">
                 Contact Type {{  organisation_information_form.contact_type }}<br/>
@@ -99,7 +99,7 @@
         <br/>
         <div class="div_content">
             <div class="div_header">
-                <h4>Customer Documents</h4>
+                <h3>Customer Documents</h3>
             </div>
             <div class="div_sub_content">
                 <table>
@@ -191,7 +191,7 @@
         <br/>
         <div class="div_content">
             <div class="div_header">
-                <h2>Organisation Opportunities</h2>
+                <h3>Organisation Opportunities</h3>
             </div>
             <div class="div_sub_content">
                 <a href="{% url 'new_opportunity' organisation_results.organisations_id %}">Add a new opportuninity</a>

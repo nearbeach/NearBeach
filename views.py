@@ -481,13 +481,14 @@ def customer_information(request, customer_id):
                 # Lets save some contact history
                 contact_type = form.cleaned_data['contact_type']
 
-                # Calendar values
-                start_date_year = int(form.cleaned_data['start_date_year'])
-                start_date_month = int(form.cleaned_data['start_date_month'])
-                start_date_day = int(form.cleaned_data['start_date_day'])
-
-                # Create the final start/end date fields
-                task_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day)
+                contact_date = time_combined(
+                    int(form.cleaned_data['start_date_year']),
+                    int(form.cleaned_data['start_date_month']),
+                    int(form.cleaned_data['start_date_day']),
+                    int(form.cleaned_data['start_date_hour']),
+                    int(form.cleaned_data['start_date_minute']),
+                    form.cleaned_data['start_date_meridiems']
+                )
 
                 # documents
                 contact_attachment = request.FILES.get('contact_attachment')
@@ -496,7 +497,7 @@ def customer_information(request, customer_id):
                     organisations_id=save_data.organisations_id,
                     customer_id=save_data,
                     contact_type=contact_type,
-                    contact_date=task_start_date,
+                    contact_date=contact_date,
                     contact_history=contact_history_notes,
                     user_id=current_user,
                     contact_attachment=contact_attachment,
@@ -592,6 +593,22 @@ def customer_information(request, customer_id):
     # Date required to initiate date
     today = datetime.datetime.now()
 
+    """
+    We need to do some basic formulations with the hour and and minutes.
+    For the hour we need to find all those who are in the PM and
+    change both the hour and meridiem accordingly.
+    For the minute, we have to create it in 5 minute blocks.
+    """
+    hour = today.hour
+    minute = int(5 * round(today.minute / 5.0))
+    meridiems = 'AM'
+
+    if hour > 12:
+        hour = hour - 12
+        meridiems = 'PM'
+    elif hour == 0:
+        hour = 12
+
     # load template
     t = loader.get_template('NearBeach/customer_information.html')
 
@@ -603,6 +620,9 @@ def customer_information(request, customer_id):
                 'start_date_year': today.year,
                 'start_date_month': today.month,
                 'start_date_day': today.day,
+                'start_date_hour': hour,
+                'start_date_minute': minute,
+                'start_date_meridiems': meridiems,
             }),
         'campus_results': campus_results,
         'add_campus_results': add_campus_results,
@@ -943,41 +963,14 @@ def new_opportunity(request, organisation_id='', customer_id=''):
 			"""
             stage_of_opportunity_instance = list_of_opportunity_stage.objects.get(
                 opportunity_stage_id=request.POST.get('opportunity_stage'))
-            # Stage of Opportunity
 
-            """
-			Dealing with the End Date Fields
-			"""
-            finish_date_year = int(form.cleaned_data['finish_date_year'])
-            finish_date_month = int(form.cleaned_data['finish_date_month'])
-            finish_date_day = int(form.cleaned_data['finish_date_day'])
-            finish_date_hour = int(form.cleaned_data['finish_date_hour'])
-            finish_date_minute = int(form.cleaned_data['finish_date_minute'])
-            finish_date_meridiems = form.cleaned_data['finish_date_meridiems']
-
-            """
-            Time is tricky. So I am following the simple rules;
-            12:** AM will have the hour changed to 0
-            1:** AM will not have the hour changed
-            12:** PM will not have the hour changed
-            1:** PM will have the hour changed by adding 12
-
-            From these simple points, I have constructed the following 
-            if statements to take control of the correct hour.
-            """
-            if finish_date_meridiems == "AM":
-                if finish_date_hour == 12:
-                    finish_date_hour = 0
-            else:
-                if finish_date_hour > 12:
-                    finish_date_hour = finish_date_hour + 12
-
-            opportunity_end_date = datetime.datetime(
-                finish_date_year,
-                finish_date_month,
-                finish_date_day,
-                finish_date_hour,
-                finish_date_minute
+            opportunity_end_date = time_combined(
+                int(form.cleaned_data['finish_date_year']),
+                int(form.cleaned_data['finish_date_month']),
+                int(form.cleaned_data['finish_date_day']),
+                int(form.cleaned_data['finish_date_hour']),
+                int(form.cleaned_data['finish_date_minute']),
+                form.cleaned_data['finish_date_meridiems']
             )
 
             """
@@ -998,7 +991,7 @@ def new_opportunity(request, organisation_id='', customer_id=''):
                 change_user=request.user,
             )
             if not request.POST.get('customer_id') == '':
-                customer_instace = customers.objects.get(customer_id=request.POST.get('customer_id'))
+                customer_instace = customers.objects.get(customer_id=int(request.POST.get('customer_id')))
                 submit_opportunity.customer_id = customer_instace
             else:
                 submit_opportunity.customer_id = None
@@ -1145,50 +1138,24 @@ def new_project(request, organisations_id='', customer_id=''):
             project_description = form.cleaned_data['project_description']
             organisations_id_form = form.cleaned_data['organisations_id']
 
-            # Calendar values
-            start_date_year = int(form.cleaned_data['start_date_year'])
-            start_date_month = int(form.cleaned_data['start_date_month'])
-            start_date_day = int(form.cleaned_data['start_date_day'])
-            start_date_hour = int(form.cleaned_data['start_date_hour'])
-            start_date_minute = int(form.cleaned_data['start_date_minute'])
-            start_date_meridiems = form.cleaned_data['start_date_meridiems']
-
-            finish_date_year = int(form.cleaned_data['finish_date_year'])
-            finish_date_month = int(form.cleaned_data['finish_date_month'])
-            finish_date_day = int(form.cleaned_data['finish_date_day'])
-            finish_date_hour = int(form.cleaned_data['finish_date_hour'])
-            finish_date_minute = int(form.cleaned_data['finish_date_minute'])
-            finish_date_meridiems = form.cleaned_data['finish_date_meridiems']
-
-            """
-			Time is tricky. So I am following the simple rules;
-			12:** AM will have the hour changed to 0
-			1:** AM will not have the hour changed
-			12:** PM will not have the hour changed
-			1:** PM will have the hour changed by adding 12
-			
-			From these simple points, I have constructed the following 
-			if statements to take control of the correct hour.
-			"""
-            if start_date_meridiems == "AM":
-                if start_date_hour == 12:
-                    start_date_hour = 0
-            else:
-                if start_date_hour > 12:
-                    start_date_hour = start_date_hour + 12
-
-            if finish_date_meridiems == "AM":
-                if finish_date_hour == 12:
-                    finish_date_hour = 0
-            else:
-                if finish_date_hour > 12:
-                    finish_date_hour = finish_date_hour + 12
-
             # Create the final start/end date fields
-            project_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day, start_date_hour,
-                                                   start_date_minute)
-            project_end_date = datetime.datetime(finish_date_year, finish_date_month, finish_date_day, finish_date_hour,
-                                                 finish_date_minute)
+            project_start_date = time_combined(
+                int(form.cleaned_data['start_date_year']),
+                int(form.cleaned_data['start_date_month']),
+                int(form.cleaned_data['start_date_day']),
+                int(form.cleaned_data['start_date_hour']),
+                int(form.cleaned_data['start_date_minute']),
+                form.cleaned_data['start_date_meridiems']
+            )
+
+            project_end_date = time_combined(
+                int(form.cleaned_data['finish_date_year']),
+                int(form.cleaned_data['finish_date_month']),
+                int(form.cleaned_data['finish_date_day']),
+                int(form.cleaned_data['finish_date_hour']),
+                int(form.cleaned_data['finish_date_minute']),
+                form.cleaned_data['finish_date_meridiems']
+            )
 
             submit_project = project(
                 project_name=project_name,
@@ -1320,50 +1287,24 @@ def new_task(request, organisations_id='', customer_id=''):
             task_long_description = form.cleaned_data['task_long_description']
             organisations_id_form = form.cleaned_data['organisations_id']
 
-            # Calendar values
-            start_date_year = int(form.cleaned_data['start_date_year'])
-            start_date_month = int(form.cleaned_data['start_date_month'])
-            start_date_day = int(form.cleaned_data['start_date_day'])
-            start_date_hour = int(form.cleaned_data['start_date_hour'])
-            start_date_minute = int(form.cleaned_data['start_date_minute'])
-            start_date_meridiems = form.cleaned_data['start_date_meridiems']
-
-            finish_date_year = int(form.cleaned_data['finish_date_year'])
-            finish_date_month = int(form.cleaned_data['finish_date_month'])
-            finish_date_day = int(form.cleaned_data['finish_date_day'])
-            finish_date_hour = int(form.cleaned_data['finish_date_hour'])
-            finish_date_minute = int(form.cleaned_data['finish_date_minute'])
-            finish_date_meridiems = form.cleaned_data['finish_date_meridiems']
-
-            """
-			Time is tricky. So I am following the simple rules;
-			12:** AM will have the hour changed to 0
-			1:** AM will not have the hour changed
-			12:** PM will not have the hour changed
-			1:** PM will have the hour changed by adding 12
-			
-			From these simple points, I have constructed the following 
-			if statements to take control of the correct hour.
-			"""
-            if start_date_meridiems == "AM":
-                if start_date_hour == 12:
-                    start_date_hour = 0
-            else:
-                if start_date_hour > 12:
-                    start_date_hour = start_date_hour + 12
-
-            if finish_date_meridiems == "AM":
-                if finish_date_hour == 12:
-                    finish_date_hour = 0
-            else:
-                if finish_date_hour > 12:
-                    finish_date_hour = finish_date_hour + 12
-
             # Create the final start/end date fields
-            task_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day, start_date_hour,
-                                                start_date_minute)
-            task_end_date = datetime.datetime(finish_date_year, finish_date_month, finish_date_day, finish_date_hour,
-                                              finish_date_minute)
+            task_start_date = time_combined(
+                int(form.cleaned_data['start_date_year']),
+                int(form.cleaned_data['start_date_month']),
+                int(form.cleaned_data['start_date_day']),
+                int(form.cleaned_data['start_date_hour']),
+                int(form.cleaned_data['start_date_minute']),
+                form.cleaned_data['start_date_meridiems']
+            )
+
+            task_end_date = time_combined(
+                int(form.cleaned_data['finish_date_year']),
+                int(form.cleaned_data['finish_date_month']),
+                int(form.cleaned_data['finish_date_day']),
+                int(form.cleaned_data['finish_date_hour']),
+                int(form.cleaned_data['finish_date_minute']),
+                form.cleaned_data['finish_date_meridiems']
+            )
 
             submit_task = tasks(
                 task_short_description=task_short_description,
@@ -1531,39 +1472,17 @@ def opportunity_information(request, opportunity_id):
             save_opportunity.opportunity_stage_id = list_of_opportunity_stage.objects.get(
                 opportunity_stage_id=int(request.POST['opportunity_stage_id']))
 
-            # DATE Stuff
-            finish_date_year = int(form.cleaned_data['finish_date_year'])
-            finish_date_month = int(form.cleaned_data['finish_date_month'])
-            finish_date_day = int(form.cleaned_data['finish_date_day'])
-            finish_date_hour = int(form.cleaned_data['finish_date_hour'])
-            finish_date_minute = int(form.cleaned_data['finish_date_minute'])
-            finish_date_meridiems = form.cleaned_data['finish_date_meridiems']
 
-            """
-			Time is tricky. So I am following the simple rules;
-			12:** AM will have the hour changed to 0
-			1:** AM will not have the hour changed
-			12:** PM will not have the hour changed
-			1:** PM will have the hour changed by adding 12
-
-			From these simple points, I have constructed the following 
-			if statements to take control of the correct hour.
-			"""
-            if finish_date_meridiems == "AM":
-                if finish_date_hour == 12:
-                    finish_date_hour = 0
-            else:
-                if finish_date_hour > 12:
-                    finish_date_hour = finish_date_hour + 12
-
-            project_end_date = datetime.datetime(
-                finish_date_year,
-                finish_date_month,
-                finish_date_day,
-                finish_date_hour,
-                finish_date_minute
+            save_opportunity.opportunity_expected_close_date = time_combined(
+                int(form.cleaned_data['finish_date_year']),
+                int(form.cleaned_data['finish_date_month']),
+                int(form.cleaned_data['finish_date_day']),
+                int(form.cleaned_data['finish_date_hour']),
+                int(form.cleaned_data['finish_date_minute']),
+                form.cleaned_data['finish_date_meridiems']
             )
 
+            #Save the opportunity
             save_opportunity.save()
 
             # Save the to-do if required
@@ -1588,13 +1507,14 @@ def opportunity_information(request, opportunity_id):
 
     end_hour = opportunity_results.opportunity_expected_close_date.hour
     end_meridiem = u'AM'
-    if end_hour == 0:
-        end_hour = 12
-    elif end_hour == 12:
-        end_meridiem = u'PM'
-    elif end_hour > 12:
+
+    print(str(end_hour))
+
+    if end_hour > 12:
         end_hour = end_hour - 12
-        end_meridiem = u'PM'
+        end_meridiem = 'PM'
+    elif end_hour == 0:
+        end_hour = 12
 
     # initial data
     initial = {
@@ -1659,14 +1579,15 @@ def organisation_information(request, organisations_id):
                 # organisation_id = form.cleaned_data['organisations_id'] #Not going to work :( #organisations_results.organisations_id
                 contact_type = form.cleaned_data['contact_type']
 
-
-                # Calendar values
-                start_date_year = int(form.cleaned_data['start_date_year'])
-                start_date_month = int(form.cleaned_data['start_date_month'])
-                start_date_day = int(form.cleaned_data['start_date_day'])
-
                 # Create the final start/end date fields
-                task_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day)
+                task_start_date = time_combined(
+                    int(form.cleaned_data['start_date_year']),
+                    int(form.cleaned_data['start_date_month']),
+                    int(form.cleaned_data['start_date_day']),
+                    0,
+                    0,
+                    'AM'
+                )
 
                 # documents
                 contact_attachment = request.FILES.get('contact_attachment')
@@ -1792,50 +1713,24 @@ def project_information(request, project_id):
             project_results.project_name = form.cleaned_data['project_name']
             project_results.project_description = form.cleaned_data['project_description']
 
-            # Calendar values
-            start_date_year = int(form.cleaned_data['start_date_year'])
-            start_date_month = int(form.cleaned_data['start_date_month'])
-            start_date_day = int(form.cleaned_data['start_date_day'])
-            start_date_hour = int(form.cleaned_data['start_date_hour'])
-            start_date_minute = int(form.cleaned_data['start_date_minute'])
-            start_date_meridiems = form.cleaned_data['start_date_meridiems']
-
-            finish_date_year = int(form.cleaned_data['finish_date_year'])
-            finish_date_month = int(form.cleaned_data['finish_date_month'])
-            finish_date_day = int(form.cleaned_data['finish_date_day'])
-            finish_date_hour = int(form.cleaned_data['finish_date_hour'])
-            finish_date_minute = int(form.cleaned_data['finish_date_minute'])
-            finish_date_meridiems = form.cleaned_data['finish_date_meridiems']
-
-            """
-			Time is tricky. So I am following the simple rules;
-			12:** AM will have the hour changed to 0
-			1:** AM will not have the hour changed
-			12:** PM will not have the hour changed
-			1:** PM will have the hour changed by adding 12
-			
-			From these simple points, I have constructed the following 
-			if statements to take control of the correct hour.
-			"""
-            if start_date_meridiems == "AM":
-                if start_date_hour == 12:
-                    start_date_hour = 0
-            else:
-                if start_date_hour < 12:
-                    start_date_hour = start_date_hour + 12
-
-            if finish_date_meridiems == "AM":
-                if finish_date_hour == 12:
-                    finish_date_hour = 0
-            else:
-                if finish_date_hour < 12:
-                    finish_date_hour = finish_date_hour + 12
-
             # Create the final start/end date fields
-            project_results.project_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day,
-                                                                   start_date_hour, start_date_minute)
-            project_results.project_end_date = datetime.datetime(finish_date_year, finish_date_month, finish_date_day,
-                                                                 finish_date_hour, finish_date_minute)
+            project_results.project_start_date = time_combined(
+                int(form.cleaned_data['start_date_year']),
+                int(form.cleaned_data['start_date_month']),
+                int(form.cleaned_data['start_date_day']),
+                int(form.cleaned_data['start_date_hour']),
+                int(form.cleaned_data['start_date_minute']),
+                form.cleaned_data['start_date_meridiems']
+            )
+
+            project_results.project_end_date = time_combined(
+                int(form.cleaned_data['finish_date_year']),
+                int(form.cleaned_data['finish_date_month']),
+                int(form.cleaned_data['finish_date_day']),
+                int(form.cleaned_data['finish_date_hour']),
+                int(form.cleaned_data['finish_date_minute']),
+                form.cleaned_data['finish_date_meridiems']
+            )
 
             # Check to make sure the resolve button was hit
             if 'Resolve' in request.POST:
@@ -2383,49 +2278,22 @@ def task_information(request, task_id):
             task_results.task_long_description = form.cleaned_data['task_long_description']
 
             # Calendar values
-            start_date_year = int(form.cleaned_data['start_date_year'])
-            start_date_month = int(form.cleaned_data['start_date_month'])
-            start_date_day = int(form.cleaned_data['start_date_day'])
-            start_date_hour = int(form.cleaned_data['start_date_hour'])
-            start_date_minute = int(form.cleaned_data['start_date_minute'])
-            start_date_meridiems = form.cleaned_data['start_date_meridiems']
-
-            finish_date_year = int(form.cleaned_data['finish_date_year'])
-            finish_date_month = int(form.cleaned_data['finish_date_month'])
-            finish_date_day = int(form.cleaned_data['finish_date_day'])
-            finish_date_hour = int(form.cleaned_data['finish_date_hour'])
-            finish_date_minute = int(form.cleaned_data['finish_date_minute'])
-            finish_date_meridiems = form.cleaned_data['finish_date_meridiems']
-
-            """
-			Time is tricky. So I am following the simple rules;
-			12:** AM will have the hour changed to 0
-			1:** AM will not have the hour changed
-			12:** PM will not have the hour changed
-			1:** PM will have the hour changed by adding 12
-			
-			From these simple points, I have constructed the following 
-			if statements to take control of the correct hour.
-			"""
-            if start_date_meridiems == "AM":
-                if start_date_hour == 12:
-                    start_date_hour = 0
-            else:
-                if start_date_hour > 12:
-                    start_date_hour = start_date_hour + 12
-
-            if finish_date_meridiems == "AM":
-                if finish_date_hour == 12:
-                    finish_date_hour = 0
-            else:
-                if finish_date_hour > 12:
-                    finish_date_hour = finish_date_hour + 12
-
-            # Create the final start/end date fields
-            task_results.task_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day,
-                                                             start_date_hour, start_date_minute)
-            task_results.task_end_date = datetime.datetime(finish_date_year, finish_date_month, finish_date_day,
-                                                           finish_date_hour, finish_date_minute)
+            task_results.task_start_date = time_combined(
+                int(form.cleaned_data['start_date_year']),
+                int(form.cleaned_data['start_date_month']),
+                int(form.cleaned_data['start_date_day']),
+                int(form.cleaned_data['start_date_hour']),
+                int(form.cleaned_data['start_date_minute']),
+                form.cleaned_data['start_date_meridiems']
+            )
+            task_results.task_end_date = time_combined(
+                int(form.cleaned_data['finish_date_year']),
+                int(form.cleaned_data['finish_date_month']),
+                int(form.cleaned_data['finish_date_day']),
+                int(form.cleaned_data['finish_date_hour']),
+                int(form.cleaned_data['finish_date_minute']),
+                form.cleaned_data['finish_date_meridiems']
+            )
 
             # Check to make sure the resolve button was hit
             if 'Resolve' in request.POST:
@@ -2438,15 +2306,11 @@ def task_information(request, task_id):
                 # The user has tried adding a customer
                 customer_id = int(request.POST.get("add_customer_select"))
 
-                tasks_instance = tasks.objects.get(pk=task_id)
-                customers_instance = customers.objects.get(pk=customer_id)
-
                 submit_customer = tasks_customers(
                     tasks_id=tasks.objects.get(pk=task_id),
                     customer_id=customers.objects.get(pk=customer_id),
                     change_user=request.user,
                 )
-
                 submit_customer.save()
 
             if 'add_user_submit' in request.POST:
@@ -2748,3 +2612,38 @@ def handler500(request):
     )
     response.status_code = 500
     return response
+
+
+
+"""
+The time converter - we need a function that breaks time up into different segments, and also
+combines it back. This is the time converter
+"""
+def time_combined(year,month,day,hour,minute,meridiem):
+    """
+    Time is tricky. So I am following the simple rules;
+    12:** AM will have the hour changed to 0
+    1:** AM will not have the hour changed
+    12:** PM will not have the hour changed
+    1:** PM will have the hour changed by adding 12
+
+    From these simple points, I have constructed the following
+    if statements to take control of the correct hour.
+    """
+    if meridiem == "AM":
+        if hour == 12:
+            hour = 0
+    else:
+        if hour < 12:
+            hour = hour + 12
+
+
+
+    # Create the final start/end date fields
+    return datetime.datetime(
+        year,
+        month,
+        day,
+        hour,
+        minute
+    )

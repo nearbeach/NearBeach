@@ -25,7 +25,7 @@
             <div class="div_sub_content">
                 <table>
                     <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
-                    <tr><td><img src="{{ profile_picture }}" height="160px"></td><td>{{ customer_information_form.update_profile_picture }}</td></tr>
+                    <tr><td colspan="2"><img src="{{ profile_picture }}" height="160px"><br/> {{ customer_information_form.update_profile_picture }}</td></tr>
                     <tr><td>Customer Title:</td><td>{{ customer_information_form.customer_title }}</td></tr>
                     <tr><td>Customer First Name:</td><td>{{ customer_information_form.customer_first_name }}</td></tr>
                     <tr><td>Customer Last Name:</td><td>{{ customer_information_form.customer_last_name }}</td></tr>
@@ -38,7 +38,7 @@
         <br/>
         <div class="div_content">
             <div class="div_header">
-                <h1>Campus Contact Information</h1>
+                <h3>Campus Contact Information</h3>
             </div>
             <div class="div_sub_content">
                 {% if add_campus_results %}
@@ -74,11 +74,12 @@
         <br/>
         <div class="div_content">
             <div class="div_header">
-                <h1>Contact History</h1>
+                <h3>Contact History</h3>
             </div>
             <div class="div_sub_content", id="div_contact_history">
                 Contact Type {{  customer_information_form.contact_type }}<br/>
-                Date {{ customer_information_form.start_date_year }}/{{ customer_information_form.start_date_month }}/{{ customer_information_form.start_date_day }}
+                Date {{ customer_information_form.start_date_year }}/{{ customer_information_form.start_date_month }}/{{ customer_information_form.start_date_day }}<br/>
+                {{ customer_information_form.start_date_hour }}:{{ customer_information_form.start_date_minute }} {{ customer_information_form.start_date_meridiems }}
                 {{ customer_information_form.contact_history }}
                 {{ customer_information_form.contact_attachment }}
                 <input type="submit" name="submit_contact" value="Submit Contact"/>
@@ -99,7 +100,7 @@
         <br/>
         <div class="div_content">
             <div class="div_header">
-                <h4>Customer Documents</h4>
+                <h3>Customer Documents</h3>
             </div>
             <div class="div_sub_content">
                 <table>
@@ -191,7 +192,7 @@
         </div>
         <div class="div_content">
             <div class="div_header">
-                <h2>Customer Opportunities</h2>
+                <h3>Customer Opportunities</h3>
             </div>
             <div class="div_sub_content">
                 <a href="{% url 'new_opportunity' customer_results.organisations_id.organisations_id customer_results.customer_id %}">Add a new opportuninity</a>
