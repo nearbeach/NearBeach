@@ -1489,11 +1489,11 @@ def opportunity_information(request, opportunity_id):
             next_step = form.cleaned_data['next_step']
             print(next_step)
             if not next_step == '':
-                current_user = request.user
                 opportunity_instance = opportunity.objects.get(opportunity_id=opportunity_id)
                 save_next_step = opportunity_next_step(
                     opportunity_id=opportunity_instance,
                     next_step_description=next_step,
+                    change_user_id=request.user.id, #WHY???
                     user_id=current_user,
                 )
                 save_next_step.save()
