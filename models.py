@@ -2,8 +2,11 @@ from __future__ import unicode_literals
 
 from django.db import models, connection
 
+from .private_media import *
+
 #Import Django's users
 from django.contrib.auth.models import User
+import uuid
 
 #ENUM choices
 IS_DELETED_CHOICE = (
@@ -109,8 +112,99 @@ class customers_campus(models.Model):
 
 
 
+class documents(models.Model):
+	document_key=models.UUIDField(
+		default=uuid.uuid4,
+		editable=False,
+		primary_key=True,
+	)
+	document_description=models.CharField(max_length=255)
+	document_url_location = models.TextField(
+		# Contains URLS
+		null=True,
+		blank=True,
+	)
+	document = models.FileField(
+		blank=True,
+		null=True,
+		storage=File_Storage(),
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted=models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE',
+	)
+
+	class Meta:
+		db_table = "documents"
+
+	def __str__(self):
+		return self.document_description
 
 
+class document_permissions(models.Model):
+	document_key=models.ForeignKey(
+		'documents',
+		on_delete=models.CASCADE,
+	)
+	project_id=models.ForeignKey(
+		'project',
+		blank=True,
+		null=True,
+		on_delete=models.CASCADE,
+	)
+	task_id = models.ForeignKey(
+		'tasks',
+		blank=True,
+		null=True,
+		on_delete=models.CASCADE,
+	)
+	organisations_id = models.ForeignKey(
+		'organisations',
+		blank=True,
+		null=True,
+		on_delete=models.CASCADE,
+	)
+	customer_id = models.ForeignKey(
+		'customers',
+		blank=True,
+		null=True,
+		on_delete=models.CASCADE,
+	)
+	opportunity_id = models.ForeignKey(
+		'opportunity',
+		blank=True,
+		null=True,
+		on_delete=models.CASCADE,
+	)
+	user_id = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		null=True,
+		blank=True
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length = 5,
+		choices = IS_DELETED_CHOICE,
+		default = 'FALSE'
+	)
+
+	class Meta:
+		db_table = "document_permissions"
 
 
 class document_folders(models.Model):
@@ -379,23 +473,6 @@ class organisations_campus(models.Model):
 		db_table = "organisations_campus"
 
 
-class organisation_customers_documents(models.Model):
-	document_id = models.AutoField(primary_key=True)
-	organisations_id = models.ForeignKey('organisations', on_delete = models.CASCADE,)
-	customer_id = models.ForeignKey('customers', on_delete = models.CASCADE,null=True,blank=True,)
-	document_description = models.CharField(max_length=255)
-	document = models.FileField(upload_to='documents/', null=True, blank=True)
-	document_uploaded_audit = models.DateTimeField(auto_now_add=True)
-	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-	date_created = models.DateTimeField(auto_now_add=True)
-	date_modified = models.DateTimeField(auto_now=True)
-	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
-	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-
-	class Meta:
-		db_table = "organisation_customers_documents"
-
-
 class project(models.Model):
 	project_id = models.AutoField(primary_key = True)
 	project_name = models.CharField(max_length = 255)
@@ -485,23 +562,6 @@ class project_tasks(models.Model):
 		db_table = "project_tasks"
 
 
-
-class project_tasks_documents(models.Model):
-	document_id = models.AutoField(primary_key=True)
-	project_id = models.ForeignKey('project', on_delete=models.CASCADE, blank=True, null=True)
-	task_id = models.ForeignKey('tasks', on_delete=models.CASCADE, blank=True, null=True)
-	document_description = models.CharField(max_length=255)
-	document_url_location = models.TextField(null=True, blank=True) #Will contain drive locations & URLs
-	document = models.FileField(upload_to='documents/', null=True, blank=True)
-	document_uploaded_audit = models.DateTimeField(auto_now_add=True)
-	document_folder_id = models.ForeignKey('document_folders', on_delete=models.CASCADE, blank=True, null=True)
-	date_created = models.DateTimeField(auto_now_add=True)
-	date_modified = models.DateTimeField(auto_now=True)
-	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
-	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-
-	class Meta:
-		db_table = "project_tasks_documents"
 
 
 class stages(models.Model):

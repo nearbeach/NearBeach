@@ -34,6 +34,10 @@ from django.db.models import Q, Min
 # Import everything from forms
 from .forms import *
 
+#Private files
+from .private_media import *
+
+
 # Import datetime
 import datetime
 
@@ -1666,6 +1670,36 @@ def organisation_information(request, organisations_id):
 
     return HttpResponse(t.render(c, request))
 
+"""
+TEMP CODE
+"""
+@login_required(login_url='login')
+def private_document(request, document_key):
+    """
+    This is temp code. Hopefully I will make this function
+    a lot better
+    """
+    PRIVATE_MEDIA_ROOT = settings.PRIVATE_MEDIA_ROOT
+    #Now get the document location and return that to the user.
+    document_results=documents.objects.get(pk=document_key)
+
+    path = PRIVATE_MEDIA_ROOT + '/' + document_results.document.name
+    #path = '/home/luke/Downloads/gog_gods_will_be_watching_2.1.0.9.sh'
+
+    """
+    Serve private files to users with read permission.
+    """
+    #logger.debug('Serving {0} to {1}'.format(path, request.user))
+    #if not permissions.has_read_permission(request, path):
+    #    if settings.DEBUG:
+    #        raise PermissionDenied
+    #    else:
+    #        raise Http404('File not found')
+    return server.serve(request, path=path)
+
+"""
+END TEMP DOCUMENT
+"""
 
 @login_required(login_url='login')
 def project_information(request, project_id):
