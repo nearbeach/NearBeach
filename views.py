@@ -514,15 +514,20 @@ def customer_information(request, customer_id):
 			"""
             document = request.FILES.get('document')
             if not document == None:
-                document_save = organisation_customers_documents(
-                    organisations_id=save_data.organisations_id,
-                    customer_id=save_data,
+                document_save = documents(
                     document_description=form.cleaned_data['document_description'],
                     document=form.cleaned_data['document'],
-                    user_id=current_user,
                     change_user=request.user,
                 )
                 document_save.save()
+
+                document_permissions_save = document_permissions(
+                    document_key=document_save,
+                    organisations_id=save_data.organisations_id,
+                    customer_id=save_data,
+                    change_user=request.user,
+                )
+                document_permissions_save.save()
 
             # If we are adding a new campus
             if 'add_campus_submit' in request.POST:
@@ -552,9 +557,11 @@ def customer_information(request, customer_id):
     customer_results = customers.objects.get(pk=customer_id)
     add_campus_results = organisations_campus.objects.filter(organisations_id=customer_results.organisations_id)
     customer_contact_history = contact_history.objects.filter(customer_id=customer_id)
-    customer_document_results = organisation_customers_documents.objects.filter(customer_id=customer_id)
-    organisation_document_results = organisation_customers_documents.objects.filter(
-        organisations_id=customer_results.organisations_id, customer_id__isnull=True)
+    customer_document_results = document_permissions.objects.filter(customer_id=customer_id)
+    organisation_document_results = document_permissions.objects.filter(
+        organisations_id=customer_results.organisations_id,
+        customer_id__isnull=True
+    )
 
     # Setup connection to the database and query it
     cursor = connection.cursor()
@@ -1612,23 +1619,29 @@ def organisation_information(request, organisations_id):
 			"""
             document = request.FILES.get('document')
             if not document == None:
-                document_save = organisation_customers_documents(
-                    organisations_id=save_data,
+                document_save = documents(
+                    #organisations_id=save_data,
                     document_description=form.cleaned_data['document_description'],
                     document=form.cleaned_data['document'],
-                    user_id=current_user,
                     change_user=request.user,
                 )
                 document_save.save()
+
+                document_permissions_save = document_permissions(
+                    organisations_id=save_data,
+                    change_user=request.user,
+                    document_key=document_save,
+                )
+            document_permissions_save.save()
 
     # Query the database for organisation information
     organisation_results = organisations.objects.get(pk=organisations_id)
     campus_results = organisations_campus.objects.filter(organisations_id=organisations_id)
     customers_results = customers.objects.filter(organisations_id=organisation_results)
     organisation_contact_history = contact_history.objects.filter(organisations_id=organisations_id)
-    customer_document_results = organisation_customers_documents.objects.filter(organisations_id=organisations_id,
+    customer_document_results = document_permissions.objects.filter(organisations_id=organisations_id,
                                                                                 customer_id__isnull=False)
-    organisation_document_results = organisation_customers_documents.objects.filter(organisations_id=organisations_id,
+    organisation_document_results = document_permissions.objects.filter(organisations_id=organisations_id,
                                                                                     customer_id__isnull=True)
     project_results = project.objects.filter(organisations_id=organisations_id)
     task_results = tasks.objects.filter(organisations_id=organisations_id)
@@ -1683,7 +1696,7 @@ def private_document(request, document_key):
     #Now get the document location and return that to the user.
     document_results=documents.objects.get(pk=document_key)
 
-    path = PRIVATE_MEDIA_ROOT + '/' + document_results.document.name
+    path = PRIVATE_MEDIA_ROOT + '/' + document_results.documents.name
     #path = '/home/luke/Downloads/gog_gods_will_be_watching_2.1.0.9.sh'
 
     """
@@ -1822,8 +1835,7 @@ def project_information(request, project_id):
 
                 parent_folder_id = request.POST.get("parent_folder_id")
 
-                submit_document = project_tasks_documents(
-                    project_id=project.objects.get(pk=project_id),
+                submit_document = documents(
                     document=document,
                     document_description=document_description,
                     document_url_location=document_url_location,
@@ -1837,6 +1849,10 @@ def project_information(request, project_id):
                     submit_document.save()
                 except:
                     submit_document.save()
+                submit_document_permissions = document_permissions(
+                    project_id=project.objects.get(pk=project_id),
+                    change_user=request.user,
+                )
 
             """
 			Fuck - someone wants to create a new folder...
@@ -1889,8 +1905,23 @@ def project_information(request, project_id):
 
     # Obtain the required data
     project_history_results = project_history.objects.filter(project_id=project_id, is_deleted='FALSE')
-    documents_results = project_tasks_documents.objects.filter(project_id=project_id, is_deleted='FALSE').order_by(
-        'document_description')
+    cursor.execute(
+        """
+        SELECT 
+        *
+        FROM 
+          documents
+          LEFT JOIN
+                document_permissions
+                ON documents.document_key = document_permissions.document_key_id
+        
+        WHERE 1=1
+        
+        AND document_permissions.project_id_id = %s
+        """, [project_id]
+    )
+    documents_results = cursor.fetchall()
+
     document_folders_results = document_folders.objects.filter(project_id=project_id, is_deleted='FALSE').order_by(
         'document_folder_description')
     costs_results = costs.objects.filter(project_id=project_id, is_deleted='FALSE')
@@ -2042,7 +2073,8 @@ def project_information(request, project_id):
         'project_history_results': project_history_results,
         'project_customers_results': project_customers_results,
         'new_customers_results': new_customers_results,
-        'documents_results': serializers.serialize('json', documents_results),
+        #'documents_results': serializers.serialize('json', documents_results),
+        'documents_results': documents_results,
         'document_folders_results': serializers.serialize('json', document_folders_results),
         'media_url': settings.MEDIA_URL,
         'users_results': users_results,
@@ -2384,8 +2416,8 @@ def task_information(request, task_id):
 
                 print(document)
 
-                submit_document = project_tasks_documents(
-                    task_id=tasks.objects.get(pk=task_id),
+                submit_document = documents(
+                    #task_id=tasks.objects.get(pk=task_id),
                     document=document,
                     document_description=document_description,
                     document_url_location=document_url_location,
@@ -2399,6 +2431,14 @@ def task_information(request, task_id):
                     submit_document.save()
                 except:
                     submit_document.save()
+
+                #Submit the document permissions
+                submit_document_permissions = document_permissions(
+                    document_key=submit_document,
+                    task_id=tasks.objects.get(pk=task_id),
+                    change_user=request.user,
+                )
+                submit_document_permissions.save()
 
             """
 			Fuck - someone wants to create a new folder...
@@ -2440,8 +2480,23 @@ def task_information(request, task_id):
 
     # Obtain required data
     task_history_results = tasks_history.objects.filter(tasks_id=task_id)  # Will need to remove all IS_DELETED=TRUE
-    documents_results = project_tasks_documents.objects.filter(task_id=task_id, is_deleted='FALSE').order_by(
-        'document_description')
+
+    cursor.execute(
+        """
+        SELECT *
+        
+        FROM 
+          documents
+          LEFT JOIN
+                document_permissions
+                ON documents.document_key = document_permissions.document_key_id
+        
+        WHERE 1=1
+        
+        AND document_permissions.task_id_id = %s        
+        """, [task_id])
+    documents_results = cursor.fetchall()
+
     document_folders_results = document_folders.objects.filter(task_id=task_id, is_deleted='FALSE').order_by(
         'document_folder_description')
     costs_results = costs.objects.filter(task_id=task_id, is_deleted='FALSE')
@@ -2594,7 +2649,8 @@ def task_information(request, task_id):
         'task_history_results': task_history_results,
         'tasks_customers_results': tasks_customers_results,
         'new_customers_results': new_customers_results,
-        'documents_results': serializers.serialize('json', documents_results),
+        #'documents_results': serializers.serialize('json', documents_results),
+        'documents_results': documents_results,
         'document_folders_results': serializers.serialize('json', document_folders_results),
         'media_url': settings.MEDIA_URL,
         'users_results': users_results,

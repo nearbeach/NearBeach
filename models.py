@@ -1,10 +1,6 @@
 from __future__ import unicode_literals
-
 from django.db import models, connection
-
 from .private_media import *
-
-#Import Django's users
 from django.contrib.auth.models import User
 import uuid
 
@@ -23,14 +19,40 @@ PROJECT_STATUS_CHOICE = (
 
 #List of tables - in alphabetical order
 class assigned_users(models.Model):
-	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-	project_id = models.ForeignKey('project',on_delete=models.CASCADE,blank=True,null=True)
-	task_id=models.ForeignKey('tasks',on_delete=models.CASCADE,blank=True,null=True)
-	opportunity_id=models.ForeignKey('opportunity',on_delete=models.CASCADE,blank=True,null=True)
+	user_id = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+	)
+	project_id = models.ForeignKey(
+		'project',
+		on_delete=models.CASCADE,
+		blank=True,
+		null=True
+	)
+	task_id=models.ForeignKey(
+		'tasks',
+		on_delete=models.CASCADE,
+		blank=True,
+		null=True,
+	)
+	opportunity_id=models.ForeignKey(
+		'opportunity',
+		on_delete=models.CASCADE,
+		blank=True,
+		null=True,
+	)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
-	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
-	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user',
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE',
+	)
 
 	class Meta:
 		db_table="assigned_users"
