@@ -171,6 +171,34 @@ class documents(models.Model):
 		return self.document_description
 
 
+class documents_folder(models.Model):
+	document_key = models.ForeignKey(
+		'documents',
+		on_delete=models.CASCADE,
+	)
+	folder_id = models.ForeignKey(
+		'folders',
+		on_delete=models.CASCADE,
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length = 5,
+		choices = IS_DELETED_CHOICE,
+		default = 'FALSE'
+	)
+
+
+	class Meta:
+		db_table = "documents_folder"
+
+
+
 class document_permissions(models.Model):
 	document_key=models.ForeignKey(
 		'documents',
@@ -229,21 +257,21 @@ class document_permissions(models.Model):
 		db_table = "document_permissions"
 
 
-class document_folders(models.Model):
-	document_folder_id = models.AutoField(primary_key=True)
+class folders(models.Model):
+	folder_id = models.AutoField(primary_key=True)
 	project_id = models.ForeignKey('project', on_delete=models.CASCADE, blank=True, null=True)
 	task_id = models.ForeignKey('tasks', on_delete=models.CASCADE, blank=True, null=True)
-	document_folder_description = models.CharField(max_length=255)
+	folder_description = models.CharField(max_length=255)
 	parent_folder_id = models.ForeignKey('self', blank=True, null=True)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	def __str__(self):
-		return self.document_folder_description.encode('utf8')
+		return self.folder_description.encode('utf8')
 
 	class Meta:
-		db_table = "document_folder"
+		db_table = "folder"
 
 
 class groups(models.Model):

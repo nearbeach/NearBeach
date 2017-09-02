@@ -27,6 +27,7 @@ from django.conf import settings
 import urllib
 import urllib2
 import json
+import simplejson
 
 # For Importing RAW SQL
 from django.db.models import Q, Min
@@ -2444,18 +2445,17 @@ def task_information(request, task_id):
 			Fuck - someone wants to create a new folder...
 			"""
             if 'new_folder' in request.POST:
-                document_folder_description = form.cleaned_data['document_folder_description']
+                folder_description = form.cleaned_data['folder_description']
                 folder_location = request.POST.get("folder_location")
 
-                print(document_folder_description)
-                submit_folder = document_folders(
+                submit_folder = folders(
                     task_id=tasks.objects.get(pk=task_id),
-                    document_folder_description=document_folder_description,
+                    folder_description=folder_description,
                     change_user=request.user,
                 )
 
                 try:
-                    submit_folder.parent_folder_id = document_folders.objects.get(
+                    submit_folder.parent_folder_id = folders.objects.get(
                         document_folder_id=int(folder_location))
                     submit_folder.save()
                 except:
@@ -2483,22 +2483,43 @@ def task_information(request, task_id):
 
     cursor.execute(
         """
-        SELECT *
+        SELECT DISTINCT
+          documents.document_key
+        , documents.document_description
+        , documents.document_url_location
+        , documents.document
+        , documents_folder.folder_id_id
         
         FROM 
           documents
           LEFT JOIN
                 document_permissions
                 ON documents.document_key = document_permissions.document_key_id
+		LEFT JOIN
+				folder
+				ON folder.task_id_id = %s
+		LEFT JOIN
+				documents_folder
+				ON documents_folder.folder_id_id = folder.folder_id
+				AND documents_folder.document_key_id = documents.document_key
+
         
         WHERE 1=1
         
-        AND document_permissions.task_id_id = %s        
-        """, [task_id])
+        AND document_permissions.task_id_id = %s
+        ORDER BY documents.document_description     
+        """, [task_id,task_id])
+    #documents_results = namedtuplefetchall(cursor)
     documents_results = cursor.fetchall()
 
-    document_folders_results = document_folders.objects.filter(task_id=task_id, is_deleted='FALSE').order_by(
-        'document_folder_description')
+    #print(documents_results)
+
+    folders_results = folders.objects.filter(
+        task_id=task_id,
+        is_deleted='FALSE',
+    ).order_by(
+        'folder_description'
+    )
     costs_results = costs.objects.filter(task_id=task_id, is_deleted='FALSE')
 
     """
@@ -2649,9 +2670,8 @@ def task_information(request, task_id):
         'task_history_results': task_history_results,
         'tasks_customers_results': tasks_customers_results,
         'new_customers_results': new_customers_results,
-        #'documents_results': serializers.serialize('json', documents_results),
-        'documents_results': documents_results,
-        'document_folders_results': serializers.serialize('json', document_folders_results),
+        'documents_results': simplejson.dumps(documents_results,encoding='utf-8'),
+        'folders_results': serializers.serialize('json', folders_results),
         'media_url': settings.MEDIA_URL,
         'users_results': users_results,
         'assigned_results': assigned_results.values(

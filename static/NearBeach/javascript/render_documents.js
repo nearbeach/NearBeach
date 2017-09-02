@@ -23,7 +23,7 @@ function render_folders(document_folders_results, current_folder) {
 	for (var i=0; i<folder_results.length; i++) {
 		content_string += '<div class="folder_content"><div class=""folder_header"><b>';
 		content_string += '<img src="/static/NearBeach/images/folder-icon-small.png" height="20px"> ';
-		content_string += folder_results[i].fields.document_folder_description;
+		content_string += folder_results[i].fields.folder_description;
 		content_string += '</b></div><div class="folder_sub_content" id="'+ folder_results[i].pk + '_folder">';
 
 		content_string += render_folders(document_folders_results, folder_results[i].pk);
@@ -44,7 +44,7 @@ function render_folders(document_folders_results, current_folder) {
 		var folder_location = document.getElementById("folder_location");
 		var opt2 = document.createElement('option');
 		opt2.value = folder_results[i].pk;
-		opt2.innerHTML = folder_results[i].fields.document_folder_description;
+		opt2.innerHTML = folder_results[i].fields.folder_description;
 		folder_location.appendChild(opt2);
 
 	}
@@ -65,23 +65,24 @@ function add_new_folder() {
 function render_documents(document_results, site_url) {
 	for (var i=0; i<document_results.length; i++) {
 		var content_string = '<a href="';
-		if ((document_results[i].fields.document == '') || (document_results[i].fields.document == null)) {
-            content_string += document_results[i].fields.document_url_location;
+		if ((document_results[i][3] == '') || (document_results[i][3] == null)) {
+            content_string += document_results[i][2];
 
         } else {
-			content_string += site_url + document_results[i].fields.document;
+			content_string += site_url + document_results[i][3];
 		}
 		content_string += '" target="_blank">';
-		content_string += document_results[i].fields.document_description;
+		content_string += document_results[i][1];
 		content_string += '</a>';
 
-
-		if (document_results[i].fields.document_folder_id == null) {
+		alert("Document Results = " + document_results[i][4]);
+		if ((document_results[i][4] == null) || (document_results[i][4] == "")) {
 			destination_folder = document.getElementById("root_folder");
 		} else {
-			destination_folder = document.getElementById(document_results[i].fields.document_folder_id + "_folder");
+			destination_folder = document.getElementById(document_results[i][4] + "_folder");
 		}
 		destination_folder.innerHTML = destination_folder.innerHTML + '<br/>' + content_string;
+
 	}
 }
 
@@ -114,7 +115,7 @@ function enable_submit() {
 	id_document = Boolean(document.getElementById("id_document").value != "");
 	id_document_url_location = Boolean(document.getElementById("id_document_url_location").value != "");
 	id_document_description = Boolean(document.getElementById("id_document_description").value != "");
-	id_new_folder = Boolean(document.getElementById("id_document_folder_description").value == "");
+	id_new_folder = Boolean(document.getElementById("id_folder_description").value == "");
 
 	new_document = document.getElementById("new_document");
 	new_folder = document.getElementById("new_folder");

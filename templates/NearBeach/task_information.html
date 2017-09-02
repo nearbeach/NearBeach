@@ -6,25 +6,32 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/task_information.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/render_documents.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
+
+<body onload="on_page_load()">
 <script>
 	function on_page_load() {
+	    alert("START");
 		initiate_dates();
-		render_documents_code = '<div id="_folder" class="folder_sub_content">' + render_folders({{ document_folders_results | safe }}, null) + '</div>';
+
+		var fucking_var = {{ folders_results | safe }};
+		render_documents_code = '<div id="_folder" class="folder_sub_content">' + render_folders(fucking_var, null) + '</div>';
 
 		root_folder = document.getElementById("root_folder");
 		root_folder.innerHTML = render_documents_code;
 
         //Rendering all the documents - need to fix this pile of strung togeather hay
-        render_documents({{ documents_results | safe }}, {{ media_url }});
+        alert("Pass the document results into a var");
+        var document_results_json = {{ documents_results | safe }};
+        render_documents(document_results_json, {{ media_url }});
 
         //Re-size all those pesky textareas;
         autoscale_textarea();
 
         //Running total currently stops the javascript.
         running_total();
-	}
+    }
 </script>
-<body onload="on_page_load();">
+{{ documents_results }}
 	<form action="{% url 'task_information' task_results.tasks_id %}" method="POST" enctype="multipart/form-data">
 		{% csrf_token %}
 		<div class="div_content">
@@ -224,7 +231,7 @@
 		<div id="overlay_new_folder" class="overlay_new_folder">
 			<div class="overlay_content">
 				<h1>New Folder</h1>
-				{{ task_information_form.document_folder_description }}<br/>
+				{{ task_information_form.folder_description }}<br/>
 				<select id="folder_location" name="parent_folder_id">
 					<option value="">-----</option>
 				</select>

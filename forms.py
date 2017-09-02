@@ -544,7 +544,7 @@ class project_information_form(ModelForm):
 	document_url_location = forms.URLField(required=False, widget=forms.TextInput(attrs={'placeholder':'https://example.com', 'onChange':'enable_submit()'}))
 	document_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
 
-	document_folder_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
+	folder_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
 
 	# Costs feature
 	cost_description = forms.CharField(
@@ -640,7 +640,17 @@ class task_information_form(ModelForm):
 	document_url_location = forms.URLField(required=False, widget=forms.TextInput(attrs={'placeholder':'https://example.com', 'onChange':'enable_submit()'}))
 	document_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
 
-	document_folder_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width': '100%', 'onkeyup': 'enable_submit()'}))
+	folder_description = forms.CharField(
+		max_length=255,
+		required=False,
+		widget=forms.TextInput(
+			attrs={
+				'width': '100%',
+				'onkeyup': 'enable_submit()'
+			}
+		)
+	)
+
 
 	#Costs feature
 	cost_description=forms.CharField(
