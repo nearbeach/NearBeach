@@ -2446,7 +2446,7 @@ def task_information(request, task_id):
 			"""
             if 'new_folder' in request.POST:
                 folder_description = form.cleaned_data['folder_description']
-                folder_location = request.POST.get("folder_location")
+                folder_location = request.POST.get("parent_folder_id")
 
                 submit_folder = folders(
                     task_id=tasks.objects.get(pk=task_id),
@@ -2456,7 +2456,7 @@ def task_information(request, task_id):
 
                 try:
                     submit_folder.parent_folder_id = folders.objects.get(
-                        document_folder_id=int(folder_location))
+                        folder_id=int(folder_location))
                     submit_folder.save()
                 except:
                     submit_folder.save()

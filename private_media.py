@@ -146,14 +146,7 @@ def get_class(import_path=None):
         raise ImproperlyConfigured('Module "%s" does not define a "%s" class.' % (module, classname))
 
 
-"""
-Mostly left unchanged
-"""
-server = get_class(settings.PRIVATE_MEDIA_SERVER)(**getattr(settings, 'PRIVATE_MEDIA_SERVER_OPTIONS', {}))
-if hasattr(settings,'PRIVATE_MEDIA_PERMISSIONS'):
-    permissions = get_class(settings.PRIVATE_MEDIA_PERMISSIONS)(**getattr(settings, 'PRIVATE_MEDIA_PERMISSIONS_OPTIONS', {}))
-else:
-    permissions = Check_Permissions()
+
 
 """
 Left unchanged
@@ -186,6 +179,7 @@ class ApacheXSendfileServer(object):
 
         return response
 
+
 """
 Left unchanged
 """
@@ -213,3 +207,14 @@ class DefaultServer(object):
         # filename = os.path.basename(path)
         # response['Content-Disposition'] = smart_str(u'attachment; filename={0}'.format(filename))
         return response
+
+
+"""
+Mostly left unchanged
+"""
+#server = get_class(settings.PRIVATE_MEDIA_SERVER)(**getattr(settings, 'PRIVATE_MEDIA_SERVER_OPTIONS', {}))
+server = ApacheXSendfileServer(**getattr(settings, 'PRIVATE_MEDIA_SERVER_OPTIONS', {}))
+if hasattr(settings,'PRIVATE_MEDIA_PERMISSIONS'):
+    permissions = get_class(settings.PRIVATE_MEDIA_PERMISSIONS)(**getattr(settings, 'PRIVATE_MEDIA_PERMISSIONS_OPTIONS', {}))
+else:
+    permissions = Check_Permissions()

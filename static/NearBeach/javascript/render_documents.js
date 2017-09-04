@@ -75,7 +75,6 @@ function render_documents(document_results, site_url) {
 		content_string += document_results[i][1];
 		content_string += '</a>';
 
-		alert("Document Results = " + document_results[i][4]);
 		if ((document_results[i][4] == null) || (document_results[i][4] == "")) {
 			destination_folder = document.getElementById("root_folder");
 		} else {

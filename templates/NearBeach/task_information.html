@@ -10,7 +10,6 @@
 <body onload="on_page_load()">
 <script>
 	function on_page_load() {
-	    alert("START");
 		initiate_dates();
 
 		var fucking_var = {{ folders_results | safe }};
@@ -20,7 +19,6 @@
 		root_folder.innerHTML = render_documents_code;
 
         //Rendering all the documents - need to fix this pile of strung togeather hay
-        alert("Pass the document results into a var");
         var document_results_json = {{ documents_results | safe }};
         render_documents(document_results_json, {{ media_url }});
 
@@ -31,7 +29,7 @@
         running_total();
     }
 </script>
-{{ documents_results }}
+{{ folder_results }}
 	<form action="{% url 'task_information' task_results.tasks_id %}" method="POST" enctype="multipart/form-data">
 		{% csrf_token %}
 		<div class="div_content">
