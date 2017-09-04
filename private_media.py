@@ -212,8 +212,7 @@ class DefaultServer(object):
 """
 Mostly left unchanged
 """
-#server = get_class(settings.PRIVATE_MEDIA_SERVER)(**getattr(settings, 'PRIVATE_MEDIA_SERVER_OPTIONS', {}))
-server = ApacheXSendfileServer(**getattr(settings, 'PRIVATE_MEDIA_SERVER_OPTIONS', {}))
+server = get_class(settings.PRIVATE_MEDIA_SERVER)(**getattr(settings, 'PRIVATE_MEDIA_SERVER_OPTIONS', {}))
 if hasattr(settings,'PRIVATE_MEDIA_PERMISSIONS'):
     permissions = get_class(settings.PRIVATE_MEDIA_PERMISSIONS)(**getattr(settings, 'PRIVATE_MEDIA_PERMISSIONS_OPTIONS', {}))
 else:
