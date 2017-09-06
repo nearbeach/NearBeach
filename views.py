@@ -1843,8 +1843,8 @@ def project_information(request, project_id):
                     change_user=request.user,
                 )
                 try:
-                    submit_document.document_folder_id = document_folders.objects.get(
-                        document_folder_id=int(parent_folder_id),
+                    submit_document.document_folder_id = folders.objects.get(
+                        folder_id=int(parent_folder_id),
                         change_user=request.user,
                     )
                     submit_document.save()
@@ -1859,20 +1859,18 @@ def project_information(request, project_id):
 			Fuck - someone wants to create a new folder...
 			"""
             if 'new_folder' in request.POST:
-                document_folder_description = form.cleaned_data['document_folder_description']
+                document_folder_description = form.cleaned_data['folder_description']
                 folder_location = request.POST.get("folder_location")
 
-                print(document_folder_description)
-                submit_folder = document_folders(
+                submit_folder = folders(
                     project_id=project.objects.get(pk=project_id),
-                    document_folder_description=document_folder_description,
+                    folder_description=document_folder_description,
                     change_user=request.user,
                 )
 
                 try:
-                    submit_folder.parent_folder_id = document_folders.objects.get(
-                        document_folder_id=int(folder_location),
-                        change_user=request.user,
+                    submit_folder.parent_folder_id = folders.objects.get(
+                        folder_id=int(folder_location),
                     )
                     submit_folder.save()
                 except:
@@ -1908,23 +1906,41 @@ def project_information(request, project_id):
     project_history_results = project_history.objects.filter(project_id=project_id, is_deleted='FALSE')
     cursor.execute(
         """
-        SELECT 
-        *
+        SELECT DISTINCT
+          documents.document_key
+        , documents.document_description
+        , documents.document_url_location
+        , documents.document
+        , documents_folder.folder_id_id
+        
         FROM 
           documents
           LEFT JOIN
                 document_permissions
                 ON documents.document_key = document_permissions.document_key_id
+		LEFT JOIN
+				folder
+				ON folder.project_id_id = %s
+		LEFT JOIN
+				documents_folder
+				ON documents_folder.folder_id_id = folder.folder_id
+				AND documents_folder.document_key_id = documents.document_key
+
         
         WHERE 1=1
         
         AND document_permissions.project_id_id = %s
-        """, [project_id]
+        ORDER BY documents.document_description 
+        """, [project_id,project_id]
     )
     documents_results = cursor.fetchall()
 
-    document_folders_results = document_folders.objects.filter(project_id=project_id, is_deleted='FALSE').order_by(
-        'document_folder_description')
+    folders_results = folders.objects.filter(
+        project_id=project_id,
+        is_deleted='FALSE'
+    ).order_by(
+        'folder_description'
+    )
     costs_results = costs.objects.filter(project_id=project_id, is_deleted='FALSE')
 
     """
@@ -2074,9 +2090,8 @@ def project_information(request, project_id):
         'project_history_results': project_history_results,
         'project_customers_results': project_customers_results,
         'new_customers_results': new_customers_results,
-        #'documents_results': serializers.serialize('json', documents_results),
-        'documents_results': documents_results,
-        'document_folders_results': serializers.serialize('json', document_folders_results),
+        'documents_results': simplejson.dumps(documents_results,encoding='utf-8'),
+        'folders_results': serializers.serialize('json', folders_results),
         'media_url': settings.MEDIA_URL,
         'users_results': users_results,
         'assigned_results': assigned_results.values(
@@ -2415,7 +2430,7 @@ def task_information(request, task_id):
 
                 parent_folder_id = request.POST.get("parent_folder_id")
 
-                print(document)
+                print(parent_folder_id)
 
                 submit_document = documents(
                     #task_id=tasks.objects.get(pk=task_id),
@@ -2424,14 +2439,19 @@ def task_information(request, task_id):
                     document_url_location=document_url_location,
                     change_user=request.user,
                 )
-                try:
-                    submit_document.document_folder_id = document_folders.objects.get(
-                        document_folder_id=int(parent_folder_id),
+                submit_document.save()
+
+                print(parent_folder_id)
+
+                #If the document is under a folder
+                if isinstance(parent_folder_id, int):
+                    submit_documents_folder = documents_folder(
+                        document_key=submit_document,
                         change_user=request.user,
+                        folder_id=int(parent_folder_id),
                     )
-                    submit_document.save()
-                except:
-                    submit_document.save()
+                    submit_documents_folder.save()
+
 
                 #Submit the document permissions
                 submit_document_permissions = document_permissions(
@@ -2446,7 +2466,7 @@ def task_information(request, task_id):
 			"""
             if 'new_folder' in request.POST:
                 folder_description = form.cleaned_data['folder_description']
-                folder_location = request.POST.get("parent_folder_id")
+                folder_location = request.POST.get("folder_location")
 
                 submit_folder = folders(
                     task_id=tasks.objects.get(pk=task_id),

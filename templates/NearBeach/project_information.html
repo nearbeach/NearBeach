@@ -1,25 +1,18 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
-<script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/expand_sections.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/project_information.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/render_documents.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
 <script>
 	function on_page_load() {
 		initiate_dates();
-		render_documents_code = '<div id="_folder" class="folder_sub_content">' + render_folders({{ document_folders_results | safe }}, null) + '</div>';
-
-		root_folder = document.getElementById("root_folder");
-		root_folder.innerHTML = render_documents_code;
-
-        render_documents({{ documents_results | safe }}, {{ media_url }});
+		var fucking_var = {{ folders_results | safe }};
 
         //Autoscale all textarea
         autoscale_textarea();
 
-        running_total();
+        //running_total();
 	}
 </script>
 
@@ -179,57 +172,7 @@
 				<h3>Project Documents</h3>
 			</div>
 			<div class="div_sub_content" id="div_project_documents" style="display: none;">
-                {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
-                    <a href="#" onclick="add_new_document()">Upload New Document</a><br/>
-                    <a href="#" onclick="add_new_folder()">Create New Folder</a>
-                {% endif %}
-				<div id="root_folder">
-					It looks like there are no documents or folders
-				</div>
-			</div>
-		</div>
-		<div id="overlay_new_document" class="overlay_new_document">
-			<div class="overlay_content">
-				<h1>New Document</h1>
-				<select id="upload_type" onchange="upload_or_link()">
-					<option id="upload">Upload Documentation</option>
-					<option id="link">Link Documentation</option>
-				</select>
-				<div id="overlay_upload" style="display: block;">
-					<p>Please upload a file and press submit</p>
-					{{ project_information_form.document }}
-
-				</div>
-				<div id="overlay_link" style="display: none;">
-					<p>Please include the URL to the cloud document</p>
-					{{ project_information_form.document_url_location }}
-				</div>
-				<br/>
-				<div width="100%">
-					File Description<br/>
-					{{ project_information_form.document_description }}<br/>
-					Folder Location<br/>
-					<select id="parent_folder_id" name="parent_folder_id">
-						<option value="">-----</option>
-					</select>
-				</div>
-				<div>
-					<button id="new_document" name="new_document" disabled>Submit</button>
-					<a href="#" onclick="add_new_document()">Cancel</a>
-				</div>
-			</div>
-		</div>
-		<div id="overlay_new_folder" class="overlay_new_folder">
-			<div class="overlay_content">
-				<h1>New Folder</h1>
-				{{ project_information_form.document_folder_description }}<br/>
-				<select id="folder_location" name="parent_folder_id">
-					<option value="">-----</option>
-				</select>
-				<div>
-					<button id="new_folder" name="new_folder" disabled>Submit</button>
-					<a href="#" onclick="add_new_folder()">Cancel</a>
-				</div>
+                << REBUILDING AS AJAX WIDGET >>
 			</div>
 		</div>
         <br/>

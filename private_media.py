@@ -120,30 +120,7 @@ class Check_Permissions(object):
         else:
             return False
 
-"""
-Left unchanged
-"""
-from importlib import import_module
-def get_class(import_path=None):
-    """
-    Largely based on django.core.files.storage's get_storage_class
-    """
-    from django.core.exceptions import ImproperlyConfigured
-    if import_path is None:
-        raise ImproperlyConfigured('No class path specified.')
-    try:
-        dot = import_path.rindex('.')
-    except ValueError:
-        raise ImproperlyConfigured("%s isn't a module." % import_path)
-    module, classname = import_path[:dot], import_path[dot+1:]
-    try:
-        mod = import_module(module)
-    except ImportError as e:
-        raise ImproperlyConfigured('Error importing module %s: "%s"' % (module, e))
-    try:
-        return getattr(mod, classname)
-    except AttributeError:
-        raise ImproperlyConfigured('Module "%s" does not define a "%s" class.' % (module, classname))
+
 
 
 
@@ -208,12 +185,41 @@ class DefaultServer(object):
         # response['Content-Disposition'] = smart_str(u'attachment; filename={0}'.format(filename))
         return response
 
+"""
+Left unchanged
+"""
+from importlib import import_module
+def get_class(import_path=None):
+    """
+    Largely based on django.core.files.storage's get_storage_class
+    """
+    from django.core.exceptions import ImproperlyConfigured
+    if import_path is None:
+        raise ImproperlyConfigured('No class path specified.')
+    try:
+        dot = import_path.rindex('.')
+    except ValueError:
+        raise ImproperlyConfigured("%s isn't a module." % import_path)
+    module, classname = import_path[:dot], import_path[dot+1:]
+    try:
+        mod = import_module(module)
+    except ImportError as e:
+        raise ImproperlyConfigured('Error importing module %s: "%s"' % (module, e))
+    try:
+        return getattr(mod, classname)
+    except AttributeError:
+        raise ImproperlyConfigured('Module "%s" does not define a "%s" class.' % (module, classname))
+
 
 """
 Mostly left unchanged
 """
-server = get_class(settings.PRIVATE_MEDIA_SERVER)(**getattr(settings, 'PRIVATE_MEDIA_SERVER_OPTIONS', {}))
+if settings.DEBUG == True:
+    server = DefaultServer(**getattr(settings, 'PRIVATE_MEDIA_SERVER_OPTIONS', {}))
+else:
+    server = ApacheXSendfileServer(**getattr(settings, 'PRIVATE_MEDIA_SERVER_OPTIONS', {}))
 if hasattr(settings,'PRIVATE_MEDIA_PERMISSIONS'):
     permissions = get_class(settings.PRIVATE_MEDIA_PERMISSIONS)(**getattr(settings, 'PRIVATE_MEDIA_PERMISSIONS_OPTIONS', {}))
 else:
     permissions = Check_Permissions()
+

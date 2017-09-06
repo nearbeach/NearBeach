@@ -21,13 +21,11 @@ function render_folders(document_folders_results, current_folder) {
 	 */
 	var content_string = '';
 	for (var i=0; i<folder_results.length; i++) {
-		content_string += '<div class="folder_content"><div class=""folder_header"><b>';
-		content_string += '<img src="/static/NearBeach/images/folder-icon-small.png" height="20px"> ';
-		content_string += folder_results[i].fields.folder_description;
-		content_string += '</b></div><div class="folder_sub_content" id="'+ folder_results[i].pk + '_folder">';
-
+		content_string += '<li><label>' + folder_results[i].fields.folder_description + '</label>';
+		content_string += '<input type="checkbox" id="' + folder_results[i].pk + '_checkbox">';
+		content_string += '<ul id="' + folder_results[i].pk + '_folder">';
 		content_string += render_folders(document_folders_results, folder_results[i].pk);
-		content_string += '</div>';
+		content_string += '</ul></li>';
 
 		/*
 		Minor step
@@ -35,12 +33,15 @@ function render_folders(document_folders_results, current_folder) {
 		We are now adding the folder to the new_document_location select
 		*/
 		var new_document_location = document.getElementById("parent_folder_id");
+		var folder_location = document.getElementById("folder_location");
 		var opt = document.createElement('option');
 		opt.value = folder_results[i].pk;
-		opt.innerHTML = folder_results[i].fields.document_folder_description;
+		opt.innerHTML = folder_results[i].fields.folder_description;
 		new_document_location.appendChild(opt);
+		//folder_location.appendChild(opt);
 
 		//Ok, I am cheating here.
+		//Bug with JAVASCRIPT - will now allow me to append the same opt twice.
 		var folder_location = document.getElementById("folder_location");
 		var opt2 = document.createElement('option');
 		opt2.value = folder_results[i].pk;
