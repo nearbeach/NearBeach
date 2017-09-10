@@ -1604,16 +1604,28 @@ def organisation_information(request, organisations_id):
                 # documents
                 contact_attachment = request.FILES.get('contact_attachment')
 
+                if contact_attachment:
+                    documents_save = documents(
+                        document_description=contact_attachment,
+                        document=contact_attachment,
+                        change_user=request.user,
+                    )
+                    documents_save.save()
+
                 submit_history = contact_history(
                     organisations_id=save_data,
                     contact_type=contact_type,
                     contact_date=task_start_date,
                     contact_history=contact_history_notes,
                     user_id=current_user,
-                    contact_attachment=contact_attachment,
+                    #contact_attachment=contact_attachment,
                     change_user=request.user,
                 )
+                if contact_history:
+                    submit_history.document_key=documents_save.document_key
                 submit_history.save()
+
+
 
             """
 			Document Uploads
@@ -1622,10 +1634,15 @@ def organisation_information(request, organisations_id):
             if not document == None:
                 document_save = documents(
                     #organisations_id=save_data,
-                    document_description=form.cleaned_data['document_description'],
+                    #document_description=form.cleaned_data['document_description'],
                     document=form.cleaned_data['document'],
                     change_user=request.user,
                 )
+                document_description = form.cleaned_data['document_description']
+                if document_description=="":
+                    document_save.document_description=document_save.document
+                else:
+                    document_save.document_description=document_description
                 document_save.save()
 
                 document_permissions_save = document_permissions(
@@ -1640,10 +1657,14 @@ def organisation_information(request, organisations_id):
     campus_results = organisations_campus.objects.filter(organisations_id=organisations_id)
     customers_results = customers.objects.filter(organisations_id=organisation_results)
     organisation_contact_history = contact_history.objects.filter(organisations_id=organisations_id)
-    customer_document_results = document_permissions.objects.filter(organisations_id=organisations_id,
-                                                                                customer_id__isnull=False)
-    organisation_document_results = document_permissions.objects.filter(organisations_id=organisations_id,
-                                                                                    customer_id__isnull=True)
+    customer_document_results = document_permissions.objects.filter(
+        organisations_id=organisations_id,
+        customer_id__isnull=False
+    )
+    organisation_document_results = document_permissions.objects.filter(
+        organisations_id=organisations_id,
+        customer_id__isnull=True
+    )
     project_results = project.objects.filter(organisations_id=organisations_id)
     task_results = tasks.objects.filter(organisations_id=organisations_id)
     opportunity_results = opportunity.objects.filter(organisations_id=organisations_id)
@@ -1680,6 +1701,7 @@ def organisation_information(request, organisations_id):
         'project_results': project_results,
         'task_results': task_results,
         'opportunity_results': opportunity_results,
+        'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
     }
 
     return HttpResponse(t.render(c, request))
