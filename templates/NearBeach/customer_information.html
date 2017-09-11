@@ -89,8 +89,8 @@
                         <p>
                             {{ row.contact_type }} - Submitted by {{ row.user_id }} on {{ row.contact_date }}<br/>
                             <textarea readonly>{{ row.contact_history }}</textarea>
-                            {% if row.contact_attachment %}
-                                <a href="{{ media_url }}{{ row.contact_attachment }}" target="_blank">{{ row.contact_attachment }}</a>
+                            {% if row.document_key %}
+                                <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}" target="_blank">{{ row.document_key.document_description }}</a>
                             {% endif %}
                         </p>
                     {% endfor %}
@@ -114,9 +114,9 @@
                     <h4>Customer Documents</h4>
                     {% for row in customer_document_results %}
                         {% if row.document_description == "" %}
-                            <a href="{{ request.META.HTTP_HOST }}{{ row.document.url }}">{{ row.document.name|slice:"10:" }}</a><br/>
+                            <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document }}</a><br/>
                         {%  else %}
-                            <a href="{{ request.META.HTTP_HOST }}{{ row.document.url }}">{{ row.document_description }}</a><br/>
+                            <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document_description }}</a><br/>
                         {% endif %}
                     {% endfor %}
                 {% endif %}
@@ -124,10 +124,10 @@
                 {% if organisation_document_results %}
                     <h4>Organisation Documents</h4>
                     {% for row in organisation_document_results %}
-                        {% if row.document_description == "" %}
-                            <a href="{{ request.META.HTTP_HOST }}{{ row.document.url }}">{{ row.document.name|slice:"10:" }}</a><br/>
+                        {% if row.document_key.document_description == "" %}
+                            <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document }}</a><br/>
                         {%  else %}
-                            <a href="{{ request.META.HTTP_HOST }}{{ row.document.url }}">{{ row.document_description }}</a><br/>
+                            <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">{{ row.document_key.document_description }}</a><br/>
                         {% endif %}
                     {% endfor %}
                 {% endif %}

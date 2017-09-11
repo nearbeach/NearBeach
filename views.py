@@ -664,6 +664,7 @@ def customer_information(request, customer_id):
         'project_results': project_results,
         'task_results': task_results,
         'opportunity_results': opportunity_results,
+        'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
     }
 
     return HttpResponse(t.render(c, request))
