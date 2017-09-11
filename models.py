@@ -73,7 +73,6 @@ class contact_history(models.Model):
 	contact_type = models.ForeignKey('list_of_contact_types', on_delete=models.CASCADE,)
 	contact_date = models.DateTimeField()
 	contact_history = models.TextField()
-	#contact_attachment= models.FileField(upload_to='contact_history/', null=True, blank=True)
 	document_key = models.ForeignKey(
 		'documents',
 		on_delete=models.CASCADE,

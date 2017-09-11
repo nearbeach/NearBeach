@@ -497,6 +497,21 @@ def customer_information(request, customer_id):
 
                 # documents
                 contact_attachment = request.FILES.get('contact_attachment')
+                if contact_attachment:
+                    documents_save = documents(
+                        document_description=contact_attachment,
+                        document=contact_attachment,
+                        change_user=request.user,
+                    )
+                    documents_save.save()
+
+                    #Add to document permissions
+                    document_permissions_save = document_permissions(
+                        document_key=documents_save,
+                        customer_id=customers.objects.get(customer_id=customer_id),
+                        change_user=request.user,
+                    )
+                    document_permissions_save.save()
 
                 submit_history = contact_history(
                     organisations_id=save_data.organisations_id,
@@ -505,9 +520,11 @@ def customer_information(request, customer_id):
                     contact_date=contact_date,
                     contact_history=contact_history_notes,
                     user_id=current_user,
-                    contact_attachment=contact_attachment,
-                    change_user = request.user,
+                    change_user=request.user,
+                    document_key=documents_save,
                 )
+                if contact_history:
+                    submit_history.document_key=documents_save
                 submit_history.save()
 
             """
@@ -1612,17 +1629,26 @@ def organisation_information(request, organisations_id):
                     )
                     documents_save.save()
 
+                    #Add to document permissions
+                    document_permissions_save = document_permissions(
+                        document_key=documents_save,
+                        organisations_id=organisations.objects.get(organisations_id=organisations_id),
+                        change_user=request.user,
+                    )
+                    document_permissions_save.save()
+
+
                 submit_history = contact_history(
                     organisations_id=save_data,
                     contact_type=contact_type,
                     contact_date=task_start_date,
                     contact_history=contact_history_notes,
                     user_id=current_user,
-                    #contact_attachment=contact_attachment,
                     change_user=request.user,
+                    document_key=documents_save,
                 )
                 if contact_history:
-                    submit_history.document_key=documents_save.document_key
+                    submit_history.document_key=documents_save
                 submit_history.save()
 
 
@@ -1719,7 +1745,7 @@ def private_document(request, document_key):
     #Now get the document location and return that to the user.
     document_results=documents.objects.get(pk=document_key)
 
-    path = PRIVATE_MEDIA_ROOT + '/' + document_results.documents.name
+    path = PRIVATE_MEDIA_ROOT + '/' + document_results.document.name
     #path = '/home/luke/Downloads/gog_gods_will_be_watching_2.1.0.9.sh'
 
     """

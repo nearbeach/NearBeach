@@ -88,8 +88,8 @@
                         <p>
                             {{ row.contact_type }} - Submitted by {{ row.user_id }} on {{ row.contact_date }}<br/>
                             <textarea readonly>{{ row.contact_history }}</textarea>
-                            {% if row.contact_attachment %}
-                                <a href="{{ media_url }}{{ row.contact_attachment }}" target="_blank">{{ row.contact_attachment }}</a>
+                            {% if row.document_key %}
+                                <a href="#" target="_blank">{{ row.document_key.document_description }}</a>
                             {% endif %}
                         </p>
                     {% endfor %}
