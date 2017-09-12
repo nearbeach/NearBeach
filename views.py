@@ -1677,7 +1677,7 @@ def organisation_information(request, organisations_id):
                     change_user=request.user,
                     document_key=document_save,
                 )
-            document_permissions_save.save()
+                document_permissions_save.save()
 
     # Query the database for organisation information
     organisation_results = organisations.objects.get(pk=organisations_id)

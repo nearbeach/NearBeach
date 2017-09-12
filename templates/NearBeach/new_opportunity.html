@@ -6,7 +6,9 @@
     <script type="text/javascript">
     function initialise() {
         //Apply the customers and then apply the organisation and customers.
+        apply_organisation_customer("{{ organisation_id }}","{{ customer_id }}");
         update_customers();
+
         apply_organisation_customer("{{ organisation_id }}","{{ customer_id }}");
 
         //Update the date boxes.
