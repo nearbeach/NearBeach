@@ -900,8 +900,8 @@ def new_campus(request, organisations_id):
             return HttpResponseRedirect(reverse(new_campus, args={organisations_id}))
 
     # SQL
-    countries_results = list_of_countries.objects.all()
-    countries_regions_results = list_of_countries_regions.objects.all()
+    countries_results = list_of_countries.objects.all().order_by('country_name')
+    countries_regions_results = list_of_countries_regions.objects.all().order_by('region_name')
 
     # load template
     t = loader.get_template('NearBeach/new_campus.html')

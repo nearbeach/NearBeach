@@ -98,9 +98,10 @@
                         <select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" >
                             <option value="---------" selected>---------</option>
                             {% for row in new_customers_results %}
-                                <option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
-                            {% endfor %}
-                        </select>
+                                {% if not row.customer_id == None %}
+                                    <option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
+                                {% endif %}
+                            {% endfor %}                        </select>
                         <input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Project" disabled="disabled">
                     {% endif %}
 				{% endif %}
