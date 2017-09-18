@@ -4,17 +4,20 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/expand_sections.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/project_information.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/render_documents.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
+<script tpye="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
+
 <script>
 	function on_page_load() {
+	    //Initiate the dates
 		initiate_dates();
-		render_documents_code = '<div id="_folder" class="folder_sub_content">' + render_folders({{ document_folders_results | safe }}, null) + '</div>';
 
-		root_folder = document.getElementById("root_folder");
-		root_folder.innerHTML = render_documents_code;
+		var fucking_var = {{ folders_results | safe }};
 
-        render_documents({{ documents_results | safe }}, {{ media_url }});
+        //Autoscale all textarea
+        autoscale_textarea();
 
+        //Running totals under costs
         running_total();
 	}
 </script>
@@ -52,10 +55,10 @@
 			<div class="div_header" onclick="hide_unhide('div_project_history')">
 				<h3>Project History</h3>
 			</div>
-			<div class="div_sub_content" id="div_project_history" style="display: none;">
+			<div class="div_sub_content" id="div_project_history">
 				{% if project_history_results %}
 					{% for row in project_history_results %}
-						<p>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.audit_date }}<br />
+						<p>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}<br />
 						<textarea readonly>{{ row.project_history }}</textarea>
 						</p>
 					{% endfor %}
@@ -64,12 +67,12 @@
 				{% endif %}
 			</div>
 		</div>
-		<br/>none
+        <br/>
 		<div class="div_content">
 			<div class="div_header" onclick="hide_unhide('div_associated_tasks')">
 				<h3>Associated Tasks</h3>
 			</div>
-			<div class="div_sub_content" id="div_associated_tasks" style="display: none;">
+			<div class="div_sub_content" id="div_associated_tasks">
                 {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
 				    <a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
                 {% endif %}
@@ -78,7 +81,7 @@
 						<tr class="header"><td>Task Id</td><td>Short Description</td><td>End Date</td></tr>
 						{% for associated_task_row in associated_tasks_results %}
 							<tr>
-							<td><a href="Task - {% url 'task_information' associated_task_row.tasks_id %}">{{ associated_task_row.tasks_id }}</a></td>
+							<td><a href="{% url 'task_information' associated_task_row.tasks_id %}">Task - {{ associated_task_row.tasks_id }}</a></td>
 							<td>{{ associated_task_row.task_short_description }}</td>
 							<td>{{ associated_task_row.task_end_date }}</td>
 							</tr>
@@ -101,9 +104,10 @@
                         <select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" >
                             <option value="---------" selected>---------</option>
                             {% for row in new_customers_results %}
-                                <option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
-                            {% endfor %}
-                        </select>
+                                {% if not row.customer_id == None %}
+                                    <option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
+                                {% endif %}
+                            {% endfor %}                        </select>
                         <input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Project" disabled="disabled">
                     {% endif %}
 				{% endif %}
@@ -175,63 +179,13 @@
 				<h3>Project Documents</h3>
 			</div>
 			<div class="div_sub_content" id="div_project_documents" style="display: none;">
-                {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
-                    <a href="#" onclick="add_new_document()">Upload New Document</a><br/>
-                    <a href="#" onclick="add_new_folder()">Create New Folder</a>
-                {% endif %}
-				<div id="root_folder">
-					It looks like there are no documents or folders
-				</div>
-			</div>
-		</div>
-		<div id="overlay_new_document" class="overlay_new_document">
-			<div class="overlay_content">
-				<h1>New Document</h1>
-				<select id="upload_type" onchange="upload_or_link()">
-					<option id="upload">Upload Documentation</option>
-					<option id="link">Link Documentation</option>
-				</select>
-				<div id="overlay_upload" style="display: block;">
-					<p>Please upload a file and press submit</p>
-					{{ project_information_form.document }}
-
-				</div>
-				<div id="overlay_link" style="display: none;">
-					<p>Please include the URL to the cloud document</p>
-					{{ project_information_form.document_url_location }}
-				</div>
-				<br/>
-				<div width="100%">
-					File Description<br/>
-					{{ project_information_form.document_description }}<br/>
-					Folder Location<br/>
-					<select id="parent_folder_id" name="parent_folder_id">
-						<option value="">-----</option>
-					</select>
-				</div>
-				<div>
-					<button id="new_document" name="new_document" disabled>Submit</button>
-					<a href="#" onclick="add_new_document()">Cancel</a>
-				</div>
-			</div>
-		</div>
-		<div id="overlay_new_folder" class="overlay_new_folder">
-			<div class="overlay_content">
-				<h1>New Folder</h1>
-				{{ project_information_form.document_folder_description }}<br/>
-				<select id="folder_location" name="parent_folder_id">
-					<option value="">-----</option>
-				</select>
-				<div>
-					<button id="new_folder" name="new_folder" disabled>Submit</button>
-					<a href="#" onclick="add_new_folder()">Cancel</a>
-				</div>
+                << REBUILDING AS AJAX WIDGET >>
 			</div>
 		</div>
         <br/>
         <div class="div_content">
             <div class="div_header">
-                <h4>Assigned Users</h4>
+                <h3>Assigned Users</h3>
             </div>
             <div class="div_sub_content">
                 {% if users_results %}

@@ -27,12 +27,17 @@ from django.conf import settings
 import urllib
 import urllib2
 import json
+import simplejson
 
 # For Importing RAW SQL
 from django.db.models import Q, Min
 
 # Import everything from forms
 from .forms import *
+
+#Private files
+from .private_media import *
+
 
 # Import datetime
 import datetime
@@ -42,83 +47,103 @@ import datetime
 
 @login_required(login_url='login')
 def active_projects(request):
-	# Get username_id from User
-	current_user = request.user
+    # Get username_id from User
+    current_user = request.user
 
-	# Setup connection to the database and query it
-	cursor = connection.cursor()
+    # Setup connection to the database and query it
+    cursor = connection.cursor()
 
-	cursor.execute("""
-	SELECT 
-	  project.project_id AS "project_id"
-	, '' AS "task_id"
-	, project.project_name AS "description"
-	, project.project_end_date AS "end_date"
+    cursor.execute("""
+    SELECT 
+      project.project_id AS "project_id"
+    , '' AS "task_id"
+    , project.project_name AS "description"
+    , project.project_end_date AS "end_date"
+    , organisations.organisation_name AS "organisation_name"
+    , organisations.organisations_id AS "organisations_id"
+    
+    
+    
+    from 
+      project left join project_tasks
+        on project.project_id = project_tasks.project_id
+        and project_tasks.is_deleted = 'FALSE'
+    , project_groups
+    , user_groups
+    , organisations
+    
+    
+    where 1 = 1
+    and project.project_status IN ('New','Open')
+    and project.project_status IN ('New','Open')
+    and project.project_id = project_groups.project_id_id
+    and project_groups.groups_id_id = user_groups.group_id_id
+    and user_groups.username_id = %s
+    and project.organisations_id_id=organisations.organisations_id
+    
+    
+    UNION
+    
+    select 
+      project_tasks.project_id AS `Project ID`
+    , tasks.tasks_id AS `Task ID`
+    , tasks.task_short_description AS `Description`
+    , tasks.task_end_date AS `End Date` 
+    , organisations.organisation_name AS "organisation_name"
+    , organisations.organisations_id AS "organisations_id"
+    
+    from 
+      tasks left join project_tasks
+        on tasks.tasks_id = project_tasks.task_id 
+        and project_tasks.is_deleted = "FALSE"
+    , tasks_groups
+    , user_groups
+    , organisations
+    
+    
+    where 1 = 1
+    and tasks.task_status in ('New','Open')
+    and tasks.tasks_id = tasks_groups.tasks_id_id
+    and tasks_groups.groups_id_id = user_groups.group_id_id
+    and user_groups.username_id = %s
+    and tasks.organisations_id_id=organisations.organisations_id
+        
+    UNION
+    
+    select 
+     project_tasks.project_id AS `Project ID`
+    , tasks.tasks_id AS `Task ID`
+    , tasks.task_short_description AS `Description`
+    , tasks.task_end_date AS `End Date` 
+    , organisations.organisation_name AS "organisation_name"
+    , organisations.organisations_id AS "organisations_id"
+    
+    from 
+      tasks left join project_tasks
+        on tasks.tasks_id = project_tasks.task_id 
+        and project_tasks.is_deleted = "FALSE"
+    , organisations
+    
+    
+    
+    where 1 = 1
+    and tasks.task_status in ('New','Open')
+    and tasks.task_assigned_to_id = %s
+    and tasks.organisations_id_id=organisations.organisations_id
+    """, [current_user.id, current_user.id, current_user.id])
 
-	from 
-	  project left join project_tasks
-		on project.project_id = project_tasks.project_id
-		and project_tasks.is_deleted = 'FALSE'
-	, project_groups
-	, user_groups
+    active_projects_results = namedtuplefetchall(cursor)
+    print(active_projects_results)
 
-	where 1 = 1
-	and project.project_status IN ('New','Open')
-	and project.project_status IN ('New','Open')
-	and project.project_id = project_groups.project_id_id
-	and project_groups.groups_id_id = user_groups.group_id_id
-	and user_groups.username_id = %s
+    # Load the template
+    t = loader.get_template('NearBeach/active_projects.html')
 
-	UNION
+    # context
+    c = {
+        'active_projects_results': active_projects_results,
+    }
 
-	select 
-	  project_tasks.project_id AS `Project ID`
-	, tasks.tasks_id AS `Task ID`
-	, tasks.task_short_description AS `Description`
-	, tasks.task_end_date AS `End Date` 
-
-	from 
-	  tasks left join project_tasks
-		on tasks.tasks_id = project_tasks.task_id 
-		and project_tasks.is_deleted = "FALSE"
-	, tasks_groups
-	, user_groups
-
-	where 1 = 1
-	and tasks.task_status in ('New','Open')
-	and tasks.tasks_id = tasks_groups.tasks_id_id
-	and tasks_groups.groups_id_id = user_groups.group_id_id
-	and user_groups.username_id = %s
-	
-	UNION
-	
-	select 
-	 project_tasks.project_id AS `Project ID`
-	, tasks.tasks_id AS `Task ID`
-	, tasks.task_short_description AS `Description`
-	, tasks.task_end_date AS `End Date` 
-	
-	from 
-	  tasks left join project_tasks
-		on tasks.tasks_id = project_tasks.task_id 
-		and project_tasks.is_deleted = "FALSE"
-
-
-	where 1 = 1
-	and tasks.task_status in ('New','Open')
-	and tasks.task_assigned_to_id = %s
-	""", [current_user.id, current_user.id, current_user.id])
-	active_projects_results = namedtuplefetchall(cursor)
-
-	# Load the template
-	t = loader.get_template('NearBeach/active_projects.html')
-
-	# context
-	c = {
-		'active_projects_results': active_projects_results,
-	}
-
-	return HttpResponse(t.render(c, request))
+    return HttpResponse(t.render(c, request))
 
 
 @login_required(login_url='login')
@@ -144,6 +169,7 @@ def assign_customer_project_task(request, customer_id):
             assign_save = project_customers(
                 project_id=project_instance,
                 customer_id=customer_instance,
+                change_user=request.user,
                 # Customer description will have to be programmed in at a later date
             )
             assign_save.save()
@@ -154,6 +180,7 @@ def assign_customer_project_task(request, customer_id):
             assign_save = tasks_customers(
                 tasks_id=task_instance,
                 customer_id=customer_instance,
+                change_user=request.user,
             )
             assign_save.save()
 
@@ -218,7 +245,9 @@ def associate(request, project_id, task_id, project_or_task):
     # Submit the data
     submit_result = project_tasks(
         project_id_id=project_id,
-        task_id_id=task_id)
+        task_id_id=task_id,
+        change_user=request.user,
+    )
     submit_result.save()
 
     # Once we assign them together, we go back to the original
@@ -313,6 +342,7 @@ def campus_information(request, campus_information):
             campus_results.campus_suburb = form.cleaned_data['campus_suburb']
             campus_results.campus_region_id = campus_region_instance
             campus_results.campus_country_id = campus_country_instance
+            campus_results.change_user=request.user
 
             campus_results.save()
 
@@ -324,9 +354,15 @@ def campus_information(request, campus_information):
             customer_instance = customers.objects.get(customer_id=customer_results)
             campus_instances = organisations_campus.objects.get(id=campus_information)
 
+
             # Save the new campus
-            submit_campus = customers_campus(customer_id=customer_instance, campus_id=campus_instances,
-                                             customer_phone='', customer_fax='')
+            submit_campus = customers_campus(
+                customer_id=customer_instance,
+                campus_id=campus_instances,
+                customer_phone='',
+                customer_fax='',
+                change_user=request.user,
+            )
             submit_campus.save()
 
             # Go to the form.
@@ -373,6 +409,7 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
 
             save_data.customer_phone = form.cleaned_data['customer_phone']
             save_data.customer_fax = form.cleaned_data['customer_fax']
+            save_data.change_user=request.user
 
             save_data.save()
 
@@ -430,6 +467,7 @@ def customer_information(request, customer_id):
             save_data.customer_first_name = form.cleaned_data['customer_first_name']
             save_data.customer_last_name = form.cleaned_data['customer_last_name']
             save_data.customer_email = form.cleaned_data['customer_email']
+            save_data.change_user=request.user
 
             # Check to see if the picture has been updated
             update_profile_picture = request.FILES.get('update_profile_picture')
@@ -448,25 +486,45 @@ def customer_information(request, customer_id):
                 # Lets save some contact history
                 contact_type = form.cleaned_data['contact_type']
 
-                # Calendar values
-                start_date_year = int(form.cleaned_data['start_date_year'])
-                start_date_month = int(form.cleaned_data['start_date_month'])
-                start_date_day = int(form.cleaned_data['start_date_day'])
-
-                # Create the final start/end date fields
-                task_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day)
+                contact_date = time_combined(
+                    int(form.cleaned_data['start_date_year']),
+                    int(form.cleaned_data['start_date_month']),
+                    int(form.cleaned_data['start_date_day']),
+                    int(form.cleaned_data['start_date_hour']),
+                    int(form.cleaned_data['start_date_minute']),
+                    form.cleaned_data['start_date_meridiems']
+                )
 
                 # documents
                 contact_attachment = request.FILES.get('contact_attachment')
+                if contact_attachment:
+                    documents_save = documents(
+                        document_description=contact_attachment,
+                        document=contact_attachment,
+                        change_user=request.user,
+                    )
+                    documents_save.save()
+
+                    #Add to document permissions
+                    document_permissions_save = document_permissions(
+                        document_key=documents_save,
+                        customer_id=customers.objects.get(customer_id=customer_id),
+                        change_user=request.user,
+                    )
+                    document_permissions_save.save()
 
                 submit_history = contact_history(
-                    organisations_id=save_data.organisations_id
-                    , customer_id=save_data
-                    , contact_type=contact_type
-                    , contact_date=task_start_date
-                    , contact_history=contact_history_notes
-                    , user_id=current_user
-                    , contact_attachment=contact_attachment)
+                    organisations_id=save_data.organisations_id,
+                    customer_id=save_data,
+                    contact_type=contact_type,
+                    contact_date=contact_date,
+                    contact_history=contact_history_notes,
+                    user_id=current_user,
+                    change_user=request.user,
+                    document_key=documents_save,
+                )
+                if contact_history:
+                    submit_history.document_key=documents_save
                 submit_history.save()
 
             """
@@ -474,14 +532,20 @@ def customer_information(request, customer_id):
 			"""
             document = request.FILES.get('document')
             if not document == None:
-                document_save = organisation_customers_documents(
-                    organisations_id=save_data.organisation_id,
-                    customer_id=save_data,
+                document_save = documents(
                     document_description=form.cleaned_data['document_description'],
                     document=form.cleaned_data['document'],
-                    user_id=current_user,
+                    change_user=request.user,
                 )
                 document_save.save()
+
+                document_permissions_save = document_permissions(
+                    document_key=document_save,
+                    organisations_id=save_data.organisations_id,
+                    customer_id=save_data,
+                    change_user=request.user,
+                )
+                document_permissions_save.save()
 
             # If we are adding a new campus
             if 'add_campus_submit' in request.POST:
@@ -493,8 +557,13 @@ def customer_information(request, customer_id):
                 campus_instances = organisations_campus.objects.get(id=campus_id_results)
 
                 # Save the new campus
-                submit_campus = customers_campus(customer_id=customer_instance, campus_id=campus_instances,
-                                                 customer_phone='', customer_fax='')
+                submit_campus = customers_campus(
+                    customer_id=customer_instance,
+                    campus_id=campus_instances,
+                    customer_phone='',
+                    customer_fax='',
+                    change_user=request.user,
+                )
                 submit_campus.save()
 
                 # Go to the form.
@@ -506,9 +575,11 @@ def customer_information(request, customer_id):
     customer_results = customers.objects.get(pk=customer_id)
     add_campus_results = organisations_campus.objects.filter(organisations_id=customer_results.organisations_id)
     customer_contact_history = contact_history.objects.filter(customer_id=customer_id)
-    customer_document_results = organisation_customers_documents.objects.filter(customer_id=customer_id)
-    organisation_document_results = organisation_customers_documents.objects.filter(
-        organisations_id=customer_results.organisations_id, customer_id__isnull=True)
+    customer_document_results = document_permissions.objects.filter(customer_id=customer_id)
+    organisation_document_results = document_permissions.objects.filter(
+        organisations_id=customer_results.organisations_id,
+        customer_id__isnull=True
+    )
 
     # Setup connection to the database and query it
     cursor = connection.cursor()
@@ -551,6 +622,22 @@ def customer_information(request, customer_id):
     # Date required to initiate date
     today = datetime.datetime.now()
 
+    """
+    We need to do some basic formulations with the hour and and minutes.
+    For the hour we need to find all those who are in the PM and
+    change both the hour and meridiem accordingly.
+    For the minute, we have to create it in 5 minute blocks.
+    """
+    hour = today.hour
+    minute = int(5 * round(today.minute / 5.0))
+    meridiems = 'AM'
+
+    if hour > 12:
+        hour = hour - 12
+        meridiems = 'PM'
+    elif hour == 0:
+        hour = 12
+
     # load template
     t = loader.get_template('NearBeach/customer_information.html')
 
@@ -562,6 +649,9 @@ def customer_information(request, customer_id):
                 'start_date_year': today.year,
                 'start_date_month': today.month,
                 'start_date_day': today.day,
+                'start_date_hour': hour,
+                'start_date_minute': minute,
+                'start_date_meridiems': meridiems,
             }),
         'campus_results': campus_results,
         'add_campus_results': add_campus_results,
@@ -574,6 +664,7 @@ def customer_information(request, customer_id):
         'project_results': project_results,
         'task_results': task_results,
         'opportunity_results': opportunity_results,
+        'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
     }
 
     return HttpResponse(t.render(c, request))
@@ -584,6 +675,7 @@ def delete_cost(request, cost_id, location_id, project_or_task):
     # Delete the cost
     cost_save = costs.objects.get(pk=cost_id)
     cost_save.is_deleted = "TRUE"
+    cost_save.change_user=request.user
     cost_save.save()
 
     # Once we assign them together, we go back to the original
@@ -787,11 +879,19 @@ def new_campus(request, organisations_id):
             # BUG - some simple validation should go here?
 
             # Submitting the data
-            submit_form = organisations_campus(organisations_id=organisation, campus_nickname=campus_nickname,
-                                               campus_phone=campus_phone, campus_fax=campus_fax,
-                                               campus_address1=campus_address1, campus_address2=campus_address2,
-                                               campus_address3=campus_address3, campus_suburb=campus_suburb,
-                                               campus_region_id=campus_region_id, campus_country_id=campus_country_id)
+            submit_form = organisations_campus(
+                organisations_id=organisation,
+                campus_nickname=campus_nickname,
+                campus_phone=campus_phone,
+                campus_fax=campus_fax,
+                campus_address1=campus_address1,
+                campus_address2=campus_address2,
+                campus_address3=campus_address3,
+                campus_suburb=campus_suburb,
+                campus_region_id=campus_region_id,
+                campus_country_id=campus_country_id,
+                change_user = request.user,
+            )
             submit_form.save()
 
             return HttpResponseRedirect(reverse(organisation_information, args={organisations_id}))
@@ -800,8 +900,8 @@ def new_campus(request, organisations_id):
             return HttpResponseRedirect(reverse(new_campus, args={organisations_id}))
 
     # SQL
-    countries_results = list_of_countries.objects.all()
-    countries_regions_results = list_of_countries_regions.objects.all()
+    countries_results = list_of_countries.objects.all().order_by('country_name')
+    countries_regions_results = list_of_countries_regions.objects.all().order_by('region_name')
 
     # load template
     t = loader.get_template('NearBeach/new_campus.html')
@@ -835,11 +935,17 @@ def new_customer(request, organisations_id):
             customer_last_name = form.cleaned_data['customer_last_name']
             customer_email = form.cleaned_data['customer_email']
 
+
             organisations_id = form.cleaned_data['organisations_id']
 
-            submit_form = customers(customer_title=customer_title, customer_first_name=customer_first_name,
-                                    customer_last_name=customer_last_name, customer_email=customer_email,
-                                    organisations_id=organisations_id)
+            submit_form = customers(
+                customer_title=customer_title,
+                customer_first_name=customer_first_name,
+                customer_last_name=customer_last_name,
+                customer_email=customer_email,
+                organisations_id=organisations_id,
+                change_user=request.user,
+            )
 
             # BUG - no validation process to see if there exists a customer already :(
             submit_form.save()
@@ -887,41 +993,14 @@ def new_opportunity(request, organisation_id='', customer_id=''):
 			"""
             stage_of_opportunity_instance = list_of_opportunity_stage.objects.get(
                 opportunity_stage_id=request.POST.get('opportunity_stage'))
-            # Stage of Opportunity
 
-            """
-			Dealing with the End Date Fields
-			"""
-            finish_date_year = int(form.cleaned_data['finish_date_year'])
-            finish_date_month = int(form.cleaned_data['finish_date_month'])
-            finish_date_day = int(form.cleaned_data['finish_date_day'])
-            finish_date_hour = int(form.cleaned_data['finish_date_hour'])
-            finish_date_minute = int(form.cleaned_data['finish_date_minute'])
-            finish_date_meridiems = form.cleaned_data['finish_date_meridiems']
-
-            """
-            Time is tricky. So I am following the simple rules;
-            12:** AM will have the hour changed to 0
-            1:** AM will not have the hour changed
-            12:** PM will not have the hour changed
-            1:** PM will have the hour changed by adding 12
-
-            From these simple points, I have constructed the following 
-            if statements to take control of the correct hour.
-            """
-            if finish_date_meridiems == "AM":
-                if finish_date_hour == 12:
-                    finish_date_hour = 0
-            else:
-                if finish_date_hour > 12:
-                    finish_date_hour = finish_date_hour + 12
-
-            opportunity_end_date = datetime.datetime(
-                finish_date_year,
-                finish_date_month,
-                finish_date_day,
-                finish_date_hour,
-                finish_date_minute
+            opportunity_end_date = time_combined(
+                int(form.cleaned_data['finish_date_year']),
+                int(form.cleaned_data['finish_date_month']),
+                int(form.cleaned_data['finish_date_day']),
+                int(form.cleaned_data['finish_date_hour']),
+                int(form.cleaned_data['finish_date_minute']),
+                form.cleaned_data['finish_date_meridiems']
             )
 
             """
@@ -939,9 +1018,10 @@ def new_opportunity(request, organisation_id='', customer_id=''):
                 opportunity_expected_close_date=opportunity_end_date,
                 opportunity_stage_id=stage_of_opportunity_instance,
                 user_id=current_user,
+                change_user=request.user,
             )
             if not request.POST.get('customer_id') == '':
-                customer_instace = customers.objects.get(customer_id=request.POST.get('customer_id'))
+                customer_instace = customers.objects.get(customer_id=int(request.POST.get('customer_id')))
                 submit_opportunity.customer_id = customer_instace
             else:
                 submit_opportunity.customer_id = None
@@ -960,6 +1040,7 @@ def new_opportunity(request, organisation_id='', customer_id=''):
                     opportunity_id=opportunity_instance,
                     next_step_description=next_step_description,
                     user_id=current_user,
+                    change_user=request.user,
                 )
                 submit_next_step.save()
 
@@ -1044,8 +1125,12 @@ def new_organisation(request):
 			"""
             if ((duplicate_results.count() == 0) or (request.POST.get("save_duplicate"))):
                 # Save the form data
-                submit_form = organisations(organisation_name=organisation_name, organisation_email=organisation_email,
-                                            organisation_website=organisation_website)
+                submit_form = organisations(
+                    organisation_name=organisation_name,
+                    organisation_email=organisation_email,
+                    organisation_website=organisation_website,
+                    change_user=request.user,
+                )
                 submit_form.save()
 
                 return HttpResponseRedirect(reverse(organisation_information, args={submit_form.organisations_id}))
@@ -1083,50 +1168,24 @@ def new_project(request, organisations_id='', customer_id=''):
             project_description = form.cleaned_data['project_description']
             organisations_id_form = form.cleaned_data['organisations_id']
 
-            # Calendar values
-            start_date_year = int(form.cleaned_data['start_date_year'])
-            start_date_month = int(form.cleaned_data['start_date_month'])
-            start_date_day = int(form.cleaned_data['start_date_day'])
-            start_date_hour = int(form.cleaned_data['start_date_hour'])
-            start_date_minute = int(form.cleaned_data['start_date_minute'])
-            start_date_meridiems = form.cleaned_data['start_date_meridiems']
-
-            finish_date_year = int(form.cleaned_data['finish_date_year'])
-            finish_date_month = int(form.cleaned_data['finish_date_month'])
-            finish_date_day = int(form.cleaned_data['finish_date_day'])
-            finish_date_hour = int(form.cleaned_data['finish_date_hour'])
-            finish_date_minute = int(form.cleaned_data['finish_date_minute'])
-            finish_date_meridiems = form.cleaned_data['finish_date_meridiems']
-
-            """
-			Time is tricky. So I am following the simple rules;
-			12:** AM will have the hour changed to 0
-			1:** AM will not have the hour changed
-			12:** PM will not have the hour changed
-			1:** PM will have the hour changed by adding 12
-			
-			From these simple points, I have constructed the following 
-			if statements to take control of the correct hour.
-			"""
-            if start_date_meridiems == "AM":
-                if start_date_hour == 12:
-                    start_date_hour = 0
-            else:
-                if start_date_hour > 12:
-                    start_date_hour = start_date_hour + 12
-
-            if finish_date_meridiems == "AM":
-                if finish_date_hour == 12:
-                    finish_date_hour = 0
-            else:
-                if finish_date_hour > 12:
-                    finish_date_hour = finish_date_hour + 12
-
             # Create the final start/end date fields
-            project_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day, start_date_hour,
-                                                   start_date_minute)
-            project_end_date = datetime.datetime(finish_date_year, finish_date_month, finish_date_day, finish_date_hour,
-                                                 finish_date_minute)
+            project_start_date = time_combined(
+                int(form.cleaned_data['start_date_year']),
+                int(form.cleaned_data['start_date_month']),
+                int(form.cleaned_data['start_date_day']),
+                int(form.cleaned_data['start_date_hour']),
+                int(form.cleaned_data['start_date_minute']),
+                form.cleaned_data['start_date_meridiems']
+            )
+
+            project_end_date = time_combined(
+                int(form.cleaned_data['finish_date_year']),
+                int(form.cleaned_data['finish_date_month']),
+                int(form.cleaned_data['finish_date_day']),
+                int(form.cleaned_data['finish_date_hour']),
+                int(form.cleaned_data['finish_date_minute']),
+                form.cleaned_data['finish_date_meridiems']
+            )
 
             submit_project = project(
                 project_name=project_name,
@@ -1134,7 +1193,9 @@ def new_project(request, organisations_id='', customer_id=''):
                 organisations_id=organisations_id_form,
                 project_start_date=project_start_date,
                 project_end_date=project_end_date,
-                project_status='New')
+                project_status='New',
+                change_user=request.user,
+            )
 
             # Submit the data
             submit_project.save()
@@ -1147,7 +1208,11 @@ def new_project(request, organisations_id='', customer_id=''):
             assigned_to_groups = request.POST.get('assigned_to_groups')
 
             for row in assigned_to_groups:
-                submit_group = project_groups(project_id_id=submit_project.pk, groups_id_id=row)
+                submit_group = project_groups(
+                    project_id_id=submit_project.pk,
+                    groups_id_id=row,
+                    change_user = request.user,
+                )
                 submit_group.save()
 
             # If there is a customer id attached to this. Assign the project to the customer and go back to customer informaton
@@ -1156,6 +1221,7 @@ def new_project(request, organisations_id='', customer_id=''):
                 save_project_customers = project_customers(
                     project_id=submit_project,
                     customer_id=customer_instance,
+                    change_user=request.user,
                 )
                 save_project_customers.save()
 
@@ -1232,6 +1298,7 @@ def new_project(request, organisations_id='', customer_id=''):
                 'finish_date_minute': minute,
                 'finish_date_meridiems': meridiems, }),
             'groups_results': groups_results,
+            'groups_count': groups_results.__len__(),
             'organisations_count': organisations_results.count(),
             'organisations_id': organisations_id,
             'customer_id': customer_id,
@@ -1250,50 +1317,24 @@ def new_task(request, organisations_id='', customer_id=''):
             task_long_description = form.cleaned_data['task_long_description']
             organisations_id_form = form.cleaned_data['organisations_id']
 
-            # Calendar values
-            start_date_year = int(form.cleaned_data['start_date_year'])
-            start_date_month = int(form.cleaned_data['start_date_month'])
-            start_date_day = int(form.cleaned_data['start_date_day'])
-            start_date_hour = int(form.cleaned_data['start_date_hour'])
-            start_date_minute = int(form.cleaned_data['start_date_minute'])
-            start_date_meridiems = form.cleaned_data['start_date_meridiems']
-
-            finish_date_year = int(form.cleaned_data['finish_date_year'])
-            finish_date_month = int(form.cleaned_data['finish_date_month'])
-            finish_date_day = int(form.cleaned_data['finish_date_day'])
-            finish_date_hour = int(form.cleaned_data['finish_date_hour'])
-            finish_date_minute = int(form.cleaned_data['finish_date_minute'])
-            finish_date_meridiems = form.cleaned_data['finish_date_meridiems']
-
-            """
-			Time is tricky. So I am following the simple rules;
-			12:** AM will have the hour changed to 0
-			1:** AM will not have the hour changed
-			12:** PM will not have the hour changed
-			1:** PM will have the hour changed by adding 12
-			
-			From these simple points, I have constructed the following 
-			if statements to take control of the correct hour.
-			"""
-            if start_date_meridiems == "AM":
-                if start_date_hour == 12:
-                    start_date_hour = 0
-            else:
-                if start_date_hour > 12:
-                    start_date_hour = start_date_hour + 12
-
-            if finish_date_meridiems == "AM":
-                if finish_date_hour == 12:
-                    finish_date_hour = 0
-            else:
-                if finish_date_hour > 12:
-                    finish_date_hour = finish_date_hour + 12
-
             # Create the final start/end date fields
-            task_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day, start_date_hour,
-                                                start_date_minute)
-            task_end_date = datetime.datetime(finish_date_year, finish_date_month, finish_date_day, finish_date_hour,
-                                              finish_date_minute)
+            task_start_date = time_combined(
+                int(form.cleaned_data['start_date_year']),
+                int(form.cleaned_data['start_date_month']),
+                int(form.cleaned_data['start_date_day']),
+                int(form.cleaned_data['start_date_hour']),
+                int(form.cleaned_data['start_date_minute']),
+                form.cleaned_data['start_date_meridiems']
+            )
+
+            task_end_date = time_combined(
+                int(form.cleaned_data['finish_date_year']),
+                int(form.cleaned_data['finish_date_month']),
+                int(form.cleaned_data['finish_date_day']),
+                int(form.cleaned_data['finish_date_hour']),
+                int(form.cleaned_data['finish_date_minute']),
+                form.cleaned_data['finish_date_meridiems']
+            )
 
             submit_task = tasks(
                 task_short_description=task_short_description,
@@ -1301,7 +1342,8 @@ def new_task(request, organisations_id='', customer_id=''):
                 organisations_id=organisations_id_form,
                 task_start_date=task_start_date,
                 task_end_date=task_end_date,
-                task_status='New'
+                task_status='New',
+                change_user = request.user,
             )
 
             # Submit the data
@@ -1315,7 +1357,11 @@ def new_task(request, organisations_id='', customer_id=''):
             assigned_to_groups = request.POST.get('assigned_to_groups')
 
             for row in assigned_to_groups:
-                submit_group = tasks_groups(tasks_id_id=submit_task.pk, groups_id_id=row)
+                submit_group = tasks_groups(
+                    tasks_id_id=submit_task.pk,
+                    groups_id_id=row,
+                    change_user=request.user,
+                )
                 submit_group.save()
 
             """
@@ -1328,6 +1374,7 @@ def new_task(request, organisations_id='', customer_id=''):
                 save_tasks_customers = tasks_customers(
                     tasks_id=submit_task,
                     customer_id=customer_instance,
+                    change_user=request.user,
                 )
                 save_tasks_customers.save()
 
@@ -1408,7 +1455,9 @@ def new_task(request, organisations_id='', customer_id=''):
                     'organisations_id': organisations_id,
                 }),
             'groups_results': groups_results,
+            'groups_count': groups_results.__len__(),
             'organisations_id': organisations_id,
+            'organisations_count': organisations.objects.filter(is_deleted='FALSE').count(),
             'customer_id': customer_id,
         }
 
@@ -1419,6 +1468,7 @@ def new_task(request, organisations_id='', customer_id=''):
 def next_step(request, next_step_id, opportunity_id):
     next_step_save = opportunity_next_step.objects.get(id=next_step_id)
     next_step_save.next_step_completed = 1
+    next_step.change_user=request.user
     next_step_save.save()
 
     return HttpResponseRedirect(
@@ -1443,6 +1493,7 @@ def opportunity_information(request, opportunity_id):
             save_opportunity.opportunity_description = form.cleaned_data['opportunity_description']
             save_opportunity.opportunity_amount = form.cleaned_data['opportunity_amount']
             save_opportunity.opportunity_success_probability = form.cleaned_data['opportunity_success_probability']
+            save_opportunity.change_user=request.user
 
             # Instance needed
             save_opportunity.currency_id = list_of_currency.objects.get(currency_id=int(request.POST['currency_id']))
@@ -1451,50 +1502,28 @@ def opportunity_information(request, opportunity_id):
             save_opportunity.opportunity_stage_id = list_of_opportunity_stage.objects.get(
                 opportunity_stage_id=int(request.POST['opportunity_stage_id']))
 
-            # DATE Stuff
-            finish_date_year = int(form.cleaned_data['finish_date_year'])
-            finish_date_month = int(form.cleaned_data['finish_date_month'])
-            finish_date_day = int(form.cleaned_data['finish_date_day'])
-            finish_date_hour = int(form.cleaned_data['finish_date_hour'])
-            finish_date_minute = int(form.cleaned_data['finish_date_minute'])
-            finish_date_meridiems = form.cleaned_data['finish_date_meridiems']
 
-            """
-			Time is tricky. So I am following the simple rules;
-			12:** AM will have the hour changed to 0
-			1:** AM will not have the hour changed
-			12:** PM will not have the hour changed
-			1:** PM will have the hour changed by adding 12
-
-			From these simple points, I have constructed the following 
-			if statements to take control of the correct hour.
-			"""
-            if finish_date_meridiems == "AM":
-                if finish_date_hour == 12:
-                    finish_date_hour = 0
-            else:
-                if finish_date_hour > 12:
-                    finish_date_hour = finish_date_hour + 12
-
-            project_end_date = datetime.datetime(
-                finish_date_year,
-                finish_date_month,
-                finish_date_day,
-                finish_date_hour,
-                finish_date_minute
+            save_opportunity.opportunity_expected_close_date = time_combined(
+                int(form.cleaned_data['finish_date_year']),
+                int(form.cleaned_data['finish_date_month']),
+                int(form.cleaned_data['finish_date_day']),
+                int(form.cleaned_data['finish_date_hour']),
+                int(form.cleaned_data['finish_date_minute']),
+                form.cleaned_data['finish_date_meridiems']
             )
 
+            #Save the opportunity
             save_opportunity.save()
 
             # Save the to-do if required
             next_step = form.cleaned_data['next_step']
             print(next_step)
             if not next_step == '':
-                current_user = request.user
                 opportunity_instance = opportunity.objects.get(opportunity_id=opportunity_id)
                 save_next_step = opportunity_next_step(
                     opportunity_id=opportunity_instance,
                     next_step_description=next_step,
+                    change_user_id=request.user.id, #WHY???
                     user_id=current_user,
                 )
                 save_next_step.save()
@@ -1508,13 +1537,14 @@ def opportunity_information(request, opportunity_id):
 
     end_hour = opportunity_results.opportunity_expected_close_date.hour
     end_meridiem = u'AM'
-    if end_hour == 0:
-        end_hour = 12
-    elif end_hour == 12:
-        end_meridiem = u'PM'
-    elif end_hour > 12:
+
+    print(str(end_hour))
+
+    if end_hour > 12:
         end_hour = end_hour - 12
-        end_meridiem = u'PM'
+        end_meridiem = 'PM'
+    elif end_hour == 0:
+        end_hour = 12
 
     # initial data
     initial = {
@@ -1555,10 +1585,11 @@ def organisation_information(request, organisations_id):
 
             save_data = organisations.objects.get(organisations_id=organisations_id)
 
+
             # Extract it from website
             save_data.organisation_name = form.cleaned_data['organisation_name']
             save_data.organisation_website = form.cleaned_data['organisation_website']
-            # save_data.organisation_profile_picture = form.cleaned_data['update_profile_picture']
+            save_data.change_user=request.user
 
             # Check to see if the picture has been updated
             update_profile_picture = request.FILES.get('update_profile_picture')
@@ -1578,47 +1609,89 @@ def organisation_information(request, organisations_id):
                 # organisation_id = form.cleaned_data['organisations_id'] #Not going to work :( #organisations_results.organisations_id
                 contact_type = form.cleaned_data['contact_type']
 
-                # Calendar values
-                start_date_year = int(form.cleaned_data['start_date_year'])
-                start_date_month = int(form.cleaned_data['start_date_month'])
-                start_date_day = int(form.cleaned_data['start_date_day'])
-
                 # Create the final start/end date fields
-                task_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day)
+                task_start_date = time_combined(
+                    int(form.cleaned_data['start_date_year']),
+                    int(form.cleaned_data['start_date_month']),
+                    int(form.cleaned_data['start_date_day']),
+                    0,
+                    0,
+                    'AM'
+                )
 
                 # documents
                 contact_attachment = request.FILES.get('contact_attachment')
 
-                submit_history = contact_history(organisations_id=save_data
-                                                 , contact_type=contact_type
-                                                 , contact_date=task_start_date
-                                                 , contact_history=contact_history_notes
-                                                 , user_id=current_user
-                                                 , contact_attachment=contact_attachment)
+                if contact_attachment:
+                    documents_save = documents(
+                        document_description=contact_attachment,
+                        document=contact_attachment,
+                        change_user=request.user,
+                    )
+                    documents_save.save()
+
+                    #Add to document permissions
+                    document_permissions_save = document_permissions(
+                        document_key=documents_save,
+                        organisations_id=organisations.objects.get(organisations_id=organisations_id),
+                        change_user=request.user,
+                    )
+                    document_permissions_save.save()
+
+
+                submit_history = contact_history(
+                    organisations_id=save_data,
+                    contact_type=contact_type,
+                    contact_date=task_start_date,
+                    contact_history=contact_history_notes,
+                    user_id=current_user,
+                    change_user=request.user,
+                    document_key=documents_save,
+                )
+                if contact_history:
+                    submit_history.document_key=documents_save
                 submit_history.save()
+
+
 
             """
 			Document Uploads
 			"""
             document = request.FILES.get('document')
             if not document == None:
-                document_save = organisation_customers_documents(
-                    organisations_id=save_data,
-                    document_description=form.cleaned_data['document_description'],
+                document_save = documents(
+                    #organisations_id=save_data,
+                    #document_description=form.cleaned_data['document_description'],
                     document=form.cleaned_data['document'],
-                    user_id=current_user,
+                    change_user=request.user,
                 )
+                document_description = form.cleaned_data['document_description']
+                if document_description=="":
+                    document_save.document_description=document_save.document
+                else:
+                    document_save.document_description=document_description
                 document_save.save()
+
+                document_permissions_save = document_permissions(
+                    organisations_id=save_data,
+                    change_user=request.user,
+                    document_key=document_save,
+                )
+                document_permissions_save.save()
 
     # Query the database for organisation information
     organisation_results = organisations.objects.get(pk=organisations_id)
     campus_results = organisations_campus.objects.filter(organisations_id=organisations_id)
     customers_results = customers.objects.filter(organisations_id=organisation_results)
     organisation_contact_history = contact_history.objects.filter(organisations_id=organisations_id)
-    customer_document_results = organisation_customers_documents.objects.filter(organisations_id=organisations_id,
-                                                                                customer_id__isnull=False)
-    organisation_document_results = organisation_customers_documents.objects.filter(organisations_id=organisations_id,
-                                                                                    customer_id__isnull=True)
+    customer_document_results = document_permissions.objects.filter(
+        organisations_id=organisations_id,
+        customer_id__isnull=False
+    )
+    organisation_document_results = document_permissions.objects.filter(
+        organisations_id=organisations_id,
+        customer_id__isnull=True
+    )
     project_results = project.objects.filter(organisations_id=organisations_id)
     task_results = tasks.objects.filter(organisations_id=organisations_id)
     opportunity_results = opportunity.objects.filter(organisations_id=organisations_id)
@@ -1655,10 +1728,41 @@ def organisation_information(request, organisations_id):
         'project_results': project_results,
         'task_results': task_results,
         'opportunity_results': opportunity_results,
+        'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
     }
 
     return HttpResponse(t.render(c, request))
 
+"""
+TEMP CODE
+"""
+@login_required(login_url='login')
+def private_document(request, document_key):
+    """
+    This is temp code. Hopefully I will make this function
+    a lot better
+    """
+    PRIVATE_MEDIA_ROOT = settings.PRIVATE_MEDIA_ROOT
+    #Now get the document location and return that to the user.
+    document_results=documents.objects.get(pk=document_key)
+
+    path = PRIVATE_MEDIA_ROOT + '/' + document_results.document.name
+    #path = '/home/luke/Downloads/gog_gods_will_be_watching_2.1.0.9.sh'
+
+    """
+    Serve private files to users with read permission.
+    """
+    #logger.debug('Serving {0} to {1}'.format(path, request.user))
+    #if not permissions.has_read_permission(request, path):
+    #    if settings.DEBUG:
+    #        raise PermissionDenied
+    #    else:
+    #        raise Http404('File not found')
+    return server.serve(request, path=path)
+
+"""
+END TEMP DOCUMENT
+"""
 
 @login_required(login_url='login')
 def project_information(request, project_id):
@@ -1706,56 +1810,31 @@ def project_information(request, project_id):
             project_results.project_name = form.cleaned_data['project_name']
             project_results.project_description = form.cleaned_data['project_description']
 
-            # Calendar values
-            start_date_year = int(form.cleaned_data['start_date_year'])
-            start_date_month = int(form.cleaned_data['start_date_month'])
-            start_date_day = int(form.cleaned_data['start_date_day'])
-            start_date_hour = int(form.cleaned_data['start_date_hour'])
-            start_date_minute = int(form.cleaned_data['start_date_minute'])
-            start_date_meridiems = form.cleaned_data['start_date_meridiems']
-
-            finish_date_year = int(form.cleaned_data['finish_date_year'])
-            finish_date_month = int(form.cleaned_data['finish_date_month'])
-            finish_date_day = int(form.cleaned_data['finish_date_day'])
-            finish_date_hour = int(form.cleaned_data['finish_date_hour'])
-            finish_date_minute = int(form.cleaned_data['finish_date_minute'])
-            finish_date_meridiems = form.cleaned_data['finish_date_meridiems']
-
-            """
-			Time is tricky. So I am following the simple rules;
-			12:** AM will have the hour changed to 0
-			1:** AM will not have the hour changed
-			12:** PM will not have the hour changed
-			1:** PM will have the hour changed by adding 12
-			
-			From these simple points, I have constructed the following 
-			if statements to take control of the correct hour.
-			"""
-            if start_date_meridiems == "AM":
-                if start_date_hour == 12:
-                    start_date_hour = 0
-            else:
-                if start_date_hour < 12:
-                    start_date_hour = start_date_hour + 12
-
-            if finish_date_meridiems == "AM":
-                if finish_date_hour == 12:
-                    finish_date_hour = 0
-            else:
-                if finish_date_hour < 12:
-                    finish_date_hour = finish_date_hour + 12
-
             # Create the final start/end date fields
-            project_results.project_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day,
-                                                                   start_date_hour, start_date_minute)
-            project_results.project_end_date = datetime.datetime(finish_date_year, finish_date_month, finish_date_day,
-                                                                 finish_date_hour, finish_date_minute)
+            project_results.project_start_date = time_combined(
+                int(form.cleaned_data['start_date_year']),
+                int(form.cleaned_data['start_date_month']),
+                int(form.cleaned_data['start_date_day']),
+                int(form.cleaned_data['start_date_hour']),
+                int(form.cleaned_data['start_date_minute']),
+                form.cleaned_data['start_date_meridiems']
+            )
+
+            project_results.project_end_date = time_combined(
+                int(form.cleaned_data['finish_date_year']),
+                int(form.cleaned_data['finish_date_month']),
+                int(form.cleaned_data['finish_date_day']),
+                int(form.cleaned_data['finish_date_hour']),
+                int(form.cleaned_data['finish_date_minute']),
+                form.cleaned_data['finish_date_meridiems']
+            )
 
             # Check to make sure the resolve button was hit
             if 'Resolve' in request.POST:
                 # Well, we have to now resolve the data
                 project_results.project_status = 'Resolved'
 
+            project_results.change_user=request.user
             project_results.save()
 
             if 'add_customer_submit' in request.POST:
@@ -1764,7 +1843,8 @@ def project_information(request, project_id):
 
                 submit_customer = project_customers(
                     project_id=project.objects.get(pk=project_id),
-                    customer_id=customers.objects.get(pk=customer_id)
+                    customer_id=customers.objects.get(pk=customer_id),
+                    change_user=request.user,
                 )
 
                 submit_customer.save()
@@ -1774,6 +1854,7 @@ def project_information(request, project_id):
                     project_id=project.objects.get(pk=project_id),
                     cost_description=form.cleaned_data['cost_description'],
                     cost_amount=form.cleaned_data['cost_amount'],
+                    change_user=request.user,
                 )
                 submit_cost.save()
 
@@ -1787,6 +1868,7 @@ def project_information(request, project_id):
                 submit_associate_user = assigned_users(
                     user_id=user_instance,
                     project_id=project.objects.get(pk=project_id),
+                    change_user=request.user,
                 )
                 submit_associate_user.save()
 
@@ -1803,36 +1885,42 @@ def project_information(request, project_id):
 
                 parent_folder_id = request.POST.get("parent_folder_id")
 
-                submit_document = project_tasks_documents(
-                    project_id=project.objects.get(pk=project_id),
+                submit_document = documents(
                     document=document,
                     document_description=document_description,
                     document_url_location=document_url_location,
-                    # document_folder_id = parent_folder_instance,
+                    change_user=request.user,
                 )
                 try:
-                    submit_document.document_folder_id = document_folders.objects.get(
-                        document_folder_id=int(parent_folder_id))
+                    submit_document.document_folder_id = folders.objects.get(
+                        folder_id=int(parent_folder_id),
+                        change_user=request.user,
+                    )
                     submit_document.save()
                 except:
                     submit_document.save()
+                submit_document_permissions = document_permissions(
+                    project_id=project.objects.get(pk=project_id),
+                    change_user=request.user,
+                )
 
             """
 			Fuck - someone wants to create a new folder...
 			"""
             if 'new_folder' in request.POST:
-                document_folder_description = form.cleaned_data['document_folder_description']
+                document_folder_description = form.cleaned_data['folder_description']
                 folder_location = request.POST.get("folder_location")
 
-                print(document_folder_description)
-                submit_folder = document_folders(
+                submit_folder = folders(
                     project_id=project.objects.get(pk=project_id),
-                    document_folder_description=document_folder_description,
+                    folder_description=document_folder_description,
+                    change_user=request.user,
                 )
 
                 try:
-                    submit_folder.parent_folder_id = document_folders.objects.get(
-                        document_folder_id=int(folder_location))
+                    submit_folder.parent_folder_id = folders.objects.get(
+                        folder_id=int(folder_location),
+                    )
                     submit_folder.save()
                 except:
                     submit_folder.save()
@@ -1851,7 +1939,8 @@ def project_information(request, project_id):
                     project_id=project_id_connection,
                     user_id=current_user,
                     project_history=project_history_text_results,
-                    user_infomation=current_user.id
+                    user_infomation=current_user.id,
+                    change_user = request.user,
                 )
                 data.save()
 
@@ -1864,10 +1953,43 @@ def project_information(request, project_id):
 
     # Obtain the required data
     project_history_results = project_history.objects.filter(project_id=project_id, is_deleted='FALSE')
-    documents_results = project_tasks_documents.objects.filter(project_id=project_id, is_deleted='FALSE').order_by(
-        'document_description')
-    document_folders_results = document_folders.objects.filter(project_id=project_id, is_deleted='FALSE').order_by(
-        'document_folder_description')
+    cursor.execute(
+        """
+        SELECT DISTINCT
+          documents.document_key
+        , documents.document_description
+        , documents.document_url_location
+        , documents.document
+        , documents_folder.folder_id_id
+        
+        FROM 
+          documents
+          LEFT JOIN
+                document_permissions
+                ON documents.document_key = document_permissions.document_key_id
+		LEFT JOIN
+				folder
+				ON folder.project_id_id = %s
+		LEFT JOIN
+				documents_folder
+				ON documents_folder.folder_id_id = folder.folder_id
+				AND documents_folder.document_key_id = documents.document_key
+
+        
+        WHERE 1=1
+        
+        AND document_permissions.project_id_id = %s
+        ORDER BY documents.document_description 
+        """, [project_id,project_id]
+    )
+    documents_results = cursor.fetchall()
+
+    folders_results = folders.objects.filter(
+        project_id=project_id,
+        is_deleted='FALSE'
+    ).order_by(
+        'folder_description'
+    )
     costs_results = costs.objects.filter(project_id=project_id, is_deleted='FALSE')
 
     """
@@ -2017,8 +2139,8 @@ def project_information(request, project_id):
         'project_history_results': project_history_results,
         'project_customers_results': project_customers_results,
         'new_customers_results': new_customers_results,
-        'documents_results': serializers.serialize('json', documents_results),
-        'document_folders_results': serializers.serialize('json', document_folders_results),
+        'documents_results': simplejson.dumps(documents_results,encoding='utf-8'),
+        'folders_results': serializers.serialize('json', folders_results),
         'media_url': settings.MEDIA_URL,
         'users_results': users_results,
         'assigned_results': assigned_results.values(
@@ -2037,14 +2159,16 @@ def project_information(request, project_id):
 def resolve_project(request, project_id):
     project_update = project.objects.get(project_id=project_id)
     project_update.project_status = 'Resolved'
+    project_update.change_user=request.user
     project_update.save()
     return HttpResponseRedirect(reverse('active_projects'))
 
 
 @login_required(login_url='login')
 def resolve_task(request, task_id):
-    task_update = task.object.get(task_id=task_id)
+    task_update = tasks.object.get(task_id=task_id)
     task_update.task_status = 'Resolved'
+    task_update.change_user=request.user
     task_update.save()
     return HttpResponseRedirect(reverse('active_projects'))
 
@@ -2285,49 +2409,22 @@ def task_information(request, task_id):
             task_results.task_long_description = form.cleaned_data['task_long_description']
 
             # Calendar values
-            start_date_year = int(form.cleaned_data['start_date_year'])
-            start_date_month = int(form.cleaned_data['start_date_month'])
-            start_date_day = int(form.cleaned_data['start_date_day'])
-            start_date_hour = int(form.cleaned_data['start_date_hour'])
-            start_date_minute = int(form.cleaned_data['start_date_minute'])
-            start_date_meridiems = form.cleaned_data['start_date_meridiems']
-
-            finish_date_year = int(form.cleaned_data['finish_date_year'])
-            finish_date_month = int(form.cleaned_data['finish_date_month'])
-            finish_date_day = int(form.cleaned_data['finish_date_day'])
-            finish_date_hour = int(form.cleaned_data['finish_date_hour'])
-            finish_date_minute = int(form.cleaned_data['finish_date_minute'])
-            finish_date_meridiems = form.cleaned_data['finish_date_meridiems']
-
-            """
-			Time is tricky. So I am following the simple rules;
-			12:** AM will have the hour changed to 0
-			1:** AM will not have the hour changed
-			12:** PM will not have the hour changed
-			1:** PM will have the hour changed by adding 12
-			
-			From these simple points, I have constructed the following 
-			if statements to take control of the correct hour.
-			"""
-            if start_date_meridiems == "AM":
-                if start_date_hour == 12:
-                    start_date_hour = 0
-            else:
-                if start_date_hour > 12:
-                    start_date_hour = start_date_hour + 12
-
-            if finish_date_meridiems == "AM":
-                if finish_date_hour == 12:
-                    finish_date_hour = 0
-            else:
-                if finish_date_hour > 12:
-                    finish_date_hour = finish_date_hour + 12
-
-            # Create the final start/end date fields
-            task_results.task_start_date = datetime.datetime(start_date_year, start_date_month, start_date_day,
-                                                             start_date_hour, start_date_minute)
-            task_results.task_end_date = datetime.datetime(finish_date_year, finish_date_month, finish_date_day,
-                                                           finish_date_hour, finish_date_minute)
+            task_results.task_start_date = time_combined(
+                int(form.cleaned_data['start_date_year']),
+                int(form.cleaned_data['start_date_month']),
+                int(form.cleaned_data['start_date_day']),
+                int(form.cleaned_data['start_date_hour']),
+                int(form.cleaned_data['start_date_minute']),
+                form.cleaned_data['start_date_meridiems']
+            )
+            task_results.task_end_date = time_combined(
+                int(form.cleaned_data['finish_date_year']),
+                int(form.cleaned_data['finish_date_month']),
+                int(form.cleaned_data['finish_date_day']),
+                int(form.cleaned_data['finish_date_hour']),
+                int(form.cleaned_data['finish_date_minute']),
+                form.cleaned_data['finish_date_meridiems']
+            )
 
             # Check to make sure the resolve button was hit
             if 'Resolve' in request.POST:
@@ -2340,14 +2437,11 @@ def task_information(request, task_id):
                 # The user has tried adding a customer
                 customer_id = int(request.POST.get("add_customer_select"))
 
-                tasks_instance = tasks.objects.get(pk=task_id)
-                customers_instance = customers.objects.get(pk=customer_id)
-
                 submit_customer = tasks_customers(
                     tasks_id=tasks.objects.get(pk=task_id),
-                    customer_id=customers.objects.get(pk=customer_id)
+                    customer_id=customers.objects.get(pk=customer_id),
+                    change_user=request.user,
                 )
-
                 submit_customer.save()
 
             if 'add_user_submit' in request.POST:
@@ -2356,6 +2450,7 @@ def task_information(request, task_id):
                 submit_associate_user = assigned_users(
                     user_id=user_instance,
                     task_id=tasks.objects.get(tasks_id=task_id),
+                    change_user=request.user,
                 )
                 submit_associate_user.save()
 
@@ -2368,6 +2463,7 @@ def task_information(request, task_id):
                     cost_description=cost_description,
                     cost_amount=cost_amount,
                     task_id=tasks.objects.get(tasks_id=task_id),
+                    change_user=request.user,
                 )
                 submit_cost.save()
 
@@ -2383,38 +2479,53 @@ def task_information(request, task_id):
 
                 parent_folder_id = request.POST.get("parent_folder_id")
 
-                print(document)
+                print(parent_folder_id)
 
-                submit_document = project_tasks_documents(
-                    task_id=tasks.objects.get(pk=task_id),
+                submit_document = documents(
+                    #task_id=tasks.objects.get(pk=task_id),
                     document=document,
                     document_description=document_description,
                     document_url_location=document_url_location,
-                    # document_folder_id = parent_folder_instance,
+                    change_user=request.user,
                 )
-                try:
-                    submit_document.document_folder_id = document_folders.objects.get(
-                        document_folder_id=int(parent_folder_id))
-                    submit_document.save()
-                except:
-                    submit_document.save()
+                submit_document.save()
+
+                print(parent_folder_id)
+
+                #If the document is under a folder
+                if isinstance(parent_folder_id, int):
+                    submit_documents_folder = documents_folder(
+                        document_key=submit_document,
+                        change_user=request.user,
+                        folder_id=int(parent_folder_id),
+                    )
+                    submit_documents_folder.save()
+
+
+                #Submit the document permissions
+                submit_document_permissions = document_permissions(
+                    document_key=submit_document,
+                    task_id=tasks.objects.get(pk=task_id),
+                    change_user=request.user,
+                )
+                submit_document_permissions.save()
 
             """
 			Fuck - someone wants to create a new folder...
 			"""
             if 'new_folder' in request.POST:
-                document_folder_description = form.cleaned_data['document_folder_description']
+                folder_description = form.cleaned_data['folder_description']
                 folder_location = request.POST.get("folder_location")
 
-                print(document_folder_description)
-                submit_folder = document_folders(
+                submit_folder = folders(
                     task_id=tasks.objects.get(pk=task_id),
-                    document_folder_description=document_folder_description,
+                    folder_description=folder_description,
+                    change_user=request.user,
                 )
 
                 try:
-                    submit_folder.parent_folder_id = document_folders.objects.get(
-                        document_folder_id=int(folder_location))
+                    submit_folder.parent_folder_id = folders.objects.get(
+                        folder_id=int(folder_location))
                     submit_folder.save()
                 except:
                     submit_folder.save()
@@ -2431,16 +2542,53 @@ def task_information(request, task_id):
                     tasks_id=task_id_connection,
                     user_id=current_user,
                     task_history=task_history_text_results,
-                    user_infomation=current_user.id
+                    user_infomation=current_user.id,
+                    change_user=request.user,
                 )
                 data.save()
 
     # Obtain required data
     task_history_results = tasks_history.objects.filter(tasks_id=task_id)  # Will need to remove all IS_DELETED=TRUE
-    documents_results = project_tasks_documents.objects.filter(task_id=task_id, is_deleted='FALSE').order_by(
-        'document_description')
-    document_folders_results = document_folders.objects.filter(task_id=task_id, is_deleted='FALSE').order_by(
-        'document_folder_description')
+
+    cursor.execute(
+        """
+        SELECT DISTINCT
+          documents.document_key
+        , documents.document_description
+        , documents.document_url_location
+        , documents.document
+        , documents_folder.folder_id_id
+        
+        FROM 
+          documents
+          LEFT JOIN
+                document_permissions
+                ON documents.document_key = document_permissions.document_key_id
+		LEFT JOIN
+				folder
+				ON folder.task_id_id = %s
+		LEFT JOIN
+				documents_folder
+				ON documents_folder.folder_id_id = folder.folder_id
+				AND documents_folder.document_key_id = documents.document_key
+
+        
+        WHERE 1=1
+        
+        AND document_permissions.task_id_id = %s
+        ORDER BY documents.document_description     
+        """, [task_id,task_id])
+    #documents_results = namedtuplefetchall(cursor)
+    documents_results = cursor.fetchall()
+
+    #print(documents_results)
+
+    folders_results = folders.objects.filter(
+        task_id=task_id,
+        is_deleted='FALSE',
+    ).order_by(
+        'folder_description'
+    )
     costs_results = costs.objects.filter(task_id=task_id, is_deleted='FALSE')
 
     """
@@ -2591,8 +2739,8 @@ def task_information(request, task_id):
         'task_history_results': task_history_results,
         'tasks_customers_results': tasks_customers_results,
         'new_customers_results': new_customers_results,
-        'documents_results': serializers.serialize('json', documents_results),
-        'document_folders_results': serializers.serialize('json', document_folders_results),
+        'documents_results': simplejson.dumps(documents_results,encoding='utf-8'),
+        'folders_results': serializers.serialize('json', folders_results),
         'media_url': settings.MEDIA_URL,
         'users_results': users_results,
         'assigned_results': assigned_results.values(
@@ -2613,8 +2761,6 @@ The following function helps change the cursor's results into useable
 SQL that the html templates can read.
 """
 from collections import namedtuple
-
-
 def namedtuplefetchall(cursor):
     "Return all rows from a cursor as a namedtuple"
     desc = cursor.description
@@ -2628,14 +2774,55 @@ The following def are designed to help display a customer 404 and 500 pages
 
 
 def handler404(request):
-    response = render_to_response('404.html', {},
-                                  context_instance=RequestContext(request))
+    response = render_to_response(
+        '404.html',
+        {},
+        context_instance=RequestContext(request)
+    )
     response.status_code = 404
     return response
 
 
 def handler500(request):
-    response = render_to_response('500.html', {},
-                                  context_instance=RequestContext(request))
+    response = render_to_response(
+        '500.html',
+        {},
+        context_instance=RequestContext(request)
+    )
     response.status_code = 500
     return response
+
+
+
+"""
+The time converter - we need a function that breaks time up into different segments, and also
+combines it back. This is the time converter
+"""
+def time_combined(year,month,day,hour,minute,meridiem):
+    """
+    Time is tricky. So I am following the simple rules;
+    12:** AM will have the hour changed to 0
+    1:** AM will not have the hour changed
+    12:** PM will not have the hour changed
+    1:** PM will have the hour changed by adding 12
+
+    From these simple points, I have constructed the following
+    if statements to take control of the correct hour.
+    """
+    if meridiem == "AM":
+        if hour == 12:
+            hour = 0
+    else:
+        if hour < 12:
+            hour = hour + 12
+
+
+
+    # Create the final start/end date fields
+    return datetime.datetime(
+        year,
+        month,
+        day,
+        hour,
+        minute
+    )

@@ -1,9 +1,8 @@
 from __future__ import unicode_literals
-
 from django.db import models, connection
-
-#Import Django's users
+from .private_media import *
 from django.contrib.auth.models import User
+import uuid
 
 #ENUM choices
 IS_DELETED_CHOICE = (
@@ -20,13 +19,40 @@ PROJECT_STATUS_CHOICE = (
 
 #List of tables - in alphabetical order
 class assigned_users(models.Model):
-	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-	project_id = models.ForeignKey('project',on_delete=models.CASCADE,blank=True,null=True)
-	task_id=models.ForeignKey('tasks',on_delete=models.CASCADE,blank=True,null=True)
-	opportunity_id=models.ForeignKey('opportunity',on_delete=models.CASCADE,blank=True,null=True)
+	user_id = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+	)
+	project_id = models.ForeignKey(
+		'project',
+		on_delete=models.CASCADE,
+		blank=True,
+		null=True
+	)
+	task_id=models.ForeignKey(
+		'tasks',
+		on_delete=models.CASCADE,
+		blank=True,
+		null=True,
+	)
+	opportunity_id=models.ForeignKey(
+		'opportunity',
+		on_delete=models.CASCADE,
+		blank=True,
+		null=True,
+	)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
-	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user',
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE',
+	)
 
 	class Meta:
 		db_table="assigned_users"
@@ -45,12 +71,18 @@ class contact_history(models.Model):
 	organisations_id = models.ForeignKey('organisations', on_delete=models.CASCADE, )
 	customer_id = models.ForeignKey('customers', on_delete = models.CASCADE, blank=True, null=True)
 	contact_type = models.ForeignKey('list_of_contact_types', on_delete=models.CASCADE,)
-	contact_date = models.DateField()
+	contact_date = models.DateTimeField()
 	contact_history = models.TextField()
-	contact_attachment= models.FileField(upload_to='contact_history/', null=True, blank=True)
+	document_key = models.ForeignKey(
+		'documents',
+		on_delete=models.CASCADE,
+	)
 	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-	audit_date = models.DateTimeField(auto_now = True)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
+
 
 	class Meta:
 		db_table = "contact_history"
@@ -62,8 +94,10 @@ class costs(models.Model):
 	task_id = models.ForeignKey('tasks', on_delete=models.CASCADE, blank=True, null=True)
 	cost_description = models.CharField(max_length=255, )
 	cost_amount = models.DecimalField(max_digits=19, decimal_places=2)
-	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
-
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	def __str__(self):
 		return '$' + str(self.cost_amount)
 
@@ -79,10 +113,12 @@ class customers(models.Model):
 	customer_email = models.CharField(max_length = 200)
 	customer_profile_picture = models.ImageField(blank=True,null=True,upload_to='profile_pictures')
 	organisations_id = models.ForeignKey('organisations', on_delete = models.CASCADE,)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-	
 	def __str__(self):
-		return str(self.customer_id) + ' - ' + self.customer_first_name + ' ' + self.customer_last_name
+		return str(self.customer_id) + ' - ' + self.customer_first_name.encode('utf8') + ' ' + self.customer_last_name.encode('utf8')
 	
 	class Meta:
 		db_table = "customers"
@@ -92,39 +128,164 @@ class customers_campus(models.Model):
 	campus_id = models.ForeignKey('organisations_campus', on_delete = models.CASCADE,)
 	customer_phone = models.CharField(max_length = 11)
 	customer_fax = models.CharField(max_length = 11)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-	
 	class Meta:
 		db_table = "customers_campus"
 
 
 
-
-
-
-
-class document_folders(models.Model):
-	document_folder_id = models.AutoField(primary_key=True)
-	project_id = models.ForeignKey('project', on_delete=models.CASCADE, blank=True, null=True)
-	task_id = models.ForeignKey('tasks', on_delete=models.CASCADE, blank=True, null=True)
-	document_folder_description = models.CharField(max_length=255)
-	parent_folder_id = models.ForeignKey('self', blank=True, null=True)
-	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-
-	def __str__(self):
-		return self.document_folder_description
+class documents(models.Model):
+	document_key=models.UUIDField(
+		default=uuid.uuid4,
+		editable=False,
+		primary_key=True,
+	)
+	document_description=models.CharField(max_length=255)
+	document_url_location = models.TextField(
+		# Contains URLS
+		null=True,
+		blank=True,
+	)
+	document = models.FileField(
+		blank=True,
+		null=True,
+		storage=File_Storage(),
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted=models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE',
+	)
 
 	class Meta:
-		db_table = "document_folder"
+		db_table = "documents"
+
+	def __str__(self):
+		return self.document_description
+
+
+class documents_folder(models.Model):
+	document_key = models.ForeignKey(
+		'documents',
+		on_delete=models.CASCADE,
+	)
+	folder_id = models.ForeignKey(
+		'folders',
+		on_delete=models.CASCADE,
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length = 5,
+		choices = IS_DELETED_CHOICE,
+		default = 'FALSE'
+	)
+
+
+	class Meta:
+		db_table = "documents_folder"
+
+
+
+class document_permissions(models.Model):
+	document_key=models.ForeignKey(
+		'documents',
+		on_delete=models.CASCADE,
+	)
+	project_id=models.ForeignKey(
+		'project',
+		blank=True,
+		null=True,
+		on_delete=models.CASCADE,
+	)
+	task_id = models.ForeignKey(
+		'tasks',
+		blank=True,
+		null=True,
+		on_delete=models.CASCADE,
+	)
+	organisations_id = models.ForeignKey(
+		'organisations',
+		blank=True,
+		null=True,
+		on_delete=models.CASCADE,
+	)
+	customer_id = models.ForeignKey(
+		'customers',
+		blank=True,
+		null=True,
+		on_delete=models.CASCADE,
+	)
+	opportunity_id = models.ForeignKey(
+		'opportunity',
+		blank=True,
+		null=True,
+		on_delete=models.CASCADE,
+	)
+	user_id = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		null=True,
+		blank=True
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length = 5,
+		choices = IS_DELETED_CHOICE,
+		default = 'FALSE'
+	)
+
+	class Meta:
+		db_table = "document_permissions"
+
+
+class folders(models.Model):
+	folder_id = models.AutoField(primary_key=True)
+	project_id = models.ForeignKey('project', on_delete=models.CASCADE, blank=True, null=True)
+	task_id = models.ForeignKey('tasks', on_delete=models.CASCADE, blank=True, null=True)
+	folder_description = models.CharField(max_length=255)
+	parent_folder_id = models.ForeignKey('self', blank=True, null=True)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
+	def __str__(self):
+		return self.folder_description.encode('utf8')
+
+	class Meta:
+		db_table = "folder"
 
 
 class groups(models.Model):
 	group_id = models.AutoField(primary_key = True)
 	group_name = models.CharField(max_length = 50, unique = True)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-	
 	def __str__(self):
-		return self.group_name
+		return self.group_name.encode('utf8')
 	
 	class Meta:
 		db_table = "groups"
@@ -133,7 +294,7 @@ class group_permissions(models.Model):
 	role = models.CharField(max_length = 15)
 	
 	def __str__(self):
-		return self.role
+		return self.role.encode('utf8')
 	
 	class Meta:
 		db_table = "group_permissions"
@@ -145,11 +306,13 @@ class list_of_amount_type(models.Model):
 	list_order = models.IntegerField(unique=True)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
-	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user',blank=True,null=True)
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 	def __str__(self):
-		return self.amount_type_description
+		return self.amount_type_description.encode('utf8')
 
 	class Meta:
 		db_table = "list_of_amount_type"
@@ -165,8 +328,10 @@ class list_of_currency(models.Model):
 	list_order = models.IntegerField(unique=True)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
-	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user',blank=True,null=True)
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 	def __str__(self):
 		return self.currency_description.encode('utf8')
@@ -178,10 +343,13 @@ class list_of_currency(models.Model):
 class list_of_contact_types(models.Model):
 	contact_type_id = models.AutoField(primary_key=True)
 	contact_type = models.CharField(max_length=10)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user',blank=True,null=True)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 	def __str__(self):
-		return self.contact_type
+		return self.contact_type.encode('utf8')
 
 	class Meta:
 		db_table = "list_of_contact_types"
@@ -190,8 +358,11 @@ class list_of_contact_types(models.Model):
 class list_of_countries(models.Model):
 	country_id = models.CharField(primary_key = True, max_length = 2)
 	country_name = models.CharField(max_length = 50)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user',blank=True,null=True)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-	
+
 	def __str__(self):
 		return self.country_name.encode('utf8')
 	
@@ -204,8 +375,11 @@ class list_of_countries_regions(models.Model):
 	country_id = models.ForeignKey('list_of_countries', on_delete = models.CASCADE,)
 	region_name = models.CharField(max_length = 150)
 	region_type = models.CharField(max_length = 80, null=True)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user',blank=True,null=True)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-	
+
 	def __str__(self):
 		return self.region_name.encode('utf8')
 	
@@ -224,10 +398,13 @@ class list_of_opportunity_stage(models.Model):
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user',blank=True,null=True)
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 	def __str__(self):
-		return self.opportunity_stage_description
+		return self.opportunity_stage_description.encode('utf8')
 
 	class Meta:
 		db_table = "list_of_opportunity_stage"
@@ -242,11 +419,13 @@ class list_of_lead_source(models.Model):
 	list_order = models.IntegerField(unique=True)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
-	user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user',blank=True,null=True)
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 	def __str__(self):
-		return self.lead_source_description
+		return self.lead_source_description.encode('utf8')
 
 	class Meta:
 		db_table = "list_of_lead_source"
@@ -255,10 +434,13 @@ class list_of_lead_source(models.Model):
 class list_of_titles(models.Model):
 	title_id = models.AutoField(primary_key = True)
 	title = models.CharField(max_length = 10)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user',blank=True,null=True)
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-	
+
 	def __str__(self):
-		return self.title
+		return self.title.encode('utf8')
 	
 	class Meta:
 		db_table = "list_of_titles"
@@ -279,7 +461,10 @@ class opportunity(models.Model):
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 	class Meta:
 		db_table="opportunities"
@@ -291,7 +476,10 @@ class opportunity_next_step(models.Model):
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-	is_deleted = models.CharField(max_length=5, choices=IS_DELETED_CHOICE, default='FALSE')
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 
 	class Meta:
 		db_table='opportunity_next_step'
@@ -303,10 +491,13 @@ class organisations(models.Model):
 	organisation_website = models.CharField(max_length = 50)
 	organisation_email = models.CharField(max_length = 100)
 	organisation_profile_picture = models.ImageField(blank=True,null=True)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-	
+
 	def __str__(self):
-		return self.organisation_name
+		return self.organisation_name.encode('utf8')
 	
 	class Meta:
 		db_table = "organisations"
@@ -323,27 +514,16 @@ class organisations_campus(models.Model):
 	campus_suburb = models.CharField(max_length = 50)
 	campus_region_id = models.ForeignKey('list_of_countries_regions', on_delete = models.CASCADE,)
 	campus_country_id = models.ForeignKey('list_of_countries', on_delete = models.CASCADE,)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-	
+
 	def __str__(self):
-		return self.campus_nickname
+		return self.campus_nickname.encode('utf8')
 	
 	class Meta:
 		db_table = "organisations_campus"
-
-
-class organisation_customers_documents(models.Model):
-	document_id = models.AutoField(primary_key=True)
-	organisations_id = models.ForeignKey('organisations', on_delete = models.CASCADE,)
-	customer_id = models.ForeignKey('customers', on_delete = models.CASCADE,null=True,blank=True,)
-	document_description = models.CharField(max_length=255)
-	document = models.FileField(upload_to='documents/', null=True, blank=True)
-	document_uploaded_audit = models.DateTimeField(auto_now_add=True)
-	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-
-	class Meta:
-		db_table = "organisation_customers_documents"
 
 
 class project(models.Model):
@@ -354,9 +534,13 @@ class project(models.Model):
 	project_start_date = models.DateTimeField()
 	project_end_date = models.DateTimeField()
 	project_status = models.CharField(max_length = 15, choices = PROJECT_STATUS_CHOICE, default = 'New')
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	
 	def __str__(self):
-		return self.project_name
+		return self.project_name.encode('utf8')
 	
 	class Meta:
 		db_table = "project"
@@ -367,9 +551,11 @@ class project_customers(models.Model):
 	project_id = models.ForeignKey('project', on_delete = models.CASCADE,)
 	customer_id = models.ForeignKey('customers', on_delete = models.CASCADE,)
 	customer_description = models.CharField(max_length=255, null=True, blank=True)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-	audit_date = models.DateTimeField(auto_now = True)
-	
+
 	class Meta:
 		db_table = "project_customers"	
 	
@@ -377,9 +563,11 @@ class project_customers(models.Model):
 class project_groups(models.Model):
 	project_id = models.ForeignKey('project', on_delete = models.CASCADE,)
 	groups_id = models.ForeignKey('groups', on_delete = models.CASCADE,)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-	audit_date = models.DateTimeField(auto_now = True)
-	
+
 	class Meta:
 		db_table = "project_groups"
 		
@@ -390,8 +578,10 @@ class project_history(models.Model):
 	user_id = models.ForeignKey(User, on_delete = models.CASCADE, null = True)
 	user_infomation = models.CharField(max_length = 255)
 	project_history = models.TextField()
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-	audit_date = models.DateTimeField(auto_now = True)	
 
 	def __str__(self):
 		return self.region.encode('utf8')
@@ -403,8 +593,11 @@ class project_stages(models.Model):
 	project_stages_id = models.AutoField(primary_key = True)
 	project_id = models.ForeignKey('project', on_delete = models.CASCADE,)
 	stages_id = models.ForeignKey('stages', on_delete = models.CASCADE,)
-	audit_date = models.DateTimeField(auto_now = True)
-	
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
+
 	class Meta:
 		db_table = "project_stages"
 
@@ -413,38 +606,28 @@ class project_tasks(models.Model):
 	project_tasks = models.AutoField(primary_key = True)
 	project_id = models.ForeignKey('project', on_delete = models.CASCADE, db_column = 'project_id')
 	task_id = models.ForeignKey('tasks', on_delete = models.CASCADE, db_column = 'task_id')
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-	audit_date = models.DateTimeField(auto_now = True)		
-	
+
 	class Meta:
 		db_table = "project_tasks"
 
 
-
-class project_tasks_documents(models.Model):
-	document_id = models.AutoField(primary_key=True)
-	project_id = models.ForeignKey('project', on_delete=models.CASCADE, blank=True, null=True)
-	task_id = models.ForeignKey('tasks', on_delete=models.CASCADE, blank=True, null=True)
-	document_description = models.CharField(max_length=255)
-	document_url_location = models.TextField(null=True, blank=True) #Will contain drive locations & URLs
-	document = models.FileField(upload_to='documents/', null=True, blank=True)
-	document_uploaded_audit = models.DateTimeField(auto_now_add=True)
-	document_folder_id = models.ForeignKey('document_folders', on_delete=models.CASCADE, blank=True, null=True)
-	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-
-	class Meta:
-		db_table = "project_tasks_documents"
 
 
 class stages(models.Model):
 	stages_id = models.AutoField(primary_key = True)
 	group_id = models.ForeignKey('groups', on_delete = models.CASCADE,)
 	stage = models.CharField(max_length = 45)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-	
+
 	def __str__(self):
-		return self.stage
+		return self.stage.encode('utf8')
 	
 	class Meta:
 		db_table = "stages"
@@ -459,9 +642,13 @@ class tasks(models.Model):
 	task_end_date = models.DateTimeField()
 	task_assigned_to = models.ForeignKey(User, null = True, blank = True)
 	task_status = models.CharField(max_length = 15, choices = PROJECT_STATUS_CHOICE, default = 'New')
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
 	
 	def __str__(self):
-		return self.task_short_description
+		return self.task_short_description.encode('utf8')
 	
 	class Meta:
 		db_table = "tasks"
@@ -471,8 +658,11 @@ class tasks_actions(models.Model):
 	tasks_id = models.ForeignKey('tasks', on_delete = models.CASCADE,)
 	task_action = models.TextField()
 	submitted_by = models.ForeignKey(User,)
-	audit_date = models.DateTimeField(auto_now = True)		
-	
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
+	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
+
 	class Meta:
 		db_table = "tasks_actions"	
 
@@ -481,18 +671,22 @@ class tasks_customers(models.Model):
 	tasks_id = models.ForeignKey('tasks', on_delete=models.CASCADE, )
 	customer_id = models.ForeignKey('customers', on_delete = models.CASCADE,)
 	customers_description = models.CharField(max_length=155, null=True, blank=True)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-	audit_date = models.DateTimeField(auto_now = True)	
-	
+
 	class Meta:
 		db_table = "tasks_customers"
 		
 class tasks_groups(models.Model):
 	tasks_id = models.ForeignKey('tasks', on_delete = models.CASCADE,)
 	groups_id = models.ForeignKey('groups', on_delete = models.CASCADE,)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-	audit_date = models.DateTimeField(auto_now = True)
-	
+
 	class Meta:
 		db_table = "tasks_groups"
 		
@@ -502,9 +696,11 @@ class tasks_history(models.Model):
 	user_id = models.ForeignKey(User, on_delete = models.CASCADE,)
 	user_infomation = models.CharField(max_length = 255)	
 	task_history = models.TextField()
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-	audit_date = models.DateTimeField(auto_now = True)	
-	
+
 	class Meta:
 		db_table = "tasks_history"
 		
@@ -513,8 +709,11 @@ class user_groups(models.Model):
 	username = models.ForeignKey(User,)
 	group_id = models.ForeignKey('groups', on_delete = models.CASCADE,)
 	user_group_permission = models.ForeignKey('group_permissions', on_delete = models.CASCADE,)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='%(class)s_change_user')
 	is_deleted = models.CharField(max_length = 5, choices = IS_DELETED_CHOICE, default = 'FALSE')
-	
+
 	class Meta:
 		db_table = "user_groups"	
 		

@@ -10,7 +10,7 @@ def initialise_data(apps, schema_editor):
     The initial setup of the database should populate certain fields with
     the correct data. Otherwise certain features of the database will
     not function correctly. The first of such is the group permissions
-    which determine how much data/options the user will see. There are 
+    which determine how much data/options the user will see. There are
     4 different rows submitted;
     1. Admin
     2. Group Admin

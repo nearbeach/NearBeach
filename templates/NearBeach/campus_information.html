@@ -17,9 +17,9 @@
 				{% csrf_token %}
 				<table>
 					<tr class="header">
-						<td>Field</td><td>Input</td>
+						<td width="20%">Field</td><td>Input</td>
 					</tr>
-					<tr><td>Organisation Name:</td><td>{{ campus_results.organisations_id }}</td></tr>
+                    <tr><td>Organisation Name:</td><td><a href="{% url 'organisation_information' campus_results.organisations_id.organisations_id %}">{{ campus_results.organisations_id }}</a></td></tr>
 					<tr><td>Campus Nickname:</td><td>{{ campus_information_form.campus_nickname }}</td></tr>
 					<tr><td>Campus Phone:</td><td>{{ campus_information_form.campus_phone }}</td></tr>
 					<tr><td>Campus Fax:</td><td>{{ campus_information_form.campus_fax }}</td></tr>
@@ -54,7 +54,7 @@
 	<br/>
 	<div class="div_content">
 		<div class="div_header">
-			<h2>Campus Contacts</h2>
+			<h3>Campus Contacts</h3>
 		</div>
 		<div class="div_sub_content">
 			{% if add_customers_results %}
@@ -92,7 +92,7 @@
 
 	<div class="div_content">
 		<div class="div_header">
-			<h2>Map</h2>
+			<h3>Map</h3>
 		</div>
 		<div class="div_sub_content">
 			<div id='map' style='width: 100%; height: 680px'></div>

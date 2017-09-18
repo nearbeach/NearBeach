@@ -19,25 +19,24 @@
 
 			{% for row in active_projects_results %}
 				<tr>
-					{% if row.0 == None %}
+					{% if row.project_id == None %}
 						<td> - </td>
 					{% else %}
-						<td><a href="{% url 'project_information' row.0 %}">PRO{{ row.0 }}</a></td>
+						<td><a href="{% url 'project_information' row.project_id %}">PRO{{ row.project_id }}</a></td>
 					{% endif %}
 
-					{% if row.1 == "" %}
+					{% if row.task_id == "" %}
 						<td> - </td>
 					{% else %}
-						<td><a href="{% url 'task_information' row.1 %}">TASK{{ row.1 }}</a></td>
+						<td><a href="{% url 'task_information' row.task_id %}">TASK{{ row.task_id }}</a></td>
 					{% endif %}
 
-					<td>{{ row.2 }}</td>
-					<td>{{ row.3 }}</td>
+					<td><a href="{% url 'organisation_information' row.organisations_id %}">{{ row.organisation_name }}</a><br/><br/>
+						{{ row.description }}</td>
+					<td>{{ row.end_date }}</td>
 				</tr>
 			{% endfor %}
 			</table>
-
-
 		{% else %}
 			<p>Sorry, but there seems to be no data :(</p>
 		{% endif %}

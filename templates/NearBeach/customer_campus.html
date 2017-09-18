@@ -20,8 +20,8 @@
 				<tr><td>Customer fax:</td><td>{{ customer_campus_form.customer_fax }}</td></tr>
 				<tr><td>Organisation:</td><td><a href="{% url 'organisation_information' customer_campus_results.campus_id.organisations_id.organisations_id  %}">{{ customer_campus_results.campus_id.organisations_id }}</a></td></tr>
 				<tr><td>Campus:</td><td><a href="{% url 'campus_information' customer_campus_results.campus_id.id %}">{{ customer_campus_results.campus_id }}</a></td></tr>
-				<tr><td>Suburb:</td><td>{{ customer_campus_results.campus_id.campus_suburb_id }}</td></tr>
-				<tr><td>State [update section in javascript]:</td><td>{{ customer_campus_results.campus_id.campus_state_id }}</td></tr>
+				<tr><td>Suburb:</td><td>{{ customer_campus_results.campus_id.campus_suburb }}</td></tr>
+				<tr><td>State</td><td>{{ customer_campus_results.campus_id.campus_region_id }}</td></tr>
 				<tr><td>Country:</td><td>{{ customer_campus_results.campus_id.campus_country_id }}</td></tr>
 			</table>
 			<input type="submit" name="Save" value="Save and Return"/>
@@ -29,7 +29,7 @@
 	</div>
 	<div class="div_content">
 		<div class="div_header">
-			<h2>Map</h2>
+			<h3>Map</h3>
 		</div>
 		<div class="div_sub_content">
 			<div id='map' style='width: 100%; height: 680px'></div>

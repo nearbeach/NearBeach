@@ -77,6 +77,7 @@ urlpatterns = [
 	#Search
 	url(r'^search', views.search, name='search'),
 
+	url(r'^private/(?P<document_key>[0-9A-Za-z_\-]+)/$', views.private_document, name='private'),
 ]
 
 if settings.DEBUG:

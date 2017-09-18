@@ -4,21 +4,22 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/expand_sections.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/task_information.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/render_documents.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
+<script tpye="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
+
+<body onload="on_page_load()">
 <script>
 	function on_page_load() {
 		initiate_dates();
-		render_documents_code = '<div id="_folder" class="folder_sub_content">' + render_folders({{ document_folders_results | safe }}, null) + '</div>';
 
-		root_folder = document.getElementById("root_folder");
-		root_folder.innerHTML = render_documents_code;
+        //Re-size all those pesky textareas;
+        autoscale_textarea();
 
-        render_documents({{ documents_results | safe }}, {{ media_url }});
-
+        //Running total currently stops the javascript.
         running_total();
-	}
+    }
 </script>
-<body onload="on_page_load();">
+{{ folder_results }}
 	<form action="{% url 'task_information' task_results.tasks_id %}" method="POST" enctype="multipart/form-data">
 		{% csrf_token %}
 		<div class="div_content">
@@ -49,10 +50,10 @@
 			<div class="div_header" onclick="hide_unhide('task_history')">
 				<h3>Task History</h3>
 			</div>
-			<div class="div_sub_content" id="task_history" style="display: none;">
+			<div class="div_sub_content" id="task_history">
 				{% if task_history_results %}
 					{% for row in task_history_results %}
-						<p>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.audit_date }}<br />
+						<p>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}<br />
 						<textarea readonly>{{ row.task_history }}</textarea>
 						</p>
 					{% endfor %}
@@ -75,7 +76,7 @@
 							<tr class="header"><td>Project Id</td><td>project Name</td><td>End Date</td></tr>
 							{% for associated_project_row in associated_project_results %}
 								<tr>
-								<td><a href="Project - {% url 'project_information' associated_project_row.project_id %}">{{ associated_project_row.project_id }}</a></td>
+								<td><a href="{% url 'project_information' associated_project_row.project_id %}">Project - {{ associated_project_row.project_id }}</a></td>
 								<td>{{ associated_project_row.project_name }}</td>
 								<td>{{ associated_project_row.project_end_date }}</td>
 								</tr>
@@ -97,7 +98,9 @@
                         <select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" >
                             <option value="---------" selected>---------</option>
                             {% for row in new_customers_results %}
-                                <option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
+                                {% if not row.customer_id == None %}
+                                    <option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
+                                {% endif %}
                             {% endfor %}
                         </select>
                         <input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Task" disabled="disabled">
@@ -174,64 +177,15 @@
 				<h3>Task Documents</h3>
 			</div>
 			<div class="div_sub_content" id="task_documents" style="display: none;">
-                {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
-                    <a href="#" onclick="add_new_document()">Upload New Document</a><br/>
-                    <a href="#" onclick="add_new_folder()">Create New Folder</a>
+                << REBUILDING AS AJAX WIDGET >>
+			</div>
+		</div>
 
-                    <div id="root_folder">
-                        It looks like there are no documents or folders
-                    </div>
-                {% endif %}
-			</div>
-		</div>
-		<div id="overlay_new_document" class="overlay_new_document">
-			<div class="overlay_content">
-				<h1>New Document</h1>
-				<select id="upload_type" onchange="upload_or_link()">
-					<option id="upload">Upload Documentation</option>
-					<option id="link">Link Documentation</option>
-				</select>
-				<div id="overlay_upload" style="display: block;">
-					<p>Please upload a file and press submit</p>
-					{{ task_information_form.document }}
 
-				</div>
-				<div id="overlay_link" style="display: none;">
-					<p>Please include the URL to the cloud document</p>
-					{{ task_information_form.document_url_location }}
-				</div>
-				<br/>
-				<div width="100%">
-					File Description<br/>
-					{{ task_information_form.document_description }}<br/>
-					Folder Location<br/>
-					<select id="parent_folder_id" name="parent_folder_id">
-						<option value="">-----</option>
-					</select>
-				</div>
-				<div>
-					<button id="new_document" name="new_document" disabled>Submit</button>
-					<a href="#" onclick="add_new_document()">Cancel</a>
-				</div>
-			</div>
-		</div>
-		<div id="overlay_new_folder" class="overlay_new_folder">
-			<div class="overlay_content">
-				<h1>New Folder</h1>
-				{{ task_information_form.document_folder_description }}<br/>
-				<select id="folder_location" name="parent_folder_id">
-					<option value="">-----</option>
-				</select>
-				<div>
-					<button id="new_folder" name="new_folder" disabled>Submit</button>
-					<a href="#" onclick="add_new_folder()">Cancel</a>
-				</div>
-			</div>
-		</div>
         <br/>
         <div class="div_content">
             <div class="div_header">
-                <h4>Assigned Users</h4>
+                <h3>Assigned Users</h3>
             </div>
             <div class="div_sub_content">
                 {% if users_results %}
@@ -273,3 +227,4 @@
 
 
 {% endblock %}
+

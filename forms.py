@@ -179,7 +179,7 @@ class customer_campus_form(ModelForm):
 		model = customers_campus
 		fields = { 
 					'customer_phone', 
-					'customer_fax' 
+					'customer_fax'
 				}
 
 
@@ -199,7 +199,13 @@ class campus_information_form(ModelForm):
 	class Meta:
 		model = organisations_campus
 		fields = '__all__'
-		exclude = ['campus_region_id', 'campus_country_id','organisations_id','is_deleted']
+		exclude = [
+			'campus_region_id',
+			'campus_country_id',
+			'organisations_id',
+			'is_deleted',
+			'change_user',
+		]
 
 
 
@@ -213,8 +219,12 @@ class customer_information_form(ModelForm):
 	start_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
 	start_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
 	start_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+	start_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
+	start_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
+	start_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
 
-	contact_history = forms.CharField(widget=forms.TextInput(attrs={'width': '99%','height': '300px'}), required=False)
+
+	contact_history = forms.CharField(widget=forms.Textarea(attrs={'width': '99%','max-height': '300px'}), required=False)
 
 	contact_attachment = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange':'enable_submit()'}))
 
@@ -230,6 +240,7 @@ class customer_information_form(ModelForm):
 		exclude = [
 			'is_deleted',
 			'organisations_id',
+			'change_user',
 		]
 
 	def clean_update_profile_picture(self):
@@ -364,7 +375,8 @@ class new_opportunity_form(ModelForm):
 			'date_created',
 			'date_modified',
 			'user_id',
-			'is_deleted'
+			'is_deleted',
+			'change_user',
 		}
 
 class new_organisation_form(forms.Form):
@@ -446,7 +458,8 @@ class opportunity_information_form(ModelForm):
 			'date_created',
 			'date_modified',
 			'user_id',
-			'is_deleted'
+			'is_deleted',
+			'change_user',
 		}
 
 class organisation_information_form(ModelForm):
@@ -464,7 +477,7 @@ class organisation_information_form(ModelForm):
 	start_date_day = forms.ChoiceField(choices=DAY_CHOICES,
 									   widget=forms.Select(attrs={"onChange": 'check_start_date()'}))
 
-	contact_history = forms.CharField(widget=forms.TextInput(attrs={'width': '99%', 'height': '300px'}), required=False)
+	contact_history = forms.CharField(widget=forms.Textarea(attrs={'width': '99%'}), required=False)
 	contact_attachment = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange': 'enable_submit()'}))
 
 	#Profile picture
@@ -531,7 +544,7 @@ class project_information_form(ModelForm):
 	document_url_location = forms.URLField(required=False, widget=forms.TextInput(attrs={'placeholder':'https://example.com', 'onChange':'enable_submit()'}))
 	document_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
 
-	document_folder_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
+	folder_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
 
 	# Costs feature
 	cost_description = forms.CharField(
@@ -627,7 +640,17 @@ class task_information_form(ModelForm):
 	document_url_location = forms.URLField(required=False, widget=forms.TextInput(attrs={'placeholder':'https://example.com', 'onChange':'enable_submit()'}))
 	document_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
 
-	document_folder_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width': '100%', 'onkeyup': 'enable_submit()'}))
+	folder_description = forms.CharField(
+		max_length=255,
+		required=False,
+		widget=forms.TextInput(
+			attrs={
+				'width': '100%',
+				'onkeyup': 'enable_submit()'
+			}
+		)
+	)
+
 
 	#Costs feature
 	cost_description=forms.CharField(

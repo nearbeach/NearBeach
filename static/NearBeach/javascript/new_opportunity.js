@@ -51,3 +51,29 @@ function probability_update() {
     success_probability.value = opportuniy_stage[opportuniy_stage.selectedIndex].getAttribute("probability");
 
 }
+
+
+function apply_organisation_customer(organisation, customer) {
+    /*
+    After the page loads, we will need to apply the organisation and
+    if relivant the customer.
+     */
+    if (organisation!=null) {
+        //Apply the organisation
+        var select_field=document.getElementById("id_organisations_id");
+        for (i=0;i<select_field.length;i++) {
+            if (select_field[i].value==organisation) {
+                select_field[i].selected=true;
+            }
+        }
+    }
+    if (customer!=null) {
+        //Apply the customer
+        var select_field=document.getElementById("customer_id");
+        for (i=0;i<select_field.length;i++) {
+            if (select_field[i].value==customer) {
+                select_field[i].selected=true;
+            }
+        }
+    }
+}
