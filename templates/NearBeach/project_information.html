@@ -1,18 +1,24 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
+<script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/expand_sections.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/project_information.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
+<script tpye="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
+
 <script>
 	function on_page_load() {
+	    //Initiate the dates
 		initiate_dates();
+
 		var fucking_var = {{ folders_results | safe }};
 
         //Autoscale all textarea
         autoscale_textarea();
 
-        //running_total();
+        //Running totals under costs
+        running_total();
 	}
 </script>
 
