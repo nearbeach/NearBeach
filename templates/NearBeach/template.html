@@ -5,33 +5,36 @@
 	<title>NearBeach Pre-Alpha</title>
 	{% load staticfiles %}
 	<link rel='stylesheet' href='{% static "NearBeach/css/styles.css" %}' />
-	
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+    <script src="js/jquery-3.2.1.min.js"></script>
+
+    <script>
+        function toggleMenu() {
+            $("#main-nav").slideToggle(300);
+        }
+
+        function toggleSub(sub) {
+            if (sub == 0) {
+                $("#sub-menu-main").slideToggle(300);
+            } else {
+                $("#sub-menu-item").slideToggle(300);
+            }
+        }
+    </script>
 </head>
+<header id="main-header">
+    <div id="main-menu">
+        <h1><a href="#">NearBeach</a></h1>
+        <a href="#" id="menu-toggle" onclick="toggleMenu()">
+            <img src="{{ MEDIA_URL }}/static/NearBeach/images/burger.png">
+        </a>
+    </div>
+</header>
 <body>
 	<div class="landing_page">
-	<nav class="menu">
-		<ul>
-			<li><a href="#">Main Menu</a>
-				<ul class="submenu">
-					<li><a href="{% url 'search_organisations' %}">Organisations</a></li>
-					<li><a href="{% url 'search_customers' %}">Customers</a></li>
-					<li><a href="{% url 'logout' %}">Logout</a></li>
-				</ul>
-			</li>
-			<li><a href="{% url 'active_projects' %}">Active Projects</a></li>
-			<li><a href="#">New Item</a>
-				<ul class="submenu">
-					<li><a href="{% url 'new_project' %}">New Project</a></li>
-					<li><a href="{% url 'new_task' %}">New Task</a></li>
-					<li><a href="{% url 'new_organisation' %}">New Organisation</a></li>
-					<li><a href="{% url 'new_customer' 0 %}">New Customer</a></li>
-				</ul>
-			</li>
-			<li><a href="{% url 'search' %}">Search</a></li>
-		</ul>
-	</nav>
-	
-	
+
 	{% if user.is_authenticated %}
 		{% block content %}
 		{% endblock %}
