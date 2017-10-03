@@ -11,67 +11,48 @@
     <form action={% url 'new_project' %} method="post" class="new_project">
 {% endif %}
 	{% csrf_token %}
-	<div class="div_content">
-		<div class="div_header">
-			<h1>New Project</h1>
-		</div>
-		<div class="div_sub_content">
-			{% if organisations_count == 0 %}
-				<a href="{% url 'new_organisation' %}">Can you please create an organisation first.</a>
-			{% else %}
-				<table>
-					<tr class="header"><td width="150px">Field</td><td>Input</td></tr>
-					<tr><td>Project Name</td><td>{{ new_project_form.project_name }}</td></tr>
-					<tr><td>Project Description</td><td>{{ new_project_form.project_description }}</td></tr>
-					<tr><td>Organisation</td><td>{{ new_project_form.organisations_id }}</td></tr>
-					<tr><td>Project Start</td><td>{{ new_project_form.start_date_year }}/{{ new_project_form.start_date_month }}/{{ new_project_form.start_date_day }}<br/>
-						{{ new_project_form.start_date_hour }}:{{ new_project_form.start_date_minute }} {{ new_project_form.start_date_meridiems }}</td></tr>
-					<tr><td>Project Finish</td><td>{{ new_project_form.finish_date_year }}/{{ new_project_form.finish_date_month }}/{{ new_project_form.finish_date_day }}<br/>
-						{{ new_project_form.finish_date_hour }}:{{ new_project_form.finish_date_minute }} {{ new_project_form.finish_date_meridiems }}</td></tr>
-				</table>
-		</div>
-	</div>
-	<br/>
-	<div class="div_content">
-		<div class="div_header">
-			<h3>Assigned to Group(s)</h3>
-		</div>
-		<div class="div_sub_content">
-			{% if groups_count == 1 %}
-				<p>Group already automatically choosen. Please click on "Submit"</p>
-			{% else %}
-				<p>Please select the appropriate groups to assign this project to - number {{ groups_count }}</p>
-			{% endif %}
-			<select multiple required name="assigned_to_groups" id="assigned_to_groups" style="width: 50%; height: 120px;">
-			{% for group_row in groups_results %}
-				<option value = "{{ group_row.group_id }}">{{ group_row.group_name }}</option>
-			{% endfor %}
-			</select>
-			<br />
-			<input type="submit" value="Submit new project">
-			{% if groups_count == 1 %}
-			<script>
-				/*
-				Method
-				~~~~~~
-				If the group_count == 1 we will use javascript to select
-				the only option and then hide the select statement. As it
-				will not be needed.
-				 */
-				var object=document.getElementById("assigned_to_groups");
-				object.options[0].selected=true;
-				object.style.display="none";
+    <h2>New Project</h2>
+    {% if organisations_count == 0 %}
+        <a href="{% url 'new_organisation' %}">Can you please create an organisation first.</a>
+    {% else %}
+        <ul>
+            <li>{{ new_project_form.project_name }}</li>
+            <li>{{ new_project_form.project_description }}</li>
+            <li>Organisation: {{ new_project_form.organisations_id }}</li>
+            <li>Project Start: {{ new_project_form.start_date_year }}/{{ new_project_form.start_date_month }}/{{ new_project_form.start_date_day }}<br/>
+                {{ new_project_form.start_date_hour }}:{{ new_project_form.start_date_minute }} {{ new_project_form.start_date_meridiems }}</li>
+            <li>Project Finish: {{ new_project_form.finish_date_year }}/{{ new_project_form.finish_date_month }}/{{ new_project_form.finish_date_day }}<br/>
+                {{ new_project_form.finish_date_hour }}:{{ new_project_form.finish_date_minute }} {{ new_project_form.finish_date_meridiems }}</li>
+        </ul>
+        <h2>Assigned to Group(s)</h2>
+        {% if groups_count == 1 %}
+            <p>Group already automatically choosen. Please click on "Submit"</p>
+        {% else %}
+            <p>Please select the appropriate groups to assign this project to - number {{ groups_count }}</p>
+        {% endif %}
+        <select multiple required name="assigned_to_groups" id="assigned_to_groups" style="width: 50%; height: 120px;">
+        {% for group_row in groups_results %}
+            <option value = "{{ group_row.group_id }}">{{ group_row.group_name }}</option>
+        {% endfor %}
+        </select>
+        <input type="submit" value="Submit new project">
+        {% if groups_count == 1 %}
+            <script>
+                /*
+                Method
+                ~~~~~~
+                If the group_count == 1 we will use javascript to select
+                the only option and then hide the select statement. As it
+                will not be needed.
+                 */
+                var object=document.getElementById("assigned_to_groups");
+                object.options[0].selected=true;
+                object.style.display="none";
 
-			</script>
-			{% endif %}
-			</form>
-			{% endif %}
-		</div>
-	</div>
-
-
-			</div>
-		</div>
+            </script>
+        {% endif %}
+        </form>
+    {% endif %}
 </body>
 
 {% endblock %}

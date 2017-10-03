@@ -305,15 +305,54 @@ class new_campus_form(forms.Form):
 	#regions_results = list_of_countries_regions.objects.all()
 	
 	#Fields
-	campus_nickname = forms.CharField(max_length = 255)
-	campus_phone = forms.CharField(max_length = 255, required = False)
-	campus_fax = forms.CharField(max_length = 255, required = False)
-	#campus_country_id = forms.ModelChoiceField(label = "Country", widget = forms.Select(attrs={"onChange":'country_changed()'}), queryset = countries_results)
-	campus_address1 = forms.CharField(max_length = 255, required = False)
-	campus_address2 = forms.CharField(max_length = 255, required = False)
-	campus_address3 = forms.CharField(max_length = 255, required = False)
-	campus_suburb = forms.CharField(max_length = 255, required = False)
-	#campus_region_id = forms.ModelChoiceField(label = "Regions", widget = forms.Select, queryset = regions_results)
+	campus_nickname = forms.CharField(
+		max_length = 255,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Campus Nickname i.e Melbourne',
+		})
+	)
+	campus_phone = forms.CharField(
+		max_length = 255,
+		required = False,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Campus Phone (03) 9999 9999',
+		})
+	)
+	campus_fax = forms.CharField(
+		max_length = 255,
+		required = False,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Campus Fax (03) 9999 9999',
+		})
+	)
+	campus_address1 = forms.CharField(
+		max_length = 255,
+		required = False,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Address 1',
+		})
+	)
+	campus_address2 = forms.CharField(
+		max_length = 255,
+		required = False,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Address 2',
+		})
+	)
+	campus_address3 = forms.CharField(
+		max_length = 255,
+		required = False,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Address 3',
+		})
+	)
+	campus_suburb = forms.CharField(
+		max_length = 255,
+		required = False,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Suburb',
+		})
+	)
 
 
 class new_customer_form(forms.Form):
@@ -358,25 +397,48 @@ class new_opportunity_form(ModelForm):
 	amount_type_results = list_of_amount_type.objects.filter(is_deleted='FALSE')
 	organisaion_results = organisations.objects.filter(is_deleted='FALSE')
 
+	# Fields
+	opportunity_name = forms.CharField(
+		max_length=255,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Opportunity Name',
+		})
+	)
+	opportunity_description = forms.CharField(
+		widget=forms.Textarea(attrs={
+			'placeholder': 'Opportunity Description',
+		})
+	)
 	organisations_id = forms.ModelChoiceField(
 		label="Organisations",
 		queryset=organisaion_results,
-		widget=forms.Select(attrs={"onChange":'update_customers()'}),
+		widget=forms.Select(attrs={
+			"onChange":'update_customers()'
+		}),
 	)
-
 	amount_type_id = forms.ModelChoiceField(
 		label="Amount Type",
 		widget=forms.Select,
 		queryset=amount_type_results,
 	)
-
 	finish_date_year = forms.ChoiceField(
 		choices = YEAR_CHOICES,
-		widget=forms.Select(
-			attrs={"onChange":'check_end_date()'}
-		))
-	finish_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
-	finish_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+		widget=forms.Select(attrs={
+			"onChange":'check_end_date()'
+		})
+	)
+	finish_date_month = forms.ChoiceField(
+		choices = MONTH_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_end_date()'
+		})
+	)
+	finish_date_day = forms.ChoiceField(
+		choices = DAY_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_end_date()'
+		})
+	)
 	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
 	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
@@ -428,22 +490,64 @@ class new_organisation_form(forms.Form):
 class new_project_form(forms.Form):
 	#Get data for choice boxes
 	organisations_results = organisations.objects.filter(is_deleted='FALSE')
-	
-	
-	project_name = forms.CharField(max_length = 255)
-	project_description = forms.CharField(widget = forms.Textarea)
-	organisations_id = forms.ModelChoiceField(label = "Organisation", widget = forms.Select, queryset = organisations_results)
-	
-	start_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
-	start_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
-	start_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+
+	# Fields
+	project_name = forms.CharField(
+		max_length = 255,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Project Name',
+		})
+	)
+	project_description = forms.CharField(
+		widget = forms.Textarea(attrs={
+			'placeholder': 'Project Description',
+		})
+	)
+	organisations_id = forms.ModelChoiceField(
+		label = "Organisation",
+		widget = forms.Select,
+		queryset = organisations_results,
+	)
+	start_date_year = forms.ChoiceField(
+		choices = YEAR_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_start_date()'
+		})
+	)
+	start_date_month = forms.ChoiceField(
+		choices = MONTH_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_start_date()'
+		})
+	)
+	start_date_day = forms.ChoiceField(
+		choices = DAY_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_start_date()'
+		})
+	)
 	start_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
 	start_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
 	start_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
 	
-	finish_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
-	finish_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
-	finish_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_year = forms.ChoiceField(
+		choices = YEAR_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_end_date()'
+		})
+	)
+	finish_date_month = forms.ChoiceField(
+		choices = MONTH_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_end_date()'
+		})
+	)
+	finish_date_day = forms.ChoiceField(
+		choices = DAY_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_end_date()'
+		})
+	)
 	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
 	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
@@ -454,21 +558,64 @@ class new_project_form(forms.Form):
 class new_task_form(forms.Form):
 	#Get data for choice boxes
 	organisations_results = organisations.objects.filter(is_deleted='FALSE')
-	
-	task_short_description = forms.CharField(max_length = 255)
-	task_long_description = forms.CharField(widget = forms.Textarea)
-	organisations_id = forms.ModelChoiceField(label = "Organisation", widget = forms.Select, queryset = organisations_results)
 
-	start_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
-	start_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
-	start_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
+	# Fields
+	task_short_description = forms.CharField(
+		max_length = 255,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Task Short Description',
+		}),
+	)
+	task_long_description = forms.CharField(
+		widget = forms.Textarea(attrs={
+			"placeholder": 'Task Long Description',
+		}),
+	)
+	organisations_id = forms.ModelChoiceField(
+		label = "Organisation",
+		widget = forms.Select,
+		queryset = organisations_results
+	)
+	start_date_year = forms.ChoiceField(
+		choices = YEAR_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_start_date()'
+		})
+	)
+	start_date_month = forms.ChoiceField(
+		choices = MONTH_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_start_date()'
+		})
+	)
+	start_date_day = forms.ChoiceField(
+		choices = DAY_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_start_date()'
+		})
+	)
 	start_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
 	start_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
 	start_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
 	
-	finish_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
-	finish_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
-	finish_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
+	finish_date_year = forms.ChoiceField(
+		choices = YEAR_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_end_date()'
+		})
+	)
+	finish_date_month = forms.ChoiceField(
+		choices = MONTH_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_end_date()'
+		})
+	)
+	finish_date_day = forms.ChoiceField(
+		choices = DAY_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_end_date()'
+		})
+	)
 	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
 	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
