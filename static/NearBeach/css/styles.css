@@ -41,6 +41,28 @@ input[type="submit"], input[type="button"] {
     border-radius: 5px;
 }
 
+/* --- Navigation --- */
+
+#main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+#main-nav a, #menu-toggle {
+    display: block;
+    justify-content: space-between;
+    text-align: center;
+    text-decoration: none;
+    padding: 10px 15px 10px 15px;
+}
+
+#main-header ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
 
 h1 a {
     font-size: 1.1s5em;
@@ -71,6 +93,28 @@ h1 {
 
 #main-nav a:hover {
     color: lightgray;
+}
+
+#menu-toggle {
+    display: inline-block;
+    text-align: center;
+    float: right;
+    margin: 10px;
+    width: 30px;
+    height: 30px;
+}
+
+#main-header, #main-nav {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+#menu {
+    display: flex;
+    justify-content: space-between;
+    background-color: #33adff;
+    box-shadow: 0 0 1rem 1px rgba(0, 0, 0, 0.5);
 }
 
 #main-nav {

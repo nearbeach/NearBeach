@@ -3,8 +3,8 @@ The following file is designed to be all style related information for the menu.
 The main constributor for this is https://github.com/DatCodingGuy
 */
 
-/* --- Main Menu --- *
-#main-header {
+/* --- Main Menu --- */
+/*#main-header {
     position: fixed;
     top: 0;
     left: 0;
@@ -34,7 +34,7 @@ The main constributor for this is https://github.com/DatCodingGuy
 
 #main-nav {
     display: none;
-}
+}*/
 
 
 /* --- Sub Menus --- */
