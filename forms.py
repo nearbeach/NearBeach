@@ -320,13 +320,36 @@ class new_customer_form(forms.Form):
 	#Get data for choice boxes
 	titles_results = list_of_titles.objects.all()
 	organisations_results = organisations.objects.filter(is_deleted='FALSE')
-	
-	customer_title = forms.ModelChoiceField(label = 'Title', widget = forms.Select, queryset = titles_results)
-	customer_first_name = forms.CharField(max_length = 50)
-	customer_last_name = forms.CharField(max_length = 50)
-	customer_email = forms.EmailField(max_length = 200)
-	
-	organisations_id = forms.ModelChoiceField(label = "Organisation", widget = forms.Select, queryset = organisations_results)
+
+	#Fields
+	customer_title = forms.ModelChoiceField(
+		label = 'Title',
+		widget = forms.Select(),
+		queryset = titles_results
+	)
+	customer_first_name = forms.CharField(
+		max_length = 50,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'First Name',
+		}),
+	)
+	customer_last_name = forms.CharField(
+		max_length = 50,
+		widget = forms.TextInput(attrs={
+		'placeholder': 'Last Name',
+	}),
+	)
+	customer_email = forms.EmailField(
+		max_length = 200,
+		widget = forms.TextInput(attrs={
+		'placeholder': 'customer@email.com',
+	}),
+	)
+	organisations_id = forms.ModelChoiceField(
+		label = "Organisation",
+		widget = forms.Select,
+		queryset = organisations_results
+	)
 
 
 class new_opportunity_form(ModelForm):
@@ -380,9 +403,27 @@ class new_opportunity_form(ModelForm):
 		}
 
 class new_organisation_form(forms.Form):
-	organisation_name = forms.CharField(max_length = 255)
-	organisation_website = forms.URLField(max_length = 255, initial='https://', widget=forms.TextInput(attrs={'width': '99%'}))
-	organisation_email = forms.EmailField(max_length = 255, widget=forms.TextInput(attrs={'width': '99%'}))
+	organisation_name = forms.CharField(
+		max_length = 255,
+		widget=forms.TextInput(attrs={
+				'placeholder': 'Organisation\'s Name',
+				'width': '99%',
+		})
+	)
+	organisation_website = forms.URLField(
+		max_length = 255,
+		widget=forms.TextInput(attrs={
+			'width': '99%',
+			'placeholder': 'https://organisations_website.com',
+		})
+	)
+	organisation_email = forms.EmailField(
+		max_length = 255,
+		widget=forms.TextInput(attrs={
+			'width': '99%',
+			'placeholder': 'organisations@email.com',
+		})
+	)
 
 class new_project_form(forms.Form):
 	#Get data for choice boxes

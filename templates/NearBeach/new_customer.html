@@ -1,18 +1,15 @@
 {% extends "./template.html" %}
 {% block content %}
-<div class="div_content">
-	<div class="div_header">
-		<h1>New Customer</h1>
-	</div>
-	<div class="div_sub_content">
-		<form action={% url 'new_customer' organisations_id %} method="post" class="new_customer">
-			{% csrf_token %}
-			<table>
-				<tr class="header"><td width="250px">Field</td><td>Input</td></tr>
-				{{ new_customer_form.as_table }}
-			</table>
-			<input type="submit" value="Submit new customer">
-		</form>
-	</div>
-</div>
+	<h2>New Customer</h2>
+	<form action={% url 'new_customer' organisations_id %} method="post" class="new_customer" id="input-form">
+        {% csrf_token %}
+        <ul>
+            <li>Title: {{ new_customer_form.customer_title }}
+            <li>{{ new_customer_form.customer_first_name }}</li>
+            <li>{{ new_customer_form.customer_last_name }}</li>
+            <li>{{ new_customer_form.customer_email }}</li>
+            <li>{{ new_customer_form.organisations_id }}</li>
+        </ul>
+        <input type="submit" value="Submit new customer">
+    </form>
 {% endblock %}

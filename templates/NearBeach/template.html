@@ -8,7 +8,7 @@
 
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 
-    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="{% static '/NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
 
     <script>
         function toggleMenu() {
@@ -30,10 +30,32 @@
         <a href="#" id="menu-toggle" onclick="toggleMenu()">
             <img src="{{ MEDIA_URL }}/static/NearBeach/images/burger.png">
         </a>
+        <nav>
+            <ul id="main-nav">
+                <li onclick="toggleSub(0)">
+                    <a href="#" class="main-nav-dropdown">Main Menu<div class="down-arrow"></div></a>
+                    <ul class="sub-menu" id="sub-menu-main">
+                        <li><a href="{% url 'search_organisations' %}">Organisations</a></li>
+                        <li><a href="{% url 'search_customers' %}">Customers</a></li>
+                    </ul>
+                </li>
+                <li><a href="{% url 'active_projects' %}"  class="main-nav-active">Active Projects</a></li>
+                <li onclick="toggleSub(1)">
+                    <a href="#" class="main-nav-dropdown">New Item<div class="down-arrow"></div></a>
+                    <ul class="sub-menu" id="sub-menu-item">
+                        <li><a href="{% url 'new_project' %}">New Project</a></li>
+                        <li><a href="{% url 'new_task' %}">New Task</a></li>
+                        <li><a href="{% url 'new_organisation' %}">New Organisation</a></li>
+                        <li><a href="{% url 'new_customer' 0 %}">New Customer</a></li>
+                    </ul>
+                </li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </nav>
     </div>
 </header>
 <body>
-	<div class="landing_page">
+	<div id="wrapper">
 
 	{% if user.is_authenticated %}
 		{% block content %}
