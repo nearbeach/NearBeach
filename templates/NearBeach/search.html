@@ -1,58 +1,35 @@
 {% extends "./template.html" %}
 {% block content %}
-<div class="div_content">
-	<div class="div_header">
-		<h1>Search NearBeach</h1>
-	</div>
-	<div class="div_sub_content">
-		<form action={% url 'search' %} method="post" class="search_for">
-			{% csrf_token %}
-			<table>
-				{{ search_form.search_for }}
-			</table>
-			<input hidden type="submit">
-		</form>
-	</div>
-</div>
-<br/>
-<div class="div_content">
-	<div class="div_header">
-		<h3>Projects</h3>
-	</div>
-	<div class="div_sub_content">
-		<table>
-			<tr class="header"><td>Project ID</td><td>Project Name</td><td>Organisation</td><td>Project Status</td><td>Project End Date</td></tr>
-			{% for row in project_results %}
-				<tr>
-				<td><a href="{% url 'project_information' row.project_id %}">PRO{{ row.project_id }}</a></td>
-				<td>{{ row.project_name }}</td>
-				<td>{{ row.organisations_id }}</td>
-				<td>{{ row.project_status }}</td>
-				<td>{{ row.project_end_date }}</td>
-				</tr>
-			{% endfor %}
-		</table>
-	</div>
-</div>
-<br/>
-<div class="div_content">
-	<div class="div_header">
-		<h3>Tasks</h3>
-	</div>
-	<div class="div_sub_content">
-		<table>
-			<tr class="header"><td>Task ID</td><td>Task Description</td><td>Organisation</td><td>Task Status</td><td>Task End Date</td></tr>
-			{% for row in task_results %}
-				<tr>
-				<td><a href="{% url 'task_information' row.tasks_id %}">TASK{{ row.tasks_id }}</a></td>
-				<td>{{ row.task_short_description }}</td>
-				<td>{{ row.organisations_id }}</td>
-				<Td>{{ row.task_status }}</Td>
-				<td>{{ row.task_end_date }}</td>
+<h2>Search NearBeach</h2>
+<form action={% url 'search' %} method="post" class="search_for">
+    {% csrf_token %}
+    {{ search_form.search_for }}<input hidden type="submit">
+</form>
+<h2>Projects</h2>
+<table>
+    <tr class="header"><td>Project ID</td><td>Project Name</td><td>Organisation</td><td>Project Status</td><td>Project End Date</td></tr>
+    {% for row in project_results %}
+        <tr>
+        <td><a href="{% url 'project_information' row.project_id %}">PRO{{ row.project_id }}</a></td>
+        <td>{{ row.project_name }}</td>
+        <td>{{ row.organisations_id }}</td>
+        <td>{{ row.project_status }}</td>
+        <td>{{ row.project_end_date }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<h2>Tasks</h2>
+<table>
+    <tr class="header"><td>Task ID</td><td>Task Description</td><td>Organisation</td><td>Task Status</td><td>Task End Date</td></tr>
+    {% for row in task_results %}
+        <tr>
+        <td><a href="{% url 'task_information' row.tasks_id %}">TASK{{ row.tasks_id }}</a></td>
+        <td>{{ row.task_short_description }}</td>
+        <td>{{ row.organisations_id }}</td>
+        <Td>{{ row.task_status }}</Td>
+        <td>{{ row.task_end_date }}</td>
 
-				</tr>
-			{% endfor %}
-		</table>
-	</div>
-</div>
+        </tr>
+    {% endfor %}
+</table>
 {% endblock %}
