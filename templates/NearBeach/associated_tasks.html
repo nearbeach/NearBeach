@@ -1,10 +1,6 @@
 {% extends "./template.html" %}
 {% block content %}
-<div class="div_content">
-    <div class="div_header">
-        <h1>Associate Tasks</h1>
-    </div>
-    <div class="div_sub_content">
+        <h2>Associate Tasks</h2>
         <form action={% url 'associated_tasks' project_id %} method="post" class="associated_tasks">
             {% csrf_token %}
             <table>

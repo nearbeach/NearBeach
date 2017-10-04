@@ -187,14 +187,55 @@ class campus_information_form(ModelForm):
 	#SQL
 	region_results = list_of_countries_regions.objects.all()
 
-	#Fields
-	campus_phone = forms.CharField(required=False)
-	campus_fax = forms.CharField(required=False)
-	campus_address1 = forms.CharField(required=False)
-	campus_address2 = forms.CharField(required=False)
-	campus_address3 = forms.CharField(required=False)
-	campus_suburb = forms.CharField(required=False)
-
+	# Fields
+	campus_nickname = forms.CharField(
+		max_length=255,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Campus Nickname i.e Melbourne',
+		})
+	)
+	campus_phone = forms.CharField(
+		max_length=255,
+		required=False,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Campus Phone (03) 9999 9999',
+		})
+	)
+	campus_fax = forms.CharField(
+		max_length=255,
+		required=False,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Campus Fax (03) 9999 9999',
+		})
+	)
+	campus_address1 = forms.CharField(
+		max_length=255,
+		required=False,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Address 1',
+		})
+	)
+	campus_address2 = forms.CharField(
+		max_length=255,
+		required=False,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Address 2',
+		})
+	)
+	campus_address3 = forms.CharField(
+		max_length=255,
+		required=False,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Address 3',
+		})
+	)
+	campus_suburb = forms.CharField(
+		max_length=255,
+		required=False,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Suburb',
+		})
+	)
 
 	class Meta:
 		model = organisations_campus
@@ -772,7 +813,13 @@ class project_information_form(ModelForm):
 
 class search_form(forms.Form):
 	#Just have a simple search field
-	search_for = forms.CharField(max_length = 255, required = False)
+	search_for = forms.CharField(
+		max_length = 255,
+		required = False,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Search',
+		})
+	)
 	
 class search_customers_form(forms.Form):
 	#Just have a simple search field
@@ -789,9 +836,17 @@ class search_projects_form(forms.Form):
 												choices = INCLUDE_CLOSED)
 	
 class search_tasks_form(forms.Form):
-	search_tasks = forms.CharField(max_length = 255, required = False)
-	include_closed = forms.MultipleChoiceField(widget = forms.CheckboxSelectMultiple,
-												choices = INCLUDE_CLOSED)
+	search_tasks = forms.CharField(
+		max_length = 255,
+		required = False,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Search Tasks',
+		}),
+	)
+	include_closed = forms.MultipleChoiceField(
+		widget = forms.CheckboxSelectMultiple,
+		choices = INCLUDE_CLOSED
+	)
 
 class search_users_form(forms.Form):
 	search_users = forms.CharField(
