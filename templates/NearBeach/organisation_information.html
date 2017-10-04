@@ -19,11 +19,7 @@
 <body onload="on_page_load()">
     <form action="{% url 'organisation_information' organisation_results.organisations_id %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="div_content">
-            <div class="div_header">
-                <h1>{{ organisation_results.organisation_name }}</h1>
-            </div>
-            <div class="div_sub_content">
+                <h2>{{ organisation_results.organisation_name }}</h2>
                 <table>
                     <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
                     <tr><td colspan="2"><img src="{{ profile_picture }}" height="160px"><br/> {{ organisation_information_form.update_profile_picture }}</td></tr>
@@ -31,14 +27,8 @@
                     <tr><td>Website:</td><td>{{ organisation_information_form.organisation_website }}</td></tr>
                 </table>
                 <input type="submit" name="submit_contact" value="Update"/>
-            </div>
-        </div>
-        <br/>
-        <div class="div_content">
-            <div class="div_header">
-                <h3>Organisation Campus'</h3>
-            </div>
-            <div class="div_sub_content">
+                <h2>Organisation Campus'</h2>
+
                 <a href="{% url 'new_campus' organisation_results.organisations_id %}">New Campus</a>
                 <table>
                 <tr class="header"><td>Campus Nickname</td><td>Campus Location</td><td>Campus Address</td></tr>

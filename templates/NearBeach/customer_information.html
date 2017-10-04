@@ -18,202 +18,163 @@
 <body onload="on_page_load()">
     <form action="{% url 'customer_information' customer_results.customer_id %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="div_content">
-            <div class="div_header">
-                <h1>Customer Information</h1>
-            </div>
-            <div class="div_sub_content">
+            <h2>Customer Information</h2>
+            <table>
+                <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
+                <tr><td colspan="2"><img src="{{ profile_picture }}" height="160px"><br/> {{ customer_information_form.update_profile_picture }}</td></tr>
+                <tr><td>Customer Title:</td><td>{{ customer_information_form.customer_title }}</td></tr>
+                <tr><td>Customer First Name:</td><td>{{ customer_information_form.customer_first_name }}</td></tr>
+                <tr><td>Customer Last Name:</td><td>{{ customer_information_form.customer_last_name }}</td></tr>
+                <tr><td>Customer Email:</td><td>{{ customer_information_form.customer_email }}</td></tr>
+                <tr><td>Customer's Organisation:</td><td><a href="{% url 'organisation_information' customer_results.organisations_id.organisations_id %}">{{ customer_results.organisations_id }}</a></td></tr>
+            </table>
+            <input type="submit" name="update" value="Update Details"/>
+            <h2>Campus Contact Information</h2>
+            {% if add_campus_results %}
+
+                    <select name="add_campus_select" id="id_add_cammpus_select" onchange="enable_disable_add_campus()">
+                        <option value="---------"> ---------</option>
+                        {% for row in add_campus_results %}
+                            <option value="{{ row.id }}">{{ row.campus_nickname }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="submit" name="add_campus_submit" value="Add Campus" disabled id="id_add_cammpus_submit">
+
+            {% endif %}
+            {% if campus_results %}
                 <table>
-                    <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
-                    <tr><td colspan="2"><img src="{{ profile_picture }}" height="160px"><br/> {{ customer_information_form.update_profile_picture }}</td></tr>
-                    <tr><td>Customer Title:</td><td>{{ customer_information_form.customer_title }}</td></tr>
-                    <tr><td>Customer First Name:</td><td>{{ customer_information_form.customer_first_name }}</td></tr>
-                    <tr><td>Customer Last Name:</td><td>{{ customer_information_form.customer_last_name }}</td></tr>
-                    <tr><td>Customer Email:</td><td>{{ customer_information_form.customer_email }}</td></tr>
-                    <tr><td>Customer's Organisation:</td><td><a href="{% url 'organisation_information' customer_results.organisations_id.organisations_id %}">{{ customer_results.organisations_id }}</a></td></tr>
+                    <tr class="header"><td>Campus nickname</td><td>Contact's Phone</td><td>Contact's Fax</td><td>Campus Suburb</td><td>Campus Region</td><td>Campus Country</td></tr>
+                    {% for row in campus_results %}
+                        <tr>
+                            <td><a href="{% url 'customers_campus_information' row.id 'CUST' %}">{{ row.campus_id }}</a></td>
+                            <td>{{ row.customer_phone }}</td>
+                            <td>{{ row.customer_fax }}</td>
+                            <td>{{ row.campus_id.campus_suburb }}</td>
+                            <td>{{ row.campus_id.campus_region_id }}</td>
+                            <td>{{ row.campus_id.campus_country_id }}</td>
+                        </tr>
+                    {% endfor %}
                 </table>
-                <input type="submit" name="update" value="Update Details"/>
-            </div>
-        </div>
-        <br/>
-        <div class="div_content">
-            <div class="div_header">
-                <h3>Campus Contact Information</h3>
-            </div>
-            <div class="div_sub_content">
-                {% if add_campus_results %}
-
-                        <select name="add_campus_select" id="id_add_cammpus_select" onchange="enable_disable_add_campus()">
-                            <option value="---------"> ---------</option>
-                            {% for row in add_campus_results %}
-                                <option value="{{ row.id }}">{{ row.campus_nickname }}</option>
-                            {% endfor %}
-                        </select>
-                        <input type="submit" name="add_campus_submit" value="Add Campus" disabled id="id_add_cammpus_submit">
-
-                {% endif %}
-                {% if campus_results %}
+            {% else %}
+                <p>There are currently no campuses</p>
+            {% endif %}
+            <h2>Contact History</h2>
+            Contact Type {{  customer_information_form.contact_type }}<br/>
+            Date {{ customer_information_form.start_date_year }}/{{ customer_information_form.start_date_month }}/{{ customer_information_form.start_date_day }}<br/>
+            {{ customer_information_form.start_date_hour }}:{{ customer_information_form.start_date_minute }} {{ customer_information_form.start_date_meridiems }}
+            {{ customer_information_form.contact_history }}
+            {{ customer_information_form.contact_attachment }}
+            <input type="submit" name="submit_contact" value="Submit Contact"/>
+            {% if customer_contact_history %}
+                <div><h4>Contact History</h4></div>
+                {% for row in customer_contact_history %}
+                    <p>
+                        {{ row.contact_type }} - Submitted by {{ row.user_id }} on {{ row.contact_date }}<br/>
+                        <textarea readonly>{{ row.contact_history }}</textarea>
+                        {% if row.document_key %}
+                            <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}" target="_blank">{{ row.document_key.document_description }}</a>
+                        {% endif %}
+                    </p>
+                {% endfor %}
+            {% endif %}
+            <h2>Customer Documents</h2>
+            <table>
+                <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
+                <tr><td>Document Description:</td><td>{{ customer_information_form.document_description }}</td></tr>
+                <tr><td>Upload Document:</td><td>{{ customer_information_form.document }}</td></tr>
+            </table>
+            <input type="submit" name="update" value="Upload Documents"/>
+            <br/>
+            {% if customer_document_results %}
+                <h4>Customer Documents</h4>
+                {% for row in customer_document_results %}
+                    {% if row.document_description == "" %}
+                        <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document }}</a><br/>
+                    {%  else %}
+                        <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document_description }}</a><br/>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            <br/>
+            {% if organisation_document_results %}
+                <h4>Organisation Documents</h4>
+                {% for row in organisation_document_results %}
+                    {% if row.document_key.document_description == "" %}
+                        <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document }}</a><br/>
+                    {%  else %}
+                        <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">{{ row.document_key.document_description }}</a><br/>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            <h2>Associated Projects & Tasks</h2>
+            <h4>Actions</h4>
+            <ul>
+                <li><a href="{% url 'new_project' customer_results.organisations_id.organisations_id customer_results.customer_id %}">New Project</a></li>
+                <li><a href="{% url 'new_task' customer_results.organisations_id.organisations_id customer_results.customer_id %}">Create New Task</a></li>
+                <li><a href="{% url 'assign_customer_project_task' customer_results.customer_id %}">Assign Existing Project or Task</a></li>
+            </ul>
+            <br/>
+            <h4>Assigned Projects</h4>
+                {% if project_results %}
                     <table>
-                        <tr class="header"><td>Campus nickname</td><td>Contact's Phone</td><td>Contact's Fax</td><td>Campus Suburb</td><td>Campus Region</td><td>Campus Country</td></tr>
-                        {% for row in campus_results %}
+                        <tr class="header">
+                            <td>Project ID</td>
+                            <td>Project Name</td>
+                            <td>Project End Date</td>
+                            <td>Project Status</td>
+                        </tr>
+                        {% for row in project_results %}
                             <tr>
-                                <td><a href="{% url 'customers_campus_information' row.id 'CUST' %}">{{ row.campus_id }}</a></td>
-                                <td>{{ row.customer_phone }}</td>
-                                <td>{{ row.customer_fax }}</td>
-                                <td>{{ row.campus_id.campus_suburb }}</td>
-                                <td>{{ row.campus_id.campus_region_id }}</td>
-                                <td>{{ row.campus_id.campus_country_id }}</td>
+                                <td><a href="{% url 'project_information' row.project_id %}">PRO{{ row.project_id }}</a></td>
+                                <td>{{ row.project_name }}</td>
+                                <td>{{ row.project_end_date }}</td>
+                                <td>{{ row.project_status }}</td>
                             </tr>
                         {% endfor %}
                     </table>
                 {% else %}
-                    <p>There are currently no campuses</p>
+                    <p>Sorry. There are currently no projects for this customer</p>
                 {% endif %}
-            </div>
-        </div>
-        <br/>
-        <div class="div_content">
-            <div class="div_header">
-                <h3>Contact History</h3>
-            </div>
-            <div class="div_sub_content", id="div_contact_history">
-                Contact Type {{  customer_information_form.contact_type }}<br/>
-                Date {{ customer_information_form.start_date_year }}/{{ customer_information_form.start_date_month }}/{{ customer_information_form.start_date_day }}<br/>
-                {{ customer_information_form.start_date_hour }}:{{ customer_information_form.start_date_minute }} {{ customer_information_form.start_date_meridiems }}
-                {{ customer_information_form.contact_history }}
-                {{ customer_information_form.contact_attachment }}
-                <input type="submit" name="submit_contact" value="Submit Contact"/>
-                {% if customer_contact_history %}
-                    <div><h4>Contact History</h4></div>
-                    {% for row in customer_contact_history %}
-                        <p>
-                            {{ row.contact_type }} - Submitted by {{ row.user_id }} on {{ row.contact_date }}<br/>
-                            <textarea readonly>{{ row.contact_history }}</textarea>
-                            {% if row.document_key %}
-                                <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}" target="_blank">{{ row.document_key.document_description }}</a>
-                            {% endif %}
-                        </p>
-                    {% endfor %}
-                {% endif %}
-            </div>
-        </div>
-        <br/>
-        <div class="div_content">
-            <div class="div_header">
-                <h3>Customer Documents</h3>
-            </div>
-            <div class="div_sub_content">
-                <table>
-                    <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
-                    <tr><td>Document Description:</td><td>{{ customer_information_form.document_description }}</td></tr>
-                    <tr><td>Upload Document:</td><td>{{ customer_information_form.document }}</td></tr>
-                </table>
-                <input type="submit" name="update" value="Upload Documents"/>
-                <br/>
-                {% if customer_document_results %}
-                    <h4>Customer Documents</h4>
-                    {% for row in customer_document_results %}
-                        {% if row.document_description == "" %}
-                            <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document }}</a><br/>
-                        {%  else %}
-                            <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document_description }}</a><br/>
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-                <br/>
-                {% if organisation_document_results %}
-                    <h4>Organisation Documents</h4>
-                    {% for row in organisation_document_results %}
-                        {% if row.document_key.document_description == "" %}
-                            <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document }}</a><br/>
-                        {%  else %}
-                            <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">{{ row.document_key.document_description }}</a><br/>
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-            </div>
-        </div>
-        <div class="div_content">
-            <div class="div_header">
-                <h3>Associated Projects & Tasks</h3>
-            </div>
-            <div class="div_sub_content">
-                <h4>Actions</h4>
-                <ul>
-                    <li><a href="{% url 'new_project' customer_results.organisations_id.organisations_id customer_results.customer_id %}">New Project</a></li>
-                    <li><a href="{% url 'new_task' customer_results.organisations_id.organisations_id customer_results.customer_id %}">Create New Task</a></li>
-                    <li><a href="{% url 'assign_customer_project_task' customer_results.customer_id %}">Assign Existing Project or Task</a></li>
-                </ul>
-                <br/>
-                <h4>Assigned Projects</h4>
-                    {% if project_results %}
-                        <table>
-                            <tr class="header">
-                                <td>Project ID</td>
-                                <td>Project Name</td>
-                                <td>Project End Date</td>
-                                <td>Project Status</td>
-                            </tr>
-                            {% for row in project_results %}
-                                <tr>
-                                    <td><a href="{% url 'project_information' row.project_id %}">PRO{{ row.project_id }}</a></td>
-                                    <td>{{ row.project_name }}</td>
-                                    <td>{{ row.project_end_date }}</td>
-                                    <td>{{ row.project_status }}</td>
-                                </tr>
-                            {% endfor %}
-                        </table>
-                    {% else %}
-                        <p>Sorry. There are currently no projects for this customer</p>
-                    {% endif %}
-                <br/>
-                <h4>Assigned Tasks</h4>
-                    {% if task_results %}
-                        <table>
-                            <tr class="header">
-                                <td>Task ID</td>
-                                <td>Task Name</td>
-                                <td>Task End Date</td>
-                                <td>Task Status</td>
-                            </tr>
-                            {% for row in task_results %}
-                                <tr>
-                                    <td><a href="{% url 'task_information' row.tasks_id %}">TASK{{ row.tasks_id }}</a></td>
-                                    <td>{{ row.task_short_description }}</td>
-                                    <td>{{ row.task_end_date }}</td>
-                                    <td>{{ row.task_status }}</td>
-                                </tr>
-                            {% endfor %}
-                        </table>
-                    {% else %}
-                        <p>Sorry. There are currently no tasks for this customer.</p>
-                    {% endif %}
-            </div>
-        </div>
-        <div class="div_content">
-            <div class="div_header">
-                <h3>Customer Opportunities</h3>
-            </div>
-            <div class="div_sub_content">
-                <a href="{% url 'new_opportunity' customer_results.organisations_id.organisations_id customer_results.customer_id %}">Add a new opportuninity</a>
-                {% if opportunity_results %}
+            <br/>
+            <h4>Assigned Tasks</h4>
+                {% if task_results %}
                     <table>
                         <tr class="header">
-                            <td>Opportunity Name</td>
-                            <td>Opportunity Stage</td>
-                            <td>Opportunity End Date</td>
+                            <td>Task ID</td>
+                            <td>Task Name</td>
+                            <td>Task End Date</td>
+                            <td>Task Status</td>
                         </tr>
-                        {% for row in opportunity_results %}
+                        {% for row in task_results %}
                             <tr>
-                                <td><a href="{% url 'opportunity_information' row.opportunity_id %}">{{ row.opportunity_name }}</a></td>
-                                <td>{{ row.opportunity_stage_id }}</td>
-                                <td>{{ row.opportunity_expected_close_date }}</td>
+                                <td><a href="{% url 'task_information' row.tasks_id %}">TASK{{ row.tasks_id }}</a></td>
+                                <td>{{ row.task_short_description }}</td>
+                                <td>{{ row.task_end_date }}</td>
+                                <td>{{ row.task_status }}</td>
                             </tr>
                         {% endfor %}
                     </table>
+                {% else %}
+                    <p>Sorry. There are currently no tasks for this customer.</p>
                 {% endif %}
-            </div>
-        </div>
+            <h2>Customer Opportunities</h2>
+            <a href="{% url 'new_opportunity' customer_results.organisations_id.organisations_id customer_results.customer_id %}">Add a new opportuninity</a>
+            {% if opportunity_results %}
+                <table>
+                    <tr class="header">
+                        <td>Opportunity Name</td>
+                        <td>Opportunity Stage</td>
+                        <td>Opportunity End Date</td>
+                    </tr>
+                    {% for row in opportunity_results %}
+                        <tr>
+                            <td><a href="{% url 'opportunity_information' row.opportunity_id %}">{{ row.opportunity_name }}</a></td>
+                            <td>{{ row.opportunity_stage_id }}</td>
+                            <td>{{ row.opportunity_expected_close_date }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
     </form>
 </body>
 
