@@ -255,6 +255,13 @@ class customer_information_form(ModelForm):
 	contact_type_results = list_of_contact_types.objects.filter(is_deleted='FALSE')
 
 	#The Fields
+	customer_first_name = forms.CharField(
+		max_length=255,
+		widget=forms.TextInput(attrs={
+			'width': '30%',
+		})
+	)
+
 	contact_type = forms.ModelChoiceField(label='Contact Type', widget=forms.Select, queryset=contact_type_results,empty_label=None)
 
 	start_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
