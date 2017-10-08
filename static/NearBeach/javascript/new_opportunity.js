@@ -77,3 +77,57 @@ function apply_organisation_customer(organisation, customer) {
         }
     }
 }
+
+
+function grant_access_checkbox(checkbox_id,div_id) {
+    /*
+    After the user has ticked the checkbox, we will try and find the
+    checkbox the user has ticked and determine if we want to hide
+    or show the div with the content.
+     */
+}
+
+function select_groups(select) {
+    /*
+    Method
+    ~~~~~~
+    1.) Obtain the text for the current selection
+    2.) Look at the <ul id="select_groups_ul">...</ul> and determine if the text is already present
+    3.) If text is not present, add on another <li>
+     */
+    alert("Start");
+
+    var select_value = select.value;
+    var dataset = document.getElementById("select_groups_datalist");
+    //alert(option);
+    alert("Finish");
+
+}
+
+/*
+function selectIngredient(select)
+{
+  var option = select.options[select.selectedIndex];
+  var ul = select.parentNode.getElementsByTagName('ul')[0];
+
+  var choices = ul.getElementsByTagName('input');
+  for (var i = 0; i < choices.length; i++)
+    if (choices[i].value == option.value)
+      return;
+
+  var li = document.createElement('li');
+  var input = document.createElement('input');
+  var text = document.createTextNode(option.firstChild.data);
+
+  input.type = 'hidden';
+  input.name = 'ingredients[]';
+  input.value = option.value;
+
+  li.appendChild(input);
+  li.appendChild(text);
+  li.setAttribute('onclick', 'this.parentNode.removeChild(this);');
+
+  ul.appendChild(li);
+}
+
+ */

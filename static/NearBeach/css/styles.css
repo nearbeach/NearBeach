@@ -236,34 +236,6 @@ h2 {
     border: 1px solid darkgray;
 }
 
-/* --- Login Form --- */
-
-#login-header {
-    padding-top: 10%;
-    font-size: 3.5em;
-}
-
-#login-form {
-    max-width: 450px;
-    padding: 30px;
-    margin: -20px auto;
-    list-style: none;
-}
-
-#login-form ul {
-    padding: 0;
-    margin: 0;
-}
-
-#login-form ul li {
-    display: block;
-    margin-bottom: 10px;
-    min-height: 35px;
-}
-
-#login-form ul input[type="submit"], #login-form ul input[type="submit"] {
-    width: 100%;
-}
 
 @media (min-width: 400px) {
 

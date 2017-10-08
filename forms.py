@@ -3,20 +3,9 @@ from django import forms
 
 
 #Import from Models
-from .models import customers
-from .models import organisations
-from .models import organisations_campus
-from .models import list_of_titles
-from .models import list_of_countries
-from .models import list_of_amount_type
-from .models import list_of_countries_regions
-from .models import list_of_contact_types
-from .models import list_of_opportunity_stage
-from .models import opportunity
-from .models import user_groups
-from .models import project
-from .models import tasks
-from .models import customers_campus
+from .models import *
+from django.contrib.auth.models import User
+from django.contrib import auth
 #Import ModelForm
 from django.forms import ModelForm
 
@@ -444,6 +433,8 @@ class new_opportunity_form(ModelForm):
 	opportunity_stage_results = list_of_opportunity_stage.objects.filter(is_deleted='FALSE')
 	amount_type_results = list_of_amount_type.objects.filter(is_deleted='FALSE')
 	organisaion_results = organisations.objects.filter(is_deleted='FALSE')
+	groups_results = groups.objects.filter(is_deleted="FALSE")
+	user_results = auth.models.User.objects.all()
 
 	# Fields
 	opportunity_name = forms.CharField(
@@ -495,6 +486,36 @@ class new_opportunity_form(ModelForm):
 		max_length=255,
 		required=False
 	)
+
+	select_groups = forms.ModelMultipleChoiceField(
+		queryset=groups_results,
+		required = False,
+			   widget = forms.SelectMultiple(attrs={
+		'placeholder': "Choose the users(s)",
+		'class': 'chosen-select',
+		'multiple tabindex': '4',
+		'width': '500px',
+	}),
+	)
+
+	select_users = forms.ModelMultipleChoiceField(
+		queryset = user_results,
+		required=False,
+		widget = forms.SelectMultiple(attrs={
+			'placeholder': "Choose the users(s)",
+			'class': 'chosen-select',
+			'multiple tabindex': '4',
+			'width': '500px',
+		}),
+	)
+
+	"""
+	customer_title = forms.ModelChoiceField(
+		label = 'Title',
+		widget = forms.Select(),
+		queryset = titles_results
+	)
+	"""
 
 	class Meta:
 		model = opportunity

@@ -19,6 +19,7 @@ from django.template import RequestContext
 from .models import *
 from django.contrib.auth.models import User
 
+
 # Import Settings file to obtain secret key
 from django.conf import settings
 
@@ -987,6 +988,10 @@ def new_opportunity(request, organisation_id='', customer_id=''):
             opportunity_success_probability = form.cleaned_data['opportunity_success_probability']
             lead_source_id = form.cleaned_data['lead_source_id']
             next_step_description = form.cleaned_data['next_step_description']
+            select_groups = form.cleaned_data['select_groups']
+            select_users = form.cleaned_data['select_users']
+
+
 
             """
 			Some dropdown boxes will need to have instances made from the values.
@@ -1029,13 +1034,13 @@ def new_opportunity(request, organisation_id='', customer_id=''):
             # submit_opportunity.save()
 
             submit_opportunity.save()
+            opportunity_instance = opportunity.objects.get(opportunity_id=submit_opportunity.opportunity_id)
 
             """
 			If the next step has words in it, save it to the database
 			"""
             if not next_step_description == "":
                 # Save the next step description
-                opportunity_instance = opportunity.objects.get(opportunity_id=submit_opportunity.opportunity_id)
                 submit_next_step = opportunity_next_step(
                     opportunity_id=opportunity_instance,
                     next_step_description=next_step_description,
@@ -1045,17 +1050,60 @@ def new_opportunity(request, organisation_id='', customer_id=''):
                 submit_next_step.save()
 
             """
+            Permissions granting
+            """
+            give_all_access = True
+
+            if (select_groups):
+                give_all_access = False
+
+
+                for row in select_groups:
+                    group_instance = groups.objects.get(group_name=row)
+                    permission_save = opportunity_permissions(
+                        opportunity_id=opportunity_instance,
+                        groups_id=group_instance,
+                        user_id=current_user,
+                        change_user=request.user,
+                    )
+                    permission_save.save()
+
+            if (select_users):
+                give_all_access = False
+
+                for row in select_users:
+                    assigned_user_instance = auth.models.User.objects.get(username=row)
+                    permission_save = opportunity_permissions(
+                        opportunity_id=opportunity_instance,
+                        assigned_user=assigned_user_instance,
+                        user_id=current_user,
+                        change_user=request.user,
+                    )
+                    permission_save.save()
+
+            if (give_all_access):
+                permission_save = opportunity_permissions(
+                    opportunity_id=opportunity_instance,
+                    all_users='True',
+                    user_id=current_user,
+                    change_user=request.user,
+                )
+                permission_save.save()
+
+            """
 			Now we go to the opportunity information page so the user can start
 			inputting the require information (like documents), and tasks.
 			"""
             return HttpResponseRedirect(reverse(opportunity_information, args={submit_opportunity.opportunity_id}))
-
+        else:
+            print(form.errors)
     # load template
     t = loader.get_template('NearBeach/new_opportunity.html')
 
     # DATA
     customer_results = customers.objects.all()
     opportunity_stage_results = list_of_opportunity_stage.objects.filter(is_deleted="FALSE")
+
 
     # Setup dates for initalising
     next_week = datetime.datetime.now() + datetime.timedelta(days=31)

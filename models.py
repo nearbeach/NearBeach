@@ -469,6 +469,52 @@ class opportunity(models.Model):
 	class Meta:
 		db_table="opportunities"
 
+
+class opportunity_permissions(models.Model):
+	opportunity_permissions_id = models.AutoField(primary_key=True)
+	opportunity_id = models.ForeignKey(
+		'opportunity',
+		on_delete=models.CASCADE
+	)
+	assigned_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_assigned_user',
+		null=True,
+		blank=True,
+	)
+	groups_id = models.ForeignKey(
+		'groups',
+		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
+	)
+	all_users = models.CharField(
+		max_length = 5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE',
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length = 5,
+		choices = IS_DELETED_CHOICE,
+		default = 'FALSE'
+	)
+
+	class Meta:
+		db_table="opportunity_permission"
+
+
+
 class opportunity_next_step(models.Model):
 	opportunity_id = models.ForeignKey('opportunity',on_delete=models.CASCADE)
 	next_step_description = models.CharField(max_length=255)
