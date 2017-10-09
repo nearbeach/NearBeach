@@ -11,7 +11,7 @@ from django.core import serializers
 from django.db.models import Sum
 
 from django.core.files.storage import FileSystemStorage
-
+from django.http import HttpResponseForbidden
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
@@ -612,8 +612,24 @@ def customer_information(request, customer_id):
     task_results = namedtuplefetchall(cursor)
 
     # The campus the customer is associated to
+    """
+    We need to limit the amount of opportunities to those that the user has access to.
+    """
+    user_groups_results = user_groups.objects.filter(username=request.user)
+
+    opportunity_permissions_results = opportunity_permissions.objects.filter(
+        Q(
+            Q(assigned_user=request.user)  # User has permission
+            | Q(groups_id__in=user_groups_results.values('group_id'))  # User's groups have permission
+            | Q(all_users='TRUE')  # All users have access
+        )
+    )
+    opportunity_results = opportunity.objects.filter(
+        customer_id=customer_id,
+        opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
+    )
     campus_results = customers_campus.objects.filter(customer_id=customer_id)
-    opportunity_results = opportunity.objects.filter(customer_id=customer_id)
+
 
     try:
         profile_picture = customer_results.customer_profile_picture.url
@@ -1084,7 +1100,7 @@ def new_opportunity(request, organisation_id='', customer_id=''):
             if (give_all_access):
                 permission_save = opportunity_permissions(
                     opportunity_id=opportunity_instance,
-                    all_users='True',
+                    all_users='TRUE',
                     user_id=current_user,
                     change_user=request.user,
                 )
@@ -1097,6 +1113,8 @@ def new_opportunity(request, organisation_id='', customer_id=''):
             return HttpResponseRedirect(reverse(opportunity_information, args={submit_opportunity.opportunity_id}))
         else:
             print(form.errors)
+
+
     # load template
     t = loader.get_template('NearBeach/new_opportunity.html')
 
@@ -1578,6 +1596,38 @@ def opportunity_information(request, opportunity_id):
         else:
             print(form.errors)
 
+    else:
+        """
+        We want to limit who can see what opportunity. The exception to this is for the user
+        who just created the opportunity. (I should program in a warning stating that they
+        might not be able to see the opportunity again unless they add themselfs to the 
+        permissions list.
+
+        The user has to meet at least one of these conditions;
+        1.) User has permission
+        2.) User's group has permission
+        3.) All users have permission
+        """
+        user_groups_results = user_groups.objects.filter(username=request.user)
+
+        permission_results = opportunity_permissions.objects.filter(
+            Q(
+                Q(assigned_user=request.user)  # User has permission
+                | Q(groups_id__in=user_groups_results.values('group_id'))  # User's groups have permission
+                | Q(all_users='TRUE')  # All users have access
+            )
+            & Q(opportunity_id=opportunity_id)
+        )
+
+        print(permission_results)
+
+        if (not permission_results):
+            #Permission has not been granted.
+            #raise Http404
+            print("FAILED PERMISSIONS")
+            return HttpResponseForbidden()
+
+
     # Data
     opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
     customer_results = customers.objects.filter(organisations_id=opportunity_results.organisations_id)
@@ -1742,7 +1792,24 @@ def organisation_information(request, organisations_id):
     )
     project_results = project.objects.filter(organisations_id=organisations_id)
     task_results = tasks.objects.filter(organisations_id=organisations_id)
-    opportunity_results = opportunity.objects.filter(organisations_id=organisations_id)
+    #opportunity_results = opportunity.objects.filter(organisations_id=organisations_id)
+    """
+    We need to limit the amount of opportunities to those that the user has access to.
+    """
+    user_groups_results = user_groups.objects.filter(username=request.user)
+
+    opportunity_permissions_results = opportunity_permissions.objects.filter(
+        Q(
+            Q(assigned_user=request.user)  # User has permission
+            | Q(groups_id__in=user_groups_results.values('group_id'))  # User's groups have permission
+            | Q(all_users='TRUE')  # All users have access
+        )
+    )
+    opportunity_results = opportunity.objects.filter(
+        organisations_id=organisations_id,
+        opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
+    )
+
 
     # Date required to initiate date
     today = datetime.datetime.now()
