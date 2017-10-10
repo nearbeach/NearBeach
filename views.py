@@ -1636,12 +1636,12 @@ def opportunity_information(request, opportunity_id):
         groups_id__isnull=False,
         opportunity_id=opportunity_id,
         is_deleted='FALSE',
-    )
+    ).values('groups_id').distinct()
     user_permissions = opportunity_permissions.objects.filter(
         user_id__isnull=False,
         opportunity_id=opportunity_id,
         is_deleted='FALSE',
-    )
+    ).values('user_id').distinct()
 
     end_hour = opportunity_results.opportunity_expected_close_date.hour
     end_meridiem = u'AM'
