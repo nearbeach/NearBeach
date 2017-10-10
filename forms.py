@@ -490,7 +490,7 @@ class new_opportunity_form(ModelForm):
 	select_groups = forms.ModelMultipleChoiceField(
 		queryset=groups_results,
 		required = False,
-			   widget = forms.SelectMultiple(attrs={
+		widget = forms.SelectMultiple(attrs={
 		'placeholder': "Choose the users(s)",
 		'class': 'chosen-select',
 		'multiple tabindex': '4',
@@ -691,6 +691,11 @@ class new_task_form(forms.Form):
 
 
 class opportunity_information_form(ModelForm):
+	#Get data for form
+	groups_results = groups.objects.filter(is_deleted="FALSE")
+	user_results = auth.models.User.objects.all()
+
+
 	next_step=forms.CharField(
 		max_length=255,
 		required=False,
@@ -702,6 +707,28 @@ class opportunity_information_form(ModelForm):
 	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
 	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
 	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+
+	select_groups = forms.ModelMultipleChoiceField(
+		queryset=groups_results,
+		required=False,
+		widget=forms.SelectMultiple(attrs={
+			'placeholder': "Choose the users(s)",
+			'class': 'chosen-select',
+			'multiple tabindex': '4',
+			'width': '500px',
+		}),
+	)
+
+	select_users = forms.ModelMultipleChoiceField(
+		queryset=user_results,
+		required=False,
+		widget=forms.SelectMultiple(attrs={
+			'placeholder': "Choose the users(s)",
+			'class': 'chosen-select',
+			'multiple tabindex': '4',
+			'width': '500px',
+		}),
+	)
 
 
 	class Meta:

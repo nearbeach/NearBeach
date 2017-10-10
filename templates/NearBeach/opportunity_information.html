@@ -1,6 +1,9 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
+<link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
+<link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
+
 <body>
     <form action="{% url 'opportunity_information' opportunity_id %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
@@ -115,28 +118,32 @@
         <p>Please note - if there are NO permissions added to an opportunity then everyone will have access to the
             opportunity</p>
         <h3>Group Permissions</h3>
-        [[ INSERT THE ABILITY TO ADD MORE GROUPS ETC ]]
+        {{ opportunity_information_form.select_groups }}<input type="submit" name="submit_contact" value="Add Group"/>
         {% if group_permissions %}
                 <table>
                     <tr><td width="80%">Group</td><td> ---- </td></tr>
                     {% for row in group_permissions %}
                         <tr>
-                            <td>{{ row.group_id }}</td>
+                            <td>{{ row.groups_id }}</td>
                             <td>[[ DELETE LINK ]]</td>
                         </tr>
                     {% endfor %}
                 </table>
         {% endif %}
         <h3>User Permissions</h3>
+        {{ opportunity_information_form.select_users }}<input type="submit" name="submit_contact" value="Add User"/>
         {% if user_permissions %}
-            [[ INSERT THE ABILITY TO ADD MORE USERS ETC ]]
             <table>
                 <tr><td width="80%">User</td><td> ---- </td></tr>
                 {% for row in user_permissions %}
-                    <tr><td>{{ row.user_id }}</td><td>[[ DELETE LINK ]]</td></tr>
+                    <tr><td>{{ row.username }} - {{ row.first_name }} {{ row.last_name }}</td><td>[[ DELETE LINK ]]</td></tr>
                 {% endfor %}
             </table>
         {% endif %}
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
+
     </form>
 </body>
 {% endblock %}

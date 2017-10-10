@@ -1580,12 +1580,11 @@ def opportunity_information(request, opportunity_id):
 
             #Save the opportunity
             save_opportunity.save()
+            opportunity_instance = opportunity.objects.get(opportunity_id=opportunity_id)
 
             # Save the to-do if required
             next_step = form.cleaned_data['next_step']
-            print(next_step)
             if not next_step == '':
-                opportunity_instance = opportunity.objects.get(opportunity_id=opportunity_id)
                 save_next_step = opportunity_next_step(
                     opportunity_id=opportunity_instance,
                     next_step_description=next_step,
@@ -1593,6 +1592,31 @@ def opportunity_information(request, opportunity_id):
                     user_id=current_user,
                 )
                 save_next_step.save()
+
+            # If we need to add more users :D
+            select_groups = form.cleaned_data['select_groups']
+            if select_groups:
+                for row in select_groups:
+                    group_instance = groups.objects.get(group_id=row.group_id)
+                    permission_save = opportunity_permissions(
+                        opportunity_id=opportunity_instance,
+                        groups_id=group_instance,
+                        user_id=current_user,
+                        change_user=request.user,
+                    )
+                    permission_save.save()
+
+            select_users = form.cleaned_data['select_users']
+            if select_users:
+                for row in select_users:
+                    assigned_user_instance = auth.models.User.objects.get(username=row)
+                    permission_save = opportunity_permissions(
+                        opportunity_id=opportunity_instance,
+                        assigned_user=assigned_user_instance,
+                        user_id=current_user,
+                        change_user=request.user,
+                    )
+                    permission_save.save()
         else:
             print(form.errors)
 
@@ -1636,12 +1660,21 @@ def opportunity_information(request, opportunity_id):
         groups_id__isnull=False,
         opportunity_id=opportunity_id,
         is_deleted='FALSE',
-    ).values('groups_id').distinct()
+    ).distinct()
+    user_permissions = auth.models.User.objects.filter(
+        id__in=opportunity_permissions.objects.filter(
+            user_id__isnull=False,
+            opportunity_id=opportunity_id,
+            is_deleted='FALSE',
+        ).values('user_id').distinct()
+    )
+    """
     user_permissions = opportunity_permissions.objects.filter(
         user_id__isnull=False,
         opportunity_id=opportunity_id,
         is_deleted='FALSE',
-    ).values('user_id').distinct()
+    ).distinct()
+    """
 
     end_hour = opportunity_results.opportunity_expected_close_date.hour
     end_meridiem = u'AM'
