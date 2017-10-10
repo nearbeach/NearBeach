@@ -1632,6 +1632,16 @@ def opportunity_information(request, opportunity_id):
     opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
     customer_results = customers.objects.filter(organisations_id=opportunity_results.organisations_id)
     next_step_results = opportunity_next_step.objects.filter(opportunity_id=opportunity_id)
+    group_permissions = opportunity_permissions.objects.filter(
+        groups_id__isnull=False,
+        opportunity_id=opportunity_id,
+        is_deleted='FALSE',
+    )
+    user_permissions = opportunity_permissions.objects.filter(
+        user_id__isnull=False,
+        opportunity_id=opportunity_id,
+        is_deleted='FALSE',
+    )
 
     end_hour = opportunity_results.opportunity_expected_close_date.hour
     end_meridiem = u'AM'
@@ -1666,6 +1676,8 @@ def opportunity_information(request, opportunity_id):
         'opportunity_results': opportunity_results,
         'customer_results': customer_results,
         'next_step_results': next_step_results,
+        'group_permissions': group_permissions,
+        'user_permissions': user_permissions,
     }
 
     return HttpResponse(t.render(c, request))
