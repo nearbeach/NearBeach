@@ -78,6 +78,7 @@ urlpatterns = [
 	url(r'^search', views.search, name='search'),
 
 	url(r'^private/(?P<document_key>[0-9A-Za-z_\-]+)/$', views.private_document, name='private'),
+	url(r'^permission_denied',views.permission_denied,name='permission_denied'),
 ]
 
 if settings.DEBUG:

@@ -1698,10 +1698,11 @@ def opportunity_information(request, opportunity_id):
         print(permission_results)
 
         if (not permission_results):
-            #Permission has not been granted.
-            #raise Http404
-            print("FAILED PERMISSIONS")
-            return HttpResponseForbidden()
+            return HttpResponseRedirect(
+                reverse(
+                    permission_denied,
+                )
+            )
 
 
     # Data
@@ -1945,6 +1946,20 @@ def organisation_information(request, organisations_id):
 
     return HttpResponse(t.render(c, request))
 
+@login_required(login_url='login')
+def permission_denied(request):
+    #The user has no access to this page
+    # Load the template
+    t = loader.get_template('NearBeach/permission_denied.html')
+
+    # context
+    c = {
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
 """
 TEMP CODE
 """
@@ -2004,8 +2019,12 @@ def project_information(request, project_id):
     has_permission = cursor.fetchall()
 
     if not has_permission[0][0] == 1 and not request.session['IS_ADMIN'] == 'TRUE':
-        # Send them to 404!!
-        raise Http404
+        # Send them to permission denied!!
+        return HttpResponseRedirect(
+            reverse(
+                permission_denied,
+            )
+        )
 
     """
 	There are two buttons on the project information page. Both will come
@@ -2600,9 +2619,12 @@ def task_information(request, task_id):
     has_permission = cursor.fetchall()
 
     if not has_permission[0][0] == 1 and not request.session['IS_ADMIN'] == 'TRUE':
-        # Send them to 404!!
-        raise Http404
-
+        # Send them to permission denied!!
+        return HttpResponseRedirect(
+            reverse(
+                permission_denied,
+            )
+        )
     """
 	There are two buttons on the task information page. Both will come
 	here. Both will save the data, however only one of them will resolve
