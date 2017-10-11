@@ -121,11 +121,11 @@
         {{ opportunity_information_form.select_groups }}<input type="submit" name="submit_contact" value="Add Group"/>
         {% if group_permissions %}
                 <table>
-                    <tr><td width="80%">Group</td><td> ---- </td></tr>
+                    <tr><td width="80%">Group</td><td width="20%"> ---- </td></tr>
                     {% for row in group_permissions %}
                         <tr>
                             <td>{{ row.groups_id }}</td>
-                            <td>[[ DELETE LINK ]]</td>
+                            <td><a href="{% url 'delete_opportunity_permission' opportunity_results.opportunity_id row.groups_id.group_id '0' %}">Delete Permission</a></td>
                         </tr>
                     {% endfor %}
                 </table>
@@ -136,7 +136,9 @@
             <table>
                 <tr><td width="80%">User</td><td> ---- </td></tr>
                 {% for row in user_permissions %}
-                    <tr><td>{{ row.username }} - {{ row.first_name }} {{ row.last_name }}</td><td>[[ DELETE LINK ]]</td></tr>
+                    <tr>
+                        <td>{{ row.username }} - {{ row.first_name }} {{ row.last_name }}</td>
+                        <td><a href="{% url 'delete_opportunity_permission' opportunity_results.opportunity_id '0' row.id %}">Delete Permission</a></td>
                 {% endfor %}
             </table>
         {% endif %}

@@ -703,6 +703,46 @@ def delete_cost(request, cost_id, location_id, project_or_task):
 
 
 @login_required(login_url='login')
+def delete_opportunity_permission(request, opportunity_id, groups_id, assigned_user):
+    """
+    Method
+    ~~~~~~
+    1.) If groups_id not empty, remove the permissions
+    2.) If user_id not empty, remove the permissions
+    3.) If the count of active permissions for the opportunity is 0, add the permission "ALL USERS"
+    """
+    opportunity_instance = opportunity.objects.get(opportunity_id=opportunity_id)
+
+    if (not groups_id == 0):
+        # Will remove the ALL USERS permissions now that we have limited the permissions
+        opportunity_permissions.objects.filter(
+            opportunity_id=opportunity_instance,
+            groups_id=groups_id,
+            is_deleted='FALSE'
+        ).update(is_deleted='TRUE')
+
+    if (not assigned_user == 0):
+        # Will remove the ALL USERS permissions now that we have limited the permissions
+        opportunity_permissions.objects.filter(
+            opportunity_id=opportunity_instance,
+            assigned_user=assigned_user,
+            is_deleted='FALSE'
+        ).update(is_deleted='TRUE')
+
+    if (opportunity_permissions.objects.filter(opportunity_id=opportunity_id,is_deleted='FALSE').count() == 0):
+        #Add all users
+        permission_save=opportunity_permissions(
+            opportunity_id=opportunity_instance,
+            all_users='TRUE',
+            user_id=request.user,
+            change_user=request.user,
+        )
+        permission_save.save()
+    return HttpResponseRedirect(reverse('opportunity_information', args={opportunity_id}))
+
+#MyModel.objects.filter(pk=some_value).update(field1='some value')
+
+@login_required(login_url='login')
 def index(request):
     """
 	The index page determines if a particular user has logged in. It will
@@ -1605,6 +1645,12 @@ def opportunity_information(request, opportunity_id):
                         change_user=request.user,
                     )
                     permission_save.save()
+                #Will remove the ALL USERS permissions now that we have limited the permissions
+                opportunity_permissions.objects.filter(
+                    opportunity_id=opportunity_id,
+                    all_users='TRUE',
+                    is_deleted='FALSE'
+                ).update(is_deleted='TRUE')
 
             select_users = form.cleaned_data['select_users']
             if select_users:
@@ -1617,6 +1663,12 @@ def opportunity_information(request, opportunity_id):
                         change_user=request.user,
                     )
                     permission_save.save()
+                #Will remove the ALL USERS permissions now that we have limited the permissions
+                opportunity_permissions.objects.filter(
+                    opportunity_id=opportunity_id,
+                    all_users='TRUE',
+                    is_deleted='FALSE'
+                ).update(is_deleted='TRUE')
         else:
             print(form.errors)
 
@@ -1663,7 +1715,7 @@ def opportunity_information(request, opportunity_id):
     ).distinct()
     user_permissions = auth.models.User.objects.filter(
         id__in=opportunity_permissions.objects.filter(
-            user_id__isnull=False,
+            assigned_user__isnull=False,
             opportunity_id=opportunity_id,
             is_deleted='FALSE',
         ).values('user_id').distinct()

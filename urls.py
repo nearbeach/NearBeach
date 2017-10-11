@@ -65,7 +65,7 @@ urlpatterns = [
 
 	#misc
 	url(r'^delete_cost/(?P<cost_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])', views.delete_cost,name='delete_cost'),
-
+	url(r'^delete_opportunity_permission/(?P<opportunity_id>[0-9]+)/(?P<groups_id>[0-9]+)/(?P<assigned_user>[0-9]+)', views.delete_opportunity_permission,name='delete_opportunity_permission'),
 
 	#Forgotten Passwords
 	url(r'^password_reset/$', password_reset, {'post_reset_redirect': 'password_reset_done', 'template_name': 'NearBeach/password_reset.html'}, name='password_reset'),
