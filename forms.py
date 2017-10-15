@@ -20,15 +20,15 @@ from django.db import connection
 import datetime
 
 #Global Variables
-User = get_user_model
+User=get_user_model
 
 
 
 #Setup drop down box options
-NOTHING_CHOICE = (
+NOTHING_CHOICE=(
 	('','-----'),
 )
-YEAR_CHOICES = (
+YEAR_CHOICES=(
 	('2010','2010'),
 	('2011','2011'),
 	('2012','2012'),
@@ -62,7 +62,7 @@ YEAR_CHOICES = (
 	('2040','2040'),
 )
 
-MONTH_CHOICES = (
+MONTH_CHOICES=(
 	('1','January'),
 	('2','February'),
 	('3','March'),
@@ -77,7 +77,7 @@ MONTH_CHOICES = (
 	('12','December'),
 )
 
-DAY_CHOICES = (
+DAY_CHOICES=(
 	('1','1'),
 	('2','2'),
 	('3','3'),
@@ -111,7 +111,7 @@ DAY_CHOICES = (
 	('31','31'),
 )
 
-HOUR_CHOICES = (
+HOUR_CHOICES=(
 	('1','1'),
 	('2','2'),
 	('3','3'),
@@ -126,7 +126,7 @@ HOUR_CHOICES = (
 	('12','12'),
 )
 
-MINUTE_CHOICES = (
+MINUTE_CHOICES=(
 	('00','00'),
 	('05','05'),
 	('10','10'),
@@ -141,32 +141,38 @@ MINUTE_CHOICES = (
 	('55','55'),
 )
 
-MERIDIEMS_CHOICES = (
+MERIDIEMS_CHOICES=(
 	('AM','AM'),
 	('PM','PM'),
 )
 
 
 #Include closed option
-INCLUDE_CLOSED = {
+INCLUDE_CLOSED={
 	('INCLUDE_CLOSED','Include Closed?'),
 }
 
-INCLUDE_DEACTIVATED = {
+INCLUDE_DEACTIVATED={
 	('INCLUDE_DEACTIVATED','Include Deactivated?'),
 }
 
 #Global Variables
-MAX_PICTURE_SIZE = 1000 * 1024 #1Mb wow
+MAX_PICTURE_SIZE=1000 * 1024 #1Mb wow
 
 
 class customer_campus_form(ModelForm):
-	customer_phone = forms.CharField(max_length = 11, required = False)
-	customer_fax = forms.CharField(max_length = 11, required = False)
+	customer_phone=forms.CharField(
+		max_length=11, 
+		required=False
+	)
+	customer_fax=forms.CharField(
+		max_length=11,
+		required=False
+	)
 	
 	class Meta:
-		model = customers_campus
-		fields = { 
+		model=customers_campus
+		fields={ 
 					'customer_phone', 
 					'customer_fax'
 				}
@@ -174,51 +180,51 @@ class customer_campus_form(ModelForm):
 
 class campus_information_form(ModelForm):
 	#SQL
-	region_results = list_of_countries_regions.objects.all()
+	region_results=list_of_countries_regions.objects.all()
 
 	# Fields
-	campus_nickname = forms.CharField(
+	campus_nickname=forms.CharField(
 		max_length=255,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'Campus Nickname i.e Melbourne',
 		})
 	)
-	campus_phone = forms.CharField(
+	campus_phone=forms.CharField(
 		max_length=255,
 		required=False,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'Campus Phone (03) 9999 9999',
 		})
 	)
-	campus_fax = forms.CharField(
+	campus_fax=forms.CharField(
 		max_length=255,
 		required=False,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'Campus Fax (03) 9999 9999',
 		})
 	)
-	campus_address1 = forms.CharField(
+	campus_address1=forms.CharField(
 		max_length=255,
 		required=False,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'Address 1',
 		})
 	)
-	campus_address2 = forms.CharField(
+	campus_address2=forms.CharField(
 		max_length=255,
 		required=False,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'Address 2',
 		})
 	)
-	campus_address3 = forms.CharField(
+	campus_address3=forms.CharField(
 		max_length=255,
 		required=False,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'Address 3',
 		})
 	)
-	campus_suburb = forms.CharField(
+	campus_suburb=forms.CharField(
 		max_length=255,
 		required=False,
 		widget=forms.TextInput(attrs={
@@ -227,9 +233,9 @@ class campus_information_form(ModelForm):
 	)
 
 	class Meta:
-		model = organisations_campus
-		fields = '__all__'
-		exclude = [
+		model=organisations_campus
+		fields='__all__'
+		exclude=[
 			'campus_region_id',
 			'campus_country_id',
 			'organisations_id',
@@ -241,55 +247,89 @@ class campus_information_form(ModelForm):
 
 class customer_information_form(ModelForm):
 	# Get data for choice boxes
-	contact_type_results = list_of_contact_types.objects.filter(is_deleted='FALSE')
+	contact_type_results=list_of_contact_types.objects.filter(is_deleted='FALSE')
 
 	#The Fields
-	customer_first_name = forms.CharField(
+	customer_first_name=forms.CharField(
 		max_length=255,
 		widget=forms.TextInput(attrs={
 			'width': '30%',
 		})
 	)
 
-	contact_type = forms.ModelChoiceField(label='Contact Type', widget=forms.Select, queryset=contact_type_results,empty_label=None)
+	contact_type=forms.ModelChoiceField(
+		label='Contact Type',
+		widget=forms.Select,
+		queryset=contact_type_results,
+		empty_label=None
+	)
 
-	start_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
-	start_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
-	start_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
-	start_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
-	start_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
-	start_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+	start_date_year=forms.ChoiceField(
+		choices=YEAR_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_start_date()'
+		})
+	)
+	start_date_month=forms.ChoiceField(
+		choices=MONTH_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_start_date()'
+		})
+	)
+	start_date_day=forms.ChoiceField(
+		choices=DAY_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_start_date()'
+		})
+	)
+	start_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
+	start_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
+	start_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
 
 
-	contact_history = forms.CharField(widget=forms.Textarea(attrs={'width': '99%','max-height': '300px'}), required=False)
+	contact_history=forms.CharField(
+		widget=forms.Textarea(attrs={
+			'width': '99%',
+			'max-height': '300px'
+		}),
+		required=False
+	)
 
-	contact_attachment = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange':'enable_submit()'}))
+	contact_attachment=forms.FileField(
+		required=False,
+		widget=forms.FileInput(attrs={
+			'onChange':'enable_submit()'
+		})
+	)
 
-	update_profile_picture = forms.ImageField(required=False,)
+	update_profile_picture=forms.ImageField(required=False,)
 
 	#Customer Documents
-	document_description = forms.CharField(max_length=255, required=False)
-	document = forms.FileField(required=False)
+	document_description=forms.CharField(
+		max_length=255,
+		required=False
+	)
+	document=forms.FileField(required=False)
 
 	class Meta:
-		model = customers
-		fields = '__all__'
-		exclude = [
+		model=customers
+		fields='__all__'
+		exclude=[
 			'is_deleted',
 			'organisations_id',
 			'change_user',
 		]
 
 	def clean_update_profile_picture(self):
-		profile_picture = self.cleaned_data['update_profile_picture']
+		profile_picture=self.cleaned_data['update_profile_picture']
 
 		try:
 			"""
 			We only want to limit pictures to being under 400kb
 			"""
-			picture_errors = ""
+			picture_errors=""
 
-			main, sub = profile_picture.content_type.split('/')
+			main, sub=profile_picture.content_type.split('/')
 			if not (main == 'image' and sub in ['jpeg','gif','png']):
 				picture_errors += 'Please use a JPEG, GIF or PNG image'
 
@@ -308,18 +348,28 @@ class customer_information_form(ModelForm):
 
 
 class login_form(forms.Form):
-	username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'login', 'width': '100%'}))
-	password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'password', 'width': '100%'}))
+	username=forms.CharField(
+		widget=forms.TextInput(attrs={
+			'placeholder': 'login',
+			'width': '100%'
+		})
+	)
+	password=forms.CharField(
+		widget=forms.PasswordInput(attrs={
+			'placeholder': 'password',
+			'width': '100%'
+		})
+	)
 
 
 	def clean(self):
 		#Get login data
-		username = self.cleaned_data.get("username")
-		password = self.cleaned_data.get("password")
+		username=self.cleaned_data.get("username")
+		password=self.cleaned_data.get("password")
 		
 		#Checking authentication
 		if username and password:
-			user = authenticate(username=username, password=password)
+			user=authenticate(username=username, password=password)
 			"""
 			The following bunch of if, else if statements will return errors if the following
 			cases are met
@@ -338,54 +388,54 @@ class login_form(forms.Form):
 
 class new_campus_form(forms.Form):
 	#Get data for choice boxes
-	#countries_results = list_of_countries.objects.all()
-	#regions_results = list_of_countries_regions.objects.all()
+	#countries_results=list_of_countries.objects.all()
+	#regions_results=list_of_countries_regions.objects.all()
 	
 	#Fields
-	campus_nickname = forms.CharField(
-		max_length = 255,
+	campus_nickname=forms.CharField(
+		max_length=255,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'Campus Nickname i.e Melbourne',
 		})
 	)
-	campus_phone = forms.CharField(
-		max_length = 255,
-		required = False,
+	campus_phone=forms.CharField(
+		max_length=255,
+		required=False,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'Campus Phone (03) 9999 9999',
 		})
 	)
-	campus_fax = forms.CharField(
-		max_length = 255,
-		required = False,
+	campus_fax=forms.CharField(
+		max_length=255,
+		required=False,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'Campus Fax (03) 9999 9999',
 		})
 	)
-	campus_address1 = forms.CharField(
-		max_length = 255,
-		required = False,
+	campus_address1=forms.CharField(
+		max_length=255,
+		required=False,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'Address 1',
 		})
 	)
-	campus_address2 = forms.CharField(
-		max_length = 255,
-		required = False,
+	campus_address2=forms.CharField(
+		max_length=255,
+		required=False,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'Address 2',
 		})
 	)
-	campus_address3 = forms.CharField(
-		max_length = 255,
-		required = False,
+	campus_address3=forms.CharField(
+		max_length=255,
+		required=False,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'Address 3',
 		})
 	)
-	campus_suburb = forms.CharField(
-		max_length = 255,
-		required = False,
+	campus_suburb=forms.CharField(
+		max_length=255,
+		required=False,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'Suburb',
 		})
@@ -394,114 +444,103 @@ class new_campus_form(forms.Form):
 
 class new_customer_form(forms.Form):
 	#Get data for choice boxes
-	titles_results = list_of_titles.objects.all()
-	organisations_results = organisations.objects.filter(is_deleted='FALSE')
+	titles_results=list_of_titles.objects.all()
+	organisations_results=organisations.objects.filter(is_deleted='FALSE')
 
 	#Fields
-	customer_title = forms.ModelChoiceField(
-		label = 'Title',
-		widget = forms.Select(),
-		queryset = titles_results
+	customer_title=forms.ModelChoiceField(
+		label='Title',
+		widget=forms.Select(),
+		queryset=titles_results
 	)
-	customer_first_name = forms.CharField(
-		max_length = 50,
+	customer_first_name=forms.CharField(
+		max_length=50,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'First Name',
 		}),
 	)
-	customer_last_name = forms.CharField(
-		max_length = 50,
-		widget = forms.TextInput(attrs={
+	customer_last_name=forms.CharField(
+		max_length=50,
+		widget=forms.TextInput(attrs={
 		'placeholder': 'Last Name',
 	}),
 	)
-	customer_email = forms.EmailField(
-		max_length = 200,
-		widget = forms.TextInput(attrs={
+	customer_email=forms.EmailField(
+		max_length=200,
+		widget=forms.TextInput(attrs={
 		'placeholder': 'customer@email.com',
 	}),
 	)
-	organisations_id = forms.ModelChoiceField(
-		label = "Organisation",
-		widget = forms.Select,
-		queryset = organisations_results
+	organisations_id=forms.ModelChoiceField(
+		label="Organisation",
+		widget=forms.Select,
+		queryset=organisations_results
 	)
 
 
 class new_opportunity_form(ModelForm):
 	#Get data for choice boxes
-	opportunity_stage_results = list_of_opportunity_stage.objects.filter(is_deleted='FALSE')
-	amount_type_results = list_of_amount_type.objects.filter(is_deleted='FALSE')
-	organisaion_results = organisations.objects.filter(is_deleted='FALSE')
-	groups_results = groups.objects.filter(is_deleted="FALSE")
-	user_results = auth.models.User.objects.all()
+	opportunity_stage_results=list_of_opportunity_stage.objects.filter(is_deleted='FALSE')
+	amount_type_results=list_of_amount_type.objects.filter(is_deleted='FALSE')
+	organisaion_results=organisations.objects.filter(is_deleted='FALSE')
+	groups_results=groups.objects.filter(is_deleted="FALSE")
+	user_results=auth.models.User.objects.all()
 
 	# Fields
-	opportunity_name = forms.CharField(
+	opportunity_name=forms.CharField(
 		max_length=255,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'Opportunity Name',
 		})
 	)
-	opportunity_description = forms.CharField(
+	opportunity_description=forms.CharField(
 		widget=forms.Textarea(attrs={
 			'placeholder': 'Opportunity Description',
 		})
 	)
-	organisations_id = forms.ModelChoiceField(
+	organisations_id=forms.ModelChoiceField(
 		label="Organisations",
 		queryset=organisaion_results,
 		widget=forms.Select(attrs={
 			"onChange":'update_customers()'
 		}),
 	)
-	amount_type_id = forms.ModelChoiceField(
+	amount_type_id=forms.ModelChoiceField(
 		label="Amount Type",
 		widget=forms.Select,
 		queryset=amount_type_results,
 	)
-	finish_date_year = forms.ChoiceField(
-		choices = YEAR_CHOICES,
+	finish_date_year=forms.ChoiceField(
+		choices=YEAR_CHOICES,
 		widget=forms.Select(attrs={
 			"onChange":'check_end_date()'
 		})
 	)
-	finish_date_month = forms.ChoiceField(
-		choices = MONTH_CHOICES,
+	finish_date_month=forms.ChoiceField(
+		choices=MONTH_CHOICES,
 		widget=forms.Select(attrs={
 			"onChange":'check_end_date()'
 		})
 	)
-	finish_date_day = forms.ChoiceField(
-		choices = DAY_CHOICES,
+	finish_date_day=forms.ChoiceField(
+		choices=DAY_CHOICES,
 		widget=forms.Select(attrs={
 			"onChange":'check_end_date()'
 		})
 	)
-	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
-	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
-	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+	finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
+	finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
+	finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
 
-	next_step_description = forms.CharField(
+	next_step_description=forms.CharField(
 		max_length=255,
 		required=False
 	)
 
-	select_groups = forms.ModelMultipleChoiceField(
+	select_groups=forms.ModelMultipleChoiceField(
 		queryset=groups_results,
-		required = False,
-		widget = forms.SelectMultiple(attrs={
-		'placeholder': "Choose the users(s)",
-		'class': 'chosen-select',
-		'multiple tabindex': '4',
-		'width': '500px',
-	}),
-	)
-
-	select_users = forms.ModelMultipleChoiceField(
-		queryset = user_results,
 		required=False,
-		widget = forms.SelectMultiple(attrs={
+		widget=forms.SelectMultiple(attrs={
 			'placeholder': "Choose the users(s)",
 			'class': 'chosen-select',
 			'multiple tabindex': '4',
@@ -509,20 +548,23 @@ class new_opportunity_form(ModelForm):
 		}),
 	)
 
-	"""
-	customer_title = forms.ModelChoiceField(
-		label = 'Title',
-		widget = forms.Select(),
-		queryset = titles_results
+	select_users=forms.ModelMultipleChoiceField(
+		queryset=user_results,
+		required=False,
+		widget=forms.SelectMultiple(attrs={
+			'placeholder': "Choose the users(s)",
+			'class': 'chosen-select',
+			'multiple tabindex': '4',
+			'width': '500px',
+		}),
 	)
-	"""
 
 	class Meta:
-		model = opportunity
-		fields = '__all__'
+		model=opportunity
+		fields='__all__'
 
 
-		exclude = {
+		exclude={
 			'opportunity_expected_close_date',
 			'opportunity_stage_id',
 			'customer_id',
@@ -534,166 +576,167 @@ class new_opportunity_form(ModelForm):
 		}
 
 class new_organisation_form(forms.Form):
-	organisation_name = forms.CharField(
-		max_length = 255,
+	organisation_name=forms.CharField(
+		max_length=255,
 		widget=forms.TextInput(attrs={
 				'placeholder': 'Organisation\'s Name',
 				'width': '99%',
 		})
 	)
-	organisation_website = forms.URLField(
-		max_length = 255,
+	organisation_website=forms.URLField(
+		max_length=255,
 		widget=forms.TextInput(attrs={
 			'width': '99%',
 			'placeholder': 'https://organisations_website.com',
 		})
 	)
-	organisation_email = forms.EmailField(
-		max_length = 255,
+	organisation_email=forms.EmailField(
+		max_length=255,
 		widget=forms.TextInput(attrs={
 			'width': '99%',
 			'placeholder': 'organisations@email.com',
 		})
 	)
 
+
 class new_project_form(forms.Form):
 	#Get data for choice boxes
-	organisations_results = organisations.objects.filter(is_deleted='FALSE')
+	organisations_results=organisations.objects.filter(is_deleted='FALSE')
 
 	# Fields
-	project_name = forms.CharField(
-		max_length = 255,
+	project_name=forms.CharField(
+		max_length=255,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'Project Name',
 		})
 	)
-	project_description = forms.CharField(
-		widget = forms.Textarea(attrs={
+	project_description=forms.CharField(
+		widget=forms.Textarea(attrs={
 			'placeholder': 'Project Description',
 		})
 	)
-	organisations_id = forms.ModelChoiceField(
-		label = "Organisation",
-		widget = forms.Select,
-		queryset = organisations_results,
+	organisations_id=forms.ModelChoiceField(
+		label="Organisation",
+		widget=forms.Select,
+		queryset=organisations_results,
 	)
-	start_date_year = forms.ChoiceField(
-		choices = YEAR_CHOICES,
+	start_date_year=forms.ChoiceField(
+		choices=YEAR_CHOICES,
 		widget=forms.Select(attrs={
 			"onChange":'check_start_date()'
 		})
 	)
-	start_date_month = forms.ChoiceField(
-		choices = MONTH_CHOICES,
+	start_date_month=forms.ChoiceField(
+		choices=MONTH_CHOICES,
 		widget=forms.Select(attrs={
 			"onChange":'check_start_date()'
 		})
 	)
-	start_date_day = forms.ChoiceField(
-		choices = DAY_CHOICES,
+	start_date_day=forms.ChoiceField(
+		choices=DAY_CHOICES,
 		widget=forms.Select(attrs={
 			"onChange":'check_start_date()'
 		})
 	)
-	start_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
-	start_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
-	start_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+	start_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
+	start_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
+	start_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
 	
-	finish_date_year = forms.ChoiceField(
-		choices = YEAR_CHOICES,
+	finish_date_year=forms.ChoiceField(
+		choices=YEAR_CHOICES,
 		widget=forms.Select(attrs={
 			"onChange":'check_end_date()'
 		})
 	)
-	finish_date_month = forms.ChoiceField(
-		choices = MONTH_CHOICES,
+	finish_date_month=forms.ChoiceField(
+		choices=MONTH_CHOICES,
 		widget=forms.Select(attrs={
 			"onChange":'check_end_date()'
 		})
 	)
-	finish_date_day = forms.ChoiceField(
-		choices = DAY_CHOICES,
+	finish_date_day=forms.ChoiceField(
+		choices=DAY_CHOICES,
 		widget=forms.Select(attrs={
 			"onChange":'check_end_date()'
 		})
 	)
-	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
-	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
-	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+	finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
+	finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
+	finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
 
 	
 
 
 class new_task_form(forms.Form):
 	#Get data for choice boxes
-	organisations_results = organisations.objects.filter(is_deleted='FALSE')
+	organisations_results=organisations.objects.filter(is_deleted='FALSE')
 
 	# Fields
-	task_short_description = forms.CharField(
-		max_length = 255,
+	task_short_description=forms.CharField(
+		max_length=255,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'Task Short Description',
 		}),
 	)
-	task_long_description = forms.CharField(
-		widget = forms.Textarea(attrs={
+	task_long_description=forms.CharField(
+		widget=forms.Textarea(attrs={
 			"placeholder": 'Task Long Description',
 		}),
 	)
-	organisations_id = forms.ModelChoiceField(
-		label = "Organisation",
-		widget = forms.Select,
-		queryset = organisations_results
+	organisations_id=forms.ModelChoiceField(
+		label="Organisation",
+		widget=forms.Select,
+		queryset=organisations_results
 	)
-	start_date_year = forms.ChoiceField(
-		choices = YEAR_CHOICES,
+	start_date_year=forms.ChoiceField(
+		choices=YEAR_CHOICES,
 		widget=forms.Select(attrs={
 			"onChange":'check_start_date()'
 		})
 	)
-	start_date_month = forms.ChoiceField(
-		choices = MONTH_CHOICES,
+	start_date_month=forms.ChoiceField(
+		choices=MONTH_CHOICES,
 		widget=forms.Select(attrs={
 			"onChange":'check_start_date()'
 		})
 	)
-	start_date_day = forms.ChoiceField(
-		choices = DAY_CHOICES,
+	start_date_day=forms.ChoiceField(
+		choices=DAY_CHOICES,
 		widget=forms.Select(attrs={
 			"onChange":'check_start_date()'
 		})
 	)
-	start_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
-	start_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
-	start_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+	start_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
+	start_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
+	start_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
 	
-	finish_date_year = forms.ChoiceField(
-		choices = YEAR_CHOICES,
+	finish_date_year=forms.ChoiceField(
+		choices=YEAR_CHOICES,
 		widget=forms.Select(attrs={
 			"onChange":'check_end_date()'
 		})
 	)
-	finish_date_month = forms.ChoiceField(
-		choices = MONTH_CHOICES,
+	finish_date_month=forms.ChoiceField(
+		choices=MONTH_CHOICES,
 		widget=forms.Select(attrs={
 			"onChange":'check_end_date()'
 		})
 	)
-	finish_date_day = forms.ChoiceField(
-		choices = DAY_CHOICES,
+	finish_date_day=forms.ChoiceField(
+		choices=DAY_CHOICES,
 		widget=forms.Select(attrs={
 			"onChange":'check_end_date()'
 		})
 	)
-	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
-	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
-	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+	finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
+	finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
+	finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
 
 
 class opportunity_information_form(ModelForm):
 	#Get data for form
-	groups_results = groups.objects.filter(is_deleted="FALSE")
-	user_results = auth.models.User.objects.all()
+	groups_results=groups.objects.filter(is_deleted="FALSE")
+	user_results=auth.models.User.objects.all()
 
 
 	next_step=forms.CharField(
@@ -701,14 +744,30 @@ class opportunity_information_form(ModelForm):
 		required=False,
 	)
 
-	finish_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
-	finish_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
-	finish_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
-	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
-	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
-	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+	finish_date_year=forms.ChoiceField(
+		choices=YEAR_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_end_date()'
+		})
+	)
 
-	select_groups = forms.ModelMultipleChoiceField(
+	finish_date_month=forms.ChoiceField(
+		choices=MONTH_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_end_date()'
+		})
+	)
+	finish_date_day=forms.ChoiceField(
+		choices=DAY_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_end_date()'
+		})
+	)
+	finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
+	finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
+	finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
+
+	select_groups=forms.ModelMultipleChoiceField(
 		queryset=groups_results,
 		required=False,
 		widget=forms.SelectMultiple(attrs={
@@ -719,7 +778,7 @@ class opportunity_information_form(ModelForm):
 		}),
 	)
 
-	select_users = forms.ModelMultipleChoiceField(
+	select_users=forms.ModelMultipleChoiceField(
 		queryset=user_results,
 		required=False,
 		widget=forms.SelectMultiple(attrs={
@@ -732,9 +791,9 @@ class opportunity_information_form(ModelForm):
 
 
 	class Meta:
-		model = opportunity
-		fields = '__all__'
-		exclude = {
+		model=opportunity
+		fields='__all__'
+		exclude={
 			'customer_id',
 			'organisations_id',
 			'opportunity_expected_close_date',
@@ -748,46 +807,75 @@ class opportunity_information_form(ModelForm):
 
 class organisation_information_form(ModelForm):
 	# Get data for choice boxes
-	contact_type_results = list_of_contact_types.objects.filter(is_deleted='FALSE')
+	contact_type_results=list_of_contact_types.objects.filter(is_deleted='FALSE')
 
 	# The Fields
-	contact_type = forms.ModelChoiceField(label='Contact Type', widget=forms.Select, queryset=contact_type_results,
-										  empty_label=None)
+	contact_type=forms.ModelChoiceField(
+		label='Contact Type',
+		widget=forms.Select,
+		queryset=contact_type_results,
+		empty_label=None
+	)
 
-	start_date_year = forms.ChoiceField(choices=YEAR_CHOICES,
-										widget=forms.Select(attrs={"onChange": 'check_start_date()'}))
-	start_date_month = forms.ChoiceField(choices=MONTH_CHOICES,
-										 widget=forms.Select(attrs={"onChange": 'check_start_date()'}))
-	start_date_day = forms.ChoiceField(choices=DAY_CHOICES,
-									   widget=forms.Select(attrs={"onChange": 'check_start_date()'}))
+	start_date_year=forms.ChoiceField(
+		choices=YEAR_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange": 'check_start_date()'
+		})
+	)
+	start_date_month=forms.ChoiceField(
+		choices=MONTH_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange": 'check_start_date()'
+		})
+	)
+	start_date_day=forms.ChoiceField(
+		choices=DAY_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange": 'check_start_date()'
+		})
+	)
 
-	contact_history = forms.CharField(widget=forms.Textarea(attrs={'width': '99%'}), required=False)
-	contact_attachment = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange': 'enable_submit()'}))
+	contact_history=forms.CharField(
+		widget=forms.Textarea(attrs={
+			'width': '99%'
+		})
+		, required=False
+	)
+	contact_attachment=forms.FileField(
+		required=False,
+		widget=forms.FileInput(attrs={
+			'onChange': 'enable_submit()'
+		})
+	)
 
 	#Profile picture
-	update_profile_picture = forms.ImageField(required=False, )
+	update_profile_picture=forms.ImageField(required=False, )
 
 	#Customer Documents
-	document_description = forms.CharField(max_length=255,required=False)
-	document = forms.FileField(required=False)
+	document_description=forms.CharField(
+		max_length=255,
+		required=False
+	)
+	document=forms.FileField(required=False)
 
 	class Meta:
-		model = organisations
-		fields = {
+		model=organisations
+		fields={
                 'organisation_name',
                 'organisation_website',
             }
 
 	def clean_update_profile_picture(self):
-		profile_picture = self.cleaned_data['update_profile_picture']
+		profile_picture=self.cleaned_data['update_profile_picture']
 
 		try:
 			"""
             We only want to limit pictures to being under 400kb
             """
-			picture_errors = ""
+			picture_errors=""
 
-			main, sub = profile_picture.content_type.split('/')
+			main, sub=profile_picture.content_type.split('/')
 			if not (main == 'image' and sub in ['jpeg', 'gif', 'png']):
 				picture_errors += 'Please use a JPEG, GIF or PNG image'
 
@@ -809,29 +897,89 @@ class project_information_form(ModelForm):
 	project datetime edits!!
 	"""
 
-	start_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
-	start_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
-	start_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
-	start_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
-	start_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
-	start_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+	start_date_year=forms.ChoiceField(
+		choices=YEAR_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_start_date()'
+		})
+	)
+	start_date_month=forms.ChoiceField(
+		choices=MONTH_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_start_date()'
+		})
+	)
+	start_date_day=forms.ChoiceField(
+		choices=DAY_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_start_date()'
+		})
+	)
+	start_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
+	start_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
+	start_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
 	
-	finish_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
-	finish_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
-	finish_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
-	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
-	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
-	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
-	project_history_text = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Please update any history here and then click on the save button'}), required = False)
+	finish_date_year=forms.ChoiceField(
+		choices=YEAR_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_end_date()'
+		})
+	)
+	finish_date_month=forms.ChoiceField(
+		choices=MONTH_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_end_date()'
+		})
+	)
+	finish_date_day=forms.ChoiceField(
+		choices=DAY_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_end_date()'
+		})
+	)
+	finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
+	finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
+	finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
+	project_history_text=forms.CharField(
+		widget=forms.Textarea(attrs={
+			'placeholder': 'Please update any history here and then click on the save button'
+		})
+		, required=False
+	)
 
-	document = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange':'enable_submit()'}))
-	document_url_location = forms.URLField(required=False, widget=forms.TextInput(attrs={'placeholder':'https://example.com', 'onChange':'enable_submit()'}))
-	document_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
+	document=forms.FileField(
+		required=False,
+		widget=forms.FileInput(attrs={
+			'onChange':'enable_submit()'
+		})
+	)
+	document_url_location=forms.URLField(
+		required=False,
+		widget=forms.TextInput(attrs={
+			'placeholder':'https://example.com',
+			'onChange':'enable_submit()'
+		})
+	)
+	document_description=forms.CharField(
+		max_length=255,
+		required=False,
+		widget=forms.TextInput(attrs={
+			'width':'100%',
+			'onkeyup':'enable_submit()'
+		})
+	)
 
-	folder_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
+	folder_description=forms.CharField(
+		max_length=255,
+		required=False,
+		widget=forms.TextInput(attrs={
+			'width':'100%',
+			'onkeyup':'enable_submit()'
+		})
+	)
 
 	# Costs feature
-	cost_description = forms.CharField(
+	cost_description=forms.CharField(
 		max_length=255,
 		required=False,
 		widget=forms.TextInput(
@@ -842,7 +990,7 @@ class project_information_form(ModelForm):
 			}
 		)
 	)
-	cost_amount = forms.DecimalField(
+	cost_amount=forms.DecimalField(
 		max_digits=19,
 		decimal_places=2,
 		required=False,
@@ -857,8 +1005,8 @@ class project_information_form(ModelForm):
 
 
 	class Meta:
-		model = project
-		fields = {
+		model=project
+		fields={
 			'project_name',
 			'project_description',
 		}
@@ -868,9 +1016,9 @@ class project_information_form(ModelForm):
 
 class search_form(forms.Form):
 	#Just have a simple search field
-	search_for = forms.CharField(
-		max_length = 255,
-		required = False,
+	search_for=forms.CharField(
+		max_length=255,
+		required=False,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'Search',
 		})
@@ -878,37 +1026,48 @@ class search_form(forms.Form):
 	
 class search_customers_form(forms.Form):
 	#Just have a simple search field
-	search_customers = forms.CharField(max_length = 255, required = False)
+	search_customers=forms.CharField(
+		max_length=255,
+		required=False
+	)
 
 class search_organisations_form(forms.Form):
 	#Just have a simple search field
-	search_organisations = forms.CharField(max_length = 255, required = False)
+	search_organisations=forms.CharField(
+		max_length=255,
+		required=False
+	)
 
 
 class search_projects_form(forms.Form):
-	search_projects = forms.CharField(max_length = 255, required = False)
-	include_closed = forms.MultipleChoiceField(widget = forms.CheckboxSelectMultiple,
-												choices = INCLUDE_CLOSED)
+	search_projects=forms.CharField(
+		max_length=255,
+		required=False
+	)
+	include_closed=forms.MultipleChoiceField(
+		widget=forms.CheckboxSelectMultiple,
+		choices=INCLUDE_CLOSED
+	)
 	
 class search_tasks_form(forms.Form):
-	search_tasks = forms.CharField(
-		max_length = 255,
-		required = False,
+	search_tasks=forms.CharField(
+		max_length=255,
+		required=False,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'Search Tasks',
 		}),
 	)
-	include_closed = forms.MultipleChoiceField(
-		widget = forms.CheckboxSelectMultiple,
-		choices = INCLUDE_CLOSED
+	include_closed=forms.MultipleChoiceField(
+		widget=forms.CheckboxSelectMultiple,
+		choices=INCLUDE_CLOSED
 	)
 
 class search_users_form(forms.Form):
-	search_users = forms.CharField(
+	search_users=forms.CharField(
 		max_length=255,
 		required=False,
 	)
-	include_deactivated = forms.MultipleChoiceField(
+	include_deactivated=forms.MultipleChoiceField(
 		widget=forms.CheckboxSelectMultiple,
 		choices=INCLUDE_DEACTIVATED
 	)
@@ -917,28 +1076,84 @@ class search_users_form(forms.Form):
 
 	
 class task_information_form(ModelForm):
-	task_short_description = forms.CharField(max_length=255, widget=forms.TextInput(attrs={"class":'task_short_description'}))
+	task_short_description=forms.CharField(
+		max_length=255,
+		widget=forms.TextInput(attrs={
+			"class":'task_short_description'
+		})
+	)
 
-	start_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
-	start_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
-	start_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_start_date()'}))
-	start_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
-	start_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
-	start_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
+	start_date_year=forms.ChoiceField(
+		choices=YEAR_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_start_date()'
+		})
+	)
+	start_date_month=forms.ChoiceField(
+		choices=MONTH_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_start_date()'
+		})
+	)
+	start_date_day=forms.ChoiceField(
+		choices=DAY_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_start_date()'
+		})
+	)
+	start_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
+	start_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
+	start_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
 	
-	finish_date_year = forms.ChoiceField(choices = YEAR_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
-	finish_date_month = forms.ChoiceField(choices = MONTH_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
-	finish_date_day = forms.ChoiceField(choices = DAY_CHOICES, widget=forms.Select(attrs={"onChange":'check_end_date()'}))
-	finish_date_hour = forms.ChoiceField(choices = HOUR_CHOICES)
-	finish_date_minute = forms.ChoiceField(choices = MINUTE_CHOICES)
-	finish_date_meridiems = forms.ChoiceField(choices = MERIDIEMS_CHOICES)
-	task_history_text = forms.CharField(widget=forms.Textarea, required = False)
+	finish_date_year=forms.ChoiceField(
+		choices=YEAR_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_end_date()'
+		})
+	)
+	finish_date_month=forms.ChoiceField(
+		choices=MONTH_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_end_date()'
+		})
+	)
+	finish_date_day=forms.ChoiceField(
+		choices=DAY_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_end_date()'
+		})
+	)
+	finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
+	finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
+	finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
+	task_history_text=forms.CharField(
+		widget=forms.Textarea,
+		required=False
+	)
 
-	document = forms.FileField(required=False, widget=forms.FileInput(attrs={'onChange':'enable_submit()'}))
-	document_url_location = forms.URLField(required=False, widget=forms.TextInput(attrs={'placeholder':'https://example.com', 'onChange':'enable_submit()'}))
-	document_description = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'width':'100%', 'onkeyup':'enable_submit()'}))
+	document=forms.FileField(
+		required=False,
+		widget=forms.FileInput(attrs={
+			'onChange':'enable_submit()'
+		})
+	)
+	document_url_location=forms.URLField(
+		required=False,
+		widget=forms.TextInput(attrs={
+			'placeholder':'https://example.com',
+			'onChange':'enable_submit()'
+		})
+	)
+	document_description=forms.CharField(
+		max_length=255,
+		required=False,
+		widget=forms.TextInput(attrs={
+			'width':'100%',
+			'onkeyup':'enable_submit()'
+		})
+	)
 
-	folder_description = forms.CharField(
+	folder_description=forms.CharField(
 		max_length=255,
 		required=False,
 		widget=forms.TextInput(
@@ -976,8 +1191,8 @@ class task_information_form(ModelForm):
 	)
 
 	class Meta:
-		model = tasks
-		fields = {
+		model=tasks
+		fields={
 				'task_short_description',
 				'task_long_description',
 		}
