@@ -1,50 +1,23 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
-
-# login imports
-from django.http import HttpResponseRedirect, Http404
-from django.contrib import auth
-from django.template import RequestContext, loader
-from django.urls import reverse
-from django.contrib.auth.decorators import login_required
-from django.core import serializers
-from django.db.models import Sum
-
-from django.core.files.storage import FileSystemStorage
-from django.http import HttpResponseForbidden
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-
-# Importing all the classes from the models
-from .models import *
-from django.contrib.auth.models import User
-
-
-# Import Settings file to obtain secret key
-from django.conf import settings
-
-# Used for login
-# from django.contrib.auth import authenticate, get_user_model, login, logout
-import urllib
-import urllib2
-import json
-import simplejson
-
-# For Importing RAW SQL
-from django.db.models import Q, Min
-
-# Import everything from forms
+#Import NearBeach Modules
 from .forms import *
-
-#Private files
+from .models import *
 from .private_media import *
 
+#Import django Modules
+from django.conf import settings
+from django.contrib import auth
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core import serializers
+from django.core.files.storage import FileSystemStorage
+from django.db.models import Sum, Q, Min
+from django.http import HttpResponse,HttpResponseForbidden, HttpResponseRedirect, Http404
+from django.shortcuts import render, get_object_or_404, render_to_response
+from django.template import RequestContext, loader
+from django.urls import reverse
 
-# Import datetime
-import datetime
-
-
-# Create your views here.
+#import python modules
+import datetime, json, simplejson, urllib, urllib2
 
 @login_required(login_url='login')
 def active_projects(request):
