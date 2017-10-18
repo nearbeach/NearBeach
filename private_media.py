@@ -9,17 +9,13 @@ I have modified some of the code, however most of the recognition should be for 
 I have placed this code into one file for convenience.
 """
 
-from django.http import HttpResponse
-import mimetypes
-import os
-from django.core.files.storage import FileSystemStorage
 from django.conf import settings
-import stat
-from django.http import Http404, HttpResponseNotModified
+from django.core.files.storage import FileSystemStorage
+from django.http import Http404, HttpResponseNotModified, HttpResponse
 from django.utils.http import http_date
 from django.views.static import was_modified_since
 
-
+import mimetypes, os, stat
 
 """
 FUNCTION DESCRIPTION

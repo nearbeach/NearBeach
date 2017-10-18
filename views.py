@@ -2868,7 +2868,11 @@ def task_information(request, task_id):
 		, customers_campus_information.customer_phone
 		FROM
 		  customers LEFT JOIN 
-			(SELECT * FROM customers_campus join organisations_campus ON customers_campus.campus_id_id = organisations_campus.id) as customers_campus_information
+			(SELECT 
+			  * 
+			  FROM 
+			  customers_campus join organisations_campus 
+			  ON customers_campus.campus_id_id = organisations_campus.id) as customers_campus_information
 			ON customers.customer_id = customers_campus_information.customer_id_id
 		, tasks_customers
 		WHERE 1=1
