@@ -109,11 +109,16 @@
             <br/>Sorry, there seems to be no customers associated with this project.
         {% endif %}
         <h2>Project Costs</h2>
-        <div>
-            {{ project_information_form.cost_description }}
-            {{ project_information_form.cost_amount }}
-            <input type="submit" name="add_cost_submit" id="add_cost_submit" value="Add Cost to Task" disabled="disabled">
-        </div>
+        <table>
+            <tr>
+                <td width="60%">{{ project_information_form.cost_description }}</td>
+                <td width="20%">{{ project_information_form.cost_amount }}</td>
+                <td width="20%"><input type="submit" name="add_cost_submit" id="add_cost_submit" value="Add Cost to Task" disabled="disabled"></td>
+            </tr>
+
+
+
+        </table>
         <br/>
         {% if costs_results %}
             <table>

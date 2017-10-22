@@ -106,11 +106,13 @@
                 <br/>There are currently no customers associated to this task.
             {% endif %}
             <h2>Task Costs</h2>
-            <div>
-                {{ task_information_form.cost_description }}
-                {{ task_information_form.cost_amount }}
-                <input type="submit" name="add_cost_submit" id="add_cost_submit" value="Add Cost to Task" disabled="disabled">
-            </div>
+            <table>
+                <tr>
+                    <td width="60%">{{ task_information_form.cost_description }}</td>
+                    <td width="20%">{{ task_information_form.cost_amount }}</td>
+                    <td width="20%"><input type="submit" name="add_cost_submit" id="add_cost_submit" value="Add Cost to Task" disabled="disabled"></td>
+                </tr>
+            </table>
             {% if costs_results %}
                 <table>
                     <tr class="header">

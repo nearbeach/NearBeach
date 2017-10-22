@@ -58,8 +58,8 @@
             <h2>Contact History</h2>
             Contact Type {{  customer_information_form.contact_type }}<br/>
             Date {{ customer_information_form.start_date_year }}/{{ customer_information_form.start_date_month }}/{{ customer_information_form.start_date_day }}<br/>
-            {{ customer_information_form.start_date_hour }}:{{ customer_information_form.start_date_minute }} {{ customer_information_form.start_date_meridiems }}
-            {{ customer_information_form.contact_history }}
+            Time {{ customer_information_form.start_date_hour }}:{{ customer_information_form.start_date_minute }} {{ customer_information_form.start_date_meridiems }}<br/>
+            {{ customer_information_form.contact_history }}<br/>
             {{ customer_information_form.contact_attachment }}
             <input type="submit" name="submit_contact" value="Submit Contact"/>
             {% if customer_contact_history %}
