@@ -1021,21 +1021,27 @@ class search_form(forms.Form):
 		required=False,
 		widget=forms.TextInput(attrs={
 			'placeholder': 'Search',
-		})
+		}),
 	)
 	
 class search_customers_form(forms.Form):
 	#Just have a simple search field
 	search_customers=forms.CharField(
 		max_length=255,
-		required=False
+		required=False,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Search Customers',
+		}),
 	)
 
 class search_organisations_form(forms.Form):
 	#Just have a simple search field
 	search_organisations=forms.CharField(
 		max_length=255,
-		required=False
+		required=False,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Search Organisations',
+		}),
 	)
 
 
