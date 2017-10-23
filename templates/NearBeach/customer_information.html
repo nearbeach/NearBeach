@@ -69,6 +69,7 @@
                         {{ row.contact_type }} - Submitted by {{ row.user_id }} on {{ row.contact_date }}<br/>
                         <textarea readonly>{{ row.contact_history }}</textarea>
                         {% if row.document_key %}
+                            <br/>
                             <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}" target="_blank">{{ row.document_key.document_description }}</a>
                         {% endif %}
                     </p>

@@ -87,6 +87,8 @@ class contact_history(models.Model):
 	document_key=models.ForeignKey(
 		'documents',
 		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
 	)
 	user_id=models.ForeignKey(
 		User,

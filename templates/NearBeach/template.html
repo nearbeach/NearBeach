@@ -27,14 +27,16 @@
         }
     </script>
 </head>
-<header id="main-header">
-    <div id="main-menu">
-        <h1>
-            <a href="#">NearBeach</a>
-        </h1>
-        <a href="#" id="menu-toggle" onclick="toggleMenu()">
-            <img src="{{ MEDIA_URL }}/static/NearBeach/images/burger.png" width="24" height="24">
-        </a>
+<body>
+    <header id="main-header">
+        <div id="menu">
+            <h1>
+                <a href="#">NearBeach</a>
+            </h1>
+            <a href="#" id="menu-toggle" onclick="toggleMenu()">
+                <img src="{{ MEDIA_URL }}/static/NearBeach/images/burger.png" width="24" height="24">
+            </a>
+        </div>
         <nav>
             <ul id="main-nav">
                 <li onclick="toggleSub(0)">
@@ -58,9 +60,8 @@
                 <li><a href="{% url 'logout' %}">Logout</a></li>
             </ul>
         </nav>
-    </div>
-</header>
-<body>
+    </header>
+
 	<div id="wrapper">
 
 	{% if user.is_authenticated %}
