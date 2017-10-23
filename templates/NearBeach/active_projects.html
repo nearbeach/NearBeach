@@ -10,11 +10,11 @@
 		{% if active_projects_results %}
 			<input type="text" id="Search_Active_Projects" onkeyup="Search_Active_Projects()" placeholder="Search for Active Projects" class="search">
 			<table id="Active_Projects_Table">
-			<tr class="header">
-				<th style="width: 10%;">Project</th>
-				<th style="width: 10%;">Task</th>
-				<th style="width: 70%;">Description</th>
-				<th style="width: 10%;">End Date</th>
+			<tr>
+				<td width="10%">Project</td>
+				<td width="10%;">Task</td>
+				<td width="70%;">Description</td>
+				<td width="10%;">End Date</td>
 			</tr>
 
 			{% for row in active_projects_results %}

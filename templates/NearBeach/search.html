@@ -3,7 +3,13 @@
 <h2>Search NearBeach</h2>
 <form action={% url 'search' %} method="post" class="search_for">
     {% csrf_token %}
-    {{ search_form.search_for }}<input hidden type="submit">
+    <table>
+        <tr>
+            <td width="80%">{{ search_form.search_for }}</td>
+            <td width="20%"><input hidden type="submit"></td>
+        </tr>
+    </table>
+
 </form>
 <h2>Projects</h2>
 <table>

@@ -4,18 +4,22 @@
 <form action={% url 'search_customers' %} method="post" class="search_customers">
     {% csrf_token %}
     <table>
-        {{ search_customers_form.search_customers }}
+        <tr>
+            <td width="80%">{{ search_customers_form.search_customers }}</td>
+            <td width="20%"><input hidden type="submit"></td>
+        </tr>
     </table>
-    <input hidden type="submit">
+
+
+    <table>
+    <tr class="header"><td width="30%">Customer Name</td><td>Organisation</td></tr>
+    {% for customer in customers_results %}
+        <tr>
+            <td><a href="{% url 'customer_information' customer.customer_id %}">{{ customer.customer_first_name }} {{ customer.customer_last_name }}</td>
+            <td>{{ customer.customer_first_name }}</td>
+        </tr>
+    {% endfor %}
+    </table>
 </form>
-<table>
-<tr class="header"><td width="30%">Customer Name</td><td>Organisation</td></tr>
-{% for customer in customers_results %}
-    <tr>
-        <td><a href="{% url 'customer_information' customer.customer_id %}">{{ customer.customer_first_name }} {{ customer.customer_last_name }}</td>
-        <td>{{ customer.customer_first_name }}</td>
-    </tr>
-{% endfor %}
-</table>
 {% endblock %}
 
