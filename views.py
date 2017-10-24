@@ -1,49 +1,23 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
-
-# login imports
-from django.http import HttpResponseRedirect, Http404
-from django.contrib import auth
-from django.template import RequestContext, loader
-from django.urls import reverse
-from django.contrib.auth.decorators import login_required
-from django.core import serializers
-from django.db.models import Sum
-
-from django.core.files.storage import FileSystemStorage
-
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-
-# Importing all the classes from the models
-from .models import *
-from django.contrib.auth.models import User
-
-# Import Settings file to obtain secret key
-from django.conf import settings
-
-# Used for login
-# from django.contrib.auth import authenticate, get_user_model, login, logout
-import urllib
-import urllib2
-import json
-import simplejson
-
-# For Importing RAW SQL
-from django.db.models import Q, Min
-
-# Import everything from forms
+#Import NearBeach Modules
 from .forms import *
-
-#Private files
+from .models import *
 from .private_media import *
 
+#Import django Modules
+from django.conf import settings
+from django.contrib import auth
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core import serializers
+from django.core.files.storage import FileSystemStorage
+from django.db.models import Sum, Q, Min
+from django.http import HttpResponse,HttpResponseForbidden, HttpResponseRedirect, Http404
+from django.shortcuts import render, get_object_or_404, render_to_response
+from django.template import RequestContext, loader
+from django.urls import reverse
 
-# Import datetime
-import datetime
-
-
-# Create your views here.
+#import python modules
+import datetime, json, simplejson, urllib, urllib2
 
 @login_required(login_url='login')
 def active_projects(request):
@@ -521,9 +495,9 @@ def customer_information(request, customer_id):
                     contact_history=contact_history_notes,
                     user_id=current_user,
                     change_user=request.user,
-                    document_key=documents_save,
+                    #document_key=documents_save,
                 )
-                if contact_history:
+                if contact_attachment:
                     submit_history.document_key=documents_save
                 submit_history.save()
 
@@ -611,8 +585,24 @@ def customer_information(request, customer_id):
     task_results = namedtuplefetchall(cursor)
 
     # The campus the customer is associated to
+    """
+    We need to limit the amount of opportunities to those that the user has access to.
+    """
+    user_groups_results = user_groups.objects.filter(username=request.user)
+
+    opportunity_permissions_results = opportunity_permissions.objects.filter(
+        Q(
+            Q(assigned_user=request.user)  # User has permission
+            | Q(groups_id__in=user_groups_results.values('group_id'))  # User's groups have permission
+            | Q(all_users='TRUE')  # All users have access
+        )
+    )
+    opportunity_results = opportunity.objects.filter(
+        customer_id=customer_id,
+        opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
+    )
     campus_results = customers_campus.objects.filter(customer_id=customer_id)
-    opportunity_results = opportunity.objects.filter(customer_id=customer_id)
+
 
     try:
         profile_picture = customer_results.customer_profile_picture.url
@@ -684,6 +674,46 @@ def delete_cost(request, cost_id, location_id, project_or_task):
     else:
         return HttpResponseRedirect(reverse('task_information', args={location_id}))
 
+
+@login_required(login_url='login')
+def delete_opportunity_permission(request, opportunity_id, groups_id, assigned_user):
+    """
+    Method
+    ~~~~~~
+    1.) If groups_id not empty, remove the permissions
+    2.) If user_id not empty, remove the permissions
+    3.) If the count of active permissions for the opportunity is 0, add the permission "ALL USERS"
+    """
+    opportunity_instance = opportunity.objects.get(opportunity_id=opportunity_id)
+
+    if (not groups_id == 0):
+        # Will remove the ALL USERS permissions now that we have limited the permissions
+        opportunity_permissions.objects.filter(
+            opportunity_id=opportunity_instance,
+            groups_id=groups_id,
+            is_deleted='FALSE'
+        ).update(is_deleted='TRUE')
+
+    if (not assigned_user == 0):
+        # Will remove the ALL USERS permissions now that we have limited the permissions
+        opportunity_permissions.objects.filter(
+            opportunity_id=opportunity_instance,
+            assigned_user=assigned_user,
+            is_deleted='FALSE'
+        ).update(is_deleted='TRUE')
+
+    if (opportunity_permissions.objects.filter(opportunity_id=opportunity_id,is_deleted='FALSE').count() == 0):
+        #Add all users
+        permission_save=opportunity_permissions(
+            opportunity_id=opportunity_instance,
+            all_users='TRUE',
+            user_id=request.user,
+            change_user=request.user,
+        )
+        permission_save.save()
+    return HttpResponseRedirect(reverse('opportunity_information', args={opportunity_id}))
+
+#MyModel.objects.filter(pk=some_value).update(field1='some value')
 
 @login_required(login_url='login')
 def index(request):
@@ -987,6 +1017,10 @@ def new_opportunity(request, organisation_id='', customer_id=''):
             opportunity_success_probability = form.cleaned_data['opportunity_success_probability']
             lead_source_id = form.cleaned_data['lead_source_id']
             next_step_description = form.cleaned_data['next_step_description']
+            select_groups = form.cleaned_data['select_groups']
+            select_users = form.cleaned_data['select_users']
+
+
 
             """
 			Some dropdown boxes will need to have instances made from the values.
@@ -1029,13 +1063,13 @@ def new_opportunity(request, organisation_id='', customer_id=''):
             # submit_opportunity.save()
 
             submit_opportunity.save()
+            opportunity_instance = opportunity.objects.get(opportunity_id=submit_opportunity.opportunity_id)
 
             """
 			If the next step has words in it, save it to the database
 			"""
             if not next_step_description == "":
                 # Save the next step description
-                opportunity_instance = opportunity.objects.get(opportunity_id=submit_opportunity.opportunity_id)
                 submit_next_step = opportunity_next_step(
                     opportunity_id=opportunity_instance,
                     next_step_description=next_step_description,
@@ -1045,10 +1079,54 @@ def new_opportunity(request, organisation_id='', customer_id=''):
                 submit_next_step.save()
 
             """
+            Permissions granting
+            """
+            give_all_access = True
+
+            if (select_groups):
+                give_all_access = False
+
+
+                for row in select_groups:
+                    group_instance = groups.objects.get(group_name=row)
+                    permission_save = opportunity_permissions(
+                        opportunity_id=opportunity_instance,
+                        groups_id=group_instance,
+                        user_id=current_user,
+                        change_user=request.user,
+                    )
+                    permission_save.save()
+
+            if (select_users):
+                give_all_access = False
+
+                for row in select_users:
+                    assigned_user_instance = auth.models.User.objects.get(username=row)
+                    permission_save = opportunity_permissions(
+                        opportunity_id=opportunity_instance,
+                        assigned_user=assigned_user_instance,
+                        user_id=current_user,
+                        change_user=request.user,
+                    )
+                    permission_save.save()
+
+            if (give_all_access):
+                permission_save = opportunity_permissions(
+                    opportunity_id=opportunity_instance,
+                    all_users='TRUE',
+                    user_id=current_user,
+                    change_user=request.user,
+                )
+                permission_save.save()
+
+            """
 			Now we go to the opportunity information page so the user can start
 			inputting the require information (like documents), and tasks.
 			"""
             return HttpResponseRedirect(reverse(opportunity_information, args={submit_opportunity.opportunity_id}))
+        else:
+            print(form.errors)
+
 
     # load template
     t = loader.get_template('NearBeach/new_opportunity.html')
@@ -1056,6 +1134,7 @@ def new_opportunity(request, organisation_id='', customer_id=''):
     # DATA
     customer_results = customers.objects.all()
     opportunity_stage_results = list_of_opportunity_stage.objects.filter(is_deleted="FALSE")
+
 
     # Setup dates for initalising
     next_week = datetime.datetime.now() + datetime.timedelta(days=31)
@@ -1514,12 +1593,11 @@ def opportunity_information(request, opportunity_id):
 
             #Save the opportunity
             save_opportunity.save()
+            opportunity_instance = opportunity.objects.get(opportunity_id=opportunity_id)
 
             # Save the to-do if required
             next_step = form.cleaned_data['next_step']
-            print(next_step)
             if not next_step == '':
-                opportunity_instance = opportunity.objects.get(opportunity_id=opportunity_id)
                 save_next_step = opportunity_next_step(
                     opportunity_id=opportunity_instance,
                     next_step_description=next_step,
@@ -1527,13 +1605,102 @@ def opportunity_information(request, opportunity_id):
                     user_id=current_user,
                 )
                 save_next_step.save()
+
+            # If we need to add more users :D
+            select_groups = form.cleaned_data['select_groups']
+            if select_groups:
+                for row in select_groups:
+                    group_instance = groups.objects.get(group_id=row.group_id)
+                    permission_save = opportunity_permissions(
+                        opportunity_id=opportunity_instance,
+                        groups_id=group_instance,
+                        user_id=current_user,
+                        change_user=request.user,
+                    )
+                    permission_save.save()
+                #Will remove the ALL USERS permissions now that we have limited the permissions
+                opportunity_permissions.objects.filter(
+                    opportunity_id=opportunity_id,
+                    all_users='TRUE',
+                    is_deleted='FALSE'
+                ).update(is_deleted='TRUE')
+
+            select_users = form.cleaned_data['select_users']
+            if select_users:
+                for row in select_users:
+                    assigned_user_instance = auth.models.User.objects.get(username=row)
+                    permission_save = opportunity_permissions(
+                        opportunity_id=opportunity_instance,
+                        assigned_user=assigned_user_instance,
+                        user_id=current_user,
+                        change_user=request.user,
+                    )
+                    permission_save.save()
+                #Will remove the ALL USERS permissions now that we have limited the permissions
+                opportunity_permissions.objects.filter(
+                    opportunity_id=opportunity_id,
+                    all_users='TRUE',
+                    is_deleted='FALSE'
+                ).update(is_deleted='TRUE')
         else:
             print(form.errors)
+
+    else:
+        """
+        We want to limit who can see what opportunity. The exception to this is for the user
+        who just created the opportunity. (I should program in a warning stating that they
+        might not be able to see the opportunity again unless they add themselfs to the 
+        permissions list.
+
+        The user has to meet at least one of these conditions;
+        1.) User has permission
+        2.) User's group has permission
+        3.) All users have permission
+        """
+        user_groups_results = user_groups.objects.filter(username=request.user)
+
+        permission_results = opportunity_permissions.objects.filter(
+            Q(
+                Q(assigned_user=request.user)  # User has permission
+                | Q(groups_id__in=user_groups_results.values('group_id'))  # User's groups have permission
+                | Q(all_users='TRUE')  # All users have access
+            )
+            & Q(opportunity_id=opportunity_id)
+        )
+
+        print(permission_results)
+
+        if (not permission_results):
+            return HttpResponseRedirect(
+                reverse(
+                    permission_denied,
+                )
+            )
+
 
     # Data
     opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
     customer_results = customers.objects.filter(organisations_id=opportunity_results.organisations_id)
     next_step_results = opportunity_next_step.objects.filter(opportunity_id=opportunity_id)
+    group_permissions = opportunity_permissions.objects.filter(
+        groups_id__isnull=False,
+        opportunity_id=opportunity_id,
+        is_deleted='FALSE',
+    ).distinct()
+    user_permissions = auth.models.User.objects.filter(
+        id__in=opportunity_permissions.objects.filter(
+            assigned_user__isnull=False,
+            opportunity_id=opportunity_id,
+            is_deleted='FALSE',
+        ).values('user_id').distinct()
+    )
+    """
+    user_permissions = opportunity_permissions.objects.filter(
+        user_id__isnull=False,
+        opportunity_id=opportunity_id,
+        is_deleted='FALSE',
+    ).distinct()
+    """
 
     end_hour = opportunity_results.opportunity_expected_close_date.hour
     end_meridiem = u'AM'
@@ -1568,6 +1735,8 @@ def opportunity_information(request, opportunity_id):
         'opportunity_results': opportunity_results,
         'customer_results': customer_results,
         'next_step_results': next_step_results,
+        'group_permissions': group_permissions,
+        'user_permissions': user_permissions,
     }
 
     return HttpResponse(t.render(c, request))
@@ -1694,7 +1863,24 @@ def organisation_information(request, organisations_id):
     )
     project_results = project.objects.filter(organisations_id=organisations_id)
     task_results = tasks.objects.filter(organisations_id=organisations_id)
-    opportunity_results = opportunity.objects.filter(organisations_id=organisations_id)
+    #opportunity_results = opportunity.objects.filter(organisations_id=organisations_id)
+    """
+    We need to limit the amount of opportunities to those that the user has access to.
+    """
+    user_groups_results = user_groups.objects.filter(username=request.user)
+
+    opportunity_permissions_results = opportunity_permissions.objects.filter(
+        Q(
+            Q(assigned_user=request.user)  # User has permission
+            | Q(groups_id__in=user_groups_results.values('group_id'))  # User's groups have permission
+            | Q(all_users='TRUE')  # All users have access
+        )
+    )
+    opportunity_results = opportunity.objects.filter(
+        organisations_id=organisations_id,
+        opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
+    )
+
 
     # Date required to initiate date
     today = datetime.datetime.now()
@@ -1732,6 +1918,20 @@ def organisation_information(request, organisations_id):
     }
 
     return HttpResponse(t.render(c, request))
+
+@login_required(login_url='login')
+def permission_denied(request):
+    #The user has no access to this page
+    # Load the template
+    t = loader.get_template('NearBeach/permission_denied.html')
+
+    # context
+    c = {
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
 
 """
 TEMP CODE
@@ -1792,8 +1992,12 @@ def project_information(request, project_id):
     has_permission = cursor.fetchall()
 
     if not has_permission[0][0] == 1 and not request.session['IS_ADMIN'] == 'TRUE':
-        # Send them to 404!!
-        raise Http404
+        # Send them to permission denied!!
+        return HttpResponseRedirect(
+            reverse(
+                permission_denied,
+            )
+        )
 
     """
 	There are two buttons on the project information page. Both will come
@@ -2388,9 +2592,12 @@ def task_information(request, task_id):
     has_permission = cursor.fetchall()
 
     if not has_permission[0][0] == 1 and not request.session['IS_ADMIN'] == 'TRUE':
-        # Send them to 404!!
-        raise Http404
-
+        # Send them to permission denied!!
+        return HttpResponseRedirect(
+            reverse(
+                permission_denied,
+            )
+        )
     """
 	There are two buttons on the task information page. Both will come
 	here. Both will save the data, however only one of them will resolve
@@ -2661,7 +2868,11 @@ def task_information(request, task_id):
 		, customers_campus_information.customer_phone
 		FROM
 		  customers LEFT JOIN 
-			(SELECT * FROM customers_campus join organisations_campus ON customers_campus.campus_id_id = organisations_campus.id) as customers_campus_information
+			(SELECT 
+			  * 
+			  FROM 
+			  customers_campus join organisations_campus 
+			  ON customers_campus.campus_id_id = organisations_campus.id) as customers_campus_information
 			ON customers.customer_id = customers_campus_information.customer_id_id
 		, tasks_customers
 		WHERE 1=1

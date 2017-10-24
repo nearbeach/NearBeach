@@ -15,6 +15,11 @@
         check_end_date();
     }
     </script>
+
+    <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
+    <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
+
+
 <body onload="initialise();">
     {% if organisation_id == '' and customer_id == '' %}
         <form action="{% url 'new_opportunity' %}" method="post" class="new_opportunity">
@@ -24,46 +29,55 @@
         <form action="{% url 'new_opportunity' organisation_id %}" method="post" class="new_opportunity">
     {% endif %}
         {% csrf_token %}
-        <div class="div_content">
-            <div class="div_header">
-                <h1>New Opportunity</h1>
-            </div>
-            <div class="div_sub_content">
-                {% if organisations_count == 0 %}
-                    <a href="{% url 'new_organisation' %}">Can you please create an organisation first.</a>
-                {% else %}
-                    <table>
-                        <tr class="header"><td width="150px">Field</td><td>Input</td></tr>
-                        <tr><td>Opportunity Name</td><td>{{ new_opportunity_form.opportunity_name }}</td></tr>
-                        <tr><td>Opportunity Description</td><td>{{ new_opportunity_form.opportunity_description }}</td></tr>
-                        <tr><td>Organisation</td><td>{{ new_opportunity_form.organisations_id }}</td></tr>
-                        <tr><td>Customer</td><td>
-                            <select id="customer_id" name="customer_id">
-                                <option value="" selected>---------</option>
-                                {% for row in customer_results %}
-                                    <option value="{{ row.customer_id }}" organisation_id="{{ row.organisations_id.organisations_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </td></tr>
-                        <tr><td>Opportunity Budget</td><td>{{ new_opportunity_form.currency_id }}{{ new_opportunity_form.opportunity_amount }}{{ new_opportunity_form.amount_type_id }}</td></tr>
-                        <tr><td>Opportunity Expected Closure</td><td>{{ new_opportunity_form.finish_date_year }} - {{ new_opportunity_form.finish_date_month }} - {{ new_opportunity_form.finish_date_day }}<br/>
-                            {{ new_opportunity_form.finish_date_hour }}:{{ new_opportunity_form.finish_date_minute }} {{ new_opportunity_form.finish_date_meridiems }}</td></tr>
-                        <tr><td>Stage of Opportunity</td><td>
-                            <select id="opportunity_stage" name="opportunity_stage" required="True" onchange="probability_update()">
-                                <option value="---------" selected disabled="disabled">---------</option>
-                                {% for row in opportunity_stage_results %}
-                                    <option value="{{ row.opportunity_stage_id }}" probability="{{ row.probability_success }}">{{ row.opportunity_stage_description }}</option>
-                                {% endfor %}
-                            </select>
-                        </td></tr>
-                        <tr><td>Success Probability</td><td>{{ new_opportunity_form.opportunity_success_probability }}%</td></tr>
-                        <tr><td>Lead Source</td><td>{{ new_opportunity_form.lead_source_id }}</td></tr>
-                        <tr><td>Next Step?</td><td>{{ new_opportunity_form.next_step_description }}</td></tr>
-                    </table>
-                    <input type="submit" value="Submit Opportunity">
-                {%  endif %}
-            </div>
-        </div>
+        <h1>New Opportunity</h1>
+        {% if organisations_count == 0 %}
+            <a href="{% url 'new_organisation' %}">Can you please create an organisation first.</a>
+        {% else %}
+            <ul>
+                <li>{{ new_opportunity_form.opportunity_name }}</li>
+                <li>{{ new_opportunity_form.opportunity_description }}</li>
+                <li>Organisation: {{ new_opportunity_form.organisations_id }}</li>
+                <li>Customer: <select id="customer_id" name="customer_id">
+                    <option value="" selected>---------</option>
+                    {% for row in customer_results %}
+                        <option value="{{ row.customer_id }}" organisation_id="{{ row.organisations_id.organisations_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
+                    {% endfor %}
+                    </select>
+                </li>
+                <li>Opportunity Budget: {{ new_opportunity_form.currency_id }}{{ new_opportunity_form.opportunity_amount }}{{ new_opportunity_form.amount_type_id }}</li>
+                <li>Opportunity Expected Closure: {{ new_opportunity_form.finish_date_year }} - {{ new_opportunity_form.finish_date_month }} - {{ new_opportunity_form.finish_date_day }}<br/>
+                    {{ new_opportunity_form.finish_date_hour }}:{{ new_opportunity_form.finish_date_minute }} {{ new_opportunity_form.finish_date_meridiems }}</li>
+                <li>Stage of Opportunity:
+                    <select id="opportunity_stage" name="opportunity_stage" required="True" onchange="probability_update()">
+                        <option value="---------" selected disabled="disabled">---------</option>
+                        {% for row in opportunity_stage_results %}
+                            <option value="{{ row.opportunity_stage_id }}" probability="{{ row.probability_success }}">{{ row.opportunity_stage_description }}</option>
+                        {% endfor %}
+                    </select>
+                </li>
+                <li>Success Probability: {{ new_opportunity_form.opportunity_success_probability }}%</li>
+                <li>Lead Source: {{ new_opportunity_form.lead_source_id }}</li>
+                <li>Next Step?: {{ new_opportunity_form.next_step_description }}</li>
+            </ul>
+            <h1>Grant Access to Opportunity</h1>
+            <ul>
+                <li>Select which groups are required to have access<br/>
+                    {{ new_opportunity_form.select_groups }}
+
+                    <br/>
+                <li>Select which users are required to have access<br/>
+                    {{ new_opportunity_form.select_users }}
+                    <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
+                    <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
+                    <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
+                    <br/>
+                </li>
+            </ul>
+            If no Groups or Users are selected, then access will be granted for everyone. This can be changed at a later date.
+            <input type="submit" value="Submit Opportunity">
+        {%  endif %}
+
+
     </form>
 </body>
 {% endblock %}

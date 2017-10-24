@@ -77,3 +77,29 @@ function apply_organisation_customer(organisation, customer) {
         }
     }
 }
+
+
+function grant_access_checkbox(checkbox_id,div_id) {
+    /*
+    After the user has ticked the checkbox, we will try and find the
+    checkbox the user has ticked and determine if we want to hide
+    or show the div with the content.
+     */
+}
+
+function select_groups(select) {
+    /*
+    Method
+    ~~~~~~
+    1.) Obtain the text for the current selection
+    2.) Look at the <ul id="select_groups_ul">...</ul> and determine if the text is already present
+    3.) If text is not present, add on another <li>
+     */
+    alert("Start");
+
+    var select_value = select.value;
+    var dataset = document.getElementById("select_groups_datalist");
+    //alert(option);
+    alert("Finish");
+
+}

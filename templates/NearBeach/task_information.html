@@ -6,11 +6,9 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/task_information.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
 <script tpye="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
-
-<body onload="on_page_load()">
 <script>
-	function on_page_load() {
-		initiate_dates();
+    function on_page_load() {
+        initiate_dates();
 
         //Re-size all those pesky textareas;
         autoscale_textarea();
@@ -19,206 +17,160 @@
         running_total();
     }
 </script>
-{{ folder_results }}
+
+
+<body onload="on_page_load()">
 	<form action="{% url 'task_information' task_results.tasks_id %}" method="POST" enctype="multipart/form-data">
 		{% csrf_token %}
-		<div class="div_content">
-			<div class="div_header">
-				<h1>Task information - TASK{{ task_results.tasks_id }}</h1>
-			</div>
-			<div class="div_sub_content">
-                {% if task_results.task_status == 'Resolved' or task_results.task_status == 'Closed' %}
-                    <fieldset disabled="disabled">
-                {% endif %}
-				{{ task_information_form.task_short_description }}<br/>
-				{{ task_information_form.task_long_description }}<br/>
-				Task Start - {{ task_information_form.start_date_year }}/{{ task_information_form.start_date_month }}/{{ task_information_form.start_date_day }} @ {{ task_information_form.start_date_hour }}:{{ task_information_form.start_date_minute }} {{ task_information_form.start_date_meridiems }}<br/>
-				Task finish Date - {{ task_information_form.finish_date_year }}/{{ task_information_form.finish_date_month }}/{{ task_information_form.finish_date_day }} @ {{ task_information_form.finish_date_hour }}:{{ task_information_form.finish_date_minute }} {{ task_information_form.finish_date_meridiems }}<br/>
-				<br/>
-				{{ task_information_form.task_history_text }}<br/>
+            <h2>Task information - TASK{{ task_results.tasks_id }}</h2>
+            {% if task_results.task_status == 'Resolved' or task_results.task_status == 'Closed' %}
+                <fieldset disabled="disabled">
+            {% endif %}
+            {{ task_information_form.task_short_description }}<br/>
+            {{ task_information_form.task_long_description }}<br/>
+            Task Start - {{ task_information_form.start_date_year }}/{{ task_information_form.start_date_month }}/{{ task_information_form.start_date_day }} @ {{ task_information_form.start_date_hour }}:{{ task_information_form.start_date_minute }} {{ task_information_form.start_date_meridiems }}<br/>
+            Task finish Date - {{ task_information_form.finish_date_year }}/{{ task_information_form.finish_date_month }}/{{ task_information_form.finish_date_day }} @ {{ task_information_form.finish_date_hour }}:{{ task_information_form.finish_date_minute }} {{ task_information_form.finish_date_meridiems }}<br/>
+            <br/>
+            {{ task_information_form.task_history_text }}<br/>
 
-				<input type="submit" name="Save" value="Save"/>
-				{% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
-					<input type="submit" name="Resolve" value="Resolve Project"/>
-                {% else %}
-                    </fieldset>
-				{% endif %}
-			</div>
-		</div>
-		<br/>
-		<div class="div_content">
-			<div class="div_header" onclick="hide_unhide('task_history')">
-				<h3>Task History</h3>
-			</div>
-			<div class="div_sub_content" id="task_history">
-				{% if task_history_results %}
-					{% for row in task_history_results %}
-						<p>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}<br />
-						<textarea readonly>{{ row.task_history }}</textarea>
-						</p>
-					{% endfor %}
-				{% else %}
-					<p>Currently no history</p>
-				{% endif %}
-			</div>
-		</div>
-		<br/>
-		<div class="div_content">
-			<div class="div_header" onclick="hide_unhide('associated_projects')">
-				<h3>Associated Projects</h3>
-			</div>
-			<div class="div_sub_content" id="associated_projects" style="display: none;">
-                {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
-				    <a href="{% url 'associated_projects' task_results.tasks_id %}">Associate Project</a>
-                {% endif %}
-				{% if associated_project_results %}
-						<table>
-							<tr class="header"><td>Project Id</td><td>project Name</td><td>End Date</td></tr>
-							{% for associated_project_row in associated_project_results %}
-								<tr>
-								<td><a href="{% url 'project_information' associated_project_row.project_id %}">Project - {{ associated_project_row.project_id }}</a></td>
-								<td>{{ associated_project_row.project_name }}</td>
-								<td>{{ associated_project_row.project_end_date }}</td>
-								</tr>
-							{% endfor %}
-						</table>
-				{% else %}
-					<p>Currently no associated projects.</p>
-				{% endif %}
-			</div>
-		</div>
-		<br/>
-		<div class="div_content">
-			<div class="div_header" onclick="hide_unhide('task_customers')">
-				<h3>Task's Customers</h3>
-			</div>
-			<div class="div_sub_content" id="task_customers" style="display: none;">
-				{% if new_customers_results %}
-                    {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
-                        <select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" >
-                            <option value="---------" selected>---------</option>
-                            {% for row in new_customers_results %}
-                                {% if not row.customer_id == None %}
-                                    <option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
-                                {% endif %}
-                            {% endfor %}
-                        </select>
-                        <input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Task" disabled="disabled">
-                    {% endif %}
-				{% endif %}
-				{% if tasks_customers_results %}
-
-					<table>
-						<tr class="header">
-							<td>Customer Name</td>
-							<td>Customer Description</td>
-							<td>Customer Email</td>
-							<td>Customer Campus</td>
-							<td>Customer Phone</td>
-						</tr>
-						{% for row in tasks_customers_results %}
-							<tr>
-								<td>{{ row.customer_first_name }} {{ row.customer_last_name }}</td>
-								<td>{{ row.customer_description }}</td>
-								<td>{{ row.customer_email }}</td>
-								<td>{{ row.campus_nickname }}</td>
-								<td>{{ row.customer_phone }}</td>
-							</tr>
-						{% endfor %}
-					</table>
-
-				{% else %}
-					<br/>There are currently no customers associated to this task.
-				{% endif %}
-			</div>
-		</div>
-		<br/>
-		<div class="div_content">
-			<div class="div_header" onclick="hide_unhide('task_costs')">
-				<h3>Task Costs</h3>
-			</div>
-			<div class="div_sub_content" id="task_costs" style="display: none;">
-				<div>
-                    {{ task_information_form.cost_description }}
-                    {{ task_information_form.cost_amount }}
-                    <input type="submit" name="add_cost_submit" id="add_cost_submit" value="Add Cost to Task" disabled="disabled">
-                </div>
-                <br/>
-                {% if costs_results %}
+            <input type="submit" name="Save" value="Save"/>
+            {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
+                <input type="submit" name="Resolve" value="Resolve Project"/>
+            {% else %}
+                </fieldset>
+            {% endif %}
+            <h2>Task History</h2>
+            {% if task_history_results %}
+                {% for row in task_history_results %}
+                    <p>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}<br />
+                    <textarea readonly>{{ row.task_history }}</textarea>
+                    </p>
+                {% endfor %}
+            {% else %}
+                <p>Currently no history</p>
+            {% endif %}
+            <h2>Associated Projects</h2>
+            {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
+                <a href="{% url 'associated_projects' task_results.tasks_id %}">Associate Project</a>
+            {% endif %}
+            {% if associated_project_results %}
                     <table>
-                        <tr class="header">
-                            <td>Item</td>
-                            <td>Cost</td>
-                            <td>Running Total</td>
-                            <td>Delete</td>
-                        </tr>
-                        {% for row in costs_results %}
+                        <tr class="header"><td>Project Id</td><td>project Name</td><td>End Date</td></tr>
+                        {% for associated_project_row in associated_project_results %}
                             <tr>
-                                <td>{{ row.cost_description }}</td>
-                                <td name="cost_amount">{{ row.cost_amount }}</td>
-                                <td name="running_total">--filled-by-javascript--</td>
-                                <td><a href="{% url 'delete_cost' row.cost_id task_results.tasks_id 'T' %}">Remove Cost</a></td>
+                            <td><a href="{% url 'project_information' associated_project_row.project_id %}">Project - {{ associated_project_row.project_id }}</a></td>
+                            <td>{{ associated_project_row.project_name }}</td>
+                            <td>{{ associated_project_row.project_end_date }}</td>
                             </tr>
                         {% endfor %}
-                        <tr>
-                            <td>GRAND TOTAL</td>
-                            <td id="grand_total">--fill out--</td>
-                        </tr>
                     </table>
-                {% else %}
-                    <p>No costs associated with this task</p>
-                {% endif %}
-			</div>
-
-		</div>
-		<br/>
-		<div class="div_content">
-			<div class="div_header" onclick="hide_unhide('task_documents')">
-				<h3>Task Documents</h3>
-			</div>
-			<div class="div_sub_content" id="task_documents" style="display: none;">
-                << REBUILDING AS AJAX WIDGET >>
-			</div>
-		</div>
-
-
-        <br/>
-        <div class="div_content">
-            <div class="div_header">
-                <h3>Assigned Users</h3>
-            </div>
-            <div class="div_sub_content">
-                {% if users_results %}
-                    <select id="add_user_select" name="add_user_select" onchange="enable_disable_add_user()">
-                        <option value="------">-------</option>
-                        {% for row in users_results %}
-                            <option value="{{ row.id }}">{{ row.Name }}</option>
+            {% else %}
+                <p>Currently no associated projects.</p>
+            {% endif %}
+            <h2>Task's Customers</h2>
+            {% if new_customers_results %}
+                {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
+                    <select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" >
+                        <option value="---------" selected>---------</option>
+                        {% for row in new_customers_results %}
+                            {% if not row.customer_id == None %}
+                                <option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
+                            {% endif %}
                         {% endfor %}
                     </select>
-                    <input type="submit" id="add_user_submit" name="add_user_submit" value="Add User" disabled="disabled"/>
+                    <input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Task" disabled="disabled">
                 {% endif %}
-                {% if assigned_results %}
-                    <table>
-                        <tr class="header">
-                            <td>Username</td>
-                            <td>First Name</td>
-                            <td>Last name</td>
+            {% endif %}
+            {% if tasks_customers_results %}
+
+                <table>
+                    <tr class="header">
+                        <td>Customer Name</td>
+                        <td>Customer Description</td>
+                        <td>Customer Email</td>
+                        <td>Customer Campus</td>
+                        <td>Customer Phone</td>
+                    </tr>
+                    {% for row in tasks_customers_results %}
+                        <tr>
+                            <td>{{ row.customer_first_name }} {{ row.customer_last_name }}</td>
+                            <td>{{ row.customer_description }}</td>
+                            <td>{{ row.customer_email }}</td>
+                            <td>{{ row.campus_nickname }}</td>
+                            <td>{{ row.customer_phone }}</td>
                         </tr>
-                        {% if assigned_results %}
-                            {% for row in assigned_results %}
-                                <tr>
-                                    <td>{{ row.user_id__username }}</td>
-                                    <td>{{ row.user_id__first_name }}</td>
-                                    <td>{{ row.user_id__last_name }}</td>
-                                </tr>
-                            {% endfor %}
-                        {% endif %}
-                    </table>
-                {% else %}
-                    <p>There are currently no staff members assigned to this project</p>
-                {% endif %}
-            </div>
-        </div>
+                    {% endfor %}
+                </table>
+
+            {% else %}
+                <br/>There are currently no customers associated to this task.
+            {% endif %}
+            <h2>Task Costs</h2>
+            <table>
+                <tr>
+                    <td width="60%">{{ task_information_form.cost_description }}</td>
+                    <td width="20%">{{ task_information_form.cost_amount }}</td>
+                    <td width="20%"><input type="submit" name="add_cost_submit" id="add_cost_submit" value="Add Cost to Task" disabled="disabled"></td>
+                </tr>
+            </table>
+            {% if costs_results %}
+                <table>
+                    <tr class="header">
+                        <td>Item</td>
+                        <td>Cost</td>
+                        <td>Running Total</td>
+                        <td>Delete</td>
+                    </tr>
+                    {% for row in costs_results %}
+                        <tr>
+                            <td>{{ row.cost_description }}</td>
+                            <td name="cost_amount">{{ row.cost_amount }}</td>
+                            <td name="running_total">--filled-by-javascript--</td>
+                            <td><a href="{% url 'delete_cost' row.cost_id task_results.tasks_id 'T' %}">Remove Cost</a></td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td>GRAND TOTAL</td>
+                        <td id="grand_total">--fill out--</td>
+                    </tr>
+                </table>
+            {% else %}
+                <p>No costs associated with this task</p>
+            {% endif %}
+
+
+            <h2>Task Documents</h2>
+            << REBUILDING AS AJAX WIDGET >>
+            <h2>Assigned Users</h2>
+            {% if users_results %}
+                <select id="add_user_select" name="add_user_select" onchange="enable_disable_add_user()">
+                    <option value="------">-------</option>
+                    {% for row in users_results %}
+                        <option value="{{ row.id }}">{{ row.Name }}</option>
+                    {% endfor %}
+                </select>
+                <input type="submit" id="add_user_submit" name="add_user_submit" value="Add User" disabled="disabled"/>
+            {% endif %}
+            {% if assigned_results %}
+                <table>
+                    <tr class="header">
+                        <td>Username</td>
+                        <td>First Name</td>
+                        <td>Last name</td>
+                    </tr>
+                    {% if assigned_results %}
+                        {% for row in assigned_results %}
+                            <tr>
+                                <td>{{ row.user_id__username }}</td>
+                                <td>{{ row.user_id__first_name }}</td>
+                                <td>{{ row.user_id__last_name }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                </table>
+            {% else %}
+                <p>There are currently no staff members assigned to this project</p>
+            {% endif %}
 	</form>
 </body>
 

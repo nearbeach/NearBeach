@@ -1,96 +1,101 @@
 <html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-    .div_login_desktop {
-        position: fixed;
-        top: 50%;
-        left: 50%;
+    body {
+        background-color: #ecf0f1;
     }
 
-    .div_login_mobile {
-        width: 100%;
-        margin: auto;
+    h1 a {
+        font-size: 1.1s5em;
+        text-align: center;
+        text-decoration: none;
+        color: azure;
+        margin-left: 10px;
+        font-weight: 400;
     }
 
-	
-	.login_button {
-	    background-color: #4CAF50;
-		color: white;
-		padding: 14px 20px;
-		margin: 8px 0;
-		border: none;
-		cursor: pointer;
-		width: 100%;
-		height:45px;	
-	}
-
-
-    input {
-        width: 100%;
+    input[type="text"], input[type="password"], textarea {
         box-sizing: border-box;
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
+        padding: 8px;
+        outline: none;
+        border: 1px solid #b0cfe0;
+        -webkit-transition: all 0.30s ease-in-out;
+        -moz-transition: all 0.30s ease-in-out;
+        -ms-transition: all 0.30s ease-in-out;
+        -o-transition: all 0.30s ease-in-out;
+        width: 100%;
+        max-width: 900px;
     }
+
+    input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+        box-shadow: 0 0 5px #b0cfe0;
+        border: 1px solid #b0cfe0;
+    }
+
+    textarea {
+        color: #0a0a0a;
+        margin-bottom: 8px;
+    }
+
+    input[type="submit"], input[type="button"] {
+        -moz-box-shadow: inset 0px 1px 0px 0px #3985b1;
+        -webkit-box-shadow: inset 0px 1px 0px 0px rgba(0, 0, 0, 0.2);
+        box-shadow: inset 0px 1px 0px 0px #33adff;
+        background-color: #33adff;
+        border: 1px solid #33adff;
+        display: inline-block;
+        cursor: pointer;
+        color: #fff;
+        padding: 8px 19px;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+
+    #login-form {
+        max-width: 450px;
+        padding: 30px;
+        margin: -20px auto;
+        list-style: none;
+    }
+
+    #login-form ul {
+        padding: 0;
+        margin: 0;
+    }
+
+    #login-form ul li {
+        display: block;
+        margin-bottom: 10px;
+        min-height: 35px;
+    }
+
+    #login-form ul input[type="submit"], #login-form ul input[type="submit"] {
+        width: 100%;
+    }
+
 </style>
-<script>
-    function responsive_login_screen() {
-        //Get all elements
-        var div_login = document.getElementById("div_login");
-        var form_login = document.getElementById("form_login");
-
-        //Get all sizes
-        var screen_size = document.documentElement.clientWidth;
-
-
-        //alert(form_login_width);
-
-        if (screen_size <= 800) {
-            //Mobile view
-            div_login.classList.remove("div_login_desktop");
-            div_login.classList.add("div_login_mobile");
-
-            //Make sure we remove the margin left and right
-            var form_login_width = form_login.clientWidth;
-            var form_login_height = form_login.clientHeight;
-
-            div_login.style.marginLeft = 0;
-            div_login.style.marginTop = 0;
-
-        } else {
-            //Desktop view
-            div_login.classList.remove("div_login_mobile");
-            div_login.classList.add("div_login_desktop");
-
-            //Make sure that we center the div
-            var form_login_width = form_login.clientWidth;
-            var form_login_height = form_login.clientHeight;
-
-            div_login.style.marginLeft = -form_login_width/2;
-            div_login.style.marginTop = -form_login_height/2;
-        }
-    }
-</script>
-<body onload="responsive_login_screen()" onresize="responsive_login_screen()">
-    <div id="div_login">
-        <form action="{% url 'login' %}" method="post" width="100%" id="form_login">
-            {% csrf_token %}
-            <table width="100%">
-                {% if login_form.non_field_errors %}
-                    {% for error in login_form.non_field_errors %}
-                        <tr><td>{{ error }}</td></td>
-                    {% endfor %}
-                {% endif %}
-                <tr><td>{{ login_form.username }}</td></tr>
-                <tr><td>{{ login_form.password }}</td></tr>
-                {% if not RECAPTCHA_SITE_KEY == '' %}
-                    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-                    <tr><td><div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_PUBLIC_KEY }}"></div></td></tr>
-                {% endif %}
-                <tr><td><input type="submit" value="Login" class="login_button" /></td></tr>
-                <tr><td><a href="{% url 'password_reset' %}">Forgotten Password</a></td></tr>
-            </table>
-
-        </form>
-    </div>
+<body>
+    <form action="{%  url 'login' %}" method="post" id="login-form">
+        {% csrf_token %}
+        <ul>
+            <li><h1>NearBeach</h1></li>
+            {% if login_form.non_field_errors %}
+                <li>The following errors appeared:</li>
+                {% for error in login_form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            {% endif %}
+            <li>{{ login_form.username }}</li>
+            <li>{{ login_form.password }}</li>
+            {% if not RECAPTCHA_SITE_KEY == '' %}
+                <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+                <li><div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_PUBLIC_KEY }}"></div></li>
+            {% endif %}
+            <li><input type="submit" value="Login" class="login_button" /></li>
+            <li><a href="{% url 'password_reset' %}">Forgotten Password</a></li>
+            <li></li>
+        </ul>
 </body>
 </html>

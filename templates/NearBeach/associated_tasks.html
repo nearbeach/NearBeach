@@ -1,38 +1,30 @@
 {% extends "./template.html" %}
 {% block content %}
-<div class="div_content">
-    <div class="div_header">
-        <h1>Associate Tasks</h1>
-    </div>
-    <div class="div_sub_content">
-        <form action={% url 'associated_tasks' project_id %} method="post" class="associated_tasks">
-            {% csrf_token %}
-            <table>
-                {{ search_tasks }}
-            </table>
-            <input hidden type="submit">
-        </form>
-
+    <h2>Associate Tasks</h2>
+    <form action={% url 'associated_tasks' project_id %} method="post" class="associated_tasks">
+        {% csrf_token %}
         <table>
-            <tr class="header">
-                <td width="50%">Task Short Description</td>
-                <td width="20%">Organisation</td>
-                <td width="10%">Task End Date</td>
-                <td width="10%">Task Assigned To</td>
-                <td width="10%">Task Status</td>
-            </tr>
-            {% for task_row in tasks_results %}
-                <tr>
-                    <td><a href="{% url 'associate' project_id task_row.tasks_id 'P' %}">{{ task_row.task_short_description }}</a></td>
-                    <td>{{ task_row.organisations_id.organisation_name }}</td>
-                    <td>{{ task_row.task_end_date }}</td>
-                    <td>{{ task_row.task_assigned_to }}</td>
-                    <td>{{ task_row.task_status }}</td>
-                </tr>
-            {% endfor %}
+            {{ search_tasks }}
         </table>
-    </div>
-</div>
+        <input hidden type="submit">
+    </form>
 
-
+    <table>
+        <tr class="header">
+            <td width="50%">Task Short Description</td>
+            <td width="20%">Organisation</td>
+            <td width="10%">Task End Date</td>
+            <td width="10%">Task Assigned To</td>
+            <td width="10%">Task Status</td>
+        </tr>
+        {% for task_row in tasks_results %}
+            <tr>
+                <td><a href="{% url 'associate' project_id task_row.tasks_id 'P' %}">{{ task_row.task_short_description }}</a></td>
+                <td>{{ task_row.organisations_id.organisation_name }}</td>
+                <td>{{ task_row.task_end_date }}</td>
+                <td>{{ task_row.task_assigned_to }}</td>
+                <td>{{ task_row.task_status }}</td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}
