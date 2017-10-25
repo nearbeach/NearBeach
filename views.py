@@ -1815,9 +1815,9 @@ def organisation_information(request, organisations_id):
                     contact_history=contact_history_notes,
                     user_id=current_user,
                     change_user=request.user,
-                    document_key=documents_save,
+                    #document_key=documents_save,
                 )
-                if contact_history:
+                if contact_attachment:
                     submit_history.document_key=documents_save
                 submit_history.save()
 
