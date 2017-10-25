@@ -18,7 +18,6 @@
                 <select>
                     <option value="">-------</option>
                     {% for row in customer_results %}
-
                         {% if row.customer_id == opportunity_results.customer_id.customer_id %}
                             <option value="{{ row.customer_id }}" selected>
                         {% else %}
@@ -44,13 +43,15 @@
         </table>
         <input type="submit" name="submit_contact" value="Update"/>
         <h2>To Do</h2>
-        {{ opportunity_information_form.next_step }}
-        <input type="submit" name="submit_next_step" value="Add To Do"/>
-        {% if next_step_results %}
-            <table>
+        <table>
+            <tr>
+                <td>{{ opportunity_information_form.next_step }}</td>
+                <td><input type="submit" name="submit_next_step" value="Add To Do"/></td>
+            </tr>
+            {% if next_step_results %}
                 <tr class="header">
                     <td>Next Step</td>
-                    <td width="20%">Completed</td>
+                    <td width="20%"> ---- </td>
                 </tr>
                 {% for row in next_step_results %}
                     <tr>
@@ -62,10 +63,10 @@
                         {% endif %}
                     </tr>
                 {% endfor %}
-            </table>
-        {% else %}
-            <p>There are currently no next steps</p>
-        {% endif %}
+            {% else %}
+                <tr><td>There are currently no to do</td></tr>
+            {% endif %}
+        </table>
         <h2>Associated Projects & Tasks</h2>
         <ul>
             <li><a href="#">Create New Project</a></li>
@@ -118,34 +119,40 @@
         <p>Please note - if there are NO permissions added to an opportunity then everyone will have access to the
             opportunity</p>
         <h3>Group Permissions</h3>
-        {{ opportunity_information_form.select_groups }}<input type="submit" name="submit_contact" value="Add Group"/>
-        {% if group_permissions %}
-                <table>
-                    <tr><td width="80%">Group</td><td width="20%"> ---- </td></tr>
-                    {% for row in group_permissions %}
-                        <tr>
-                            <td>{{ row.groups_id }}</td>
-                            <td><a href="{% url 'delete_opportunity_permission' opportunity_results.opportunity_id row.groups_id.group_id '0' %}">Delete Permission</a></td>
-                        </tr>
-                    {% endfor %}
-                </table>
-        {% endif %}
+        <table>
+            <tr>
+                <td width="80%">{{ opportunity_information_form.select_groups }}</td>
+                <td width="20%"><input type="submit" name="submit_contact" value="Add Group(s)"/></td>
+            </tr>
+            {% if group_permissions %}
+                {% for row in group_permissions %}
+                    <tr>
+                        <td>{{ row.groups_id }}</td>
+                        <td><a href="{% url 'delete_opportunity_permission' opportunity_results.opportunity_id row.groups_id.group_id '0' %}">Delete Permission</a></td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </table>
+
         <h3>User Permissions</h3>
-        {{ opportunity_information_form.select_users }}<input type="submit" name="submit_contact" value="Add User"/>
-        {% if user_permissions %}
-            <table>
-                <tr><td width="80%">User</td><td> ---- </td></tr>
+        <table>
+            <tr>
+                <td width="80%">{{ opportunity_information_form.select_users }}</td>
+                <td width="20%"><input type="submit" name="submit_contact" value="Add User(s)"/></td>
+            </tr>
+            {% if user_permissions %}
                 {% for row in user_permissions %}
                     <tr>
                         <td>{{ row.username }} - {{ row.first_name }} {{ row.last_name }}</td>
                         <td><a href="{% url 'delete_opportunity_permission' opportunity_results.opportunity_id '0' row.id %}">Delete Permission</a></td>
+                    </tr>
                 {% endfor %}
-            </table>
-        {% endif %}
+            {% endif %}
+        </table>
         <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
         <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
         <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
-
     </form>
+<div name="blank_space" style="margin-bottom: 150px;"></div>
 </body>
 {% endblock %}
