@@ -1626,6 +1626,7 @@ def opportunity_information(request, opportunity_id):
                 ).update(is_deleted='TRUE')
 
             select_users = form.cleaned_data['select_users']
+            print(select_users)
             if select_users:
                 for row in select_users:
                     assigned_user_instance = auth.models.User.objects.get(username=row)
@@ -1692,15 +1693,9 @@ def opportunity_information(request, opportunity_id):
             assigned_user__isnull=False,
             opportunity_id=opportunity_id,
             is_deleted='FALSE',
-        ).values('user_id').distinct()
+        ).values('assigned_user').distinct()
     )
-    """
-    user_permissions = opportunity_permissions.objects.filter(
-        user_id__isnull=False,
-        opportunity_id=opportunity_id,
-        is_deleted='FALSE',
-    ).distinct()
-    """
+    print(user_permissions)
 
     end_hour = opportunity_results.opportunity_expected_close_date.hour
     end_meridiem = u'AM'
