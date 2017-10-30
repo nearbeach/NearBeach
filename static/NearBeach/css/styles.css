@@ -2,6 +2,10 @@
     font-family: -apple-system,   system-ui,   BlinkMacSystemFont,   "Segoe UI",   "Roboto",   "Helvetica Neue", Arial, sans-serif;
 }
 
+select option:disabled {
+    display:none;
+}
+
 input[type="text"], input[type="password"], textarea {
     box-sizing: border-box;
     -webkit-box-sizing: border-box;
