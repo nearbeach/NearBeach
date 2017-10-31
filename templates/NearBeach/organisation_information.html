@@ -21,6 +21,7 @@
         {% csrf_token %}
         <h2>{{ organisation_results.organisation_name }}</h2>
         <ul>
+        <li><a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}">AARGH</a></li>
             {% if profile_picture %}
                 <li><img src="{{ profile_picture }}" height="160px"><br/> {{ organisation_information_form.update_profile_picture }}</li>
             {% else %}
