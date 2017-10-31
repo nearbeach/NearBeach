@@ -350,3 +350,12 @@ h2 {
         padding-left: 30px;
     }
 }
+
+#map {
+    height: 680px;
+    width: 100%;
+}
+
+.mapboxgl-canvas{
+    position: relative;
+}

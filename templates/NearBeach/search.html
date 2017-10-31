@@ -18,7 +18,7 @@
         <tr>
         <td><a href="{% url 'project_information' row.project_id %}">PRO{{ row.project_id }}</a></td>
         <td>{{ row.project_name }}</td>
-        <td>{{ row.organisations_id }}</td>
+        <td>{{ row.organisation_name }}</td>
         <td>{{ row.project_status }}</td>
         <td>{{ row.project_end_date }}</td>
         </tr>
@@ -31,7 +31,7 @@
         <tr>
         <td><a href="{% url 'task_information' row.tasks_id %}">TASK{{ row.tasks_id }}</a></td>
         <td>{{ row.task_short_description }}</td>
-        <td>{{ row.organisations_id }}</td>
+        <td>{{ row.organisation_name }}</td>
         <Td>{{ row.task_status }}</Td>
         <td>{{ row.task_end_date }}</td>
 

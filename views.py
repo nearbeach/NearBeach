@@ -2404,8 +2404,10 @@ def search(request):
     cursor = connection.cursor()
     cursor.execute("""
 		SELECT DISTINCT
-		*
-		FROM project
+		project.*
+		, organisations.organisation_name
+		FROM project JOIN organisations
+		ON project.organisations_id_id = organisations.organisations_id
 		WHERE 1=1
 		AND (
 			project.project_id like %s
@@ -2418,8 +2420,10 @@ def search(request):
     # Get list of tasks
     cursor.execute("""
 		SELECT DISTINCT
-		*
-		FROM tasks
+		tasks.*
+		, organisations.organisation_name
+		FROM tasks JOIN organisations
+		ON tasks.organisations_id_id = organisations.organisations_id
 		WHERE 1=1
 		AND (
 			tasks.tasks_id like %s
