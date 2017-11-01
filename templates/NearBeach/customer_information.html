@@ -70,7 +70,7 @@
                         <textarea readonly>{{ row.contact_history }}</textarea>
                         {% if row.document_key %}
                             <br/>
-                            <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}" target="_blank">{{ row.document_key.document_description }}</a>
+                            <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}" target="_blank">{{ row.document_key.document_description }}</a>
                         {% endif %}
                     </p>
                 {% endfor %}
@@ -87,9 +87,9 @@
                 <h4>Customer Documents</h4>
                 {% for row in customer_document_results %}
                     {% if row.document_description == "" %}
-                        <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document }}</a><br/>
+                        <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document }}</a><br/>
                     {%  else %}
-                        <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document_description }}</a><br/>
+                        <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document_description }}</a><br/>
                     {% endif %}
                 {% endfor %}
             {% endif %}
@@ -98,9 +98,9 @@
                 <h4>Organisation Documents</h4>
                 {% for row in organisation_document_results %}
                     {% if row.document_key.document_description == "" %}
-                        <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document }}</a><br/>
+                        <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document }}</a><br/>
                     {%  else %}
-                        <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">{{ row.document_key.document_description }}</a><br/>
+                        <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">{{ row.document_key.document_description }}</a><br/>
                     {% endif %}
                 {% endfor %}
             {% endif %}

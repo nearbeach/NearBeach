@@ -21,7 +21,6 @@
         {% csrf_token %}
         <h2>{{ organisation_results.organisation_name }}</h2>
         <ul>
-        <li><a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}">AARGH</a></li>
             {% if profile_picture %}
                 <li><img src="{{ profile_picture }}" height="160px"><br/> {{ organisation_information_form.update_profile_picture }}</li>
             {% else %}
@@ -70,7 +69,7 @@
                     {{ row.contact_type }} - Submitted by {{ row.user_id }} on {{ row.contact_date }}<br/>
                     <textarea readonly>{{ row.contact_history }}</textarea>
                     {% if row.document_key %}
-                        <br/><a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}" target="_blank">{{ row.document_key.document_description }}</a>
+                        <br/><a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}" target="_blank">{{ row.document_key.document_description }}</a>
                     {% endif %}
                 </p>
             {% endfor %}
@@ -86,16 +85,16 @@
         {% if organisation_document_results %}
             <h4>Organisation Documents</h4>
             {% for row in organisation_document_results %}
-                <a href="{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key }}</a><br/>
+                <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key }}</a><br/>
             {% endfor %}
         {% endif %}
         {% if customer_document_results %}
             <h4>Customer Documents associated to Organisation</h4>
             {% for row in customer_document_results %}
                 {% if row.document_description == "" %}
-                    {{ row.customer_id }} - <a href="{{ request.META.HTTP_HOST }}{{ row.document.url }}">{{ row.document.name|slice:"10:" }}</a><br/>
+                    {{ row.customer_id }} - <a href="https://{{ request.META.HTTP_HOST }}{{ row.document.url }}">{{ row.document.name|slice:"10:" }}</a><br/>
                 {%  else %}
-                    {{ row.customer_id }} - <a href="{{ request.META.HTTP_HOST }}{{ row.document.url }}">{{ row.document_description }}</a><br/>
+                    {{ row.customer_id }} - <a href="https://{{ request.META.HTTP_HOST }}{{ row.document.url }}">{{ row.document_description }}</a><br/>
                 {% endif %}
             {% endfor %}
         {% endif %}
