@@ -343,7 +343,10 @@ def campus_information(request, campus_information):
             return HttpResponseRedirect(reverse('customers_campus_information', args={submit_campus.id, 'CAMP'}))
 
     # Get Data
-    customer_campus_results = customers_campus.objects.filter(campus_id=campus_information)
+    customer_campus_results = customers_campus.objects.filter(
+        campus_id=campus_information,
+        is_deleted='FALSE',
+    )
     add_customers_results = customers.objects.filter(organisations_id=campus_results.organisations_id)
     countries_regions_results = list_of_countries_regions.objects.all()
     countries_results = list_of_countries.objects.all()
@@ -601,7 +604,10 @@ def customer_information(request, customer_id):
         customer_id=customer_id,
         opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
     )
-    campus_results = customers_campus.objects.filter(customer_id=customer_id)
+    campus_results = customers_campus.objects.filter(
+        customer_id=customer_id,
+        is_deleted='FALSE',
+    )
 
 
     try:
@@ -658,6 +664,23 @@ def customer_information(request, customer_id):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def delete_campus_contact(request, customers_campus_id, cust_or_camp):
+    """
+    So... I will need to add in security to define IF a user can do this action
+    """
+    save_customers_campus = customers_campus.objects.get(pk=customers_campus_id)
+    save_customers_campus.is_deleted = "TRUE"
+    save_customers_campus.change_user = request.user
+    save_customers_campus.save()
+
+    print(save_customers_campus.campus_id.id)
+    if cust_or_camp=="CAMP":
+        return HttpResponseRedirect(reverse('campus_information', args={save_customers_campus.campus_id.id}))
+    else:
+        return HttpResponseRedirect(reverse('customer_information', args={save_customers_campus.customer_id.customer_id}))
 
 
 @login_required(login_url='login')

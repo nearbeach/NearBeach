@@ -8,164 +8,165 @@
 <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
 <script src='https://code.jquery.com/jquery-1.11.0.min.js'></script>
 <body onload="on_page_load('{{ campus_results.campus_country_id_id }}', '{{ campus_results.campus_region_id }}')">
-			<h2>Campus Information - {{ campus_results.campus_nickname }}</h2>
-			<form action="{% url 'campus_information' campus_results.id %}" method="post" class="campus_information">
-				{% csrf_token %}
-                <ul>
-                    <li><a href="{% url 'organisation_information' campus_results.organisations_id.organisations_id %}">{{ campus_results.organisations_id }}</a></li>
-                    <li>{{ campus_information_form.campus_nickname }}</li>
-                    <li>{{ campus_information_form.campus_phone }}</li>
-                    <li>{{ campus_information_form.campus_fax }}</li>
-                    <li>{{ campus_information_form.campus_address1 }}</li>
-                    <li>{{ campus_information_form.campus_address2 }}</li>
-                    <li>{{ campus_information_form.campus_address3 }}</li>
-                    <li>{{ campus_information_form.campus_suburb }}</li>
-                    <li>
-                        Country:
-                        <select id="campus_country_id" name="campus_country_id" onchange="country_changed()" required="True">
-                            <option value="---------" selected disabled="disabled">---------</option>
-                            {% for row in countries_results %}
-                                <option value="{{ row.country_id }}">{{ row.country_name }}</option>
-                            {% endfor %}
-                        </select>
-                    </li>
-                    <li>
-                        Region:
-                        <select id="campus_region_id" name="campus_region_id" required="True">
-							<option value="---------" selected disabled="disabled">---------</option>
-							{% for row in countries_regions_results %}
-								<option value="{{ row.region_id }}" country_id="{{ row.country_id_id }}">{{ row.region_name }}</option>
-							{% endfor %}
-						</select>
-                    </li>
-                </ul>
-				<input type="submit" value="Save">
-			</form>
-			<h2>Campus Contacts</h2>
-			{% if add_customers_results %}
-				<form action="{% url 'campus_information' campus_results.id %}" method="POST" class="campus_information">
-					{% csrf_token %}
-					<select name="add_customer_select" id="id_add_customer_select" onchange="enable_disable_add_customer()">
-						<option value="---------"> ---------</option>
-						{% for row in add_customers_results %}
-							<option value="{{ row.customer_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
-						{% endfor %}
-					</select>
-					<input type="submit" name="add_customer_submit" value="Add Customer" disabled id="id_add_customer_submit">
-				</form>
-			{% endif %}
-			<br/>
-			{% if customer_campus_results %}
-				<table>
-					<tr class="header"><td>First Name</td><td>Last Name</td><td>Email</td><td>Phone</td><td>Fax</td></tr>
-					{% for row in customer_campus_results %}
-						<tr>
-                            <td><a href="{% url 'customers_campus_information' row.id 'CAMP' %}">{{ row.customer_id.customer_first_name }}</a></td>
-							<td>{{ row.customer_id.customer_last_name }}</td>
-							<td>{{ row.customer_id.customer_email }}</td>
-							<td>{{ row.customer_phone }}</td>
-							<td>{{ row.customer_fax }}</td>
-						</tr>
+	<h2>Campus Information - {{ campus_results.campus_nickname }}</h2>
+	<form action="{% url 'campus_information' campus_results.id %}" method="post" class="campus_information">
+		{% csrf_token %}
+		<ul>
+			<li><a href="{% url 'organisation_information' campus_results.organisations_id.organisations_id %}">{{ campus_results.organisations_id }}</a></li>
+			<li>{{ campus_information_form.campus_nickname }}</li>
+			<li>{{ campus_information_form.campus_phone }}</li>
+			<li>{{ campus_information_form.campus_fax }}</li>
+			<li>{{ campus_information_form.campus_address1 }}</li>
+			<li>{{ campus_information_form.campus_address2 }}</li>
+			<li>{{ campus_information_form.campus_address3 }}</li>
+			<li>{{ campus_information_form.campus_suburb }}</li>
+			<li>
+				Country:
+				<select id="campus_country_id" name="campus_country_id" onchange="country_changed()" required="True">
+					<option value="---------" selected disabled="disabled">---------</option>
+					{% for row in countries_results %}
+						<option value="{{ row.country_id }}">{{ row.country_name }}</option>
 					{% endfor %}
-				</table>
-			{% else %}
-				<p>There are no customers at this campus</p>
-			{% endif %}
-			<h2>Map</h2>
-            <div id='map'></div>
-            <script type="text/javascript">
-                /*
-                Extract the cordinates of the current campus. This requires jQuery
+				</select>
+			</li>
+			<li>
+				Region:
+				<select id="campus_region_id" name="campus_region_id" required="True">
+					<option value="---------" selected disabled="disabled">---------</option>
+					{% for row in countries_regions_results %}
+						<option value="{{ row.region_id }}" country_id="{{ row.country_id_id }}">{{ row.region_name }}</option>
+					{% endfor %}
+				</select>
+			</li>
+		</ul>
+		<input type="submit" value="Save">
+	</form>
+	<h2>Campus Contacts</h2>
+	{% if add_customers_results %}
+		<form action="{% url 'campus_information' campus_results.id %}" method="POST" class="campus_information">
+			{% csrf_token %}
+			<select name="add_customer_select" id="id_add_customer_select" onchange="enable_disable_add_customer()">
+				<option value="---------"> ---------</option>
+				{% for row in add_customers_results %}
+					<option value="{{ row.customer_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
+				{% endfor %}
+			</select>
+			<input type="submit" name="add_customer_submit" value="Add Customer" disabled id="id_add_customer_submit">
+		</form>
+	{% endif %}
+	<br/>
+	{% if customer_campus_results %}
+		<table>
+			<tr class="header"><td>First Name</td><td>Last Name</td><td>Email</td><td>Phone</td><td>Fax</td><td>Delete</td></tr>
+			{% for row in customer_campus_results %}
+				<tr>
+					<td><a href="{% url 'customers_campus_information' row.id 'CAMP' %}">{{ row.customer_id.customer_first_name }}</a></td>
+					<td>{{ row.customer_id.customer_last_name }}</td>
+					<td>{{ row.customer_id.customer_email }}</td>
+					<td>{{ row.customer_phone }}</td>
+					<td>{{ row.customer_fax }}</td>
+					<td><a href="{% url 'delete_campus_contact' row.id 'CAMP' %}">Delete</a></td>
+				</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+		<p>There are no customers at this campus</p>
+	{% endif %}
+	<h2>Map</h2>
+	<div id='map'></div>
+	<script type="text/javascript">
+		/*
+		Extract the cordinates of the current campus. This requires jQuery
 
-                Method
-                ~~~~~~
-                1.) Obtain the address into a HTML friendly format
-                2.) Using your mapbox API, query mapbox
-                3.) The screen has to wait until the page has fully loaded.
-                    this will not work otherwise and has caused great many
-                    gaming hours lost. There were teas. My three legged cat
-                    Amputee Amber did console me during those times.
-                4.) Place the co-ordinates into a global variable because
-                    I do not want to lose them.
-                5.) Obtain map information :)
-                 */
-                var access_token = 'pk.eyJ1Ijoicm9ib3RpY2hlYWQiLCJhIjoiY2o1bGtxNzNrMmVybjJxampmbjRtN2YyZSJ9.vljaOJpttEga2nIIR0WZQw';
-                var address =
-                    "{{ campus_results.campus_address1 }}" + " " +
-                    "{{ campus_results.campus_address2 }}" + " " +
-                    "{{ campus_results.campus_address3 }}" + " " +
-                    "{{ campus_results.campus_suburb }}" + " " +
-                    "{{ campus_results.campus_region_id }}" + " " +
-                    "{{ campus_results.campus_country_id }}"
-                ;
-                address = encodeURIComponent(address);
+		Method
+		~~~~~~
+		1.) Obtain the address into a HTML friendly format
+		2.) Using your mapbox API, query mapbox
+		3.) The screen has to wait until the page has fully loaded.
+			this will not work otherwise and has caused great many
+			gaming hours lost. There were teas. My three legged cat
+			Amputee Amber did console me during those times.
+		4.) Place the co-ordinates into a global variable because
+			I do not want to lose them.
+		5.) Obtain map information :)
+		 */
+		var access_token = 'pk.eyJ1Ijoicm9ib3RpY2hlYWQiLCJhIjoiY2o1bGtxNzNrMmVybjJxampmbjRtN2YyZSJ9.vljaOJpttEga2nIIR0WZQw';
+		var address =
+			"{{ campus_results.campus_address1 }}" + " " +
+			"{{ campus_results.campus_address2 }}" + " " +
+			"{{ campus_results.campus_address3 }}" + " " +
+			"{{ campus_results.campus_suburb }}" + " " +
+			"{{ campus_results.campus_region_id }}" + " " +
+			"{{ campus_results.campus_country_id }}"
+		;
+		address = encodeURIComponent(address);
 
 
-                function get_cords(return_cords){
-                    var json_data = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + address + ".json?access_token=" + access_token;
-                    $.getJSON(json_data,function(data) {
-                        //extract_data = data.features[0].center;
-                        //alert("Inside the function - " + extract_data);
-                        return_cords(data.features[0].center);
-                    });
-                }
-                var cordinates
-                $(function(){
-                    $(document).ready(function() {
-                        get_cords( function ( cordinates ) {
-                            /*
-                            Bit of a hack job here. I have placed this map calling function
-                            within the get_cords function as I can not pass the variables
-                            of this function to the outside world.
+		function get_cords(return_cords){
+			var json_data = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + address + ".json?access_token=" + access_token;
+			$.getJSON(json_data,function(data) {
+				//extract_data = data.features[0].center;
+				//alert("Inside the function - " + extract_data);
+				return_cords(data.features[0].center);
+			});
+		}
+		var cordinates
+		$(function(){
+			$(document).ready(function() {
+				get_cords( function ( cordinates ) {
+					/*
+					Bit of a hack job here. I have placed this map calling function
+					within the get_cords function as I can not pass the variables
+					of this function to the outside world.
 
-                            Amputee Amber is upset that with all her consoling, it did not
-                            stop me from swearing from my computer. She is currently sleeping
-                            on the chair not next to me.
+					Amputee Amber is upset that with all her consoling, it did not
+					stop me from swearing from my computer. She is currently sleeping
+					on the chair not next to me.
 
-                            The house mates dog is outside - out of choice
-                             */
-                            mapboxgl.accessToken = access_token;
-                            var map = new mapboxgl.Map({
-                                container: 'map', // container id
-                                style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
-                                center: cordinates, // starting position [lng, lat]
-                                zoom: 15 // starting zoom
-                            });
+					The house mates dog is outside - out of choice
+					 */
+					mapboxgl.accessToken = access_token;
+					var map = new mapboxgl.Map({
+						container: 'map', // container id
+						style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
+						center: cordinates, // starting position [lng, lat]
+						zoom: 15 // starting zoom
+					});
 
-                            map.on('load', function() {
-                                map.addLayer({
-                                    "id": "points",
-                                    "type": "symbol",
-                                    "source": {
-                                        "type": "geojson",
-                                        "data": {
-                                            "type": "FeatureCollection",
-                                            "features": [{
-                                                "type": "Feature",
-                                                "geometry": {
-                                                    "type": "Point",
-                                                    "coordinates": cordinates
-                                                },
-                                                "properties": {
-                                                    "title": "{{ campus_results.campus_nickname }}",
-                                                    "icon": "marker"
-                                                }
-                                            }]
-                                        }
-                                    },
-                                    "layout": {
-                                        "icon-image": "{icon}-15",
-                                        "text-field": "{title}",
-                                        "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
-                                        "text-offset": [0, 0.6],
-                                        "text-anchor": "top"
-                                    }
-                                })
+					map.on('load', function() {
+						map.addLayer({
+							"id": "points",
+							"type": "symbol",
+							"source": {
+								"type": "geojson",
+								"data": {
+									"type": "FeatureCollection",
+									"features": [{
+										"type": "Feature",
+										"geometry": {
+											"type": "Point",
+											"coordinates": cordinates
+										},
+										"properties": {
+											"title": "{{ campus_results.campus_nickname }}",
+											"icon": "marker"
+										}
+									}]
+								}
+							},
+							"layout": {
+								"icon-image": "{icon}-15",
+								"text-field": "{title}",
+								"text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+								"text-offset": [0, 0.6],
+								"text-anchor": "top"
+							}
+						})
 
-                            })
-                        });
-                    });
-                });
-            </script>
+					})
+				});
+			});
+		});
+	</script>
 </body>
 {% endblock %}

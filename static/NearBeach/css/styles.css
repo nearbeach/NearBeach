@@ -2,6 +2,15 @@
     font-family: -apple-system,   system-ui,   BlinkMacSystemFont,   "Segoe UI",   "Roboto",   "Helvetica Neue", Arial, sans-serif;
 }
 
+#map {
+    width:100%;
+    height: 680px;
+}
+
+#mapboxgl-canvas {
+    position: relative;
+}
+
 select option:disabled {
     display:none;
 }
@@ -351,11 +360,4 @@ h2 {
     }
 }
 
-#map {
-    height: 680px;
-    width: 100%;
-}
 
-.mapboxgl-canvas{
-    position: relative;
-}

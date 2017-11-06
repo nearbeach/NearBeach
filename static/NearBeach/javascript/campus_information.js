@@ -50,6 +50,8 @@ function on_page_load(country, region) {
             campus_region_select[i].disabled = true;
         }
     }
+
+    relayout_map()
 }
 
 
@@ -72,4 +74,17 @@ function country_changed() {
         }
     }
 
+}
+
+/*
+The following javascript is to fix a bug where the map only renders on the right side
+of the screen. The javascript changes the position to relative. Which fixes this issue.
+ */
+function relayout_map() {
+		var mapbox = document.getElementById("map");
+		var mapbox_canvas = mapbox.getElementsByClassName("mapboxgl-canvas");
+
+		for (var i=0; i < mapbox_canvas.length; i++) {
+		    mapbox_canvas[i].style.position="relative";
+		}
 }

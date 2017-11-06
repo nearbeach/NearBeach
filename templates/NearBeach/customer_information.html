@@ -26,7 +26,13 @@
                     <li><img src="{% static 'NearBeach/images/icons/star.svg' %}" height="160px"><br/> {{ organisation_information_form.update_profile_picture }}</li>
                 {% endif %}
                 <li>{{ customer_information_form.update_profile_picture }}</li>
-                <li>{{ customer_information_form.customer_title }} {{ customer_information_form.customer_first_name }} {{ customer_information_form.customer_last_name }}</li>
+                <table>
+                    <tr>
+                        <td width="10%">{{ customer_information_form.customer_title }}</td>
+                        <td width="45%">{{ customer_information_form.customer_first_name }}</td>
+                        <td width="45%">{{ customer_information_form.customer_last_name }}</td>
+                    </tr>
+                </table>
                 <li>{{ customer_information_form.customer_email }}</li>
                 <li>Organisation: <a href="{% url 'organisation_information' customer_results.organisations_id.organisations_id %}">{{ customer_results.organisations_id }}</a></li>
             </ul>
@@ -45,7 +51,15 @@
             {% endif %}
             {% if campus_results %}
                 <table>
-                    <tr class="header"><td>Campus nickname</td><td>Contact's Phone</td><td>Contact's Fax</td><td>Campus Suburb</td><td>Campus Region</td><td>Campus Country</td></tr>
+                    <tr class="header">
+                        <td>Campus nickname</td>
+                        <td>Contact's Phone</td>
+                        <td>Contact's Fax</td>
+                        <td>Campus Suburb</td>
+                        <td>Campus Region</td>
+                        <td>Campus Country</td>
+                        <td>Delete</td>
+                    </tr>
                     {% for row in campus_results %}
                         <tr>
                             <td><a href="{% url 'customers_campus_information' row.id 'CUST' %}">{{ row.campus_id }}</a></td>
@@ -54,6 +68,7 @@
                             <td>{{ row.campus_id.campus_suburb }}</td>
                             <td>{{ row.campus_id.campus_region_id }}</td>
                             <td>{{ row.campus_id.campus_country_id }}</td>
+                            <td><a href="{% url 'delete_campus_contact' row.id 'CUST' %}">Delete</a></td>
                         </tr>
                     {% endfor %}
                 </table>

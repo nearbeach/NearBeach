@@ -252,9 +252,7 @@ class customer_information_form(ModelForm):
 	#The Fields
 	customer_first_name=forms.CharField(
 		max_length=255,
-		widget=forms.TextInput(attrs={
-			'width': '30%',
-		})
+		widget=forms.TextInput()
 	)
 
 	contact_type=forms.ModelChoiceField(
