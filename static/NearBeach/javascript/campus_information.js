@@ -16,6 +16,9 @@ function enable_disable_add_customer() {
 }
 
 function on_page_load(country, region) {
+    //Quickly, relayout the map before anyone knows
+    relayout_map()
+
     /* Information
      * ~~~~~~~~~~~
      * The following will setup the page correctly. We want the ability for the country and region to be selected
@@ -51,7 +54,7 @@ function on_page_load(country, region) {
         }
     }
 
-    relayout_map()
+
 }
 
 
