@@ -84,12 +84,10 @@ The following javascript is to fix a bug where the map only renders on the right
 of the screen. The javascript changes the position to relative. Which fixes this issue.
  */
 function relayout_map() {
-    alert('start');
     var mapbox = document.getElementById("map");
     var mapbox_canvas = mapbox.getElementsByClassName("mapboxgl-canvas");
 
     for (var i=0; i < mapbox_canvas.length; i++) {
         mapbox_canvas[i].style.position="relative";
     }
-    alert('finish');
 }
