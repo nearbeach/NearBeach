@@ -52,7 +52,8 @@ function on_page_load(country, region) {
     }
 
     //Quickly, relayout the map before anyone knows
-    relayout_map();
+    //relayout_map();
+    setTimeout(relayout_map, 500)
 }
 
 
@@ -82,7 +83,7 @@ The following javascript is to fix a bug where the map only renders on the right
 of the screen. The javascript changes the position to relative. Which fixes this issue.
  */
 function relayout_map() {
-    alert("WHY DO I NEED TO ADD AN ALERT?")
+    //alert("WHY DO I NEED TO ADD AN ALERT?")
     var mapbox = document.getElementById("map");
     var mapbox_canvas = mapbox.getElementsByClassName("mapboxgl-canvas");
 
