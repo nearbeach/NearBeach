@@ -980,6 +980,39 @@ class project_history(models.Model):
 	class Meta:
 		db_table="project_history"
 
+
+class project_opportunity(models.Model):
+	project_opprtunity_id = models.AutoField(primary_key=True)
+	project_id = models.ForeignKey(
+		'project',
+		on_delete=models.CASCADE,
+	)
+	opportunity_id = models.ForeignKey(
+		'opportunity',
+		on_delete=models.CASCADE,
+	)
+	opportunity_description = models.CharField(
+		max_length=255,
+		null=True,
+		blank=True
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	class Meta:
+		db_table = "project_opportunity"
+
+
 class project_stages(models.Model):
 	project_stages_id=models.AutoField(primary_key=True)
 	project_id=models.ForeignKey(
@@ -1212,6 +1245,32 @@ class tasks_history(models.Model):
 	class Meta:
 		db_table="tasks_history"
 		
+class tasks_opportunity(models.Model):
+	tasks_opportunity_id=models.AutoField(primary_key=True)
+	tasks_id=models.ForeignKey(
+		'tasks',
+		on_delete=models.CASCADE,
+	)
+	opportunity_id=models.ForeignKey(
+		'opportunity',
+		on_delete=models.CASCADE,
+	)
+	date_created=models.DateTimeField(auto_now_add=True)
+	date_modified=models.DateTimeField(auto_now=True)
+	change_user=models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted=models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	class Meta:
+		db_table="tasks_opportunity"
+
 
 class user_groups(models.Model):
 	username=models.ForeignKey(User,)

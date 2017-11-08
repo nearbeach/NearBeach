@@ -4,7 +4,7 @@
 <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
 <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
 <script src='https://code.jquery.com/jquery-1.11.0.min.js'></script>
-<div class="div_content">
+<body>
     <h2>Customer Campus</h2>
     <form action="{% url 'customers_campus_information' customer_campus_id customer_or_org %}" method="POST">
         {% csrf_token %}
