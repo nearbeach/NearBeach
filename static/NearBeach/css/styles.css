@@ -54,6 +54,11 @@ input[type="submit"], input[type="button"] {
     border-radius: 5px;
 }
 
+input[type="submit"]:disabled, input[type="button"]:disabled {
+  background-color: rebeccapurple;
+}
+
+
 /* --- Navigation --- */
 
 #main-header {
