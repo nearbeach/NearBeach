@@ -38,8 +38,6 @@ function enable_disable_add_cost() {
 	var cost_amount = document.getElementById("id_cost_amount");
 	var add_cost_submit = document.getElementById("add_cost_submit");
 
-	alert(cost_amount.value);
-
 	if ((cost_description.value != '') && (cost_amount.value != '') &&
 		((cost_amount.value >= 0) || (cost_amount.value <= 0)) //Work around for if it is a number.
 		) {
