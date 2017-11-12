@@ -2,6 +2,19 @@
     font-family: -apple-system,   system-ui,   BlinkMacSystemFont,   "Segoe UI",   "Roboto",   "Helvetica Neue", Arial, sans-serif;
 }
 
+#map {
+    width:100%;
+    height: 680px;
+}
+
+#mapboxgl-canvas {
+    position: relative;
+}
+
+select option:disabled {
+    display:none;
+}
+
 input[type="text"], input[type="password"], textarea {
     box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -40,6 +53,11 @@ input[type="submit"], input[type="button"] {
     text-decoration: none;
     border-radius: 5px;
 }
+
+input[type="submit"]:disabled, input[type="button"]:disabled {
+  background-color: rebeccapurple;
+}
+
 
 /* --- Navigation --- */
 
@@ -346,3 +364,5 @@ h2 {
         padding-left: 30px;
     }
 }
+
+

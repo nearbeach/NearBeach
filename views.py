@@ -343,7 +343,10 @@ def campus_information(request, campus_information):
             return HttpResponseRedirect(reverse('customers_campus_information', args={submit_campus.id, 'CAMP'}))
 
     # Get Data
-    customer_campus_results = customers_campus.objects.filter(campus_id=campus_information)
+    customer_campus_results = customers_campus.objects.filter(
+        campus_id=campus_information,
+        is_deleted='FALSE',
+    )
     add_customers_results = customers.objects.filter(organisations_id=campus_results.organisations_id)
     countries_regions_results = list_of_countries_regions.objects.all()
     countries_results = list_of_countries.objects.all()
@@ -601,7 +604,10 @@ def customer_information(request, customer_id):
         customer_id=customer_id,
         opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
     )
-    campus_results = customers_campus.objects.filter(customer_id=customer_id)
+    campus_results = customers_campus.objects.filter(
+        customer_id=customer_id,
+        is_deleted='FALSE',
+    )
 
 
     try:
@@ -658,6 +664,23 @@ def customer_information(request, customer_id):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def delete_campus_contact(request, customers_campus_id, cust_or_camp):
+    """
+    So... I will need to add in security to define IF a user can do this action
+    """
+    save_customers_campus = customers_campus.objects.get(pk=customers_campus_id)
+    save_customers_campus.is_deleted = "TRUE"
+    save_customers_campus.change_user = request.user
+    save_customers_campus.save()
+
+    print(save_customers_campus.campus_id.id)
+    if cust_or_camp=="CAMP":
+        return HttpResponseRedirect(reverse('campus_information', args={save_customers_campus.campus_id.id}))
+    else:
+        return HttpResponseRedirect(reverse('customer_information', args={save_customers_campus.customer_id.customer_id}))
 
 
 @login_required(login_url='login')
@@ -1239,7 +1262,10 @@ def new_organisation(request):
 
 
 @login_required(login_url='login')
-def new_project(request, organisations_id='', customer_id=''):
+def new_project(request, organisations_id='', customer_id='', opportunity_id=''):
+    print("Organisation ID = ", organisations_id)
+    print("Customer ID = ", customer_id)
+    print("Opportunity ID = ", opportunity_id)
     if request.method == "POST":
         form = new_project_form(request.POST)
         if form.is_valid():
@@ -1295,7 +1321,7 @@ def new_project(request, organisations_id='', customer_id=''):
                 submit_group.save()
 
             # If there is a customer id attached to this. Assign the project to the customer and go back to customer informaton
-            if not customer_id == '':
+            if (not customer_id == '') and (not customer_id == '0'):
                 customer_instance = customers.objects.get(customer_id=customer_id)
                 save_project_customers = project_customers(
                     project_id=submit_project,
@@ -1304,12 +1330,25 @@ def new_project(request, organisations_id='', customer_id=''):
                 )
                 save_project_customers.save()
 
-                # Lets go to customer information
-                return HttpResponseRedirect(reverse(customer_information, args={customer_id}))
+            print("opportunity id = " + opportunity_id)
+
+            if not opportunity_id == '':
+                print("Saving Opportunity Instance")
+                opportunity_instance = opportunity.objects.get(opportunity_id=opportunity_id)
+                save_project_opportunity = project_opportunity(
+                    project_id=submit_project,
+                    opportunity_id=opportunity_instance,
+                    change_user=request.user,
+                )
+                save_project_opportunity.save()
 
             # If there is an organisation id, send the user to organisation info. Otherwise back to project infomration
+            if not opportunity_id == '':
+                return HttpResponseRedirect(reverse(opportunity_information, args={opportunity_id}))
             if not organisations_id == '':
                 return HttpResponseRedirect(reverse(organisation_information, args={organisations_id}))
+            elif (not customer_id == '') and (not customer_id == 0):
+                return HttpResponseRedirect(reverse(customer_information, args={customer_id}))
             else:
                 return HttpResponseRedirect(reverse(project_information, args={submit_project.pk}))
 
@@ -1378,6 +1417,7 @@ def new_project(request, organisations_id='', customer_id=''):
                 'finish_date_meridiems': meridiems, }),
             'groups_results': groups_results,
             'groups_count': groups_results.__len__(),
+            'opportunity_id': opportunity_id,
             'organisations_count': organisations_results.count(),
             'organisations_id': organisations_id,
             'customer_id': customer_id,
@@ -1387,7 +1427,7 @@ def new_project(request, organisations_id='', customer_id=''):
 
 
 @login_required(login_url='login')
-def new_task(request, organisations_id='', customer_id=''):
+def new_task(request, organisations_id='', customer_id='', opportunity_id=''):
     # Define if the page is loading in POST
     if request.method == "POST":
         form = new_task_form(request.POST)
@@ -1448,7 +1488,7 @@ def new_task(request, organisations_id='', customer_id=''):
 			variables in the URL. If one of them is the customer_id, we will use that to assign the task
 			to the customer and then go back to that customer information page
 			"""
-            if not customer_id == '':
+            if (not customer_id == '') and (not customer_id == '0'):
                 customer_instance = customers.objects.get(customer_id=customer_id)
                 save_tasks_customers = tasks_customers(
                     tasks_id=submit_task,
@@ -1457,19 +1497,26 @@ def new_task(request, organisations_id='', customer_id=''):
                 )
                 save_tasks_customers.save()
 
-                # Lets go back to the customer
-                return HttpResponseRedirect(reverse(customer_information, args={customer_id}))
+            if (not opportunity_id == ''):
+                opportunity_instance = opportunity.objects.get(opportunity_id=opportunity_id)
+                save_tasks_opportunity = tasks_opportunity(
+                    tasks_id=submit_task,
+                    opportunity_id=opportunity_instance,
+                    change_user=request.user,
+                )
+                save_tasks_opportunity.save()
 
-            """
-			If we have come from an organisation information page, then there will be extra variables in 
-			the URL. We want to head back there. If we did not come from there then we will want to go
-			to the task information page
-			"""
+                # Lets go back to the customer
+
+            # If there is an organisation id, send the user to organisation info. Otherwise back to project infomration
+            if not opportunity_id == '':
+                return HttpResponseRedirect(reverse(opportunity_information, args={opportunity_id}))
             if not organisations_id == '':
                 return HttpResponseRedirect(reverse(organisation_information, args={organisations_id}))
+            elif (not customer_id == '') and (not customer_id == 0):
+                return HttpResponseRedirect(reverse(customer_information, args={customer_id}))
             else:
-                return HttpResponseRedirect(reverse(task_information, args={submit_task.pk}))
-        return HttpResponseRedirect(reverse('new_task'))
+                return HttpResponseRedirect(reverse(project_information, args={submit_project.pk}))
 
     else:
         # Obtain the groups the user is associated with
@@ -1538,6 +1585,7 @@ def new_task(request, organisations_id='', customer_id=''):
             'organisations_id': organisations_id,
             'organisations_count': organisations.objects.filter(is_deleted='FALSE').count(),
             'customer_id': customer_id,
+            'opportunity_id': opportunity_id,
         }
 
     return HttpResponse(t.render(c, request))
@@ -1626,6 +1674,7 @@ def opportunity_information(request, opportunity_id):
                 ).update(is_deleted='TRUE')
 
             select_users = form.cleaned_data['select_users']
+            print(select_users)
             if select_users:
                 for row in select_users:
                     assigned_user_instance = auth.models.User.objects.get(username=row)
@@ -1679,6 +1728,14 @@ def opportunity_information(request, opportunity_id):
 
 
     # Data
+    project_results = project_opportunity.objects.filter(
+        opportunity_id=opportunity_id,
+        is_deleted='FALSE',
+    )
+    tasks_results = tasks_opportunity.objects.filter(
+        opportunity_id=opportunity_id,
+        is_deleted='FALSE',
+    )
     opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
     customer_results = customers.objects.filter(organisations_id=opportunity_results.organisations_id)
     next_step_results = opportunity_next_step.objects.filter(opportunity_id=opportunity_id)
@@ -1692,15 +1749,9 @@ def opportunity_information(request, opportunity_id):
             assigned_user__isnull=False,
             opportunity_id=opportunity_id,
             is_deleted='FALSE',
-        ).values('user_id').distinct()
+        ).values('assigned_user').distinct()
     )
-    """
-    user_permissions = opportunity_permissions.objects.filter(
-        user_id__isnull=False,
-        opportunity_id=opportunity_id,
-        is_deleted='FALSE',
-    ).distinct()
-    """
+    print(user_permissions)
 
     end_hour = opportunity_results.opportunity_expected_close_date.hour
     end_meridiem = u'AM'
@@ -1727,7 +1778,7 @@ def opportunity_information(request, opportunity_id):
     t = loader.get_template('NearBeach/opportunity_information.html')
 
     c = {
-        'opportunity_id': opportunity_id,
+        'opportunity_id': str(opportunity_id),
         'opportunity_information_form': opportunity_information_form(
             instance=opportunity_results,
             initial=initial,
@@ -1737,6 +1788,8 @@ def opportunity_information(request, opportunity_id):
         'next_step_results': next_step_results,
         'group_permissions': group_permissions,
         'user_permissions': user_permissions,
+        'project_results': project_results,
+        'tasks_results': tasks_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -2041,6 +2094,7 @@ def project_information(request, project_id):
             project_results.change_user=request.user
             project_results.save()
 
+
             if 'add_customer_submit' in request.POST:
                 # The user has tried adding a customer
                 customer_id = int(request.POST.get("add_customer_select"))
@@ -2053,11 +2107,13 @@ def project_information(request, project_id):
 
                 submit_customer.save()
 
-            if 'add_cost_submit' in request.POST:
+            cost_description = form.cleaned_data['cost_description']
+            cost_amount = form.cleaned_data['cost_amount']
+            if ((not cost_description == '') and ((cost_amount <= 0) or (cost_amount >= 0))):
                 submit_cost = costs(
                     project_id=project.objects.get(pk=project_id),
-                    cost_description=form.cleaned_data['cost_description'],
-                    cost_amount=form.cleaned_data['cost_amount'],
+                    cost_description=cost_description,
+                    cost_amount=cost_amount,
                     change_user=request.user,
                 )
                 submit_cost.save()
@@ -2150,10 +2206,8 @@ def project_information(request, project_id):
 
         else:
             print(form.errors)
-    else:
-        # If the method is not POST then we have to define project_results
-        # project_results = project.objects.get(project_id = project_id)
-        project_results = get_object_or_404(project, project_id=project_id)
+
+    project_results = get_object_or_404(project, project_id=project_id)
 
     # Obtain the required data
     project_history_results = project_history.objects.filter(project_id=project_id, is_deleted='FALSE')
@@ -2409,8 +2463,10 @@ def search(request):
     cursor = connection.cursor()
     cursor.execute("""
 		SELECT DISTINCT
-		*
-		FROM project
+		project.*
+		, organisations.organisation_name
+		FROM project JOIN organisations
+		ON project.organisations_id_id = organisations.organisations_id
 		WHERE 1=1
 		AND (
 			project.project_id like %s
@@ -2423,8 +2479,10 @@ def search(request):
     # Get list of tasks
     cursor.execute("""
 		SELECT DISTINCT
-		*
-		FROM tasks
+		tasks.*
+		, organisations.organisation_name
+		FROM tasks JOIN organisations
+		ON tasks.organisations_id_id = organisations.organisations_id
 		WHERE 1=1
 		AND (
 			tasks.tasks_id like %s

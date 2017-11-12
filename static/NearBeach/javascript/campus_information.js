@@ -50,6 +50,10 @@ function on_page_load(country, region) {
             campus_region_select[i].disabled = true;
         }
     }
+
+    //Quickly, relayout the map before anyone knows
+    //relayout_map();
+    setTimeout(relayout_map, 500)
 }
 
 
@@ -72,4 +76,18 @@ function country_changed() {
         }
     }
 
+}
+
+/*
+The following javascript is to fix a bug where the map only renders on the right side
+of the screen. The javascript changes the position to relative. Which fixes this issue.
+ */
+function relayout_map() {
+    //alert("WHY DO I NEED TO ADD AN ALERT?")
+    var mapbox = document.getElementById("map");
+    var mapbox_canvas = mapbox.getElementsByClassName("mapboxgl-canvas");
+
+    for (var i=0; i < mapbox_canvas.length; i++) {
+        mapbox_canvas[i].style.position="relative";
+    }
 }

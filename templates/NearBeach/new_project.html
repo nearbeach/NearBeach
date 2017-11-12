@@ -3,7 +3,9 @@
 {% load static %}
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <body onload="initiate_dates();">
-{% if customer_id %}
+{% if opportunity_id %}
+    <form action={% url 'new_project' organisations_id customer_id opportunity_id %} method="post" class="new_project">
+{% elif customer_id %}
     <form action={% url 'new_project' organisations_id customer_id %} method="post" class="new_project">
 {% elif organisations_id %}
     <form action={% url 'new_project' organisations_id %} method="post" class="new_project">

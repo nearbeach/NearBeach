@@ -69,8 +69,15 @@
         </table>
         <h2>Associated Projects & Tasks</h2>
         <ul>
-            <li><a href="#">Create New Project</a></li>
-            <li><a href="#">Create New Task</a></li>
+            {% if opportunity_results.customer_id %}
+                <li><a href="{% url 'new_project' opportunity_results.organisations_id.organisations_id opportunity_results.customer_id.customer_id opportunity_id %}">Create New Project</a></li>
+                <li><a href="{% url 'new_task' opportunity_results.organisations_id.organisations_id opportunity_results.customer_id.customer_id opportunity_id %}">Create New Task</a></li>
+            {% else %}
+                <li><a href="{% url 'new_project' opportunity_results.organisations_id.organisations_id 0 opportunity_id %}">Create New Project</a></li>
+                <li><a href="{% url 'new_task' opportunity_results.organisations_id.organisations_id 0 opportunity_id %}">Create New Task</a></li>
+
+            {% endif %}
+
         </ul>
         <h2>Assigned Projects</h2>
         {% if project_results %}
@@ -83,10 +90,10 @@
                 </tr>
                 {% for row in project_results %}
                     <tr>
-                        <td><a href="#">PRO{{ row.project_id }}</a></td>
-                        <td>{{ row.project_name }}</td>
-                        <td>{{ row.project_end_date }}</td>
-                        <td>{{ row.project_status }}</td>
+                        <td><a href="#">PRO{{ row.project_id.project_id }}</a></td>
+                        <td>{{ row.project_id.project_name }}</td>
+                        <td>{{ row.project_id.project_end_date }}</td>
+                        <td>{{ row.project_id.project_status }}</td>
                     </tr>
                 {% endfor %}
             </table>
@@ -95,7 +102,7 @@
         {% endif %}
         <br/>
         <h2>Assigned Tasks</h2>
-        {% if task_results %}
+        {% if tasks_results %}
             <table>
                 <tr class="header">
                     <td>Task ID</td>
@@ -103,12 +110,12 @@
                     <td>Project End Date</td>
                     <td>Project Status</td>
                 </tr>
-                {% for row in task_results %}
+                {% for row in tasks_results %}
                     <tr>
-                        <td><a href="#">TASK{{ row.tasks_id }}</a></td>
-                        <td>{{ row.task_short_description }}</td>
-                        <td>{{ row.task_end_date }}</td>
-                        <td>{{ row.task_status }}</td>
+                        <td><a href="#">TASK{{ row.tasks_id.tasks_id }}</a></td>
+                        <td>{{ row.tasks_id.task_short_description }}</td>
+                        <td>{{ row.tasks_id.task_end_date }}</td>
+                        <td>{{ row.tasks_id.task_status }}</td>
                     </tr>
                 {% endfor %}
             </table>
