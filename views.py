@@ -2094,6 +2094,7 @@ def project_information(request, project_id):
             project_results.change_user=request.user
             project_results.save()
 
+
             if 'add_customer_submit' in request.POST:
                 # The user has tried adding a customer
                 customer_id = int(request.POST.get("add_customer_select"))
@@ -2106,11 +2107,13 @@ def project_information(request, project_id):
 
                 submit_customer.save()
 
-            if 'add_cost_submit' in request.POST:
+            cost_description = form.cleaned_data['cost_description']
+            cost_amount = form.cleaned_data['cost_amount']
+            if ((not cost_description == '') and ((cost_amount <= 0) or (cost_amount >= 0))):
                 submit_cost = costs(
                     project_id=project.objects.get(pk=project_id),
-                    cost_description=form.cleaned_data['cost_description'],
-                    cost_amount=form.cleaned_data['cost_amount'],
+                    cost_description=cost_description,
+                    cost_amount=cost_amount,
                     change_user=request.user,
                 )
                 submit_cost.save()
@@ -2203,10 +2206,8 @@ def project_information(request, project_id):
 
         else:
             print(form.errors)
-    else:
-        # If the method is not POST then we have to define project_results
-        # project_results = project.objects.get(project_id = project_id)
-        project_results = get_object_or_404(project, project_id=project_id)
+
+    project_results = get_object_or_404(project, project_id=project_id)
 
     # Obtain the required data
     project_history_results = project_history.objects.filter(project_id=project_id, is_deleted='FALSE')
