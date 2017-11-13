@@ -667,6 +667,18 @@ def customer_information(request, customer_id):
 
 
 @login_required(login_url='login')
+def dashboard(request):
+    # Load the template
+    t = loader.get_template('NearBeach/dashboard.html')
+
+    # context
+    c = {
+
+    }
+
+    return HttpResponse(t.render(c, request))
+
+@login_required(login_url='login')
 def delete_campus_contact(request, customers_campus_id, cust_or_camp):
     """
     So... I will need to add in security to define IF a user can do this action
