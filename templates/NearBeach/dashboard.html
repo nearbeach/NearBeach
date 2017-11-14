@@ -1,7 +1,37 @@
 {% extends "./template.html" %}
 {% block content %}
-    <h2>Dashboard</h2>
-    <p>WHERE ARE MY WIDGETS :'(</p>
-    {% block active_tasks %}
-    {% endblock %}
+    <script>
+    /*
+    $.ajax({
+   url:href,
+   type:'GET',
+   success: function(data){
+       $('#content').html($(data).find('#content').html());
+   }
+});
+     */
+        function on_page_load() {
+            $.ajax({
+                url: '/dashboard/active_projects/',
+                data: {},
+                dataType: 'HTML',
+                type:'GET',
+                success: function(data) {
+                    $('#active_projects').html(data);
+                },
+                fail: function(){
+                    alert("Sorry");
+                }
+            })
+        }
+    </script>
+    <body onload="on_page_load()">
+        <h2>Dashboard</h2>
+        <p>WHERE ARE MY WIDGETS :'(</p>
+        <ul>
+            <li id="active_projects"></li>
+        </ul>
+
+        <div id="active_tasks">[data to be populated here]</div>
+    </body>
 {% endblock %}

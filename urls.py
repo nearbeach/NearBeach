@@ -1,5 +1,6 @@
 from django.conf.urls import include, url
 
+
 #The following two imports are for the static files
 from django.conf import settings
 from django.conf.urls.static import static
@@ -23,7 +24,9 @@ urlpatterns = [
 	url(r'^customers_campus_information/(?P<customer_campus_id>[0-9]+)/(?P<customer_or_org>["CUST","CAMP"]+)',
 		views.customers_campus_information, name="customers_campus_information"),
 	url(r'^customer_information/(?P<customer_id>[0-9]+)/', views.customer_information, name='customer_information'),
-	url(r'^dashboard/', views.dashboard,name='dashboard'),
+	url(r'^dashboard/$', views.dashboard,name='dashboard'),
+	url(r'dashboard/active_projects', views.dashboard_active_projects,name='dashboard_active_projects'),
+	url(r'dashboard/active_tasks', views.dashboard_active_tasks,name='dashboard_active_tasks'),
 	url(r'^delete_cost/(?P<cost_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])', views.delete_cost,
 		name='delete_cost'),
 	url(r'^delete_campus_contact/(?P<customers_campus_id>[0-9]+)/(?P<cust_or_camp>["CUST","CAMP"]+)',views.delete_campus_contact, name='delete_campus_contact'),

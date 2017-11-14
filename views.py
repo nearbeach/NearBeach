@@ -107,7 +107,6 @@ def active_projects(request):
     """, [current_user.id, current_user.id, current_user.id])
 
     active_projects_results = namedtuplefetchall(cursor)
-    print(active_projects_results)
 
     # Load the template
     t = loader.get_template('NearBeach/active_projects.html')
@@ -677,6 +676,102 @@ def dashboard(request):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def dashboard_active_projects(request):
+    #Data
+    # Get username_id from User
+    current_user = request.user
+
+    # Setup connection to the database and query it
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    SELECT 
+      project.project_id AS "project_id"
+    , '' AS "task_id"
+    , project.project_name AS "description"
+    , project.project_end_date AS "end_date"
+    , organisations.organisation_name AS "organisation_name"
+    , organisations.organisations_id AS "organisations_id"
+
+
+
+    from 
+      project left join project_tasks
+        on project.project_id = project_tasks.project_id
+        and project_tasks.is_deleted = 'FALSE'
+    , project_groups
+    , user_groups
+    , organisations
+
+
+    where 1 = 1
+    and project.project_status IN ('New','Open')
+    and project.is_deleted = 'FALSE'
+    and project.project_id = project_groups.project_id_id
+    and project_groups.groups_id_id = user_groups.group_id_id
+    and user_groups.username_id = %s
+    and project.organisations_id_id=organisations.organisations_id
+    """, [current_user.id])
+
+    active_projects_results = namedtuplefetchall(cursor)
+
+    # Load the template
+    t = loader.get_template('NearBeach/dashboard_widgets/active_projects.html')
+
+    # context
+    c = {
+        'active_projects_results': active_projects_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def dashboard_active_tasks(request):
+    # Get username_id from User
+    current_user = request.user
+
+    # Setup connection to the database and query it
+    cursor = connection.cursor()
+
+    cursor.execute("""
+       select 
+        project_tasks.project_id AS `Project ID`
+       , tasks.tasks_id AS `Task ID`
+       , tasks.task_short_description AS `Description`
+       , tasks.task_end_date AS `End Date` 
+       , organisations.organisation_name AS "organisation_name"
+       , organisations.organisations_id AS "organisations_id"
+
+       from 
+         tasks left join project_tasks
+           on tasks.tasks_id = project_tasks.task_id 
+           and project_tasks.is_deleted = "FALSE"
+       , organisations
+
+
+
+       where 1 = 1
+       and tasks.task_status in ('New','Open')
+       and tasks.task_assigned_to_id = %s
+       and tasks.organisations_id_id=organisations.organisations_id
+       """, [ current_user.id])
+
+    active_tasks_results = namedtuplefetchall(cursor)
+
+    # Load the template
+    t = loader.get_template('NearBeach/dashboard_widgets/active_tasks.html')
+
+    # context
+    c = {
+        'active_tasks_results': active_tasks_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
 
 @login_required(login_url='login')
 def delete_campus_contact(request, customers_campus_id, cust_or_camp):
