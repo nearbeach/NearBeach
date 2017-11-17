@@ -677,9 +677,47 @@ def dashboard(request):
 
     return HttpResponse(t.render(c, request))
 
-
 @login_required(login_url='login')
 def dashboard_active_projects(request):
+    #Get username id from User
+    current_user = request.user
+
+    #Get Data
+    assigned_users_results = assigned_users.objects.filter(
+        is_deleted='FALSE',
+        user_id=current_user,
+    )
+
+    # Load the template
+    t = loader.get_template('NearBeach/dashboard_widgets/active_projects.html')
+
+    # context
+    c = {
+        'assigned_users_results': assigned_users_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def dashboard_active_tasks(request):
+    # Get username id from User
+    current_user = request.user
+
+    # Get Data
+
+    # Load the template
+    t = loader.get_template('NearBeach/dashboard_widgets/active_tasks.html')
+
+    # context
+    c = {
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def dashboard_group_active_projects(request):
     #Data
     # Get username_id from User
     current_user = request.user
@@ -719,7 +757,7 @@ def dashboard_active_projects(request):
     active_projects_results = namedtuplefetchall(cursor)
 
     # Load the template
-    t = loader.get_template('NearBeach/dashboard_widgets/active_projects.html')
+    t = loader.get_template('NearBeach/dashboard_widgets/group_active_projects.html')
 
     # context
     c = {
@@ -730,7 +768,7 @@ def dashboard_active_projects(request):
 
 
 @login_required(login_url='login')
-def dashboard_active_tasks(request):
+def dashboard_group_active_tasks(request):
     # Get username_id from User
     current_user = request.user
 
@@ -738,36 +776,96 @@ def dashboard_active_tasks(request):
     cursor = connection.cursor()
 
     cursor.execute("""
-       select 
-        project_tasks.project_id AS `Project ID`
-       , tasks.tasks_id AS `Task ID`
-       , tasks.task_short_description AS `Description`
-       , tasks.task_end_date AS `End Date` 
-       , organisations.organisation_name AS "organisation_name"
-       , organisations.organisations_id AS "organisations_id"
-
-       from 
-         tasks left join project_tasks
-           on tasks.tasks_id = project_tasks.task_id 
-           and project_tasks.is_deleted = "FALSE"
-       , organisations
-
-
-
-       where 1 = 1
-       and tasks.task_status in ('New','Open')
-       and tasks.task_assigned_to_id = %s
-       and tasks.organisations_id_id=organisations.organisations_id
+       SELECT DISTINCT
+          tasks.tasks_id
+        , tasks.task_short_description
+        , tasks.task_end_date
+        , organisations.organisation_name
+        , organisations.organisations_id
+        FROM 
+          tasks
+        , organisations
+        , tasks_groups
+        , user_groups
+        
+        WHERE 1=1
+        
+        AND tasks.is_deleted = 'FALSE'
+        AND tasks.task_status IN ('New','Open')
+        AND tasks.organisations_id_id=organisations.organisations_id
+        AND tasks.tasks_id = tasks_groups.tasks_id_id
+        AND tasks_groups.groups_id_id = user_groups.group_id_id
+        AND user_groups.username_id = %s
        """, [ current_user.id])
 
     active_tasks_results = namedtuplefetchall(cursor)
 
     # Load the template
-    t = loader.get_template('NearBeach/dashboard_widgets/active_tasks.html')
+    t = loader.get_template('NearBeach/dashboard_widgets/group_active_tasks.html')
 
     # context
     c = {
         'active_tasks_results': active_tasks_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def dashboard_group_opportunities(request):
+    # Get username_id from User
+    current_user = request.user
+
+    # Setup connection to the database and query it
+    cursor = connection.cursor()
+
+    cursor.execute("""
+            SELECT DISTINCT
+          opportunities.opportunity_id
+        , opportunities.opportunity_name
+        , organisations.organisations_id
+        , organisations.organisation_name
+        , customers.customer_id
+        , customers.customer_first_name
+        , customers.customer_last_name
+        , list_of_opportunity_stage.opportunity_stage_description
+        , opportunities.opportunity_expected_close_date
+        
+        
+        FROM 
+          opportunity_permission LEFT JOIN user_groups
+            ON opportunity_permission.assigned_user_id = user_groups.username_id
+        , opportunities JOIN organisations
+            ON opportunities.organisations_id_id = organisations.organisations_id
+            LEFT JOIN customers
+            ON opportunities.customer_id_id = customers.customer_id
+            JOIN list_of_opportunity_stage
+            ON opportunities.opportunity_stage_id_id = list_of_opportunity_stage.opportunity_stage_id
+        WHERE 1=1
+        AND opportunity_permission.opportunity_id_id = opportunities.opportunity_id
+        AND list_of_opportunity_stage.opportunity_stage_description NOT LIKE '%Close%'
+        AND (
+            --Assigned user
+            opportunity_permission.assigned_user_id = %s
+            --Group ID
+            OR (
+                user_groups.username_id = %s
+                AND user_groups.is_deleted = 'FALSE'
+                )	
+            --All users
+            OR opportunity_permission.all_users = 'TRUE'
+            )
+        AND opportunity_permission.is_deleted = 'FALSE'
+    """, [current_user.id, current_user.id])
+
+    active_group_opportunities = namedtuplefetchall(cursor)
+
+    # Load the template
+    t = loader.get_template('NearBeach/dashboard_widgets/group_opportunities.html')
+
+    # context
+    c = {
+        'active_group_opportunities': active_group_opportunities,
     }
 
     return HttpResponse(t.render(c, request))
