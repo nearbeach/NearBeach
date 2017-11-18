@@ -843,10 +843,10 @@ JOIN list_of_opportunity_stage
 ON opportunities.opportunity_stage_id_id = list_of_opportunity_stage.opportunity_stage_id
 WHERE 1=1
 AND opportunity_permission.opportunity_id_id = opportunities.opportunity_id
-AND list_of_opportunity_stage.opportunity_stage_description NOT LIKE '%Close%'
+AND list_of_opportunity_stage.opportunity_stage_description NOT LIKE '%%Close%%'
 AND (
 --Assigned user
-opportunity_permission.assigned_user_id = 1
+opportunity_permission.assigned_user_id = %s
 --Group ID
 OR (
 user_groups.username_id = %s
@@ -856,7 +856,7 @@ AND user_groups.is_deleted = 'FALSE'
 OR opportunity_permission.all_users = 'TRUE'
 )
 AND opportunity_permission.is_deleted = 'FALSE'
-""",[current_user.id])
+""",[current_user.id,current_user.id])
     print(current_user.id)
     active_group_opportunities = namedtuplefetchall(cursor)
 
