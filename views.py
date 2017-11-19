@@ -820,44 +820,43 @@ def dashboard_group_opportunities(request):
     cursor = connection.cursor()
 
     cursor.execute("""
-SELECT DISTINCT
-opportunities.opportunity_id
-, opportunities.opportunity_name
-, organisations.organisations_id
-, organisations.organisation_name
-, customers.customer_id
-, customers.customer_first_name
-, customers.customer_last_name
-, list_of_opportunity_stage.opportunity_stage_description
-, opportunities.opportunity_expected_close_date
-
-
-FROM 
-opportunity_permission LEFT JOIN user_groups
-ON opportunity_permission.assigned_user_id = user_groups.username_id
-, opportunities JOIN organisations
-ON opportunities.organisations_id_id = organisations.organisations_id
-LEFT JOIN customers
-ON opportunities.customer_id_id = customers.customer_id
-JOIN list_of_opportunity_stage
-ON opportunities.opportunity_stage_id_id = list_of_opportunity_stage.opportunity_stage_id
-WHERE 1=1
-AND opportunity_permission.opportunity_id_id = opportunities.opportunity_id
-AND list_of_opportunity_stage.opportunity_stage_description NOT LIKE '%%Close%%'
-AND (
---Assigned user
-opportunity_permission.assigned_user_id = %s
---Group ID
-OR (
-user_groups.username_id = %s
-AND user_groups.is_deleted = 'FALSE'
-)	
---All users
-OR opportunity_permission.all_users = 'TRUE'
-)
-AND opportunity_permission.is_deleted = 'FALSE'
-""",[current_user.id,current_user.id])
-    print(current_user.id)
+        SELECT DISTINCT
+        opportunities.opportunity_id
+        , opportunities.opportunity_name
+        , organisations.organisations_id
+        , organisations.organisation_name
+        , customers.customer_id
+        , customers.customer_first_name
+        , customers.customer_last_name
+        , list_of_opportunity_stage.opportunity_stage_description
+        , opportunities.opportunity_expected_close_date
+        
+        
+        FROM 
+        opportunity_permission LEFT JOIN user_groups
+        ON opportunity_permission.assigned_user_id = user_groups.username_id
+        , opportunities JOIN organisations
+        ON opportunities.organisations_id_id = organisations.organisations_id
+        LEFT JOIN customers
+        ON opportunities.customer_id_id = customers.customer_id
+        JOIN list_of_opportunity_stage
+        ON opportunities.opportunity_stage_id_id = list_of_opportunity_stage.opportunity_stage_id
+        WHERE 1=1
+        AND opportunity_permission.opportunity_id_id = opportunities.opportunity_id
+        AND list_of_opportunity_stage.opportunity_stage_description NOT LIKE '%%Close%%'
+        AND (
+        --Assigned user
+        opportunity_permission.assigned_user_id = %s
+        --Group ID
+        OR (
+        user_groups.username_id = %s
+        AND user_groups.is_deleted = 'FALSE'
+        )	
+        --All users
+        OR opportunity_permission.all_users = 'TRUE'
+        )
+        AND opportunity_permission.is_deleted = 'FALSE'
+    """,[current_user.id,current_user.id])
     active_group_opportunities = namedtuplefetchall(cursor)
 
     # Load the template
@@ -866,6 +865,54 @@ AND opportunity_permission.is_deleted = 'FALSE'
     # context
     c = {
         'active_group_opportunities': active_group_opportunities,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def dashboard_opportunities(request):
+    # Get username_id from User
+    current_user = request.user
+
+    # Setup connection to the database and query it
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT DISTINCT
+        opportunities.opportunity_id
+        , opportunities.opportunity_name
+        , organisations.organisations_id
+        , organisations.organisation_name
+        , customers.customer_id
+        , customers.customer_first_name
+        , customers.customer_last_name
+        , list_of_opportunity_stage.opportunity_stage_description
+        , opportunities.opportunity_expected_close_date
+
+
+        FROM 
+        opportunity_permission LEFT JOIN user_groups
+        ON opportunity_permission.assigned_user_id = user_groups.username_id
+        , opportunities JOIN organisations
+        ON opportunities.organisations_id_id = organisations.organisations_id
+        LEFT JOIN customers
+        ON opportunities.customer_id_id = customers.customer_id
+        JOIN list_of_opportunity_stage
+        ON opportunities.opportunity_stage_id_id = list_of_opportunity_stage.opportunity_stage_id
+        WHERE 1=1
+        AND opportunity_permission.opportunity_id_id = opportunities.opportunity_id
+        AND list_of_opportunity_stage.opportunity_stage_description NOT LIKE '%%Close%%'
+        AND opportunity_permission.assigned_user_id = %s
+    """, [current_user.id])
+    active_opportunities = namedtuplefetchall(cursor)
+
+    # Load the template
+    t = loader.get_template('NearBeach/dashboard_widgets/opportunities.html')
+
+    # context
+    c = {
+        'active_opportunities': active_opportunities,
     }
 
     return HttpResponse(t.render(c, request))

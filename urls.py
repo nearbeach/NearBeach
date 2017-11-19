@@ -31,6 +31,7 @@ urlpatterns = [
 	url(r'dashboard/group_active_projects', views.dashboard_group_active_projects,name='dashboard_group_active_projects'),
 	url(r'dashboard/group_active_tasks', views.dashboard_group_active_tasks,name='dashboard_group_active_tasks'),
 	url(r'dashboard/group_opportunities', views.dashboard_group_opportunities, name='dashboard_group_opportunities'),
+	url(r'dashboard/opportunities', views.dashboard_opportunities, name='dashboard_opportunities'),
 	url(r'^delete_cost/(?P<cost_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])', views.delete_cost,
 		name='delete_cost'),
 	url(r'^delete_campus_contact/(?P<customers_campus_id>[0-9]+)/(?P<cust_or_camp>["CUST","CAMP"]+)',views.delete_campus_contact, name='delete_campus_contact'),
