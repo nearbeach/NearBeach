@@ -616,6 +616,56 @@ class list_of_lead_source(models.Model):
 		db_table="list_of_lead_source"
 
 
+class list_of_quote_approval_status(models.Model):
+	quote_approval_status_id=models.AutoField(primary_key=True)
+	quote_approval_status=models.CharField(max_length=100)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	class Meta:
+		db_table="list_of_quote_approval_status"
+
+
+class list_of_quote_stages(models.Model):
+	quote_stages_id=models.AutoField(primary_key=True)
+	quote_stage=models.CharField(max_length=50)
+	"""
+	For the quote stages; if the quote is still a quote, then the dropdown box
+	will only show those who are NOT an is_invoice=TRUE. However if the quote
+	has been turned into an INVOICE, then the dropdown box will show those
+	is_invoice=TRUE
+	"""
+	is_invoice=models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+	date_created=models.DateTimeField(auto_now_add=True)
+	date_modified=models.DateTimeField(auto_now=True)
+	change_user=models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted=models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+	class Meta:
+		db_table="list_of_quote_stages"
+
+
 class list_of_titles(models.Model):
 	title_id=models.AutoField(primary_key=True)
 	title=models.CharField(max_length=10)
@@ -1074,7 +1124,7 @@ class quotes(models.Model):
 	quote_title=models.CharField(max_length=255)
 	quote_valid_till=models.DateTimeField()
 	quote_stage_id = models.ForeignKey(
-		'quote_stages',
+		'list_of_quote_stages',
 		on_delete=models.CASCADE,
 	)
 	is_invoice=models.CharField(
@@ -1083,7 +1133,7 @@ class quotes(models.Model):
 		default='FALSE'
 	)
 	quote_approval_status_id=models.ForeignKey(
-		'quote_approval_status',
+		'list_of_quote_approval_status',
 		on_delete=models.CASCADE,
 	)
 	quote_terms=models.TextField(
@@ -1131,55 +1181,6 @@ class quotes(models.Model):
 		db_table="quotes"
 
 
-class quote_approval_status(models.Model):
-	quote_approval_status_id=models.AutoField(primary_key=True)
-	quote_approval_status=models.CharField(max_length=100)
-	date_created = models.DateTimeField(auto_now_add=True)
-	date_modified = models.DateTimeField(auto_now=True)
-	change_user = models.ForeignKey(
-		User,
-		on_delete=models.CASCADE,
-		related_name='%(class)s_change_user'
-	)
-	is_deleted = models.CharField(
-		max_length=5,
-		choices=IS_DELETED_CHOICE,
-		default='FALSE'
-	)
-
-	class Meta:
-		db_table="quote_approval_status"
-
-
-
-class quote_stages(models.Model):
-	quote_stages_id=models.AutoField(primary_key=True)
-	quote_stage=models.CharField(max_length=50)
-	"""
-	For the quote stages; if the quote is still a quote, then the dropdown box
-	will only show those who are NOT an is_invoice=TRUE. However if the quote
-	has been turned into an INVOICE, then the dropdown box will show those
-	is_invoice=TRUE
-	"""
-	is_invoice=models.CharField(
-		max_length=5,
-		choices=IS_DELETED_CHOICE,
-		default='FALSE'
-	)
-	date_created=models.DateTimeField(auto_now_add=True)
-	date_modified=models.DateTimeField(auto_now=True)
-	change_user=models.ForeignKey(
-		User,
-		on_delete=models.CASCADE,
-		related_name='%(class)s_change_user'
-	)
-	is_deleted=models.CharField(
-		max_length=5,
-		choices=IS_DELETED_CHOICE,
-		default='FALSE'
-	)
-	class Meta:
-		db_table="quote_stages"
 
 class stages(models.Model):
 	stages_id=models.AutoField(primary_key=True)

@@ -1679,6 +1679,19 @@ def new_project(request, organisations_id='', customer_id='', opportunity_id='')
 
 
 @login_required(login_url='login')
+def new_quote(request):
+    # Load the template
+    t = loader.get_template('NearBeach/new_quote.html')
+
+    # context
+    c = {
+        'new_project_form': new_project_form,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
 def new_task(request, organisations_id='', customer_id='', opportunity_id=''):
     # Define if the page is loading in POST
     if request.method == "POST":

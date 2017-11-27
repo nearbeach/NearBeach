@@ -662,7 +662,20 @@ class new_project_form(forms.Form):
 	finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
 	finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
 
-	
+
+class new_quote_form(ModelForm):
+	class Meta:
+		model=quotes
+		fields={
+			'quote_id',
+			'quote_title',
+			'quote_valid_till',
+			'quote_stage_id',
+			'is_invoice',
+			'quote_approval_status_id',
+			'quote_terms',
+			'customer_notes',
+		}
 
 
 class new_task_form(forms.Form):
