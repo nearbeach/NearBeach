@@ -664,14 +664,73 @@ class new_project_form(forms.Form):
 
 
 class new_quote_form(ModelForm):
+	#Get data for form
+	list_of_quote_stages=list_of_quote_stages.objects.filter(
+		is_deleted='FALSE',
+		is_invoice='FALSE',
+	)
+	list_of_quote_approval_status=list_of_quote_approval_status.objects.filter(
+		is_deleted='FALSE',
+	)
+
+	quote_title=forms.CharField(
+		max_length=255,
+		widget=forms.TextInput(attrs={
+			'placeholder': 'Quote Title',
+		})
+	)
+
+	quote_valid_till_year=forms.ChoiceField(
+		choices=YEAR_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_start_date()'
+		})
+	)
+	quote_valid_till_month=forms.ChoiceField(
+		choices=MONTH_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_start_date()'
+		})
+	)
+	quote_valid_till_day=forms.ChoiceField(
+		choices=DAY_CHOICES,
+		widget=forms.Select(attrs={
+			"onChange":'check_start_date()'
+		})
+	)
+	quote_valid_till_hour=forms.ChoiceField(choices=HOUR_CHOICES)
+	quote_valid_till_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
+	quote_valid_till_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
+
+
+	quote_stage_id = forms.ModelChoiceField(
+		label="Quote Stage",
+		widget=forms.Select,
+		queryset=list_of_quote_stages,
+	)
+
+	quote_approval_status_id=forms.ModelChoiceField(
+		label="Quote Approval Status",
+		widget=forms.Select,
+		queryset=list_of_quote_approval_status,
+	)
+	quote_terms=forms.CharField(
+		widget=forms.Textarea(attrs={
+			"placeholder": 'Quote Terms',
+		}),
+	)
+	customer_notes = forms.CharField(
+		widget=forms.Textarea(attrs={
+			"placeholder": 'Customer Notes',
+		}),
+	)
+
+
 	class Meta:
 		model=quotes
 		fields={
-			'quote_id',
 			'quote_title',
-			'quote_valid_till',
 			'quote_stage_id',
-			'is_invoice',
 			'quote_approval_status_id',
 			'quote_terms',
 			'customer_notes',

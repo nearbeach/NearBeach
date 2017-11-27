@@ -618,7 +618,15 @@ class list_of_lead_source(models.Model):
 
 class list_of_quote_approval_status(models.Model):
 	quote_approval_status_id=models.AutoField(primary_key=True)
-	quote_approval_status=models.CharField(max_length=100)
+	quote_approval_status=models.CharField(
+		max_length=100,
+		unique=True,
+	)
+	quote_approved=models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE',
+	)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 	change_user = models.ForeignKey(
@@ -632,13 +640,19 @@ class list_of_quote_approval_status(models.Model):
 		default='FALSE'
 	)
 
+	def __str__(self):
+		return self.quote_approval_status.encode('utf8')
+
 	class Meta:
 		db_table="list_of_quote_approval_status"
 
 
 class list_of_quote_stages(models.Model):
 	quote_stages_id=models.AutoField(primary_key=True)
-	quote_stage=models.CharField(max_length=50)
+	quote_stage=models.CharField(
+		max_length=50,
+		unique=True,
+	)
 	"""
 	For the quote stages; if the quote is still a quote, then the dropdown box
 	will only show those who are NOT an is_invoice=TRUE. However if the quote
@@ -662,6 +676,10 @@ class list_of_quote_stages(models.Model):
 		choices=IS_DELETED_CHOICE,
 		default='FALSE'
 	)
+
+	def __str__(self):
+		return self.quote_stage.encode('utf8')
+
 	class Meta:
 		db_table="list_of_quote_stages"
 
@@ -1177,6 +1195,10 @@ class quotes(models.Model):
 		choices=IS_DELETED_CHOICE,
 		default='FALSE'
 	)
+
+	def __str__(self):
+		return self.quote_title.encode('utf8')
+
 	class Meta:
 		db_table="quotes"
 

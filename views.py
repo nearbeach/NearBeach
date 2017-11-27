@@ -1679,13 +1679,56 @@ def new_project(request, organisations_id='', customer_id='', opportunity_id='')
 
 
 @login_required(login_url='login')
-def new_quote(request):
+def new_quote(request,destination,primary_key):
+    if request.method == "POST":
+        form = new_quote_form(request.POST)
+        if form.is_valid():
+            quote_title=form.cleaned_data['quote_title']
+            quote_terms=form.cleaned_data['quote_terms']
+            quote_stage_id=form.cleaned_data['quote_stage_id']
+            quote_approval_status_id=form.cleaned_data['quote_approval_status_id']
+            customer_notes=form.cleaned_data['customer_notes']
+
+            # Create the final start/end date fields
+            quote_valid_till = time_combined(
+                int(form.cleaned_data['quote_valid_till_year']),
+                int(form.cleaned_data['quote_valid_till_month']),
+                int(form.cleaned_data['quote_valid_till_day']),
+                int(form.cleaned_data['quote_valid_till_hour']),
+                int(form.cleaned_data['quote_valid_till_minute']),
+                form.cleaned_data['quote_valid_till_meridiems']
+            )
+            quote_stage_instance = list_of_quote_stages.objects.get(quote_stages_id=quote_stage_id.quote_stages_id)
+            quote_approval_status_instance=list_of_quote_approval_status.objects.get(
+                quote_approval_status_id=quote_approval_status_id.quote_approval_status_id
+            )
+            submit_quotes = quotes(
+                quote_title=quote_title,
+                quote_terms=quote_terms,
+                quote_stage_id=quote_stage_instance,
+                quote_approval_status_id=quote_approval_status_instance,
+                customer_notes=customer_notes,
+                quote_valid_till=quote_valid_till,
+                change_user=request.user
+            )
+            submit_quotes.save()
+
+            #Now to go to the quote information page
+            ####
+            ####
+            #### ADD CODE
+
+        else:
+            print(form.errors)
+
     # Load the template
     t = loader.get_template('NearBeach/new_quote.html')
 
     # context
     c = {
-        'new_project_form': new_project_form,
+        'new_quote_form': new_quote_form,
+        'primary_key': primary_key,
+        'destination': destination,
     }
 
     return HttpResponse(t.render(c, request))

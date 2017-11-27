@@ -1,8 +1,18 @@
 {% extends "./template.html" %}
 {% block content %}
-<h2>New Quote</h2>
-<form>
-{{ new_quote_form.as_table }}
-</form>
+    <form action={% url 'new_quote' primary_key destination %} method="post" class="new_quote">
+    {% csrf_token %}
+        <h2>New Quote</h2>
+        <ul>
+            <li>{{ new_quote_form.quote_title }}</li>
+            <li>{{ new_quote_form.quote_terms }}</li>
+            <li>Quote Stage: {{ new_quote_form.quote_stage_id }}</li>
+            <li>Quote Approval Status: {{ new_quote_form.quote_approval_status_id }}</li>
+            <li>Quote Valid To: {{ new_quote_form.quote_valid_till_year }}/{{ new_quote_form.quote_valid_till_month }}/{{ new_quote_form.quote_valid_till_day }}<br/>
+                {{ new_quote_form.quote_valid_till_hour }}:{{ new_quote_form.quote_valid_till_minute }} {{ new_quote_form.quote_valid_till_meridiems }}</li>
+            <li>{{ new_quote_form.customer_notes }}</li>
+        </ul>
+    <input type="submit" value="Submit new quote">
+    </form>
 {% endblock %}
 
