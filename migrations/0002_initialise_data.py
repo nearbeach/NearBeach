@@ -5489,6 +5489,19 @@ def initialise_data(apps, schema_editor):
     ])
 
 
+    list_of_quote_stages = apps.get_model("NearBeach", "list_of_quote_stages")
+    db_alias = schema_editor.connection.alias
+    list_of_quote_stages.objects.using(db_alias).bulk_create([
+        list_of_quote_stages(quote_stage="Draft"),
+        list_of_quote_stages(quote_stage="Negotiation"),
+        list_of_quote_stages(quote_stage="Delivered"),
+        list_of_quote_stages(quote_stage="On Hold"),
+        list_of_quote_stages(quote_stage="Confirmed"),
+        list_of_quote_stages(quote_stage="Close Accepted"),
+        list_of_quote_stages(quote_stage="Close Rejected"),
+        list_of_quote_stages(quote_stage="Close Lost"),
+        list_of_quote_stages(quote_stage="Close Dead"),
+    ])
 
 
 class Migration(migrations.Migration):

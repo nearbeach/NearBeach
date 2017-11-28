@@ -1,6 +1,10 @@
 {% extends "./template.html" %}
 {% block content %}
-<h2>New Quote</h2>
-
+    <form>
+        <h2>Quote Information</h2>
+    <table>
+        {{ quote_information_form.as_table }}
+    </table>
+    </form>
 {% endblock %}
 

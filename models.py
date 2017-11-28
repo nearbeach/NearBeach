@@ -17,6 +17,12 @@ PROJECT_STATUS_CHOICE=(
 	('Closed','Closed'),
 )
 
+QUOTE_APPROVAL_STATUS=(
+	('REJECTED','REJECTED'),
+	('DRAFT','DRAFT'),
+	('APPROVED','APPROVED'),
+)
+
 #List of tables - in alphabetical order
 class assigned_users(models.Model):
 	user_id=models.ForeignKey(
@@ -616,37 +622,6 @@ class list_of_lead_source(models.Model):
 		db_table="list_of_lead_source"
 
 
-class list_of_quote_approval_status(models.Model):
-	quote_approval_status_id=models.AutoField(primary_key=True)
-	quote_approval_status=models.CharField(
-		max_length=100,
-		unique=True,
-	)
-	quote_approved=models.CharField(
-		max_length=5,
-		choices=IS_DELETED_CHOICE,
-		default='FALSE',
-	)
-	date_created = models.DateTimeField(auto_now_add=True)
-	date_modified = models.DateTimeField(auto_now=True)
-	change_user = models.ForeignKey(
-		User,
-		on_delete=models.CASCADE,
-		related_name='%(class)s_change_user'
-	)
-	is_deleted = models.CharField(
-		max_length=5,
-		choices=IS_DELETED_CHOICE,
-		default='FALSE'
-	)
-
-	def __str__(self):
-		return self.quote_approval_status.encode('utf8')
-
-	class Meta:
-		db_table="list_of_quote_approval_status"
-
-
 class list_of_quote_stages(models.Model):
 	quote_stages_id=models.AutoField(primary_key=True)
 	quote_stage=models.CharField(
@@ -1150,10 +1125,15 @@ class quotes(models.Model):
 		choices=IS_DELETED_CHOICE,
 		default='FALSE'
 	)
-	quote_approval_status_id=models.ForeignKey(
-		'list_of_quote_approval_status',
-		on_delete=models.CASCADE,
+
+	##UPDATE ME##
+	quote_approval_status_id=models.CharField(
+		max_length=10,
+		choices=QUOTE_APPROVAL_STATUS,
+		default='DRAFT',
 	)
+
+
 	quote_terms=models.TextField(
 		null=True,
 		blank=True,

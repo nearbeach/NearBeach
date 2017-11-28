@@ -1714,9 +1714,7 @@ def new_quote(request,destination,primary_key):
             submit_quotes.save()
 
             #Now to go to the quote information page
-            ####
-            ####
-            #### ADD CODE
+            return HttpResponseRedirect(reverse(quote_information, args={submit_quotes.quote_id}))
 
         else:
             print(form.errors)
@@ -2720,6 +2718,22 @@ def project_information(request, project_id):
 
     return HttpResponse(t.render(c, request))
 
+
+@login_required(login_url='login')
+def quote_information(request, quote_id):
+    quotes_results = quotes.objects.get(quote_id=quote_id)
+
+
+    # Load the template
+    t = loader.get_template('NearBeach/quote_information.html')
+
+    # context
+    c = {
+        'quotes_results': quotes_results,
+        'quote_information_form': quote_information_form,
+    }
+
+    return HttpResponse(t.render(c, request))
 
 @login_required(login_url='login')
 def resolve_project(request, project_id):

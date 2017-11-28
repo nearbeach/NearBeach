@@ -68,6 +68,7 @@ urlpatterns = [
 	url(r'^permission_denied', views.permission_denied, name='permission_denied'),
 	url(r'^private/(?P<document_key>[0-9A-Za-z_\-]+)/$', views.private_document, name='private'),
 	url(r'^project_information/(?P<project_id>[0-9]+)/', views.project_information, name='project_information'),
+	url(r'^quote_information/(?P<quote_id>[0-9]+)/', views.quote_information, name='quote_information'),
 	url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$', password_reset_confirm,
 		{'post_reset_redirect': 'password_reset_complete', 'template_name': 'NearBeach/reset.html'},
 		name='password_reset_confirm'),
