@@ -5493,25 +5493,25 @@ def initialise_data(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     list_of_quote_stages.objects.using(db_alias).bulk_create([
         #Quote Stage
-        list_of_quote_stages(quote_stage="Draft",is_invoice='FALSE'),
-        list_of_quote_stages(quote_stage="Negotiation",is_invoice='FALSE'),
-        list_of_quote_stages(quote_stage="Delivered",is_invoice='FALSE'),
-        list_of_quote_stages(quote_stage="On Hold",is_invoice='FALSE'),
-        list_of_quote_stages(quote_stage="Confirmed",is_invoice='FALSE'),
-        list_of_quote_stages(quote_stage="Close Accepted",is_invoice='FALSE'),
-        list_of_quote_stages(quote_stage="Close Rejected",is_invoice='FALSE'),
-        list_of_quote_stages(quote_stage="Close Lost",is_invoice='FALSE'),
-        list_of_quote_stages(quote_stage="Close Dead",is_invoice='FALSE'),
+        list_of_quote_stages(quote_stage="Quote Draft",is_invoice='FALSE'),
+        list_of_quote_stages(quote_stage="Quote Negotiation",is_invoice='FALSE'),
+        list_of_quote_stages(quote_stage="Quote Delivered",is_invoice='FALSE'),
+        list_of_quote_stages(quote_stage="Quote On Hold",is_invoice='FALSE'),
+        list_of_quote_stages(quote_stage="Quote Confirmed",is_invoice='FALSE'),
+        list_of_quote_stages(quote_stage="Quote Close Accepted",is_invoice='FALSE'),
+        list_of_quote_stages(quote_stage="Quote Close Rejected",is_invoice='FALSE'),
+        list_of_quote_stages(quote_stage="Quote Close Lost",is_invoice='FALSE'),
+        list_of_quote_stages(quote_stage="Quote Close Dead",is_invoice='FALSE'),
         #Invoice Stage
-        list_of_quote_stages(quote_stage="Draft",is_invoice='TRUE'),
-        list_of_quote_stages(quote_stage="Negotiation",is_invoice='TRUE'),
-        list_of_quote_stages(quote_stage="Delivered",is_invoice='TRUE'),
-        list_of_quote_stages(quote_stage="On Hold",is_invoice='TRUE'),
-        list_of_quote_stages(quote_stage="Confirmed",is_invoice='TRUE'),
-        list_of_quote_stages(quote_stage="Close Accepted",is_invoice='TRUE'),
-        list_of_quote_stages(quote_stage="Close Rejected",is_invoice='TRUE'),
-        list_of_quote_stages(quote_stage="Close Lost",is_invoice='TRUE'),
-        list_of_quote_stages(quote_stage="Close Dead",is_invoice='TRUE'),
+        list_of_quote_stages(quote_stage="Invoice Draft",is_invoice='TRUE'),
+        list_of_quote_stages(quote_stage="Invoice Negotiation",is_invoice='TRUE'),
+        list_of_quote_stages(quote_stage="Invoice Delivered",is_invoice='TRUE'),
+        list_of_quote_stages(quote_stage="Invoice On Hold",is_invoice='TRUE'),
+        list_of_quote_stages(quote_stage="Invoice Confirmed",is_invoice='TRUE'),
+        list_of_quote_stages(quote_stage="Invoice Close Accepted",is_invoice='TRUE'),
+        list_of_quote_stages(quote_stage="Invoice Close Rejected",is_invoice='TRUE'),
+        list_of_quote_stages(quote_stage="Invoice Close Lost",is_invoice='TRUE'),
+        list_of_quote_stages(quote_stage="Invoice Close Dead",is_invoice='TRUE'),
     ])
 
 
