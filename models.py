@@ -644,7 +644,9 @@ class list_of_quote_stages(models.Model):
 	change_user=models.ForeignKey(
 		User,
 		on_delete=models.CASCADE,
-		related_name='%(class)s_change_user'
+		related_name='%(class)s_change_user',
+		blank=True,
+		null=True
 	)
 	is_deleted=models.CharField(
 		max_length=5,
