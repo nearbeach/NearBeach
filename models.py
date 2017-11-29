@@ -10,6 +10,11 @@ IS_DELETED_CHOICE=(
 	('FALSE','FALSE'),
 )
 
+PRODUCT_OR_SERVICE=(
+	('Product','Product'),
+	('Service','Service'),
+)
+
 PROJECT_STATUS_CHOICE=(
 	('New','New'),
 	('Open','Open'),
@@ -553,6 +558,38 @@ class list_of_countries_regions(models.Model):
 		db_table="list_of_countries_regions"
 
 
+
+
+class list_of_lead_source(models.Model):
+	lead_source_id=models.AutoField(primary_key=True)
+	lead_source_description=models.CharField(max_length=20)
+	list_order=models.IntegerField(unique=True)
+	date_created=models.DateTimeField(auto_now_add=True)
+	date_modified=models.DateTimeField(auto_now=True)
+	date_created=models.DateTimeField(auto_now_add=True)
+	date_modified=models.DateTimeField(auto_now=True)
+	change_user=models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user',
+		blank=True,
+		null=True
+	)
+	is_deleted=models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	def __str__(self):
+		return self.lead_source_description.encode('utf8')
+
+	class Meta:
+		db_table="list_of_lead_source"
+
+
+
+
 class list_of_opportunity_stage(models.Model):
 	opportunity_stage_id=models.AutoField(primary_key=True)
 	opportunity_stage_description=models.CharField(max_length=50)
@@ -594,34 +631,6 @@ class list_of_opportunity_stage(models.Model):
 
 
 
-class list_of_lead_source(models.Model):
-	lead_source_id=models.AutoField(primary_key=True)
-	lead_source_description=models.CharField(max_length=20)
-	list_order=models.IntegerField(unique=True)
-	date_created=models.DateTimeField(auto_now_add=True)
-	date_modified=models.DateTimeField(auto_now=True)
-	date_created=models.DateTimeField(auto_now_add=True)
-	date_modified=models.DateTimeField(auto_now=True)
-	change_user=models.ForeignKey(
-		User,
-		on_delete=models.CASCADE,
-		related_name='%(class)s_change_user',
-		blank=True,
-		null=True
-	)
-	is_deleted=models.CharField(
-		max_length=5,
-		choices=IS_DELETED_CHOICE,
-		default='FALSE'
-	)
-
-	def __str__(self):
-		return self.lead_source_description.encode('utf8')
-
-	class Meta:
-		db_table="list_of_lead_source"
-
-
 class list_of_quote_stages(models.Model):
 	quote_stages_id=models.AutoField(primary_key=True)
 	quote_stage=models.CharField(
@@ -660,6 +669,37 @@ class list_of_quote_stages(models.Model):
 
 	class Meta:
 		db_table="list_of_quote_stages"
+
+
+class list_of_taxes(models.Model):
+	tax_id = models.AutoField(primary_key=True)
+	tax_amount=models.DecimalField(
+		max_digits=3,
+		decimal_places=2,
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user',
+		blank=True,
+		null=True,
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	def __str__(self):
+		return self.tax_amount.encode('utf8')
+
+	class Meta:
+		db_table="list_of_taxes"
 
 
 class list_of_titles(models.Model):
@@ -899,6 +939,55 @@ class organisations_campus(models.Model):
 	
 	class Meta:
 		db_table="organisations_campus"
+
+
+class products_and_services(models.Model):
+	"""
+	For naming convention, products and services will be shorten to
+	just product. The product name contains both products and services
+	"""
+	product_id=models.AutoField(primary_key=True)
+	product_or_service = models.CharField(
+		max_length=7,
+		choices=PRODUCT_OR_SERVICE,
+	)
+	product_name=models.CharField(max_length=100)
+	product_part_number=models.CharField(
+		max_length=100,
+		null=True,
+		blank=True,
+	)
+	product_cost=models.DecimalField(
+		max_digits=19,
+		decimal_places=2
+	)
+	product_price=models.DecimalField(
+		max_digits=19,
+		decimal_places=2,
+	)
+	product_description=models.TextField(
+		blank=True,
+		null=True,
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	def __str__(self):
+		return self.product_name.encode('utf8')
+
+	class Meta:
+		db_table = "productsand_services"
+
 
 
 class project(models.Model):
