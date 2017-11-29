@@ -1,10 +1,58 @@
 {% extends "./template.html" %}
 {% block content %}
-    <form>
-        <h2>Quote Information</h2>
-    <table>
-        {{ quote_information_form.as_table }}
-    </table>
+<script>
+    function on_page_load() {
+        //EXTRACT Group ACTIVE PROJECTS
+        $.ajax({
+            url: '/quote_information/{{ quote_id }}/products_and_services',
+            data: {},
+            dataType: 'HTML',
+            type:'GET',
+            success: function(data) {
+                $('#products_and_services').html(data);
+            },
+            error: function(){
+                alert("Sorry");
+            }
+        });
+    }
+</script>
+
+<script>
+    $('#products_and_services').on('submit', function(e){
+        e.preventDefault();
+        $.ajax({
+           type: "POST",
+           url: "{% url 'quotes_products_and_services' quote_id %}",
+           data: $(this).serialize(),
+           success: function() {
+             on_page_load()
+           }
+        });
+    });
+</script>
+
+<body onload="on_page_load()">
+    <form action={% url 'quote_information' quote_id %} method="post" class="new_quote">
+    {% csrf_token %}
+        <h2>{{ quote_or_invoice }}{{ quotes_results.quote_id }}</h2>
+        <ul>
+            <li>{{ quote_information_form.quote_title }}</li>
+            <li>{{ quote_information_form.quote_terms }}</li>
+            <li>{{ quote_or_invoice }} Stage: {{ quote_information_form.quote_stage_id }}</li>
+            <li>{{ quote_or_invoice }} Valid To: {{ quote_information_form.quote_valid_till_year }}/{{ quote_information_form.quote_valid_till_month }}/{{ quote_information_form.quote_valid_till_day }}<br/>
+                {{ quote_information_form.quote_valid_till_hour }}:{{ quote_information_form.quote_valid_till_minute }} {{ quote_information_form.quote_valid_till_meridiems }}</li>
+            <li>{{ quote_information_form.customer_notes }}</li>
+        </ul>
+        <input type="submit" value="Update {{ quote_or_invoice }}">
+        {% if quote_or_invoice == 'Quote' %}
+            <input type="submit" value="Create Invoice" name="create_invoice" id="create_invoice">
+        {% else %}
+            <input type="submit" value="Revert to Quote" name="revert_quote" id="revert_quote">
+        {% endif %}
     </form>
+
+    <form method="post" class="products_and_services" id="products_and_services"></form>
+</body>
 {% endblock %}
 

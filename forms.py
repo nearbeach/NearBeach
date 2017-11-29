@@ -724,7 +724,6 @@ class new_quote_form(ModelForm):
 		fields={
 			'quote_title',
 			'quote_stage_id',
-			'quote_approval_status_id',
 			'quote_terms',
 			'customer_notes',
 		}
@@ -1079,7 +1078,6 @@ class quote_information_form(ModelForm):
 	#Get data for form
 	list_of_quote_stages=list_of_quote_stages.objects.filter(
 		is_deleted='FALSE',
-		is_invoice='FALSE',
 	)
 
 
@@ -1136,7 +1134,6 @@ class quote_information_form(ModelForm):
 		fields={
 			'quote_title',
 			'quote_stage_id',
-			'quote_approval_status_id',
 			'quote_terms',
 			'customer_notes',
 		}

@@ -639,6 +639,7 @@ class list_of_quote_stages(models.Model):
 		choices=IS_DELETED_CHOICE,
 		default='FALSE'
 	)
+	sort_order = models.IntegerField(unique=True,auto_created=True)
 	date_created=models.DateTimeField(auto_now_add=True)
 	date_modified=models.DateTimeField(auto_now=True)
 	change_user=models.ForeignKey(
@@ -1127,8 +1128,6 @@ class quotes(models.Model):
 		choices=IS_DELETED_CHOICE,
 		default='FALSE'
 	)
-
-	##UPDATE ME##
 	quote_approval_status_id=models.CharField(
 		max_length=10,
 		choices=QUOTE_APPROVAL_STATUS,

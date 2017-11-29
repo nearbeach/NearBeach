@@ -1686,7 +1686,6 @@ def new_quote(request,destination,primary_key):
             quote_title=form.cleaned_data['quote_title']
             quote_terms=form.cleaned_data['quote_terms']
             quote_stage_id=form.cleaned_data['quote_stage_id']
-            quote_approval_status_id=form.cleaned_data['quote_approval_status_id']
             customer_notes=form.cleaned_data['customer_notes']
 
             # Create the final start/end date fields
@@ -1699,18 +1698,39 @@ def new_quote(request,destination,primary_key):
                 form.cleaned_data['quote_valid_till_meridiems']
             )
             quote_stage_instance = list_of_quote_stages.objects.get(quote_stages_id=quote_stage_id.quote_stages_id)
-            quote_approval_status_instance=list_of_quote_approval_status.objects.get(
-                quote_approval_status_id=quote_approval_status_id.quote_approval_status_id
-            )
+
             submit_quotes = quotes(
                 quote_title=quote_title,
                 quote_terms=quote_terms,
                 quote_stage_id=quote_stage_instance,
-                quote_approval_status_id=quote_approval_status_instance,
                 customer_notes=customer_notes,
                 quote_valid_till=quote_valid_till,
                 change_user=request.user
             )
+            """
+            ADD CODE HERE
+            If the user does not have the access to approve quotes, then the quote approval
+            sticks to draft and they will not be able to turn it into an INVOICE.
+            If however the user DOES have access to approve quotes, then the quote approval
+            sticks to approved and they can instantly turn the quote into an INVOICE.
+            This is an automatic process - no user input needed
+            
+            
+            EXCEPT I HAVE TO WRITE THE CODE. So by default I am just turning it to the default value.
+            """
+            submit_quotes.quote_approval_status_id='APPROVED'
+
+
+            """
+            Link the quote to the correct project/task/opportunity
+            """
+            if destination=='project':
+                submit_quotes.project_id = project.objects.get(project_id=primary_key)
+            elif destination=='task':
+                submit_quotes.task_id = tasks.objects.get(tasks_id=primary_key)
+            else:
+                submit_quotes.opportunity_id = opportunity.objects.get(opportunity_id=primary_key)
+
             submit_quotes.save()
 
             #Now to go to the quote information page
@@ -1822,7 +1842,7 @@ def new_task(request, organisations_id='', customer_id='', opportunity_id=''):
             elif (not customer_id == '') and (not customer_id == 0):
                 return HttpResponseRedirect(reverse(customer_information, args={customer_id}))
             else:
-                return HttpResponseRedirect(reverse(project_information, args={submit_project.pk}))
+                return HttpResponseRedirect(reverse(task_information, args={submit_task.pk}))
 
     else:
         # Obtain the groups the user is associated with
@@ -2722,7 +2742,85 @@ def project_information(request, project_id):
 @login_required(login_url='login')
 def quote_information(request, quote_id):
     quotes_results = quotes.objects.get(quote_id=quote_id)
+    """
+    ADD IN ABILITY TO CHECK USER PERMISSIONS HERE!
+    :param request: 
+    :param quote_id: 
+    :return: 
+    """
+    if request.method == "POST":
+        form = quote_information_form(request.POST)
+        if form.is_valid():
+            #Extract the information from the forms
+            quotes_results.quote_title = form.cleaned_data['quote_title']
+            quotes_results.quote_terms = form.cleaned_data['quote_terms']
+            quotes_results.quote_stage_id = form.cleaned_data['quote_stage_id']
+            quotes_results.customer_notes = form.cleaned_data['customer_notes']
 
+            quotes_results.quote_valid_till = time_combined(
+                int(form.cleaned_data['quote_valid_till_year']),
+                int(form.cleaned_data['quote_valid_till_month']),
+                int(form.cleaned_data['quote_valid_till_day']),
+                int(form.cleaned_data['quote_valid_till_hour']),
+                int(form.cleaned_data['quote_valid_till_minute']),
+                form.cleaned_data['quote_valid_till_meridiems']
+            )
+
+            #Check to see if we have to move quote to invoice
+            if 'create_invoice' in request.POST:
+                quotes_results.is_invoice = 'TRUE'
+                quotes_results.quote_stage_id = list_of_quote_stages.objects.filter(is_invoice='TRUE').order_by('sort_order')[0]
+
+            #Check to see if we have to revert the invoice to a quote
+            if 'revert_quote' in request.POST:
+                quotes_results.is_invoice = 'FALSE'
+                quotes_results.quote_stage_id = list_of_quote_stages.objects.filter(is_invoice='FALSE').order_by('sort_order')[0]
+
+
+            quotes_results.change_user=request.user
+            quotes_results.save()
+
+        else:
+            print(form.errors)
+
+
+
+
+    #Determine if quote or invoice
+    quote_or_invoice = 'Quote'
+    if quotes_results.is_invoice == 'TRUE':
+        quote_or_invoice = 'Invoice'
+
+    """
+    	The 24 hours to 12 hours formula.
+    	00:00 means that it is 12:00 AM - change required for hour
+    	01:00 means that it is 01:00 AM - no change required
+    	12:00 means that it is 12:00 PM - change required for meridiem
+    	13:00 means that it is 01:00 PM - change required for hour and meridiem
+    	"""
+    quote_valid_till_hour = quotes_results.quote_valid_till.hour
+    quote_valid_till_meridiem = u'AM'
+    if quote_valid_till_hour == 0:
+        quote_valid_till_hour = 12
+    elif quote_valid_till_hour == 12:
+        quote_valid_till_meridiem = u'PM'
+    elif quote_valid_till_hour > 12:
+        start_hour = quote_valid_till_hour - 12
+        quote_valid_till_meridiem = u'PM'
+
+    # Setup the initial data for the form
+    initial = {
+        'quote_title': quotes_results.quote_title,
+        'quote_terms': quotes_results.quote_terms,
+        'quote_stage_id': quotes_results.quote_stage_id.quote_stages_id,
+        'quote_valid_till_year': quotes_results.quote_valid_till.year,
+        'quote_valid_till_month': quotes_results.quote_valid_till.month,
+        'quote_valid_till_day': quotes_results.quote_valid_till.day,
+        'quote_valid_till_hour': quote_valid_till_hour,
+        'quote_valid_till_minute': quotes_results.quote_valid_till.minute,
+        'quote_valid_till_meridiem': quote_valid_till_meridiem,
+        'customer_notes': quotes_results.customer_notes,
+    }
 
     # Load the template
     t = loader.get_template('NearBeach/quote_information.html')
@@ -2730,10 +2828,14 @@ def quote_information(request, quote_id):
     # context
     c = {
         'quotes_results': quotes_results,
-        'quote_information_form': quote_information_form,
+        'quote_information_form': quote_information_form(initial=initial),
+        'quote_id': quote_id,
+        'quote_or_invoice': quote_or_invoice,
     }
 
     return HttpResponse(t.render(c, request))
+
+
 
 @login_required(login_url='login')
 def resolve_project(request, project_id):
