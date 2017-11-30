@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.db import models, connection
 from .private_media import *
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator, MinValueValidator
 import uuid
 
 #ENUM choices
@@ -1273,6 +1274,67 @@ class quotes(models.Model):
 		db_table="quotes"
 
 
+class quotes_products_and_services(models.Model):
+	quotes_products_and_services_id = models.AutoField(primary_key=True)
+	quote=models.ForeignKey(
+		'quotes',
+		on_delete=models.CASCADE,
+	)
+	products_and_services=models.ForeignKey(
+		'products_and_services',
+		on_delete=models.CASCADE,
+	)
+	quantity=models.IntegerField()
+	product_description=models.TextField(
+		blank=True,
+		null=True,
+	)
+	product_cost=models.DecimalField(
+		max_digits=19,
+		decimal_places=2
+	)
+	discount=models.IntegerField(
+		default=0,
+		validators=[MaxValueValidator(100), MinValueValidator(0)] #Could I use this for the money too? :D
+	)
+	product_price=models.DecimalField(
+		max_digits=19,
+		decimal_places=2,
+	)
+	tax=models.ForeignKey(
+		'list_of_taxes',
+		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
+	)
+	total=models.DecimalField(
+		max_digits=19,
+		decimal_places=2,
+		validators=[MaxValueValidator(99999999999999999999),MinValueValidator(-99999999999999999999)],
+	)
+	product_note=models.CharField(
+		max_length=255,
+		null=True,
+		blank=True,
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	def __str__(self):
+		return str(self.quotes_products_and_services_id) + "| " + self.product_description.encode('utf8')
+
+	class Meta:
+		db_table="quotes_products_and_services"
 
 class stages(models.Model):
 	stages_id=models.AutoField(primary_key=True)
