@@ -10,7 +10,7 @@ from django.conf.urls.static import static
 from django.contrib.auth.views import password_reset, password_reset_done, password_reset_confirm, password_reset_complete
 
 from . import views
-from . import quotes
+from . import views_quotes
 
 urlpatterns = [
 	url(r'^$', views.index, name='index'),
@@ -70,7 +70,7 @@ urlpatterns = [
 	url(r'^private/(?P<document_key>[0-9A-Za-z_\-]+)/$', views.private_document, name='private'),
 	url(r'^project_information/(?P<project_id>[0-9]+)/', views.project_information, name='project_information'),
 	url(r'^quote_information/(?P<quote_id>[0-9]+)/$', views.quote_information, name='quote_information'),
-	url(r'^quote_information/(?P<quote_id>[0-9]+)/products_and_services/', quotes.products_and_services, name='quotes_products_and_services'),
+	url(r'^quote_information/(?P<quote_id>[0-9]+)/products_and_services/', views_quotes.products_and_services, name='quotes_products_and_services'),
 	url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$', password_reset_confirm,
 		{'post_reset_redirect': 'password_reset_complete', 'template_name': 'NearBeach/reset.html'},
 		name='password_reset_confirm'),
@@ -82,6 +82,11 @@ urlpatterns = [
 	url(r'^task_information/(?P<task_id>[0-9]+)', views.task_information, name='task_information'),
 	#Bug - if this line is before the other search functions, it will override other functions
 	url(r'^search', views.search, name='search'),
+
+
+	#Quotes Modules
+	url(r'^quote_line_items/(?P<quote_id>[0-9]+)/$', views_quotes.line_items, name='quote_line_items'),
+	url(r'^quote_new_line_item/(?P<quote_id>[0-9]+)/$', views_quotes.new_line_item, name='quote_new_line_item'),
 
 ]
 
