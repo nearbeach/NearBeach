@@ -10,7 +10,6 @@ from django.contrib import auth
 from django.forms import ModelForm
 
 from special_fields import *
-from django.core import serializers
 
 
 #Used for login
@@ -1335,20 +1334,25 @@ class task_information_form(ModelForm):
 
 class test(forms.Form):
 	#Obtain the required fields
-	products_and_services_results = products_and_services.objects.all()\
-		.order_by('product_or_service','product_name')\
-		.values('product_or_service','product_name')
-	#products_and_services_serialised = serializers.serialize('json', products_and_services_results, ensure_ascii=False)
+	products_and_services_results = products_and_services.objects.all() \
+		.order_by('product_or_service', 'product_name') \
+		.values('product_or_service', 'product_name')
 
-	#config = ModelChoiceField(queryset=Config.objects.all(), empty_label="Choose a link", widget=GroupedSelect())
-	#test_field = forms.ModelChoiceField(queryset=products_and_services_serialised, empty_label="FUCKING EMPTY", widget=GroupedSelect)
-	#test_field = forms.ModelChoiceField(queryset=products_and_services_results, empty_label="FUCKING EMPTY", widget=GroupedSelect)
-	test_field = forms.ChoiceField(choices=products_and_services_results)
-
-	#Members.objects.values('designation').annotate(dcount=Count('designation'))
+	test_field = forms.ModelChoiceField(
+		queryset=products_and_services.objects.filter(is_deleted='FALSE'),
+		empty_label="Please pick a product/service",
+		widget=ProductOrServiceSelect(),
+	)
 
 
-
-
-
-
+	"""
+		select_groups=forms.ModelMultipleChoiceField(
+		queryset=groups_results,
+		required=False,
+		widget=forms.SelectMultiple(attrs={
+			'placeholder': "Choose the users(s)",
+			'class': 'chosen-select',
+			'multiple tabindex': '4',
+			'width': '500px',
+		}),
+	)"""

@@ -1,7 +1,14 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
+<link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
+
 <ul>
     <li>Quantity</li>
     <li>Product</li>
-    <table>
-        {{ test_form.as_table }}
-    </table>
+    <li>
+        {{ test_form.test_field }}
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
+    </li>
 </ul>

@@ -987,7 +987,7 @@ class products_and_services(models.Model):
 		return self.product_name.encode('utf8')
 
 	class Meta:
-		db_table = "productsand_services"
+		db_table = "products_and_services"
 
 
 
