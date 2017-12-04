@@ -5,18 +5,6 @@ from django.core.validators import ValidationError
 
 import gettext
 
-class MultiSelectForm(forms.Form):
-	def __init__(self, attrs=None, choices=(), *args, **kwargs):
-		#empty_permittted is false
-		kwargs['empty_permitted'] = False
-		forms.Form.__init__(self,*args,**kwargs)
-
-		name = attrs.get('name','multiple_select')
-		self.fields[name] = forms.MultipleChoiceField(
-			choices=choices,
-			required=kwargs.get('required', False),
-			widget=MultiSelectForm(attrs=attrs, choices=choices)
-		)
 
 
 # widget for select with optional opt groups
@@ -48,7 +36,7 @@ class GroupedSelect(forms.Select):
         from django.utils.html import escape
         #from django.newforms.util import flatatt, smart_unicode
         if value is None: value = ''
-        final_attrs = self.build_attrs(attrs, name=name)
+        final_attrs = self.build_attrs(attrs)#, name='fyck_off')
         output = [u'<select%s>' % flatatt(final_attrs)]
         str_value = smart_unicode(value)
         for group_label, group in self.choices:
@@ -73,6 +61,7 @@ class GroupedChoiceField(forms.ChoiceField):
         super(forms.ChoiceField, self).__init__(required, widget, label, initial, help_text)
         self.choices = choices
 
+
     def clean(self, value):
         """
         Validates that the input is in self.choices.
@@ -89,3 +78,19 @@ class GroupedChoiceField(forms.ChoiceField):
         if value not in valid_values:
             raise ValidationError(gettext(u'Select a valid choice. That choice is not one of the available choices.'))
         return value
+
+
+"""
+class MultiSelectForm(forms.Form):
+	def __init__(self, attrs=None, choices=(), *args, **kwargs):
+		#empty_permittted is false
+		kwargs['empty_permitted'] = False
+		forms.Form.__init__(self,*args,**kwargs)
+
+		name = attrs.get('name','multiple_select')
+		self.fields[name] = forms.MultipleChoiceField(
+			choices=choices,
+			required=kwargs.get('required', False),
+			widget=MultiSelectForm(attrs=attrs, choices=choices)
+		)
+"""
