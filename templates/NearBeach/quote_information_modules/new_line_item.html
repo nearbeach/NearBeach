@@ -3,12 +3,13 @@
 <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
 
 <ul>
-    <li>Quantity</li>
-    <li>Product</li>
     <li>
         {{ test_form.test_field }}
-        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
-        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
-        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
+        <script>
+            $("#id_product_or_service").on('change', function(evt, params) {
+                alert("Ok, changed the function :)");
+            })
+        </script>
     </li>
+
 </ul>
