@@ -479,6 +479,44 @@ class new_customer_form(forms.Form):
 	)
 
 
+class new_line_item_form(ModelForm):
+    #Get the data
+    products_and_services = forms.ModelChoiceField(
+        queryset=products_and_services.objects.filter(is_deleted='FALSE'),
+        empty_label="Please pick a product/service",
+        widget=ProductOrServiceSelect(),
+    )
+
+    class Meta:
+        model = quotes_products_and_services
+        fields = '__all__'
+
+        exclude = {
+            'quotes_products_and_services_id',
+			'quote',
+            'customer_id',
+            'date_created',
+            'date_modified',
+            'user_id',
+            'is_deleted',
+            'change_user',
+        }
+
+    """
+    class test(forms.Form):
+    	#Obtain the required fields
+    	products_and_services_results = products_and_services.objects.all() \
+    		.order_by('product_or_service', 'product_name') \
+    		.values('product_or_service', 'product_name')
+
+    	test_field = forms.ModelChoiceField(
+    		queryset=products_and_services.objects.filter(is_deleted='FALSE'),
+    		empty_label="Please pick a product/service",
+    		widget=ProductOrServiceSelect(),
+    	)
+    """
+
+
 class new_opportunity_form(ModelForm):
 	#Get data for choice boxes
 	opportunity_stage_results=list_of_opportunity_stage.objects.filter(is_deleted='FALSE')
@@ -1331,7 +1369,7 @@ class task_information_form(ModelForm):
 				'task_long_description',
 		}
 
-
+"""
 class test(forms.Form):
 	#Obtain the required fields
 	products_and_services_results = products_and_services.objects.all() \
@@ -1343,16 +1381,4 @@ class test(forms.Form):
 		empty_label="Please pick a product/service",
 		widget=ProductOrServiceSelect(),
 	)
-
-
-	"""
-		select_groups=forms.ModelMultipleChoiceField(
-		queryset=groups_results,
-		required=False,
-		widget=forms.SelectMultiple(attrs={
-			'placeholder': "Choose the users(s)",
-			'class': 'chosen-select',
-			'multiple tabindex': '4',
-			'width': '500px',
-		}),
-	)"""
+"""

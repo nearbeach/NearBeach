@@ -6,14 +6,6 @@ from django.utils.html import escape, mark_safe
 
 import gettext
 
-
-"""
-			'placeholder': "Choose the users(s)",
-			'class': 'chosen-select',
-			'multiple tabindex': '4',
-			'width': '500px',
-"""
-
 class ProductOrServiceSelect(forms.Select):
     def render(self, name, value, attrs=None, choices=()):
         if value is None: value = ''
@@ -32,7 +24,10 @@ class ProductOrServiceSelect(forms.Select):
         for option in row_results.filter(product_or_service='Product'):
             option_value = smart_unicode(option.product_id)
             option_label = smart_unicode(option.product_name)
-            output = output + u'<option value="%s">%s</option>' % (escape(option_value), escape(option_label))
+            output = output + u'<option value="%s">%s' % (escape(option_value), escape(option_label))
+            if ((not option.product_part_number == '') and (not option.product_part_number == None)):
+                output = output + u' -- %s' % (escape(smart_unicode(option.product_part_number)))
+            output = output + u'</option>'
 
         #Close off the optgroup PRODUCTS, start the optgroup SERVICES
         output = output + u'</optgroup><optgroup label="Services">'
@@ -41,7 +36,10 @@ class ProductOrServiceSelect(forms.Select):
         for option in row_results.filter(product_or_service='Service'):
             option_value = smart_unicode(option.product_id)
             option_label = smart_unicode(option.product_name)
-            output = output + u'<option value="%s">%s</option>' % (escape(option_value), escape(option_label))
+            output = output + u'<option value="%s">%s' % (escape(option_value), escape(option_label))
+            if ((not option.product_part_number == '') and (not option.product_part_number == None)):
+                output = output + u' -- %s' % (escape(smart_unicode(option.product_part_number)))
+            output = output + u'</option>'
 
         #Close everything off
         output = output + u'</optgroup></option>'

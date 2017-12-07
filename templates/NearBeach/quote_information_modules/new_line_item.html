@@ -2,14 +2,38 @@
 <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
 <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
 
-<ul>
-    <li>
-        {{ test_form.test_field }}
-        <script>
-            $("#id_product_or_service").on('change', function(evt, params) {
-                alert("Ok, changed the function :)");
-            })
-        </script>
-    </li>
 
-</ul>
+<table>
+    {{ new_line_item_form.as_table }}
+</table>
+
+<table>
+    <tr class="header">
+        <td width="70%">Product/Product Code</td>
+        <td width="10%">Quantity</td>
+        <td width="15%">Cost</td>
+    </tr>
+    <tr>
+        <td>{{ new_line_item_form.products_and_services }}</td>
+        <td>{{ new_line_item_form.quantity }}</td>
+        <td>{{ new_line_item_form.product_cost }}</td>
+    </tr>
+    <tr>
+        <td colspan="3">{{ new_line_item_form.product_description }}</td>
+    </tr>
+    <tr>
+
+    </tr>
+
+</table>
+
+<script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
+
+<script>
+    $("#id_product_or_service").on('change', function(evt, params) {
+      var label = $(this.options[this.selectedIndex]).closest('optgroup').prop('label');
+        alert(label);
+    })
+</script>

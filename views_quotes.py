@@ -18,7 +18,7 @@ def line_items(request, quote_id):
 
 @login_required(login_url='login')
 def new_line_item(request,quote_id):
-    test_form = test()
+    #test_form = test()
 
     # Load the template
     t = loader.get_template('NearBeach/quote_information_modules/new_line_item.html')
@@ -26,7 +26,7 @@ def new_line_item(request,quote_id):
     # context
     c = {
         'quote_id': quote_id,
-        'test_form': test_form,
+        'new_line_item_form': new_line_item_form(),
     }
 
     return HttpResponse(t.render(c, request))
