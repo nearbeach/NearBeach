@@ -2,29 +2,37 @@
 <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
 <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
 
-
-<table>
-    {{ new_line_item_form.as_table }}
-</table>
-
-<table>
+<table id="product">
     <tr class="header">
-        <td width="70%">Product/Product Code</td>
-        <td width="10%">Quantity</td>
-        <td width="15%">Cost</td>
+        <td width="70%" colspan="2">Add Product/Service</td>
+        <td width="5%" style="display: none;">Quantity</td>
+        <td width="20%" style="display: none;">Cost</td>
     </tr>
     <tr>
-        <td>{{ new_line_item_form.products_and_services }}</td>
-        <td>{{ new_line_item_form.quantity }}</td>
-        <td>{{ new_line_item_form.product_cost }}</td>
+        <td colspan="2">{{ new_line_item_form.products_and_services }}</td>
+        <td style="display: none;">{{ new_line_item_form.quantity }}</td>
+        <td style="display: none;">{{ new_line_item_form.product_cost }}</td>
     </tr>
     <tr>
-        <td colspan="3">{{ new_line_item_form.product_description }}</td>
+        <td colspan="4" style="display: none;">{{ new_line_item_form.product_description }}</td>
+    </tr>
+</table>
+<table id="product_costing" style="display: none;">
+    <tr>
+        <td>Price</td>
+        <td>Discount</td>
+        <td>Tax</td>
+        <td>Total</td>
     </tr>
     <tr>
-
+        <td>{{ new_line_item_form.product_price }}</td>
+        <td>{{ new_line_item_form.discount_percent }}{{ new_line_item_form.discount_amount }} {{ new_line_item_form.discount_choice }}</td>
+        <td>{{ new_line_item_form.tax }}{{ new_line_item_form.tax_amount }}</td>
+        <td>{{ new_line_item_form.total }}</td>
     </tr>
-
+    <tr>
+        <td colspan="4">{{ new_line_item_form.product_note }}</td>
+    </tr>
 </table>
 
 <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
@@ -35,5 +43,12 @@
     $("#id_product_or_service").on('change', function(evt, params) {
       var label = $(this.options[this.selectedIndex]).closest('optgroup').prop('label');
         alert(label);
+
+        if (label == 'Products') {
+            alert($("#product").style)
+            $("#product_costing").html.style = "display: block;";
+
+            alert("Finished");
+        }
     })
 </script>

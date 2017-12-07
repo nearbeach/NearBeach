@@ -6,6 +6,11 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 import uuid
 
 #ENUM choices
+DISCOUNT_CHOICE=(
+	('Percentage','Percentage'),
+	('Amount','Amount'),
+)
+
 IS_DELETED_CHOICE=(
 	('TRUE','TRUE'),
 	('FALSE','FALSE'),
@@ -1285,7 +1290,8 @@ class quotes_products_and_services(models.Model):
 		on_delete=models.CASCADE,
 	)
 	quantity=models.IntegerField()
-	product_description=models.TextField(
+	product_description=models.CharField(
+		max_length=255,
 		blank=True,
 		null=True,
 	)
@@ -1293,9 +1299,21 @@ class quotes_products_and_services(models.Model):
 		max_digits=19,
 		decimal_places=2
 	)
-	discount=models.IntegerField(
+	discount_choice=models.CharField(
+		max_length=10,
+		choices=DISCOUNT_CHOICE,
+		default='PERCENTAGE',
+	)
+	discount_percent=models.DecimalField(
 		default=0,
+		max_digits=3,
+		decimal_places=2,
 		validators=[MaxValueValidator(100), MinValueValidator(0)] #Could I use this for the money too? :D
+	)
+	discount_amount=models.DecimalField(
+		default=0,
+		max_digits=19,
+		decimal_places=2,
 	)
 	product_price=models.DecimalField(
 		max_digits=19,
@@ -1306,6 +1324,11 @@ class quotes_products_and_services(models.Model):
 		on_delete=models.CASCADE,
 		null=True,
 		blank=True,
+	)
+	tax_amount=models.DecimalField(
+		max_digits=19,
+		decimal_places=2,
+		default=0,
 	)
 	total=models.DecimalField(
 		max_digits=19,
