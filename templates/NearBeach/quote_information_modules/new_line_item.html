@@ -33,6 +33,9 @@
     <tr>
         <td colspan="4">{{ new_line_item_form.product_note }}</td>
     </tr>
+    <tr>
+        <td colspan="4"><input type="submit" disabled value="Submit New Line Item"></td>
+    </tr>
 </table>
 
 <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
@@ -42,13 +45,10 @@
 <script>
     $("#id_product_or_service").on('change', function(evt, params) {
       var label = $(this.options[this.selectedIndex]).closest('optgroup').prop('label');
-        alert(label);
 
         if (label == 'Products') {
-            alert($("#product").style)
-            $("#product_costing").html.style = "display: block;";
-
-            alert("Finished");
+            $("#product").find("td").css("display", "");
+            $("#product_costing").css("display","");
         }
     })
 </script>
