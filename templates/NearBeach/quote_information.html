@@ -6,20 +6,7 @@
 
 <script>
     function on_page_load() {
-        //EXTRACT Group ACTIVE PROJECTS
-        $.ajax({
-            url: '/quote_information/{{ quote_id }}/products_and_services',
-            data: {},
-            dataType: 'HTML',
-            type:'GET',
-            success: function(data) {
-                $('#products_and_services').html(data);
-            },
-            error: function(){
-                alert("Sorry");
-            }
-        });
-
+        //Obtain new line module
         $.ajax({
             url: '/quote_new_line_item/{{ quote_id }}/',
             data: {},
@@ -35,22 +22,8 @@
     }
 </script>
 
-    <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
-    <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
-
-<script>
-    $('#products_and_services').on('submit', function(e){
-        e.preventDefault();
-        $.ajax({
-           type: "POST",
-           url: "{% url 'quotes_products_and_services' quote_id %}",
-           data: $(this).serialize(),
-           success: function() {
-             on_page_load()
-           }
-        });
-    });
-</script>
+<link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
+<link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
 
 <body onload="on_page_load()">
     <form action={% url 'quote_information' quote_id %} method="post" class="new_quote">
@@ -72,7 +45,6 @@
         {% endif %}
     </form>
     <form method="post" class="new_line_item" id="new_line_item"></form>
-    <form method="post" class="products_and_services" id="products_and_services"></form>
 
 </body>
 {% endblock %}

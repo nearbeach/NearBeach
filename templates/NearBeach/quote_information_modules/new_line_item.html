@@ -43,12 +43,39 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
 
 <script>
+    /*
+    Method
+    ~~~~~~
+    1.) When the user changes the product/service the system will determine which one it is
+    2.) It will apply the default values and hide unwanted fields
+    3.) If it is a product, it will extract the base values from the database
+     */
     $("#id_product_or_service").on('change', function(evt, params) {
-      var label = $(this.options[this.selectedIndex]).closest('optgroup').prop('label');
+        var label = $(this.options[this.selectedIndex]).closest('optgroup').prop('label');
+        var product_id = $(this.options[this.selectedIndex]).val();
+
 
         if (label == 'Products') {
             $("#product").find("td").css("display", "");
             $("#product_costing").css("display","");
+
+            //Get the product information
+            $.ajax({
+                url: '/lookup_product/' + product_id,
+                data: {},
+                dataType: 'HTML',
+                type:'GET',
+                success: function(data) {
+                    //Write the information to the correct cells
+
+                    //TEMP CODE
+                    alert(data);
+                    //END TEMP CODE
+                },
+                error: function(){
+                    alert("Sorry");
+                }
+            });
         }
     })
 </script>
