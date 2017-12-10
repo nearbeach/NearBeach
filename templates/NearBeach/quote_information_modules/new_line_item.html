@@ -63,13 +63,25 @@
             $.ajax({
                 url: '/lookup_product/' + product_id,
                 data: {},
-                dataType: 'HTML',
+                dataType: 'JSON',
                 type:'GET',
                 success: function(data) {
                     //Write the information to the correct cells
 
                     //TEMP CODE
                     alert(data);
+                    $.each(data[''], function(key, element) {
+                        //console.log(element['product_name'])
+                        alert("IT WORKED!");
+                    });
+                    alert("Finished");
+
+
+                    /*
+                    $.each(data['errors'], function(key, element){
+                         console.log(key+' : '+element['Person']);
+                    });
+                     */
                     //END TEMP CODE
                 },
                 error: function(){
