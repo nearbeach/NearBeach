@@ -506,6 +506,17 @@ class new_line_item_form(ModelForm):
             'placeholder': 'Service Description',
 		})
 	)
+    discount_amount = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'style': 'display: none;',
+            'step': '1',
+        })
+    )
+    discount_percentage = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'step': '1',
+        })
+    )
 
     tax_amount = forms.CharField(
 		widget=forms.TextInput(attrs={
@@ -522,6 +533,12 @@ class new_line_item_form(ModelForm):
 			'value': '0',
 		})
 	)
+    product_note = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder':'Product Notes',
+        })
+    )
 
 
     class Meta:
@@ -539,19 +556,6 @@ class new_line_item_form(ModelForm):
             'change_user',
         }
 
-    """
-    class test(forms.Form):
-        #Obtain the required fields
-        products_and_services_results = products_and_services.objects.all() \
-            .order_by('product_or_service', 'product_name') \
-            .values('product_or_service', 'product_name')
-
-        test_field = forms.ModelChoiceField(
-            queryset=products_and_services.objects.filter(is_deleted='FALSE'),
-            empty_label="Please pick a product/service",
-            widget=ProductOrServiceSelect(),
-        )
-    """
 
 
 class new_opportunity_form(ModelForm):

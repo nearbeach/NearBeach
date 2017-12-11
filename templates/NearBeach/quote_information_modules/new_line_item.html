@@ -5,12 +5,12 @@
 <table id="product">
     <tr class="header">
         <td width="70%" colspan="2">Add Product/Service</td>
-        <td width="5%" style="display: none;">Quantity</td>
+        <td class="quantity" width="5%" style="display: none;">Quantity</td>
         <td width="20%" style="display: none;">Cost</td>
     </tr>
     <tr>
         <td colspan="2">{{ new_line_item_form.products_and_services }}</td>
-        <td style="display: none;">{{ new_line_item_form.quantity }}</td>
+        <td class="quantity" style="display: none;">{{ new_line_item_form.quantity }}</td>
         <td style="display: none;">{{ new_line_item_form.product_cost }}</td>
     </tr>
     <tr>
@@ -66,13 +66,11 @@
                We now have to look into each element of the JSON (even though there
                is only one), to extract the values inside.
                */
-               alert("Got JSON data");
                $.each(data, function(i,f) {
                    /*
                    Now we can extract the required information using the following code
                    f.fields.product_or_service
                    */
-                   alert("ROW OF DATA INPUT");
                    $("#id_product_cost").val(f.fields.product_cost);
                    $("#id_product_description").val(f.fields.product_description);
                    $("#id_product_price").val(f.fields.product_price);
@@ -89,20 +87,12 @@
                });
 
             });
-
-            alert("Finish");
-
-
-            /*
-            $.getJSON('/lookup_product/1',function(data) {
-            $.each(data,function(i,f) { alert(f.fields.product_or_service); });
-            });
-             */
         } else {
             /*
             Well, this is exciting. Someone has order in services.
              */
             $("#id_product_description").prop("readonly","false");
+            $(".quantity").css("display","none")
         }
     })
 </script>
