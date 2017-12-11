@@ -60,29 +60,49 @@
             $("#product_costing").css("display","");
 
             //Get the product information
-            $.ajax({
-                url: '/lookup_product/' + product_id,
-                data: {},
-                dataType: 'JSON',
-                type:'GET',
-                success: function(data) {
-                    //Write the information to the correct cells
+            $.getJSON('/lookup_product/'+product_id,function(data){
+               /*
+               We are now looking up the product information from the JSON function.
+               We now have to look into each element of the JSON (even though there
+               is only one), to extract the values inside.
+               */
+               alert("Got JSON data");
+               $.each(data, function(i,f) {
+                   /*
+                   Now we can extract the required information using the following code
+                   f.fields.product_or_service
+                   */
+                   alert("ROW OF DATA INPUT");
+                   $("#id_product_cost").val(f.fields.product_cost);
+                   $("#id_product_description").val(f.fields.product_description);
+                   $("#id_product_price").val(f.fields.product_price);
 
-                    //TEMP CODE
-                    alert(data);
+                   /*
+                   If the product discription does not exist, make it hide
+                   */
+                   if (f.fields.product_description == "") {
+                        $("#id_product_description").css("display","none");
+                        $("#id_product_description").prop("readonly","true");
+                   } else {
+                       $("#id_product_description").css("display","");
+                   }
+               });
 
-
-                    /*
-                    $.each(data['errors'], function(key, element){
-                         console.log(key+' : '+element['Person']);
-                    });
-                     */
-                    //END TEMP CODE
-                },
-                error: function(){
-                    alert("Sorry");
-                }
             });
+
+            alert("Finish");
+
+
+            /*
+            $.getJSON('/lookup_product/1',function(data) {
+            $.each(data,function(i,f) { alert(f.fields.product_or_service); });
+            });
+             */
+        } else {
+            /*
+            Well, this is exciting. Someone has order in services.
+             */
+            $("#id_product_description").prop("readonly","false");
         }
     })
 </script>

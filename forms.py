@@ -503,6 +503,7 @@ class new_line_item_form(ModelForm):
 		max_length=255,
 		widget=forms.TextInput(attrs={
 			'readonly': True,
+            'placeholder': 'Service Description',
 		})
 	)
 
