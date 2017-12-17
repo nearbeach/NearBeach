@@ -490,6 +490,7 @@ class new_line_item_form(ModelForm):
 		widget=forms.TextInput(attrs={
 			'value': '1',
 			'width': '10px',
+            'onkeyup': 'update_total()',
 		})
 	)
     product_cost = forms.CharField(

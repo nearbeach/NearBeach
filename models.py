@@ -680,7 +680,7 @@ class list_of_quote_stages(models.Model):
 class list_of_taxes(models.Model):
 	tax_id = models.AutoField(primary_key=True)
 	tax_amount=models.DecimalField(
-		max_digits=3,
+		max_digits=4,
 		decimal_places=2,
 	)
 	date_created = models.DateTimeField(auto_now_add=True)
@@ -702,7 +702,7 @@ class list_of_taxes(models.Model):
 	)
 
 	def __str__(self):
-		return self.tax_amount.encode('utf8')
+		return str(self.tax_amount) #No need to encode as it is a decimal point
 
 	class Meta:
 		db_table="list_of_taxes"

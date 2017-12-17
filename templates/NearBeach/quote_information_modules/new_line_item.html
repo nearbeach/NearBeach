@@ -2,6 +2,56 @@
 <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
 <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
 
+<script>
+    function update_total() {
+        /*
+        This function is activated every time the value changes in the new line item. The calculation goes along
+        the following process
+
+        Price - Discount ($ Value $) + Tax
+
+        Tax = Tax_percent % (Price - Discount)
+
+        To simplify this, we will have the variable
+
+        discounted_price = Price - Discount, so the final formula becomes
+
+        Total = (discounted_price + tax_percent % discounted_price) * Quantity
+
+        My maths degree hard at work
+         */
+        //Get variables
+        alert("Start");
+        var quantity = +$("#id_quantity").val();
+        var price = +$("#id_product_price").val();
+        var discount_amount = +0;
+        //Obtain the discount_amount
+        if ($("#id_discount_choice").val() == "Percentage") {
+            //We want to change the percentage into a total amount.
+            var discount_percentage = +$("#id_discount_percent").val();
+            discount_amount = (discount_percentage / 100) * price;
+        } else {
+            discount_amount = +$("#id_discount_amount").val();
+        }
+
+
+        discounted_price = price - discount_amount;
+
+        if ($("#id_tax").val() != '') {
+            $("#id_tax_amount").val(($("#id_tax").val() / 100) * (price * quantity));
+        } else {
+            $("#id_tax_amount").val(0);
+
+        }
+
+
+        //Get the final total
+        $("#id_total").val("");
+        $("#id_total").val((quantity * discounted_price) + +$("#id_tax_amount").val());//*/
+
+    }
+</script>
+
 <table id="product">
     <tr class="header">
         <td width="70%" colspan="2">Add Product/Service</td>
@@ -85,7 +135,9 @@
                        $("#id_product_description").css("display","");
                    }
                });
-
+               alert("Got here");
+                update_total();
+                alert("RUNNING!");
             });
         } else {
             /*
@@ -95,4 +147,6 @@
             $(".quantity").css("display","none")
         }
     })
+
+
 </script>
