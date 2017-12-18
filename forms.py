@@ -500,6 +500,11 @@ class new_line_item_form(ModelForm):
 			'value': '0',
 		})
 	)
+    product_price = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'onkeyup': 'update_total()',
+        })
+    )
     product_description = forms.CharField(
 		max_length=255,
 		widget=forms.TextInput(attrs={
@@ -511,11 +516,18 @@ class new_line_item_form(ModelForm):
         widget=forms.TextInput(attrs={
             'style': 'display: none;',
             'step': '1',
+            'onkeyup': 'update_total()',
+        })
+    )
+    discount_choice = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'onchange': 'change_discount_choice',
         })
     )
     discount_percentage = forms.CharField(
         widget=forms.TextInput(attrs={
             'step': '1',
+            'onkeyup': 'update_total()',
         })
     )
 
@@ -525,7 +537,8 @@ class new_line_item_form(ModelForm):
 			'width': '50px',
 			'value': '0',
 			'step': '1',
-		})
+            'onchange': 'update_tax()',
+        })
 	)
     total = forms.CharField(
 		widget=forms.TextInput(attrs={
