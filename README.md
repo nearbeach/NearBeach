@@ -3,7 +3,7 @@ NearBeach is currently being built as a project and task management tool (PATMT)
 
 NearBeach will have many modules included within it to help track projects/tasks
 
-* Advertisement materials
+* Opportunities
 * Customers
 * Costs
 * Documentation upload (DU)/Documentation Cloud Links (DCL)
