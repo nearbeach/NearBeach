@@ -486,6 +486,7 @@ class new_customer_form(forms.Form):
 class new_line_item_form(ModelForm):
     #Get the data
     products_and_services = forms.ModelChoiceField(
+        required=False,
         queryset=products_and_services.objects.filter(is_deleted='FALSE'),
         empty_label="Please pick a product/service",
         widget=ProductOrServiceSelect(),
