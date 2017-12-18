@@ -1314,6 +1314,7 @@ class quotes_products_and_services(models.Model):
 		default=0,
 		max_digits=19,
 		decimal_places=2,
+		validators=[MaxValueValidator(1000000000), MinValueValidator(0)]  # Could I use this for the money too? :D
 	)
 	product_price=models.DecimalField(
 		max_digits=19,

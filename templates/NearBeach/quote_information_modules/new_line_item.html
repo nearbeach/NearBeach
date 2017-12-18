@@ -1,3 +1,4 @@
+{% csrf_token %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
 <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
@@ -6,64 +7,53 @@
     function change_discount_choice() {
         /* Updates the discount type */
         if ($("#id_discount_choice").val() == "Percentage") {
-            alert("Percentage");
+            //Show the percentage
+            $("#id_discount_percent").css("display","");
+            $("#id_discount_amount").css("display","none");
         } else {
-            alert("Amount");
+            //Show the amount
+            $("#id_discount_percent").css("display","none");
+            $("#id_discount_amount").css("display","");
         }
     }
 
     function update_total() {
-        /*
-        This function is activated every time the value changes in the new line item. The calculation goes along
-        the following process
+        //Get and declare variables
+        var total_price = parseFloat($("#id_quantity").val()) * parseFloat($("#id_product_price").val());
+        var discount_price = 0;
+        var tax_amount = 0;
 
-        Price - Discount ($ Value $) + Tax
-
-        Tax = Tax_percent % (Price - Discount)
-
-        To simplify this, we will have the variable
-
-        discounted_price = Price - Discount, so the final formula becomes
-
-        Total = (discounted_price + tax_percent % discounted_price) * Quantity
-
-        My maths degree hard at work
-         */
-        //Get variables
-        var quantity = +$("#id_quantity").val();
-        var price = +$("#id_product_price").val();
-        var discount_amount = +0;
-        //Obtain the discount_amount
         if ($("#id_discount_choice").val() == "Percentage") {
-            //We want to change the percentage into a total amount.
-            var discount_percentage = +$("#id_discount_percent").val();
-            discount_amount = (discount_percentage / 100) * price;
+            //Apply the percentage to the total_price to get $$$ off
+            discount_price = total_price - (($("#id_discount_percent").val()/100)*total_price);
         } else {
-            discount_amount = +$("#id_discount_amount").val();
+            discount_price = total_price - $("#id_discount_amount").val();
         }
 
-
-        discounted_price = price - discount_amount;
-
-        if ($("#id_tax").val() != '') {
-            $("#id_tax_amount").val(($("#id_tax").val() / 100) * (price * quantity));
-        } else {
+        //Show the amount of tax
+        if ($("#id_tax").val() == "") {
+            //There is no tax applied. ZERO
+            tax_amount = 0;
             $("#id_tax_amount").val(0);
-
+        } else {
+            //There is a tax amount.
+            tax_amount = ($("#id_tax").val()/100)*discount_price;
+            $("#id_tax_amount").val(tax_amount);
         }
 
+        //Calculate the total
+        $("#id_total").val(discount_price + tax_amount);
 
-        //Get the final total
-        $("#id_total").val("");
-        $("#id_total").val((quantity * discounted_price) + +$("#id_tax_amount").val());//*/
+        //Determine if user can submit the line item
+        if (isNaN($("#id_total").val()) == false) {
+            $("#submit_line_item").prop("disabled",false);
+        } else {
+            $("#submit_line_item").prop("disabled",true);
+        }
 
     }
 
-    function update_tax() {
-        /* This function is designed to change the tax price and then apply that
-        change to the totla.
-         */
-    }
+
 </script>
 
 <table id="product">
@@ -83,7 +73,7 @@
 </table>
 <table id="product_costing" style="display: none;">
     <tr>
-        <td>Price</td>
+        <td>Price per Unit</td>
         <td>Discount</td>
         <td>Tax</td>
         <td>Total</td>
@@ -98,7 +88,7 @@
         <td colspan="4">{{ new_line_item_form.product_note }}</td>
     </tr>
     <tr>
-        <td colspan="4"><input type="submit" disabled value="Submit New Line Item"></td>
+        <td colspan="4"><input id="submit_line_item" type="submit" disabled value="Submit New Line Item"></td>
     </tr>
 </table>
 
@@ -161,4 +151,19 @@
     })
 
 
+    //Submitting a new line item
+    $("#new_line_item").on('submit', function(e) {
+       e.preventDefault();
+       $.ajax({
+           type: "POST",
+           url: '/quote_new_line_item/{{ quote_id }}/',
+           data: $(this).serialize(),
+           success: function() {
+               alert("YAY!");
+           },
+           error: function() {
+               alert("There has been an error submitting the new line item");
+           }
+       })
+    });
 </script>

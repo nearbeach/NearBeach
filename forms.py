@@ -28,6 +28,10 @@ User=get_user_model
 
 
 #Setup drop down box options
+DISCOUNT_CHOICE=(
+	('Percentage','Percentage'),
+	('Amount','Amount'),
+)
 NOTHING_CHOICE=(
     ('','-----'),
 )
@@ -506,6 +510,7 @@ class new_line_item_form(ModelForm):
         })
     )
     product_description = forms.CharField(
+        required=False,
 		max_length=255,
 		widget=forms.TextInput(attrs={
 			'readonly': True,
@@ -519,12 +524,21 @@ class new_line_item_form(ModelForm):
             'onkeyup': 'update_total()',
         })
     )
-    discount_choice = forms.CharField(
-        widget=forms.TextInput(attrs={
-            'onchange': 'change_discount_choice',
+    discount_choice = forms.ChoiceField(
+        choices=DISCOUNT_CHOICE,
+        widget=forms.Select(attrs={
+            'onchange': 'change_discount_choice()',
         })
     )
     discount_percentage = forms.CharField(
+        required=False, #if empty, we are assuming it will be 0%
+        widget=forms.TextInput(attrs={
+            'step': '1',
+            'onkeyup': 'update_total()',
+        })
+    )
+    discount_amount = forms.CharField(
+        required=False, #if empty, we are assuming it will be 0
         widget=forms.TextInput(attrs={
             'step': '1',
             'onkeyup': 'update_total()',
@@ -537,7 +551,7 @@ class new_line_item_form(ModelForm):
 			'width': '50px',
 			'value': '0',
 			'step': '1',
-            'onchange': 'update_tax()',
+            'onchange': 'update_total()',
         })
 	)
     total = forms.CharField(
@@ -549,6 +563,7 @@ class new_line_item_form(ModelForm):
 	)
     product_note = forms.CharField(
         max_length=255,
+        required=False,
         widget=forms.TextInput(attrs={
             'placeholder':'Product Notes',
         })
