@@ -37,7 +37,7 @@
             $("#id_tax_amount").val(0);
         } else {
             //There is a tax amount.
-            tax_amount = ($("#id_tax").val()/100)*discount_price;
+            tax_amount = ($("#id_tax").children("option").filter(":selected").text()/100)*discount_price;
             $("#id_tax_amount").val(tax_amount);
         }
 
@@ -104,7 +104,7 @@
     2.) It will apply the default values and hide unwanted fields
     3.) If it is a product, it will extract the base values from the database
      */
-    $("#id_product_or_service").on('change', function(evt, params) {
+    $("#id_products_and_services").on('change', function(evt, params) {
         var label = $(this.options[this.selectedIndex]).closest('optgroup').prop('label');
         var product_id = $(this.options[this.selectedIndex]).val();
 
@@ -160,6 +160,7 @@
            data: $(this).serialize(),
            success: function() {
                alert("YAY!");
+               
            },
            error: function() {
                alert("There has been an error submitting the new line item");

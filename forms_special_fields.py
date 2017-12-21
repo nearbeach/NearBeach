@@ -16,7 +16,7 @@ class ProductOrServiceSelect(forms.Select):
             .order_by('product_or_service','product_name')
 
         #Start the rendering
-        output = u'<select name="product_or_service" id="id_product_or_service" class="chosen-select"><option value="------" selected disabled> Add Product or Service </option>'
+        output = u'<select name="products_and_services" id="id_products_and_services" class="chosen-select"><option value="------" selected disabled> Add Product or Service </option>'
         output = output + u'<optgroup label="Products">'
 
 

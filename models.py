@@ -957,7 +957,10 @@ class products_and_services(models.Model):
 		max_length=7,
 		choices=PRODUCT_OR_SERVICE,
 	)
-	product_name=models.CharField(max_length=100)
+	product_name=models.CharField(
+		max_length=100,
+		unique=True, #To stop the user inputting the same product!
+	)
 	product_part_number=models.CharField(
 		max_length=100,
 		null=True,

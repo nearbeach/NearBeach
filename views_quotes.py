@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.template import  loader
 from NearBeach.forms import *
 from .models import *
+from NearBeach.models import *
 
 
 
@@ -25,11 +26,8 @@ def new_line_item(request,quote_id):
     if request.POST:
         form = new_line_item_form(request.POST, request.FILES)
         if form.is_valid():
-            #Current user
-            current_user = request.user
-
             #All data
-            products_and_services = form.cleaned_data['products_and_services']
+            extracted_product_and_services = form.cleaned_data['products_and_services']
             quantity = form.cleaned_data['quantity']
             product_description = form.cleaned_data['product_description']
             product_cost = form.cleaned_data['product_cost']
@@ -43,9 +41,48 @@ def new_line_item(request,quote_id):
             product_note = form.cleaned_data['product_note']
 
             #Instances needed
+            quote_instance = quotes.objects.get(quote_id=quote_id)
+            product_instance = products_and_services.objects.get(product_name = extracted_product_and_services)
+
+            #Check to make sure they are not blank - default = 0
+            if ((discount_percent == '') or (not discount_percent)): discount_percent = 0
+            if ((discount_amount == '') or (not discount_amount)) : discount_amount = 0
+
+
+            print("products_and_services: " + str(products_and_services))
+            print("quantity: " + str(quantity))
+            print("product_description: " + str(product_description))
+            print("product_cost: " + str(product_cost))
+            print("discount_choice: " + str(discount_choice))
+            print("discount_percent: " + str(discount_percent))
+            print("discount_amount: " + str(discount_amount))
+            print("product_price: " + str(product_price))
+            print("tax: " + str(tax))
+            print("tax_amount: " + str(tax_amount))
+            print("total: " + str(total))
+            print("product_note: " + str(product_note))
+            print("quote_id: " + str(quote_instance))
 
 
             #Save line item
+            submit_line_item = quotes_products_and_services(
+                products_and_services = product_instance,
+                quantity = quantity,
+                product_description = product_description,
+                product_cost = product_cost,
+                discount_choice = discount_choice,
+                discount_percent = discount_percent,
+                discount_amount = discount_amount,
+                product_price = product_price,
+                tax = tax,
+                tax_amount = tax_amount,
+                total = total,
+                product_note = product_note,
+                change_user=request.user,
+                quote_id=quote_instance.quote_id,
+            )
+            submit_line_item.save()
+
 
 
         else:

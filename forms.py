@@ -552,10 +552,18 @@ class new_line_item_form(ModelForm):
 			'width': '50px',
 			'value': '0',
 			'step': '1',
-            'onchange': 'update_total()',
         })
 	)
+    tax = forms.ModelChoiceField(
+        required=False,
+        label="Organisations",
+        queryset=list_of_taxes.objects.filter(is_deleted='FALSE'),
+        widget=forms.Select(attrs={
+            "onChange": 'update_total()'
+        }),
+    )
     total = forms.CharField(
+        required=False,
 		widget=forms.TextInput(attrs={
 			'readonly': True,
 			'width': '100px',
@@ -1440,16 +1448,4 @@ class task_information_form(ModelForm):
                 'task_long_description',
         }
 
-"""
-class test(forms.Form):
-    #Obtain the required fields
-    products_and_services_results = products_and_services.objects.all() \
-        .order_by('product_or_service', 'product_name') \
-        .values('product_or_service', 'product_name')
 
-    test_field = forms.ModelChoiceField(
-        queryset=products_and_services.objects.filter(is_deleted='FALSE'),
-        empty_label="Please pick a product/service",
-        widget=ProductOrServiceSelect(),
-    )
-"""
