@@ -1,0 +1,41 @@
+{% if line_item_results %}
+    <h4>Line Items</h4>
+    <table>
+    <tr>
+        <td>Product/Service</td>
+        <td>Product Note</td>
+        <td>Product Price</td>
+        <td>Quantity</td>
+        <td>Discount</td>
+        <td>Tax %</td>
+        <td>Tax Amount</td>
+        <td>Total</td>
+        <td>Delete</td>
+    </tr>
+        {% for row in line_item_results %}
+            <tr>
+                <td>{{ row.products_and_services }}</td>
+                <td>{{ row.product_note }}</td>
+                <td>{{ row.product_price }}</td>
+                <td>{{ row.quantity }}</td>
+                <td>
+                    {% if row.discount_choice == 'Percentage' %}
+                        {{ row.discount_percent }}%
+                    {% else %}
+                        {{ row.discount_amount }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if row.tax == None %}
+                        0.00%
+                    {% else %}
+                        {{ row.tax }}%</td>
+                    {% endif %}
+                <td>{{ row.tax_amount }}</td>
+                <td>{{ row.total }}</td>
+                <td><a onclick="delete_line_item({{ row.quotes_products_and_services_id }})" href="javascript:void(0);">Delete</a></td>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>Sorry, there are no current line items. Please enter the line items above.</p>
+{% endif %}

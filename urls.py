@@ -84,8 +84,11 @@ urlpatterns = [
 
 
 	#Quotes Modules
-	url(r'^quote_line_items/(?P<quote_id>[0-9]+)/$', views_quotes.line_items, name='quote_line_items'),
+	url(r'^quote_list_of_line_items/(?P<quote_id>[0-9]+)/$', views_quotes.list_of_line_items, name='quote_list_of_line_items'),
 	url(r'^quote_new_line_item/(?P<quote_id>[0-9]+)/$', views_quotes.new_line_item, name='quote_new_line_item'),
+	url(r'^quote_delete_line_item/(?P<line_item_id>[0-9]+)/$', views_quotes.delete_line_item, name='quote_delete_line_item'),
+
+	#Look up
 	url(r'^lookup_product/(?P<product_id>[0-9]+)/$', views_lookup.lookup_product, name='lookup_product')
 
 ]

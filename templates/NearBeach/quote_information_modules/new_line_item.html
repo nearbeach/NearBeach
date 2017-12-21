@@ -159,8 +159,8 @@
            url: '/quote_new_line_item/{{ quote_id }}/',
            data: $(this).serialize(),
            success: function() {
-               alert("YAY!");
-               
+               reload_new_line_item();
+               reload_list_of_line_items();
            },
            error: function() {
                alert("There has been an error submitting the new line item");

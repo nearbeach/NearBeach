@@ -6,15 +6,41 @@ from .models import *
 from NearBeach.models import *
 
 
+@login_required(login_url='login')
+def delete_line_item(request, line_item_id):
+    # Delete the line item
+    line_item = quotes_products_and_services.objects.get(quotes_products_and_services_id = line_item_id)
+    line_item.is_deleted = "TRUE"
+    line_item.change_user=request.user
+    line_item.save()
+
+    #Return a blank page for fun
+    t = loader.get_template('NearBeach/blank.html')
+
+    # context
+    c = {}
+
+    return HttpResponse(t.render(c, request))
+    #SoMuchFun
+
+
+
 
 @login_required(login_url='login')
-def line_items(request, quote_id):
+def list_of_line_items(request, quote_id):
+    #Get data
+    line_item_results = quotes_products_and_services.objects.filter(
+        is_deleted='FALSE',
+        quote_id=quote_id,
+    )
+
     # Load the template
-    t = loader.get_template('NearBeach/quote_information_modules/line_items.html')
+    t = loader.get_template('NearBeach/quote_information_modules/list_of_line_items.html')
 
     # context
     c = {
         'quote_id': quote_id,
+        'line_item_results': line_item_results,
     }
 
     return HttpResponse(t.render(c, request))
