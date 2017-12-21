@@ -33,6 +33,46 @@ def list_of_line_items(request, quote_id):
         is_deleted='FALSE',
         quote_id=quote_id,
     )
+    # Setup connection to the database and query it
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    SELECT quotes_products_and_services.*
+    , products_and_services.product_name
+    
+    FROM
+      quotes_products_and_services
+    , products_and_services
+      
+    WHERE 1=1
+    
+    AND quotes_products_and_services.quote_id = %s
+    AND quotes_products_and_services.is_deleted = 'FALSE'
+    AND products_and_services.product_or_service = 'Product'
+    
+    AND quotes_products_and_services.products_and_services_id = products_and_services.product_id
+    """, [quote_id])
+
+    product_line_items = namedtuplefetchall(cursor)
+
+    cursor.execute("""
+    SELECT quotes_products_and_services.*
+    , products_and_services.product_name
+    
+    FROM
+      quotes_products_and_services
+    , products_and_services
+      
+    WHERE 1=1
+    
+    AND quotes_products_and_services.quote_id = %s
+    AND quotes_products_and_services.is_deleted = 'FALSE'
+    AND products_and_services.product_or_service = 'Service'
+    
+    AND quotes_products_and_services.products_and_services_id = products_and_services.product_id
+    """, [quote_id])
+
+    service_line_items = namedtuplefetchall(cursor)
 
     # Load the template
     t = loader.get_template('NearBeach/quote_information_modules/list_of_line_items.html')
@@ -41,6 +81,8 @@ def list_of_line_items(request, quote_id):
     c = {
         'quote_id': quote_id,
         'line_item_results': line_item_results,
+        'product_line_items': product_line_items,
+        'service_line_items': service_line_items,
     }
 
     return HttpResponse(t.render(c, request))
@@ -126,3 +168,14 @@ def new_line_item(request,quote_id):
     return HttpResponse(t.render(c, request))
 
 
+# Extra functionality
+"""
+The following function helps change the cursor's results into useable
+SQL that the html templates can read.
+"""
+from collections import namedtuple
+def namedtuplefetchall(cursor):
+    "Return all rows from a cursor as a namedtuple"
+    desc = cursor.description
+    nt_result = namedtuple('Result', [col[0] for col in desc])
+    return [nt_result(*row) for row in cursor.fetchall()]

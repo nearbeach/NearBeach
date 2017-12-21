@@ -1,20 +1,20 @@
-{% if line_item_results %}
-    <h4>Line Items</h4>
+<h4>Products</h4>
+{% if product_line_items %}
     <table>
-    <tr>
-        <td>Product/Service</td>
-        <td>Product Note</td>
-        <td>Product Price</td>
-        <td>Quantity</td>
-        <td>Discount</td>
-        <td>Tax %</td>
-        <td>Tax Amount</td>
-        <td>Total</td>
-        <td>Delete</td>
-    </tr>
-        {% for row in line_item_results %}
+        <tr>
+            <td>Product</td>
+            <td>Product Note</td>
+            <td>Product Price</td>
+            <td>Quantity</td>
+            <td>Discount</td>
+            <td>Tax %</td>
+            <td>Tax Amount</td>
+            <td>Total</td>
+            <td>Delete</td>
+        </tr>
+        {% for row in product_line_items %}
             <tr>
-                <td>{{ row.products_and_services }}</td>
+                <td>{{ row.product_name }}</td>
                 <td>{{ row.product_note }}</td>
                 <td>{{ row.product_price }}</td>
                 <td>{{ row.quantity }}</td>
@@ -35,7 +35,80 @@
                 <td>{{ row.total }}</td>
                 <td><a onclick="delete_line_item({{ row.quotes_products_and_services_id }})" href="javascript:void(0);">Delete</a></td>
         {% endfor %}
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td id="product_total"></td>
+            <td></td>
+        </tr>
     </table>
 {% else %}
-    <p>Sorry, there are no current line items. Please enter the line items above.</p>
+    <p>There are no product line items</p>
 {% endif %}
+<h4>Service</h4>
+{% if service_line_items %}
+    <table>
+        <tr>
+            <td>Product</td>
+            <td>Product Note</td>
+            <td>Product Price</td>
+            <td>Discount</td>
+            <td>Tax %</td>
+            <td>Tax Amount</td>
+            <td>Total</td>
+            <td>Delete</td>
+        </tr>
+        {% for row in service_line_items %}
+            <tr>
+                <td>{{ row.product_name }}</td>
+                <td>{{ row.product_note }}</td>
+                <td>{{ row.product_price }}</td>
+                <td>
+                    {% if row.discount_choice == 'Percentage' %}
+                        {{ row.discount_percent }}%
+                    {% else %}
+                        {{ row.discount_amount }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if row.tax == None %}
+                        0.00%
+                    {% else %}
+                        {{ row.tax }}%</td>
+                    {% endif %}
+                <td>{{ row.tax_amount }}</td>
+                <td>{{ row.total }}</td>
+                <td><a onclick="delete_line_item({{ row.quotes_products_and_services_id }})" href="javascript:void(0);">Delete</a></td>
+        {% endfor %}
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td id="service_total"></td>
+            <td></td>
+        </tr>
+    </table>
+{% else %}
+    <p>Sorry, there are no services</p>
+{% endif %}
+<h4>Totals</h4>
+<table>
+    <tr>
+        <td>Product Total</td>
+        <td>Service Total</td>
+        <td>Total</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+</table>
