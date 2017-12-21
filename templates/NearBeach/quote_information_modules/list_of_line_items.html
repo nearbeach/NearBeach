@@ -16,8 +16,8 @@
             <tr>
                 <td>{{ row.product_name }}</td>
                 <td>{{ row.product_note }}</td>
-                <td>{{ row.product_price }}</td>
-                <td>{{ row.quantity }}</td>
+                <td id="product_price">{{ row.product_price }}</td>
+                <td id="product_quantity">{{ row.quantity }}</td>
                 <td>
                     {% if row.discount_choice == 'Percentage' %}
                         {{ row.discount_percent }}%
@@ -31,11 +31,11 @@
                     {% else %}
                         {{ row.tax }}%</td>
                     {% endif %}
-                <td>{{ row.tax_amount }}</td>
-                <td>{{ row.total }}</td>
+                <td id="product_tax_amount">{{ row.tax_amount }}</td>
+                <td id="product_total">{{ row.total }}</td>
                 <td><a onclick="delete_line_item({{ row.quotes_products_and_services_id }})" href="javascript:void(0);">Delete</a></td>
         {% endfor %}
-        <tr>
+        <tr id="product_totals">
             <td></td>
             <td></td>
             <td></td>
@@ -56,7 +56,7 @@
         <tr>
             <td>Product</td>
             <td>Product Note</td>
-            <td>Product Price</td>
+            <td>Service Price</td>
             <td>Discount</td>
             <td>Tax %</td>
             <td>Tax Amount</td>
@@ -112,3 +112,38 @@
         <td></td>
     </tr>
 </table>
+
+<script>
+/*
+function running_total() {
+	/*
+	Method
+	~~~~~~
+	The running total is calculated AFTER ALL data has been created
+	to help save server memory for large datasets.
+
+	1.) Get variables and set running total = 0
+	2.) LOOP
+	3.) Find cost amount and add to running total
+	4.) Edit running total spot
+	5.) Loop
+	6.) Fill out grand total
+
+	var cost_amount = document.getElementsByName("cost_amount");
+	var running_total = document.getElementsByName("running_total");
+	var grand_total = document.getElementById("grand_total");
+	var running_total_amount = 0;
+
+	//The loop
+	for(var i = 1; i <= running_total.length; i++) {
+		running_total_amount = running_total_amount + Number(cost_amount[i].innerHTML);
+		running_total[i-1].innerHTML = running_total_amount;
+	}
+
+	grand_total.innerHTML = running_total_amount;
+}
+ */
+function calculate_quote_totals() {
+
+}
+</script>
