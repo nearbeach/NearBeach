@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib import auth
 #Import ModelForm
 from django.forms import ModelForm
+from django.forms.widgets import TextInput
 
 from forms_special_fields import *
 
@@ -534,8 +535,10 @@ class new_line_item_form(ModelForm):
     discount_percentage = forms.CharField(
         required=False, #if empty, we are assuming it will be 0%
         widget=forms.TextInput(attrs={
-            'step': '1',
-            'onkeyup': 'update_total()',
+            'min': '0',
+            'max': '100',
+            'step': '5',
+            'onchange': 'update_total()',
         })
     )
     discount_amount = forms.CharField(
@@ -545,10 +548,16 @@ class new_line_item_form(ModelForm):
             'onkeyup': 'update_total()',
         })
     )
-
+    sales_price = forms.CharField(
+        required=False, #if empty, we are assuming it will be 0
+        widget=forms.TextInput(attrs={
+            'step': '1',
+            'readonly': 'true',
+        })
+    )
     tax_amount = forms.CharField(
 		widget=forms.TextInput(attrs={
-			'readonly': True,
+			'readonly': 'true',
 			'width': '50px',
 			'value': '0',
 			'step': '1',

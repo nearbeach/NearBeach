@@ -20,15 +20,19 @@
     function update_total() {
         //Get and declare variables
         var total_price = parseFloat($("#id_quantity").val()) * parseFloat($("#id_product_price").val());
-        var discount_price = 0;
+        var sales_price = 0;
         var tax_amount = 0;
 
+        //When the discount choice is percentage, we want to calcuate the discount amount
+        //and apply it to the discount amount text box
         if ($("#id_discount_choice").val() == "Percentage") {
-            //Apply the percentage to the total_price to get $$$ off
-            discount_price = total_price - (($("#id_discount_percent").val()/100)*total_price);
-        } else {
-            discount_price = total_price - $("#id_discount_amount").val();
+            //It is a percentage, lets calculate it and then apply it to the amount text box
+            var discount_amount = (($("#id_discount_percent").val()/100)*total_price);
+            $("id_discount_amount").val(11.50);
         }
+        $("id_sales_price").val("11.40");
+        sales_price = total_price - $("#id_discount_amount").val();
+
 
         //Show the amount of tax
         if ($("#id_tax").val() == "") {
@@ -42,7 +46,7 @@
         }
 
         //Calculate the total
-        $("#id_total").val(discount_price + tax_amount);
+        $("#id_total").val(sales_price + tax_amount);
 
         //Determine if user can submit the line item
         if (isNaN($("#id_total").val()) == false) {
@@ -75,20 +79,22 @@
     <tr>
         <td>Price per Unit</td>
         <td>Discount</td>
+        <td>Sales Price</td>
         <td>Tax</td>
         <td>Total</td>
     </tr>
     <tr>
         <td>{{ new_line_item_form.product_price }}</td>
         <td>{{ new_line_item_form.discount_percent }}{{ new_line_item_form.discount_amount }} {{ new_line_item_form.discount_choice }}</td>
+        <td>{{ new_line_item_form.sales_price }}</td>
         <td>{{ new_line_item_form.tax }}{{ new_line_item_form.tax_amount }}</td>
         <td>{{ new_line_item_form.total }}</td>
     </tr>
     <tr>
-        <td colspan="4">{{ new_line_item_form.product_note }}</td>
+        <td colspan="5">{{ new_line_item_form.product_note }}</td>
     </tr>
     <tr>
-        <td colspan="4"><input id="submit_line_item" type="submit" disabled value="Submit New Line Item"></td>
+        <td colspan="5"><input id="submit_line_item" type="submit" disabled value="Submit New Line Item"></td>
     </tr>
 </table>
 

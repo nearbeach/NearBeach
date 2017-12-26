@@ -7,6 +7,7 @@
             <td>Product Price</td>
             <td>Quantity</td>
             <td>Discount</td>
+            <td>Discount Amount</td>
             <td>Tax %</td>
             <td>Tax Amount</td>
             <td>Total</td>
@@ -22,8 +23,11 @@
                     {% if row.discount_choice == 'Percentage' %}
                         {{ row.discount_percent }}%
                     {% else %}
-                        {{ row.discount_amount }}
+                        N/A
                     {% endif %}
+                </td>
+                <td>
+                    {{ row.discount_amount }}
                 </td>
                 <td>
                     {% if row.tax == None %}
