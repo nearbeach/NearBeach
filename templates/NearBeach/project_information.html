@@ -8,25 +8,10 @@
 <script tpye="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
 
 <script>
-
-	function load_project_history() {
-        //Load Project History
-        $.ajax({
-            url: '/information_project_history/{{ project_id }}/',
-            data: {},
-            dataType: 'HTML',
-            type: 'GET',
-            success: function(data) {
-                $('#project_history').html(data);
-            },
-            error: function() {
-                $('#project_history').html('<h2>Project History</h2>Sorry, project history encounted an error and did not load.');
-            }
-        });
-    }
-
-	function on_page_load() {
-	    //Load Project History
+    function on_page_load() {
+	    //Initiate AJAX modules
+        load_project_costs();
+        load_project_customers();
         load_project_history();
 
 
@@ -92,77 +77,18 @@
         {% else %}
             <p>Currently no associated history.</p>
         {% endif %}
+
+    <form method="post" class="project_customers" id="project_customers">
         <h2>Project Customers</h2>
-        {% if new_customers_results %}
-            {% if project_results.project_status == 'New' or project_results.project_status == 'Open' %}
-                <select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" >
-                    <option value="---------" selected>---------</option>
-                    {% for row in new_customers_results %}
-                        {% if not row.customer_id == None %}
-                            <option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
-                        {% endif %}
-                    {% endfor %}                        </select>
-                <input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Project" disabled="disabled">
-            {% endif %}
-        {% endif %}
-        {% if project_customers_results %}
-            <table>
-                <tr class="header">
-                    <td>Customer Name</td>
-                    <td>Customer Description</td>
-                    <td>Customer Email</td>
-                    <td>Customer Campus</td>
-                    <td>Customer Phone</td>
-                </tr>
-                {% for row in project_customers_results %}
-                    <tr>
-                        <td>{{ row.customer_first_name }} {{ row.customer_last_name }}</td>
-                        <td>{{ row.customer_description }}</td>
-                        <td>{{ row.customer_email }}</td>
-                        <td>{{ row.campus_nickname }}</td>
-                        <td>{{ row.customer_phone }}</td>
-                    </tr>
-                {% endfor %}
-            </table>
-        {% else %}
-            <br/>Sorry, there seems to be no customers associated with this project.
-        {% endif %}
+        Loading...
+    </form>
+
+    <form method="post" class="project_costs" id="project_costs">
         <h2>Project Costs</h2>
-        <table>
-            <tr>
-                <td width="60%">{{ project_information_form.cost_description }}</td>
-                <td width="20%">{{ project_information_form.cost_amount }}</td>
-                <td width="20%"><input type="submit" name="add_cost_submit" id="add_cost_submit" value="Add Cost to Task" disabled="disabled"></td>
-            </tr>
+        Loading...
+    </form>
 
 
-
-        </table>
-        <br/>
-        {% if costs_results %}
-            <table>
-                <tr class="header">
-                    <td>Item</td>
-                    <td>Cost</td>
-                    <td>Running Total</td>
-                    <td>Delete</td>
-                </tr>
-                {% for row in costs_results %}
-                    <tr>
-                        <td>{{ row.cost_description }}</td>
-                        <td name="cost_amount">{{ row.cost_amount }}</td>
-                        <td name="running_total">--filled-by-javascript--</td>
-                        <td><a href="{% url 'delete_cost' row.cost_id row.project_id.project_id 'P' %}">Remove Cost</a></td>
-                    </tr>
-                {% endfor %}
-                <tr>
-                    <td>GRAND TOTAL</td>
-                    <td id="grand_total">--fill out--</td>
-                </tr>
-            </table>
-        {% else %}
-            <p>No costs associated with this task</p>
-        {% endif %}
         <h2>Project Documents</h2>
         << REBUILDING AS AJAX WIDGET >>
         <h2>Assigned Users</h2>
@@ -198,6 +124,39 @@
 </body>
 
     <script>
+    $("#project_costs").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/information_project_costs/{{ project_id }}/',
+            data: $(this).serialize(),
+            success: function() {
+                //Reload the project history :)
+                load_project_costs();
+            },
+            error: function() {
+                alert("Sorry, project costs did not save. Please try again.");
+            }
+        })
+    });
+
+    $("#project_customers").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/information_project_customers/{{ project_id }}/',
+            data: $(this).serialize(),
+            success: function() {
+                //Reload the project history :)
+                load_project_customers();
+            },
+            error: function() {
+                alert("Sorry, project customers did not save. Please try again.");
+            }
+        })
+    });
+
+
     $("#project_history").on('submit', function(e) {
         e.preventDefault();
         $.ajax({
@@ -205,13 +164,63 @@
             url: '/information_project_history/{{ project_id }}/',
             data: $(this).serialize(),
             success: function() {
-                //Don't need to reload the whole thing. Just clear the history
+                //Reload the project history :)
                 load_project_history();
             },
             error: function() {
                 alert("Sorry, project history did not save. Please try again.");
             }
         })
-    })
+    });
+
+    function load_project_costs() {
+        //Load Project History
+        $.ajax({
+            url: '/information_project_costs/{{ project_id }}/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#project_costs').html(data);
+                running_total();
+            },
+            error: function() {
+                $('#project_history').html('<h2>Project Costs</h2>Sorry, project costs encounted an error and did not load.');
+            }
+        });
+    };
+
+    function load_project_customers() {
+        //Load Project Customers
+        $.ajax({
+            url: '/information_project_customers/{{ project_id }}/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#project_customers').html(data);
+            },
+            error: function() {
+                $('#project_customers').html('<h2>Project Customers</h2>Sorry, project customers encounted an error and did not load.');
+            }
+        });
+    };
+
+    function load_project_history() {
+        //Load Project History
+        $.ajax({
+            url: '/information_project_history/{{ project_id }}/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#project_history').html(data);
+            },
+            error: function() {
+                $('#project_history').html('<h2>Project History</h2>Sorry, project history encounted an error and did not load.');
+            }
+        });
+    };
+
     </script>
 {% endblock %}

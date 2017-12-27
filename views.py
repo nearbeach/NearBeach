@@ -2421,28 +2421,8 @@ def project_information(request, project_id):
             project_results.save()
 
 
-            if 'add_customer_submit' in request.POST:
-                # The user has tried adding a customer
-                customer_id = int(request.POST.get("add_customer_select"))
 
-                submit_customer = project_customers(
-                    project_id=project.objects.get(pk=project_id),
-                    customer_id=customers.objects.get(pk=customer_id),
-                    change_user=request.user,
-                )
 
-                submit_customer.save()
-
-            cost_description = form.cleaned_data['cost_description']
-            cost_amount = form.cleaned_data['cost_amount']
-            if ((not cost_description == '') and ((cost_amount <= 0) or (cost_amount >= 0))):
-                submit_cost = costs(
-                    project_id=project.objects.get(pk=project_id),
-                    cost_description=cost_description,
-                    cost_amount=cost_amount,
-                    change_user=request.user,
-                )
-                submit_cost.save()
 
             """
 			If the user has added another user to the project
@@ -2554,7 +2534,7 @@ def project_information(request, project_id):
     ).order_by(
         'folder_description'
     )
-    costs_results = costs.objects.filter(project_id=project_id, is_deleted='FALSE')
+
 
     """
 	The 24 hours to 12 hours formula.
@@ -2616,51 +2596,9 @@ def project_information(request, project_id):
 		""", [project_id])
     associated_tasks_results = namedtuplefetchall(cursor)
 
-    cursor.execute("""
-		SELECT DISTINCT
-		  customers.customer_first_name
-		, customers.customer_last_name
-		, project_customers.customer_description
-		, customers.customer_email
-		, customers_campus_information.campus_nickname
-		, customers_campus_information.customer_phone
-		FROM
-		  customers LEFT JOIN 
-			(SELECT * FROM customers_campus join organisations_campus ON customers_campus.campus_id_id = organisations_campus.id) as customers_campus_information
-			ON customers.customer_id = customers_campus_information.customer_id_id
-		, project_customers
-		WHERE 1=1
-		AND customers.customer_id = project_customers.customer_id_id
-		AND project_customers.project_id_id = %s
-	""", [project_id])
-    project_customers_results = namedtuplefetchall(cursor)
 
-    cursor.execute("""
-		SELECT DISTINCT 
-		  customers.customer_id
-		, customers.customer_first_name || ' ' || customers.customer_last_name AS customer_name
-		
-		FROM
-		  project 
-		, organisations LEFT JOIN customers
-			ON organisations.organisations_id = customers.organisations_id_id
-		
-		WHERE 1=1
-		AND project.organisations_id_id = organisations.organisations_id
-		
-		AND customers.customer_id NOT IN (SELECT DISTINCT project_customers.customer_id_id
-					FROM project_customers
-					WHERE 1=1
-					AND project_customers.project_id_id = project.project_id
-					AND project_customers.is_deleted = 'FALSE')
-		
-		
-		-- LINKS --
-		AND organisations.organisations_id = %s
-		AND project.project_id = %s
-		-- END LINKS --
-	""", [project_results.organisations_id_id, project_id])
-    new_customers_results = namedtuplefetchall(cursor)
+
+
 
     cursor.execute("""
 			SELECT DISTINCT
@@ -2701,8 +2639,6 @@ def project_information(request, project_id):
         'project_results': project_results,
         'associated_tasks_results': associated_tasks_results,
         'project_history_results': project_history_results,
-        'project_customers_results': project_customers_results,
-        'new_customers_results': new_customers_results,
         'documents_results': simplejson.dumps(documents_results,encoding='utf-8'),
         'folders_results': serializers.serialize('json', folders_results),
         'media_url': settings.MEDIA_URL,
@@ -2713,7 +2649,6 @@ def project_information(request, project_id):
             'user_id__first_name',
             'user_id__last_name',
         ).distinct(),
-        'costs_results': costs_results,
         'project_id': project_id,
     }
 

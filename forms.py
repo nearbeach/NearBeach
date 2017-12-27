@@ -351,6 +351,33 @@ class customer_information_form(ModelForm):
         return profile_picture
 
 
+class information_project_costs_form(forms.Form):
+    cost_description = forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                'width': '70%',
+                'placeholder': 'Cost Description',
+                'onkeyup': 'enable_disable_add_cost()',
+            }
+        )
+    )
+    cost_amount = forms.DecimalField(
+        max_digits=19,
+        decimal_places=2,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                'width': '30%',
+                'placeholder': '$0.00',
+                'onkeyup': 'enable_disable_add_cost()',
+            }
+        )
+    )
+
+
+
 class information_project_history_form(forms.Form):
     project_history=forms.CharField(
         widget=forms.Textarea(attrs={
@@ -358,6 +385,10 @@ class information_project_history_form(forms.Form):
         })
         , required=False
     )
+
+
+
+
 
 
 class login_form(forms.Form):
@@ -1171,30 +1202,7 @@ class project_information_form(ModelForm):
         })
     )
 
-    # Costs feature
-    cost_description=forms.CharField(
-        max_length=255,
-        required=False,
-        widget=forms.TextInput(
-            attrs={
-                'width': '70%',
-                'placeholder': 'Cost Description',
-                'onkeyup': 'enable_disable_add_cost()',
-            }
-        )
-    )
-    cost_amount=forms.DecimalField(
-        max_digits=19,
-        decimal_places=2,
-        required=False,
-        widget=forms.TextInput(
-            attrs={
-                'width': '30%',
-                'placeholder': '$0.00',
-                'onkeyup': 'enable_disable_add_cost()',
-            }
-        )
-    )
+
 
 
     class Meta:
