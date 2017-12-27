@@ -18,6 +18,28 @@ from .models import *
 
 @login_required(login_url='login')
 def information_project_history(request, project_id):
+    print("Information Project History")
+    if request.method == "POST":
+        form = information_project_history_form(request.POST, request.FILES)
+        if form.is_valid():
+            project_history_results = form.cleaned_data['project_history']
+
+            if not project_history_results == '':
+                current_user = request.user
+
+                project_id_instance = project.objects.get(pk=project_id)
+
+                data = project_history(
+                    project_id=project_id_instance,
+                    user_id=current_user,
+                    project_history=project_history_results,
+                    user_infomation=current_user.id,
+                    change_user = request.user,
+                )
+                data.save()
+        else:
+            print(form.errors)
+
     project_history_results = project_history.objects.filter(
         project_id=project_id,
         is_deleted="FALSE",
@@ -27,7 +49,11 @@ def information_project_history(request, project_id):
     t = loader.get_template('NearBeach/project_information/project_history.html')
 
     # context
-    c = {}
+    c = {
+        'information_project_history_form': information_project_history_form(),
+        'project_history_results': project_history_results,
+        'project_id': project_id,
+    }
 
     return HttpResponse(t.render(c, request))
     #SoMuchFun

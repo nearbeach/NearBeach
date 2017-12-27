@@ -8,7 +8,28 @@
 <script tpye="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
 
 <script>
+
+	function load_project_history() {
+        //Load Project History
+        $.ajax({
+            url: '/information_project_history/{{ project_id }}/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#project_history').html(data);
+            },
+            error: function() {
+                $('#project_history').html('<h2>Project History</h2>Sorry, project history encounted an error and did not load.');
+            }
+        });
+    }
+
 	function on_page_load() {
+	    //Load Project History
+        load_project_history();
+
+
 	    //Initiate the dates
 		initiate_dates();
 
@@ -19,7 +40,10 @@
 
         //Running totals under costs
         running_total();
+
 	}
+
+
 </script>
 
 <body onload="on_page_load();">
@@ -37,23 +61,18 @@
         Project Start - {{ project_information_form.start_date_year }}{{ project_information_form.start_date_month }}{{ project_information_form.start_date_day }} @ {{ project_information_form.start_date_hour }}:{{ project_information_form.start_date_minute }} {{ project_information_form.start_date_meridiems }}<br/>
         Project Finish - {{ project_information_form.finish_date_year }}{{ project_information_form.finish_date_month }}{{ project_information_form.finish_date_day }} @ {{ project_information_form.finish_date_hour }}:{{ project_information_form.finish_date_minute }}{{ project_information_form.finish_date_meridiems }}<br/><br/>
         {{ project_information_form.project_history_text }}<br/>
-        <input type="submit" name="Save" value="Save"/>
+        <input type="submit" name="Save" value="Update"/>
         {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
             <input type="submit" name="Resolve" value="Resolve Project"/>
         {% else %}
             </fieldset>
         {% endif %}
+    </form>
 
+    <form method="post" class="project_history" id="project_history">
         <h2>Project History</h2>
-        {% if project_history_results %}
-            {% for row in project_history_results %}
-                <p>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}<br />
-                <textarea readonly>{{ row.project_history }}</textarea>
-                </p>
-            {% endfor %}
-        {% else %}
-            <p>Currently no history</p>
-        {% endif %}
+        Loading...
+    </form>
         <h2>Associated Tasks</h2>
         {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
             <a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
@@ -176,6 +195,23 @@
         {% else %}
             <p>There are currently no staff members assigned to this project</p>
         {% endif %}
-	</form>
 </body>
+
+    <script>
+    $("#project_history").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/information_project_history/{{ project_id }}/',
+            data: $(this).serialize(),
+            success: function() {
+                //Don't need to reload the whole thing. Just clear the history
+                load_project_history();
+            },
+            error: function() {
+                alert("Sorry, project history did not save. Please try again.");
+            }
+        })
+    })
+    </script>
 {% endblock %}

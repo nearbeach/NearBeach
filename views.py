@@ -2510,26 +2510,6 @@ def project_information(request, project_id):
                     submit_folder.save()
                 except:
                     submit_folder.save()
-
-            # Now save the new project history.
-            project_history_text_results = form.cleaned_data['project_history_text']
-
-            if not project_history_text_results == '':
-                current_user = request.user
-
-                ### TEMP SOLUTION ###
-                project_id_connection = project.objects.get(pk=project_id)
-                ### END TEMP SOLUTION ###
-
-                data = project_history(
-                    project_id=project_id_connection,
-                    user_id=current_user,
-                    project_history=project_history_text_results,
-                    user_infomation=current_user.id,
-                    change_user = request.user,
-                )
-                data.save()
-
         else:
             print(form.errors)
 
@@ -2734,6 +2714,7 @@ def project_information(request, project_id):
             'user_id__last_name',
         ).distinct(),
         'costs_results': costs_results,
+        'project_id': project_id,
     }
 
     return HttpResponse(t.render(c, request))

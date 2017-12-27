@@ -351,6 +351,13 @@ class customer_information_form(ModelForm):
         return profile_picture
 
 
+class information_project_history_form(forms.Form):
+    project_history=forms.CharField(
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Please update any history here and then click on the submit button'
+        })
+        , required=False
+    )
 
 
 class login_form(forms.Form):
@@ -1131,12 +1138,7 @@ class project_information_form(ModelForm):
     finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
     finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
     finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
-    project_history_text=forms.CharField(
-        widget=forms.Textarea(attrs={
-            'placeholder': 'Please update any history here and then click on the save button'
-        })
-        , required=False
-    )
+
 
     document=forms.FileField(
         required=False,

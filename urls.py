@@ -9,7 +9,7 @@ from django.conf.urls.static import static
 #Password reset
 from django.contrib.auth.views import password_reset, password_reset_done, password_reset_confirm, password_reset_complete
 
-from . import views, views_lookup, views_quotes
+from . import views, views_lookup, views_quotes, views_project_information
 
 urlpatterns = [
 	url(r'^$', views.index, name='index'),
@@ -87,6 +87,10 @@ urlpatterns = [
 	url(r'^quote_list_of_line_items/(?P<quote_id>[0-9]+)/$', views_quotes.list_of_line_items, name='quote_list_of_line_items'),
 	url(r'^quote_new_line_item/(?P<quote_id>[0-9]+)/$', views_quotes.new_line_item, name='quote_new_line_item'),
 	url(r'^quote_delete_line_item/(?P<line_item_id>[0-9]+)/$', views_quotes.delete_line_item, name='quote_delete_line_item'),
+
+
+	#Project Information
+	url(r'^information_project_history/(?P<project_id>[0-9]+)/$', views_project_information.information_project_history, name='information_project_history'),
 
 	#Look up
 	url(r'^lookup_product/(?P<product_id>[0-9]+)/$', views_lookup.lookup_product, name='lookup_product')
