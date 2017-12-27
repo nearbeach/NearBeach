@@ -93,6 +93,7 @@ urlpatterns = [
 	url(r'^information_project_costs/(?P<project_id>[0-9]+)/$', views_project_information.information_project_costs, name='information_project_costs'),
 	url(r'^information_project_customers/(?P<project_id>[0-9]+)/$', views_project_information.information_project_customers, name='information_project_customers'),
 	url(r'^information_project_history/(?P<project_id>[0-9]+)/$', views_project_information.information_project_history, name='information_project_history'),
+	url(r'^information_project_assign_users/(?P<project_id>[0-9]+)/$', views_project_information.information_project_assigned_users, name='information_project_assigned_users'),
 
 
 	#Look up

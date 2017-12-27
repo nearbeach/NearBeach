@@ -17,6 +17,67 @@ from .models import *
 
 
 @login_required(login_url='login')
+def information_project_assigned_users(request, project_id):
+    if request.method == "POST":
+        user_results = int(request.POST.get("add_user_select"))
+        user_instance = auth.models.User.objects.get(pk=user_results)
+        submit_associate_user = assigned_users(
+            user_id=user_instance,
+            project_id=project.objects.get(pk=project_id),
+            change_user=request.user,
+        )
+        submit_associate_user.save()
+
+    #Get data
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    			SELECT DISTINCT
+    			  auth_user.id
+    			, auth_user.username
+    			, auth_user.first_name
+    			, auth_user.last_name
+    			, auth_user.first_name || ' ' || auth_user.last_name AS "Name"
+    			, auth_user.email
+    			FROM
+    			  project_groups
+    			, user_groups
+    			, auth_user
+
+    			WHERE 1=1
+
+    			--AUTH_USER CONDITIONS
+    			AND auth_user.is_active=1
+
+    			--PROJECT_GROUPS CONDITIONS
+    			AND project_groups.project_id_id=%s
+
+    			-- JOINS --
+    			AND project_groups.groups_id_id=user_groups.group_id_id
+    			AND user_groups.username_id=auth_user.id
+    			-- END JOINS --
+    		""", [project_id])
+    users_results = namedtuplefetchall(cursor)
+
+    assigned_results = assigned_users.objects.filter(project_id=project_id)
+
+    #Load template
+    t = loader.get_template('NearBeach/project_information/project_assigned_users.html')
+
+    # context
+    c = {
+        'users_results': users_results,
+        'assigned_results': assigned_results.values(
+            'user_id',
+            'user_id__username',
+            'user_id__first_name',
+            'user_id__last_name',
+        ).distinct(),
+    }
+
+    return HttpResponse(t.render(c, request))
+
+@login_required(login_url='login')
 def information_project_costs(request, project_id):
     if request.method == "POST":
         form = information_project_costs_form(request.POST, request.FILES)
