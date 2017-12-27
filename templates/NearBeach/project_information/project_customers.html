@@ -1,0 +1,37 @@
+{% csrf_token %}
+<h2>Project Customers</h2>
+{% if new_customers_results %}
+    {% if project_results.project_status == 'New' or project_results.project_status == 'Open' %}
+        <select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" >
+            <option value="---------" selected>---------</option>
+            {% for row in new_customers_results %}
+                {% if not row.customer_id == None %}
+                    <option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+        <input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Project" disabled="disabled">
+    {% endif %}
+{% endif %}
+{% if project_customers_results %}
+    <table>
+        <tr class="header">
+            <td>Customer Name</td>
+            <td>Customer Description</td>
+            <td>Customer Email</td>
+            <td>Customer Campus</td>
+            <td>Customer Phone</td>
+        </tr>
+        {% for row in project_customers_results %}
+            <tr>
+                <td>{{ row.customer_first_name }} {{ row.customer_last_name }}</td>
+                <td>{{ row.customer_description }}</td>
+                <td>{{ row.customer_email }}</td>
+                <td>{{ row.campus_nickname }}</td>
+                <td>{{ row.customer_phone }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <br/>Sorry, there seems to be no customers associated with this project.
+{% endif %}

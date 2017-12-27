@@ -46,4 +46,3 @@ function enable_disable_add_cost() {
 		add_cost_submit.disabled = true;
 	}
 }
-

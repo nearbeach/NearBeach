@@ -2415,48 +2415,13 @@ def project_information(request, project_id):
             # Check to make sure the resolve button was hit
             if 'Resolve' in request.POST:
                 # Well, we have to now resolve the data
+                print("RESOLVE PROJECT!~")
                 project_results.project_status = 'Resolved'
+            else:
+                print(request.POST)
 
             project_results.change_user=request.user
             project_results.save()
-
-
-            if 'add_customer_submit' in request.POST:
-                # The user has tried adding a customer
-                customer_id = int(request.POST.get("add_customer_select"))
-
-                submit_customer = project_customers(
-                    project_id=project.objects.get(pk=project_id),
-                    customer_id=customers.objects.get(pk=customer_id),
-                    change_user=request.user,
-                )
-
-                submit_customer.save()
-
-            cost_description = form.cleaned_data['cost_description']
-            cost_amount = form.cleaned_data['cost_amount']
-            if ((not cost_description == '') and ((cost_amount <= 0) or (cost_amount >= 0))):
-                submit_cost = costs(
-                    project_id=project.objects.get(pk=project_id),
-                    cost_description=cost_description,
-                    cost_amount=cost_amount,
-                    change_user=request.user,
-                )
-                submit_cost.save()
-
-            """
-			If the user has added another user to the project
-			auth.models.User.objects.all() <-bug in the system,this is workaround
-			"""
-            if 'add_user_submit' in request.POST:
-                user_results = int(request.POST.get("add_user_select"))
-                user_instance = auth.models.User.objects.get(pk=user_results)
-                submit_associate_user = assigned_users(
-                    user_id=user_instance,
-                    project_id=project.objects.get(pk=project_id),
-                    change_user=request.user,
-                )
-                submit_associate_user.save()
 
             """
 			If the user has submitted a new document. We only upload the document IF and ONLY IF the user
@@ -2510,26 +2475,6 @@ def project_information(request, project_id):
                     submit_folder.save()
                 except:
                     submit_folder.save()
-
-            # Now save the new project history.
-            project_history_text_results = form.cleaned_data['project_history_text']
-
-            if not project_history_text_results == '':
-                current_user = request.user
-
-                ### TEMP SOLUTION ###
-                project_id_connection = project.objects.get(pk=project_id)
-                ### END TEMP SOLUTION ###
-
-                data = project_history(
-                    project_id=project_id_connection,
-                    user_id=current_user,
-                    project_history=project_history_text_results,
-                    user_infomation=current_user.id,
-                    change_user = request.user,
-                )
-                data.save()
-
         else:
             print(form.errors)
 
@@ -2574,7 +2519,7 @@ def project_information(request, project_id):
     ).order_by(
         'folder_description'
     )
-    costs_results = costs.objects.filter(project_id=project_id, is_deleted='FALSE')
+
 
     """
 	The 24 hours to 12 hours formula.
@@ -2636,81 +2581,8 @@ def project_information(request, project_id):
 		""", [project_id])
     associated_tasks_results = namedtuplefetchall(cursor)
 
-    cursor.execute("""
-		SELECT DISTINCT
-		  customers.customer_first_name
-		, customers.customer_last_name
-		, project_customers.customer_description
-		, customers.customer_email
-		, customers_campus_information.campus_nickname
-		, customers_campus_information.customer_phone
-		FROM
-		  customers LEFT JOIN 
-			(SELECT * FROM customers_campus join organisations_campus ON customers_campus.campus_id_id = organisations_campus.id) as customers_campus_information
-			ON customers.customer_id = customers_campus_information.customer_id_id
-		, project_customers
-		WHERE 1=1
-		AND customers.customer_id = project_customers.customer_id_id
-		AND project_customers.project_id_id = %s
-	""", [project_id])
-    project_customers_results = namedtuplefetchall(cursor)
 
-    cursor.execute("""
-		SELECT DISTINCT 
-		  customers.customer_id
-		, customers.customer_first_name || ' ' || customers.customer_last_name AS customer_name
-		
-		FROM
-		  project 
-		, organisations LEFT JOIN customers
-			ON organisations.organisations_id = customers.organisations_id_id
-		
-		WHERE 1=1
-		AND project.organisations_id_id = organisations.organisations_id
-		
-		AND customers.customer_id NOT IN (SELECT DISTINCT project_customers.customer_id_id
-					FROM project_customers
-					WHERE 1=1
-					AND project_customers.project_id_id = project.project_id
-					AND project_customers.is_deleted = 'FALSE')
-		
-		
-		-- LINKS --
-		AND organisations.organisations_id = %s
-		AND project.project_id = %s
-		-- END LINKS --
-	""", [project_results.organisations_id_id, project_id])
-    new_customers_results = namedtuplefetchall(cursor)
 
-    cursor.execute("""
-			SELECT DISTINCT
-			  auth_user.id
-			, auth_user.username
-			, auth_user.first_name
-			, auth_user.last_name
-			, auth_user.first_name || ' ' || auth_user.last_name AS "Name"
-			, auth_user.email
-			FROM
-			  project_groups
-			, user_groups
-			, auth_user
-
-			WHERE 1=1
-
-			--AUTH_USER CONDITIONS
-			AND auth_user.is_active=1
-
-			--PROJECT_GROUPS CONDITIONS
-			AND project_groups.project_id_id=%s
-
-			-- JOINS --
-			AND project_groups.groups_id_id=user_groups.group_id_id
-			AND user_groups.username_id=auth_user.id
-			-- END JOINS --
-		""", [project_id])
-    users_results = namedtuplefetchall(cursor)
-
-    assigned_results = assigned_users.objects.filter(project_id=project_id)
 
     # Load the template
     t = loader.get_template('NearBeach/project_information.html')
@@ -2721,19 +2593,11 @@ def project_information(request, project_id):
         'project_results': project_results,
         'associated_tasks_results': associated_tasks_results,
         'project_history_results': project_history_results,
-        'project_customers_results': project_customers_results,
-        'new_customers_results': new_customers_results,
         'documents_results': simplejson.dumps(documents_results,encoding='utf-8'),
         'folders_results': serializers.serialize('json', folders_results),
         'media_url': settings.MEDIA_URL,
-        'users_results': users_results,
-        'assigned_results': assigned_results.values(
-            'user_id',
-            'user_id__username',
-            'user_id__first_name',
-            'user_id__last_name',
-        ).distinct(),
-        'costs_results': costs_results,
+
+        'project_id': project_id,
     }
 
     return HttpResponse(t.render(c, request))
