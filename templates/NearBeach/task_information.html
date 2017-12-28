@@ -139,16 +139,27 @@
         })
     });
 
+    //Code used to help send which button was clicked in POST
+    $("form input[type=submit]").click(function() {
+        $("input[type=submit]", $(this).parents("form")).removeAttr("clicked");
+        $(this).attr("clicked", "true");
+    });
+
 
 
     $("#task_information").on('submit', function(e) {
+        //Grab which button was pressed
+        var val = $("input[type=submit][clicked=true]").val()
+        alert('&button=' + val);
+
         e.preventDefault();
         $.ajax({
             type: 'POST',
             url: '/task_information/{{ task_id }}/',
             data: $(this).serialize(),
             success: function() {
-                //Nothing to do. :)
+                //If we have the resolve button, we will need to navigate to the resolved task url.
+                //ADD IF STATEMENT HERE!
             },
             error: function() {
                 alert("Sorry, task information did not save. Please try again.");

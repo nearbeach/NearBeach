@@ -130,7 +130,11 @@ urlpatterns = [
 		name='information_customer_documents'),
 
 	#Look up
-	url(r'^lookup_product/(?P<product_id>[0-9]+)/$', views_lookup.lookup_product, name='lookup_product')
+	url(r'^lookup_product/(?P<product_id>[0-9]+)/$', views_lookup.lookup_product, name='lookup_product'),
+
+	#Resolve
+	url(r'^resolve_project/(?P<project_id>[0-9]+)/', views.resolve_project,	name='resolve_project'),
+	url(r'^resolve_task/(?P<task_id>[0-9]+)/', views.resolve_task,	name='resolve_task'),
 
 ]
 
