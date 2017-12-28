@@ -15,6 +15,7 @@ from django.http import HttpResponse,HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, render_to_response
 from django.template import RequestContext, loader
 from django.urls import reverse
+from .namedtuplefetchall import *
 
 #import python modules
 import datetime, json, simplejson, urllib, urllib2
@@ -3312,24 +3313,9 @@ def task_information(request, task_id):
     return HttpResponse(t.render(c, request))
 
 
-# Extra functionality
-"""
-The following function helps change the cursor's results into useable
-SQL that the html templates can read.
-"""
-from collections import namedtuple
-def namedtuplefetchall(cursor):
-    "Return all rows from a cursor as a namedtuple"
-    desc = cursor.description
-    nt_result = namedtuple('Result', [col[0] for col in desc])
-    return [nt_result(*row) for row in cursor.fetchall()]
-
-
 """
 The following def are designed to help display a customer 404 and 500 pages
 """
-
-
 def handler404(request):
     response = render_to_response(
         '404.html',
