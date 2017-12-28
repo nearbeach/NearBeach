@@ -6,6 +6,9 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
 <script>
 	function on_page_load() {
+	    //Load AJAX components
+        load_contact_history();
+
         //Autoscale all textarea
         autoscale_textarea();
 
@@ -56,24 +59,14 @@
             </tr>
         {% endfor %}
         </table>
+    </form>
+
+    <form method="post" class="organisation_contact_history" id="organisation_contact_history" enctype="multipart/form-data">
         <h2>Contact History</h2>
-        Contact Type {{  organisation_information_form.contact_type }}<br/>
-        Date: {{ organisation_information_form.start_date_year }}/{{ organisation_information_form.start_date_month }}/{{ organisation_information_form.start_date_day }}<br/>
-        {{ organisation_information_form.contact_history }}<br/>
-        {{ organisation_information_form.contact_attachment }}
-        <input type="submit" name="submit_contact" value="Submit Contact"/>
-        {% if organisation_contact_history %}
-            <div><h4>Contact History</h4></div>
-            {% for row in organisation_contact_history %}
-                <p>
-                    {{ row.contact_type }} - Submitted by {{ row.user_id }} on {{ row.contact_date }}<br/>
-                    <textarea readonly>{{ row.contact_history }}</textarea>
-                    {% if row.document_key %}
-                        <br/><a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}" target="_blank">{{ row.document_key.document_description }}</a>
-                    {% endif %}
-                </p>
-            {% endfor %}
-        {% endif %}
+        Loading...
+    </form>
+
+
         <h2>Organisation Documents</h2>
         <table>
             <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
@@ -171,6 +164,41 @@
                 {% endfor %}
             </table>
         {% endif %}
-    </form>
 </body>
+<script>
+    $("#organisation_contact_history").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/information_organisation_contact_history/{{ organisation_results.organisations_id }}/',
+            data: $(this).serialize(),
+            success: function() {
+                //Reload the project history :)
+                load_contact_history();
+            },
+            error: function() {
+                alert("Sorry, project history did not save. Please try again.");
+            }
+        })
+    });
+
+
+    function load_contact_history() {
+        //Load Project History
+        $.ajax({
+            url: '/information_organisation_contact_history/{{ organisation_results.organisations_id }}/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#organisation_contact_history').html(data);
+            },
+            error: function() {
+                $('#organisation_contact_history').html('<h2>Contact History</h2>Sorry, contact history encounted an error and did not load.');
+            }
+        });
+    };
+
+</script>
+
 {% endblock %}

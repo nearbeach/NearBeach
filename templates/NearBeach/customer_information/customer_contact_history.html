@@ -1,0 +1,23 @@
+{% csrf_token %}
+<h2>Contact History</h2>
+<ul>
+    <li>Contact Type {{  contact_history_form.contact_type }}</li>
+    <li>Date {{ contact_history_form.start_date_year }}/{{ contact_history_form.start_date_month }}/{{ contact_history_form.start_date_day }}</li>
+    <li>Time {{ contact_history_form.start_date_hour }}:{{ contact_history_form.start_date_minute }} {{ contact_history_form.start_date_meridiems }}</li>
+    <li>{{ contact_history_form.contact_history }}</li>
+    <li>{{ contact_history_form.contact_attachment }}</li>
+    <li><input type="submit" name="submit_contact" value="Submit Contact"/></li>
+</ul>
+{% if customer_contact_history %}
+    <div><h4>Contact History</h4></div>
+    {% for row in customer_contact_history %}
+        <p>
+            {{ row.contact_type }} - Submitted by {{ row.user_id }} on {{ row.contact_date }}<br/>
+            <textarea readonly>{{ row.contact_history }}</textarea>
+            {% if row.document_key %}
+                <br/>
+                <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}" target="_blank">{{ row.document_key.document_description }}</a>
+            {% endif %}
+        </p>
+    {% endfor %}
+{% endif %}

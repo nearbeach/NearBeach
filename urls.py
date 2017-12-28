@@ -9,7 +9,13 @@ from django.conf.urls.static import static
 #Password reset
 from django.contrib.auth.views import password_reset, password_reset_done, password_reset_confirm, password_reset_complete
 
-from . import views, views_lookup, views_quotes, views_project_information
+from . import views, \
+	views_lookup, \
+	views_quotes, \
+	views_project_information, \
+	views_task_information, \
+	views_organisation_information, \
+	views_customer_information
 
 urlpatterns = [
 	url(r'^$', views.index, name='index'),
@@ -95,6 +101,33 @@ urlpatterns = [
 	url(r'^information_project_history/(?P<project_id>[0-9]+)/$', views_project_information.information_project_history, name='information_project_history'),
 	url(r'^information_project_assign_users/(?P<project_id>[0-9]+)/$', views_project_information.information_project_assigned_users, name='information_project_assigned_users'),
 
+
+	#Task Information
+	url(r'^information_task_costs/(?P<task_id>[0-9]+)/$', views_task_information.information_task_costs,
+		name='information_task_costs'),
+	url(r'^information_task_customers/(?P<task_id>[0-9]+)/$', views_task_information.information_task_customers,
+		name='information_task_customers'),
+	url(r'^information_task_history/(?P<task_id>[0-9]+)/$', views_task_information.information_task_history,
+		name='information_task_history'),
+	url(r'^information_task_assign_users/(?P<task_id>[0-9]+)/$', views_task_information.information_task_assigned_users,
+		name='information_task_assigned_users'),
+
+
+	# organisation Information
+	url(r'^information_organisation_contact_history/(?P<organisation_id>[0-9]+)/$',
+		views_organisation_information.information_organisation_contact_history,
+		name='information_organisation_contact_history'),
+	url(r'^information_organisation_documents/(?P<organisation_id>[0-9]+)/$',
+		views_organisation_information.information_organisation_documents,
+		name='information_organisation_documents'),
+
+	# customer Information
+	url(r'^information_customer_contact_history/(?P<customer_id>[0-9]+)/$',
+		views_customer_information.information_customer_contact_history,
+		name='information_customer_contact_history'),
+	url(r'^information_customer_documents/(?P<customer_id>[0-9]+)/$',
+		views_customer_information.information_customer_documents,
+		name='information_customer_documents'),
 
 	#Look up
 	url(r'^lookup_product/(?P<product_id>[0-9]+)/$', views_lookup.lookup_product, name='lookup_product')
