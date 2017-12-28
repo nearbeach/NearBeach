@@ -1,0 +1,39 @@
+{% csrf_token %}
+<h2>Task's Customers</h2>
+{% if new_customers_results %}
+    {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
+        <select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" >
+            <option value="---------" selected>---------</option>
+            {% for row in new_customers_results %}
+                {% if not row.customer_id == None %}
+                    <option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+        <input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Task" disabled="disabled">
+    {% endif %}
+{% endif %}
+{% if tasks_customers_results %}
+
+    <table>
+        <tr class="header">
+            <td>Customer Name</td>
+            <td>Customer Description</td>
+            <td>Customer Email</td>
+            <td>Customer Campus</td>
+            <td>Customer Phone</td>
+        </tr>
+        {% for row in tasks_customers_results %}
+            <tr>
+                <td>{{ row.customer_first_name }} {{ row.customer_last_name }}</td>
+                <td>{{ row.customer_description }}</td>
+                <td>{{ row.customer_email }}</td>
+                <td>{{ row.campus_nickname }}</td>
+                <td>{{ row.customer_phone }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% else %}
+    <br/>There are currently no customers associated to this task.
+{% endif %}

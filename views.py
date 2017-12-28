@@ -15,6 +15,7 @@ from django.http import HttpResponse,HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, render_to_response
 from django.template import RequestContext, loader
 from django.urls import reverse
+from .namedtuplefetchall import *
 
 #import python modules
 import datetime, json, simplejson, urllib, urllib2
@@ -452,56 +453,7 @@ def customer_information(request, customer_id):
 
             save_data.save()
 
-            """
-			If the user has written something in the contact section, we want to save it
-			"""
-            contact_history_notes = form.cleaned_data['contact_history']
-            print(contact_history_notes)
 
-            if not contact_history_notes == '':
-                # Lets save some contact history
-                contact_type = form.cleaned_data['contact_type']
-
-                contact_date = time_combined(
-                    int(form.cleaned_data['start_date_year']),
-                    int(form.cleaned_data['start_date_month']),
-                    int(form.cleaned_data['start_date_day']),
-                    int(form.cleaned_data['start_date_hour']),
-                    int(form.cleaned_data['start_date_minute']),
-                    form.cleaned_data['start_date_meridiems']
-                )
-
-                # documents
-                contact_attachment = request.FILES.get('contact_attachment')
-                if contact_attachment:
-                    documents_save = documents(
-                        document_description=contact_attachment,
-                        document=contact_attachment,
-                        change_user=request.user,
-                    )
-                    documents_save.save()
-
-                    #Add to document permissions
-                    document_permissions_save = document_permissions(
-                        document_key=documents_save,
-                        customer_id=customers.objects.get(customer_id=customer_id),
-                        change_user=request.user,
-                    )
-                    document_permissions_save.save()
-
-                submit_history = contact_history(
-                    organisations_id=save_data.organisations_id,
-                    customer_id=save_data,
-                    contact_type=contact_type,
-                    contact_date=contact_date,
-                    contact_history=contact_history_notes,
-                    user_id=current_user,
-                    change_user=request.user,
-                    #document_key=documents_save,
-                )
-                if contact_attachment:
-                    submit_history.document_key=documents_save
-                submit_history.save()
 
             """
 			Document Uploads
@@ -550,7 +502,6 @@ def customer_information(request, customer_id):
     # Get the instance
     customer_results = customers.objects.get(pk=customer_id)
     add_campus_results = organisations_campus.objects.filter(organisations_id=customer_results.organisations_id)
-    customer_contact_history = contact_history.objects.filter(customer_id=customer_id)
     customer_document_results = document_permissions.objects.filter(customer_id=customer_id)
     organisation_document_results = document_permissions.objects.filter(
         organisations_id=customer_results.organisations_id,
@@ -651,7 +602,6 @@ def customer_information(request, customer_id):
         'campus_results': campus_results,
         'add_campus_results': add_campus_results,
         'customer_results': customer_results,
-        'customer_contact_history': customer_contact_history,
         'media_url': settings.MEDIA_URL,
         'profile_picture': profile_picture,
         'customer_document_results': customer_document_results,
@@ -660,6 +610,7 @@ def customer_information(request, customer_id):
         'task_results': task_results,
         'opportunity_results': opportunity_results,
         'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
+        'customer_id': customer_id,
     }
 
     return HttpResponse(t.render(c, request))
@@ -2147,60 +2098,6 @@ def organisation_information(request, organisations_id):
             # Save
             save_data.save()
 
-            """
-            If the user has written something in the contact section, we want to save it
-            """
-            contact_history_notes = form.cleaned_data['contact_history']
-
-            if not contact_history_notes == '':
-                # Lets save some contact history
-                # organisation_id = form.cleaned_data['organisations_id'] #Not going to work :( #organisations_results.organisations_id
-                contact_type = form.cleaned_data['contact_type']
-
-                # Create the final start/end date fields
-                task_start_date = time_combined(
-                    int(form.cleaned_data['start_date_year']),
-                    int(form.cleaned_data['start_date_month']),
-                    int(form.cleaned_data['start_date_day']),
-                    0,
-                    0,
-                    'AM'
-                )
-
-                # documents
-                contact_attachment = request.FILES.get('contact_attachment')
-
-                if contact_attachment:
-                    documents_save = documents(
-                        document_description=contact_attachment,
-                        document=contact_attachment,
-                        change_user=request.user,
-                    )
-                    documents_save.save()
-
-                    #Add to document permissions
-                    document_permissions_save = document_permissions(
-                        document_key=documents_save,
-                        organisations_id=organisations.objects.get(organisations_id=organisations_id),
-                        change_user=request.user,
-                    )
-                    document_permissions_save.save()
-
-
-                submit_history = contact_history(
-                    organisations_id=save_data,
-                    contact_type=contact_type,
-                    contact_date=task_start_date,
-                    contact_history=contact_history_notes,
-                    user_id=current_user,
-                    change_user=request.user,
-                    #document_key=documents_save,
-                )
-                if contact_attachment:
-                    submit_history.document_key=documents_save
-                submit_history.save()
-
-
 
             """
 			Document Uploads
@@ -2231,7 +2128,7 @@ def organisation_information(request, organisations_id):
     organisation_results = organisations.objects.get(pk=organisations_id)
     campus_results = organisations_campus.objects.filter(organisations_id=organisations_id)
     customers_results = customers.objects.filter(organisations_id=organisation_results)
-    organisation_contact_history = contact_history.objects.filter(organisations_id=organisations_id)
+
     customer_document_results = document_permissions.objects.filter(
         organisations_id=organisations_id,
         customer_id__isnull=False
@@ -2286,7 +2183,6 @@ def organisation_information(request, organisations_id):
                 'start_date_month': today.month,
                 'start_date_day': today.day,
             }),
-        'organisation_contact_history': organisation_contact_history,
         'profile_picture': profile_picture,
         'customer_document_results': customer_document_results,
         'organisation_document_results': organisation_document_results,
@@ -2986,40 +2882,6 @@ def task_information(request, task_id):
 
             task_results.save()
 
-            if 'add_customer_submit' in request.POST:
-                # The user has tried adding a customer
-                customer_id = int(request.POST.get("add_customer_select"))
-
-                submit_customer = tasks_customers(
-                    tasks_id=tasks.objects.get(pk=task_id),
-                    customer_id=customers.objects.get(pk=customer_id),
-                    change_user=request.user,
-                )
-                submit_customer.save()
-
-            if 'add_user_submit' in request.POST:
-                user_results = int(request.POST.get("add_user_select"))
-                user_instance = auth.models.User.objects.get(pk=user_results)
-                submit_associate_user = assigned_users(
-                    user_id=user_instance,
-                    task_id=tasks.objects.get(tasks_id=task_id),
-                    change_user=request.user,
-                )
-                submit_associate_user.save()
-
-            if 'add_cost_submit' in request.POST:
-                # Extract information
-                cost_description = form.cleaned_data['cost_description']
-                cost_amount = form.cleaned_data['cost_amount']
-                # SAve
-                submit_cost = costs(
-                    cost_description=cost_description,
-                    cost_amount=cost_amount,
-                    task_id=tasks.objects.get(tasks_id=task_id),
-                    change_user=request.user,
-                )
-                submit_cost.save()
-
             """
 			If the user has submitted a new document. We only upload the document IF and ONLY IF the user
 			has selected the "Submit" button on the "New Document" dialog. We do not want to accidently
@@ -3083,25 +2945,9 @@ def task_information(request, task_id):
                 except:
                     submit_folder.save()
 
-            # Now save the new project history.
-            task_history_text_results = form.cleaned_data['task_history_text']
-
-            if not task_history_text_results == '':
-                current_user = request.user
-
-                task_id_connection = tasks.objects.get(tasks_id=task_id)
-
-                data = tasks_history(
-                    tasks_id=task_id_connection,
-                    user_id=current_user,
-                    task_history=task_history_text_results,
-                    user_infomation=current_user.id,
-                    change_user=request.user,
-                )
-                data.save()
 
     # Obtain required data
-    task_history_results = tasks_history.objects.filter(tasks_id=task_id)  # Will need to remove all IS_DELETED=TRUE
+
 
     cursor.execute(
         """
@@ -3142,7 +2988,7 @@ def task_information(request, task_id):
     ).order_by(
         'folder_description'
     )
-    costs_results = costs.objects.filter(task_id=task_id, is_deleted='FALSE')
+
 
     """
 	The 24 hours to 12 hours formula.
@@ -3204,86 +3050,11 @@ def task_information(request, task_id):
 		""", [task_id])
     associated_project_results = namedtuplefetchall(cursor)
 
-    cursor.execute("""
-		SELECT DISTINCT
-		  customers.customer_first_name
-		, customers.customer_last_name
-		, tasks_customers.customers_description
-		, customers.customer_email
-		, customers_campus_information.campus_nickname
-		, customers_campus_information.customer_phone
-		FROM
-		  customers LEFT JOIN 
-			(SELECT 
-			  * 
-			  FROM 
-			  customers_campus join organisations_campus 
-			  ON customers_campus.campus_id_id = organisations_campus.id) as customers_campus_information
-			ON customers.customer_id = customers_campus_information.customer_id_id
-		, tasks_customers
-		WHERE 1=1
-		AND customers.customer_id = tasks_customers.customer_id_id
-		AND tasks_customers.tasks_id_id = %s
-	""", [task_id])
-    tasks_customers_results = namedtuplefetchall(cursor)
 
-    # task_customers_results
-    cursor.execute("""
-		SELECT DISTINCT 
-		  customers.customer_id
-		, customers.customer_first_name || ' ' || customers.customer_last_name AS customer_name
-		
-		FROM
-		  tasks 
-		, organisations LEFT JOIN customers
-			ON organisations.organisations_id = customers.organisations_id_id
-		
-		WHERE 1=1
-		AND tasks.organisations_id_id = organisations.organisations_id
-		
-		AND customers.customer_id NOT IN (SELECT DISTINCT tasks_customers.customer_id_id
-					FROM tasks_customers
-					WHERE 1=1
-					AND tasks_customers.tasks_id_id = tasks.tasks_id
-					AND tasks_customers.is_deleted = 'FALSE')
-		
-		
-		-- LINKS --
-		AND organisations.organisations_id = %s
-		AND tasks.tasks_id = %s
-		-- END LINKS --	
-	""", [task_results.organisations_id_id, task_id])
-    new_customers_results = namedtuplefetchall(cursor)
 
-    cursor.execute("""
-				SELECT DISTINCT
-				  auth_user.id
-				, auth_user.username
-				, auth_user.first_name
-				, auth_user.last_name
-				, auth_user.first_name || ' ' || auth_user.last_name AS "Name"
-				, auth_user.email
-				FROM
-				  tasks_groups
-				, user_groups
-				, auth_user
 
-				WHERE 1=1
 
-				--AUTH_USER CONDITIONS
-				AND auth_user.is_active=1
 
-				--PROJECT_GROUPS CONDITIONS
-				AND tasks_groups.tasks_id_id=%s
-
-				-- JOINS --
-				AND tasks_groups.groups_id_id=user_groups.group_id_id
-				AND user_groups.username_id=auth_user.id
-				-- END JOINS --
-			""", [task_id])
-    users_results = namedtuplefetchall(cursor)
-
-    assigned_results = assigned_users.objects.filter(task_id=task_id)
     running_total = 0
     # Load the template
     t = loader.get_template('NearBeach/task_information.html')
@@ -3293,43 +3064,18 @@ def task_information(request, task_id):
         'task_results': task_results,
         'task_information_form': task_information_form(initial=initial),
         'associated_project_results': associated_project_results,
-        'task_history_results': task_history_results,
-        'tasks_customers_results': tasks_customers_results,
-        'new_customers_results': new_customers_results,
         'documents_results': simplejson.dumps(documents_results,encoding='utf-8'),
         'folders_results': serializers.serialize('json', folders_results),
         'media_url': settings.MEDIA_URL,
-        'users_results': users_results,
-        'assigned_results': assigned_results.values(
-            'user_id',
-            'user_id__username',
-            'user_id__first_name',
-            'user_id__last_name',
-        ).distinct(),
-        'costs_results': costs_results,
+        'task_id': task_id,
     }
 
     return HttpResponse(t.render(c, request))
 
 
-# Extra functionality
-"""
-The following function helps change the cursor's results into useable
-SQL that the html templates can read.
-"""
-from collections import namedtuple
-def namedtuplefetchall(cursor):
-    "Return all rows from a cursor as a namedtuple"
-    desc = cursor.description
-    nt_result = namedtuple('Result', [col[0] for col in desc])
-    return [nt_result(*row) for row in cursor.fetchall()]
-
-
 """
 The following def are designed to help display a customer 404 and 500 pages
 """
-
-
 def handler404(request):
     response = render_to_response(
         '404.html',

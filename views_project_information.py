@@ -14,6 +14,7 @@ from django.http import HttpResponse
 from django.template import  loader
 from NearBeach.forms import *
 from .models import *
+from .namedtuplefetchall import *
 
 
 @login_required(login_url='login')
@@ -228,14 +229,3 @@ def information_project_history(request, project_id):
 
 
 
-# Extra functionality
-"""
-The following function helps change the cursor's results into useable
-SQL that the html templates can read.
-"""
-from collections import namedtuple
-def namedtuplefetchall(cursor):
-    "Return all rows from a cursor as a namedtuple"
-    desc = cursor.description
-    nt_result = namedtuple('Result', [col[0] for col in desc])
-    return [nt_result(*row) for row in cursor.fetchall()]
