@@ -145,15 +145,26 @@
 
 
 
+    //Code used to help send which button was clicked in POST
+    $("form input[type=submit]").click(function() {
+        $("input[type=submit]", $(this).parents("form")).removeAttr("clicked");
+        $(this).attr("clicked", "true");
+    });
     $("#project_information").on('submit', function(e) {
+        //Grab which button was pressed
+        var which_button = $("input[type=submit][clicked=true]").val()
+
         e.preventDefault();
         $.ajax({
             type: 'POST',
             url: '/project_information/{{ project_id }}/',
             data: $(this).serialize(),
             success: function() {
-                //Nothing to do. :)
-            },
+                //If we have the resolve button, we will need to navigate to the resolved project url.
+                if (which_button == "Resolve Project") {
+                    //Navigate to the resolve project URL
+                    document.location = "{% url 'resolve_project' project_id %}"
+                }            },
             error: function() {
                 alert("Sorry, project information did not save. Please try again.");
             }

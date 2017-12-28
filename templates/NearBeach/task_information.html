@@ -144,13 +144,9 @@
         $("input[type=submit]", $(this).parents("form")).removeAttr("clicked");
         $(this).attr("clicked", "true");
     });
-
-
-
     $("#task_information").on('submit', function(e) {
         //Grab which button was pressed
-        var val = $("input[type=submit][clicked=true]").val()
-        alert('&button=' + val);
+        var which_button = $("input[type=submit][clicked=true]").val()
 
         e.preventDefault();
         $.ajax({
@@ -159,7 +155,10 @@
             data: $(this).serialize(),
             success: function() {
                 //If we have the resolve button, we will need to navigate to the resolved task url.
-                //ADD IF STATEMENT HERE!
+                if (which_button == "Resolve Project") {
+                    //Navigate to the resolve task URL
+                    document.location = "{% url 'resolve_task' task_id %}"
+                }
             },
             error: function() {
                 alert("Sorry, task information did not save. Please try again.");

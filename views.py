@@ -2608,7 +2608,7 @@ def resolve_project(request, project_id):
 
 @login_required(login_url='login')
 def resolve_task(request, task_id):
-    task_update = tasks.object.get(task_id=task_id)
+    task_update = tasks.objects.get(tasks_id=task_id)
     task_update.task_status = 'Resolved'
     task_update.change_user=request.user
     task_update.save()
