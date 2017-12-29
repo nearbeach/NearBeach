@@ -125,9 +125,12 @@ urlpatterns = [
 	url(r'^information_customer_contact_history/(?P<customer_id>[0-9]+)/$',
 		views_customer_information.information_customer_contact_history,
 		name='information_customer_contact_history'),
-	url(r'^information_customer_documents/(?P<customer_id>[0-9]+)/$',
-		views_customer_information.information_customer_documents,
-		name='information_customer_documents'),
+	url(r'^information_customer_documents_upload/(?P<customer_id>[0-9]+)/$',
+		views_customer_information.information_customer_documents_upload,
+		name='information_customer_documents_upload'),
+	url(r'^information_customer_documents_list/(?P<customer_id>[0-9]+)/(?P<organisations_id>[0-9]+)/$',
+		views_customer_information.information_customer_documents_list,
+		name='information_customer_documents_list'),
 
 	#Look up
 	url(r'^lookup_product/(?P<product_id>[0-9]+)/$', views_lookup.lookup_product, name='lookup_product'),

@@ -455,25 +455,7 @@ def customer_information(request, customer_id):
 
 
 
-            """
-			Document Uploads
-			"""
-            document = request.FILES.get('document')
-            if not document == None:
-                document_save = documents(
-                    document_description=form.cleaned_data['document_description'],
-                    document=form.cleaned_data['document'],
-                    change_user=request.user,
-                )
-                document_save.save()
 
-                document_permissions_save = document_permissions(
-                    document_key=document_save,
-                    organisations_id=save_data.organisations_id,
-                    customer_id=save_data,
-                    change_user=request.user,
-                )
-                document_permissions_save.save()
 
             # If we are adding a new campus
             if 'add_campus_submit' in request.POST:
@@ -502,11 +484,6 @@ def customer_information(request, customer_id):
     # Get the instance
     customer_results = customers.objects.get(pk=customer_id)
     add_campus_results = organisations_campus.objects.filter(organisations_id=customer_results.organisations_id)
-    customer_document_results = document_permissions.objects.filter(customer_id=customer_id)
-    organisation_document_results = document_permissions.objects.filter(
-        organisations_id=customer_results.organisations_id,
-        customer_id__isnull=True
-    )
 
     # Setup connection to the database and query it
     cursor = connection.cursor()
@@ -604,8 +581,6 @@ def customer_information(request, customer_id):
         'customer_results': customer_results,
         'media_url': settings.MEDIA_URL,
         'profile_picture': profile_picture,
-        'customer_document_results': customer_document_results,
-        'organisation_document_results': organisation_document_results,
         'project_results': project_results,
         'task_results': task_results,
         'opportunity_results': opportunity_results,

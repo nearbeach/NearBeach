@@ -1,0 +1,22 @@
+{% csrf_token %}
+{% if customer_document_results %}
+    <h4>Customer Documents</h4>
+    {% for row in customer_document_results %}
+        {% if row.document_description == "" %}
+            <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document }}</a><br/>
+        {%  else %}
+            <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document_description }}</a><br/>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+<br/>
+{% if organisation_document_results %}
+    <h4>Organisation Documents</h4>
+    {% for row in organisation_document_results %}
+        {% if row.document_key.document_description == "" %}
+            <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document }}</a><br/>
+        {%  else %}
+            <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">{{ row.document_key.document_description }}</a><br/>
+        {% endif %}
+    {% endfor %}
+{% endif %}

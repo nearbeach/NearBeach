@@ -1,0 +1,35 @@
+<form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+
+{% load staticfiles %}
+<h2>Customer Documents</h2>
+<table>
+    <tr>
+        <td>Upload Document:</td>
+        <td><input id="fileupload" type="file" name="file" data-url="{% url 'information_customer_documents_upload' customer_id %}" multiple></td>
+        <td>
+            <div id="progress" class="progress">
+                <div class="progress-bar progress-bar-success"></div>
+            </div>
+        </td>
+    </tr>
+</table>
+<script src="{% static '/NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/vendor/jquery.ui.widget.js' %}"></script>
+<script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.iframe-transport.js' %}"></script>
+<script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.fileupload.js' %}"></script>
+
+
+
+<script>
+$(function () {
+    $('#fileupload').fileupload({
+        dataType: 'json',
+        done: function (e, data) {
+            $.each(data.result.files, function (index, file) {
+                $('<p/>').text(file.name).appendTo(document.body);
+            });
+        }
+    });
+});
+</script>
+</form>

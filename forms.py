@@ -253,6 +253,7 @@ class campus_information_form(ModelForm):
 
 
 
+
 class customer_information_form(ModelForm):
 
 
@@ -263,13 +264,6 @@ class customer_information_form(ModelForm):
     )
 
     update_profile_picture=forms.ImageField(required=False,)
-
-    #Customer Documents
-    document_description=forms.CharField(
-        max_length=255,
-        required=False
-    )
-    document=forms.FileField(required=False)
 
     class Meta:
         model=customers
@@ -304,6 +298,15 @@ class customer_information_form(ModelForm):
 
         return profile_picture
 
+"""
+#Might be redundant!
+class document_upload_form(forms.Form):
+    document_description=forms.CharField(
+        max_length=255,
+        required=False
+    )
+    document=forms.FileField(required=False)
+"""
 
 class information_customer_contact_history_form(forms.Form):
     # Get data for choice boxes
