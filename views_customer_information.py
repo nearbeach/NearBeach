@@ -10,11 +10,14 @@ from django.contrib.auth.decorators import login_required
 from .models import *
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import  loader
 from NearBeach.forms import *
 from .models import *
 from .namedtuplefetchall import *
+
+import simplejson
+
 
 @login_required(login_url='login')
 def information_customer_contact_history(request, customer_id):
@@ -121,43 +124,49 @@ def information_customer_documents_list(request, customer_id, organisations_id):
 @login_required(login_url='login')
 def information_customer_documents_upload(request, customer_id):
     if request.method == "POST":
-        if not request.FILES == None:
-            #Get the file data
-            file = request.FILES['file']
+        if request.FILES == None:
+            return HttpResponseBadRequest('File needs to be uploaded')
 
-            #Data objects required
-            filename = str(file)
-            file_size = file._size
-            print("File name: " + filename + "\nFile Size: " + str(file_size))
+        #Get the file data
+        file = request.FILES['file']
 
-            """
-            File Uploads
-            """
-            customer_results = customers.objects.get(customer_id=customer_id)
-            document_save = documents(
-                document_description=filename,
-                document=file,
-                change_user=request.user,
-            )
-            document_save.save()
+        #Data objects required
+        filename = str(file)
+        file_size = file._size
+        print("File name: " + filename + "\nFile Size: " + str(file_size))
 
-            document_permissions_save = document_permissions(
-                document_key=document_save,
-                organisations_id=customer_results.organisations_id,
-                customer_id=customer_results,
-                change_user=request.user,
-            )
-            document_permissions_save.save()
+        """
+        File Uploads
+        """
+        customer_results = customers.objects.get(customer_id=customer_id)
+        document_save = documents(
+            document_description=filename,
+            document=file,
+            change_user=request.user,
+        )
+        document_save.save()
 
-    #Load template
-    t = loader.get_template('NearBeach/customer_information/customer_documents_upload.html')
+        document_permissions_save = document_permissions(
+            document_key=document_save,
+            organisations_id=customer_results.organisations_id,
+            customer_id=customer_results,
+            change_user=request.user,
+        )
+        document_permissions_save.save()
 
-    # context
-    c = {
-        'customer_id': customer_id,
-    }
-
-    return HttpResponse(t.render(c, request))
+        result = []
+        result.append({
+            "name" : filename,
+            "size" : file_size,
+            "url" : '',
+            "thumbnail_url" : '',
+            "delete_url" : '/',
+            "delete_type" : "POST",
+        })
+        response_data = simplejson.dumps(result)
+        return HttpResponse(response_data, content_type='application/json')
+    else:
+        return HttpResponseBadRequest('Only POST accepted')
 
 
 """

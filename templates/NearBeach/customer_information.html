@@ -87,12 +87,6 @@
     </form>
 
 
-
-    <form method="post" class="customer_documents_upload" id="customer_documents_upload" enctype="multipart/form-data">
-        <h2>Customer Documents Upload</h2>
-        Loading...
-    </form>
-
     <form method="post" class="customer_documents_list" id="customer_documents_list" enctype="multipart/form-data">
         <h2>Customer Documents List</h2>
         Loading...
@@ -205,7 +199,7 @@
         })
     });
 
-
+/*
     $("#customer_documents_upload").on('submit', function(e) {
         e.preventDefault();
         $.ajax({
@@ -220,7 +214,7 @@
                 alert("Sorry, project history did not save. Please try again.");
             }
         })
-    });
+    });*/
 
 
     function load_contact_history() {
@@ -252,22 +246,6 @@
             },
             error: function() {
                 $('#customer_documents_list').html('<h2>Contact Documents</h2>Sorry, contact documents encounted an error and did not load.');
-            }
-        });
-    };
-
-    function load_customer_documents_upload() {
-        //Load Project History
-        $.ajax({
-            url: '/information_customer_documents_upload/{{ customer_id }}/',
-            data: {},
-            dataType: 'HTML',
-            type: 'GET',
-            success: function(data) {
-                $('#customer_documents_upload').html(data);
-            },
-            error: function() {
-                $('#customer_documents_upload').html('<h2>Contact Documents</h2>Sorry, contact documents encounted an error and did not load.');
             }
         });
     };
