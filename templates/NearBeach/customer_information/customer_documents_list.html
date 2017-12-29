@@ -6,12 +6,17 @@
     <tr>
         <td>Upload Document:</td>
         <td><input id="fileupload" type="file" name="file" data-url="{% url 'information_customer_documents_upload' customer_id %}" multiple></td>
-        <td>
-            <div id="progress" class="progress">
-                <div class="progress-bar progress-bar-success"></div>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div id="progress">
+                <span id="upload_percent">No uploads occuring</span>
+                <div id="upload_progress" style="background-color: green; width: 0%; height: 20px;"></div>
             </div>
         </td>
     </tr>
+
+
 </table>
 <script src="{% static '/NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
 <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/vendor/jquery.ui.widget.js' %}"></script>
@@ -26,6 +31,13 @@ $(function () {
         dataType: 'json',
         done: function (e, data) {
             load_customer_documents_list();
+        },
+        progressall: function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            $("#upload_percent").html(progress + "%");
+            $("#upload_progress").css(
+                'width', progress + '%',
+            );
         }
     });
 });
