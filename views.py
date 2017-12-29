@@ -2191,6 +2191,7 @@ def organisation_information(request, organisations_id):
         'task_results': task_results,
         'opportunity_results': opportunity_results,
         'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
+        'organisations_id': organisations_id,
     }
 
     return HttpResponse(t.render(c, request))

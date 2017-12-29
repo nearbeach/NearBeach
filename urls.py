@@ -117,9 +117,9 @@ urlpatterns = [
 	url(r'^information_organisation_contact_history/(?P<organisation_id>[0-9]+)/$',
 		views_organisation_information.information_organisation_contact_history,
 		name='information_organisation_contact_history'),
-	url(r'^information_organisation_documents/(?P<organisation_id>[0-9]+)/$',
-		views_organisation_information.information_organisation_documents,
-		name='information_organisation_documents'),
+	url(r'^information_organisation_documents_list/(?P<organisation_id>[0-9]+)/$',
+		views_organisation_information.information_organisation_documents_list,
+		name='information_organisation_documents_list'),
 
 	# customer Information
 	url(r'^information_customer_contact_history/(?P<customer_id>[0-9]+)/$',

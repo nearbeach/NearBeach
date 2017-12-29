@@ -91,9 +91,9 @@ def information_organisation_contact_history(request, organisation_id):
 
 
 @login_required(login_url='login')
-def information_organisation_documents(request, organisation_id):
+def information_organisation_documents_list(request, organisation_id):
     #Load template
-    t = loader.get_template('NearBeach/organisation_information/organisation_documents.html')
+    t = loader.get_template('NearBeach/organisation_information/organisation_documents_list.html')
 
     # context
     c = {
