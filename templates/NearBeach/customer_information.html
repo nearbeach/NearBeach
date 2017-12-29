@@ -191,31 +191,13 @@
             data: $(this).serialize(),
             success: function() {
                 //Reload the project history :)
-                load_customer_documents();
-            },
-            error: function() {
-                alert("Sorry, project history did not save. Please try again.");
-            }
-        })
-    });
-
-/*
-    $("#customer_documents_upload").on('submit', function(e) {
-        e.preventDefault();
-        $.ajax({
-            type: 'POST',
-            url: '/information_customer_documents_upload/{{ customer_id }}/',
-            data: $(this).serialize(),
-            success: function() {
-                //Reload the project history :)
                 load_customer_documents_list();
             },
             error: function() {
                 alert("Sorry, project history did not save. Please try again.");
             }
         })
-    });*/
-
+    });
 
     function load_contact_history() {
         //Load Project History
@@ -249,6 +231,57 @@
             }
         });
     };
+
+
+
+    function edit_document_description(document_key) {
+        alert(document_key);
+    }
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    function delete_document(document_key) {
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        $.ajax({
+            url: "/delete_document/" + document_key + "/",
+            data: {},
+            dataType: 'HTML',
+            type: 'POST',
+            success: function(data) {
+                load_customer_documents_list();
+            },
+            error: function() {
+                alert("There was an issue deleting the document");
+            }
+        })
+    }
+
+    // using jQuery to extract the CSRFToken
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
 </script>
 
 {% endblock %}

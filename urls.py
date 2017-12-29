@@ -139,6 +139,10 @@ urlpatterns = [
 	url(r'^resolve_project/(?P<project_id>[0-9]+)/', views.resolve_project,	name='resolve_project'),
 	url(r'^resolve_task/(?P<task_id>[0-9]+)/', views.resolve_task,	name='resolve_task'),
 
+	#Document functions
+	url(r'^delete_document/(?P<document_key>[0-9A-Za-z_\-]+)/$', views.delete_document, name='delete_document'),
+	url(r'^rename_document/(?P<document_key>[0-9A-Za-z_\-]+)/$', views.rename_document, name='rename_document'),
+
 ]
 
 if settings.DEBUG:

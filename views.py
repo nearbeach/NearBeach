@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.core import serializers
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Sum, Q, Min
-from django.http import HttpResponse,HttpResponseForbidden, HttpResponseRedirect, Http404
+from django.http import HttpResponse,HttpResponseForbidden, HttpResponseRedirect, Http404, HttpResponseBadRequest
 from django.shortcuts import render, get_object_or_404, render_to_response
 from django.template import RequestContext, loader
 from django.urls import reverse
@@ -874,6 +874,32 @@ def delete_cost(request, cost_id, location_id, project_or_task):
         return HttpResponseRedirect(reverse('project_information', args={location_id}))
     else:
         return HttpResponseRedirect(reverse('task_information', args={location_id}))
+
+
+@login_required(login_url='login')
+def delete_document(request, document_key):
+    # Delete the document
+    document = documents.objects.get(document_key=document_key)
+    document.is_deleted = "TRUE"
+    document.change_user=request.user
+    document.save()
+
+    document_permission_save = document_permissions.objects.get(document_key=document_key)
+    document_permission_save.is_deleted = "TRUE"
+    document_permission_save.change_user=request.user
+    document_permission_save.save()
+
+    print("Deleted Document: " + document_key)
+
+    #Return a blank page for fun
+    t = loader.get_template('NearBeach/blank.html')
+
+    # context
+    c = {}
+
+    return HttpResponse(t.render(c, request))
+    #SoMuchFun
+
 
 
 @login_required(login_url='login')
@@ -2570,6 +2596,12 @@ def quote_information(request, quote_id):
 
     return HttpResponse(t.render(c, request))
 
+@login_required(login_url='login')
+def rename_document(request, document_key):
+    if request.method == "POST":
+        print(request)
+    else:
+        return HttpResponseBadRequest("This is a POST function. POST OFF!")
 
 
 @login_required(login_url='login')

@@ -9,7 +9,7 @@
     </tr>
     <tr>
         <td colspan="2">
-            <div id="progress">
+            <div id="progress" style="border: none; width: 100%;">
                 <span id="upload_percent">No uploads occuring</span>
                 <div id="upload_progress" style="background-color: green; width: 0%; height: 20px;"></div>
             </div>
@@ -43,24 +43,53 @@ $(function () {
 });
 </script>
 </form>
-{% if customer_document_results %}
-    <h4>Customer Documents</h4>
-    {% for row in customer_document_results %}
-        {% if row.document_description == "" %}
-            <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document }}</a><br/>
-        {%  else %}
-            <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document_description }}</a><br/>
-        {% endif %}
-    {% endfor %}
-{% endif %}
+
+<form>
+    {% if customer_document_results %}
+        <h4>Customer Documents</h4>
+        <table>
+            <tr>
+                <td width="80%">Document(s)</td>
+                <td width="20%">Delete</td>
+            </tr>
+            {% for row in customer_document_results %}
+                <tr id="row.document_key.document_key">
+                    <td>
+                       {% if row.document_description == "" %}
+                           <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">{{ row.document_key.document }}</a>
+                       {% else %}
+                           <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">{{ row.document_key.document_description }}</a>
+                       {% endif %}
+                    </td>
+                    <td>
+                        <a onclick="delete_document('{{ row.document_key.document_key }}')" href="javascript:void(0);">Delete</a>
+                    </td>
+                </tr>
+
+            {% endfor %}
+        </table>
+    {% endif %}
+</form>
+
+
+
+
 <br/>
 {% if organisation_document_results %}
     <h4>Organisation Documents</h4>
-    {% for row in organisation_document_results %}
-        {% if row.document_key.document_description == "" %}
-            <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document }}</a><br/>
-        {%  else %}
-            <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">{{ row.document_key.document_description }}</a><br/>
-        {% endif %}
-    {% endfor %}
+    <table>
+        <tr><td>Document</td></tr>
+        {% for row in organisation_document_results %}
+            <tr><td>
+                {% if row.document_key.document_description == "" %}
+                        <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document }}</a><br/>
+                    {%  else %}
+                        <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">{{ row.document_key.document_description }}</a><br/>
+                {% endif %}
+            </td></tr>
+        {% endfor %}
+    </table>
+
+
 {% endif %}
+
