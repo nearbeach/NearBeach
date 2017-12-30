@@ -1,31 +1,96 @@
-{% csrf_token %}
-<h2>Organisation Documents</h2>
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% load staticfiles %}
+    <h2>Organisation Documents</h2>
+    <table>
+        <tr>
+            <td>Upload Document:</td>
+            <td><input id="fileupload" type="file" name="file" data-url="{% url 'information_organisation_documents_uploads' organisation_id %}" multiple></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div id="progress" style="border: none; width: 100%;">
+                    <span id="upload_percent">No uploads occuring</span>
+                    <div id="upload_progress" style="background-color: green; width: 0%; height: 20px;"></div>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <script src="{% static '/NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/vendor/jquery.ui.widget.js' %}"></script>
+    <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.iframe-transport.js' %}"></script>
+    <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.fileupload.js' %}"></script>
+
+
+    {% if organisation_document_results %}
+        <h4>Organisation Documents</h4>
         <table>
-            <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
-            <tr><td>Document Description:</td><td>{{ organisation_information_form.document_description }}</td></tr>
-            <tr><td>Upload Document:</td><td>{{ organisation_information_form.document }}</td></tr>
-        </table>
-        <input type="submit" name="update" value="Upload Documents"/>
-        <br/>
-        {% if organisation_document_results %}
-            <h4>Organisation Documents</h4>
+            <tr>
+                <td width="80%">Document(s)</td>
+                <td width="20%">Delete</td>
+            </tr>
             {% for row in organisation_document_results %}
-                <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key }}</a><br/>
+                <tr id="row.document_key.document_key">
+                    <td>
+                        {% if row.document_description == "" %}
+                           <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">{{ row.document_key.document }}</a>
+                        {% else %}
+                           <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">{{ row.document_key.document_description }}</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a onclick="delete_document('{{ row.document_key.document_key }}')" href="javascript:void(0);">Delete</a>
+                    </td>
+                </tr>
             {% endfor %}
-        {% endif %}
-        {% if customer_document_results %}
-            <h4>Customer Documents associated to Organisation</h4>
+        </table>
+    {% endif %}
+
+    {% if customer_document_results %}
+        <h4>Customer Documents associated to Organisation</h4>
+        <table>
+            <tr>
+                <td width="20%">Customer Name</td>
+                <td width="65%">Document(s)</td>
+                <td width="15%">Delete</td>
+            </tr>
             {% for row in customer_document_results %}
-                {% if row.document_description == "" %}
-                    {{ row.customer_id }} - <a href="https://{{ request.META.HTTP_HOST }}{{ row.document.url }}">{{ row.document.name|slice:"10:" }}</a><br/>
-                {%  else %}
-                    {{ row.customer_id }} - <a href="https://{{ request.META.HTTP_HOST }}{{ row.document.url }}">{{ row.document_description }}</a><br/>
-                {% endif %}
+                <tr id="row.document_key.document_key">
+                    <td>
+                        <a href="{% url 'customer_information' row.customer_id.customer_id %}">
+                            {{ row.customer_id.customer_first_name }} {{ row.customer_id.customer_last_name }}
+                        </a>
+                    </td>
+                    <td>
+                        {% if row.document_description == "" %}
+                           <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">{{ row.document_key.document }}</a>
+                        {% else %}
+                           <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">{{ row.document_key.document_description }}</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a onclick="delete_document('{{ row.document_key.document_key }}')" href="javascript:void(0);">Delete</a>
+                    </td>
+                </tr>
             {% endfor %}
-        {% endif %}
-        <br/>
-        <h2>Associated Projects & Tasks</h2>
-        <ul>
-            <li><a href="{% url 'new_project' organisation_results.organisations_id %}">Create New Project</a></li>
-            <li><a href="{% url 'new_task' organisation_results.organisations_id %}">Create New Task</a></li>
-        </ul>
+        </table>
+    {% endif %}
+
+    <script>
+    $(function () {
+        $('#fileupload').fileupload({
+            dataType: 'json',
+            done: function (e, data) {
+                load_customer_documents_list();
+            },
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $("#upload_percent").html(progress + "%");
+                $("#upload_progress").css(
+                    'width', progress + '%',
+                );
+            }
+        });
+    });
+    </script>
+</form>

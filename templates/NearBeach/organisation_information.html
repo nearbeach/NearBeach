@@ -1,3 +1,4 @@
+
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
@@ -73,7 +74,11 @@
     </form>
 
 
-
+        <h2>Associated Projects & Tasks</h2>
+        <ul>
+            <li><a href="{% url 'new_project' organisation_results.organisations_id %}">Create New Project</a></li>
+            <li><a href="{% url 'new_task' organisation_results.organisations_id %}">Create New Task</a></li>
+        </ul>
 
         <h2>Assigned Projects</h2>
         {% if project_results %}
@@ -195,6 +200,23 @@
     };
 
 
+    function load_organisation_documents_list() {
+        //Load Project History
+        $.ajax({
+            url: '/information_organisation_documents_list/{{ organisations_id }}/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#organisation_documents_list').html(data);
+            },
+            error: function() {
+                $('#organisation_documents_list').html('<h2>Contact Documents</h2>Sorry, organisations documents encounted an error and did not load.');
+            }
+        });
+    };
+
+
 
     function edit_document_description(document_key) {
         alert(document_key);
@@ -246,21 +268,7 @@
     var csrftoken = getCookie('csrftoken');
 
 
-    function load_organisation_documents_list() {
-        //Load Project History
-        $.ajax({
-            url: '/information_organisation_documents_list/{{ organisations_id }}/',
-            data: {},
-            dataType: 'HTML',
-            type: 'GET',
-            success: function(data) {
-                $('#organisation_contact_history').html(data);
-            },
-            error: function() {
-                $('#organisation_contact_history').html('<h2>Contact Documents</h2>Sorry, organisations documents encounted an error and did not load.');
-            }
-        });
-    };
+
 
 
 </script>

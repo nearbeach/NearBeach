@@ -2102,42 +2102,20 @@ def organisation_information(request, organisations_id):
 
             """
 			Document Uploads
-			"""
-            document = request.FILES.get('document')
-            if not document == None:
-                document_save = documents(
-                    #organisations_id=save_data,
-                    #document_description=form.cleaned_data['document_description'],
-                    document=form.cleaned_data['document'],
-                    change_user=request.user,
-                )
-                document_description = form.cleaned_data['document_description']
-                if document_description=="":
-                    document_save.document_description=document_save.document
-                else:
-                    document_save.document_description=document_description
-                document_save.save()
+			        if request.FILES == None:
+            return HttpResponseBadRequest('File needs to be uploaded')
 
-                document_permissions_save = document_permissions(
-                    organisations_id=save_data,
-                    change_user=request.user,
-                    document_key=document_save,
-                )
-                document_permissions_save.save()
+        #Get the file data
+        file = request.FILES['file']
+			
+			"""
 
     # Query the database for organisation information
     organisation_results = organisations.objects.get(pk=organisations_id)
     campus_results = organisations_campus.objects.filter(organisations_id=organisations_id)
     customers_results = customers.objects.filter(organisations_id=organisation_results)
 
-    customer_document_results = document_permissions.objects.filter(
-        organisations_id=organisations_id,
-        customer_id__isnull=False
-    )
-    organisation_document_results = document_permissions.objects.filter(
-        organisations_id=organisations_id,
-        customer_id__isnull=True
-    )
+
     project_results = project.objects.filter(organisations_id=organisations_id)
     task_results = tasks.objects.filter(organisations_id=organisations_id)
     #opportunity_results = opportunity.objects.filter(organisations_id=organisations_id)
@@ -2185,8 +2163,6 @@ def organisation_information(request, organisations_id):
                 'start_date_day': today.day,
             }),
         'profile_picture': profile_picture,
-        'customer_document_results': customer_document_results,
-        'organisation_document_results': organisation_document_results,
         'project_results': project_results,
         'task_results': task_results,
         'opportunity_results': opportunity_results,
