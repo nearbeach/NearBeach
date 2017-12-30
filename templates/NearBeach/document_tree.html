@@ -1,0 +1,39 @@
+{% load staticfiles %}
+<script>
+function load_sub_folder(folder_id) {
+        /*
+        The following script will load the sub folder information through AJAX (spray and whipe)
+         */
+        $.ajax({
+            url: '/document_tree/{{ location_id }}/{{ project_or_task }}/' + folder_id + '/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $("#" + folder_id).html(data);
+            },
+            error: function() {
+                $("#" + folder_id).html('FOLDER ERROR! Data was not successfully retrieved from server');
+            }
+
+        });
+    }
+</script>
+<script src="{% static '/NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
+{% if folder_id == '' %}
+Root
+{% else %}
+    {{ folder_instance.folder_description }}
+{% endif %}
+<ul>
+    <li>Folders will go in the first part</li>
+    <li>Files will go into the second part</li>
+    {% for row in folder_results %}
+        <li id="{{ row.folder_id }}" class="folder">{{ row.folder_description }}</li>
+        <script>load_sub_folder({{ row.folder_id }})</script>
+    {% endfor %}
+    {% for row in document_results %}
+        <li id="{{ row.folder }}" class="document">{{ row.document_description }}</li>
+    {% endfor %}
+</ul>
+

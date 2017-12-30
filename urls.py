@@ -146,6 +146,10 @@ urlpatterns = [
 	url(r'^delete_document/(?P<document_key>[0-9A-Za-z_\-]+)/$', views.delete_document, name='delete_document'),
 	url(r'^rename_document/(?P<document_key>[0-9A-Za-z_\-]+)/$', views.rename_document, name='rename_document'),
 
+	#Document Tree
+	url(r'^document_tree/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])/$', views.document_tree,name='document_tree'),
+	url(r'^document_tree/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])/(?P<folder_id>[0-9]+)', views.document_tree,name='document_tree'),
+
 ]
 
 if settings.DEBUG:
