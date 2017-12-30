@@ -9,3 +9,8 @@ NearBeach will have many modules included within it to help track projects/tasks
 * Documentation upload (DU)/Documentation Cloud Links (DCL)
 
 Please note - most of these features are still currently being constructed in the Alpha stage.
+
+Software References
+ * chosen-js: https://harvesthq.github.io/chosen/
+ * jQuery File Upload: http://blueimp.github.io/jQuery-File-Upload/index.html
+ [NOTE TO SELF - expand this section. Give more credit where it is due!]

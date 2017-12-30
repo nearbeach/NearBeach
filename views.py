@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.core import serializers
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Sum, Q, Min
-from django.http import HttpResponse,HttpResponseForbidden, HttpResponseRedirect, Http404
+from django.http import HttpResponse,HttpResponseForbidden, HttpResponseRedirect, Http404, HttpResponseBadRequest
 from django.shortcuts import render, get_object_or_404, render_to_response
 from django.template import RequestContext, loader
 from django.urls import reverse
@@ -455,25 +455,7 @@ def customer_information(request, customer_id):
 
 
 
-            """
-			Document Uploads
-			"""
-            document = request.FILES.get('document')
-            if not document == None:
-                document_save = documents(
-                    document_description=form.cleaned_data['document_description'],
-                    document=form.cleaned_data['document'],
-                    change_user=request.user,
-                )
-                document_save.save()
 
-                document_permissions_save = document_permissions(
-                    document_key=document_save,
-                    organisations_id=save_data.organisations_id,
-                    customer_id=save_data,
-                    change_user=request.user,
-                )
-                document_permissions_save.save()
 
             # If we are adding a new campus
             if 'add_campus_submit' in request.POST:
@@ -502,11 +484,6 @@ def customer_information(request, customer_id):
     # Get the instance
     customer_results = customers.objects.get(pk=customer_id)
     add_campus_results = organisations_campus.objects.filter(organisations_id=customer_results.organisations_id)
-    customer_document_results = document_permissions.objects.filter(customer_id=customer_id)
-    organisation_document_results = document_permissions.objects.filter(
-        organisations_id=customer_results.organisations_id,
-        customer_id__isnull=True
-    )
 
     # Setup connection to the database and query it
     cursor = connection.cursor()
@@ -604,8 +581,6 @@ def customer_information(request, customer_id):
         'customer_results': customer_results,
         'media_url': settings.MEDIA_URL,
         'profile_picture': profile_picture,
-        'customer_document_results': customer_document_results,
-        'organisation_document_results': organisation_document_results,
         'project_results': project_results,
         'task_results': task_results,
         'opportunity_results': opportunity_results,
@@ -899,6 +874,32 @@ def delete_cost(request, cost_id, location_id, project_or_task):
         return HttpResponseRedirect(reverse('project_information', args={location_id}))
     else:
         return HttpResponseRedirect(reverse('task_information', args={location_id}))
+
+
+@login_required(login_url='login')
+def delete_document(request, document_key):
+    # Delete the document
+    document = documents.objects.get(document_key=document_key)
+    document.is_deleted = "TRUE"
+    document.change_user=request.user
+    document.save()
+
+    document_permission_save = document_permissions.objects.get(document_key=document_key)
+    document_permission_save.is_deleted = "TRUE"
+    document_permission_save.change_user=request.user
+    document_permission_save.save()
+
+    print("Deleted Document: " + document_key)
+
+    #Return a blank page for fun
+    t = loader.get_template('NearBeach/blank.html')
+
+    # context
+    c = {}
+
+    return HttpResponse(t.render(c, request))
+    #SoMuchFun
+
 
 
 @login_required(login_url='login')
@@ -2101,42 +2102,20 @@ def organisation_information(request, organisations_id):
 
             """
 			Document Uploads
-			"""
-            document = request.FILES.get('document')
-            if not document == None:
-                document_save = documents(
-                    #organisations_id=save_data,
-                    #document_description=form.cleaned_data['document_description'],
-                    document=form.cleaned_data['document'],
-                    change_user=request.user,
-                )
-                document_description = form.cleaned_data['document_description']
-                if document_description=="":
-                    document_save.document_description=document_save.document
-                else:
-                    document_save.document_description=document_description
-                document_save.save()
+			        if request.FILES == None:
+            return HttpResponseBadRequest('File needs to be uploaded')
 
-                document_permissions_save = document_permissions(
-                    organisations_id=save_data,
-                    change_user=request.user,
-                    document_key=document_save,
-                )
-                document_permissions_save.save()
+        #Get the file data
+        file = request.FILES['file']
+			
+			"""
 
     # Query the database for organisation information
     organisation_results = organisations.objects.get(pk=organisations_id)
     campus_results = organisations_campus.objects.filter(organisations_id=organisations_id)
     customers_results = customers.objects.filter(organisations_id=organisation_results)
 
-    customer_document_results = document_permissions.objects.filter(
-        organisations_id=organisations_id,
-        customer_id__isnull=False
-    )
-    organisation_document_results = document_permissions.objects.filter(
-        organisations_id=organisations_id,
-        customer_id__isnull=True
-    )
+
     project_results = project.objects.filter(organisations_id=organisations_id)
     task_results = tasks.objects.filter(organisations_id=organisations_id)
     #opportunity_results = opportunity.objects.filter(organisations_id=organisations_id)
@@ -2184,12 +2163,11 @@ def organisation_information(request, organisations_id):
                 'start_date_day': today.day,
             }),
         'profile_picture': profile_picture,
-        'customer_document_results': customer_document_results,
-        'organisation_document_results': organisation_document_results,
         'project_results': project_results,
         'task_results': task_results,
         'opportunity_results': opportunity_results,
         'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
+        'organisations_id': organisations_id,
     }
 
     return HttpResponse(t.render(c, request))
@@ -2595,6 +2573,12 @@ def quote_information(request, quote_id):
 
     return HttpResponse(t.render(c, request))
 
+@login_required(login_url='login')
+def rename_document(request, document_key):
+    if request.method == "POST":
+        print(request)
+    else:
+        return HttpResponseBadRequest("This is a POST function. POST OFF!")
 
 
 @login_required(login_url='login')

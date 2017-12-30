@@ -8,6 +8,7 @@
 	function on_page_load() {
 	    //Load AJAX components
         load_contact_history();
+        load_customer_documents_list();
 
         //Autoscale all textarea
         autoscale_textarea();
@@ -85,35 +86,13 @@
     </form>
 
 
-            <h2>Customer Documents</h2>
-            <table>
-                <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
-                <tr><td>Document Description:</td><td>{{ customer_information_form.document_description }}</td></tr>
-                <tr><td>Upload Document:</td><td>{{ customer_information_form.document }}</td></tr>
-            </table>
-            <input type="submit" name="update" value="Upload Documents"/>
-            <br/>
-            {% if customer_document_results %}
-                <h4>Customer Documents</h4>
-                {% for row in customer_document_results %}
-                    {% if row.document_description == "" %}
-                        <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document }}</a><br/>
-                    {%  else %}
-                        <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document_description }}</a><br/>
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-            <br/>
-            {% if organisation_document_results %}
-                <h4>Organisation Documents</h4>
-                {% for row in organisation_document_results %}
-                    {% if row.document_key.document_description == "" %}
-                        <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document }}</a><br/>
-                    {%  else %}
-                        <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">{{ row.document_key.document_description }}</a><br/>
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
+    <form method="post" class="customer_documents_list" id="customer_documents_list" enctype="multipart/form-data">
+        <h2>Customer Documents List</h2>
+        Loading...
+    </form>
+
+
+
             <h2>Associated Projects & Tasks</h2>
             <h4>Actions</h4>
             <ul>
@@ -203,6 +182,22 @@
     });
 
 
+    $("#customer_documents_list").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/information_customer_documents_list/{{ customer_id }}/{{ customer_results.organisations_id.organisations_id }}',
+            data: $(this).serialize(),
+            success: function() {
+                //Reload the project history :)
+                load_customer_documents_list();
+            },
+            error: function() {
+                alert("Sorry, project history did not save. Please try again.");
+            }
+        })
+    });
+
     function load_contact_history() {
         //Load Project History
         $.ajax({
@@ -219,6 +214,73 @@
         });
     };
 
+
+    function load_customer_documents_list() {
+        //Load Project History
+        $.ajax({
+            url: '/information_customer_documents_list/{{ customer_id }}/{{ customer_results.organisations_id.organisations_id }}',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#customer_documents_list').html(data);
+            },
+            error: function() {
+                $('#customer_documents_list').html('<h2>Contact Documents</h2>Sorry, contact documents encounted an error and did not load.');
+            }
+        });
+    };
+
+
+
+    function edit_document_description(document_key) {
+        alert(document_key);
+    }
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    function delete_document(document_key) {
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        $.ajax({
+            url: "/delete_document/" + document_key + "/",
+            data: {},
+            dataType: 'HTML',
+            type: 'POST',
+            success: function(data) {
+                load_customer_documents_list();
+            },
+            error: function() {
+                alert("There was an issue deleting the document");
+            }
+        })
+    }
+
+    // using jQuery to extract the CSRFToken
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
 </script>
 
 {% endblock %}

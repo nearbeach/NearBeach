@@ -10,11 +10,13 @@ from django.contrib.auth.decorators import login_required
 from .models import *
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import  loader
 from NearBeach.forms import *
 from .models import *
 from .namedtuplefetchall import *
+
+import simplejson
 
 @login_required(login_url='login')
 def information_organisation_contact_history(request, organisation_id):
@@ -44,8 +46,11 @@ def information_organisation_contact_history(request, organisation_id):
                 )
 
                 # documents
-                contact_attachment = request.FILES.get('contact_attachment')
+                if request.FILES == None:
+                    print("No files uploaded in contacts")
 
+                contact_attachment = request.FILES.get('contact_attachment')
+                
                 if contact_attachment:
                     documents_save = documents(
                         document_description=contact_attachment,
@@ -61,6 +66,8 @@ def information_organisation_contact_history(request, organisation_id):
                         change_user=request.user,
                     )
                     document_permissions_save.save()
+                else:
+                    print("There was no document?")
 
 
                 submit_history = contact_history(
@@ -91,16 +98,77 @@ def information_organisation_contact_history(request, organisation_id):
 
 
 @login_required(login_url='login')
-def information_organisation_documents(request, organisation_id):
+def information_organisation_documents_list(request, organisation_id):
+    #Get data
+    customer_document_results = document_permissions.objects.filter(
+        organisations_id=organisation_id,
+        customer_id__isnull=False,
+        is_deleted="FALSE",
+    )
+    organisation_document_results = document_permissions.objects.filter(
+        organisations_id=organisation_id,
+        customer_id__isnull=True,
+        is_deleted="FALSE",
+    )
+
     #Load template
-    t = loader.get_template('NearBeach/organisation_information/organisation_documents.html')
+    t = loader.get_template('NearBeach/organisation_information/organisation_documents_list.html')
 
     # context
     c = {
+        'organisation_id': organisation_id,
+        'customer_document_results': customer_document_results,
+        'organisation_document_results': organisation_document_results,
     }
 
     return HttpResponse(t.render(c, request))
 
+
+@login_required(login_url='login')
+def information_organisation_documents_upload(request, organisation_id):
+    if request.method == "POST":
+        if request.FILES == None:
+            return HttpResponseBadRequest('File needs to be uploaded')
+
+        #Get the file data
+        file = request.FILES['file']
+
+        #Data objects required
+        filename = str(file)
+        file_size = file._size
+        print("File name: " + filename + "\nFile Size: " + str(file_size))
+
+        """
+        File Uploads
+        """
+        organisation_instance = organisations.objects.get(organisations_id=organisation_id)
+        document_save = documents(
+            document_description=filename,
+            document=file,
+            change_user=request.user,
+        )
+        document_save.save()
+
+        document_permissions_save = document_permissions(
+            document_key=document_save,
+            organisations_id=organisation_instance,
+            change_user=request.user,
+        )
+        document_permissions_save.save()
+
+        result = []
+        result.append({
+            "name" : filename,
+            "size" : file_size,
+            "url" : '',
+            "thumbnail_url" : '',
+            "delete_url" : '/',
+            "delete_type" : "POST",
+        })
+        response_data = simplejson.dumps(result)
+        return HttpResponse(response_data, content_type='application/json')
+    else:
+        return HttpResponseBadRequest('Only POST accepted')
 
 """
 The time converter - we need a function that breaks time up into different segments, and also
