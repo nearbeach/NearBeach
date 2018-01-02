@@ -1,0 +1,18 @@
+{% csrf_token %}
+<table>
+    <tr>
+        <td colspan="3">Create Folder</td>
+    </tr>
+    <tr>
+        <td>
+            {{ create_folder_form.nested_folder }}
+        </td>
+        <td>
+            {{ create_folder_form.folder_description }}
+        </td>
+        <td>
+            <input type="submit" value="Submit">
+        </td>
+    </tr>
+</table>
+

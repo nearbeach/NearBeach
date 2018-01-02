@@ -11,6 +11,9 @@ NearBeach will have many modules included within it to help track projects/tasks
 Please note - most of these features are still currently being constructed in the Alpha stage.
 
 Software References
+
+NearBeach will not be where it currently is without the help of other open sourced projects. Below are the references to all the different tools that are utilised within NearBeach. NearBeach would like to thank these projects as they have help construct a better and more stable product. Please consider visiting and donating.
+
  * chosen-js: https://harvesthq.github.io/chosen/
  * jQuery File Upload: http://blueimp.github.io/jQuery-File-Upload/index.html
  [NOTE TO SELF - expand this section. Give more credit where it is due!]
