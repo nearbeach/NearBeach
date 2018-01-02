@@ -15,7 +15,8 @@ from . import views, \
 	views_project_information, \
 	views_task_information, \
 	views_organisation_information, \
-	views_customer_information
+	views_customer_information, \
+	views_document_tree
 
 urlpatterns = [
 	url(r'^$', views.index, name='index'),
@@ -147,8 +148,15 @@ urlpatterns = [
 	url(r'^rename_document/(?P<document_key>[0-9A-Za-z_\-]+)/$', views.rename_document, name='rename_document'),
 
 	#Document Tree
-	url(r'^document_tree/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])/$', views.document_tree,name='document_tree'),
-	url(r'^document_tree/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])/(?P<folder_id>[0-9]+)', views.document_tree,name='document_tree'),
+	url(r'^document_tree_list/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])/$', views_document_tree.document_tree_list,name='document_tree_list'),
+	url(r'^document_tree_list/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])/(?P<folder_id>[0-9]+)/', views_document_tree.document_tree_list,name='document_tree_list'),
+
+	url(r'^document_tree_upload/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])/', views_document_tree.document_tree_upload, name='document_tree_upload'),
+	url(r'^document_tree_upload_documents/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])/', views_document_tree.document_tree_upload_documents, name='document_tree_upload_documents'),
+
+	url(r'^document_tree_create_folder/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])/', views_document_tree.document_tree_create_folder, name='document_tree_create_folder'),
+
+
 
 ]
 

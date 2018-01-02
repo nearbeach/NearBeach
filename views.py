@@ -3057,47 +3057,7 @@ def task_information(request, task_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
-def document_tree(request, location_id, project_or_task, folder_id='',):
-    #Get Data
-    folder_results = folders.objects.filter(is_deleted="FALSE")
-    document_results = ''
 
-
-    #Filter for project_or_task
-    if project_or_task == 'P':
-        #Project
-        folder_results = folder_results.filter(project_id=project.objects.get(project_id=location_id))
-    elif project_or_task == 'T':
-        #Tasks
-        folder_results = folder_results.filter(task_id=tasks.objects.get(tasks_id=location_id))
-        document_results = ''
-    else:
-        #ERROR
-        return  HttpResponseBadRequest("Sorry, but we can not tell if this is a project or task!")
-
-    #Filter for folder_id
-    if folder_id == '':
-        folder_instance = ''
-        folder_results = folder_results.filter(parent_folder_id=None)
-    else:
-        folder_instance = folders.objects.get(folder_id=folder_id)
-        folder_results = folder_results.filter(parent_folder_id=folder_instance)
-
-    # Load the template
-    t = loader.get_template('NearBeach/document_tree.html')
-
-    # context
-    c = {
-        'folder_results': folder_results,
-        'document_results': document_results,
-        'folder_id': folder_id,
-        'folder_instance': folder_instance,
-        'location_id': location_id,
-        'project_or_task': project_or_task,
-    }
-
-    return HttpResponse(t.render(c, request))
 
 
 """

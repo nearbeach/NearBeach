@@ -1,0 +1,45 @@
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% load staticfiles %}
+
+    <table>
+        <tr>
+            <td>Upload Documents</td>
+            <td>{{ upload_form.nested_folder }}</td>
+            <td><input id="fileupload" type="file" name="file" data-url="{% url 'document_tree_upload' location_id project_or_task %}" multiple></td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <div id="progress" style="border: none; width: 100%;">
+                    <span id="upload_percent">No uploads occuring</span>
+                    <div id="upload_progress" style="background-color: green; width: 0%; height: 20px;"></div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+<script src="{% static '/NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/vendor/jquery.ui.widget.js' %}"></script>
+<script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.iframe-transport.js' %}"></script>
+<script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.fileupload.js' %}"></script>
+    <script>
+        $(function () {
+            $('#fileupload').fileupload({
+                dataType: 'json',
+                done: function (e, data) {
+                    load_document_tree_upload_documents();
+                    load_document_tree_list();
+                },
+                progressall: function (e, data) {
+                    var progress = parseInt(data.loaded / data.total * 100, 10);
+                    $("#upload_percent").html(progress + "%");
+                    $("#upload_progress").css(
+                        'width', progress + '%',
+                    );
+                }
+            });
+        });
+    </script>
+
+
+</form>

@@ -298,15 +298,73 @@ class customer_information_form(ModelForm):
 
         return profile_picture
 
-"""
-#Might be redundant!
-class document_upload_form(forms.Form):
-    document_description=forms.CharField(
+
+
+class document_tree_create_folder_form(forms.Form):
+    def __init__(self, *args, **kwargs):
+        location_id = kwargs.pop('location_id')
+        project_or_task = kwargs.pop('project_or_task',None)
+
+        super(document_tree_create_folder_form, self).__init__(*args, **kwargs)
+
+        if project_or_task == "P":
+            project_instance = project.objects.get(project_id=location_id)
+            folders_results = folders.objects.filter(
+                is_deleted="FALSE",
+                project_id=project_instance,
+            )
+        elif project_or_task == "T":
+            task_instance = tasks.objects.get(tasks_id=location_id)
+            folders_results = folders.objects.filter(
+                is_deleted="FALSE",
+                task_id=task_instance,
+            )
+
+        self.fields['nested_folder'].queryset = folders_results
+
+    folder_description = forms.CharField(
         max_length=255,
-        required=False
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': 'Folder Description',
+            }
+        )
     )
-    document=forms.FileField(required=False)
-"""
+    nested_folder = forms.ModelChoiceField(
+        required=False,
+        queryset=folders.objects.all(),
+    )
+
+
+class document_tree_upload_form(forms.Form):
+    def __init__(self, *args, **kwargs):
+        location_id = kwargs.pop('location_id')
+        project_or_task = kwargs.pop('project_or_task',None)
+
+        super(document_tree_upload_form, self).__init__(*args, **kwargs)
+
+        if project_or_task == "P":
+            project_instance = project.objects.get(project_id=location_id)
+            folders_results = folders.objects.filter(
+                is_deleted="FALSE",
+                project_id=project_instance,
+            )
+        elif project_or_task == "T":
+            task_instance = tasks.objects.get(tasks_id=location_id)
+            folders_results = folders.objects.filter(
+                is_deleted="FALSE",
+                task_id=task_instance,
+            )
+
+        self.fields['nested_folder'].queryset = folders_results
+
+    nested_folder = forms.ModelChoiceField(
+        required=False,
+        queryset=folders.objects.all(),
+    )
+
+
 
 class information_customer_contact_history_form(forms.Form):
     # Get data for choice boxes
