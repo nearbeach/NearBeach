@@ -5,6 +5,9 @@
     <script type="text/javascript" src="{% static 'NearBeach/javascript/new_opportunity.js' %}"></script>
 
 <script>
+
+
+
     function on_page_load() {
         //Load AJAX components
         reload_list_of_line_items();
@@ -83,6 +86,26 @@
     <form method="post" class="new_line_item" id="new_line_item"></form>
     <form method="post" class="list_of_line_items" id="list_of_line_items"></form>
 
+
+
+
+<script>
+    $("#new_line_item").on('submit', function (e) {
+    e.preventDefault();
+    $.ajax({
+        type: "POST",
+        url: '/quote_new_line_item/{{ quote_id }}/',
+        data: $(this).serialize(),
+        success: function() {
+            reload_new_line_item();
+            reload_list_of_line_items();
+        },
+        error: function () {
+            alert("There has been an error submitting the new line item");
+        }
+    })
+});
+</script>
 </body>
 {% endblock %}
 

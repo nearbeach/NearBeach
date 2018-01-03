@@ -98,7 +98,7 @@ def new_line_item(request,quote_id):
             extracted_product_and_services = form.cleaned_data['products_and_services']
             quantity = form.cleaned_data['quantity']
             product_description = form.cleaned_data['product_description']
-            product_cost = form.cleaned_data['product_cost']
+            product_price = form.cleaned_data['product_price']
             discount_choice = form.cleaned_data['discount_choice']
             discount_percent = form.cleaned_data['discount_percent']
             discount_amount = form.cleaned_data['discount_amount']
@@ -120,7 +120,7 @@ def new_line_item(request,quote_id):
             print("products_and_services: " + str(products_and_services))
             print("quantity: " + str(quantity))
             print("product_description: " + str(product_description))
-            print("product_cost: " + str(product_cost))
+            print("product_price: " + str(product_price))
             print("discount_choice: " + str(discount_choice))
             print("discount_percent: " + str(discount_percent))
             print("discount_amount: " + str(discount_amount))
@@ -137,7 +137,7 @@ def new_line_item(request,quote_id):
                 products_and_services = product_instance,
                 quantity = quantity,
                 product_description = product_description,
-                product_cost = product_cost,
+                product_cost = product_instance.product_cost,
                 discount_choice = discount_choice,
                 discount_percent = discount_percent,
                 discount_amount = discount_amount,

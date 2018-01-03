@@ -1314,7 +1314,7 @@ class quotes_products_and_services(models.Model):
 	)
 	discount_percent=models.DecimalField(
 		default=0,
-		max_digits=4,
+		max_digits=5,
 		decimal_places=2,
 		validators=[MaxValueValidator(100), MinValueValidator(0)] #Could I use this for the money too? :D
 	)
@@ -1327,9 +1327,9 @@ class quotes_products_and_services(models.Model):
 	#The price of the product AFTER discounts
 	sales_price=models.DecimalField(
 		default=0,
-		max_digits=3,
+		max_digits=19,
 		decimal_places=2,
-		validators=[MaxValueValidator(100), MinValueValidator(0)]  # Could I use this for the money too? :D
+		validators=[MaxValueValidator(1000000000), MinValueValidator(0)]  # Could I use this for the money too? :D
 	)
 	tax=models.ForeignKey(
 		'list_of_taxes',
