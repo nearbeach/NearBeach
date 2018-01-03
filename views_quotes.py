@@ -4,6 +4,7 @@ from django.template import  loader
 from NearBeach.forms import *
 from .models import *
 from NearBeach.models import *
+from django.db.models import Sum, F
 
 
 @login_required(login_url='login')
@@ -33,46 +34,19 @@ def list_of_line_items(request, quote_id):
         is_deleted='FALSE',
         quote_id=quote_id,
     )
-    # Setup connection to the database and query it
-    cursor = connection.cursor()
 
-    cursor.execute("""
-    SELECT quotes_products_and_services.*
-    , products_and_services.product_name
-    
-    FROM
-      quotes_products_and_services
-    , products_and_services
-      
-    WHERE 1=1
-    
-    AND quotes_products_and_services.quote_id = %s
-    AND quotes_products_and_services.is_deleted = 'FALSE'
-    AND products_and_services.product_or_service = 'Product'
-    
-    AND quotes_products_and_services.products_and_services_id = products_and_services.product_id
-    """, [quote_id])
+    product_line_items = quotes_products_and_services.objects.filter(
+        quote_id=quote_id,
+        products_and_services__product_or_service='Product',
+        is_deleted="FALSE",
+    )
 
-    product_line_items = namedtuplefetchall(cursor)
+    service_line_items = quotes_products_and_services.objects.filter(
+        quote_id=quote_id,
+        products_and_services__product_or_service='Service',
+        is_deleted="FALSE",
+    )
 
-    cursor.execute("""
-    SELECT quotes_products_and_services.*
-    , products_and_services.product_name
-    
-    FROM
-      quotes_products_and_services
-    , products_and_services
-      
-    WHERE 1=1
-    
-    AND quotes_products_and_services.quote_id = %s
-    AND quotes_products_and_services.is_deleted = 'FALSE'
-    AND products_and_services.product_or_service = 'Service'
-    
-    AND quotes_products_and_services.products_and_services_id = products_and_services.product_id
-    """, [quote_id])
-
-    service_line_items = namedtuplefetchall(cursor)
 
     # Load the template
     t = loader.get_template('NearBeach/quote_information_modules/list_of_line_items.html')
@@ -102,6 +76,7 @@ def new_line_item(request,quote_id):
             discount_choice = form.cleaned_data['discount_choice']
             discount_percent = form.cleaned_data['discount_percent']
             discount_amount = form.cleaned_data['discount_amount']
+            sales_price = form.cleaned_data['sales_price']
             product_price = form.cleaned_data['product_price']
             tax = form.cleaned_data['tax']
             tax_amount = form.cleaned_data['tax_amount']
@@ -148,6 +123,7 @@ def new_line_item(request,quote_id):
                 product_note = product_note,
                 change_user=request.user,
                 quote_id=quote_instance.quote_id,
+                sales_price=sales_price,
             )
             submit_line_item.save()
 
