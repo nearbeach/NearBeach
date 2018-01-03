@@ -691,16 +691,10 @@ class new_line_item_form(ModelForm):
             'onkeyup': 'update_total()',
 		})
 	)
-    product_cost = forms.CharField(
-		widget=forms.TextInput(attrs={
-			'readonly': True,
-			'width': '50px',
-			'value': '0',
-		})
-	)
     product_price = forms.CharField(
         widget=forms.TextInput(attrs={
-            'onkeyup': 'update_total()',
+            'readonly': True,
+            'style': 'background-color: aliceblue',
         })
     )
     product_description = forms.CharField(
@@ -708,23 +702,27 @@ class new_line_item_form(ModelForm):
 		max_length=255,
 		widget=forms.TextInput(attrs={
 			'readonly': True,
-            'placeholder': 'Service Description',
+            'placeholder': 'Product/Service Description',
+            'style': 'background-color: aliceblue',
+            'style': 'display: none;',
 		})
 	)
     discount_amount = forms.CharField(
+        required=False,
         widget=forms.TextInput(attrs={
-            'style': 'display: none;',
+            'style': 'background-color: aliceblue',
             'step': '1',
             'onkeyup': 'update_total()',
+            'readonly': True,
         })
     )
     discount_choice = forms.ChoiceField(
         choices=DISCOUNT_CHOICE,
         widget=forms.Select(attrs={
-            'onchange': 'change_discount_choice()',
+            'onchange': 'discount_type_change()',
         })
     )
-    discount_percentage = forms.CharField(
+    discount_percent = forms.CharField(
         required=False, #if empty, we are assuming it will be 0%
         widget=forms.TextInput(attrs={
             'min': '0',
@@ -733,18 +731,13 @@ class new_line_item_form(ModelForm):
             'onchange': 'update_total()',
         })
     )
-    discount_amount = forms.CharField(
-        required=False, #if empty, we are assuming it will be 0
-        widget=forms.TextInput(attrs={
-            'step': '1',
-            'onkeyup': 'update_total()',
-        })
-    )
+
     sales_price = forms.CharField(
         required=False, #if empty, we are assuming it will be 0
         widget=forms.TextInput(attrs={
             'step': '1',
             'readonly': 'true',
+            'style': 'background-color: aliceblue',
         })
     )
     tax_amount = forms.CharField(
@@ -753,6 +746,7 @@ class new_line_item_form(ModelForm):
 			'width': '50px',
 			'value': '0',
 			'step': '1',
+            'style': 'background-color: aliceblue',
         })
 	)
     tax = forms.ModelChoiceField(
@@ -769,6 +763,7 @@ class new_line_item_form(ModelForm):
 			'readonly': True,
 			'width': '100px',
 			'value': '0',
+            'style': 'background-color: aliceblue',
 		})
 	)
     product_note = forms.CharField(
@@ -793,6 +788,8 @@ class new_line_item_form(ModelForm):
             'user_id',
             'is_deleted',
             'change_user',
+            'product_cost',
+            'discount_percent'
         }
 
 

@@ -102,6 +102,27 @@
         Loading...
     </form>
 
+
+    <h2>Task Quotes</h2>
+    <a href="{% url 'new_quote' task_id 'tasks' %}">New Quote</a>
+    {% if quote_results %}
+        <table>
+            <tr>
+                <td width="50%">Quote Title</td>
+                <td width="25%">Valid Till</td>
+                <td width="25%">Quote Stage</td>
+            </tr>
+            {% for row in quote_results %}
+                <tr>
+                    <td>{{ row.quote_title }}</td>
+                    <td>{{ row.quote_valid_till }}</td>
+                    <td>{{ row.quote_stage_id }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+
     <form method="post" class="task_assigned_users" id="task_assigned_users" style="">
         <h2>Task Assigned Users</h2>
         Loading...

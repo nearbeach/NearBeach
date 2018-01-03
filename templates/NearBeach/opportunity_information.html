@@ -122,6 +122,27 @@
         {% else %}
             <p>There are no associated tasks. Please create a new task</p>
         {% endif %}
+
+        <h2>Opportunity Quotes</h2>
+        <a href="{% url 'new_quote' opportunity_id 'opportunity' %}">New Quote</a>
+        {% if quote_results %}
+            <table>
+                <tr>
+                    <td width="50%">Quote Title</td>
+                    <td width="25%">Valid Till</td>
+                    <td width="25%">Quote Stage</td>
+                </tr>
+                {% for row in quote_results %}
+                    <tr>
+                        <td>{{ row.quote_title }}</td>
+                        <td>{{ row.quote_valid_till }}</td>
+                        <td>{{ row.quote_stage_id }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+
+
         <h2>Opportunity Permissions</h2>
         <p>Please note - if there are NO permissions added to an opportunity then everyone will have access to the
             opportunity</p>
@@ -140,6 +161,8 @@
                 {% endfor %}
             {% endif %}
         </table>
+
+
 
         <h3>User Permissions</h3>
         <table>

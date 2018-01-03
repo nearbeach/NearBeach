@@ -2029,6 +2029,11 @@ def opportunity_information(request, opportunity_id):
             is_deleted='FALSE',
         ).values('assigned_user').distinct()
     )
+
+    quote_results = quotes.objects.filter(
+        is_deleted='FALSE',
+        opportunity_id=opportunity.objects.get(opportunity_id=opportunity_id),
+    )
     print(user_permissions)
 
     end_hour = opportunity_results.opportunity_expected_close_date.hour
@@ -2068,6 +2073,7 @@ def opportunity_information(request, opportunity_id):
         'user_permissions': user_permissions,
         'project_results': project_results,
         'tasks_results': tasks_results,
+        'quote_results': quote_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -2456,6 +2462,10 @@ def project_information(request, project_id):
     associated_tasks_results = namedtuplefetchall(cursor)
 
 
+    quote_results = quotes.objects.filter(
+        is_deleted="FALSE",
+        project_id = project_results,
+    )
 
 
     # Load the template
@@ -2470,7 +2480,7 @@ def project_information(request, project_id):
         'documents_results': simplejson.dumps(documents_results,encoding='utf-8'),
         'folders_results': serializers.serialize('json', folders_results),
         'media_url': settings.MEDIA_URL,
-
+        'quote_results': quote_results,
         'project_id': project_id,
     }
 
@@ -3035,9 +3045,10 @@ def task_information(request, task_id):
     associated_project_results = namedtuplefetchall(cursor)
 
 
-
-
-
+    quote_results = quotes.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_results,
+    )
 
     running_total = 0
     # Load the template

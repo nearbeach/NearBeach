@@ -56,6 +56,8 @@ urlpatterns = [
 	url(r'^new_project/$', views.new_project, name='new_project'),
 	url(r'^new_project/(?P<organisations_id>[0-9]+)/$', views.new_project, name='new_project'),
 	url(r'^new_project/(?P<organisations_id>[0-9]+)/(?P<customer_id>[0-9]+)/$', views.new_project, name='new_project'),
+	url(r'^new_project/(?P<organisations_id>[0-9]+)/(?P<customer_id>[0-9]+)/(?P<opportunity_id>[0-9]+)/',
+		views.new_project, name='new_project'),
 	url(r'^new_quote/(?P<primary_key>[0-9]+)/(?P<destination>["project","task","opportunity"]+)/',views.new_quote, name='new_quote'),
 
 	url(r'^new_task/$', views.new_task, name='new_task'),
