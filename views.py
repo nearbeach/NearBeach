@@ -1118,8 +1118,9 @@ def new_campus(request, organisations_id):
         form = new_campus_form(request.POST)
         if form.is_valid():
             # Get instances
-            region_instance = list_of_countries_regions.objects.get(region_id=request.POST.get('campus_region_id'))
-            country_instance = list_of_countries.objects.get(country_id=request.POST.get('campus_country_id'))
+            region_instance = list_of_countries_regions.objects.get(
+                region_id=request.POST.get('country_and_regions')
+            )
 
             campus_nickname = form.cleaned_data['campus_nickname']
             campus_phone = form.cleaned_data['campus_phone']
@@ -1128,8 +1129,6 @@ def new_campus(request, organisations_id):
             campus_address2 = form.cleaned_data['campus_address2']
             campus_address3 = form.cleaned_data['campus_address3']
             campus_suburb = form.cleaned_data['campus_suburb']
-            campus_region_id = region_instance
-            campus_country_id = country_instance
 
             organisation = organisations.objects.get(organisations_id=organisations_id)
 
@@ -1145,8 +1144,8 @@ def new_campus(request, organisations_id):
                 campus_address2=campus_address2,
                 campus_address3=campus_address3,
                 campus_suburb=campus_suburb,
-                campus_region_id=campus_region_id,
-                campus_country_id=campus_country_id,
+                campus_region_id=region_instance,
+                campus_country_id=region_instance.country_id,
                 change_user = request.user,
             )
             submit_form.save()

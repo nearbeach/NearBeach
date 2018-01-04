@@ -638,6 +638,15 @@ class new_campus_form(forms.Form):
             'placeholder': 'Suburb',
         })
     )
+    country_and_region = forms.ModelChoiceField(
+        required=False,
+        queryset=list_of_countries.objects.filter(is_deleted='FALSE'),
+        empty_label="Please pick a Country/Region",
+        widget=RegionSelect(attrs={
+            'class': 'chosen-select',
+            'tag': forms.HiddenInput(),
+        }),
+    )
 
 
 class new_customer_form(forms.Form):
