@@ -104,6 +104,43 @@ def initialise_data(apps, schema_editor):
         list_of_opportunity_stage(list_order="10", opportunity_stage_description="Closed Lost",probability_success="0"),
     ])
 
+    #List of requirement items status
+    list_of_requirement_item_status = apps.get_model("NearBeach","list_of_requirement_item_status")
+    list_of_requirement_item_status.objects.using(db_alias).bulk_create([
+        list_of_requirement_item_status(requirement_item_status="Draft"),
+        list_of_requirement_item_status(requirement_item_status="Review"),
+        list_of_requirement_item_status(requirement_item_status="Developing/Working"),
+        list_of_requirement_item_status(requirement_item_status="Testing"),
+        list_of_requirement_item_status(requirement_item_status="User Acceptance Testing"),
+        list_of_requirement_item_status(requirement_item_status="Rework"),
+        list_of_requirement_item_status(requirement_item_status="Implemented"),
+        list_of_requirement_item_status(requirement_item_status="Finish"),
+        list_of_requirement_item_status(requirement_item_status="Not Tested"),
+        list_of_requirement_item_status(requirement_item_status="Obsolete"),
+    ])
+
+    #List of requirement items type
+    list_of_requirement_item_type = apps.get_model("NearBeach","list_of_requirement_item_type")
+    list_of_requirement_item_type.objects.using(db_alias).bulk_create([
+        list_of_requirement_item_type(requirement_item_type="Informational"),
+        list_of_requirement_item_type(requirement_item_type="Feature"),
+        list_of_requirement_item_type(requirement_item_type="User Case"),
+        list_of_requirement_item_type(requirement_item_type="User Interface"),
+        list_of_requirement_item_type(requirement_item_type="Non Functional"),
+        list_of_requirement_item_type(requirement_item_type="Constraint"),
+        list_of_requirement_item_type(requirement_item_type="System Function"),
+
+    ])
+
+    #List of requirement type
+    list_of_requirement_type = apps.get_model("NearBeach","list_of_requirement_type")
+    list_of_requirement_type.objects.using(db_alias).bulk_create([
+        list_of_requirement_type(requirement_type="Non Specific"),
+        list_of_requirement_type(requirement_type="Customer Requirements"),
+        list_of_requirement_type(requirement_type="System Requirements"),
+    ])
+
+
 
     # List of titles
     list_of_titles = apps.get_model("NearBeach", "list_of_titles")

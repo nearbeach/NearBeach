@@ -489,7 +489,7 @@ class list_of_currency(models.Model):
 
 class list_of_contact_types(models.Model):
 	contact_type_id=models.AutoField(primary_key=True)
-	contact_type=models.CharField(max_length=10)
+	contact_type=models.CharField(max_length=50)
 	date_created=models.DateTimeField(auto_now_add=True)
 	date_modified=models.DateTimeField(auto_now=True)
 	change_user=models.ForeignKey(
@@ -675,6 +675,92 @@ class list_of_quote_stages(models.Model):
 
 	class Meta:
 		db_table="list_of_quote_stages"
+
+
+
+
+
+class list_of_requirement_item_status(models.Model):
+	requirement_item_status_id=models.AutoField(primary_key=True)
+	requirement_item_status = models.CharField(
+		max_length=100,
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user',
+		blank=True,
+		null=True,
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	def __str__(self):
+		return str(self.requirement_item_status)
+
+	class Meta:
+		db_table = "list_of_requirement_item_status"
+
+
+class list_of_requirement_item_type(models.Model):
+	requirement_item_type_id=models.AutoField(primary_key=True)
+	requirement_item_type = models.CharField(
+		max_length=100,
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user',
+		blank=True,
+		null=True,
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	def __str__(self):
+		return str(self.requirement_item_type)
+
+	class Meta:
+		db_table = "list_of_requirement_item_type"
+
+
+class list_of_requirement_type(models.Model):
+	requirement_type_id = models.AutoField(primary_key=True)
+	requirement_type=models.CharField(
+		max_length=100,
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user',
+		blank=True,
+		null=True,
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	def __str__(self):
+		return str(self.requirement_type)
+
+	class Meta:
+		db_table="list_of_requirement_type"
+
+
 
 
 class list_of_taxes(models.Model):
@@ -1370,6 +1456,157 @@ class quotes_products_and_services(models.Model):
 
 	class Meta:
 		db_table="quotes_products_and_services"
+
+
+class requirements(models.Model):
+	requirement_id=models.AutoField(primary_key=True)
+	requirement_title=models.CharField(
+		max_length=255,
+	)
+	requirement_scope=models.TextField(
+		null=True,
+		blank=True,
+	)
+	requirement_type = models.ForeignKey(
+		'list_of_requirement_type',
+		on_delete=models.CASCADE,
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	def __str__(self):
+		return str(self.requirement_title)
+
+
+	class Meta:
+		db_table="requirements"
+
+
+
+class requirement_item(models.Model):
+	requirement_item_id = models.AutoField(primary_key=True)
+	requirement_id = models.ForeignKey(
+		'requirements',
+		on_delete=models.CASCADE,
+	)
+	requirement_item_title = models.CharField(max_length=255)
+	requirement_item_scope = models.TextField(
+		null=True,
+		blank=True,
+	)
+	requirement_item_status = models.ForeignKey(
+		'list_of_requirement_item_status',
+		on_delete=models.CASCADE,
+	)
+	requirement_item_type = models.ForeignKey(
+		'list_of_requirement_item_type',
+		on_delete=models.CASCADE,
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	def __str__(self):
+		return str(self.requirement_item_title)
+
+	class Meta:
+		db_table="requirement_item"
+
+
+
+class requirement_item_permissions(models.Model):
+	requirement_item_permissions_id = models.AutoField(primary_key=True)
+	project_id = models.ForeignKey(
+		'project',
+		blank=True,
+		null=True,
+		on_delete=models.CASCADE,
+	)
+	task_id = models.ForeignKey(
+		'tasks',
+		blank=True,
+		null=True,
+		on_delete=models.CASCADE,
+	)
+	organisations_id = models.ForeignKey(
+		'organisations',
+		blank=True,
+		null=True,
+		on_delete=models.CASCADE,
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	class Meta:
+		db_table="requirement_item_permissions"
+
+
+class requirement_permissions(models.Model):
+	requirement_permissions_id = models.AutoField(primary_key=True)
+	project_id = models.ForeignKey(
+		'project',
+		blank=True,
+		null=True,
+		on_delete=models.CASCADE,
+	)
+	task_id = models.ForeignKey(
+		'tasks',
+		blank=True,
+		null=True,
+		on_delete=models.CASCADE,
+	)
+	organisations_id = models.ForeignKey(
+		'organisations',
+		blank=True,
+		null=True,
+		on_delete=models.CASCADE,
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	class Meta:
+		db_table = "requirement_permissions"
+
+
 
 class stages(models.Model):
 	stages_id=models.AutoField(primary_key=True)
