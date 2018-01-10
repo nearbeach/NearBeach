@@ -1,1 +1,55 @@
-<h2>Requirement Information - </h2>
+{% extends "./template.html" %}
+{% block content %}
+{% load static %}
+<body>
+    <h2>Requirement Information - {{ requirement_id }}</h2>
+    <form id="requirement_information" name="requirement_information" method="POST" enctype="multipart/form-data">
+        <ul>
+            <li>{{ requirement_information_form.requirement_title }}</li>
+            <li>{{ requirement_information_form.requirement_scope }}</li>
+            <li>Requirement Type: {{ requirement_information_form.requirement_type }}</li>
+            <li><input type="submit" value="Update"><input type="submit" value="Resolve" name="resolve"></li>
+        </ul>
+    </form>
+    <h2>Requirement Items</h2>
+
+    {% if requirement_items_results %}
+        <table>
+            <tr>
+                <td>Item</td>
+                <td>Item Title</td>
+                <td>Item Type</td>
+                <td>Item Status</td>
+            </tr>
+        {% for row in requirement_items_results %}
+
+        {% endfor %}
+        </table>
+    {% else %}
+    <p>Currently there are no requirement items. Please click the hyperlink below this section to start creating the required requirements.</p>
+    {% endif %}
+    <a href="javascript:void(0)" onclick="new_requirement_item()">New Requirement Item</a>
+
+    <form method="POST" class="new_requirement_item" id="new_requirement_item">
+    <!-- BLANK - will populate when needed using AJAX -->
+    </form>
+
+    <form method="POST" class="edit_requirement_item" id="edit_requirement_item">
+    <!-- BLANK - will populate when needed using AJAX -->
+    </form>
+
+
+    <form method="POST" class="requirement_links" id="requirement_links">
+        <h2>Requirement Links</h2>
+        Loading...
+    </form>
+
+    <script>
+        function new_requirement_item() {
+            //New Requirement Item
+
+        }
+    </script>
+
+</body>
+{% endblock %}

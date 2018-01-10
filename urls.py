@@ -7,7 +7,11 @@ from django.conf.urls.static import static
 
 
 #Password reset
-from django.contrib.auth.views import password_reset, password_reset_done, password_reset_confirm, password_reset_complete
+from django.contrib.auth.views import \
+	password_reset, \
+	password_reset_done, \
+	password_reset_confirm, \
+	password_reset_complete
 
 from . import views, \
 	views_lookup, \
@@ -16,7 +20,8 @@ from . import views, \
 	views_task_information, \
 	views_organisation_information, \
 	views_customer_information, \
-	views_document_tree
+	views_document_tree, \
+	views_requirements
 
 urlpatterns = [
 	url(r'^$', views.index, name='index'),
@@ -158,8 +163,23 @@ urlpatterns = [
 
 	url(r'^document_tree_create_folder/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])/', views_document_tree.document_tree_create_folder, name='document_tree_create_folder'),
 
-
-
+	#requirements
+	url(r'^requirement_information/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_information,
+		name="requirement_information"),
+	url(r'^requirement_items_edit/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_items_edit,
+		name="requirement_items_edit"),
+	url(r'^requirement_items_list/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_items_list,
+		name="requirement_items_list"),
+	url(r'^requirement_items_new/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_items_new,
+		name="requirement_items_new"),
+	url(r'^requirement_items_new_link/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_items_new_link,
+		name="requirement_items_new_link"),
+	url(r'^requirement_items_new_link/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_items_new_link,
+		name="requirement_items_new_link"),
+	url(r'^requirement_links_list/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_links_list,
+		name="requirement_links_list"),
+	url(r'^requirement_new_link/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_new_link,
+		name="requirement_new_link"),
 ]
 
 if settings.DEBUG:

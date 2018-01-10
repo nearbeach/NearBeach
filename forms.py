@@ -1405,6 +1405,17 @@ class search_form(forms.Form):
         }),
     )
 
+
+class requirement_information_form(ModelForm):
+    class Meta:
+        model=requirements
+        exclude=[
+            'change_user',
+            'is_deleted',
+        ]
+
+
+
 class search_customers_form(forms.Form):
     #Just have a simple search field
     search_customers=forms.CharField(
