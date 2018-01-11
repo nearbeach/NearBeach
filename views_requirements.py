@@ -33,7 +33,7 @@ def requirement_information(request, requirement_id):
 
 
 @login_required(login_url='login')
-def requirement_items_edit(request, requirement_id):
+def requirement_item_edit(request, requirement_item_id):
     #Load template
     t = loader.get_template('NearBeach/requirement_information/requirement_items_edit.html')
 
@@ -48,12 +48,15 @@ def requirement_items_edit(request, requirement_id):
 
 @login_required(login_url='login')
 def requirement_items_list(request, requirement_id):
+    requirement_items_results = requirement_item.objects.filter(requirement_id=requirement_id)
+
     #Load template
     t = loader.get_template('NearBeach/requirement_information/requirement_items_list.html')
 
     # context
     c = {
-
+        'requirement_id': requirement_id,
+        'requirement_items_results': requirement_items_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -62,12 +65,14 @@ def requirement_items_list(request, requirement_id):
 
 @login_required(login_url='login')
 def requirement_items_new(request, requirement_id):
+    if request.method == "POST":
+        print("PROGRAM IN THE POST STUFF HERE! Mum called and now I have to go somewhere. :'(")
     #Load template
     t = loader.get_template('NearBeach/requirement_information/requirement_items_new.html')
 
     # context
     c = {
-
+        'requirement_items_new_form': requirement_items_new_form(),
     }
 
     return HttpResponse(t.render(c, request))
@@ -78,20 +83,6 @@ def requirement_items_new(request, requirement_id):
 def requirement_items_new_link(request, requirement_id):
     #Load template
     t = loader.get_template('NearBeach/requirement_information/requirement_items_new_link.html')
-
-    # context
-    c = {
-
-    }
-
-    return HttpResponse(t.render(c, request))
-
-
-
-@login_required(login_url='login')
-def requirement_items_list(request, requirement_id):
-    #Load template
-    t = loader.get_template('NearBeach/requirement_information/requirement_items_list.html')
 
     # context
     c = {

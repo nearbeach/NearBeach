@@ -1416,6 +1416,28 @@ class requirement_information_form(ModelForm):
 
 
 
+class requirement_items_new_form(ModelForm):
+    requirement_item_title=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Requirement Item Title',
+        })
+    )
+    requirement_item_scope=forms.CharField(
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Requirement Item Scope',
+        })
+    )
+    class Meta:
+        model=requirement_item
+        exclude = [
+            'change_user',
+            'is_deleted',
+        ]
+
+
+
+
 class search_customers_form(forms.Form):
     #Just have a simple search field
     search_customers=forms.CharField(

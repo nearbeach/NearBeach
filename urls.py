@@ -166,8 +166,8 @@ urlpatterns = [
 	#requirements
 	url(r'^requirement_information/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_information,
 		name="requirement_information"),
-	url(r'^requirement_items_edit/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_items_edit,
-		name="requirement_items_edit"),
+	url(r'^requirement_item_edit/(?P<requirement_item_id>[0-9]+)/', views_requirements.requirement_item_edit,
+		name="requirement_item_edit"),
 	url(r'^requirement_items_list/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_items_list,
 		name="requirement_items_list"),
 	url(r'^requirement_items_new/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_items_new,
