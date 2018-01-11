@@ -164,6 +164,8 @@ urlpatterns = [
 	url(r'^document_tree_create_folder/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])/', views_document_tree.document_tree_create_folder, name='document_tree_create_folder'),
 
 	#requirements
+	url(r'^new_requirement/', views_requirements.new_requirement,
+		name="new_requirement"),
 	url(r'^requirement_information/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_information,
 		name="requirement_information"),
 	url(r'^requirement_item_edit/(?P<requirement_item_id>[0-9]+)/', views_requirements.requirement_item_edit,
@@ -172,14 +174,16 @@ urlpatterns = [
 		name="requirement_items_list"),
 	url(r'^requirement_items_new/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_items_new,
 		name="requirement_items_new"),
-	url(r'^requirement_items_new_link/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_items_new_link,
+	url(r'^requirement_items_new_link/(?P<requirement_item_id>[0-9]+)/$', views_requirements.requirement_items_new_link,
 		name="requirement_items_new_link"),
-	url(r'^requirement_items_new_link/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_items_new_link,
-		name="requirement_items_new_link"),
+url(r'^requirement_items_new_link/(?P<requirement_item_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<destination>["project","task","organisation"]+)',
+	views_requirements.requirement_items_new_link, name="requirement_items_new_link"),
 	url(r'^requirement_links_list/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_links_list,
 		name="requirement_links_list"),
 	url(r'^requirement_new_link/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_new_link,
 		name="requirement_new_link"),
+
+
 ]
 
 if settings.DEBUG:

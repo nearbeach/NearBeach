@@ -1416,7 +1416,12 @@ class requirement_information_form(ModelForm):
 
 
 
-class requirement_items_new_form(ModelForm):
+class requirement_items_form(forms.ModelForm):
+    """
+    This is used for both
+    -- New requirement items
+    -- Editing existing requirement items
+    """
     requirement_item_title=forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
@@ -1428,9 +1433,15 @@ class requirement_items_new_form(ModelForm):
             'placeholder': 'Requirement Item Scope',
         })
     )
+
+    #Fixing a bug
+    requirement_id=forms.IntegerField(required=False)
+    change_user=forms.IntegerField(required=False)
+
     class Meta:
         model=requirement_item
         exclude = [
+            'requirement_id'
             'change_user',
             'is_deleted',
         ]

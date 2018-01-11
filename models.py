@@ -1533,8 +1533,12 @@ class requirement_item(models.Model):
 
 
 
-class requirement_item_permissions(models.Model):
+class requirement_item_links(models.Model):
 	requirement_item_permissions_id = models.AutoField(primary_key=True)
+	requirement_item = models.ForeignKey(
+		'requirement_item',
+		on_delete=models.CASCADE,
+	)
 	project_id = models.ForeignKey(
 		'project',
 		blank=True,
@@ -1570,8 +1574,12 @@ class requirement_item_permissions(models.Model):
 		db_table="requirement_item_permissions"
 
 
-class requirement_permissions(models.Model):
+class requirement_links(models.Model):
 	requirement_permissions_id = models.AutoField(primary_key=True)
+	requirements = models.ForeignKey(
+		'requirements',
+		on_delete=models.CASCADE,
+	)
 	project_id = models.ForeignKey(
 		'project',
 		blank=True,

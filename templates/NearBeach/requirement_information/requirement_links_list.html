@@ -1,1 +1,25 @@
+<h2>Requirement Links</h2>
+{% csrf_token %}
+<table>
+    <tr>
+        <td>Requirement</td>
+        <td>Title</td>
+        <td>Links</td>
+    </tr>
+    {% for row in requirement_results %}
+        <tr>
+            <td>{{ row.requirement_id }}</td>
+            <td>{{ row.requirement_title }}</td>
 
+        </tr>
+    {% endfor %}
+</table>
+
+
+{% for campaigntype in campaigntypes %}
+    {% for campaign in campaigntype.campaign_set.all %}
+        {{ campaign.name }}
+    {% endfor %}
+{% endfor %}
+
+Look at https://stackoverflow.com/questions/32287729/how-to-filter-objects-in-django

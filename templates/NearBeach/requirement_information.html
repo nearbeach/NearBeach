@@ -24,9 +24,11 @@
     <!-- BLANK - will populate when needed using AJAX -->
     </form>
 
-    <form method="POST" class="edit_requirement_item" id="edit_requirement_item">
-    <!-- BLANK - will populate when needed using AJAX -->
+    <form method="POST" class="edit_requirement_item" id="edit_requirement_item" style="background-color: azure;">
+        <!-- BLANK - will populate when needed using AJAX -->
     </form>
+
+
 
 
     <form method="POST" class="requirement_links_list" id="requirement_links_list">
@@ -53,6 +55,24 @@
             })
         });
 
+        $("#edit_requirement_item").on('submit', function(e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '/requirement_item_edit/' + $("#requirement_item_id").val() + '/',
+                data: $(this).serialize(),
+                success: function() {
+                    //Reload the project history :)
+                    $("#edit_requirement_item").html("");
+                    load_requirement_items_list();
+
+                },
+                error: function() {
+                    alert("Sorry, new requirement item did not save. Please try again.");
+                }
+            })
+        });
+
 
         function load_requirement_items_list() {
             //New Requirement Item
@@ -69,6 +89,22 @@
                 }
             })
 
+        }
+
+
+        function link_requirement_item(requirement_item_id) {
+            $.ajax({
+                url: '/requirement_items_new_link/' + requirement_item_id + '/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $("#requirement_item_new_link").html(data);
+                },
+                error: function() {
+                    $("#requirement_item_new_link").html("<h2>New Requirement Item</h2>Sorry, new requirement item encounted an error and did not load");
+                }
+            })
         }
 
 
@@ -107,8 +143,31 @@
         }
 
 
+        function send_requirement_item_link(requirement_item_id, location_id, task_or_project) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
 
-        function requirement_links() {
+            $.ajax({
+                url: '/requirement_items_new_link/' + requirement_item_id + '/' + location_id + '/' + task_or_project + '/',
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function (data) {
+                    //RELOAD STUFF
+                    $("#requirement_item_new_link").html('<a href="javascript:void(0)" onclick="link_requirement_item(' + requirement_item_id + ')">Link Requirement Item</a>');
+                },
+                error: function() {
+                    alert("Sorry, could not link requirement item. Please try again soon.")
+                }
+            })
+        }
+
+        function requirement_links_list() {
             //New Requirement Item
             $.ajax({
                 url: '/requirement_links_list/{{ requirement_id }}',
@@ -128,8 +187,32 @@
         function on_page_load() {
             //Load all ajax modules
             load_requirement_items_list();
-            requirement_links();
+            requirement_links_list();
         }
+
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        // using jQuery to extract the CSRFToken
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        var csrftoken = getCookie('csrftoken');
     </script>
 
 </body>

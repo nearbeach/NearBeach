@@ -1,9 +1,9 @@
 <h5>New Requirement Item</h5>
 {% csrf_token %}
 <ul>
-    <li>{{ requirement_items_new_form.requirement_item_title }}</li>
-    <li>{{ requirement_items_new_form.requirement_item_scope }}</li>
-    <li>Item Status: {{ requirement_items_new_form.requirement_item_status }}</li>
-    <li>Item Type: {{ requirement_items_new_form.requirement_item_type }}</li>
+    <li>{{ requirement_items_form.requirement_item_title }}</li>
+    <li>{{ requirement_items_form.requirement_item_scope }}</li>
+    <li>Item Status: {{ requirement_items_form.requirement_item_status }}</li>
+    <li>Item Type: {{ requirement_items_form.requirement_item_type }}</li>
     <li><input type="submit" value="Submit New Requirement Item"></li>
 </ul>
