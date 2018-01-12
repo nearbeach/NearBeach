@@ -101,6 +101,8 @@ urlpatterns = [
 	url(r'^quote_list_of_line_items/(?P<quote_id>[0-9]+)/$', views_quotes.list_of_line_items, name='quote_list_of_line_items'),
 	url(r'^quote_new_line_item/(?P<quote_id>[0-9]+)/$', views_quotes.new_line_item, name='quote_new_line_item'),
 	url(r'^quote_delete_line_item/(?P<line_item_id>[0-9]+)/$', views_quotes.delete_line_item, name='quote_delete_line_item'),
+	url(r'^quote_responsible_customer/(?P<quote_id>[0-9]+)/$', views_quotes.responsible_customer, name='quote_responsible_customer'),
+	url(r'^quote_responsible_customer/(?P<quote_id>[0-9]+)/(?P<customer_id>[0-9]+)/$', views_quotes.responsible_customer, name='quote_responsible_customer'),
 
 
 	#Project Information
@@ -180,7 +182,11 @@ url(r'^requirement_items_new_link/(?P<requirement_item_id>[0-9]+)/(?P<location_i
 	views_requirements.requirement_items_new_link, name="requirement_items_new_link"),
 	url(r'^requirement_links_list/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_links_list,
 		name="requirement_links_list"),
-	url(r'^requirement_new_link/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_new_link,
+	url(r'^requirement_new_link/(?P<requirement_id>[0-9]+)/$', views_requirements.requirement_new_link,
+		name="requirement_new_link"),
+
+url(r'^requirement_new_link/(?P<requirement_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<destination>["project","task","organisation"]+)'
+	, views_requirements.requirement_new_link,
 		name="requirement_new_link"),
 
 

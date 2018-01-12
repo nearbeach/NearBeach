@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import  loader
 from NearBeach.forms import *
 from .models import *
@@ -139,6 +139,53 @@ def new_line_item(request,quote_id):
     c = {
         'quote_id': quote_id,
         'new_line_item_form': new_line_item_form(),
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def responsible_customer(request,quote_id, customer_id=''):
+    if request.method == "POST":
+        if customer_id == '':
+            return HttpResponseBadRequest("Customer ID is required!")
+
+        customer_instance = customers.objects.get(customer_id=customer_id)
+        quote_instance = quotes.objects.get(quote_id=quote_id)
+
+        responsible_customer_save = quote_responsible_customers(
+            customer_id=customer_instance,
+            quote_id=quote_instance,
+            change_user=request.user,
+        )
+        responsible_customer_save.save()
+    #Get data
+    responsible_customer_results = customers.objects.filter(
+        customer_id__in=quote_responsible_customers.objects.filter(
+            quote_id=quote_id,
+            is_deleted="FALSE"
+        ).values('customer_id').distinct())
+
+    quote_results = quotes.objects.get(quote_id=quote_id)
+
+    if not quote_results.project_id == None:
+        customer_results = customers.objects.filter(
+            organisations_id=quote_results.project_id.organisations_id.organisations_id)
+    elif not quote_results.task_id == None:
+        customer_results = customers.objects.filter(
+            organisations_id=quote_results.task_id.organisations_id.organisations_id)
+    elif not quote_results.opportunity_id == None:
+        customer_results = customers.objects.filter(organisations_id=quote_results.opportunity_id.organisations_id.organisations_id)
+
+    # Load the template
+    t = loader.get_template('NearBeach/quote_information_modules/responsible_customer.html')
+
+    # context
+    c = {
+        'quote_id': quote_id,
+        'customer_results': customer_results,
+        'responsible_customer_results': responsible_customer_results,
+
     }
 
     return HttpResponse(t.render(c, request))

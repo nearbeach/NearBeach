@@ -1458,6 +1458,34 @@ class quotes_products_and_services(models.Model):
 		db_table="quotes_products_and_services"
 
 
+
+class quote_responsible_customers(models.Model):
+	quote_responsible_customers_id=models.AutoField(primary_key=True)
+	quote_id=models.ForeignKey(
+		'quotes',
+		on_delete=models.CASCADE,
+	)
+	customer_id=models.ForeignKey(
+		'customers',
+		on_delete=models.CASCADE,
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	class Meta:
+		db_table="quote_responsible_customers"
+
+
 class requirements(models.Model):
 	requirement_id=models.AutoField(primary_key=True)
 	requirement_title=models.CharField(
@@ -1534,7 +1562,7 @@ class requirement_item(models.Model):
 
 
 class requirement_item_links(models.Model):
-	requirement_item_permissions_id = models.AutoField(primary_key=True)
+	requirement_item_links_id = models.AutoField(primary_key=True)
 	requirement_item = models.ForeignKey(
 		'requirement_item',
 		on_delete=models.CASCADE,
@@ -1575,7 +1603,7 @@ class requirement_item_links(models.Model):
 
 
 class requirement_links(models.Model):
-	requirement_permissions_id = models.AutoField(primary_key=True)
+	requirement_links_id = models.AutoField(primary_key=True)
 	requirements = models.ForeignKey(
 		'requirements',
 		on_delete=models.CASCADE,

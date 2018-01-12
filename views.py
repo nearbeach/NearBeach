@@ -2669,11 +2669,16 @@ def search(request):
 	""", [search_like, search_like, search_like])
     task_results = namedtuplefetchall(cursor)
 
+    opportunity_results = opportunity.objects.all()
+    requirement_results = requirements.objects.all()
+
     # context
     c = {
         'search_form': search_form(initial={'search_for': search_results}),
         'project_results': project_results,
         'task_results': task_results,
+        'opportunity_results': opportunity_results,
+        'requirement_results': requirement_results,
     }
 
     return HttpResponse(t.render(c, request))

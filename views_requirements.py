@@ -258,8 +258,6 @@ def requirement_links_list(request, requirement_id):
 
     # context
     c = {
-        'links_results': links_results,
-        'item_links_results': item_links_results,
         'item_results': item_results,
         'requirement_results': requirement_results,
     }
@@ -269,12 +267,102 @@ def requirement_links_list(request, requirement_id):
 
 
 @login_required(login_url='login')
-def requirement_new_link(request, requirement_id):
+def requirement_new_link(request, requirement_id, location_id='', destination=''):
+    if request.method == "POST":
+        print("Requirement ID: " + requirement_id + "\nLocation ID: " + location_id + "\nTask or Project: " + destination)
+        #Check to make sure that there exists a location id and project_or_task value
+        if location_id == '' or destination == '':
+            #Well - this is not good for POST
+            print("Please check the URL")
+            return HttpResponseBadRequest("Please note, both location_id and project_or_task will need to be filled out.")
+
+        print("Trying to save")
+        requirement_link_save = requirement_links(
+            requirements=requirements.objects.get(requirement_id=requirement_id),
+            change_user=request.user,
+        )
+
+        if destination == "project":
+            project_instance = project.objects.get(project_id=location_id)
+            requirement_link_save.project_id = project_instance
+        elif destination == "task":
+            task_instance = tasks.objects.get(tasks_id=location_id)
+            requirement_link_save.task_id = task_instance
+        elif destination == "organisation":
+            organisation_instance = organisations.objects.get(organisation_id=location_id)
+            requirement_link_save.organisations_id = organisation_instance
+        else:
+            return HttpResponseBadRequest("You can only choose: project, task, or organisation")
+
+        requirement_link_save.save()
+
+        #Return blank page\
+        # Load template
+        t = loader.get_template('NearBeach/blank.html')
+
+        # context
+        c = {
+        }
+
+        return HttpResponse(t.render(c, request))
+    """
+    The linked requirements will only link to requirements the user has access to. Nothing else.
+    """
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT 
+          project.project_id
+        , project.project_name
+
+
+
+        from 
+          project left join project_tasks
+            on project.project_id = project_tasks.project_id
+            and project_tasks.is_deleted = 'FALSE'
+        , project_groups
+        , user_groups
+
+
+        where 1 = 1
+        and project.project_status IN ('New','Open')
+        and project.project_status IN ('New','Open')
+        and project.project_id = project_groups.project_id_id
+        and project_groups.groups_id_id = user_groups.group_id_id
+        and user_groups.username_id = %s
+        """, [request.user.id])
+    project_results = namedtuplefetchall(cursor)
+
+    cursor.execute("""
+        select 
+         tasks.tasks_id
+        , tasks.task_short_description
+
+        from 
+          tasks 
+        , tasks_groups
+        , user_groups
+        , organisations
+
+
+        where 1 = 1
+        and tasks.task_status in ('New','Open')
+        and tasks.tasks_id = tasks_groups.tasks_id_id
+        and tasks_groups.groups_id_id = user_groups.group_id_id
+        and user_groups.username_id = %s
+        and tasks.organisations_id_id=organisations.organisations_id    
+        """, [request.user.id])
+    task_results = namedtuplefetchall(cursor)
+
     #Load template
     t = loader.get_template('NearBeach/requirement_information/requirement_new_link.html')
 
     # context
     c = {
+        'requirement_id': requirement_id,
+        'project_results': project_results,
+        'task_results': task_results,
 
     }
 
