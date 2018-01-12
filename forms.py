@@ -1405,6 +1405,50 @@ class search_form(forms.Form):
         }),
     )
 
+
+class requirement_information_form(ModelForm):
+    class Meta:
+        model=requirements
+        exclude=[
+            'change_user',
+            'is_deleted',
+        ]
+
+
+
+class requirement_items_form(forms.ModelForm):
+    """
+    This is used for both
+    -- New requirement items
+    -- Editing existing requirement items
+    """
+    requirement_item_title=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Requirement Item Title',
+        })
+    )
+    requirement_item_scope=forms.CharField(
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Requirement Item Scope',
+        })
+    )
+
+    #Fixing a bug
+    requirement_id=forms.IntegerField(required=False)
+    change_user=forms.IntegerField(required=False)
+
+    class Meta:
+        model=requirement_item
+        exclude = [
+            'requirement_id'
+            'change_user',
+            'is_deleted',
+        ]
+
+
+
+
 class search_customers_form(forms.Form):
     #Just have a simple search field
     search_customers=forms.CharField(

@@ -7,7 +7,11 @@ from django.conf.urls.static import static
 
 
 #Password reset
-from django.contrib.auth.views import password_reset, password_reset_done, password_reset_confirm, password_reset_complete
+from django.contrib.auth.views import \
+	password_reset, \
+	password_reset_done, \
+	password_reset_confirm, \
+	password_reset_complete
 
 from . import views, \
 	views_lookup, \
@@ -16,7 +20,8 @@ from . import views, \
 	views_task_information, \
 	views_organisation_information, \
 	views_customer_information, \
-	views_document_tree
+	views_document_tree, \
+	views_requirements
 
 urlpatterns = [
 	url(r'^$', views.index, name='index'),
@@ -96,6 +101,8 @@ urlpatterns = [
 	url(r'^quote_list_of_line_items/(?P<quote_id>[0-9]+)/$', views_quotes.list_of_line_items, name='quote_list_of_line_items'),
 	url(r'^quote_new_line_item/(?P<quote_id>[0-9]+)/$', views_quotes.new_line_item, name='quote_new_line_item'),
 	url(r'^quote_delete_line_item/(?P<line_item_id>[0-9]+)/$', views_quotes.delete_line_item, name='quote_delete_line_item'),
+	url(r'^quote_responsible_customer/(?P<quote_id>[0-9]+)/$', views_quotes.responsible_customer, name='quote_responsible_customer'),
+	url(r'^quote_responsible_customer/(?P<quote_id>[0-9]+)/(?P<customer_id>[0-9]+)/$', views_quotes.responsible_customer, name='quote_responsible_customer'),
 
 
 	#Project Information
@@ -158,6 +165,29 @@ urlpatterns = [
 
 	url(r'^document_tree_create_folder/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])/', views_document_tree.document_tree_create_folder, name='document_tree_create_folder'),
 
+	#requirements
+	url(r'^new_requirement/', views_requirements.new_requirement,
+		name="new_requirement"),
+	url(r'^requirement_information/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_information,
+		name="requirement_information"),
+	url(r'^requirement_item_edit/(?P<requirement_item_id>[0-9]+)/', views_requirements.requirement_item_edit,
+		name="requirement_item_edit"),
+	url(r'^requirement_items_list/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_items_list,
+		name="requirement_items_list"),
+	url(r'^requirement_items_new/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_items_new,
+		name="requirement_items_new"),
+	url(r'^requirement_items_new_link/(?P<requirement_item_id>[0-9]+)/$', views_requirements.requirement_items_new_link,
+		name="requirement_items_new_link"),
+url(r'^requirement_items_new_link/(?P<requirement_item_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<destination>["project","task","organisation"]+)',
+	views_requirements.requirement_items_new_link, name="requirement_items_new_link"),
+	url(r'^requirement_links_list/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_links_list,
+		name="requirement_links_list"),
+	url(r'^requirement_new_link/(?P<requirement_id>[0-9]+)/$', views_requirements.requirement_new_link,
+		name="requirement_new_link"),
+
+url(r'^requirement_new_link/(?P<requirement_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<destination>["project","task","organisation"]+)'
+	, views_requirements.requirement_new_link,
+		name="requirement_new_link"),
 
 
 ]
