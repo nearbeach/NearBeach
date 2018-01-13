@@ -9,22 +9,9 @@ def initialise_data(apps, schema_editor):
     """
     The initial setup of the database should populate certain fields with
     the correct data. Otherwise certain features of the database will
-    not function correctly. The first of such is the group permissions
-    which determine how much data/options the user will see. There are
-    4 different rows submitted;
-    1. Admin
-    2. Group Admin
-    3. User
-    4. Read Only
+    not function correctly.
     """
-    group_permissions = apps.get_model("NearBeach", "group_permissions")
     db_alias = schema_editor.connection.alias
-    group_permissions.objects.using(db_alias).bulk_create([
-        group_permissions(role="Admin"),
-        group_permissions(role="Group Admin"),
-        group_permissions(role="User"),
-        group_permissions(role="Read Only"),
-    ])
 
     # List of amount types
     list_of_amount_type = apps.get_model("NearBeach", "list_of_amount_type")

@@ -4,6 +4,7 @@ from .private_media import *
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 import uuid
+from smart_selects.db_fields import ChainedForeignKey
 
 #ENUM choices
 DISCOUNT_CHOICE=(
@@ -14,6 +15,19 @@ DISCOUNT_CHOICE=(
 IS_DELETED_CHOICE=(
 	('TRUE','TRUE'),
 	('FALSE','FALSE'),
+)
+
+PERMISSION_LEVEL=(
+	(0, 'No Permission'),
+	(1, 'Read Only'),
+	(2, 'Edit Only'),
+	(3, 'Add and Edit'),
+	(4, 'Full Permission'),
+)
+
+PERMISSION_BOOLEAN=(
+	(0, 'No Permission'),
+	(1, 'Has Permission'),
 )
 
 PRODUCT_OR_SERVICE=(
@@ -418,10 +432,18 @@ class groups(models.Model):
 		db_table="groups"
 
 class group_permissions(models.Model):
-	role=models.CharField(max_length=15)
-	
+	group_permissions_id=models.AutoField(primary_key=True)
+	permission_set=models.ForeignKey(
+		'permission_set',
+		on_delete=models.CASCADE,
+	)
+	groups=models.ForeignKey(
+		'groups',
+		on_delete=models.CASCADE,
+	)
+
 	def __str__(self):
-		return self.role.encode('utf8')
+		return str(self.permission_set)
 	
 	class Meta:
 		db_table="group_permissions"
@@ -1031,6 +1053,101 @@ class organisations_campus(models.Model):
 	
 	class Meta:
 		db_table="organisations_campus"
+
+
+class permission_set(models.Model):
+	permission_set_id=models.AutoField(primary_key=True)
+	permission_set_name=models.CharField(
+		max_length=255,
+		unique=True,
+	)
+	#BASELINE PERMISSIONS
+	administration_assign_users_to_groups=models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
+	)
+	administration_create_groups = models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
+	)
+	administration_create_permission_sets=models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
+	)
+	administration_create_users=models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
+	)
+	assign_campus_to_customer=models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
+	)
+	associate_project_and_tasks=models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
+	)
+	invoice=models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
+	)
+	invoice_product=models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
+	)
+	customer=models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
+	)
+	opportunity=models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
+	)
+	organisation=models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
+	)
+	organisation_campus=models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
+	)
+	project=models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
+	)
+	task=models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
+	)
+	"""
+	ADDITIVE PERMISSIONS
+	~~~~~~~~~~~~~~~~~~~~
+	Designed to add on extra abilities to those users who have "READ ONLY" for certain modules.
+	If a user has the ability to "EDIT" for any of these modules, then this section does not 
+	need to be populated with data.
+	"""
+	documents=models.IntegerField(
+		choices=PERMISSION_BOOLEAN,
+		default=0,
+	)
+	contact_history=models.IntegerField(
+		choices=PERMISSION_BOOLEAN,
+		default=0,
+	)
+	project_history=models.IntegerField(
+		choices=PERMISSION_BOOLEAN,
+		default=0,
+	)
+	task_history=models.IntegerField(
+		choices=PERMISSION_BOOLEAN,
+		default=0,
+	)
+
+	def __str__(self):
+		return self.permission_set_name.encode('utf8')
+
+	class Meta:
+		db_table = "permission_set"
+
 
 
 class products_and_services(models.Model):
@@ -1847,13 +1964,16 @@ class tasks_opportunity(models.Model):
 
 class user_groups(models.Model):
 	username=models.ForeignKey(User,)
-	group_id=models.ForeignKey(
+	groups=models.ForeignKey(
 		'groups',
 		on_delete=models.CASCADE,
 	)
-	user_group_permission=models.ForeignKey(
-		'group_permissions',
-		on_delete=models.CASCADE,
+	permission_set=ChainedForeignKey(
+		group_permissions,
+		chained_field='groups',
+		chained_model_field='groups',
+		show_all=False,
+		auto_choose=True,
 	)
 	date_created=models.DateTimeField(auto_now_add=True)
 	date_modified=models.DateTimeField(auto_now=True)
