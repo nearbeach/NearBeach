@@ -16,6 +16,7 @@ from django.shortcuts import render, get_object_or_404, render_to_response
 from django.template import RequestContext, loader
 from django.urls import reverse
 from .namedtuplefetchall import *
+from .user_permissions import return_user_permission_level
 
 #import python modules
 import datetime, json, simplejson, urllib, urllib2
@@ -32,6 +33,21 @@ def active_projects(request):
     active_projects_results = project.objects.filter(
         is_deleted='FALSE',
     )
+
+    """
+    The following test code will be performed to help determine if JSON is good. YAY go JSON
+    """
+    data = request.session['NearBeach_Permissions']
+
+    #administration_assign_users_to_groups
+    print("USER PERMISSION LEVEL: " +
+        str(return_user_permission_level(request,1,'administration_assign_users_to_groups'))
+    )
+
+
+    """
+    END TEMP CODE
+    """
 
     # Load the template
     t = loader.get_template('NearBeach/active_projects.html')
@@ -895,7 +911,7 @@ def is_admin(request):
 	will return
 	"""
     current_user = request.user
-    results = user_groups.objects.filter(username_id=current_user.id).aggregate(Min('user_group_permission'))
+    results = user_groups.objects.filter(username=request.user).aggregate(Min('user_group_permission'))
 
     # ADMIN
     if results.values()[0] == 1:
@@ -985,7 +1001,7 @@ def login(request):
                 user = auth.authenticate(username=username, password=password)
                 auth.login(request, user)
 
-                is_admin(request)
+                #is_admin(request)
 
             # Just double checking. :)
             if request.user.is_authenticated:
@@ -1490,13 +1506,12 @@ def new_project(request, organisations_id='', customer_id='', opportunity_id='')
 
 		FROM 
 		  user_groups join groups
-			on user_groups.group_id_id = groups.group_id
+			on user_groups.groups_id = groups.group_id
 
 		WHERE 1=1
 		AND user_groups.is_deleted = "FALSE"
 		AND user_groups.username_id = %s
-		"""
-            , [current_user.id])
+		""", [current_user.id])
         groups_results = namedtuplefetchall(cursor)
 
         organisations_results = organisations.objects.filter(is_deleted='FALSE')
@@ -2054,7 +2069,7 @@ def organisation_information(request, organisations_id):
     opportunity_permissions_results = opportunity_permissions.objects.filter(
         Q(
             Q(assigned_user=request.user)  # User has permission
-            | Q(groups_id__in=user_groups_results.values('group_id'))  # User's groups have permission
+            | Q(groups_id__in=user_groups_results.values('groups_id'))  # User's groups have permission
             | Q(all_users='TRUE')  # All users have access
         )
     )

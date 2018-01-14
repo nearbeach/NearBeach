@@ -1204,38 +1204,22 @@ class permission_set(models.Model):
 
     def natural_key(self):
         return (
-            'permission_set_id',
-            self.permission_set_id,
-            'permission_set_name',
-            self.permission_set_name,
-            'administration_assign_users_to_groups',
-            self.administration_assign_users_to_groups,
-            'administration_create_groups',
-            self.administration_create_groups,
-            'administration_create_permission_sets',
-            self.administration_create_permission_sets,
-            'administration_create_users',
-            self.administration_create_users,
-            'assign_campus_to_customer',
-            self.assign_campus_to_customer,
-            'associate_project_and_tasks',
-            self.associate_project_and_tasks,
-            'customer',
-            self.customer,
-            'invoice',
-            self.invoice,
-            'invoice_product',
-            self.invoice_product,
-            'opportunity',
-            self.opportunity,
-            'organisation',
-            self.organisation,
-            'organisation_campus',
-            self.organisation_campus,
-            'project',
-            self.project,
-            'task',
-            self.task
+            self.permission_set_id, #0
+            self.permission_set_name, #1
+            self.administration_assign_users_to_groups, #2
+            self.administration_create_groups, #3
+            self.administration_create_permission_sets, #4
+            self.administration_create_users, #5
+            self.assign_campus_to_customer, #6
+            self.associate_project_and_tasks, #7
+            self.customer, #8
+            self.invoice, #9
+            self.invoice_product, #10
+            self.opportunity, #11
+            self.organisation, #12
+            self.organisation_campus, #13
+            self.project, #14
+            self.task #15
         )
 
     #class Meta:
@@ -1245,7 +1229,8 @@ class permission_set(models.Model):
         return self.permission_set_name.encode('utf8')
 
     class Meta:
-        db_table = "permission_set"
+		db_table = "permission_set"
+
 
 
 class products_and_services(models.Model):
