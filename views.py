@@ -448,7 +448,7 @@ def customer_information(request, customer_id):
     opportunity_permissions_results = opportunity_permissions.objects.filter(
         Q(
             Q(assigned_user=request.user)  # User has permission
-            | Q(groups_id__in=user_groups_results.values('group_id'))  # User's groups have permission
+            | Q(groups_id__in=user_groups_results.values('groups_id'))  # User's groups have permission
             | Q(all_users='TRUE')  # All users have access
         )
     )
@@ -1710,13 +1710,12 @@ def new_task(request, organisations_id='', customer_id='', opportunity_id=''):
 
 		FROM 
 		  user_groups join groups
-			on user_groups.group_id_id = groups.group_id
+			on user_groups.groups_id = groups.group_id
 
 		WHERE 1=1
 		AND user_groups.is_deleted = "FALSE"
 		AND user_groups.username_id = %s
-		"""
-            , [current_user.id])
+		""",[current_user.id])
         groups_results = namedtuplefetchall(cursor)
 
         # Setup dates for initalising
@@ -2134,22 +2133,26 @@ def project_information(request, project_id):
     project_permissions = 0
     project_history_permissions = 0
 
-    project_groups_results = project_groups.objects.filter(
-        is_deleted="FALSE",
-        project_id=project.objects.get(project_id=project_id),
-    ).values('groups_id_id')
+    if request.session['is_superuser'] == True:
+        project_permissions = 4
+        project_history_permissions = 4
+    else:
+        project_groups_results = project_groups.objects.filter(
+            is_deleted="FALSE",
+            project_id=project.objects.get(project_id=project_id),
+        ).values('groups_id_id')
 
-    for row in project_groups_results:
-        pp_results = return_user_permission_level(request, row['groups_id_id'],'project')
-        ph_results = return_user_permission_level(request, row['groups_id_id'],'project_history')
+        for row in project_groups_results:
+            pp_results = return_user_permission_level(request, row['groups_id_id'],'project')
+            ph_results = return_user_permission_level(request, row['groups_id_id'],'project_history')
 
-        if pp_results > project_permissions:
-            project_permissions = pp_results
+            if pp_results > project_permissions:
+                project_permissions = pp_results
 
-        if ph_results > project_history_permissions:
-            project_history_permissions = ph_results
+            if ph_results > project_history_permissions:
+                project_history_permissions = ph_results
 
-    if project_permissions == 0 and not request.session['is_superuser'] == True:
+    if project_permissions == 0:
         # Send them to permission denied!!
         return HttpResponseRedirect(reverse(permission_denied))
 
@@ -2711,6 +2714,28 @@ def task_information(request, task_id):
 	this task is associated to. We will do a simple count(*) SQL QUERY
 	that will determine this.
 	"""
+    task_permissions = 0
+    task_history_permissions = 0
+
+    if request.session['is_superuser'] == True:
+        task_permissions = 4
+        task_history_permissions = 4
+    else:
+        task_groups_results = tasks_groups.objects.filter(
+            is_deleted="FALSE",
+            tasks_id=tasks.objects.get(tasks_id=task_id),
+        ).values('groups_id_id')
+
+        for row in task_groups_results:
+            pp_results = return_user_permission_level(request, row['groups_id_id'],'task')
+            ph_results = return_user_permission_level(request, row['groups_id_id'],'task_history')
+
+            if pp_results > task_permissions:
+                task_permissions = pp_results
+
+            if ph_results > task_history_permissions:
+                task_history_permissions = ph_results
+
     current_user = request.user
 
     # Setup connection to the database and query it
@@ -2722,7 +2747,7 @@ def task_information(request, task_id):
 		  tasks_groups
 		, user_groups
 		WHERE 1=1
-		AND tasks_groups.groups_id_id = user_groups.group_id_id
+		AND tasks_groups.groups_id_id = user_groups.groups_id
 		AND tasks_groups.is_deleted = 'FALSE'
 		AND user_groups.is_deleted = 'FALSE'
 		AND user_groups.username_id = %s
@@ -2966,6 +2991,8 @@ def task_information(request, task_id):
         'folders_results': serializers.serialize('json', folders_results),
         'media_url': settings.MEDIA_URL,
         'task_id': task_id,
+        'task_permissions': task_permissions,
+        'task_history_permissions': task_history_permissions,
     }
 
     return HttpResponse(t.render(c, request))

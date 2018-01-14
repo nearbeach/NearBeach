@@ -15,10 +15,27 @@ from django.template import  loader
 from NearBeach.forms import *
 from .models import *
 from .namedtuplefetchall import *
+from .user_permissions import return_user_permission_level
 
 
 @login_required(login_url='login')
 def information_project_assigned_users(request, project_id):
+    project_permissions = 0
+
+    if request.session['is_superuser'] == True:
+        project_permissions = 4
+    else:
+        project_groups_results = project_groups.objects.filter(
+            is_deleted="FALSE",
+            project_id=project.objects.get(project_id=project_id),
+        ).values('groups_id_id')
+
+        for row in project_groups_results:
+            pp_results = return_user_permission_level(request, row['groups_id_id'],'project')
+
+            if pp_results > project_permissions:
+                project_permissions = pp_results
+
     if request.method == "POST":
         user_results = int(request.POST.get("add_user_select"))
         user_instance = auth.models.User.objects.get(pk=user_results)
@@ -74,12 +91,29 @@ def information_project_assigned_users(request, project_id):
             'user_id__first_name',
             'user_id__last_name',
         ).distinct(),
+        'project_permissions': project_permissions,
     }
 
     return HttpResponse(t.render(c, request))
 
 @login_required(login_url='login')
 def information_project_costs(request, project_id):
+    project_permissions = 0
+
+    if request.session['is_superuser'] == True:
+        project_permissions = 4
+    else:
+        project_groups_results = project_groups.objects.filter(
+            is_deleted="FALSE",
+            project_id=project.objects.get(project_id=project_id),
+        ).values('groups_id_id')
+
+        for row in project_groups_results:
+            pp_results = return_user_permission_level(request, row['groups_id_id'],'project')
+
+            if pp_results > project_permissions:
+                project_permissions = pp_results
+
     if request.method == "POST":
         form = information_project_costs_form(request.POST, request.FILES)
         if form.is_valid():
@@ -104,6 +138,7 @@ def information_project_costs(request, project_id):
     c = {
         'information_project_costs_form': information_project_costs_form(),
         'costs_results': costs_results,
+        'project_permissions': project_permissions,
     }
 
     return HttpResponse(t.render(c, request))
@@ -111,6 +146,22 @@ def information_project_costs(request, project_id):
 
 @login_required(login_url='login')
 def information_project_customers(request, project_id):
+    project_permissions = 0
+
+    if request.session['is_superuser'] == True:
+        project_permissions = 4
+    else:
+        project_groups_results = project_groups.objects.filter(
+            is_deleted="FALSE",
+            project_id=project.objects.get(project_id=project_id),
+        ).values('groups_id_id')
+
+        for row in project_groups_results:
+            pp_results = return_user_permission_level(request, row['groups_id_id'],'project')
+
+            if pp_results > project_permissions:
+                project_permissions = pp_results
+
     if request.method == "POST":
         # The user has tried adding a customer
         customer_id = int(request.POST.get("add_customer_select"))
@@ -181,6 +232,7 @@ def information_project_customers(request, project_id):
         'project_results': project_results,
         'new_customers_results': new_customers_results,
         'project_customers_results': project_customers_results,
+        'project_permissions': project_permissions,
     }
 
     return HttpResponse(t.render(c, request))
@@ -190,6 +242,28 @@ def information_project_customers(request, project_id):
 
 @login_required(login_url='login')
 def information_project_history(request, project_id):
+    project_permissions = 0
+    project_history_permissions = 0
+
+    if request.session['is_superuser'] == True:
+        project_permissions = 4
+        project_history_permissions = 4
+    else:
+        project_groups_results = project_groups.objects.filter(
+            is_deleted="FALSE",
+            project_id=project.objects.get(project_id=project_id),
+        ).values('groups_id_id')
+
+        for row in project_groups_results:
+            pp_results = return_user_permission_level(request, row['groups_id_id'],'project')
+            ph_results = return_user_permission_level(request, row['groups_id_id'],'project_history')
+
+            if pp_results > project_permissions:
+                project_permissions = pp_results
+
+            if ph_results > project_history_permissions:
+                project_history_permissions = ph_results
+
     if request.method == "POST":
         form = information_project_history_form(request.POST, request.FILES)
         if form.is_valid():
@@ -223,6 +297,8 @@ def information_project_history(request, project_id):
         'information_project_history_form': information_project_history_form(),
         'project_history_results': project_history_results,
         'project_id': project_id,
+        'project_permissions': project_permissions,
+        'project_history_permissions': project_history_permissions,
     }
 
     return HttpResponse(t.render(c, request))

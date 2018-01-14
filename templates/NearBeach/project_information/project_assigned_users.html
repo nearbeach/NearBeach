@@ -1,6 +1,6 @@
 {% csrf_token %}
 <h2>Assigned Users</h2>
-{% if users_results %}
+{% if users_results and project_permissions > 1 %}
     <select id="add_user_select" name="add_user_select" onchange="enable_disable_add_user()">
         <option value="------">-------</option>
         {% for row in users_results %}

@@ -15,10 +15,27 @@ from django.template import  loader
 from NearBeach.forms import *
 from .models import *
 from .namedtuplefetchall import *
+from .user_permissions import return_user_permission_level
 
 
 @login_required(login_url='login')
 def information_task_assigned_users(request, task_id):
+    task_permissions = 0
+
+    if request.session['is_superuser'] == True:
+        task_permissions = 4
+    else:
+        task_groups_results = tasks_groups.objects.filter(
+            is_deleted="FALSE",
+            tasks_id=tasks.objects.get(tasks_id=task_id),
+        ).values('groups_id_id')
+
+        for row in task_groups_results:
+            pp_results = return_user_permission_level(request, row['groups_id_id'],'task')
+
+            if pp_results > task_permissions:
+                task_permissions = pp_results
+
     if request.method == "POST":
         user_results = int(request.POST.get("add_user_select"))
         user_instance = auth.models.User.objects.get(pk=user_results)
@@ -73,6 +90,7 @@ def information_task_assigned_users(request, task_id):
             'user_id__first_name',
             'user_id__last_name',
         ).distinct(),
+        'task_permissions': task_permissions,
     }
 
     return HttpResponse(t.render(c, request))
@@ -80,6 +98,22 @@ def information_task_assigned_users(request, task_id):
 
 @login_required(login_url='login')
 def information_task_costs(request, task_id):
+    task_permissions = 0
+
+    if request.session['is_superuser'] == True:
+        task_permissions = 4
+    else:
+        task_groups_results = tasks_groups.objects.filter(
+            is_deleted="FALSE",
+            tasks_id=tasks.objects.get(tasks_id=task_id),
+        ).values('groups_id_id')
+
+        for row in task_groups_results:
+            pp_results = return_user_permission_level(request, row['groups_id_id'],'task')
+
+            if pp_results > task_permissions:
+                task_permissions = pp_results
+
     # Get the data from the form
     if request.method == "POST":
         form = information_task_costs_form(request.POST, request.FILES)
@@ -108,6 +142,7 @@ def information_task_costs(request, task_id):
         'costs_results': costs_results,
         'information_task_costs_form': information_task_costs_form(),
         'task_id': task_id,
+        'task_permissions': task_permissions,
     }
 
     return HttpResponse(t.render(c, request))
@@ -115,6 +150,22 @@ def information_task_costs(request, task_id):
 
 @login_required(login_url='login')
 def information_task_customers(request, task_id):
+    task_permissions = 0
+
+    if request.session['is_superuser'] == True:
+        task_permissions = 4
+    else:
+        task_groups_results = tasks_groups.objects.filter(
+            is_deleted="FALSE",
+            tasks_id=tasks.objects.get(tasks_id=task_id),
+        ).values('groups_id_id')
+
+        for row in task_groups_results:
+            pp_results = return_user_permission_level(request, row['groups_id_id'],'task')
+
+            if pp_results > task_permissions:
+                task_permissions = pp_results
+
     if request.method == "POST":
         # The user has tried adding a customer
         customer_id = int(request.POST.get("add_customer_select"))
@@ -189,6 +240,7 @@ def information_task_customers(request, task_id):
         'task_results': task_results,
         'new_customers_results': new_customers_results,
         'tasks_customers_results': tasks_customers_results,
+        'task_permissions': task_permissions,
     }
 
     return HttpResponse(t.render(c, request))
@@ -196,6 +248,28 @@ def information_task_customers(request, task_id):
 
 @login_required(login_url='login')
 def information_task_history(request, task_id):
+    task_permissions = 0
+    task_history_permissions = 0
+
+    if request.session['is_superuser'] == True:
+        task_permissions = 4
+        task_history_permissions = 4
+    else:
+        task_groups_results = tasks_groups.objects.filter(
+            is_deleted="FALSE",
+            tasks_id=tasks.objects.get(tasks_id=task_id),
+        ).values('groups_id_id')
+
+        for row in task_groups_results:
+            pp_results = return_user_permission_level(request, row['groups_id_id'],'task')
+            ph_results = return_user_permission_level(request, row['groups_id_id'],'task_history')
+
+            if pp_results > task_permissions:
+                task_permissions = pp_results
+
+            if ph_results > task_history_permissions:
+                task_history_permissions = ph_results
+
     # Get the data from the form
     if request.method == "POST":
         form = information_task_history_form(request.POST, request.FILES)
@@ -230,6 +304,8 @@ def information_task_history(request, task_id):
     c = {
         'information_task_history_form': information_task_history_form(),
         'task_history_results': task_history_results,
+        'task_permissions': task_permissions,
+        'task_history_permissions': task_history_permissions,
     }
 
     return HttpResponse(t.render(c, request))

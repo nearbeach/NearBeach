@@ -64,7 +64,9 @@
     </form>
         <h2>Associated Tasks</h2>
         {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
-            <a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
+            {% if project_permissions > 1 %}
+                <a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
+            {% endif %}
         {% endif %}
         {% if associated_tasks_results %}
                 <table>

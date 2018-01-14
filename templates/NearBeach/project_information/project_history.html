@@ -1,11 +1,13 @@
 {% csrf_token %}
 <h2>Project History</h2>
 <ul>
-    <li>{{ information_project_history_form.project_history }}</li>
-    <li>
-        <input type="submit" name="project_history_submit" value="Submit">
-        <a onclick="clear_history()" href="javascript:void(0);">Clear</a>
-    </li>
+    {% if project_permissions > 1 or project_history_permissions > 0 %}
+        <li>{{ information_project_history_form.project_history }}</li>
+        <li>
+            <input type="submit" name="project_history_submit" value="Submit">
+            <a onclick="clear_history()" href="javascript:void(0);">Clear</a>
+        </li>
+    {% endif %}
     {% if project_history_results %}
         {% for row in project_history_results %}
             <li>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}</li>
