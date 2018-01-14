@@ -189,7 +189,7 @@ url(r'^requirement_new_link/(?P<requirement_id>[0-9]+)/(?P<location_id>[0-9]+)/(
 	, views_requirements.requirement_new_link,
 		name="requirement_new_link"),
 
-url(r'^user_permissions', views_lookup.user_permissions, name='user_permissions'),
+url(r'^user_permissions', views_lookup.lookup_user_permissions, name='user_permissions'),
 
 url(r'^chaining/', include('smart_selects.urls')),
 ]

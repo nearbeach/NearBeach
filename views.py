@@ -25,89 +25,13 @@ def active_projects(request):
     # Get username_id from User
     current_user = request.user
 
-    # Setup connection to the database and query it
-    cursor = connection.cursor()
-
-    cursor.execute("""
-    SELECT 
-      project.project_id AS "project_id"
-    , '' AS "task_id"
-    , project.project_name AS "description"
-    , project.project_end_date AS "end_date"
-    , organisations.organisation_name AS "organisation_name"
-    , organisations.organisations_id AS "organisations_id"
-    
-    
-    
-    from 
-      project left join project_tasks
-        on project.project_id = project_tasks.project_id
-        and project_tasks.is_deleted = 'FALSE'
-    , project_groups
-    , user_groups
-    , organisations
-    
-    
-    where 1 = 1
-    and project.project_status IN ('New','Open')
-    and project.project_status IN ('New','Open')
-    and project.project_id = project_groups.project_id_id
-    and project_groups.groups_id_id = user_groups.group_id_id
-    and user_groups.username_id = %s
-    and project.organisations_id_id=organisations.organisations_id
-    
-    
-    UNION
-    
-    select 
-      project_tasks.project_id AS `Project ID`
-    , tasks.tasks_id AS `Task ID`
-    , tasks.task_short_description AS `Description`
-    , tasks.task_end_date AS `End Date` 
-    , organisations.organisation_name AS "organisation_name"
-    , organisations.organisations_id AS "organisations_id"
-    
-    from 
-      tasks left join project_tasks
-        on tasks.tasks_id = project_tasks.task_id 
-        and project_tasks.is_deleted = "FALSE"
-    , tasks_groups
-    , user_groups
-    , organisations
-    
-    
-    where 1 = 1
-    and tasks.task_status in ('New','Open')
-    and tasks.tasks_id = tasks_groups.tasks_id_id
-    and tasks_groups.groups_id_id = user_groups.group_id_id
-    and user_groups.username_id = %s
-    and tasks.organisations_id_id=organisations.organisations_id
-        
-    UNION
-    
-    select 
-     project_tasks.project_id AS `Project ID`
-    , tasks.tasks_id AS `Task ID`
-    , tasks.task_short_description AS `Description`
-    , tasks.task_end_date AS `End Date` 
-    , organisations.organisation_name AS "organisation_name"
-    , organisations.organisations_id AS "organisations_id"
-    
-    from 
-      tasks left join project_tasks
-        on tasks.tasks_id = project_tasks.task_id 
-        and project_tasks.is_deleted = "FALSE"
-    , organisations
-    
-    
-    
-    where 1 = 1
-    and tasks.task_status in ('New','Open')
-    and tasks.task_assigned_to_id = %s
-    and tasks.organisations_id_id=organisations.organisations_id
-    """, [current_user.id, current_user.id, current_user.id])
-
-    active_projects_results = namedtuplefetchall(cursor)
+    ###
+    #BUG
+    #Might remove the active projects features.
+    ###
+    active_projects_results = project.objects.filter(
+        is_deleted='FALSE',
+    )
 
     # Load the template
     t = loader.get_template('NearBeach/active_projects.html')
@@ -1065,24 +989,22 @@ def login(request):
 
             # Just double checking. :)
             if request.user.is_authenticated:
-				"""				
-				The user is now authenticated. We now want to create the cookies required
-				for this session's information. Such information would be
-				1.) Is the user an admin?
-				2.) What are their groups and their group permissions
-				
-				This information will be used to help quickly tell the server information
-				about the user without having to constantly look it up.
-				"""
+                """
+                The user has been authenticated. Now the system will store the user's permissions and groups 
+                into cookies. :)
+                """
+                user_groups_results = user_groups.objects.filter(
+                    username=request.user,
+                    is_deleted='FALSE',
+                )
+                request.session['NearBeach_Permissions'] = serializers.serialize(
+                    'json',
+                    user_groups_results
+                )
 
-				#from django.core import serializers
-				#data = serializers.serialize("xml", SomeModel.objects.all())
-				request.session['user_group_results'] = serializers.serialize('json',user_groups.objects.filter(
-					username=request.user,
-					is_deleted='FALSE'
-				))
-
-				return HttpResponseRedirect(reverse('active_projects'))
+                return HttpResponseRedirect(reverse('active_projects'))
+            else:
+                print("User not authenticated")
         else:
             print(form.errors)
 

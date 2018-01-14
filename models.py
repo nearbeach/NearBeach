@@ -408,28 +408,47 @@ class folders(models.Model):
 
 
 class groups(models.Model):
-	group_id=models.AutoField(primary_key=True)
-	group_name=models.CharField(
+	group_id = models.AutoField(primary_key=True)
+	group_name = models.CharField(
 		max_length=50,
 		unique=True
 	)
-	date_created=models.DateTimeField(auto_now_add=True)
-	date_modified=models.DateTimeField(auto_now=True)
-	change_user=models.ForeignKey(
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
 		User,
 		on_delete=models.CASCADE,
 		related_name='%(class)s_change_user'
 	)
-	is_deleted=models.CharField(
+	is_deleted = models.CharField(
 		max_length=5,
 		choices=IS_DELETED_CHOICE,
 		default='FALSE'
 	)
+
+	def natural_key(self):
+		return (
+			self.group_id,
+			self.group_name
+		)
+
 	def __str__(self):
 		return self.group_name.encode('utf8')
-	
+
 	class Meta:
-		db_table="groups"
+		db_table = "groups"
+
+
+class groups_manager(models.Manager):
+	def get_by_natural_key(
+			self,
+			group_id,
+			group_name
+	):
+		return self.get(
+			group_id=group_id,
+			group_name=group_name
+		)
 
 class group_permissions(models.Model):
 	group_permissions_id=models.AutoField(primary_key=True)
@@ -437,9 +456,9 @@ class group_permissions(models.Model):
 		'permission_set',
 		on_delete=models.CASCADE,
 	)
-	groups=models.ForeignKey(
+	groups = models.ForeignKey(
 		'groups',
-		on_delete=models.CASCADE,
+		on_delete=models.CASCADE
 	)
 
 	def __str__(self):
@@ -1055,99 +1074,178 @@ class organisations_campus(models.Model):
 		db_table="organisations_campus"
 
 
+class permission_set_manager(models.Manager):
+    def get_by_natural_key(
+            self,
+            permission_set_id,
+            permission_set_name,
+            administration_assign_users_to_groups,
+            administration_create_groups,
+            administration_create_permission_sets,
+            administration_create_users,
+            assign_campus_to_customer,
+            associate_project_and_tasks,
+            customer,
+            invoice,
+            invoice_product,
+            opportunity,
+            organisation,
+            organisation_campus,
+            project,
+            task
+    ):
+        return self.get(
+            permission_set_id=permission_set_id,
+            permission_set_name=permission_set_name,
+            administration_assign_users_to_groups=administration_assign_users_to_groups,
+            administration_create_groups=administration_create_groups,
+            administration_create_permission_sets=administration_create_permission_sets,
+            administration_create_users=administration_create_users,
+            assign_campus_to_customer=assign_campus_to_customer,
+            associate_project_and_tasks=associate_project_and_tasks,
+            customer=customer,
+            invoice=invoice,
+            invoice_product=invoice_product,
+            opportunity=opportunity,
+            organisation=organisation,
+            organisation_campus=organisation_campus,
+            project=project,
+            task=task
+        )
+
 class permission_set(models.Model):
-	permission_set_id=models.AutoField(primary_key=True)
-	permission_set_name=models.CharField(
-		max_length=255,
-		unique=True,
-	)
-	#BASELINE PERMISSIONS
-	administration_assign_users_to_groups=models.IntegerField(
-		choices=PERMISSION_LEVEL,
-		default=0,
-	)
-	administration_create_groups = models.IntegerField(
-		choices=PERMISSION_LEVEL,
-		default=0,
-	)
-	administration_create_permission_sets=models.IntegerField(
-		choices=PERMISSION_LEVEL,
-		default=0,
-	)
-	administration_create_users=models.IntegerField(
-		choices=PERMISSION_LEVEL,
-		default=0,
-	)
-	assign_campus_to_customer=models.IntegerField(
-		choices=PERMISSION_LEVEL,
-		default=0,
-	)
-	associate_project_and_tasks=models.IntegerField(
-		choices=PERMISSION_LEVEL,
-		default=0,
-	)
-	invoice=models.IntegerField(
-		choices=PERMISSION_LEVEL,
-		default=0,
-	)
-	invoice_product=models.IntegerField(
-		choices=PERMISSION_LEVEL,
-		default=0,
-	)
-	customer=models.IntegerField(
-		choices=PERMISSION_LEVEL,
-		default=0,
-	)
-	opportunity=models.IntegerField(
-		choices=PERMISSION_LEVEL,
-		default=0,
-	)
-	organisation=models.IntegerField(
-		choices=PERMISSION_LEVEL,
-		default=0,
-	)
-	organisation_campus=models.IntegerField(
-		choices=PERMISSION_LEVEL,
-		default=0,
-	)
-	project=models.IntegerField(
-		choices=PERMISSION_LEVEL,
-		default=0,
-	)
-	task=models.IntegerField(
-		choices=PERMISSION_LEVEL,
-		default=0,
-	)
-	"""
-	ADDITIVE PERMISSIONS
-	~~~~~~~~~~~~~~~~~~~~
-	Designed to add on extra abilities to those users who have "READ ONLY" for certain modules.
-	If a user has the ability to "EDIT" for any of these modules, then this section does not 
-	need to be populated with data.
-	"""
-	documents=models.IntegerField(
-		choices=PERMISSION_BOOLEAN,
-		default=0,
-	)
-	contact_history=models.IntegerField(
-		choices=PERMISSION_BOOLEAN,
-		default=0,
-	)
-	project_history=models.IntegerField(
-		choices=PERMISSION_BOOLEAN,
-		default=0,
-	)
-	task_history=models.IntegerField(
-		choices=PERMISSION_BOOLEAN,
-		default=0,
-	)
+    objects = permission_set_manager()
 
-	def __str__(self):
-		return self.permission_set_name.encode('utf8')
+    permission_set_id = models.AutoField(primary_key=True)
+    permission_set_name = models.CharField(
+        max_length=255,
+        unique=True,
+    )
+    # BASELINE PERMISSIONS
+    administration_assign_users_to_groups = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
+    administration_create_groups = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
+    administration_create_permission_sets = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
+    administration_create_users = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
+    assign_campus_to_customer = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
+    associate_project_and_tasks = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
+    invoice = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
+    invoice_product = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
+    customer = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
+    opportunity = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
+    organisation = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
+    organisation_campus = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
+    project = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
+    task = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
+    """
+    ADDITIVE PERMISSIONS
+    ~~~~~~~~~~~~~~~~~~~~
+    Designed to add on extra abilities to those users who have "READ ONLY" for certain modules.
+    If a user has the ability to "EDIT" for any of these modules, then this section does not 
+    need to be populated with data.
+    """
+    documents = models.IntegerField(
+        choices=PERMISSION_BOOLEAN,
+        default=0,
+    )
+    contact_history = models.IntegerField(
+        choices=PERMISSION_BOOLEAN,
+        default=0,
+    )
+    project_history = models.IntegerField(
+        choices=PERMISSION_BOOLEAN,
+        default=0,
+    )
+    task_history = models.IntegerField(
+        choices=PERMISSION_BOOLEAN,
+        default=0,
+    )
 
-	class Meta:
-		db_table = "permission_set"
+    def natural_key(self):
+        return (
+            'permission_set_id',
+            self.permission_set_id,
+            'permission_set_name',
+            self.permission_set_name,
+            'administration_assign_users_to_groups',
+            self.administration_assign_users_to_groups,
+            'administration_create_groups',
+            self.administration_create_groups,
+            'administration_create_permission_sets',
+            self.administration_create_permission_sets,
+            'administration_create_users',
+            self.administration_create_users,
+            'assign_campus_to_customer',
+            self.assign_campus_to_customer,
+            'associate_project_and_tasks',
+            self.associate_project_and_tasks,
+            'customer',
+            self.customer,
+            'invoice',
+            self.invoice,
+            'invoice_product',
+            self.invoice_product,
+            'opportunity',
+            self.opportunity,
+            'organisation',
+            self.organisation,
+            'organisation_campus',
+            self.organisation_campus,
+            'project',
+            self.project,
+            'task',
+            self.task
+        )
 
+    #class Meta:
+    #    unique_together = (('first_name', 'last_name'),)
+
+    def __str__(self):
+        return self.permission_set_name.encode('utf8')
+
+    class Meta:
+        db_table = "permission_set"
 
 
 class products_and_services(models.Model):
@@ -1968,12 +2066,9 @@ class user_groups(models.Model):
 		'groups',
 		on_delete=models.CASCADE,
 	)
-	permission_set=ChainedForeignKey(
-		group_permissions,
-		chained_field='groups',
-		chained_model_field='groups',
-		show_all=False,
-		auto_choose=True,
+	permission_set=models.ForeignKey(
+		'permission_set',
+		on_delete=models.CASCADE,
 	)
 	date_created=models.DateTimeField(auto_now_add=True)
 	date_modified=models.DateTimeField(auto_now=True)
@@ -1990,3 +2085,4 @@ class user_groups(models.Model):
 
 	class Meta:
 		db_table="user_groups"	
+
