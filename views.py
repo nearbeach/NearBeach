@@ -34,21 +34,6 @@ def active_projects(request):
         is_deleted='FALSE',
     )
 
-    """
-    The following test code will be performed to help determine if JSON is good. YAY go JSON
-    """
-    data = request.session['NearBeach_Permissions']
-
-    #administration_assign_users_to_groups
-    print("USER PERMISSION LEVEL: " +
-        str(return_user_permission_level(request,1,'administration_assign_users_to_groups'))
-    )
-
-
-    """
-    END TEMP CODE
-    """
-
     # Load the template
     t = loader.get_template('NearBeach/active_projects.html')
 
@@ -904,29 +889,6 @@ def index(request):
     return HttpResponseRedirect(reverse('login'))
 
 
-@login_required(login_url='login')
-def is_admin(request):
-    """
-	We will determine if the user is an administrator. Then we
-	will return
-	"""
-    current_user = request.user
-    results = user_groups.objects.filter(username=request.user).aggregate(Min('user_group_permission'))
-
-    # ADMIN
-    if results.values()[0] == 1:
-        request.session['IS_ADMIN'] = 'TRUE'
-    else:
-        request.session['IS_ADMIN'] = 'FALSE'
-
-    # Group Admin
-    if results.values()[0] == 2:
-        request.session['IS_GROUP_ADMIN'] = 'TRUE'
-    else:
-        request.session['IS_GROUP_ADMIN'] = 'FALSE'
-
-    return
-
 
 def login(request):
     """
@@ -994,7 +956,6 @@ def login(request):
                     user = auth.authenticate(username=username, password=password)
                     auth.login(request, user)
 
-                    is_admin(request)
 
 
             else:
@@ -1015,8 +976,12 @@ def login(request):
                 )
                 request.session['NearBeach_Permissions'] = serializers.serialize(
                     'json',
-                    user_groups_results
+                    user_groups_results,
+                    use_natural_foreign_keys=True,
+                    use_natural_primary_keys=True
                 )
+                request.session['is_superuser'] = request.user.is_superuser
+
 
                 return HttpResponseRedirect(reverse('active_projects'))
             else:
@@ -2162,37 +2127,31 @@ END TEMP DOCUMENT
 @login_required(login_url='login')
 def project_information(request, project_id):
     """
-	We need to determine if the user has access to any of the groups that
-	this project is associated to. We will do a simple count(*) SQL QUERY
-	that will determine this.
-	"""
-    current_user = request.user
+    The project permissions. The query looks up ALL the groups associated to this project currently and searches
+    for the user's MAXIMUM user_level_permission. This will determine if the user can edit etc.
+    If the highest user_level_permission = 0, then the user is redirected to the access denied page.
+    """
+    project_permissions = 0
+    project_history_permissions = 0
 
-    # Setup connection to the database and query it
-    cursor = connection.cursor()
+    project_groups_results = project_groups.objects.filter(
+        is_deleted="FALSE",
+        project_id=project.objects.get(project_id=project_id),
+    ).values('groups_id_id')
 
-    cursor.execute("""
-		SELECT COUNT(*)
-		FROM
-		  project_groups
-		, user_groups
-		
-		WHERE 1=1
-		AND project_groups.groups_id_id = user_groups.group_id_id
-		AND project_groups.is_deleted = 'FALSE'
-		AND user_groups.is_deleted = 'FALSE'
-		AND user_groups.username_id = %s
-		AND project_groups.project_id_id = %s
-	""", [current_user.id, project_id])
-    has_permission = cursor.fetchall()
+    for row in project_groups_results:
+        pp_results = return_user_permission_level(request, row['groups_id_id'],'project')
+        ph_results = return_user_permission_level(request, row['groups_id_id'],'project_history')
 
-    if not has_permission[0][0] == 1 and not request.session['IS_ADMIN'] == 'TRUE':
+        if pp_results > project_permissions:
+            project_permissions = pp_results
+
+        if ph_results > project_history_permissions:
+            project_history_permissions = ph_results
+
+    if project_permissions == 0 and not request.session['is_superuser'] == True:
         # Send them to permission denied!!
-        return HttpResponseRedirect(
-            reverse(
-                permission_denied,
-            )
-        )
+        return HttpResponseRedirect(reverse(permission_denied))
 
     """
 	There are two buttons on the project information page. Both will come
@@ -2200,7 +2159,7 @@ def project_information(request, project_id):
 	this project.
 	"""
     # Get the data from the form if the information has been submitted
-    if request.method == "POST":
+    if request.method == "POST" and project_permissions >= 2: #Greater than edit :)
         form = project_information_form(request.POST, request.FILES)
         if form.is_valid():
             # Define the data we will edit
@@ -2298,6 +2257,7 @@ def project_information(request, project_id):
 
     # Obtain the required data
     project_history_results = project_history.objects.filter(project_id=project_id, is_deleted='FALSE')
+    cursor = connection.cursor()
     cursor.execute(
         """
         SELECT DISTINCT
@@ -2418,6 +2378,8 @@ def project_information(request, project_id):
         'media_url': settings.MEDIA_URL,
         'quote_results': quote_results,
         'project_id': project_id,
+        'project_permissions': project_permissions,
+        'project_history_permissions': project_history_permissions,
     }
 
     return HttpResponse(t.render(c, request))

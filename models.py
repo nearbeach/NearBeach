@@ -1092,7 +1092,11 @@ class permission_set_manager(models.Manager):
             organisation,
             organisation_campus,
             project,
-            task
+            task,
+			documents,
+			contact_history,
+			project_history,
+			task_history,
     ):
         return self.get(
             permission_set_id=permission_set_id,
@@ -1110,7 +1114,11 @@ class permission_set_manager(models.Manager):
             organisation=organisation,
             organisation_campus=organisation_campus,
             project=project,
-            task=task
+            task=task,
+			documents=documents,
+			contact_history=contact_history,
+			project_history=project_history,
+			task_history=task_history,
         )
 
 class permission_set(models.Model):
@@ -1219,7 +1227,11 @@ class permission_set(models.Model):
             self.organisation, #12
             self.organisation_campus, #13
             self.project, #14
-            self.task #15
+            self.task, #15
+			self.documents, #16
+			self.contact_history, #17
+			self.project_history, #18
+			self.task_history #19
         )
 
     #class Meta:

@@ -42,5 +42,6 @@ def permission_section_to_number(permission_section):
         "organisation_campus": 13,
         "project": 14,
         "task": 15,
+
     }
     return switcher.get(permission_section,0)
