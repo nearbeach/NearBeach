@@ -349,6 +349,19 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
 
 @login_required(login_url='login')
 def customer_information(request, customer_id):
+    customer_permissions = 0
+
+    if request.session['is_superuser'] == True:
+        customer_permissions = 4
+    else:
+        pp_results = return_user_permission_level(request, None,'customer')
+
+        if pp_results > customer_permissions:
+            customer_permissions = pp_results
+
+    if customer_permissions == 0:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse('permission_denied'))
     """
 	If the user is not logged in, we want to send them to the login page.
 	This function should be in ALL webpage requests except for login and
@@ -357,7 +370,7 @@ def customer_information(request, customer_id):
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse('login'))
 
-    if request.method == "POST":
+    if request.method == "POST" and customer_permissions > 1:
         # Save everything!
         form = customer_information_form(request.POST, request.FILES)
         if form.is_valid():
@@ -511,6 +524,7 @@ def customer_information(request, customer_id):
         'opportunity_results': opportunity_results,
         'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
         'customer_id': customer_id,
+        'customer_permissions': customer_permissions,
     }
 
     return HttpResponse(t.render(c, request))
@@ -981,7 +995,6 @@ def login(request):
                     use_natural_primary_keys=True
                 )
                 request.session['is_superuser'] = request.user.is_superuser
-
 
                 return HttpResponseRedirect(reverse('active_projects'))
             else:
@@ -1981,8 +1994,34 @@ def opportunity_information(request, opportunity_id):
 
 @login_required(login_url='login')
 def organisation_information(request, organisations_id):
+    organisation_permissions = 0
+    organisation_campus_permissions = 0
+    customer_permissions = 0
+
+    if request.session['is_superuser'] == True:
+        organisation_permissions = 4
+        organisation_campus_permissions = 4
+        customer_permissions = 4
+    else:
+        pp_results = return_user_permission_level(request, None,'organisation')
+        ph_results = return_user_permission_level(request, None,'organisation_campus')
+        pb_results = return_user_permission_level(request, None,'customer')
+
+        if pp_results > organisation_permissions:
+            organisation_permissions = pp_results
+
+        if ph_results > organisation_campus_permissions:
+            organisation_campus_permissions = ph_results
+
+        if pb_results > customer_permissions:
+            customer_permissions = pb_results
+
+    if organisation_permissions == 0:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     # Get the data from the form if the information has been submitted
-    if request.method == "POST":
+    if request.method == "POST" and organisation_permissions > 1:
         form = organisation_information_form(request.POST, request.FILES)
         if form.is_valid():
             current_user = request.user
@@ -2074,6 +2113,9 @@ def organisation_information(request, organisations_id):
         'opportunity_results': opportunity_results,
         'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
         'organisations_id': organisations_id,
+        'organisation_permissions': organisation_permissions,
+        'organisation_campus_permissions': organisation_campus_permissions,
+        'customer_permissions': customer_permissions,
     }
 
     return HttpResponse(t.render(c, request))

@@ -5,22 +5,7 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
-<script>
-	function on_page_load() {
-	    //Load AJAX components
-        load_contact_history();
-        load_organisation_documents_list();
-
-        //Autoscale all textarea
-        autoscale_textarea();
-
-        //Fix up just contact history's input textarea
-        document.getElementById("id_contact_history").style.height = "200px";
-
-
-        initiate_dates();
-	}
-</script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <body onload="on_page_load()">
     <form action="{% url 'organisation_information' organisation_results.organisations_id %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
@@ -34,33 +19,42 @@
             <li>{{ organisation_information_form.organisation_name }}</li>
             <li>{{ organisation_information_form.organisation_website }}</li>
         </ul>
-        <input type="submit" name="submit_contact" value="Update"/>
-        <h2>Organisation Campus'</h2>
+        {% if organisation_permissions > 1 %}
+            <input type="submit" name="submit_contact" value="Update"/>
+        {% endif %}
+        {% if organisation_campus_permissions > 0 %}
+            <h2>Organisation Campus'</h2>
+            {% if organisation_campus_permissions > 1 %}
+                <a href="{% url 'new_campus' organisation_results.organisations_id %}">New Campus</a>
+            {% endif %}
+            <table>
+            <tr class="header"><td>Campus Nickname</td><td>Campus Location</td><td>Campus Address</td></tr>
+            {% for campus in campus_results %}
+                <tr>
+                <td><a href="{% url 'campus_information' campus.pk %}">{{ campus.campus_nickname }}</a></td>
+                <td>{{ campus.campus_country_id }} - {{ campus.campus_region_id }}</td>
+                <td>{{ campus.campus_address1 }}<br />{{ campus.campus_address2 }}<br />{{ campus.campus_address3 }}{{ campus.campus_suburb }}</td>
+                </tr>
+            {% endfor %}
+            </table>
+        {% endif %}
+        {% if customer_permissions > 0 %}
+            <h2>Organisation Contacts</h2>
+            {% if customer_permissions > 1 %}
+                <a href="{% url 'new_customer' organisation_results.organisations_id%}">New Customer</a>
+            {% endif %}
+            <table>
+            <tr class="header"><td>Name</td><td>Email</td></tr>
+            {% for customer in customers_results %}
+                <tr>
+                <td><a href="{% url 'customer_information' customer.customer_id %}">{{ customer.customer_first_name }} {{ customer.customer_last_name }}</a></td>
+                <td>{{ customer.customer_email }}</td>
 
-        <a href="{% url 'new_campus' organisation_results.organisations_id %}">New Campus</a>
-        <table>
-        <tr class="header"><td>Campus Nickname</td><td>Campus Location</td><td>Campus Address</td></tr>
-        {% for campus in campus_results %}
-            <tr>
-            <td><a href="{% url 'campus_information' campus.pk %}">{{ campus.campus_nickname }}</a></td>
-            <td>{{ campus.campus_country_id }} - {{ campus.campus_region_id }}</td>
-            <td>{{ campus.campus_address1 }}<br />{{ campus.campus_address2 }}<br />{{ campus.campus_address3 }}{{ campus.campus_suburb }}</td>
-            </tr>
-        {% endfor %}
-        </table>
-        <h2>Organisation Contacts</h2>
-        <a href="{% url 'new_customer' organisation_results.organisations_id%}">New Customer</a>
-        <table>
-        <tr class="header"><td>Name</td><td>Email</td></tr>
-        {% for customer in customers_results %}
-            <tr>
-            <td><a href="{% url 'customer_information' customer.customer_id %}">{{ customer.customer_first_name }} {{ customer.customer_last_name }}</a></td>
-            <td>{{ customer.customer_email }}</td>
 
-
-            </tr>
-        {% endfor %}
-        </table>
+                </tr>
+            {% endfor %}
+            </table>
+        {% endif %}
     </form>
 
     <form method="post" class="organisation_contact_history" id="organisation_contact_history" enctype="multipart/form-data">
@@ -75,10 +69,12 @@
 
 
         <h2>Associated Projects & Tasks</h2>
-        <ul>
-            <li><a href="{% url 'new_project' organisation_results.organisations_id %}">Create New Project</a></li>
-            <li><a href="{% url 'new_task' organisation_results.organisations_id %}">Create New Task</a></li>
-        </ul>
+        {% if organisation_permissions > 1 %}
+            <ul>
+                <li><a href="{% url 'new_project' organisation_results.organisations_id %}">Create New Project</a></li>
+                <li><a href="{% url 'new_task' organisation_results.organisations_id %}">Create New Task</a></li>
+            </ul>
+        {% endif %}
 
         <h2>Assigned Projects</h2>
         {% if project_results %}
@@ -262,7 +258,23 @@
     }
     var csrftoken = getCookie('csrftoken');
 
+	function on_page_load() {
+	    //Load AJAX components
+        load_contact_history();
+        load_organisation_documents_list();
 
+        //Autoscale all textarea
+        autoscale_textarea();
+
+        //Fix up just contact history's input textarea
+        //document.getElementById("id_contact_history").style.height = "200px";
+
+        //THIS WILL NEED TO BE MOVED TO THE MODULE!!
+        //initiate_dates();
+
+        //Setup the user permissions
+        set_permissions({{ organisation_permissions }})
+	}
 
 
 

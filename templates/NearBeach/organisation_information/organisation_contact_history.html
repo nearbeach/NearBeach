@@ -4,14 +4,16 @@
 
 {% csrf_token %}
 <h2>Contact History</h2>
-<ul>
-    <li>Contact Type {{  contact_history_form.contact_type }}</li>
-    <li>Date: {{ contact_history_form.start_date_year }}/{{ contact_history_form.start_date_month }}/{{ contact_history_form.start_date_day }}</li>
-    <li>{{ contact_history_form.contact_history }}</li>
-    <li>{{ contact_history_form.contact_attachment }}</li>
-    <li><input id="pissfart" type="file" name="pissfart" value="Submit content the fun way"></li>
-    <li><input type="submit" name="submit_contact" value="Submit Contact"/></li>
-</ul>
+{% if organisation_permissions > 1 or contact_history > 0 %}
+    <ul>
+        <li>Contact Type {{  contact_history_form.contact_type }}</li>
+        <li>Date: {{ contact_history_form.start_date_year }}/{{ contact_history_form.start_date_month }}/{{ contact_history_form.start_date_day }}</li>
+        <li>{{ contact_history_form.contact_history }}</li>
+        <li>{{ contact_history_form.contact_attachment }}</li>
+        <li><input id="docupload" type="file" name="docupload" value="Submit content"></li>
+        <li><input type="submit" name="submit_contact" value="Submit Contact"/></li>
+    </ul>
+{% endif %}
 {% if contact_history_results %}
     <div><h4>Contact History</h4></div>
     {% for row in contact_history_results %}

@@ -19,6 +19,17 @@ def return_user_permission_level(request, group_id,permission_section):
             #If permission_value > user_permission_value, update the later with the former
             if permission_value > user_permission_level:
                 user_permission_level = permission_value
+        elif group_id == None:
+            """
+            There is no group associated with this permission. Just navigate through all the permissions
+            and determine if the user has access.
+            """
+            permission_value = row['fields']['permission_set'][permission_section_to_number(permission_section)]
+
+            # If permission_value > user_permission_value, update the later with the former
+            if permission_value > user_permission_level:
+                user_permission_level = permission_value
+
 
     return user_permission_level
 
@@ -42,6 +53,9 @@ def permission_section_to_number(permission_section):
         "organisation_campus": 13,
         "project": 14,
         "task": 15,
-
+        "documents": 16,
+        "contact_history": 17,
+        "project_history": 18,
+        "task_history": 19,
     }
     return switcher.get(permission_section,0)

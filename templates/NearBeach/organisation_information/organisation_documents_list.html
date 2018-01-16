@@ -2,25 +2,26 @@
     {% csrf_token %}
     {% load staticfiles %}
     <h2>Organisation Documents</h2>
-    <table>
-        <tr>
-            <td>Upload Document:</td>
-            <td><input id="fileupload" type="file" name="file" data-url="{% url 'information_organisation_documents_uploads' organisation_id %}" multiple></td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <div id="progress" style="border: none; width: 100%;">
-                    <span id="upload_percent">No uploads occuring</span>
-                    <div id="upload_progress" style="background-color: green; width: 0%; height: 20px;"></div>
-                </div>
-            </td>
-        </tr>
-    </table>
-    <script src="{% static '/NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
-    <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/vendor/jquery.ui.widget.js' %}"></script>
-    <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.iframe-transport.js' %}"></script>
-    <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.fileupload.js' %}"></script>
-
+    {% if organisation_permissions > 1 or document_permissions > 0 %}
+        <table>
+            <tr>
+                <td>Upload Document:</td>
+                <td><input id="fileupload" type="file" name="file" data-url="{% url 'information_organisation_documents_uploads' organisation_id %}" multiple></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div id="progress" style="border: none; width: 100%;">
+                        <span id="upload_percent">No uploads occuring</span>
+                        <div id="upload_progress" style="background-color: green; width: 0%; height: 20px;"></div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <script src="{% static '/NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
+        <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/vendor/jquery.ui.widget.js' %}"></script>
+        <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.iframe-transport.js' %}"></script>
+        <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.fileupload.js' %}"></script>
+    {% endif %}
 
     {% if organisation_document_results %}
         <h4>Organisation Documents</h4>
