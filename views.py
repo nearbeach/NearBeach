@@ -350,14 +350,20 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
 @login_required(login_url='login')
 def customer_information(request, customer_id):
     customer_permissions = 0
+    assign_campus_to_customer_permission = 0
 
     if request.session['is_superuser'] == True:
         customer_permissions = 4
+        assign_campus_to_customer_permission = 4
     else:
         pp_results = return_user_permission_level(request, None,'customer')
+        ph_results = return_user_permission_level(request, None,'assign_campus_to_customer')
 
         if pp_results > customer_permissions:
             customer_permissions = pp_results
+
+        if ph_results > assign_campus_to_customer_permission:
+            assign_campus_to_customer_permission = ph_results
 
     if customer_permissions == 0:
         # Send them to permission denied!!
@@ -525,6 +531,7 @@ def customer_information(request, customer_id):
         'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
         'customer_id': customer_id,
         'customer_permissions': customer_permissions,
+        'assign_campus_to_customer_permission': assign_campus_to_customer_permission,
     }
 
     return HttpResponse(t.render(c, request))
@@ -1022,6 +1029,11 @@ def logout(request):
 
 @login_required(login_url='login')
 def new_campus(request, organisations_id):
+    permission = return_user_permission_level(request, None, 'organisation_campus')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     """
 	If the user is not logged in, we want to send them to the login page.
 	This function should be in ALL webpage requests except for login and
@@ -1091,6 +1103,10 @@ def new_campus(request, organisations_id):
 
 @login_required(login_url='login')
 def new_customer(request, organisations_id):
+    permission = return_user_permission_level(request, None, 'customer')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
     """
 	If the user is not logged in, we want to send them to the login page.
 	This function should be in ALL webpage requests except for login and
@@ -1144,6 +1160,11 @@ def new_customer(request, organisations_id):
 
 @login_required(login_url='login')
 def new_opportunity(request, organisation_id='', customer_id=''):
+    permission = return_user_permission_level(request, None, 'opportunity')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     # POST or None
     if request.method == 'POST':
         form = new_opportunity_form(request.POST)
@@ -1317,6 +1338,10 @@ def new_opportunity(request, organisation_id='', customer_id=''):
 
 @login_required(login_url='login')
 def new_organisation(request):
+    permission = return_user_permission_level(request, None, 'organisation')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
     """
 	To stop duplicates in the system, the code will quickly check to see if
 	there is already a company that has either one of the following;
@@ -1382,6 +1407,11 @@ def new_organisation(request):
 
 @login_required(login_url='login')
 def new_project(request, organisations_id='', customer_id='', opportunity_id=''):
+    permission = return_user_permission_level(request, None, 'project')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     print("Organisation ID = ", organisations_id)
     print("Customer ID = ", customer_id)
     print("Opportunity ID = ", opportunity_id)
@@ -1546,6 +1576,11 @@ def new_project(request, organisations_id='', customer_id='', opportunity_id='')
 
 @login_required(login_url='login')
 def new_quote(request,destination,primary_key):
+    permission = return_user_permission_level(request, None, 'quote')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     if request.method == "POST":
         form = new_quote_form(request.POST)
         if form.is_valid():
@@ -1620,6 +1655,11 @@ def new_quote(request,destination,primary_key):
 
 @login_required(login_url='login')
 def new_task(request, organisations_id='', customer_id='', opportunity_id=''):
+    permission = return_user_permission_level(request, None, 'task')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     # Define if the page is loading in POST
     if request.method == "POST":
         form = new_task_form(request.POST)

@@ -1092,6 +1092,8 @@ class permission_set_manager(models.Manager):
             organisation,
             organisation_campus,
             project,
+			requirement,
+			requirement_link,
             task,
 			documents,
 			contact_history,
@@ -1114,6 +1116,8 @@ class permission_set_manager(models.Manager):
             organisation=organisation,
             organisation_campus=organisation_campus,
             project=project,
+			requirement=requirement,
+			requirement_link=requirement_link,
             task=task,
 			documents=documents,
 			contact_history=contact_history,
@@ -1181,7 +1185,15 @@ class permission_set(models.Model):
     project = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
-    )
+	)
+    requirement = models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0
+	)
+    requirement_link = models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0
+	)
     task = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
@@ -1227,11 +1239,13 @@ class permission_set(models.Model):
             self.organisation, #12
             self.organisation_campus, #13
             self.project, #14
-            self.task, #15
-			self.documents, #16
-			self.contact_history, #17
-			self.project_history, #18
-			self.task_history #19
+			self.requirement, #15
+			self.requirement_link, #16
+            self.task, #17
+			self.documents, #18
+			self.contact_history, #19
+			self.project_history, #20
+			self.task_history #21
         )
 
     #class Meta:

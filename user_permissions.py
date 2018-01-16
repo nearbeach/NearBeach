@@ -52,10 +52,12 @@ def permission_section_to_number(permission_section):
         "organisation": 12,
         "organisation_campus": 13,
         "project": 14,
-        "task": 15,
-        "documents": 16,
-        "contact_history": 17,
-        "project_history": 18,
-        "task_history": 19,
+        "requirement": 15,
+        "requirement_link": 16,
+        "task": 17,
+        "documents": 18,
+        "contact_history": 19,
+        "project_history": 20,
+        "task_history": 21,
     }
     return switcher.get(permission_section,0)

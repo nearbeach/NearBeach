@@ -31,5 +31,6 @@ def lookup_user_permissions(request):
     )
     #Send data to cookies
     request.session['NearBeach_Permissions'] = data
+    request.session['is_superuser'] = request.user.is_superuser
     return HttpResponse(data, content_type='application/json')
 

@@ -1,5 +1,13 @@
 {% extends "./template.html" %}
 {% block content %}
-{% load static %}
-<h1>New Requirement</h1>
+<form action={% url 'new_requirement' %} method="post" class="new_requirement">
+    {% csrf_token %}
+    <h2>New Requirement</h2>
+    <ul>
+        <li>{{ new_requirement_form.requirement_title }}</li>
+        <li>{{ new_requirement_form.requirement_scope }}</li>
+        <li>Requirement Type: {{ new_requirement_form.requirement_type }}</li>
+        <li><input type="submit" value="Submit New Requirement"></li>
+    </ul>
+</form>
 {% endblock %}

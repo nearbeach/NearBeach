@@ -47,7 +47,7 @@
                 <input type="submit" name="update" value="Update Details"/>
             {% endif %}
             <h2>Campus Contact Information</h2>
-            {% if add_campus_results and customer_permissions > 1%}
+            {% if add_campus_results and assign_campus_to_customer_permission > 1%}
 
                     <select name="add_campus_select" id="id_add_cammpus_select" onchange="enable_disable_add_campus()">
                         <option value="---------"> ---------</option>
