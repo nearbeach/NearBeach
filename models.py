@@ -1221,6 +1221,18 @@ class permission_set(models.Model):
         choices=PERMISSION_BOOLEAN,
         default=0,
     )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+    is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
 
     def natural_key(self):
         return (

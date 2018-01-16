@@ -1259,6 +1259,26 @@ class organisation_information_form(ModelForm):
         return profile_picture
 
 
+class permission_set_form(ModelForm):
+    permission_set_name = forms.CharField(
+        max_length=255,
+        label='',
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Permission Set Name',
+        })
+    )
+    #Used for both edit and create
+    class Meta:
+        model=permission_set
+        exclude={
+            'date_created',
+            'date_modified',
+            'change_user',
+            'is_deleted',
+        }
+
+
+
 class project_information_form(ModelForm):
     """
     Project information will need to abide by the stricked laws of the new
