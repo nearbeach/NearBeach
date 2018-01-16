@@ -21,7 +21,8 @@ from . import views, \
 	views_organisation_information, \
 	views_customer_information, \
 	views_document_tree, \
-	views_requirements
+	views_requirements, \
+	views_administration
 
 urlpatterns = [
 	url(r'^$', views.index, name='index'),
@@ -189,9 +190,16 @@ url(r'^requirement_new_link/(?P<requirement_id>[0-9]+)/(?P<location_id>[0-9]+)/(
 	, views_requirements.requirement_new_link,
 		name="requirement_new_link"),
 
-url(r'^user_permissions', views_lookup.user_permissions, name='user_permissions'),
+url(r'^user_permissions', views_lookup.lookup_user_permissions, name='user_permissions'),
 
-url(r'^chaining/', include('smart_selects.urls')),
+	#Permission sets
+	url(r'^permission_set_information/',views_administration.permission_set_information, name='permission_set_information'),
+	url(r'^permission_set_information_edit/(?P<permission_set_id>[0-9]+)/$', views_administration.permission_set_information_edit,
+		name='permission_set_information_edit'),
+	url(r'^permission_set_information_list/',views_administration.permission_set_information_list, name='permission_set_information_list'),
+	url(r'^permission_set_information_create/', views_administration.permission_set_information_create,
+		name='permission_set_information_create'),
+
 ]
 
 if settings.DEBUG:

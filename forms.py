@@ -1056,6 +1056,28 @@ class new_quote_form(ModelForm):
         }
 
 
+class new_requirement_form(ModelForm):
+    requirement_title = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Requirement Title'
+        }),
+    )
+    requirement_scope = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Requirement Title'
+        }),
+    )
+    class Meta:
+        model=requirements
+        fields={
+            'requirement_title',
+            'requirement_scope',
+            'requirement_type',
+        }
+
+
+
 class new_task_form(forms.Form):
     #Get data for choice boxes
     organisations_results=organisations.objects.filter(is_deleted='FALSE')
@@ -1235,6 +1257,26 @@ class organisation_information_form(ModelForm):
             pass
 
         return profile_picture
+
+
+class permission_set_form(ModelForm):
+    permission_set_name = forms.CharField(
+        max_length=255,
+        label='',
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Permission Set Name',
+        })
+    )
+    #Used for both edit and create
+    class Meta:
+        model=permission_set
+        exclude={
+            'date_created',
+            'date_modified',
+            'change_user',
+            'is_deleted',
+        }
+
 
 
 class project_information_form(ModelForm):

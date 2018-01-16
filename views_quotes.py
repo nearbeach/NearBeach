@@ -49,7 +49,7 @@ def list_of_line_items(request, quote_id):
 
 
     # Load the template
-    t = loader.get_template('NearBeach/quote_information_modules/list_of_line_items.html')
+    t = loader.get_template('NearBeach/quote_information/list_of_line_items.html')
 
     # context
     c = {
@@ -133,7 +133,7 @@ def new_line_item(request,quote_id):
             print(form.errors)
 
     # Load the template
-    t = loader.get_template('NearBeach/quote_information_modules/new_line_item.html')
+    t = loader.get_template('NearBeach/quote_information/new_line_item.html')
 
     # context
     c = {
@@ -178,7 +178,7 @@ def responsible_customer(request,quote_id, customer_id=''):
         customer_results = customers.objects.filter(organisations_id=quote_results.opportunity_id.organisations_id.organisations_id)
 
     # Load the template
-    t = loader.get_template('NearBeach/quote_information_modules/responsible_customer.html')
+    t = loader.get_template('NearBeach/quote_information/responsible_customer.html')
 
     # context
     c = {

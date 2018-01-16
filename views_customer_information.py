@@ -10,17 +10,38 @@ from django.contrib.auth.decorators import login_required
 from .models import *
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.template import  loader
 from NearBeach.forms import *
 from .models import *
 from .namedtuplefetchall import *
 
 import simplejson
+from .user_permissions import return_user_permission_level
+from django.urls import reverse
 
 
 @login_required(login_url='login')
 def information_customer_contact_history(request, customer_id):
+    customer_permissions = 0
+    contact_history = 0
+
+    if request.session['is_superuser'] == True:
+        customer_permissions = 4
+        contact_history = 4
+    else:
+        pp_results = return_user_permission_level(request, None,'customer')
+        ph_results = return_user_permission_level(request, None, 'contact_history')
+
+        if pp_results > customer_permissions :
+            customer_permissions = pp_results
+
+        if ph_results == 1:
+            contact_history = 1
+
+    if customer_permissions  == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     if request.method == "POST":
         # Save everything!
         form = information_customer_contact_history_form(request.POST, request.FILES)

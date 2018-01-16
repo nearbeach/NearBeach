@@ -2,21 +2,48 @@ from django.contrib.auth.decorators import login_required
 from .models import *
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.urls import reverse
 from django.template import  loader
 from NearBeach.forms import *
 from .models import *
 from .namedtuplefetchall import *
+from .user_permissions import return_user_permission_level
 
 
 
 @login_required(login_url='login')
 def new_requirement(request):
+    permission = return_user_permission_level(request, None, 'organisation_campus')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        form = new_requirement_form(request.POST)
+        if form.is_valid():
+            requirement_title = form.cleaned_data['requirement_title']
+            requirement_scope = form.cleaned_data['requirement_scope']
+            requirement_type = form.cleaned_data['requirement_type']
+
+            requirements_save = requirements(
+                requirement_title=requirement_title,
+                requirement_scope=requirement_scope,
+                requirement_type=requirement_type,
+                change_user=request.user,
+            )
+            requirements_save.save()
+
+            return HttpResponseRedirect(reverse(requirement_information, args={requirements_save.requirement_id}))
+        else:
+            print(form.errors)
+
     #Load template
     t = loader.get_template('NearBeach/new_requirement.html')
 
     # context
     c = {
+        'new_requirement_form': new_requirement_form(),
     }
 
     return HttpResponse(t.render(c, request))

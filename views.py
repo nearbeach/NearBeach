@@ -16,6 +16,7 @@ from django.shortcuts import render, get_object_or_404, render_to_response
 from django.template import RequestContext, loader
 from django.urls import reverse
 from .namedtuplefetchall import *
+from .user_permissions import return_user_permission_level
 
 #import python modules
 import datetime, json, simplejson, urllib, urllib2
@@ -25,89 +26,13 @@ def active_projects(request):
     # Get username_id from User
     current_user = request.user
 
-    # Setup connection to the database and query it
-    cursor = connection.cursor()
-
-    cursor.execute("""
-    SELECT 
-      project.project_id AS "project_id"
-    , '' AS "task_id"
-    , project.project_name AS "description"
-    , project.project_end_date AS "end_date"
-    , organisations.organisation_name AS "organisation_name"
-    , organisations.organisations_id AS "organisations_id"
-    
-    
-    
-    from 
-      project left join project_tasks
-        on project.project_id = project_tasks.project_id
-        and project_tasks.is_deleted = 'FALSE'
-    , project_groups
-    , user_groups
-    , organisations
-    
-    
-    where 1 = 1
-    and project.project_status IN ('New','Open')
-    and project.project_status IN ('New','Open')
-    and project.project_id = project_groups.project_id_id
-    and project_groups.groups_id_id = user_groups.group_id_id
-    and user_groups.username_id = %s
-    and project.organisations_id_id=organisations.organisations_id
-    
-    
-    UNION
-    
-    select 
-      project_tasks.project_id AS `Project ID`
-    , tasks.tasks_id AS `Task ID`
-    , tasks.task_short_description AS `Description`
-    , tasks.task_end_date AS `End Date` 
-    , organisations.organisation_name AS "organisation_name"
-    , organisations.organisations_id AS "organisations_id"
-    
-    from 
-      tasks left join project_tasks
-        on tasks.tasks_id = project_tasks.task_id 
-        and project_tasks.is_deleted = "FALSE"
-    , tasks_groups
-    , user_groups
-    , organisations
-    
-    
-    where 1 = 1
-    and tasks.task_status in ('New','Open')
-    and tasks.tasks_id = tasks_groups.tasks_id_id
-    and tasks_groups.groups_id_id = user_groups.group_id_id
-    and user_groups.username_id = %s
-    and tasks.organisations_id_id=organisations.organisations_id
-        
-    UNION
-    
-    select 
-     project_tasks.project_id AS `Project ID`
-    , tasks.tasks_id AS `Task ID`
-    , tasks.task_short_description AS `Description`
-    , tasks.task_end_date AS `End Date` 
-    , organisations.organisation_name AS "organisation_name"
-    , organisations.organisations_id AS "organisations_id"
-    
-    from 
-      tasks left join project_tasks
-        on tasks.tasks_id = project_tasks.task_id 
-        and project_tasks.is_deleted = "FALSE"
-    , organisations
-    
-    
-    
-    where 1 = 1
-    and tasks.task_status in ('New','Open')
-    and tasks.task_assigned_to_id = %s
-    and tasks.organisations_id_id=organisations.organisations_id
-    """, [current_user.id, current_user.id, current_user.id])
-
-    active_projects_results = namedtuplefetchall(cursor)
+    ###
+    #BUG
+    #Might remove the active projects features.
+    ###
+    active_projects_results = project.objects.filter(
+        is_deleted='FALSE',
+    )
 
     # Load the template
     t = loader.get_template('NearBeach/active_projects.html')
@@ -424,6 +349,25 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
 
 @login_required(login_url='login')
 def customer_information(request, customer_id):
+    customer_permissions = 0
+    assign_campus_to_customer_permission = 0
+
+    if request.session['is_superuser'] == True:
+        customer_permissions = 4
+        assign_campus_to_customer_permission = 4
+    else:
+        pp_results = return_user_permission_level(request, None,'customer')
+        ph_results = return_user_permission_level(request, None,'assign_campus_to_customer')
+
+        if pp_results > customer_permissions:
+            customer_permissions = pp_results
+
+        if ph_results > assign_campus_to_customer_permission:
+            assign_campus_to_customer_permission = ph_results
+
+    if customer_permissions == 0:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse('permission_denied'))
     """
 	If the user is not logged in, we want to send them to the login page.
 	This function should be in ALL webpage requests except for login and
@@ -432,7 +376,7 @@ def customer_information(request, customer_id):
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse('login'))
 
-    if request.method == "POST":
+    if request.method == "POST" and customer_permissions > 1:
         # Save everything!
         form = customer_information_form(request.POST, request.FILES)
         if form.is_valid():
@@ -523,7 +467,7 @@ def customer_information(request, customer_id):
     opportunity_permissions_results = opportunity_permissions.objects.filter(
         Q(
             Q(assigned_user=request.user)  # User has permission
-            | Q(groups_id__in=user_groups_results.values('group_id'))  # User's groups have permission
+            | Q(groups_id__in=user_groups_results.values('groups_id'))  # User's groups have permission
             | Q(all_users='TRUE')  # All users have access
         )
     )
@@ -586,6 +530,8 @@ def customer_information(request, customer_id):
         'opportunity_results': opportunity_results,
         'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
         'customer_id': customer_id,
+        'customer_permissions': customer_permissions,
+        'assign_campus_to_customer_permission': assign_campus_to_customer_permission,
     }
 
     return HttpResponse(t.render(c, request))
@@ -964,29 +910,6 @@ def index(request):
     return HttpResponseRedirect(reverse('login'))
 
 
-@login_required(login_url='login')
-def is_admin(request):
-    """
-	We will determine if the user is an administrator. Then we
-	will return
-	"""
-    current_user = request.user
-    results = user_groups.objects.filter(username_id=current_user.id).aggregate(Min('user_group_permission'))
-
-    # ADMIN
-    if results.values()[0] == 1:
-        request.session['IS_ADMIN'] = 'TRUE'
-    else:
-        request.session['IS_ADMIN'] = 'FALSE'
-
-    # Group Admin
-    if results.values()[0] == 2:
-        request.session['IS_GROUP_ADMIN'] = 'TRUE'
-    else:
-        request.session['IS_GROUP_ADMIN'] = 'FALSE'
-
-    return
-
 
 def login(request):
     """
@@ -1054,35 +977,35 @@ def login(request):
                     user = auth.authenticate(username=username, password=password)
                     auth.login(request, user)
 
-                    is_admin(request)
 
 
             else:
                 user = auth.authenticate(username=username, password=password)
                 auth.login(request, user)
 
-                is_admin(request)
+                #is_admin(request)
 
             # Just double checking. :)
             if request.user.is_authenticated:
-				"""				
-				The user is now authenticated. We now want to create the cookies required
-				for this session's information. Such information would be
-				1.) Is the user an admin?
-				2.) What are their groups and their group permissions
-				
-				This information will be used to help quickly tell the server information
-				about the user without having to constantly look it up.
-				"""
+                """
+                The user has been authenticated. Now the system will store the user's permissions and groups 
+                into cookies. :)
+                """
+                user_groups_results = user_groups.objects.filter(
+                    username=request.user,
+                    is_deleted='FALSE',
+                )
+                request.session['NearBeach_Permissions'] = serializers.serialize(
+                    'json',
+                    user_groups_results,
+                    use_natural_foreign_keys=True,
+                    use_natural_primary_keys=True
+                )
+                request.session['is_superuser'] = request.user.is_superuser
 
-				#from django.core import serializers
-				#data = serializers.serialize("xml", SomeModel.objects.all())
-				request.session['user_group_results'] = serializers.serialize('json',user_groups.objects.filter(
-					username=request.user,
-					is_deleted='FALSE'
-				))
-
-				return HttpResponseRedirect(reverse('active_projects'))
+                return HttpResponseRedirect(reverse('active_projects'))
+            else:
+                print("User not authenticated")
         else:
             print(form.errors)
 
@@ -1106,6 +1029,11 @@ def logout(request):
 
 @login_required(login_url='login')
 def new_campus(request, organisations_id):
+    permission = return_user_permission_level(request, None, 'organisation_campus')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     """
 	If the user is not logged in, we want to send them to the login page.
 	This function should be in ALL webpage requests except for login and
@@ -1175,6 +1103,10 @@ def new_campus(request, organisations_id):
 
 @login_required(login_url='login')
 def new_customer(request, organisations_id):
+    permission = return_user_permission_level(request, None, 'customer')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
     """
 	If the user is not logged in, we want to send them to the login page.
 	This function should be in ALL webpage requests except for login and
@@ -1228,6 +1160,11 @@ def new_customer(request, organisations_id):
 
 @login_required(login_url='login')
 def new_opportunity(request, organisation_id='', customer_id=''):
+    permission = return_user_permission_level(request, None, 'opportunity')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     # POST or None
     if request.method == 'POST':
         form = new_opportunity_form(request.POST)
@@ -1401,6 +1338,10 @@ def new_opportunity(request, organisation_id='', customer_id=''):
 
 @login_required(login_url='login')
 def new_organisation(request):
+    permission = return_user_permission_level(request, None, 'organisation')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
     """
 	To stop duplicates in the system, the code will quickly check to see if
 	there is already a company that has either one of the following;
@@ -1466,6 +1407,11 @@ def new_organisation(request):
 
 @login_required(login_url='login')
 def new_project(request, organisations_id='', customer_id='', opportunity_id=''):
+    permission = return_user_permission_level(request, None, 'project')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     print("Organisation ID = ", organisations_id)
     print("Customer ID = ", customer_id)
     print("Opportunity ID = ", opportunity_id)
@@ -1568,13 +1514,12 @@ def new_project(request, organisations_id='', customer_id='', opportunity_id='')
 
 		FROM 
 		  user_groups join groups
-			on user_groups.group_id_id = groups.group_id
+			on user_groups.groups_id = groups.group_id
 
 		WHERE 1=1
 		AND user_groups.is_deleted = "FALSE"
 		AND user_groups.username_id = %s
-		"""
-            , [current_user.id])
+		""", [current_user.id])
         groups_results = namedtuplefetchall(cursor)
 
         organisations_results = organisations.objects.filter(is_deleted='FALSE')
@@ -1631,6 +1576,11 @@ def new_project(request, organisations_id='', customer_id='', opportunity_id='')
 
 @login_required(login_url='login')
 def new_quote(request,destination,primary_key):
+    permission = return_user_permission_level(request, None, 'quote')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     if request.method == "POST":
         form = new_quote_form(request.POST)
         if form.is_valid():
@@ -1705,6 +1655,11 @@ def new_quote(request,destination,primary_key):
 
 @login_required(login_url='login')
 def new_task(request, organisations_id='', customer_id='', opportunity_id=''):
+    permission = return_user_permission_level(request, None, 'task')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     # Define if the page is loading in POST
     if request.method == "POST":
         form = new_task_form(request.POST)
@@ -1808,13 +1763,12 @@ def new_task(request, organisations_id='', customer_id='', opportunity_id=''):
 
 		FROM 
 		  user_groups join groups
-			on user_groups.group_id_id = groups.group_id
+			on user_groups.groups_id = groups.group_id
 
 		WHERE 1=1
 		AND user_groups.is_deleted = "FALSE"
 		AND user_groups.username_id = %s
-		"""
-            , [current_user.id])
+		""",[current_user.id])
         groups_results = namedtuplefetchall(cursor)
 
         # Setup dates for initalising
@@ -2080,8 +2034,34 @@ def opportunity_information(request, opportunity_id):
 
 @login_required(login_url='login')
 def organisation_information(request, organisations_id):
+    organisation_permissions = 0
+    organisation_campus_permissions = 0
+    customer_permissions = 0
+
+    if request.session['is_superuser'] == True:
+        organisation_permissions = 4
+        organisation_campus_permissions = 4
+        customer_permissions = 4
+    else:
+        pp_results = return_user_permission_level(request, None,'organisation')
+        ph_results = return_user_permission_level(request, None,'organisation_campus')
+        pb_results = return_user_permission_level(request, None,'customer')
+
+        if pp_results > organisation_permissions:
+            organisation_permissions = pp_results
+
+        if ph_results > organisation_campus_permissions:
+            organisation_campus_permissions = ph_results
+
+        if pb_results > customer_permissions:
+            customer_permissions = pb_results
+
+    if organisation_permissions == 0:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     # Get the data from the form if the information has been submitted
-    if request.method == "POST":
+    if request.method == "POST" and organisation_permissions > 1:
         form = organisation_information_form(request.POST, request.FILES)
         if form.is_valid():
             current_user = request.user
@@ -2132,7 +2112,7 @@ def organisation_information(request, organisations_id):
     opportunity_permissions_results = opportunity_permissions.objects.filter(
         Q(
             Q(assigned_user=request.user)  # User has permission
-            | Q(groups_id__in=user_groups_results.values('group_id'))  # User's groups have permission
+            | Q(groups_id__in=user_groups_results.values('groups_id'))  # User's groups have permission
             | Q(all_users='TRUE')  # All users have access
         )
     )
@@ -2173,6 +2153,9 @@ def organisation_information(request, organisations_id):
         'opportunity_results': opportunity_results,
         'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
         'organisations_id': organisations_id,
+        'organisation_permissions': organisation_permissions,
+        'organisation_campus_permissions': organisation_campus_permissions,
+        'customer_permissions': customer_permissions,
     }
 
     return HttpResponse(t.render(c, request))
@@ -2225,37 +2208,35 @@ END TEMP DOCUMENT
 @login_required(login_url='login')
 def project_information(request, project_id):
     """
-	We need to determine if the user has access to any of the groups that
-	this project is associated to. We will do a simple count(*) SQL QUERY
-	that will determine this.
-	"""
-    current_user = request.user
+    The project permissions. The query looks up ALL the groups associated to this project currently and searches
+    for the user's MAXIMUM user_level_permission. This will determine if the user can edit etc.
+    If the highest user_level_permission = 0, then the user is redirected to the access denied page.
+    """
+    project_permissions = 0
+    project_history_permissions = 0
 
-    # Setup connection to the database and query it
-    cursor = connection.cursor()
+    if request.session['is_superuser'] == True:
+        project_permissions = 4
+        project_history_permissions = 4
+    else:
+        project_groups_results = project_groups.objects.filter(
+            is_deleted="FALSE",
+            project_id=project.objects.get(project_id=project_id),
+        ).values('groups_id_id')
 
-    cursor.execute("""
-		SELECT COUNT(*)
-		FROM
-		  project_groups
-		, user_groups
-		
-		WHERE 1=1
-		AND project_groups.groups_id_id = user_groups.group_id_id
-		AND project_groups.is_deleted = 'FALSE'
-		AND user_groups.is_deleted = 'FALSE'
-		AND user_groups.username_id = %s
-		AND project_groups.project_id_id = %s
-	""", [current_user.id, project_id])
-    has_permission = cursor.fetchall()
+        for row in project_groups_results:
+            pp_results = return_user_permission_level(request, row['groups_id_id'],'project')
+            ph_results = return_user_permission_level(request, row['groups_id_id'],'project_history')
 
-    if not has_permission[0][0] == 1 and not request.session['IS_ADMIN'] == 'TRUE':
+            if pp_results > project_permissions:
+                project_permissions = pp_results
+
+            if ph_results > project_history_permissions:
+                project_history_permissions = ph_results
+
+    if project_permissions == 0:
         # Send them to permission denied!!
-        return HttpResponseRedirect(
-            reverse(
-                permission_denied,
-            )
-        )
+        return HttpResponseRedirect(reverse(permission_denied))
 
     """
 	There are two buttons on the project information page. Both will come
@@ -2263,7 +2244,7 @@ def project_information(request, project_id):
 	this project.
 	"""
     # Get the data from the form if the information has been submitted
-    if request.method == "POST":
+    if request.method == "POST" and project_permissions >= 2: #Greater than edit :)
         form = project_information_form(request.POST, request.FILES)
         if form.is_valid():
             # Define the data we will edit
@@ -2361,6 +2342,7 @@ def project_information(request, project_id):
 
     # Obtain the required data
     project_history_results = project_history.objects.filter(project_id=project_id, is_deleted='FALSE')
+    cursor = connection.cursor()
     cursor.execute(
         """
         SELECT DISTINCT
@@ -2481,6 +2463,8 @@ def project_information(request, project_id):
         'media_url': settings.MEDIA_URL,
         'quote_results': quote_results,
         'project_id': project_id,
+        'project_permissions': project_permissions,
+        'project_history_permissions': project_history_permissions,
     }
 
     return HttpResponse(t.render(c, request))
@@ -2812,6 +2796,28 @@ def task_information(request, task_id):
 	this task is associated to. We will do a simple count(*) SQL QUERY
 	that will determine this.
 	"""
+    task_permissions = 0
+    task_history_permissions = 0
+
+    if request.session['is_superuser'] == True:
+        task_permissions = 4
+        task_history_permissions = 4
+    else:
+        task_groups_results = tasks_groups.objects.filter(
+            is_deleted="FALSE",
+            tasks_id=tasks.objects.get(tasks_id=task_id),
+        ).values('groups_id_id')
+
+        for row in task_groups_results:
+            pp_results = return_user_permission_level(request, row['groups_id_id'],'task')
+            ph_results = return_user_permission_level(request, row['groups_id_id'],'task_history')
+
+            if pp_results > task_permissions:
+                task_permissions = pp_results
+
+            if ph_results > task_history_permissions:
+                task_history_permissions = ph_results
+
     current_user = request.user
 
     # Setup connection to the database and query it
@@ -2823,7 +2829,7 @@ def task_information(request, task_id):
 		  tasks_groups
 		, user_groups
 		WHERE 1=1
-		AND tasks_groups.groups_id_id = user_groups.group_id_id
+		AND tasks_groups.groups_id_id = user_groups.groups_id
 		AND tasks_groups.is_deleted = 'FALSE'
 		AND user_groups.is_deleted = 'FALSE'
 		AND user_groups.username_id = %s
@@ -3067,6 +3073,8 @@ def task_information(request, task_id):
         'folders_results': serializers.serialize('json', folders_results),
         'media_url': settings.MEDIA_URL,
         'task_id': task_id,
+        'task_permissions': task_permissions,
+        'task_history_permissions': task_history_permissions,
     }
 
     return HttpResponse(t.render(c, request))

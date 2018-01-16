@@ -4,6 +4,7 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/customer_information.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <script>
 	function on_page_load() {
 	    //Load AJAX components
@@ -14,9 +15,11 @@
         autoscale_textarea();
 
         //Fix up autoscaling for id_contact_history
-        document.getElementById("id_contact_history").style.height = "200px";
+        //document.getElementById("id_contact_history").style.height = "200px";
 
-        initiate_dates();
+        //Move these to a proper set
+        //initiate_dates();
+        set_permissions({{ customer_permissions }});
 	}
 </script>
 <body onload="on_page_load()">
@@ -40,9 +43,11 @@
                 <li>{{ customer_information_form.customer_email }}</li>
                 <li>Organisation: <a href="{% url 'organisation_information' customer_results.organisations_id.organisations_id %}">{{ customer_results.organisations_id }}</a></li>
             </ul>
-            <input type="submit" name="update" value="Update Details"/>
+            {% if customer_permissions > 1 %}
+                <input type="submit" name="update" value="Update Details"/>
+            {% endif %}
             <h2>Campus Contact Information</h2>
-            {% if add_campus_results %}
+            {% if add_campus_results and assign_campus_to_customer_permission > 1%}
 
                     <select name="add_campus_select" id="id_add_cammpus_select" onchange="enable_disable_add_campus()">
                         <option value="---------"> ---------</option>
@@ -94,6 +99,7 @@
 
 
             <h2>Associated Projects & Tasks</h2>
+            {% if customer_permissions > 1 %}
             <h4>Actions</h4>
             <ul>
                 <li><a href="{% url 'new_project' customer_results.organisations_id.organisations_id customer_results.customer_id %}">New Project</a></li>
@@ -101,6 +107,7 @@
                 <li><a href="{% url 'assign_customer_project_task' customer_results.customer_id %}">Assign Existing Project or Task</a></li>
             </ul>
             <br/>
+            {% endif %}
             <h4>Assigned Projects</h4>
                 {% if project_results %}
                     <table>

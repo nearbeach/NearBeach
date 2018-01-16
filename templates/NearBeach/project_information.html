@@ -5,14 +5,12 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/expand_sections.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/project_information.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
-<script tpye="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 
 <script>
     function on_page_load() {
 	    //Initiate AJAX modules
-
-
-
         load_project_assigned_users();
         load_project_costs();
         load_project_customers();
@@ -31,6 +29,9 @@
 
         //Running totals under costs
         running_total();
+
+        //Finally set the permissions
+        set_permissions({{ project_permissions }});
 	}
 </script>
 
@@ -63,7 +64,9 @@
     </form>
         <h2>Associated Tasks</h2>
         {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
-            <a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
+            {% if project_permissions > 1 %}
+                <a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
+            {% endif %}
         {% endif %}
         {% if associated_tasks_results %}
                 <table>

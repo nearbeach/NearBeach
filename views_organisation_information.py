@@ -10,18 +10,39 @@ from django.contrib.auth.decorators import login_required
 from .models import *
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.template import  loader
 from NearBeach.forms import *
 from .models import *
 from .namedtuplefetchall import *
+from .user_permissions import return_user_permission_level
+from django.urls import reverse
 
 import simplejson
 
 @login_required(login_url='login')
 def information_organisation_contact_history(request, organisation_id):
+    organisation_permissions = 0
+    contact_history = 0
+
+    if request.session['is_superuser'] == True:
+        organisation_permissions = 4
+        contact_history = 4
+    else:
+        pp_results = return_user_permission_level(request, None,'organisation')
+        ph_results = return_user_permission_level(request, None, 'contact_history')
+
+        if pp_results > organisation_permissions:
+            organisation_permissions = pp_results
+
+        if ph_results == 1:
+            contact_history = 1
+
+    if organisation_permissions == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     # Get the data from the form if the information has been submitted
-    if request.method == "POST":
+    if request.method == "POST" and organisation_permissions > 1:
         form = information_organisation_contact_history_form(request.POST, request.FILES)
         if form.is_valid():
             current_user = request.user
@@ -92,6 +113,8 @@ def information_organisation_contact_history(request, organisation_id):
     c = {
         'contact_history_form': information_organisation_contact_history_form(),
         'contact_history_results': contact_history_results,
+        'organisation_permissions': organisation_permissions,
+        'contact_history': contact_history,
     }
 
     return HttpResponse(t.render(c, request))
@@ -99,6 +122,25 @@ def information_organisation_contact_history(request, organisation_id):
 
 @login_required(login_url='login')
 def information_organisation_documents_list(request, organisation_id):
+    organisation_permissions = 0
+    document_permissions = 0
+
+    if request.session['is_superuser'] == True:
+        organisation_permissions = 4
+        document_permissions = 4
+    else:
+        pp_results = return_user_permission_level(request, None,'organisation')
+        ph_results = return_user_permission_level(request, None, 'documents')
+
+        if pp_results > organisation_permissions:
+            organisation_permissions = pp_results
+
+        if ph_results == 1:
+            document_permissions = 1
+
+    if organisation_permissions == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     #Get data
     customer_document_results = document_permissions.objects.filter(
         organisations_id=organisation_id,
@@ -119,6 +161,8 @@ def information_organisation_documents_list(request, organisation_id):
         'organisation_id': organisation_id,
         'customer_document_results': customer_document_results,
         'organisation_document_results': organisation_document_results,
+        'organisation_permissions': organisation_permissions,
+        'document_permissions': document_permissions,
     }
 
     return HttpResponse(t.render(c, request))
