@@ -365,6 +365,19 @@ class document_tree_upload_form(forms.Form):
     )
 
 
+class groups_form(ModelForm):
+    group_name = forms.CharField(
+        max_length=50,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Group Name',
+        })
+    )
+    class Meta:
+        model=groups
+        fields = {
+            'group_name',
+        }
+
 
 class information_customer_contact_history_form(forms.Form):
     # Get data for choice boxes

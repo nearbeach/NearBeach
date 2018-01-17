@@ -1,0 +1,12 @@
+{% csrf_token %}
+<h4>Add Permission Set to Group</h4>
+<ul>
+    <li>
+        <select id="permission_set" name="permission_set">
+            {% for row in permission_set_results %}
+                <option value="{{ row.permission_set_id }}">{{ row.permission_set_name }}</option>
+            {% endfor %}
+        </select>
+    </li>
+    <li><input id="submit_permission_set" type="submit" value="Submit Permission Set"></li>
+</ul>

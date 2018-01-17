@@ -200,6 +200,14 @@ url(r'^user_permissions', views_lookup.lookup_user_permissions, name='user_permi
 	url(r'^permission_set_information_create/', views_administration.permission_set_information_create,
 		name='permission_set_information_create'),
 
+
+url(r'^group_information/', views_administration.group_information, name='group_information'),
+	url(r'^group_information_create/', views_administration.group_information_create, name='group_information_create'),
+url(r'^group_information_edit/(?P<group_id>[0-9]+)/', views_administration.group_information_edit, name='group_information_edit'),
+url(r'^group_information_edit_users/(?P<group_id>[0-9]+)/', views_administration.group_information_edit_users, name='group_information_edit_users'),
+url(r'^group_information_list/', views_administration.group_information_list, name='group_information_list'),
+url(r'^group_information_add_permission_set/(?P<group_id>[0-9]+)/', views_administration.group_information_add_permission_set, name='group_information_add_permission_set'),
+
 ]
 
 if settings.DEBUG:
