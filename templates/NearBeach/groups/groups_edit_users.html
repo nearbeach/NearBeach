@@ -26,7 +26,7 @@
 <ul>
     <li>Add user to group:</li>
     <li>
-        <select id="user_id" name="user_id" onchange="update_add_user_to_group()">
+        <select id="user_id" name="user_id" onchange="update_add_user_to_group()" required>
             <option value="------" disabled selected>------</option>
             {% for row in user_results %}
                 <option value="{{ row.id }}">{{ row.username }} - {{ row.first_name }} {{ row.last_name }}</option>
@@ -34,14 +34,14 @@
         </select>
     </li>
     <li>
-        <select id="permission_set" name="permission_set" onchange="update_add_user_to_group()">
+        <select id="permission_set" name="permission_set" onchange="update_add_user_to_group()" required>
             <option value="------" disabled selected>------</option>
             {% for row in permission_set_results %}
                 <option value="{{ row.permission_set_id }}">{{ row.permission_set }}</option>
             {% endfor %}
         </select>
     </li>
-    <li><input id="submit_new_user_permission" type="submit" value="Submit New User Permission" disabled></li>
+    <li><input id="submit_new_user_permission" type="submit" value="Submit New User Permission"></li>
 </ul>
 {% elif not user_results %}
     <p>There are no users to add.</p>

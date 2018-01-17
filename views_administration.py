@@ -58,11 +58,17 @@ def group_information_add_permission_set(request, group_id):
 
 
     if request.method == "POST" and permission_permission > 2:
-        submit_group_permissions = group_permissions(
-            permission_set = permission_set.objects.get(permission_set_id=request.GET['permission_set']),
-            group_id = groups.objects.get(groups_id=group_id),
-        )
-        submit_group_permissions.save()
+        form = add_permission_set_to_group_form(request.POST)
+        if form.is_valid():
+            submit_group_permission = group_permissions(
+                permission_set=form.cleaned_data['permission_set_name'],
+                groups=groups.objects.get(group_id=group_id),
+            )
+            submit_group_permission.save()
+            print("SAVED")
+        else:
+            print(form.errors)
+
 
     permission_set_results = permission_set.objects.filter(
         is_deleted='FALSE',
@@ -74,6 +80,7 @@ def group_information_add_permission_set(request, group_id):
     # context
     c = {
         'permission_set_results': permission_set_results,
+        'form': add_permission_set_to_group_form,
     }
 
     return HttpResponse(t.render(c, request))
@@ -178,12 +185,17 @@ def group_information_edit_users(request, group_id):
 
 
     if request.method == "POST" and user_permission > 2:
+        print(request.POST.get('permission_set'))
+        permission_set_instance=permission_set.objects.get(permission_set_id=request.POST.get('permission_set'))
         #Get the new user
         submit_user_groups = user_groups(
-            username = User.groups.get(id=request.GET('user_id')),
-            permission_set=permission_set.objects.get(permission_set_id=request.GET('permission_set')),
-            change_user = request.user
+            username = User.objects.get(id=request.POST.get('user_id')),
+            permission_set=permission_set_instance,
+            change_user = request.user,
+            #groups_id=groups.objects.get(group_id=group_id),
+            groups_id=group_id,
         )
+        print("Saving user permissions")
         submit_user_groups.save()
 
     #List of users in group, and list of users to add

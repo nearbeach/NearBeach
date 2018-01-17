@@ -21,8 +21,10 @@
         function toggleSub(sub) {
             if (sub == 0) {
                 $("#sub-menu-main").slideToggle(300);
-            } else {
+            } else if (sub == 1) {
                 $("#sub-menu-item").slideToggle(300);
+            } else if (sub == 2) {
+                $("#sub-menu-admin").slideToggle(300);
             }
         }
     </script>
@@ -57,6 +59,14 @@
                         <li><a href="{% url 'search' %}">Search All</a></li>
                         <li><a href="{% url 'search_organisations' %}">Organisations</a></li>
                         <li><a href="{% url 'search_customers' %}">Customers</a></li>
+                    </ul>
+                </li>
+                <li onclick="toggleSub(2)">
+                    <a href="#" class="main-nav-dropdown">Administration<div class="down-arrow"></div></a>
+                    <ul class="sub-menu" id="sub-menu-admin">
+                        <li><a href="{% url 'permission_set_information' %}">Permission Sets</a></li>
+                        <li><a href="{% url 'group_information' %}">Groups</a></li>
+                        <li><a href="#">Users</a></li>
                     </ul>
                 </li>
 

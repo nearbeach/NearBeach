@@ -13,10 +13,20 @@
         <a href="javascript:void(0)" onclick="load_create_group()">Create New Group</a>
     </form>
 
-    <form method="post" class="edit_group" id="edit_group" style="background-color: springgreen">
-        <!--left blank -->
-    </form>
+    <div style="background-color: springgreen">
 
+        <form method="post" class="edit_group" id="edit_group">
+            <!--left blank -->
+        </form>
+
+        <form method="post" class="user_list" id="user_list">
+            <!-- left blank -->
+        </form>
+
+        <form method="post" class="add_permission_set" id="add_permission_set">
+            <!--left blank -->
+        </form>
+    </div>
 
 <script>
     $("#create_group").on('submit', function(e) {
@@ -36,6 +46,25 @@
         })
     });
 
+
+
+
+    $("#user_list").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+           url: '/group_information_edit_users/' + $("#edit_group_id").val() + '/',
+           data: $(this).serialize(),
+           dataType: 'HTML',
+           type: 'POST',
+           success: function(data) {
+               load_users($("#edit_group_id").val());
+           },
+           error: function() {
+               alert("ERROR! Submitting new users");
+           }
+        })
+    });
+
     $("#edit_group").on('submit', function(e) {
         e.preventDefault();
         $.ajax({
@@ -45,7 +74,6 @@
            type: 'POST',
            success: function(data) {
                load_group_list();
-               $("#edit_group").html("");
            },
            error: function() {
                alert("ERROR! Submitting new group");

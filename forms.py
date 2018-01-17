@@ -168,6 +168,15 @@ INCLUDE_DEACTIVATED={
 MAX_PICTURE_SIZE=1000 * 1024 #1Mb wow
 
 
+class add_permission_set_to_group_form(forms.Form):
+    permission_set_name = forms.ModelChoiceField(
+        label = "Permission Set Name",
+        widget=forms.Select,
+        queryset=permission_set.objects.filter(is_deleted='FALSE')
+    )
+
+
+
 class customer_campus_form(ModelForm):
     customer_phone=forms.CharField(
         max_length=11,
@@ -188,7 +197,7 @@ class customer_campus_form(ModelForm):
 
 class campus_information_form(ModelForm):
     #SQL
-    region_results=list_of_countries_regions.objects.all()
+    #region_results=list_of_countries_regions.objects.all()
 
     # Fields
     campus_nickname=forms.CharField(
