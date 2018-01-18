@@ -38,4 +38,38 @@
         </tr>
     {% endfor %}
 </table>
+
+<h2>Opportunities</h2>
+<table>
+    <tr class="header">
+        <td>Opportunity ID</td>
+        <td>Opportunity Name</td>
+        <td>Opportunity Stage</td>
+        <td>Expected Close Date</td>
+    </tr>
+    {% for row in opportunity_results %}
+        <tr>
+            <td><a href="{% url 'opportunity_information' row.opportunity_id %}">OPP{{ row.opportunity_id }}</a></td>
+            <td>{{ row.opportunity_name }}</td>
+            <td>{{ row.opportunity_stage }}</td>
+            <td>{{ row.opportunity_expected_close_date }}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+<h2>Requirements</h2>
+<table>
+    <tr class="header">
+        <td>Requirement ID</td>
+        <td>Requirement Name</td>
+        <td>Requirement Type</td>
+    </tr>
+    {% for row in requirement_results %}
+        <tr>
+            <td><a href="{% url 'requirement_information' row.requirement_id %}">REQ{{ row.requirement_id }}</a></td>
+            <td>{{ row.requirement_title }}</td>
+            <td>{{ row.requirement_type }}</td>
+        </tr>
+    {% endfor %}
+</table>
 {% endblock %}

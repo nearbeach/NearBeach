@@ -21,8 +21,10 @@
         function toggleSub(sub) {
             if (sub == 0) {
                 $("#sub-menu-main").slideToggle(300);
-            } else {
+            } else if (sub == 1) {
                 $("#sub-menu-item").slideToggle(300);
+            } else if (sub == 2) {
+                $("#sub-menu-admin").slideToggle(300);
             }
         }
     </script>
@@ -39,24 +41,35 @@
         </div>
         <nav>
             <ul id="main-nav">
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'active_projects' %}">Active Projects</a></li>
                 <li onclick="toggleSub(0)">
-                    <a href="#" class="main-nav-dropdown">Main Menu<div class="down-arrow"></div></a>
-                    <ul class="sub-menu" id="sub-menu-main">
-                        <li><a href="{% url 'search_organisations' %}">Organisations</a></li>
-                        <li><a href="{% url 'search_customers' %}">Customers</a></li>
-                    </ul>
-                </li>
-                <li><a href="{% url 'active_projects' %}"  class="main-nav-active">Active Projects</a></li>
-                <li onclick="toggleSub(1)">
                     <a href="#" class="main-nav-dropdown">New Item<div class="down-arrow"></div></a>
-                    <ul class="sub-menu" id="sub-menu-item">
+                    <ul class="sub-menu" id="sub-menu-main">
+                        <li><a href="{% url 'new_requirement' %}">New Requirement</a></li>
                         <li><a href="{% url 'new_project' %}">New Project</a></li>
                         <li><a href="{% url 'new_task' %}">New Task</a></li>
                         <li><a href="{% url 'new_organisation' %}">New Organisation</a></li>
                         <li><a href="{% url 'new_customer' 0 %}">New Customer</a></li>
                     </ul>
                 </li>
-                <li><a href="{% url 'search' %}">Search</a></li>
+                <li onclick="toggleSub(1)">
+                    <a href="#" class="main-nav-dropdown">Search<div class="down-arrow"></div></a>
+                    <ul class="sub-menu" id="sub-menu-item">
+                        <li><a href="{% url 'search' %}">Search All</a></li>
+                        <li><a href="{% url 'search_organisations' %}">Organisations</a></li>
+                        <li><a href="{% url 'search_customers' %}">Customers</a></li>
+                    </ul>
+                </li>
+                <li onclick="toggleSub(2)">
+                    <a href="#" class="main-nav-dropdown">Administration<div class="down-arrow"></div></a>
+                    <ul class="sub-menu" id="sub-menu-admin">
+                        <li><a href="{% url 'permission_set_information' %}">Permission Sets</a></li>
+                        <li><a href="{% url 'group_information' %}">Groups</a></li>
+                        <li><a href="#">Users</a></li>
+                    </ul>
+                </li>
+
                 <li><a href="{% url 'logout' %}">Logout</a></li>
             </ul>
         </nav>

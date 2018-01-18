@@ -1,21 +1,11 @@
+
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
-<script>
-	function on_page_load() {
-        //Autoscale all textarea
-        autoscale_textarea();
-
-        //Fix up just contact history's input textarea
-        document.getElementById("id_contact_history").style.height = "200px";
-
-
-        initiate_dates();
-	}
-</script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <body onload="on_page_load()">
     <form action="{% url 'organisation_information' organisation_results.organisations_id %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
@@ -29,81 +19,63 @@
             <li>{{ organisation_information_form.organisation_name }}</li>
             <li>{{ organisation_information_form.organisation_website }}</li>
         </ul>
-        <input type="submit" name="submit_contact" value="Update"/>
-        <h2>Organisation Campus'</h2>
+        {% if organisation_permissions > 1 %}
+            <input type="submit" name="submit_contact" value="Update"/>
+        {% endif %}
+        {% if organisation_campus_permissions > 0 %}
+            <h2>Organisation Campus'</h2>
+            {% if organisation_campus_permissions > 1 %}
+                <a href="{% url 'new_campus' organisation_results.organisations_id %}">New Campus</a>
+            {% endif %}
+            <table>
+            <tr class="header"><td>Campus Nickname</td><td>Campus Location</td><td>Campus Address</td></tr>
+            {% for campus in campus_results %}
+                <tr>
+                <td><a href="{% url 'campus_information' campus.pk %}">{{ campus.campus_nickname }}</a></td>
+                <td>{{ campus.campus_country_id }} - {{ campus.campus_region_id }}</td>
+                <td>{{ campus.campus_address1 }}<br />{{ campus.campus_address2 }}<br />{{ campus.campus_address3 }}{{ campus.campus_suburb }}</td>
+                </tr>
+            {% endfor %}
+            </table>
+        {% endif %}
+        {% if customer_permissions > 0 %}
+            <h2>Organisation Contacts</h2>
+            {% if customer_permissions > 1 %}
+                <a href="{% url 'new_customer' organisation_results.organisations_id%}">New Customer</a>
+            {% endif %}
+            <table>
+            <tr class="header"><td>Name</td><td>Email</td></tr>
+            {% for customer in customers_results %}
+                <tr>
+                <td><a href="{% url 'customer_information' customer.customer_id %}">{{ customer.customer_first_name }} {{ customer.customer_last_name }}</a></td>
+                <td>{{ customer.customer_email }}</td>
 
-        <a href="{% url 'new_campus' organisation_results.organisations_id %}">New Campus</a>
-        <table>
-        <tr class="header"><td>Campus Nickname</td><td>Campus Location</td><td>Campus Address</td></tr>
-        {% for campus in campus_results %}
-            <tr>
-            <td><a href="{% url 'campus_information' campus.pk %}">{{ campus.campus_nickname }}</a></td>
-            <td>{{ campus.campus_country_id }} - {{ campus.campus_region_id }}</td>
-            <td>{{ campus.campus_address1 }}<br />{{ campus.campus_address2 }}<br />{{ campus.campus_address3 }}{{ campus.campus_suburb }}</td>
-            </tr>
-        {% endfor %}
-        </table>
-        <h2>Organisation Contacts</h2>
-        <a href="{% url 'new_customer' organisation_results.organisations_id%}">New Customer</a>
-        <table>
-        <tr class="header"><td>Name</td><td>Email</td></tr>
-        {% for customer in customers_results %}
-            <tr>
-            <td><a href="{% url 'customer_information' customer.customer_id %}">{{ customer.customer_first_name }} {{ customer.customer_last_name }}</a></td>
-            <td>{{ customer.customer_email }}</td>
 
+                </tr>
+            {% endfor %}
+            </table>
+        {% endif %}
+    </form>
 
-            </tr>
-        {% endfor %}
-        </table>
+    <form method="post" class="organisation_contact_history" id="organisation_contact_history" enctype="multipart/form-data">
         <h2>Contact History</h2>
-        Contact Type {{  organisation_information_form.contact_type }}<br/>
-        Date: {{ organisation_information_form.start_date_year }}/{{ organisation_information_form.start_date_month }}/{{ organisation_information_form.start_date_day }}<br/>
-        {{ organisation_information_form.contact_history }}<br/>
-        {{ organisation_information_form.contact_attachment }}
-        <input type="submit" name="submit_contact" value="Submit Contact"/>
-        {% if organisation_contact_history %}
-            <div><h4>Contact History</h4></div>
-            {% for row in organisation_contact_history %}
-                <p>
-                    {{ row.contact_type }} - Submitted by {{ row.user_id }} on {{ row.contact_date }}<br/>
-                    <textarea readonly>{{ row.contact_history }}</textarea>
-                    {% if row.document_key %}
-                        <br/><a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}" target="_blank">{{ row.document_key.document_description }}</a>
-                    {% endif %}
-                </p>
-            {% endfor %}
-        {% endif %}
-        <h2>Organisation Documents</h2>
-        <table>
-            <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
-            <tr><td>Document Description:</td><td>{{ organisation_information_form.document_description }}</td></tr>
-            <tr><td>Upload Document:</td><td>{{ organisation_information_form.document }}</td></tr>
-        </table>
-        <input type="submit" name="update" value="Upload Documents"/>
-        <br/>
-        {% if organisation_document_results %}
-            <h4>Organisation Documents</h4>
-            {% for row in organisation_document_results %}
-                <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key }}</a><br/>
-            {% endfor %}
-        {% endif %}
-        {% if customer_document_results %}
-            <h4>Customer Documents associated to Organisation</h4>
-            {% for row in customer_document_results %}
-                {% if row.document_description == "" %}
-                    {{ row.customer_id }} - <a href="https://{{ request.META.HTTP_HOST }}{{ row.document.url }}">{{ row.document.name|slice:"10:" }}</a><br/>
-                {%  else %}
-                    {{ row.customer_id }} - <a href="https://{{ request.META.HTTP_HOST }}{{ row.document.url }}">{{ row.document_description }}</a><br/>
-                {% endif %}
-            {% endfor %}
-        {% endif %}
-        <br/>
+        Loading...
+    </form>
+
+    <form method="post" class="organisation_documents_list" id="organisation_documents_list" enctype="multipart/form-data">
+        <h2>Organisation Documents List</h2>
+        Loading...
+    </form>
+
+
         <h2>Associated Projects & Tasks</h2>
-        <ul>
-            <li><a href="{% url 'new_project' organisation_results.organisations_id %}">Create New Project</a></li>
-            <li><a href="{% url 'new_task' organisation_results.organisations_id %}">Create New Task</a></li>
-        </ul>
+        {% if organisation_permissions > 1 %}
+            <ul>
+                <li><a href="{% url 'new_project' organisation_results.organisations_id %}">Create New Project</a></li>
+                <li><a href="{% url 'new_task' organisation_results.organisations_id %}">Create New Task</a></li>
+            </ul>
+        {% endif %}
+
         <h2>Assigned Projects</h2>
         {% if project_results %}
             <table>
@@ -171,6 +143,141 @@
                 {% endfor %}
             </table>
         {% endif %}
-    </form>
 </body>
+<script>
+    $("#organisation_contact_history").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/information_organisation_contact_history/{{ organisation_results.organisations_id }}/',
+            data: $(this).serialize(),
+            success: function() {
+                //Reload the project history :)
+                load_contact_history();
+            },
+            error: function() {
+                alert("Sorry, project history did not save. Please try again.");
+            }
+        })
+    });
+
+
+    $("#organisation_documents_list").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/information_organisation_documents_list/{{ organisations_id }}',
+            data: $(this).serialize(),
+            success: function() {
+                //Reload the project history :)
+                load_organisation_documents_list();
+            },
+            error: function() {
+                alert("Sorry, project history did not save. Please try again.");
+            }
+        })
+    });
+
+
+    function load_contact_history() {
+        //Load Project History
+        $.ajax({
+            url: '/information_organisation_contact_history/{{ organisation_results.organisations_id }}/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#organisation_contact_history').html(data);
+            },
+            error: function() {
+                $('#organisation_contact_history').html('<h2>Contact History</h2>Sorry, contact history encounted an error and did not load.');
+            }
+        });
+    };
+
+
+    function load_organisation_documents_list() {
+        //Load Project History
+        $.ajax({
+            url: '/information_organisation_documents_list/{{ organisations_id }}/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#organisation_documents_list').html(data);
+            },
+            error: function() {
+                $('#organisation_documents_list').html('<h2>Contact Documents</h2>Sorry, organisations documents encounted an error and did not load.');
+            }
+        });
+    };
+
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    function delete_document(document_key) {
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        $.ajax({
+            url: "/delete_document/" + document_key + "/",
+            data: {},
+            dataType: 'HTML',
+            type: 'POST',
+            success: function(data) {
+                load_organisation_documents_list();
+            },
+            error: function() {
+                alert("There was an issue deleting the document");
+            }
+        })
+    }
+
+    // using jQuery to extract the CSRFToken
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+
+	function on_page_load() {
+	    //Load AJAX components
+        load_contact_history();
+        load_organisation_documents_list();
+
+        //Autoscale all textarea
+        autoscale_textarea();
+
+        //Fix up just contact history's input textarea
+        //document.getElementById("id_contact_history").style.height = "200px";
+
+        //THIS WILL NEED TO BE MOVED TO THE MODULE!!
+        //initiate_dates();
+
+        //Setup the user permissions
+        set_permissions({{ organisation_permissions }})
+	}
+
+
+
+</script>
+
 {% endblock %}

@@ -1,0 +1,25 @@
+{% csrf_token %}
+<h2>Task History</h2>
+<ul>
+    {% if task_permissions > 1 %}
+        <li>{{ information_task_history_form.task_history }}</li>
+        <li>
+            <input type="submit" name="task_history_submit" value="Submit">
+            <a onclick="clear_history()" href="javascript:void(0);">Clear</a>
+        </li>
+    {% endif %}
+    {% if task_history_results %}
+        {% for row in task_history_results %}
+            <li>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}</li>
+            <li><textarea readonly>{{ row.task_history }}</textarea></li>
+        {% endfor %}
+    {% else %}
+        <li>Currently no history</li>
+    {% endif %}
+</ul>
+<script>
+    function clear_history() {
+        $("#id_task_history").val("");
+    }
+</script>
+

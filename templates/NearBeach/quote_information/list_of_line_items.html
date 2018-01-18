@@ -1,0 +1,232 @@
+<h2>Line Items</h2>
+{% if product_line_items %}
+    <h3>Product Line Items</h3>
+    <table id="product_line_table">
+        <tr>
+            <td>Product</td>
+            <td>Price</td>
+            <td>Quantity</td>
+            <td>Discount Amount</td>
+            <td>Sales Price</td>
+            <td>Tax %</td>
+            <td>Tax Amount</td>
+            <td>Total</td>
+            <td>Delete</td>
+        </tr>
+        {% for row in product_line_items %}
+            <tr>
+                <td>{{ row.products_and_services }}</td>
+                <td name="product_price">{{ row.product_price }}</td>
+                <td name="product_quantity">{{ row.quantity }}</td>
+                {% if row.discount_choice == "Percentage" %}
+                    <td>{{ row.discount_percent }}% = {{ row.discount_amount }}</td>
+                    <td style="display: none;" name="product_discount">{{ row.discount_amount }}</td> <!--this is hidden here so I can calculate the discount amount! SHH DO NOT TELL MUM -->
+                {% else %}
+                    <td name="product_discount">{{ row.discount_amount }}</td>
+                {% endif %}
+                <td name="product_sales_price">{{ row.sales_price }}</td>
+                <td>{{ row.tax }}</td>
+                <td name="product_tax">{{ row.tax_amount }}</td>
+                <td>{{ row.total }}</td>
+                <td><a onclick="delete_line_item({{ row.quotes_products_and_services_id }})" href="javascript:void(0);">Delete</a></td>
+            </tr>
+            {% if not row.product_note == "" %}
+                <tr>
+                    <td>Product Note:</td>
+                    <td colspan="7">{{ row.product_note }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+    <br/>
+    <table style="width: 30%;">
+        <tr>
+            <td>Unadjusted Price</td>
+            <td id="product_unadjusted_price">[JAVASCRIPT TO FILL]</td>
+        </tr>
+        <tr>
+            <td>Discount</td>
+            <td id="product_discount">[JAVASCRIPT TO FILL]</td>
+        </tr>
+        <tr>
+            <td>Sales Price</td>
+            <td id="product_sales_price">[JAVASCRIPT TO FILL]</td>
+        </tr>
+        <tr>
+            <td>Tax</td>
+            <td id="product_tax">[JAVASCRIPT TO FILL]</td>
+        </tr>
+        <tr>
+            <td>Grand Total</td>
+            <td id="product_total">[JAVASCRIPT TO FILL]</td>
+        </tr>
+    </table>
+{% endif %}
+
+
+{% if service_line_items %}
+    <h3>Service Line Items</h3>
+    <table id="service_line_table">
+        <tr>
+            <td>Service</td>
+            <td>Price</td>
+            <td>Quantity</td>
+            <td>Discount Amount</td>
+            <td>Sales Price</td>
+            <td>Tax %</td>
+            <td>Tax Amount</td>
+            <td>Total</td>
+            <td>Delete</td>
+        </tr>
+        {% for row in service_line_items %}
+            <tr>
+                <td>{{ row.products_and_services }}</td>
+                <td name="service_price">{{ row.product_price }}</td>
+                <td name="service_quantity">{{ row.quantity }}</td>
+                {% if row.discount_choice == "Percentage" %}
+                    <td>{{ row.discount_percent }}% = {{ row.discount_amount }}</td>
+                    <td style="display: none;" name="service_discount">{{ row.discount_amount }}</td> <!--this is hidden here so I can calculate the discount amount! SHH DO NOT TELL MUM -->
+                {% else %}
+                    <td name="service_discount">{{ row.discount_amount }}</td>
+                {% endif %}
+                <td name="service_sales_price">{{ row.sales_price }}</td>
+                <td>{{ row.tax }}</td>
+                <td name="service_tax">{{ row.tax_amount }}</td>
+                <td>{{ row.total }}</td>
+                <td><a onclick="delete_line_item({{ row.quotes_products_and_services_id }})" href="javascript:void(0);">Delete</a></td>
+            </tr>
+            {% if not row.service_note == "" %}
+                <tr>
+                    <td>Product Note:</td>
+                    <td colspan="7">{{ row.service_note }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+    <br/>
+    <table style="width: 30%;">
+        <tr>
+            <td>Unadjusted Price</td>
+            <td id="service_unadjusted_price">[JAVASCRIPT TO FILL]</td>
+        </tr>
+        <tr>
+            <td>Discount</td>
+            <td id="service_discount">[JAVASCRIPT TO FILL]</td>
+        </tr>
+        <tr>
+            <td>Sales Price</td>
+            <td id="service_sales_price">[JAVASCRIPT TO FILL]</td>
+        </tr>
+        <tr>
+            <td>Tax</td>
+            <td id="service_tax">[JAVASCRIPT TO FILL]</td>
+        </tr>
+        <tr>
+            <td>Grand Total</td>
+            <td id="service_total">[JAVASCRIPT TO FILL]</td>
+        </tr>
+    </table>
+{% endif %}
+
+
+<h2>Totals</h2>
+<table style="width: 30%;">
+    <tr>
+        <td>Unadjusted Price</td>
+        <td id="unadjusted_price">[JAVASCRIPT TO FILL]</td>
+    </tr>
+    <tr>
+        <td>Discount</td>
+        <td id="discount">[JAVASCRIPT TO FILL]</td>
+    </tr>
+    <tr>
+        <td>Sales Price</td>
+        <td id="sales_price">[JAVASCRIPT TO FILL]</td>
+    </tr>
+    <tr>
+        <td>Tax</td>
+        <td id="tax">[JAVASCRIPT TO FILL]</td>
+    </tr>
+    <tr>
+        <td>Grand Total</td>
+        <td id="total">[JAVASCRIPT TO FILL]</td>
+    </tr>
+</table>
+
+
+<script>
+    $(document).ready(function () {
+        //Variables
+        var product_discount = 0;
+        var product_sales_price = 0;
+        var product_tax = 0;
+
+        var service_discount = 0;
+        var service_sales_price = 0;
+        var service_tax = 0;
+
+        /*
+        The following loops loop throught the tables and gets the answers needed - by batman
+         */
+        $('[name="product_discount"]').each(function (){
+            if ($.isNumeric($(this).html())) {
+                product_discount = product_discount + parseFloat($(this).html());
+            };
+        });
+
+        $('[name="product_sales_price"]').each(function (){
+            if ($.isNumeric($(this).html())) {
+                product_sales_price = product_sales_price + parseFloat($(this).html());
+            };
+        });
+
+        $('[name="product_tax"]').each(function (){
+            if ($.isNumeric($(this).html())) {
+                product_tax = product_tax + parseFloat($(this).html());
+            };
+        });
+
+                /*
+        The following loops loop throught the tables and gets the answers needed - by batman
+         */
+        $('[name="service_discount"]').each(function (){
+            if ($.isNumeric($(this).html())) {
+                service_discount = service_discount + parseFloat($(this).html());
+            };
+        });
+
+        $('[name="service_sales_price"]').each(function (){
+            if ($.isNumeric($(this).html())) {
+                service_sales_price = service_sales_price + parseFloat($(this).html());
+            };
+        });
+
+        $('[name="service_tax"]').each(function (){
+            if ($.isNumeric($(this).html())) {
+                service_tax = service_tax + parseFloat($(this).html());
+            };
+        });
+
+        // Adding the values back to the totals :)
+        $("#product_unadjusted_price").html(product_sales_price + product_discount);
+        $("#product_discount").html(product_discount);
+        $("#product_sales_price").html(product_sales_price);
+        $("#product_tax").html(product_tax);
+        $("#product_total").html(product_sales_price + product_tax);
+
+        $("#service_unadjusted_price").html(service_sales_price + service_discount);
+        $("#service_discount").html(service_discount);
+        $("#service_sales_price").html(service_sales_price);
+        $("#service_tax").html(service_tax);
+        $("#service_total").html(service_sales_price + service_tax);
+
+
+        $("#unadjusted_price").html(service_sales_price + service_discount + product_sales_price + product_discount);
+        $("#discount").html(service_discount + product_discount);
+        $("#sales_price").html(service_sales_price + product_sales_price);
+        $("#tax").html(service_tax + product_tax);
+        $("#total").html(service_sales_price + service_tax + product_sales_price + product_tax);
+    });
+</script>
+
+

@@ -1,0 +1,36 @@
+{% csrf_token %}
+<h2>Project Costs</h2>
+{% if project_permissions > 1 %}
+    <table>
+        <tr>
+            <td width="60%">{{ information_project_costs_form.cost_description }}</td>
+            <td width="20%">{{ information_project_costs_form.cost_amount }}</td>
+            <td width="20%"><input type="submit" name="add_cost_submit" id="add_cost_submit" value="Add Cost to Task" disabled="disabled"></td>
+        </tr>
+    </table>
+{% endif %}
+<br/>
+{% if costs_results %}
+    <table>
+        <tr class="header">
+            <td>Item</td>
+            <td>Cost</td>
+            <td>Running Total</td>
+            <td>Delete</td>
+        </tr>
+        {% for row in costs_results %}
+            <tr>
+                <td>{{ row.cost_description }}</td>
+                <td name="cost_amount">{{ row.cost_amount }}</td>
+                <td name="running_total">--filled-by-javascript--</td>
+                <td><a href="{% url 'delete_cost' row.cost_id row.project_id.project_id 'P' %}">Remove Cost</a></td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td>GRAND TOTAL</td>
+            <td id="grand_total">--fill out--</td>
+        </tr>
+    </table>
+{% else %}
+    <p>No costs associated with this task</p>
+{% endif %}

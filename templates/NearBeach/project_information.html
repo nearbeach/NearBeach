@@ -5,25 +5,38 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/expand_sections.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/project_information.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
-<script tpye="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 
 <script>
-	function on_page_load() {
+    function on_page_load() {
+	    //Initiate AJAX modules
+        load_project_assigned_users();
+        load_project_costs();
+        load_project_customers();
+        load_project_history();
+
+        load_document_tree_upload_documents();
+        load_document_tree_create_folder();
+        load_document_tree_list();
+
+
 	    //Initiate the dates
 		initiate_dates();
-
-		var fucking_var = {{ folders_results | safe }};
 
         //Autoscale all textarea
         autoscale_textarea();
 
         //Running totals under costs
         running_total();
+
+        //Finally set the permissions
+        set_permissions({{ project_permissions }});
 	}
 </script>
 
 <body onload="on_page_load();">
-	<form action="{% url 'project_information' project_results.project_id %}" method="POST" enctype="multipart/form-data">
+	<form id="project_information" name="project_information" method="POST" enctype="multipart/form-data">
         <h2>Project Information - PRO{{ project_results.project_id }}</h2>
         {% csrf_token %}
         {% if project_results.project_status == 'Resolved' or project_results == 'Closed' %}
@@ -37,26 +50,23 @@
         Project Start - {{ project_information_form.start_date_year }}{{ project_information_form.start_date_month }}{{ project_information_form.start_date_day }} @ {{ project_information_form.start_date_hour }}:{{ project_information_form.start_date_minute }} {{ project_information_form.start_date_meridiems }}<br/>
         Project Finish - {{ project_information_form.finish_date_year }}{{ project_information_form.finish_date_month }}{{ project_information_form.finish_date_day }} @ {{ project_information_form.finish_date_hour }}:{{ project_information_form.finish_date_minute }}{{ project_information_form.finish_date_meridiems }}<br/><br/>
         {{ project_information_form.project_history_text }}<br/>
-        <input type="submit" name="Save" value="Save"/>
+        <input type="submit" name="update" id="update" value="Update"/>
         {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
-            <input type="submit" name="Resolve" value="Resolve Project"/>
+            <input type="submit" name="Resolve" id="resolve" value="Resolve Project"/>
         {% else %}
             </fieldset>
         {% endif %}
+    </form>
 
+    <form method="post" class="project_history" id="project_history">
         <h2>Project History</h2>
-        {% if project_history_results %}
-            {% for row in project_history_results %}
-                <p>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}<br />
-                <textarea readonly>{{ row.project_history }}</textarea>
-                </p>
-            {% endfor %}
-        {% else %}
-            <p>Currently no history</p>
-        {% endif %}
+        Loading...
+    </form>
         <h2>Associated Tasks</h2>
         {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
-            <a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
+            {% if project_permissions > 1 %}
+                <a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
+            {% endif %}
         {% endif %}
         {% if associated_tasks_results %}
                 <table>
@@ -73,109 +83,294 @@
         {% else %}
             <p>Currently no associated history.</p>
         {% endif %}
+
+    <form method="post" class="project_customers" id="project_customers">
         <h2>Project Customers</h2>
-        {% if new_customers_results %}
-            {% if project_results.project_status == 'New' or project_results.project_status == 'Open' %}
-                <select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" >
-                    <option value="---------" selected>---------</option>
-                    {% for row in new_customers_results %}
-                        {% if not row.customer_id == None %}
-                            <option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
-                        {% endif %}
-                    {% endfor %}                        </select>
-                <input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Project" disabled="disabled">
-            {% endif %}
-        {% endif %}
-        {% if project_customers_results %}
-            <table>
-                <tr class="header">
-                    <td>Customer Name</td>
-                    <td>Customer Description</td>
-                    <td>Customer Email</td>
-                    <td>Customer Campus</td>
-                    <td>Customer Phone</td>
-                </tr>
-                {% for row in project_customers_results %}
-                    <tr>
-                        <td>{{ row.customer_first_name }} {{ row.customer_last_name }}</td>
-                        <td>{{ row.customer_description }}</td>
-                        <td>{{ row.customer_email }}</td>
-                        <td>{{ row.campus_nickname }}</td>
-                        <td>{{ row.customer_phone }}</td>
-                    </tr>
-                {% endfor %}
-            </table>
-        {% else %}
-            <br/>Sorry, there seems to be no customers associated with this project.
-        {% endif %}
+        Loading...
+    </form>
+
+    <form method="post" class="project_costs" id="project_costs">
         <h2>Project Costs</h2>
+        Loading...
+    </form>
+
+    <h2>Document Uploads</h2>
+    <form method="post" class="document_tree_upload_documents" id="document_tree_upload_documents" enctype="multipart/form-data">
+        <h2>Document Tree Upload Documents</h2>
+        Loading...
+    </form>
+
+    <form method="post" class="document_tree_create_folder" id="document_tree_create_folder">
+        <h2>Document Tree Create Folder</h2>
+        Loading...
+    </form>
+
+    <form method="post" class="document_tree_list" id="document_tree_list">
+        <h2>Document Tree List</h2>
+        Loading...
+    </form>
+
+    <h2>Project Quotes</h2>
+    <a href="{% url 'new_quote' project_id 'project' %}">New Quote</a>
+    {% if quote_results %}
         <table>
             <tr>
-                <td width="60%">{{ project_information_form.cost_description }}</td>
-                <td width="20%">{{ project_information_form.cost_amount }}</td>
-                <td width="20%"><input type="submit" name="add_cost_submit" id="add_cost_submit" value="Add Cost to Task" disabled="disabled"></td>
+                <td width="50%">Quote Title</td>
+                <td width="25%">Valid Till</td>
+                <td width="25%">Quote Stage</td>
             </tr>
-
-
-
-        </table>
-        <br/>
-        {% if costs_results %}
-            <table>
-                <tr class="header">
-                    <td>Item</td>
-                    <td>Cost</td>
-                    <td>Running Total</td>
-                    <td>Delete</td>
-                </tr>
-                {% for row in costs_results %}
-                    <tr>
-                        <td>{{ row.cost_description }}</td>
-                        <td name="cost_amount">{{ row.cost_amount }}</td>
-                        <td name="running_total">--filled-by-javascript--</td>
-                        <td><a href="{% url 'delete_cost' row.cost_id row.project_id.project_id 'P' %}">Remove Cost</a></td>
-                    </tr>
-                {% endfor %}
+            {% for row in quote_results %}
                 <tr>
-                    <td>GRAND TOTAL</td>
-                    <td id="grand_total">--fill out--</td>
+                    <td>{{ row.quote_title }}</td>
+                    <td>{{ row.quote_valid_till }}</td>
+                    <td>{{ row.quote_stage_id }}</td>
                 </tr>
-            </table>
-        {% else %}
-            <p>No costs associated with this task</p>
-        {% endif %}
-        <h2>Project Documents</h2>
-        << REBUILDING AS AJAX WIDGET >>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+
+    <form method="post" class="project_assigned_users" id="project_assigned_users">
         <h2>Assigned Users</h2>
-        {% if users_results %}
-            <select id="add_user_select" name="add_user_select" onchange="enable_disable_add_user()">
-                <option value="------">-------</option>
-                {% for row in users_results %}
-                    <option value="{{ row.id }}">{{ row.Name }}</option>
-                {% endfor %}
-            </select>
-            <input type="submit" id="add_user_submit" name="add_user_submit" value="Add User" disabled="disabled"/>
-        {% endif %}
-        {% if assigned_results %}
-            <table>
-                <tr class="header">
-                    <td>Username</td>
-                    <td>First Name</td>
-                    <td>Last name</td>
-                </tr>
-                {% if assigned_results %}
-                    {% for row in assigned_results %}
-                        <tr>
-                            <td>{{ row.user_id__username }}</td>
-                            <td>{{ row.user_id__first_name }}</td>
-                            <td>{{ row.user_id__last_name }}</td>
-                        </tr>
-                    {% endfor %}
-                {% endif %}
-            </table>
-        {% else %}
-            <p>There are currently no staff members assigned to this project</p>
-        {% endif %}
-	</form>
+        Loading...
+    </form>
+
+
+
+
+<script>
+    $("#document_tree_create_folder").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/document_tree_create_folder/{{ project_id }}/P/',
+            data: $(this).serialize(),
+            success: function() {
+                load_document_tree_create_folder();
+                load_document_tree_list();
+            },
+            error: function() {
+                alert("Sorry, document tree create folder did not save. Please try again.");
+            }
+        })
+    });
+
+
+    $("#project_assigned_users").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/information_project_assign_users/{{ project_id }}/',
+            data: $(this).serialize(),
+            success: function() {
+                //Reload the project history :)
+                load_project_assigned_users();
+            },
+            error: function() {
+                alert("Sorry, project assigned users did not save. Please try again.");
+            }
+        })
+    });
+
+    $("#project_costs").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/information_project_costs/{{ project_id }}/',
+            data: $(this).serialize(),
+            success: function() {
+                //Reload the project history :)
+                load_project_costs();
+            },
+            error: function() {
+                alert("Sorry, project costs did not save. Please try again.");
+            }
+        })
+    });
+
+    $("#project_customers").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/information_project_customers/{{ project_id }}/',
+            data: $(this).serialize(),
+            success: function() {
+                //Reload the project history :)
+                load_project_customers();
+            },
+            error: function() {
+                alert("Sorry, project customers did not save. Please try again.");
+            }
+        })
+    });
+
+
+
+    //Code used to help send which button was clicked in POST
+    $("form input[type=submit]").click(function() {
+        $("input[type=submit]", $(this).parents("form")).removeAttr("clicked");
+        $(this).attr("clicked", "true");
+    });
+    $("#project_information").on('submit', function(e) {
+        //Grab which button was pressed
+        var which_button = $("input[type=submit][clicked=true]").val()
+
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/project_information/{{ project_id }}/',
+            data: $(this).serialize(),
+            success: function() {
+                //If we have the resolve button, we will need to navigate to the resolved project url.
+                if (which_button == "Resolve Project") {
+                    //Navigate to the resolve project URL
+                    document.location = "{% url 'resolve_project' project_id %}"
+                }            },
+            error: function() {
+                alert("Sorry, project information did not save. Please try again.");
+            }
+        })
+    });
+
+    $("#project_history").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/information_project_history/{{ project_id }}/',
+            data: $(this).serialize(),
+            success: function() {
+                //Reload the project history :)
+                load_project_history();
+            },
+            error: function() {
+                alert("Sorry, project history did not save. Please try again.");
+            }
+        })
+    });
+
+
+    function load_project_assigned_users() {
+        //Load Project History
+        $.ajax({
+            url: '/information_project_assign_users/{{ project_id }}/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#project_assigned_users').html(data);
+            },
+            error: function() {
+                $('#project_assigned_users').html('<h2>Assigned Users</h2>Sorry, assigned users encounted an error and did not load.');
+            }
+        });
+    };
+
+
+    function load_document_tree_create_folder() {
+        //Load Project History
+        $.ajax({
+            url: '/document_tree_create_folder/{{ project_id }}/P',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#document_tree_create_folder').html(data);
+            },
+            error: function() {
+                $('#document_tree_create_folder').html('Sorry, document tree create folder encounted an error and did not load.');
+            }
+        });
+    };
+
+
+    function load_document_tree_upload_documents() {
+        //Load Project History
+        $.ajax({
+            url: '/document_tree_upload_documents/{{ project_id }}/P',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#document_tree_upload_documents').html(data);
+            },
+            error: function() {
+                $('#document_tree_upload_documents').html('Sorry, document tree upload documents encounted an error and did not load.');
+            }
+        });
+    };
+
+    function load_document_tree_list() {
+        //Load Project History
+        $.ajax({
+            url: '/document_tree_list/{{ project_id }}/P',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#document_tree_list').html(data);
+            },
+            error: function() {
+                $('#document_tree_list').html('<h2>Document Tree</h2>Sorry, document tree encounted an error and did not load.');
+            }
+        });
+    };
+
+
+
+
+    function load_project_costs() {
+        //Load Project History
+        $.ajax({
+            url: '/information_project_costs/{{ project_id }}/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#project_costs').html(data);
+                running_total();
+            },
+            error: function() {
+                $('#project_history').html('<h2>Project Costs</h2>Sorry, project costs encounted an error and did not load.');
+            }
+        });
+    };
+
+    function load_project_customers() {
+        //Load Project Customers
+        $.ajax({
+            url: '/information_project_customers/{{ project_id }}/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#project_customers').html(data);
+            },
+            error: function() {
+                $('#project_customers').html('<h2>Project Customers</h2>Sorry, project customers encounted an error and did not load.');
+            }
+        });
+    };
+
+    function load_project_history() {
+        //Load Project History
+        $.ajax({
+            url: '/information_project_history/{{ project_id }}/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#project_history').html(data);
+            },
+            error: function() {
+                $('#project_history').html('<h2>Project History</h2>Sorry, project history encounted an error and did not load.');
+            }
+        });
+    };
+
+</script>
+
+
+
+
 </body>
 {% endblock %}

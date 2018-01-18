@@ -12,16 +12,21 @@ function running_total() {
 	5.) Loop
 	6.) Fill out grand total
 	 */
-	var cost_amount = document.getElementsByName("cost_amount");
-	var running_total = document.getElementsByName("running_total");
-	var grand_total = document.getElementById("grand_total");
-	var running_total_amount = 0;
+	try {
+		var cost_amount = document.getElementsByName("cost_amount");
+		var running_total = document.getElementsByName("running_total");
+		var grand_total = document.getElementById("grand_total");
+		var running_total_amount = 0;
 
-	//The loop
-	for(var i = 1; i <= running_total.length; i++) {
-		running_total_amount = running_total_amount + Number(cost_amount[i].innerHTML);
-		running_total[i-1].innerHTML = running_total_amount;
+		//The loop
+		for(var i = 1; i <= running_total.length; i++) {
+			running_total_amount = running_total_amount + Number(cost_amount[i].innerHTML);
+			running_total[i-1].innerHTML = running_total_amount;
+		}
+
+		grand_total.innerHTML = running_total_amount;
 	}
-
-	grand_total.innerHTML = running_total_amount;
+	catch(err) {
+		//Nothing to do.
+	}
 }

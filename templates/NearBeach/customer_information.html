@@ -4,15 +4,22 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/customer_information.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <script>
 	function on_page_load() {
+	    //Load AJAX components
+        load_contact_history();
+        load_customer_documents_list();
+
         //Autoscale all textarea
         autoscale_textarea();
 
         //Fix up autoscaling for id_contact_history
-        document.getElementById("id_contact_history").style.height = "200px";
+        //document.getElementById("id_contact_history").style.height = "200px";
 
-        initiate_dates();
+        //Move these to a proper set
+        //initiate_dates();
+        set_permissions({{ customer_permissions }});
 	}
 </script>
 <body onload="on_page_load()">
@@ -36,9 +43,11 @@
                 <li>{{ customer_information_form.customer_email }}</li>
                 <li>Organisation: <a href="{% url 'organisation_information' customer_results.organisations_id.organisations_id %}">{{ customer_results.organisations_id }}</a></li>
             </ul>
-            <input type="submit" name="update" value="Update Details"/>
+            {% if customer_permissions > 1 %}
+                <input type="submit" name="update" value="Update Details"/>
+            {% endif %}
             <h2>Campus Contact Information</h2>
-            {% if add_campus_results %}
+            {% if add_campus_results and assign_campus_to_customer_permission > 1%}
 
                     <select name="add_campus_select" id="id_add_cammpus_select" onchange="enable_disable_add_campus()">
                         <option value="---------"> ---------</option>
@@ -75,56 +84,22 @@
             {% else %}
                 <p>There are currently no campuses</p>
             {% endif %}
-            <h2>Contact History</h2>
-            Contact Type {{  customer_information_form.contact_type }}<br/>
-            Date {{ customer_information_form.start_date_year }}/{{ customer_information_form.start_date_month }}/{{ customer_information_form.start_date_day }}<br/>
-            Time {{ customer_information_form.start_date_hour }}:{{ customer_information_form.start_date_minute }} {{ customer_information_form.start_date_meridiems }}<br/>
-            {{ customer_information_form.contact_history }}<br/>
-            {{ customer_information_form.contact_attachment }}
-            <input type="submit" name="submit_contact" value="Submit Contact"/>
-            {% if customer_contact_history %}
-                <div><h4>Contact History</h4></div>
-                {% for row in customer_contact_history %}
-                    <p>
-                        {{ row.contact_type }} - Submitted by {{ row.user_id }} on {{ row.contact_date }}<br/>
-                        <textarea readonly>{{ row.contact_history }}</textarea>
-                        {% if row.document_key %}
-                            <br/>
-                            <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}" target="_blank">{{ row.document_key.document_description }}</a>
-                        {% endif %}
-                    </p>
-                {% endfor %}
-            {% endif %}
-            <h2>Customer Documents</h2>
-            <table>
-                <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
-                <tr><td>Document Description:</td><td>{{ customer_information_form.document_description }}</td></tr>
-                <tr><td>Upload Document:</td><td>{{ customer_information_form.document }}</td></tr>
-            </table>
-            <input type="submit" name="update" value="Upload Documents"/>
-            <br/>
-            {% if customer_document_results %}
-                <h4>Customer Documents</h4>
-                {% for row in customer_document_results %}
-                    {% if row.document_description == "" %}
-                        <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document }}</a><br/>
-                    {%  else %}
-                        <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document_description }}</a><br/>
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-            <br/>
-            {% if organisation_document_results %}
-                <h4>Organisation Documents</h4>
-                {% for row in organisation_document_results %}
-                    {% if row.document_key.document_description == "" %}
-                        <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">-- {{ row.document_key.document }}</a><br/>
-                    {%  else %}
-                        <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">{{ row.document_key.document_description }}</a><br/>
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
+    </form>
+    <form method="post" class="customer_contact_history" id="customer_contact_history" enctype="multipart/form-data">
+        <h2>Contact History</h2>
+        Loading...
+    </form>
+
+
+    <form method="post" class="customer_documents_list" id="customer_documents_list" enctype="multipart/form-data">
+        <h2>Customer Documents List</h2>
+        Loading...
+    </form>
+
+
+
             <h2>Associated Projects & Tasks</h2>
+            {% if customer_permissions > 1 %}
             <h4>Actions</h4>
             <ul>
                 <li><a href="{% url 'new_project' customer_results.organisations_id.organisations_id customer_results.customer_id %}">New Project</a></li>
@@ -132,6 +107,7 @@
                 <li><a href="{% url 'assign_customer_project_task' customer_results.customer_id %}">Assign Existing Project or Task</a></li>
             </ul>
             <br/>
+            {% endif %}
             <h4>Assigned Projects</h4>
                 {% if project_results %}
                     <table>
@@ -195,5 +171,123 @@
             {% endif %}
     </form>
 </body>
+<script>
+    $("#customer_contact_history").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/information_customer_contact_history/{{ customer_id }}/',
+            data: $(this).serialize(),
+            success: function() {
+                //Reload the project history :)
+                load_contact_history();
+            },
+            error: function() {
+                alert("Sorry, project history did not save. Please try again.");
+            }
+        })
+    });
+
+
+    $("#customer_documents_list").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/information_customer_documents_list/{{ customer_id }}/{{ customer_results.organisations_id.organisations_id }}',
+            data: $(this).serialize(),
+            success: function() {
+                //Reload the project history :)
+                load_customer_documents_list();
+            },
+            error: function() {
+                alert("Sorry, project history did not save. Please try again.");
+            }
+        })
+    });
+
+    function load_contact_history() {
+        //Load Project History
+        $.ajax({
+            url: '/information_customer_contact_history/{{ customer_id }}/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#customer_contact_history').html(data);
+            },
+            error: function() {
+                $('#customer_contact_history').html('<h2>Contact History</h2>Sorry, contact history encounted an error and did not load.');
+            }
+        });
+    };
+
+
+    function load_customer_documents_list() {
+        //Load Project History
+        $.ajax({
+            url: '/information_customer_documents_list/{{ customer_id }}/{{ customer_results.organisations_id.organisations_id }}',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#customer_documents_list').html(data);
+            },
+            error: function() {
+                $('#customer_documents_list').html('<h2>Contact Documents</h2>Sorry, contact documents encounted an error and did not load.');
+            }
+        });
+    };
+
+
+
+    function edit_document_description(document_key) {
+        alert(document_key);
+    }
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    function delete_document(document_key) {
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        $.ajax({
+            url: "/delete_document/" + document_key + "/",
+            data: {},
+            dataType: 'HTML',
+            type: 'POST',
+            success: function(data) {
+                load_customer_documents_list();
+            },
+            error: function() {
+                alert("There was an issue deleting the document");
+            }
+        })
+    }
+
+    // using jQuery to extract the CSRFToken
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+</script>
 
 {% endblock %}

@@ -1,0 +1,20 @@
+{% if requirement_items_results %}
+    <table>
+        <tr>
+            <td>Item</td>
+            <td>Item Title</td>
+            <td>Item Type</td>
+            <td>Item Status</td>
+        </tr>
+    {% for row in requirement_items_results %}
+        <tr>
+            <td><a href="javascript:void(0)" onclick="edit_requirement_item({{ row.requirement_item_id }})">{{ row.requirement_item_id }}</a></td>
+            <td>{{ row.requirement_item_title }}</td>
+            <td>{{ row.requirement_item_type }}</td>
+            <td>{{ row.requirement_item_status }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% else %}
+<p>Currently there are no requirement items. Please click the hyperlink below this section to start creating the required requirements.</p>
+{% endif %}

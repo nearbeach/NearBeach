@@ -9,22 +9,9 @@ def initialise_data(apps, schema_editor):
     """
     The initial setup of the database should populate certain fields with
     the correct data. Otherwise certain features of the database will
-    not function correctly. The first of such is the group permissions
-    which determine how much data/options the user will see. There are
-    4 different rows submitted;
-    1. Admin
-    2. Group Admin
-    3. User
-    4. Read Only
+    not function correctly.
     """
-    group_permissions = apps.get_model("NearBeach", "group_permissions")
     db_alias = schema_editor.connection.alias
-    group_permissions.objects.using(db_alias).bulk_create([
-        group_permissions(role="Admin"),
-        group_permissions(role="Group Admin"),
-        group_permissions(role="User"),
-        group_permissions(role="Read Only"),
-    ])
 
     # List of amount types
     list_of_amount_type = apps.get_model("NearBeach", "list_of_amount_type")
@@ -103,6 +90,43 @@ def initialise_data(apps, schema_editor):
         list_of_opportunity_stage(list_order="9", opportunity_stage_description="Closed Won",probability_success="100"),
         list_of_opportunity_stage(list_order="10", opportunity_stage_description="Closed Lost",probability_success="0"),
     ])
+
+    #List of requirement items status
+    list_of_requirement_item_status = apps.get_model("NearBeach","list_of_requirement_item_status")
+    list_of_requirement_item_status.objects.using(db_alias).bulk_create([
+        list_of_requirement_item_status(requirement_item_status="Draft"),
+        list_of_requirement_item_status(requirement_item_status="Review"),
+        list_of_requirement_item_status(requirement_item_status="Developing/Working"),
+        list_of_requirement_item_status(requirement_item_status="Testing"),
+        list_of_requirement_item_status(requirement_item_status="User Acceptance Testing"),
+        list_of_requirement_item_status(requirement_item_status="Rework"),
+        list_of_requirement_item_status(requirement_item_status="Implemented"),
+        list_of_requirement_item_status(requirement_item_status="Finish"),
+        list_of_requirement_item_status(requirement_item_status="Not Tested"),
+        list_of_requirement_item_status(requirement_item_status="Obsolete"),
+    ])
+
+    #List of requirement items type
+    list_of_requirement_item_type = apps.get_model("NearBeach","list_of_requirement_item_type")
+    list_of_requirement_item_type.objects.using(db_alias).bulk_create([
+        list_of_requirement_item_type(requirement_item_type="Informational"),
+        list_of_requirement_item_type(requirement_item_type="Feature"),
+        list_of_requirement_item_type(requirement_item_type="User Case"),
+        list_of_requirement_item_type(requirement_item_type="User Interface"),
+        list_of_requirement_item_type(requirement_item_type="Non Functional"),
+        list_of_requirement_item_type(requirement_item_type="Constraint"),
+        list_of_requirement_item_type(requirement_item_type="System Function"),
+
+    ])
+
+    #List of requirement type
+    list_of_requirement_type = apps.get_model("NearBeach","list_of_requirement_type")
+    list_of_requirement_type.objects.using(db_alias).bulk_create([
+        list_of_requirement_type(requirement_type="Non Specific"),
+        list_of_requirement_type(requirement_type="Customer Requirements"),
+        list_of_requirement_type(requirement_type="System Requirements"),
+    ])
+
 
 
     # List of titles
@@ -5489,6 +5513,30 @@ def initialise_data(apps, schema_editor):
     ])
 
 
+    list_of_quote_stages = apps.get_model("NearBeach", "list_of_quote_stages")
+    db_alias = schema_editor.connection.alias
+    list_of_quote_stages.objects.using(db_alias).bulk_create([
+        #Quote Stage
+        list_of_quote_stages(quote_stage="Quote Draft",is_invoice='FALSE',sort_order=1),
+        list_of_quote_stages(quote_stage="Quote Negotiation",is_invoice='FALSE',sort_order=2),
+        list_of_quote_stages(quote_stage="Quote Delivered",is_invoice='FALSE',sort_order=3),
+        list_of_quote_stages(quote_stage="Quote On Hold",is_invoice='FALSE',sort_order=4),
+        list_of_quote_stages(quote_stage="Quote Confirmed",is_invoice='FALSE',sort_order=5),
+        list_of_quote_stages(quote_stage="Quote Close Accepted",is_invoice='FALSE',sort_order=6),
+        list_of_quote_stages(quote_stage="Quote Close Rejected",is_invoice='FALSE',sort_order=7),
+        list_of_quote_stages(quote_stage="Quote Close Lost",is_invoice='FALSE',sort_order=8),
+        list_of_quote_stages(quote_stage="Quote Close Dead",is_invoice='FALSE',sort_order=9),
+        #Invoice Stage
+        list_of_quote_stages(quote_stage="Invoice Draft",is_invoice='TRUE',sort_order=10),
+        list_of_quote_stages(quote_stage="Invoice Negotiation",is_invoice='TRUE',sort_order=11),
+        list_of_quote_stages(quote_stage="Invoice Delivered",is_invoice='TRUE',sort_order=12),
+        list_of_quote_stages(quote_stage="Invoice On Hold",is_invoice='TRUE',sort_order=13),
+        list_of_quote_stages(quote_stage="Invoice Confirmed",is_invoice='TRUE',sort_order=14),
+        list_of_quote_stages(quote_stage="Invoice Close Accepted",is_invoice='TRUE',sort_order=15),
+        list_of_quote_stages(quote_stage="Invoice Close Rejected",is_invoice='TRUE',sort_order=16),
+        list_of_quote_stages(quote_stage="Invoice Close Lost",is_invoice='TRUE',sort_order=17),
+        list_of_quote_stages(quote_stage="Invoice Close Dead",is_invoice='TRUE',sort_order=18),
+    ])
 
 
 class Migration(migrations.Migration):

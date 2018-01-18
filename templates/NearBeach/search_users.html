@@ -1,14 +1,34 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
-<form>
-    <div class="div_content">
-        <div class="div_header">
-            <h1>Search Users</h1>
-        </div>
-        <div class="div_sub_content">
-
-        </div>
-    </div>
-</form>
+<h2>Search Users</h2>
+    <form action={% url 'search_users' %} method="post" class="search_users">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <td width="80%">{{ search_form.search_for }}</td>
+                <td width="20%"><input type="submit" value="Search Users"></td><!-- This will go to a blank user information page -->
+            </tr>
+            <tr>
+                <td colspan="2"><a href="{% url 'user_information' %}">New User</a></td>
+            </tr>
+        </table>
+    </form>
+    <br/>
+    <table>
+        <tr>
+            <td>Username</td>
+            <td>First Name</td>
+            <td>Last Name</td>
+            <td>Email</td>
+        </tr>
+        {% for row in user_results %}
+            <tr>
+                <td><a href="{% url 'user_information' row.id %}">{{ row.username }}</a></td>
+                <td>{{ row.first_name }}</td>
+                <td>{{ row.last_name }}</td>
+                <td>{{ row.email }}</td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

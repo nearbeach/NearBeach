@@ -11,10 +11,12 @@ from django.contrib.auth.models import User
 from django.core import serializers
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Sum, Q, Min
-from django.http import HttpResponse,HttpResponseForbidden, HttpResponseRedirect, Http404
+from django.http import HttpResponse,HttpResponseForbidden, HttpResponseRedirect, Http404, HttpResponseBadRequest
 from django.shortcuts import render, get_object_or_404, render_to_response
 from django.template import RequestContext, loader
 from django.urls import reverse
+from .namedtuplefetchall import *
+from .user_permissions import return_user_permission_level
 
 #import python modules
 import datetime, json, simplejson, urllib, urllib2
@@ -24,90 +26,13 @@ def active_projects(request):
     # Get username_id from User
     current_user = request.user
 
-    # Setup connection to the database and query it
-    cursor = connection.cursor()
-
-    cursor.execute("""
-    SELECT 
-      project.project_id AS "project_id"
-    , '' AS "task_id"
-    , project.project_name AS "description"
-    , project.project_end_date AS "end_date"
-    , organisations.organisation_name AS "organisation_name"
-    , organisations.organisations_id AS "organisations_id"
-    
-    
-    
-    from 
-      project left join project_tasks
-        on project.project_id = project_tasks.project_id
-        and project_tasks.is_deleted = 'FALSE'
-    , project_groups
-    , user_groups
-    , organisations
-    
-    
-    where 1 = 1
-    and project.project_status IN ('New','Open')
-    and project.project_status IN ('New','Open')
-    and project.project_id = project_groups.project_id_id
-    and project_groups.groups_id_id = user_groups.group_id_id
-    and user_groups.username_id = %s
-    and project.organisations_id_id=organisations.organisations_id
-    
-    
-    UNION
-    
-    select 
-      project_tasks.project_id AS `Project ID`
-    , tasks.tasks_id AS `Task ID`
-    , tasks.task_short_description AS `Description`
-    , tasks.task_end_date AS `End Date` 
-    , organisations.organisation_name AS "organisation_name"
-    , organisations.organisations_id AS "organisations_id"
-    
-    from 
-      tasks left join project_tasks
-        on tasks.tasks_id = project_tasks.task_id 
-        and project_tasks.is_deleted = "FALSE"
-    , tasks_groups
-    , user_groups
-    , organisations
-    
-    
-    where 1 = 1
-    and tasks.task_status in ('New','Open')
-    and tasks.tasks_id = tasks_groups.tasks_id_id
-    and tasks_groups.groups_id_id = user_groups.group_id_id
-    and user_groups.username_id = %s
-    and tasks.organisations_id_id=organisations.organisations_id
-        
-    UNION
-    
-    select 
-     project_tasks.project_id AS `Project ID`
-    , tasks.tasks_id AS `Task ID`
-    , tasks.task_short_description AS `Description`
-    , tasks.task_end_date AS `End Date` 
-    , organisations.organisation_name AS "organisation_name"
-    , organisations.organisations_id AS "organisations_id"
-    
-    from 
-      tasks left join project_tasks
-        on tasks.tasks_id = project_tasks.task_id 
-        and project_tasks.is_deleted = "FALSE"
-    , organisations
-    
-    
-    
-    where 1 = 1
-    and tasks.task_status in ('New','Open')
-    and tasks.task_assigned_to_id = %s
-    and tasks.organisations_id_id=organisations.organisations_id
-    """, [current_user.id, current_user.id, current_user.id])
-
-    active_projects_results = namedtuplefetchall(cursor)
-    print(active_projects_results)
+    ###
+    #BUG
+    #Might remove the active projects features.
+    ###
+    active_projects_results = project.objects.filter(
+        is_deleted='FALSE',
+    )
 
     # Load the template
     t = loader.get_template('NearBeach/active_projects.html')
@@ -424,6 +349,25 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
 
 @login_required(login_url='login')
 def customer_information(request, customer_id):
+    customer_permissions = 0
+    assign_campus_to_customer_permission = 0
+
+    if request.session['is_superuser'] == True:
+        customer_permissions = 4
+        assign_campus_to_customer_permission = 4
+    else:
+        pp_results = return_user_permission_level(request, None,'customer')
+        ph_results = return_user_permission_level(request, None,'assign_campus_to_customer')
+
+        if pp_results > customer_permissions:
+            customer_permissions = pp_results
+
+        if ph_results > assign_campus_to_customer_permission:
+            assign_campus_to_customer_permission = ph_results
+
+    if customer_permissions == 0:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse('permission_denied'))
     """
 	If the user is not logged in, we want to send them to the login page.
 	This function should be in ALL webpage requests except for login and
@@ -432,7 +376,7 @@ def customer_information(request, customer_id):
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse('login'))
 
-    if request.method == "POST":
+    if request.method == "POST" and customer_permissions > 1:
         # Save everything!
         form = customer_information_form(request.POST, request.FILES)
         if form.is_valid():
@@ -453,76 +397,9 @@ def customer_information(request, customer_id):
 
             save_data.save()
 
-            """
-			If the user has written something in the contact section, we want to save it
-			"""
-            contact_history_notes = form.cleaned_data['contact_history']
-            print(contact_history_notes)
 
-            if not contact_history_notes == '':
-                # Lets save some contact history
-                contact_type = form.cleaned_data['contact_type']
 
-                contact_date = time_combined(
-                    int(form.cleaned_data['start_date_year']),
-                    int(form.cleaned_data['start_date_month']),
-                    int(form.cleaned_data['start_date_day']),
-                    int(form.cleaned_data['start_date_hour']),
-                    int(form.cleaned_data['start_date_minute']),
-                    form.cleaned_data['start_date_meridiems']
-                )
 
-                # documents
-                contact_attachment = request.FILES.get('contact_attachment')
-                if contact_attachment:
-                    documents_save = documents(
-                        document_description=contact_attachment,
-                        document=contact_attachment,
-                        change_user=request.user,
-                    )
-                    documents_save.save()
-
-                    #Add to document permissions
-                    document_permissions_save = document_permissions(
-                        document_key=documents_save,
-                        customer_id=customers.objects.get(customer_id=customer_id),
-                        change_user=request.user,
-                    )
-                    document_permissions_save.save()
-
-                submit_history = contact_history(
-                    organisations_id=save_data.organisations_id,
-                    customer_id=save_data,
-                    contact_type=contact_type,
-                    contact_date=contact_date,
-                    contact_history=contact_history_notes,
-                    user_id=current_user,
-                    change_user=request.user,
-                    #document_key=documents_save,
-                )
-                if contact_attachment:
-                    submit_history.document_key=documents_save
-                submit_history.save()
-
-            """
-			Document Uploads
-			"""
-            document = request.FILES.get('document')
-            if not document == None:
-                document_save = documents(
-                    document_description=form.cleaned_data['document_description'],
-                    document=form.cleaned_data['document'],
-                    change_user=request.user,
-                )
-                document_save.save()
-
-                document_permissions_save = document_permissions(
-                    document_key=document_save,
-                    organisations_id=save_data.organisations_id,
-                    customer_id=save_data,
-                    change_user=request.user,
-                )
-                document_permissions_save.save()
 
             # If we are adding a new campus
             if 'add_campus_submit' in request.POST:
@@ -551,12 +428,6 @@ def customer_information(request, customer_id):
     # Get the instance
     customer_results = customers.objects.get(pk=customer_id)
     add_campus_results = organisations_campus.objects.filter(organisations_id=customer_results.organisations_id)
-    customer_contact_history = contact_history.objects.filter(customer_id=customer_id)
-    customer_document_results = document_permissions.objects.filter(customer_id=customer_id)
-    organisation_document_results = document_permissions.objects.filter(
-        organisations_id=customer_results.organisations_id,
-        customer_id__isnull=True
-    )
 
     # Setup connection to the database and query it
     cursor = connection.cursor()
@@ -596,7 +467,7 @@ def customer_information(request, customer_id):
     opportunity_permissions_results = opportunity_permissions.objects.filter(
         Q(
             Q(assigned_user=request.user)  # User has permission
-            | Q(groups_id__in=user_groups_results.values('group_id'))  # User's groups have permission
+            | Q(groups_id__in=user_groups_results.values('groups_id'))  # User's groups have permission
             | Q(all_users='TRUE')  # All users have access
         )
     )
@@ -652,15 +523,268 @@ def customer_information(request, customer_id):
         'campus_results': campus_results,
         'add_campus_results': add_campus_results,
         'customer_results': customer_results,
-        'customer_contact_history': customer_contact_history,
         'media_url': settings.MEDIA_URL,
         'profile_picture': profile_picture,
-        'customer_document_results': customer_document_results,
-        'organisation_document_results': organisation_document_results,
         'project_results': project_results,
         'task_results': task_results,
         'opportunity_results': opportunity_results,
         'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
+        'customer_id': customer_id,
+        'customer_permissions': customer_permissions,
+        'assign_campus_to_customer_permission': assign_campus_to_customer_permission,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def dashboard(request):
+    # Load the template
+    t = loader.get_template('NearBeach/dashboard.html')
+
+    # context
+    c = {
+
+    }
+
+    return HttpResponse(t.render(c, request))
+
+@login_required(login_url='login')
+def dashboard_active_projects(request):
+    #Get username id from User
+    current_user = request.user
+
+    #Get Data
+    assigned_users_results = assigned_users.objects.filter(
+        is_deleted='FALSE',
+        user_id=current_user,
+    )
+
+    # Load the template
+    t = loader.get_template('NearBeach/dashboard_widgets/active_projects.html')
+
+    # context
+    c = {
+        'assigned_users_results': assigned_users_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def dashboard_active_tasks(request):
+    # Get username id from User
+    current_user = request.user
+
+    # Get Data
+
+    # Load the template
+    t = loader.get_template('NearBeach/dashboard_widgets/active_tasks.html')
+
+    # context
+    c = {
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def dashboard_group_active_projects(request):
+    #Data
+    # Get username_id from User
+    current_user = request.user
+
+    # Setup connection to the database and query it
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    SELECT 
+      project.project_id AS "project_id"
+    , '' AS "task_id"
+    , project.project_name AS "description"
+    , project.project_end_date AS "end_date"
+    , organisations.organisation_name AS "organisation_name"
+    , organisations.organisations_id AS "organisations_id"
+
+
+
+    from 
+      project left join project_tasks
+        on project.project_id = project_tasks.project_id
+        and project_tasks.is_deleted = 'FALSE'
+    , project_groups
+    , user_groups
+    , organisations
+
+
+    where 1 = 1
+    and project.project_status IN ('New','Open')
+    and project.is_deleted = 'FALSE'
+    and project.project_id = project_groups.project_id_id
+    and project_groups.groups_id_id = user_groups.group_id_id
+    and user_groups.username_id = %s
+    and project.organisations_id_id=organisations.organisations_id
+    """, [current_user.id])
+
+    active_projects_results = namedtuplefetchall(cursor)
+
+    # Load the template
+    t = loader.get_template('NearBeach/dashboard_widgets/group_active_projects.html')
+
+    # context
+    c = {
+        'active_projects_results': active_projects_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def dashboard_group_active_tasks(request):
+    # Get username_id from User
+    current_user = request.user
+
+    # Setup connection to the database and query it
+    cursor = connection.cursor()
+
+    cursor.execute("""
+       SELECT DISTINCT
+          tasks.tasks_id
+        , tasks.task_short_description
+        , tasks.task_end_date
+        , organisations.organisation_name
+        , organisations.organisations_id
+        FROM 
+          tasks
+        , organisations
+        , tasks_groups
+        , user_groups
+        
+        WHERE 1=1
+        
+        AND tasks.is_deleted = 'FALSE'
+        AND tasks.task_status IN ('New','Open')
+        AND tasks.organisations_id_id=organisations.organisations_id
+        AND tasks.tasks_id = tasks_groups.tasks_id_id
+        AND tasks_groups.groups_id_id = user_groups.group_id_id
+        AND user_groups.username_id = %s
+       """, [ current_user.id])
+
+    active_tasks_results = namedtuplefetchall(cursor)
+
+    # Load the template
+    t = loader.get_template('NearBeach/dashboard_widgets/group_active_tasks.html')
+
+    # context
+    c = {
+        'active_tasks_results': active_tasks_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def dashboard_group_opportunities(request):
+    # Get username_id from User
+    current_user = request.user
+
+    # Setup connection to the database and query it
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT DISTINCT
+        opportunities.opportunity_id
+        , opportunities.opportunity_name
+        , organisations.organisations_id
+        , organisations.organisation_name
+        , customers.customer_id
+        , customers.customer_first_name
+        , customers.customer_last_name
+        , list_of_opportunity_stage.opportunity_stage_description
+        , opportunities.opportunity_expected_close_date
+        
+        
+        FROM 
+        opportunity_permission LEFT JOIN user_groups
+        ON opportunity_permission.assigned_user_id = user_groups.username_id
+        , opportunities JOIN organisations
+        ON opportunities.organisations_id_id = organisations.organisations_id
+        LEFT JOIN customers
+        ON opportunities.customer_id_id = customers.customer_id
+        JOIN list_of_opportunity_stage
+        ON opportunities.opportunity_stage_id_id = list_of_opportunity_stage.opportunity_stage_id
+        WHERE 1=1
+        AND opportunity_permission.opportunity_id_id = opportunities.opportunity_id
+        AND list_of_opportunity_stage.opportunity_stage_description NOT LIKE '%%Close%%'
+        AND (
+        --Assigned user
+        opportunity_permission.assigned_user_id = %s
+        --Group ID
+        OR (
+        user_groups.username_id = %s
+        AND user_groups.is_deleted = 'FALSE'
+        )	
+        --All users
+        OR opportunity_permission.all_users = 'TRUE'
+        )
+        AND opportunity_permission.is_deleted = 'FALSE'
+    """,[current_user.id,current_user.id])
+    active_group_opportunities = namedtuplefetchall(cursor)
+
+    # Load the template
+    t = loader.get_template('NearBeach/dashboard_widgets/group_opportunities.html')
+
+    # context
+    c = {
+        'active_group_opportunities': active_group_opportunities,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def dashboard_opportunities(request):
+    # Get username_id from User
+    current_user = request.user
+
+    # Setup connection to the database and query it
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT DISTINCT
+        opportunities.opportunity_id
+        , opportunities.opportunity_name
+        , organisations.organisations_id
+        , organisations.organisation_name
+        , customers.customer_id
+        , customers.customer_first_name
+        , customers.customer_last_name
+        , list_of_opportunity_stage.opportunity_stage_description
+        , opportunities.opportunity_expected_close_date
+
+
+        FROM 
+        opportunity_permission LEFT JOIN user_groups
+        ON opportunity_permission.assigned_user_id = user_groups.username_id
+        , opportunities JOIN organisations
+        ON opportunities.organisations_id_id = organisations.organisations_id
+        LEFT JOIN customers
+        ON opportunities.customer_id_id = customers.customer_id
+        JOIN list_of_opportunity_stage
+        ON opportunities.opportunity_stage_id_id = list_of_opportunity_stage.opportunity_stage_id
+        WHERE 1=1
+        AND opportunity_permission.opportunity_id_id = opportunities.opportunity_id
+        AND list_of_opportunity_stage.opportunity_stage_description NOT LIKE '%%Close%%'
+        AND opportunity_permission.assigned_user_id = %s
+    """, [current_user.id])
+    active_opportunities = namedtuplefetchall(cursor)
+
+    # Load the template
+    t = loader.get_template('NearBeach/dashboard_widgets/opportunities.html')
+
+    # context
+    c = {
+        'active_opportunities': active_opportunities,
     }
 
     return HttpResponse(t.render(c, request))
@@ -696,6 +820,32 @@ def delete_cost(request, cost_id, location_id, project_or_task):
         return HttpResponseRedirect(reverse('project_information', args={location_id}))
     else:
         return HttpResponseRedirect(reverse('task_information', args={location_id}))
+
+
+@login_required(login_url='login')
+def delete_document(request, document_key):
+    # Delete the document
+    document = documents.objects.get(document_key=document_key)
+    document.is_deleted = "TRUE"
+    document.change_user=request.user
+    document.save()
+
+    document_permission_save = document_permissions.objects.get(document_key=document_key)
+    document_permission_save.is_deleted = "TRUE"
+    document_permission_save.change_user=request.user
+    document_permission_save.save()
+
+    print("Deleted Document: " + document_key)
+
+    #Return a blank page for fun
+    t = loader.get_template('NearBeach/blank.html')
+
+    # context
+    c = {}
+
+    return HttpResponse(t.render(c, request))
+    #SoMuchFun
+
 
 
 @login_required(login_url='login')
@@ -760,29 +910,6 @@ def index(request):
     return HttpResponseRedirect(reverse('login'))
 
 
-@login_required(login_url='login')
-def is_admin(request):
-    """
-	We will determine if the user is an administrator. Then we
-	will return
-	"""
-    current_user = request.user
-    results = user_groups.objects.filter(username_id=current_user.id).aggregate(Min('user_group_permission'))
-
-    # ADMIN
-    if results.values()[0] == 1:
-        request.session['IS_ADMIN'] = 'TRUE'
-    else:
-        request.session['IS_ADMIN'] = 'FALSE'
-
-    # Group Admin
-    if results.values()[0] == 2:
-        request.session['IS_GROUP_ADMIN'] = 'TRUE'
-    else:
-        request.session['IS_GROUP_ADMIN'] = 'FALSE'
-
-    return
-
 
 def login(request):
     """
@@ -797,6 +924,7 @@ def login(request):
 	the relevant errors.
 	"""
     form = login_form(request.POST or None)
+    print("LOGIN REQUEST")
 
     # reCAPTCHA
     RECAPTCHA_PUBLIC_KEY = ''
@@ -807,6 +935,7 @@ def login(request):
 
     # POST
     if request.method == 'POST':
+        print("POST")
         if form.is_valid():
             """
 			Method
@@ -819,6 +948,7 @@ def login(request):
 			"""
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
+            print("DATA EXTRACTED")
 
             if hasattr(settings, 'RECAPTCHA_PUBLIC_KEY') and hasattr(settings, 'RECAPTCHA_PRIVATE_KEY'):
                 """
@@ -850,35 +980,87 @@ def login(request):
                     user = auth.authenticate(username=username, password=password)
                     auth.login(request, user)
 
-                    is_admin(request)
 
 
             else:
                 user = auth.authenticate(username=username, password=password)
                 auth.login(request, user)
 
-                is_admin(request)
+                #is_admin(request)
 
             # Just double checking. :)
             if request.user.is_authenticated:
-				"""				
-				The user is now authenticated. We now want to create the cookies required
-				for this session's information. Such information would be
-				1.) Is the user an admin?
-				2.) What are their groups and their group permissions
-				
-				This information will be used to help quickly tell the server information
-				about the user without having to constantly look it up.
-				"""
+                print("User Authenticated")
+                """
+                The user has been authenticated. Now the system will store the user's permissions and groups 
+                into cookies. :)
+                
+                First Setup
+                ~~~~~~~~~~~
+                If permission_set with id of 1 does not exist, go through first stage setup.
+                """
+                if not permission_set.objects.all():
+                    #Create administration permission_set
+                    submit_permission_set = permission_set(
+                        permission_set_name="Administration Permission Set",
+                        administration_assign_users_to_groups=4,
+                        administration_create_groups=4,
+                        administration_create_permission_sets=4,
+                        administration_create_users=4,
+                        assign_campus_to_customer=4,
+                        associate_project_and_tasks=4,
+                        customer=4,
+                        invoice=4,
+                        invoice_product=4,
+                        opportunity=4,
+                        organisation=4,
+                        organisation_campus=4,
+                        project=4,
+                        requirement=4,
+                        requirement_link=4,
+                        task=4,
+                        documents=1,
+                        contact_history=1,
+                        project_history=1,
+                        task_history=1,
+                        change_user=request.user,
+                    )
+                    submit_permission_set.save()
 
-				#from django.core import serializers
-				#data = serializers.serialize("xml", SomeModel.objects.all())
-				request.session['user_group_results'] = serializers.serialize('json',user_groups.objects.filter(
-					username=request.user,
-					is_deleted='FALSE'
-				))
+                    #Create admin group
+                    submit_group = groups(
+                        group_name="Administration",
+                        change_user=request.user,
+                    )
+                    submit_group.save()
 
-				return HttpResponseRedirect(reverse('active_projects'))
+                    #Add user to admin groups
+                    submit_user_group = user_groups(
+                        username=request.user,
+                        groups=groups.objects.get(group_id=1),
+                        permission_set=permission_set.objects.get(permission_set_id=1),
+                        change_user=request.user,
+                    )
+                    submit_user_group.save()
+
+
+
+
+                user_groups_results = user_groups.objects.filter(
+                    username=request.user,
+                    is_deleted='FALSE',
+                )
+                request.session['NearBeach_Permissions'] = serializers.serialize(
+                    'json',
+                    user_groups_results,
+                    use_natural_foreign_keys=True,
+                    use_natural_primary_keys=True
+                )
+                request.session['is_superuser'] = request.user.is_superuser
+
+                return HttpResponseRedirect(reverse('active_projects'))
+            else:
+                print("User not authenticated")
         else:
             print(form.errors)
 
@@ -902,6 +1084,11 @@ def logout(request):
 
 @login_required(login_url='login')
 def new_campus(request, organisations_id):
+    permission = return_user_permission_level(request, None, 'organisation_campus')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     """
 	If the user is not logged in, we want to send them to the login page.
 	This function should be in ALL webpage requests except for login and
@@ -914,8 +1101,9 @@ def new_campus(request, organisations_id):
         form = new_campus_form(request.POST)
         if form.is_valid():
             # Get instances
-            region_instance = list_of_countries_regions.objects.get(region_id=request.POST.get('campus_region_id'))
-            country_instance = list_of_countries.objects.get(country_id=request.POST.get('campus_country_id'))
+            region_instance = list_of_countries_regions.objects.get(
+                region_id=request.POST.get('country_and_regions')
+            )
 
             campus_nickname = form.cleaned_data['campus_nickname']
             campus_phone = form.cleaned_data['campus_phone']
@@ -924,8 +1112,6 @@ def new_campus(request, organisations_id):
             campus_address2 = form.cleaned_data['campus_address2']
             campus_address3 = form.cleaned_data['campus_address3']
             campus_suburb = form.cleaned_data['campus_suburb']
-            campus_region_id = region_instance
-            campus_country_id = country_instance
 
             organisation = organisations.objects.get(organisations_id=organisations_id)
 
@@ -941,8 +1127,8 @@ def new_campus(request, organisations_id):
                 campus_address2=campus_address2,
                 campus_address3=campus_address3,
                 campus_suburb=campus_suburb,
-                campus_region_id=campus_region_id,
-                campus_country_id=campus_country_id,
+                campus_region_id=region_instance,
+                campus_country_id=region_instance.country_id,
                 change_user = request.user,
             )
             submit_form.save()
@@ -972,6 +1158,10 @@ def new_campus(request, organisations_id):
 
 @login_required(login_url='login')
 def new_customer(request, organisations_id):
+    permission = return_user_permission_level(request, None, 'customer')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
     """
 	If the user is not logged in, we want to send them to the login page.
 	This function should be in ALL webpage requests except for login and
@@ -1025,6 +1215,11 @@ def new_customer(request, organisations_id):
 
 @login_required(login_url='login')
 def new_opportunity(request, organisation_id='', customer_id=''):
+    permission = return_user_permission_level(request, None, 'opportunity')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     # POST or None
     if request.method == 'POST':
         form = new_opportunity_form(request.POST)
@@ -1198,6 +1393,10 @@ def new_opportunity(request, organisation_id='', customer_id=''):
 
 @login_required(login_url='login')
 def new_organisation(request):
+    permission = return_user_permission_level(request, None, 'organisation')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
     """
 	To stop duplicates in the system, the code will quickly check to see if
 	there is already a company that has either one of the following;
@@ -1263,6 +1462,11 @@ def new_organisation(request):
 
 @login_required(login_url='login')
 def new_project(request, organisations_id='', customer_id='', opportunity_id=''):
+    permission = return_user_permission_level(request, None, 'project')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     print("Organisation ID = ", organisations_id)
     print("Customer ID = ", customer_id)
     print("Opportunity ID = ", opportunity_id)
@@ -1365,13 +1569,12 @@ def new_project(request, organisations_id='', customer_id='', opportunity_id='')
 
 		FROM 
 		  user_groups join groups
-			on user_groups.group_id_id = groups.group_id
+			on user_groups.groups_id = groups.group_id
 
 		WHERE 1=1
 		AND user_groups.is_deleted = "FALSE"
 		AND user_groups.username_id = %s
-		"""
-            , [current_user.id])
+		""", [current_user.id])
         groups_results = namedtuplefetchall(cursor)
 
         organisations_results = organisations.objects.filter(is_deleted='FALSE')
@@ -1427,7 +1630,91 @@ def new_project(request, organisations_id='', customer_id='', opportunity_id='')
 
 
 @login_required(login_url='login')
+def new_quote(request,destination,primary_key):
+    permission = return_user_permission_level(request, None, 'quote')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        form = new_quote_form(request.POST)
+        if form.is_valid():
+            quote_title=form.cleaned_data['quote_title']
+            quote_terms=form.cleaned_data['quote_terms']
+            quote_stage_id=form.cleaned_data['quote_stage_id']
+            customer_notes=form.cleaned_data['customer_notes']
+
+            # Create the final start/end date fields
+            quote_valid_till = time_combined(
+                int(form.cleaned_data['quote_valid_till_year']),
+                int(form.cleaned_data['quote_valid_till_month']),
+                int(form.cleaned_data['quote_valid_till_day']),
+                int(form.cleaned_data['quote_valid_till_hour']),
+                int(form.cleaned_data['quote_valid_till_minute']),
+                form.cleaned_data['quote_valid_till_meridiems']
+            )
+            quote_stage_instance = list_of_quote_stages.objects.get(quote_stages_id=quote_stage_id.quote_stages_id)
+
+            submit_quotes = quotes(
+                quote_title=quote_title,
+                quote_terms=quote_terms,
+                quote_stage_id=quote_stage_instance,
+                customer_notes=customer_notes,
+                quote_valid_till=quote_valid_till,
+                change_user=request.user
+            )
+            """
+            ADD CODE HERE
+            If the user does not have the access to approve quotes, then the quote approval
+            sticks to draft and they will not be able to turn it into an INVOICE.
+            If however the user DOES have access to approve quotes, then the quote approval
+            sticks to approved and they can instantly turn the quote into an INVOICE.
+            This is an automatic process - no user input needed
+            
+            
+            EXCEPT I HAVE TO WRITE THE CODE. So by default I am just turning it to the default value.
+            """
+            submit_quotes.quote_approval_status_id='APPROVED'
+
+
+            """
+            Link the quote to the correct project/task/opportunity
+            """
+            if destination=='project':
+                submit_quotes.project_id = project.objects.get(project_id=primary_key)
+            elif destination=='task':
+                submit_quotes.task_id = tasks.objects.get(tasks_id=primary_key)
+            else:
+                submit_quotes.opportunity_id = opportunity.objects.get(opportunity_id=primary_key)
+
+            submit_quotes.save()
+
+            #Now to go to the quote information page
+            return HttpResponseRedirect(reverse(quote_information, args={submit_quotes.quote_id}))
+
+        else:
+            print(form.errors)
+
+    # Load the template
+    t = loader.get_template('NearBeach/new_quote.html')
+
+    # context
+    c = {
+        'new_quote_form': new_quote_form,
+        'primary_key': primary_key,
+        'destination': destination,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
 def new_task(request, organisations_id='', customer_id='', opportunity_id=''):
+    permission = return_user_permission_level(request, None, 'task')
+
+    if permission < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     # Define if the page is loading in POST
     if request.method == "POST":
         form = new_task_form(request.POST)
@@ -1516,7 +1803,7 @@ def new_task(request, organisations_id='', customer_id='', opportunity_id=''):
             elif (not customer_id == '') and (not customer_id == 0):
                 return HttpResponseRedirect(reverse(customer_information, args={customer_id}))
             else:
-                return HttpResponseRedirect(reverse(project_information, args={submit_project.pk}))
+                return HttpResponseRedirect(reverse(task_information, args={submit_task.pk}))
 
     else:
         # Obtain the groups the user is associated with
@@ -1531,13 +1818,12 @@ def new_task(request, organisations_id='', customer_id='', opportunity_id=''):
 
 		FROM 
 		  user_groups join groups
-			on user_groups.group_id_id = groups.group_id
+			on user_groups.groups_id = groups.group_id
 
 		WHERE 1=1
 		AND user_groups.is_deleted = "FALSE"
 		AND user_groups.username_id = %s
-		"""
-            , [current_user.id])
+		""",[current_user.id])
         groups_results = namedtuplefetchall(cursor)
 
         # Setup dates for initalising
@@ -1751,6 +2037,11 @@ def opportunity_information(request, opportunity_id):
             is_deleted='FALSE',
         ).values('assigned_user').distinct()
     )
+
+    quote_results = quotes.objects.filter(
+        is_deleted='FALSE',
+        opportunity_id=opportunity.objects.get(opportunity_id=opportunity_id),
+    )
     print(user_permissions)
 
     end_hour = opportunity_results.opportunity_expected_close_date.hour
@@ -1790,6 +2081,7 @@ def opportunity_information(request, opportunity_id):
         'user_permissions': user_permissions,
         'project_results': project_results,
         'tasks_results': tasks_results,
+        'quote_results': quote_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -1797,8 +2089,34 @@ def opportunity_information(request, opportunity_id):
 
 @login_required(login_url='login')
 def organisation_information(request, organisations_id):
+    organisation_permissions = 0
+    organisation_campus_permissions = 0
+    customer_permissions = 0
+
+    if request.session['is_superuser'] == True:
+        organisation_permissions = 4
+        organisation_campus_permissions = 4
+        customer_permissions = 4
+    else:
+        pp_results = return_user_permission_level(request, None,'organisation')
+        ph_results = return_user_permission_level(request, None,'organisation_campus')
+        pb_results = return_user_permission_level(request, None,'customer')
+
+        if pp_results > organisation_permissions:
+            organisation_permissions = pp_results
+
+        if ph_results > organisation_campus_permissions:
+            organisation_campus_permissions = ph_results
+
+        if pb_results > customer_permissions:
+            customer_permissions = pb_results
+
+    if organisation_permissions == 0:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     # Get the data from the form if the information has been submitted
-    if request.method == "POST":
+    if request.method == "POST" and organisation_permissions > 1:
         form = organisation_information_form(request.POST, request.FILES)
         if form.is_valid():
             current_user = request.user
@@ -1821,99 +2139,23 @@ def organisation_information(request, organisations_id):
             # Save
             save_data.save()
 
-            """
-            If the user has written something in the contact section, we want to save it
-            """
-            contact_history_notes = form.cleaned_data['contact_history']
-
-            if not contact_history_notes == '':
-                # Lets save some contact history
-                # organisation_id = form.cleaned_data['organisations_id'] #Not going to work :( #organisations_results.organisations_id
-                contact_type = form.cleaned_data['contact_type']
-
-                # Create the final start/end date fields
-                task_start_date = time_combined(
-                    int(form.cleaned_data['start_date_year']),
-                    int(form.cleaned_data['start_date_month']),
-                    int(form.cleaned_data['start_date_day']),
-                    0,
-                    0,
-                    'AM'
-                )
-
-                # documents
-                contact_attachment = request.FILES.get('contact_attachment')
-
-                if contact_attachment:
-                    documents_save = documents(
-                        document_description=contact_attachment,
-                        document=contact_attachment,
-                        change_user=request.user,
-                    )
-                    documents_save.save()
-
-                    #Add to document permissions
-                    document_permissions_save = document_permissions(
-                        document_key=documents_save,
-                        organisations_id=organisations.objects.get(organisations_id=organisations_id),
-                        change_user=request.user,
-                    )
-                    document_permissions_save.save()
-
-
-                submit_history = contact_history(
-                    organisations_id=save_data,
-                    contact_type=contact_type,
-                    contact_date=task_start_date,
-                    contact_history=contact_history_notes,
-                    user_id=current_user,
-                    change_user=request.user,
-                    #document_key=documents_save,
-                )
-                if contact_attachment:
-                    submit_history.document_key=documents_save
-                submit_history.save()
-
-
 
             """
 			Document Uploads
-			"""
-            document = request.FILES.get('document')
-            if not document == None:
-                document_save = documents(
-                    #organisations_id=save_data,
-                    #document_description=form.cleaned_data['document_description'],
-                    document=form.cleaned_data['document'],
-                    change_user=request.user,
-                )
-                document_description = form.cleaned_data['document_description']
-                if document_description=="":
-                    document_save.document_description=document_save.document
-                else:
-                    document_save.document_description=document_description
-                document_save.save()
+			        if request.FILES == None:
+            return HttpResponseBadRequest('File needs to be uploaded')
 
-                document_permissions_save = document_permissions(
-                    organisations_id=save_data,
-                    change_user=request.user,
-                    document_key=document_save,
-                )
-                document_permissions_save.save()
+        #Get the file data
+        file = request.FILES['file']
+			
+			"""
 
     # Query the database for organisation information
     organisation_results = organisations.objects.get(pk=organisations_id)
     campus_results = organisations_campus.objects.filter(organisations_id=organisations_id)
     customers_results = customers.objects.filter(organisations_id=organisation_results)
-    organisation_contact_history = contact_history.objects.filter(organisations_id=organisations_id)
-    customer_document_results = document_permissions.objects.filter(
-        organisations_id=organisations_id,
-        customer_id__isnull=False
-    )
-    organisation_document_results = document_permissions.objects.filter(
-        organisations_id=organisations_id,
-        customer_id__isnull=True
-    )
+
+
     project_results = project.objects.filter(organisations_id=organisations_id)
     task_results = tasks.objects.filter(organisations_id=organisations_id)
     #opportunity_results = opportunity.objects.filter(organisations_id=organisations_id)
@@ -1925,7 +2167,7 @@ def organisation_information(request, organisations_id):
     opportunity_permissions_results = opportunity_permissions.objects.filter(
         Q(
             Q(assigned_user=request.user)  # User has permission
-            | Q(groups_id__in=user_groups_results.values('group_id'))  # User's groups have permission
+            | Q(groups_id__in=user_groups_results.values('groups_id'))  # User's groups have permission
             | Q(all_users='TRUE')  # All users have access
         )
     )
@@ -1960,14 +2202,15 @@ def organisation_information(request, organisations_id):
                 'start_date_month': today.month,
                 'start_date_day': today.day,
             }),
-        'organisation_contact_history': organisation_contact_history,
         'profile_picture': profile_picture,
-        'customer_document_results': customer_document_results,
-        'organisation_document_results': organisation_document_results,
         'project_results': project_results,
         'task_results': task_results,
         'opportunity_results': opportunity_results,
         'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
+        'organisations_id': organisations_id,
+        'organisation_permissions': organisation_permissions,
+        'organisation_campus_permissions': organisation_campus_permissions,
+        'customer_permissions': customer_permissions,
     }
 
     return HttpResponse(t.render(c, request))
@@ -2020,37 +2263,35 @@ END TEMP DOCUMENT
 @login_required(login_url='login')
 def project_information(request, project_id):
     """
-	We need to determine if the user has access to any of the groups that
-	this project is associated to. We will do a simple count(*) SQL QUERY
-	that will determine this.
-	"""
-    current_user = request.user
+    The project permissions. The query looks up ALL the groups associated to this project currently and searches
+    for the user's MAXIMUM user_level_permission. This will determine if the user can edit etc.
+    If the highest user_level_permission = 0, then the user is redirected to the access denied page.
+    """
+    project_permissions = 0
+    project_history_permissions = 0
 
-    # Setup connection to the database and query it
-    cursor = connection.cursor()
+    if request.session['is_superuser'] == True:
+        project_permissions = 4
+        project_history_permissions = 4
+    else:
+        project_groups_results = project_groups.objects.filter(
+            is_deleted="FALSE",
+            project_id=project.objects.get(project_id=project_id),
+        ).values('groups_id_id')
 
-    cursor.execute("""
-		SELECT COUNT(*)
-		FROM
-		  project_groups
-		, user_groups
-		
-		WHERE 1=1
-		AND project_groups.groups_id_id = user_groups.group_id_id
-		AND project_groups.is_deleted = 'FALSE'
-		AND user_groups.is_deleted = 'FALSE'
-		AND user_groups.username_id = %s
-		AND project_groups.project_id_id = %s
-	""", [current_user.id, project_id])
-    has_permission = cursor.fetchall()
+        for row in project_groups_results:
+            pp_results = return_user_permission_level(request, row['groups_id_id'],'project')
+            ph_results = return_user_permission_level(request, row['groups_id_id'],'project_history')
 
-    if not has_permission[0][0] == 1 and not request.session['IS_ADMIN'] == 'TRUE':
+            if pp_results > project_permissions:
+                project_permissions = pp_results
+
+            if ph_results > project_history_permissions:
+                project_history_permissions = ph_results
+
+    if project_permissions == 0:
         # Send them to permission denied!!
-        return HttpResponseRedirect(
-            reverse(
-                permission_denied,
-            )
-        )
+        return HttpResponseRedirect(reverse(permission_denied))
 
     """
 	There are two buttons on the project information page. Both will come
@@ -2058,7 +2299,7 @@ def project_information(request, project_id):
 	this project.
 	"""
     # Get the data from the form if the information has been submitted
-    if request.method == "POST":
+    if request.method == "POST" and project_permissions >= 2: #Greater than edit :)
         form = project_information_form(request.POST, request.FILES)
         if form.is_valid():
             # Define the data we will edit
@@ -2089,48 +2330,13 @@ def project_information(request, project_id):
             # Check to make sure the resolve button was hit
             if 'Resolve' in request.POST:
                 # Well, we have to now resolve the data
+                print("RESOLVE PROJECT!~")
                 project_results.project_status = 'Resolved'
+            else:
+                print(request.POST)
 
             project_results.change_user=request.user
             project_results.save()
-
-
-            if 'add_customer_submit' in request.POST:
-                # The user has tried adding a customer
-                customer_id = int(request.POST.get("add_customer_select"))
-
-                submit_customer = project_customers(
-                    project_id=project.objects.get(pk=project_id),
-                    customer_id=customers.objects.get(pk=customer_id),
-                    change_user=request.user,
-                )
-
-                submit_customer.save()
-
-            cost_description = form.cleaned_data['cost_description']
-            cost_amount = form.cleaned_data['cost_amount']
-            if ((not cost_description == '') and ((cost_amount <= 0) or (cost_amount >= 0))):
-                submit_cost = costs(
-                    project_id=project.objects.get(pk=project_id),
-                    cost_description=cost_description,
-                    cost_amount=cost_amount,
-                    change_user=request.user,
-                )
-                submit_cost.save()
-
-            """
-			If the user has added another user to the project
-			auth.models.User.objects.all() <-bug in the system,this is workaround
-			"""
-            if 'add_user_submit' in request.POST:
-                user_results = int(request.POST.get("add_user_select"))
-                user_instance = auth.models.User.objects.get(pk=user_results)
-                submit_associate_user = assigned_users(
-                    user_id=user_instance,
-                    project_id=project.objects.get(pk=project_id),
-                    change_user=request.user,
-                )
-                submit_associate_user.save()
 
             """
 			If the user has submitted a new document. We only upload the document IF and ONLY IF the user
@@ -2184,26 +2390,6 @@ def project_information(request, project_id):
                     submit_folder.save()
                 except:
                     submit_folder.save()
-
-            # Now save the new project history.
-            project_history_text_results = form.cleaned_data['project_history_text']
-
-            if not project_history_text_results == '':
-                current_user = request.user
-
-                ### TEMP SOLUTION ###
-                project_id_connection = project.objects.get(pk=project_id)
-                ### END TEMP SOLUTION ###
-
-                data = project_history(
-                    project_id=project_id_connection,
-                    user_id=current_user,
-                    project_history=project_history_text_results,
-                    user_infomation=current_user.id,
-                    change_user = request.user,
-                )
-                data.save()
-
         else:
             print(form.errors)
 
@@ -2211,6 +2397,7 @@ def project_information(request, project_id):
 
     # Obtain the required data
     project_history_results = project_history.objects.filter(project_id=project_id, is_deleted='FALSE')
+    cursor = connection.cursor()
     cursor.execute(
         """
         SELECT DISTINCT
@@ -2248,7 +2435,7 @@ def project_information(request, project_id):
     ).order_by(
         'folder_description'
     )
-    costs_results = costs.objects.filter(project_id=project_id, is_deleted='FALSE')
+
 
     """
 	The 24 hours to 12 hours formula.
@@ -2310,81 +2497,12 @@ def project_information(request, project_id):
 		""", [project_id])
     associated_tasks_results = namedtuplefetchall(cursor)
 
-    cursor.execute("""
-		SELECT DISTINCT
-		  customers.customer_first_name
-		, customers.customer_last_name
-		, project_customers.customer_description
-		, customers.customer_email
-		, customers_campus_information.campus_nickname
-		, customers_campus_information.customer_phone
-		FROM
-		  customers LEFT JOIN 
-			(SELECT * FROM customers_campus join organisations_campus ON customers_campus.campus_id_id = organisations_campus.id) as customers_campus_information
-			ON customers.customer_id = customers_campus_information.customer_id_id
-		, project_customers
-		WHERE 1=1
-		AND customers.customer_id = project_customers.customer_id_id
-		AND project_customers.project_id_id = %s
-	""", [project_id])
-    project_customers_results = namedtuplefetchall(cursor)
 
-    cursor.execute("""
-		SELECT DISTINCT 
-		  customers.customer_id
-		, customers.customer_first_name || ' ' || customers.customer_last_name AS customer_name
-		
-		FROM
-		  project 
-		, organisations LEFT JOIN customers
-			ON organisations.organisations_id = customers.organisations_id_id
-		
-		WHERE 1=1
-		AND project.organisations_id_id = organisations.organisations_id
-		
-		AND customers.customer_id NOT IN (SELECT DISTINCT project_customers.customer_id_id
-					FROM project_customers
-					WHERE 1=1
-					AND project_customers.project_id_id = project.project_id
-					AND project_customers.is_deleted = 'FALSE')
-		
-		
-		-- LINKS --
-		AND organisations.organisations_id = %s
-		AND project.project_id = %s
-		-- END LINKS --
-	""", [project_results.organisations_id_id, project_id])
-    new_customers_results = namedtuplefetchall(cursor)
+    quote_results = quotes.objects.filter(
+        is_deleted="FALSE",
+        project_id = project_results,
+    )
 
-    cursor.execute("""
-			SELECT DISTINCT
-			  auth_user.id
-			, auth_user.username
-			, auth_user.first_name
-			, auth_user.last_name
-			, auth_user.first_name || ' ' || auth_user.last_name AS "Name"
-			, auth_user.email
-			FROM
-			  project_groups
-			, user_groups
-			, auth_user
-
-			WHERE 1=1
-
-			--AUTH_USER CONDITIONS
-			AND auth_user.is_active=1
-
-			--PROJECT_GROUPS CONDITIONS
-			AND project_groups.project_id_id=%s
-
-			-- JOINS --
-			AND project_groups.groups_id_id=user_groups.group_id_id
-			AND user_groups.username_id=auth_user.id
-			-- END JOINS --
-		""", [project_id])
-    users_results = namedtuplefetchall(cursor)
-
-    assigned_results = assigned_users.objects.filter(project_id=project_id)
 
     # Load the template
     t = loader.get_template('NearBeach/project_information.html')
@@ -2395,22 +2513,120 @@ def project_information(request, project_id):
         'project_results': project_results,
         'associated_tasks_results': associated_tasks_results,
         'project_history_results': project_history_results,
-        'project_customers_results': project_customers_results,
-        'new_customers_results': new_customers_results,
         'documents_results': simplejson.dumps(documents_results,encoding='utf-8'),
         'folders_results': serializers.serialize('json', folders_results),
         'media_url': settings.MEDIA_URL,
-        'users_results': users_results,
-        'assigned_results': assigned_results.values(
-            'user_id',
-            'user_id__username',
-            'user_id__first_name',
-            'user_id__last_name',
-        ).distinct(),
-        'costs_results': costs_results,
+        'quote_results': quote_results,
+        'project_id': project_id,
+        'project_permissions': project_permissions,
+        'project_history_permissions': project_history_permissions,
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def quote_information(request, quote_id):
+    quotes_results = quotes.objects.get(quote_id=quote_id)
+    """
+    ADD IN ABILITY TO CHECK USER PERMISSIONS HERE!
+    :param request: 
+    :param quote_id: 
+    :return: 
+    """
+    if request.method == "POST":
+        form = quote_information_form(request.POST)
+        if form.is_valid():
+            #Extract the information from the forms
+            quotes_results.quote_title = form.cleaned_data['quote_title']
+            quotes_results.quote_terms = form.cleaned_data['quote_terms']
+            quotes_results.quote_stage_id = form.cleaned_data['quote_stage_id']
+            quotes_results.customer_notes = form.cleaned_data['customer_notes']
+
+            quotes_results.quote_valid_till = time_combined(
+                int(form.cleaned_data['quote_valid_till_year']),
+                int(form.cleaned_data['quote_valid_till_month']),
+                int(form.cleaned_data['quote_valid_till_day']),
+                int(form.cleaned_data['quote_valid_till_hour']),
+                int(form.cleaned_data['quote_valid_till_minute']),
+                form.cleaned_data['quote_valid_till_meridiems']
+            )
+
+            #Check to see if we have to move quote to invoice
+            if 'create_invoice' in request.POST:
+                quotes_results.is_invoice = 'TRUE'
+                quotes_results.quote_stage_id = list_of_quote_stages.objects.filter(is_invoice='TRUE').order_by('sort_order')[0]
+
+            #Check to see if we have to revert the invoice to a quote
+            if 'revert_quote' in request.POST:
+                quotes_results.is_invoice = 'FALSE'
+                quotes_results.quote_stage_id = list_of_quote_stages.objects.filter(is_invoice='FALSE').order_by('sort_order')[0]
+
+
+            quotes_results.change_user=request.user
+            quotes_results.save()
+
+        else:
+            print(form.errors)
+
+
+
+
+    #Determine if quote or invoice
+    quote_or_invoice = 'Quote'
+    if quotes_results.is_invoice == 'TRUE':
+        quote_or_invoice = 'Invoice'
+
+    """
+    	The 24 hours to 12 hours formula.
+    	00:00 means that it is 12:00 AM - change required for hour
+    	01:00 means that it is 01:00 AM - no change required
+    	12:00 means that it is 12:00 PM - change required for meridiem
+    	13:00 means that it is 01:00 PM - change required for hour and meridiem
+    	"""
+    quote_valid_till_hour = quotes_results.quote_valid_till.hour
+    quote_valid_till_meridiem = u'AM'
+    if quote_valid_till_hour == 0:
+        quote_valid_till_hour = 12
+    elif quote_valid_till_hour == 12:
+        quote_valid_till_meridiem = u'PM'
+    elif quote_valid_till_hour > 12:
+        start_hour = quote_valid_till_hour - 12
+        quote_valid_till_meridiem = u'PM'
+
+    # Setup the initial data for the form
+    initial = {
+        'quote_title': quotes_results.quote_title,
+        'quote_terms': quotes_results.quote_terms,
+        'quote_stage_id': quotes_results.quote_stage_id.quote_stages_id,
+        'quote_valid_till_year': quotes_results.quote_valid_till.year,
+        'quote_valid_till_month': quotes_results.quote_valid_till.month,
+        'quote_valid_till_day': quotes_results.quote_valid_till.day,
+        'quote_valid_till_hour': quote_valid_till_hour,
+        'quote_valid_till_minute': quotes_results.quote_valid_till.minute,
+        'quote_valid_till_meridiem': quote_valid_till_meridiem,
+        'customer_notes': quotes_results.customer_notes,
+    }
+
+    # Load the template
+    t = loader.get_template('NearBeach/quote_information.html')
+
+    # context
+    c = {
+        'quotes_results': quotes_results,
+        'quote_information_form': quote_information_form(initial=initial),
+        'quote_id': quote_id,
+        'quote_or_invoice': quote_or_invoice,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+@login_required(login_url='login')
+def rename_document(request, document_key):
+    if request.method == "POST":
+        print(request)
+    else:
+        return HttpResponseBadRequest("This is a POST function. POST OFF!")
 
 
 @login_required(login_url='login')
@@ -2424,7 +2640,7 @@ def resolve_project(request, project_id):
 
 @login_required(login_url='login')
 def resolve_task(request, task_id):
-    task_update = tasks.object.get(task_id=task_id)
+    task_update = tasks.objects.get(tasks_id=task_id)
     task_update.task_status = 'Resolved'
     task_update.change_user=request.user
     task_update.save()
@@ -2492,11 +2708,16 @@ def search(request):
 	""", [search_like, search_like, search_like])
     task_results = namedtuplefetchall(cursor)
 
+    opportunity_results = opportunity.objects.all()
+    requirement_results = requirements.objects.all()
+
     # context
     c = {
         'search_form': search_form(initial={'search_for': search_results}),
         'project_results': project_results,
         'task_results': task_results,
+        'opportunity_results': opportunity_results,
+        'requirement_results': requirement_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -2630,6 +2851,28 @@ def task_information(request, task_id):
 	this task is associated to. We will do a simple count(*) SQL QUERY
 	that will determine this.
 	"""
+    task_permissions = 0
+    task_history_permissions = 0
+
+    if request.session['is_superuser'] == True:
+        task_permissions = 4
+        task_history_permissions = 4
+    else:
+        task_groups_results = tasks_groups.objects.filter(
+            is_deleted="FALSE",
+            tasks_id=tasks.objects.get(tasks_id=task_id),
+        ).values('groups_id_id')
+
+        for row in task_groups_results:
+            pp_results = return_user_permission_level(request, row['groups_id_id'],'task')
+            ph_results = return_user_permission_level(request, row['groups_id_id'],'task_history')
+
+            if pp_results > task_permissions:
+                task_permissions = pp_results
+
+            if ph_results > task_history_permissions:
+                task_history_permissions = ph_results
+
     current_user = request.user
 
     # Setup connection to the database and query it
@@ -2641,7 +2884,7 @@ def task_information(request, task_id):
 		  tasks_groups
 		, user_groups
 		WHERE 1=1
-		AND tasks_groups.groups_id_id = user_groups.group_id_id
+		AND tasks_groups.groups_id_id = user_groups.groups_id
 		AND tasks_groups.is_deleted = 'FALSE'
 		AND user_groups.is_deleted = 'FALSE'
 		AND user_groups.username_id = %s
@@ -2697,40 +2940,6 @@ def task_information(request, task_id):
                 task_results.task_status = 'Resolved'
 
             task_results.save()
-
-            if 'add_customer_submit' in request.POST:
-                # The user has tried adding a customer
-                customer_id = int(request.POST.get("add_customer_select"))
-
-                submit_customer = tasks_customers(
-                    tasks_id=tasks.objects.get(pk=task_id),
-                    customer_id=customers.objects.get(pk=customer_id),
-                    change_user=request.user,
-                )
-                submit_customer.save()
-
-            if 'add_user_submit' in request.POST:
-                user_results = int(request.POST.get("add_user_select"))
-                user_instance = auth.models.User.objects.get(pk=user_results)
-                submit_associate_user = assigned_users(
-                    user_id=user_instance,
-                    task_id=tasks.objects.get(tasks_id=task_id),
-                    change_user=request.user,
-                )
-                submit_associate_user.save()
-
-            if 'add_cost_submit' in request.POST:
-                # Extract information
-                cost_description = form.cleaned_data['cost_description']
-                cost_amount = form.cleaned_data['cost_amount']
-                # SAve
-                submit_cost = costs(
-                    cost_description=cost_description,
-                    cost_amount=cost_amount,
-                    task_id=tasks.objects.get(tasks_id=task_id),
-                    change_user=request.user,
-                )
-                submit_cost.save()
 
             """
 			If the user has submitted a new document. We only upload the document IF and ONLY IF the user
@@ -2795,25 +3004,9 @@ def task_information(request, task_id):
                 except:
                     submit_folder.save()
 
-            # Now save the new project history.
-            task_history_text_results = form.cleaned_data['task_history_text']
-
-            if not task_history_text_results == '':
-                current_user = request.user
-
-                task_id_connection = tasks.objects.get(tasks_id=task_id)
-
-                data = tasks_history(
-                    tasks_id=task_id_connection,
-                    user_id=current_user,
-                    task_history=task_history_text_results,
-                    user_infomation=current_user.id,
-                    change_user=request.user,
-                )
-                data.save()
 
     # Obtain required data
-    task_history_results = tasks_history.objects.filter(tasks_id=task_id)  # Will need to remove all IS_DELETED=TRUE
+
 
     cursor.execute(
         """
@@ -2854,7 +3047,7 @@ def task_information(request, task_id):
     ).order_by(
         'folder_description'
     )
-    costs_results = costs.objects.filter(task_id=task_id, is_deleted='FALSE')
+
 
     """
 	The 24 hours to 12 hours formula.
@@ -2916,86 +3109,12 @@ def task_information(request, task_id):
 		""", [task_id])
     associated_project_results = namedtuplefetchall(cursor)
 
-    cursor.execute("""
-		SELECT DISTINCT
-		  customers.customer_first_name
-		, customers.customer_last_name
-		, tasks_customers.customers_description
-		, customers.customer_email
-		, customers_campus_information.campus_nickname
-		, customers_campus_information.customer_phone
-		FROM
-		  customers LEFT JOIN 
-			(SELECT 
-			  * 
-			  FROM 
-			  customers_campus join organisations_campus 
-			  ON customers_campus.campus_id_id = organisations_campus.id) as customers_campus_information
-			ON customers.customer_id = customers_campus_information.customer_id_id
-		, tasks_customers
-		WHERE 1=1
-		AND customers.customer_id = tasks_customers.customer_id_id
-		AND tasks_customers.tasks_id_id = %s
-	""", [task_id])
-    tasks_customers_results = namedtuplefetchall(cursor)
 
-    # task_customers_results
-    cursor.execute("""
-		SELECT DISTINCT 
-		  customers.customer_id
-		, customers.customer_first_name || ' ' || customers.customer_last_name AS customer_name
-		
-		FROM
-		  tasks 
-		, organisations LEFT JOIN customers
-			ON organisations.organisations_id = customers.organisations_id_id
-		
-		WHERE 1=1
-		AND tasks.organisations_id_id = organisations.organisations_id
-		
-		AND customers.customer_id NOT IN (SELECT DISTINCT tasks_customers.customer_id_id
-					FROM tasks_customers
-					WHERE 1=1
-					AND tasks_customers.tasks_id_id = tasks.tasks_id
-					AND tasks_customers.is_deleted = 'FALSE')
-		
-		
-		-- LINKS --
-		AND organisations.organisations_id = %s
-		AND tasks.tasks_id = %s
-		-- END LINKS --	
-	""", [task_results.organisations_id_id, task_id])
-    new_customers_results = namedtuplefetchall(cursor)
+    quote_results = quotes.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_results,
+    )
 
-    cursor.execute("""
-				SELECT DISTINCT
-				  auth_user.id
-				, auth_user.username
-				, auth_user.first_name
-				, auth_user.last_name
-				, auth_user.first_name || ' ' || auth_user.last_name AS "Name"
-				, auth_user.email
-				FROM
-				  tasks_groups
-				, user_groups
-				, auth_user
-
-				WHERE 1=1
-
-				--AUTH_USER CONDITIONS
-				AND auth_user.is_active=1
-
-				--PROJECT_GROUPS CONDITIONS
-				AND tasks_groups.tasks_id_id=%s
-
-				-- JOINS --
-				AND tasks_groups.groups_id_id=user_groups.group_id_id
-				AND user_groups.username_id=auth_user.id
-				-- END JOINS --
-			""", [task_id])
-    users_results = namedtuplefetchall(cursor)
-
-    assigned_results = assigned_users.objects.filter(task_id=task_id)
     running_total = 0
     # Load the template
     t = loader.get_template('NearBeach/task_information.html')
@@ -3005,43 +3124,25 @@ def task_information(request, task_id):
         'task_results': task_results,
         'task_information_form': task_information_form(initial=initial),
         'associated_project_results': associated_project_results,
-        'task_history_results': task_history_results,
-        'tasks_customers_results': tasks_customers_results,
-        'new_customers_results': new_customers_results,
         'documents_results': simplejson.dumps(documents_results,encoding='utf-8'),
         'folders_results': serializers.serialize('json', folders_results),
         'media_url': settings.MEDIA_URL,
-        'users_results': users_results,
-        'assigned_results': assigned_results.values(
-            'user_id',
-            'user_id__username',
-            'user_id__first_name',
-            'user_id__last_name',
-        ).distinct(),
-        'costs_results': costs_results,
+        'task_id': task_id,
+        'task_permissions': task_permissions,
+        'task_history_permissions': task_history_permissions,
     }
 
     return HttpResponse(t.render(c, request))
 
 
-# Extra functionality
-"""
-The following function helps change the cursor's results into useable
-SQL that the html templates can read.
-"""
-from collections import namedtuple
-def namedtuplefetchall(cursor):
-    "Return all rows from a cursor as a namedtuple"
-    desc = cursor.description
-    nt_result = namedtuple('Result', [col[0] for col in desc])
-    return [nt_result(*row) for row in cursor.fetchall()]
+
+
+
 
 
 """
 The following def are designed to help display a customer 404 and 500 pages
 """
-
-
 def handler404(request):
     response = render_to_response(
         '404.html',

@@ -1,0 +1,15 @@
+<h2>Projects Assigned to me</h2>
+{% if assigned_users_results %}
+    <table>
+        <tr>
+            <td>Project ID</td>
+            <td>Description</td>
+            <td>End Date</td>
+        </tr>
+        {% for row in assigned_users_results %}
+
+        {% endfor %}
+    </table>
+{% else %}
+    <p>Sorry, no projects have been assigned to you.</p>
+{% endif %}

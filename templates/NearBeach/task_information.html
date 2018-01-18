@@ -6,8 +6,20 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/task_information.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
 <script tpye="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <script>
     function on_page_load() {
+        //Initiate AJAX modules
+        load_task_assigned_users();
+        load_task_costs();
+        load_task_customers();
+        load_task_history();
+
+        load_document_tree_list();
+        load_document_tree_create_folder();
+        load_document_tree_upload_documents();
+
+        
         initiate_dates();
 
         //Re-size all those pesky textareas;
@@ -15,12 +27,15 @@
 
         //Running total currently stops the javascript.
         running_total();
+
+        //Finally set the permissions
+        set_permissions({{ task_permissions }});
     }
 </script>
 
 
 <body onload="on_page_load()">
-	<form action="{% url 'task_information' task_results.tasks_id %}" method="POST" enctype="multipart/form-data">
+	<form id="task_information" name="task_information" method="POST" enctype="multipart/form-data">
 		{% csrf_token %}
             <h2>Task information - TASK{{ task_results.tasks_id }}</h2>
             {% if task_results.task_status == 'Resolved' or task_results.task_status == 'Closed' %}
@@ -31,152 +46,322 @@
             Task Start - {{ task_information_form.start_date_year }}/{{ task_information_form.start_date_month }}/{{ task_information_form.start_date_day }} @ {{ task_information_form.start_date_hour }}:{{ task_information_form.start_date_minute }} {{ task_information_form.start_date_meridiems }}<br/>
             Task finish Date - {{ task_information_form.finish_date_year }}/{{ task_information_form.finish_date_month }}/{{ task_information_form.finish_date_day }} @ {{ task_information_form.finish_date_hour }}:{{ task_information_form.finish_date_minute }} {{ task_information_form.finish_date_meridiems }}<br/>
             <br/>
-            {{ task_information_form.task_history_text }}<br/>
 
-            <input type="submit" name="Save" value="Save"/>
-            {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
-                <input type="submit" name="Resolve" value="Resolve Project"/>
+            {% if task_permissions > 1 %}
+                <input type="submit" name="update" value="Update"/>
+                {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
+                    <input type="submit" name="Resolve" value="Resolve Project"/>
+                {% else %}
+                    </fieldset>
+                {% endif %}
             {% else %}
                 </fieldset>
             {% endif %}
-            <h2>Task History</h2>
-            {% if task_history_results %}
-                {% for row in task_history_results %}
-                    <p>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}<br />
-                    <textarea readonly>{{ row.task_history }}</textarea>
-                    </p>
-                {% endfor %}
-            {% else %}
-                <p>Currently no history</p>
-            {% endif %}
-            <h2>Associated Projects</h2>
-            {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
-                <a href="{% url 'associated_projects' task_results.tasks_id %}">Associate Project</a>
-            {% endif %}
-            {% if associated_project_results %}
-                    <table>
-                        <tr class="header"><td>Project Id</td><td>project Name</td><td>End Date</td></tr>
-                        {% for associated_project_row in associated_project_results %}
-                            <tr>
-                            <td><a href="{% url 'project_information' associated_project_row.project_id %}">Project - {{ associated_project_row.project_id }}</a></td>
-                            <td>{{ associated_project_row.project_name }}</td>
-                            <td>{{ associated_project_row.project_end_date }}</td>
-                            </tr>
-                        {% endfor %}
-                    </table>
-            {% else %}
-                <p>Currently no associated projects.</p>
-            {% endif %}
-            <h2>Task's Customers</h2>
-            {% if new_customers_results %}
-                {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
-                    <select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" >
-                        <option value="---------" selected>---------</option>
-                        {% for row in new_customers_results %}
-                            {% if not row.customer_id == None %}
-                                <option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
-                    <input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Task" disabled="disabled">
-                {% endif %}
-            {% endif %}
-            {% if tasks_customers_results %}
+    </form>
 
-                <table>
-                    <tr class="header">
-                        <td>Customer Name</td>
-                        <td>Customer Description</td>
-                        <td>Customer Email</td>
-                        <td>Customer Campus</td>
-                        <td>Customer Phone</td>
-                    </tr>
-                    {% for row in tasks_customers_results %}
-                        <tr>
-                            <td>{{ row.customer_first_name }} {{ row.customer_last_name }}</td>
-                            <td>{{ row.customer_description }}</td>
-                            <td>{{ row.customer_email }}</td>
-                            <td>{{ row.campus_nickname }}</td>
-                            <td>{{ row.customer_phone }}</td>
-                        </tr>
-                    {% endfor %}
-                </table>
-
-            {% else %}
-                <br/>There are currently no customers associated to this task.
-            {% endif %}
-            <h2>Task Costs</h2>
+    <form method="post" class="task_history" id="task_history" style="">
+        <h2>Task History</h2>
+        Loading...
+    </form>
+    <h2>Associated Projects</h2>
+    {% if task_permissions > 1 %}
+        {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
+            <a href="{% url 'associated_projects' task_results.tasks_id %}">Associate Project</a>
+        {% endif %}
+    {% endif %}
+    {% if associated_project_results %}
             <table>
-                <tr>
-                    <td width="60%">{{ task_information_form.cost_description }}</td>
-                    <td width="20%">{{ task_information_form.cost_amount }}</td>
-                    <td width="20%"><input type="submit" name="add_cost_submit" id="add_cost_submit" value="Add Cost to Task" disabled="disabled"></td>
-                </tr>
-            </table>
-            {% if costs_results %}
-                <table>
-                    <tr class="header">
-                        <td>Item</td>
-                        <td>Cost</td>
-                        <td>Running Total</td>
-                        <td>Delete</td>
-                    </tr>
-                    {% for row in costs_results %}
-                        <tr>
-                            <td>{{ row.cost_description }}</td>
-                            <td name="cost_amount">{{ row.cost_amount }}</td>
-                            <td name="running_total">--filled-by-javascript--</td>
-                            <td><a href="{% url 'delete_cost' row.cost_id task_results.tasks_id 'T' %}">Remove Cost</a></td>
-                        </tr>
-                    {% endfor %}
+                <tr class="header"><td>Project Id</td><td>project Name</td><td>End Date</td></tr>
+                {% for associated_project_row in associated_project_results %}
                     <tr>
-                        <td>GRAND TOTAL</td>
-                        <td id="grand_total">--fill out--</td>
+                    <td><a href="{% url 'project_information' associated_project_row.project_id %}">Project - {{ associated_project_row.project_id }}</a></td>
+                    <td>{{ associated_project_row.project_name }}</td>
+                    <td>{{ associated_project_row.project_end_date }}</td>
                     </tr>
-                </table>
-            {% else %}
-                <p>No costs associated with this task</p>
-            {% endif %}
+                {% endfor %}
+            </table>
+    {% else %}
+        <p>Currently no associated projects.</p>
+    {% endif %}
+
+    <form method="post" class="task_customers" id="task_customers" style="">
+        <h2>Task Customers</h2>
+        Loading...
+    </form>
+
+    <form method="post" class="task_costs" id="task_costs" style="">
+        <h2>Task Costs</h2>
+        Loading...
+    </form>
 
 
-            <h2>Task Documents</h2>
-            << REBUILDING AS AJAX WIDGET >>
-            <h2>Assigned Users</h2>
-            {% if users_results %}
-                <select id="add_user_select" name="add_user_select" onchange="enable_disable_add_user()">
-                    <option value="------">-------</option>
-                    {% for row in users_results %}
-                        <option value="{{ row.id }}">{{ row.Name }}</option>
-                    {% endfor %}
-                </select>
-                <input type="submit" id="add_user_submit" name="add_user_submit" value="Add User" disabled="disabled"/>
-            {% endif %}
-            {% if assigned_results %}
-                <table>
-                    <tr class="header">
-                        <td>Username</td>
-                        <td>First Name</td>
-                        <td>Last name</td>
-                    </tr>
-                    {% if assigned_results %}
-                        {% for row in assigned_results %}
-                            <tr>
-                                <td>{{ row.user_id__username }}</td>
-                                <td>{{ row.user_id__first_name }}</td>
-                                <td>{{ row.user_id__last_name }}</td>
-                            </tr>
-                        {% endfor %}
-                    {% endif %}
-                </table>
-            {% else %}
-                <p>There are currently no staff members assigned to this project</p>
-            {% endif %}
-	</form>
+
+    <h2>Document Uploads</h2>
+    <form method="post" class="document_tree_upload_documents" id="document_tree_upload_documents" enctype="multipart/form-data">
+        <h2>Document Tree Upload Documents</h2>
+        Loading...
+    </form>
+
+    <form method="post" class="document_tree_create_folder" id="document_tree_create_folder">
+        <h2>Document Tree Create Folder</h2>
+        Loading...
+    </form>
+
+    <form method="post" class="document_tree_list" id="document_tree_list">
+        <h2>Document Tree List</h2>
+        Loading...
+    </form>
+
+
+    <h2>Task Quotes</h2>
+    <a href="{% url 'new_quote' task_id 'tasks' %}">New Quote</a>
+    {% if quote_results %}
+        <table>
+            <tr>
+                <td width="50%">Quote Title</td>
+                <td width="25%">Valid Till</td>
+                <td width="25%">Quote Stage</td>
+            </tr>
+            {% for row in quote_results %}
+                <tr>
+                    <td>{{ row.quote_title }}</td>
+                    <td>{{ row.quote_valid_till }}</td>
+                    <td>{{ row.quote_stage_id }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+
+    <form method="post" class="task_assigned_users" id="task_assigned_users" style="">
+        <h2>Task Assigned Users</h2>
+        Loading...
+    </form>
+
 </body>
+<script>
+    $("#document_tree_create_folder").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/document_tree_create_folder/{{ task_id }}/T/',
+            data: $(this).serialize(),
+            success: function() {
+                load_document_tree_create_folder();
+                load_document_tree_list();
+            },
+            error: function() {
+                alert("Sorry, document tree create folder did not save. Please try again.");
+            }
+        })
+    });
+
+    $("#task_assigned_users").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/information_task_assign_users/{{ task_id }}/',
+            data: $(this).serialize(),
+            success: function() {
+                //Reload the task history :)
+                load_task_assigned_users();
+            },
+            error: function() {
+                alert("Sorry, task assigned users did not save. Please try again.");
+            }
+        })
+    });
+
+    $("#task_costs").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/information_task_costs/{{ task_id }}/',
+            data: $(this).serialize(),
+            success: function() {
+                //Reload the task history :)
+                load_task_costs();
+            },
+            error: function() {
+                alert("Sorry, task costs did not save. Please try again.");
+            }
+        })
+    });
+
+    $("#task_customers").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/information_task_customers/{{ task_id }}/',
+            data: $(this).serialize(),
+            success: function() {
+                //Reload the task history :)
+                load_task_customers();
+            },
+            error: function() {
+                alert("Sorry, task customers did not save. Please try again.");
+            }
+        })
+    });
+
+    //Code used to help send which button was clicked in POST
+    $("form input[type=submit]").click(function() {
+        $("input[type=submit]", $(this).parents("form")).removeAttr("clicked");
+        $(this).attr("clicked", "true");
+    });
+    $("#task_information").on('submit', function(e) {
+        //Grab which button was pressed
+        var which_button = $("input[type=submit][clicked=true]").val()
+
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/task_information/{{ task_id }}/',
+            data: $(this).serialize(),
+            success: function() {
+                //If we have the resolve button, we will need to navigate to the resolved task url.
+                if (which_button == "Resolve Project") {
+                    //Navigate to the resolve task URL
+                    document.location = "{% url 'resolve_task' task_id %}"
+                }
+            },
+            error: function() {
+                alert("Sorry, task information did not save. Please try again.");
+            }
+        })
+    });
+
+    $("#task_history").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/information_task_history/{{ task_id }}/',
+            data: $(this).serialize(),
+            success: function() {
+                //Reload the task history :)
+                load_task_history();
+            },
+            error: function() {
+                alert("Sorry, task history did not save. Please try again.");
+            }
+        })
+    });
+
+    function load_document_tree_create_folder() {
+        //Load Project History
+        $.ajax({
+            url: '/document_tree_create_folder/{{ task_id }}/T',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#document_tree_create_folder').html(data);
+            },
+            error: function() {
+                $('#document_tree_create_folder').html('Sorry, document tree create folder encounted an error and did not load.');
+            }
+        });
+    };
 
 
+    function load_document_tree_upload_documents() {
+        //Load Project History
+        $.ajax({
+            url: '/document_tree_upload_documents/{{ task_id }}/T',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#document_tree_upload_documents').html(data);
+            },
+            error: function() {
+                $('#document_tree_upload_documents').html('Sorry, document tree upload documents encounted an error and did not load.');
+            }
+        });
+    };
+
+    function load_document_tree_list() {
+        //Load Project History
+        $.ajax({
+            url: '/document_tree_list/{{ task_id }}/T',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#document_tree_list').html(data);
+            },
+            error: function() {
+                $('#document_tree_list').html('<h2>Document Tree</h2>Sorry, document tree encounted an error and did not load.');
+            }
+        });
+    };
 
 
+    function load_task_assigned_users() {
+        //Load Project History
+        $.ajax({
+            url: '/information_task_assign_users/{{ task_id }}/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#task_assigned_users').html(data);
+            },
+            error: function() {
+                $('#task_assigned_users').html('<h2>Assigned Users</h2>Sorry, assigned users encounted an error and did not load.');
+            }
+        });
+    };
+
+    function load_task_costs() {
+        //Load Project History
+        $.ajax({
+            url: '/information_task_costs/{{ task_id }}/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#task_costs').html(data);
+                running_total();
+            },
+            error: function() {
+                $('#task_history').html('<h2>Project Costs</h2>Sorry, task costs encounted an error and did not load.');
+            }
+        });
+    };
+
+    function load_task_customers() {
+        //Load Project Customers
+        $.ajax({
+            url: '/information_task_customers/{{ task_id }}/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#task_customers').html(data);
+            },
+            error: function() {
+                $('#task_customers').html('<h2>Project Customers</h2>Sorry, task customers encounted an error and did not load.');
+            }
+        });
+    };
+
+    function load_task_history() {
+        //Load Project History
+        $.ajax({
+            url: '/information_task_history/{{ task_id }}/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#task_history').html(data);
+                $('#task_history').css('display','');
+            },
+            error: function() {
+                $('#task_history').html('<h2>Project History</h2>Sorry, task history encounted an error and did not load.');
+            }
+        });
+    };
+</script>
 
 {% endblock %}
-

@@ -1,8 +1,9 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
-<script type="text/javascript" src="{% static 'NearBeach/javascript/new_campus.js' %}"></script>
 <body onload="on_page_load()">
+    <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
+    <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
     <h2>New Campus</h2>
     <form id="input-form" action="{% url 'new_campus' organisations_id %}" method="post" class="new_campus">
         {% csrf_token %}
@@ -14,24 +15,37 @@
             <li>{{ new_campus_form.campus_address2 }}</li>
             <li>{{ new_campus_form.campus_address3 }}</li>
             <li>{{ new_campus_form.campus_suburb }}</li>
-            <li>
-                Country: <select id="campus_country_id" name="campus_country_id" onchange="country_changed()" required="True">
-                    <option value="---------" selected disabled="disabled">---------</option>
-                    {% for row in countries_results %}
-                        <option value="{{ row.country_id }}">{{ row.country_name }}</option>
-                    {% endfor %}
-                </select>
-            </li>
-            <li>
-                State: <select id="campus_region_id" name="campus_region_id" required="True">
-                    <option value="---------" selected disabled="disabled">---------</option>
-                    {% for row in countries_regions_results %}
-                        <option value="{{ row.region_id }}" country_id="{{ row.country_id_id }}">{{ row.region_name }}</option>
-                    {% endfor %}
-                </select>
-            </li>
+            <li>{{ new_campus_form.country_and_region }}</li>
         </ul>
-        <input type="submit" value="Submit new campus">
+
+        <br/>
+        <input id="submit" type="submit" value="Submit new campus" disabled="disabled">
+        <a href="{% url 'organisation_information' organisations_id %}">Cancel</a>
+
+
+
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
     </form>
+
+
+<script>
+    $("#input-form").on('change', function() {
+        enable_disable_submit();
+    });
+    $("#input-form").on('onkeyup', function() {
+        enable_disable_submit();
+    });
+
+    function enable_disable_submit() {
+        if (($("#id_country_and_regions").val() != '') &&
+            ($("#id_campus_nickname").val() != '')) {
+            $("#submit").prop("disabled",false)
+        } else {
+            $("#submit").prop("disabled",true)
+        }
+    };
+</script>
 </body>
 {% endblock %}
