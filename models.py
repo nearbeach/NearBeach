@@ -4,7 +4,6 @@ from .private_media import *
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 import uuid
-from smart_selects.db_fields import ChainedForeignKey
 
 #ENUM choices
 DISCOUNT_CHOICE=(
