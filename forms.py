@@ -9,7 +9,6 @@ from django.contrib import auth
 #Import ModelForm
 from django.forms import ModelForm
 from django.forms.widgets import TextInput
-
 from forms_special_fields import *
 
 
@@ -24,7 +23,7 @@ from django.db import connection
 import datetime
 
 #Global Variables
-User=get_user_model
+#User=get_user_model
 
 
 
@@ -1667,3 +1666,56 @@ class task_information_form(ModelForm):
         }
 
 
+
+class user_information_form(ModelForm):
+    password1 = forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'type': 'password',
+            'placeholder': 'Password'
+        })
+    )
+    password2 = forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'type': 'password',
+            'placeholder': 'Repeate Password'
+        })
+    )
+    username = forms.CharField(
+        max_length=50,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Username'
+        })
+    )
+    first_name = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'First Name'
+        })
+    )
+    last_name = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Last Name'
+        })
+    )
+    email = forms.EmailField(
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Email Address'
+        })
+    )
+    class Meta:
+        model=User
+        fields={
+            'username',
+            'first_name',
+            'last_name',
+            'is_active',
+            'is_superuser',
+            'email',
+        }

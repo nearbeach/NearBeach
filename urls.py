@@ -93,6 +93,7 @@ urlpatterns = [
 	url(r'^search_customers', views.search_customers, name='search_customers'),
 	url(r'^search_organisations', views.search_organisations, name='search_organisations'),
 	url(r'^search_projects_tasks', views.search_projects_tasks, name='search_projects_tasks'),
+	url(r'^search_users', views_administration.search_users, name='search_users'),
 	url(r'^task_information/(?P<task_id>[0-9]+)', views.task_information, name='task_information'),
 	#Bug - if this line is before the other search functions, it will override other functions
 	url(r'^search', views.search, name='search'),
@@ -207,6 +208,10 @@ url(r'^group_information_edit/(?P<group_id>[0-9]+)/', views_administration.group
 url(r'^group_information_edit_users/(?P<group_id>[0-9]+)/', views_administration.group_information_edit_users, name='group_information_edit_users'),
 url(r'^group_information_list/', views_administration.group_information_list, name='group_information_list'),
 url(r'^group_information_add_permission_set/(?P<group_id>[0-9]+)/', views_administration.group_information_add_permission_set, name='group_information_add_permission_set'),
+
+	#User information
+	url(r'^user_information/$', views_administration.user_information, name='user_information'),
+	url(r'^user_information/(?P<user_id>[0-9]+)/$', views_administration.user_information, name='user_information'),
 
 ]
 

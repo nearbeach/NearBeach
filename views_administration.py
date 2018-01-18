@@ -18,6 +18,7 @@ from django.urls import reverse
 from .namedtuplefetchall import *
 from .user_permissions import return_user_permission_level
 
+
 #import python modules
 import datetime, json, simplejson, urllib, urllib2
 
@@ -511,6 +512,145 @@ def permission_set_information_list(request):
     # context
     c = {
         'permission_set_results': permission_set_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def search_users(request):
+    user_permission = 0;
+
+    if request.session['is_superuser'] == True:
+        user_permission = 4
+    else:
+        pp_results = return_user_permission_level(request, None, 'administration_create_users')
+
+        if pp_results > user_permission:
+            user_permission = pp_results
+
+    if user_permission == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    filter_users = ''
+    if request.method == "POST":
+        form = search_form(request.POST)
+        if form.is_valid():
+            # EDIT LATER for helping search
+            search_for = form.cleaned_data['search_for']
+            user_results = User.objects.filter(
+                Q(is_active=True),
+                Q(username__contains=search_for) | Q(first_name__contains=search_for) | Q(last_name__contains=search_for) | Q(email__contains=search_for),
+            )
+        else:
+            print(form.errors)
+
+    else:
+        user_results = User.objects.filter(
+            is_active=True,
+        )
+
+
+    # Load template
+    t = loader.get_template('NearBeach/search_users.html')
+
+    # context
+    c = {
+        'user_results': user_results,
+        'search_form': search_form(request.POST or None),
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def user_information(request, user_id=''):
+    user_permission = 0;
+
+    if request.session['is_superuser'] == True:
+        user_permission = 4
+    else:
+        pp_results = return_user_permission_level(request, None, 'administration_create_users')
+
+        if pp_results > user_permission:
+            user_permission = pp_results
+
+    if user_permission == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    errors = ''
+    if request.method == "POST" and user_permission == 4:
+        if user_id == "":
+            form = user_information_form(request.POST)
+        else:
+            form = user_information_form(
+                request.POST,
+                instance=User.objects.get(id=user_id),
+            )
+        if form.is_valid():
+            form.save()
+
+            """
+            For new users
+            ~~~~~~~~~~~~~
+            - If password fields are left blank, generate random password
+            - If password fields do not match, send back errors
+            - If password fields match, save password against the new user
+            
+            For old users
+            ~~~~~~~~~~~~~
+            - If password fields are blank, nothing to do
+            - If password fields do not match, send back error
+            - If password fields match, save password against user
+            """
+            password1 = form.cleaned_data['password1']
+            password2 = form.cleaned_data['password2']
+            if user_id == "":
+                if not password1 == password1:
+                    errors = '<li>PASSWORDS ARE NOT THE SAME<li>'
+                else:
+                    if password1 == "":
+                        #Passwords are blank - generate a new password for the user
+                        password1 = User.objects.make_random_password()
+
+                    #Save the password
+                    user_instance = User.objects.get(username=form.cleaned_data['username'])
+                    user_instance.set_password(password1)
+                    user_instance.save()
+
+                    #Go to the new profile of the user
+                    return HttpResponseRedirect(reverse('user_information',args={user_instance.id}))
+
+            else:
+                if password1 == password2:
+                    #Change passwords
+                    if not password1 == "":
+                        user_instance = User.objects.get(id=user_id)
+                        user_instance.set_password(password1)
+                        user_instance.save()
+                else:
+                    errors = '<li>PASSWORDS ARE NOT THE SAME<li>'
+        else:
+            print(form.errors)
+            errors = form.errors
+
+    #forms
+    if user_id == "":
+        ui_form = user_information_form()
+    else:
+        ui_form = user_information_form(
+            instance=User.objects.get(id=user_id)
+        )
+
+    # Load template
+    t = loader.get_template('NearBeach/user_information.html')
+
+    # context
+    c = {
+        'user_information_form': ui_form,
+        'is_superuser': request.session['is_superuser'],
+        'errors': errors,
     }
 
     return HttpResponse(t.render(c, request))
