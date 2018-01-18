@@ -924,6 +924,7 @@ def login(request):
 	the relevant errors.
 	"""
     form = login_form(request.POST or None)
+    print("LOGIN REQUEST")
 
     # reCAPTCHA
     RECAPTCHA_PUBLIC_KEY = ''
@@ -934,6 +935,7 @@ def login(request):
 
     # POST
     if request.method == 'POST':
+        print("POST")
         if form.is_valid():
             """
 			Method
@@ -946,6 +948,7 @@ def login(request):
 			"""
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
+            print("DATA EXTRACTED")
 
             if hasattr(settings, 'RECAPTCHA_PUBLIC_KEY') and hasattr(settings, 'RECAPTCHA_PRIVATE_KEY'):
                 """
@@ -987,10 +990,62 @@ def login(request):
 
             # Just double checking. :)
             if request.user.is_authenticated:
+                print("User Authenticated")
                 """
                 The user has been authenticated. Now the system will store the user's permissions and groups 
                 into cookies. :)
+                
+                First Setup
+                ~~~~~~~~~~~
+                If permission_set with id of 1 does not exist, go through first stage setup.
                 """
+                if not permission_set.objects.all():
+                    #Create administration permission_set
+                    submit_permission_set = permission_set(
+                        permission_set_name="Administration Permission Set",
+                        administration_assign_users_to_groups=4,
+                        administration_create_groups=4,
+                        administration_create_permission_sets=4,
+                        administration_create_users=4,
+                        assign_campus_to_customer=4,
+                        associate_project_and_tasks=4,
+                        customer=4,
+                        invoice=4,
+                        invoice_product=4,
+                        opportunity=4,
+                        organisation=4,
+                        organisation_campus=4,
+                        project=4,
+                        requirement=4,
+                        requirement_link=4,
+                        task=4,
+                        documents=1,
+                        contact_history=1,
+                        project_history=1,
+                        task_history=1,
+                        change_user=request.user,
+                    )
+                    submit_permission_set.save()
+
+                    #Create admin group
+                    submit_group = groups(
+                        group_name="Administration",
+                        change_user=request.user,
+                    )
+                    submit_group.save()
+
+                    #Add user to admin groups
+                    submit_user_group = user_groups(
+                        username=request.user,
+                        groups=groups.objects.get(group_id=1),
+                        permission_set=permission_set.objects.get(permission_set_id=1),
+                        change_user=request.user,
+                    )
+                    submit_user_group.save()
+
+
+
+
                 user_groups_results = user_groups.objects.filter(
                     username=request.user,
                     is_deleted='FALSE',

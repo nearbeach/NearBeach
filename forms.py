@@ -595,13 +595,28 @@ class login_form(forms.Form):
             -- Login is not valid
             -- Login is currently not active
             -- If the user does not have groups associated with them
+            
+            Exception
+            ~~~~~~~~~
+            If there are NO rows in permission_set then the system will need to be setup and ignore the 
+            last rule.
             """
             if ((not user) or (not user.check_password(password))):
                 raise forms.ValidationError("The login details are incorrect")
             elif (not user.is_active):
                 raise forms.ValidationError("Please contact your system administrator. Your account has been disabled")
-            elif (user_groups.objects.filter(username_id=user.id, is_deleted='FALSE').count() == 0):
-                raise forms.ValidationError("Please contact your system administrator. Your account has no group access")
+
+            try:
+                #If this exists, continue
+                permission_set.objects.filter(permission_set_id=1)
+
+                #Continue
+                if (user_groups.objects.filter(username_id=user.id, is_deleted='FALSE').count() == 0): #If the system has not been setup ignore this rule.
+                    raise forms.ValidationError("Please contact your system administrator. Your account has no group access")
+
+            except:
+                print("First time setup " + str(datetime.datetime.now()))
+
         return super(login_form, self).clean()
 
 
@@ -1673,7 +1688,8 @@ class user_information_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'type': 'password',
-            'placeholder': 'Password'
+            'placeholder': 'Password',
+            'onkeyup': 'enable_submit()',
         })
     )
     password2 = forms.CharField(
@@ -1681,7 +1697,8 @@ class user_information_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'type': 'password',
-            'placeholder': 'Repeate Password'
+            'placeholder': 'Repeate Password',
+            'onkeyup': 'enable_submit()',
         })
     )
     username = forms.CharField(

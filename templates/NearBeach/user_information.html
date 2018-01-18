@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 <h2>User Information</h2>
-<form action="{% url 'user_information' %}" method="post" class="user_information">
+<form action="{% url 'user_information' user_id %}" method="post" class="user_information">
     {% csrf_token %}
     <ul>
         {% if errors %}
@@ -20,7 +20,7 @@
             Giving this user this permission grants them to access /admin/
             </li>
         {% endif %}
-        <li><input type="submit" value="Save User"></li>
+        <li><input id="submit_user" type="submit" value="Save User"></li>
     </ul>
 </form>
     <h4>User Information Notes</h4>
@@ -29,6 +29,14 @@
         <li>Only users with access to the DJANGO Superuser will be able to assign other users to DJANGO Superuser. Please note, this grants access to the /admin/ section of the site if it is enabled. This role is ONLY recommended for those users who are system administrators.</li>
         <li>To change a user's password, just fill out the two password fields with the new password and click on the "SAVE" button</li>
     </ul>
-
+<script>
+    function enable_submit() {
+        if ($("#id_password1").val() == $("#id_password2").val()) {
+            $("#submit_user").prop("disabled", false);
+        } else {
+           $("#submit_user").prop("disabled", true);
+        }
+    }
+</script>
 
 {% endblock %}

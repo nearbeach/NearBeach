@@ -651,6 +651,7 @@ def user_information(request, user_id=''):
         'user_information_form': ui_form,
         'is_superuser': request.session['is_superuser'],
         'errors': errors,
+        'user_id': user_id,
     }
 
     return HttpResponse(t.render(c, request))
