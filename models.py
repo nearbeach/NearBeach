@@ -385,7 +385,8 @@ class folders(models.Model):
 	parent_folder_id=models.ForeignKey(
 		'self',
 		blank=True,
-		null=True
+		null=True,
+		on_delete=models.CASCADE
 	)
 	date_created=models.DateTimeField(auto_now_add=True)
 	date_modified=models.DateTimeField(auto_now=True)
@@ -1921,7 +1922,8 @@ class tasks(models.Model):
 	task_assigned_to=models.ForeignKey(
 		User,
 		null=True,
-		blank=True
+		blank=True,
+		on_delete=models.CASCADE,
 	)
 	task_status=models.CharField(
 		max_length=15,
@@ -1954,7 +1956,10 @@ class tasks_actions(models.Model):
 		on_delete=models.CASCADE,
 	)
 	task_action=models.TextField()
-	submitted_by=models.ForeignKey(User,)
+	submitted_by=models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+	)
 	date_created=models.DateTimeField(auto_now_add=True)
 	date_modified=models.DateTimeField(auto_now=True)
 	change_user=models.ForeignKey(
@@ -2083,7 +2088,10 @@ class tasks_opportunity(models.Model):
 
 
 class user_groups(models.Model):
-	username=models.ForeignKey(User,)
+	username=models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+	)
 	groups=models.ForeignKey(
 		'groups',
 		on_delete=models.CASCADE,
