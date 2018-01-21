@@ -23,11 +23,11 @@ import simplejson
 @login_required(login_url='login')
 def information_organisation_contact_history(request, organisation_id):
     organisation_permissions = 0
-    contact_history = 0
+    contact_history_permission = 0
 
     if request.session['is_superuser'] == True:
         organisation_permissions = 4
-        contact_history = 4
+        contact_history_permission = 4
     else:
         pp_results = return_user_permission_level(request, None,'organisation')
         ph_results = return_user_permission_level(request, None, 'contact_history')
@@ -36,7 +36,7 @@ def information_organisation_contact_history(request, organisation_id):
             organisation_permissions = pp_results
 
         if ph_results == 1:
-            contact_history = 1
+            contact_history_permission = 1
 
     if organisation_permissions == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
@@ -104,7 +104,9 @@ def information_organisation_contact_history(request, organisation_id):
                     submit_history.document_key=documents_save
                 submit_history.save()
     #Get data
-    contact_history_results = contact_history.objects.filter(organisations_id=organisation_id)
+    contact_history_results = contact_history.objects.filter(
+        organisations_id=organisations.objects.get(organisations_id=organisation_id)
+    )
 
     #Load template
     t = loader.get_template('NearBeach/organisation_information/organisation_contact_history.html')
@@ -123,11 +125,11 @@ def information_organisation_contact_history(request, organisation_id):
 @login_required(login_url='login')
 def information_organisation_documents_list(request, organisation_id):
     organisation_permissions = 0
-    document_permissions = 0
+    document_perm = 0
 
     if request.session['is_superuser'] == True:
         organisation_permissions = 4
-        document_permissions = 4
+        document_perm = 4
     else:
         pp_results = return_user_permission_level(request, None,'organisation')
         ph_results = return_user_permission_level(request, None, 'documents')
@@ -136,7 +138,7 @@ def information_organisation_documents_list(request, organisation_id):
             organisation_permissions = pp_results
 
         if ph_results == 1:
-            document_permissions = 1
+            document_perm = 1
 
     if organisation_permissions == 0:
         return HttpResponseRedirect(reverse('permission_denied'))

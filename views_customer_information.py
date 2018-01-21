@@ -24,11 +24,11 @@ from django.urls import reverse
 @login_required(login_url='login')
 def information_customer_contact_history(request, customer_id):
     customer_permissions = 0
-    contact_history = 0
+    contact_history_perm = 0
 
     if request.session['is_superuser'] == True:
         customer_permissions = 4
-        contact_history = 4
+        contact_history_perm = 4
     else:
         pp_results = return_user_permission_level(request, None,'customer')
         ph_results = return_user_permission_level(request, None, 'contact_history')
@@ -37,7 +37,7 @@ def information_customer_contact_history(request, customer_id):
             customer_permissions = pp_results
 
         if ph_results == 1:
-            contact_history = 1
+            contact_history_perm = 1
 
     if customer_permissions  == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
@@ -103,7 +103,9 @@ def information_customer_contact_history(request, customer_id):
 
 
     #Data
-    customer_contact_history = contact_history.objects.filter(customer_id=customer_id)
+    customer_contact_history = contact_history.objects.filter(
+        customer_id=customers.objects.get(customer_id=customer_id)
+    )
 
     #Load template
     t = loader.get_template('NearBeach/customer_information/customer_contact_history.html')
