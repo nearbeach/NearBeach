@@ -385,7 +385,8 @@ class folders(models.Model):
 	parent_folder_id=models.ForeignKey(
 		'self',
 		blank=True,
-		null=True
+		null=True,
+		on_delete=models.CASCADE
 	)
 	date_created=models.DateTimeField(auto_now_add=True)
 	date_modified=models.DateTimeField(auto_now=True)
