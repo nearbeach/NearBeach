@@ -1266,7 +1266,7 @@ class permission_set(models.Model):
         return self.permission_set_name.encode('utf8')
 
     class Meta:
-		db_table = "permission_set"
+        db_table = "permission_set"
 
 
 
