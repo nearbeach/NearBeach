@@ -72,7 +72,7 @@ def information_task_assigned_users(request, task_id):
     				AND tasks_groups.tasks_id_id=%s
 
     				-- JOINS --
-    				AND tasks_groups.groups_id_id=user_groups.group_id_id
+    				AND tasks_groups.groups_id_id=user_groups.groups_id
     				AND user_groups.username_id=auth_user.id
     				-- END JOINS --
     			""", [task_id])

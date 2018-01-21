@@ -71,7 +71,7 @@ def information_project_assigned_users(request, project_id):
     			AND project_groups.project_id_id=%s
 
     			-- JOINS --
-    			AND project_groups.groups_id_id=user_groups.group_id_id
+    			AND project_groups.groups_id_id=user_groups.groups_id
     			AND user_groups.username_id=auth_user.id
     			-- END JOINS --
     		""", [project_id])
