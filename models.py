@@ -4,7 +4,6 @@ from .private_media import *
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 import uuid
-from smart_selects.db_fields import ChainedForeignKey
 
 #ENUM choices
 DISCOUNT_CHOICE=(
@@ -1267,7 +1266,7 @@ class permission_set(models.Model):
         return self.permission_set_name.encode('utf8')
 
     class Meta:
-		db_table = "permission_set"
+        db_table = "permission_set"
 
 
 
