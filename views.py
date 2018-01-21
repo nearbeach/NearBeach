@@ -1135,7 +1135,7 @@ def new_campus(request, organisations_id):
 
             return HttpResponseRedirect(reverse(organisation_information, args={organisations_id}))
         else:
-            print form.errors
+            print(form.errors)
             return HttpResponseRedirect(reverse(new_campus, args={organisations_id}))
 
     # SQL
