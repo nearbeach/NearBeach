@@ -64,10 +64,10 @@ def information_project_assigned_users(request, project_id):
 
     			WHERE 1=1
 
-    			--AUTH_USER CONDITIONS
+    			-- AUTH_USER CONDITIONS
     			AND auth_user.is_active='1' 
 
-    			--PROJECT_GROUPS CONDITIONS
+    			-- PROJECT_GROUPS CONDITIONS
     			AND project_groups.project_id_id=%s
 
     			-- JOINS --

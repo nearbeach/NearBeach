@@ -65,10 +65,10 @@ def information_task_assigned_users(request, task_id):
 
     				WHERE 1=1
 
-    				--AUTH_USER CONDITIONS
+    				-- AUTH_USER CONDITIONS
     				AND auth_user.is_active='1'
 
-    				--PROJECT_GROUPS CONDITIONS
+    				-- PROJECT_GROUPS CONDITIONS
     				AND tasks_groups.tasks_id_id=%s
 
     				-- JOINS --
