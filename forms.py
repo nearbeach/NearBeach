@@ -1101,7 +1101,7 @@ class new_requirement_form(ModelForm):
     )
     requirement_scope = forms.CharField(
         widget=forms.Textarea(attrs={
-            'placeholder': 'Requirement Title'
+            'placeholder': 'Requirement Scope'
         }),
     )
     class Meta:

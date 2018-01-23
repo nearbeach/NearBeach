@@ -56,7 +56,6 @@ def information_task_assigned_users(request, task_id):
     				, auth_user.username
     				, auth_user.first_name
     				, auth_user.last_name
-    				, auth_user.first_name || ' ' || auth_user.last_name AS "Name"
     				, auth_user.email
     				FROM
     				  tasks_groups

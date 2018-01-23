@@ -21,29 +21,6 @@ from .user_permissions import return_user_permission_level
 #import python modules
 import datetime, json, simplejson, urllib, urllib2
 
-@login_required(login_url='login')
-def active_projects(request):
-    # Get username_id from User
-    current_user = request.user
-
-    ###
-    #BUG
-    #Might remove the active projects features.
-    ###
-    active_projects_results = project.objects.filter(
-        is_deleted='FALSE',
-    )
-
-    # Load the template
-    t = loader.get_template('NearBeach/active_projects.html')
-
-    # context
-    c = {
-        'active_projects_results': active_projects_results,
-    }
-
-    return HttpResponse(t.render(c, request))
-
 
 @login_required(login_url='login')
 def assign_customer_project_task(request, customer_id):
@@ -904,7 +881,7 @@ def index(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse('login'))
     else:
-        return HttpResponseRedirect(reverse('active_projects'))
+        return HttpResponseRedirect(reverse('dashboard'))
 
     # Default
     return HttpResponseRedirect(reverse('login'))
@@ -1058,7 +1035,7 @@ def login(request):
                 )
                 request.session['is_superuser'] = request.user.is_superuser
 
-                return HttpResponseRedirect(reverse('active_projects'))
+                return HttpResponseRedirect(reverse('dashboard'))
             else:
                 print("User not authenticated")
         else:
@@ -1997,7 +1974,7 @@ def opportunity_information(request, opportunity_id):
         permission_results = opportunity_permissions.objects.filter(
             Q(
                 Q(assigned_user=request.user)  # User has permission
-                | Q(groups_id__in=user_groups_results.values('group_id'))  # User's groups have permission
+                | Q(groups_id__in=user_groups_results.values('groups_id'))  # User's groups have permission
                 | Q(all_users='TRUE')  # All users have access
             )
             & Q(opportunity_id=opportunity_id)
@@ -2635,7 +2612,7 @@ def resolve_project(request, project_id):
     project_update.project_status = 'Resolved'
     project_update.change_user=request.user
     project_update.save()
-    return HttpResponseRedirect(reverse('active_projects'))
+    return HttpResponseRedirect(reverse('dashboard'))
 
 
 @login_required(login_url='login')
@@ -2644,7 +2621,7 @@ def resolve_task(request, task_id):
     task_update.task_status = 'Resolved'
     task_update.change_user=request.user
     task_update.save()
-    return HttpResponseRedirect(reverse('active_projects'))
+    return HttpResponseRedirect(reverse('dashboard'))
 
 
 @login_required(login_url='login')

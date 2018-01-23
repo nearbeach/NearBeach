@@ -55,7 +55,6 @@ def information_project_assigned_users(request, project_id):
     			, auth_user.username
     			, auth_user.first_name
     			, auth_user.last_name
-    			, auth_user.first_name || ' ' || auth_user.last_name AS "Name"
     			, auth_user.email
     			FROM
     			  project_groups
