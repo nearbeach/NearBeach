@@ -1,10 +1,15 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
+
 <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
 <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
 
-<body>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
+
+
+<body onload="on_page_load()">
+
     <form action="{% url 'opportunity_information' opportunity_id %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <h2>Opportunity Information</h2>
@@ -184,5 +189,17 @@
         <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
     </form>
 <div name="blank_space" style="margin-bottom: 150px;"></div>
+{{ opportunity_results.opportunity_stage_id.opportunity_closed }}
+<script>
+    function on_page_load() {
+        /*
+        If the opportunity_stage_id has the field opportunity_closed == TRUE, we want
+        to turn this opportunity into a read only. As it can not longer be edited.
+         */
+        if ("{{ opportunity_results.opportunity_stage_id.opportunity_closed }}" == "TRUE") {
+            set_permissions(1); //Read only
+        }
+    }
+</script>
 </body>
 {% endblock %}

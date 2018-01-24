@@ -645,6 +645,11 @@ class list_of_opportunity_stage(models.Model):
 		decimal_places=0,
 	)
 	list_order=models.IntegerField(unique=True)
+	opportunity_closed=models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE',
+	)
 	date_created=models.DateTimeField(auto_now_add=True)
 	date_modified=models.DateTimeField(auto_now=True)
 	user_id=models.ForeignKey(
