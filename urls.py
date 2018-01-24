@@ -209,7 +209,7 @@ url(r'^group_information_list/', views_administration.group_information_list, na
 url(r'^group_information_add_permission_set/(?P<group_id>[0-9]+)/', views_administration.group_information_add_permission_set, name='group_information_add_permission_set'),
 
 	#User information
-	url(r'^user_information/$', views_administration.user_information, name='user_information'),
+	url(r'^new_user/$', views_administration.new_user, name='new_user'),
 	url(r'^user_information/(?P<user_id>[0-9]+)/$', views_administration.user_information, name='user_information'),
 
 ]

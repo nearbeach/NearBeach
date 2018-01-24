@@ -17,6 +17,7 @@ from django.template import RequestContext, loader
 from django.urls import reverse
 from .namedtuplefetchall import *
 from .user_permissions import return_user_permission_level
+from datetime import timedelta
 
 #import python modules
 import datetime, json, simplejson, urllib, urllib2
@@ -528,13 +529,11 @@ def dashboard(request):
 
 @login_required(login_url='login')
 def dashboard_active_projects(request):
-    #Get username id from User
-    current_user = request.user
-
     #Get Data
     assigned_users_results = assigned_users.objects.filter(
         is_deleted='FALSE',
-        user_id=current_user,
+        user_id=request.user,
+        project_id__isnull=False,
     )
 
     # Load the template
@@ -550,16 +549,19 @@ def dashboard_active_projects(request):
 
 @login_required(login_url='login')
 def dashboard_active_tasks(request):
-    # Get username id from User
-    current_user = request.user
-
     # Get Data
+    assigned_users_results = assigned_users.objects.filter(
+        is_deleted='FALSE',
+        user_id=request.user,
+        task_id__isnull=False,
+    )
 
     # Load the template
     t = loader.get_template('NearBeach/dashboard_widgets/active_tasks.html')
 
     # context
     c = {
+        'assigned_users_results': assigned_users_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -598,7 +600,7 @@ def dashboard_group_active_projects(request):
     and project.project_status IN ('New','Open')
     and project.is_deleted = 'FALSE'
     and project.project_id = project_groups.project_id_id
-    and project_groups.groups_id_id = user_groups.group_id_id
+    and project_groups.groups_id_id = user_groups.groups_id
     and user_groups.username_id = %s
     and project.organisations_id_id=organisations.organisations_id
     """, [current_user.id])
@@ -643,7 +645,7 @@ def dashboard_group_active_tasks(request):
         AND tasks.task_status IN ('New','Open')
         AND tasks.organisations_id_id=organisations.organisations_id
         AND tasks.tasks_id = tasks_groups.tasks_id_id
-        AND tasks_groups.groups_id_id = user_groups.group_id_id
+        AND tasks_groups.groups_id_id = user_groups.groups_id
         AND user_groups.username_id = %s
        """, [ current_user.id])
 
@@ -1608,9 +1610,17 @@ def new_project(request, organisations_id='', customer_id='', opportunity_id='')
 
 @login_required(login_url='login')
 def new_quote(request,destination,primary_key):
-    permission = return_user_permission_level(request, None, 'quote')
+    quote_permissions = 0
 
-    if permission < 3:
+    if request.session['is_superuser'] == True:
+        quote_permissions = 4
+    else:
+        pp_results = return_user_permission_level(request, None,'quote')
+
+        if pp_results > quote_permissions:
+            quote_permissions = pp_results
+
+    if quote_permissions < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST":
@@ -1672,6 +1682,9 @@ def new_quote(request,destination,primary_key):
         else:
             print(form.errors)
 
+    end_date = datetime.datetime.now()+timedelta(14)
+
+
     # Load the template
     t = loader.get_template('NearBeach/new_quote.html')
 
@@ -1680,6 +1693,9 @@ def new_quote(request,destination,primary_key):
         'new_quote_form': new_quote_form,
         'primary_key': primary_key,
         'destination': destination,
+        'end_year': end_date.year,
+        'end_month': end_date.month,
+        'end_day': end_date.day,
     }
 
     return HttpResponse(t.render(c, request))
@@ -1871,6 +1887,20 @@ def next_step(request, next_step_id, opportunity_id):
 
 @login_required(login_url='login')
 def opportunity_information(request, opportunity_id):
+    opportunity_perm = 0
+
+    if request.session['is_superuser'] == True:
+        opportunity_perm = 4
+    else:
+        pp_results = return_user_permission_level(request, None,'opportunity')
+
+        if pp_results > opportunity_perm :
+            opportunity_perm = pp_results
+
+    if opportunity_perm  == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
     if request.method == "POST":
         form = opportunity_information_form(request.POST, request.FILES)
         if form.is_valid():
@@ -3107,6 +3137,7 @@ def task_information(request, task_id):
         'task_id': task_id,
         'task_permissions': task_permissions,
         'task_history_permissions': task_history_permissions,
+        'quote_results': quote_results,
     }
 
     return HttpResponse(t.render(c, request))

@@ -39,6 +39,7 @@
 	<form id="project_information" name="project_information" method="POST" enctype="multipart/form-data">
         <h2>Project Information - PRO{{ project_results.project_id }}</h2>
         {% csrf_token %}
+        <div id="save_state"></div>
         {% if project_results.project_status == 'Resolved' or project_results == 'Closed' %}
             <fieldset disabled="disabled">
         {% endif %}
@@ -121,7 +122,7 @@
             </tr>
             {% for row in quote_results %}
                 <tr>
-                    <td>{{ row.quote_title }}</td>
+                    <td><a href="{% url 'quote_information' row.quote_id %}">{{ row.quote_title }}</a></td>
                     <td>{{ row.quote_valid_till }}</td>
                     <td>{{ row.quote_stage_id }}</td>
                 </tr>
@@ -212,6 +213,9 @@
         $(this).attr("clicked", "true");
     });
     $("#project_information").on('submit', function(e) {
+        //State the save_state is currently saving
+        $("#save_state").html("Currently Saving Project");
+
         //Grab which button was pressed
         var which_button = $("input[type=submit][clicked=true]").val()
 
@@ -221,6 +225,10 @@
             url: '/project_information/{{ project_id }}/',
             data: $(this).serialize(),
             success: function() {
+                //State that the function has saved
+                var current_time = Date();
+                $("#save_state").html("Saved last on " + current_time);
+
                 //If we have the resolve button, we will need to navigate to the resolved project url.
                 if (which_button == "Resolve Project") {
                     //Navigate to the resolve project URL

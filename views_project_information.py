@@ -207,7 +207,8 @@ def information_project_customers(request, project_id):
 
     cursor.execute("""
     		SELECT DISTINCT
-    		  customers.customer_first_name
+    		  customers.customer_id
+    		, customers.customer_first_name
     		, customers.customer_last_name
     		, project_customers.customer_description
     		, customers.customer_email

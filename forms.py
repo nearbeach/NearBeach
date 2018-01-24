@@ -472,6 +472,10 @@ class information_organisation_contact_history_form(forms.Form):
         })
     )
 
+    start_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
+    start_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
+    start_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
+
     contact_history = forms.CharField(
         widget=forms.Textarea(attrs={
             'width': '99%'
@@ -1079,6 +1083,7 @@ class new_quote_form(ModelForm):
         widget=forms.Textarea(attrs={
             "placeholder": 'Customer Notes',
         }),
+        required=False,
     )
 
 
@@ -1461,6 +1466,7 @@ class quote_information_form(ModelForm):
         widget=forms.Textarea(attrs={
             "placeholder": 'Customer Notes',
         }),
+        required=False,
     )
 
     class Meta:

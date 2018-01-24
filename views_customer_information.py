@@ -107,6 +107,8 @@ def information_customer_contact_history(request, customer_id):
         customer_id=customers.objects.get(customer_id=customer_id)
     )
 
+    contact_date = datetime.datetime.now()
+
     #Load template
     t = loader.get_template('NearBeach/customer_information/customer_contact_history.html')
 
@@ -116,6 +118,11 @@ def information_customer_contact_history(request, customer_id):
         'customer_contact_history': customer_contact_history,
         'media_url': settings.MEDIA_URL,
         'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
+        'contact_year': contact_date.year,
+        'contact_month': contact_date.month,
+        'contact_day': contact_date.day,
+        'contact_hour': contact_date.hour,
+        'contact_minute': int(contact_date.minute/5)*5,
     }
 
     return HttpResponse(t.render(c, request))

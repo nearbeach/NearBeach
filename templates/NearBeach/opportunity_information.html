@@ -139,7 +139,7 @@
                 </tr>
                 {% for row in quote_results %}
                     <tr>
-                        <td>{{ row.quote_title }}</td>
+                        <td><a href="{% url 'quote_information' row.quote_id %}">{{ row.quote_title }}</a></td>
                         <td>{{ row.quote_valid_till }}</td>
                         <td>{{ row.quote_stage_id }}</td>
                     </tr>

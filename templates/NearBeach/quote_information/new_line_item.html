@@ -172,7 +172,7 @@
             var discount_amount = parseFloat(product_price * quantity * parseFloat(discount_percent / 100));
 
             //We will add the discount amount to the page
-            $("#id_discount_amount").val(discount_amount);
+            $("#id_discount_amount").val(discount_amount.toFixed(2));
         }
 
         //Extract the discount amount
@@ -180,7 +180,7 @@
 
         //Calculate the sales price and populate it
         var sales_price = parseFloat(quantity * product_price - discount_amount);
-        $("#id_sales_price").val(sales_price);
+        $("#id_sales_price").val(sales_price.toFixed(2));
 
 
         //Tax is calculated OFF sales price
@@ -192,12 +192,12 @@
             //There is a tax amount.
             tax_percentage = parseFloat($("#id_tax").children("option").filter(":selected").text()/100);
             tax_amount = parseFloat(tax_percentage * sales_price);
-            $("#id_tax_amount").val(tax_amount);
+            $("#id_tax_amount").val(tax_amount.toFixed(2));
         }
 
 
         //Total is the sales price + tax
         var total = parseFloat(sales_price + tax_amount)
-        $("#id_total").val(total);
+        $("#id_total").val(total.toFixed(2));
     }
 </script>

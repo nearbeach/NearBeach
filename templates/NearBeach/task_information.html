@@ -38,6 +38,7 @@
 	<form id="task_information" name="task_information" method="POST" enctype="multipart/form-data">
 		{% csrf_token %}
             <h2>Task information - TASK{{ task_results.tasks_id }}</h2>
+            <div id="save_state"></div>
             {% if task_results.task_status == 'Resolved' or task_results.task_status == 'Closed' %}
                 <fieldset disabled="disabled">
             {% endif %}
@@ -114,7 +115,7 @@
 
 
     <h2>Task Quotes</h2>
-    <a href="{% url 'new_quote' task_id 'tasks' %}">New Quote</a>
+    <a href="{% url 'new_quote' task_id 'task' %}">New Quote</a>
     {% if quote_results %}
         <table>
             <tr>
@@ -124,7 +125,7 @@
             </tr>
             {% for row in quote_results %}
                 <tr>
-                    <td>{{ row.quote_title }}</td>
+                    <td><a href="{% url 'quote_information' row.quote_id %}">{{ row.quote_title }}</a></td>
                     <td>{{ row.quote_valid_till }}</td>
                     <td>{{ row.quote_stage_id }}</td>
                 </tr>
@@ -210,6 +211,9 @@
         $(this).attr("clicked", "true");
     });
     $("#task_information").on('submit', function(e) {
+        //State the save_state is currently saving
+        $("#save_state").html("Currently Saving Project");
+
         //Grab which button was pressed
         var which_button = $("input[type=submit][clicked=true]").val()
 
@@ -219,6 +223,10 @@
             url: '/task_information/{{ task_id }}/',
             data: $(this).serialize(),
             success: function() {
+                //State that the function has saved
+                var current_time = Date();
+                $("#save_state").html("Saved last on " + current_time);
+
                 //If we have the resolve button, we will need to navigate to the resolved task url.
                 if (which_button == "Resolve Project") {
                     //Navigate to the resolve task URL

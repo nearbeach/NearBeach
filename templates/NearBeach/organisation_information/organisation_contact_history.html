@@ -1,4 +1,3 @@
-<form action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {% load staticfiles %}
 
@@ -8,6 +7,7 @@
     <ul>
         <li>Contact Type {{  contact_history_form.contact_type }}</li>
         <li>Date: {{ contact_history_form.start_date_year }}/{{ contact_history_form.start_date_month }}/{{ contact_history_form.start_date_day }}</li>
+        <li>Time {{ contact_history_form.start_date_hour }}:{{ contact_history_form.start_date_minute }} {{ contact_history_form.start_date_meridiems }}</li>
         <li>{{ contact_history_form.contact_history }}</li>
         <li>{{ contact_history_form.contact_attachment }}</li>
         <li><input id="docupload" type="file" name="docupload" value="Submit content"></li>
@@ -26,4 +26,27 @@
         </p>
     {% endfor %}
 {% endif %}
-</form>
+<script>
+    /*
+    Setup the contact history to have this specific moment as the contact history. Saves the user
+    having to update the date/time.
+     */
+    document.getElementById("id_start_date_year").value = "{{ contact_year }}";
+    document.getElementById("id_start_date_month").value = "{{ contact_month }}";
+    document.getElementById("id_start_date_day").value = "{{ contact_day }}";
+    document.getElementById("id_start_date_minute").value = "{{ contact_minute }}";
+
+    if ({{ contact_hour }} == 0 ) {
+        document.getElementById("id_start_date_hour").value = "12";
+        document.getElementById("id_start_date_meridiems").value = "AM";
+    } else if ({{ contact_hour }} == 12) {
+        document.getElementById("id_start_date_hour").value = {{ contact_hour }}
+        document.getElementById("id_start_date_meridiems").value = "PM";
+    } else if ({{ contact_hour }} > 12) {
+         document.getElementById("id_start_date_hour").value = {{ contact_hour }} - 12;
+         document.getElementById("id_start_date_meridiems").value = "PM";
+    } else {
+        document.getElementById("id_start_date_hour").value = {{ contact_hour }}
+        document.getElementById("id_start_date_meridiems").value = "AM";
+    }
+</script>
