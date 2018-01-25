@@ -696,14 +696,14 @@ def dashboard_group_opportunities(request):
         AND opportunity_permission.opportunity_id_id = opportunities.opportunity_id
         AND list_of_opportunity_stage.opportunity_stage_description NOT LIKE '%%Close%%'
         AND (
-        --Assigned user
+        -- Assigned user
         opportunity_permission.assigned_user_id = %s
-        --Group ID
+        -- Group ID
         OR (
         user_groups.username_id = %s
         AND user_groups.is_deleted = 'FALSE'
         )	
-        --All users
+        -- All users
         OR opportunity_permission.all_users = 'TRUE'
         )
         AND opportunity_permission.is_deleted = 'FALSE'
