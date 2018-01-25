@@ -47,6 +47,9 @@
             <tr><td>Opportunity Success Probability:</td><td>{{ opportunity_information_form.opportunity_success_probability }}</td></tr>
         </table>
         <input type="submit" name="submit_contact" value="Update"/>
+        {% if opportunity_results.opportunity_stage_id.opportunity_closed == "TRUE" and opportunity_perm == 4 %}
+            <a href="javascript:void(0)" onclick="reopen_temp()">Reopen</a>
+        {% endif %}
         <h2>To Do</h2>
         <table>
             <tr>
@@ -191,6 +194,19 @@
 <div name="blank_space" style="margin-bottom: 150px;"></div>
 {{ opportunity_results.opportunity_stage_id.opportunity_closed }}
 <script>
+    function reopen_temp() {
+        $("input").prop("readonly", false);
+
+        //Enable all the select statements
+        $("select").prop("disabled", false);
+
+        //Disable all text area
+        $("textarea").prop("disabled", false);
+
+        //Disable all the buttons.
+        $("input[type=submit]").prop("disabled", false);
+    };
+
     function on_page_load() {
         /*
         If the opportunity_stage_id has the field opportunity_closed == TRUE, we want

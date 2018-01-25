@@ -2089,6 +2089,7 @@ def opportunity_information(request, opportunity_id):
         'project_results': project_results,
         'tasks_results': tasks_results,
         'quote_results': quote_results,
+        'opportunity_perm': opportunity_perm,
     }
 
     return HttpResponse(t.render(c, request))
@@ -2266,6 +2267,7 @@ def private_document(request, document_key):
 """
 END TEMP DOCUMENT
 """
+
 
 @login_required(login_url='login')
 def project_information(request, project_id):

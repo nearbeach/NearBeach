@@ -1319,6 +1319,33 @@ class permission_set_form(ModelForm):
         }
 
 
+class product_and_service_form(ModelForm):
+    product_name = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Product Name'
+        }),
+    )
+    product_part_number = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Product Part Number'
+        }),
+    )
+    product_description = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Product Description'
+        }),
+    )
+    class Meta:
+        model=products_and_services
+        fields='__all__'
+        exclude = {
+            'is_deleted',
+            'change_user',
+        }
+
 
 class project_information_form(ModelForm):
     """

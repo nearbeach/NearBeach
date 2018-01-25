@@ -551,6 +551,146 @@ def permission_set_information_list(request):
 
 
 @login_required(login_url='login')
+def product_and_service_discontinued(request, product_id):
+    product_instance = products_and_services.objects.get(product_id=product_id)
+
+    if product_instance.is_deleted == "FALSE":
+        product_instance.is_deleted = "TRUE"
+    else:
+        product_instance.is_deleted = "FALSE"
+
+    product_instance.save()
+
+    return HttpResponseRedirect(reverse(product_and_service_search))
+
+@login_required(login_url='login')
+def product_and_service_edit(request, product_id):
+    perm = 0
+
+    if request.session['is_superuser'] == True:
+        perm = 4
+    else:
+        pp_results = return_user_permission_level(request, None, 'administration_create_permission_sets')
+
+        if pp_results > perm:
+            perm = pp_results
+
+    if perm == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST" and perm > 2:
+        form = product_and_service_form(request.POST, instance=products_and_services.objects.get(product_id=product_id))
+        if form.is_valid():
+            form.save()
+
+            return HttpResponseRedirect(reverse(product_and_service_search))
+        else:
+            print(form.errors)
+
+    # Load template
+    t = loader.get_template('NearBeach/product_and_service/product_and_service_edit.html')
+
+    # context
+    c = {
+        'product_and_service_form': product_and_service_form(
+            instance=products_and_services.objects.get(product_id=product_id)
+        ),
+        'product_id': product_id,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def product_and_service_new(request):
+    perm = 0
+
+    if request.session['is_superuser'] == True:
+        perm = 4
+    else:
+        pp_results = return_user_permission_level(request, None, 'administration_create_permission_sets')
+
+        if pp_results > perm:
+            perm = pp_results
+
+    if perm == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST" and perm > 3:
+        form = product_and_service_form(request.POST,)
+        if form.is_valid():
+            submit_product = products_and_services(
+                product_or_service=form.cleaned_data['product_or_service'],
+                product_name=form.cleaned_data['product_name'],
+                product_part_number=form.cleaned_data['product_part_number'],
+                product_cost=form.cleaned_data['product_cost'],
+                product_price=form.cleaned_data['product_price'],
+                product_description=form.cleaned_data['product_description'],
+                change_user=request.user,
+            )
+            submit_product.save()
+
+
+            return HttpResponseRedirect(reverse(product_and_service_search))
+        else:
+            print(form.errors)
+
+    # Load template
+    t = loader.get_template('NearBeach/product_and_service/product_and_service_new.html')
+
+    # context
+    c = {
+        'product_and_service_form': product_and_service_form(),
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+
+@login_required(login_url='login')
+def product_and_service_search(request):
+    perm = 0
+
+    if request.session['is_superuser'] == True:
+        perm = 4
+    else:
+        pp_results = return_user_permission_level(request, None, 'invoice_product')
+
+        if pp_results > perm:
+            perm = pp_results
+
+    if perm == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #Get Data
+    product_results = products_and_services.objects.filter(
+        product_or_service='Product',
+        #Is deleted becomes 'DISCONTINUED' in the table. We can then recontinue it :)
+    )
+    service_results = products_and_services.objects.filter(
+        product_or_service='Service',
+        # Is deleted becomes 'DISCONTINUED' in the table. We can then recontinue it :)
+    )
+
+    # Load template
+    t = loader.get_template('NearBeach/product_and_service/product_and_service_search.html')
+
+    # context
+    c = {
+        'product_results': product_results,
+        'service_results': service_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+
+
+
+@login_required(login_url='login')
 def search_users(request):
     user_permission = 0;
 

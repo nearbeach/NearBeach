@@ -1,0 +1,69 @@
+{% extends "../template.html" %}
+{% block content %}
+{% load static %}
+<h1>Products and Services</h1>
+<a href="{% url 'product_and_service_new' %}">Add product or service</a>
+    <h2>Product</h2>
+    <table>
+        <tr>
+            <td>Product Name</td>
+            <td>Product Part Number</td>
+            <td>Product Cost</td>
+            <td>Product Price</td>
+            <td>Product Description</td>
+            <td> ------ </td>
+        </tr>
+        {% for row in product_results %}
+            <tr>
+                <td><a href="{% url 'product_and_service_edit' row.product_id %}">{{ row.product_name }}</a></td>
+                <td>{{ row.product_part_number }}</td>
+                <td>{{ row.product_cost }}</td>
+                <td>{{ row.product_price }}</td>
+                <td>{{ row.product_description }}</td>
+                <td>
+                    <a href="{% url 'product_and_service_discontinued' row.product_id %}">
+                        {% if row.is_deleted == 'FALSE' %}
+                            Click to discontinue
+                        {% else %}
+                            Click to recontinue
+                        {% endif %}
+                    </a>
+                </td>
+
+            </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Services</h2>
+    <table>
+        <tr>
+            <td>Service Name</td>
+            <td>Service Part Number</td>
+            <td>Service Cost</td>
+            <td>Service Price</td>
+            <td>Service Description</td>
+            <td> ------ </td>
+        </tr>
+        {% for row in service_results %}
+            <tr>
+                <td><a href="#">{{ row.product_name }}</a></td>
+                <td>{{ row.product_part_number }}</td>
+                <td>{{ row.product_cost }}</td>
+                <td>{{ row.product_price }}</td>
+                <td>{{ row.product_description }}</td>
+                <td>
+                    <a href="{% url 'product_and_service_discontinued' row.product_id %}">
+                        {% if row.is_deleted == 'FALSE' %}
+                            Click to discontinue
+                        {% else %}
+                            Click to recontinue
+                        {% endif %}
+                    </a>
+                </td>
+
+            </tr>
+        {% endfor %}
+    </table>
+
+
+{% endblock %}
