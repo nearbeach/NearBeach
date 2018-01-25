@@ -25,6 +25,28 @@ These are not the only features in NearBeach, but some which you may start using
 
 NearBeach will not be where it currently is without the help of other open sourced projects. Below are the references to all the different tools that are utilised within NearBeach. NearBeach would like to thank these projects as they have help construct a better and more stable product. Please consider visiting and donating.
 
- * chosen-js: https://harvesthq.github.io/chosen/
- * jQuery File Upload: http://blueimp.github.io/jQuery-File-Upload/index.html
- [NOTE TO SELF - expand this section. Give more credit where it is due!]
+### Chosen-js
+Concept and development by Patrick Filler for Harvest.
+Design and CSS by Matthew Lettini
+Repository maintained by @pfiller, @kenearley, @stof, @koenpunt, and @tjschuck.
+Github: https://github.com/harvesthq/chosen
+Link: https://harvesthq.github.io/chosen/
+License: MIT
+Note: Chosen-js is used to help streamline the select boxes, to make it easier for the user to select item(s).
+
+### jQuery
+Creator(s): John Resig
+Github: https://github.com/jquery/jquery
+Link: jquery.com
+License: MIT
+Note: jQuery help shorten a lot of the javascript code within NearBeach. There are also a few widgets that rely on this technology (i.e. Chosen-js).
+
+
+### jQuery-File-Upload
+Creator(s): Sebastian Tschan @blueimp
+Github: https://github.com/blueimp/jQuery-File-Upload
+Link: http://blueimp.github.io/jQuery-File-Upload/index.html
+License: MIT
+Note: jQuery-File-Upload has allowed us to upload files through the AJAX method.
+
+File Upload: http://blueimp.github.io/jQuery-File-Upload/index.html
