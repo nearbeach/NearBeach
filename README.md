@@ -27,11 +27,17 @@ NearBeach will not be where it currently is without the help of other open sourc
 
 ### Chosen-js
 Concept and development by Patrick Filler for Harvest.
+
 Design and CSS by Matthew Lettini
+
 Repository maintained by @pfiller, @kenearley, @stof, @koenpunt, and @tjschuck.
+
 Github: https://github.com/harvesthq/chosen
+
 Link: https://harvesthq.github.io/chosen/
+
 License: MIT
+
 Note: Chosen-js is used to help streamline the select boxes, to make it easier for the user to select item(s).
 
 ### jQuery
