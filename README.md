@@ -10,11 +10,12 @@ However projects and tasks are but a small feature to a PATMT system. You will n
 ![NearBeach - Requirements]()
 
 What if you have an opportunity? You do not have the user's full requirements yet, but there could easily be a sale involved. NearBeach has also implemented the opportunity module, to help you store each potential opportunity that comes through the pipeline.
-![NearBeach - Opportunity]()
+![NearBeach - Opportunity](https://github.com/robotichead/Store_Github_Pictures/blob/master/NearBeach%20-%20Opportunity?raw=true)
 
 
 Finally, you might need to send a quote to your customer. As a new feature, the Quotes module has been implemented into NearBeach.
-![NearBeach - Quotes]()
+![NearBeach - Quotes](https://github.com/robotichead/Store_Github_Pictures/blob/master/NearBeach%20-%20Quote3.png?raw=true)
+![NearBeach - Quotes](https://github.com/robotichead/Store_Github_Pictures/blob/master/NearBeach%20-%20Quote1.png?raw=true)
 
 These are not the only features in NearBeach, but some which you may start using strait away. Feel free to download and install and start using NearBeach right away.
 
