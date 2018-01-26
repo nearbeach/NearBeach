@@ -78,8 +78,8 @@ def assign_customer_project_task(request, customer_id):
 		, project_groups
 		, project
 		WHERE 1=1
-		--USER_GROUPS CONDITIONS
-		AND user_groups.username_id = %s --INSERT FILTER HERE!
+		-- USER_GROUPS CONDITIONS
+		AND user_groups.username_id = %s -- INSERT FILTER HERE!
 		-- JOINS --
 		AND user_groups.group_id_id = project_groups.groups_id_id
 		AND project_groups.project_id_id = project.project_id
@@ -95,7 +95,7 @@ def assign_customer_project_task(request, customer_id):
 		, tasks_groups
 		, tasks
 		WHERE 1=1
-		--USER_GROUPS CONDITIONS
+		-- USER_GROUPS CONDITIONS
 		AND user_groups.username_id = %s
 		-- JOINS --
 		AND user_groups.group_id_id = tasks_groups.groups_id_id
