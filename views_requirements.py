@@ -187,7 +187,7 @@ def requirement_items_new(request, requirement_id):
         if pp_results > permission:
             permission = pp_results
 
-    if permission > 1:
+    if permission < 2:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST":
@@ -391,7 +391,7 @@ def requirement_new_link(request, requirement_id, location_id='', destination=''
         if pp_results > permission:
             permission = pp_results
 
-    if permission > 2:
+    if permission < 2:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST":
