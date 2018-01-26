@@ -4,7 +4,7 @@
     <select id="add_user_select" name="add_user_select" onchange="enable_disable_add_user()">
         <option value="------">-------</option>
         {% for row in users_results %}
-            <option value="{{ row.id }}">{{ row.Name }}</option>
+            <option value="{{ row.id }}">{{ row.username }}: {{ row.first_name }} {{ row.last_name }}</option>
         {% endfor %}
     </select>
     <input type="submit" id="add_user_submit" name="add_user_submit" value="Add User" disabled="disabled"/>

@@ -1,18 +1,36 @@
 {% extends "./template.html" %}
 {% block content %}
-    <form action={% url 'new_quote' primary_key destination %} method="post" class="new_quote">
-    {% csrf_token %}
-        <h2>New Quote</h2>
-        <ul>
-            <li>{{ new_quote_form.quote_title }}</li>
-            <li>{{ new_quote_form.quote_terms }}</li>
-            <li>Quote Stage: {{ new_quote_form.quote_stage_id }}</li>
-            <li>Quote Approval Status: {{ new_quote_form.quote_approval_status_id }}</li>
-            <li>Quote Valid To: {{ new_quote_form.quote_valid_till_year }}/{{ new_quote_form.quote_valid_till_month }}/{{ new_quote_form.quote_valid_till_day }}<br/>
-                {{ new_quote_form.quote_valid_till_hour }}:{{ new_quote_form.quote_valid_till_minute }} {{ new_quote_form.quote_valid_till_meridiems }}</li>
-            <li>{{ new_quote_form.customer_notes }}</li>
-        </ul>
-    <input type="submit" value="Submit new quote">
-    </form>
+    {% load static %}
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
+    <body onload="initiate_dates();">
+        <form action={% url 'new_quote' primary_key destination %} method="post" class="new_quote">
+        {% csrf_token %}
+            <h2>New Quote</h2>
+            <ul>
+                <li>{{ new_quote_form.quote_title }}</li>
+                <li>{{ new_quote_form.quote_terms }}</li>
+                <li>Quote Stage: {{ new_quote_form.quote_stage_id }}</li>
+                <li>Quote Approval Status: {{ new_quote_form.quote_approval_status_id }}</li>
+                <li>Quote Valid To: {{ new_quote_form.quote_valid_till_year }}/{{ new_quote_form.quote_valid_till_month }}/{{ new_quote_form.quote_valid_till_day }}<br/>
+                    {{ new_quote_form.quote_valid_till_hour }}:{{ new_quote_form.quote_valid_till_minute }} {{ new_quote_form.quote_valid_till_meridiems }}</li>
+                <li>{{ new_quote_form.customer_notes }}</li>
+            </ul>
+        <input type="submit" value="Submit new quote">
+        </form>
+        <script>
+            /*
+            We want the quote's end date to be a default of in two weeks. So the following code extracts the date for in
+            two weeks and then applies it to the quote end time.
+             */
+            document.getElementById("id_quote_valid_till_year").value = '{{ end_year }}';
+            document.getElementById("id_quote_valid_till_month").value = '{{ end_month }}';
+            document.getElementById("id_quote_valid_till_day").value = '{{ end_day }}';
+
+            document.getElementById("id_quote_valid_till_hour").value = '5';
+            document.getElementById("id_quote_valid_till_minute").value = '00';
+            document.getElementById("id_quote_valid_till_meridiems").value = 'PM';
+
+        </script>
+    </body>
 {% endblock %}
 

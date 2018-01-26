@@ -24,7 +24,7 @@
         </tr>
         {% for row in project_customers_results %}
             <tr>
-                <td>{{ row.customer_first_name }} {{ row.customer_last_name }}</td>
+                <td><a href="{% url 'customer_information' row.customer_id %}">{{ row.customer_first_name }} {{ row.customer_last_name }}</a></td>
                 <td>{{ row.customer_description }}</td>
                 <td>{{ row.customer_email }}</td>
                 <td>{{ row.campus_nickname }}</td>

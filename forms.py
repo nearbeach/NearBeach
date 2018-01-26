@@ -472,6 +472,10 @@ class information_organisation_contact_history_form(forms.Form):
         })
     )
 
+    start_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
+    start_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
+    start_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
+
     contact_history = forms.CharField(
         widget=forms.Textarea(attrs={
             'width': '99%'
@@ -1079,6 +1083,7 @@ class new_quote_form(ModelForm):
         widget=forms.Textarea(attrs={
             "placeholder": 'Customer Notes',
         }),
+        required=False,
     )
 
 
@@ -1101,7 +1106,7 @@ class new_requirement_form(ModelForm):
     )
     requirement_scope = forms.CharField(
         widget=forms.Textarea(attrs={
-            'placeholder': 'Requirement Title'
+            'placeholder': 'Requirement Scope'
         }),
     )
     class Meta:
@@ -1314,6 +1319,33 @@ class permission_set_form(ModelForm):
         }
 
 
+class product_and_service_form(ModelForm):
+    product_name = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Product Name'
+        }),
+    )
+    product_part_number = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Product Part Number'
+        }),
+    )
+    product_description = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Product Description'
+        }),
+    )
+    class Meta:
+        model=products_and_services
+        fields='__all__'
+        exclude = {
+            'is_deleted',
+            'change_user',
+        }
+
 
 class project_information_form(ModelForm):
     """
@@ -1461,6 +1493,7 @@ class quote_information_form(ModelForm):
         widget=forms.Textarea(attrs={
             "placeholder": 'Customer Notes',
         }),
+        required=False,
     )
 
     class Meta:

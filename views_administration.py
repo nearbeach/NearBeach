@@ -260,6 +260,66 @@ def group_information_list(request):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
+def new_user(request):
+    user_permission = 0;
+
+    if request.session['is_superuser'] == True:
+        user_permission = 4
+    else:
+        pp_results = return_user_permission_level(request, None, 'administration_create_users')
+
+        if pp_results > user_permission:
+            user_permission = pp_results
+
+    if user_permission < 2:
+        return HttpResponseRedirect(reverse('permission_denied'))
+    errors = ''
+    if request.method == "POST" and user_permission == 4:
+        form = user_information_form(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            """
+            For new users
+            ~~~~~~~~~~~~~
+            - If password fields are left blank, generate random password
+            - If password fields do not match, send back errors
+            - If password fields match, save password against the new user
+            """
+            password1 = form.cleaned_data['password1']
+            password2 = form.cleaned_data['password2']
+            if not password1 == password2:
+                errors = '<li>PASSWORDS ARE NOT THE SAME<li>'
+            else:
+                if password1 == "":
+                    # Passwords are blank - generate a new password for the user
+                    password1 = User.objects.make_random_password()
+
+                # Save the password
+                user_instance = User.objects.get(username=form.cleaned_data['username'])
+                user_instance.set_password(password1)
+                user_instance.save()
+
+                # Go to the new profile of the user
+                return HttpResponseRedirect(reverse('user_information', args={user_instance.id}))
+
+        else:
+            print(form.errors)
+            errors = form.errors
+
+    #Load template
+    t = loader.get_template('NearBeach/new_user.html')
+
+    # context
+    c = {
+        'user_information_form': user_information_form(),
+        'is_superuser': request.session['is_superuser'],
+        'errors': errors,
+    }
+
+    return HttpResponse(t.render(c, request))
 
 
 @login_required(login_url='login')
@@ -403,39 +463,12 @@ def permission_set_information_edit(request, permission_set_id):
 
     save_errors = None
     if request.method == "POST":
-        form = permission_set_form(request.POST)
+        form = permission_set_form(
+            request.POST,
+            instance=permission_set.objects.get(permission_set_id=permission_set_id)
+        )
         if form.is_valid():
-            # Try and save the form.
-            update_permission_set = permission_set.objects.get(permission_set_id=permission_set_id)
-
-            #Bug in python objects - can not update a name if it has the same name.
-            #if not update_permission_set.permission_set_name == form.cleaned_data['permission_set_name']:
-            #    update_permission_set.permission_set_name = form.cleaned_data['permission_set_name']
-
-            update_permission_set.administration_assign_users_to_groups = form.cleaned_data['administration_assign_users_to_groups']
-            update_permission_set.administration_create_groups = form.cleaned_data['administration_create_groups']
-            update_permission_set.administration_create_permission_sets = form.cleaned_data['administration_create_permission_sets']
-            update_permission_set.administration_create_users = form.cleaned_data['administration_create_users']
-            update_permission_set.assign_campus_to_customer = form.cleaned_data['assign_campus_to_customer']
-            update_permission_set.associate_project_and_tasks = form.cleaned_data['associate_project_and_tasks']
-            update_permission_set.customer = form.cleaned_data['customer']
-            update_permission_set.invoice = form.cleaned_data['invoice']
-            update_permission_set.invoice_product = form.cleaned_data['invoice_product']
-            update_permission_set.opportunity = form.cleaned_data['opportunity']
-            update_permission_set.organisation = form.cleaned_data['organisation']
-            update_permission_set.organisation_campus = form.cleaned_data['organisation_campus']
-            update_permission_set.project = form.cleaned_data['project']
-            update_permission_set.requirement = form.cleaned_data['requirement']
-            update_permission_set.requirement_link = form.cleaned_data['requirement_link']
-            update_permission_set.task = form.cleaned_data['task']
-            update_permission_set.documents = form.cleaned_data['documents']
-            update_permission_set.contact_history = form.cleaned_data['contact_history']
-            update_permission_set.project_history = form.cleaned_data['project_history']
-            update_permission_set.task_history = form.cleaned_data['task_history']
-            update_permission_set.change_user=request.user
-
-            update_permission_set.save()
-
+            form.save()
 
             # Load blank page
             t = loader.get_template('NearBeach/blank.html')
@@ -518,6 +551,146 @@ def permission_set_information_list(request):
 
 
 @login_required(login_url='login')
+def product_and_service_discontinued(request, product_id):
+    product_instance = products_and_services.objects.get(product_id=product_id)
+
+    if product_instance.is_deleted == "FALSE":
+        product_instance.is_deleted = "TRUE"
+    else:
+        product_instance.is_deleted = "FALSE"
+
+    product_instance.save()
+
+    return HttpResponseRedirect(reverse(product_and_service_search))
+
+@login_required(login_url='login')
+def product_and_service_edit(request, product_id):
+    perm = 0
+
+    if request.session['is_superuser'] == True:
+        perm = 4
+    else:
+        pp_results = return_user_permission_level(request, None, 'administration_create_permission_sets')
+
+        if pp_results > perm:
+            perm = pp_results
+
+    if perm == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST" and perm > 2:
+        form = product_and_service_form(request.POST, instance=products_and_services.objects.get(product_id=product_id))
+        if form.is_valid():
+            form.save()
+
+            return HttpResponseRedirect(reverse(product_and_service_search))
+        else:
+            print(form.errors)
+
+    # Load template
+    t = loader.get_template('NearBeach/product_and_service/product_and_service_edit.html')
+
+    # context
+    c = {
+        'product_and_service_form': product_and_service_form(
+            instance=products_and_services.objects.get(product_id=product_id)
+        ),
+        'product_id': product_id,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def product_and_service_new(request):
+    perm = 0
+
+    if request.session['is_superuser'] == True:
+        perm = 4
+    else:
+        pp_results = return_user_permission_level(request, None, 'administration_create_permission_sets')
+
+        if pp_results > perm:
+            perm = pp_results
+
+    if perm == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST" and perm > 3:
+        form = product_and_service_form(request.POST,)
+        if form.is_valid():
+            submit_product = products_and_services(
+                product_or_service=form.cleaned_data['product_or_service'],
+                product_name=form.cleaned_data['product_name'],
+                product_part_number=form.cleaned_data['product_part_number'],
+                product_cost=form.cleaned_data['product_cost'],
+                product_price=form.cleaned_data['product_price'],
+                product_description=form.cleaned_data['product_description'],
+                change_user=request.user,
+            )
+            submit_product.save()
+
+
+            return HttpResponseRedirect(reverse(product_and_service_search))
+        else:
+            print(form.errors)
+
+    # Load template
+    t = loader.get_template('NearBeach/product_and_service/product_and_service_new.html')
+
+    # context
+    c = {
+        'product_and_service_form': product_and_service_form(),
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+
+@login_required(login_url='login')
+def product_and_service_search(request):
+    perm = 0
+
+    if request.session['is_superuser'] == True:
+        perm = 4
+    else:
+        pp_results = return_user_permission_level(request, None, 'invoice_product')
+
+        if pp_results > perm:
+            perm = pp_results
+
+    if perm == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #Get Data
+    product_results = products_and_services.objects.filter(
+        product_or_service='Product',
+        #Is deleted becomes 'DISCONTINUED' in the table. We can then recontinue it :)
+    )
+    service_results = products_and_services.objects.filter(
+        product_or_service='Service',
+        # Is deleted becomes 'DISCONTINUED' in the table. We can then recontinue it :)
+    )
+
+    # Load template
+    t = loader.get_template('NearBeach/product_and_service/product_and_service_search.html')
+
+    # context
+    c = {
+        'product_results': product_results,
+        'service_results': service_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+
+
+
+@login_required(login_url='login')
 def search_users(request):
     user_permission = 0;
 
@@ -565,7 +738,7 @@ def search_users(request):
 
 
 @login_required(login_url='login')
-def user_information(request, user_id=''):
+def user_information(request, user_id):
     user_permission = 0;
 
     if request.session['is_superuser'] == True:
@@ -636,7 +809,7 @@ def user_information(request, user_id=''):
             errors = form.errors
 
     #forms
-    if user_id == "":
+    if user_id == None:
         ui_form = user_information_form()
     else:
         ui_form = user_information_form(

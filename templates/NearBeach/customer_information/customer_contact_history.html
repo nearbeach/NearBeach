@@ -21,3 +21,27 @@
         </p>
     {% endfor %}
 {% endif %}
+<script>
+    /*
+    Setup the contact history to have this specific moment as the contact history. Saves the user
+    having to update the date/time.
+     */
+    document.getElementById("id_start_date_year").value = "{{ contact_year }}";
+    document.getElementById("id_start_date_month").value = "{{ contact_month }}";
+    document.getElementById("id_start_date_day").value = "{{ contact_day }}";
+    document.getElementById("id_start_date_minute").value = "{{ contact_minute }}";
+
+    if ({{ contact_hour }} == 0 ) {
+        document.getElementById("id_start_date_hour").value = "12";
+        document.getElementById("id_start_date_meridiems").value = "AM";
+    } else if ({{ contact_hour }} == 12) {
+        document.getElementById("id_start_date_hour").value = {{ contact_hour }}
+        document.getElementById("id_start_date_meridiems").value = "PM";
+    } else if ({{ contact_hour }} > 12) {
+         document.getElementById("id_start_date_hour").value = {{ contact_hour }} - 12;
+         document.getElementById("id_start_date_meridiems").value = "PM";
+    } else {
+        document.getElementById("id_start_date_hour").value = {{ contact_hour }}
+        document.getElementById("id_start_date_meridiems").value = "AM";
+    }
+</script>

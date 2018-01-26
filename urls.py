@@ -26,7 +26,6 @@ from . import views, \
 
 urlpatterns = [
 	url(r'^$', views.index, name='index'),
-	url(r'^active_projects/', views.active_projects, name='active_projects'),
 	url(r'^assign_customer_project_task/(?P<customer_id>[0-9]+)/', views.assign_customer_project_task,
 		name='assign_customer_project_task'),
 	url(r'^associate/(?P<project_id>[0-9]+)/(?P<task_id>[0-9]+)/(?P<project_or_task>[P,T])', views.associate,
@@ -210,8 +209,13 @@ url(r'^group_information_list/', views_administration.group_information_list, na
 url(r'^group_information_add_permission_set/(?P<group_id>[0-9]+)/', views_administration.group_information_add_permission_set, name='group_information_add_permission_set'),
 
 	#User information
-	url(r'^user_information/$', views_administration.user_information, name='user_information'),
+	url(r'^new_user/$', views_administration.new_user, name='new_user'),
 	url(r'^user_information/(?P<user_id>[0-9]+)/$', views_administration.user_information, name='user_information'),
+
+url(r'^product_and_service_search/', views_administration.product_and_service_search, name='product_and_service_search'),
+url(r'^product_and_service_new/', views_administration.product_and_service_new, name='product_and_service_new'),
+url(r'^product_and_service_discontinued/(?P<product_id>[0-9]+)/', views_administration.product_and_service_discontinued, name='product_and_service_discontinued'),
+url(r'^product_and_service_edit/(?P<product_id>[0-9]+)/', views_administration.product_and_service_edit, name='product_and_service_edit'),
 
 ]
 

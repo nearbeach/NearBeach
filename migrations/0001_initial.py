@@ -273,6 +273,7 @@ class Migration(migrations.Migration):
                 ('opportunity_stage_description', models.CharField(max_length=50)),
                 ('probability_success', models.DecimalField(decimal_places=0, max_digits=3)),
                 ('list_order', models.IntegerField(unique=True)),
+                ('opportunity_closed',models.CharField(choices=[('TRUE', 'TRUE'), ('FALSE', 'FALSE')], default='FALSE', max_length=5)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.CharField(choices=[('TRUE', 'TRUE'), ('FALSE', 'FALSE')], default='FALSE', max_length=5)),

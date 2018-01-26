@@ -56,7 +56,6 @@ def information_task_assigned_users(request, task_id):
     				, auth_user.username
     				, auth_user.first_name
     				, auth_user.last_name
-    				, auth_user.first_name || ' ' || auth_user.last_name AS "Name"
     				, auth_user.email
     				FROM
     				  tasks_groups
@@ -65,10 +64,10 @@ def information_task_assigned_users(request, task_id):
 
     				WHERE 1=1
 
-    				--AUTH_USER CONDITIONS
-    				AND auth_user.is_active=1
+    				-- AUTH_USER CONDITIONS
+    				AND auth_user.is_active='1'
 
-    				--PROJECT_GROUPS CONDITIONS
+    				-- PROJECT_GROUPS CONDITIONS
     				AND tasks_groups.tasks_id_id=%s
 
     				-- JOINS --

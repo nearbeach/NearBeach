@@ -14,12 +14,20 @@ from .user_permissions import return_user_permission_level
 
 @login_required(login_url='login')
 def new_requirement(request):
-    permission = return_user_permission_level(request, None, 'organisation_campus')
+    permission = 0;
 
-    if permission < 3:
+    if request.session['is_superuser'] == True:
+        permission = 4
+    else:
+        pp_results = return_user_permission_level(request, None, 'requirement')
+
+        if pp_results > permission:
+            permission = pp_results
+
+    if permission == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
-    if request.method == "POST":
+    if request.method == "POST" and permission > 2:
         form = new_requirement_form(request.POST)
         if form.is_valid():
             requirement_title = form.cleaned_data['requirement_title']
@@ -51,6 +59,19 @@ def new_requirement(request):
 
 @login_required(login_url='login')
 def requirement_information(request, requirement_id):
+    permission = 0;
+
+    if request.session['is_superuser'] == True:
+        permission = 4
+    else:
+        pp_results = return_user_permission_level(request, None, 'requirement')
+
+        if pp_results > permission:
+            permission = pp_results
+
+    if permission == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     #Setup the initial data for the form
     requirement_results = requirements.objects.get(requirement_id=requirement_id)
     initial = {
@@ -73,7 +94,20 @@ def requirement_information(request, requirement_id):
 
 @login_required(login_url='login')
 def requirement_item_edit(request, requirement_item_id):
-    if request.method == "POST":
+    permission = 0;
+
+    if request.session['is_superuser'] == True:
+        permission = 4
+    else:
+        pp_results = return_user_permission_level(request, None, 'requirement')
+
+        if pp_results > permission:
+            permission = pp_results
+
+    if permission == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST" and permission > 1:
         form = requirement_items_form(request.POST)
         if form.is_valid():
             # Save the data
@@ -113,6 +147,19 @@ def requirement_item_edit(request, requirement_item_id):
 
 @login_required(login_url='login')
 def requirement_items_list(request, requirement_id):
+    permission = 0;
+
+    if request.session['is_superuser'] == True:
+        permission = 4
+    else:
+        pp_results = return_user_permission_level(request, None, 'requirement')
+
+        if pp_results > permission:
+            permission = pp_results
+
+    if permission == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     requirement_items_results = requirement_item.objects.filter(requirement_id=requirement_id)
 
     #Load template
@@ -130,6 +177,19 @@ def requirement_items_list(request, requirement_id):
 
 @login_required(login_url='login')
 def requirement_items_new(request, requirement_id):
+    permission = 0;
+
+    if request.session['is_superuser'] == True:
+        permission = 4
+    else:
+        pp_results = return_user_permission_level(request, None, 'requirement')
+
+        if pp_results > permission:
+            permission = pp_results
+
+    if permission < 2:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     if request.method == "POST":
         form = requirement_items_form(request.POST)
         if form.is_valid():
@@ -171,6 +231,19 @@ def requirement_items_new(request, requirement_id):
 
 @login_required(login_url='login')
 def requirement_items_new_link(request, requirement_item_id, location_id= '', destination=''):
+    permission = 0;
+
+    if request.session['is_superuser'] == True:
+        permission = 4
+    else:
+        pp_results = return_user_permission_level(request, None, 'requirement_link')
+
+        if pp_results > permission:
+            permission = pp_results
+
+    if permission == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     if request.method == "POST":
         #Check to make sure that there exists a location id and project_or_task value
         if location_id == '' or destination == '':
@@ -274,6 +347,19 @@ def requirement_items_new_link(request, requirement_item_id, location_id= '', de
 
 @login_required(login_url='login')
 def requirement_links_list(request, requirement_id):
+    permission = 0;
+
+    if request.session['is_superuser'] == True:
+        permission = 4
+    else:
+        pp_results = return_user_permission_level(request, None, 'requirement')
+
+        if pp_results > permission:
+            permission = pp_results
+
+    if permission == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     links_results = requirement_links.objects.filter(requirements=requirement_id)
     item_links_results = requirement_item_links.objects.filter(pk=requirement_id)
     item_results = requirement_item.objects.filter(requirement_item_id__in=item_links_results)
@@ -295,6 +381,19 @@ def requirement_links_list(request, requirement_id):
 
 @login_required(login_url='login')
 def requirement_new_link(request, requirement_id, location_id='', destination=''):
+    permission = 0;
+
+    if request.session['is_superuser'] == True:
+        permission = 4
+    else:
+        pp_results = return_user_permission_level(request, None, 'requirement_link')
+
+        if pp_results > permission:
+            permission = pp_results
+
+    if permission < 2:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     if request.method == "POST":
         print("Requirement ID: " + requirement_id + "\nLocation ID: " + location_id + "\nTask or Project: " + destination)
         #Check to make sure that there exists a location id and project_or_task value
@@ -356,7 +455,7 @@ def requirement_new_link(request, requirement_id, location_id='', destination=''
         and project.project_status IN ('New','Open')
         and project.project_status IN ('New','Open')
         and project.project_id = project_groups.project_id_id
-        and project_groups.groups_id_id = user_groups.group_id_id
+        and project_groups.groups_id_id = user_groups.groups_id
         and user_groups.username_id = %s
         """, [request.user.id])
     project_results = namedtuplefetchall(cursor)
@@ -376,7 +475,7 @@ def requirement_new_link(request, requirement_id, location_id='', destination=''
         where 1 = 1
         and tasks.task_status in ('New','Open')
         and tasks.tasks_id = tasks_groups.tasks_id_id
-        and tasks_groups.groups_id_id = user_groups.group_id_id
+        and tasks_groups.groups_id_id = user_groups.groups_id
         and user_groups.username_id = %s
         and tasks.organisations_id_id=organisations.organisations_id    
         """, [request.user.id])

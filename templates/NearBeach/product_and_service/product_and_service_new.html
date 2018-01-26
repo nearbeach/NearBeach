@@ -1,0 +1,17 @@
+{% extends "../template.html" %}
+{% block content %}
+{% load static %}
+<h2>New Product or Service</h2>
+    <form action="{% url 'product_and_service_new' %}" method="post" class="new_product">
+        {% csrf_token %}
+        <ul>
+            <li>{{ product_and_service_form.product_or_service }}</li>
+            <li>{{ product_and_service_form.product_name }}</li>
+            <li>{{ product_and_service_form.product_part_number }}</li>
+            <li>Product Cost: {{ product_and_service_form.product_cost }}</li>
+            <li>Product Price: {{ product_and_service_form.product_price }}</li>
+            <li>{{ product_and_service_form.product_description }}</li>
+            <li><input type="submit" value="Save Changes and return"><a href="{% url 'product_and_service_search' %}">Cancel</a></li>
+        </ul>
+    </form>
+{% endblock %}

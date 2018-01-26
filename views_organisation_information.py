@@ -57,13 +57,13 @@ def information_organisation_contact_history(request, organisation_id):
                 contact_type = form.cleaned_data['contact_type']
 
                 # Create the final start/end date fields
-                task_start_date = time_combined(
+                contact_date = time_combined(
                     int(form.cleaned_data['start_date_year']),
                     int(form.cleaned_data['start_date_month']),
                     int(form.cleaned_data['start_date_day']),
-                    0,
-                    0,
-                    'AM'
+                    int(form.cleaned_data['start_date_hour']),
+                    int(form.cleaned_data['start_date_minute']),
+                    form.cleaned_data['start_date_meridiems']
                 )
 
                 # documents
@@ -94,7 +94,7 @@ def information_organisation_contact_history(request, organisation_id):
                 submit_history = contact_history(
                     organisations_id=organisations.objects.get(organisations_id=organisation_id),
                     contact_type=contact_type,
-                    contact_date=task_start_date,
+                    contact_date=contact_date,
                     contact_history=contact_history_notes,
                     user_id=current_user,
                     change_user=request.user,
@@ -108,6 +108,8 @@ def information_organisation_contact_history(request, organisation_id):
         organisations_id=organisations.objects.get(organisations_id=organisation_id)
     )
 
+    contact_date = datetime.datetime.now()
+
     #Load template
     t = loader.get_template('NearBeach/organisation_information/organisation_contact_history.html')
 
@@ -117,6 +119,11 @@ def information_organisation_contact_history(request, organisation_id):
         'contact_history_results': contact_history_results,
         'organisation_permissions': organisation_permissions,
         'contact_history': contact_history,
+        'contact_year': contact_date.year,
+        'contact_month': contact_date.month,
+        'contact_day': contact_date.day,
+        'contact_hour': contact_date.hour,
+        'contact_minute': int(contact_date.minute / 5) * 5,
     }
 
     return HttpResponse(t.render(c, request))

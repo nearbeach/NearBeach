@@ -17,32 +17,10 @@ from django.template import RequestContext, loader
 from django.urls import reverse
 from .namedtuplefetchall import *
 from .user_permissions import return_user_permission_level
+from datetime import timedelta
 
 #import python modules
 import datetime, json, simplejson, urllib, urllib2
-
-@login_required(login_url='login')
-def active_projects(request):
-    # Get username_id from User
-    current_user = request.user
-
-    ###
-    #BUG
-    #Might remove the active projects features.
-    ###
-    active_projects_results = project.objects.filter(
-        is_deleted='FALSE',
-    )
-
-    # Load the template
-    t = loader.get_template('NearBeach/active_projects.html')
-
-    # context
-    c = {
-        'active_projects_results': active_projects_results,
-    }
-
-    return HttpResponse(t.render(c, request))
 
 
 @login_required(login_url='login')
@@ -551,13 +529,11 @@ def dashboard(request):
 
 @login_required(login_url='login')
 def dashboard_active_projects(request):
-    #Get username id from User
-    current_user = request.user
-
     #Get Data
     assigned_users_results = assigned_users.objects.filter(
         is_deleted='FALSE',
-        user_id=current_user,
+        user_id=request.user,
+        project_id__isnull=False,
     )
 
     # Load the template
@@ -573,16 +549,19 @@ def dashboard_active_projects(request):
 
 @login_required(login_url='login')
 def dashboard_active_tasks(request):
-    # Get username id from User
-    current_user = request.user
-
     # Get Data
+    assigned_users_results = assigned_users.objects.filter(
+        is_deleted='FALSE',
+        user_id=request.user,
+        task_id__isnull=False,
+    )
 
     # Load the template
     t = loader.get_template('NearBeach/dashboard_widgets/active_tasks.html')
 
     # context
     c = {
+        'assigned_users_results': assigned_users_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -621,7 +600,7 @@ def dashboard_group_active_projects(request):
     and project.project_status IN ('New','Open')
     and project.is_deleted = 'FALSE'
     and project.project_id = project_groups.project_id_id
-    and project_groups.groups_id_id = user_groups.group_id_id
+    and project_groups.groups_id_id = user_groups.groups_id
     and user_groups.username_id = %s
     and project.organisations_id_id=organisations.organisations_id
     """, [current_user.id])
@@ -666,7 +645,7 @@ def dashboard_group_active_tasks(request):
         AND tasks.task_status IN ('New','Open')
         AND tasks.organisations_id_id=organisations.organisations_id
         AND tasks.tasks_id = tasks_groups.tasks_id_id
-        AND tasks_groups.groups_id_id = user_groups.group_id_id
+        AND tasks_groups.groups_id_id = user_groups.groups_id
         AND user_groups.username_id = %s
        """, [ current_user.id])
 
@@ -717,14 +696,14 @@ def dashboard_group_opportunities(request):
         AND opportunity_permission.opportunity_id_id = opportunities.opportunity_id
         AND list_of_opportunity_stage.opportunity_stage_description NOT LIKE '%%Close%%'
         AND (
-        --Assigned user
+        -- Assigned user
         opportunity_permission.assigned_user_id = %s
-        --Group ID
+        -- Group ID
         OR (
         user_groups.username_id = %s
         AND user_groups.is_deleted = 'FALSE'
         )	
-        --All users
+        -- All users
         OR opportunity_permission.all_users = 'TRUE'
         )
         AND opportunity_permission.is_deleted = 'FALSE'
@@ -904,7 +883,7 @@ def index(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse('login'))
     else:
-        return HttpResponseRedirect(reverse('active_projects'))
+        return HttpResponseRedirect(reverse('dashboard'))
 
     # Default
     return HttpResponseRedirect(reverse('login'))
@@ -1058,7 +1037,7 @@ def login(request):
                 )
                 request.session['is_superuser'] = request.user.is_superuser
 
-                return HttpResponseRedirect(reverse('active_projects'))
+                return HttpResponseRedirect(reverse('dashboard'))
             else:
                 print("User not authenticated")
         else:
@@ -1631,9 +1610,17 @@ def new_project(request, organisations_id='', customer_id='', opportunity_id='')
 
 @login_required(login_url='login')
 def new_quote(request,destination,primary_key):
-    permission = return_user_permission_level(request, None, 'quote')
+    quote_permissions = 0
 
-    if permission < 3:
+    if request.session['is_superuser'] == True:
+        quote_permissions = 4
+    else:
+        pp_results = return_user_permission_level(request, None,'quote')
+
+        if pp_results > quote_permissions:
+            quote_permissions = pp_results
+
+    if quote_permissions < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST":
@@ -1695,6 +1682,9 @@ def new_quote(request,destination,primary_key):
         else:
             print(form.errors)
 
+    end_date = datetime.datetime.now()+timedelta(14)
+
+
     # Load the template
     t = loader.get_template('NearBeach/new_quote.html')
 
@@ -1703,6 +1693,9 @@ def new_quote(request,destination,primary_key):
         'new_quote_form': new_quote_form,
         'primary_key': primary_key,
         'destination': destination,
+        'end_year': end_date.year,
+        'end_month': end_date.month,
+        'end_day': end_date.day,
     }
 
     return HttpResponse(t.render(c, request))
@@ -1894,6 +1887,20 @@ def next_step(request, next_step_id, opportunity_id):
 
 @login_required(login_url='login')
 def opportunity_information(request, opportunity_id):
+    opportunity_perm = 0
+
+    if request.session['is_superuser'] == True:
+        opportunity_perm = 4
+    else:
+        pp_results = return_user_permission_level(request, None,'opportunity')
+
+        if pp_results > opportunity_perm :
+            opportunity_perm = pp_results
+
+    if opportunity_perm  == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
     if request.method == "POST":
         form = opportunity_information_form(request.POST, request.FILES)
         if form.is_valid():
@@ -1997,7 +2004,7 @@ def opportunity_information(request, opportunity_id):
         permission_results = opportunity_permissions.objects.filter(
             Q(
                 Q(assigned_user=request.user)  # User has permission
-                | Q(groups_id__in=user_groups_results.values('group_id'))  # User's groups have permission
+                | Q(groups_id__in=user_groups_results.values('groups_id'))  # User's groups have permission
                 | Q(all_users='TRUE')  # All users have access
             )
             & Q(opportunity_id=opportunity_id)
@@ -2082,6 +2089,7 @@ def opportunity_information(request, opportunity_id):
         'project_results': project_results,
         'tasks_results': tasks_results,
         'quote_results': quote_results,
+        'opportunity_perm': opportunity_perm,
     }
 
     return HttpResponse(t.render(c, request))
@@ -2259,6 +2267,7 @@ def private_document(request, document_key):
 """
 END TEMP DOCUMENT
 """
+
 
 @login_required(login_url='login')
 def project_information(request, project_id):
@@ -2635,7 +2644,7 @@ def resolve_project(request, project_id):
     project_update.project_status = 'Resolved'
     project_update.change_user=request.user
     project_update.save()
-    return HttpResponseRedirect(reverse('active_projects'))
+    return HttpResponseRedirect(reverse('dashboard'))
 
 
 @login_required(login_url='login')
@@ -2644,7 +2653,7 @@ def resolve_task(request, task_id):
     task_update.task_status = 'Resolved'
     task_update.change_user=request.user
     task_update.save()
-    return HttpResponseRedirect(reverse('active_projects'))
+    return HttpResponseRedirect(reverse('dashboard'))
 
 
 @login_required(login_url='login')
@@ -3130,6 +3139,7 @@ def task_information(request, task_id):
         'task_id': task_id,
         'task_permissions': task_permissions,
         'task_history_permissions': task_history_permissions,
+        'quote_results': quote_results,
     }
 
     return HttpResponse(t.render(c, request))

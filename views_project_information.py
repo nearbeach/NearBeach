@@ -55,7 +55,6 @@ def information_project_assigned_users(request, project_id):
     			, auth_user.username
     			, auth_user.first_name
     			, auth_user.last_name
-    			, auth_user.first_name || ' ' || auth_user.last_name AS "Name"
     			, auth_user.email
     			FROM
     			  project_groups
@@ -64,10 +63,10 @@ def information_project_assigned_users(request, project_id):
 
     			WHERE 1=1
 
-    			--AUTH_USER CONDITIONS
-    			AND auth_user.is_active=TRUE 
+    			-- AUTH_USER CONDITIONS
+    			AND auth_user.is_active='1' 
 
-    			--PROJECT_GROUPS CONDITIONS
+    			-- PROJECT_GROUPS CONDITIONS
     			AND project_groups.project_id_id=%s
 
     			-- JOINS --
@@ -208,7 +207,8 @@ def information_project_customers(request, project_id):
 
     cursor.execute("""
     		SELECT DISTINCT
-    		  customers.customer_first_name
+    		  customers.customer_id
+    		, customers.customer_first_name
     		, customers.customer_last_name
     		, project_customers.customer_description
     		, customers.customer_email
