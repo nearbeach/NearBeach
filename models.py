@@ -217,6 +217,7 @@ class customers(models.Model):
 		db_table="customers"
 
 class customers_campus(models.Model):
+	customers_campus_id=models.AutoField(primary_key=True)
 	customer_id=models.ForeignKey(
 		'customers', 
 		on_delete=models.CASCADE,
@@ -1025,6 +1026,7 @@ class organisations(models.Model):
 
 	
 class organisations_campus(models.Model):
+	organisations_campus_id=models.AutoField(primary_key=True)
 	organisations_id=models.ForeignKey(
 		'organisations',
 		on_delete=models.CASCADE,
