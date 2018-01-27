@@ -218,11 +218,7 @@ def information_task_customers(request, task_id):
     		, customers_campus_information.customer_phone
     		FROM
     		  customers LEFT JOIN 
-    			(SELECT 
-    			  * 
-    			  FROM 
-    			  customers_campus join organisations_campus 
-    			  ON customers_campus.campus_id_id = organisations_campus.id) as customers_campus_information
+    			(SELECT customers_campus_id, customer_phone, customer_fax, campus_id_id, customer_id_id, organisations_campus_id, campus_nickname, campus_phone, campus_fax, campus_address1, campus_address2, campus_address3, campus_suburb, campus_country_id_id, campus_region_id_id, organisations_id_id FROM customers_campus join organisations_campus ON customers_campus.campus_id_id = organisations_campus.organisations_campus_id ) as customers_campus_information
     			ON customers.customer_id = customers_campus_information.customer_id_id
     		, tasks_customers
     		WHERE 1=1
