@@ -179,35 +179,16 @@ def information_task_customers(request, task_id):
     #Get Data
     task_results = tasks.objects.get(tasks_id=task_id)
 
+    #Obtain a list of customers not already added to this task
+    new_customers_results = customers.objects.filter(
+        organisations_id=task_results.organisations_id,
+        is_deleted="FALSE",
+    ).exclude(
+        customer_id__in=tasks_customers.objects.filter(tasks_id=task_results.tasks_id).values('customer_id')
+    )
+
     # task_customers_results
     cursor = connection.cursor()
-    cursor.execute("""
-    		SELECT DISTINCT 
-    		  customers.customer_id
-    		, customers.customer_first_name || ' ' || customers.customer_last_name AS customer_name
-
-    		FROM
-    		  tasks 
-    		, organisations LEFT JOIN customers
-    			ON organisations.organisations_id = customers.organisations_id_id
-
-    		WHERE 1=1
-    		AND tasks.organisations_id_id = organisations.organisations_id
-
-    		AND customers.customer_id NOT IN (SELECT DISTINCT tasks_customers.customer_id_id
-    					FROM tasks_customers
-    					WHERE 1=1
-    					AND tasks_customers.tasks_id_id = tasks.tasks_id
-    					AND tasks_customers.is_deleted = 'FALSE')
-
-
-    		-- LINKS --
-    		AND organisations.organisations_id = %s
-    		AND tasks.tasks_id = %s
-    		-- END LINKS --	
-    	""", [task_results.organisations_id_id, task_id])
-    new_customers_results = namedtuplefetchall(cursor)
-
     cursor.execute("""
     		SELECT DISTINCT
     		  customers.customer_first_name
