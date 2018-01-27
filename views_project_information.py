@@ -216,7 +216,7 @@ def information_project_customers(request, project_id):
     		, customers_campus_information.customer_phone
     		FROM
     		  customers LEFT JOIN 
-    			(SELECT * FROM customers_campus join organisations_campus ON customers_campus.campus_id_id = organisations_campus.id) as customers_campus_information
+    			(SELECT * FROM customers_campus join organisations_campus ON customers_campus.campus_id_id = organisations_campus.organisations_campus_id) as customers_campus_information
     			ON customers.customer_id = customers_campus_information.customer_id_id
     		, project_customers
     		WHERE 1=1
