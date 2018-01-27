@@ -9,7 +9,7 @@ NearBeach's main focus is to create both projects and tasks. Each task can then 
 ![NearBeach - Project Information](https://github.com/robotichead/Store_Github_Pictures/blob/master/NearBeach%20-%20project%20information.png?raw=true)
 
 However projects and tasks are but a small feature to a PATMT system. You will need to store user requirements and be able to assign those requirement items to projects/tasks for completion. You will need to track these requirements to make sure they are completed. NearBeach has recently implemented a requirement module to help you store all your customer's requirements
-![NearBeach - Requirements]()
+![NearBeach - Requirements](https://github.com/robotichead/Store_Github_Pictures/blob/master/NearBeach%20-%20Requirements.png?raw=true)
 
 What if you have an opportunity? You do not have the user's full requirements yet, but there could easily be a sale involved. NearBeach has also implemented the opportunity module, to help you store each potential opportunity that comes through the pipeline.
 ![NearBeach - Opportunity](https://github.com/robotichead/Store_Github_Pictures/blob/master/NearBeach%20-%20Opportunity?raw=true)
