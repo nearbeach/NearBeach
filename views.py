@@ -229,7 +229,7 @@ def campus_information(request, campus_information):
 
             # Get the SQL Instances
             customer_instance = customers.objects.get(customer_id=customer_results)
-            campus_instances = organisations_campus.objects.get(id=campus_information)
+            campus_instances = organisations_campus.objects.get(organisations_campus_id=campus_information)
 
 
             # Save the new campus
@@ -243,7 +243,8 @@ def campus_information(request, campus_information):
             submit_campus.save()
 
             # Go to the form.
-            return HttpResponseRedirect(reverse('customers_campus_information', args={submit_campus.id, 'CAMP'}))
+            return HttpResponseRedirect(reverse('customers_campus_information', args={submit_campus.customers_campus_id, 'CAMP'}))
+
 
     # Get Data
     customer_campus_results = customers_campus.objects.filter(
@@ -285,7 +286,7 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
         form = customer_campus_form(request.POST)
         if form.is_valid():
             # Save the data
-            save_data = customers_campus.objects.get(id=customer_campus_id)
+            save_data = customers_campus.objects.get(customers_campus_id=customer_campus_id)
 
             save_data.customer_phone = form.cleaned_data['customer_phone']
             save_data.customer_fax = form.cleaned_data['customer_fax']
@@ -298,12 +299,12 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
 			will be the customer information
 			"""
             if customer_or_org == "CAMP":
-                return HttpResponseRedirect(reverse('campus_information', args={save_data.campus_id.id}))
+                return HttpResponseRedirect(reverse('campus_information', args={save_data.campus_id.organisations_campus_id}))
             else:
                 return HttpResponseRedirect(reverse('customer_information', args={save_data.customer_id.customer_id}))
 
     # Get Data
-    customer_campus_results = customers_campus.objects.get(id=customer_campus_id)
+    customer_campus_results = customers_campus.objects.get(customers_campus_id=customer_campus_id)
 
     # Setup the initial results
     initial = {
@@ -386,7 +387,9 @@ def customer_information(request, customer_id):
 
                 # Get the SQL Instances
                 customer_instance = customers.objects.get(customer_id=customer_id)
-                campus_instances = organisations_campus.objects.get(id=campus_id_results)
+                campus_instances = organisations_campus.objects.get(
+                    organisations_campus_id=int(campus_id_results)
+                )
 
                 # Save the new campus
                 submit_campus = customers_campus(
@@ -399,7 +402,7 @@ def customer_information(request, customer_id):
                 submit_campus.save()
 
                 # Go to the form.
-                return HttpResponseRedirect(reverse('customers_campus_information', args={submit_campus.id, 'CUST'}))
+                return HttpResponseRedirect(reverse('customers_campus_information', args={submit_campus.customers_campus_id, 'CUST'}))
         else:
             print(form.errors)
 
@@ -779,9 +782,8 @@ def delete_campus_contact(request, customers_campus_id, cust_or_camp):
     save_customers_campus.change_user = request.user
     save_customers_campus.save()
 
-    print(save_customers_campus.campus_id.id)
     if cust_or_camp=="CAMP":
-        return HttpResponseRedirect(reverse('campus_information', args={save_customers_campus.campus_id.id}))
+        return HttpResponseRedirect(reverse('campus_information', args={save_customers_campus.campus_id.organisations_campus_id}))
     else:
         return HttpResponseRedirect(reverse('customer_information', args={save_customers_campus.customer_id.customer_id}))
 
