@@ -21,7 +21,8 @@ from datetime import timedelta
 
 #import python modules
 import datetime, json, simplejson, urllib, urllib2
-
+import pytz
+from django.utils import timezone
 
 @login_required(login_url='login')
 def assign_customer_project_task(request, customer_id):
