@@ -1228,7 +1228,7 @@ def new_opportunity(request, organisation_id='', customer_id=''):
             stage_of_opportunity_instance = list_of_opportunity_stage.objects.get(
                 opportunity_stage_id=request.POST.get('opportunity_stage'))
 
-            opportunity_end_date = time_combined(
+            opportunity_end_date = convert_to_utc(
                 int(form.cleaned_data['finish_date_year']),
                 int(form.cleaned_data['finish_date_month']),
                 int(form.cleaned_data['finish_date_day']),
@@ -1460,7 +1460,7 @@ def new_project(request, organisations_id='', customer_id='', opportunity_id='')
             organisations_id_form = form.cleaned_data['organisations_id']
 
             # Create the final start/end date fields
-            project_start_date = time_combined(
+            project_start_date = convert_to_utc(
                 int(form.cleaned_data['start_date_year']),
                 int(form.cleaned_data['start_date_month']),
                 int(form.cleaned_data['start_date_day']),
@@ -1469,7 +1469,7 @@ def new_project(request, organisations_id='', customer_id='', opportunity_id='')
                 form.cleaned_data['start_date_meridiems']
             )
 
-            project_end_date = time_combined(
+            project_end_date = convert_to_utc(
                 int(form.cleaned_data['finish_date_year']),
                 int(form.cleaned_data['finish_date_month']),
                 int(form.cleaned_data['finish_date_day']),
@@ -1635,7 +1635,7 @@ def new_quote(request,destination,primary_key):
             customer_notes=form.cleaned_data['customer_notes']
 
             # Create the final start/end date fields
-            quote_valid_till = time_combined(
+            quote_valid_till = convert_to_utc(
                 int(form.cleaned_data['quote_valid_till_year']),
                 int(form.cleaned_data['quote_valid_till_month']),
                 int(form.cleaned_data['quote_valid_till_day']),
@@ -1720,7 +1720,7 @@ def new_task(request, organisations_id='', customer_id='', opportunity_id=''):
             organisations_id_form = form.cleaned_data['organisations_id']
 
             # Create the final start/end date fields
-            task_start_date = time_combined(
+            task_start_date = convert_to_utc(
                 int(form.cleaned_data['start_date_year']),
                 int(form.cleaned_data['start_date_month']),
                 int(form.cleaned_data['start_date_day']),
@@ -1729,7 +1729,7 @@ def new_task(request, organisations_id='', customer_id='', opportunity_id=''):
                 form.cleaned_data['start_date_meridiems']
             )
 
-            task_end_date = time_combined(
+            task_end_date = convert_to_utc(
                 int(form.cleaned_data['finish_date_year']),
                 int(form.cleaned_data['finish_date_month']),
                 int(form.cleaned_data['finish_date_day']),
@@ -1926,7 +1926,7 @@ def opportunity_information(request, opportunity_id):
                 opportunity_stage_id=int(request.POST['opportunity_stage_id']))
 
 
-            save_opportunity.opportunity_expected_close_date = time_combined(
+            save_opportunity.opportunity_expected_close_date = convert_to_utc(
                 int(form.cleaned_data['finish_date_year']),
                 int(form.cleaned_data['finish_date_month']),
                 int(form.cleaned_data['finish_date_day']),
@@ -2321,7 +2321,7 @@ def project_information(request, project_id):
             project_results.project_description = form.cleaned_data['project_description']
 
             # Create the final start/end date fields
-            project_results.project_start_date = time_combined(
+            project_results.project_start_date = convert_to_utc(
                 int(form.cleaned_data['start_date_year']),
                 int(form.cleaned_data['start_date_month']),
                 int(form.cleaned_data['start_date_day']),
@@ -2330,7 +2330,7 @@ def project_information(request, project_id):
                 form.cleaned_data['start_date_meridiems']
             )
 
-            project_results.project_end_date = time_combined(
+            project_results.project_end_date = convert_to_utc(
                 int(form.cleaned_data['finish_date_year']),
                 int(form.cleaned_data['finish_date_month']),
                 int(form.cleaned_data['finish_date_day']),
@@ -2342,70 +2342,16 @@ def project_information(request, project_id):
             # Check to make sure the resolve button was hit
             if 'Resolve' in request.POST:
                 # Well, we have to now resolve the data
-                print("RESOLVE PROJECT!~")
                 project_results.project_status = 'Resolved'
-            else:
-                print(request.POST)
 
             project_results.change_user=request.user
             project_results.save()
-
-            """
-			If the user has submitted a new document. We only upload the document IF and ONLY IF the user
-			has selected the "Submit" button on the "New Document" dialog. We do not want to accidently
-			upload a document if we hit the "SAVE" button from a different location
-			"""
-            if 'new_document' in request.POST:
-                # document = request.FILES['document']
-                document = request.FILES.get('document')
-                document_description = request.POST.get("document_description")
-                document_url_location = request.POST.get("document_url_location")
-
-                parent_folder_id = request.POST.get("parent_folder_id")
-
-                submit_document = documents(
-                    document=document,
-                    document_description=document_description,
-                    document_url_location=document_url_location,
-                    change_user=request.user,
-                )
-                try:
-                    submit_document.document_folder_id = folders.objects.get(
-                        folder_id=int(parent_folder_id),
-                        change_user=request.user,
-                    )
-                    submit_document.save()
-                except:
-                    submit_document.save()
-                submit_document_permissions = document_permissions(
-                    project_id=project.objects.get(pk=project_id),
-                    change_user=request.user,
-                )
-
-            """
-			Fuck - someone wants to create a new folder...
-			"""
-            if 'new_folder' in request.POST:
-                document_folder_description = form.cleaned_data['folder_description']
-                folder_location = request.POST.get("folder_location")
-
-                submit_folder = folders(
-                    project_id=project.objects.get(pk=project_id),
-                    folder_description=document_folder_description,
-                    change_user=request.user,
-                )
-
-                try:
-                    submit_folder.parent_folder_id = folders.objects.get(
-                        folder_id=int(folder_location),
-                    )
-                    submit_folder.save()
-                except:
-                    submit_folder.save()
         else:
             print(form.errors)
 
     project_results = get_object_or_404(project, project_id=project_id)
+    project_start_results = convert_extracted_time(project_results.project_start_date)
+    project_end_results = convert_extracted_time(project_results.project_end_date)
 
     # Obtain the required data
     project_history_results = project_history.objects.filter(project_id=project_id, is_deleted='FALSE')
@@ -2449,49 +2395,22 @@ def project_information(request, project_id):
     )
 
 
-    """
-	The 24 hours to 12 hours formula.
-	00:00 means that it is 12:00 AM - change required for hour
-	01:00 means that it is 01:00 AM - no change required
-	12:00 means that it is 12:00 PM - change required for meridiem
-	13:00 means that it is 01:00 PM - change required for hour and meridiem
-	"""
-    start_hour = project_results.project_start_date.hour
-    start_meridiem = u'AM'
-    if start_hour == 0:
-        start_hour = 12
-    elif start_hour == 12:
-        start_meridiem = u'PM'
-    elif start_hour > 12:
-        start_hour = start_hour - 12
-        start_meridiem = u'PM'
-
-    end_hour = project_results.project_end_date.hour
-    end_meridiem = u'AM'
-    if end_hour == 0:
-        end_hour = 12
-    elif end_hour == 12:
-        end_meridiem = u'PM'
-    elif end_hour > 12:
-        end_hour = end_hour - 12
-        end_meridiem = u'PM'
-
     # Setup the initial data for the form
     initial = {
         'project_name': project_results.project_name,
         'project_description': project_results.project_description,
-        'start_date_year': project_results.project_start_date.year,
-        'start_date_month': project_results.project_start_date.month,
-        'start_date_day': project_results.project_start_date.day,
-        'start_date_hour': start_hour,
-        'start_date_minute': project_results.project_start_date.minute,
-        'start_date_meridiems': start_meridiem,
-        'finish_date_year': project_results.project_end_date.year,
-        'finish_date_month': project_results.project_end_date.month,
-        'finish_date_day': project_results.project_end_date.day,
-        'finish_date_hour': end_hour,
-        'finish_date_minute': project_results.project_end_date.minute,
-        'finish_date_meridiems': end_meridiem,
+        'start_date_year': project_start_results['year'],
+        'start_date_month': project_start_results['month'],
+        'start_date_day': project_start_results['day'],
+        'start_date_hour': project_start_results['hour'],
+        'start_date_minute': project_start_results['minute'],
+        'start_date_meridiems': project_start_results['meridiem'],
+        'finish_date_year': project_end_results['year'],
+        'finish_date_month': project_end_results['month'],
+        'finish_date_day': project_end_results['day'],
+        'finish_date_hour': project_end_results['hour'],
+        'finish_date_minute': project_end_results['minute'],
+        'finish_date_meridiems': project_end_results['meridiem'],
     }
 
     # Query the database for associated task information
@@ -2555,7 +2474,7 @@ def quote_information(request, quote_id):
             quotes_results.quote_stage_id = form.cleaned_data['quote_stage_id']
             quotes_results.customer_notes = form.cleaned_data['customer_notes']
 
-            quotes_results.quote_valid_till = time_combined(
+            quotes_results.quote_valid_till = convert_to_utc(
                 int(form.cleaned_data['quote_valid_till_year']),
                 int(form.cleaned_data['quote_valid_till_month']),
                 int(form.cleaned_data['quote_valid_till_day']),
@@ -2919,6 +2838,8 @@ def task_information(request, task_id):
     # Define the data we will edit
     # task_results = tasks.objects.get(tasks_id = task_id)
     task_results = get_object_or_404(tasks, tasks_id=task_id)
+    task_start_results = convert_extracted_time(task_results.task_start_date)
+    task_end_results = convert_extracted_time(task_results.task_end_date)
 
     # Get the data from the form
     if request.method == "POST":
@@ -2929,7 +2850,7 @@ def task_information(request, task_id):
             task_results.task_long_description = form.cleaned_data['task_long_description']
 
             # Calendar values
-            task_results.task_start_date = time_combined(
+            task_results.task_start_date = convert_to_utc(
                 int(form.cleaned_data['start_date_year']),
                 int(form.cleaned_data['start_date_month']),
                 int(form.cleaned_data['start_date_day']),
@@ -2937,7 +2858,7 @@ def task_information(request, task_id):
                 int(form.cleaned_data['start_date_minute']),
                 form.cleaned_data['start_date_meridiems']
             )
-            task_results.task_end_date = time_combined(
+            task_results.task_end_date = convert_to_utc(
                 int(form.cleaned_data['finish_date_year']),
                 int(form.cleaned_data['finish_date_month']),
                 int(form.cleaned_data['finish_date_day']),
@@ -3061,49 +2982,23 @@ def task_information(request, task_id):
     )
 
 
-    """
-	The 24 hours to 12 hours formula.
-	00:00 means that it is 12:00 AM - change required for hour
-	01:00 means that it is 01:00 AM - no change required
-	12:00 means that it is 12:00 PM - change required for meridiem
-	13:00 means that it is 01:00 PM - change required for hour and meridiem
-	"""
-    start_hour = task_results.task_start_date.hour
-    start_meridiem = u'AM'
-    if start_hour == 0:
-        start_hour = 12
-    elif start_hour == 12:
-        start_meridiem = u'PM'
-    elif start_hour > 12:
-        start_hour = start_hour - 12
-        start_meridiem = u'PM'
-
-    end_hour = task_results.task_end_date.hour
-    end_meridiem = u'AM'
-    if end_hour == 0:
-        end_hour = 12
-    elif end_hour == 12:
-        end_meridiem = u'PM'
-    elif end_hour > 12:
-        end_hour = end_hour - 12
-        end_meridiem = u'PM'
 
     # Setup the initial
     initial = {
         'task_short_description': task_results.task_short_description,
         'task_long_description': task_results.task_long_description,
-        'start_date_year': task_results.task_start_date.year,
-        'start_date_month': task_results.task_start_date.month,
-        'start_date_day': task_results.task_start_date.day,
-        'start_date_hour': start_hour,
-        'start_date_minute': task_results.task_start_date.minute,
-        'start_date_meridiems': start_meridiem,
-        'finish_date_year': task_results.task_end_date.year,
-        'finish_date_month': task_results.task_end_date.month,
-        'finish_date_day': task_results.task_end_date.day,
-        'finish_date_hour': end_hour,
-        'finish_date_minute': task_results.task_end_date.minute,
-        'finish_date_meridiems': end_meridiem,
+        'start_date_year': task_start_results['year'],
+        'start_date_month': task_start_results['month'],
+        'start_date_day': task_start_results['day'],
+        'start_date_hour': task_start_results['hour'],
+        'start_date_minute': task_start_results['minute'],
+        'start_date_meridiems': task_start_results['meridiem'],
+        'finish_date_year': task_end_results['year'],
+        'finish_date_month': task_end_results['month'],
+        'finish_date_day': task_end_results['day'],
+        'finish_date_hour': task_end_results['hour'],
+        'finish_date_minute': task_end_results['minute'],
+        'finish_date_meridiems': task_end_results['meridiem'],
     }
 
     # Query the database for associated project information
@@ -3174,38 +3069,3 @@ def handler500(request):
     )
     response.status_code = 500
     return response
-
-
-
-"""
-The time converter - we need a function that breaks time up into different segments, and also
-combines it back. This is the time converter
-"""
-def time_combined(year,month,day,hour,minute,meridiem):
-    """
-    Time is tricky. So I am following the simple rules;
-    12:** AM will have the hour changed to 0
-    1:** AM will not have the hour changed
-    12:** PM will not have the hour changed
-    1:** PM will have the hour changed by adding 12
-
-    From these simple points, I have constructed the following
-    if statements to take control of the correct hour.
-    """
-    if meridiem == "AM":
-        if hour == 12:
-            hour = 0
-    else:
-        if hour < 12:
-            hour = hour + 12
-
-
-
-    # Create the final start/end date fields
-    return datetime.datetime(
-        year,
-        month,
-        day,
-        hour,
-        minute
-    )

@@ -67,3 +67,25 @@ def convert_extracted_time(datetime):
         'minute': minute,
         'meridiem': meridiem,
     }
+
+
+def convert_to_utc(year, month, day, hour, minute, meridiem):
+    """
+    The data from the form is inputted into this function. The time is then converted into UTC from the local timezone.
+    From there the datetime of the UTC is returned for input into the database.
+    :param datetime:
+    :return:
+    """
+
+    #Convert the hour:meridiem into 24-H
+    if meridiem == "AM":
+        if hour == 12:
+            hour = 0
+    else:
+        if hour < 12:
+            hour = hour + 12
+
+    location = pytz.timezone(settings.TIME_ZONE)
+    local_time = location.localize(datetime.datetime(year, month, day, hour, minute))
+
+    return local_time.astimezone(pytz.utc)
