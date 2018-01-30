@@ -15,7 +15,7 @@ from django.http import HttpResponse,HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, render_to_response
 from django.template import RequestContext, loader
 from django.urls import reverse
-from .namedtuplefetchall import *
+from .misc_functions import *
 from .user_permissions import return_user_permission_level
 
 

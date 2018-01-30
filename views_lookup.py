@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from .models import *
 from django.core import serializers
-from .namedtuplefetchall import *
+from .misc_functions import *
 import simplejson
 
 @login_required(login_url='login')

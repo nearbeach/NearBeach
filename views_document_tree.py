@@ -6,7 +6,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import  loader
 from NearBeach.forms import *
 from .models import *
-from .namedtuplefetchall import *
+from .misc_functions import *
 from django.db.models import Q
 
 import simplejson
