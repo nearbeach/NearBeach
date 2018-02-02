@@ -24,7 +24,7 @@ def new_requirement(request):
         if pp_results > permission:
             permission = pp_results
 
-    if permission == 0:
+    if permission < 2:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST" and permission > 2:

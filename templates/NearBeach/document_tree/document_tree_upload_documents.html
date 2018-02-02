@@ -1,7 +1,7 @@
 <form action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {% load staticfiles %}
-
+{% if general_permission > 1 or document_permission == 1 %}
     <table>
         <tr>
             <td>Upload Documents</td>
@@ -17,7 +17,7 @@
             </td>
         </tr>
     </table>
-
+{% endif %}
 <script src="{% static '/NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
 <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/vendor/jquery.ui.widget.js' %}"></script>
 <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.iframe-transport.js' %}"></script>

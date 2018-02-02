@@ -26,6 +26,20 @@ import datetime, json, simplejson, urllib, urllib2
 
 @login_required(login_url='login')
 def group_information(request):
+    perm = 0
+
+    if request.session['is_superuser']:
+        perm = 4
+    else:
+        ph_permission = return_user_permission_level(request, None, 'administration_create_groups')
+
+        #Permission takes the highest from both
+        if ph_permission > perm:
+            perm = ph_permission
+
+    if perm == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     #Load template
     t = loader.get_template('NearBeach/group_information.html')
 
@@ -614,7 +628,7 @@ def product_and_service_new(request):
         if pp_results > perm:
             perm = pp_results
 
-    if perm == 0:
+    if perm < 2:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST" and perm > 3:

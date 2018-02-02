@@ -8,11 +8,33 @@ from NearBeach.forms import *
 from .models import *
 from .misc_functions import *
 from django.db.models import Q
+from .user_permissions import return_user_permission_level
 
 import simplejson
 
 @login_required(login_url='login')
 def document_tree_create_folder(request, location_id, project_or_task):
+    general_permission = 0
+    document_permission = 0
+
+    if request.session['is_superuser'] == True:
+        general_permission = 4
+        document_permission = 1 #Boolean value
+    else:
+        if project_or_task == "P":
+            pp_results = return_user_permission_level(request, None,'project')
+        else:
+            pp_results = return_user_permission_level(request, None,'task')
+
+        ph_results = return_user_permission_level(request, None,'documents')
+
+
+        if pp_results > general_permission:
+            general_permission = pp_results
+
+        if ph_results > document_permission:
+            document_permission = ph_results
+
     if request.method == "POST":
         print(request.POST)
         form = document_tree_create_folder_form(request.POST,location_id=location_id, project_or_task=project_or_task)
@@ -62,6 +84,8 @@ def document_tree_create_folder(request, location_id, project_or_task):
             location_id=location_id,
             project_or_task=project_or_task,
         ),
+        'general_permission': general_permission,
+        'document_permission': document_permissions,
     }
 
     return HttpResponse(t.render(c, request))
@@ -200,6 +224,27 @@ def document_tree_upload(request, location_id, project_or_task):
 
 
 def document_tree_upload_documents(request, location_id, project_or_task):
+    general_permission = 0
+    document_permission = 0
+
+    if request.session['is_superuser'] == True:
+        general_permission = 4
+        document_permission = 1 #Boolean value
+    else:
+        if project_or_task == "P":
+            pp_results = return_user_permission_level(request, None,'project')
+        else:
+            pp_results = return_user_permission_level(request, None,'task')
+
+        ph_results = return_user_permission_level(request, None,'documents')
+
+
+        if pp_results > general_permission:
+            general_permission = pp_results
+
+        if ph_results > document_permission:
+            document_permission = ph_results
+
     # Load the template
     t = loader.get_template('NearBeach/document_tree/document_tree_upload_documents.html')
 
@@ -210,7 +255,9 @@ def document_tree_upload_documents(request, location_id, project_or_task):
         'upload_form': document_tree_upload_form(
             location_id=location_id,
             project_or_task=project_or_task,
-        )
+        ),
+        'general_permission': general_permission,
+        'document_permission': document_permission,
     }
 
     return HttpResponse(t.render(c, request))
