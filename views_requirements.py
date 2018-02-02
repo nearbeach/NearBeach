@@ -59,15 +59,21 @@ def new_requirement(request):
 
 @login_required(login_url='login')
 def requirement_information(request, requirement_id):
-    permission = 0;
+    permission = 0
+    requirement_link_permissions = 0
 
     if request.session['is_superuser'] == True:
         permission = 4
+        requirement_link_permissions = 4
     else:
         pp_results = return_user_permission_level(request, None, 'requirement')
+        ph_results = return_user_permission_level(request, None, 'requirement_link')
 
         if pp_results > permission:
             permission = pp_results
+
+        if ph_results > requirement_link_permissions:
+            requirement_link_permissions = ph_results
 
     if permission == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
@@ -87,6 +93,8 @@ def requirement_information(request, requirement_id):
     c = {
         'requirement_id': requirement_id,
         'requirement_information_form': requirement_information_form(initial=initial),
+        'permission': permission,
+        'requirement_link_permissions': requirement_link_permissions,
     }
 
     return HttpResponse(t.render(c, request))

@@ -18,7 +18,9 @@
         Loading Table...
     </form>
 
-    <a href="javascript:void(0)" onclick="new_requirement_item()">New Requirement Item</a>
+    {% if permission > 2 %}
+        <a href="javascript:void(0)" onclick="new_requirement_item()">New Requirement Item</a>
+    {% endif %}
 
     <form method="POST" class="new_requirement_item" id="new_requirement_item" style="background-color: #b0cfe0;">
     <!-- BLANK - will populate when needed using AJAX -->
@@ -37,7 +39,9 @@
     </form>
 
     <form method="POST" class="requirement_new_link" id="requirement_new_link" style="background-color: palevioletred">
-        <a href="javascript:void(0)" onclick="link_requirement({{ requirement_id }})">Link Current Requirement</a>
+        {% if requirement_link_permissions > 2 %}
+            <a href="javascript:void(0)" onclick="link_requirement({{ requirement_id }})">Link Current Requirement</a>
+        {% endif %}
     </form>
 
     <script>

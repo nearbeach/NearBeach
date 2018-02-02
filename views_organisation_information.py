@@ -35,8 +35,8 @@ def information_organisation_contact_history(request, organisation_id):
         if pp_results > organisation_permissions:
             organisation_permissions = pp_results
 
-        if ph_results == 1:
-            contact_history_permission = 1
+        if ph_results > contact_history_permission:
+            contact_history_permission = ph_results
 
     if organisation_permissions == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
@@ -118,7 +118,7 @@ def information_organisation_contact_history(request, organisation_id):
         'contact_history_form': information_organisation_contact_history_form(),
         'contact_history_results': contact_history_results,
         'organisation_permissions': organisation_permissions,
-        'contact_history': contact_history,
+        'contact_history_permission': contact_history_permission,
         'contact_year': contact_date.year,
         'contact_month': contact_date.month,
         'contact_day': contact_date.day,

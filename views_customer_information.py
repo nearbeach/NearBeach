@@ -123,6 +123,8 @@ def information_customer_contact_history(request, customer_id):
         'contact_day': contact_date.day,
         'contact_hour': contact_date.hour,
         'contact_minute': int(contact_date.minute/5)*5,
+        'contact_history_perm': contact_history_perm,
+        'customer_permissions': customer_permissions,
     }
 
     return HttpResponse(t.render(c, request))

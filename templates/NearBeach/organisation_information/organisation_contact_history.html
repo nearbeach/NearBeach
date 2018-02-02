@@ -3,7 +3,7 @@
 
 {% csrf_token %}
 <h2>Contact History</h2>
-{% if organisation_permissions > 1 or contact_history > 0 %}
+{% if organisation_permissions > 1 or contact_history_permission > 0 %}
     <ul>
         <li>Contact Type {{  contact_history_form.contact_type }}</li>
         <li>Date: {{ contact_history_form.start_date_year }}/{{ contact_history_form.start_date_month }}/{{ contact_history_form.start_date_day }}</li>
