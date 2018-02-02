@@ -46,7 +46,7 @@
 
         {{ project_information_form.project_name }}<br/>
         {{ project_information_form.project_description }}<br/>
-        Organisation - {{ project_results.organisations_id.organisation_name }}<br/>
+        Organisation - <a href="{% url 'organisation_information' project_results.organisations_id.organisations_id %}">{{ project_results.organisations_id }}</a><br/>
         Project Status - {{ project_results.project_status }}<br/>
         Project Start - {{ project_information_form.start_date_year }}{{ project_information_form.start_date_month }}{{ project_information_form.start_date_day }} @ {{ project_information_form.start_date_hour }}:{{ project_information_form.start_date_minute }} {{ project_information_form.start_date_meridiems }}<br/>
         Project Finish - {{ project_information_form.finish_date_year }}{{ project_information_form.finish_date_month }}{{ project_information_form.finish_date_day }} @ {{ project_information_form.finish_date_hour }}:{{ project_information_form.finish_date_minute }}{{ project_information_form.finish_date_meridiems }}<br/><br/>
