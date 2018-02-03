@@ -19,6 +19,9 @@
         load_document_tree_create_folder();
         load_document_tree_upload_documents();
 
+        load_task_group_add();
+        load_task_group_list();
+
         
         initiate_dates();
 
@@ -42,11 +45,14 @@
             {% if task_results.task_status == 'Resolved' or task_results.task_status == 'Closed' %}
                 <fieldset disabled="disabled">
             {% endif %}
-            {{ task_information_form.task_short_description }}<br/>
-            {{ task_information_form.task_long_description }}<br/>
-            Task Start - {{ task_information_form.start_date_year }}/{{ task_information_form.start_date_month }}/{{ task_information_form.start_date_day }} @ {{ task_information_form.start_date_hour }}:{{ task_information_form.start_date_minute }} {{ task_information_form.start_date_meridiems }}<br/>
-            Task finish Date - {{ task_information_form.finish_date_year }}/{{ task_information_form.finish_date_month }}/{{ task_information_form.finish_date_day }} @ {{ task_information_form.finish_date_hour }}:{{ task_information_form.finish_date_minute }} {{ task_information_form.finish_date_meridiems }}<br/>
-            <br/>
+            <ul>
+                <li>{{ task_information_form.task_short_description }}</li>
+                <li>{{ task_information_form.task_long_description }}</li>
+                <li>Current Task Status: {{ task_results.task_status }}</li>
+                <li><a href="{% url 'organisation_information' task_results.organisations_id.organisations_id %}">{{ task_results.organisations_id }}</a></li>
+                <li>Task Start - {{ task_information_form.start_date_year }}/{{ task_information_form.start_date_month }}/{{ task_information_form.start_date_day }} @ {{ task_information_form.start_date_hour }}:{{ task_information_form.start_date_minute }} {{ task_information_form.start_date_meridiems }}<br/></li>
+                <li>Task finish Date - {{ task_information_form.finish_date_year }}/{{ task_information_form.finish_date_month }}/{{ task_information_form.finish_date_day }} @ {{ task_information_form.finish_date_hour }}:{{ task_information_form.finish_date_minute }} {{ task_information_form.finish_date_meridiems }}<br/></li>
+            </ul>
 
             {% if task_permissions > 1 %}
                 <input type="submit" name="update" value="Update"/>
@@ -139,6 +145,14 @@
         Loading...
     </form>
 
+    {% if task_permissions >= 3 %}
+    <h2>Assigned Groups</h2>
+    <form method="post" class="task_assigned_groups" id="task_assigned_groups">
+        Loading add...
+    </form>
+    <div id="assigned_group_list">Loading list...</div>
+    {% endif %}
+
 </body>
 <script>
     $("#document_tree_create_folder").on('submit', function(e) {
@@ -201,6 +215,23 @@
             },
             error: function() {
                 alert("Sorry, task customers did not save. Please try again.");
+            }
+        })
+    });
+
+
+    $("#task_assigned_groups").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/assigned_group_add/{{ task_id }}/task/' + $("#id_add_group").val() + '/',
+            data: $(this).serialize(),
+            success: function() {
+                load_task_group_add();
+                load_task_group_list();
+            },
+            error: function() {
+                alert("Sorry, project assigned users did not save. Please try again.");
             }
         })
     });
@@ -367,6 +398,38 @@
             },
             error: function() {
                 $('#task_history').html('<h2>Project History</h2>Sorry, task history encounted an error and did not load.');
+            }
+        });
+    };
+
+
+    function load_task_group_add() {
+        $.ajax({
+            url: '/assigned_group_add/{{ task_id }}/task/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#task_assigned_groups').html(data);
+            },
+            error: function() {
+                $('#task_assigned_groups').html('<h2>Project History</h2>Sorry, Task .');
+            }
+        });
+    };
+
+
+    function load_task_group_list() {
+        $.ajax({
+            url: '/assigned_group_list/{{ task_id }}/task/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#assigned_group_list').html(data);
+            },
+            error: function() {
+                $('#assigned_group_list').html('<h2>Project History</h2>Sorry, task history encounted an error and did not load.');
             }
         });
     };

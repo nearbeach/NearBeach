@@ -1,0 +1,20 @@
+{% if group_list_results %}
+<table>
+    <tr>
+        <td>Assigned Group Name</td>
+        <td>Delete Assigned Group</td>
+    </tr>
+    {% for row in group_list_results %}
+        <tr>
+            <td>{{ row.groups_id }}</td>
+            <td>
+                {% if group_list_results.count == 1 %}
+                    --- Can not remove last group ---
+                {% else %}
+                    <a href="{% url 'assigned_group_delete' row.groups_id.group_id destination %}">Delete Group</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% endif %}

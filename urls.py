@@ -217,6 +217,11 @@ url(r'^product_and_service_new/', views_administration.product_and_service_new, 
 url(r'^product_and_service_discontinued/(?P<product_id>[0-9]+)/', views_administration.product_and_service_discontinued, name='product_and_service_discontinued'),
 url(r'^product_and_service_edit/(?P<product_id>[0-9]+)/', views_administration.product_and_service_edit, name='product_and_service_edit'),
 
+url(r'^assigned_group_add/(?P<location_id>[0-9]+)/(?P<destination>["project","task","organisation"]+)/$', views.assigned_group_add , name='assigned_group_add'),
+url(r'^assigned_group_add/(?P<location_id>[0-9]+)/(?P<destination>["project","task","organisation"]+)/(?P<group_id>[0-9]+)', views.assigned_group_add , name='assigned_group_add'),
+url(r'^assigned_group_delete/(?P<location_id>[0-9]+)/(?P<destination>["project","task","organisation"]+)/', views.assigned_group_delete , name='assigned_group_delete'),
+url(r'^assigned_group_list/(?P<location_id>[0-9]+)/(?P<destination>["project","task","organisation"]+)/', views.assigned_group_list , name='assigned_group_list'),
+
 ]
 
 if settings.DEBUG:

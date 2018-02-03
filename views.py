@@ -118,6 +118,106 @@ def assign_customer_project_task(request, customer_id):
     return HttpResponse(t.render(c, request))
 
 
+
+@login_required(login_url='login')
+def assigned_group_add(request, location_id, destination, group_id=None):
+    if request.method == "POST":
+        if destination == "project":
+            project_groups_submit = project_groups(
+                project_id=project.objects.get(project_id=location_id),
+                groups_id=groups.objects.get(group_id=group_id),
+                change_user=request.user,
+            )
+            project_groups_submit.save()
+        elif destination == "task":
+            tasks_groups_submit = tasks_groups(
+                tasks_id=tasks.objects.get(tasks_id=location_id),
+                groups_id=groups.objects.get(group_id=group_id),
+                change_user=request.user,
+            )
+            tasks_groups_submit.save()
+
+
+    if destination == "project":
+        groups_add_results = groups.objects.filter(
+            is_deleted="FALSE"
+        ).exclude(
+            group_id__in = project_groups.objects.filter(
+                is_deleted="FALSE",
+                project_id=location_id,
+            )
+        )
+    elif destination == "task":
+        groups_add_results = groups.objects.filter(
+            is_deleted="FALSE",
+        ).exclude(
+            group_id__in=tasks_groups.objects.filter(
+                is_deleted="FALSE",
+                tasks_id=location_id,
+            )
+        )
+
+    # Load the template
+    t = loader.get_template('NearBeach/assigned_groups/assigned_groups_add.html')
+
+    # context
+    c = {
+        'groups_add_results': groups_add_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def assigned_group_delete(request, location_id, destination):
+    if request.method == "POST":
+        if destination == "project":
+            project_groups_save = project_groups.objects.get(project_group_id = location_id)
+            project_groups_save.is_deleted = "TRUE"
+            project_groups_save.save()
+        elif destination == "task":
+            tasks_groups_save = tasks_groups.objects.get(id = location_id)
+            tasks_groups_save.is_deleted = "TRUE"
+            tasks_groups_save.save()
+
+    # Load the template
+    t = loader.get_template('NearBeach/blank.html')
+
+    # context
+    c = {
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def assigned_group_list(request, location_id, destination):
+    if destination == "project":
+        group_list_results = project_groups.objects.filter(
+            is_deleted="FALSE",
+            project_id = location_id
+        )
+    elif destination=="task":
+        group_list_results = tasks_groups.objects.filter(
+            is_deleted="FALSE",
+            tasks_id=location_id,
+        )
+
+    # Load the template
+    t = loader.get_template('NearBeach/assigned_groups/assigned_groups_list.html')
+
+    # context
+    c = {
+        'group_list_results': group_list_results,
+        'destination': destination
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+
 @login_required(login_url='login')
 def associate(request, project_id, task_id, project_or_task):
     # Submit the data
@@ -133,6 +233,7 @@ def associate(request, project_id, task_id, project_or_task):
         return HttpResponseRedirect(reverse('project_information', args={project_id}))
     else:
         return HttpResponseRedirect(reverse('task_information', args={task_id}))
+
 
 
 @login_required(login_url='login')
@@ -2823,13 +2924,7 @@ def task_information(request, task_id):
 	""", [current_user.id, task_id])
     has_permission = cursor.fetchall()
 
-    if not has_permission[0][0] == 1 and not request.session['IS_ADMIN'] == 'TRUE':
-        # Send them to permission denied!!
-        return HttpResponseRedirect(
-            reverse(
-                permission_denied,
-            )
-        )
+
     """
 	There are two buttons on the task information page. Both will come
 	here. Both will save the data, however only one of them will resolve
@@ -3038,6 +3133,7 @@ def task_information(request, task_id):
         'task_permissions': task_permissions,
         'task_history_permissions': task_history_permissions,
         'quote_results': quote_results,
+        'task_results': task_results,
     }
 
     return HttpResponse(t.render(c, request))

@@ -613,11 +613,10 @@ class login_form(forms.Form):
 
             try:
                 #If this exists, continue
-                permission_set.objects.filter(permission_set_id=1)
-
-                #Continue
-                if (user_groups.objects.filter(username_id=user.id, is_deleted='FALSE').count() == 0): #If the system has not been setup ignore this rule.
-                    raise forms.ValidationError("Please contact your system administrator. Your account has no group access")
+                if not permission_set.objects.filter(permission_set_id=1).count() == 0: #Sometimes this piece of code will throw an error
+                    #Continue
+                    if (user_groups.objects.filter(username_id=user.id, is_deleted='FALSE').count() == 0): #If the system has not been setup ignore this rule.
+                        raise forms.ValidationError("Please contact your system administrator. Your account has no group access")
                 else:
                     print("Currently the user has been setup with: " + str(user_groups.objects.filter(username_id=user.id, is_deleted='FALSE').count()) + " user groups")
 
@@ -1712,8 +1711,8 @@ class task_information_form(ModelForm):
     class Meta:
         model=tasks
         fields={
-                'task_short_description',
-                'task_long_description',
+            'task_short_description',
+            'task_long_description',
         }
 
 
