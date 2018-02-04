@@ -76,7 +76,7 @@ def information_project_assigned_users(request, project_id):
     		""", [project_id])
     users_results = namedtuplefetchall(cursor)
 
-    assigned_results = assigned_users.objects.filter(project_id=project_id)
+    assigned_results = assigned_users.objects.filter(project_id=project_id,is_deleted="FALSE")
 
     #Load template
     t = loader.get_template('NearBeach/project_information/project_assigned_users.html')
@@ -85,6 +85,7 @@ def information_project_assigned_users(request, project_id):
     c = {
         'users_results': users_results,
         'assigned_results': assigned_results.values(
+            'user_id__id',
             'user_id',
             'user_id__username',
             'user_id__first_name',
@@ -94,6 +95,26 @@ def information_project_assigned_users(request, project_id):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def information_project_delete_assigned_users(request, project_id, location_id):
+    assigned_users_save = assigned_users.objects.filter(
+        project_id=project_id,
+        user_id=location_id,
+    )
+    assigned_users_save.update(is_deleted="TRUE")
+
+    #Load template
+    t = loader.get_template('NearBeach/blank.html')
+
+    # context
+    c = {}
+
+    return HttpResponse(t.render(c, request))
+
+
 
 @login_required(login_url='login')
 def information_project_costs(request, project_id):

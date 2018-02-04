@@ -7,6 +7,7 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
+    <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.fileupload.js' %}"></script>
 
 <script>
     function on_page_load() {
@@ -433,6 +434,37 @@
             }
         });
     };
+
+    function delete_group_item(group_item) {
+        $.ajax({
+            url: '/assigned_group_delete/' + group_item + '/project/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                load_project_group_list()
+            },
+            error: function() {
+                alert("Sorry, there was an issue deleting the Assigned Group")
+            }
+        });
+    };
+
+
+    function remove_user(location_id) {
+        $.ajax({
+            url: '/information_project_delete_assigned_users/{{ project_id }}/' + location_id + '/' ,
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                load_project_assigned_users();
+            },
+            error: function() {
+                alert("Sorry, there was an issue deleting the Assigned Users")
+            }
+        });
+    }
 
 </script>
 

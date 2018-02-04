@@ -11,7 +11,7 @@
                 {% if group_list_results.count == 1 %}
                     --- Can not remove last group ---
                 {% else %}
-                    <a href="{% url 'assigned_group_delete' row.groups_id.group_id destination %}">Delete Group</a>
+                    <a href="javascript:void(0)" onclick="delete_group_item({{ row.id }})">Delete Group</a>
                 {% endif %}
             </td>
         </tr>

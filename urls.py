@@ -111,6 +111,7 @@ urlpatterns = [
 	url(r'^information_project_customers/(?P<project_id>[0-9]+)/$', views_project_information.information_project_customers, name='information_project_customers'),
 	url(r'^information_project_history/(?P<project_id>[0-9]+)/$', views_project_information.information_project_history, name='information_project_history'),
 	url(r'^information_project_assign_users/(?P<project_id>[0-9]+)/$', views_project_information.information_project_assigned_users, name='information_project_assigned_users'),
+	url(r'^information_project_delete_assigned_users/(?P<project_id>[0-9]+)/(?P<location_id>[0-9]+)', views_project_information.information_project_delete_assigned_users, name='information_project_delete_assigned_users'),
 
 
 	#Task Information
@@ -123,6 +124,10 @@ urlpatterns = [
 	url(r'^information_task_assign_users/(?P<task_id>[0-9]+)/$', views_task_information.information_task_assigned_users,
 		name='information_task_assigned_users'),
 
+
+
+	url(r'^information_task_delete_assigned_users/(?P<task_id>[0-9]+)/(?P<user_id>[0-9]+)/$', views_task_information.information_task_delete_assigned_users,
+		name='information_task_delete_assigned_users'),
 
 	# organisation Information
 	url(r'^information_organisation_contact_history/(?P<organisation_id>[0-9]+)/$',

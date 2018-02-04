@@ -47,7 +47,7 @@ def information_task_assigned_users(request, task_id):
         submit_associate_user.save()
 
     #Get data
-    assigned_results = assigned_users.objects.filter(task_id=task_id)
+    assigned_results = assigned_users.objects.filter(task_id=task_id,is_deleted="FALSE")
 
     cursor = connection.cursor()
     cursor.execute("""
@@ -84,13 +84,30 @@ def information_task_assigned_users(request, task_id):
     c = {
         'users_results': users_results,
         'assigned_results': assigned_results.values(
-            'user_id',
+            'user_id__id',
             'user_id__username',
             'user_id__first_name',
             'user_id__last_name',
         ).distinct(),
         'task_permissions': task_permissions,
     }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def information_task_delete_assigned_users(request, task_id, user_id):
+    assigned_users_save = assigned_users.objects.filter(
+        task_id=task_id,
+        user_id=user_id,
+    )
+    assigned_users_save.update(is_deleted="TRUE")
+
+    #Load template
+    t = loader.get_template('NearBeach/blank.html')
+
+    # context
+    c = {}
 
     return HttpResponse(t.render(c, request))
 

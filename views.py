@@ -170,15 +170,19 @@ def assigned_group_add(request, location_id, destination, group_id=None):
 
 @login_required(login_url='login')
 def assigned_group_delete(request, location_id, destination):
-    if request.method == "POST":
-        if destination == "project":
-            project_groups_save = project_groups.objects.get(project_group_id = location_id)
-            project_groups_save.is_deleted = "TRUE"
-            project_groups_save.save()
-        elif destination == "task":
-            tasks_groups_save = tasks_groups.objects.get(id = location_id)
-            tasks_groups_save.is_deleted = "TRUE"
-            tasks_groups_save.save()
+    if destination == "project":
+        project_groups_save = project_groups.objects.get(id = location_id)
+        project_groups_save.is_deleted = "TRUE"
+        if not project_groups_save.save():
+            print("Error saving project")
+
+
+    elif destination == "task":
+        tasks_groups_save = tasks_groups.objects.get(id = location_id)
+        tasks_groups_save.is_deleted = "TRUE"
+        if not tasks_groups_save.save():
+            print("Error saving task")
+
 
     # Load the template
     t = loader.get_template('NearBeach/blank.html')
