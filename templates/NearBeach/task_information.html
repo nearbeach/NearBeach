@@ -7,6 +7,153 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
 <script tpye="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
+
+<script>
+    function on_page_load() {
+        //Initiate AJAX modules
+        load_task_assigned_users();
+        load_task_costs();
+        load_task_customers();
+        load_task_history();
+
+        load_document_tree_list();
+        load_document_tree_create_folder();
+        load_document_tree_upload_documents();
+
+        load_task_group_add();
+        load_task_group_list();
+
+
+        initiate_dates();
+
+        //Re-size all those pesky textareas;
+        autoscale_textarea();
+
+        //Running total currently stops the javascript.
+        running_total();
+
+        //Finally set the permissions
+        set_permissions({{ task_permissions }});
+    }
+</script>
+
+<body onload="on_page_load()">
+	<form id="task_information" name="task_information" method="POST" enctype="multipart/form-data">
+		{% csrf_token %}
+            <h2>Task information - TASK{{ task_results.tasks_id }}</h2>
+            <div id="save_state"></div>
+            {% if task_results.task_status == 'Resolved' or task_results.task_status == 'Closed' %}
+                <fieldset disabled="disabled">
+            {% endif %}
+            <ul>
+                <li>{{ task_information_form.task_short_description }}</li>
+                <li>{{ task_information_form.task_long_description }}</li>
+                <li>Current Task Status: {{ task_results.task_status }}</li>
+                <li><a href="{% url 'organisation_information' task_results.organisations_id.organisations_id %}">{{ task_results.organisations_id }}</a></li>
+                <li>Task Start - {{ task_information_form.start_date_year }}/{{ task_information_form.start_date_month }}/{{ task_information_form.start_date_day }} @ {{ task_information_form.start_date_hour }}:{{ task_information_form.start_date_minute }} {{ task_information_form.start_date_meridiems }}<br/></li>
+                <li>Task finish Date - {{ task_information_form.finish_date_year }}/{{ task_information_form.finish_date_month }}/{{ task_information_form.finish_date_day }} @ {{ task_information_form.finish_date_hour }}:{{ task_information_form.finish_date_minute }} {{ task_information_form.finish_date_meridiems }}<br/></li>
+            </ul>
+
+            {% if task_permissions > 1 %}
+                <input type="submit" name="update" value="Update"/>
+                {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
+                    <input type="submit" name="Resolve" value="Resolve Project"/>
+                {% else %}
+                    </fieldset>
+                {% endif %}
+            {% else %}
+                </fieldset>
+            {% endif %}
+    </form>
+
+
+    <form method="post" class="task_history" id="task_history" style="">
+        <h2>Task History</h2>
+        Loading...
+    </form>
+    <h2>Associated Projects</h2>
+    {% if task_permissions > 1 %}
+        {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
+            <a href="{% url 'associated_projects' task_results.tasks_id %}">Associate Project</a>
+        {% endif %}
+    {% endif %}
+    {% if associated_project_results %}
+            <table>
+                <tr class="header"><td>Project Id</td><td>project Name</td><td>End Date</td></tr>
+                {% for associated_project_row in associated_project_results %}
+                    <tr>
+                    <td><a href="{% url 'project_information' associated_project_row.project_id %}">Project - {{ associated_project_row.project_id }}</a></td>
+                    <td>{{ associated_project_row.project_name }}</td>
+                    <td>{{ associated_project_row.project_end_date }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+    {% else %}
+        <p>Currently no associated projects.</p>
+    {% endif %}
+
+    <form method="post" class="task_customers" id="task_customers" style="">
+        <h2>Task Customers</h2>
+        Loading...
+    </form>
+
+    <form method="post" class="task_costs" id="task_costs" style="">
+        <h2>Task Costs</h2>
+        Loading...
+    </form>
+
+
+
+    <h2>Document Uploads</h2>
+    <form method="post" class="document_tree_upload_documents" id="document_tree_upload_documents" enctype="multipart/form-data">
+        <h2>Document Tree Upload Documents</h2>
+        Loading...
+    </form>
+
+    <form method="post" class="document_tree_create_folder" id="document_tree_create_folder">
+        <h2>Document Tree Create Folder</h2>
+        Loading...
+    </form>
+
+    <form method="post" class="document_tree_list" id="document_tree_list">
+        <h2>Document Tree List</h2>
+        Loading...
+    </form>
+
+
+    <h2>Task Quotes</h2>
+    <a href="{% url 'new_quote' task_id 'task' %}">New Quote</a>
+    {% if quote_results %}
+        <table>
+            <tr>
+                <td width="50%">Quote Title</td>
+                <td width="25%">Valid Till</td>
+                <td width="25%">Quote Stage</td>
+            </tr>
+            {% for row in quote_results %}
+                <tr>
+                    <td><a href="{% url 'quote_information' row.quote_id %}">{{ row.quote_title }}</a></td>
+                    <td>{{ row.quote_valid_till }}</td>
+                    <td>{{ row.quote_stage_id }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+
+    <form method="post" class="task_assigned_users" id="task_assigned_users" style="">
+        <h2>Task Assigned Users</h2>
+        Loading...
+    </form>
+
+    {% if task_permissions >= 3 %}
+    <h2>Assigned Groups</h2>
+    <form method="post" class="task_assigned_groups" id="task_assigned_groups">
+        Loading add...
+    </form>
+    <div id="assigned_group_list">Loading list...</div>
+    {% endif %}
+
 <script>
     $("#document_tree_create_folder").on('submit', function(e) {
         e.preventDefault();
@@ -317,153 +464,7 @@
             }
         });
     }
-
-
-    function on_page_load() {
-        //Initiate AJAX modules
-        load_task_assigned_users();
-        load_task_costs();
-        load_task_customers();
-        load_task_history();
-
-        load_document_tree_list();
-        load_document_tree_create_folder();
-        load_document_tree_upload_documents();
-
-        load_task_group_add();
-        load_task_group_list();
-
-
-        initiate_dates();
-
-        //Re-size all those pesky textareas;
-        autoscale_textarea();
-
-        //Running total currently stops the javascript.
-        running_total();
-
-        //Finally set the permissions
-        set_permissions({{ task_permissions }});
-    }
 </script>
-
-<body onload="on_page_load()">
-	<form id="task_information" name="task_information" method="POST" enctype="multipart/form-data">
-		{% csrf_token %}
-            <h2>Task information - TASK{{ task_results.tasks_id }}</h2>
-            <div id="save_state"></div>
-            {% if task_results.task_status == 'Resolved' or task_results.task_status == 'Closed' %}
-                <fieldset disabled="disabled">
-            {% endif %}
-            <ul>
-                <li>{{ task_information_form.task_short_description }}</li>
-                <li>{{ task_information_form.task_long_description }}</li>
-                <li>Current Task Status: {{ task_results.task_status }}</li>
-                <li><a href="{% url 'organisation_information' task_results.organisations_id.organisations_id %}">{{ task_results.organisations_id }}</a></li>
-                <li>Task Start - {{ task_information_form.start_date_year }}/{{ task_information_form.start_date_month }}/{{ task_information_form.start_date_day }} @ {{ task_information_form.start_date_hour }}:{{ task_information_form.start_date_minute }} {{ task_information_form.start_date_meridiems }}<br/></li>
-                <li>Task finish Date - {{ task_information_form.finish_date_year }}/{{ task_information_form.finish_date_month }}/{{ task_information_form.finish_date_day }} @ {{ task_information_form.finish_date_hour }}:{{ task_information_form.finish_date_minute }} {{ task_information_form.finish_date_meridiems }}<br/></li>
-            </ul>
-
-            {% if task_permissions > 1 %}
-                <input type="submit" name="update" value="Update"/>
-                {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
-                    <input type="submit" name="Resolve" value="Resolve Project"/>
-                {% else %}
-                    </fieldset>
-                {% endif %}
-            {% else %}
-                </fieldset>
-            {% endif %}
-    </form>
-
-    <form method="post" class="task_history" id="task_history" style="">
-        <h2>Task History</h2>
-        Loading...
-    </form>
-    <h2>Associated Projects</h2>
-    {% if task_permissions > 1 %}
-        {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
-            <a href="{% url 'associated_projects' task_results.tasks_id %}">Associate Project</a>
-        {% endif %}
-    {% endif %}
-    {% if associated_project_results %}
-            <table>
-                <tr class="header"><td>Project Id</td><td>project Name</td><td>End Date</td></tr>
-                {% for associated_project_row in associated_project_results %}
-                    <tr>
-                    <td><a href="{% url 'project_information' associated_project_row.project_id %}">Project - {{ associated_project_row.project_id }}</a></td>
-                    <td>{{ associated_project_row.project_name }}</td>
-                    <td>{{ associated_project_row.project_end_date }}</td>
-                    </tr>
-                {% endfor %}
-            </table>
-    {% else %}
-        <p>Currently no associated projects.</p>
-    {% endif %}
-
-    <form method="post" class="task_customers" id="task_customers" style="">
-        <h2>Task Customers</h2>
-        Loading...
-    </form>
-
-    <form method="post" class="task_costs" id="task_costs" style="">
-        <h2>Task Costs</h2>
-        Loading...
-    </form>
-
-
-
-    <h2>Document Uploads</h2>
-    <form method="post" class="document_tree_upload_documents" id="document_tree_upload_documents" enctype="multipart/form-data">
-        <h2>Document Tree Upload Documents</h2>
-        Loading...
-    </form>
-
-    <form method="post" class="document_tree_create_folder" id="document_tree_create_folder">
-        <h2>Document Tree Create Folder</h2>
-        Loading...
-    </form>
-
-    <form method="post" class="document_tree_list" id="document_tree_list">
-        <h2>Document Tree List</h2>
-        Loading...
-    </form>
-
-
-    <h2>Task Quotes</h2>
-    <a href="{% url 'new_quote' task_id 'task' %}">New Quote</a>
-    {% if quote_results %}
-        <table>
-            <tr>
-                <td width="50%">Quote Title</td>
-                <td width="25%">Valid Till</td>
-                <td width="25%">Quote Stage</td>
-            </tr>
-            {% for row in quote_results %}
-                <tr>
-                    <td><a href="{% url 'quote_information' row.quote_id %}">{{ row.quote_title }}</a></td>
-                    <td>{{ row.quote_valid_till }}</td>
-                    <td>{{ row.quote_stage_id }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
-
-
-    <form method="post" class="task_assigned_users" id="task_assigned_users" style="">
-        <h2>Task Assigned Users</h2>
-        Loading...
-    </form>
-
-    {% if task_permissions >= 3 %}
-    <h2>Assigned Groups</h2>
-    <form method="post" class="task_assigned_groups" id="task_assigned_groups">
-        Loading add...
-    </form>
-    <div id="assigned_group_list">Loading list...</div>
-    {% endif %}
-
-
 
 </body>
 {% endblock %}
