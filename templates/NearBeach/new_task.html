@@ -21,6 +21,7 @@
                 <li>{{ new_task_form.task_short_description }}</li>
                 <li>{{ new_task_form.task_long_description }}</li>
                 <li>Associated Organisation: {{ new_task_form.organisations_id }}</li>
+                <li>Time zone: {{ timezone }}</li>
                 <li>Task Start: {{ new_task_form.start_date_year }}/{{ new_task_form.start_date_month }}/{{ new_task_form.start_date_day }}<br/>{{ new_task_form.start_date_hour }}:{{ new_task_form.start_date_minute }} {{ new_task_form.start_date_meridiems }}</li>
                 <li>Task Finish: {{ new_task_form.finish_date_year }}/{{ new_task_form.finish_date_month }}/{{ new_task_form.finish_date_day }}<br/>{{ new_task_form.finish_date_hour }}:{{ new_task_form.finish_date_minute }} {{ new_task_form.finish_date_meridiems }}</li>
             </ul>

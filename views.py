@@ -1473,6 +1473,7 @@ def new_opportunity(request, organisation_id='', customer_id=''):
         'organisation_id': organisation_id,
         'customer_id': customer_id,
         'opportunity_stage_results': opportunity_stage_results,
+        'timezone': settings.TIME_ZONE,
     }
 
     return HttpResponse(t.render(c, request))
@@ -1711,6 +1712,7 @@ def new_project(request, organisations_id='', customer_id='', opportunity_id='')
             'organisations_count': organisations_results.count(),
             'organisations_id': organisations_id,
             'customer_id': customer_id,
+            'timezone': settings.TIME_ZONE,
         }
 
     return HttpResponse(t.render(c, request))
@@ -1804,6 +1806,7 @@ def new_quote(request,destination,primary_key):
         'end_year': end_date.year,
         'end_month': end_date.month,
         'end_day': end_date.day,
+        'timezone': settings.TIME_ZONE,
     }
 
     return HttpResponse(t.render(c, request))
@@ -1973,6 +1976,7 @@ def new_task(request, organisations_id='', customer_id='', opportunity_id=''):
             'organisations_count': organisations.objects.filter(is_deleted='FALSE').count(),
             'customer_id': customer_id,
             'opportunity_id': opportunity_id,
+            'timezone': settings.TIME_ZONE
         }
 
     return HttpResponse(t.render(c, request))
@@ -2198,6 +2202,7 @@ def opportunity_information(request, opportunity_id):
         'tasks_results': tasks_results,
         'quote_results': quote_results,
         'opportunity_perm': opportunity_perm,
+        'timezone': settings.TIME_ZONE,
     }
 
     return HttpResponse(t.render(c, request))
@@ -2556,6 +2561,7 @@ def project_information(request, project_id):
         'project_id': project_id,
         'project_permissions': project_permissions,
         'project_history_permissions': project_history_permissions,
+        'timezone': settings.TIME_ZONE,
     }
 
     return HttpResponse(t.render(c, request))
@@ -2653,6 +2659,7 @@ def quote_information(request, quote_id):
         'quote_information_form': quote_information_form(initial=initial),
         'quote_id': quote_id,
         'quote_or_invoice': quote_or_invoice,
+        'timezone': settings.TIME_ZONE,
     }
 
     return HttpResponse(t.render(c, request))
@@ -3141,6 +3148,7 @@ def task_information(request, task_id):
         'task_history_permissions': task_history_permissions,
         'quote_results': quote_results,
         'task_results': task_results,
+        'timezone': settings.TIME_ZONE,
     }
 
     return HttpResponse(t.render(c, request))

@@ -50,6 +50,7 @@
                 <li>{{ task_information_form.task_long_description }}</li>
                 <li>Current Task Status: {{ task_results.task_status }}</li>
                 <li><a href="{% url 'organisation_information' task_results.organisations_id.organisations_id %}">{{ task_results.organisations_id }}</a></li>
+                <li>Time Zone - {{ timezone }}</li>
                 <li>Task Start - {{ task_information_form.start_date_year }}/{{ task_information_form.start_date_month }}/{{ task_information_form.start_date_day }} @ {{ task_information_form.start_date_hour }}:{{ task_information_form.start_date_minute }} {{ task_information_form.start_date_meridiems }}<br/></li>
                 <li>Task finish Date - {{ task_information_form.finish_date_year }}/{{ task_information_form.finish_date_month }}/{{ task_information_form.finish_date_day }} @ {{ task_information_form.finish_date_hour }}:{{ task_information_form.finish_date_minute }} {{ task_information_form.finish_date_meridiems }}<br/></li>
             </ul>

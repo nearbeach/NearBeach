@@ -48,6 +48,7 @@
                     </select>
                 </li>
                 <li>Opportunity Budget: {{ new_opportunity_form.currency_id }}{{ new_opportunity_form.opportunity_amount }}{{ new_opportunity_form.amount_type_id }}</li>
+                <li>Time zone: {{ timezone }}</li>
                 <li>Opportunity Expected Closure: {{ new_opportunity_form.finish_date_year }} - {{ new_opportunity_form.finish_date_month }} - {{ new_opportunity_form.finish_date_day }}<br/>
                     {{ new_opportunity_form.finish_date_hour }}:{{ new_opportunity_form.finish_date_minute }} {{ new_opportunity_form.finish_date_meridiems }}</li>
                 <li>Stage of Opportunity:
