@@ -24,10 +24,7 @@ function running_total() {
 			running_total[i-1].innerHTML = running_total_amount;
 		}
 
-		if (grand_total.exists(e)) {
-			grand_total.innerHTML = running_total_amount;
-		}
-
+		grand_total.innerHTML = running_total_amount;
 	}
 	catch(err) {
 		//Nothing to do.

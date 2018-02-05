@@ -32,6 +32,7 @@
             <td>{{ row.requirement_item_title }}</td>
             <td>
                 {% for link in row.requirement_item_links_set.all %}
+                    item
                     {% if not link.project_id == None %}
                         <a href="{% url 'project_information' link.project_id.project_id %}">Project - {{ link.project_id.project_id }}</a><br/>
                     {% elif not link.task_id == None %}

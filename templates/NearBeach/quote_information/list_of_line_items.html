@@ -208,24 +208,24 @@
         });
 
         // Adding the values back to the totals :)
-        $("#product_unadjusted_price").html(product_sales_price + product_discount);
-        $("#product_discount").html(product_discount);
-        $("#product_sales_price").html(product_sales_price);
-        $("#product_tax").html(product_tax);
-        $("#product_total").html(product_sales_price + product_tax);
+        $("#product_unadjusted_price").html((product_sales_price + product_discount).toFixed(2));
+        $("#product_discount").html((product_discount).toFixed(2));
+        $("#product_sales_price").html((product_sales_price).toFixed(2));
+        $("#product_tax").html((product_tax).toFixed(2));
+        $("#product_total").html((product_sales_price + product_tax).toFixed(2));
 
-        $("#service_unadjusted_price").html(service_sales_price + service_discount);
-        $("#service_discount").html(service_discount);
-        $("#service_sales_price").html(service_sales_price);
-        $("#service_tax").html(service_tax);
-        $("#service_total").html(service_sales_price + service_tax);
+        $("#service_unadjusted_price").html((service_sales_price + service_discount).toFixed(2));
+        $("#service_discount").html((service_discount).toFixed(2));
+        $("#service_sales_price").html((service_sales_price).toFixed(2));
+        $("#service_tax").html((service_tax).toFixed(2));
+        $("#service_total").html((service_sales_price + service_tax).toFixed(2));
 
 
-        $("#unadjusted_price").html(service_sales_price + service_discount + product_sales_price + product_discount);
-        $("#discount").html(service_discount + product_discount);
-        $("#sales_price").html(service_sales_price + product_sales_price);
-        $("#tax").html(service_tax + product_tax);
-        $("#total").html(service_sales_price + service_tax + product_sales_price + product_tax);
+        $("#unadjusted_price").html((service_sales_price + service_discount + product_sales_price + product_discount).toFixed(2));
+        $("#discount").html((service_discount + product_discount).toFixed(2));
+        $("#sales_price").html((service_sales_price + product_sales_price).toFixed(2));
+        $("#tax").html((service_tax + product_tax).toFixed(2));
+        $("#total").html((service_sales_price + service_tax + product_sales_price + product_tax).toFixed(2));
     });
 </script>
 

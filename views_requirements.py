@@ -311,7 +311,7 @@ def requirement_items_new_link(request, requirement_item_id, location_id= '', de
     and project.project_status IN ('New','Open')
     and project.project_status IN ('New','Open')
     and project.project_id = project_groups.project_id_id
-    and project_groups.groups_id_id = user_groups.group_id_id
+    and project_groups.groups_id_id = user_groups.groups_id
     and user_groups.username_id = %s
     """, [request.user.id])
     project_results = namedtuplefetchall(cursor)
@@ -331,7 +331,7 @@ def requirement_items_new_link(request, requirement_item_id, location_id= '', de
     where 1 = 1
     and tasks.task_status in ('New','Open')
     and tasks.tasks_id = tasks_groups.tasks_id_id
-    and tasks_groups.groups_id_id = user_groups.group_id_id
+    and tasks_groups.groups_id_id = user_groups.groups_id
     and user_groups.username_id = %s
     and tasks.organisations_id_id=organisations.organisations_id    
     """, [request.user.id])

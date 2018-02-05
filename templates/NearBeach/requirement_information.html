@@ -243,6 +243,10 @@
             requirement_links_list();
         }
 
+        function close_new_requirement_item() {
+            $("#new_requirement_item").html("");
+        }
+
 
         function csrfSafeMethod(method) {
             // these HTTP methods do not require CSRF protection
