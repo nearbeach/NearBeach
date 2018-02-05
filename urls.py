@@ -227,6 +227,13 @@ url(r'^assigned_group_add/(?P<location_id>[0-9]+)/(?P<destination>["project","ta
 url(r'^assigned_group_delete/(?P<location_id>[0-9]+)/(?P<destination>["project","task","organisation"]+)/', views.assigned_group_delete , name='assigned_group_delete'),
 url(r'^assigned_group_list/(?P<location_id>[0-9]+)/(?P<destination>["project","task","organisation"]+)/', views.assigned_group_list , name='assigned_group_list'),
 
+url(r'^list_of_taxes_information/', views_administration.list_of_taxes_information, name='list_of_taxes_information'),
+url(r'^list_of_taxes_list/', views_administration.list_of_taxes_list, name='list_of_taxes_list'),
+url(r'^list_of_taxes_edit/(?P<tax_id>[0-9]+)/', views_administration.list_of_taxes_edit, name='list_of_taxes_edit'),
+url(r'^list_of_taxes_new/', views_administration.list_of_taxes_new, name='list_of_taxes_new'),
+
+
+
 ]
 
 if settings.DEBUG:

@@ -2909,6 +2909,9 @@ def task_information(request, task_id):
             if ph_results > task_history_permissions:
                 task_history_permissions = ph_results
 
+    if task_permissions == 0:
+        return HttpResponseRedirect(reverse(permission_denied))
+
     current_user = request.user
 
     # Setup connection to the database and query it

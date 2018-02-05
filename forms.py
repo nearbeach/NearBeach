@@ -566,7 +566,13 @@ class information_task_history_form(forms.Form):
     )
 
 
-
+class list_of_taxes_form(ModelForm):
+    class Meta:
+        model = list_of_taxes
+        fields = {
+            'tax_amount',
+            'tax_description',
+        }
 
 
 
