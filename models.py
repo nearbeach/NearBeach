@@ -813,12 +813,16 @@ class list_of_requirement_type(models.Model):
 class list_of_taxes(models.Model):
 	tax_id = models.AutoField(primary_key=True)
 	tax_amount=models.DecimalField(
-		max_digits=4,
-		decimal_places=2,
+		max_digits=6,
+		decimal_places=4,
 	)
+	tax_description=models.CharField(
+		max_length=50,
+		blank=True,
+		null=True,
+	) #Incase the customer wants to place a name against the tax
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
-	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 	change_user = models.ForeignKey(

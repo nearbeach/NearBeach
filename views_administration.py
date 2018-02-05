@@ -275,6 +275,81 @@ def group_information_list(request):
 
 
 @login_required(login_url='login')
+def list_of_taxes_information(request):
+    #Load template
+    t = loader.get_template('NearBeach/list_of_taxes/list_of_taxes_information.html')
+
+    # context
+    c = {
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def list_of_taxes_edit(request,tax_id):
+    tax_result = list_of_taxes.objects.get(pk=tax_id)
+    if request.method == "POST":
+        form = list_of_taxes_form(request.POST)
+        if form.is_valid():
+            tax_result.tax_amount = form.cleaned_data['tax_amount']
+            tax_result.tax_description = form.cleaned_data['tax_description']
+            tax_result.save()
+
+    #Load template
+    t = loader.get_template('NearBeach/list_of_taxes/list_of_taxes_edit.html')
+
+    # context
+    c = {
+        'list_of_taxes_form': list_of_taxes_form(instance=tax_result),
+        'tax_id': tax_id,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def list_of_taxes_list(request):
+    list_of_taxes_results = list_of_taxes.objects.all().order_by('tax_amount') #No taxes are deleted, only disabled.
+
+    #Load template
+    t = loader.get_template('NearBeach/list_of_taxes/list_of_taxes_list.html')
+
+    # context
+    c = {
+        'list_of_taxes_results': list_of_taxes_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def list_of_taxes_new(request):
+    if request.method == "POST":
+        form = list_of_taxes_form(request.POST)
+        if form.is_valid():
+            tax_submit = list_of_taxes(
+                tax_amount = form.cleaned_data['tax_amount'],
+                tax_description = form.cleaned_data['tax_description'],
+                change_user = request.user,
+            )
+            tax_submit.save()
+        else:
+            print(form.errors)
+
+    #Load template
+    t = loader.get_template('NearBeach/list_of_taxes/list_of_taxes_new.html')
+
+    # context
+    c = {
+        'list_of_taxes_form': list_of_taxes_form()
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
 def new_user(request):
     user_permission = 0;
 
