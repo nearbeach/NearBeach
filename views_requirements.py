@@ -275,7 +275,10 @@ def requirement_items_new_link(request, requirement_item_id, location_id= '', de
         else:
             return HttpResponseBadRequest("You can only choose: project, task, or organisation")
 
-        requirement_item_link_save.save()
+        if requirement_item_link_save.save():
+            print("Save successful")
+        else:
+            print("Save unsuccessful")
 
         #Return blank page\
         # Load template
@@ -368,10 +371,17 @@ def requirement_links_list(request, requirement_id):
     if permission == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
-    links_results = requirement_links.objects.filter(requirements=requirement_id)
-    item_links_results = requirement_item_links.objects.filter(pk=requirement_id)
-    item_results = requirement_item.objects.filter(requirement_item_id__in=item_links_results)
-    requirement_results = requirements.objects.filter(requirement_id__in=links_results)
+    links_results = requirement_links.objects.filter(
+        requirements=requirement_id,
+        is_deleted="FALSE",
+    )
+    item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    )
+    item_links_results = requirement_item_links.objects.filter(requirement_item__in=item_results)
+    requirement_results = requirements.objects.filter(requirement_id=requirement_id)
+
 
 
     #Load template
