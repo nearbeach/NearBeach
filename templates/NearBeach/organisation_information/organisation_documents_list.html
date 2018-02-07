@@ -17,7 +17,6 @@
                 </td>
             </tr>
         </table>
-        <script src="{% static '/NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
         <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/vendor/jquery.ui.widget.js' %}"></script>
         <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.iframe-transport.js' %}"></script>
         <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.fileupload.js' %}"></script>
@@ -82,7 +81,7 @@
         $('#fileupload').fileupload({
             dataType: 'json',
             done: function (e, data) {
-                load_customer_documents_list();
+                load_organisation_documents_list();
             },
             progressall: function (e, data) {
                 var progress = parseInt(data.loaded / data.total * 100, 10);

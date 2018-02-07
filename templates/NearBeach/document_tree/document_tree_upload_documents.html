@@ -7,6 +7,10 @@
             <td>Upload Documents</td>
             <td>{{ upload_form.nested_folder }}</td>
             <td><input id="fileupload" type="file" name="file" data-url="{% url 'document_tree_upload' location_id project_or_task %}" multiple></td>
+            <script src="{% static '/NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
+            <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/vendor/jquery.ui.widget.js' %}"></script>
+            <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.iframe-transport.js' %}"></script>
+            <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.fileupload.js' %}"></script>
         </tr>
         <tr>
             <td colspan="3">
@@ -18,10 +22,6 @@
         </tr>
     </table>
 {% endif %}
-<script src="{% static '/NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
-<script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/vendor/jquery.ui.widget.js' %}"></script>
-<script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.iframe-transport.js' %}"></script>
-<script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.fileupload.js' %}"></script>
     <script>
         $(function () {
             $('#fileupload').fileupload({
