@@ -7,10 +7,6 @@
             <td>Upload Documents</td>
             <td>{{ upload_form.nested_folder }}</td>
             <td><input id="fileupload" type="file" name="file" data-url="{% url 'document_tree_upload' location_id project_or_task %}" multiple></td>
-            <script src="{% static '/NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
-            <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/vendor/jquery.ui.widget.js' %}"></script>
-            <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.iframe-transport.js' %}"></script>
-            <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.fileupload.js' %}"></script>
         </tr>
         <tr>
             <td colspan="3">
@@ -22,24 +18,25 @@
         </tr>
     </table>
 {% endif %}
-    <script>
-        $(function () {
-            $('#fileupload').fileupload({
-                dataType: 'json',
-                done: function (e, data) {
-                    load_document_tree_upload_documents();
-                    load_document_tree_list();
-                },
-                progressall: function (e, data) {
-                    var progress = parseInt(data.loaded / data.total * 100, 10);
-                    $("#upload_percent").html(progress + "%");
-                    $("#upload_progress").css(
-                        'width', progress + '%',
-                    );
-                }
-            });
-        });
-    </script>
-
-
 </form>
+<script>
+    $(function () {
+        $('#fileupload').fileupload({
+            dataType: 'json',
+            done: function (e, data) {
+                load_document_tree_upload_documents();
+                load_document_tree_list();
+            },
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $("#upload_percent").html(progress + "%");
+                $("#upload_progress").css(
+                    'width', progress + '%',
+                );
+            }
+        });
+    });
+</script>
+<script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/vendor/jquery.ui.widget.js' %}"></script>
+<script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.iframe-transport.js' %}"></script>
+<script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.fileupload.js' %}"></script>
