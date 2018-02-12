@@ -132,6 +132,26 @@ def information_customer_contact_history(request, customer_id):
 
 @login_required(login_url='login')
 def information_customer_documents_list(request, customer_id, organisations_id):
+    customer_permissions = 0
+    document_perm = 0
+
+    if request.session['is_superuser'] == True:
+        customer_permissions = 4
+        document_perm = 4
+    else:
+        pp_results = return_user_permission_level(request, None,'customer')
+        ph_results = return_user_permission_level(request, None, 'documents')
+
+        if pp_results > customer_permissions:
+            customer_permissions = pp_results
+
+        if ph_results == 1:
+            document_perm = 1
+
+    if customer_permissions == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
     #Get Data
     customer_document_results = document_permissions.objects.filter(
         customer_id=customer_id,
@@ -152,6 +172,8 @@ def information_customer_documents_list(request, customer_id, organisations_id):
         'customer_id': customer_id,
         'customer_document_results': customer_document_results,
         'organisation_document_results': organisation_document_results,
+        'customer_permissions': customer_permissions,
+        'document_perm': document_perm,
     }
 
     return HttpResponse(t.render(c, request))

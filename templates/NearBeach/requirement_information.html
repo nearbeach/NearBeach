@@ -1,6 +1,7 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <body onload="on_page_load()">
     <h2>Requirement Information - {{ requirement_id }}</h2>
     <form id="requirement_information" name="requirement_information" method="POST" enctype="multipart/form-data">
@@ -158,6 +159,7 @@
                 type: 'GET',
                 success: function(data) {
                     $("#edit_requirement_item").html(data);
+                    set_permissions({{ permission }});
                 },
                 error: function() {
                     $("#edit_requirement_item").html("<h2>Edit Requirement Item</h2>Sorry, edit requirement item encounted an error and did not load");
@@ -241,6 +243,8 @@
             //Load all ajax modules
             load_requirement_items_list();
             requirement_links_list();
+
+            set_permissions({{ permission }})
         }
 
         function close_new_requirement_item() {

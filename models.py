@@ -1103,6 +1103,7 @@ class permission_set_manager(models.Manager):
             organisation,
             organisation_campus,
             project,
+			quote,
 			requirement,
 			requirement_link,
             task,
@@ -1127,6 +1128,7 @@ class permission_set_manager(models.Manager):
             organisation=organisation,
             organisation_campus=organisation_campus,
             project=project,
+			quote=quote,
 			requirement=requirement,
 			requirement_link=requirement_link,
             task=task,
@@ -1196,6 +1198,10 @@ class permission_set(models.Model):
     project = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
+	)
+    quote = models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
 	)
     requirement = models.IntegerField(
 		choices=PERMISSION_LEVEL,

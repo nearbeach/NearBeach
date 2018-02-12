@@ -2,43 +2,44 @@
     {% csrf_token %}
     {% load staticfiles %}
     <h2>Customer Documents</h2>
-    <table>
-        <tr>
-            <td>Upload Document:</td>
-            <td><input id="fileupload" type="file" name="file" data-url="{% url 'information_customer_documents_upload' customer_id %}" multiple></td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <div id="progress" style="border: none; width: 100%;">
-                    <span id="upload_percent">No uploads occuring</span>
-                    <div id="upload_progress" style="background-color: green; width: 0%; height: 20px;"></div>
-                </div>
-            </td>
-        </tr>
-    </table>
-    <script src="{% static '/NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
-    <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/vendor/jquery.ui.widget.js' %}"></script>
-    <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.iframe-transport.js' %}"></script>
-    <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.fileupload.js' %}"></script>
+    {% if customer_permissions > 1 or document_perm == 1 %}
+        <table>
+            <tr>
+                <td>Upload Document:</td>
+                <td><input id="fileupload" type="file" name="file" data-url="{% url 'information_customer_documents_upload' customer_id %}" multiple></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div id="progress" style="border: none; width: 100%;">
+                        <span id="upload_percent">No uploads occuring</span>
+                        <div id="upload_progress" style="background-color: green; width: 0%; height: 20px;"></div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <script src="{% static '/NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
+        <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/vendor/jquery.ui.widget.js' %}"></script>
+        <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.iframe-transport.js' %}"></script>
+        <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.fileupload.js' %}"></script>
 
-
-
-    <script>
-    $(function () {
-        $('#fileupload').fileupload({
-            dataType: 'json',
-            done: function (e, data) {
-                load_customer_documents_list();
-            },
-            progressall: function (e, data) {
-                var progress = parseInt(data.loaded / data.total * 100, 10);
-                $("#upload_percent").html(progress + "%");
-                $("#upload_progress").css(
-                    'width', progress + '%',
-                );
-            }
+        <script>
+        $(function () {
+            $('#fileupload').fileupload({
+                dataType: 'json',
+                done: function (e, data) {
+                    load_customer_documents_list();
+                },
+                progressall: function (e, data) {
+                    var progress = parseInt(data.loaded / data.total * 100, 10);
+                    $("#upload_percent").html(progress + "%");
+                    $("#upload_progress").css(
+                        'width', progress + '%',
+                    );
+                }
+            });
         });
-    });
+    {% endif %}
+
     </script>
     {% if customer_document_results %}
         <h4>Customer Documents</h4>
@@ -57,7 +58,11 @@
                        {% endif %}
                     </td>
                     <td>
-                        <a onclick="delete_document('{{ row.document_key.document_key }}')" href="javascript:void(0);">Delete</a>
+                        {% if customer_permissions > 1 or document_perm == 1 %}
+                            <a onclick="delete_document('{{ row.document_key.document_key }}')" href="javascript:void(0);">Delete</a>
+                        {% else %}
+                            ------
+                        {% endif %}
                     </td>
                 </tr>
 

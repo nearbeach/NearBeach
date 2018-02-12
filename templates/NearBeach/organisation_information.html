@@ -12,9 +12,9 @@
         <h2>{{ organisation_results.organisation_name }}</h2>
         <ul>
             {% if profile_picture %}
-                <li><img src="{{ profile_picture }}" height="160px"><br/> {{ organisation_information_form.update_profile_picture }}</li>
+                <li><img src="{{ profile_picture }}" height="160px"><br/> {% if organisation_permissions > 1 %}{{ organisation_information_form.update_profile_picture }}{% endif %}</li>
             {% else %}
-                <li><img src="{% static 'NearBeach/images/icons/star.svg' %}" height="160px"><br/> {{ organisation_information_form.update_profile_picture }}</li>
+                <li><img src="{% static 'NearBeach/images/icons/star.svg' %}" height="160px"><br/> {% if organisation_permissions > 1 %}{{ organisation_information_form.update_profile_picture }}{% endif %}</li>
             {% endif %}
             <li>{{ organisation_information_form.organisation_name }}</li>
             <li>{{ organisation_information_form.organisation_website }}</li>

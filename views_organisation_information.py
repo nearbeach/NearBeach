@@ -172,6 +172,7 @@ def information_organisation_documents_list(request, organisation_id):
         'organisation_document_results': organisation_document_results,
         'organisation_permissions': organisation_permissions,
         'document_permissions': document_permissions,
+        'document_perm': document_perm,
     }
 
     return HttpResponse(t.render(c, request))

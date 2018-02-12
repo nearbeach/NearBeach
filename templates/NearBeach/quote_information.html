@@ -3,6 +3,7 @@
 {% load static %}
     <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
     <script type="text/javascript" src="{% static 'NearBeach/javascript/new_opportunity.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 
 <script>
     function on_page_load() {
@@ -10,6 +11,8 @@
         reload_list_of_line_items();
         reload_new_line_item();
         reload_responsible_customer();
+
+        set_permissions({{ quote_permission }})
     }
 
     function reload_new_line_item() {
@@ -105,6 +108,7 @@
 <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
 
 <body onload="on_page_load()">
+
     <form action={% url 'quote_information' quote_id %} method="post" class="new_quote">
     {% csrf_token %}
         <h2>{{ quote_or_invoice }}{{ quotes_results.quote_id }}</h2>
@@ -126,7 +130,9 @@
     </form>
     <form method="post" class="new_line_item" id="new_line_item"></form>
     <form method="post" class="list_of_line_items" id="list_of_line_items"></form>
-    <form method="post" class="list_of_responsible_customers" id="list_of_responsible_customers"></form>
+    {% if quote_permission > 1 %}
+        <form method="post" class="list_of_responsible_customers" id="list_of_responsible_customers"></form>
+    {% endif %}
 
 
 

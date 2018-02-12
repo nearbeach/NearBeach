@@ -220,6 +220,8 @@
          */
         if ("{{ opportunity_results.opportunity_stage_id.opportunity_closed }}" == "TRUE") {
             set_permissions(1); //Read only
+        } else {
+            set_permissions({{ opportunity_perm }});
         }
     }
 </script>

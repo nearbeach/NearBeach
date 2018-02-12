@@ -2,7 +2,7 @@
     {% csrf_token %}
     {% load staticfiles %}
     <h2>Organisation Documents</h2>
-    {% if organisation_permissions > 1 or document_permissions > 0 %}
+    {% if organisation_permissions > 1 or document_perm > 0 %}
         <table>
             <tr>
                 <td>Upload Document:</td>
@@ -39,7 +39,11 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a onclick="delete_document('{{ row.document_key.document_key }}')" href="javascript:void(0);">Delete</a>
+                        {% if organisation_permissions > 1 or document_perm > 0 %}
+                            <a onclick="delete_document('{{ row.document_key.document_key }}')" href="javascript:void(0);">Delete</a>
+                        {% else %}
+                            ------
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}

@@ -32,7 +32,9 @@
                 {% else %}
                     <li><img src="{% static 'NearBeach/images/icons/star.svg' %}" height="160px"><br/> {{ organisation_information_form.update_profile_picture }}</li>
                 {% endif %}
-                <li>{{ customer_information_form.update_profile_picture }}</li>
+                {% if customer_permissions > 1 %}
+                    <li>{{ customer_information_form.update_profile_picture }}</li>
+                {% endif %}
                 <table>
                     <tr>
                         <td width="10%">{{ customer_information_form.customer_title }}</td>

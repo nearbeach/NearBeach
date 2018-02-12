@@ -2,6 +2,7 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
 <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
+{% if quote_permission > 1 %}
 <h2>New Line Item</h2>
 <table>
     <tr>
@@ -52,7 +53,7 @@
         <td colspan="3"><input type="submit" value="Submit Line Item" style="width: 100%;"></td>
     </tr>
 </table>
-
+{% endif %}
 
 
 <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>

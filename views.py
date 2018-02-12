@@ -302,6 +302,19 @@ def associated_tasks(request, project_id):
 
 @login_required(login_url='login')
 def campus_information(request, campus_information):
+    permission = 0
+
+    if request.session['is_superuser'] == True:
+        permission = 4
+    else:
+        pp_results = return_user_permission_level(request, None, 'organisation_campus')
+
+        if pp_results > permission:
+            permission = pp_results
+
+    if permission == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     # Obtain data (before POST if statement as it is used insude)
     campus_results = organisations_campus.objects.get(pk=campus_information)
 
@@ -372,6 +385,7 @@ def campus_information(request, campus_information):
         'add_customers_results': add_customers_results,
         'countries_regions_results': countries_regions_results,
         'countries_results': countries_results,
+        'permission': permission,
     }
 
     return HttpResponse(t.render(c, request))
@@ -379,6 +393,19 @@ def campus_information(request, campus_information):
 
 @login_required(login_url='login')
 def customers_campus_information(request, customer_campus_id, customer_or_org):
+    permission = 0
+
+    if request.session['is_superuser'] == True:
+        permission = 4
+    else:
+        pp_results = return_user_permission_level(request, None, 'organisation_campus')
+
+        if pp_results > permission:
+            permission = pp_results
+
+    if permission == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     """
 	If the user is not logged in, we want to send them to the login page.
 	This function should be in ALL webpage requests except for login and
@@ -427,6 +454,7 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
         'customer_campus_results': customer_campus_results,
         'customer_campus_id': customer_campus_id,
         'customer_or_org': customer_or_org,
+        'permission': permission,
     }
 
     return HttpResponse(t.render(c, request))
@@ -2570,12 +2598,24 @@ def project_information(request, project_id):
 @login_required(login_url='login')
 def quote_information(request, quote_id):
     quotes_results = quotes.objects.get(quote_id=quote_id)
-    """
-    ADD IN ABILITY TO CHECK USER PERMISSIONS HERE!
-    :param request: 
-    :param quote_id: 
-    :return: 
-    """
+
+    quote_permission = 0
+
+    if request.session['is_superuser'] == True:
+        quote_permission = 4
+    else:
+        pp_results = return_user_permission_level(request, None,'quote')
+        print(pp_results)
+
+        if pp_results > quote_permission:
+            quote_permission = pp_results
+
+    if quote_permission == 0:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse(permission_denied))
+
+
+
     if request.method == "POST":
         form = quote_information_form(request.POST)
         if form.is_valid():
@@ -2653,6 +2693,8 @@ def quote_information(request, quote_id):
     # Load the template
     t = loader.get_template('NearBeach/quote_information.html')
 
+    print(quote_permission)
+
     # context
     c = {
         'quotes_results': quotes_results,
@@ -2660,6 +2702,7 @@ def quote_information(request, quote_id):
         'quote_id': quote_id,
         'quote_or_invoice': quote_or_invoice,
         'timezone': settings.TIME_ZONE,
+        'quote_permission': quote_permission,
     }
 
     return HttpResponse(t.render(c, request))

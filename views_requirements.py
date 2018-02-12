@@ -147,6 +147,7 @@ def requirement_item_edit(request, requirement_item_id):
     c = {
         'requirement_item_id': requirement_item_id,
         'requirement_items_form': requirement_items_form(initial=initial),
+        'permission': permission,
     }
 
     return HttpResponse(t.render(c, request))
