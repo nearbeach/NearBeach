@@ -231,7 +231,7 @@ url(r'^list_of_taxes_information/', views_administration.list_of_taxes_informati
 url(r'^list_of_taxes_list/', views_administration.list_of_taxes_list, name='list_of_taxes_list'),
 url(r'^list_of_taxes_edit/(?P<tax_id>[0-9]+)/', views_administration.list_of_taxes_edit, name='list_of_taxes_edit'),
 url(r'^list_of_taxes_new/', views_administration.list_of_taxes_new, name='list_of_taxes_new'),
-
+url(r'^list_of_taxes_deactivate/(?P<tax_id>[0-9]+)/', views_administration.list_of_taxes_deactivate, name='list_of_taxes_deactivate'),
 
 
 ]

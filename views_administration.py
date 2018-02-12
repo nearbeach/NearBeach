@@ -275,15 +275,23 @@ def group_information_list(request):
 
 
 @login_required(login_url='login')
-def list_of_taxes_information(request):
-    #Load template
-    t = loader.get_template('NearBeach/list_of_taxes/list_of_taxes_information.html')
+def list_of_taxes_deactivate(request,tax_id):
+    if request.method == "POST":
+        tax_instance = list_of_taxes.objects.get(tax_id=tax_id)
+        if tax_instance.is_deleted == "FALSE":
+            tax_instance.is_deleted = "TRUE"
+        else:
+            tax_instance.is_deleted = "FALSE"
+        tax_instance.save()
 
-    # context
-    c = {
-    }
+        #Return blank page
+        t = loader.get_template('NearBeach/blank.html')
 
-    return HttpResponse(t.render(c, request))
+        c= {}
+
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("Sorry, can only be done through POST")
 
 
 @login_required(login_url='login')
@@ -306,6 +314,21 @@ def list_of_taxes_edit(request,tax_id):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def list_of_taxes_information(request):
+    #Load template
+    t = loader.get_template('NearBeach/list_of_taxes/list_of_taxes_information.html')
+
+    # context
+    c = {
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
 
 
 @login_required(login_url='login')
