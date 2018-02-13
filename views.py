@@ -362,7 +362,7 @@ def campus_information(request, campus_information):
             submit_campus.save()
 
             # Go to the form.
-            return HttpResponseRedirect(reverse('customers_campus_information', args={int(submit_campus.customers_campus_id), 'CAMP'}))
+            return HttpResponseRedirect(reverse('customers_campus_information', args={submit_campus.customers_campus_id,'CAMP'}))
 
 
     # Get Data
