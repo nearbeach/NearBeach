@@ -1,5 +1,6 @@
 {% csrf_token %}
 <h2>Contact History</h2>
+{% if customer_permissions > 1 or contact_history_perm > 0 %}
 <ul>
     <li>Contact Type {{  contact_history_form.contact_type }}</li>
     <li>Date {{ contact_history_form.start_date_year }}/{{ contact_history_form.start_date_month }}/{{ contact_history_form.start_date_day }}</li>
@@ -8,6 +9,7 @@
     <li>{{ contact_history_form.contact_attachment }}</li>
     <li><input type="submit" name="submit_contact" value="Submit Contact"/></li>
 </ul>
+{% endif %}
 {% if customer_contact_history %}
     <div><h4>Contact History</h4></div>
     {% for row in customer_contact_history %}

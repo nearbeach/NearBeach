@@ -1,4 +1,5 @@
 {% csrf_token %}
+{% if general_permission > 1 or document_permission == 1 %}
 <table>
     <tr>
         <td colspan="3">Create Folder</td>
@@ -15,4 +16,5 @@
         </td>
     </tr>
 </table>
+{% endif %}
 

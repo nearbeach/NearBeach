@@ -1,0 +1,141 @@
+{% extends "../template.html" %}
+{% block content %}
+{% load static %}
+    <body onload="load_list_of_taxes_list()">
+    <h2>List of Taxes</h2>
+    <div id="list_of_taxes_list">Loading...</div>
+    <a href="javascript:void(0)" onclick="load_list_of_taxes_new()">New Tax</a>
+    <form method="post" class="new_tax" id="new_tax" style=""></form>
+    <form method="post" class="edit_tax" id="edit_tax" style=""></form>
+
+    <script>
+        $("#edit_tax").on('submit', function(e) {
+            e.preventDefault();
+
+            var tax_id = $("#hidden_tax_id").val();
+            $.ajax({
+                type: 'POST',
+                url: '/list_of_taxes_edit/' + tax_id + '/',
+                data: $(this).serialize(),
+                success: function() {
+                    var current_time = Date();
+                    $("#last_save").html("Last updated on " + current_time);
+                    load_list_of_taxes_list();
+                },
+                error: function() {
+                    alert("Sorry, document tree create folder did not save. Please try again.");
+                }
+            })
+        });
+
+
+        $("#new_tax").on('submit', function(e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '/list_of_taxes_new/',
+                data: $(this).serialize(),
+                success: function() {
+                    $("new_tax").html("")
+                    load_list_of_taxes_list();
+                },
+                error: function() {
+                    alert("Sorry, document tree create folder did not save. Please try again.");
+                }
+            })
+        });
+
+
+        function list_of_taxes_deactivate(tax_id) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            $.ajax({
+                url: '/list_of_taxes_deactivate/' + tax_id + '/',
+                data: {},
+                type: "POST",
+                success: function(e) {
+                    load_list_of_taxes_list()
+                },
+                error: function() {
+                    alert("Sorry, but we were not able to deactivate the tax for you.")
+                }
+            });
+        }
+
+        function load_list_of_taxes_edit(tax_id) {
+            $.ajax({
+                url: '/list_of_taxes_edit/' + tax_id + '/',
+                data: {},
+                type: 'GET',
+                success: function(e) {
+                    $("#edit_tax").html(e);
+                    $("#new_tax").html("");
+                },
+                error: function() {
+                    alert("Sorry, but we could not get this function's data")
+                }
+            });
+        }
+
+        function load_list_of_taxes_list() {
+            $.ajax({
+                url: '/list_of_taxes_list/',
+                data: {},
+                type: 'GET',
+                success: function(e) {
+                    $("#list_of_taxes_list").html(e);
+                },
+                error: function() {
+                    alert("Sorry, but we could not get list of taxes")
+                }
+            });
+        }
+
+
+        function load_list_of_taxes_new() {
+            $.ajax({
+                url: '/list_of_taxes_new/',
+                data: {},
+                type: 'GET',
+                success: function(e) {
+                    $("#new_tax").html(e);
+                    $("#edit_tax").html("");
+                },
+                error: function() {
+                    alert("Sorry, but we could not get the new tax")
+                }
+            });
+        }
+
+
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        // using jQuery to extract the CSRFToken
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        var csrftoken = getCookie('csrftoken');
+    </script>
+    </body>
+{% endblock %}

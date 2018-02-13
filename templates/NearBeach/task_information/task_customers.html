@@ -6,7 +6,7 @@
             <option value="---------" selected>---------</option>
             {% for row in new_customers_results %}
                 {% if not row.customer_id == None %}
-                    <option value="{{ row.customer_id }}">{{ row.customer_name }}</option>
+                    <option value="{{ row.customer_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
                 {% endif %}
             {% endfor %}
         </select>

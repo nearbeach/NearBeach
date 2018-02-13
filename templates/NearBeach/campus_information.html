@@ -3,13 +3,14 @@
 {% load static %}
 
 <script type="text/javascript" src="{% static 'NearBeach/javascript/campus_information.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 
 <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
 <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
 <script src='https://code.jquery.com/jquery-1.11.0.min.js'></script>
 <body onload="on_page_load('{{ campus_results.campus_country_id_id }}', '{{ campus_results.campus_region_id }}')">
 	<h2>Campus Information - {{ campus_results.campus_nickname }}</h2>
-	<form action="{% url 'campus_information' campus_results.id %}" method="post" class="campus_information">
+	<form action="{% url 'campus_information' campus_results.organisations_campus_id %}" method="post" class="campus_information">
 		{% csrf_token %}
 		<ul>
 			<li><a href="{% url 'organisation_information' campus_results.organisations_id.organisations_id %}">{{ campus_results.organisations_id }}</a></li>
@@ -43,7 +44,7 @@
 	</form>
 	<h2>Campus Contacts</h2>
 	{% if add_customers_results %}
-		<form action="{% url 'campus_information' campus_results.id %}" method="POST" class="campus_information">
+		<form action="{% url 'campus_information' campus_results.organisations_campus_id %}" method="POST" class="campus_information">
 			{% csrf_token %}
 			<select name="add_customer_select" id="id_add_customer_select" onchange="enable_disable_add_customer()">
 				<option value="---------"> ---------</option>
@@ -60,12 +61,12 @@
 			<tr class="header"><td>First Name</td><td>Last Name</td><td>Email</td><td>Phone</td><td>Fax</td><td>Delete</td></tr>
 			{% for row in customer_campus_results %}
 				<tr>
-					<td><a href="{% url 'customers_campus_information' row.id 'CAMP' %}">{{ row.customer_id.customer_first_name }}</a></td>
+					<td><a href="{% url 'customers_campus_information' row.customers_campus_id 'CAMP' %}">{{ row.customer_id.customer_first_name }}</a></td>
 					<td>{{ row.customer_id.customer_last_name }}</td>
 					<td>{{ row.customer_id.customer_email }}</td>
 					<td>{{ row.customer_phone }}</td>
 					<td>{{ row.customer_fax }}</td>
-					<td><a href="{% url 'delete_campus_contact' row.id 'CAMP' %}">Delete</a></td>
+					<td><a href="{% url 'delete_campus_contact' row.customers_campus_id 'CAMP' %}">Delete</a></td>
 				</tr>
 			{% endfor %}
 		</table>
@@ -167,6 +168,51 @@
 				});
 			});
 		});
+
+
+        function on_page_load(country, region) {
+            /* Information
+             * ~~~~~~~~~~~
+             * The following will setup the page correctly. We want the ability for the country and region to be selected
+             * correctly, and any options under the region that should not be appearing will be disabled. The disabled
+             * will disappear through CSS manipulation.
+             */
+            var campus_country_select = document.getElementById("campus_country_id").getElementsByTagName("option");
+            var campus_region_select = document.getElementById("campus_region_id").getElementsByTagName("option");
+
+
+            //Select the correct country
+            for (var i=0; i<campus_country_select.length; i++) {
+                //Select country if it is the correct one and then break out of the loop
+                if (campus_country_select[i].value.toLowerCase() == country.toLowerCase()) {
+                    document.getElementById("campus_country_id").selectedIndex = i;
+                    break;
+                }
+            }
+
+            //Select the correct region, and disable all others
+            for (var i=1; i<campus_region_select.length; i++) {
+                //Select region if it is the correct one
+                if (campus_region_select[i].text.toLowerCase() == region.toLowerCase()) {
+                    document.getElementById("campus_region_id").selectedIndex = i;
+                }
+
+                //Enable or disable region due to country
+                var country_id = campus_region_select[i].getAttribute("country_id");
+                if (country_id.toLowerCase() == country.toLowerCase()) {
+                    campus_region_select[i].disabled = false;
+                } else {
+                    campus_region_select[i].disabled = true;
+                }
+            }
+
+            set_permissions({{ permission }});
+
+
+            //Quickly, relayout the map before anyone knows
+            //relayout_map();
+            setTimeout(relayout_map, 500);
+        }
 	</script>
 </body>
 {% endblock %}

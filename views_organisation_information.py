@@ -14,7 +14,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedire
 from django.template import  loader
 from NearBeach.forms import *
 from .models import *
-from .namedtuplefetchall import *
+from .misc_functions import *
 from .user_permissions import return_user_permission_level
 from django.urls import reverse
 
@@ -35,8 +35,8 @@ def information_organisation_contact_history(request, organisation_id):
         if pp_results > organisation_permissions:
             organisation_permissions = pp_results
 
-        if ph_results == 1:
-            contact_history_permission = 1
+        if ph_results > contact_history_permission:
+            contact_history_permission = ph_results
 
     if organisation_permissions == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
@@ -57,7 +57,7 @@ def information_organisation_contact_history(request, organisation_id):
                 contact_type = form.cleaned_data['contact_type']
 
                 # Create the final start/end date fields
-                contact_date = time_combined(
+                contact_date = convert_to_utc(
                     int(form.cleaned_data['start_date_year']),
                     int(form.cleaned_data['start_date_month']),
                     int(form.cleaned_data['start_date_day']),
@@ -118,7 +118,7 @@ def information_organisation_contact_history(request, organisation_id):
         'contact_history_form': information_organisation_contact_history_form(),
         'contact_history_results': contact_history_results,
         'organisation_permissions': organisation_permissions,
-        'contact_history': contact_history,
+        'contact_history_permission': contact_history_permission,
         'contact_year': contact_date.year,
         'contact_month': contact_date.month,
         'contact_day': contact_date.day,
@@ -172,6 +172,7 @@ def information_organisation_documents_list(request, organisation_id):
         'organisation_document_results': organisation_document_results,
         'organisation_permissions': organisation_permissions,
         'document_permissions': document_permissions,
+        'document_perm': document_perm,
     }
 
     return HttpResponse(t.render(c, request))
@@ -222,36 +223,3 @@ def information_organisation_documents_upload(request, organisation_id):
         return HttpResponse(response_data, content_type='application/json')
     else:
         return HttpResponseBadRequest('Only POST accepted')
-
-"""
-The time converter - we need a function that breaks time up into different segments, and also
-combines it back. This is the time converter
-"""
-def time_combined(year,month,day,hour,minute,meridiem):
-    """
-    Time is tricky. So I am following the simple rules;
-    12:** AM will have the hour changed to 0
-    1:** AM will not have the hour changed
-    12:** PM will not have the hour changed
-    1:** PM will have the hour changed by adding 12
-
-    From these simple points, I have constructed the following
-    if statements to take control of the correct hour.
-    """
-    if meridiem == "AM":
-        if hour == 12:
-            hour = 0
-    else:
-        if hour < 12:
-            hour = hour + 12
-
-
-
-    # Create the final start/end date fields
-    return datetime.datetime(
-        year,
-        month,
-        day,
-        hour,
-        minute
-    )

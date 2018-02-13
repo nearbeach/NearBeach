@@ -38,13 +38,17 @@
 
     $("#permission_set_edit").on('submit', function(e) {
         e.preventDefault();
+        $("#save_state").html("Currently Saving Project");
         $.ajax({
             type: 'POST',
             url: '/permission_set_information_edit/' + $("#permission_set_id").val() + '/',
             data: $(this).serialize(),
             success: function() {
+                var current_time = Date();
+                $("#save_state").html("Saved last on " + current_time);
                 load_permission_set_list();
                 $("#permission_set_create").html('<a href="javascript:void(0)" onclick="load_permission_create()">Create a new permission set</a>');
+
             },
             error: function () {
                 alert("Sorry, there was an error submitting this permission_set");

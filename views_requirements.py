@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.template import  loader
 from NearBeach.forms import *
 from .models import *
-from .namedtuplefetchall import *
+from .misc_functions import *
 from .user_permissions import return_user_permission_level
 
 
@@ -24,7 +24,7 @@ def new_requirement(request):
         if pp_results > permission:
             permission = pp_results
 
-    if permission == 0:
+    if permission < 2:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST" and permission > 2:
@@ -59,15 +59,21 @@ def new_requirement(request):
 
 @login_required(login_url='login')
 def requirement_information(request, requirement_id):
-    permission = 0;
+    permission = 0
+    requirement_link_permissions = 0
 
     if request.session['is_superuser'] == True:
         permission = 4
+        requirement_link_permissions = 4
     else:
         pp_results = return_user_permission_level(request, None, 'requirement')
+        ph_results = return_user_permission_level(request, None, 'requirement_link')
 
         if pp_results > permission:
             permission = pp_results
+
+        if ph_results > requirement_link_permissions:
+            requirement_link_permissions = ph_results
 
     if permission == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
@@ -87,6 +93,8 @@ def requirement_information(request, requirement_id):
     c = {
         'requirement_id': requirement_id,
         'requirement_information_form': requirement_information_form(initial=initial),
+        'permission': permission,
+        'requirement_link_permissions': requirement_link_permissions,
     }
 
     return HttpResponse(t.render(c, request))
@@ -139,6 +147,7 @@ def requirement_item_edit(request, requirement_item_id):
     c = {
         'requirement_item_id': requirement_item_id,
         'requirement_items_form': requirement_items_form(initial=initial),
+        'permission': permission,
     }
 
     return HttpResponse(t.render(c, request))
@@ -267,7 +276,10 @@ def requirement_items_new_link(request, requirement_item_id, location_id= '', de
         else:
             return HttpResponseBadRequest("You can only choose: project, task, or organisation")
 
-        requirement_item_link_save.save()
+        if requirement_item_link_save.save():
+            print("Save successful")
+        else:
+            print("Save unsuccessful")
 
         #Return blank page\
         # Load template
@@ -303,7 +315,7 @@ def requirement_items_new_link(request, requirement_item_id, location_id= '', de
     and project.project_status IN ('New','Open')
     and project.project_status IN ('New','Open')
     and project.project_id = project_groups.project_id_id
-    and project_groups.groups_id_id = user_groups.group_id_id
+    and project_groups.groups_id_id = user_groups.groups_id
     and user_groups.username_id = %s
     """, [request.user.id])
     project_results = namedtuplefetchall(cursor)
@@ -323,7 +335,7 @@ def requirement_items_new_link(request, requirement_item_id, location_id= '', de
     where 1 = 1
     and tasks.task_status in ('New','Open')
     and tasks.tasks_id = tasks_groups.tasks_id_id
-    and tasks_groups.groups_id_id = user_groups.group_id_id
+    and tasks_groups.groups_id_id = user_groups.groups_id
     and user_groups.username_id = %s
     and tasks.organisations_id_id=organisations.organisations_id    
     """, [request.user.id])
@@ -360,10 +372,17 @@ def requirement_links_list(request, requirement_id):
     if permission == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
-    links_results = requirement_links.objects.filter(requirements=requirement_id)
-    item_links_results = requirement_item_links.objects.filter(pk=requirement_id)
-    item_results = requirement_item.objects.filter(requirement_item_id__in=item_links_results)
-    requirement_results = requirements.objects.filter(requirement_id__in=links_results)
+    links_results = requirement_links.objects.filter(
+        requirements=requirement_id,
+        is_deleted="FALSE",
+    )
+    item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    )
+    item_links_results = requirement_item_links.objects.filter(requirement_item__in=item_results)
+    requirement_results = requirements.objects.filter(requirement_id=requirement_id)
+
 
 
     #Load template

@@ -5,6 +5,7 @@ from NearBeach.forms import *
 from .models import *
 from NearBeach.models import *
 from django.db.models import Sum, F
+from NearBeach.user_permissions import *
 
 
 @login_required(login_url='login')
@@ -65,6 +66,19 @@ def list_of_line_items(request, quote_id):
 
 @login_required(login_url='login')
 def new_line_item(request,quote_id):
+    quotes_results = quotes.objects.get(quote_id=quote_id)
+
+    quote_permission = 0
+
+    if request.session['is_superuser'] == True:
+        quote_permission = 4
+    else:
+        pp_results = return_user_permission_level(request, None,'quote')
+        print(pp_results)
+
+        if pp_results > quote_permission:
+            quote_permission = pp_results
+
     if request.POST:
         form = new_line_item_form(request.POST, request.FILES)
         if form.is_valid():
@@ -139,6 +153,7 @@ def new_line_item(request,quote_id):
     c = {
         'quote_id': quote_id,
         'new_line_item_form': new_line_item_form(),
+        'quote_permission': quote_permission,
     }
 
     return HttpResponse(t.render(c, request))

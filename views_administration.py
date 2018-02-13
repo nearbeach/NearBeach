@@ -15,7 +15,7 @@ from django.http import HttpResponse,HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, render_to_response
 from django.template import RequestContext, loader
 from django.urls import reverse
-from .namedtuplefetchall import *
+from .misc_functions import *
 from .user_permissions import return_user_permission_level
 
 
@@ -26,6 +26,20 @@ import datetime, json, simplejson, urllib, urllib2
 
 @login_required(login_url='login')
 def group_information(request):
+    perm = 0
+
+    if request.session['is_superuser']:
+        perm = 4
+    else:
+        ph_permission = return_user_permission_level(request, None, 'administration_create_groups')
+
+        #Permission takes the highest from both
+        if ph_permission > perm:
+            perm = ph_permission
+
+    if perm == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     #Load template
     t = loader.get_template('NearBeach/group_information.html')
 
@@ -258,6 +272,104 @@ def group_information_list(request):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def list_of_taxes_deactivate(request,tax_id):
+    if request.method == "POST":
+        tax_instance = list_of_taxes.objects.get(tax_id=tax_id)
+        if tax_instance.is_deleted == "FALSE":
+            tax_instance.is_deleted = "TRUE"
+        else:
+            tax_instance.is_deleted = "FALSE"
+        tax_instance.save()
+
+        #Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+
+        c= {}
+
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("Sorry, can only be done through POST")
+
+
+@login_required(login_url='login')
+def list_of_taxes_edit(request,tax_id):
+    tax_result = list_of_taxes.objects.get(pk=tax_id)
+    if request.method == "POST":
+        form = list_of_taxes_form(request.POST)
+        if form.is_valid():
+            tax_result.tax_amount = form.cleaned_data['tax_amount']
+            tax_result.tax_description = form.cleaned_data['tax_description']
+            tax_result.save()
+
+    #Load template
+    t = loader.get_template('NearBeach/list_of_taxes/list_of_taxes_edit.html')
+
+    # context
+    c = {
+        'list_of_taxes_form': list_of_taxes_form(instance=tax_result),
+        'tax_id': tax_id,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def list_of_taxes_information(request):
+    #Load template
+    t = loader.get_template('NearBeach/list_of_taxes/list_of_taxes_information.html')
+
+    # context
+    c = {
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+
+@login_required(login_url='login')
+def list_of_taxes_list(request):
+    list_of_taxes_results = list_of_taxes.objects.all().order_by('tax_amount') #No taxes are deleted, only disabled.
+
+    #Load template
+    t = loader.get_template('NearBeach/list_of_taxes/list_of_taxes_list.html')
+
+    # context
+    c = {
+        'list_of_taxes_results': list_of_taxes_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def list_of_taxes_new(request):
+    if request.method == "POST":
+        form = list_of_taxes_form(request.POST)
+        if form.is_valid():
+            tax_submit = list_of_taxes(
+                tax_amount = form.cleaned_data['tax_amount'],
+                tax_description = form.cleaned_data['tax_description'],
+                change_user = request.user,
+            )
+            tax_submit.save()
+        else:
+            print(form.errors)
+
+    #Load template
+    t = loader.get_template('NearBeach/list_of_taxes/list_of_taxes_new.html')
+
+    # context
+    c = {
+        'list_of_taxes_form': list_of_taxes_form()
+    }
+
+    return HttpResponse(t.render(c, request))
+
 
 
 @login_required(login_url='login')
@@ -614,7 +726,7 @@ def product_and_service_new(request):
         if pp_results > perm:
             perm = pp_results
 
-    if perm == 0:
+    if perm < 2:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST" and perm > 3:

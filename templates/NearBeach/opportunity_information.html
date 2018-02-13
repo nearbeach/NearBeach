@@ -37,6 +37,7 @@
                 {{ opportunity_information_form.opportunity_amount }}
                 {{ opportunity_information_form.amount_type_id }}
             </td></tr>
+            <tr><td>Time Zone: </td><td>{{ timezone }}</td></tr>
             <tr><td>Opportunity Expected Close Date:</td><td>
                 {{ opportunity_information_form.finish_date_year }}
                 {{ opportunity_information_form.finish_date_month }}
@@ -52,10 +53,12 @@
         {% endif %}
         <h2>To Do</h2>
         <table>
-            <tr>
-                <td>{{ opportunity_information_form.next_step }}</td>
-                <td><input type="submit" name="submit_next_step" value="Add To Do"/></td>
-            </tr>
+            {% if opportunity_results.opportunity_stage_id.opportunity_closed != "TRUE" %}
+                <tr>
+                    <td>{{ opportunity_information_form.next_step }}</td>
+                    <td><input type="submit" name="submit_next_step" value="Add To Do"/></td>
+                </tr>
+            {% endif %}
             {% if next_step_results %}
                 <tr class="header">
                     <td>Next Step</td>
@@ -77,6 +80,7 @@
         </table>
         <h2>Associated Projects & Tasks</h2>
         <ul>
+        {% if opportunity_results.opportunity_stage_id.opportunity_closed != "TRUE" %}
             {% if opportunity_results.customer_id %}
                 <li><a href="{% url 'new_project' opportunity_results.organisations_id.organisations_id opportunity_results.customer_id.customer_id opportunity_id %}">Create New Project</a></li>
                 <li><a href="{% url 'new_task' opportunity_results.organisations_id.organisations_id opportunity_results.customer_id.customer_id opportunity_id %}">Create New Task</a></li>
@@ -85,7 +89,7 @@
                 <li><a href="{% url 'new_task' opportunity_results.organisations_id.organisations_id 0 opportunity_id %}">Create New Task</a></li>
 
             {% endif %}
-
+        {% endif %}
         </ul>
         <h2>Assigned Projects</h2>
         {% if project_results %}
@@ -132,7 +136,9 @@
         {% endif %}
 
         <h2>Opportunity Quotes</h2>
-        <a href="{% url 'new_quote' opportunity_id 'opportunity' %}">New Quote</a>
+        {% if opportunity_results.opportunity_stage_id.opportunity_closed != "TRUE" %}
+            <a href="{% url 'new_quote' opportunity_id 'opportunity' %}">New Quote</a>
+        {% endif %}
         {% if quote_results %}
             <table>
                 <tr>
@@ -150,7 +156,7 @@
             </table>
         {% endif %}
 
-
+    {% if opportunity_results.opportunity_stage_id.opportunity_closed != "TRUE" %}
         <h2>Opportunity Permissions</h2>
         <p>Please note - if there are NO permissions added to an opportunity then everyone will have access to the
             opportunity</p>
@@ -187,12 +193,12 @@
                 {% endfor %}
             {% endif %}
         </table>
+    {% endif %}
         <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
         <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
         <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
     </form>
 <div name="blank_space" style="margin-bottom: 150px;"></div>
-{{ opportunity_results.opportunity_stage_id.opportunity_closed }}
 <script>
     function reopen_temp() {
         $("input").prop("readonly", false);
@@ -214,6 +220,8 @@
          */
         if ("{{ opportunity_results.opportunity_stage_id.opportunity_closed }}" == "TRUE") {
             set_permissions(1); //Read only
+        } else {
+            set_permissions({{ opportunity_perm }});
         }
     }
 </script>

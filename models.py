@@ -217,6 +217,7 @@ class customers(models.Model):
 		db_table="customers"
 
 class customers_campus(models.Model):
+	customers_campus_id=models.AutoField(primary_key=True)
 	customer_id=models.ForeignKey(
 		'customers', 
 		on_delete=models.CASCADE,
@@ -812,12 +813,16 @@ class list_of_requirement_type(models.Model):
 class list_of_taxes(models.Model):
 	tax_id = models.AutoField(primary_key=True)
 	tax_amount=models.DecimalField(
-		max_digits=4,
-		decimal_places=2,
+		max_digits=6,
+		decimal_places=4,
 	)
+	tax_description=models.CharField(
+		max_length=50,
+		blank=True,
+		null=True,
+	) #Incase the customer wants to place a name against the tax
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
-	user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 	change_user = models.ForeignKey(
@@ -1025,6 +1030,7 @@ class organisations(models.Model):
 
 	
 class organisations_campus(models.Model):
+	organisations_campus_id=models.AutoField(primary_key=True)
 	organisations_id=models.ForeignKey(
 		'organisations',
 		on_delete=models.CASCADE,
@@ -1097,6 +1103,7 @@ class permission_set_manager(models.Manager):
             organisation,
             organisation_campus,
             project,
+			quote,
 			requirement,
 			requirement_link,
             task,
@@ -1121,6 +1128,7 @@ class permission_set_manager(models.Manager):
             organisation=organisation,
             organisation_campus=organisation_campus,
             project=project,
+			quote=quote,
 			requirement=requirement,
 			requirement_link=requirement_link,
             task=task,
@@ -1190,6 +1198,10 @@ class permission_set(models.Model):
     project = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
+	)
+    quote = models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
 	)
     requirement = models.IntegerField(
 		choices=PERMISSION_LEVEL,

@@ -7,6 +7,7 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
 <script tpye="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
+
 <script>
     function on_page_load() {
         //Initiate AJAX modules
@@ -19,7 +20,10 @@
         load_document_tree_create_folder();
         load_document_tree_upload_documents();
 
-        
+        load_task_group_add();
+        load_task_group_list();
+
+
         initiate_dates();
 
         //Re-size all those pesky textareas;
@@ -33,7 +37,6 @@
     }
 </script>
 
-
 <body onload="on_page_load()">
 	<form id="task_information" name="task_information" method="POST" enctype="multipart/form-data">
 		{% csrf_token %}
@@ -42,11 +45,15 @@
             {% if task_results.task_status == 'Resolved' or task_results.task_status == 'Closed' %}
                 <fieldset disabled="disabled">
             {% endif %}
-            {{ task_information_form.task_short_description }}<br/>
-            {{ task_information_form.task_long_description }}<br/>
-            Task Start - {{ task_information_form.start_date_year }}/{{ task_information_form.start_date_month }}/{{ task_information_form.start_date_day }} @ {{ task_information_form.start_date_hour }}:{{ task_information_form.start_date_minute }} {{ task_information_form.start_date_meridiems }}<br/>
-            Task finish Date - {{ task_information_form.finish_date_year }}/{{ task_information_form.finish_date_month }}/{{ task_information_form.finish_date_day }} @ {{ task_information_form.finish_date_hour }}:{{ task_information_form.finish_date_minute }} {{ task_information_form.finish_date_meridiems }}<br/>
-            <br/>
+            <ul>
+                <li>{{ task_information_form.task_short_description }}</li>
+                <li>{{ task_information_form.task_long_description }}</li>
+                <li>Current Task Status: {{ task_results.task_status }}</li>
+                <li><a href="{% url 'organisation_information' task_results.organisations_id.organisations_id %}">{{ task_results.organisations_id }}</a></li>
+                <li>Time Zone - {{ timezone }}</li>
+                <li>Task Start - {{ task_information_form.start_date_year }}/{{ task_information_form.start_date_month }}/{{ task_information_form.start_date_day }} @ {{ task_information_form.start_date_hour }}:{{ task_information_form.start_date_minute }} {{ task_information_form.start_date_meridiems }}<br/></li>
+                <li>Task finish Date - {{ task_information_form.finish_date_year }}/{{ task_information_form.finish_date_month }}/{{ task_information_form.finish_date_day }} @ {{ task_information_form.finish_date_hour }}:{{ task_information_form.finish_date_minute }} {{ task_information_form.finish_date_meridiems }}<br/></li>
+            </ul>
 
             {% if task_permissions > 1 %}
                 <input type="submit" name="update" value="Update"/>
@@ -59,6 +66,7 @@
                 </fieldset>
             {% endif %}
     </form>
+
 
     <form method="post" class="task_history" id="task_history" style="">
         <h2>Task History</h2>
@@ -139,7 +147,14 @@
         Loading...
     </form>
 
-</body>
+    {% if task_permissions >= 3 %}
+    <h2>Assigned Groups</h2>
+    <form method="post" class="task_assigned_groups" id="task_assigned_groups">
+        Loading add...
+    </form>
+    <div id="assigned_group_list">Loading list...</div>
+    {% endif %}
+
 <script>
     $("#document_tree_create_folder").on('submit', function(e) {
         e.preventDefault();
@@ -194,13 +209,30 @@
         $.ajax({
             type: 'POST',
             url: '/information_task_customers/{{ task_id }}/',
-            data: $(this).serialize(),
+            data: $(this.serialize()),
             success: function() {
                 //Reload the task history :)
                 load_task_customers();
             },
             error: function() {
                 alert("Sorry, task customers did not save. Please try again.");
+            }
+        })
+    });
+
+
+    $("#task_assigned_groups").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/assigned_group_add/{{ task_id }}/task/' + $("#id_add_group").val() + '/',
+            data: $(this).serialize(),
+            success: function() {
+                load_task_group_add();
+                load_task_group_list();
+            },
+            error: function() {
+                alert("Sorry, project assigned users did not save. Please try again.");
             }
         })
     });
@@ -370,6 +402,70 @@
             }
         });
     };
+
+
+    function load_task_group_add() {
+        $.ajax({
+            url: '/assigned_group_add/{{ task_id }}/task/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#task_assigned_groups').html(data);
+            },
+            error: function() {
+                $('#task_assigned_groups').html('<h2>Project History</h2>Sorry, Task .');
+            }
+        });
+    };
+
+
+    function load_task_group_list() {
+        $.ajax({
+            url: '/assigned_group_list/{{ task_id }}/task/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#assigned_group_list').html(data);
+            },
+            error: function() {
+                $('#assigned_group_list').html('<h2>Project History</h2>Sorry, task history encounted an error and did not load.');
+            }
+        });
+    };
+
+    function delete_group_item(group_item) {
+        $.ajax({
+            url: '/assigned_group_delete/' + group_item + '/task/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                load_task_group_list()
+            },
+            error: function() {
+                alert("Sorry, there was an issue deleting the Assigned Group")
+            }
+        });
+    };
+
+
+    function remove_user(location_id) {
+        $.ajax({
+            url: '/information_task_delete_assigned_users/{{ task_id }}/' + location_id + '/' ,
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                load_task_assigned_users();
+            },
+            error: function() {
+                alert("Sorry, there was an issue deleting the Assigned Users")
+            }
+        });
+    }
 </script>
 
+</body>
 {% endblock %}

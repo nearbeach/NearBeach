@@ -21,7 +21,7 @@ from django.db import connection
 
 #Import extra
 import datetime
-
+from django.core.exceptions import ObjectDoesNotExist
 #Global Variables
 #User=get_user_model
 
@@ -566,7 +566,13 @@ class information_task_history_form(forms.Form):
     )
 
 
-
+class list_of_taxes_form(ModelForm):
+    class Meta:
+        model = list_of_taxes
+        fields = {
+            'tax_amount',
+            'tax_description',
+        }
 
 
 
@@ -610,15 +616,17 @@ class login_form(forms.Form):
             elif (not user.is_active):
                 raise forms.ValidationError("Please contact your system administrator. Your account has been disabled")
 
+
             try:
                 #If this exists, continue
-                permission_set.objects.filter(permission_set_id=1)
+                if not permission_set.objects.filter(permission_set_id=1).count() == 0: #Sometimes this piece of code will throw an error
+                    #Continue
+                    if (user_groups.objects.filter(username_id=user.id, is_deleted='FALSE').count() == 0): #If the system has not been setup ignore this rule.
+                        raise forms.ValidationError("Please contact your system administrator. Your account has no group access")
+                else:
+                    print("Currently the user has been setup with: " + str(user_groups.objects.filter(username_id=user.id, is_deleted='FALSE').count()) + " user groups")
 
-                #Continue
-                if (user_groups.objects.filter(username_id=user.id, is_deleted='FALSE').count() == 0): #If the system has not been setup ignore this rule.
-                    raise forms.ValidationError("Please contact your system administrator. Your account has no group access")
-
-            except:
+            except ObjectDoesNotExist:
                 print("First time setup " + str(datetime.datetime.now()))
 
         return super(login_form, self).clean()
@@ -1709,8 +1717,8 @@ class task_information_form(ModelForm):
     class Meta:
         model=tasks
         fields={
-                'task_short_description',
-                'task_long_description',
+            'task_short_description',
+            'task_long_description',
         }
 
 

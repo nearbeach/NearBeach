@@ -14,7 +14,7 @@ from django.http import HttpResponse
 from django.template import  loader
 from NearBeach.forms import *
 from .models import *
-from .namedtuplefetchall import *
+from .misc_functions import *
 from .user_permissions import return_user_permission_level
 
 
@@ -76,7 +76,7 @@ def information_project_assigned_users(request, project_id):
     		""", [project_id])
     users_results = namedtuplefetchall(cursor)
 
-    assigned_results = assigned_users.objects.filter(project_id=project_id)
+    assigned_results = assigned_users.objects.filter(project_id=project_id,is_deleted="FALSE")
 
     #Load template
     t = loader.get_template('NearBeach/project_information/project_assigned_users.html')
@@ -85,6 +85,7 @@ def information_project_assigned_users(request, project_id):
     c = {
         'users_results': users_results,
         'assigned_results': assigned_results.values(
+            'user_id__id',
             'user_id',
             'user_id__username',
             'user_id__first_name',
@@ -94,6 +95,26 @@ def information_project_assigned_users(request, project_id):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def information_project_delete_assigned_users(request, project_id, location_id):
+    assigned_users_save = assigned_users.objects.filter(
+        project_id=project_id,
+        user_id=location_id,
+    )
+    assigned_users_save.update(is_deleted="TRUE")
+
+    #Load template
+    t = loader.get_template('NearBeach/blank.html')
+
+    # context
+    c = {}
+
+    return HttpResponse(t.render(c, request))
+
+
 
 @login_required(login_url='login')
 def information_project_costs(request, project_id):
@@ -175,36 +196,16 @@ def information_project_customers(request, project_id):
     #Get data
     project_results = project.objects.get(project_id=project_id)
 
+    #Obtain a list of customers not already added to this task
+    new_customers_results = customers.objects.filter(
+        organisations_id=project_results.organisations_id,
+        is_deleted="FALSE",
+    ).exclude(
+        customer_id__in=tasks_customers.objects.filter(tasks_id=project_results.project_id).values('customer_id')
+    )
+
     #Cursor for custom SQL :)
     cursor = connection.cursor()
-
-    cursor.execute("""
-    		SELECT DISTINCT 
-    		  customers.customer_id
-    		, customers.customer_first_name || ' ' || customers.customer_last_name AS customer_name
-
-    		FROM
-    		  project 
-    		, organisations LEFT JOIN customers
-    			ON organisations.organisations_id = customers.organisations_id_id
-
-    		WHERE 1=1
-    		AND project.organisations_id_id = organisations.organisations_id
-
-    		AND customers.customer_id NOT IN (SELECT DISTINCT project_customers.customer_id_id
-    					FROM project_customers
-    					WHERE 1=1
-    					AND project_customers.project_id_id = project.project_id
-    					AND project_customers.is_deleted = 'FALSE')
-
-
-    		-- LINKS --
-    		AND organisations.organisations_id = %s
-    		AND project.project_id = %s
-    		-- END LINKS --
-    	""", [project_results.organisations_id_id, project_id])
-    new_customers_results = namedtuplefetchall(cursor)
-
     cursor.execute("""
     		SELECT DISTINCT
     		  customers.customer_id
@@ -216,7 +217,7 @@ def information_project_customers(request, project_id):
     		, customers_campus_information.customer_phone
     		FROM
     		  customers LEFT JOIN 
-    			(SELECT * FROM customers_campus join organisations_campus ON customers_campus.campus_id_id = organisations_campus.id) as customers_campus_information
+    			(SELECT customers_campus_id, customer_phone, customer_fax, campus_id_id, customer_id_id, organisations_campus_id, campus_nickname, campus_phone, campus_fax, campus_address1, campus_address2, campus_address3, campus_suburb, campus_country_id_id, campus_region_id_id, organisations_id_id FROM customers_campus join organisations_campus ON customers_campus.campus_id_id = organisations_campus.organisations_campus_id) as customers_campus_information
     			ON customers.customer_id = customers_campus_information.customer_id_id
     		, project_customers
     		WHERE 1=1

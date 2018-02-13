@@ -1,6 +1,7 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <body onload="on_page_load()">
     <h2>Requirement Information - {{ requirement_id }}</h2>
     <form id="requirement_information" name="requirement_information" method="POST" enctype="multipart/form-data">
@@ -18,7 +19,9 @@
         Loading Table...
     </form>
 
-    <a href="javascript:void(0)" onclick="new_requirement_item()">New Requirement Item</a>
+    {% if permission > 2 %}
+        <a href="javascript:void(0)" onclick="new_requirement_item()">New Requirement Item</a>
+    {% endif %}
 
     <form method="POST" class="new_requirement_item" id="new_requirement_item" style="background-color: #b0cfe0;">
     <!-- BLANK - will populate when needed using AJAX -->
@@ -37,7 +40,9 @@
     </form>
 
     <form method="POST" class="requirement_new_link" id="requirement_new_link" style="background-color: palevioletred">
-        <a href="javascript:void(0)" onclick="link_requirement({{ requirement_id }})">Link Current Requirement</a>
+        {% if requirement_link_permissions > 2 %}
+            <a href="javascript:void(0)" onclick="link_requirement({{ requirement_id }})">Link Current Requirement</a>
+        {% endif %}
     </form>
 
     <script>
@@ -154,6 +159,7 @@
                 type: 'GET',
                 success: function(data) {
                     $("#edit_requirement_item").html(data);
+                    set_permissions({{ permission }});
                 },
                 error: function() {
                     $("#edit_requirement_item").html("<h2>Edit Requirement Item</h2>Sorry, edit requirement item encounted an error and did not load");
@@ -237,6 +243,12 @@
             //Load all ajax modules
             load_requirement_items_list();
             requirement_links_list();
+
+            set_permissions({{ permission }})
+        }
+
+        function close_new_requirement_item() {
+            $("#new_requirement_item").html("");
         }
 
 

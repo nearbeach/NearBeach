@@ -1,0 +1,19 @@
+{% csrf_token %}
+{% if groups_add_results %}
+<select id="id_add_group" name="id_add_group" onchange="add_group_change()">
+    <option value="" selected>------</option>
+    {% for row in groups_add_results %}
+        <option value="{{ row.group_id }}">{{ row.group_name }}</option>
+    {% endfor %}
+</select>
+<input id="submit_add_group" type="submit" value="Assign New Group" disabled>
+<script>
+    function add_group_change() {
+        if ($("#id_add_group").val() != "") {
+            $("#submit_add_group").prop("disabled",false)
+        } else {
+            $("#submit_add_group").prop("disabled",true)
+        }
+    }
+</script>
+{% endif %}

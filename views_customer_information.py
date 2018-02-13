@@ -14,7 +14,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedire
 from django.template import  loader
 from NearBeach.forms import *
 from .models import *
-from .namedtuplefetchall import *
+from .misc_functions import *
 
 import simplejson
 from .user_permissions import return_user_permission_level
@@ -57,7 +57,7 @@ def information_customer_contact_history(request, customer_id):
                 # Lets save some contact history
                 contact_type = form.cleaned_data['contact_type']
 
-                contact_date = time_combined(
+                contact_date = convert_to_utc(
                     int(form.cleaned_data['start_date_year']),
                     int(form.cleaned_data['start_date_month']),
                     int(form.cleaned_data['start_date_day']),
@@ -123,6 +123,8 @@ def information_customer_contact_history(request, customer_id):
         'contact_day': contact_date.day,
         'contact_hour': contact_date.hour,
         'contact_minute': int(contact_date.minute/5)*5,
+        'contact_history_perm': contact_history_perm,
+        'customer_permissions': customer_permissions,
     }
 
     return HttpResponse(t.render(c, request))
@@ -130,6 +132,26 @@ def information_customer_contact_history(request, customer_id):
 
 @login_required(login_url='login')
 def information_customer_documents_list(request, customer_id, organisations_id):
+    customer_permissions = 0
+    document_perm = 0
+
+    if request.session['is_superuser'] == True:
+        customer_permissions = 4
+        document_perm = 4
+    else:
+        pp_results = return_user_permission_level(request, None,'customer')
+        ph_results = return_user_permission_level(request, None, 'documents')
+
+        if pp_results > customer_permissions:
+            customer_permissions = pp_results
+
+        if ph_results == 1:
+            document_perm = 1
+
+    if customer_permissions == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
     #Get Data
     customer_document_results = document_permissions.objects.filter(
         customer_id=customer_id,
@@ -150,6 +172,8 @@ def information_customer_documents_list(request, customer_id, organisations_id):
         'customer_id': customer_id,
         'customer_document_results': customer_document_results,
         'organisation_document_results': organisation_document_results,
+        'customer_permissions': customer_permissions,
+        'document_perm': document_perm,
     }
 
     return HttpResponse(t.render(c, request))
@@ -202,36 +226,3 @@ def information_customer_documents_upload(request, customer_id):
     else:
         return HttpResponseBadRequest('Only POST accepted')
 
-
-"""
-The time converter - we need a function that breaks time up into different segments, and also
-combines it back. This is the time converter
-"""
-def time_combined(year,month,day,hour,minute,meridiem):
-    """
-    Time is tricky. So I am following the simple rules;
-    12:** AM will have the hour changed to 0
-    1:** AM will not have the hour changed
-    12:** PM will not have the hour changed
-    1:** PM will have the hour changed by adding 12
-
-    From these simple points, I have constructed the following
-    if statements to take control of the correct hour.
-    """
-    if meridiem == "AM":
-        if hour == 12:
-            hour = 0
-    else:
-        if hour < 12:
-            hour = hour + 12
-
-
-
-    # Create the final start/end date fields
-    return datetime.datetime(
-        year,
-        month,
-        day,
-        hour,
-        minute
-    )
