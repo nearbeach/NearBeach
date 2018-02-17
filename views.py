@@ -543,6 +543,10 @@ def customer_information(request, customer_id):
     # Get the instance
     customer_results = customers.objects.get(pk=customer_id)
     add_campus_results = organisations_campus.objects.filter(organisations_id=customer_results.organisations_id)
+    quote_results = quotes.objects.filter(
+        is_deleted="FALSE",
+        customer_id=customer_id,
+    )
 
     # Setup connection to the database and query it
     cursor = connection.cursor()
@@ -647,6 +651,7 @@ def customer_information(request, customer_id):
         'customer_id': customer_id,
         'customer_permissions': customer_permissions,
         'assign_campus_to_customer_permission': assign_campus_to_customer_permission,
+        'quote_results':quote_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -1809,6 +1814,10 @@ def new_quote(request,destination,primary_key):
                 submit_quotes.project_id = project.objects.get(project_id=primary_key)
             elif destination=='task':
                 submit_quotes.task_id = tasks.objects.get(tasks_id=primary_key)
+            elif destination=='customer':
+                submit_quotes.customer_id = customers.objects.get(customer_id=primary_key)
+            elif destination=='organisation':
+                submit_quotes.organisation_id = organisations.objects.get(organisations_id=primary_key)
             else:
                 submit_quotes.opportunity_id = opportunity.objects.get(opportunity_id=primary_key)
 
@@ -2312,6 +2321,10 @@ def organisation_information(request, organisations_id):
     organisation_results = organisations.objects.get(pk=organisations_id)
     campus_results = organisations_campus.objects.filter(organisations_id=organisations_id)
     customers_results = customers.objects.filter(organisations_id=organisation_results)
+    quote_results = quotes.objects.filter(
+        is_deleted="FALSE",
+        organisation_id=organisations_id,
+    )
 
 
     project_results = project.objects.filter(organisations_id=organisations_id)
@@ -2369,6 +2382,7 @@ def organisation_information(request, organisations_id):
         'organisation_permissions': organisation_permissions,
         'organisation_campus_permissions': organisation_campus_permissions,
         'customer_permissions': customer_permissions,
+        'quote_results':quote_results,
     }
 
     return HttpResponse(t.render(c, request))

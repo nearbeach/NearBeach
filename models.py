@@ -197,6 +197,8 @@ class customers(models.Model):
 	organisations_id=models.ForeignKey(
 		'organisations', 
 		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
 	)
 	date_created=models.DateTimeField(auto_now_add=True)
 	date_modified=models.DateTimeField(auto_now=True)
@@ -1600,6 +1602,20 @@ class quotes(models.Model):
 		'opportunity',
 		on_delete=models.CASCADE,
 		db_column='opportunity_id',
+		null=True,
+		blank=True,
+	)
+	customer_id=models.ForeignKey(
+		'customers',
+		on_delete=models.CASCADE,
+		db_column='customer_id',
+		null=True,
+		blank=True,
+	)
+	organisation_id=models.ForeignKey(
+		'organisations',
+		on_delete=models.CASCADE,
+		db_column='organisations_id',
 		null=True,
 		blank=True,
 	)

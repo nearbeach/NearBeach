@@ -736,7 +736,8 @@ class new_customer_form(forms.Form):
     organisations_id=forms.ModelChoiceField(
         label="Organisation",
         widget=forms.Select,
-        queryset=organisations_results
+        queryset=organisations_results,
+        required=False,
     )
 
 
