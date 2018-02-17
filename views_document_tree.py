@@ -164,6 +164,11 @@ def document_tree_upload(request, location_id, project_or_task):
             return HttpResponseBadRequest('File needs to be uploaded')
 
         #Get the file data
+        print("\n\nSTART TEMP CODE\n\n")
+        print(request.FILES)
+        #print(request.FILES['document_upload'])
+        #print(request.FILES['id_document_upload'])
+        #print("END TEMP CODE\n\n")
         file = request.FILES['file']
         nested_folder = request.POST.get('nested_folder')
 
