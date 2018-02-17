@@ -371,6 +371,13 @@ class document_tree_upload_form(forms.Form):
         required=False,
         queryset=folders.objects.all(),
     )
+    document = forms.FileField(
+        required=True,
+    )
+    document_description = forms.CharField(
+        required=True,
+        max_length=50,
+    )
 
 
 class groups_form(ModelForm):

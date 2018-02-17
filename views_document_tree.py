@@ -164,12 +164,7 @@ def document_tree_upload(request, location_id, project_or_task):
             return HttpResponseBadRequest('File needs to be uploaded')
 
         #Get the file data
-        print("\n\nSTART TEMP CODE\n\n")
-        print(request.FILES)
-        #print(request.FILES['document_upload'])
-        #print(request.FILES['id_document_upload'])
-        #print("END TEMP CODE\n\n")
-        file = request.FILES['file']
+        file = request.FILES['document']
         nested_folder = request.POST.get('nested_folder')
 
         #Data objects required
@@ -197,7 +192,7 @@ def document_tree_upload(request, location_id, project_or_task):
             document_permissions_save.project_id = project_instance
         else:
             #Task
-            task_instance = tasks.objects.get(task_id=location_id)
+            task_instance = tasks.objects.get(tasks_id=location_id)
             document_permissions_save.task_id = task_instance
         document_permissions_save.save()
 

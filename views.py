@@ -1844,6 +1844,15 @@ def new_quote(request,destination,primary_key):
 def new_task(request, organisations_id='', customer_id='', opportunity_id=''):
     permission = return_user_permission_level(request, None, 'task')
 
+
+    if request.session['is_superuser'] == True:
+        permission = 4
+    else:
+        pp_results = return_user_permission_level(request, None,'quote')
+
+        if pp_results > permission:
+            permission = pp_results
+
     if permission < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
 

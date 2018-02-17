@@ -1,98 +1,35 @@
-<form id="document_upload_form" action="" method="post" enctype="multipart/form-data">
+{% if general_permission > 1 or document_permission == 1 %}
     {% csrf_token %}
     {% load staticfiles %}
-{% if general_permission > 1 or document_permission == 1 %}
     <table>
         <tr>
-            <td>Upload Documents</td>
-            <td>{{ upload_form.nested_folder }}</td>
-            <td><input name="document_upload" id="id_document_upload" type="file"/></td>
-            <td><input name="document_submit" id="document_submit" type="submit" value="Submit Document"/> </td>
+            <td colspan="2">{{ upload_form.document }}</td>
         </tr>
-        <tr>
-            <td colspan="4">
+        </td id="document_row_description">
+            <td colspan="2">{{ upload_form.document_description }}</td>
+        </tr>
+        <tr id="document_row_nested_folder">
+            <td width="20%">Nested Folder:</td>
+            <td width="80%">{{ upload_form.nested_folder }}</td>
+        </tr>
+        <tr id="document_row_uploads">
+            <td colspan="2">
                 <div id="progress" style="border: none; width: 100%;">
-                    <span id="upload_percent">No uploads occuring</span>
+                    <span id="upload_percent"><a href="javascript:void(0)" onclick="upload_document()">Upload Document</a></span>
                     <div id="upload_progress" style="background-color: green; width: 0%; height: 20px;"></div>
                 </div>
             </td>
-
-        </tr>
-        <tr>
-            <td colspan="4">
-                <progress></progress>
-            </td>
         </tr>
     </table>
+    <br/>
+    <script>
+        $("#id_document").on('change', function(e) {
+            //Get the file name
+            file_name = $("#id_document").val();
+            split_name = file_name.split("\\");
+
+            //Set the filename
+            $("#id_document_description").val(split_name[split_name.length - 1]);
+        })
+    </script>
 {% endif %}
-</form>
-<script>
-$('#id_document_upload').on('change', function() {
-    alert("HELLO WORLD!");
-
-$.ajaxSetup({
-        beforeSend: function (xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            }
-        }
-});
-
-    $.ajax({
-        // Your server script to process the upload
-        url: "{% url 'document_tree_upload' location_id project_or_task %}",
-        type: 'POST',
-
-        // Form data
-        data: $("#document_upload_form"),
-
-        // Tell jQuery not to process data or worry about content-type
-        // You *must* include these options!
-        cache: false,
-        contentType: false,
-        processData: false,
-
-        // Custom XMLHttpRequest
-        xhr: function() {
-            var myXhr = $.ajaxSettings.xhr();
-            if (myXhr.upload) {
-                // For handling the progress of the upload
-                myXhr.upload.addEventListener('progress', function(e) {
-                    if (e.lengthComputable) {
-                        $('progress').attr({
-                            value: e.loaded,
-                            max: e.total,
-                        });
-                    }
-                } , false);
-            }
-            return myXhr;
-        },
-    });
-    alert("Finished");
-
-});
-
-function csrfSafeMethod(method) {
-            // these HTTP methods do not require CSRF protection
-            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-        }
-
-        // using jQuery to extract the CSRFToken
-        function getCookie(name) {
-            var cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = jQuery.trim(cookies[i]);
-                    // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-        var csrftoken = getCookie('csrftoken');
-</script>
