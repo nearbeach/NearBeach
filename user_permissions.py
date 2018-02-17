@@ -4,6 +4,13 @@ This python script will return the user's permission level for ANY given permiss
 import json
 
 def return_user_permission_level(request, group_id,permission_section):
+    """
+
+    :param request:
+    :param group_id:
+    :param permission_section:
+    :return:
+    """
     #Default NO PERMISSION
     user_permission_level = 0
 

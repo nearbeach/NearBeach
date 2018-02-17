@@ -465,6 +465,46 @@
             }
         });
     }
+
+    function upload_document() {
+        //Get form data
+        var form_data = new FormData(document.querySelector('#document_tree_upload_documents'));
+
+        $.ajax({
+            xhr: function() {
+                var xhr = new window.XMLHttpRequest();
+
+                // Upload progress
+                xhr.upload.addEventListener("progress", function(evt){
+                    if (evt.lengthComputable) {
+                        var percentComplete = evt.loaded / evt.total;
+                        //Do something with upload progress
+                        console.log(percentComplete);
+
+                        $("#upload_percent").html(percentComplete * 100 + "%");
+                        $("#upload_progress").css(
+                            'width', percentComplete * 100 + '%'
+                        );
+                    }
+               }, false);
+               return xhr;
+            },
+
+            url: '/document_tree_upload/{{ task_id }}/T/',
+            data: form_data,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: function(data) {
+                load_document_tree_create_folder();
+                load_document_tree_list();
+                load_document_tree_upload_documents();
+            },
+            error: function() {
+                alert("Sorry, there was an error uploading the document");
+            }
+        });
+    }
 </script>
 
 </body>
