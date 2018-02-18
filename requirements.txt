@@ -1,0 +1,4 @@
+# requirements.txt
+Django==1.11
+simplejson
+pillow
