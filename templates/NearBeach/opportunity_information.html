@@ -81,14 +81,8 @@
         <h2>Associated Projects & Tasks</h2>
         <ul>
         {% if opportunity_results.opportunity_stage_id.opportunity_closed != "TRUE" %}
-            {% if opportunity_results.customer_id %}
-                <li><a href="{% url 'new_project' opportunity_results.organisations_id.organisations_id opportunity_results.customer_id.customer_id opportunity_id %}">Create New Project</a></li>
-                <li><a href="{% url 'new_task' opportunity_results.organisations_id.organisations_id opportunity_results.customer_id.customer_id opportunity_id %}">Create New Task</a></li>
-            {% else %}
-                <li><a href="{% url 'new_project' opportunity_results.organisations_id.organisations_id 0 opportunity_id %}">Create New Project</a></li>
-                <li><a href="{% url 'new_task' opportunity_results.organisations_id.organisations_id 0 opportunity_id %}">Create New Task</a></li>
-
-            {% endif %}
+            <li><a href="{% url 'new_project' opportunity_id 'opportunity'%}">Create New Project</a></li>
+            <li><a href="{% url 'new_task' opportunity_id 'opportunity' %}">Create New Task</a></li>
         {% endif %}
         </ul>
         <h2>Assigned Projects</h2>

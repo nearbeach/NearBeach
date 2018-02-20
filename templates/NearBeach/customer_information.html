@@ -126,9 +126,9 @@
             {% if customer_permissions > 1 %}
             <h4>Actions</h4>
             <ul>
-                {% if not customer_results.organisations_id == Null %}
-                    <li><a href="{% url 'new_project' customer_results.organisations_id.organisations_id customer_results.customer_id %}">New Project</a></li>
-                    <li><a href="{% url 'new_task' customer_results.organisations_id.organisations_id customer_results.customer_id %}">Create New Task</a></li>
+                {% if destination %}
+                    <li><a href="{% url 'new_project' customer_results.customer_id 'customer' %}">New Project</a></li>
+                    <li><a href="{% url 'new_task' customer_results.customer_id 'customer' %}">Create New Task</a></li>
                 {% else %}
                     <li>PROGRAM IN NEW PROJECT - currently not connected to an orgnanisation</li>
                     <li>PROGRAM IN NEW TASK - currently not connected to an orgnanisation</li>
@@ -183,7 +183,7 @@
                 {% endif %}
             <h2>Customer Opportunities</h2>
             {% if not customer_results.organisations_id == Null %}
-                <a href="{% url 'new_opportunity' customer_results.organisations_id.organisations_id customer_results.customer_id %}">Add a new opportuninity</a>
+                <a href="{% url 'new_opportunity' customer_results.customer_id 'customer' %}">Add a new opportuninity</a>
             {% else %}
                 New opportunity will be added in the future when I program around the organisation limitation.
             {% endif %}

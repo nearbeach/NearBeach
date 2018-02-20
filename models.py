@@ -877,17 +877,19 @@ class opportunity(models.Model):
 	opportunity_description=models.TextField()
 	organisations_id=models.ForeignKey(
 		'organisations',
-		on_delete=models.CASCADE
+		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
 	)
 	customer_id=models.ForeignKey(
 		'customers',
 		on_delete=models.CASCADE,
 		null=True,
-		blank=True
+		blank=True,
 	)
 	currency_id=models.ForeignKey(
 		'list_of_currency',
-		on_delete=models.CASCADE
+		on_delete=models.CASCADE,
 	)
 	opportunity_amount=models.DecimalField(
 		max_digits=12,

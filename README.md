@@ -52,14 +52,4 @@ License: MIT
 Note: jQuery help shorten a lot of the javascript code within NearBeach. There are also a few widgets that rely on this technology (i.e. Chosen-js).
 
 
-### jQuery-File-Upload
-Creator(s): Sebastian Tschan @blueimp
-
-Github: https://github.com/blueimp/jQuery-File-Upload
-
-Link: http://blueimp.github.io/jQuery-File-Upload/index.html
-
-License: MIT
-
-Note: jQuery-File-Upload has allowed us to upload files through the AJAX method.
 
