@@ -183,6 +183,10 @@ def responsible_customer(request,quote_id, customer_id=''):
 
     quote_results = quotes.objects.get(quote_id=quote_id)
 
+
+    """
+    Obtain a list of all customers depending where the quote is connected to
+    """
     if not quote_results.project_id == None:
         customer_results = customers.objects.filter(
             organisations_id=quote_results.project_id.organisations_id.organisations_id)
@@ -191,6 +195,10 @@ def responsible_customer(request,quote_id, customer_id=''):
             organisations_id=quote_results.task_id.organisations_id.organisations_id)
     elif not quote_results.opportunity_id == None:
         customer_results = customers.objects.filter(organisations_id=quote_results.opportunity_id.organisations_id.organisations_id)
+    elif not quote_results.customer_id == None:
+        customer_results = customers.objects.filter(customer_id=quote_results.customer_id.customer_id)
+    elif not quote_results.organisation_id == None:
+        customer_results = customers.objects.filter(organisations_id=quote_results.organisation_id)
 
     # Load the template
     t = loader.get_template('NearBeach/quote_information/responsible_customer.html')

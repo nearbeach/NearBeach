@@ -168,10 +168,32 @@
 
     $("#organisation_contact_history").on('submit', function(e) {
         e.preventDefault();
+
+        var form_data = new FormData(this);
         $.ajax({
+            xhr: function() {
+                    var xhr = new window.XMLHttpRequest();
+
+                    // Upload progress
+                    xhr.upload.addEventListener("progress", function(evt){
+                        if (evt.lengthComputable) {
+                            var percentComplete = evt.loaded / evt.total;
+                            //Do something with upload progress
+                            console.log(percentComplete);
+
+                            $("#upload_percent").html(parseFloat(percentComplete * 100).toFixed(2) + "%");
+                            $("#upload_progress").css(
+                                'width', percentComplete * 100 + '%'
+                            );
+                        }
+                   }, false);
+                   return xhr;
+            },
             type: 'POST',
             url: '/information_organisation_contact_history/{{ organisation_results.organisations_id }}/',
-            data: $(this).serialize(),
+            data: form_data,
+            processData: false,
+            contentType: false,
             success: function() {
                 //Reload the project history :)
                 load_contact_history();

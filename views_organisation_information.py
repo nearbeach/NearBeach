@@ -43,6 +43,7 @@ def information_organisation_contact_history(request, organisation_id):
 
     # Get the data from the form if the information has been submitted
     if request.method == "POST" and organisation_permissions > 1:
+        print("Request is post")
         form = information_organisation_contact_history_form(request.POST, request.FILES)
         if form.is_valid():
             current_user = request.user
@@ -73,6 +74,7 @@ def information_organisation_contact_history(request, organisation_id):
                 contact_attachment = request.FILES.get('contact_attachment')
                 
                 if contact_attachment:
+                    print("There was a document")
                     documents_save = documents(
                         document_description=contact_attachment,
                         document=contact_attachment,
@@ -98,11 +100,13 @@ def information_organisation_contact_history(request, organisation_id):
                     contact_history=contact_history_notes,
                     user_id=current_user,
                     change_user=request.user,
-                    #document_key=documents_save,
+                    document_key=documents_save,
                 )
                 if contact_attachment:
                     submit_history.document_key=documents_save
                 submit_history.save()
+        else:
+            print(form.errors)
     #Get data
     contact_history_results = contact_history.objects.filter(
         organisations_id=organisations.objects.get(organisations_id=organisation_id)

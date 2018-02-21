@@ -66,6 +66,30 @@ def information_customer_contact_history(request, customer_id):
                     form.cleaned_data['start_date_meridiems']
                 )
 
+                """
+                        document_save = documents(
+            document_description=filename,
+            document=file,
+            change_user=request.user,
+        )
+        document_save.save()
+
+        document_permissions_save = document_permissions(
+            document_key=document_save,
+            change_user=request.user,
+        )
+        if project_or_task == "P":
+            #Project
+            project_instance = project.objects.get(project_id=location_id)
+            document_permissions_save.project_id = project_instance
+        else:
+            #Task
+            task_instance = tasks.objects.get(tasks_id=location_id)
+            document_permissions_save.task_id = task_instance
+document_permissions_save.save()
+"""
+
+
                 # documents
                 contact_attachment = request.FILES.get('contact_attachment')
                 if contact_attachment:
@@ -94,7 +118,7 @@ def information_customer_contact_history(request, customer_id):
                     contact_history=contact_history_notes,
                     user_id=current_user,
                     change_user=request.user,
-                    # document_key=documents_save,
+                    document_key=documents_save,
                 )
                 if contact_attachment:
                     submit_history.document_key = documents_save
