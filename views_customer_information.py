@@ -131,7 +131,7 @@ def information_customer_contact_history(request, customer_id):
 
 
 @login_required(login_url='login')
-def information_customer_documents_list(request, customer_id, organisations_id):
+def information_customer_documents_list(request, customer_id, organisations_id=''):
     customer_permissions = 0
     document_perm = 0
 
@@ -157,11 +157,14 @@ def information_customer_documents_list(request, customer_id, organisations_id):
         customer_id=customer_id,
         is_deleted="FALSE",
     )
-    organisation_document_results = document_permissions.objects.filter(
-        organisations_id=organisations_id,
-        customer_id__isnull=True,
-        is_deleted="FALSE",
-    )
+    try:
+        organisation_document_results = document_permissions.objects.filter(
+            organisations_id=organisations_id,
+            customer_id__isnull=True,
+            is_deleted="FALSE",
+        )
+    except:
+        organisation_document_results = None
 
 
     #Load template

@@ -126,13 +126,8 @@
             {% if customer_permissions > 1 %}
             <h4>Actions</h4>
             <ul>
-                {% if destination %}
-                    <li><a href="{% url 'new_project' customer_results.customer_id 'customer' %}">New Project</a></li>
-                    <li><a href="{% url 'new_task' customer_results.customer_id 'customer' %}">Create New Task</a></li>
-                {% else %}
-                    <li>PROGRAM IN NEW PROJECT - currently not connected to an orgnanisation</li>
-                    <li>PROGRAM IN NEW TASK - currently not connected to an orgnanisation</li>
-                {% endif %}
+                <li><a href="{% url 'new_project' customer_results.customer_id 'customer' %}">New Project</a></li>
+                <li><a href="{% url 'new_task' customer_results.customer_id 'customer' %}">Create New Task</a></li>
                 <li><a href="{% url 'assign_customer_project_task' customer_results.customer_id %}">Assign Existing Project or Task</a></li>
             </ul>
             <br/>

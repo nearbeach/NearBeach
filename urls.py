@@ -143,6 +143,10 @@ url(r'^new_task/(?P<location_id>[0-9]+)/(?P<destination>["organisation","custome
 	url(r'^information_customer_documents_upload/(?P<customer_id>[0-9]+)/$',
 		views_customer_information.information_customer_documents_upload,
 		name='information_customer_documents_upload'),
+	url(r'^information_customer_documents_list/(?P<customer_id>[0-9]+)/$',
+		views_customer_information.information_customer_documents_list,
+		name='information_customer_documents_list'),
+
 	url(r'^information_customer_documents_list/(?P<customer_id>[0-9]+)/(?P<organisations_id>[0-9]+)/$',
 		views_customer_information.information_customer_documents_list,
 		name='information_customer_documents_list'),
