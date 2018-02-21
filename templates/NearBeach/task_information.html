@@ -211,7 +211,7 @@
         $.ajax({
             type: 'POST',
             url: '/information_task_customers/{{ task_id }}/',
-            data: $(this.serialize()),
+            data: $(this).serialize(),
             success: function() {
                 //Reload the task history :)
                 load_task_customers();

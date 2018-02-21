@@ -182,11 +182,7 @@
                     <p>Sorry. There are currently no tasks for this customer.</p>
                 {% endif %}
             <h2>Customer Opportunities</h2>
-            {% if not customer_results.organisations_id == Null %}
-                <a href="{% url 'new_opportunity' customer_results.customer_id 'customer' %}">Add a new opportuninity</a>
-            {% else %}
-                New opportunity will be added in the future when I program around the organisation limitation.
-            {% endif %}
+            <a href="{% url 'new_opportunity' customer_results.customer_id 'customer' %}">Add a new opportuninity</a>
             {% if opportunity_results %}
                 <table>
                     <tr class="header">

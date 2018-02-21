@@ -144,6 +144,8 @@ def document_tree_list(request, location_id, project_or_task, folder_id='',):
     # Load the template
     t = loader.get_template('NearBeach/document_tree/document_tree_list.html')
 
+    print("PRIVATE MEDIA: " + settings.PRIVATE_MEDIA_URL)
+
     # context
     c = {
         'folder_results': folder_results,
@@ -152,6 +154,7 @@ def document_tree_list(request, location_id, project_or_task, folder_id='',):
         'folder_instance': folder_instance,
         'location_id': location_id,
         'project_or_task': project_or_task,
+        'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
     }
 
     return HttpResponse(t.render(c, request))

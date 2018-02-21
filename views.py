@@ -1404,7 +1404,10 @@ def new_opportunity(request, location_id,destination):
                 #If a customer has a null for an organisation it will pass through as null
                 submit_opportunity.organisations_id = customer_instance.organisations_id
             else:
-                organisation_instance = organisations.objects.get(organisations_id=form.cleaned_data['organisations_id'])
+                try:
+                    organisation_instance = organisations.objects.get(organisations_id=form.cleaned_data['organisations_id'])
+                except:
+                    organisation_instance = None
 
             # submit_opportunity.save()
 
@@ -2416,6 +2419,7 @@ def organisation_information(request, organisations_id):
         profile_picture = organisation_results.organisation_profile_picture.url
     except:
         profile_picture = ''
+
 
     c = {
         'organisation_results': organisation_results,
