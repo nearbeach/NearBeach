@@ -79,7 +79,6 @@ url(r'^new_task/(?P<location_id>[0-9]+)/(?P<destination>["organisation","custome
 	url(r'^private/(?P<document_key>[0-9A-Za-z_\-]+)/$', views.private_document, name='private'),
 	url(r'^project_information/(?P<project_id>[0-9]+)/', views.project_information, name='project_information'),
 	url(r'^quote_information/(?P<quote_id>[0-9]+)/$', views.quote_information, name='quote_information'),
-	#url(r'^quote_information/(?P<quote_id>[0-9]+)/line_items/', views_quotes.line_items, name='quotes_line_items'),
 	url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$', password_reset_confirm,
 		{'post_reset_redirect': 'password_reset_complete', 'template_name': 'NearBeach/reset.html'},
 		name='password_reset_confirm'),
@@ -99,6 +98,7 @@ url(r'^new_task/(?P<location_id>[0-9]+)/(?P<destination>["organisation","custome
 	url(r'^quote_new_line_item/(?P<quote_id>[0-9]+)/$', views_quotes.new_line_item, name='quote_new_line_item'),
 	url(r'^quote_delete_line_item/(?P<line_item_id>[0-9]+)/$', views_quotes.delete_line_item, name='quote_delete_line_item'),
 	url(r'^quote_responsible_customer/(?P<quote_id>[0-9]+)/$', views_quotes.responsible_customer, name='quote_responsible_customer'),
+	url(r'^quote_delete_responsible_customer/(?P<quote_id>[0-9]+)/(?P<customer_id>[0-9]+)/$', views_quotes.delete_responsible_customer, name='quote_delete_responsible_customer'),
 	url(r'^quote_responsible_customer/(?P<quote_id>[0-9]+)/(?P<customer_id>[0-9]+)/$', views_quotes.responsible_customer, name='quote_responsible_customer'),
 
 
