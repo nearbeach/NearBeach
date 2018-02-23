@@ -1684,7 +1684,7 @@ def new_project(request, location_id='', destination=''):
                 return HttpResponseRedirect(reverse(organisation_information, args={location_id}))
             elif destination == "customer":
                 return HttpResponseRedirect(reverse(customer_information, args={location_id}))
-            elif destination == "":
+            elif destination == "opportunity":
                 return HttpResponseRedirect(reverse(opportunity_information, args={location_id}))
             else:
                 return HttpResponseRedirect(reverse(project_information, args={submit_project.pk}))
@@ -1983,7 +1983,7 @@ def new_task(request, location_id='', destination=''):
                 return HttpResponseRedirect(reverse(organisation_information, args={location_id}))
             elif destination == "customer":
                 return HttpResponseRedirect(reverse(customer_information, args={location_id}))
-            elif destination == "":
+            elif destination == "opportunity":
                 return HttpResponseRedirect(reverse(opportunity_information, args={location_id}))
             else:
                 return HttpResponseRedirect(reverse(task_information, args={submit_task.pk}))
