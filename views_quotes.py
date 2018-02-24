@@ -26,6 +26,24 @@ def delete_line_item(request, line_item_id):
     #SoMuchFun
 
 
+@login_required(login_url='login')
+def delete_responsible_customer(request,quote_id,customer_id):
+    if request.method == "POST":
+        quote_responsible_customers.objects.filter(
+            is_deleted="FALSE",
+            quote_id=quotes.objects.get(quote_id=quote_id),
+            customer_id=customers.objects.get(customer_id=customer_id)
+        ).update(is_deleted="TRUE")
+        #Return a blank page for fun
+        t = loader.get_template('NearBeach/blank.html')
+
+        # context
+        c = {}
+
+        return HttpResponse(t.render(c, request))
+        #SoMuchFun
+    else:
+        return HttpResponseBadRequest("Delete Responsible Customer has to be done in POST")
 
 
 @login_required(login_url='login')
@@ -161,6 +179,17 @@ def new_line_item(request,quote_id):
 
 @login_required(login_url='login')
 def responsible_customer(request,quote_id, customer_id=''):
+    quote_permission = 0
+
+    if request.session['is_superuser'] == True:
+        quote_permission = 4
+    else:
+        pp_results = return_user_permission_level(request, None,'quote')
+        print(pp_results)
+
+        if pp_results > quote_permission:
+            quote_permission = pp_results
+
     if request.method == "POST":
         if customer_id == '':
             return HttpResponseBadRequest("Customer ID is required!")
@@ -183,6 +212,10 @@ def responsible_customer(request,quote_id, customer_id=''):
 
     quote_results = quotes.objects.get(quote_id=quote_id)
 
+
+    """
+    Obtain a list of all customers depending where the quote is connected to
+    """
     if not quote_results.project_id == None:
         customer_results = customers.objects.filter(
             organisations_id=quote_results.project_id.organisations_id.organisations_id)
@@ -191,6 +224,10 @@ def responsible_customer(request,quote_id, customer_id=''):
             organisations_id=quote_results.task_id.organisations_id.organisations_id)
     elif not quote_results.opportunity_id == None:
         customer_results = customers.objects.filter(organisations_id=quote_results.opportunity_id.organisations_id.organisations_id)
+    elif not quote_results.customer_id == None:
+        customer_results = customers.objects.filter(customer_id=quote_results.customer_id.customer_id)
+    elif not quote_results.organisation_id == None:
+        customer_results = customers.objects.filter(organisations_id=quote_results.organisation_id)
 
     # Load the template
     t = loader.get_template('NearBeach/quote_information/responsible_customer.html')
@@ -200,6 +237,7 @@ def responsible_customer(request,quote_id, customer_id=''):
         'quote_id': quote_id,
         'customer_results': customer_results,
         'responsible_customer_results': responsible_customer_results,
+        'quote_permission': quote_permission,
 
     }
 

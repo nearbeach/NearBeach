@@ -882,6 +882,7 @@ class new_opportunity_form(ModelForm):
     organisations_id=forms.ModelChoiceField(
         label="Organisations",
         queryset=organisaion_results,
+        required=False,
         widget=forms.Select(attrs={
             "onChange":'update_customers()'
         }),
@@ -1000,6 +1001,7 @@ class new_project_form(forms.Form):
         label="Organisation",
         widget=forms.Select,
         queryset=organisations_results,
+        required=False,
     )
     start_date_year=forms.ChoiceField(
         choices=YEAR_CHOICES,

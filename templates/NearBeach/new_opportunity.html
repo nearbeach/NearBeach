@@ -24,13 +24,7 @@
 
 
 <body onload="initialise();">
-    {% if organisation_id == '' and customer_id == '' %}
-        <form action="{% url 'new_opportunity' %}" method="post" class="new_opportunity">
-    {% elif not customer_id == '' %}
-        <form action="{% url 'new_opportunity' organisation_id customer_id %}" method="post" class="new_opportunity">
-    {% else %}
-        <form action="{% url 'new_opportunity' organisation_id %}" method="post" class="new_opportunity">
-    {% endif %}
+    <form action="{% url 'new_opportunity' location_id destination %}" method="post" class="new_opportunity">
         {% csrf_token %}
         <h1>New Opportunity</h1>
         {% if organisations_count == 0 %}

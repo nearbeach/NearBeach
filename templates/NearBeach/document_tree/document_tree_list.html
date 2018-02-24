@@ -32,7 +32,7 @@ function load_sub_folder(folder_id) {
     {% endfor %}
     {% for row in document_results %}
         <li id="{{ row.document_key.document_key }}" class="document">
-            <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">
+            <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}" target="_blank">
                 {{ row.document_key.document_description}}
             </a>
         </li>

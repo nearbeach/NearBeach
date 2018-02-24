@@ -49,7 +49,9 @@
                 <li>{{ task_information_form.task_short_description }}</li>
                 <li>{{ task_information_form.task_long_description }}</li>
                 <li>Current Task Status: {{ task_results.task_status }}</li>
-                <li><a href="{% url 'organisation_information' task_results.organisations_id.organisations_id %}">{{ task_results.organisations_id }}</a></li>
+                {% if task_results.organisations_id %}
+                    <li><a href="{% url 'organisation_information' task_results.organisations_id.organisations_id %}">{{ task_results.organisations_id }}</a></li>
+                {% endif %}
                 <li>Time Zone - {{ timezone }}</li>
                 <li>Task Start - {{ task_information_form.start_date_year }}/{{ task_information_form.start_date_month }}/{{ task_information_form.start_date_day }} @ {{ task_information_form.start_date_hour }}:{{ task_information_form.start_date_minute }} {{ task_information_form.start_date_meridiems }}<br/></li>
                 <li>Task finish Date - {{ task_information_form.finish_date_year }}/{{ task_information_form.finish_date_month }}/{{ task_information_form.finish_date_day }} @ {{ task_information_form.finish_date_hour }}:{{ task_information_form.finish_date_minute }} {{ task_information_form.finish_date_meridiems }}<br/></li>
@@ -209,7 +211,7 @@
         $.ajax({
             type: 'POST',
             url: '/information_task_customers/{{ task_id }}/',
-            data: $(this.serialize()),
+            data: $(this).serialize(),
             success: function() {
                 //Reload the task history :)
                 load_task_customers();
@@ -481,7 +483,7 @@
                         //Do something with upload progress
                         console.log(percentComplete);
 
-                        $("#upload_percent").html(percentComplete * 100 + "%");
+                        $("#upload_percent").html(parseFloat(percentComplete * 100).toFixed(2) + "%");
                         $("#upload_progress").css(
                             'width', percentComplete * 100 + '%'
                         );
