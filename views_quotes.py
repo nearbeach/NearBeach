@@ -86,16 +86,7 @@ def list_of_line_items(request, quote_id):
 def new_line_item(request,quote_id):
     quotes_results = quotes.objects.get(quote_id=quote_id)
 
-    quote_permission = 0
-
-    if request.session['is_superuser'] == True:
-        quote_permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None,'quote')
-        print(pp_results)
-
-        if pp_results > quote_permission:
-            quote_permission = pp_results
+    permission_results =  return_user_permission_level(request, None,'quote')
 
     if request.POST:
         form = new_line_item_form(request.POST, request.FILES)
@@ -171,7 +162,7 @@ def new_line_item(request,quote_id):
     c = {
         'quote_id': quote_id,
         'new_line_item_form': new_line_item_form(),
-        'quote_permission': quote_permission,
+        'quote_permission': permission_results['quote'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -179,16 +170,7 @@ def new_line_item(request,quote_id):
 
 @login_required(login_url='login')
 def responsible_customer(request,quote_id, customer_id=''):
-    quote_permission = 0
-
-    if request.session['is_superuser'] == True:
-        quote_permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None,'quote')
-        print(pp_results)
-
-        if pp_results > quote_permission:
-            quote_permission = pp_results
+    permission_results = return_user_permission_level(request, None,'quote')
 
     if request.method == "POST":
         if customer_id == '':
@@ -237,7 +219,7 @@ def responsible_customer(request,quote_id, customer_id=''):
         'quote_id': quote_id,
         'customer_results': customer_results,
         'responsible_customer_results': responsible_customer_results,
-        'quote_permission': quote_permission,
+        'quote_permission': permission_results['quote'],
 
     }
 

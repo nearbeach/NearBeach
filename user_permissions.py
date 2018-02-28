@@ -8,11 +8,11 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 
-def return_user_permission_level(request, group_id,permission_field):
+def return_user_permission_level(request, group_list,permission_field):
     """
 
     :param request:
-    :param group_id: limits data to a certain group - Null if no group
+    :param groups: limits data to a certain group - Null if no group
     :param permission_field: which permission field we will be looking at. The available list is;
         permission_set_id
         permission_set_name
@@ -37,16 +37,30 @@ def return_user_permission_level(request, group_id,permission_field):
         contact_history
         project_history
         task_history
+
+        Please note - if you want to look up more than ONE permission, please include them in [] brackets. For example if
+        you would like to look up; project, project_history, and documents, then you would use ['project','project_history','documents']
     :param min_permission_level: tells us what is the minimum level the user has to be, if they do not meet this requirement
         then the system will formward them onto the permission denied page. Default is 1 (read only)
     :return:
     """
+
+    #Make sure the permission_field is an array/list
+    if not isinstance(permission_field, list):
+        permission_field = [permission_field]
+
     #Default NO PERMISSION
-    user_permission_level = 0
+    user_permission_level = {}
 
     #Look into the SQL for that particular field and return it.
     if request.user.is_superuser == True:
-        return 4
+        #Add 4 to all permissions
+        for row in permission_field:
+            user_permission_level[row] = 4
+        #Add new_item and administration as 4
+        user_permission_level['new_item'] = 4
+        user_permission_level['administration'] = 4
+        return user_permission_level
 
     """
     TEMP CODE
@@ -56,25 +70,38 @@ def return_user_permission_level(request, group_id,permission_field):
     results[field + "__max"]
     """
 
+    for row in permission_field:
+        if group_list == None:
+            #There is no groups. Select the max value :)
+            user_groups_results = user_groups.objects.filter(
+                is_deleted="FALSE",
+                username=request.user,
+                permission_set__is_deleted="FALSE",
+            ).aggregate(Max('permission_set__' + row))
+            user_permission_level[row] = user_groups_results['permission_set__' + row + '__max']
+        else:
+            #There is a group, lets find all permissions connected with this group :) and return the max :)
+            group_permission = 0
+            for group_id in group_list:
+                group_instance = groups.objects.get(group_id=group_id['groups_id_id'])
 
-    if group_id == None:
-        #There is no group id. Select the max value :)
-        user_groups_results = user_groups.objects.filter(
-            is_deleted="FALSE",
-            username=request.user,
-            permission_set__is_deleted="FALSE",
-        ).aggregate(Max('permission_set__' + permission_field))
-        user_permission_level = user_groups_results['permission_set__' + permission_field + '__max']
-    else:
-        #There is a group, lets find all permissions connected with this group :)
-        group_instance = groups.objects.get(group_id=group_id)
+                #Grab user's permission for that group
+                user_groups_results = user_groups.objects.filter(
+                    is_deleted="FALSE",
+                    username=request.user,
+                    permission_set__is_deleted="FALSE",
+                    groups_id=group_instance,
+                ).aggregate(Max('permission_set__' + row))
 
-        user_groups_results = user_groups.objects.filter(
-            is_deleted="FALSE",
-            username=request.user,
-            permission_set__is_deleted="FALSE",
-            groups_id=group_instance,
-        ).aggregate(Max('permission_set__' + permission_field))
-        user_permission_level = user_groups_results['permission_set__' + permission_field + '__max']
+                #Get the max value for the permission
+                if group_permission < user_groups_results['permission_set__' + row + '__max']:
+                    group_permission = user_groups_results['permission_set__' + row + '__max']
+
+            user_permission_level[row] = group_permission
+
+    #TEMP CODE FOR NOW!
+    user_permission_level['new_item'] = 4
+    user_permission_level['administration'] = 4
+    #END TEMP CODE
 
     return user_permission_level

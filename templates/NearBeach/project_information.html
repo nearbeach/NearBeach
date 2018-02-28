@@ -7,7 +7,6 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
-    <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.fileupload.js' %}"></script>
 
 <script>
     function on_page_load() {
@@ -35,7 +34,7 @@
         running_total();
 
         //Finally set the permissions
-        set_permissions({{ project_permissions }});
+        //set_permissions({{ project_permissions }});
 	}
 </script>
 

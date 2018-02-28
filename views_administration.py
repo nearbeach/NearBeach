@@ -26,18 +26,9 @@ import datetime, json, simplejson, urllib, urllib2
 
 @login_required(login_url='login')
 def group_information(request):
-    perm = 0
+    permission_results = return_user_permission_level(request, None, 'administration_create_groups')
 
-    if request.session['is_superuser']:
-        perm = 4
-    else:
-        ph_permission = return_user_permission_level(request, None, 'administration_create_groups')
-
-        #Permission takes the highest from both
-        if ph_permission > perm:
-            perm = ph_permission
-
-    if perm == 0:
+    if permission_results['administration_create_groups'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     #Load template
@@ -53,26 +44,13 @@ def group_information(request):
 
 @login_required(login_url='login')
 def group_information_add_permission_set(request, group_id):
-    permission_permission = 0
+    permission_results = return_user_permission_level(request, None, ['administration_create_groups','administration_create_permission_sets'])
 
-    if request.session['is_superuser']:
-        permission_permission = 4
-    else:
-        ph_permission = return_user_permission_level(request, None, 'administration_create_groups')
-        pb_permission = return_user_permission_level(request, None, 'administration_create_permission_sets')
-
-        #Permission takes the highest from both
-        if ph_permission > permission_permission:
-            permission_permission = ph_permission
-
-        if pb_permission > permission_permission:
-            permission_permission = pb_permission
-
-    if permission_permission == 0:
+    if permission_results['administration_create_groups'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
 
-    if request.method == "POST" and permission_permission > 2:
+    if request.method == "POST" and permission_results['administration_create_groups'] > 2:
         form = add_permission_set_to_group_form(request.POST)
         if form.is_valid():
             submit_group_permission = group_permissions(
@@ -103,17 +81,9 @@ def group_information_add_permission_set(request, group_id):
 
 @login_required(login_url='login')
 def group_information_create(request):
-    group_permission = 0
+    permission_results = return_user_permission_level(request, None, 'administration_create_groups')
 
-    if request.session['is_superuser'] == True:
-        group_permission = 4
-    else:
-        ph_results = return_user_permission_level(request, None, 'administration_create_groups')
-
-        if ph_results > group_permission:
-            group_permission = ph_results
-
-    if group_permission < 3:
+    if permission_results['administration_create_groups'] < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST":
@@ -141,25 +111,10 @@ def group_information_create(request):
 
 @login_required(login_url='login')
 def group_information_edit(request, group_id):
-    user_permission = 0
-    group_permission = 0
+    permission_results = return_user_permission_level(request, None,['administration_assign_users_to_groups','administration_create_groups'])
 
-    if request.session['is_superuser'] == True:
-        user_permission = 4
-        group_permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None,'administration_assign_users_to_groups')
-        ph_results = return_user_permission_level(request, None, 'administration_create_groups')
-
-        if pp_results > user_permission:
-            user_permission = pp_results
-
-        if ph_results > group_permission:
-            group_permission = ph_results
-
-    if group_permission == 0:
+    if permission_results['administration_create_groups'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
-
 
     if request.method == "POST":
         form = groups_form(request.POST, instance=groups.objects.get(group_id=group_id))
@@ -174,8 +129,8 @@ def group_information_edit(request, group_id):
     # context
     c = {
         'groups_form': groups_form(instance=groups.objects.get(group_id=group_id)),
-        'user_permission': user_permission,
-        'group_permission': group_permission,
+        'user_permission': permission_results['administration_assign_users_to_groups'],
+        'group_permission': permission_results['administration_create_groups'],
         'group_id': group_id,
     }
 
@@ -185,21 +140,13 @@ def group_information_edit(request, group_id):
 
 @login_required(login_url='login')
 def group_information_edit_users(request, group_id):
-    user_permission = 0
+    permission_results = return_user_permission_level(request, None,'administration_assign_users_to_groups')
 
-    if request.session['is_superuser'] == True:
-        user_permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None,'administration_assign_users_to_groups')
-
-        if pp_results > user_permission:
-            user_permission = pp_results
-
-    if user_permission == 0:
+    if permission_results['administration_assign_users_to_groups'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
 
-    if request.method == "POST" and user_permission > 2:
+    if request.method == "POST" and permission_results['administration_assign_users_to_groups'] > 2:
         print(request.POST.get('permission_set'))
         permission_set_instance=permission_set.objects.get(permission_set_id=request.POST.get('permission_set'))
         #Get the new user
@@ -232,7 +179,7 @@ def group_information_edit_users(request, group_id):
     c = {
         'user_groups_results': user_groups_results,
         'user_results': user_results,
-        'user_permission': user_permission,
+        'user_permission': permission_results['administration_assign_users_to_groups'],
         'permission_set_results': permission_set_results,
         'group_id': group_id,
     }
@@ -245,17 +192,10 @@ def group_information_edit_users(request, group_id):
 
 @login_required(login_url='login')
 def group_information_list(request):
-    group_permissions = 0
+    permission_results = return_user_permission_level(request, None,'administration_create_groups')
 
-    if request.session['is_superuser'] == True:
-        group_permissions = 4
-    else:
-        pp_results = return_user_permission_level(request, None,'administration_create_groups')
 
-        if pp_results > group_permissions:
-            group_permissions = pp_results
-
-    if group_permissions == 0:
+    if permission_results['administration_create_group'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     group_results = groups.objects.filter(
@@ -374,20 +314,13 @@ def list_of_taxes_new(request):
 
 @login_required(login_url='login')
 def new_user(request):
-    user_permission = 0;
+    permission_results = return_user_permission_level(request, None, 'administration_create_users')
 
-    if request.session['is_superuser'] == True:
-        user_permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None, 'administration_create_users')
-
-        if pp_results > user_permission:
-            user_permission = pp_results
-
-    if user_permission < 2:
+    if permission_results['administration_create_users'] < 2:
         return HttpResponseRedirect(reverse('permission_denied'))
+
     errors = ''
-    if request.method == "POST" and user_permission == 4:
+    if request.method == "POST" and permission_results['administration_create_users'] == 4:
         form = user_information_form(request.POST)
 
         if form.is_valid():
@@ -436,19 +369,9 @@ def new_user(request):
 
 @login_required(login_url='login')
 def permission_set_information(request):
-    permission_set_permission = 0
+    permission_results = return_user_permission_level(request, None,'administration_create_permission_sets')
 
-    if request.session['is_superuser'] == True:
-        permission_set_permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None,'administration_create_permission_sets')
-
-
-        if pp_results > permission_set_permission:
-            permission_set_permission = pp_results
-
-
-    if permission_set_permission == 0:
+    if permission_results['administration_create_permission_sets'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     #Load template
@@ -464,17 +387,9 @@ def permission_set_information(request):
 
 @login_required(login_url='login')
 def permission_set_information_create(request):
-    permission_set_permission = 0
+    permission_results = return_user_permission_level(request, None, 'administration_create_permission_sets')
 
-    if request.session['is_superuser'] == True:
-        permission_set_permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None, 'administration_create_permission_sets')
-
-        if pp_results > permission_set_permission:
-            permission_set_permission = pp_results
-
-    if permission_set_permission < 3:
+    if permission_results['administration_create_permission_sets'] < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
 
 
@@ -560,17 +475,9 @@ def permission_set_information_create(request):
 
 @login_required(login_url='login')
 def permission_set_information_edit(request, permission_set_id):
-    permission_set_permission = 0
+    permission_results = return_user_permission_level(request, None, 'administration_create_permission_sets')
 
-    if request.session['is_superuser'] == True:
-        permission_set_permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None, 'administration_create_permission_sets')
-
-        if pp_results > permission_set_permission:
-            permission_set_permission = pp_results
-
-    if permission_set_permission < 2:
+    if permission_results['administration_create_permission_sets'] < 2:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     save_errors = None
@@ -635,17 +542,9 @@ def permission_set_information_edit(request, permission_set_id):
 
 @login_required(login_url='login')
 def permission_set_information_list(request):
-    permission_set_permission = 0
+    permission_results =  return_user_permission_level(request, None, 'administration_create_permission_sets')
 
-    if request.session['is_superuser'] == True:
-        permission_set_permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None, 'administration_create_permission_sets')
-
-        if pp_results > permission_set_permission:
-            permission_set_permission = pp_results
-
-    if permission_set_permission == 0:
+    if permission_results['administration_create_permission_sets'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     #Get data
@@ -677,20 +576,12 @@ def product_and_service_discontinued(request, product_id):
 
 @login_required(login_url='login')
 def product_and_service_edit(request, product_id):
-    perm = 0
+    permission_results = return_user_permission_level(request, None, 'administration_create_permission_sets')
 
-    if request.session['is_superuser'] == True:
-        perm = 4
-    else:
-        pp_results = return_user_permission_level(request, None, 'administration_create_permission_sets')
-
-        if pp_results > perm:
-            perm = pp_results
-
-    if perm == 0:
+    if permission_results['administration_create_permission_sets'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
-    if request.method == "POST" and perm > 2:
+    if request.method == "POST" and permission_results['administration_create_permission_sets'] > 2:
         form = product_and_service_form(request.POST, instance=products_and_services.objects.get(product_id=product_id))
         if form.is_valid():
             form.save()
@@ -716,20 +607,12 @@ def product_and_service_edit(request, product_id):
 
 @login_required(login_url='login')
 def product_and_service_new(request):
-    perm = 0
+    permission_results = return_user_permission_level(request, None, 'administration_create_permission_sets')
 
-    if request.session['is_superuser'] == True:
-        perm = 4
-    else:
-        pp_results = return_user_permission_level(request, None, 'administration_create_permission_sets')
-
-        if pp_results > perm:
-            perm = pp_results
-
-    if perm < 2:
+    if permission_results['administration_create_permission_sets'] < 2:
         return HttpResponseRedirect(reverse('permission_denied'))
 
-    if request.method == "POST" and perm > 3:
+    if request.method == "POST" and permission_results['administration_create_permission_sets'] > 3:
         form = product_and_service_form(request.POST,)
         if form.is_valid():
             submit_product = products_and_services(
@@ -763,17 +646,9 @@ def product_and_service_new(request):
 
 @login_required(login_url='login')
 def product_and_service_search(request):
-    perm = 0
+    permission_results = return_user_permission_level(request, None, 'invoice_product')
 
-    if request.session['is_superuser'] == True:
-        perm = 4
-    else:
-        pp_results = return_user_permission_level(request, None, 'invoice_product')
-
-        if pp_results > perm:
-            perm = pp_results
-
-    if perm == 0:
+    if permission_results['invoice_product'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     #Get Data
@@ -804,17 +679,9 @@ def product_and_service_search(request):
 
 @login_required(login_url='login')
 def search_users(request):
-    user_permission = 0;
+    permission_results = return_user_permission_level(request, None, 'administration_create_users')
 
-    if request.session['is_superuser'] == True:
-        user_permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None, 'administration_create_users')
-
-        if pp_results > user_permission:
-            user_permission = pp_results
-
-    if user_permission == 0:
+    if permission_results['administration_create_users'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     filter_users = ''
@@ -851,21 +718,13 @@ def search_users(request):
 
 @login_required(login_url='login')
 def user_information(request, user_id):
-    user_permission = 0;
+    permission_results = return_user_permission_level(request, None, 'administration_create_users')
 
-    if request.session['is_superuser'] == True:
-        user_permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None, 'administration_create_users')
-
-        if pp_results > user_permission:
-            user_permission = pp_results
-
-    if user_permission == 0:
+    if permission_results['administration_create_users'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     errors = ''
-    if request.method == "POST" and user_permission == 4:
+    if request.method == "POST" and permission_results['administration_create_users'] == 4:
         if user_id == "":
             form = user_information_form(request.POST)
         else:

@@ -22,27 +22,13 @@ import simplejson
 
 @login_required(login_url='login')
 def information_organisation_contact_history(request, organisation_id):
-    organisation_permissions = 0
-    contact_history_permission = 0
+    permission_results = return_user_permission_level(request, None,['organisation','contact_history'])
 
-    if request.session['is_superuser'] == True:
-        organisation_permissions = 4
-        contact_history_permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None,'organisation')
-        ph_results = return_user_permission_level(request, None, 'contact_history')
-
-        if pp_results > organisation_permissions:
-            organisation_permissions = pp_results
-
-        if ph_results > contact_history_permission:
-            contact_history_permission = ph_results
-
-    if organisation_permissions == 0:
+    if permission_results['organisation'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     # Get the data from the form if the information has been submitted
-    if request.method == "POST" and organisation_permissions > 1:
+    if request.method == "POST" and permission_results['organisation'] > 1:
         print("Request is post")
         form = information_organisation_contact_history_form(request.POST, request.FILES)
         if form.is_valid():
@@ -121,8 +107,8 @@ def information_organisation_contact_history(request, organisation_id):
     c = {
         'contact_history_form': information_organisation_contact_history_form(),
         'contact_history_results': contact_history_results,
-        'organisation_permissions': organisation_permissions,
-        'contact_history_permission': contact_history_permission,
+        'organisation_permissions': permission_results['organisation'],
+        'contact_history_permission': permission_results['contact_history'],
         'contact_year': contact_date.year,
         'contact_month': contact_date.month,
         'contact_day': contact_date.day,
@@ -135,23 +121,9 @@ def information_organisation_contact_history(request, organisation_id):
 
 @login_required(login_url='login')
 def information_organisation_documents_list(request, organisation_id):
-    organisation_permissions = 0
-    document_perm = 0
+    permission_results = return_user_permission_level(request, None,['organisation','documents'])
 
-    if request.session['is_superuser'] == True:
-        organisation_permissions = 4
-        document_perm = 4
-    else:
-        pp_results = return_user_permission_level(request, None,'organisation')
-        ph_results = return_user_permission_level(request, None, 'documents')
-
-        if pp_results > organisation_permissions:
-            organisation_permissions = pp_results
-
-        if ph_results == 1:
-            document_perm = 1
-
-    if organisation_permissions == 0:
+    if permission_results['organisation'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     #Get data
@@ -174,9 +146,9 @@ def information_organisation_documents_list(request, organisation_id):
         'organisation_id': organisation_id,
         'customer_document_results': customer_document_results,
         'organisation_document_results': organisation_document_results,
-        'organisation_permissions': organisation_permissions,
+        'organisation_permissions': permission_results['organisation'],
         'document_permissions': document_permissions,
-        'document_perm': document_perm,
+        'document_perm': permission_results['documents'],
     }
 
     return HttpResponse(t.render(c, request))
