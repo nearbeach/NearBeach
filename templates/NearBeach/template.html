@@ -42,16 +42,18 @@
         <nav>
             <ul id="main-nav">
                 <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                <li onclick="toggleSub(0)">
-                    <a href="#" class="main-nav-dropdown">New Item<div class="down-arrow"></div></a>
-                    <ul class="sub-menu" id="sub-menu-main">
-                        <li><a href="{% url 'new_requirement' %}">New Requirement</a></li>
-                        <li><a href="{% url 'new_project' %}">New Project</a></li>
-                        <li><a href="{% url 'new_task' %}">New Task</a></li>
-                        <li><a href="{% url 'new_organisation' %}">New Organisation</a></li>
-                        <li><a href="{% url 'new_customer' 0 %}">New Customer</a></li>
-                    </ul>
-                </li>
+                {% if new_item_permission >= 3 %}
+                    <li onclick="toggleSub(0)">
+                        <a href="#" class="main-nav-dropdown">New Item<div class="down-arrow"></div></a>
+                        <ul class="sub-menu" id="sub-menu-main">
+                            <li><a href="{% url 'new_requirement' %}">New Requirement</a></li>
+                            <li><a href="{% url 'new_project' %}">New Project</a></li>
+                            <li><a href="{% url 'new_task' %}">New Task</a></li>
+                            <li><a href="{% url 'new_organisation' %}">New Organisation</a></li>
+                            <li><a href="{% url 'new_customer' 0 %}">New Customer</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
                 <li onclick="toggleSub(1)">
                     <a href="#" class="main-nav-dropdown">Search<div class="down-arrow"></div></a>
                     <ul class="sub-menu" id="sub-menu-item">
@@ -60,16 +62,18 @@
                         <li><a href="{% url 'search_customers' %}">Customers</a></li>
                     </ul>
                 </li>
-                <li onclick="toggleSub(2)">
-                    <a href="#" class="main-nav-dropdown">Administration<div class="down-arrow"></div></a>
-                    <ul class="sub-menu" id="sub-menu-admin">
-                        <li><a href="{% url 'permission_set_information' %}">Permission Sets</a></li>
-                        <li><a href="{% url 'product_and_service_search' %}">Products and Services</a></li>
-                        <li><a href="{% url 'group_information' %}">Groups</a></li>
-                        <li><a href="{% url 'search_users' %}">Users</a></li>
-                        <li><a href="{% url 'list_of_taxes_information' %}">List of Taxes</a></li>
-                    </ul>
-                </li>
+                {% if administration_permission >= 1 %}
+                    <li onclick="toggleSub(2)">
+                        <a href="#" class="main-nav-dropdown">Administration<div class="down-arrow"></div></a>
+                        <ul class="sub-menu" id="sub-menu-admin">
+                            <li><a href="{% url 'permission_set_information' %}">Permission Sets</a></li>
+                            <li><a href="{% url 'product_and_service_search' %}">Products and Services</a></li>
+                            <li><a href="{% url 'group_information' %}">Groups</a></li>
+                            <li><a href="{% url 'search_users' %}">Users</a></li>
+                            <li><a href="{% url 'list_of_taxes_information' %}">List of Taxes</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
 
                 <li><a href="{% url 'logout' %}">Logout</a></li>
             </ul>

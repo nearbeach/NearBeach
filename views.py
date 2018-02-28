@@ -378,6 +378,8 @@ def campus_information(request, campus_information):
         'countries_regions_results': countries_regions_results,
         'countries_results': countries_results,
         'permission': permission_results['organisation_campus'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -439,6 +441,8 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
         'customer_campus_id': customer_campus_id,
         'customer_or_org': customer_or_org,
         'permission': permission_results['organisation_campus'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -614,6 +618,8 @@ def customer_information(request, customer_id):
         'customer_permissions': permission_results['customer'],
         'assign_campus_to_customer_permission': permission_results['assign_campus_to_customer'],
         'quote_results':quote_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -621,12 +627,15 @@ def customer_information(request, customer_id):
 
 @login_required(login_url='login')
 def dashboard(request):
+    permission_results = return_user_permission_level(request, None, 'project')
+
     # Load the template
     t = loader.get_template('NearBeach/dashboard.html')
 
     # context
     c = {
-
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -1220,6 +1229,8 @@ def new_campus(request, organisations_id):
         'new_campus_form': new_campus_form(),
         'countries_results': countries_results,
         'countries_regions_results': countries_regions_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -1270,6 +1281,8 @@ def new_customer(request, organisations_id):
     c = {
         'new_customer_form': new_customer_form(initial=initial),
         'organisations_id': organisations_id,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -1464,6 +1477,8 @@ def new_opportunity(request, location_id,destination):
         'destination': destination,
         'opportunity_stage_results': opportunity_stage_results,
         'timezone': settings.TIME_ZONE,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -1533,6 +1548,8 @@ def new_organisation(request):
         'new_organisation_form': form,
         'duplicate_results': duplicate_results,
         'duplication_count': duplication_count,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -1723,6 +1740,8 @@ def new_project(request, location_id='', destination=''):
             'organisations_id': organisations_id,
             'customer_id': customer_id,
             'timezone': settings.TIME_ZONE,
+            'new_item_permission': permission_results['new_item'],
+            'administration_permission': permission_results['administration'],
         }
 
     return HttpResponse(t.render(c, request))
@@ -1813,6 +1832,8 @@ def new_quote(request,destination,primary_key):
         'end_month': end_date.month,
         'end_day': end_date.day,
         'timezone': settings.TIME_ZONE,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -2006,6 +2027,8 @@ def new_task(request, location_id='', destination=''):
             'timezone': settings.TIME_ZONE,
             'location_id': location_id,
             'destination': destination,
+            'new_item_permission': permission_results['new_item'],
+            'administration_permission': permission_results['administration'],
         }
 
     return HttpResponse(t.render(c, request))
@@ -2224,6 +2247,8 @@ def opportunity_information(request, opportunity_id):
         'quote_results': quote_results,
         'opportunity_perm': permission_results['opportunity'],
         'timezone': settings.TIME_ZONE,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -2338,6 +2363,8 @@ def organisation_information(request, organisations_id):
         'organisation_campus_permissions': permission_results['organisation_campus'],
         'customer_permissions': permission_results['customer'],
         'quote_results':quote_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -2550,6 +2577,8 @@ def project_information(request, project_id):
         'project_permissions': permission_results['project'],
         'project_history_permissions': permission_results['project_history'],
         'timezone': settings.TIME_ZONE,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -2650,6 +2679,8 @@ def quote_information(request, quote_id):
         'quote_or_invoice': quote_or_invoice,
         'timezone': settings.TIME_ZONE,
         'quote_permission': permission_results['quote'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -2682,6 +2713,8 @@ def resolve_task(request, task_id):
 
 @login_required(login_url='login')
 def search(request):
+    permission_results = return_user_permission_level(request, None, 'project')
+
     # Load the template
     t = loader.get_template('NearBeach/search.html')
 
@@ -2751,6 +2784,8 @@ def search(request):
         'task_results': task_results,
         'opportunity_results': opportunity_results,
         'requirement_results': requirement_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -2758,6 +2793,8 @@ def search(request):
 
 @login_required(login_url='login')
 def search_customers(request):
+    permission_results = return_user_permission_level(request, None, 'project')
+
     # Load the template
     t = loader.get_template('NearBeach/search_customers.html')
 
@@ -2804,6 +2841,8 @@ def search_customers(request):
     c = {
         'search_customers_form': search_customers_form(initial={'search_customers': search_customers_results}),
         'customers_results': customers_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -2811,6 +2850,8 @@ def search_customers(request):
 
 @login_required(login_url='login')
 def search_organisations(request):
+    permission_results = return_user_permission_level(request, None, 'project')
+
     # Load the template
     t = loader.get_template('NearBeach/search_organisations.html')
 
@@ -2859,6 +2900,8 @@ def search_organisations(request):
         'search_organisations_form': search_organisations_form(
             initial={'search_organisations': search_organisations_results}),
         'organisations_results': organisations_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -2871,6 +2914,7 @@ def search_projects_tasks(request):
 
     # context
     c = {
+
 
     }
 
@@ -3080,6 +3124,8 @@ def task_information(request, task_id):
         'finish_date_hour': task_end_results['hour'],
         'finish_date_minute': task_end_results['minute'],
         'finish_date_meridiems': task_end_results['meridiem'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     # Query the database for associated project information
@@ -3124,11 +3170,6 @@ def task_information(request, task_id):
     }
 
     return HttpResponse(t.render(c, request))
-
-
-
-
-
 
 
 """

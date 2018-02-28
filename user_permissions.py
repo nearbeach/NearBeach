@@ -69,7 +69,6 @@ def return_user_permission_level(request, group_list,permission_field):
     results = project.objects.filter(is_deleted="FALSE").values(field).aggregate(Max(field))
     results[field + "__max"]
     """
-
     for row in permission_field:
         if group_list == None:
             #There is no groups. Select the max value :)
@@ -99,9 +98,40 @@ def return_user_permission_level(request, group_list,permission_field):
 
             user_permission_level[row] = group_permission
 
-    #TEMP CODE FOR NOW!
-    user_permission_level['new_item'] = 4
-    user_permission_level['administration'] = 4
+
+    """
+    The following code is for the menu. We will need to find out if a user can actually ADD any items and do any
+    administration.
+    """
+    permission_results = user_groups.objects.filter(
+        is_deleted="FALSE",
+        username=request.user,
+        permission_set__is_deleted="FALSE",
+    ).aggregate(
+        Max('permission_set__project'),
+        Max('permission_set__task'),
+        Max('permission_set__requirement'),
+        Max('permission_set__organisation'),
+        Max('permission_set__customer'),
+        Max('permission_set__administration_assign_users_to_groups'),
+        Max('permission_set__administration_create_groups'),
+        Max('permission_set__administration_create_permission_sets'),
+        Max('permission_set__administration_create_users'),
+    )
+
+    user_permission_level['new_item'] = max(
+        permission_results['permission_set__project__max'],
+        permission_results['permission_set__task__max'],
+        permission_results['permission_set__requirement__max'],
+        permission_results['permission_set__organisation__max'],
+        permission_results['permission_set__customer__max'],
+    )
+    user_permission_level['administration'] = max(
+        permission_results['permission_set__administration_assign_users_to_groups__max'],
+        permission_results['permission_set__administration_create_groups__max'],
+        permission_results['permission_set__administration_create_permission_sets__max'],
+        permission_results['permission_set__administration_create_users__max'],
+    )
     #END TEMP CODE
 
     return user_permission_level

@@ -44,6 +44,8 @@ def new_requirement(request):
     # context
     c = {
         'new_requirement_form': new_requirement_form(),
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -73,6 +75,9 @@ def requirement_information(request, requirement_id):
         'requirement_information_form': requirement_information_form(initial=initial),
         'permission': permission_results['requirement'],
         'requirement_link_permissions': permission_results['requirement_link'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+
     }
 
     return HttpResponse(t.render(c, request))
@@ -118,6 +123,9 @@ def requirement_item_edit(request, requirement_item_id):
         'requirement_item_id': requirement_item_id,
         'requirement_items_form': requirement_items_form(initial=initial),
         'permission': permission_results['requirement'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+
     }
 
     return HttpResponse(t.render(c, request))
