@@ -1163,19 +1163,6 @@ def login(request):
                     )
                     submit_user_group.save()
 
-
-
-
-                user_groups_results = user_groups.objects.filter(
-                    username=request.user,
-                    is_deleted='FALSE',
-                )
-                request.session['NearBeach_Permissions'] = serializers.serialize(
-                    'json',
-                    user_groups_results,
-                    use_natural_foreign_keys=True,
-                    use_natural_primary_keys=True
-                )
                 request.session['is_superuser'] = request.user.is_superuser
 
                 return HttpResponseRedirect(reverse('dashboard'))
@@ -1282,13 +1269,6 @@ def new_customer(request, organisations_id):
 
     if permission < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
-    """
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect(reverse('login'))
 
     if request.method == 'POST':
         form = new_customer_form(request.POST)
