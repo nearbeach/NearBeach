@@ -49,6 +49,7 @@ QUOTE_APPROVAL_STATUS=(
 
 #List of tables - in alphabetical order
 class assigned_users(models.Model):
+	assigned_users_id=models.AutoField(primary_key=True)
 	user_id=models.ForeignKey(
 		User,
 		on_delete=models.CASCADE,
@@ -285,6 +286,7 @@ class documents(models.Model):
 
 
 class documents_folder(models.Model):
+	documents_folder_id=models.AutoField(primary_key=True)
 	document_key=models.ForeignKey(
 		'documents',
 		on_delete=models.CASCADE,
@@ -313,6 +315,7 @@ class documents_folder(models.Model):
 
 
 class document_permissions(models.Model):
+	document_permisssions_id=models.AutoField(primary_key=True)
 	document_key=models.ForeignKey(
 		'documents',
 		on_delete=models.CASCADE,
@@ -975,6 +978,7 @@ class opportunity_permissions(models.Model):
 
 
 class opportunity_next_step(models.Model):
+	opportunity_next_step_id=models.AutoField(primary_key=True)
 	opportunity_id=models.ForeignKey(
 		'opportunity',
 		on_delete=models.CASCADE
@@ -1530,7 +1534,7 @@ class project_stages(models.Model):
 
 
 class project_tasks(models.Model):
-	project_tasks=models.AutoField(primary_key=True)
+	project_tasks_id=models.AutoField(primary_key=True)
 	project_id=models.ForeignKey(
 		'project',
 		on_delete=models.CASCADE,
@@ -2043,6 +2047,7 @@ class tasks_customers(models.Model):
 		db_table="tasks_customers"
 		
 class tasks_groups(models.Model):
+	tasks_groups_id=models.AutoField(primary_key=True)
 	tasks_id=models.ForeignKey(
 		'tasks',
 		on_delete=models.CASCADE,
@@ -2123,6 +2128,7 @@ class tasks_opportunity(models.Model):
 
 
 class user_groups(models.Model):
+	user_groups_id=models.AutoField(primary_key=True)
 	username=models.ForeignKey(
 		User,
 		on_delete=models.CASCADE,
