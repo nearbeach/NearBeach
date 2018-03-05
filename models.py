@@ -474,6 +474,103 @@ class group_permissions(models.Model):
 		db_table="group_permissions"
 
 
+class kanban_card:
+	kanban_card_id=models.AutoField(primary_key=True)
+	kanban_card_text=models.CharField(max_length=255)
+	kanban_card_sort_number=models.IntegerField()
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE',
+	)
+
+	class Meta:
+		db_table = "kanban_card"
+
+	def __str__(self):
+		return self.kanban_card_text
+
+
+class kanban_column:
+	kanban_column_id=models.AutoField(primary_key=True)
+	kanban_column_name=models.CharField(max_length=255)
+	kanban_column_sort_number=models.IntegerField()
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE',
+	)
+
+	class Meta:
+		db_table = "kanban_column"
+
+	def __str__(self):
+		return self.kanban_column_name
+
+
+class kanban_comment:
+	kanban_comment_id=models.AutoField(primary_key=True)
+	kanban_comment=models.TextField()
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE',
+	)
+
+	class Meta:
+		db_table = "kanban_comment"
+
+	def __str__(self):
+		return self.kanban_comment
+
+
+class kanban_level:
+	kanban_level_id=models.AutoField(primary_key=True)
+	kanban_level_name=models.CharField(max_length=255)
+	kanban_level_sort_number=models.IntegerField()
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE',
+	)
+
+	class Meta:
+		db_table = "kanban_level"
+
+	def __str__(self):
+		return self.kanban_level_name
+
+
+
+
 class list_of_amount_type(models.Model):
 	amount_type_id=models.AutoField(primary_key=True)
 	amount_type_description=models.CharField(max_length=20)

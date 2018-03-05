@@ -1000,6 +1000,36 @@ def index(request):
     # Default
     return HttpResponseRedirect(reverse('login'))
 
+def kanban_information(request,kanban_id):
+    t = loader.get_template('NearBeach/kanban_information.html')
+
+    # context
+    c = {}
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def kanban_list(request):
+    t = loader.get_template('NearBeach/kanban_list.html')
+
+    # context
+    c = {}
+
+    return HttpResponse(t.render(c, request))
+
+
+
+
+
+def kanban_update_card(request,kanban_id):
+    t = loader.get_template('NearBeach/blank.html')
+
+    # context
+    c = {}
+
+    return HttpResponse(t.render(c, request))
+
 
 
 def login(request):
@@ -2359,7 +2389,7 @@ def organisation_information(request, organisations_id):
         'opportunity_results': opportunity_results,
         'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
         'organisations_id': organisations_id,
-        'organisation_permissions': permission_results['organisations'],
+        'organisation_permissions': permission_results['organisation'],
         'organisation_campus_permissions': permission_results['organisation_campus'],
         'customer_permissions': permission_results['customer'],
         'quote_results':quote_results,
