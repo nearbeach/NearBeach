@@ -1000,11 +1000,31 @@ def index(request):
     # Default
     return HttpResponseRedirect(reverse('login'))
 
-def kanban_information(request,kanban_id):
+def kanban_information(request,kanban_board_id):
+    #Get the required information
+    kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+    kanban_level_results = kanban_level.objects.filter(
+        is_deleted="FALSE",
+        kanban_board=kanban_board_id,
+    )
+    kanban_column_results = kanban_column.objects.filter(
+        is_deleted="FALSE",
+        kanban_board=kanban_board_id,
+    )
+    kanban_card_results = kanban_card.objects.filter(
+        is_deleted="FALSE",
+        kanban_board=kanban_board_id,
+    )
+
     t = loader.get_template('NearBeach/kanban_information.html')
 
     # context
-    c = {}
+    c = {
+        'kanban_board_results': kanban_board_results,
+        'kanban_level_results': kanban_level_results,
+        'kanban_column_results': kanban_column_results,
+        'kanban_card_results': kanban_card_results,
+    }
 
     return HttpResponse(t.render(c, request))
 

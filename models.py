@@ -474,10 +474,45 @@ class group_permissions(models.Model):
 		db_table="group_permissions"
 
 
-class kanban_card:
+class kanban_board(models.Model):
+	kanban_board_id=models.AutoField(primary_key=True)
+	kanban_board_name=models.CharField(max_length=255)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE',
+	)
+
+	class Meta:
+		db_table = "kanban_board"
+
+	def __str__(self):
+		return self.kanban_board_name
+
+
+class kanban_card(models.Model):
 	kanban_card_id=models.AutoField(primary_key=True)
 	kanban_card_text=models.CharField(max_length=255)
 	kanban_card_sort_number=models.IntegerField()
+	kanban_level=models.ForeignKey(
+		'kanban_level',
+		on_delete=models.CASCADE,
+	)
+	kanban_column=models.ForeignKey(
+		'kanban_column',
+		on_delete=models.CASCADE,
+	)
+	kanban_board=models.ForeignKey(
+		'kanban_board',
+		on_delete=models.CASCADE,
+	)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 	change_user = models.ForeignKey(
@@ -498,10 +533,14 @@ class kanban_card:
 		return self.kanban_card_text
 
 
-class kanban_column:
+class kanban_column(models.Model):
 	kanban_column_id=models.AutoField(primary_key=True)
 	kanban_column_name=models.CharField(max_length=255)
 	kanban_column_sort_number=models.IntegerField()
+	kanban_board=models.ForeignKey(
+		'kanban_board',
+		on_delete=models.CASCADE,
+	)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 	change_user = models.ForeignKey(
@@ -522,9 +561,13 @@ class kanban_column:
 		return self.kanban_column_name
 
 
-class kanban_comment:
+class kanban_comment(models.Model):
 	kanban_comment_id=models.AutoField(primary_key=True)
 	kanban_comment=models.TextField()
+	kanban_card=models.ForeignKey(
+		'kanban_card',
+		on_delete=models.CASCADE,
+	)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 	change_user = models.ForeignKey(
@@ -545,10 +588,14 @@ class kanban_comment:
 		return self.kanban_comment
 
 
-class kanban_level:
+class kanban_level(models.Model):
 	kanban_level_id=models.AutoField(primary_key=True)
 	kanban_level_name=models.CharField(max_length=255)
 	kanban_level_sort_number=models.IntegerField()
+	kanban_board=models.ForeignKey(
+		'kanban_board',
+		on_delete=models.CASCADE,
+	)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 	change_user = models.ForeignKey(

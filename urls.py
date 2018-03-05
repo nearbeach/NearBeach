@@ -235,7 +235,7 @@ url(r'^list_of_taxes_deactivate/(?P<tax_id>[0-9]+)/', views_administration.list_
 
 #Kanban Board
 	url(r'^kanban_list/', views.kanban_list,name='kanban_list'),
-	url(r'^kanban_information/(?P<kanban_id>[0-9]+)/', views.kanban_information, name='kanban_information'),
+	url(r'^kanban_information/(?P<kanban_board_id>[0-9]+)/', views.kanban_information, name='kanban_information'),
 ]
 
 if settings.DEBUG:
