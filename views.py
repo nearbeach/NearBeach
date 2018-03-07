@@ -1029,6 +1029,24 @@ def kanban_information(request,kanban_board_id):
     return HttpResponse(t.render(c, request))
 
 
+def kanban_move_card(request,kanban_card_id,kanban_column_id,kanban_level_id):
+    if request.method == "POST":
+        kanban_card_result = kanban_card.objects.get(kanban_card_id=kanban_card_id)
+        kanban_card_result.kanban_column_id = kanban_column.objects.get(kanban_column_id=kanban_column_id)
+        kanban_card_result.kanban_level_id = kanban_level.objects.get(kanban_level_id=kanban_level_id)
+        kanban_card_result.save()
+
+        #Send back blank like a crazy person.
+        t = loader.get_template('NearBeach/blank.html')
+
+        # context
+        c = {}
+
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("This request can only be through POST")
+
+
 @login_required(login_url='login')
 def kanban_list(request):
     t = loader.get_template('NearBeach/kanban_list.html')
