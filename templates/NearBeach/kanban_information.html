@@ -1,10 +1,139 @@
 {% extends "./template.html" %}
 {% block content %}
+{% load nearbeach_extras %}
 {% load static %}
+    <style>
+    /*TEMP STYLE*/
+    #board {
+        min-height: 100px;
+        position: relative;
+    }
+    .kanban_level {
+        position: relative;
+        min-height:100px;
+    }
+    .kanban_column {
+        min-height: 100px;
+        width: 300px;
+        border: 2px solid black;
+        position: absolute;
+
+        background-color: tan;
+    }
+
+    		*[draggable=true]
+		{
+			float:left;
+			min-width: 90%;
+			min-height: 50px;
+			border: 2px solid black;
+			margin: 10px;
+			font-weight:bold;
+			min-height:60px;
+						background-image: -webkit-gradient(linear,
+            		left top, left bottom,
+					color-stop(0.63, white),
+            		color-stop(0.92, rgb(5,161,245)));
+                    background-image:-moz-linear-gradient(
+                        center top,
+                        white 63%,
+                        rgb(5,161,245) 92%
+                    );
+            	 -webkit-background-size:1px 8px;
+            	 -moz-background-size:1px 8px;
+            	 background-size:1px 8px;
+				 background-repeat:repeat;
+		}
+		.cardTitle
+		{
+			background-color: rgb(255,255,255);
+			border:2px solid white;
+		}
+    </style>
+    <h2>Kanban Table</h2>
+    <table>
+        <tr>
+            <td style="min-width: 300px;">Backlog</td>
+            <td style="min-width: 300px;">To Do</td>
+            <td style="min-width: 300px;">Finished</td>
+            <td style="min-width: 300px;">Extra</td>
+            <td style="min-width: 300px;">Extra</td>
+            <td style="min-width: 300px;">Extra</td>
+            <td style="min-width: 300px;">Extra</td>
+            <td style="min-width: 300px;">Extra</td>
+        </tr>
+        <tr style="min-height: 150px">
+            <td>
+                <div id="item1" draggable="true">
+                    <div class="cardTitle">
+                        Learn HTML5
+                    </div>
+                </div>
+                <div id="item2" draggable="true">
+                    <div class="cardTitle">
+                        Learn HTML5
+                    </div>
+                </div>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td><td></td><td></td><td></td>
+        </tr>
+        <tr style="min-height: 150px">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td><td></td><td></td><td></td>
+        </tr>
+    </table>
+
+
     <h2>Kanban Information</h2>
-    <div>
-        <div style="background-color:green; width: 250px;"><ul><li>COLUMN NAME</li></ul></div>
-        <div style="background-color:green; width: 250px;"><ul><li>COLUMN NAME</li></ul></div>
-        <div style="background-color:green; width: 250px;"><ul><li>COLUMN NAME</li></ul></div>
+    <div id="board">
+        {% for level in kanban_level_results %}
+            <div id="level_{{ level.kanban_level_id }}" class="kanban_level">
+                <header>{{ level.kanban_level_name }}</header>
+                {% for column in kanban_column_results %}
+                    <div id="column_{{ column.kanban_column_id }}" class="kanban_column" style="left: {{ forloop.counter0|mul:302 }}px">
+                        <header>{{ column.kanban_column_name }}</header>
+                        <!-- TEMP CARDS -->
+                            <div id="item2" class="kanban_card" draggable="true">
+                                <div class="cardTitle">
+                                    Learn CSS3
+                                </div>
+                            </div>
+
+                            <div id="item1" draggable="true">
+                                <div class="cardTitle">
+                                    Learn HTML5
+                                </div>
+                            </div>
+                        <!-- END TEMP CARDS -->
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
     </div>
+		<script type="text/javascript">
+		$('document').ready(on_page_load());
+
+        function on_page_load(){
+            $('.kanban_card').bind('dragstart', function(event) {
+                event.originalEvent.dataTransfer.setData("text/plain", event.target.getAttribute('id'));
+            });
+
+  		    // bind the dragover event on the board sections
+            $('.kanban_column').bind('dragover', function(event) {
+                event.preventDefault();
+            });
+
+			// bind the drop event on the board sections
+  			$('.kanban_column').bind('drop', function(event) {
+            var notecard = event.originalEvent.dataTransfer.getData("text/plain");
+            event.target.appendChild(document.getElementById(notecard));
+			// Turn off the default behaviour
+			// without this, FF will try and go to a URL with your id's name
+            event.preventDefault();
+			});
+        }
 {% endblock %}
