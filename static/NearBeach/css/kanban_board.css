@@ -1,0 +1,41 @@
+.kanban_column_header {
+    background-color:#52460a;
+    text-align:center;
+    color:white;
+    padding: 2px 0px;
+    min-width: 300px;
+}
+
+.kanban_level {
+    min-height: 100px;
+}
+
+*[draggable=true]
+{
+    float:left;
+    min-width: 90%;
+    min-height: 50px;
+    border: 2px solid black;
+    margin: 10px;
+    font-weight:bold;
+    min-height:60px;
+    background-image: -webkit-gradient(
+        linear,
+        left top, left bottom,
+        color-stop(0.63, white),
+        color-stop(0.92, rgb(5,161,245)));
+        background-image:-moz-linear-gradient(
+        center top,
+        white 63%,
+        rgb(5,161,245) 92%
+    );
+    -webkit-background-size:1px 8px;
+    -moz-background-size:1px 8px;
+    background-size:1px 8px;
+    background-repeat:repeat;
+}
+.cardTitle
+{
+    background-color: rgb(255,255,255);
+    border:2px solid white;
+}

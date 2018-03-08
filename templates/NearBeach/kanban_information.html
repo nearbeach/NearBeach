@@ -3,56 +3,14 @@
 {% load nearbeach_extras %}
 {% load static %}
 <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
-    <style>
-    /*TEMP STYLE*/
-    .kanban_column_header {
-        background-color:#52460a;
-        text-align:center;
-        color:white;
-        padding: 2px 0px;
-        min-width: 300px;
-    }
-
-    .kanban_level {
-        min-height: 100px;
-    }
-
-    *[draggable=true]
-    {
-        float:left;
-        min-width: 90%;
-        min-height: 50px;
-        border: 2px solid black;
-        margin: 10px;
-        font-weight:bold;
-        min-height:60px;
-        background-image: -webkit-gradient(
-            linear,
-            left top, left bottom,
-            color-stop(0.63, white),
-            color-stop(0.92, rgb(5,161,245)));
-            background-image:-moz-linear-gradient(
-            center top,
-            white 63%,
-            rgb(5,161,245) 92%
-        );
-        -webkit-background-size:1px 8px;
-        -moz-background-size:1px 8px;
-        background-size:1px 8px;
-        background-repeat:repeat;
-    }
-    .cardTitle
-    {
-        background-color: rgb(255,255,255);
-        border:2px solid white;
-    }
-    </style>
+<link rel='stylesheet' href='{% static "NearBeach/css/kanban_board.css" %}' />
 
     <h2>Kanban Table</h2>
     <table>
         {% for level in kanban_level_results %}
-            {% if forloop.counter0 == 0 %}
+            {% if forloop.first %}
                 <tr>
+                    <td></td>
                     {% for column in kanban_column_results %}
                         <td class="kanban_column_header">{{ column.kanban_column_name }}</td>
                     {% endfor %}
@@ -61,6 +19,7 @@
 
             {% with level_cards=kanban_card_results|filter_level_cards:level.kanban_level_id %}
                 <tr class="kanban_level">
+                    <td>{{ level.kanban_level_name }}</td>
                     {% for column in kanban_column_results %}
                         <td class="kanban_column" data-column="{{ column.kanban_column_id }}" data-level="{{ level.kanban_level_id }}">
                             {% with column_cards=level_cards|filter_column_cards:column.kanban_column_id %}
@@ -79,9 +38,43 @@
             {% endwith %}
         {% endfor %}
     </table>
+    <form id="new_card_form">
+        <a href="javascript:void(0)" onclick="load_kanban_new_card()">New Card</a>
+    </form>
 
     <script type="text/javascript">
 		$('document').ready(on_page_load());
+
+		$("#new_card_form").on("submit", function(event) {
+		    event.preventDefault();
+
+		    $.ajax({
+                url: '/kanban_new_card/{{ kanban_board_id }}/',
+                type: "POST",
+                data: $(this).serialize(),
+                dataType: "HTML",
+                success: function() {
+                    alert("IT WORKED")
+                },
+                error: function() {
+                    alert("Sorry, submitting the new card did not work for some reason.")
+                }
+            })
+        });
+
+		function load_kanban_new_card() {
+		    $.ajax({
+                url: '/kanban_new_card/{{ kanban_board_id }}/',
+                type: "GET",
+                dataType: "HTML",
+                success: function(data) {
+                    $("#new_card_form").html(data);
+                },
+                error: function() {
+                    alert("We are sorry, something went wrong with getting the new card ready.");
+                }
+            })
+        }
 
         function on_page_load(){
             $('.kanban_card').bind('dragstart', function(event) {
@@ -124,5 +117,7 @@
                 })
 			});
         }
+
+
     </script>
 {% endblock %}

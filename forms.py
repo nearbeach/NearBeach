@@ -573,6 +573,35 @@ class information_task_history_form(forms.Form):
     )
 
 
+class kanban_card_form(ModelForm):
+    kanban_card_text = forms.CharField(
+        required=True,
+        max_length=255,
+        widget=TextInput(attrs={
+            'placeholder': 'Card Text',
+        }),
+    )
+    class Meta:
+        model = kanban_card
+        fields = {
+            'kanban_card_text',
+        }
+
+
+class kanban_board_form(ModelForm):
+    kanban_board_name = forms.CharField(
+        max_length=255,
+        widget=TextInput(attrs={
+            'placeholder': 'Board Name',
+        }),
+    )
+    class Meta:
+        model = kanban_board
+        fields = {
+            'kanban_board_name',
+        }
+
+
 class list_of_taxes_form(ModelForm):
     class Meta:
         model = list_of_taxes

@@ -2,11 +2,6 @@ from django.template import Library
 register = Library()
 
 
-@register.filter(name='mul')
-def cut(value, arg):
-    return value * arg
-
-
 @register.filter(name='filter_level_cards')
 def filter_level_cards(value, arg):
     """

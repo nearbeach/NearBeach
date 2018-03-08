@@ -1001,6 +1001,11 @@ def index(request):
     return HttpResponseRedirect(reverse('login'))
 
 def kanban_information(request,kanban_board_id):
+    permission_results = return_user_permission_level(request, None,['kanban'])
+
+    if permission_results['kanban'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     #Get the required information
     kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
     kanban_level_results = kanban_level.objects.filter(
@@ -1020,10 +1025,13 @@ def kanban_information(request,kanban_board_id):
 
     # context
     c = {
+        'kanban_board_id': kanban_board_id,
         'kanban_board_results': kanban_board_results,
         'kanban_level_results': kanban_level_results,
         'kanban_column_results': kanban_column_results,
         'kanban_card_results': kanban_card_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -1049,17 +1057,61 @@ def kanban_move_card(request,kanban_card_id,kanban_column_id,kanban_level_id):
 
 @login_required(login_url='login')
 def kanban_list(request):
+    permission_results = return_user_permission_level(request, None,['kanban'])
+
+    if permission_results['kanban'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     t = loader.get_template('NearBeach/kanban_list.html')
 
     # context
-    c = {}
+    c = {
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def kanban_new_card(request,kanban_board_id):
+    permission_results = return_user_permission_level(request, None,['kanban'])
+
+    if permission_results['kanban'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        form = kanban_card_form(request.POST)
+        if form.is_valid():
+            print("FORM IS VALID")
+            ### NOTE - this function should return the CARD back to the system. From here it can be placed in the
+            ### correct spot (hopefully without having to reload).
+        else:
+            print(form.errors)
+
+
+    kanban_column_results = kanban_column.objects.filter(kanban_board=kanban_board_id)
+    kanban_level_results = kanban_level.objects.filter(kanban_board=kanban_board_id)
+
+    t = loader.get_template('NearBeach/kanban/kanban_new_card.html')
+
+    # context
+    c = {
+        'kanban_column_results': kanban_column_results,
+        'kanban_level_results': kanban_level_results,
+        'kanban_card_form': kanban_card_form(),
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'kanban_board_id': kanban_board_id,
+    }
 
     return HttpResponse(t.render(c, request))
 
 
 
 
-
+@login_required(login_url='login')
 def kanban_update_card(request,kanban_id):
     t = loader.get_template('NearBeach/blank.html')
 
