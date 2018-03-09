@@ -10,6 +10,10 @@
     min-height: 100px;
 }
 
+.kanban_card {
+    padding-bottom: 30px;
+}
+
 *[draggable=true]
 {
     float:left;

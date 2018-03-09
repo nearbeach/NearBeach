@@ -18,6 +18,7 @@ from django.urls import reverse
 from .misc_functions import *
 from .user_permissions import return_user_permission_level
 from datetime import timedelta
+from django.db.models import Max
 
 #import python modules
 import datetime, json, simplejson, urllib, urllib2
@@ -1011,15 +1012,15 @@ def kanban_information(request,kanban_board_id):
     kanban_level_results = kanban_level.objects.filter(
         is_deleted="FALSE",
         kanban_board=kanban_board_id,
-    )
+    ).order_by('kanban_level_sort_number')
     kanban_column_results = kanban_column.objects.filter(
         is_deleted="FALSE",
         kanban_board=kanban_board_id,
-    )
+    ).order_by('kanban_column_sort_number')
     kanban_card_results = kanban_card.objects.filter(
         is_deleted="FALSE",
         kanban_board=kanban_board_id,
-    )
+    ).order_by('kanban_card_sort_number')
 
     t = loader.get_template('NearBeach/kanban_information.html')
 
@@ -1082,11 +1083,42 @@ def kanban_new_card(request,kanban_board_id):
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST":
-        form = kanban_card_form(request.POST)
+        form = kanban_card_form(request.POST,kanban_board_id=kanban_board_id)
         if form.is_valid():
-            print("FORM IS VALID")
-            ### NOTE - this function should return the CARD back to the system. From here it can be placed in the
-            ### correct spot (hopefully without having to reload).
+            kanban_column_results=form.cleaned_data['kanban_column']
+            kanban_level_results=form.cleaned_data['kanban_level']
+
+            #To add the card at the bottom of the pack, we first need to get the max value
+            max_value_results = kanban_card.objects.filter(
+                kanban_column=kanban_column_results.kanban_column_id,
+                kanban_level=kanban_level_results.kanban_level_id,
+            ).aggregate(Max('kanban_card_sort_number'))
+
+            #In case it returns a none
+            try:
+                max_value = max_value_results['kanban_card_sort_number__max'] + 1
+            except:
+                max_value = 0
+
+            kanban_card_submit = kanban_card(
+                kanban_card_text=form.cleaned_data['kanban_card_text'],
+                kanban_column=kanban_column_results,
+                kanban_level=kanban_level_results,
+                change_user=request.user,
+                kanban_card_sort_number=max_value,
+                kanban_board_id=kanban_board_id,
+            )
+            kanban_card_submit.save()
+
+            #Let's return the CARD back so that the user does not have to refresh
+            t = loader.get_template('NearBeach/kanban/kanban_card_information.html')
+
+            c = {
+                'kanban_card_submit': kanban_card_submit,
+            }
+
+            return HttpResponse(t.render(c, request))
+
         else:
             print(form.errors)
 
@@ -1100,7 +1132,9 @@ def kanban_new_card(request,kanban_board_id):
     c = {
         'kanban_column_results': kanban_column_results,
         'kanban_level_results': kanban_level_results,
-        'kanban_card_form': kanban_card_form(),
+        'kanban_card_form': kanban_card_form(
+            kanban_board_id=kanban_board_id,
+        ),
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
         'kanban_board_id': kanban_board_id,

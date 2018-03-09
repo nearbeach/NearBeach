@@ -574,6 +574,13 @@ class information_task_history_form(forms.Form):
 
 
 class kanban_card_form(ModelForm):
+    def __init__(self, *args, **kwargs):
+        kanban_board_id = kwargs.pop('kanban_board_id')
+
+        super(kanban_card_form, self).__init__(*args, **kwargs)
+
+        self.fields['kanban_column'].queryset = kanban_column.objects.filter(kanban_board=kanban_board_id)
+        self.fields['kanban_level'].queryset = kanban_level.objects.filter(kanban_board=kanban_board_id)
     kanban_card_text = forms.CharField(
         required=True,
         max_length=255,
@@ -585,6 +592,8 @@ class kanban_card_form(ModelForm):
         model = kanban_card
         fields = {
             'kanban_card_text',
+            'kanban_column',
+            'kanban_level',
         }
 
 

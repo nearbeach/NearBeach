@@ -2,19 +2,7 @@
 <h2>New Kanban Card</h2>
 <ul>
     <li>{{ kanban_card_form.kanban_card_text }}</li>
-    <li>
-        <select id="id_kanban_column" name="id_kanban_column">
-            {% for row in kanban_column_results %}
-                <option id="{{ row.kanban_column_id }}">{{ row.kanban_column_name }}</option>
-            {% endfor %}
-        </select>
-    </li>
-    <li>
-        <select id="id_kanban_level" name="id_kanban_level">
-            {% for row in kanban_level_results %}
-                <option id="{{ row.kanban_level_id }}">{{ row.kanban_level_name }}</option>
-            {% endfor %}
-        </select>
-    </li>
+    <li>{{ kanban_card_form.kanban_column }}</li>
+    <li>{{ kanban_card_form.kanban_level }}</li>
     <li><input type="submit" value="Submit new "><a href="javascript:void(0)">Cancel</a> </li>
 </ul>

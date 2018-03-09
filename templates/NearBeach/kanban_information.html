@@ -48,13 +48,21 @@
 		$("#new_card_form").on("submit", function(event) {
 		    event.preventDefault();
 
+		    var kanban_column = $("#id_kanban_column").val();
+            var kanban_level = $("#id_kanban_level").val();
+
 		    $.ajax({
                 url: '/kanban_new_card/{{ kanban_board_id }}/',
                 type: "POST",
                 data: $(this).serialize(),
                 dataType: "HTML",
-                success: function() {
-                    alert("IT WORKED")
+                success: function(data) {
+                    $(".kanban_column[data-column=" + kanban_column + "][data-level=" + kanban_level + "]").html(
+                        $(".kanban_column[data-column=" + kanban_column + "][data-level=" + kanban_level + "]").html() + data
+                    );
+
+                    //We will need the page to re-bind everything
+                    on_page_load()
                 },
                 error: function() {
                     alert("Sorry, submitting the new card did not work for some reason.")
@@ -85,6 +93,11 @@
             $('.kanban_column').bind('dragover', function(event) {
                 event.preventDefault();
             });
+
+            //Double click
+            $('.kanban_card').bind('dblclick', function(event) {
+                alert("DOUBLE CLICKED");
+            })
 
 			// bind the drop event on the board sections
   			$('.kanban_column').bind('drop', function(event) {
