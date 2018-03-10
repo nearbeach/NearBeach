@@ -42,6 +42,10 @@
         <a href="javascript:void(0)" onclick="load_kanban_new_card()">New Card</a>
     </form>
 
+    <form id="edit_card_form">
+        <!-- Placeholder for the form -->
+    </form>
+
 
     <script type="text/javascript">
 		$('document').ready(on_page_load());
@@ -98,12 +102,21 @@
 
             //Double click
             $('.kanban_card').bind('dblclick', function(event) {
-                alert("DOUBLE CLICKED");
-                $("<iframe src='/dashboard/'").dialog({
-                    title: 'Dashboard',
-                    width: 600,
-                    height: 400,
-                }).width(570).height(370)
+                //alert("Need to get card data. How?");
+                //alert($(event.target).attr('id'));
+                var kanban_card_id = $(event.target).attr('id');
+
+                $.ajax({
+                    url: '/kanban_edit_card/' + kanban_card_id + '/',
+                    type: 'GET',
+                    dataType: 'HTML',
+                    success: function(data) {
+                        $("#edit_card_form").html(data)
+                    },
+                    error: function() {
+                        alert("Sorry, we can not edit the card at the moment");
+                    }
+                })
             });
 
 

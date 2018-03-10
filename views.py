@@ -1001,6 +1001,38 @@ def index(request):
     # Default
     return HttpResponseRedirect(reverse('login'))
 
+
+def kanban_edit_card(request,kanban_card_id):
+    permission_results = return_user_permission_level(request, None,['kanban','kanban_card','kanban_comment'])
+
+    if permission_results['kanban'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #Get data
+    kanban_card_results = kanban_card.objects.get(kanban_card_id=kanban_card_id)
+    kanban_comment_results = kanban_comment.objects.filter(kanban_card_id=kanban_card_id)
+
+
+    # Get template
+    t = loader.get_template('NearBeach/kanban/kanban_edit_card.html')
+
+    # context
+    c = {
+        'kanban_card_form': kanban_card_form(
+            kanban_board_id=kanban_card_results.kanban_board_id,
+            instance=kanban_card_results,
+        ),
+        'kanban_permission': permission_results['kanban'],
+        'kanban_card_permission': permission_results['kanban_card'],
+        'kanban_comment_permission': permission_results['kanban_comment'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'kanban_comment_results': kanban_comment_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
 def kanban_information(request,kanban_board_id):
     permission_results = return_user_permission_level(request, None,['kanban'])
 

@@ -568,6 +568,12 @@ class kanban_comment(models.Model):
 		'kanban_card',
 		on_delete=models.CASCADE,
 	)
+	user_id=models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		null=True
+	)
+	user_infomation = models.CharField(max_length=255)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 	change_user = models.ForeignKey(

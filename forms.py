@@ -581,6 +581,14 @@ class kanban_card_form(ModelForm):
 
         self.fields['kanban_column'].queryset = kanban_column.objects.filter(kanban_board=kanban_board_id)
         self.fields['kanban_level'].queryset = kanban_level.objects.filter(kanban_board=kanban_board_id)
+
+    kanban_card_comment = forms.CharField(
+        required=False,
+        widget=TextInput(attrs={
+            'placeholder': 'Card Comments',
+        }),
+    )
+
     kanban_card_text = forms.CharField(
         required=True,
         max_length=255,
@@ -588,6 +596,7 @@ class kanban_card_form(ModelForm):
             'placeholder': 'Card Text',
         }),
     )
+
     class Meta:
         model = kanban_card
         fields = {
