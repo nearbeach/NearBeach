@@ -1,0 +1,15 @@
+{% extends "./template.html" %}
+{% block content %}
+	<h2>New Kanban Board</h2>
+	<form action={% url 'new_kanban_board' %} method="post" class="kanban_board_form" id="input-form">
+        {% csrf_token %}
+        <ul>
+            <li>{{ kanban_board_form.kanban_board_name }}</li>
+            <li><h4>Column Names</h4></li>
+            <li>{{ kanban_board_form.kanban_board_column }}</li>
+            <li><h4>Level Names</h4></li>
+            <li>{{ kanban_board_form.kanban_board_level }}</li>
+            <li><input type="submit" value="Submit new kanban board"><a href="{% url 'kanban_list' %}">Cancel</a></li>
+        </ul>
+    </form>
+{% endblock %}

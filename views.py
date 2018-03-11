@@ -1533,9 +1533,63 @@ def new_customer(request, organisations_id):
 
 @login_required(login_url='login')
 def new_kanban_board(request):
-    t = loader.get_template('NearBeach/blank.html')
+    permission_results = return_user_permission_level(request, None, 'kanban')
 
-    c = {}
+    if permission_results['kanban'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        form = kanban_board_form(request.POST)
+        if form.is_valid():
+            #Create the new board
+            kanban_board_submit = kanban_board(
+                kanban_board_name=form.cleaned_data['kanban_board_name'],
+                change_user=request.user,
+            )
+            kanban_board_submit.save()
+
+            #Create the levels for the board
+            column_count = 1
+            for line in form.cleaned_data['kanban_board_column'].split('\n'):
+                kanban_column_submit = kanban_column(
+                    kanban_column_name=line,
+                    kanban_column_sort_number=column_count,
+                    kanban_board=kanban_board_submit,
+                    change_user=request.user,
+                )
+                kanban_column_submit.save()
+                column_count = column_count + 1
+
+
+            level_count = 1
+            for line in form.cleaned_data['kanban_board_level'].split('\n'):
+                kanban_level_submit = kanban_level(
+                    kanban_level_name=line,
+                    kanban_level_sort_number=level_count,
+                    kanban_board=kanban_board_submit,
+                    change_user=request.user,
+                )
+                kanban_level_submit.save()
+                level_count = level_count + 1
+
+            #Send you to the kanban information center
+            return HttpResponseRedirect(reverse('kanban_information', args={kanban_board_submit.kanban_board_id}))
+
+        else:
+            print(form.errors)
+            return HttpResponseBadRequest(form.errors)
+
+    t = loader.get_template('NearBeach/new_kanban_board.html')
+
+    c = {
+        'kanban_board_form': kanban_board_form(initial={
+            'kanban_board_column': 'Backlog\nIn Progress\nCompleted',
+            'kanban_board_level': 'Sprint 1\nSprint 2',
+        }),
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+
+    }
 
     return HttpResponse(t.render(c, request))
 

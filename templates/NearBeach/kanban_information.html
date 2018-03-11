@@ -5,7 +5,7 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
 <link rel='stylesheet' href='{% static "NearBeach/css/kanban_board.css" %}' />
 
-    <h2>Kanban Table</h2>
+    <h2>{{ kanban_board_results.kanban_board_name }}</h2>
     <table>
         {% for level in kanban_level_results %}
             {% if forloop.first %}

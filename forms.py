@@ -606,18 +606,26 @@ class kanban_card_form(ModelForm):
         }
 
 
-class kanban_board_form(ModelForm):
+class kanban_board_form(forms.Form):
     kanban_board_name = forms.CharField(
         max_length=255,
         widget=TextInput(attrs={
             'placeholder': 'Board Name',
         }),
     )
-    class Meta:
-        model = kanban_board
-        fields = {
-            'kanban_board_name',
-        }
+    kanban_board_column = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Please place each new column on a new line. Each name will be truncated to 255 characters',
+        }),
+        required=True,
+    )
+    kanban_board_level = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Please place each new level on a new line. Each name will be truncated to 255 characters',
+        }),
+        required=True,
+    )
+
 
 
 class list_of_taxes_form(ModelForm):
