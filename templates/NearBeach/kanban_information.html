@@ -42,6 +42,12 @@
         <a href="javascript:void(0)" onclick="load_kanban_new_card()">New Card</a>
     </form>
 
+
+    <form id="kanban_new_link">
+        <a href="javascript:void(0)" onclick="load_kanban_new_link()">Link Project, Task, or Requirement</a>
+    </form>
+
+
     <form id="edit_card_form">
         <!-- Placeholder for the form -->
     </form>
@@ -104,6 +110,10 @@
 		    $("#new_card_form").html('<a href="javascript:void(0)" onclick="load_kanban_new_card()">New Card</a>');
         }
 
+        function close_kanban_new_link() {
+		    $("#kanban_new_link").html('<a href="javascript:void(0)" onclick="load_kanban_new_link()">Link Project, Task, or Requirement</a>');
+        }
+
 
 		function load_kanban_new_card() {
 		    $.ajax({
@@ -115,6 +125,18 @@
                 },
                 error: function() {
                     alert("We are sorry, something went wrong with getting the new card ready.");
+                }
+            })
+        }
+
+
+        function load_kanban_new_link() {
+		    $.ajax({
+                url: '/kanban_new_link/',
+                type: 'GET',
+                dataType: 'HTML',
+                success: function(data) {
+                    $("#kanban_new_link").html(data).scrollIntoView();
                 }
             })
         }
@@ -183,6 +205,33 @@
                     }
                 })
 			});
+        }
+
+        function kanban_link_object(location_id, destination) {
+            //Send data to the database
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/kanban_new_link/' + location_id + '/' + destination + '/',
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function (data) {
+                    //ADD DATA TO THE CORRECT CARD!!!
+                    //REMOVE PRESENCE OF LINK
+                    alert("Sent data successfully")
+                },
+                error: function(data) {
+                    alert("Sorry, the linking of the object didn't work. Please try again.");
+                    alert(data);
+                }
+            })
         }
 
 

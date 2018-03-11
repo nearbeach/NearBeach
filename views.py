@@ -1231,6 +1231,44 @@ def kanban_new_card(request,kanban_board_id):
 
 
 
+@login_required(login_url='login')
+def kanban_new_link(request,location_id='',destination=''):
+    permission_results = return_user_permission_level(request, None,['kanban'])
+
+    if permission_results['kanban'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        return HttpResponseBadRequest("I have not done this section yet")
+
+    #Get data
+    project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_status__in=('New','Open'),
+    )
+    tasks_results = tasks.objects.filter(
+        is_deleted="FALSE",
+        task_status__in=('New','Open'),
+    )
+    requirements_results = requirements.objects.filter(
+        is_deleted="FALSE",
+        #There is no requirements status - BUG275
+    )
+
+    t = loader.get_template('NearBeach/kanban/kanban_new_link.html')
+
+    # context
+    c = {
+        'project_results': project_results,
+        'tasks_results': tasks_results,
+        'requirements_results': requirements_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
 
 @login_required(login_url='login')
 def kanban_properties(request,kanban_board_id):

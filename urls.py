@@ -241,7 +241,8 @@ url(r'^list_of_taxes_deactivate/(?P<tax_id>[0-9]+)/', views_administration.list_
 	url(r'^kanban_edit_card/(?P<kanban_card_id>[0-9]+)/$', views.kanban_edit_card,name='kanban_edit_card'),
 url(r'^kanban_properties/(?P<kanban_board_id>[0-9]+)/$', views.kanban_properties,name='kanban_properties'),
 url(r'^new_kanban_board/$', views.new_kanban_board,name='new_kanban_board'),
-
+url(r'^kanban_new_link/$', views.kanban_new_link,name='kanban_new_link'),
+url(r'^kanban_new_link/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement"]+)/$', views.kanban_new_link,name='kanban_new_link'),
 ]
 
 if settings.DEBUG:
