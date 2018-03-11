@@ -1003,13 +1003,61 @@ def index(request):
 
 
 def kanban_edit_card(request,kanban_card_id):
+    kanban_card_results = kanban_card.objects.get(kanban_card_id=kanban_card_id)
+
     permission_results = return_user_permission_level(request, None,['kanban','kanban_card','kanban_comment'])
 
     if permission_results['kanban'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
+
+    if request.method == "POST" and permission_results > 1:
+        form = kanban_card_form(
+            request.POST,
+            kanban_board_id=kanban_card_results.kanban_board_id,
+        )
+        if form.is_valid():
+            #Get required data
+            kanban_card_instance = kanban_card.objects.get(kanban_card_id=kanban_card_id)
+            current_user = request.user
+
+            kanban_column_extract=form.cleaned_data['kanban_column']
+            kanban_level_extract=form.cleaned_data['kanban_level']
+
+            kanban_card_instance.kanban_card_text=form.cleaned_data['kanban_card_text']
+            kanban_card_instance.kanban_column_id=kanban_column_extract.kanban_column_id
+            kanban_card_instance.kanban_level_id =kanban_level_extract.kanban_level_id
+            kanban_card_instance.save()
+
+            #Comments section
+            kanban_comment_extract = form.cleaned_data['kanban_card_comment']
+
+            if not kanban_comment_extract == '':
+
+
+                kanban_comment_submit = kanban_comment(
+                    kanban_card_id=kanban_card_instance.kanban_card_id ,
+                    kanban_comment=kanban_comment_extract,
+                    user_id=current_user,
+                    user_infomation=current_user.id,
+                    change_user=request.user,
+                )
+                kanban_comment_submit.save()
+
+
+            #Let's return the CARD back so that the user does not have to refresh
+            t = loader.get_template('NearBeach/kanban/kanban_card_information.html')
+
+            c = {
+                'kanban_card_submit': kanban_comment_extract,
+            }
+
+        else:
+            print(form.errors)
+            HttpResponseBadRequest(form.errors)
+
     #Get data
-    kanban_card_results = kanban_card.objects.get(kanban_card_id=kanban_card_id)
+
     kanban_comment_results = kanban_comment.objects.filter(kanban_card_id=kanban_card_id)
 
 
@@ -1028,6 +1076,7 @@ def kanban_edit_card(request,kanban_card_id):
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
         'kanban_comment_results': kanban_comment_results,
+        'kanban_card_id': kanban_card_id,
     }
 
     return HttpResponse(t.render(c, request))
@@ -1095,12 +1144,18 @@ def kanban_list(request):
     if permission_results['kanban'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
+    kanban_board_results = kanban_board.objects.filter(
+        is_deleted="FALSE",
+    )
+
     t = loader.get_template('NearBeach/kanban_list.html')
 
     # context
     c = {
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'kanban_permission': permission_results['kanban'],
+        'kanban_board_results': kanban_board_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -1178,13 +1233,15 @@ def kanban_new_card(request,kanban_board_id):
 
 
 @login_required(login_url='login')
-def kanban_update_card(request,kanban_id):
+def kanban_properties(request,kanban_board_id):
     t = loader.get_template('NearBeach/blank.html')
 
     # context
     c = {}
 
     return HttpResponse(t.render(c, request))
+
+
 
 
 
@@ -1470,6 +1527,15 @@ def new_customer(request, organisations_id):
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
     }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def new_kanban_board(request):
+    t = loader.get_template('NearBeach/blank.html')
+
+    c = {}
 
     return HttpResponse(t.render(c, request))
 

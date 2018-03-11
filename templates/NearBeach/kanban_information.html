@@ -81,8 +81,29 @@
 		$("#edit_card_form").on('submit', function(event) {
 		    event.preventDefault();
 
+            $.ajax({
+                url: '/kanban_edit_card/' + $("#edit_kanban_card_id").val() + '/',
+                type: 'POST',
+                data: $(this).serialize(),
+                dataType: "HTML",
+                success: function(data) {
+                    $("#edit_card_form").html("");
+                    $("#" + $("#edit_kanban_card_id").val()).html(data)
+                },
+                error: function () {
+                    alert("Sorry, saving the card has occurred an error!");
+                }
+            })
+        });
 
-        })
+		function close_kanban_edit_card() {
+		    $('#edit_card_form').html("");
+        }
+
+        function close_kanban_new_card() {
+		    $("#new_card_form").html('<a href="javascript:void(0)" onclick="load_kanban_new_card()">New Card</a>');
+        }
+
 
 		function load_kanban_new_card() {
 		    $.ajax({
@@ -119,7 +140,10 @@
                     type: 'GET',
                     dataType: 'HTML',
                     success: function(data) {
-                        $("#edit_card_form").html(data)
+                        $("#edit_card_form").html(data);
+                            //Navigate down to it
+                            var element = document.getElementById("edit_card_form");
+                            element.scrollIntoView();
                     },
                     error: function() {
                         alert("Sorry, we can not edit the card at the moment");
