@@ -13,11 +13,13 @@
     <li>{{ kanban_card_form.kanban_card_comment }}</li>
     <li><input type="submit" value="Submit new "></li>
 {% endif %}
-</ul>
+
 {% for row in kanban_comment_results %}
     {% for row in kanban_comment_results %}
         <li>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}</li>
         <li><textarea readonly>{{ row.kanban_comment }}</textarea></li>
     {% endfor %}
 {% endfor %}
+
 <a href="javascript:void(0)">Close</a>
+</ul>

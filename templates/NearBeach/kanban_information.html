@@ -25,7 +25,7 @@
                             {% with column_cards=level_cards|filter_column_cards:column.kanban_column_id %}
                                 {% for row in column_cards %}
                                     <div id="{{ row.kanban_card_id }}" class="kanban_card" draggable="true">
-                                        <div class="cardTitle">
+                                        <div class="cardTitle" id="{{ row.kanban_card_id }}">
                                             {{ row.kanban_card_text }}
                                         </div>
                                     </div>
@@ -67,6 +67,8 @@
                         $(".kanban_column[data-column=" + kanban_column + "][data-level=" + kanban_level + "]").html() + data
                     );
 
+                    $("#new_card_form").html('<a href="javascript:void(0)" onclick="load_kanban_new_card()">New Card</a>');
+
                     //We will need the page to re-bind everything
                     on_page_load()
                 },
@@ -75,6 +77,12 @@
                 }
             })
         });
+
+		$("#edit_card_form").on('submit', function(event) {
+		    event.preventDefault();
+
+
+        })
 
 		function load_kanban_new_card() {
 		    $.ajax({

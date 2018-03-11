@@ -564,9 +564,17 @@ class kanban_column(models.Model):
 class kanban_comment(models.Model):
 	kanban_comment_id=models.AutoField(primary_key=True)
 	kanban_comment=models.TextField()
+	kanban_board=models.ForeignKey(
+		'kanban_board',
+		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
+	)
 	kanban_card=models.ForeignKey(
 		'kanban_card',
 		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
 	)
 	user_id=models.ForeignKey(
 		User,
@@ -622,42 +630,6 @@ class kanban_level(models.Model):
 		return self.kanban_level_name
 
 
-
-class kanban_comment(models.Model):
-	kanban_comment_id=models.AutoField(primary_key=True)
-	kanban_comment_text=models.TextField()
-	kanban_board=models.ForeignKey(
-		'kanban_board',
-		on_delete=models.CASCADE,
-		blank=True,
-		null=True,
-	)
-	kanban_card=models.ForeignKey(
-		'kanban_card',
-		on_delete=models.CASCADE,
-		blank=True,
-		null=True,
-	)
-	date_created=models.DateTimeField(auto_now_add=True)
-	date_modified=models.DateTimeField(auto_now=True)
-	change_user=models.ForeignKey(
-		User,
-		on_delete=models.CASCADE,
-		related_name='%(class)s_change_user',
-		blank=True,
-		null=True
-	)
-	is_deleted=models.CharField(
-		max_length=5,
-		choices=IS_DELETED_CHOICE,
-		default='FALSE'
-	)
-
-	def __str__(self):
-		return self.kanban_comment_text
-
-	class Meta:
-		db_table = "kanban_comment"
 
 
 
