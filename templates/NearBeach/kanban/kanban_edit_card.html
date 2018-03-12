@@ -1,13 +1,18 @@
 {% csrf_token %}
 <data value="{{ kanban_card_id }}" id="edit_kanban_card_id"></data>
+
 <h2>Edit Kanban Card</h2>
 <ul>
+    {% if linked_card == True %}
+        <li>This card is linked - the card text can not be updated</li>
+    {% endif %}
     <li>{{ kanban_card_form.kanban_card_text }}</li>
     {% if kanban_permission > 1 or kanban_card_permission > 1 %}
         <li>Kanban Column: {{ kanban_card_form.kanban_column }}</li>
         <li>Kanban Level: {{ kanban_card_form.kanban_level }}</li>
     {% endif %}
 </ul>
+
 <h4>Card Comments</h4>
 <ul>
 {% if kanban_permission > 1 or kanban_card_permission > 1 or kanban_comment_permission == 1 %}

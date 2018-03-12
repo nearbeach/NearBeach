@@ -132,7 +132,7 @@
 
         function load_kanban_new_link() {
 		    $.ajax({
-                url: '/kanban_new_link/',
+                url: '/kanban_new_link/{{ kanban_board_id }}/',
                 type: 'GET',
                 dataType: 'HTML',
                 success: function(data) {
@@ -208,6 +208,9 @@
         }
 
         function kanban_link_object(location_id, destination) {
+            kanban_column = $("#id_kanban_column").val();
+            kanban_level = $("#id_kanban_level").val();
+
             //Send data to the database
             $.ajaxSetup({
                 beforeSend: function (xhr, settings) {
@@ -218,14 +221,18 @@
             });
 
             $.ajax({
-                url: '/kanban_new_link/' + location_id + '/' + destination + '/',
-                data: {},
+                url: '/kanban_new_link/{{ kanban_board_id }}/' + location_id + '/' + destination + '/',
+                data: $("#kanban_new_link").serialize(),
                 dataType: 'HTML',
                 type: 'POST',
                 success: function (data) {
-                    //ADD DATA TO THE CORRECT CARD!!!
-                    //REMOVE PRESENCE OF LINK
-                    alert("Sent data successfully")
+
+                    $(".kanban_column[data-column=" + kanban_column + "][data-level=" + kanban_level + "]").html(
+                        $(".kanban_column[data-column=" + kanban_column + "][data-level=" + kanban_level + "]").html() + data
+                    );
+
+                    close_kanban_new_link();
+
                 },
                 error: function(data) {
                     alert("Sorry, the linking of the object didn't work. Please try again.");

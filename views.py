@@ -1004,6 +1004,15 @@ def index(request):
 
 def kanban_edit_card(request,kanban_card_id):
     kanban_card_results = kanban_card.objects.get(kanban_card_id=kanban_card_id)
+    if (
+        kanban_card_results.project
+        or kanban_card_results.tasks
+        or kanban_card_results.requirements
+    ):
+        linked_card = True
+    else:
+        linked_card = False
+
 
     permission_results = return_user_permission_level(request, None,['kanban','kanban_card','kanban_comment'])
 
@@ -1024,7 +1033,8 @@ def kanban_edit_card(request,kanban_card_id):
             kanban_column_extract=form.cleaned_data['kanban_column']
             kanban_level_extract=form.cleaned_data['kanban_level']
 
-            kanban_card_instance.kanban_card_text=form.cleaned_data['kanban_card_text']
+            if linked_card == False:
+                kanban_card_instance.kanban_card_text=form.cleaned_data['kanban_card_text']
             kanban_card_instance.kanban_column_id=kanban_column_extract.kanban_column_id
             kanban_card_instance.kanban_level_id =kanban_level_extract.kanban_level_id
             kanban_card_instance.save()
@@ -1077,6 +1087,8 @@ def kanban_edit_card(request,kanban_card_id):
         'administration_permission': permission_results['administration'],
         'kanban_comment_results': kanban_comment_results,
         'kanban_card_id': kanban_card_id,
+        'linked_card': linked_card,
+        'kanban_card_results': kanban_card_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -1232,14 +1244,80 @@ def kanban_new_card(request,kanban_board_id):
 
 
 @login_required(login_url='login')
-def kanban_new_link(request,location_id='',destination=''):
+def kanban_new_link(request,kanban_board_id,location_id='',destination=''):
     permission_results = return_user_permission_level(request, None,['kanban'])
 
     if permission_results['kanban'] < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST":
-        return HttpResponseBadRequest("I have not done this section yet")
+        form=kanban_new_link_form(
+            request.POST,
+            kanban_board_id=kanban_board_id,
+        )
+        if form.is_valid():
+            #Check to make sure we have not connected the item before. If so, send them a band response
+            if (
+                    (kanban_card.objects.filter(project_id=location_id,is_deleted="FALSE") and destination == "project")
+                    or (kanban_card.objects.filter(tasks_id=location_id,is_deleted="FALSE") and destination == "task")
+                    or (kanban_card.objects.filter(requirements_id=location_id,is_deleted="FALSE") and destination == "requirement")
+                ):
+                #Sorry, this already exists
+                return HttpResponseBadRequest("Card already exists") #How do we fix these for AJAX - send back an error message
+
+            #Get form data
+            kanban_column = form.cleaned_data['kanban_column']
+            kanban_level = form.cleaned_data['kanban_level']
+
+            # To add the card at the bottom of the pack, we first need to get the max value
+            max_value_results = kanban_card.objects.filter(
+                kanban_column=kanban_column.kanban_column_id,
+                kanban_level=kanban_level.kanban_level_id,
+            ).aggregate(Max('kanban_card_sort_number'))
+
+            # In case it returns a none
+            try:
+                max_value = max_value_results['kanban_card_sort_number__max'] + 1
+            except:
+                max_value = 0
+
+            #Start by creating the card
+            kanban_card_submit = kanban_card(
+                change_user=request.user,
+                kanban_column = kanban_column,
+                kanban_level = kanban_level,
+                kanban_card_sort_number=max_value,
+                kanban_board = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+            )
+
+            #Get the instance, and the name
+            if destination == "project":
+                kanban_card_submit.project = project.objects.get(project_id=location_id)
+                kanban_card_submit.kanban_card_text = "PRO" + location_id + " - " + kanban_card_submit.project.project_name
+            elif destination == "task":
+                kanban_card_submit.tasks = tasks.objects.get(tasks_id=location_id)
+                kanban_card_submit.kanban_card_text = "TASK" + location_id + " - " + kanban_card_submit.tasks.task_short_description
+            elif destination == "requirement":
+                kanban_card_submit.requirements = requirements.objects.get(requirement_id=location_id)
+                kanban_card_submit.kanban_card_text = "REQ" + location_id + " - " + kanban_card_submit.requirements.requirement_title
+            else:
+                #Oh no, something went wrong.
+                return HttpResponseBadRequest("Sorry, that type of destination does not exist")
+
+            kanban_card_submit.save()
+
+            # Let's return the CARD back so that the user does not have to refresh
+            t = loader.get_template('NearBeach/kanban/kanban_card_information.html')
+
+            c = {
+                'kanban_card_submit': kanban_card_submit,
+            }
+
+            return HttpResponse(t.render(c, request))
+        else:
+            print(form.errors)
+            return HttpResponseBadRequest("BAD FORM")
+
 
     #Get data
     project_results = project.objects.filter(
@@ -1264,6 +1342,9 @@ def kanban_new_link(request,location_id='',destination=''):
         'requirements_results': requirements_results,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'kanban_new_link_form': kanban_new_link_form(
+            kanban_board_id=kanban_board_id
+        )
     }
 
     return HttpResponse(t.render(c, request))

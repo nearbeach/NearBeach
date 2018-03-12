@@ -628,6 +628,22 @@ class kanban_board_form(forms.Form):
 
 
 
+class kanban_new_link_form(ModelForm):
+    def __init__(self, *args, **kwargs):
+        kanban_board_id = kwargs.pop('kanban_board_id')
+
+        super(kanban_new_link_form, self).__init__(*args, **kwargs)
+
+        self.fields['kanban_column'].queryset = kanban_column.objects.filter(kanban_board=kanban_board_id)
+        self.fields['kanban_level'].queryset = kanban_level.objects.filter(kanban_board=kanban_board_id)
+    class Meta:
+        model = kanban_card
+        fields = {
+            'kanban_column',
+            'kanban_level',
+        }
+
+
 class list_of_taxes_form(ModelForm):
     class Meta:
         model = list_of_taxes

@@ -513,6 +513,24 @@ class kanban_card(models.Model):
 		'kanban_board',
 		on_delete=models.CASCADE,
 	)
+	project=models.ForeignKey(
+		'project',
+		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
+	)
+	tasks=models.ForeignKey(
+		'tasks',
+		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
+	)
+	requirements=models.ForeignKey(
+		'requirements',
+		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
+	)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 	change_user = models.ForeignKey(
