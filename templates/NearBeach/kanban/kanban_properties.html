@@ -1,0 +1,98 @@
+{% extends "../template.html" %}
+{% block content %}
+{% load static %}
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
+    <h2>Kanban Properties</h2>
+    <form method="post" class="kanban_board_form" id="kanban_properties_form">
+        {% csrf_token %}
+        {{ kanban_properties_form.kanban_board_name }}
+        <h3>Columns</h3>
+        <p>Please sort the columns in the order you would like them to appear on the board. Click on them to either change their name or delete them. Please note - only empty columns can be deleted.</p>
+        <table>
+            <tr>
+                <td>
+                    <ul id="columns">
+                        {% for row in kanban_column_results %}
+                            <li class="column_title" value="{{ row.kanban_column_id }}">{{ row.kanban_column_name }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        </table>
+
+        <h3>Levels</h3>
+        <p>Please sort the levels in the order you would like them to appear on the board. Click on them to either change their name or delete them. Please note - only empty columns can be deleted.</p>
+        <table>
+            <tr>
+                <td>
+                    <ul id="levels">
+                        {% for row in kanban_level_results %}
+                            <li class="level_title" value="{{ row.kanban_level_id }}">{{ row.kanban_level_name }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        </table>
+        <input id="save_changes" type="submit" value="Save Changes"><a href="{% url 'kanban_list' %}">Cancel and Return</a>
+    </form>
+
+    <script>
+    $("#kanban_properties_form").on('submit', function(event) {
+        event.preventDefault();
+
+        //Get the JSON data ready
+        var columns = $("#columns").find("li").map(function() {
+            var column = {};
+
+            column.id = this.value;
+            column.title = $(this).text()
+
+            return column;
+        });
+
+        //Get the JSON data ready
+        var levels = $("#levels").find("li").map(function() {
+            var level = {};
+
+            level.id = this.value;
+            level.title = $(this).text();
+
+            return level;
+        });
+
+        data_to_send = {
+            "columns": columns,
+            "levels": levels,
+            "kanban_board_name": JSON.stringify($("#id_kanban_board_name").val())
+        };
+
+        alert(JSON.stringify(data_to_send));
+
+
+        //Send data to the database
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            url: '/kanban_properties/{{ kanban_board_id }}/',
+            type: 'POST',
+            dataType: 'HTML',
+            data: JSON.stringify(data_to_send),
+            success: function(data) {
+                alert("YAY");
+            },
+            error: function () {
+                alert("SORRY");
+            }
+        });
+    });
+    </script>
+
+
+{% endblock %}

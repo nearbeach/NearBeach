@@ -1353,10 +1353,57 @@ def kanban_new_link(request,kanban_board_id,location_id='',destination=''):
 
 @login_required(login_url='login')
 def kanban_properties(request,kanban_board_id):
-    t = loader.get_template('NearBeach/blank.html')
+    permission_results = return_user_permission_level(request, None,['kanban'])
+
+    if permission_results['kanban'] < 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
+
+    """
+    If this requirement is connected to a requirement, then the user should NOT edit the properties, as it is a
+    SET Designed module.
+    """
+    kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+    if kanban_board_results.requirements:
+        return HttpResponseBadRequest("Sorry, but users are not permitted to edit a Requirement Kanban Board.")
+
+    if request.method == "POST":
+        received_json_data = json.loads(request.body)
+
+        #Update title
+        kanban_board_results.kanban_board_name = received_json_data["kanban_board_name"]
+        kanban_board_results.save()
+
+        #Update the sort order for the columns
+
+        print(received_json_data)
+        print(received_json_data["columns"]["length"])
+
+
+
+    #Get SQL
+    kanban_column_results = kanban_column.objects.filter(
+        is_deleted="FALSE",
+        kanban_board_id=kanban_board_id,
+    )
+    kanban_level_results = kanban_level.objects.filter(
+        is_deleted="FALSE",
+        kanban_board_id=kanban_board_id,
+    )
+
+    t = loader.get_template('NearBeach/kanban/kanban_properties.html')
 
     # context
-    c = {}
+    c = {
+        'kanban_board_id': kanban_board_id,
+        'kanban_column_results': kanban_column_results,
+        'kanban_level_results': kanban_level_results,
+        'kanban_board_results': kanban_board_results,
+        'kanban_properties_form': kanban_properties_form(initial={
+        'kanban_board_name': kanban_board_results.kanban_board_name,
+        })
+    }
 
     return HttpResponse(t.render(c, request))
 

@@ -16,7 +16,11 @@
                 <td><a href="{% url 'kanban_information' row.kanban_board_id %}">{{ row.kanban_board_name }}</a></td>
                 <td>{{ row.date_created }}</td>
                 {% if kanban_permission == 4 %}
-                    <td><a href="{% url 'kanban_properties' row.kanban_board_id %}">Properties</a></td>
+                    {% if row.requirements %}
+                        ------
+                    {% else %}
+                        <td><a href="{% url 'kanban_properties' row.kanban_board_id %}">Properties</a></td>
+                    {% endif %}
                 {% endif %}
             </tr>
         {% endfor %}

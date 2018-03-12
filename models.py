@@ -477,6 +477,12 @@ class group_permissions(models.Model):
 class kanban_board(models.Model):
 	kanban_board_id=models.AutoField(primary_key=True)
 	kanban_board_name=models.CharField(max_length=255)
+	requirements=models.ForeignKey(
+		'requirements',
+		null=True,
+		blank=True,
+		on_delete=models.CASCADE,
+	)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 	change_user = models.ForeignKey(
