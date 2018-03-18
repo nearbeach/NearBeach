@@ -1372,13 +1372,23 @@ def kanban_properties(request,kanban_board_id):
         received_json_data = json.loads(request.body)
 
         #Update title
-        kanban_board_results.kanban_board_name = received_json_data["kanban_board_name"]
+        kanban_board_results.kanban_board_name = str(received_json_data["kanban_board_name"])
         kanban_board_results.save()
 
         #Update the sort order for the columns
+        for row in range(0, received_json_data["columns"]["length"]):
+            kanban_column_update = kanban_column.objects.get(kanban_column_id=received_json_data["columns"][str(row)]["id"])
+            kanban_column_update.kanban_column_sort_number = row
 
-        print(received_json_data)
-        print(received_json_data["columns"]["length"])
+        # Update the sort order for the columns
+        for row in range(0, received_json_data["levels"]["length"]):
+            kanban_level_update = kanban_level.objects.get(kanban_level_id=received_json_data["levels"][str(row)]["id"])
+            kanban_level_update.kanban_level_sort_number = row
+
+        #Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c={}
+        return HttpResponse(t.render(c, request))
 
 
 

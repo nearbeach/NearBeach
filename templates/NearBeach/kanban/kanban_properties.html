@@ -14,7 +14,7 @@
                 <td>
                     <ul id="columns">
                         {% for row in kanban_column_results %}
-                            <li class="column_title" value="{{ row.kanban_column_id }}">{{ row.kanban_column_name }}</li>
+                            <li class="column_title" data-id="{{ row.kanban_column_id }}">{{ row.kanban_column_name }}</li>
                         {% endfor %}
                     </ul>
                 </td>
@@ -28,7 +28,7 @@
                 <td>
                     <ul id="levels">
                         {% for row in kanban_level_results %}
-                            <li class="level_title" value="{{ row.kanban_level_id }}">{{ row.kanban_level_name }}</li>
+                            <li class="level_title" data-id="{{ row.kanban_level_id }}">{{ row.kanban_level_name }}</li>
                         {% endfor %}
                     </ul>
                 </td>
@@ -38,6 +38,7 @@
     </form>
 
     <script>
+    $('document').ready(on_page_load());
     $("#kanban_properties_form").on('submit', function(event) {
         event.preventDefault();
 
@@ -50,6 +51,11 @@
 
             return column;
         });
+
+        /*
+
+         */
+
 
         //Get the JSON data ready
         var levels = $("#levels").find("li").map(function() {
@@ -64,10 +70,8 @@
         data_to_send = {
             "columns": columns,
             "levels": levels,
-            "kanban_board_name": JSON.stringify($("#id_kanban_board_name").val())
+            "kanban_board_name": ($("#id_kanban_board_name").val())
         };
-
-        alert(JSON.stringify(data_to_send));
 
 
         //Send data to the database
@@ -85,13 +89,17 @@
             dataType: 'HTML',
             data: JSON.stringify(data_to_send),
             success: function(data) {
-                alert("YAY");
+                //On Success, take the user to the kanban board list
+                window.location = '/kanban_list/'
             },
             error: function () {
                 alert("SORRY");
             }
         });
     });
+
+    function on_page_load() {
+    }
     </script>
 
 
