@@ -190,6 +190,9 @@ url(r'^requirement_items_new_link/(?P<requirement_item_id>[0-9]+)/(?P<location_i
 		name="requirement_links_list"),
 	url(r'^requirement_new_link/(?P<requirement_id>[0-9]+)/$', views_requirements.requirement_new_link,
 		name="requirement_new_link"),
+	url(r'^requirement_documents_uploads/(?P<location_id>[0-9]+)/(?P<destination>["requirement","requirement_item"]+)'
+		, views_requirements.requirement_documents_uploads
+		, name='requirement_documents_uploads'),
 
 url(r'^requirement_new_link/(?P<requirement_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<destination>["project","task","organisation"]+)'
 	, views_requirements.requirement_new_link,

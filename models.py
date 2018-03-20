@@ -350,6 +350,18 @@ class document_permissions(models.Model):
 		null=True,
 		on_delete=models.CASCADE,
 	)
+	requirements=models.ForeignKey(
+		'requirements',
+		blank=True,
+		null=True,
+		on_delete=models.CASCADE,
+	)
+	requirement_item=models.ForeignKey(
+		'requirement_item',
+		blank=True,
+		null=True,
+		on_delete=models.CASCADE,
+	)
 	user_id=models.ForeignKey(
 		User,
 		on_delete=models.CASCADE,

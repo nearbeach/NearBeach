@@ -52,6 +52,72 @@ def new_requirement(request):
 
 
 @login_required(login_url='login')
+def requirement_documents_uploads(request, location_id, destination):
+    permission_results = return_user_permission_level(request, None, ['requirement','document'])
+
+    if permission_results['requirement'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        # Get the file data
+        file = request.FILES['file']
+
+        # Data objects required
+        filename = str(file)
+        file_size = file._size
+        print("File name: " + filename + "\nFile Size: " + str(file_size))
+
+        """
+        File Uploads
+        """
+        document_save = documents(
+            document_description=filename,
+            document=file,
+            change_user=request.user,
+        )
+        document_save.save()
+
+        document_permissions_save = document_permissions(
+            document_key=document_save,
+            change_user=request.user,
+        )
+        if destination == "requirement":
+            document_permissions_save.requirements = requirements.objects.get(requirement_id=location_id)
+        else:
+            document_permissions_save.requirement_item = requirement_item.objects.get(requirement_item_id=location_id)
+
+        document_permissions_save.save()
+
+    if destination == "requirement":
+        document_results = document_permissions.objects.filter(
+            is_deleted='FALSE',
+            requirements=location_id,
+        )
+    else:
+        document_results = document_permissions.objects.filter(
+            is_deleted='FALSE',
+            requirement_item=location_id,
+        )
+
+
+    #Load template
+    t = loader.get_template('NearBeach/requirement_information/requirement_documents.html')
+
+    # context
+    c = {
+        'location_id': location_id,
+        'destination': destination,
+        'requirement_permissions': permission_results['requirement'],
+        'document_permissions': permission_results['document'],
+        'document_results': document_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+
+@login_required(login_url='login')
 def requirement_information(request, requirement_id):
     permission_results = return_user_permission_level(request, None, ['requirement','requirement_link'])
 
