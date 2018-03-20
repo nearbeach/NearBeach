@@ -18,6 +18,7 @@ from django.urls import reverse
 from .misc_functions import *
 from .user_permissions import return_user_permission_level
 from datetime import timedelta
+from django.db.models import Max
 
 #import python modules
 import datetime, json, simplejson, urllib, urllib2
@@ -1001,6 +1002,424 @@ def index(request):
     return HttpResponseRedirect(reverse('login'))
 
 
+def kanban_edit_card(request,kanban_card_id):
+    kanban_card_results = kanban_card.objects.get(kanban_card_id=kanban_card_id)
+    if (
+        kanban_card_results.project
+        or kanban_card_results.tasks
+        or kanban_card_results.requirements
+    ):
+        linked_card = True
+    else:
+        linked_card = False
+
+
+    permission_results = return_user_permission_level(request, None,['kanban','kanban_card','kanban_comment'])
+
+    if permission_results['kanban'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
+    if request.method == "POST" and permission_results > 1:
+        form = kanban_card_form(
+            request.POST,
+            kanban_board_id=kanban_card_results.kanban_board_id,
+        )
+        if form.is_valid():
+            #Get required data
+            kanban_card_instance = kanban_card.objects.get(kanban_card_id=kanban_card_id)
+            current_user = request.user
+
+            kanban_column_extract=form.cleaned_data['kanban_column']
+            kanban_level_extract=form.cleaned_data['kanban_level']
+
+            if linked_card == False:
+                kanban_card_instance.kanban_card_text=form.cleaned_data['kanban_card_text']
+            kanban_card_instance.kanban_column_id=kanban_column_extract.kanban_column_id
+            kanban_card_instance.kanban_level_id =kanban_level_extract.kanban_level_id
+            kanban_card_instance.save()
+
+            #Comments section
+            kanban_comment_extract = form.cleaned_data['kanban_card_comment']
+
+            if not kanban_comment_extract == '':
+
+
+                kanban_comment_submit = kanban_comment(
+                    kanban_card_id=kanban_card_instance.kanban_card_id ,
+                    kanban_comment=kanban_comment_extract,
+                    user_id=current_user,
+                    user_infomation=current_user.id,
+                    change_user=request.user,
+                )
+                kanban_comment_submit.save()
+
+
+            #Let's return the CARD back so that the user does not have to refresh
+            t = loader.get_template('NearBeach/kanban/kanban_card_information.html')
+
+            c = {
+                'kanban_card_submit': kanban_comment_extract,
+            }
+
+        else:
+            print(form.errors)
+            HttpResponseBadRequest(form.errors)
+
+    #Get data
+
+    kanban_comment_results = kanban_comment.objects.filter(kanban_card_id=kanban_card_id)
+
+
+    # Get template
+    t = loader.get_template('NearBeach/kanban/kanban_edit_card.html')
+
+    # context
+    c = {
+        'kanban_card_form': kanban_card_form(
+            kanban_board_id=kanban_card_results.kanban_board_id,
+            instance=kanban_card_results,
+        ),
+        'kanban_permission': permission_results['kanban'],
+        'kanban_card_permission': permission_results['kanban_card'],
+        'kanban_comment_permission': permission_results['kanban_comment'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'kanban_comment_results': kanban_comment_results,
+        'kanban_card_id': kanban_card_id,
+        'linked_card': linked_card,
+        'kanban_card_results': kanban_card_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+def kanban_information(request,kanban_board_id):
+    permission_results = return_user_permission_level(request, None,['kanban'])
+
+    if permission_results['kanban'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #Get the required information
+    kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+    kanban_level_results = kanban_level.objects.filter(
+        is_deleted="FALSE",
+        kanban_board=kanban_board_id,
+    ).order_by('kanban_level_sort_number')
+    kanban_column_results = kanban_column.objects.filter(
+        is_deleted="FALSE",
+        kanban_board=kanban_board_id,
+    ).order_by('kanban_column_sort_number')
+    kanban_card_results = kanban_card.objects.filter(
+        is_deleted="FALSE",
+        kanban_board=kanban_board_id,
+    ).order_by('kanban_card_sort_number')
+
+    t = loader.get_template('NearBeach/kanban_information.html')
+
+    # context
+    c = {
+        'kanban_board_id': kanban_board_id,
+        'kanban_board_results': kanban_board_results,
+        'kanban_level_results': kanban_level_results,
+        'kanban_column_results': kanban_column_results,
+        'kanban_card_results': kanban_card_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+def kanban_move_card(request,kanban_card_id,kanban_column_id,kanban_level_id):
+    if request.method == "POST":
+        kanban_card_result = kanban_card.objects.get(kanban_card_id=kanban_card_id)
+        kanban_card_result.kanban_column_id = kanban_column.objects.get(kanban_column_id=kanban_column_id)
+        kanban_card_result.kanban_level_id = kanban_level.objects.get(kanban_level_id=kanban_level_id)
+        kanban_card_result.save()
+
+        #Send back blank like a crazy person.
+        t = loader.get_template('NearBeach/blank.html')
+
+        # context
+        c = {}
+
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("This request can only be through POST")
+
+
+@login_required(login_url='login')
+def kanban_list(request):
+    permission_results = return_user_permission_level(request, None,['kanban'])
+
+    if permission_results['kanban'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    kanban_board_results = kanban_board.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    t = loader.get_template('NearBeach/kanban_list.html')
+
+    # context
+    c = {
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'kanban_permission': permission_results['kanban'],
+        'kanban_board_results': kanban_board_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def kanban_new_card(request,kanban_board_id):
+    permission_results = return_user_permission_level(request, None,['kanban'])
+
+    if permission_results['kanban'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        form = kanban_card_form(request.POST,kanban_board_id=kanban_board_id)
+        if form.is_valid():
+            kanban_column_results=form.cleaned_data['kanban_column']
+            kanban_level_results=form.cleaned_data['kanban_level']
+
+            #To add the card at the bottom of the pack, we first need to get the max value
+            max_value_results = kanban_card.objects.filter(
+                kanban_column=kanban_column_results.kanban_column_id,
+                kanban_level=kanban_level_results.kanban_level_id,
+            ).aggregate(Max('kanban_card_sort_number'))
+
+            #In case it returns a none
+            try:
+                max_value = max_value_results['kanban_card_sort_number__max'] + 1
+            except:
+                max_value = 0
+
+            kanban_card_submit = kanban_card(
+                kanban_card_text=form.cleaned_data['kanban_card_text'],
+                kanban_column=kanban_column_results,
+                kanban_level=kanban_level_results,
+                change_user=request.user,
+                kanban_card_sort_number=max_value,
+                kanban_board_id=kanban_board_id,
+            )
+            kanban_card_submit.save()
+
+            #Let's return the CARD back so that the user does not have to refresh
+            t = loader.get_template('NearBeach/kanban/kanban_card_information.html')
+
+            c = {
+                'kanban_card_submit': kanban_card_submit,
+            }
+
+            return HttpResponse(t.render(c, request))
+
+        else:
+            print(form.errors)
+
+
+    kanban_column_results = kanban_column.objects.filter(kanban_board=kanban_board_id)
+    kanban_level_results = kanban_level.objects.filter(kanban_board=kanban_board_id)
+
+    t = loader.get_template('NearBeach/kanban/kanban_new_card.html')
+
+    # context
+    c = {
+        'kanban_column_results': kanban_column_results,
+        'kanban_level_results': kanban_level_results,
+        'kanban_card_form': kanban_card_form(
+            kanban_board_id=kanban_board_id,
+        ),
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'kanban_board_id': kanban_board_id,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def kanban_new_link(request,kanban_board_id,location_id='',destination=''):
+    permission_results = return_user_permission_level(request, None,['kanban'])
+
+    if permission_results['kanban'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        form=kanban_new_link_form(
+            request.POST,
+            kanban_board_id=kanban_board_id,
+        )
+        if form.is_valid():
+            #Check to make sure we have not connected the item before. If so, send them a band response
+            if (
+                    (kanban_card.objects.filter(project_id=location_id,is_deleted="FALSE") and destination == "project")
+                    or (kanban_card.objects.filter(tasks_id=location_id,is_deleted="FALSE") and destination == "task")
+                    or (kanban_card.objects.filter(requirements_id=location_id,is_deleted="FALSE") and destination == "requirement")
+                ):
+                #Sorry, this already exists
+                return HttpResponseBadRequest("Card already exists") #How do we fix these for AJAX - send back an error message
+
+            #Get form data
+            kanban_column = form.cleaned_data['kanban_column']
+            kanban_level = form.cleaned_data['kanban_level']
+
+            # To add the card at the bottom of the pack, we first need to get the max value
+            max_value_results = kanban_card.objects.filter(
+                kanban_column=kanban_column.kanban_column_id,
+                kanban_level=kanban_level.kanban_level_id,
+            ).aggregate(Max('kanban_card_sort_number'))
+
+            # In case it returns a none
+            try:
+                max_value = max_value_results['kanban_card_sort_number__max'] + 1
+            except:
+                max_value = 0
+
+            #Start by creating the card
+            kanban_card_submit = kanban_card(
+                change_user=request.user,
+                kanban_column = kanban_column,
+                kanban_level = kanban_level,
+                kanban_card_sort_number=max_value,
+                kanban_board = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+            )
+
+            #Get the instance, and the name
+            if destination == "project":
+                kanban_card_submit.project = project.objects.get(project_id=location_id)
+                kanban_card_submit.kanban_card_text = "PRO" + location_id + " - " + kanban_card_submit.project.project_name
+            elif destination == "task":
+                kanban_card_submit.tasks = tasks.objects.get(tasks_id=location_id)
+                kanban_card_submit.kanban_card_text = "TASK" + location_id + " - " + kanban_card_submit.tasks.task_short_description
+            elif destination == "requirement":
+                kanban_card_submit.requirements = requirements.objects.get(requirement_id=location_id)
+                kanban_card_submit.kanban_card_text = "REQ" + location_id + " - " + kanban_card_submit.requirements.requirement_title
+            else:
+                #Oh no, something went wrong.
+                return HttpResponseBadRequest("Sorry, that type of destination does not exist")
+
+            kanban_card_submit.save()
+
+            # Let's return the CARD back so that the user does not have to refresh
+            t = loader.get_template('NearBeach/kanban/kanban_card_information.html')
+
+            c = {
+                'kanban_card_submit': kanban_card_submit,
+            }
+
+            return HttpResponse(t.render(c, request))
+        else:
+            print(form.errors)
+            return HttpResponseBadRequest("BAD FORM")
+
+
+    #Get data
+    project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_status__in=('New','Open'),
+    )
+    tasks_results = tasks.objects.filter(
+        is_deleted="FALSE",
+        task_status__in=('New','Open'),
+    )
+    requirements_results = requirements.objects.filter(
+        is_deleted="FALSE",
+        #There is no requirements status - BUG275
+    )
+
+    t = loader.get_template('NearBeach/kanban/kanban_new_link.html')
+
+    # context
+    c = {
+        'project_results': project_results,
+        'tasks_results': tasks_results,
+        'requirements_results': requirements_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'kanban_new_link_form': kanban_new_link_form(
+            kanban_board_id=kanban_board_id
+        )
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def kanban_properties(request,kanban_board_id):
+    permission_results = return_user_permission_level(request, None,['kanban'])
+
+    if permission_results['kanban'] < 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
+
+    """
+    If this requirement is connected to a requirement, then the user should NOT edit the properties, as it is a
+    SET Designed module.
+    """
+    kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+    if kanban_board_results.requirements:
+        return HttpResponseBadRequest("Sorry, but users are not permitted to edit a Requirement Kanban Board.")
+
+    if request.method == "POST":
+        received_json_data = json.loads(request.body)
+
+        #Update title
+        kanban_board_results.kanban_board_name = str(received_json_data["kanban_board_name"])
+        kanban_board_results.save()
+
+        #Update the sort order for the columns
+        for row in range(0, received_json_data["columns"]["length"]):
+            kanban_column_update = kanban_column.objects.get(kanban_column_id=received_json_data["columns"][str(row)]["id"])
+            kanban_column_update.kanban_column_sort_number = row
+
+        # Update the sort order for the columns
+        for row in range(0, received_json_data["levels"]["length"]):
+            kanban_level_update = kanban_level.objects.get(kanban_level_id=received_json_data["levels"][str(row)]["id"])
+            kanban_level_update.kanban_level_sort_number = row
+
+        #Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c={}
+        return HttpResponse(t.render(c, request))
+
+
+
+    #Get SQL
+    kanban_column_results = kanban_column.objects.filter(
+        is_deleted="FALSE",
+        kanban_board_id=kanban_board_id,
+    )
+    kanban_level_results = kanban_level.objects.filter(
+        is_deleted="FALSE",
+        kanban_board_id=kanban_board_id,
+    )
+
+    t = loader.get_template('NearBeach/kanban/kanban_properties.html')
+
+    # context
+    c = {
+        'kanban_board_id': kanban_board_id,
+        'kanban_column_results': kanban_column_results,
+        'kanban_level_results': kanban_level_results,
+        'kanban_board_results': kanban_board_results,
+        'kanban_properties_form': kanban_properties_form(initial={
+        'kanban_board_name': kanban_board_results.kanban_board_name,
+        })
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+
 
 def login(request):
     """
@@ -1283,6 +1702,69 @@ def new_customer(request, organisations_id):
         'organisations_id': organisations_id,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def new_kanban_board(request):
+    permission_results = return_user_permission_level(request, None, 'kanban')
+
+    if permission_results['kanban'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        form = kanban_board_form(request.POST)
+        if form.is_valid():
+            #Create the new board
+            kanban_board_submit = kanban_board(
+                kanban_board_name=form.cleaned_data['kanban_board_name'],
+                change_user=request.user,
+            )
+            kanban_board_submit.save()
+
+            #Create the levels for the board
+            column_count = 1
+            for line in form.cleaned_data['kanban_board_column'].split('\n'):
+                kanban_column_submit = kanban_column(
+                    kanban_column_name=line,
+                    kanban_column_sort_number=column_count,
+                    kanban_board=kanban_board_submit,
+                    change_user=request.user,
+                )
+                kanban_column_submit.save()
+                column_count = column_count + 1
+
+
+            level_count = 1
+            for line in form.cleaned_data['kanban_board_level'].split('\n'):
+                kanban_level_submit = kanban_level(
+                    kanban_level_name=line,
+                    kanban_level_sort_number=level_count,
+                    kanban_board=kanban_board_submit,
+                    change_user=request.user,
+                )
+                kanban_level_submit.save()
+                level_count = level_count + 1
+
+            #Send you to the kanban information center
+            return HttpResponseRedirect(reverse('kanban_information', args={kanban_board_submit.kanban_board_id}))
+
+        else:
+            print(form.errors)
+            return HttpResponseBadRequest(form.errors)
+
+    t = loader.get_template('NearBeach/new_kanban_board.html')
+
+    c = {
+        'kanban_board_form': kanban_board_form(initial={
+            'kanban_board_column': 'Backlog\nIn Progress\nCompleted',
+            'kanban_board_level': 'Sprint 1\nSprint 2',
+        }),
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+
     }
 
     return HttpResponse(t.render(c, request))
@@ -2359,7 +2841,7 @@ def organisation_information(request, organisations_id):
         'opportunity_results': opportunity_results,
         'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
         'organisations_id': organisations_id,
-        'organisation_permissions': permission_results['organisations'],
+        'organisation_permissions': permission_results['organisation'],
         'organisation_campus_permissions': permission_results['organisation_campus'],
         'customer_permissions': permission_results['customer'],
         'quote_results':quote_results,
@@ -3193,3 +3675,5 @@ def handler500(request):
     )
     response.status_code = 500
     return response
+
+

@@ -573,6 +573,93 @@ class information_task_history_form(forms.Form):
     )
 
 
+class kanban_card_form(ModelForm):
+    def __init__(self, *args, **kwargs):
+        kanban_board_id = kwargs.pop('kanban_board_id')
+
+        super(kanban_card_form, self).__init__(*args, **kwargs)
+
+        self.fields['kanban_column'].queryset = kanban_column.objects.filter(kanban_board=kanban_board_id)
+        self.fields['kanban_level'].queryset = kanban_level.objects.filter(kanban_board=kanban_board_id)
+
+    kanban_card_comment = forms.CharField(
+        required=False,
+        widget=TextInput(attrs={
+            'placeholder': 'Card Comments',
+        }),
+    )
+
+    kanban_card_text = forms.CharField(
+        required=True,
+        max_length=255,
+        widget=TextInput(attrs={
+            'placeholder': 'Card Text',
+        }),
+    )
+
+    class Meta:
+        model = kanban_card
+        fields = {
+            'kanban_card_text',
+            'kanban_column',
+            'kanban_level',
+        }
+
+
+class kanban_board_form(forms.Form):
+    kanban_board_name = forms.CharField(
+        max_length=255,
+        widget=TextInput(attrs={
+            'placeholder': 'Board Name',
+        }),
+    )
+    kanban_board_column = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Please place each new column on a new line. Each name will be truncated to 255 characters',
+        }),
+        required=True,
+    )
+    kanban_board_level = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Please place each new level on a new line. Each name will be truncated to 255 characters',
+        }),
+        required=True,
+    )
+
+
+class kanban_properties_form(ModelForm):
+    kanban_board_name=forms.CharField(
+        max_length=255,
+        widget=TextInput(attrs={
+            'placeholder': 'Board Name',
+        }),
+        required=True,
+    )
+    class Meta:
+        model = kanban_board
+        fields = {
+            'kanban_board_name',
+        }
+
+
+
+
+class kanban_new_link_form(ModelForm):
+    def __init__(self, *args, **kwargs):
+        kanban_board_id = kwargs.pop('kanban_board_id')
+
+        super(kanban_new_link_form, self).__init__(*args, **kwargs)
+
+        self.fields['kanban_column'].queryset = kanban_column.objects.filter(kanban_board=kanban_board_id)
+        self.fields['kanban_level'].queryset = kanban_level.objects.filter(kanban_board=kanban_board_id)
+    class Meta:
+        model = kanban_card
+        fields = {
+            'kanban_column',
+            'kanban_level',
+        }
+
+
 class list_of_taxes_form(ModelForm):
     class Meta:
         model = list_of_taxes

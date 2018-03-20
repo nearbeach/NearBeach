@@ -225,6 +225,9 @@
 
     $("#task_assigned_groups").on('submit', function(e) {
         e.preventDefault();
+
+
+
         $.ajax({
             type: 'POST',
             url: '/assigned_group_add/{{ task_id }}/task/' + $("#id_add_group").val() + '/',

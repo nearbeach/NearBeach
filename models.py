@@ -474,12 +474,193 @@ class group_permissions(models.Model):
 		db_table="group_permissions"
 
 
+class kanban_board(models.Model):
+	kanban_board_id=models.AutoField(primary_key=True)
+	kanban_board_name=models.CharField(max_length=255)
+	requirements=models.ForeignKey(
+		'requirements',
+		null=True,
+		blank=True,
+		on_delete=models.CASCADE,
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE',
+	)
+
+	class Meta:
+		db_table = "kanban_board"
+
+	def __str__(self):
+		return self.kanban_board_name
+
+
+class kanban_card(models.Model):
+	kanban_card_id=models.AutoField(primary_key=True)
+	kanban_card_text=models.CharField(max_length=255)
+	kanban_card_sort_number=models.IntegerField()
+	kanban_level=models.ForeignKey(
+		'kanban_level',
+		on_delete=models.CASCADE,
+	)
+	kanban_column=models.ForeignKey(
+		'kanban_column',
+		on_delete=models.CASCADE,
+	)
+	kanban_board=models.ForeignKey(
+		'kanban_board',
+		on_delete=models.CASCADE,
+	)
+	project=models.ForeignKey(
+		'project',
+		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
+	)
+	tasks=models.ForeignKey(
+		'tasks',
+		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
+	)
+	requirements=models.ForeignKey(
+		'requirements',
+		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE',
+	)
+
+	class Meta:
+		db_table = "kanban_card"
+
+	def __str__(self):
+		return self.kanban_card_text
+
+
+class kanban_column(models.Model):
+	kanban_column_id=models.AutoField(primary_key=True)
+	kanban_column_name=models.CharField(max_length=255)
+	kanban_column_sort_number=models.IntegerField()
+	kanban_board=models.ForeignKey(
+		'kanban_board',
+		on_delete=models.CASCADE,
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE',
+	)
+
+	class Meta:
+		db_table = "kanban_column"
+
+	def __str__(self):
+		return self.kanban_column_name
+
+
+class kanban_comment(models.Model):
+	kanban_comment_id=models.AutoField(primary_key=True)
+	kanban_comment=models.TextField()
+	kanban_board=models.ForeignKey(
+		'kanban_board',
+		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
+	)
+	kanban_card=models.ForeignKey(
+		'kanban_card',
+		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
+	)
+	user_id=models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		null=True
+	)
+	user_infomation = models.CharField(max_length=255)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE',
+	)
+
+	class Meta:
+		db_table = "kanban_comment"
+
+	def __str__(self):
+		return self.kanban_comment
+
+
+class kanban_level(models.Model):
+	kanban_level_id=models.AutoField(primary_key=True)
+	kanban_level_name=models.CharField(max_length=255)
+	kanban_level_sort_number=models.IntegerField()
+	kanban_board=models.ForeignKey(
+		'kanban_board',
+		on_delete=models.CASCADE,
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE',
+	)
+
+	class Meta:
+		db_table = "kanban_level"
+
+	def __str__(self):
+		return self.kanban_level_name
+
+
+
+
+
 class list_of_amount_type(models.Model):
 	amount_type_id=models.AutoField(primary_key=True)
 	amount_type_description=models.CharField(max_length=20)
 	list_order=models.IntegerField(unique=True)
-	date_created=models.DateTimeField(auto_now_add=True)
-	date_modified=models.DateTimeField(auto_now=True)
 	date_created=models.DateTimeField(auto_now_add=True)
 	date_modified=models.DateTimeField(auto_now=True)
 	change_user=models.ForeignKey(
@@ -1107,6 +1288,8 @@ class permission_set_manager(models.Manager):
             customer,
             invoice,
             invoice_product,
+			kanban,
+			kanban_card,
             opportunity,
             organisation,
             organisation_campus,
@@ -1117,6 +1300,7 @@ class permission_set_manager(models.Manager):
             task,
 			documents,
 			contact_history,
+			kanban_comment,
 			project_history,
 			task_history,
     ):
@@ -1132,6 +1316,8 @@ class permission_set_manager(models.Manager):
             customer=customer,
             invoice=invoice,
             invoice_product=invoice_product,
+			kanban=kanban,
+			kanban_card=kanban_card,
             opportunity=opportunity,
             organisation=organisation,
             organisation_campus=organisation_campus,
@@ -1142,6 +1328,7 @@ class permission_set_manager(models.Manager):
             task=task,
 			documents=documents,
 			contact_history=contact_history,
+			kanban_comment=kanban_comment,
 			project_history=project_history,
 			task_history=task_history,
         )
@@ -1191,6 +1378,14 @@ class permission_set(models.Model):
         choices=PERMISSION_LEVEL,
         default=0,
     )
+    kanban = models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
+	)
+    kanban_card = models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
+	)
     opportunity = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
@@ -1238,6 +1433,10 @@ class permission_set(models.Model):
         choices=PERMISSION_BOOLEAN,
         default=0,
     )
+    kanban_comment = models.IntegerField(
+		choices=PERMISSION_BOOLEAN,
+		default=0,
+	)
     project_history = models.IntegerField(
         choices=PERMISSION_BOOLEAN,
         default=0,
