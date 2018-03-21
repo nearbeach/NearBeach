@@ -2394,6 +2394,7 @@ class to_do(models.Model):
 	to_do = models.CharField(
 		max_length=255,
 	)
+	to_do_completed = models.BooleanField(default=False)
 	project = models.ForeignKey(
 		'project',
 		on_delete=models.CASCADE,
@@ -2420,7 +2421,7 @@ class to_do(models.Model):
 	)
 
 	class Meta:
-		db_table = "tasks_opportunity"
+		db_table = "to_do"
 
 
 

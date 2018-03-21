@@ -59,6 +59,7 @@ admin.site.register(tasks_customers)
 admin.site.register(tasks_groups)
 admin.site.register(tasks_history)
 admin.site.register(tasks)
+admin.site.register(to_do)
 admin.site.register(user_groups)
 
 

@@ -1,3 +1,4 @@
+{% csrf_token %}
 <table>
     <tr>
         <td width="80%">{{ to_do_form.to_do }}</td>
@@ -11,7 +12,13 @@
         {% for row in to_do_results %}
             <tr>
                 <td>{{ row.to_do }}</td>
-                <td><a href="javascript:void(0)" onclick="complete_to_do({{ row.to_do_id }})">Click to Complete</a></td>
+                <td>
+                    {% if row.to_do_completed %}
+                        Completed
+                    {% else %}
+                        <a href="javascript:void(0)" onclick="complete_to_do({{ row.to_do_id }})">Click to Complete</a>
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
     {% endif %}

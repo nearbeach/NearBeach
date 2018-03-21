@@ -246,6 +246,8 @@ url(r'^kanban_properties/(?P<kanban_board_id>[0-9]+)/$', views.kanban_properties
 url(r'^new_kanban_board/$', views.new_kanban_board,name='new_kanban_board'),
 url(r'^kanban_new_link/(?P<kanban_board_id>[0-9]+)/$', views.kanban_new_link,name='kanban_new_link'),
 url(r'^kanban_new_link/(?P<kanban_board_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement"]+)/$', views.kanban_new_link,name='kanban_new_link'),
+	url(r'^to_do/(?P<location_id>[0-9]+)/(?P<destination>["project","task"]+)/$', views.to_do_list, name='to_do'),
+url(r'^to_do_complete/(?P<to_do_id>[0-9]+)/$', views.to_do_complete, name='to_do_complete'),
 ]
 
 if settings.DEBUG:

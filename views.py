@@ -3680,7 +3680,22 @@ def task_information(request, task_id):
 
 
 @login_required(login_url='login')
-def to_do(request, location_id, destination):
+def to_do_list(request, location_id, destination):
+    if request.method == "POST":
+        form = to_do_form(request.POST)
+        if form.is_valid():
+            to_do_submit = to_do(
+                to_do=form.cleaned_data['to_do'],
+                change_user=request.user,
+            )
+            if destination == "project":
+                to_do_submit.project = project.objects.get(project_id=location_id)
+            else:
+                to_do_submit.tasks = tasks.objects.get(tasks_id=location_id)
+            to_do_submit.save()
+        else:
+            print(form.errors)
+
     # Get data
     if destination == 'project':
         to_do_results = to_do.objects.filter(
@@ -3699,7 +3714,23 @@ def to_do(request, location_id, destination):
     # context
     c = {
         'to_do_results': to_do_results,
+        'to_do_form': to_do_form(),
     }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def to_do_complete(request, to_do_id):
+    to_do_update = to_do.objects.get(to_do_id=to_do_id)
+    to_do_update.to_do_completed = True
+    to_do_update.save()
+
+
+    t = loader.get_template('NearBeach/blank.html')
+
+    # context
+    c = {}
 
     return HttpResponse(t.render(c, request))
 

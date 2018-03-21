@@ -1820,6 +1820,20 @@ class task_information_form(ModelForm):
         }
 
 
+class to_do_form(ModelForm):
+    to_do = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'To do next?',
+        })
+    )
+    class Meta:
+        model=to_do
+        fields={
+            'to_do'
+        }
+
+
 
 class user_information_form(ModelForm):
     password1 = forms.CharField(
