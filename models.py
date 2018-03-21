@@ -924,7 +924,6 @@ class list_of_quote_stages(models.Model):
 
 
 
-
 class list_of_requirement_item_status(models.Model):
 	requirement_item_status_id=models.AutoField(primary_key=True)
 	requirement_item_status = models.CharField(
@@ -977,6 +976,42 @@ class list_of_requirement_item_type(models.Model):
 
 	class Meta:
 		db_table = "list_of_requirement_item_type"
+
+
+
+class list_of_requirement_status(models.Model):
+	requirement_status_id=models.AutoField(primary_key=True)
+	requirement_status=models.CharField(
+		max_length=50,
+	)
+	requirement_status_is_closed=models.CharField(
+		max_length=10,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user',
+		blank=True,
+		null=True,
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	def __str__(self):
+		return str(self.requirement_status)
+
+	class Meta:
+		db_table = "list_of_requirement_status"
+
+
+
 
 
 class list_of_requirement_type(models.Model):
@@ -1985,6 +2020,10 @@ class requirements(models.Model):
 	)
 	requirement_type = models.ForeignKey(
 		'list_of_requirement_type',
+		on_delete=models.CASCADE,
+	)
+	requirement_status=models.ForeignKey(
+		'list_of_requirement_status',
 		on_delete=models.CASCADE,
 	)
 	date_created = models.DateTimeField(auto_now_add=True)

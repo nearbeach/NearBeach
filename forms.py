@@ -1220,6 +1220,7 @@ class new_requirement_form(ModelForm):
             'requirement_title',
             'requirement_scope',
             'requirement_type',
+            'requirement_status',
         }
 
 

@@ -26,10 +26,12 @@ def new_requirement(request):
             requirement_scope = form.cleaned_data['requirement_scope']
             requirement_type = form.cleaned_data['requirement_type']
 
+
             requirements_save = requirements(
                 requirement_title=requirement_title,
                 requirement_scope=requirement_scope,
                 requirement_type=requirement_type,
+                requirement_status=form.cleaned_data['requirement_status'],
                 change_user=request.user,
             )
             requirements_save.save()
@@ -124,12 +126,26 @@ def requirement_information(request, requirement_id):
     if permission_results['requirement'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
+    if request.method == "POST" and permission_results['requirement'] > 1:
+        form = requirement_information_form(request.POST)
+        if form.is_valid():
+            requirements_update = requirements.objects.get(requirement_id=requirement_id)
+            requirements_update.requirement_title = form.cleaned_data['requirement_title']
+            requirements_update.requirement_scope = form.cleaned_data['requirement_scope']
+            requirements_update.requirement_type = form.cleaned_data['requirement_type']
+            requirements_update.requirement_status = form.cleaned_data['requirement_status']
+            requirements_update.change_user = request.user
+            requirements_update.save()
+        else:
+            print(form.errors)
+
     #Setup the initial data for the form
     requirement_results = requirements.objects.get(requirement_id=requirement_id)
     initial = {
         'requirement_title': requirement_results.requirement_title,
         'requirement_scope': requirement_results.requirement_scope,
         'requirement_type': requirement_results.requirement_type,
+        'requirement_status': requirement_results.requirement_status,
     }
 
     #Load template
