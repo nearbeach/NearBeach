@@ -311,6 +311,10 @@ def campus_information(request, campus_information):
     # Obtain data (before POST if statement as it is used insude)
     campus_results = organisations_campus.objects.get(pk=campus_information)
 
+    if campus_results.campus_longitude == None:
+        update_coordinates(campus_information)
+
+
     # If instance is in POST
     if request.method == "POST":
         # Other save button must have been pressed
@@ -334,6 +338,9 @@ def campus_information(request, campus_information):
             campus_results.change_user=request.user
 
             campus_results.save()
+
+            #Update co-ordinates
+            update_coordinates(campus_information)
 
         if 'add_customer_submit' in request.POST:
             # Obtain the ID of the customer
@@ -367,7 +374,14 @@ def campus_information(request, campus_information):
     countries_regions_results = list_of_countries_regions.objects.all()
     countries_results = list_of_countries.objects.all()
 
-    # Load the template
+    #Get the mapbox key
+    if hasattr(settings, 'MAPBOX_API_TOKEN'):
+        MAPBOX_API_TOKEN = settings.MAPBOX_API_TOKEN
+        print("Got mapbox API token: " + MAPBOX_API_TOKEN)
+    else:
+        MAPBOX_API_TOKEN = ''
+
+        # Load the template
     t = loader.get_template('NearBeach/campus_information.html')
 
     # context
@@ -381,6 +395,7 @@ def campus_information(request, campus_information):
         'permission': permission_results['organisation_campus'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'MAPBOX_API_TOKEN': MAPBOX_API_TOKEN,
     }
 
     return HttpResponse(t.render(c, request))
@@ -393,16 +408,8 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
     if permission_results['organisation_campus'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
-    """
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect(reverse('login'))
-
     # IF method is post
-    if request.method == "POST":
+    if request.method == "POST" and permission_results['organisation_campus'] > 1:
         form = customer_campus_form(request.POST)
         if form.is_valid():
             # Save the data
@@ -425,12 +432,21 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
 
     # Get Data
     customer_campus_results = customers_campus.objects.get(customers_campus_id=customer_campus_id)
+    campus_results = organisations_campus.objects.get(pk=customer_campus_results.campus_id.organisations_campus_id)
+
 
     # Setup the initial results
     initial = {
         'customer_phone': customer_campus_results.customer_phone,
         'customer_fax': customer_campus_results.customer_fax,
     }
+
+    #Get the mapbox key
+    if hasattr(settings, 'MAPBOX_API_TOKEN'):
+        MAPBOX_API_TOKEN = settings.MAPBOX_API_TOKEN
+        print("Got mapbox API token: " + MAPBOX_API_TOKEN)
+    else:
+        MAPBOX_API_TOKEN = ''
 
     # Load template
     t = loader.get_template('NearBeach/customer_campus.html')
@@ -444,6 +460,8 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
         'permission': permission_results['organisation_campus'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'campus_results': campus_results,
+        'MAPBOX_API_TOKEN': MAPBOX_API_TOKEN,
     }
 
     return HttpResponse(t.render(c, request))
@@ -1630,6 +1648,10 @@ def new_campus(request, organisations_id):
             )
             submit_form.save()
 
+            #Get the coordinates and update them into the system
+            print(submit_form.organisations_campus_id)
+            update_coordinates(submit_form.organisations_campus_id)
+
             return HttpResponseRedirect(reverse(organisation_information, args={organisations_id}))
         else:
             print(form.errors)
@@ -2518,7 +2540,7 @@ def new_task(request, location_id='', destination=''):
 
 @login_required(login_url='login')
 def next_step(request, next_step_id, opportunity_id):
-    next_step_save = opportunity_next_step.objects.get(id=next_step_id)
+    next_step_save = opportunity_next_step.objects.get(opportunity_next_step_id=next_step_id)
     next_step_save.next_step_completed = 1
     next_step.change_user=request.user
     next_step_save.save()
@@ -2639,7 +2661,7 @@ def opportunity_information(request, opportunity_id):
         """
         user_groups_results = user_groups.objects.filter(username=request.user)
 
-        permission_results = opportunity_permissions.objects.filter(
+        opportunity_permission_results = opportunity_permissions.objects.filter(
             Q(
                 Q(assigned_user=request.user)  # User has permission
                 | Q(groups_id__in=user_groups_results.values('groups_id'))  # User's groups have permission
@@ -2648,9 +2670,8 @@ def opportunity_information(request, opportunity_id):
             & Q(opportunity_id=opportunity_id)
         )
 
-        print(permission_results)
 
-        if (not permission_results):
+        if (not opportunity_permission_results):
             return HttpResponseRedirect(
                 reverse(
                     permission_denied,
@@ -2712,6 +2733,10 @@ def opportunity_information(request, opportunity_id):
 
     # Loaed the template
     t = loader.get_template('NearBeach/opportunity_information.html')
+
+    #Bug fixing
+    print(permission_results)
+    print(permission_results['opportunity'])
 
     c = {
         'opportunity_id': str(opportunity_id),
@@ -3654,6 +3679,31 @@ def task_information(request, task_id):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
+def to_do(request, location_id, destination):
+    # Get data
+    if destination == 'project':
+        to_do_results = to_do.objects.filter(
+            is_deleted='FALSE',
+            project_id=location_id,
+        )
+    else:
+        to_do_results = to_do.objects.filter(
+            is_deleted='FALSE',
+            tasks_id=location_id,
+        )
+
+    # Load the template
+    t = loader.get_template('NearBeach/to_do/to_do.html')
+
+    # context
+    c = {
+        'to_do_results': to_do_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
 """
 The following def are designed to help display a customer 404 and 500 pages
 """
@@ -3677,3 +3727,52 @@ def handler500(request):
     return response
 
 
+def update_coordinates(campus_id):
+    campus_results = organisations_campus.objects.get(pk=campus_id)
+
+    #If there are no co-ordinates for this campus, get them and save them
+    if hasattr(settings, 'MAPBOX_API_TOKEN'):
+        print("Mapbox token exists")
+        address = campus_results.campus_address1 + " " + \
+            campus_results.campus_address2 + " " + \
+            campus_results.campus_address3 + " " + \
+            campus_results.campus_suburb + " " + \
+            campus_results.campus_region_id.region_name + " " + \
+            campus_results.campus_country_id.country_name + " "
+        print(address)
+        address = address.replace("/", " ") #Remove those pesky /
+        #address_coded = urllib.request.quote(address)
+        address_coded = urllib.quote_plus(address)
+        print(address_coded)
+
+        url = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + address_coded + ".json?access_token=" + settings.MAPBOX_API_TOKEN
+
+        response = urllib.urlopen(url)
+        data = json.loads(response.read())
+        print(data)
+        try:
+            campus_results.campus_longitude = data["features"][0]["center"][0]
+            campus_results.campus_latitude = data["features"][0]["center"][1]
+            campus_results.save()
+
+            print(data["features"][0]["center"])
+        except:
+            print("No data for the address: " + address)
+
+        """
+        #Python 3
+        try:
+            with urllib.request.urlopen(url) as results:
+                data = json.loads(results.read().decode())
+
+                try:
+                    campus_results.campus_longitude = data["features"][0]["center"][0]
+                    campus_results.campus_latitude = data["features"][0]["center"][1]
+                    campus_results.save()
+
+                    print(data["features"][0]["center"])
+                except:
+                    print("No data for the address: " + address)
+        except:
+            print("Address Failed")
+        """

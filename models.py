@@ -1301,6 +1301,18 @@ class organisations_campus(models.Model):
 		'list_of_countries',
 		on_delete=models.CASCADE,
 	)
+	campus_longitude=models.DecimalField(
+		decimal_places=13,
+		max_digits=16,
+		null=True, #If use has no mapping software, we want to leave this blank
+		blank=True,
+	)
+	campus_latitude=models.DecimalField(
+		decimal_places=13,
+		max_digits=16,
+		null=True, #If use has no mapping software, we want to leave this blank
+		blank=True,
+	)
 	date_created=models.DateTimeField(auto_now_add=True)
 	date_modified=models.DateTimeField(auto_now=True)
 	change_user=models.ForeignKey(
@@ -2375,6 +2387,41 @@ class tasks_opportunity(models.Model):
 
 	class Meta:
 		db_table="tasks_opportunity"
+
+
+class to_do(models.Model):
+	to_do_id = models.AutoField(primary_key=True)
+	to_do = models.CharField(
+		max_length=255,
+	)
+	project = models.ForeignKey(
+		'project',
+		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
+	)
+	tasks = models.ForeignKey(
+		'tasks',
+		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	class Meta:
+		db_table = "tasks_opportunity"
+
 
 
 class user_groups(models.Model):

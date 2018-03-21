@@ -1,6 +1,7 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
+<script type="text/javascript" src="{% static 'NearBeach/javascript/campus_information.js' %}"></script>
 <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
 <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
 <script src='https://code.jquery.com/jquery-1.11.0.min.js'></script>
@@ -31,100 +32,49 @@
     <h2>Map</h2>
     <div id='map' style='width: 100%; height: 680px; align-content: center'></div>
     <script type="text/javascript">
-        /*
-        Extract the cordinates of the current campus. This requires jQuery
-
-        Method
-        ~~~~~~
-        1.) Obtain the address into a HTML friendly format
-        2.) Using your mapbox API, query mapbox
-        3.) The screen has to wait until the page has fully loaded.
-            this will not work otherwise and has caused great many
-            gaming hours lost. There were teas. My three legged cat
-            Amputee Amber did console me during those times.
-        4.) Place the co-ordinates into a global variable because
-            I do not want to lose them.
-        5.) Obtain map information :)
-         */
-        var access_token = 'pk.eyJ1Ijoicm9ib3RpY2hlYWQiLCJhIjoiY2o1bGtxNzNrMmVybjJxampmbjRtN2YyZSJ9.vljaOJpttEga2nIIR0WZQw';
-        var address =
-            "{{ customer_campus_results.campus_id.campus_address1 }}" + " " +
-            "{{ customer_campus_results.campus_id.campus_address2 }}" + " " +
-            "{{ customer_campus_results.campus_id.campus_address3 }}" + " " +
-            "{{ customer_campus_results.campus_id.campus_suburb }}" + " " +
-            "{{ customer_campus_results.campus_id.campus_region_id }}" + " " +
-            "{{ customer_campus_results.campus_id.campus_country_id }}"
-        ;
-        address = encodeURIComponent(address);
-
-        function get_cords(return_cords){
-            var json_data = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + address + ".json?access_token=" + access_token;
-            $.getJSON(json_data,function(data) {
-                //extract_data = data.features[0].center;
-                //alert("Inside the function - " + extract_data);
-                return_cords(data.features[0].center);
-            });
-        }
-        var cordinates
-        $(function(){
-            $(document).ready(function() {
-                get_cords( function ( cordinates ) {
-                    /*
-                    Bit of a hack job here. I have placed this map calling function
-                    within the get_cords function as I can not pass the variables
-                    of this function to the outside world.
-
-                    Amputee Amber is upset that with all her consoling, it did not
-                    stop me from swearing from my computer. She is currently sleeping
-                    on the chair not next to me.
-
-                    The house mates dog is outside - out of choice
-                     */
-                    mapboxgl.accessToken = access_token;
-                    var map = new mapboxgl.Map({
-                        container: 'map', // container id
-                        style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
-                        center: cordinates, // starting position [lng, lat]
-                        zoom: 15 // starting zoom
-                    });
-
-                    map.on('load', function() {
-                        map.addLayer({
-                            "id": "points",
-                            "type": "symbol",
-                            "source": {
-                                "type": "geojson",
-                                "data": {
-                                    "type": "FeatureCollection",
-                                    "features": [{
-                                        "type": "Feature",
-                                        "geometry": {
-                                            "type": "Point",
-                                            "coordinates": cordinates
-                                        },
-                                        "properties": {
-                                            "title": "{{ customer_campus_results.campus_id.campus_nickname }}",
-                                            "icon": "marker"
-                                        }
-                                    }]
-                                }
-                            },
-                            "layout": {
-                                "icon-image": "{icon}-15",
-                                "text-field": "{title}",
-                                "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
-                                "text-offset": [0, 0.6],
-                                "text-anchor": "top"
-                            }
-                        })
-
-                    })
-                });
-            });
-        });
-
         function on_page_load() {
-            set_permissions({{ permission }})
+            set_permissions({{ permission }});
+
+            mapboxgl.accessToken  = "{{ MAPBOX_API_TOKEN }}";
+            var map = new mapboxgl.Map({
+                container: 'map', // container id
+                style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
+                center: [{{ campus_results.campus_longitude }},{{ campus_results.campus_latitude }}], // starting position [lng, lat]
+                zoom: 15 // starting zoom
+            });
+
+            map.on('load', function() {
+                map.addLayer({
+                    "id": "points",
+                    "type": "symbol",
+                    "source": {
+                        "type": "geojson",
+                        "data": {
+                            "type": "FeatureCollection",
+                            "features": [{
+                                "type": "Feature",
+                                "geometry": {
+                                    "type": "Point",
+                                    "coordinates": [{{ campus_results.campus_longitude }},{{ campus_results.campus_latitude }}]
+                                },
+                                "properties": {
+                                    "title": "{{ customer_campus_results.campus_id.campus_nickname }}",
+                                    "icon": "marker"
+                                }
+                            }]
+                        }
+                    },
+                    "layout": {
+                        "icon-image": "{icon}-15",
+                        "text-field": "{title}",
+                        "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+                        "text-offset": [0, 0.6],
+                        "text-anchor": "top"
+                    }
+                })
+
+            })
+            setTimeout(relayout_map, 500);
         }
     </script>
 {% endblock %}
