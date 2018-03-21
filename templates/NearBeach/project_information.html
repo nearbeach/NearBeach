@@ -7,11 +7,12 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
-    <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.fileupload.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
 
 <script>
     function on_page_load() {
 	    //Initiate AJAX modules
+        load_to_do();
         load_project_assigned_users();
         load_project_costs();
         load_project_customers();
@@ -25,6 +26,7 @@
         load_project_group_list();
 
 
+
 	    //Initiate the dates
 		initiate_dates();
 
@@ -35,7 +37,7 @@
         running_total();
 
         //Finally set the permissions
-        set_permissions({{ project_permissions }});
+        //set_permissions({{ project_permissions }});
 	}
 </script>
 
@@ -63,32 +65,40 @@
             </fieldset>
         {% endif %}
     </form>
+    <br/>
+    <form method="post" class="to_do" id="to_do">
+        <h2>To Do</h2>
+        Loading...
+    </form>
 
     <form method="post" class="project_history" id="project_history">
         <h2>Project History</h2>
         Loading...
     </form>
-        <h2>Associated Tasks</h2>
-        {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
-            {% if project_permissions > 1 %}
-                <a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
-            {% endif %}
-        {% endif %}
-        {% if associated_tasks_results %}
-                <table>
-                <tr class="header"><td>Task Id</td><td>Short Description</td><td>End Date</td></tr>
-                {% for associated_task_row in associated_tasks_results %}
-                    <tr>
-                    <td><a href="{% url 'task_information' associated_task_row.tasks_id %}">Task - {{ associated_task_row.tasks_id }}</a></td>
-                    <td>{{ associated_task_row.task_short_description }}</td>
-                    <td>{{ associated_task_row.task_end_date }}</td>
-                    </tr>
-                {% endfor %}
 
-                </table>
-        {% else %}
-            <p>Currently no associated history.</p>
+
+
+    <h2>Associated Tasks</h2>
+    {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
+        {% if project_permissions > 1 %}
+            <a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
         {% endif %}
+    {% endif %}
+    {% if associated_tasks_results %}
+            <table>
+            <tr class="header"><td>Task Id</td><td>Short Description</td><td>End Date</td></tr>
+            {% for associated_task_row in associated_tasks_results %}
+                <tr>
+                <td><a href="{% url 'task_information' associated_task_row.tasks_id %}">Task - {{ associated_task_row.tasks_id }}</a></td>
+                <td>{{ associated_task_row.task_short_description }}</td>
+                <td>{{ associated_task_row.task_end_date }}</td>
+                </tr>
+            {% endfor %}
+
+            </table>
+    {% else %}
+        <p>Currently no associated history.</p>
+    {% endif %}
 
     <form method="post" class="project_customers" id="project_customers">
         <h2>Project Customers</h2>
@@ -105,8 +115,7 @@
         <h2>Document Tree Upload Documents</h2>
         Loading...
     </form>
-
-    <form method="post" class="document_tree_create_folder" id="document_tree_create_folder">
+<form method="post" class="document_tree_create_folder" id="document_tree_create_folder">
         <h2>Document Tree Create Folder</h2>
         Loading...
     </form>
@@ -285,6 +294,46 @@
         })
     });
 
+    $("#to_do").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: '/to_do/{{ project_id }}/project/',
+            data: $(this).serialize(),
+            type: 'POST',
+            success: function(data) {
+                $("#to_do").html(data);
+            },
+            error: function() {
+                alert("Submitting the TO DO had an issue!");
+            }
+        })
+    });
+
+
+    function complete_to_do(to_do_id) {
+        //Send data to the database
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            url: '/to_do_complete/' + to_do_id + '/',
+            data: {},
+            type: "POST",
+            success: function(data) {
+                load_to_do();
+            },
+            error: function() {
+                alert("Can not complete To do :(");
+            }
+        });
+    }
+
+
 
     function load_project_assigned_users() {
         //Load Project History
@@ -435,6 +484,22 @@
             }
         });
     };
+
+
+    function load_to_do() {
+        $.ajax({
+            url: '/to_do/{{ project_id }}/project/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#to_do').html(data)
+            },
+            error: function() {
+                alert("Sorry, could not load the to do list");
+            }
+        })
+    }
 
     function delete_group_item(group_item) {
         $.ajax({

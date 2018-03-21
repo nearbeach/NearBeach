@@ -1,0 +1,31 @@
+{% csrf_token %}
+<data value="{{ kanban_card_id }}" id="edit_kanban_card_id"></data>
+
+<h2>Edit Kanban Card</h2>
+<ul>
+    {% if linked_card == True %}
+        <li>This card is linked - the card text can not be updated</li>
+    {% endif %}
+    <li>{{ kanban_card_form.kanban_card_text }}</li>
+    {% if kanban_permission > 1 or kanban_card_permission > 1 %}
+        <li>Kanban Column: {{ kanban_card_form.kanban_column }}</li>
+        <li>Kanban Level: {{ kanban_card_form.kanban_level }}</li>
+    {% endif %}
+</ul>
+
+<h4>Card Comments</h4>
+<ul>
+{% if kanban_permission > 1 or kanban_card_permission > 1 or kanban_comment_permission == 1 %}
+    <li>{{ kanban_card_form.kanban_card_comment }}</li>
+    <li><input type="submit" value="Submit new "></li>
+{% endif %}
+
+{% for row in kanban_comment_results %}
+    {% for row in kanban_comment_results %}
+        <li>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}</li>
+        <li><textarea readonly>{{ row.kanban_comment }}</textarea></li>
+    {% endfor %}
+{% endfor %}
+
+<a href="javascript:void(0)" onclick="close_kanban_edit_card()">Close</a>
+</ul>

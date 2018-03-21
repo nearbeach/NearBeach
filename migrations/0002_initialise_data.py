@@ -87,8 +87,8 @@ def initialise_data(apps, schema_editor):
         list_of_opportunity_stage(list_order="6", opportunity_stage_description="Perception Analysis",probability_success="60"),
         list_of_opportunity_stage(list_order="7", opportunity_stage_description="Proposal/Price Quote",probability_success="70"),
         list_of_opportunity_stage(list_order="8", opportunity_stage_description="Negotiation/Review",probability_success="80"),
-        list_of_opportunity_stage(list_order="9", opportunity_stage_description="Closed Won",probability_success="100",opportunity_closed='TRUE'),
-        list_of_opportunity_stage(list_order="10", opportunity_stage_description="Closed Lost",probability_success="0",opportunity_closed='TRUE'),
+        list_of_opportunity_stage(list_order="9", opportunity_stage_description="Closed Won",probability_success="100"),
+        list_of_opportunity_stage(list_order="10", opportunity_stage_description="Closed Lost",probability_success="0"),
     ])
 
     #List of requirement items status
@@ -117,6 +117,15 @@ def initialise_data(apps, schema_editor):
         list_of_requirement_item_type(requirement_item_type="Constraint"),
         list_of_requirement_item_type(requirement_item_type="System Function"),
 
+    ])
+
+
+    #List of requirement  status
+    list_of_requirement_status = apps.get_model("NearBeach","list_of_requirement_status")
+    list_of_requirement_status.objects.using(db_alias).bulk_create([
+        list_of_requirement_status(requirement_status="New Requirement"),
+        list_of_requirement_status(requirement_status="In Progress"),
+        list_of_requirement_status(requirement_status="Completed",requirement_status_is_closed='TRUE'),
     ])
 
     #List of requirement type

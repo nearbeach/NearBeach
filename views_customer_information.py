@@ -23,23 +23,9 @@ from django.urls import reverse
 
 @login_required(login_url='login')
 def information_customer_contact_history(request, customer_id):
-    customer_permissions = 0
-    contact_history_perm = 0
+    permission_results = return_user_permission_level(request, None,['customer','contact_history'])
 
-    if request.session['is_superuser'] == True:
-        customer_permissions = 4
-        contact_history_perm = 4
-    else:
-        pp_results = return_user_permission_level(request, None,'customer')
-        ph_results = return_user_permission_level(request, None, 'contact_history')
-
-        if pp_results > customer_permissions :
-            customer_permissions = pp_results
-
-        if ph_results == 1:
-            contact_history_perm = 1
-
-    if customer_permissions  == 0:
+    if permission_results['customer']  == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST":
@@ -65,29 +51,6 @@ def information_customer_contact_history(request, customer_id):
                     int(form.cleaned_data['start_date_minute']),
                     form.cleaned_data['start_date_meridiems']
                 )
-
-                """
-                        document_save = documents(
-            document_description=filename,
-            document=file,
-            change_user=request.user,
-        )
-        document_save.save()
-
-        document_permissions_save = document_permissions(
-            document_key=document_save,
-            change_user=request.user,
-        )
-        if project_or_task == "P":
-            #Project
-            project_instance = project.objects.get(project_id=location_id)
-            document_permissions_save.project_id = project_instance
-        else:
-            #Task
-            task_instance = tasks.objects.get(tasks_id=location_id)
-            document_permissions_save.task_id = task_instance
-document_permissions_save.save()
-"""
 
 
                 # documents
@@ -147,8 +110,8 @@ document_permissions_save.save()
         'contact_day': contact_date.day,
         'contact_hour': contact_date.hour,
         'contact_minute': int(contact_date.minute/5)*5,
-        'contact_history_perm': contact_history_perm,
-        'customer_permissions': customer_permissions,
+        'contact_history_perm': permission_results['contact_history'],
+        'customer_permissions': permission_results['customer'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -156,23 +119,9 @@ document_permissions_save.save()
 
 @login_required(login_url='login')
 def information_customer_documents_list(request, customer_id, organisations_id=''):
-    customer_permissions = 0
-    document_perm = 0
+    permission_results = return_user_permission_level(request, None,['customer','documents'])
 
-    if request.session['is_superuser'] == True:
-        customer_permissions = 4
-        document_perm = 4
-    else:
-        pp_results = return_user_permission_level(request, None,'customer')
-        ph_results = return_user_permission_level(request, None, 'documents')
-
-        if pp_results > customer_permissions:
-            customer_permissions = pp_results
-
-        if ph_results == 1:
-            document_perm = 1
-
-    if customer_permissions == 0:
+    if permission_results['customer'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
 
@@ -199,8 +148,8 @@ def information_customer_documents_list(request, customer_id, organisations_id='
         'customer_id': customer_id,
         'customer_document_results': customer_document_results,
         'organisation_document_results': organisation_document_results,
-        'customer_permissions': customer_permissions,
-        'document_perm': document_perm,
+        'customer_permissions': permission_results['customer'],
+        'document_perm': permission_results['documents'],
     }
 
     return HttpResponse(t.render(c, request))

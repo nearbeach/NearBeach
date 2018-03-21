@@ -68,7 +68,7 @@
                     <tr>
                         <td>{{ row.next_step_description }}</td>
                         {% if row.next_step_completed == 0 %}
-                            <td><a href="{% url 'next_step' row.id opportunity_results.opportunity_id %}">Click to Complete</a></td>
+                            <td><a href="{% url 'next_step' row.opportunity_next_step_id opportunity_results.opportunity_id %}">Click to Complete</a></td>
                         {% else %}
                             <td>Completed</td>
                         {% endif %}

@@ -14,30 +14,24 @@ from .user_permissions import return_user_permission_level
 
 @login_required(login_url='login')
 def new_requirement(request):
-    permission = 0;
+    permission_results = return_user_permission_level(request, None, 'requirement')
 
-    if request.session['is_superuser'] == True:
-        permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None, 'requirement')
-
-        if pp_results > permission:
-            permission = pp_results
-
-    if permission < 2:
+    if permission_results['requirement'] < 2:
         return HttpResponseRedirect(reverse('permission_denied'))
 
-    if request.method == "POST" and permission > 2:
+    if request.method == "POST" and permission_results['requirement'] > 2:
         form = new_requirement_form(request.POST)
         if form.is_valid():
             requirement_title = form.cleaned_data['requirement_title']
             requirement_scope = form.cleaned_data['requirement_scope']
             requirement_type = form.cleaned_data['requirement_type']
 
+
             requirements_save = requirements(
                 requirement_title=requirement_title,
                 requirement_scope=requirement_scope,
                 requirement_type=requirement_type,
+                requirement_status=form.cleaned_data['requirement_status'],
                 change_user=request.user,
             )
             requirements_save.save()
@@ -52,31 +46,98 @@ def new_requirement(request):
     # context
     c = {
         'new_requirement_form': new_requirement_form(),
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
 
 
 @login_required(login_url='login')
-def requirement_information(request, requirement_id):
-    permission = 0
-    requirement_link_permissions = 0
+def requirement_documents_uploads(request, location_id, destination):
+    permission_results = return_user_permission_level(request, None, ['requirement','document'])
 
-    if request.session['is_superuser'] == True:
-        permission = 4
-        requirement_link_permissions = 4
-    else:
-        pp_results = return_user_permission_level(request, None, 'requirement')
-        ph_results = return_user_permission_level(request, None, 'requirement_link')
-
-        if pp_results > permission:
-            permission = pp_results
-
-        if ph_results > requirement_link_permissions:
-            requirement_link_permissions = ph_results
-
-    if permission == 0:
+    if permission_results['requirement'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        # Get the file data
+        file = request.FILES['file']
+
+        # Data objects required
+        filename = str(file)
+        file_size = file._size
+        print("File name: " + filename + "\nFile Size: " + str(file_size))
+
+        """
+        File Uploads
+        """
+        document_save = documents(
+            document_description=filename,
+            document=file,
+            change_user=request.user,
+        )
+        document_save.save()
+
+        document_permissions_save = document_permissions(
+            document_key=document_save,
+            change_user=request.user,
+        )
+        if destination == "requirement":
+            document_permissions_save.requirements = requirements.objects.get(requirement_id=location_id)
+        else:
+            document_permissions_save.requirement_item = requirement_item.objects.get(requirement_item_id=location_id)
+
+        document_permissions_save.save()
+
+    if destination == "requirement":
+        document_results = document_permissions.objects.filter(
+            is_deleted='FALSE',
+            requirements=location_id,
+        )
+    else:
+        document_results = document_permissions.objects.filter(
+            is_deleted='FALSE',
+            requirement_item=location_id,
+        )
+
+
+    #Load template
+    t = loader.get_template('NearBeach/requirement_information/requirement_documents.html')
+
+    # context
+    c = {
+        'location_id': location_id,
+        'destination': destination,
+        'requirement_permissions': permission_results['requirement'],
+        'document_permissions': permission_results['document'],
+        'document_results': document_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+
+@login_required(login_url='login')
+def requirement_information(request, requirement_id):
+    permission_results = return_user_permission_level(request, None, ['requirement','requirement_link'])
+
+    if permission_results['requirement'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST" and permission_results['requirement'] > 1:
+        form = requirement_information_form(request.POST)
+        if form.is_valid():
+            requirements_update = requirements.objects.get(requirement_id=requirement_id)
+            requirements_update.requirement_title = form.cleaned_data['requirement_title']
+            requirements_update.requirement_scope = form.cleaned_data['requirement_scope']
+            requirements_update.requirement_type = form.cleaned_data['requirement_type']
+            requirements_update.requirement_status = form.cleaned_data['requirement_status']
+            requirements_update.change_user = request.user
+            requirements_update.save()
+        else:
+            print(form.errors)
 
     #Setup the initial data for the form
     requirement_results = requirements.objects.get(requirement_id=requirement_id)
@@ -84,6 +145,7 @@ def requirement_information(request, requirement_id):
         'requirement_title': requirement_results.requirement_title,
         'requirement_scope': requirement_results.requirement_scope,
         'requirement_type': requirement_results.requirement_type,
+        'requirement_status': requirement_results.requirement_status,
     }
 
     #Load template
@@ -93,8 +155,11 @@ def requirement_information(request, requirement_id):
     c = {
         'requirement_id': requirement_id,
         'requirement_information_form': requirement_information_form(initial=initial),
-        'permission': permission,
-        'requirement_link_permissions': requirement_link_permissions,
+        'permission': permission_results['requirement'],
+        'requirement_link_permissions': permission_results['requirement_link'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+
     }
 
     return HttpResponse(t.render(c, request))
@@ -102,20 +167,12 @@ def requirement_information(request, requirement_id):
 
 @login_required(login_url='login')
 def requirement_item_edit(request, requirement_item_id):
-    permission = 0;
+    permission_results = return_user_permission_level(request, None, 'requirement')
 
-    if request.session['is_superuser'] == True:
-        permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None, 'requirement')
-
-        if pp_results > permission:
-            permission = pp_results
-
-    if permission == 0:
+    if permission_results['requirement'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
-    if request.method == "POST" and permission > 1:
+    if request.method == "POST" and permission_results['requirement'] > 1:
         form = requirement_items_form(request.POST)
         if form.is_valid():
             # Save the data
@@ -147,7 +204,10 @@ def requirement_item_edit(request, requirement_item_id):
     c = {
         'requirement_item_id': requirement_item_id,
         'requirement_items_form': requirement_items_form(initial=initial),
-        'permission': permission,
+        'permission': permission_results['requirement'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+
     }
 
     return HttpResponse(t.render(c, request))
@@ -156,17 +216,9 @@ def requirement_item_edit(request, requirement_item_id):
 
 @login_required(login_url='login')
 def requirement_items_list(request, requirement_id):
-    permission = 0;
+    permission_results = return_user_permission_level(request, None, 'requirement')
 
-    if request.session['is_superuser'] == True:
-        permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None, 'requirement')
-
-        if pp_results > permission:
-            permission = pp_results
-
-    if permission == 0:
+    if permission_results['requirement'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     requirement_items_results = requirement_item.objects.filter(requirement_id=requirement_id)
@@ -186,17 +238,9 @@ def requirement_items_list(request, requirement_id):
 
 @login_required(login_url='login')
 def requirement_items_new(request, requirement_id):
-    permission = 0;
+    permission_results = return_user_permission_level(request, None, 'requirement')
 
-    if request.session['is_superuser'] == True:
-        permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None, 'requirement')
-
-        if pp_results > permission:
-            permission = pp_results
-
-    if permission < 2:
+    if permission_results['requirement'] < 2:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST":
@@ -240,17 +284,9 @@ def requirement_items_new(request, requirement_id):
 
 @login_required(login_url='login')
 def requirement_items_new_link(request, requirement_item_id, location_id= '', destination=''):
-    permission = 0;
+    permission_results = return_user_permission_level(request, None, 'requirement_link')
 
-    if request.session['is_superuser'] == True:
-        permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None, 'requirement_link')
-
-        if pp_results > permission:
-            permission = pp_results
-
-    if permission == 0:
+    if permission_results['requirement_link'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST":
@@ -359,17 +395,9 @@ def requirement_items_new_link(request, requirement_item_id, location_id= '', de
 
 @login_required(login_url='login')
 def requirement_links_list(request, requirement_id):
-    permission = 0;
+    permission_results = return_user_permission_level(request, None, 'requirement')
 
-    if request.session['is_superuser'] == True:
-        permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None, 'requirement')
-
-        if pp_results > permission:
-            permission = pp_results
-
-    if permission == 0:
+    if permission_results['requirement'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     links_results = requirement_links.objects.filter(
@@ -400,17 +428,9 @@ def requirement_links_list(request, requirement_id):
 
 @login_required(login_url='login')
 def requirement_new_link(request, requirement_id, location_id='', destination=''):
-    permission = 0;
+    permission_results = return_user_permission_level(request, None, 'requirement_link')
 
-    if request.session['is_superuser'] == True:
-        permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None, 'requirement_link')
-
-        if pp_results > permission:
-            permission = pp_results
-
-    if permission < 2:
+    if permission_results['requirement_link'] < 2:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST":

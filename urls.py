@@ -190,6 +190,9 @@ url(r'^requirement_items_new_link/(?P<requirement_item_id>[0-9]+)/(?P<location_i
 		name="requirement_links_list"),
 	url(r'^requirement_new_link/(?P<requirement_id>[0-9]+)/$', views_requirements.requirement_new_link,
 		name="requirement_new_link"),
+	url(r'^requirement_documents_uploads/(?P<location_id>[0-9]+)/(?P<destination>["requirement","requirement_item"]+)'
+		, views_requirements.requirement_documents_uploads
+		, name='requirement_documents_uploads'),
 
 url(r'^requirement_new_link/(?P<requirement_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<destination>["project","task","organisation"]+)'
 	, views_requirements.requirement_new_link,
@@ -233,7 +236,18 @@ url(r'^list_of_taxes_edit/(?P<tax_id>[0-9]+)/', views_administration.list_of_tax
 url(r'^list_of_taxes_new/', views_administration.list_of_taxes_new, name='list_of_taxes_new'),
 url(r'^list_of_taxes_deactivate/(?P<tax_id>[0-9]+)/', views_administration.list_of_taxes_deactivate, name='list_of_taxes_deactivate'),
 
-
+#Kanban Board
+	url(r'^kanban_list/', views.kanban_list,name='kanban_list'),
+	url(r'^kanban_information/(?P<kanban_board_id>[0-9]+)/', views.kanban_information, name='kanban_information'),
+	url(r'^kanban_move_card/(?P<kanban_card_id>[0-9]+)/(?P<kanban_column_id>[0-9]+)/(?P<kanban_level_id>[0-9]+)/', views.kanban_move_card, name='kanban_move_card'),
+	url(r'^kanban_new_card/(?P<kanban_board_id>[0-9]+)/$', views.kanban_new_card,name='kanban_new_card'),
+	url(r'^kanban_edit_card/(?P<kanban_card_id>[0-9]+)/$', views.kanban_edit_card,name='kanban_edit_card'),
+url(r'^kanban_properties/(?P<kanban_board_id>[0-9]+)/$', views.kanban_properties,name='kanban_properties'),
+url(r'^new_kanban_board/$', views.new_kanban_board,name='new_kanban_board'),
+url(r'^kanban_new_link/(?P<kanban_board_id>[0-9]+)/$', views.kanban_new_link,name='kanban_new_link'),
+url(r'^kanban_new_link/(?P<kanban_board_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement"]+)/$', views.kanban_new_link,name='kanban_new_link'),
+	url(r'^to_do/(?P<location_id>[0-9]+)/(?P<destination>["project","task"]+)/$', views.to_do_list, name='to_do'),
+url(r'^to_do_complete/(?P<to_do_id>[0-9]+)/$', views.to_do_complete, name='to_do_complete'),
 ]
 
 if settings.DEBUG:

@@ -53,3 +53,13 @@ Note: jQuery help shorten a lot of the javascript code within NearBeach. There a
 
 
 
+### jQuery File Upload
+Creator(s): Sebastian Tschan
+
+Github: https://github.com/blueimp/jQuery-File-Upload
+
+Link: https://blueimp.github.io/jQuery-File-Upload/
+
+License : MIT
+
+Note: jQuery File Upload is used when there is a file to be uploaded through the AJAX method.

@@ -18,6 +18,7 @@ from django.urls import reverse
 from .misc_functions import *
 from .user_permissions import return_user_permission_level
 from datetime import timedelta
+from django.db.models import Max
 
 #import python modules
 import datetime, json, simplejson, urllib, urllib2
@@ -302,21 +303,17 @@ def associated_tasks(request, project_id):
 
 @login_required(login_url='login')
 def campus_information(request, campus_information):
-    permission = 0
+    permission_results = return_user_permission_level(request, None, 'organisation_campus')
 
-    if request.session['is_superuser'] == True:
-        permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None, 'organisation_campus')
-
-        if pp_results > permission:
-            permission = pp_results
-
-    if permission == 0:
+    if permission_results['organisation_campus'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     # Obtain data (before POST if statement as it is used insude)
     campus_results = organisations_campus.objects.get(pk=campus_information)
+
+    if campus_results.campus_longitude == None:
+        update_coordinates(campus_information)
+
 
     # If instance is in POST
     if request.method == "POST":
@@ -341,6 +338,9 @@ def campus_information(request, campus_information):
             campus_results.change_user=request.user
 
             campus_results.save()
+
+            #Update co-ordinates
+            update_coordinates(campus_information)
 
         if 'add_customer_submit' in request.POST:
             # Obtain the ID of the customer
@@ -374,7 +374,14 @@ def campus_information(request, campus_information):
     countries_regions_results = list_of_countries_regions.objects.all()
     countries_results = list_of_countries.objects.all()
 
-    # Load the template
+    #Get the mapbox key
+    if hasattr(settings, 'MAPBOX_API_TOKEN'):
+        MAPBOX_API_TOKEN = settings.MAPBOX_API_TOKEN
+        print("Got mapbox API token: " + MAPBOX_API_TOKEN)
+    else:
+        MAPBOX_API_TOKEN = ''
+
+        # Load the template
     t = loader.get_template('NearBeach/campus_information.html')
 
     # context
@@ -385,7 +392,10 @@ def campus_information(request, campus_information):
         'add_customers_results': add_customers_results,
         'countries_regions_results': countries_regions_results,
         'countries_results': countries_results,
-        'permission': permission,
+        'permission': permission_results['organisation_campus'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'MAPBOX_API_TOKEN': MAPBOX_API_TOKEN,
     }
 
     return HttpResponse(t.render(c, request))
@@ -393,29 +403,13 @@ def campus_information(request, campus_information):
 
 @login_required(login_url='login')
 def customers_campus_information(request, customer_campus_id, customer_or_org):
-    permission = 0
+    permission_results = return_user_permission_level(request, None, 'organisation_campus')
 
-    if request.session['is_superuser'] == True:
-        permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None, 'organisation_campus')
-
-        if pp_results > permission:
-            permission = pp_results
-
-    if permission == 0:
+    if permission_results['organisation_campus'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
-    """
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect(reverse('login'))
-
     # IF method is post
-    if request.method == "POST":
+    if request.method == "POST" and permission_results['organisation_campus'] > 1:
         form = customer_campus_form(request.POST)
         if form.is_valid():
             # Save the data
@@ -438,12 +432,21 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
 
     # Get Data
     customer_campus_results = customers_campus.objects.get(customers_campus_id=customer_campus_id)
+    campus_results = organisations_campus.objects.get(pk=customer_campus_results.campus_id.organisations_campus_id)
+
 
     # Setup the initial results
     initial = {
         'customer_phone': customer_campus_results.customer_phone,
         'customer_fax': customer_campus_results.customer_fax,
     }
+
+    #Get the mapbox key
+    if hasattr(settings, 'MAPBOX_API_TOKEN'):
+        MAPBOX_API_TOKEN = settings.MAPBOX_API_TOKEN
+        print("Got mapbox API token: " + MAPBOX_API_TOKEN)
+    else:
+        MAPBOX_API_TOKEN = ''
 
     # Load template
     t = loader.get_template('NearBeach/customer_campus.html')
@@ -454,7 +457,11 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
         'customer_campus_results': customer_campus_results,
         'customer_campus_id': customer_campus_id,
         'customer_or_org': customer_or_org,
-        'permission': permission,
+        'permission': permission_results['organisation_campus'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'campus_results': campus_results,
+        'MAPBOX_API_TOKEN': MAPBOX_API_TOKEN,
     }
 
     return HttpResponse(t.render(c, request))
@@ -462,34 +469,12 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
 
 @login_required(login_url='login')
 def customer_information(request, customer_id):
-    customer_permissions = 0
-    assign_campus_to_customer_permission = 0
+    permission_results = return_user_permission_level(request, None,['assign_campus_to_customer','customer'])
 
-    if request.session['is_superuser'] == True:
-        customer_permissions = 4
-        assign_campus_to_customer_permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None,'customer')
-        ph_results = return_user_permission_level(request, None,'assign_campus_to_customer')
-
-        if pp_results > customer_permissions:
-            customer_permissions = pp_results
-
-        if ph_results > assign_campus_to_customer_permission:
-            assign_campus_to_customer_permission = ph_results
-
-    if customer_permissions == 0:
-        # Send them to permission denied!!
+    if permission_results['customer'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
-    """
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect(reverse('login'))
 
-    if request.method == "POST" and customer_permissions > 1:
+    if request.method == "POST" and permission_results['customer'] > 1:
         # Save everything!
         form = customer_information_form(request.POST, request.FILES)
         if form.is_valid():
@@ -649,9 +634,11 @@ def customer_information(request, customer_id):
         'opportunity_results': opportunity_results,
         'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
         'customer_id': customer_id,
-        'customer_permissions': customer_permissions,
-        'assign_campus_to_customer_permission': assign_campus_to_customer_permission,
+        'customer_permissions': permission_results['customer'],
+        'assign_campus_to_customer_permission': permission_results['assign_campus_to_customer'],
         'quote_results':quote_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -659,12 +646,15 @@ def customer_information(request, customer_id):
 
 @login_required(login_url='login')
 def dashboard(request):
+    permission_results = return_user_permission_level(request, None, 'project')
+
     # Load the template
     t = loader.get_template('NearBeach/dashboard.html')
 
     # context
     c = {
-
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -1030,6 +1020,424 @@ def index(request):
     return HttpResponseRedirect(reverse('login'))
 
 
+def kanban_edit_card(request,kanban_card_id):
+    kanban_card_results = kanban_card.objects.get(kanban_card_id=kanban_card_id)
+    if (
+        kanban_card_results.project
+        or kanban_card_results.tasks
+        or kanban_card_results.requirements
+    ):
+        linked_card = True
+    else:
+        linked_card = False
+
+
+    permission_results = return_user_permission_level(request, None,['kanban','kanban_card','kanban_comment'])
+
+    if permission_results['kanban'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
+    if request.method == "POST" and permission_results > 1:
+        form = kanban_card_form(
+            request.POST,
+            kanban_board_id=kanban_card_results.kanban_board_id,
+        )
+        if form.is_valid():
+            #Get required data
+            kanban_card_instance = kanban_card.objects.get(kanban_card_id=kanban_card_id)
+            current_user = request.user
+
+            kanban_column_extract=form.cleaned_data['kanban_column']
+            kanban_level_extract=form.cleaned_data['kanban_level']
+
+            if linked_card == False:
+                kanban_card_instance.kanban_card_text=form.cleaned_data['kanban_card_text']
+            kanban_card_instance.kanban_column_id=kanban_column_extract.kanban_column_id
+            kanban_card_instance.kanban_level_id =kanban_level_extract.kanban_level_id
+            kanban_card_instance.save()
+
+            #Comments section
+            kanban_comment_extract = form.cleaned_data['kanban_card_comment']
+
+            if not kanban_comment_extract == '':
+
+
+                kanban_comment_submit = kanban_comment(
+                    kanban_card_id=kanban_card_instance.kanban_card_id ,
+                    kanban_comment=kanban_comment_extract,
+                    user_id=current_user,
+                    user_infomation=current_user.id,
+                    change_user=request.user,
+                )
+                kanban_comment_submit.save()
+
+
+            #Let's return the CARD back so that the user does not have to refresh
+            t = loader.get_template('NearBeach/kanban/kanban_card_information.html')
+
+            c = {
+                'kanban_card_submit': kanban_comment_extract,
+            }
+
+        else:
+            print(form.errors)
+            HttpResponseBadRequest(form.errors)
+
+    #Get data
+
+    kanban_comment_results = kanban_comment.objects.filter(kanban_card_id=kanban_card_id)
+
+
+    # Get template
+    t = loader.get_template('NearBeach/kanban/kanban_edit_card.html')
+
+    # context
+    c = {
+        'kanban_card_form': kanban_card_form(
+            kanban_board_id=kanban_card_results.kanban_board_id,
+            instance=kanban_card_results,
+        ),
+        'kanban_permission': permission_results['kanban'],
+        'kanban_card_permission': permission_results['kanban_card'],
+        'kanban_comment_permission': permission_results['kanban_comment'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'kanban_comment_results': kanban_comment_results,
+        'kanban_card_id': kanban_card_id,
+        'linked_card': linked_card,
+        'kanban_card_results': kanban_card_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+def kanban_information(request,kanban_board_id):
+    permission_results = return_user_permission_level(request, None,['kanban'])
+
+    if permission_results['kanban'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #Get the required information
+    kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+    kanban_level_results = kanban_level.objects.filter(
+        is_deleted="FALSE",
+        kanban_board=kanban_board_id,
+    ).order_by('kanban_level_sort_number')
+    kanban_column_results = kanban_column.objects.filter(
+        is_deleted="FALSE",
+        kanban_board=kanban_board_id,
+    ).order_by('kanban_column_sort_number')
+    kanban_card_results = kanban_card.objects.filter(
+        is_deleted="FALSE",
+        kanban_board=kanban_board_id,
+    ).order_by('kanban_card_sort_number')
+
+    t = loader.get_template('NearBeach/kanban_information.html')
+
+    # context
+    c = {
+        'kanban_board_id': kanban_board_id,
+        'kanban_board_results': kanban_board_results,
+        'kanban_level_results': kanban_level_results,
+        'kanban_column_results': kanban_column_results,
+        'kanban_card_results': kanban_card_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+def kanban_move_card(request,kanban_card_id,kanban_column_id,kanban_level_id):
+    if request.method == "POST":
+        kanban_card_result = kanban_card.objects.get(kanban_card_id=kanban_card_id)
+        kanban_card_result.kanban_column_id = kanban_column.objects.get(kanban_column_id=kanban_column_id)
+        kanban_card_result.kanban_level_id = kanban_level.objects.get(kanban_level_id=kanban_level_id)
+        kanban_card_result.save()
+
+        #Send back blank like a crazy person.
+        t = loader.get_template('NearBeach/blank.html')
+
+        # context
+        c = {}
+
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("This request can only be through POST")
+
+
+@login_required(login_url='login')
+def kanban_list(request):
+    permission_results = return_user_permission_level(request, None,['kanban'])
+
+    if permission_results['kanban'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    kanban_board_results = kanban_board.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    t = loader.get_template('NearBeach/kanban_list.html')
+
+    # context
+    c = {
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'kanban_permission': permission_results['kanban'],
+        'kanban_board_results': kanban_board_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def kanban_new_card(request,kanban_board_id):
+    permission_results = return_user_permission_level(request, None,['kanban'])
+
+    if permission_results['kanban'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        form = kanban_card_form(request.POST,kanban_board_id=kanban_board_id)
+        if form.is_valid():
+            kanban_column_results=form.cleaned_data['kanban_column']
+            kanban_level_results=form.cleaned_data['kanban_level']
+
+            #To add the card at the bottom of the pack, we first need to get the max value
+            max_value_results = kanban_card.objects.filter(
+                kanban_column=kanban_column_results.kanban_column_id,
+                kanban_level=kanban_level_results.kanban_level_id,
+            ).aggregate(Max('kanban_card_sort_number'))
+
+            #In case it returns a none
+            try:
+                max_value = max_value_results['kanban_card_sort_number__max'] + 1
+            except:
+                max_value = 0
+
+            kanban_card_submit = kanban_card(
+                kanban_card_text=form.cleaned_data['kanban_card_text'],
+                kanban_column=kanban_column_results,
+                kanban_level=kanban_level_results,
+                change_user=request.user,
+                kanban_card_sort_number=max_value,
+                kanban_board_id=kanban_board_id,
+            )
+            kanban_card_submit.save()
+
+            #Let's return the CARD back so that the user does not have to refresh
+            t = loader.get_template('NearBeach/kanban/kanban_card_information.html')
+
+            c = {
+                'kanban_card_submit': kanban_card_submit,
+            }
+
+            return HttpResponse(t.render(c, request))
+
+        else:
+            print(form.errors)
+
+
+    kanban_column_results = kanban_column.objects.filter(kanban_board=kanban_board_id)
+    kanban_level_results = kanban_level.objects.filter(kanban_board=kanban_board_id)
+
+    t = loader.get_template('NearBeach/kanban/kanban_new_card.html')
+
+    # context
+    c = {
+        'kanban_column_results': kanban_column_results,
+        'kanban_level_results': kanban_level_results,
+        'kanban_card_form': kanban_card_form(
+            kanban_board_id=kanban_board_id,
+        ),
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'kanban_board_id': kanban_board_id,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def kanban_new_link(request,kanban_board_id,location_id='',destination=''):
+    permission_results = return_user_permission_level(request, None,['kanban'])
+
+    if permission_results['kanban'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        form=kanban_new_link_form(
+            request.POST,
+            kanban_board_id=kanban_board_id,
+        )
+        if form.is_valid():
+            #Check to make sure we have not connected the item before. If so, send them a band response
+            if (
+                    (kanban_card.objects.filter(project_id=location_id,is_deleted="FALSE") and destination == "project")
+                    or (kanban_card.objects.filter(tasks_id=location_id,is_deleted="FALSE") and destination == "task")
+                    or (kanban_card.objects.filter(requirements_id=location_id,is_deleted="FALSE") and destination == "requirement")
+                ):
+                #Sorry, this already exists
+                return HttpResponseBadRequest("Card already exists") #How do we fix these for AJAX - send back an error message
+
+            #Get form data
+            kanban_column = form.cleaned_data['kanban_column']
+            kanban_level = form.cleaned_data['kanban_level']
+
+            # To add the card at the bottom of the pack, we first need to get the max value
+            max_value_results = kanban_card.objects.filter(
+                kanban_column=kanban_column.kanban_column_id,
+                kanban_level=kanban_level.kanban_level_id,
+            ).aggregate(Max('kanban_card_sort_number'))
+
+            # In case it returns a none
+            try:
+                max_value = max_value_results['kanban_card_sort_number__max'] + 1
+            except:
+                max_value = 0
+
+            #Start by creating the card
+            kanban_card_submit = kanban_card(
+                change_user=request.user,
+                kanban_column = kanban_column,
+                kanban_level = kanban_level,
+                kanban_card_sort_number=max_value,
+                kanban_board = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+            )
+
+            #Get the instance, and the name
+            if destination == "project":
+                kanban_card_submit.project = project.objects.get(project_id=location_id)
+                kanban_card_submit.kanban_card_text = "PRO" + location_id + " - " + kanban_card_submit.project.project_name
+            elif destination == "task":
+                kanban_card_submit.tasks = tasks.objects.get(tasks_id=location_id)
+                kanban_card_submit.kanban_card_text = "TASK" + location_id + " - " + kanban_card_submit.tasks.task_short_description
+            elif destination == "requirement":
+                kanban_card_submit.requirements = requirements.objects.get(requirement_id=location_id)
+                kanban_card_submit.kanban_card_text = "REQ" + location_id + " - " + kanban_card_submit.requirements.requirement_title
+            else:
+                #Oh no, something went wrong.
+                return HttpResponseBadRequest("Sorry, that type of destination does not exist")
+
+            kanban_card_submit.save()
+
+            # Let's return the CARD back so that the user does not have to refresh
+            t = loader.get_template('NearBeach/kanban/kanban_card_information.html')
+
+            c = {
+                'kanban_card_submit': kanban_card_submit,
+            }
+
+            return HttpResponse(t.render(c, request))
+        else:
+            print(form.errors)
+            return HttpResponseBadRequest("BAD FORM")
+
+
+    #Get data
+    project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_status__in=('New','Open'),
+    )
+    tasks_results = tasks.objects.filter(
+        is_deleted="FALSE",
+        task_status__in=('New','Open'),
+    )
+    requirements_results = requirements.objects.filter(
+        is_deleted="FALSE",
+        #There is no requirements status - BUG275
+    )
+
+    t = loader.get_template('NearBeach/kanban/kanban_new_link.html')
+
+    # context
+    c = {
+        'project_results': project_results,
+        'tasks_results': tasks_results,
+        'requirements_results': requirements_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'kanban_new_link_form': kanban_new_link_form(
+            kanban_board_id=kanban_board_id
+        )
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def kanban_properties(request,kanban_board_id):
+    permission_results = return_user_permission_level(request, None,['kanban'])
+
+    if permission_results['kanban'] < 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
+
+    """
+    If this requirement is connected to a requirement, then the user should NOT edit the properties, as it is a
+    SET Designed module.
+    """
+    kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+    if kanban_board_results.requirements:
+        return HttpResponseBadRequest("Sorry, but users are not permitted to edit a Requirement Kanban Board.")
+
+    if request.method == "POST":
+        received_json_data = json.loads(request.body)
+
+        #Update title
+        kanban_board_results.kanban_board_name = str(received_json_data["kanban_board_name"])
+        kanban_board_results.save()
+
+        #Update the sort order for the columns
+        for row in range(0, received_json_data["columns"]["length"]):
+            kanban_column_update = kanban_column.objects.get(kanban_column_id=received_json_data["columns"][str(row)]["id"])
+            kanban_column_update.kanban_column_sort_number = row
+
+        # Update the sort order for the columns
+        for row in range(0, received_json_data["levels"]["length"]):
+            kanban_level_update = kanban_level.objects.get(kanban_level_id=received_json_data["levels"][str(row)]["id"])
+            kanban_level_update.kanban_level_sort_number = row
+
+        #Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c={}
+        return HttpResponse(t.render(c, request))
+
+
+
+    #Get SQL
+    kanban_column_results = kanban_column.objects.filter(
+        is_deleted="FALSE",
+        kanban_board_id=kanban_board_id,
+    )
+    kanban_level_results = kanban_level.objects.filter(
+        is_deleted="FALSE",
+        kanban_board_id=kanban_board_id,
+    )
+
+    t = loader.get_template('NearBeach/kanban/kanban_properties.html')
+
+    # context
+    c = {
+        'kanban_board_id': kanban_board_id,
+        'kanban_column_results': kanban_column_results,
+        'kanban_level_results': kanban_level_results,
+        'kanban_board_results': kanban_board_results,
+        'kanban_properties_form': kanban_properties_form(initial={
+        'kanban_board_name': kanban_board_results.kanban_board_name,
+        })
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+
 
 def login(request):
     """
@@ -1163,19 +1571,6 @@ def login(request):
                     )
                     submit_user_group.save()
 
-
-
-
-                user_groups_results = user_groups.objects.filter(
-                    username=request.user,
-                    is_deleted='FALSE',
-                )
-                request.session['NearBeach_Permissions'] = serializers.serialize(
-                    'json',
-                    user_groups_results,
-                    use_natural_foreign_keys=True,
-                    use_natural_primary_keys=True
-                )
                 request.session['is_superuser'] = request.user.is_superuser
 
                 return HttpResponseRedirect(reverse('dashboard'))
@@ -1204,9 +1599,9 @@ def logout(request):
 
 @login_required(login_url='login')
 def new_campus(request, organisations_id):
-    permission = return_user_permission_level(request, None, 'organisation_campus')
+    permission_results = return_user_permission_level(request, None, 'organisation_campus')
 
-    if permission < 3:
+    if permission_results['organisation_campus'] < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     """
@@ -1253,6 +1648,10 @@ def new_campus(request, organisations_id):
             )
             submit_form.save()
 
+            #Get the coordinates and update them into the system
+            print(submit_form.organisations_campus_id)
+            update_coordinates(submit_form.organisations_campus_id)
+
             return HttpResponseRedirect(reverse(organisation_information, args={organisations_id}))
         else:
             print(form.errors)
@@ -1271,6 +1670,8 @@ def new_campus(request, organisations_id):
         'new_campus_form': new_campus_form(),
         'countries_results': countries_results,
         'countries_regions_results': countries_regions_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -1278,17 +1679,10 @@ def new_campus(request, organisations_id):
 
 @login_required(login_url='login')
 def new_customer(request, organisations_id):
-    permission = return_user_permission_level(request, None, 'customer')
+    permission_results = return_user_permission_level(request, None, 'customer')
 
-    if permission < 3:
+    if permission_results['customer'] < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
-    """
-	If the user is not logged in, we want to send them to the login page.
-	This function should be in ALL webpage requests except for login and
-	the index page
-	"""
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect(reverse('login'))
 
     if request.method == 'POST':
         form = new_customer_form(request.POST)
@@ -1328,6 +1722,71 @@ def new_customer(request, organisations_id):
     c = {
         'new_customer_form': new_customer_form(initial=initial),
         'organisations_id': organisations_id,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def new_kanban_board(request):
+    permission_results = return_user_permission_level(request, None, 'kanban')
+
+    if permission_results['kanban'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        form = kanban_board_form(request.POST)
+        if form.is_valid():
+            #Create the new board
+            kanban_board_submit = kanban_board(
+                kanban_board_name=form.cleaned_data['kanban_board_name'],
+                change_user=request.user,
+            )
+            kanban_board_submit.save()
+
+            #Create the levels for the board
+            column_count = 1
+            for line in form.cleaned_data['kanban_board_column'].split('\n'):
+                kanban_column_submit = kanban_column(
+                    kanban_column_name=line,
+                    kanban_column_sort_number=column_count,
+                    kanban_board=kanban_board_submit,
+                    change_user=request.user,
+                )
+                kanban_column_submit.save()
+                column_count = column_count + 1
+
+
+            level_count = 1
+            for line in form.cleaned_data['kanban_board_level'].split('\n'):
+                kanban_level_submit = kanban_level(
+                    kanban_level_name=line,
+                    kanban_level_sort_number=level_count,
+                    kanban_board=kanban_board_submit,
+                    change_user=request.user,
+                )
+                kanban_level_submit.save()
+                level_count = level_count + 1
+
+            #Send you to the kanban information center
+            return HttpResponseRedirect(reverse('kanban_information', args={kanban_board_submit.kanban_board_id}))
+
+        else:
+            print(form.errors)
+            return HttpResponseBadRequest(form.errors)
+
+    t = loader.get_template('NearBeach/new_kanban_board.html')
+
+    c = {
+        'kanban_board_form': kanban_board_form(initial={
+            'kanban_board_column': 'Backlog\nIn Progress\nCompleted',
+            'kanban_board_level': 'Sprint 1\nSprint 2',
+        }),
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+
     }
 
     return HttpResponse(t.render(c, request))
@@ -1335,9 +1794,9 @@ def new_customer(request, organisations_id):
 
 @login_required(login_url='login')
 def new_opportunity(request, location_id,destination):
-    permission = return_user_permission_level(request, None, 'opportunity')
+    permission_results = return_user_permission_level(request, None, 'opportunity')
 
-    if permission < 3:
+    if permission_results['opportunity'] < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     # POST or None
@@ -1522,6 +1981,8 @@ def new_opportunity(request, location_id,destination):
         'destination': destination,
         'opportunity_stage_results': opportunity_stage_results,
         'timezone': settings.TIME_ZONE,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -1529,9 +1990,9 @@ def new_opportunity(request, location_id,destination):
 
 @login_required(login_url='login')
 def new_organisation(request):
-    permission = return_user_permission_level(request, None, 'organisation')
+    permission_results = return_user_permission_level(request, None, 'organisation')
 
-    if permission < 3:
+    if permission_results['organisation'] < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
     """
 	To stop duplicates in the system, the code will quickly check to see if
@@ -1591,6 +2052,8 @@ def new_organisation(request):
         'new_organisation_form': form,
         'duplicate_results': duplicate_results,
         'duplication_count': duplication_count,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -1598,9 +2061,9 @@ def new_organisation(request):
 
 @login_required(login_url='login')
 def new_project(request, location_id='', destination=''):
-    permission = return_user_permission_level(request, None, 'project')
+    permission_results = return_user_permission_level(request, None, 'project')
 
-    if permission < 3:
+    if permission_results['project'] < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST":
@@ -1781,6 +2244,8 @@ def new_project(request, location_id='', destination=''):
             'organisations_id': organisations_id,
             'customer_id': customer_id,
             'timezone': settings.TIME_ZONE,
+            'new_item_permission': permission_results['new_item'],
+            'administration_permission': permission_results['administration'],
         }
 
     return HttpResponse(t.render(c, request))
@@ -1788,17 +2253,9 @@ def new_project(request, location_id='', destination=''):
 
 @login_required(login_url='login')
 def new_quote(request,destination,primary_key):
-    quote_permissions = 0
+    permission_results = return_user_permission_level(request, None,'quote')
 
-    if request.session['is_superuser'] == True:
-        quote_permissions = 4
-    else:
-        pp_results = return_user_permission_level(request, None,'quote')
-
-        if pp_results > quote_permissions:
-            quote_permissions = pp_results
-
-    if quote_permissions < 3:
+    if permission_results['quote'] < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST":
@@ -1879,6 +2336,8 @@ def new_quote(request,destination,primary_key):
         'end_month': end_date.month,
         'end_day': end_date.day,
         'timezone': settings.TIME_ZONE,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -1886,18 +2345,9 @@ def new_quote(request,destination,primary_key):
 
 @login_required(login_url='login')
 def new_task(request, location_id='', destination=''):
-    permission = return_user_permission_level(request, None, 'task')
+    permission_results = return_user_permission_level(request, None, 'task')
 
-
-    if request.session['is_superuser'] == True:
-        permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None,'quote')
-
-        if pp_results > permission:
-            permission = pp_results
-
-    if permission < 3:
+    if permission_results['task'] < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     # Define if the page is loading in POST
@@ -2081,6 +2531,8 @@ def new_task(request, location_id='', destination=''):
             'timezone': settings.TIME_ZONE,
             'location_id': location_id,
             'destination': destination,
+            'new_item_permission': permission_results['new_item'],
+            'administration_permission': permission_results['administration'],
         }
 
     return HttpResponse(t.render(c, request))
@@ -2088,7 +2540,7 @@ def new_task(request, location_id='', destination=''):
 
 @login_required(login_url='login')
 def next_step(request, next_step_id, opportunity_id):
-    next_step_save = opportunity_next_step.objects.get(id=next_step_id)
+    next_step_save = opportunity_next_step.objects.get(opportunity_next_step_id=next_step_id)
     next_step_save.next_step_completed = 1
     next_step.change_user=request.user
     next_step_save.save()
@@ -2103,17 +2555,9 @@ def next_step(request, next_step_id, opportunity_id):
 
 @login_required(login_url='login')
 def opportunity_information(request, opportunity_id):
-    opportunity_perm = 0
+    permission_results = return_user_permission_level(request, None,'opportunity')
 
-    if request.session['is_superuser'] == True:
-        opportunity_perm = 4
-    else:
-        pp_results = return_user_permission_level(request, None,'opportunity')
-
-        if pp_results > opportunity_perm :
-            opportunity_perm = pp_results
-
-    if opportunity_perm  == 0:
+    if permission_results['opportunity']  == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
 
@@ -2217,7 +2661,7 @@ def opportunity_information(request, opportunity_id):
         """
         user_groups_results = user_groups.objects.filter(username=request.user)
 
-        permission_results = opportunity_permissions.objects.filter(
+        opportunity_permission_results = opportunity_permissions.objects.filter(
             Q(
                 Q(assigned_user=request.user)  # User has permission
                 | Q(groups_id__in=user_groups_results.values('groups_id'))  # User's groups have permission
@@ -2226,9 +2670,8 @@ def opportunity_information(request, opportunity_id):
             & Q(opportunity_id=opportunity_id)
         )
 
-        print(permission_results)
 
-        if (not permission_results):
+        if (not opportunity_permission_results):
             return HttpResponseRedirect(
                 reverse(
                     permission_denied,
@@ -2291,6 +2734,10 @@ def opportunity_information(request, opportunity_id):
     # Loaed the template
     t = loader.get_template('NearBeach/opportunity_information.html')
 
+    #Bug fixing
+    print(permission_results)
+    print(permission_results['opportunity'])
+
     c = {
         'opportunity_id': str(opportunity_id),
         'opportunity_information_form': opportunity_information_form(
@@ -2305,8 +2752,10 @@ def opportunity_information(request, opportunity_id):
         'project_results': project_results,
         'tasks_results': tasks_results,
         'quote_results': quote_results,
-        'opportunity_perm': opportunity_perm,
+        'opportunity_perm': permission_results['opportunity'],
         'timezone': settings.TIME_ZONE,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -2314,34 +2763,13 @@ def opportunity_information(request, opportunity_id):
 
 @login_required(login_url='login')
 def organisation_information(request, organisations_id):
-    organisation_permissions = 0
-    organisation_campus_permissions = 0
-    customer_permissions = 0
+    permission_results = return_user_permission_level(request, None,['organisation','organisation_campus','customer'])
 
-    if request.session['is_superuser'] == True:
-        organisation_permissions = 4
-        organisation_campus_permissions = 4
-        customer_permissions = 4
-    else:
-        pp_results = return_user_permission_level(request, None,'organisation')
-        ph_results = return_user_permission_level(request, None,'organisation_campus')
-        pb_results = return_user_permission_level(request, None,'customer')
-
-        if pp_results > organisation_permissions:
-            organisation_permissions = pp_results
-
-        if ph_results > organisation_campus_permissions:
-            organisation_campus_permissions = ph_results
-
-        if pb_results > customer_permissions:
-            customer_permissions = pb_results
-
-    if organisation_permissions == 0:
-        # Send them to permission denied!!
+    if permission_results['organisation'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     # Get the data from the form if the information has been submitted
-    if request.method == "POST" and organisation_permissions > 1:
+    if request.method == "POST" and permission_results['organisation'] > 1:
         form = organisation_information_form(request.POST, request.FILES)
         if form.is_valid():
             current_user = request.user
@@ -2438,10 +2866,12 @@ def organisation_information(request, organisations_id):
         'opportunity_results': opportunity_results,
         'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
         'organisations_id': organisations_id,
-        'organisation_permissions': organisation_permissions,
-        'organisation_campus_permissions': organisation_campus_permissions,
-        'customer_permissions': customer_permissions,
+        'organisation_permissions': permission_results['organisation'],
+        'organisation_campus_permissions': permission_results['organisation_campus'],
+        'customer_permissions': permission_results['customer'],
         'quote_results':quote_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -2494,36 +2924,18 @@ END TEMP DOCUMENT
 
 @login_required(login_url='login')
 def project_information(request, project_id):
-    """
-    The project permissions. The query looks up ALL the groups associated to this project currently and searches
-    for the user's MAXIMUM user_level_permission. This will determine if the user can edit etc.
-    If the highest user_level_permission = 0, then the user is redirected to the access denied page.
-    """
-    project_permissions = 0
-    project_history_permissions = 0
+    #First look at the user's permissions for the project's groups.
+    project_groups_results = project_groups.objects.filter(
+        is_deleted="FALSE",
+        project_id=project.objects.get(project_id=project_id),
+    ).values('groups_id_id')
 
-    if request.session['is_superuser'] == True:
-        project_permissions = 4
-        project_history_permissions = 4
-    else:
-        project_groups_results = project_groups.objects.filter(
-            is_deleted="FALSE",
-            project_id=project.objects.get(project_id=project_id),
-        ).values('groups_id_id')
+    permission_results = return_user_permission_level(request, project_groups_results,['project','project_history'])
 
-        for row in project_groups_results:
-            pp_results = return_user_permission_level(request, row['groups_id_id'],'project')
-            ph_results = return_user_permission_level(request, row['groups_id_id'],'project_history')
-
-            if pp_results > project_permissions:
-                project_permissions = pp_results
-
-            if ph_results > project_history_permissions:
-                project_history_permissions = ph_results
-
-    if project_permissions == 0:
+    if permission_results['project'] == 0:
         # Send them to permission denied!!
         return HttpResponseRedirect(reverse(permission_denied))
+
 
     """
 	There are two buttons on the project information page. Both will come
@@ -2531,7 +2943,7 @@ def project_information(request, project_id):
 	this project.
 	"""
     # Get the data from the form if the information has been submitted
-    if request.method == "POST" and project_permissions >= 2: #Greater than edit :)
+    if request.method == "POST" and permission_results['project'] >= 2: #Greater than edit :)
         form = project_information_form(request.POST, request.FILES)
         if form.is_valid():
             # Define the data we will edit
@@ -2669,9 +3081,11 @@ def project_information(request, project_id):
         'media_url': settings.MEDIA_URL,
         'quote_results': quote_results,
         'project_id': project_id,
-        'project_permissions': project_permissions,
-        'project_history_permissions': project_history_permissions,
+        'project_permissions': permission_results['project'],
+        'project_history_permissions': permission_results['project_history'],
         'timezone': settings.TIME_ZONE,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -2679,24 +3093,12 @@ def project_information(request, project_id):
 
 @login_required(login_url='login')
 def quote_information(request, quote_id):
-    quotes_results = quotes.objects.get(quote_id=quote_id)
+    permission_results = return_user_permission_level(request, None, 'quote')
 
-    quote_permission = 0
-
-    if request.session['is_superuser'] == True:
-        quote_permission = 4
-    else:
-        pp_results = return_user_permission_level(request, None,'quote')
-        print(pp_results)
-
-        if pp_results > quote_permission:
-            quote_permission = pp_results
-
-    if quote_permission == 0:
-        # Send them to permission denied!!
+    if permission_results['quote'] == 0:
         return HttpResponseRedirect(reverse(permission_denied))
 
-
+    quotes_results = quotes.objects.get(quote_id=quote_id)
 
     if request.method == "POST":
         form = quote_information_form(request.POST)
@@ -2775,7 +3177,6 @@ def quote_information(request, quote_id):
     # Load the template
     t = loader.get_template('NearBeach/quote_information.html')
 
-    print(quote_permission)
 
     # context
     c = {
@@ -2784,7 +3185,9 @@ def quote_information(request, quote_id):
         'quote_id': quote_id,
         'quote_or_invoice': quote_or_invoice,
         'timezone': settings.TIME_ZONE,
-        'quote_permission': quote_permission,
+        'quote_permission': permission_results['quote'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -2817,6 +3220,8 @@ def resolve_task(request, task_id):
 
 @login_required(login_url='login')
 def search(request):
+    permission_results = return_user_permission_level(request, None, 'project')
+
     # Load the template
     t = loader.get_template('NearBeach/search.html')
 
@@ -2886,6 +3291,8 @@ def search(request):
         'task_results': task_results,
         'opportunity_results': opportunity_results,
         'requirement_results': requirement_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -2893,6 +3300,8 @@ def search(request):
 
 @login_required(login_url='login')
 def search_customers(request):
+    permission_results = return_user_permission_level(request, None, 'project')
+
     # Load the template
     t = loader.get_template('NearBeach/search_customers.html')
 
@@ -2939,6 +3348,8 @@ def search_customers(request):
     c = {
         'search_customers_form': search_customers_form(initial={'search_customers': search_customers_results}),
         'customers_results': customers_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -2946,6 +3357,8 @@ def search_customers(request):
 
 @login_required(login_url='login')
 def search_organisations(request):
+    permission_results = return_user_permission_level(request, None, 'project')
+
     # Load the template
     t = loader.get_template('NearBeach/search_organisations.html')
 
@@ -2994,6 +3407,8 @@ def search_organisations(request):
         'search_organisations_form': search_organisations_form(
             initial={'search_organisations': search_organisations_results}),
         'organisations_results': organisations_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -3007,6 +3422,7 @@ def search_projects_tasks(request):
     # context
     c = {
 
+
     }
 
     return HttpResponse(t.render(c, request))
@@ -3014,34 +3430,16 @@ def search_projects_tasks(request):
 
 @login_required(login_url='login')
 def task_information(request, task_id):
-    """
-	We need to determine if the user has access to any of the groups that
-	this task is associated to. We will do a simple count(*) SQL QUERY
-	that will determine this.
-	"""
-    task_permissions = 0
-    task_history_permissions = 0
+    #First look at the user's permissions for the project's groups.
+    task_groups_results = tasks_groups.objects.filter(
+        is_deleted="FALSE",
+        tasks_id=tasks.objects.get(tasks_id=task_id),
+    ).values('groups_id_id')
 
-    if request.session['is_superuser'] == True:
-        task_permissions = 4
-        task_history_permissions = 4
-    else:
-        task_groups_results = tasks_groups.objects.filter(
-            is_deleted="FALSE",
-            tasks_id=tasks.objects.get(tasks_id=task_id),
-        ).values('groups_id_id')
+    permission_results = return_user_permission_level(request, task_groups_results,['task','task_history'])
 
-        for row in task_groups_results:
-            pp_results = return_user_permission_level(request, row['groups_id_id'],'task')
-            ph_results = return_user_permission_level(request, row['groups_id_id'],'task_history')
-
-            if pp_results > task_permissions:
-                task_permissions = pp_results
-
-            if ph_results > task_history_permissions:
-                task_history_permissions = ph_results
-
-    if task_permissions == 0:
+    if permission_results['task'] == 0:
+        # Send them to permission denied!!
         return HttpResponseRedirect(reverse(permission_denied))
 
     current_user = request.user
@@ -3233,6 +3631,8 @@ def task_information(request, task_id):
         'finish_date_hour': task_end_results['hour'],
         'finish_date_minute': task_end_results['minute'],
         'finish_date_meridiems': task_end_results['meridiem'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     # Query the database for associated project information
@@ -3269,8 +3669,8 @@ def task_information(request, task_id):
         'folders_results': serializers.serialize('json', folders_results),
         'media_url': settings.MEDIA_URL,
         'task_id': task_id,
-        'task_permissions': task_permissions,
-        'task_history_permissions': task_history_permissions,
+        'task_permissions': permission_results['task'],
+        'task_history_permissions': permission_results['task_history'],
         'quote_results': quote_results,
         'task_results': task_results,
         'timezone': settings.TIME_ZONE,
@@ -3279,9 +3679,60 @@ def task_information(request, task_id):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
+def to_do_list(request, location_id, destination):
+    if request.method == "POST":
+        form = to_do_form(request.POST)
+        if form.is_valid():
+            to_do_submit = to_do(
+                to_do=form.cleaned_data['to_do'],
+                change_user=request.user,
+            )
+            if destination == "project":
+                to_do_submit.project = project.objects.get(project_id=location_id)
+            else:
+                to_do_submit.tasks = tasks.objects.get(tasks_id=location_id)
+            to_do_submit.save()
+        else:
+            print(form.errors)
+
+    # Get data
+    if destination == 'project':
+        to_do_results = to_do.objects.filter(
+            is_deleted='FALSE',
+            project_id=location_id,
+        )
+    else:
+        to_do_results = to_do.objects.filter(
+            is_deleted='FALSE',
+            tasks_id=location_id,
+        )
+
+    # Load the template
+    t = loader.get_template('NearBeach/to_do/to_do.html')
+
+    # context
+    c = {
+        'to_do_results': to_do_results,
+        'to_do_form': to_do_form(),
+    }
+
+    return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
+def to_do_complete(request, to_do_id):
+    to_do_update = to_do.objects.get(to_do_id=to_do_id)
+    to_do_update.to_do_completed = True
+    to_do_update.save()
 
+
+    t = loader.get_template('NearBeach/blank.html')
+
+    # context
+    c = {}
+
+    return HttpResponse(t.render(c, request))
 
 
 """
@@ -3305,3 +3756,54 @@ def handler500(request):
     )
     response.status_code = 500
     return response
+
+
+def update_coordinates(campus_id):
+    campus_results = organisations_campus.objects.get(pk=campus_id)
+
+    #If there are no co-ordinates for this campus, get them and save them
+    if hasattr(settings, 'MAPBOX_API_TOKEN'):
+        print("Mapbox token exists")
+        address = campus_results.campus_address1 + " " + \
+            campus_results.campus_address2 + " " + \
+            campus_results.campus_address3 + " " + \
+            campus_results.campus_suburb + " " + \
+            campus_results.campus_region_id.region_name + " " + \
+            campus_results.campus_country_id.country_name + " "
+        print(address)
+        address = address.replace("/", " ") #Remove those pesky /
+        #address_coded = urllib.request.quote(address)
+        address_coded = urllib.quote_plus(address)
+        print(address_coded)
+
+        url = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + address_coded + ".json?access_token=" + settings.MAPBOX_API_TOKEN
+
+        response = urllib.urlopen(url)
+        data = json.loads(response.read())
+        print(data)
+        try:
+            campus_results.campus_longitude = data["features"][0]["center"][0]
+            campus_results.campus_latitude = data["features"][0]["center"][1]
+            campus_results.save()
+
+            print(data["features"][0]["center"])
+        except:
+            print("No data for the address: " + address)
+
+        """
+        #Python 3
+        try:
+            with urllib.request.urlopen(url) as results:
+                data = json.loads(results.read().decode())
+
+                try:
+                    campus_results.campus_longitude = data["features"][0]["center"][0]
+                    campus_results.campus_latitude = data["features"][0]["center"][1]
+                    campus_results.save()
+
+                    print(data["features"][0]["center"])
+                except:
+                    print("No data for the address: " + address)
+        except:
+            print("Address Failed")
+        """
