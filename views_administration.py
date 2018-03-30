@@ -195,7 +195,7 @@ def group_information_list(request):
     permission_results = return_user_permission_level(request, None,'administration_create_groups')
 
 
-    if permission_results['administration_create_group'] == 0:
+    if permission_results['administration_create_groups'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     group_results = groups.objects.filter(
