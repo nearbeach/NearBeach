@@ -302,6 +302,38 @@ def associated_tasks(request, project_id):
 
 
 @login_required(login_url='login')
+def bug_client_list(request):
+    #ADD IN PERMISSIONS LATER
+
+
+    #Get Data
+    bug_client_results = bug_client.objects.filter(
+        is_deleted='FALSE',
+    )
+
+    # Load the template
+    t = loader.get_template('NearBeach/bug_client_list.html')
+
+    # context
+    c = {
+        'bug_client_results': bug_client_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def bug_client_search(request):
+    print("hello world")
+
+
+@login_required(login_url='login')
+def bug_list(request):
+    print("hello world")
+
+
+
+@login_required(login_url='login')
 def campus_information(request, campus_information):
     permission_results = return_user_permission_level(request, None, 'organisation_campus')
 
@@ -1596,6 +1628,58 @@ def logout(request):
     auth.logout(request)
     return HttpResponseRedirect(reverse('login'))
 
+
+@login_required(login_url='login')
+def new_bug_client(request):
+    permission_results = return_user_permission_level(request, None, 'bug_client')
+
+    if permission_results['bug_client'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+    form_errors = ''
+    if request.method == "POST":
+        form = bug_client_form(request.POST)
+        if form.is_valid():
+            #Get required data
+            bug_client_name = form.cleaned_data['bug_client_name']
+            list_of_bug_client = form.cleaned_data['list_of_bug_client']
+            bug_client_url = form.cleaned_data['bug_client_url']
+
+            #Test the link first before doing ANYTHING!
+            try:
+                url = bug_client_url + list_of_bug_client.bug_client_api_url + 'bug?bug_status=__open__'
+                print(url)
+                req = urllib2.Request(url)
+                response = urllib2.urlopen(req)
+                print("Response gotten")
+                data = json.load(response)
+                print("Got the JSON")
+
+                bug_client_submit = bug_client(
+                    bug_client_name = bug_client_name,
+                    list_of_bug_client = list_of_bug_client,
+                    bug_client_url = bug_client_url,
+                    change_user=request.user,
+                )
+                bug_client_submit.save()
+                return HttpResponseRedirect(reverse('bug_client_list'))
+            except:
+                form_errors = "Could not connect to the API"
+
+
+        else:
+            print(form.errors)
+            form_errors(form.errors)
+
+    # load template
+    t = loader.get_template('NearBeach/new_bug_client.html')
+
+    # context
+    c = {
+        'bug_client_form': bug_client_form(),
+        'form_errors': form_errors,
+    }
+
+    return HttpResponse(t.render(c, request))
 
 @login_required(login_url='login')
 def new_campus(request, organisations_id):

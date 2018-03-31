@@ -143,6 +143,84 @@ class contact_history(models.Model):
 		db_table="contact_history"
 
 
+class bug(models.Model):
+	bug_id=models.AutoField(primary_key=True)
+	bug_client=models.ForeignKey(
+		'bug_client',
+		on_delete=models.CASCADE,
+	)
+	bug_code=models.CharField(max_length=255) #Just stores the code of the bug
+	bug_description=models.TextField()
+	bug_status=models.CharField(max_length=50) #Updated manually?
+	project=models.ForeignKey(
+		'project',
+		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
+	)
+	tasks=models.ForeignKey(
+		'tasks',
+		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
+	)
+	requirements=models.ForeignKey(
+		'requirements',
+		on_delete=models.CASCADE,
+		null=True,
+		blank=True,
+	)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey \
+		(User,
+		 on_delete=models.CASCADE,
+		 related_name='%(class)s_change_user',
+		 )
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	def __str__(self):
+		return self.bug_description.encode('utf8')
+
+	class Meta:
+		db_table = "bug"
+
+
+
+
+class bug_client(models.Model):
+	bug_client_id=models.AutoField(primary_key=True)
+	bug_client_name=models.CharField(max_length=50)
+	list_of_bug_client=models.ForeignKey(
+		'list_of_bug_client',
+		on_delete=models.CASCADE,
+	)
+	bug_client_url=models.URLField()
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey \
+		(User,
+		 on_delete=models.CASCADE,
+		 related_name='%(class)s_change_user',
+		 )
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	def __str__(self):
+		return self.bug_client_name.encode('utf8')
+
+	class Meta:
+		db_table = "bug_client"
+
+
+
 class costs(models.Model):
 	cost_id=models.AutoField(primary_key=True)
 	project_id=models.ForeignKey(
@@ -695,6 +773,33 @@ class list_of_amount_type(models.Model):
 		db_table="list_of_amount_type"
 		ordering=['list_order']
 
+
+class list_of_bug_client(models.Model):
+	list_of_bug_client_id=models.AutoField(primary_key=True)
+	bug_client_name=models.CharField(max_length=50)
+	bug_client_api_url=models.CharField(max_length=255)
+	date_created=models.DateTimeField(auto_now_add=True)
+	date_modified=models.DateTimeField(auto_now=True)
+	date_created=models.DateTimeField(auto_now_add=True)
+	date_modified=models.DateTimeField(auto_now=True)
+	change_user=models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user',
+		blank=True,
+		null=True
+	)
+	is_deleted=models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	def __str__(self):
+		return self.bug_client_name.encode('utf8')
+
+	class Meta:
+		db_table="list_of_bug_client"
 
 
 
@@ -1344,6 +1449,8 @@ class permission_set_manager(models.Manager):
             administration_create_users,
             assign_campus_to_customer,
             associate_project_and_tasks,
+			bug,
+			bug_client,
             customer,
             invoice,
             invoice_product,
@@ -1372,6 +1479,8 @@ class permission_set_manager(models.Manager):
             administration_create_users=administration_create_users,
             assign_campus_to_customer=assign_campus_to_customer,
             associate_project_and_tasks=associate_project_and_tasks,
+			bug=bug,
+			bug_client=bug_client,
             customer=customer,
             invoice=invoice,
             invoice_product=invoice_product,
@@ -1425,6 +1534,14 @@ class permission_set(models.Model):
         choices=PERMISSION_LEVEL,
         default=0,
     )
+    bug=models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
+	)
+    bug_client=models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
+	)
     invoice = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,

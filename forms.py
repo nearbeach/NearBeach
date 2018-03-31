@@ -175,6 +175,34 @@ class add_permission_set_to_group_form(forms.Form):
     )
 
 
+class bug_client_form(ModelForm):
+    # Get data for choice boxes
+    bug_client_results = list_of_bug_client.objects.filter(is_deleted='FALSE')
+
+    bug_client_name = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Bug Client Name',
+        })
+    )
+    list_of_bug_client=forms.ModelChoiceField(
+        label='Bug Clients',
+        widget=forms.Select,
+        queryset=bug_client_results,
+        empty_label=None,
+    )
+    bug_client_url=forms.CharField(
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Example: https://bugzilla.nearbeach.org',
+        })
+    )
+    class Meta:
+        model = bug_client
+        fields = {
+            'bug_client_name',
+            'list_of_bug_client',
+            'bug_client_url',
+        }
+
 
 class customer_campus_form(ModelForm):
     customer_phone=forms.CharField(
