@@ -328,9 +328,40 @@ def bug_client_search(request):
 
 
 @login_required(login_url='login')
-def bug_list(request):
-    print("hello world")
+def bug_list(request, location=None, destination=None):
+    #Add permissions later
+    if destination == "project":
+        bug_results = bug.objects.filter(
+            is_deleted="FALSE",
+            project=location,
+        )
+    elif destination == "task":
+        bug_results = bug.objects.filter(
+            is_deleted="FALSE",
+            tasks=location,
+        )
+    elif destination == "requirement":
+        bug_results = bug.objects.filter(
+            is_deleted="FALSE",
+            requirements=location,
+        )
+    else:
+        bug_results = bug.objects.filter(
+            is_deleted="FALSE",
+        )
 
+    # Load the template
+    if destination == None:
+        t = loader.get_template('NearBeach/bug_list.html')
+    else:
+        t = loader.get_template('NearBeach/bug_list_specific.html')
+
+    # context
+    c = {
+        'bug_results': bug_results,
+    }
+
+    return HttpResponse(t.render(c, request))
 
 
 @login_required(login_url='login')
