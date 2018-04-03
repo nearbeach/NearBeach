@@ -248,6 +248,17 @@ url(r'^kanban_new_link/(?P<kanban_board_id>[0-9]+)/$', views.kanban_new_link,nam
 url(r'^kanban_new_link/(?P<kanban_board_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement"]+)/$', views.kanban_new_link,name='kanban_new_link'),
 	url(r'^to_do/(?P<location_id>[0-9]+)/(?P<destination>["project","task"]+)/$', views.to_do_list, name='to_do'),
 url(r'^to_do_complete/(?P<to_do_id>[0-9]+)/$', views.to_do_complete, name='to_do_complete'),
+
+	url(r'^bug_client_list/$',views.bug_client_list,name='bug_client_list'),
+	url(r'^new_bug_client/$',views.new_bug_client, name='new_bug_client'),
+
+	url(r'^bug_list/$', views.bug_list, name='bug_list'),
+	url(r'^bug_list/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement"]+)/$', views.bug_list, name='bug_list'),
+
+	url(r'^bug_search/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement"]+)/$', views.bug_search, name='bug_search'),
+
+	url(r'^bug_add/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement"]+)/(?P<bug_id>[0-9]+)/(?P<bug_client_id>[0-9]+)',views.bug_add,name='bug_add'),
+
 ]
 
 if settings.DEBUG:

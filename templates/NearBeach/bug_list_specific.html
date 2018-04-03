@@ -1,0 +1,23 @@
+<h2>Assigned Bugs</h2>
+<table>
+    <tr>
+        <td>Bug ID</td>
+        <td>Bug Client</td>
+        <td>Bug Description</td>
+        <td>Bug Status</td>
+        {% if bug_permission == 4 %}
+            <td>Remove Bug</td>
+        {% endif %}
+    </tr>
+    {% for row in bug_results %}
+        <tr>
+            <td>{{ row.bug_code }}</td><!--get this to be hyperlinked to the bug :)-->
+            <td>{{ row.bug_client }}</td>
+            <td>{{ row.bug_description }}</td>
+            <td>{{ row.bug_status }}</td>
+            {% if bug_permission == 4 %}
+                <td><a href="javascript:void(0)" onclick="">Remove Bug</a></td><!--add in the javascript to allow this-->
+            {% endif %}
+        </tr>
+    {% endfor %}
+</table>

@@ -4,6 +4,8 @@ from django.contrib import admin
 from .models import *
 
 admin.site.register(assigned_users)
+admin.site.register(bug)
+admin.site.register(bug_client)
 admin.site.register(contact_history)
 admin.site.register(costs)
 admin.site.register(customers)
@@ -20,6 +22,7 @@ admin.site.register(kanban_card)
 admin.site.register(kanban_column)
 admin.site.register(kanban_level)
 admin.site.register(list_of_amount_type)
+admin.site.register(list_of_bug_client)
 admin.site.register(list_of_currency)
 admin.site.register(list_of_contact_types)
 admin.site.register(list_of_countries_regions)

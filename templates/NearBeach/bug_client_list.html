@@ -1,0 +1,23 @@
+{% extends "./template.html" %}
+{% block content %}
+{% load static %}
+<h2>Bug Client List</h2>
+<a href="{% url 'new_bug_client' %}">New Bug Client</a>
+{% if bug_client_results %}
+    <table>
+        <tr>
+            <td width="80%">Client Name</td>
+            <td width="20%">Type</td>
+        </tr>
+        {% for row in bug_client_results %}
+            <tr>
+                <td><a href="#">{{ row.bug_client_name }}</a></td>
+                <td>{{ row.list_of_bug_client }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>There are no bug clients listed. Please create a new one</p>
+{% endif %}
+
+{% endblock %}
