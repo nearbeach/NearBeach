@@ -204,6 +204,21 @@ class bug_client_form(ModelForm):
         }
 
 
+class bug_search_form(forms.Form):
+    #Get the choice box
+    bug_client_results = bug_client.objects.filter(is_deleted="FALSE")
+
+    #Fields
+    list_of_bug_client=forms.ModelChoiceField(
+        label='Bug Clients',
+        widget=forms.Select,
+        queryset=bug_client_results,
+        empty_label=None,
+    )
+    search = forms.CharField(max_length=255)
+
+
+
 class customer_campus_form(ModelForm):
     customer_phone=forms.CharField(
         max_length=11,

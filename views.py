@@ -302,6 +302,64 @@ def associated_tasks(request, project_id):
 
 
 @login_required(login_url='login')
+def bug_add(request,location_id, destination,bug_id, bug_client_id):
+    if request.method == "POST":
+        """
+        Method
+        ~~~~~~
+        1.) Bring in all the data we need via the URL :)
+        2.) Extract the bug_client information - we will use this to contact the bug client server
+        3.) Extract an up to date bug information. This is done here (even though it is slow), because at a 
+            later date, we might require to gather more information about this bug. This will help.
+        4.) Write the information collected VIA the JSON into the database :)
+        5.) Notify the end user that this has occurred. This might be by changing the text from "ADD" to "ADDING..." to "ADDED :)"
+        """
+
+        #Get the bug client instance - we need to reload this
+        bug_client_instance = bug_client.objects.get(
+            bug_client_id=bug_client_id,
+        )
+
+        #https://bugzilla.nearbeach.org/rest/bug?id=12 example of bugzilla rest platform
+        #Most of this will be stored in the database, so we can implement more bug clients simply. :) YAY
+        url = bug_client_instance.bug_client_url + bug_client_instance.list_of_bug_client.bug_client_api_url + \
+                'bug?id=' + bug_id # This will be implemented into the database as a field
+        print(url)
+        req = urllib2.Request(url)
+        response = urllib2.urlopen(req)
+        json_data = json.load(response)
+
+        #Save the bug
+        bug_submit = bug(
+            bug_client=bug_client_instance,
+            bug_code=bug_id, #I could not have bug_id twice, so the bug's id becomes bug_code
+            bug_description=str(json_data['bugs'][0]['summary']),
+            bug_status=str(json_data['bugs'][0]['status']),
+            change_user=request.user,
+        )
+        if destination=="project":
+            bug_submit.project_id=project.objects.get(project_id=location_id)
+        elif destination=="task":
+            bug_submit.tasks = tasks.objects.get(tasks_id=location_id)
+        else:
+            bug_submit.requirements=requirements.objects.get(requirement_id=location_id)
+
+        #Save the bug
+        bug_submit.save()
+
+        # Load the template
+        t = loader.get_template('NearBeach/blank.html')
+
+        # context
+        c = {}
+
+        return HttpResponse(t.render(c, request))
+
+    else:
+        return HttpResponseBadRequest("Only POST requests allowed")
+
+
+@login_required(login_url='login')
 def bug_client_list(request):
     #ADD IN PERMISSIONS LATER
 
@@ -323,27 +381,27 @@ def bug_client_list(request):
 
 
 @login_required(login_url='login')
-def bug_client_search(request):
+def bug_client_search(request, location_id=None, destination=None):
     print("hello world")
 
 
 @login_required(login_url='login')
-def bug_list(request, location=None, destination=None):
+def bug_list(request, location_id=None, destination=None):
     #Add permissions later
     if destination == "project":
         bug_results = bug.objects.filter(
             is_deleted="FALSE",
-            project=location,
+            project=location_id,
         )
     elif destination == "task":
         bug_results = bug.objects.filter(
             is_deleted="FALSE",
-            tasks=location,
+            tasks=location_id,
         )
     elif destination == "requirement":
         bug_results = bug.objects.filter(
             is_deleted="FALSE",
-            requirements=location,
+            requirements=location_id,
         )
     else:
         bug_results = bug.objects.filter(
@@ -359,6 +417,54 @@ def bug_list(request, location=None, destination=None):
     # context
     c = {
         'bug_results': bug_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def bug_search(request, location_id=None, destination=None):
+    #Do permissions later
+    bug_results = None
+    bug_client_id = None
+    if request.method == "POST":
+        form = bug_search_form(request.POST)
+        if form.is_valid():
+            #Get the bug client instance
+            bug_client_instance = form.cleaned_data['list_of_bug_client']
+            bug_client_id = bug_client_instance.list_of_bug_client_id
+
+            #Get the bug client information
+            bug_client_results = bug_client.objects.get(
+                bug_client_id=bug_client_instance.list_of_bug_client_id
+            )
+            #TEMP CODE#
+            url = bug_client_results.bug_client_url \
+                  + bug_client_results.list_of_bug_client.bug_client_api_url \
+                  + 'bug?bug_status=__open__' #Note - this last section should be moved into the database
+
+            print(url)
+            req = urllib2.Request(url)
+            response = urllib2.urlopen(req)
+            json_data = json.load(response)
+            bug_results = json_data['bugs'] #This could change depending on the API
+
+            #print bug_results['bugs']
+
+            #END TEMP CODE#
+        else:
+            print(form.errors)
+
+    # Load the template
+    t = loader.get_template('NearBeach/bug_search.html')
+
+    # context
+    c = {
+        'bug_search_form': bug_search_form(request.POST or None),
+        'bug_results': bug_results,
+        'location_id': location_id,
+        'destination': destination,
+        'bug_client_id': bug_client_id,
     }
 
     return HttpResponse(t.render(c, request))

@@ -2,6 +2,7 @@
 {% block content %}
 {% load static %}
     <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/bug.js' %}"></script>
 <body onload="on_page_load()">
     <h2>Requirement Information - {{ requirement_id }}</h2>
     <form id="requirement_information" name="requirement_information" method="POST" enctype="multipart/form-data">
@@ -55,7 +56,38 @@
         Loading...
     </div>
 
+    <form method="post" class="bug_list" id="bug_list">
+        <h2>Requirement Bug List</h2>
+        Loading...
+    </form>
+
+    <form method="post" class="bug_search" id="bug_search">
+        <h2>Bug Search</h2>
+        Loading...
+    </form>
+
     <script>
+        $("#bug_search").on('submit', function(e) {
+           e.preventDefault();
+
+           //Change the submit button for user feedback
+           $("#bug_search_submit").prop("disabled",true);
+           $("#bug_search_submit").val("SEARCHING...");
+
+
+           $.ajax({
+               type: 'POST',
+               url: '/bug_search/{{ requirement_id }}/requirement/',
+               data: $(this).serialize(),
+               success: function(data) {
+                   $("#bug_search").html(data);
+               },
+               error: function() {
+                   alert("Sorry, submitting the bug search caused an error");
+               }
+           })
+        });
+
         $("#new_requirement_item").on('submit', function(e) {
             e.preventDefault();
             $.ajax({
@@ -92,6 +124,38 @@
             })
         });
 
+
+        function load_bug_list() {
+        $.ajax({
+            url: '/bug_list/{{ requirement_id }}/requirement',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $("#bug_list").html(data);
+            },
+            error: function() {
+                alert("There was an issue loading the bug list");
+            }
+        })
+    }
+
+
+    function load_bug_search() {
+        $.ajax({
+            url: '/bug_search/{{ requirement_id }}/requirement',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $("#bug_search").html(data);
+            },
+            error: function() {
+                alert("There was an issues loading the bug search");
+            }
+        })
+
+    }
 
 
         function load_requirement_documents() {
@@ -291,6 +355,8 @@
             load_requirement_items_list();
             requirement_links_list();
             load_requirement_documents();
+            load_bug_search();
+            load_bug_list();
 
             set_permissions({{ permission }})
         }

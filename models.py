@@ -778,6 +778,7 @@ class list_of_bug_client(models.Model):
 	list_of_bug_client_id=models.AutoField(primary_key=True)
 	bug_client_name=models.CharField(max_length=50)
 	bug_client_api_url=models.CharField(max_length=255)
+	bug_client_open_bugs=models.CharField(max_length=255)
 	date_created=models.DateTimeField(auto_now_add=True)
 	date_modified=models.DateTimeField(auto_now=True)
 	date_created=models.DateTimeField(auto_now_add=True)

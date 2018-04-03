@@ -8,6 +8,8 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/bug.js' %}"></script>
+
 
 <script>
     function on_page_load() {
@@ -17,6 +19,8 @@
         load_project_costs();
         load_project_customers();
         load_project_history();
+        load_bug_list();
+        load_bug_search();
 
         load_document_tree_upload_documents();
         load_document_tree_create_folder();
@@ -144,6 +148,18 @@
         </table>
     {% endif %}
 
+    <form method="post" class="bug_list" id="bug_list">
+        <h2>Project Bug List</h2>
+        Loading...
+    </form>
+
+    <form method="post" class="bug_search" id="bug_search">
+        <h2>Bug Search</h2>
+        Loading...
+    </form>
+
+
+
 
     <form method="post" class="project_assigned_users" id="project_assigned_users">
         <h2>Assigned Users</h2>
@@ -161,6 +177,27 @@
 
 
 <script>
+    $("#bug_search").on('submit', function(e) {
+       e.preventDefault();
+
+       //Change the submit button for user feedback
+       $("#bug_search_submit").prop("disabled",true);
+       $("#bug_search_submit").val("SEARCHING...");
+
+
+       $.ajax({
+           type: 'POST',
+           url: '/bug_search/{{ project_id }}/project/',
+           data: $(this).serialize(),
+           success: function(data) {
+               $("#bug_search").html(data);
+           },
+           error: function() {
+               alert("Sorry, submitting the bug search caused an error");
+           }
+       })
+    });
+
     $("#document_tree_create_folder").on('submit', function(e) {
         e.preventDefault();
         $.ajax({
@@ -333,6 +370,38 @@
         });
     }
 
+
+    function load_bug_list() {
+        $.ajax({
+            url: '/bug_list/{{ project_id }}/project',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $("#bug_list").html(data);
+            },
+            error: function() {
+                alert("There was an issue loading the bug list");
+            }
+        })
+    }
+
+
+    function load_bug_search() {
+        $.ajax({
+            url: '/bug_search/{{ project_id }}/project',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $("#bug_search").html(data);
+            },
+            error: function() {
+                alert("There was an issues loading the bug search");
+            }
+        })
+
+    }
 
 
     function load_project_assigned_users() {
