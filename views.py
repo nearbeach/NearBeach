@@ -338,7 +338,7 @@ def bug_add(request,location_id, destination,bug_id, bug_client_id):
             change_user=request.user,
         )
         if destination=="project":
-            bug_submit.project_id=project.objects.get(project_id=location_id)
+            bug_submit.project=project.objects.get(project_id=location_id)
         elif destination=="task":
             bug_submit.tasks = tasks.objects.get(tasks_id=location_id)
         else:
