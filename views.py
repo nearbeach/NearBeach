@@ -441,7 +441,8 @@ def bug_search(request, location_id=None, destination=None):
             #TEMP CODE#
             url = bug_client_results.bug_client_url \
                   + bug_client_results.list_of_bug_client.bug_client_api_url \
-                  + 'bug?bug_status=__open__' #Note - this last section should be moved into the database
+                  + bug_client_instance.list_of_bug_client.api_search_bugs + form.cleaned_data['search']
+                  #+ 'bug?bug_status=__open__' #Note - this last section should be moved into the database
 
             print(url)
             req = urllib2.Request(url)
