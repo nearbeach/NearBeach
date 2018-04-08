@@ -1470,6 +1470,7 @@ class permission_set_manager(models.Manager):
 			requirement,
 			requirement_link,
             task,
+			tax,
 			documents,
 			contact_history,
 			kanban_comment,
@@ -1500,6 +1501,7 @@ class permission_set_manager(models.Manager):
 			requirement=requirement,
 			requirement_link=requirement_link,
             task=task,
+			tax=tax,
 			documents=documents,
 			contact_history=contact_history,
 			kanban_comment=kanban_comment,
@@ -1600,6 +1602,10 @@ class permission_set(models.Model):
         choices=PERMISSION_LEVEL,
         default=0,
     )
+    tax = models.IntegerField(
+		choices=PERMISSION_LEVEL,
+		default=0,
+	)
     """
     ADDITIVE PERMISSIONS
     ~~~~~~~~~~~~~~~~~~~~

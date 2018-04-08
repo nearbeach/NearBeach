@@ -36,7 +36,8 @@ def group_information(request):
 
     # context
     c = {
-
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -74,6 +75,8 @@ def group_information_add_permission_set(request, group_id):
     c = {
         'permission_set_results': permission_set_results,
         'form': add_permission_set_to_group_form,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -259,11 +262,18 @@ def list_of_taxes_edit(request,tax_id):
 
 @login_required(login_url='login')
 def list_of_taxes_information(request):
+    permission_results = return_user_permission_level(request, None, 'tax')
+
+    if permission_results['tax'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     #Load template
     t = loader.get_template('NearBeach/list_of_taxes/list_of_taxes_information.html')
 
     # context
     c = {
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -273,6 +283,11 @@ def list_of_taxes_information(request):
 
 @login_required(login_url='login')
 def list_of_taxes_list(request):
+    permission_results = return_user_permission_level(request, None, 'tax')
+
+    if permission_results['tax'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     list_of_taxes_results = list_of_taxes.objects.all().order_by('tax_amount') #No taxes are deleted, only disabled.
 
     #Load template
@@ -362,6 +377,8 @@ def new_user(request):
         'user_information_form': user_information_form(),
         'is_superuser': request.session['is_superuser'],
         'errors': errors,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -379,7 +396,8 @@ def permission_set_information(request):
 
     # context
     c = {
-
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -599,6 +617,8 @@ def product_and_service_edit(request, product_id):
             instance=products_and_services.objects.get(product_id=product_id)
         ),
         'product_id': product_id,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -637,6 +657,8 @@ def product_and_service_new(request):
     # context
     c = {
         'product_and_service_form': product_and_service_form(),
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -668,6 +690,8 @@ def product_and_service_search(request):
     c = {
         'product_results': product_results,
         'service_results': service_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -710,6 +734,8 @@ def search_users(request):
     c = {
         'user_results': user_results,
         'search_form': search_form(request.POST or None),
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -796,6 +822,8 @@ def user_information(request, user_id):
         'is_superuser': request.session['is_superuser'],
         'errors': errors,
         'user_id': user_id,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))

@@ -381,29 +381,6 @@ def bug_client_delete(request, bug_client_id):
     else:
         return HttpResponseBadRequest("Only POST requests allowed")
 
-@login_required(login_url='login')
-def bug_client_list(request):
-    permission_results = return_user_permission_level(request, None, 'bug_client')
-    if permission_results['bug_client'] == 0:
-        return HttpResponseRedirect(reverse('permission_denied'))
-
-    #Get Data
-    bug_client_results = bug_client.objects.filter(
-        is_deleted='FALSE',
-    )
-
-    # Load the template
-    t = loader.get_template('NearBeach/bug_client_list.html')
-
-    # context
-    c = {
-        'bug_client_results': bug_client_results,
-        'new_item_permission': permission_results['new_item'],
-        'administration_permission': permission_results['administration'],
-        'bug_client_permission': permission_results['bug_client'],
-    }
-
-    return HttpResponse(t.render(c, request))
 
 
 @login_required(login_url='login')
@@ -464,9 +441,37 @@ def bug_client_information(request, bug_client_id):
     c = {
         'bug_client_form': bug_client_form(initial=bug_client_initial),
         'bug_client_id': bug_client_id,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def bug_client_list(request):
+    permission_results = return_user_permission_level(request, None, 'bug_client')
+    if permission_results['bug_client'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #Get Data
+    bug_client_results = bug_client.objects.filter(
+        is_deleted='FALSE',
+    )
+
+    # Load the template
+    t = loader.get_template('NearBeach/bug_client_list.html')
+
+    # context
+    c = {
+        'bug_client_results': bug_client_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'bug_client_permission': permission_results['bug_client'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
 
 
 @login_required(login_url='login')
