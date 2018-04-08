@@ -219,6 +219,10 @@
                 type: 'GET',
                 success: function(data) {
                     $("#requirement_new_link").html(data);
+
+                    //Scroll into view
+                    var offset = $("#requirement_new_link").offset;
+                    $('html, body').animate({scrollTop: offset.top});
                 },
                 error: function() {
                     $("#requirement_new_link").html("<h2>New Requirement</h2>Sorry, new requirement encounted an error and did not load");
@@ -235,6 +239,10 @@
                 type: 'GET',
                 success: function(data) {
                     $("#requirement_item_new_link").html(data);
+
+                    //Scroll into view
+                    var offset = $("#requirement_item_new_link").offset;
+                    $('html, body').animate({scrollTop: offset.top});
                 },
                 error: function() {
                     $("#requirement_item_new_link").html("<h2>New Requirement Item</h2>Sorry, new requirement item encounted an error and did not load");
@@ -252,6 +260,10 @@
                 type: 'GET',
                 success: function(data) {
                     $("#new_requirement_item").html(data);
+
+                    //Scroll into view
+                    var offset = $("#new_requirement_item").offset;
+                    $('html, body').animate({scrollTop: offset.top});
                 },
                 error: function() {
                     $("#new_requirement_item").html("<h2>New Requirement Item</h2>Sorry, new requirement item encounted an error and did not load");
@@ -269,8 +281,16 @@
                 type: 'GET',
                 success: function(data) {
                     $("#edit_requirement_item").html(data);
+
+                    //Scroll to the item
+                    var offset = $("#edit_requirement_item").offset();
+                    $('html, body').animate({
+                        scrollTop: offset.top - 150,
+
+                    });
                     set_permissions({{ permission }});
                     load_requirement_item_documents(requirement_item_id);
+
                 },
                 error: function() {
                     $("#edit_requirement_item").html("<h2>Edit Requirement Item</h2>Sorry, edit requirement item encounted an error and did not load");

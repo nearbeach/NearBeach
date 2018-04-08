@@ -258,6 +258,8 @@ url(r'^to_do_complete/(?P<to_do_id>[0-9]+)/$', views.to_do_complete, name='to_do
 	url(r'^bug_search/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement"]+)/$', views.bug_search, name='bug_search'),
 
 	url(r'^bug_add/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement"]+)/(?P<bug_id>[0-9]+)/(?P<bug_client_id>[0-9]+)',views.bug_add,name='bug_add'),
+	url(r'^bug_client_information/(?P<bug_client_id>[0-9]+)/$', views.bug_client_information,name='bug_client_information'),
+	url(r'^bug_client_delete/(?P<bug_client_id>[0-9]+)/$', views.bug_client_delete, name='bug_client_delete'),
 
 ]
 
