@@ -1,12 +1,12 @@
 {% csrf_token %}
 <h4>Bug Search</h4>
-<ul>
-    <li>
-        {{ bug_search_form.list_of_bug_client }}
-        {{ bug_search_form.search }}
-        <input type="submit" value="Search" id="bug_search_submit">
-    </li>
-</ul>
+<table>
+    <tr>
+        <td width="15%">{{ bug_search_form.list_of_bug_client }}</td>
+        <td width="70%">{{ bug_search_form.search }}</td>
+        <td width="15%"><input type="submit" value="Search" id="bug_search_submit"></td>
+    </tr>
+</table>
 {% if bug_results %}
     <table>
         <tr>

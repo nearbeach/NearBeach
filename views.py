@@ -303,6 +303,8 @@ def associated_tasks(request, project_id):
 
 @login_required(login_url='login')
 def bug_add(request,location_id, destination,bug_id, bug_client_id):
+    #add permissions
+
     if request.method == "POST":
         """
         Method
@@ -338,7 +340,7 @@ def bug_add(request,location_id, destination,bug_id, bug_client_id):
             change_user=request.user,
         )
         if destination=="project":
-            bug_submit.project_id=project.objects.get(project_id=location_id)
+            bug_submit.project=project.objects.get(project_id=location_id)
         elif destination=="task":
             bug_submit.tasks = tasks.objects.get(tasks_id=location_id)
         else:
@@ -360,9 +362,30 @@ def bug_add(request,location_id, destination,bug_id, bug_client_id):
 
 
 @login_required(login_url='login')
-def bug_client_list(request):
-    #ADD IN PERMISSIONS LATER
+def bug_client_delete(request, bug_client_id):
+    permission_results = return_user_permission_level(request, None, 'bug_client')
 
+    if request.method == "POST" and permission_results['bug_client'] == 4:
+        bug_client_update = bug_client.objects.get(bug_client_id=bug_client_id)
+        bug_client_update.is_deleted = "TRUE"
+        bug_client_update.save()
+
+        # Load the template
+        t = loader.get_template('NearBeach/blank.html')
+
+        # context
+        c = {}
+
+        return HttpResponse(t.render(c, request))
+
+    else:
+        return HttpResponseBadRequest("Only POST requests allowed")
+
+@login_required(login_url='login')
+def bug_client_list(request):
+    permission_results = return_user_permission_level(request, None, 'bug_client')
+    if permission_results['bug_client'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
 
     #Get Data
     bug_client_results = bug_client.objects.filter(
@@ -375,14 +398,75 @@ def bug_client_list(request):
     # context
     c = {
         'bug_client_results': bug_client_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'bug_client_permission': permission_results['bug_client'],
     }
 
     return HttpResponse(t.render(c, request))
 
 
 @login_required(login_url='login')
-def bug_client_search(request, location_id=None, destination=None):
-    print("hello world")
+def bug_client_information(request, bug_client_id):
+    permission_results = return_user_permission_level(request, None, 'bug_client')
+
+    if permission_results['bug_client'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+    form_errors = ''
+    if request.method == "POST":
+        form = bug_client_form(request.POST)
+        if form.is_valid():
+            #Get required data
+            bug_client_name = form.cleaned_data['bug_client_name']
+            list_of_bug_client = form.cleaned_data['list_of_bug_client']
+            bug_client_url = form.cleaned_data['bug_client_url']
+
+            #Test the link first before doing ANYTHING!
+            try:
+                url = bug_client_url + list_of_bug_client.bug_client_api_url + 'bug?bug_status=__open__'
+                print(url)
+                req = urllib2.Request(url)
+                response = urllib2.urlopen(req)
+                print("Response gotten")
+                data = json.load(response)
+                print("Got the JSON")
+
+                bug_client_save = bug_client.objects.get(bug_client_id=bug_client_id)
+                bug_client_save.bug_client_name = bug_client_name
+                bug_client_save.list_of_bug_client = list_of_bug_client
+                bug_client_save.bug_client_url = bug_client_url
+                bug_client_save.change_user=request.user
+
+                bug_client_save.save()
+                return HttpResponseRedirect(reverse('bug_client_list'))
+            except:
+                form_errors = "Could not connect to the API"
+                print("There was an error")
+
+
+        else:
+            print(form.errors)
+            form_errors(form.errors)
+
+
+
+    #Get Data
+    bug_client_results = bug_client.objects.get(bug_client_id=bug_client_id)
+    bug_client_initial = {
+        'bug_client_name': bug_client_results.bug_client_name,
+        'list_of_bug_client': bug_client_results.list_of_bug_client,
+        'bug_client_url': bug_client_results.bug_client_url,
+    }
+
+    t = loader.get_template('NearBeach/bug_client_information.html')
+
+    # context
+    c = {
+        'bug_client_form': bug_client_form(initial=bug_client_initial),
+        'bug_client_id': bug_client_id,
+    }
+
+    return HttpResponse(t.render(c, request))
 
 
 @login_required(login_url='login')
@@ -438,10 +522,45 @@ def bug_search(request, location_id=None, destination=None):
             bug_client_results = bug_client.objects.get(
                 bug_client_id=bug_client_instance.list_of_bug_client_id
             )
-            #TEMP CODE#
+
+            #Get bugs ids that we want to remove
+            if destination == "project":
+                existing_bugs = bug.objects.filter(
+                    is_deleted="FALSE",
+                    project=location_id,
+                    bug_client_id=bug_client_instance.list_of_bug_client_id,
+                )
+            elif destination == "task":
+                existing_bugs = bug.objects.filter(
+                    is_deleted="FALSE",
+                    tasks=location_id,
+                    bug_client_id=bug_client_instance.list_of_bug_client_id,
+                )
+            else:
+                existing_bugs = bug.objects.filter(
+                    is_deleted="FALSE",
+                    requirements=location_id,
+                    bug_client_id=bug_client_instance.list_of_bug_client_id,
+                )
+            #The values in the URL
+            f_bugs = ''
+            o_notequals = ''
+            v_values =''
+
+            #The for loop
+            for idx, row in enumerate(existing_bugs):
+                nidx = str(idx+1)
+                f_bugs = f_bugs + "&f" + nidx + "=bug_id"
+                o_notequals = o_notequals + "&o" + nidx + "=notequals"
+                v_values = v_values + "&v" + nidx + "=" + str(row.bug_code)
+
+            exclude_url = f_bugs + o_notequals + v_values
+
+
             url = bug_client_results.bug_client_url \
                   + bug_client_results.list_of_bug_client.bug_client_api_url \
-                  + 'bug?bug_status=__open__' #Note - this last section should be moved into the database
+                  + bug_client_instance.list_of_bug_client.api_search_bugs + form.cleaned_data['search'] \
+                  + exclude_url
 
             print(url)
             req = urllib2.Request(url)
