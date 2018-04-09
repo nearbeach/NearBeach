@@ -3323,6 +3323,17 @@ def project_information(request, project_id):
 
             project_results.change_user=request.user
             project_results.save()
+
+            """
+            Now we need to update any kanban board cards connected to this project.
+            """
+            kanban_card_results = kanban_card.objects.filter(
+                is_deleted="FALSE",
+                project_id=project_id
+            )
+            for row in kanban_card_results:
+                row.kanban_card_text = "PRO" + str(project_id) + " - " + form.cleaned_data['project_name']
+                row.save()
         else:
             print(form.errors)
 
@@ -3850,6 +3861,17 @@ def task_information(request, task_id):
                 task_results.task_status = 'Resolved'
 
             task_results.save()
+
+            """
+            Now we need to update any kanban board cards connected to this project.
+            """
+            kanban_card_results = kanban_card.objects.filter(
+                is_deleted="FALSE",
+                tasks_id=task_id
+            )
+            for row in kanban_card_results:
+                row.kanban_card_text = "TASK" + str(task_id) + " - " + form.cleaned_data['task_short_description']
+                row.save()
 
             """
 			If the user has submitted a new document. We only upload the document IF and ONLY IF the user

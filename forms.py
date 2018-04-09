@@ -695,6 +695,10 @@ class kanban_new_link_form(ModelForm):
 
         self.fields['kanban_column'].queryset = kanban_column.objects.filter(kanban_board=kanban_board_id)
         self.fields['kanban_level'].queryset = kanban_level.objects.filter(kanban_board=kanban_board_id)
+
+        self.fields['kanban_column'].empty_label = None
+        self.fields['kanban_level'].empty_label = None
+
     class Meta:
         model = kanban_card
         fields = {
@@ -1472,19 +1476,19 @@ class product_and_service_form(ModelForm):
     product_name = forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Product Name'
+            'placeholder': 'Product/Service Name'
         }),
     )
     product_part_number = forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Product Part Number'
+            'placeholder': 'Product/Service Part Number'
         }),
     )
     product_description = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={
-            'placeholder': 'Product Description'
+            'placeholder': 'Product/Service Description'
         }),
     )
     class Meta:

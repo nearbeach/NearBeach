@@ -136,6 +136,18 @@ def requirement_information(request, requirement_id):
             requirements_update.requirement_status = form.cleaned_data['requirement_status']
             requirements_update.change_user = request.user
             requirements_update.save()
+
+            """
+            Now we need to update any kanban board cards connected to this project.
+            """
+            kanban_card_results = kanban_card.objects.filter(
+                is_deleted="FALSE",
+                requirements=requirement_id,
+            )
+            for row in kanban_card_results:
+                print('hello world')
+                row.kanban_card_text = "REQ" + str(requirement_id) + " - " + form.cleaned_data['requirement_title']
+                row.save()
         else:
             print(form.errors)
 
