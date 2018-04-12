@@ -4041,6 +4041,8 @@ def task_information(request, task_id):
         'quote_results': quote_results,
         'task_results': task_results,
         'timezone': settings.TIME_ZONE,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))

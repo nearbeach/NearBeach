@@ -750,6 +750,7 @@ def user_information(request, user_id):
         return HttpResponseRedirect(reverse('permission_denied'))
 
     errors = ''
+    save_state = ''
     if request.method == "POST" and permission_results['administration_create_users'] == 4:
         if user_id == "":
             form = user_information_form(request.POST)
@@ -760,6 +761,8 @@ def user_information(request, user_id):
             )
         if form.is_valid():
             form.save()
+
+            save_state = 'User has been saved'
 
             """
             For new users
@@ -824,6 +827,7 @@ def user_information(request, user_id):
         'user_id': user_id,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'save_state': save_state,
     }
 
     return HttpResponse(t.render(c, request))
