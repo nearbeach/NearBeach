@@ -4,7 +4,7 @@
 <h2>User Information</h2>
 <form action="{% url 'user_information' user_id %}" method="post" class="user_information">
     {% csrf_token %}
-    <div id="save_state">{{ save_state }}</div>
+    <div id="save_state">{% if not errors %}{{ save_state }}{% endif %}</div>
     <ul>
         {% if errors %}
             {{ errors }}

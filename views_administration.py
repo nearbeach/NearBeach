@@ -781,7 +781,7 @@ def user_information(request, user_id):
             password2 = form.cleaned_data['password2']
             if user_id == "":
                 if not password1 == password1:
-                    errors = '<li>PASSWORDS ARE NOT THE SAME<li>'
+                    errors = 'PASSWORDS ARE NOT THE SAME'
                 else:
                     if password1 == "":
                         #Passwords are blank - generate a new password for the user
@@ -803,7 +803,7 @@ def user_information(request, user_id):
                         user_instance.set_password(password1)
                         user_instance.save()
                 else:
-                    errors = '<li>PASSWORDS ARE NOT THE SAME<li>'
+                    errors = 'PASSWORDS ARE NOT THE SAME'
         else:
             print(form.errors)
             errors = form.errors
