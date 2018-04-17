@@ -1890,6 +1890,7 @@ class user_information_form(ModelForm):
             'type': 'password',
             'placeholder': 'Password',
             'onkeyup': 'enable_submit()',
+            'autocomplete': 'off',
         })
     )
     password2 = forms.CharField(
@@ -1899,6 +1900,7 @@ class user_information_form(ModelForm):
             'type': 'password',
             'placeholder': 'Repeate Password',
             'onkeyup': 'enable_submit()',
+            'autocomplete': 'off',
         })
     )
     username = forms.CharField(
