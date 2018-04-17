@@ -23,7 +23,7 @@
                 <td>
                     <ul id="columns">
                         {% for row in kanban_column_results %}
-                            <li class="column_title" draggable="true" data-id="{{ row.kanban_column_id }}">{{ row.kanban_column_name }}</li>
+                            <li class="column_title" draggable="true" data-id="{{ row.kanban_column_id }}" value="{{ row.kanban_column_id }}">{{ row.kanban_column_name }}</li>
                         {% endfor %}
                     </ul>
                 </td>
@@ -37,7 +37,7 @@
                 <td>
                     <ul id="levels">
                         {% for row in kanban_level_results %}
-                            <li class="level_title" data-id="{{ row.kanban_level_id }}">{{ row.kanban_level_name }}</li>
+                            <li class="level_title" draggable="true" data-id="{{ row.kanban_level_id }}" value="{{ row.kanban_level_id }}">{{ row.kanban_level_name }}</li>
                         {% endfor %}
                     </ul>
                 </td>
@@ -59,14 +59,10 @@
             var column = {};
 
             column.id = this.value;
-            column.title = $(this).text()
+            column.title = $(this).text();
 
             return column;
         });
-
-        /*
-
-         */
 
 
         //Get the JSON data ready
@@ -78,6 +74,7 @@
 
             return level;
         });
+
 
         data_to_send = {
             "columns": columns,
@@ -177,9 +174,8 @@
     var cols = document.querySelectorAll('#columns .column_title');
     [].forEach.call(cols,add_DnD_handlers);
 
-
-
-    alert("FINISHED");
+    var levels = document.querySelectorAll('#levels .level_title');
+    [].forEach.call(levels,add_DnD_handlers);
 </script>
 
 

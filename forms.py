@@ -670,6 +670,15 @@ class kanban_board_form(forms.Form):
     )
 
 
+class kanban_edit_xy_name_form(forms.Form):
+    kanban_xy_name=forms.CharField(
+        max_length=50,
+        widget=TextInput(attrs={
+            'placeholder': 'Column/Level Name',
+        }),
+    )
+
+
 class kanban_properties_form(ModelForm):
     kanban_board_name=forms.CharField(
         max_length=255,
