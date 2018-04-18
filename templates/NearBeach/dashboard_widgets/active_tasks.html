@@ -8,9 +8,9 @@
         </tr>
         {% for row in assigned_users_results %}
             <tr>
-                <td><a href="{% url 'task_information' row.task_id.tasks_id%}">Task{{ row.task_id.tasks_id }}</a></td>
-                <td>{{ row.task_id.task_short_description}}</td>
-                <td>{{ row.task_id.task_end_date }}</td>
+                <td><a href="{% url 'task_information' row.task_id__tasks_id%}">Task{{ row.task_id__tasks_id }}</a></td>
+                <td>{{ row.task_id__task_short_description}}</td>
+                <td>{{ row.task_id__task_end_date }}</td>
             </tr>
         {% endfor %}
     </table>

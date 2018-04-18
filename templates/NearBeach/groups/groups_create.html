@@ -1,5 +1,5 @@
 {% csrf_token %}
 <ul>
     <li>{{ groups_form.group_name }}</li>
-    <li><input type="submit" value="Submit New Group"></li>
+    <li><input type="submit" value="Submit New Group"><a href="javascript:void(0)" onclick="close_group_create()">Close</a></li>
 </ul>

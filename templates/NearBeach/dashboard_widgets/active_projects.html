@@ -8,9 +8,9 @@
         </tr>
         {% for row in assigned_users_results %}
             <tr>
-                <td><a href="{% url 'project_information' row.project_id.project_id %}">PRO{{ row.project_id.project_id }}</a></td>
-                <td>{{ row.project_id.project_name }}</td>
-                <td>{{ row.project_id.project_end_date }}</td>
+                <td><a href="{% url 'project_information' row.project_id__project_id %}">PRO{{ row.project_id__project_id }}</a></td>
+                <td>{{ row.project_id__project_name }}</td>
+                <td>{{ row.project_id__project_end_date }}</td>
             </tr>
         {% endfor %}
     </table>

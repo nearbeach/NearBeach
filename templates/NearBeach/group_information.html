@@ -98,6 +98,20 @@
         })
     });
 
+    function close_group_create() {
+        $("#create_group").html('<a href="javascript:void(0)" onclick="load_create_group()">Create New Group</a>');
+    }
+
+
+    function close_group_edit() {
+        $("#edit_group").html("");
+        $("#user_list").html("");
+        $("#add_permission_set").html("");
+
+    }
+
+
+
     function on_page_load() {
         load_group_list();
     }

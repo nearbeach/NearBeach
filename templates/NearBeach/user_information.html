@@ -4,6 +4,7 @@
 <h2>User Information</h2>
 <form action="{% url 'user_information' user_id %}" method="post" class="user_information">
     {% csrf_token %}
+    <div id="save_state">{% if not errors %}{{ save_state }}{% endif %}</div>
     <ul>
         {% if errors %}
             {{ errors }}
@@ -30,6 +31,17 @@
         <li>To change a user's password, just fill out the two password fields with the new password and click on the "SAVE" button</li>
     </ul>
 <script>
+    $(document).ready(function() {
+        //We don't want any explorers to auto fill out the passwords.
+        $("#id_password1").val("");
+        $("#id_password2").val("");
+    });
+
+    $("#save_state").on('submit', function() {
+        //Do not prevent default - as we want to send the data in post
+        $("#save_state").html("Saving current user");
+    });
+
     function enable_submit() {
         if ($("#id_password1").val() == $("#id_password2").val()) {
             $("#submit_user").prop("disabled", false);

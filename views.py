@@ -381,29 +381,6 @@ def bug_client_delete(request, bug_client_id):
     else:
         return HttpResponseBadRequest("Only POST requests allowed")
 
-@login_required(login_url='login')
-def bug_client_list(request):
-    permission_results = return_user_permission_level(request, None, 'bug_client')
-    if permission_results['bug_client'] == 0:
-        return HttpResponseRedirect(reverse('permission_denied'))
-
-    #Get Data
-    bug_client_results = bug_client.objects.filter(
-        is_deleted='FALSE',
-    )
-
-    # Load the template
-    t = loader.get_template('NearBeach/bug_client_list.html')
-
-    # context
-    c = {
-        'bug_client_results': bug_client_results,
-        'new_item_permission': permission_results['new_item'],
-        'administration_permission': permission_results['administration'],
-        'bug_client_permission': permission_results['bug_client'],
-    }
-
-    return HttpResponse(t.render(c, request))
 
 
 @login_required(login_url='login')
@@ -464,9 +441,37 @@ def bug_client_information(request, bug_client_id):
     c = {
         'bug_client_form': bug_client_form(initial=bug_client_initial),
         'bug_client_id': bug_client_id,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def bug_client_list(request):
+    permission_results = return_user_permission_level(request, None, 'bug_client')
+    if permission_results['bug_client'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #Get Data
+    bug_client_results = bug_client.objects.filter(
+        is_deleted='FALSE',
+    )
+
+    # Load the template
+    t = loader.get_template('NearBeach/bug_client_list.html')
+
+    # context
+    c = {
+        'bug_client_results': bug_client_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'bug_client_permission': permission_results['bug_client'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
 
 
 @login_required(login_url='login')
@@ -954,7 +959,9 @@ def dashboard_active_projects(request):
         is_deleted='FALSE',
         user_id=request.user,
         project_id__isnull=False,
-    )
+    ).values('project_id__project_id','project_id__project_name','project_id__project_end_date').distinct()
+
+    #BUG - need to make this unique
 
     # Load the template
     t = loader.get_template('NearBeach/dashboard_widgets/active_projects.html')
@@ -974,7 +981,7 @@ def dashboard_active_tasks(request):
         is_deleted='FALSE',
         user_id=request.user,
         task_id__isnull=False,
-    )
+    ).values('task_id__tasks_id','task_id__task_short_description','task_id__task_end_date').distinct()
 
     # Load the template
     t = loader.get_template('NearBeach/dashboard_widgets/active_tasks.html')
@@ -997,7 +1004,7 @@ def dashboard_group_active_projects(request):
     cursor = connection.cursor()
 
     cursor.execute("""
-    SELECT 
+    SELECT DISTINCT
       project.project_id AS "project_id"
     , '' AS "task_id"
     , project.project_name AS "description"
@@ -1308,6 +1315,8 @@ def index(request):
     return HttpResponseRedirect(reverse('login'))
 
 
+
+@login_required(login_url='login')
 def kanban_edit_card(request,kanban_card_id):
     kanban_card_results = kanban_card.objects.get(kanban_card_id=kanban_card_id)
     if (
@@ -1398,6 +1407,34 @@ def kanban_edit_card(request,kanban_card_id):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def kanban_edit_xy_name(request,location_id, destination):
+    """
+    This function is for editing both kanban column and level names.
+    PERMISSIONS WILL NEED TO BE ADDED!
+    """
+
+    if destination == "column":
+        kanban_xy_name = kanban_column.objects.get(kanban_column_id=location_id).kanban_column_name.encode('utf8')
+    elif destination == "level":
+        kanban_xy_name = kanban_level.objects.get(kanban_level_id=location_id).kanban_level_name.decode('utf8')
+    else:
+        kanban_xy_name = ''
+
+    # load template
+    t = loader.get_template('NearBeach/kanban/kanban_edit_xy_name.html')
+
+    # context
+    c = {
+        'kanban_edit_xy_name_form': kanban_edit_xy_name_form(initial={
+            'kanban_xy_name': kanban_xy_name,
+        })
+    }
+
+    return HttpResponse(t.render(c, request))
+
 
 
 def kanban_information(request,kanban_board_id):
@@ -1685,11 +1722,13 @@ def kanban_properties(request,kanban_board_id):
         for row in range(0, received_json_data["columns"]["length"]):
             kanban_column_update = kanban_column.objects.get(kanban_column_id=received_json_data["columns"][str(row)]["id"])
             kanban_column_update.kanban_column_sort_number = row
+            kanban_column_update.save()
 
         # Update the sort order for the columns
         for row in range(0, received_json_data["levels"]["length"]):
             kanban_level_update = kanban_level.objects.get(kanban_level_id=received_json_data["levels"][str(row)]["id"])
             kanban_level_update.kanban_level_sort_number = row
+            kanban_level_update.save()
 
         #Return blank page
         t = loader.get_template('NearBeach/blank.html')
@@ -1702,11 +1741,11 @@ def kanban_properties(request,kanban_board_id):
     kanban_column_results = kanban_column.objects.filter(
         is_deleted="FALSE",
         kanban_board_id=kanban_board_id,
-    )
+    ).order_by('kanban_column_sort_number')
     kanban_level_results = kanban_level.objects.filter(
         is_deleted="FALSE",
         kanban_board_id=kanban_board_id,
-    )
+    ).order_by('kanban_level_sort_number')
 
     t = loader.get_template('NearBeach/kanban/kanban_properties.html')
 
@@ -1717,8 +1756,10 @@ def kanban_properties(request,kanban_board_id):
         'kanban_level_results': kanban_level_results,
         'kanban_board_results': kanban_board_results,
         'kanban_properties_form': kanban_properties_form(initial={
-        'kanban_board_name': kanban_board_results.kanban_board_name,
-        })
+            'kanban_board_name': kanban_board_results.kanban_board_name,
+        }),
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -3318,6 +3359,17 @@ def project_information(request, project_id):
 
             project_results.change_user=request.user
             project_results.save()
+
+            """
+            Now we need to update any kanban board cards connected to this project.
+            """
+            kanban_card_results = kanban_card.objects.filter(
+                is_deleted="FALSE",
+                project_id=project_id
+            )
+            for row in kanban_card_results:
+                row.kanban_card_text = "PRO" + str(project_id) + " - " + form.cleaned_data['project_name']
+                row.save()
         else:
             print(form.errors)
 
@@ -3847,6 +3899,17 @@ def task_information(request, task_id):
             task_results.save()
 
             """
+            Now we need to update any kanban board cards connected to this project.
+            """
+            kanban_card_results = kanban_card.objects.filter(
+                is_deleted="FALSE",
+                tasks_id=task_id
+            )
+            for row in kanban_card_results:
+                row.kanban_card_text = "TASK" + str(task_id) + " - " + form.cleaned_data['task_short_description']
+                row.save()
+
+            """
 			If the user has submitted a new document. We only upload the document IF and ONLY IF the user
 			has selected the "Submit" button on the "New Document" dialog. We do not want to accidently
 			upload a document if we hit the "SAVE" button from a different location
@@ -4014,6 +4077,8 @@ def task_information(request, task_id):
         'quote_results': quote_results,
         'task_results': task_results,
         'timezone': settings.TIME_ZONE,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))

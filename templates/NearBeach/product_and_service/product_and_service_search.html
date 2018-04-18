@@ -46,7 +46,7 @@
         </tr>
         {% for row in service_results %}
             <tr>
-                <td><a href="#">{{ row.product_name }}</a></td>
+                <td><a href="{% url 'product_and_service_edit' row.product_id %}">{{ row.product_name }}</a></td>
                 <td>{{ row.product_part_number }}</td>
                 <td>{{ row.product_cost }}</td>
                 <td>{{ row.product_price }}</td>

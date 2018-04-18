@@ -670,6 +670,15 @@ class kanban_board_form(forms.Form):
     )
 
 
+class kanban_edit_xy_name_form(forms.Form):
+    kanban_xy_name=forms.CharField(
+        max_length=50,
+        widget=TextInput(attrs={
+            'placeholder': 'Column/Level Name',
+        }),
+    )
+
+
 class kanban_properties_form(ModelForm):
     kanban_board_name=forms.CharField(
         max_length=255,
@@ -695,6 +704,10 @@ class kanban_new_link_form(ModelForm):
 
         self.fields['kanban_column'].queryset = kanban_column.objects.filter(kanban_board=kanban_board_id)
         self.fields['kanban_level'].queryset = kanban_level.objects.filter(kanban_board=kanban_board_id)
+
+        self.fields['kanban_column'].empty_label = None
+        self.fields['kanban_level'].empty_label = None
+
     class Meta:
         model = kanban_card
         fields = {
@@ -1472,19 +1485,19 @@ class product_and_service_form(ModelForm):
     product_name = forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Product Name'
+            'placeholder': 'Product/Service Name'
         }),
     )
     product_part_number = forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Product Part Number'
+            'placeholder': 'Product/Service Part Number'
         }),
     )
     product_description = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={
-            'placeholder': 'Product Description'
+            'placeholder': 'Product/Service Description'
         }),
     )
     class Meta:
@@ -1886,6 +1899,7 @@ class user_information_form(ModelForm):
             'type': 'password',
             'placeholder': 'Password',
             'onkeyup': 'enable_submit()',
+            'autocomplete': 'off',
         })
     )
     password2 = forms.CharField(
@@ -1895,6 +1909,7 @@ class user_information_form(ModelForm):
             'type': 'password',
             'placeholder': 'Repeate Password',
             'onkeyup': 'enable_submit()',
+            'autocomplete': 'off',
         })
     )
     username = forms.CharField(
