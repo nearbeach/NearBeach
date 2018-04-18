@@ -959,7 +959,9 @@ def dashboard_active_projects(request):
         is_deleted='FALSE',
         user_id=request.user,
         project_id__isnull=False,
-    )
+    ).values('project_id__project_id','project_id__project_name','project_id__project_end_date').distinct()
+
+    #BUG - need to make this unique
 
     # Load the template
     t = loader.get_template('NearBeach/dashboard_widgets/active_projects.html')
@@ -979,7 +981,7 @@ def dashboard_active_tasks(request):
         is_deleted='FALSE',
         user_id=request.user,
         task_id__isnull=False,
-    )
+    ).values('task_id__tasks_id','task_id__task_short_description','task_id__task_end_date').distinct()
 
     # Load the template
     t = loader.get_template('NearBeach/dashboard_widgets/active_tasks.html')
@@ -1002,7 +1004,7 @@ def dashboard_group_active_projects(request):
     cursor = connection.cursor()
 
     cursor.execute("""
-    SELECT 
+    SELECT DISTINCT
       project.project_id AS "project_id"
     , '' AS "task_id"
     , project.project_name AS "description"
