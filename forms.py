@@ -1069,7 +1069,7 @@ class new_opportunity_form(ModelForm):
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select',
             'multiple tabindex': '4',
-            'width': '500px',
+            'width': '100%',
         }),
     )
 
