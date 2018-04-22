@@ -1311,9 +1311,8 @@ class new_requirement_form(ModelForm):
         }
 
 
-
 class new_task_form(forms.Form):
-    #Get data for choice boxes
+    # Get data for choice boxes
     organisations_results=organisations.objects.filter(is_deleted='FALSE')
     group_results = groups.objects.filter(is_deleted='FALSE')
 

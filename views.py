@@ -2923,18 +2923,15 @@ def new_task(request, location_id='', destination=''):
 
 
 @login_required(login_url='login')
-def next_step(request, next_step_id, opportunity_id):
-    next_step_save = opportunity_next_step.objects.get(opportunity_next_step_id=next_step_id)
-    next_step_save.next_step_completed = 1
-    next_step.change_user=request.user
-    next_step_save.save()
+def opportunity_group_permission(request, opportunity_id):
+    # Loaed the template
+    t = loader.get_template('NearBeach/opportunity/opportunity_group_permission.html')
 
-    return HttpResponseRedirect(
-        reverse(
-            opportunity_information,
-            args={opportunity_id}
-        )
-    )
+    c = {}
+
+    return HttpResponse(t.render(c, request))
+
+
 
 
 @login_required(login_url='login')
@@ -3118,10 +3115,6 @@ def opportunity_information(request, opportunity_id):
     # Loaed the template
     t = loader.get_template('NearBeach/opportunity_information.html')
 
-    #Bug fixing
-    print(permission_results)
-    print(permission_results['opportunity'])
-
     c = {
         'opportunity_id': str(opportunity_id),
         'opportunity_information_form': opportunity_information_form(
@@ -3141,6 +3134,18 @@ def opportunity_information(request, opportunity_id):
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
     }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+
+@login_required(login_url='login')
+def opportunity_user_permission(request, opportunity_id):
+    # Loaed the template
+    t = loader.get_template('NearBeach/opportunity/opportunity_user_permission.html')
+
+    c = {}
 
     return HttpResponse(t.render(c, request))
 
@@ -4098,8 +4103,10 @@ def to_do_list(request, location_id, destination):
             )
             if destination == "project":
                 to_do_submit.project = project.objects.get(project_id=location_id)
-            else:
+            elif destination == "task":
                 to_do_submit.tasks = tasks.objects.get(tasks_id=location_id)
+            else:
+                to_do_submit.opportunity = opportunity.objects.get(opportunity_id=location_id)
             to_do_submit.save()
         else:
             print(form.errors)
@@ -4110,11 +4117,17 @@ def to_do_list(request, location_id, destination):
             is_deleted='FALSE',
             project_id=location_id,
         )
-    else:
+    elif destination == 'task':
         to_do_results = to_do.objects.filter(
             is_deleted='FALSE',
             tasks_id=location_id,
         )
+    else: #Opportunity
+        to_do_results = to_do.objects.filter(
+            is_deleted='FALSE',
+            opportunity_id=location_id,
+        )
+
 
     # Load the template
     t = loader.get_template('NearBeach/to_do/to_do.html')

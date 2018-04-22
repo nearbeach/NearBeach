@@ -51,33 +51,10 @@
         {% if opportunity_results.opportunity_stage_id.opportunity_closed == "TRUE" and opportunity_perm == 4 %}
             <a href="javascript:void(0)" onclick="reopen_temp()">Reopen</a>
         {% endif %}
-        <h2>To Do</h2>
-        <table>
-            {% if opportunity_results.opportunity_stage_id.opportunity_closed != "TRUE" %}
-                <tr>
-                    <td>{{ opportunity_information_form.next_step }}</td>
-                    <td><input type="submit" name="submit_next_step" value="Add To Do"/></td>
-                </tr>
-            {% endif %}
-            {% if next_step_results %}
-                <tr class="header">
-                    <td>Next Step</td>
-                    <td width="20%"> ---- </td>
-                </tr>
-                {% for row in next_step_results %}
-                    <tr>
-                        <td>{{ row.next_step_description }}</td>
-                        {% if row.next_step_completed == 0 %}
-                            <td><a href="{% url 'next_step' row.opportunity_next_step_id opportunity_results.opportunity_id %}">Click to Complete</a></td>
-                        {% else %}
-                            <td>Completed</td>
-                        {% endif %}
-                    </tr>
-                {% endfor %}
-            {% else %}
-                <tr><td>There are currently no to do</td></tr>
-            {% endif %}
-        </table>
+        <form id="to_do">
+            <h2>To Do</h2>
+            Loading...
+        </form>
         <h2>Associated Projects & Tasks</h2>
         <ul>
         {% if opportunity_results.opportunity_stage_id.opportunity_closed != "TRUE" %}
