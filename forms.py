@@ -1323,6 +1323,7 @@ class new_task_form(forms.Form):
             'placeholder': 'Select Groups to Assign to Project',
             'class': 'chosen-select',
             'multiple tabindex': '4',
+            'width': '100%',
         }),
         required=True,
         queryset=group_results,
