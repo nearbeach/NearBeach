@@ -2492,6 +2492,8 @@ def new_project(request, location_id='', destination=''):
 			groups to the new project.
 			"""
             assigned_to_groups = request.POST.get('assigned_to_groups')
+            print("Multiple Assigned Groups")
+            print(assigned_to_groups)
 
             for row in assigned_to_groups:
                 submit_group = project_groups(
