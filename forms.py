@@ -1127,8 +1127,19 @@ class new_organisation_form(forms.Form):
 class new_project_form(forms.Form):
     #Get data for choice boxes
     organisations_results=organisations.objects.filter(is_deleted='FALSE')
+    group_results=groups.objects.filter(is_deleted='FALSE')
 
     # Fields
+    assigned_groups=forms.ModelMultipleChoiceField(
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': 'Select Groups to Assign to Project',
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+        }),
+        required=True,
+        queryset=group_results,
+    )
+
     project_name=forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
@@ -1189,6 +1200,14 @@ class new_project_form(forms.Form):
     finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
     finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
     finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
+
+    class Meta:
+        model = project
+        fields = {
+            'project_name',
+            'project_description',
+            'organisations_id',
+        }
 
 
 class new_quote_form(ModelForm):
@@ -1259,6 +1278,12 @@ class new_quote_form(ModelForm):
 
 
 class new_requirement_form(ModelForm):
+    #Get Objects for Model Selects
+    requirement_status_results = list_of_requirement_status.objects.filter(
+        is_deleted='FALSE',
+        requirement_status_is_closed='FALSE',
+    )
+
     requirement_title = forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
@@ -1270,6 +1295,12 @@ class new_requirement_form(ModelForm):
             'placeholder': 'Requirement Scope'
         }),
     )
+    requirement_status=forms.ModelChoiceField(
+        label="Quote Stage",
+        widget=forms.Select,
+        queryset=requirement_status_results,
+    )
+
     class Meta:
         model=requirements
         fields={
@@ -1284,8 +1315,18 @@ class new_requirement_form(ModelForm):
 class new_task_form(forms.Form):
     #Get data for choice boxes
     organisations_results=organisations.objects.filter(is_deleted='FALSE')
+    group_results = groups.objects.filter(is_deleted='FALSE')
 
     # Fields
+    assigned_groups=forms.ModelMultipleChoiceField(
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': 'Select Groups to Assign to Project',
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+        }),
+        required=True,
+        queryset=group_results,
+    )
     task_short_description=forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={

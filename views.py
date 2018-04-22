@@ -2491,15 +2491,13 @@ def new_project(request, location_id='', destination=''):
 			primary key. Using this new primary key we will allocate
 			groups to the new project.
 			"""
-            assigned_to_groups = request.POST.get('assigned_to_groups')
-            print("Multiple Assigned Groups")
-            print(assigned_to_groups)
+            assigned_to_groups = form.cleaned_data['assigned_groups']
 
             for row in assigned_to_groups:
                 submit_group = project_groups(
                     project_id_id=submit_project.pk,
-                    groups_id_id=row,
-                    change_user = request.user,
+                    groups_id_id=row.group_id,
+                    change_user=request.user,
                 )
                 submit_group.save()
             """
@@ -2604,6 +2602,8 @@ def new_project(request, location_id='', destination=''):
         # Load the template
         t = loader.get_template('NearBeach/new_project.html')
 
+        print(request.user.id)
+
         # context
         c = {
             'new_project_form': new_project_form(initial={
@@ -2619,7 +2619,8 @@ def new_project(request, location_id='', destination=''):
                 'finish_date_day': next_week.day,
                 'finish_date_hour': hour,
                 'finish_date_minute': minute,
-                'finish_date_meridiems': meridiems, }),
+                'finish_date_meridiems': meridiems,}
+            ),
             'groups_results': groups_results,
             'groups_count': groups_results.__len__(),
             'opportunity_id': opportunity_id,
@@ -2778,12 +2779,12 @@ def new_task(request, location_id='', destination=''):
 			primary key. Using this new primary key we will allocate
 			groups to the new project.
 			"""
-            assigned_to_groups = request.POST.get('assigned_to_groups')
+            assigned_to_groups = form.cleaned_data['assigned_groups']
 
             for row in assigned_to_groups:
                 submit_group = tasks_groups(
                     tasks_id_id=submit_task.pk,
-                    groups_id_id=row,
+                    groups_id_id=row.group_id,
                     change_user=request.user,
                 )
                 submit_group.save()
