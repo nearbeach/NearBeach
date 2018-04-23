@@ -5,22 +5,22 @@
 <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
 <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
 
-<script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 
 
 <body onload="on_page_load()">
-
     <form action="{% url 'opportunity_information' opportunity_id %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <h2>Opportunity Information</h2>
-        <table>
-            <tr class="header"><td width="250px">Field</td><td>Input</td></tr>
-            <tr><td>Opportunity Name:</td><td>{{ opportunity_information_form.opportunity_name }}</td></tr>
-            <tr><td>Opportunity Description:</td><td>{{ opportunity_information_form.opportunity_description }}</td></tr>
-            <tr><td>Lead Source:</td><td>{{ opportunity_results.lead_source_id }}</td></tr>
-            <tr><td>Organisation:</td><td>{{ opportunity_results.organisations_id }}</td></tr>
-            <tr><td>Customer:</td><td>
-                <select>
+        <ul>
+            <li>{{ opportunity_information_form.opportunity_name }}</li>
+            <li>{{ opportunity_information_form.opportunity_description }}</li>
+            <li>Lead Source: {{ opportunity_results.lead_source_id }}</li>
+            <li>Organisation: {{ opportunity_results.organisations_id }}</li>
+            <li>
+                Customer: <select>
                     <option value="">-------</option>
                     {% for row in customer_results %}
                         {% if row.customer_id == opportunity_results.customer_id.customer_id %}
@@ -31,146 +31,181 @@
                         {{ row.customer_first_name }} {{ row.customer_last_name }}</option>
                     {% endfor %}
                 </select>
-            </td></tr>
-            <tr><td>Opportunity Amount:</td><td>
-                {{ opportunity_information_form.currency_id }}
+            </li>
+            <li>
+                Opportunity Amount: {{ opportunity_information_form.currency_id }}
                 {{ opportunity_information_form.opportunity_amount }}
                 {{ opportunity_information_form.amount_type_id }}
-            </td></tr>
-            <tr><td>Time Zone: </td><td>{{ timezone }}</td></tr>
-            <tr><td>Opportunity Expected Close Date:</td><td>
-                {{ opportunity_information_form.finish_date_year }}
+            </li>
+            <li>Time Zone: {{ timezone }}</li>
+            <li>Opportunity Expected Close Date: {{ opportunity_information_form.finish_date_year }}
                 {{ opportunity_information_form.finish_date_month }}
                 {{ opportunity_information_form.finish_date_day }}
                 @ {{ opportunity_information_form.finish_date_hour }}:{{ opportunity_information_form.finish_date_minute }}
-                {{ opportunity_information_form.finish_date_meridiems }}</td></tr>
-            <tr><td>Opportunity Stage:</td><td>{{ opportunity_information_form.opportunity_stage_id }}</td></tr>
-            <tr><td>Opportunity Success Probability:</td><td>{{ opportunity_information_form.opportunity_success_probability }}</td></tr>
-        </table>
-        <input type="submit" name="submit_contact" value="Update"/>
-        {% if opportunity_results.opportunity_stage_id.opportunity_closed == "TRUE" and opportunity_perm == 4 %}
-            <a href="javascript:void(0)" onclick="reopen_temp()">Reopen</a>
-        {% endif %}
-        <form id="to_do">
-            <h2>To Do</h2>
-            Loading...
-        </form>
-        <h2>Associated Projects & Tasks</h2>
-        <ul>
-        {% if opportunity_results.opportunity_stage_id.opportunity_closed != "TRUE" %}
-            <li><a href="{% url 'new_project' opportunity_id 'opportunity'%}">Create New Project</a></li>
-            <li><a href="{% url 'new_task' opportunity_id 'opportunity' %}">Create New Task</a></li>
-        {% endif %}
+                {{ opportunity_information_form.finish_date_meridiems }}
+            </li>
+            <li>Opportunity Stage: {{ opportunity_information_form.opportunity_stage_id }}</li>
+            <li>Opportunity Success Probability: {{ opportunity_information_form.opportunity_success_probability }}</li>
+            <li>
+                <input type="submit" name="submit_contact" value="Update"/>
+                {% if opportunity_results.opportunity_stage_id.opportunity_closed == "TRUE" and opportunity_perm == 4 %}
+                    <a href="javascript:void(0)" onclick="reopen_temp()">Reopen</a>
+                {% endif %}
+            </li>
         </ul>
-        <h2>Assigned Projects</h2>
-        {% if project_results %}
-            <table>
-                <tr class="header">
-                    <td>Project ID</td>
-                    <td>Project Name</td>
-                    <td>Project End Date</td>
-                    <td>Project Status</td>
-                </tr>
-                {% for row in project_results %}
-                    <tr>
-                        <td><a href="#">PRO{{ row.project_id.project_id }}</a></td>
-                        <td>{{ row.project_id.project_name }}</td>
-                        <td>{{ row.project_id.project_end_date }}</td>
-                        <td>{{ row.project_id.project_status }}</td>
-                    </tr>
-                {% endfor %}
-            </table>
-        {% else %}
-            <p>There are no associated projects. Please create a new project</p>
-        {% endif %}
-        <br/>
-        <h2>Assigned Tasks</h2>
-        {% if tasks_results %}
-            <table>
-                <tr class="header">
-                    <td>Task ID</td>
-                    <td>Project Name</td>
-                    <td>Project End Date</td>
-                    <td>Project Status</td>
-                </tr>
-                {% for row in tasks_results %}
-                    <tr>
-                        <td><a href="#">TASK{{ row.tasks_id.tasks_id }}</a></td>
-                        <td>{{ row.tasks_id.task_short_description }}</td>
-                        <td>{{ row.tasks_id.task_end_date }}</td>
-                        <td>{{ row.tasks_id.task_status }}</td>
-                    </tr>
-                {% endfor %}
-            </table>
-        {% else %}
-            <p>There are no associated tasks. Please create a new task</p>
-        {% endif %}
+    </form>
 
-        <h2>Opportunity Quotes</h2>
-        {% if opportunity_results.opportunity_stage_id.opportunity_closed != "TRUE" %}
-            <a href="{% url 'new_quote' opportunity_id 'opportunity' %}">New Quote</a>
-        {% endif %}
-        {% if quote_results %}
-            <table>
-                <tr>
-                    <td width="50%">Quote Title</td>
-                    <td width="25%">Valid Till</td>
-                    <td width="25%">Quote Stage</td>
-                </tr>
-                {% for row in quote_results %}
-                    <tr>
-                        <td><a href="{% url 'quote_information' row.quote_id %}">{{ row.quote_title }}</a></td>
-                        <td>{{ row.quote_valid_till }}</td>
-                        <td>{{ row.quote_stage_id }}</td>
-                    </tr>
-                {% endfor %}
-            </table>
-        {% endif %}
+    <h2>To Do</h2>
+    <form id="to_do">
+        Loading...
+    </form>
 
+    <h2>Associated Projects & Tasks</h2>
+    <ul>
     {% if opportunity_results.opportunity_stage_id.opportunity_closed != "TRUE" %}
-        <h2>Opportunity Permissions</h2>
-        <p>Please note - if there are NO permissions added to an opportunity then everyone will have access to the
-            opportunity</p>
-        <h3>Group Permissions</h3>
+        <li><a href="{% url 'new_project' opportunity_id 'opportunity'%}">Create New Project</a></li>
+        <li><a href="{% url 'new_task' opportunity_id 'opportunity' %}">Create New Task</a></li>
+    {% endif %}
+    </ul>
+    <h2>Assigned Projects</h2>
+    {% if project_results %}
         <table>
-            <tr>
-                <td width="80%">{{ opportunity_information_form.select_groups }}</td>
-                <td width="20%"><input type="submit" name="submit_contact" value="Add Group(s)"/></td>
+            <tr class="header">
+                <td>Project ID</td>
+                <td>Project Name</td>
+                <td>Project End Date</td>
+                <td>Project Status</td>
             </tr>
-            {% if group_permissions %}
-                {% for row in group_permissions %}
-                    <tr>
-                        <td>{{ row.groups_id }}</td>
-                        <td><a href="{% url 'delete_opportunity_permission' opportunity_results.opportunity_id row.groups_id.group_id '0' %}">Delete Permission</a></td>
-                    </tr>
-                {% endfor %}
-            {% endif %}
+            {% for row in project_results %}
+                <tr>
+                    <td><a href="#">PRO{{ row.project_id.project_id }}</a></td>
+                    <td>{{ row.project_id.project_name }}</td>
+                    <td>{{ row.project_id.project_end_date }}</td>
+                    <td>{{ row.project_id.project_status }}</td>
+                </tr>
+            {% endfor %}
         </table>
+    {% else %}
+        <p>There are no associated projects. Please create a new project</p>
+    {% endif %}
+    <br/>
+    <h2>Assigned Tasks</h2>
+    {% if tasks_results %}
+        <table>
+            <tr class="header">
+                <td>Task ID</td>
+                <td>Project Name</td>
+                <td>Project End Date</td>
+                <td>Project Status</td>
+            </tr>
+            {% for row in tasks_results %}
+                <tr>
+                    <td><a href="#">TASK{{ row.tasks_id.tasks_id }}</a></td>
+                    <td>{{ row.tasks_id.task_short_description }}</td>
+                    <td>{{ row.tasks_id.task_end_date }}</td>
+                    <td>{{ row.tasks_id.task_status }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>There are no associated tasks. Please create a new task</p>
+    {% endif %}
 
-
-
-        <h3>User Permissions</h3>
+    <h2>Opportunity Quotes</h2>
+    {% if opportunity_results.opportunity_stage_id.opportunity_closed != "TRUE" %}
+        <a href="{% url 'new_quote' opportunity_id 'opportunity' %}">New Quote</a>
+    {% endif %}
+    {% if quote_results %}
         <table>
             <tr>
-                <td width="80%">{{ opportunity_information_form.select_users }}</td>
-                <td width="20%"><input type="submit" name="submit_contact" value="Add User(s)"/></td>
+                <td width="50%">Quote Title</td>
+                <td width="25%">Valid Till</td>
+                <td width="25%">Quote Stage</td>
             </tr>
-            {% if user_permissions %}
-                {% for row in user_permissions %}
-                    <tr>
-                        <td>{{ row.username }} - {{ row.first_name }} {{ row.last_name }}</td>
-                        <td><a href="{% url 'delete_opportunity_permission' opportunity_results.opportunity_id '0' row.id %}">Delete Permission</a></td>
-                    </tr>
-                {% endfor %}
-            {% endif %}
+            {% for row in quote_results %}
+                <tr>
+                    <td><a href="{% url 'quote_information' row.quote_id %}">{{ row.quote_title }}</a></td>
+                    <td>{{ row.quote_valid_till }}</td>
+                    <td>{{ row.quote_stage_id }}</td>
+                </tr>
+            {% endfor %}
         </table>
     {% endif %}
-        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
-        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
-        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
+
+{% if opportunity_results.opportunity_stage_id.opportunity_closed != "TRUE" %}
+    <h2>Opportunity Permissions</h2>
+    <p>Please note - if there are NO permissions added to an opportunity then everyone will have access to the
+        opportunity</p>
+    <form id="group_permissions">
+        <h3>Group Permissions</h3>
+        Loading...
     </form>
+
+
+    <form id="user_permissions">
+        <h3>User Permissions</h3>
+        Loading...
+    </form>
+
+{% endif %}
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
 <div name="blank_space" style="margin-bottom: 150px;"></div>
 <script>
+    $("#to_do").on('submit', function(e){
+       e.preventDefault();
+       $.ajax({
+           url: '/to_do/{{ opportunity_id }}/opportunity/',
+           data: $(this).serialize(),
+           type: "POST",
+           success: function(data) {
+               $("#to_do").html(data);
+           },
+           error: function() {
+               alert("Sorry, something went wrong with the TO DO");
+           }
+       })
+    });
+
+    $("#group_permissions").on('submit', function(e){
+        e.preventDefault();
+        $.ajax({
+           url: '/opportunity_information/opportunity_group_permission/{{ opportunity_id }}/',
+           data: $(this).serialize(),
+           type: "POST",
+           success: function(data) {
+               $("#group_permissions").html(data);
+           },
+           error: function() {
+               alert("Sorry, something went wrong with the group permissions");
+           }
+        })
+    });
+
+    function complete_to_do(to_do_id) {
+        //Send data to the database
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            url: '/to_do_complete/' + to_do_id + '/',
+            data: {},
+            type: "POST",
+            success: function(data) {
+                load_to_do();
+            },
+            error: function() {
+                alert("Can not complete To do :(");
+            }
+        });
+    }
+
     function reopen_temp() {
         $("input").prop("readonly", false);
 
@@ -194,6 +229,80 @@
         } else {
             set_permissions({{ opportunity_perm }});
         }
+
+        load_to_do();
+        load_group_permissions();
+        load_user_permissions();
+    }
+
+    function load_to_do() {
+        $.ajax({
+            url: '/to_do/{{ opportunity_id }}/opportunity/',
+            data: {},
+            type: "GET",
+            datatype: "HTML",
+            success: function (data) {
+                $("#to_do").html(data);
+            },
+            error: function() {
+                alert("Sorry, could not load the TO DO list");
+            },
+        });
+    }
+
+    function load_group_permissions() {
+        $.ajax({
+            url: '/opportunity_information/opportunity_group_permission/{{ opportunity_id }}/',
+            data: {},
+            type: "GET",
+            datatype: "HTML",
+            success: function(data) {
+                $("#group_permissions").html(data);
+            },
+            error: function() {
+                alert("Sorry, could not load group permissions");
+            },
+        })
+    }
+
+    function load_user_permissions() {
+        $.ajax({
+            url: '/opportunity_information/opportunity_user_permission/{{ opportunity_id }}/',
+            data: {},
+            type: "GET",
+            datatype: "HTML",
+            success: function(data) {
+                $("#user_permissions").html(data);
+            },
+            error: function() {
+                alert("Sorry, could not load user permissions");
+            },
+        })
+    }
+
+    function delete_permission(opportunity_permissions_id) {
+        //Send data to the database
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            url: '/opportunity_information/opportunity_delete_permission/' + opportunity_permissions_id + '/',
+            data: {},
+            type: "POST",
+            datatype: "HTML",
+            success: function(data) {
+                load_group_permissions();
+                load_user_permissions();
+            },
+            error: function() {
+                alert("There was an error removing that permission");
+            }
+        })
     }
 </script>
 </body>

@@ -7,7 +7,7 @@ from .models import *
 from django.contrib.auth.models import User
 from django.contrib import auth
 #Import ModelForm
-from django.forms import ModelForm
+from django.forms import ModelForm, BaseModelFormSet
 from django.forms.widgets import TextInput
 from forms_special_fields import *
 
@@ -1386,6 +1386,23 @@ class new_task_form(forms.Form):
     finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
     finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
     finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
+
+class opportunity_group_permission_form(forms.Form):
+    def __init__(self,*args,**kwargs):
+        #Extract the variables
+        group_results = kwargs.pop('group_results')
+
+        super(opportunity_group_permission_form,self).__init__(*args,**kwargs)
+
+
+        self.fields['group'].queryset = group_results
+
+    group = forms.ModelChoiceField(
+        required=True,
+        queryset=groups.objects.filter(is_deleted="BLANK") #This will make the queryset a blank set
+    )
+
+
 
 
 class opportunity_information_form(ModelForm):

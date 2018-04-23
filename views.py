@@ -1254,46 +1254,6 @@ def delete_document(request, document_key):
 
 
 @login_required(login_url='login')
-def delete_opportunity_permission(request, opportunity_id, groups_id, assigned_user):
-    """
-    Method
-    ~~~~~~
-    1.) If groups_id not empty, remove the permissions
-    2.) If user_id not empty, remove the permissions
-    3.) If the count of active permissions for the opportunity is 0, add the permission "ALL USERS"
-    """
-    opportunity_instance = opportunity.objects.get(opportunity_id=opportunity_id)
-
-    if (not groups_id == 0):
-        # Will remove the ALL USERS permissions now that we have limited the permissions
-        opportunity_permissions.objects.filter(
-            opportunity_id=opportunity_instance,
-            groups_id=groups_id,
-            is_deleted='FALSE'
-        ).update(is_deleted='TRUE')
-
-    if (not assigned_user == 0):
-        # Will remove the ALL USERS permissions now that we have limited the permissions
-        opportunity_permissions.objects.filter(
-            opportunity_id=opportunity_instance,
-            assigned_user=assigned_user,
-            is_deleted='FALSE'
-        ).update(is_deleted='TRUE')
-
-    if (opportunity_permissions.objects.filter(opportunity_id=opportunity_id,is_deleted='FALSE').count() == 0):
-        #Add all users
-        permission_save=opportunity_permissions(
-            opportunity_id=opportunity_instance,
-            all_users='TRUE',
-            user_id=request.user,
-            change_user=request.user,
-        )
-        permission_save.save()
-    return HttpResponseRedirect(reverse('opportunity_information', args={opportunity_id}))
-
-#MyModel.objects.filter(pk=some_value).update(field1='some value')
-
-@login_required(login_url='login')
 def index(request):
     """
 	The index page determines if a particular user has logged in. It will
@@ -2923,11 +2883,58 @@ def new_task(request, location_id='', destination=''):
 
 
 @login_required(login_url='login')
+def opportunity_delete_permission(request, opportunity_permissions_id):
+    if request.method == "POST":
+        opportunity_permission_update = opportunity_permissions.objects.get(opportunity_permissions_id=opportunity_permissions_id)
+        opportunity_permission_update.is_deleted = "TRUE"
+        opportunity_permission_update.change_user = request.user
+        opportunity_permission_update.save()
+
+        # RETURN BLANK PAGE
+        t = loader.get_template('NearBeach/blank.html')
+
+        c = {}
+
+        return HttpResponse(t.render(c, request))
+
+    else:
+        return HttpResponseBadRequest("Sorry, this has to be through post")
+
+@login_required(login_url='login')
 def opportunity_group_permission(request, opportunity_id):
+    if request.method == "POST":
+        form = opportunity_group_permission_form(request.POST, group_results=groups.objects.all())
+        if form.is_valid():
+            opportunity_permissions_submit = opportunity_permissions(
+                change_user=request.user,
+                groups_id=form.cleaned_data['group'],
+                opportunity_id=opportunity.objects.get(opportunity_id=opportunity_id),
+            )
+            opportunity_permissions_submit.save()
+        else:
+            print(form.errors)
+
+    group_permissions = opportunity_permissions.objects.filter(
+        is_deleted="FALSE",
+        opportunity_id=opportunity_id,
+    ).exclude(
+        groups_id__isnull=True,
+    )
+
+    group_results = groups.objects.filter(
+        is_deleted="FALSE",
+    ).exclude(
+        group_id__in=group_permissions.values_list('groups_id')
+    )
+
     # Loaed the template
     t = loader.get_template('NearBeach/opportunity/opportunity_group_permission.html')
 
-    c = {}
+    c = {
+        'group_permissions': group_permissions,
+        'group_results': group_results,
+        'opportunity_group_permission_form': opportunity_group_permission_form(group_results=group_results),
+    }
 
     return HttpResponse(t.render(c, request))
 

@@ -47,8 +47,7 @@ urlpatterns = [
 	url(r'^delete_cost/(?P<cost_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])', views.delete_cost,
 		name='delete_cost'),
 	url(r'^delete_campus_contact/(?P<customers_campus_id>[0-9]+)/(?P<cust_or_camp>["CUST","CAMP"]+)',views.delete_campus_contact, name='delete_campus_contact'),
-	url(r'^delete_opportunity_permission/(?P<opportunity_id>[0-9]+)/(?P<groups_id>[0-9]+)/(?P<assigned_user>[0-9]+)',
-		views.delete_opportunity_permission, name='delete_opportunity_permission'),
+
 	url(r'^login', views.login, name='login'),
 	url(r'^logout', views.logout, name='logout'),
 	url(r'^new_campus/(?P<organisations_id>[0-9]+)/', views.new_campus, name='new_campus'),
@@ -70,6 +69,8 @@ url(r'^new_task/(?P<location_id>[0-9]+)/(?P<destination>["organisation","custome
 		name='opportunity_information'),
 
 	url(r'opportunity_information/opportunity_group_permission/(?P<opportunity_id>[0-9]+)',views.opportunity_group_permission,name='opportunity_group_permission'),
+url(r'opportunity_information/opportunity_delete_permission/(?P<opportunity_permissions_id>[0-9]+)',views.opportunity_delete_permission,name='opportunity_delete_permission'),
+url(r'opportunity_information/opportunity_user_permission/(?P<opportunity_id>[0-9]+)',views.opportunity_user_permission,name='opportunity_user_permission'),
 
 
 

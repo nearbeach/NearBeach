@@ -1,0 +1,23 @@
+{% csrf_token %}
+<h4>Group Permissions</h4>
+<table>
+    {% if group_results %}
+        <tr>
+            <td width="80%">{{ opportunity_group_permission_form.group }}</td>
+            <td width="20%"><input type="submit" name="submit_contact" value="Add Group(s)"/></td>
+        </tr>
+    {% else %}
+        <tr>
+            <td width="80%">No more groups to add</td>
+            <td></td>
+        </tr>
+    {% endif %}
+    {% if group_permissions %}
+        {% for row in group_permissions %}
+            <tr>
+                <td>{{ row.groups_id }}</td>
+                <td><a href="javascript:void(0)" onclick="delete_permission({{ row.opportunity_permissions_id }})">Delete Permission</a></td>
+            </tr>
+        {% endfor %}
+    {% endif %}
+</table>
