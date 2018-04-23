@@ -2903,7 +2903,7 @@ def opportunity_delete_permission(request, opportunity_permissions_id):
 @login_required(login_url='login')
 def opportunity_group_permission(request, opportunity_id):
     if request.method == "POST":
-        form = opportunity_permission_form(request.POST, group_results=groups.objects.all())
+        form = opportunity_group_permission_form(request.POST, group_results=groups.objects.all())
         if form.is_valid():
             opportunity_permissions_submit = opportunity_permissions(
                 change_user=request.user,
@@ -2933,7 +2933,7 @@ def opportunity_group_permission(request, opportunity_id):
     c = {
         'group_permissions': group_permissions,
         'group_results': group_results,
-        'opportunity_permission_form': opportunity_permission_form(group_results=group_results),
+        'opportunity_permission_form': opportunity_group_permission(group_results=group_results),
     }
 
     return HttpResponse(t.render(c, request))
@@ -3150,12 +3150,12 @@ def opportunity_information(request, opportunity_id):
 @login_required(login_url='login')
 def opportunity_user_permission(request, opportunity_id):
     if request.method == "POST":
-        form = opportunity_permission_form(request.POST, group_results=groups.objects.all())
+        form = opportunity_user_permission(request.POST, user_results=User.objects.all())
         if form.is_valid():
             opportunity_permissions_submit = opportunity_permissions(
                 change_user=request.user,
                 groups_id=form.cleaned_data['group'],
-                opportunity_id=opportunity.objects.get(opportunity_id=opportunity_id),
+                opportunity_id=opportunity.objects.get(opportunity_id=opportunity_id)
             )
             opportunity_permissions_submit.save()
         else:
@@ -3165,22 +3165,22 @@ def opportunity_user_permission(request, opportunity_id):
         is_deleted="FALSE",
         opportunity_id=opportunity_id,
     ).exclude(
-        groups_id__isnull=True,
+        assigned_user__isnull=True,
     )
 
-    group_results = groups.objects.filter(
-        is_deleted="FALSE",
+    user_results = User.objects.filter(
+        #is_deleted="FALSE",
     ).exclude(
-        group_id__in=group_permissions.values_list('groups_id')
+        id__in=group_permissions.values_list('assigned_user_id')
     )
 
     # Loaed the template
-    t = loader.get_template('NearBeach/opportunity/opportunity_group_permission.html')
+    t = loader.get_template('NearBeach/opportunity/opportunity_user_permission.html')
 
     c = {
         'group_permissions': group_permissions,
         'group_results': group_results,
-        'opportunity_permission_form': opportunity_permission_form(group_results=group_results),
+        'opportunity_permission_form': opportunity_user_permission_form(group_results=group_results),
     }
 
     return HttpResponse(t.render(c, request))

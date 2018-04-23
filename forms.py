@@ -1388,7 +1388,20 @@ class new_task_form(forms.Form):
     finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
 
 
+class opportunity_group_permission_form(forms.Form):
+    def __init__(self,*args,**kwargs):
+        #Extract the variables
+        group_results = kwargs.pop('group_results')
 
+        super(opportunity_group_permission_form,self).__init__(*args,**kwargs)
+
+
+        self.fields['group'].queryset = group_results
+
+    group = forms.ModelChoiceField(
+        required=True,
+        queryset=groups.objects.filter(is_deleted="BLANK") #This will make the queryset a blank set
+    )
 
 
 
@@ -1507,20 +1520,23 @@ class organisation_information_form(ModelForm):
         return profile_picture
 
 
-class opportunity_permission_form(forms.Form):
+class opportunity_user_permission_form(forms.Form):
     def __init__(self,*args,**kwargs):
         #Extract the variables
-        group_results = kwargs.pop('group_results')
+        user_results = kwargs.pop('user_results')
 
-        super(opportunity_permission_form,self).__init__(*args,**kwargs)
+        super(opportunity_group_permission_form,self).__init__(*args,**kwargs)
 
 
-        self.fields['group'].queryset = group_results
+        self.fields['group'].queryset = user_results
 
     group = forms.ModelChoiceField(
         required=True,
-        queryset=groups.objects.filter(is_deleted="BLANK") #This will make the queryset a blank set
+        #queryset=groups.objects.filter(is_deleted="BLANK") #This will make the queryset a blank set
+        queryset=User.objects.filter(username=None)
     )
+
+
 
 
 class permission_set_form(ModelForm):
