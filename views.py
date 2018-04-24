@@ -1254,46 +1254,6 @@ def delete_document(request, document_key):
 
 
 @login_required(login_url='login')
-def delete_opportunity_permission(request, opportunity_id, groups_id, assigned_user):
-    """
-    Method
-    ~~~~~~
-    1.) If groups_id not empty, remove the permissions
-    2.) If user_id not empty, remove the permissions
-    3.) If the count of active permissions for the opportunity is 0, add the permission "ALL USERS"
-    """
-    opportunity_instance = opportunity.objects.get(opportunity_id=opportunity_id)
-
-    if (not groups_id == 0):
-        # Will remove the ALL USERS permissions now that we have limited the permissions
-        opportunity_permissions.objects.filter(
-            opportunity_id=opportunity_instance,
-            groups_id=groups_id,
-            is_deleted='FALSE'
-        ).update(is_deleted='TRUE')
-
-    if (not assigned_user == 0):
-        # Will remove the ALL USERS permissions now that we have limited the permissions
-        opportunity_permissions.objects.filter(
-            opportunity_id=opportunity_instance,
-            assigned_user=assigned_user,
-            is_deleted='FALSE'
-        ).update(is_deleted='TRUE')
-
-    if (opportunity_permissions.objects.filter(opportunity_id=opportunity_id,is_deleted='FALSE').count() == 0):
-        #Add all users
-        permission_save=opportunity_permissions(
-            opportunity_id=opportunity_instance,
-            all_users='TRUE',
-            user_id=request.user,
-            change_user=request.user,
-        )
-        permission_save.save()
-    return HttpResponseRedirect(reverse('opportunity_information', args={opportunity_id}))
-
-#MyModel.objects.filter(pk=some_value).update(field1='some value')
-
-@login_required(login_url='login')
 def index(request):
     """
 	The index page determines if a particular user has logged in. It will
@@ -2491,13 +2451,13 @@ def new_project(request, location_id='', destination=''):
 			primary key. Using this new primary key we will allocate
 			groups to the new project.
 			"""
-            assigned_to_groups = request.POST.get('assigned_to_groups')
+            assigned_to_groups = form.cleaned_data['assigned_groups']
 
             for row in assigned_to_groups:
                 submit_group = project_groups(
                     project_id_id=submit_project.pk,
-                    groups_id_id=row,
-                    change_user = request.user,
+                    groups_id_id=row.group_id,
+                    change_user=request.user,
                 )
                 submit_group.save()
             """
@@ -2602,6 +2562,8 @@ def new_project(request, location_id='', destination=''):
         # Load the template
         t = loader.get_template('NearBeach/new_project.html')
 
+        print(request.user.id)
+
         # context
         c = {
             'new_project_form': new_project_form(initial={
@@ -2617,7 +2579,8 @@ def new_project(request, location_id='', destination=''):
                 'finish_date_day': next_week.day,
                 'finish_date_hour': hour,
                 'finish_date_minute': minute,
-                'finish_date_meridiems': meridiems, }),
+                'finish_date_meridiems': meridiems,}
+            ),
             'groups_results': groups_results,
             'groups_count': groups_results.__len__(),
             'opportunity_id': opportunity_id,
@@ -2776,12 +2739,12 @@ def new_task(request, location_id='', destination=''):
 			primary key. Using this new primary key we will allocate
 			groups to the new project.
 			"""
-            assigned_to_groups = request.POST.get('assigned_to_groups')
+            assigned_to_groups = form.cleaned_data['assigned_groups']
 
             for row in assigned_to_groups:
                 submit_group = tasks_groups(
                     tasks_id_id=submit_task.pk,
-                    groups_id_id=row,
+                    groups_id_id=row.group_id,
                     change_user=request.user,
                 )
                 submit_group.save()
@@ -2920,18 +2883,62 @@ def new_task(request, location_id='', destination=''):
 
 
 @login_required(login_url='login')
-def next_step(request, next_step_id, opportunity_id):
-    next_step_save = opportunity_next_step.objects.get(opportunity_next_step_id=next_step_id)
-    next_step_save.next_step_completed = 1
-    next_step.change_user=request.user
-    next_step_save.save()
+def opportunity_delete_permission(request, opportunity_permissions_id):
+    if request.method == "POST":
+        opportunity_permission_update = opportunity_permissions.objects.get(opportunity_permissions_id=opportunity_permissions_id)
+        opportunity_permission_update.is_deleted = "TRUE"
+        opportunity_permission_update.change_user = request.user
+        opportunity_permission_update.save()
 
-    return HttpResponseRedirect(
-        reverse(
-            opportunity_information,
-            args={opportunity_id}
-        )
+        # RETURN BLANK PAGE
+        t = loader.get_template('NearBeach/blank.html')
+
+        c = {}
+
+        return HttpResponse(t.render(c, request))
+
+    else:
+        return HttpResponseBadRequest("Sorry, this has to be through post")
+
+@login_required(login_url='login')
+def opportunity_group_permission(request, opportunity_id):
+    if request.method == "POST":
+        form = opportunity_group_permission_form(request.POST, group_results=groups.objects.all())
+        if form.is_valid():
+            opportunity_permissions_submit = opportunity_permissions(
+                change_user=request.user,
+                groups_id=form.cleaned_data['group'],
+                opportunity_id=opportunity.objects.get(opportunity_id=opportunity_id),
+            )
+            opportunity_permissions_submit.save()
+        else:
+            print(form.errors)
+
+    group_permissions = opportunity_permissions.objects.filter(
+        is_deleted="FALSE",
+        opportunity_id=opportunity_id,
+    ).exclude(
+        groups_id__isnull=True,
     )
+
+    group_results = groups.objects.filter(
+        is_deleted="FALSE",
+    ).exclude(
+        group_id__in=group_permissions.values_list('groups_id')
+    )
+
+    # Loaed the template
+    t = loader.get_template('NearBeach/opportunity/opportunity_group_permission.html')
+
+    c = {
+        'group_permissions': group_permissions,
+        'group_results': group_results,
+        'opportunity_permission_form': opportunity_group_permission_form(group_results=group_results),
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
 
 
 @login_required(login_url='login')
@@ -3115,10 +3122,6 @@ def opportunity_information(request, opportunity_id):
     # Loaed the template
     t = loader.get_template('NearBeach/opportunity_information.html')
 
-    #Bug fixing
-    print(permission_results)
-    print(permission_results['opportunity'])
-
     c = {
         'opportunity_id': str(opportunity_id),
         'opportunity_information_form': opportunity_information_form(
@@ -3137,6 +3140,47 @@ def opportunity_information(request, opportunity_id):
         'timezone': settings.TIME_ZONE,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+
+@login_required(login_url='login')
+def opportunity_user_permission(request, opportunity_id):
+    if request.method == "POST":
+        form = opportunity_user_permission_form(request.POST, user_results=User.objects.all())
+        if form.is_valid():
+            opportunity_permissions_submit = opportunity_permissions(
+                change_user=request.user,
+                assigned_user=form.cleaned_data['user'],
+                opportunity_id=opportunity.objects.get(opportunity_id=opportunity_id)
+            )
+            opportunity_permissions_submit.save()
+        else:
+            print(form.errors)
+
+    group_permissions = opportunity_permissions.objects.filter(
+        is_deleted="FALSE",
+        opportunity_id=opportunity_id,
+    ).exclude(
+        assigned_user__isnull=True,
+    )
+
+    user_results = User.objects.filter(
+        #is_deleted="FALSE",
+    ).exclude(
+        id__in=group_permissions.values_list('assigned_user_id')
+    )
+
+    # Loaed the template
+    t = loader.get_template('NearBeach/opportunity/opportunity_user_permission.html')
+
+    c = {
+        'group_permissions': group_permissions,
+        'user_results': user_results,
+        'opportunity_user_permission_form': opportunity_user_permission_form(user_results=user_results),
     }
 
     return HttpResponse(t.render(c, request))
@@ -4095,8 +4139,10 @@ def to_do_list(request, location_id, destination):
             )
             if destination == "project":
                 to_do_submit.project = project.objects.get(project_id=location_id)
-            else:
+            elif destination == "task":
                 to_do_submit.tasks = tasks.objects.get(tasks_id=location_id)
+            else:
+                to_do_submit.opportunity = opportunity.objects.get(opportunity_id=location_id)
             to_do_submit.save()
         else:
             print(form.errors)
@@ -4107,11 +4153,17 @@ def to_do_list(request, location_id, destination):
             is_deleted='FALSE',
             project_id=location_id,
         )
-    else:
+    elif destination == 'task':
         to_do_results = to_do.objects.filter(
             is_deleted='FALSE',
             tasks_id=location_id,
         )
+    else: #Opportunity
+        to_do_results = to_do.objects.filter(
+            is_deleted='FALSE',
+            opportunity_id=location_id,
+        )
+
 
     # Load the template
     t = loader.get_template('NearBeach/to_do/to_do.html')

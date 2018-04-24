@@ -7,7 +7,7 @@ from .models import *
 from django.contrib.auth.models import User
 from django.contrib import auth
 #Import ModelForm
-from django.forms import ModelForm
+from django.forms import ModelForm, BaseModelFormSet
 from django.forms.widgets import TextInput
 from forms_special_fields import *
 
@@ -1069,7 +1069,7 @@ class new_opportunity_form(ModelForm):
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select',
             'multiple tabindex': '4',
-            'width': '500px',
+            'width': '100%',
         }),
     )
 
@@ -1127,8 +1127,19 @@ class new_organisation_form(forms.Form):
 class new_project_form(forms.Form):
     #Get data for choice boxes
     organisations_results=organisations.objects.filter(is_deleted='FALSE')
+    group_results=groups.objects.filter(is_deleted='FALSE')
 
     # Fields
+    assigned_groups=forms.ModelMultipleChoiceField(
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': 'Select Groups to Assign to Project',
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+        }),
+        required=True,
+        queryset=group_results,
+    )
+
     project_name=forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
@@ -1189,6 +1200,14 @@ class new_project_form(forms.Form):
     finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
     finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
     finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
+
+    class Meta:
+        model = project
+        fields = {
+            'project_name',
+            'project_description',
+            'organisations_id',
+        }
 
 
 class new_quote_form(ModelForm):
@@ -1259,6 +1278,12 @@ class new_quote_form(ModelForm):
 
 
 class new_requirement_form(ModelForm):
+    #Get Objects for Model Selects
+    requirement_status_results = list_of_requirement_status.objects.filter(
+        is_deleted='FALSE',
+        requirement_status_is_closed='FALSE',
+    )
+
     requirement_title = forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
@@ -1270,6 +1295,12 @@ class new_requirement_form(ModelForm):
             'placeholder': 'Requirement Scope'
         }),
     )
+    requirement_status=forms.ModelChoiceField(
+        label="Quote Stage",
+        widget=forms.Select,
+        queryset=requirement_status_results,
+    )
+
     class Meta:
         model=requirements
         fields={
@@ -1280,12 +1311,22 @@ class new_requirement_form(ModelForm):
         }
 
 
-
 class new_task_form(forms.Form):
-    #Get data for choice boxes
+    # Get data for choice boxes
     organisations_results=organisations.objects.filter(is_deleted='FALSE')
+    group_results = groups.objects.filter(is_deleted='FALSE')
 
     # Fields
+    assigned_groups=forms.ModelMultipleChoiceField(
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': 'Select Groups to Assign to Project',
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+            'width': '100%',
+        }),
+        required=True,
+        queryset=group_results,
+    )
     task_short_description=forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
@@ -1345,6 +1386,23 @@ class new_task_form(forms.Form):
     finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
     finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
     finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
+
+
+class opportunity_group_permission_form(forms.Form):
+    def __init__(self,*args,**kwargs):
+        #Extract the variables
+        group_results = kwargs.pop('group_results')
+
+        super(opportunity_group_permission_form,self).__init__(*args,**kwargs)
+
+
+        self.fields['group'].queryset=group_results
+
+    group = forms.ModelChoiceField(
+        required=True,
+        queryset=groups.objects.filter(is_deleted="BLANK") #This will make the queryset a blank set
+    )
+
 
 
 class opportunity_information_form(ModelForm):
@@ -1460,6 +1518,25 @@ class organisation_information_form(ModelForm):
             pass
 
         return profile_picture
+
+
+class opportunity_user_permission_form(forms.Form):
+    def __init__(self,*args,**kwargs):
+        #Extract the variables
+        user_results = kwargs.pop('user_results')
+
+        super(opportunity_user_permission_form,self).__init__(*args,**kwargs)
+
+
+        self.fields['user'].queryset = user_results
+
+    user = forms.ModelChoiceField(
+        required=True,
+        #queryset=groups.objects.filter(is_deleted="BLANK") #This will make the queryset a blank set
+        queryset=User.objects.filter(username=None)
+    )
+
+
 
 
 class permission_set_form(ModelForm):

@@ -144,19 +144,19 @@
         {% if opportunity_results %}
             <table>
                 <tr class="header">
-                    <td>Customer</td>
                     <td>Opportunity Name</td>
+                    <td>Customer</td>
                     <td>Opportunity Stage</td>
                     <td>Opportunity End Date</td>
                 </tr>
                 {% for row in opportunity_results %}
                     <tr>
+                        <td><a href="{% url 'opportunity_information' row.opportunity_id %}">{{ row.opportunity_name }}</a></td>
                         {% if row.customer_id.customer_id %}
                             <td><a href="{% url 'customer_information' row.customer_id.customer_id %}">{{ row.customer_id }}</a></td>
                         {% else %}
                             <td> - </td>
                         {%  endif %}
-                        <td><a href="{% url 'opportunity_information' row.opportunity_id %}">{{ row.opportunity_name }}</a></td>
                         <td>{{ row.opportunity_stage_id }}</td>
                         <td>{{ row.opportunity_expected_close_date }}</td>
                     </tr>

@@ -47,8 +47,7 @@ urlpatterns = [
 	url(r'^delete_cost/(?P<cost_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])', views.delete_cost,
 		name='delete_cost'),
 	url(r'^delete_campus_contact/(?P<customers_campus_id>[0-9]+)/(?P<cust_or_camp>["CUST","CAMP"]+)',views.delete_campus_contact, name='delete_campus_contact'),
-	url(r'^delete_opportunity_permission/(?P<opportunity_id>[0-9]+)/(?P<groups_id>[0-9]+)/(?P<assigned_user>[0-9]+)',
-		views.delete_opportunity_permission, name='delete_opportunity_permission'),
+
 	url(r'^login', views.login, name='login'),
 	url(r'^logout', views.logout, name='logout'),
 	url(r'^new_campus/(?P<organisations_id>[0-9]+)/', views.new_campus, name='new_campus'),
@@ -65,9 +64,16 @@ url(r'^new_opportunity/(?P<location_id>[0-9]+)/(?P<destination>["customer","orga
 	url(r'^new_task/$', views.new_task, name='new_task'),
 url(r'^new_task/(?P<location_id>[0-9]+)/(?P<destination>["organisation","customer","opportunity"]+)/$', views.new_task, name='new_task'),
 
-	url(r'^next_step/(?P<next_step_id>[0-9]+)/(?P<opportunity_id>[0-9]+)', views.next_step, name="next_step"),
+
 	url(r'^opportunity_information/(?P<opportunity_id>[0-9]+)/', views.opportunity_information,
 		name='opportunity_information'),
+
+	url(r'opportunity_information/opportunity_group_permission/(?P<opportunity_id>[0-9]+)',views.opportunity_group_permission,name='opportunity_group_permission'),
+url(r'opportunity_information/opportunity_delete_permission/(?P<opportunity_permissions_id>[0-9]+)',views.opportunity_delete_permission,name='opportunity_delete_permission'),
+url(r'opportunity_information/opportunity_user_permission/(?P<opportunity_id>[0-9]+)',views.opportunity_user_permission,name='opportunity_user_permission'),
+
+
+
 	url(r'^organisation_information/(?P<organisations_id>[0-9]+)/', views.organisation_information,
 		name='organisation_information'),
 	url(r'^password_reset/$', password_reset,
@@ -246,7 +252,7 @@ url(r'^kanban_properties/(?P<kanban_board_id>[0-9]+)/$', views.kanban_properties
 url(r'^new_kanban_board/$', views.new_kanban_board,name='new_kanban_board'),
 url(r'^kanban_new_link/(?P<kanban_board_id>[0-9]+)/$', views.kanban_new_link,name='kanban_new_link'),
 url(r'^kanban_new_link/(?P<kanban_board_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement"]+)/$', views.kanban_new_link,name='kanban_new_link'),
-	url(r'^to_do/(?P<location_id>[0-9]+)/(?P<destination>["project","task"]+)/$', views.to_do_list, name='to_do'),
+	url(r'^to_do/(?P<location_id>[0-9]+)/(?P<destination>["project","task","opportunity"]+)/$', views.to_do_list, name='to_do'),
 url(r'^to_do_complete/(?P<to_do_id>[0-9]+)/$', views.to_do_complete, name='to_do_complete'),
 
 	url(r'^bug_client_list/$',views.bug_client_list,name='bug_client_list'),

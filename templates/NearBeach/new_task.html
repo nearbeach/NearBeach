@@ -1,7 +1,9 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
-<script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javsascript/check_dates.js' %}"></script>
+<link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
+<link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
 <body onload="initiate_dates();">
     {% if destination %}
         <form action="{% url 'new_task' location_id destination %}" method="post" class="new_project">
@@ -20,35 +22,13 @@
                 <li>Time zone: {{ timezone }}</li>
                 <li>Task Start: {{ new_task_form.start_date_year }}/{{ new_task_form.start_date_month }}/{{ new_task_form.start_date_day }}<br/>{{ new_task_form.start_date_hour }}:{{ new_task_form.start_date_minute }} {{ new_task_form.start_date_meridiems }}</li>
                 <li>Task Finish: {{ new_task_form.finish_date_year }}/{{ new_task_form.finish_date_month }}/{{ new_task_form.finish_date_day }}<br/>{{ new_task_form.finish_date_hour }}:{{ new_task_form.finish_date_minute }} {{ new_task_form.finish_date_meridiems }}</li>
+                <li><h2>Assigned to Group(s)</h2></li>
+                <li>{{ new_task_form.assigned_groups }}</li>
+                <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
+                <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
+                <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
+                <li><input type="submit" value="Submit new project"><a href="{% url 'dashboard' %}">Cancel New Task</a></li>
             </ul>
-        <h2>Assigned to Group(s)</h2>
-        {% if groups_count == 1 %}
-            <p>Group already automatically choosen. Please click on "Submit"</p>
-        {% else %}
-            <p>Please select the appropriate groups to assign this project to - number {{ groups_count }}</p>
-        {% endif %}
-        <select multiple required name="assigned_to_groups" id="assigned_to_groups" style="width: 50%; height: 120px;">
-        {% for group_row in groups_results %}
-            <option value = "{{ group_row.group_id }}">{{ group_row.group_name }}</option>
-        {% endfor %}
-        </select>
-        <br />
-        <input type="submit" value="Submit new project">
-        {% if groups_count == 1 %}
-        <script>
-            /*
-            Method
-            ~~~~~~
-            If the group_count == 1 we will use javascript to select
-            the only option and then hide the select statement. As it
-            will not be needed.
-             */
-            var object=document.getElementById("assigned_to_groups");
-            object.options[0].selected=true;
-            object.style.display="none";
-
-        </script>
-        {% endif %}
         {% endif %}
 		</div>
 	</div>
