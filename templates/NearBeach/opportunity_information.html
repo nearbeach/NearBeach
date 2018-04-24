@@ -183,6 +183,21 @@
         })
     });
 
+    $("#user_permissions").on('submit', function(e){
+        e.preventDefault();
+        $.ajax({
+            url: '/opportunity_information/opportunity_user_permission/{{ opportunity_id }}/',
+            data: $(this).serialize(),
+            type: "POST",
+            success: function(data) {
+                $("#user_permissions").html(data);
+            },
+            error: function() {
+                alert("Sorry, something went wrong with the user permisions");
+            }
+        })
+    })
+
     function complete_to_do(to_do_id) {
         //Send data to the database
         $.ajaxSetup({

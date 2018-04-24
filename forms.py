@@ -1396,7 +1396,7 @@ class opportunity_group_permission_form(forms.Form):
         super(opportunity_group_permission_form,self).__init__(*args,**kwargs)
 
 
-        self.fields['group'].queryset = group_results
+        self.fields['group'].queryset=group_results
 
     group = forms.ModelChoiceField(
         required=True,
@@ -1525,12 +1525,12 @@ class opportunity_user_permission_form(forms.Form):
         #Extract the variables
         user_results = kwargs.pop('user_results')
 
-        super(opportunity_group_permission_form,self).__init__(*args,**kwargs)
+        super(opportunity_user_permission_form,self).__init__(*args,**kwargs)
 
 
-        self.fields['group'].queryset = user_results
+        self.fields['user'].queryset = user_results
 
-    group = forms.ModelChoiceField(
+    user = forms.ModelChoiceField(
         required=True,
         #queryset=groups.objects.filter(is_deleted="BLANK") #This will make the queryset a blank set
         queryset=User.objects.filter(username=None)
