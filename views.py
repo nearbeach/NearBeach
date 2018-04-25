@@ -2153,7 +2153,6 @@ def new_opportunity(request, location_id,destination):
             amount_type_id = form.cleaned_data['amount_type_id']
             opportunity_success_probability = form.cleaned_data['opportunity_success_probability']
             lead_source_id = form.cleaned_data['lead_source_id']
-            next_step_description = form.cleaned_data['next_step_description']
             select_groups = form.cleaned_data['select_groups']
             select_users = form.cleaned_data['select_users']
 
@@ -2204,28 +2203,19 @@ def new_opportunity(request, location_id,destination):
                 #If a customer has a null for an organisation it will pass through as null
                 submit_opportunity.organisations_id = customer_instance.organisations_id
             else:
+                """
                 try:
                     organisation_instance = organisations.objects.get(organisations_id=form.cleaned_data['organisations_id'])
+                    submit_opportunity.organisations_id = organisation_instance
                 except:
                     organisation_instance = None
-
-            # submit_opportunity.save()
-
+                    submit_opportunity.organisations_id = organisation_instance
+                """
+                organisations_instance = form.cleaned_data['organisations_id']
+                if organisations_instance:
+                    submit_opportunity.organisations_id = organisations_instance
             submit_opportunity.save()
             opportunity_instance = opportunity.objects.get(opportunity_id=submit_opportunity.opportunity_id)
-
-            """
-			If the next step has words in it, save it to the database
-			"""
-            if not next_step_description == "":
-                # Save the next step description
-                submit_next_step = opportunity_next_step(
-                    opportunity_id=opportunity_instance,
-                    next_step_description=next_step_description,
-                    user_id=current_user,
-                    change_user=request.user,
-                )
-                submit_next_step.save()
 
             """
             Permissions granting
@@ -2241,7 +2231,6 @@ def new_opportunity(request, location_id,destination):
                     permission_save = opportunity_permissions(
                         opportunity_id=opportunity_instance,
                         groups_id=group_instance,
-                        user_id=current_user,
                         change_user=request.user,
                     )
                     permission_save.save()
@@ -2254,7 +2243,6 @@ def new_opportunity(request, location_id,destination):
                     permission_save = opportunity_permissions(
                         opportunity_id=opportunity_instance,
                         assigned_user=assigned_user_instance,
-                        user_id=current_user,
                         change_user=request.user,
                     )
                     permission_save.save()
@@ -2263,7 +2251,6 @@ def new_opportunity(request, location_id,destination):
                 permission_save = opportunity_permissions(
                     opportunity_id=opportunity_instance,
                     all_users='TRUE',
-                    user_id=current_user,
                     change_user=request.user,
                 )
                 permission_save.save()
@@ -2324,6 +2311,8 @@ def new_opportunity(request, location_id,destination):
         'timezone': settings.TIME_ZONE,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'destination': destination,
+        'location_id': location_id,
     }
 
     return HttpResponse(t.render(c, request))
@@ -2402,6 +2391,7 @@ def new_organisation(request):
 
 @login_required(login_url='login')
 def new_project(request, location_id='', destination=''):
+    print("DESTINATION IS: " + str(destination))
     permission_results = return_user_permission_level(request, None, 'project')
 
     if permission_results['project'] < 3:
@@ -2464,6 +2454,7 @@ def new_project(request, location_id='', destination=''):
             If the destination is CUSTOMER, then we assign the project_customers to that customer.
             If the destination is connected to OPPORTUNITY, then we assign it to the opportunity.
             """
+            print("CURRENT DESTINATION IS: " + str(destination))
             if destination == "customer":
                 customer_instance = customers.objects.get(customer_id=location_id)
                 save_project_customers = project_customers(
@@ -2590,6 +2581,8 @@ def new_project(request, location_id='', destination=''):
             'timezone': settings.TIME_ZONE,
             'new_item_permission': permission_results['new_item'],
             'administration_permission': permission_results['administration'],
+            'destination': destination,
+            'location_id': location_id,
         }
 
     return HttpResponse(t.render(c, request))
@@ -3078,7 +3071,6 @@ def opportunity_information(request, opportunity_id):
     )
     opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
     customer_results = customers.objects.filter(organisations_id=opportunity_results.organisations_id)
-    next_step_results = opportunity_next_step.objects.filter(opportunity_id=opportunity_id)
     group_permissions = opportunity_permissions.objects.filter(
         groups_id__isnull=False,
         opportunity_id=opportunity_id,
@@ -3094,7 +3086,7 @@ def opportunity_information(request, opportunity_id):
 
     quote_results = quotes.objects.filter(
         is_deleted='FALSE',
-        opportunity_id=opportunity.objects.get(opportunity_id=opportunity_id),
+        opportunity_id=opportunity_id,
     )
     print(user_permissions)
 
@@ -3130,7 +3122,6 @@ def opportunity_information(request, opportunity_id):
         ),
         'opportunity_results': opportunity_results,
         'customer_results': customer_results,
-        'next_step_results': next_step_results,
         'group_permissions': group_permissions,
         'user_permissions': user_permissions,
         'project_results': project_results,
@@ -3254,8 +3245,9 @@ def organisation_information(request, organisations_id):
         )
     )
     opportunity_results = opportunity.objects.filter(
+        is_deleted="FALSE",
         organisations_id=organisations_id,
-        opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
+        #opportunity_id__in=opportunity_permissions_results.values('opportunity_id') #There a bug with this line
     )
 
 

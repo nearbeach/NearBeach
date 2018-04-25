@@ -95,7 +95,6 @@ def new_line_item(request,quote_id):
             extracted_product_and_services = form.cleaned_data['products_and_services']
             quantity = form.cleaned_data['quantity']
             product_description = form.cleaned_data['product_description']
-            product_price = form.cleaned_data['product_price']
             discount_choice = form.cleaned_data['discount_choice']
             discount_percent = form.cleaned_data['discount_percent']
             discount_amount = form.cleaned_data['discount_amount']

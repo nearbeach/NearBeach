@@ -1314,38 +1314,6 @@ class opportunity_permissions(models.Model):
 		db_table="opportunity_permission"
 
 
-
-class opportunity_next_step(models.Model):
-	opportunity_next_step_id=models.AutoField(primary_key=True)
-	opportunity_id=models.ForeignKey(
-		'opportunity',
-		on_delete=models.CASCADE
-	)
-	next_step_description=models.CharField(max_length=255)
-	next_step_completed=models.BooleanField(default=False)
-	date_created=models.DateTimeField(auto_now_add=True)
-	date_modified=models.DateTimeField(auto_now=True)
-	user_id=models.ForeignKey(
-		User,
-		on_delete=models.CASCADE
-	)
-	date_created=models.DateTimeField(auto_now_add=True)
-	date_modified=models.DateTimeField(auto_now=True)
-	change_user=models.ForeignKey(
-		User,
-		on_delete=models.CASCADE,
-		related_name='%(class)s_change_user'
-	)
-	is_deleted=models.CharField(
-		max_length=5,
-		choices=IS_DELETED_CHOICE,
-		default='FALSE'
-	)
-
-	class Meta:
-		db_table='opportunity_next_step'
-
-
 class organisations(models.Model):
 	organisations_id=models.AutoField(primary_key=True)
 	organisation_name=models.CharField(max_length=255)

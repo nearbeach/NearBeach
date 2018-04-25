@@ -1057,10 +1057,6 @@ class new_opportunity_form(ModelForm):
     finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
     finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
 
-    next_step_description=forms.CharField(
-        max_length=255,
-        required=False
-    )
 
     select_groups=forms.ModelMultipleChoiceField(
         queryset=groups_results,
