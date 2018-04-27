@@ -1,4 +1,5 @@
 {% csrf_token %}
+{% load humanize %}
 <h2>Project Costs</h2>
 {% if project_permissions > 1 %}
     <table>
@@ -21,7 +22,7 @@
         {% for row in costs_results %}
             <tr>
                 <td>{{ row.cost_description }}</td>
-                <td name="cost_amount">{{ row.cost_amount }}</td>
+                <td name="cost_amount">{{ row.cost_amount|intcomma }}</td>
                 <td name="running_total">--filled-by-javascript--</td>
                 <td><a href="{% url 'delete_cost' row.cost_id row.project_id.project_id 'P' %}">Remove Cost</a></td>
             </tr>
