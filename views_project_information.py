@@ -37,37 +37,20 @@ def information_project_assigned_users(request, project_id):
         )
         submit_associate_user.save()
 
-    #Get data
-    cursor = connection.cursor()
+    assigned_results = assigned_users.objects.filter(
+        project_id=project_id,
+        is_deleted="FALSE",
+    )
 
-    cursor.execute("""
-    			SELECT DISTINCT
-    			  auth_user.id
-    			, auth_user.username
-    			, auth_user.first_name
-    			, auth_user.last_name
-    			, auth_user.email
-    			FROM
-    			  project_groups
-    			, user_groups
-    			, auth_user
+    users_results = user_groups.objects.filter(
+        is_deleted="FALSE",
+        groups_id__in=project_groups.objects.filter(
+            is_deleted="FALSE",
+            project_id=project_id,
+        ).values('groups_id')
+    ).exclude(username_id__in=assigned_results.values('user_id'))
 
-    			WHERE 1=1
 
-    			-- AUTH_USER CONDITIONS
-    			AND auth_user.is_active='1' 
-
-    			-- PROJECT_GROUPS CONDITIONS
-    			AND project_groups.project_id_id=%s
-
-    			-- JOINS --
-    			AND project_groups.groups_id_id=user_groups.groups_id
-    			AND user_groups.username_id=auth_user.id
-    			-- END JOINS --
-    		""", [project_id])
-    users_results = namedtuplefetchall(cursor)
-
-    assigned_results = assigned_users.objects.filter(project_id=project_id,is_deleted="FALSE")
 
     #Load template
     t = loader.get_template('NearBeach/project_information/project_assigned_users.html')
