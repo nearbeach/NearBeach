@@ -47,9 +47,14 @@ def information_project_assigned_users(request, project_id):
         groups_id__in=project_groups.objects.filter(
             is_deleted="FALSE",
             project_id=project_id,
-        ).values('groups_id')
-    ).exclude(username_id__in=assigned_results.values('user_id'))
-
+        ).values('groups_id'))\
+        .exclude(username_id__in=assigned_results.values('user_id'))\
+        .values(
+            'username_id',
+            'username',
+            'username_id__first_name',
+            'username_id__last_name',)\
+        .distinct()
 
 
     #Load template

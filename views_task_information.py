@@ -40,33 +40,19 @@ def information_task_assigned_users(request, task_id):
     #Get data
     assigned_results = assigned_users.objects.filter(task_id=task_id,is_deleted="FALSE")
 
-    cursor = connection.cursor()
-    cursor.execute("""
-    				SELECT DISTINCT
-    				  auth_user.id
-    				, auth_user.username
-    				, auth_user.first_name
-    				, auth_user.last_name
-    				, auth_user.email
-    				FROM
-    				  tasks_groups
-    				, user_groups
-    				, auth_user
-
-    				WHERE 1=1
-
-    				-- AUTH_USER CONDITIONS
-    				AND auth_user.is_active='1'
-
-    				-- PROJECT_GROUPS CONDITIONS
-    				AND tasks_groups.tasks_id_id=%s
-
-    				-- JOINS --
-    				AND tasks_groups.groups_id_id=user_groups.groups_id
-    				AND user_groups.username_id=auth_user.id
-    				-- END JOINS --
-    			""", [task_id])
-    users_results = namedtuplefetchall(cursor)
+    users_results = user_groups.objects.filter(
+        is_deleted="FALSE",
+        groups_id__in=tasks_groups.objects.filter(
+            is_deleted="FALSE",
+            tasks_id=task_id,
+        ).values('groups_id')) \
+        .exclude(username_id__in=assigned_results.values('user_id')) \
+        .values(
+        'username_id',
+        'username',
+        'username_id__first_name',
+        'username_id__last_name', ) \
+        .distinct()
 
     #Load template
     t = loader.get_template('NearBeach/task_information/task_assigned_users.html')

@@ -146,7 +146,7 @@ def assigned_group_add(request, location_id, destination, group_id=None):
             group_id__in = project_groups.objects.filter(
                 is_deleted="FALSE",
                 project_id=location_id,
-            )
+            ).values('groups_id')
         )
     elif destination == "task":
         groups_add_results = groups.objects.filter(
@@ -155,7 +155,7 @@ def assigned_group_add(request, location_id, destination, group_id=None):
             group_id__in=tasks_groups.objects.filter(
                 is_deleted="FALSE",
                 tasks_id=location_id,
-            )
+            ).values('groups_id')
         )
 
     # Load the template
