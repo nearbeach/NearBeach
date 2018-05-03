@@ -1,15 +1,6 @@
 {% extends "./template.html" %}
 {% block content %}
     <script>
-    /*
-    $.ajax({
-   url:href,
-   type:'GET',
-   success: function(data){
-       $('#content').html($(data).find('#content').html());
-   }
-});
-     */
         function on_page_load() {
             //EXTRACT Group ACTIVE PROJECTS
             $.ajax({
@@ -37,7 +28,19 @@
                     alert("Sorry, the 'Group Active Tasks' had issues loading");
                 }
             });
-                        $.ajax({
+            $.ajax({
+                url: '/dashboard/active_requirements/',
+                data: {},
+                dataType: "HTML",
+                type: "GET",
+                success: function(data) {
+                    $("#active_requirements").html(data);
+                },
+                error: function() {
+                    alert("Sorry, the 'Active Requirements' dashboard widget could not load");
+                }
+            });
+            $.ajax({
                 url: '/dashboard/active_projects/',
                 data: {},
                 dataType: 'HTML',
@@ -92,6 +95,7 @@
         <ul>
             <li id="active_projects"></li>
             <li id="active_tasks"></li>
+            <li id="active_requirements"></li>
             <li id="opportunities"></li>
             <li id="group_active_projects"></li>
             <li id="group_active_tasks"></li>

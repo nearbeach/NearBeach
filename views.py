@@ -976,6 +976,29 @@ def dashboard_active_projects(request):
 
 
 @login_required(login_url='login')
+def dashboard_active_requirements(request):
+    requirement_results = requirements.objects.filter(
+        is_deleted="FALSE",
+        requirement_status__in=list_of_requirement_status.objects.filter(
+            requirement_status_is_closed="FALSE"
+            #Do not worry about deleted status. We want them to appear and hopefully the user will
+            #update these requirement_status.
+        ).values('requirement_status_id')
+    )
+
+    # Load the template
+    t = loader.get_template('NearBeach/dashboard_widgets/active_requirements.html')
+
+
+    # context
+    c = {
+        'requirement_results': requirement_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
 def dashboard_active_tasks(request):
     # Get Data
     assigned_users_results = assigned_users.objects.filter(

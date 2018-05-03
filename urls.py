@@ -39,6 +39,7 @@ urlpatterns = [
 	url(r'^dashboard/$', views.dashboard,name='dashboard'),
 	url(r'dashboard/active_projects', views.dashboard_active_projects,
 		name='dashboard_active_projects'),
+url(r'dashboard/active_requirements', views.dashboard_active_requirements, name='dashboard_active_requirements'),
 	url(r'dashboard/active_tasks', views.dashboard_active_tasks, name='dashboard_active_tasks'),
 	url(r'dashboard/group_active_projects', views.dashboard_group_active_projects,name='dashboard_group_active_projects'),
 	url(r'dashboard/group_active_tasks', views.dashboard_group_active_tasks,name='dashboard_group_active_tasks'),
