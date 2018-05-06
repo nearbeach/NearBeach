@@ -674,6 +674,13 @@ def campus_information(request, campus_information):
     else:
         MAPBOX_API_TOKEN = ''
 
+    #Get the Google Key
+    if hasattr(settings, 'GOOGLE_MAP_API_TOKEN'):
+        GOOGLE_MAP_API_TOKEN = settings.GOOGLE_MAP_API_TOKEN
+        print("Got Google Maps API token: " + GOOGLE_MAP_API_TOKEN)
+    else:
+        GOOGLE_MAP_API_TOKEN = ''
+
         # Load the template
     t = loader.get_template('NearBeach/campus_information.html')
 
@@ -689,6 +696,7 @@ def campus_information(request, campus_information):
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
         'MAPBOX_API_TOKEN': MAPBOX_API_TOKEN,
+        'GOOGLE_MAP_API_TOKEN': GOOGLE_MAP_API_TOKEN,
     }
 
     return HttpResponse(t.render(c, request))

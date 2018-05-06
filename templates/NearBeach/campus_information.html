@@ -7,7 +7,8 @@
 
 <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
 <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
-<script src='https://code.jquery.com/jquery-1.11.0.min.js'></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
+
 <body onload="on_page_load('{{ campus_results.campus_country_id_id }}', '{{ campus_results.campus_region_id }}')">
 	<h2>Campus Information - {{ campus_results.campus_nickname }}</h2>
 	<form action="{% url 'campus_information' campus_results.organisations_campus_id %}" method="post" class="campus_information">
@@ -75,6 +76,19 @@
 	{% endif %}
 	<h2>Map</h2>
 	<div id='map'></div>
+
+    <div id="google_map"></div>
+    <script>
+      var map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('google_map'), {
+          center: {lat: {{ campus_results.campus_longitude }}, lng: {{ campus_results.campus_latitude }}},
+          zoom: 8
+        });
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAP_API_TOKEN }}&callback=initMap" async defer></script>
+
 	<script type="text/javascript">
         function on_page_load(country, region) {
             /* Information
@@ -114,8 +128,7 @@
 
             set_permissions({{ permission }});
 
-            //var access_token = 'pk.eyJ1Ijoicm9ib3RpY2hlYWQiLCJhIjoiY2o1bGtxNzNrMmVybjJxampmbjRtN2YyZSJ9.vljaOJpttEga2nIIR0WZQw'; //TEMP
-            //mapboxgl.accessToken = access_token; //TO BE REPLACED BY STRING FROM DJANGO SETTINGS
+
             mapboxgl.accessToken  = "{{ MAPBOX_API_TOKEN }}";
             var map = new mapboxgl.Map({
                 container: 'map', // container id
@@ -161,5 +174,6 @@
 
         }
 	</script>
+
 </body>
 {% endblock %}
