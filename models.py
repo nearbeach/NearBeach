@@ -1010,6 +1010,11 @@ class list_of_quote_stages(models.Model):
 		choices=IS_DELETED_CHOICE,
 		default='FALSE'
 	)
+	quote_closed=models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE',
+	)
 	sort_order = models.IntegerField(unique=True,auto_created=True)
 	date_created=models.DateTimeField(auto_now_add=True)
 	date_modified=models.DateTimeField(auto_now=True)

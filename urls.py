@@ -23,7 +23,6 @@ from . import views, \
 	views_document_tree, \
 	views_requirements, \
 	views_administration
-
 urlpatterns = [
 	url(r'^$', views.index, name='index'),
 	url(r'^assign_customer_project_task/(?P<customer_id>[0-9]+)/', views.assign_customer_project_task,
@@ -39,6 +38,8 @@ urlpatterns = [
 	url(r'^dashboard/$', views.dashboard,name='dashboard'),
 	url(r'dashboard/active_projects', views.dashboard_active_projects,
 		name='dashboard_active_projects'),
+url(r'dashboard/active_quotes', views.dashboard_active_quotes,
+		name='dashboard_active_quotes'),
 url(r'dashboard/active_requirements', views.dashboard_active_requirements, name='dashboard_active_requirements'),
 	url(r'dashboard/active_tasks', views.dashboard_active_tasks, name='dashboard_active_tasks'),
 	url(r'dashboard/group_active_projects', views.dashboard_group_active_projects,name='dashboard_group_active_projects'),
@@ -272,6 +273,7 @@ url(r'^to_do_complete/(?P<to_do_id>[0-9]+)/$', views.to_do_complete, name='to_do
 	url(r'^kanban_edit_xy_name/(?P<location_id>[0-9]+)/(?P<destination>["column","level"]+)/$', views.kanban_edit_xy_name,name='kanban_edit_xy_name'),
 
 ]
+
 
 if settings.DEBUG:
 	urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

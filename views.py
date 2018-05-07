@@ -749,6 +749,13 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
     else:
         MAPBOX_API_TOKEN = ''
 
+    #Get the Google Key
+    if hasattr(settings, 'GOOGLE_MAP_API_TOKEN'):
+        GOOGLE_MAP_API_TOKEN = settings.GOOGLE_MAP_API_TOKEN
+        print("Got Google Maps API token: " + GOOGLE_MAP_API_TOKEN)
+    else:
+        GOOGLE_MAP_API_TOKEN = ''
+
     # Load template
     t = loader.get_template('NearBeach/customer_campus.html')
 
@@ -978,6 +985,27 @@ def dashboard_active_projects(request):
     # context
     c = {
         'assigned_users_results': assigned_users_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def dashboard_active_quotes(request):
+    quote_results = quotes.objects.filter(
+        is_deleted="FALSE",
+        quote_stage_id__in=list_of_quote_stages.objects.filter(
+            #We do not want to remove any quotes with deleted stages
+            quote_closed="FALSE"
+        ).values('quote_stages_id')
+    )
+
+    # Load the template
+    t = loader.get_template('NearBeach/dashboard_widgets/active_quotes.html')
+
+    # context
+    c = {
+        'quote_results': quote_results,
     }
 
     return HttpResponse(t.render(c, request))

@@ -1,0 +1,17 @@
+{% if quote_results %}
+    <h2>Active Quotes</h2>
+    <table>
+        <tr>
+            <td width="75%">Quote Title</td>
+            <td width="10%">Quote Stage</td>
+            <td width="15%">Quote Valid to</td>
+        </tr>
+        {% for row in quote_results %}
+            <tr>
+                <td><a href="{% url 'quote_information' row.quote_id %}">{{ row.quote_title }}</a></td>
+                <td>{{ row.quote_stage_id }}</td>
+                <td>{{ row.quote_valid_till }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
