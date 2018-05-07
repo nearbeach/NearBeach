@@ -20,6 +20,8 @@ from .user_permissions import return_user_permission_level
 from datetime import timedelta
 from django.db.models import Max
 
+from geolocation.main import GoogleMaps
+
 #import python modules
 import datetime, json, simplejson, urllib, urllib2
 import pytz
@@ -667,19 +669,17 @@ def campus_information(request, campus_information):
     countries_regions_results = list_of_countries_regions.objects.all()
     countries_results = list_of_countries.objects.all()
 
-    #Get the mapbox key
+    #Get one of the MAP keys
+    MAPBOX_API_TOKEN = ''
+    GOOGLE_MAP_API_TOKEN = ''
+
     if hasattr(settings, 'MAPBOX_API_TOKEN'):
         MAPBOX_API_TOKEN = settings.MAPBOX_API_TOKEN
         print("Got mapbox API token: " + MAPBOX_API_TOKEN)
-    else:
-        MAPBOX_API_TOKEN = ''
-
-    #Get the Google Key
-    if hasattr(settings, 'GOOGLE_MAP_API_TOKEN'):
+    elif hasattr(settings, 'GOOGLE_MAP_API_TOKEN'):
         GOOGLE_MAP_API_TOKEN = settings.GOOGLE_MAP_API_TOKEN
         print("Got Google Maps API token: " + GOOGLE_MAP_API_TOKEN)
-    else:
-        GOOGLE_MAP_API_TOKEN = ''
+
 
         # Load the template
     t = loader.get_template('NearBeach/campus_information.html')
@@ -749,12 +749,16 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
     else:
         MAPBOX_API_TOKEN = ''
 
-    #Get the Google Key
-    if hasattr(settings, 'GOOGLE_MAP_API_TOKEN'):
+    #Get one of the MAP keys
+    MAPBOX_API_TOKEN = ''
+    GOOGLE_MAP_API_TOKEN = ''
+
+    if hasattr(settings, 'MAPBOX_API_TOKEN'):
+        MAPBOX_API_TOKEN = settings.MAPBOX_API_TOKEN
+        print("Got mapbox API token: " + MAPBOX_API_TOKEN)
+    elif hasattr(settings, 'GOOGLE_MAP_API_TOKEN'):
         GOOGLE_MAP_API_TOKEN = settings.GOOGLE_MAP_API_TOKEN
         print("Got Google Maps API token: " + GOOGLE_MAP_API_TOKEN)
-    else:
-        GOOGLE_MAP_API_TOKEN = ''
 
     # Load template
     t = loader.get_template('NearBeach/customer_campus.html')
@@ -770,6 +774,7 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
         'administration_permission': permission_results['administration'],
         'campus_results': campus_results,
         'MAPBOX_API_TOKEN': MAPBOX_API_TOKEN,
+        'GOOGLE_MAP_API_TOKEN': GOOGLE_MAP_API_TOKEN,
     }
 
     return HttpResponse(t.render(c, request))
@@ -4273,20 +4278,41 @@ def handler500(request):
 def update_coordinates(campus_id):
     campus_results = organisations_campus.objects.get(pk=campus_id)
 
+    #Set the address up
+    address = campus_results.campus_address1 + " " + \
+              campus_results.campus_address2 + " " + \
+              campus_results.campus_address3 + " " + \
+              campus_results.campus_suburb + " " + \
+              campus_results.campus_region_id.region_name + " " + \
+              campus_results.campus_country_id.country_name + " "
+    print(address)
+    address = address.replace("/", " ")  # Remove those pesky /
+
+
+
     #If there are no co-ordinates for this campus, get them and save them
-    if hasattr(settings, 'MAPBOX_API_TOKEN'):
+    if hasattr(settings, 'GOOGLE_MAP_API_TOKEN'):
+        print("Google Maps token exists")
+        google_maps = GoogleMaps(api_key=settings.GOOGLE_MAP_API_TOKEN)
+        try:
+            location = google_maps.search(location=address)
+            first_location = location.first()
+
+            #Save the data
+            campus_results.campus_longitude = first_location.lng
+            campus_results.campus_latitude = first_location.lat
+            campus_results.save()
+        except:
+            print("Sorry, there was an error getting the location details for this address.")
+
+    elif hasattr(settings, 'MAPBOX_API_TOKEN'):
         print("Mapbox token exists")
-        address = campus_results.campus_address1 + " " + \
-            campus_results.campus_address2 + " " + \
-            campus_results.campus_address3 + " " + \
-            campus_results.campus_suburb + " " + \
-            campus_results.campus_region_id.region_name + " " + \
-            campus_results.campus_country_id.country_name + " "
-        print(address)
-        address = address.replace("/", " ") #Remove those pesky /
-        #address_coded = urllib.request.quote(address)
+
+        #Get address ready for HTML
+
         address_coded = urllib.quote_plus(address)
         print(address_coded)
+
 
         url = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + address_coded + ".json?access_token=" + settings.MAPBOX_API_TOKEN
 

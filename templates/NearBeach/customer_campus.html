@@ -2,9 +2,16 @@
 {% block content %}
 {% load static %}
 <script type="text/javascript" src="{% static 'NearBeach/javascript/campus_information.js' %}"></script>
-<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
-<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
 <script type="text/javascript" src="{% static 'NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
+
+{% if not MAPBOX_API_TOKEN == '' %}
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/mapbox.js' %}"></script>
+{% elif not GOOGLE_MAP_API_TOKEN == '' %}
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAP_API_TOKEN }}&callback=initMap" async defer></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/google_maps.js' %}"></script>
+{% endif %}
 
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <body onload="on_page_load()">
@@ -36,46 +43,7 @@
         function on_page_load() {
             set_permissions({{ permission }});
 
-            mapboxgl.accessToken  = "{{ MAPBOX_API_TOKEN }}";
-            var map = new mapboxgl.Map({
-                container: 'map', // container id
-                style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
-                center: [{{ campus_results.campus_longitude }},{{ campus_results.campus_latitude }}], // starting position [lng, lat]
-                zoom: 15 // starting zoom
-            });
-
-            map.on('load', function() {
-                map.addLayer({
-                    "id": "points",
-                    "type": "symbol",
-                    "source": {
-                        "type": "geojson",
-                        "data": {
-                            "type": "FeatureCollection",
-                            "features": [{
-                                "type": "Feature",
-                                "geometry": {
-                                    "type": "Point",
-                                    "coordinates": [{{ campus_results.campus_longitude }},{{ campus_results.campus_latitude }}]
-                                },
-                                "properties": {
-                                    "title": "{{ customer_campus_results.campus_id.campus_nickname }}",
-                                    "icon": "marker"
-                                }
-                            }]
-                        }
-                    },
-                    "layout": {
-                        "icon-image": "{icon}-15",
-                        "text-field": "{title}",
-                        "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
-                        "text-offset": [0, 0.6],
-                        "text-anchor": "top"
-                    }
-                })
-
-            })
-            setTimeout(relayout_map, 500);
+            initMap({{ campus_results.campus_latitude }},{{ campus_results.campus_longitude }},"{{ campus_results.campus_nickname }}");
         }
     </script>
 {% endblock %}
