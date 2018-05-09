@@ -24,7 +24,9 @@ from . import views, \
 	views_requirements, \
 	views_administration
 urlpatterns = [
+
 	url(r'^$', views.index, name='index'),
+	url(r'^alerts/',views.alerts,name='alerts'),
 	url(r'^assign_customer_project_task/(?P<customer_id>[0-9]+)/', views.assign_customer_project_task,
 		name='assign_customer_project_task'),
 	url(r'^associate/(?P<project_id>[0-9]+)/(?P<task_id>[0-9]+)/(?P<project_or_task>[P,T])', views.associate,

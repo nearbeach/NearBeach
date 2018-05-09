@@ -22,10 +22,76 @@ from django.db.models import Max
 
 from geolocation.main import GoogleMaps
 
+
 #import python modules
 import datetime, json, simplejson, urllib, urllib2
 import pytz
 from django.utils import timezone
+
+
+@login_required(login_url='login')
+def alerts(request):
+    compare_time = datetime.datetime.now() + datetime.timedelta(hours=24)
+
+    project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_id__in=assigned_users.objects.filter(
+            is_deleted="FALSE",
+            project_id__isnull=False,
+            user_id=request.user,
+        ).values('project_id'),
+        project_end_date__lte=compare_time,
+        project_status__in={'New','Open'},
+    )
+
+    task_results = tasks.objects.filter(
+        is_deleted="FALSE",
+        tasks_id__in=assigned_users.objects.filter(
+            is_deleted="FALSE",
+            task_id__isnull=False,
+            user_id=request.user,
+        ).values('task_id'),
+        task_end_date__lte=compare_time,
+        task_status__in={'New','Open'},
+    )
+
+    opportunity_results = opportunity.objects.filter(
+        is_deleted="FALSE",
+        opportunity_id__in=opportunity_permissions.objects.filter(
+            is_deleted="FALSE",
+            assigned_user=request.user,
+        ).values('opportunity_id'),
+        opportunity_expected_close_date__lte=compare_time,
+        opportunity_stage_id__in=list_of_opportunity_stage.objects.filter(
+            opportunity_closed="FALSE",
+        ).values('opportunity_stage_id'),
+    )
+
+    quote_results = quotes.objects.filter(
+        is_deleted="FALSE",
+        quote_stage_id__in=list_of_quote_stages.objects.filter(
+            quote_closed="FALSE",
+        ).values('quote_stages_id'),
+        quote_valid_till__lte=compare_time,
+    )
+
+    if not project_results and not task_results and not opportunity_results and not quote_results:
+        #There are no alerts, just redirect to dashboard
+        return HttpResponseRedirect(reverse('dashboard'))
+
+
+    # Load the template
+    t = loader.get_template('NearBeach/alerts.html')
+
+    # context
+    c = {
+        'project_results': project_results,
+        'task_results': task_results,
+        'opportunity_results': opportunity_results,
+        'quote_results': quote_results,
+    }
+
+    return HttpResponse(t.render(c, request))
 
 @login_required(login_url='login')
 def assign_customer_project_task(request, customer_id):
@@ -1930,7 +1996,7 @@ def login(request):
 
                 request.session['is_superuser'] = request.user.is_superuser
 
-                return HttpResponseRedirect(reverse('dashboard'))
+                return HttpResponseRedirect(reverse('alerts'))
             else:
                 print("User not authenticated")
         else:
