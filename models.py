@@ -463,6 +463,58 @@ class document_permissions(models.Model):
 		db_table="document_permissions"
 
 
+class email_contact(models.Model):
+	email_contact_id=models.AutoField(primary_key=True)
+	email_content=models.ForeignKey(
+		'email_content',
+		on_delete=models.CASCADE,
+	)
+	customers=models.ForeignKey(
+		'customers',
+		on_delete=models.CASCADE,
+	)
+	organisations=models.ForeignKey(
+		'organisations',
+		on_delete=models.CASCADE,
+	)
+	date_created=models.DateTimeField(auto_now_add=True)
+	date_modified=models.DateTimeField(auto_now=True)
+	change_user=models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted=models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	class Meta:
+		db_table="email_contact"
+
+
+class email_content(models.Model):
+	email_content_id=models.AutoField(primary_key=True)
+	email_subject=models.CharField(max_length=255)
+	email_content=models.TextField()
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
+	change_user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='%(class)s_change_user'
+	)
+	is_deleted = models.CharField(
+		max_length=5,
+		choices=IS_DELETED_CHOICE,
+		default='FALSE'
+	)
+
+	class Meta:
+		db_table = "email_content"
+
+
 class folders(models.Model):
 	folder_id=models.AutoField(primary_key=True)
 	project_id=models.ForeignKey(

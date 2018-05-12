@@ -423,6 +423,100 @@ class document_tree_upload_form(forms.Form):
     )
 
 
+class email_form(forms.Form):
+    def __init__(self, *args, **kwargs):
+        location_id = kwargs.pop('location_id')
+        destination = kwargs.pop('destination')
+
+        super(email_form, self).__init__(*args, **kwargs)
+
+        """
+        if project_or_task == "P":
+            project_instance = project.objects.get(project_id=location_id)
+            folders_results = folders.objects.filter(
+                is_deleted="FALSE",
+                project_id=project_instance,
+            )
+        elif project_or_task == "T":
+            task_instance = tasks.objects.get(tasks_id=location_id)
+            folders_results = folders.objects.filter(
+                is_deleted="FALSE",
+                task_id=task_instance,
+            )
+
+        self.fields['nested_folder'].queryset = folders_results
+        """
+        if destination == "organisation":
+            customer_results = customers.objects.filter(
+                is_deleted="FALSE",
+                organisations_id=location_id,
+            )
+        else:
+            customer_results = customers.objects.filter(
+                is_deleted="FALSE",
+                organisations_id=customers.objects.filter(customer_id=location_id).values('organisations_id')
+            )
+
+        self.fields['to_email'].queryset = customer_results
+        self.fields['cc_email'].queryset = customer_results
+        self.fields['bcc_email'].queryset = customer_results
+
+
+    organisation_email = forms.EmailField(
+        max_length=200,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'style': 'display: none;',
+        }),
+    )
+    to_email = forms.ModelChoiceField(
+        required=False,
+        queryset=customers.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': "Choose the users(s)",
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+            'width': '500px',
+        }),
+    )
+    cc_email = forms.ModelChoiceField(
+        required=False,
+        queryset=customers.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': "Choose the users(s)",
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+            'width': '500px',
+        }),
+    )
+    bcc_email = forms.ModelChoiceField(
+        required=False,
+        queryset=customers.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': "Choose the users(s)",
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+            'width': '500px',
+        }),
+    )
+    email_subject = forms.CharField(
+        required=True,
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Email Subject',
+        }),
+    )
+    email_content = forms.CharField(
+        required=True,
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Place email content here',
+        })
+    )
+    private_email = forms.BooleanField(
+        required=False,
+    )
+
+
 class groups_form(ModelForm):
     group_name = forms.CharField(
         max_length=50,

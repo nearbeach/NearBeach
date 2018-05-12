@@ -1386,6 +1386,25 @@ def delete_document(request, document_key):
     #SoMuchFun
 
 
+@login_required(login_url='login')
+def email(request,location_id,destination):
+    #Template
+    t = loader.get_template('NearBeach/email.html')
+
+    # context
+    c = {
+        'email_form': email_form(
+            location_id=location_id,
+            destination=destination,
+        ),
+        'destination': destination,
+        'location_id': location_id,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
 
 @login_required(login_url='login')
 def index(request):
