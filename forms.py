@@ -1948,6 +1948,14 @@ class task_information_form(ModelForm):
             'task_long_description',
         }
 
+class timeline_form(forms.Form):
+    start_date=forms.DateField(
+        required=True
+    )
+    end_date=forms.DateField(
+        required=True
+    )
+
 
 class to_do_form(ModelForm):
     to_do = forms.CharField(
