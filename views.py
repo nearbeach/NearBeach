@@ -1388,15 +1388,43 @@ def delete_document(request, document_key):
 
 @login_required(login_url='login')
 def email(request,location_id,destination):
+    print("REQUEST POST PRINTOUT")
+    print("~~~~~~~~~~~~~~~~~~~~~")
+    print(request.POST)
+    print("~~~~~~~~~~~~~~~~~~~~~")
+
+    if request.method == "POST":
+        form = email_form(request.POST)
+        if form.is_valid():
+            #Extract form data
+            organisation_email = form.cleaned_data['organisation_email']
+            #to_email = form.cleaned_data['to_email']
+            #cc_email = form.cleaned_data['cc_email']
+            #bcc_email = form.cleaned_data['bcc_email']
+            email_subject = form.cleaned_data['email_subject']
+            email_content = form.cleaned_data['email_content']
+        else:
+            print("ERROR with email form.")
+            print(form.errors)
+
     #Template
     t = loader.get_template('NearBeach/email.html')
 
+    #Initiate form
+    if destination == "organisation":
+        organisation_results = organisations.objects.get(organisations_id=location_id)
+        initial = {
+            'organisation_email': organisation_results.organisation_email,
+        }
+    else:
+        customer_results = customers.objects.get(customer_id=location_id)
+        initial = {
+            'to_email': customer_results.customer_id,
+        }
+
     # context
     c = {
-        'email_form': email_form(
-            location_id=location_id,
-            destination=destination,
-        ),
+        'email_form': email_form(initial=initial),
         'destination': destination,
         'location_id': location_id,
     }

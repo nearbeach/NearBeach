@@ -424,44 +424,6 @@ class document_tree_upload_form(forms.Form):
 
 
 class email_form(forms.Form):
-    def __init__(self, *args, **kwargs):
-        location_id = kwargs.pop('location_id')
-        destination = kwargs.pop('destination')
-
-        super(email_form, self).__init__(*args, **kwargs)
-
-        """
-        if project_or_task == "P":
-            project_instance = project.objects.get(project_id=location_id)
-            folders_results = folders.objects.filter(
-                is_deleted="FALSE",
-                project_id=project_instance,
-            )
-        elif project_or_task == "T":
-            task_instance = tasks.objects.get(tasks_id=location_id)
-            folders_results = folders.objects.filter(
-                is_deleted="FALSE",
-                task_id=task_instance,
-            )
-
-        self.fields['nested_folder'].queryset = folders_results
-        """
-        if destination == "organisation":
-            customer_results = customers.objects.filter(
-                is_deleted="FALSE",
-                organisations_id=location_id,
-            )
-        else:
-            customer_results = customers.objects.filter(
-                is_deleted="FALSE",
-                organisations_id=customers.objects.filter(customer_id=location_id).values('organisations_id')
-            )
-
-        self.fields['to_email'].queryset = customer_results
-        self.fields['cc_email'].queryset = customer_results
-        self.fields['bcc_email'].queryset = customer_results
-
-
     organisation_email = forms.EmailField(
         max_length=200,
         required=False,
@@ -469,8 +431,31 @@ class email_form(forms.Form):
             'style': 'display: none;',
         }),
     )
+
+    """
+        country_and_region = forms.ModelChoiceField(
+        required=False,
+        queryset=list_of_countries.objects.filter(is_deleted='FALSE'),
+        empty_label="Please pick a Country/Region",
+        widget=RegionSelect(attrs={
+            'class': 'chosen-select',
+            'tag': forms.HiddenInput(),
+        }),
+    )"""
     to_email = forms.ModelChoiceField(
         required=False,
+        queryset=customers.objects.filter(is_deleted="FALSE"),
+        empty_label="Please pick an email",
+        widget=ToEmailSelect(attrs={
+            'class': 'chosen-select',
+            'tag': forms.HiddenInput(),
+        }),
+    )
+
+    """
+    to_email = forms.ModelChoiceField(
+        required=False,
+        empty_label=None,
         queryset=customers.objects.all(),
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
@@ -478,9 +463,11 @@ class email_form(forms.Form):
             'multiple tabindex': '4',
             'width': '500px',
         }),
+
     )
     cc_email = forms.ModelChoiceField(
         required=False,
+        empty_label=None,
         queryset=customers.objects.all(),
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
@@ -491,6 +478,7 @@ class email_form(forms.Form):
     )
     bcc_email = forms.ModelChoiceField(
         required=False,
+        empty_label=None,
         queryset=customers.objects.all(),
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
@@ -499,6 +487,7 @@ class email_form(forms.Form):
             'width': '500px',
         }),
     )
+    """
     email_subject = forms.CharField(
         required=True,
         max_length=255,
