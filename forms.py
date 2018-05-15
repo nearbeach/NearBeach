@@ -423,6 +423,89 @@ class document_tree_upload_form(forms.Form):
     )
 
 
+class email_form(forms.Form):
+    organisation_email = forms.EmailField(
+        max_length=200,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'style': 'display: none;',
+        }),
+    )
+
+    """
+        country_and_region = forms.ModelChoiceField(
+        required=False,
+        queryset=list_of_countries.objects.filter(is_deleted='FALSE'),
+        empty_label="Please pick a Country/Region",
+        widget=RegionSelect(attrs={
+            'class': 'chosen-select',
+            'tag': forms.HiddenInput(),
+        }),
+    )"""
+    to_email = forms.ModelChoiceField(
+        required=False,
+        queryset=customers.objects.filter(is_deleted="FALSE"),
+        empty_label="Please pick an email",
+        widget=ToEmailSelect(attrs={
+            'class': 'chosen-select',
+            'tag': forms.HiddenInput(),
+        }),
+    )
+
+    """
+    to_email = forms.ModelChoiceField(
+        required=False,
+        empty_label=None,
+        queryset=customers.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': "Choose the users(s)",
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+            'width': '500px',
+        }),
+
+    )
+    cc_email = forms.ModelChoiceField(
+        required=False,
+        empty_label=None,
+        queryset=customers.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': "Choose the users(s)",
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+            'width': '500px',
+        }),
+    )
+    bcc_email = forms.ModelChoiceField(
+        required=False,
+        empty_label=None,
+        queryset=customers.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': "Choose the users(s)",
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+            'width': '500px',
+        }),
+    )
+    """
+    email_subject = forms.CharField(
+        required=True,
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Email Subject',
+        }),
+    )
+    email_content = forms.CharField(
+        required=True,
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Place email content here',
+        })
+    )
+    private_email = forms.BooleanField(
+        required=False,
+    )
+
+
 class groups_form(ModelForm):
     group_name = forms.CharField(
         max_length=50,

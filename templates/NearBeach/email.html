@@ -1,0 +1,40 @@
+{% extends "./template.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
+<link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
+<!--<script src="{% static 'NearBeach/javascript/tinymce/tinymce.min.js' %}"></script>-->
+<script>
+    function on_page_load() {
+        /*tinymce.init({
+            selector: '#id_email_content'
+        });--*/
+    }
+</script>
+<body onload="on_page_load()">
+    <form action={% url 'email' location_id destination %} method="post" class="email">
+        <h2>Email</h2>
+        {% csrf_token %}
+        <ul>
+            <li>{{ email_form.organisation_email  }}</li>
+            <li>To: {{ email_form.to_email }}</li>
+            <li>CC: {{ email_form.cc_email }}</li>
+            <li>BCC: {{ email_form.bcc_email }}</li>
+            <li>{{ email_form.email_subject }}</li>
+            <li>{{ email_form.email_content }}</li>
+            <li>Private Email: {{ email_form.private_email }}</li>
+            <li>
+                <input type="submit" value="Send Email">
+                {% if destination == "customer" %}
+                    <a href="{% url 'customer_information' location_id %}">Cancel Email</a>
+                {% else %}
+                    <a href="{% url 'organisation_information' location_id %}">Cancel Email</a>
+                {% endif %}
+            </li>
+        </ul>
+    </form>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
+</body>
+{% endblock %}
