@@ -2,3 +2,4 @@
 Django==1.11
 simplejson
 pillow
+geolocation-python

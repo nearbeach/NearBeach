@@ -4,10 +4,18 @@
 
 <script type="text/javascript" src="{% static 'NearBeach/javascript/campus_information.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
 
-<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
-<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
-<script src='https://code.jquery.com/jquery-1.11.0.min.js'></script>
+
+
+{% if not MAPBOX_API_TOKEN == '' %}
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/mapbox.js' %}"></script>
+{% elif not GOOGLE_MAP_API_TOKEN == '' %}
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAP_API_TOKEN }}&callback=initMap" async defer></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/google_maps.js' %}"></script>
+{% endif %}
 <body onload="on_page_load('{{ campus_results.campus_country_id_id }}', '{{ campus_results.campus_region_id }}')">
 	<h2>Campus Information - {{ campus_results.campus_nickname }}</h2>
 	<form action="{% url 'campus_information' campus_results.organisations_campus_id %}" method="post" class="campus_information">
@@ -75,6 +83,8 @@
 	{% endif %}
 	<h2>Map</h2>
 	<div id='map'></div>
+
+
 	<script type="text/javascript">
         function on_page_load(country, region) {
             /* Information
@@ -113,53 +123,10 @@
             }
 
             set_permissions({{ permission }});
-
-            //var access_token = 'pk.eyJ1Ijoicm9ib3RpY2hlYWQiLCJhIjoiY2o1bGtxNzNrMmVybjJxampmbjRtN2YyZSJ9.vljaOJpttEga2nIIR0WZQw'; //TEMP
-            //mapboxgl.accessToken = access_token; //TO BE REPLACED BY STRING FROM DJANGO SETTINGS
-            mapboxgl.accessToken  = "{{ MAPBOX_API_TOKEN }}";
-            var map = new mapboxgl.Map({
-                container: 'map', // container id
-                style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
-                center: [{{ campus_results.campus_longitude }},{{ campus_results.campus_latitude }}], // starting position [lng, lat]
-                zoom: 15 // starting zoom
-            });
-            map.on('load', function() {
-                map.addLayer({
-                    "id": "points",
-                    "type": "symbol",
-                    "source": {
-                        "type": "geojson",
-                        "data": {
-                            "type": "FeatureCollection",
-                            "features": [{
-                                "type": "Feature",
-                                "geometry": {
-                                    "type": "Point",
-                                    "coordinates": [{{ campus_results.campus_longitude }},{{ campus_results.campus_latitude }}]
-                                },
-                                "properties": {
-                                    "title": "{{ campus_results.campus_nickname }}",
-                                    "icon": "marker"
-                                }
-                            }]
-                        }
-                    },
-                    "layout": {
-                        "icon-image": "{icon}-15",
-                        "text-field": "{title}",
-                        "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
-                        "text-offset": [0, 0.6],
-                        "text-anchor": "top"
-                    }
-                })
-
-            });
-
-            //Quickly, relayout the map before anyone knows
-            //relayout_map();
-            setTimeout(relayout_map, 500);
+            initMap({{ campus_results.campus_latitude }},{{ campus_results.campus_longitude }},"{{ campus_results.campus_nickname }}");
 
         }
 	</script>
+
 </body>
 {% endblock %}

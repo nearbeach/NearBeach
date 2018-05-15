@@ -412,16 +412,23 @@ def requirement_links_list(request, requirement_id):
     if permission_results['requirement'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
+    """
     links_results = requirement_links.objects.filter(
         requirements=requirement_id,
         is_deleted="FALSE",
     )
+    item_links_results = requirement_item_links.objects.filter(requirement_item__in=item_results)
+    """
+
     item_results = requirement_item.objects.filter(
         is_deleted="FALSE",
         requirement_id=requirement_id,
     )
-    item_links_results = requirement_item_links.objects.filter(requirement_item__in=item_results)
-    requirement_results = requirements.objects.filter(requirement_id=requirement_id)
+
+    requirement_results = requirements.objects.filter(
+        requirement_id=requirement_id,
+        is_deleted="FALSE",
+    )
 
 
 

@@ -1,3 +1,4 @@
+{% load nearbeach_extras %}
 <h2>Tasks Assigned to me</h2>
 {% if assigned_users_results %}
     <table>
@@ -7,7 +8,7 @@
             <td>End Date</td>
         </tr>
         {% for row in assigned_users_results %}
-            <tr>
+            <tr {% if row.task_id__task_end_date|hours_ago:24 %}style="background-color:lightcoral"{% endif %}>
                 <td><a href="{% url 'task_information' row.task_id__tasks_id%}">Task{{ row.task_id__tasks_id }}</a></td>
                 <td>{{ row.task_id__task_short_description}}</td>
                 <td>{{ row.task_id__task_end_date }}</td>
