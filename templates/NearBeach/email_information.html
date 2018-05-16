@@ -1,0 +1,14 @@
+{% extends "./template.html" %}
+{% block content %}
+{% load static %}
+    <h2>Email Information</h2>
+    <ul>
+        <li>
+            To:
+            {% for row in to_email %}
+                {{ row.customer_id.customer_email }}
+            {% endfor %}
+        </li>
+    </ul>
+
+{% endblock %}

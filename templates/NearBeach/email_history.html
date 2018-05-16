@@ -1,0 +1,20 @@
+<h2>Email History</h2>
+<a href="{% url 'email' location_id destination %}">Create a new email</a>
+{% if email_results %}
+    <table>
+        <tr>
+            <td width="70%">Subject</td>
+            <td width="15%">Date</td>
+            <td width="15%">Sent By</td>
+        </tr>
+        {% for row in email_results %}
+            <tr>
+                <td><a href="#">{{ row.email_subject }}</a></td>
+                <td>{{ row.date_created }}</td>
+                <td>{{ row.change_user }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+<p>There is no email history</p>
+{% endif %}

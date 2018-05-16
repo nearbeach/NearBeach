@@ -1441,21 +1441,24 @@ def email(request,location_id,destination):
             for row in form.cleaned_data['to_email']:
                 email_contact_submit=email_contact(
                     email_content=email_content_submit,
-                    to_customers=customers.objects.get(customer_id=row.customer_id)
+                    to_customers=customers.objects.get(customer_id=row.customer_id),
+                    change_user=request.user,
                 )
                 email_contact_submit.save()
 
             for row in form.cleaned_data['cc_email']:
                 email_contact_submit = email_contact(
                     email_content=email_content_submit,
-                    cc_customers=customers.objects.get(customer_id=row.customer_id)
+                    cc_customers=customers.objects.get(customer_id=row.customer_id),
+                    change_user = request.user,
                 )
                 email_contact_submit.save()
 
             for row in form.cleaned_data['bcc_email']:
                 email_contact_submit = email_contact(
                     email_content=email_content_submit,
-                    bcc_customers=customers.objects.get(customer_id=row.customer_id)
+                    bcc_customers=customers.objects.get(customer_id=row.customer_id),
+                    change_user=request.user,
                 )
                 email_contact_submit.save()
 
@@ -1463,6 +1466,7 @@ def email(request,location_id,destination):
                 email_contact_submit = email_contact(
                     email_content=email_content_submit,
                     organisations=organisations.objects.get(organisations_id=location_id),
+                    change_user=request.user,
                 )
                 email_contact_submit.save()
 
@@ -1508,6 +1512,43 @@ def email(request,location_id,destination):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
+def email_history(request,location_id,destination):
+    #Get data
+    if destination == "organisation":
+        email_results = email_content.objects.filter(
+            is_deleted="FALSE",
+            email_content_id__in=email_contact.objects.filter(
+                is_deleted="FALSE",
+                organisations_id=location_id,
+            ).values('email_content_id')
+        )
+    elif destination == "customer":
+        email_results = email_content.objects.filter(
+            is_deleted="FALSE",
+            email_content_id__in=email_contact.objects.filter(
+                (
+                        Q(to_customers=location_id) |
+                        Q(cc_customers=location_id)
+                )
+                & Q(is_deleted="FALSE"),
+            ).values('email_content_id')
+        )
+        #Item.objects.filter(Q(creator=owner) | Q(moderated=False))
+
+    # Template
+    t = loader.get_template('NearBeach/email_history.html')
+
+    print(email_results)
+
+    # context
+    c = {
+        'destination': destination,
+        'location_id': location_id,
+        'email_results': email_results,
+    }
+
+    return HttpResponse(t.render(c, request))
 
 
 @login_required(login_url='login')
