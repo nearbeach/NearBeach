@@ -19,7 +19,7 @@ from .misc_functions import *
 from .user_permissions import return_user_permission_level
 from datetime import timedelta
 from django.db.models import Max
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from geolocation.main import GoogleMaps
 
 
@@ -1397,29 +1397,82 @@ def email(request,location_id,destination):
         if form.is_valid():
             #Extract form data
             organisation_email = form.cleaned_data['organisation_email']
-            #to_email = form.cleaned_data['to_email']
-            #cc_email = form.cleaned_data['cc_email']
-            #bcc_email = form.cleaned_data['bcc_email']
-            email_subject = form.cleaned_data['email_subject']
-            email_content = form.cleaned_data['email_content']
 
-            print(form.cleaned_data['to_email'])
+            to_email = []
+            cc_email = []
+            bcc_email = []
 
-            to_email = ''
-            cc_email = ''
-            bcc_email = ''
+            if organisation_email:
+                to_email.append(organisation_email)
 
             for row in form.cleaned_data['to_email']:
-                to_email = to_email + str(row.customer_email) + ','
+                to_email.append(row.customer_email)
 
-            send_mail(
-                email_subject,
-                email_content,
+            for row in form.cleaned_data['cc_email']:
+                cc_email.append(row.customer_email)
+
+            for row in form.cleaned_data['bcc_email']:
+                bcc_email.append(row.customer_email)
+
+            email = EmailMessage(
+                form.cleaned_data['email_subject'],
+                form.cleaned_data['email_content'],
                 'nearbeach@tpg.com.au',
-                #[to_email],
-                ['luke@nearbeach.org'],
-                fail_silently=False,
+                to_email,
+                bcc_email,
+                cc=cc_email,
+                reply_to=['nearbeach@tpg.com.au'],
             )
+            email.send(fail_silently=False)
+
+            """
+            Once the email has been sent with no errors. Then we save the content. :)
+            First create the content email
+            Then apply who got sent the email.
+            """
+            print(email_content)
+            email_content_submit=email_content(
+                email_subject= form.cleaned_data['email_subject'],
+                email_content=form.cleaned_data['email_content'],
+                change_user=request.user,
+            )
+            email_content_submit.save()
+
+            for row in form.cleaned_data['to_email']:
+                email_contact_submit=email_contact(
+                    email_content=email_content_submit,
+                    to_customers=customers.objects.get(customer_id=row.customer_id)
+                )
+                email_contact_submit.save()
+
+            for row in form.cleaned_data['cc_email']:
+                email_contact_submit = email_contact(
+                    email_content=email_content_submit,
+                    cc_customers=customers.objects.get(customer_id=row.customer_id)
+                )
+                email_contact_submit.save()
+
+            for row in form.cleaned_data['bcc_email']:
+                email_contact_submit = email_contact(
+                    email_content=email_content_submit,
+                    bcc_customers=customers.objects.get(customer_id=row.customer_id)
+                )
+                email_contact_submit.save()
+
+            if organisation_email:
+                email_contact_submit = email_contact(
+                    email_content=email_content_submit,
+                    organisations=organisations.objects.get(organisations_id=location_id),
+                )
+                email_contact_submit.save()
+
+
+            #Now go back where you came from
+            if destination == "organisation":
+                return HttpResponseRedirect(reverse('organisation_information', args={location_id}))
+            else:
+                return HttpResponseRedirect(reverse('customer_information', args={location_id}))
+
 
 
         else:

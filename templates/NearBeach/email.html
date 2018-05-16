@@ -17,7 +17,12 @@
         <h2>Email</h2>
         {% csrf_token %}
         <ul>
-            <li>{{ email_form.organisation_email  }}</li>
+            <li>
+                {{ email_form.organisation_email  }}
+                {% if destination == "organisation" %}
+                    <a id="remove_organisation_id" href="javascript:void(0)" onclick="remove_organisation()">Click here to remove organisation from email list</a>
+                {% endif %}
+            </li>
             <li>To: {{ email_form.to_email }}</li>
             <li>CC: {{ email_form.cc_email }}</li>
             <li>BCC: {{ email_form.bcc_email }}</li>
@@ -37,5 +42,12 @@
     <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
     <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
     <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
+    <script>
+        function remove_organisation() {
+            $("#id_organisation_email").val("");
+            $("#remove_organisation_id").html("");
+            $("#id_to_email").prop('required',true);
+        }
+    </script>
 </body>
 {% endblock %}

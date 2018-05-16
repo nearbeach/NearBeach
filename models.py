@@ -469,9 +469,26 @@ class email_contact(models.Model):
 		'email_content',
 		on_delete=models.CASCADE,
 	)
-	customers=models.ForeignKey(
+	to_customers = models.ForeignKey(
 		'customers',
+		related_name='%(class)s_to_customers',
 		on_delete=models.CASCADE,
+		blank=True,
+		null=True,
+	)
+	cc_customers=models.ForeignKey(
+		'customers',
+		related_name='%(class)s_cc_customers',
+		on_delete=models.CASCADE,
+		blank=True,
+		null=True,
+	)
+	bcc_customers=models.ForeignKey(
+		'customers',
+		related_name='%(class)s_bcc_customers',
+		on_delete=models.CASCADE,
+		blank=True,
+		null=True,
 	)
 	organisations=models.ForeignKey(
 		'organisations',

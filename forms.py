@@ -444,6 +444,8 @@ class email_form(ModelForm):
             self.fields['to_email'].required = True
 
         self.fields['to_email'].queryset = customer_results
+        self.fields['cc_email'].queryset = customer_results
+        self.fields['bcc_email'].queryset = customer_results
 
     organisation_email = forms.EmailField(
         max_length=200,
