@@ -19,7 +19,7 @@ from .misc_functions import *
 from .user_permissions import return_user_permission_level
 from datetime import timedelta
 from django.db.models import Max
-
+from django.core.mail import send_mail
 from geolocation.main import GoogleMaps
 
 
@@ -1388,13 +1388,12 @@ def delete_document(request, document_key):
 
 @login_required(login_url='login')
 def email(request,location_id,destination):
-    print("REQUEST POST PRINTOUT")
-    print("~~~~~~~~~~~~~~~~~~~~~")
-    print(request.POST)
-    print("~~~~~~~~~~~~~~~~~~~~~")
-
     if request.method == "POST":
-        form = email_form(request.POST)
+        form = email_form(
+            request.POST,
+            location_id=location_id,
+            destination=destination,
+        )
         if form.is_valid():
             #Extract form data
             organisation_email = form.cleaned_data['organisation_email']
@@ -1403,6 +1402,26 @@ def email(request,location_id,destination):
             #bcc_email = form.cleaned_data['bcc_email']
             email_subject = form.cleaned_data['email_subject']
             email_content = form.cleaned_data['email_content']
+
+            print(form.cleaned_data['to_email'])
+
+            to_email = ''
+            cc_email = ''
+            bcc_email = ''
+
+            for row in form.cleaned_data['to_email']:
+                to_email = to_email + str(row.customer_email) + ','
+
+            send_mail(
+                email_subject,
+                email_content,
+                'nearbeach@tpg.com.au',
+                #[to_email],
+                ['luke@nearbeach.org'],
+                fail_silently=False,
+            )
+
+
         else:
             print("ERROR with email form.")
             print(form.errors)
@@ -1424,7 +1443,11 @@ def email(request,location_id,destination):
 
     # context
     c = {
-        'email_form': email_form(initial=initial),
+        'email_form': email_form(
+            initial=initial,
+            location_id=location_id,
+            destination=destination,
+        ),
         'destination': destination,
         'location_id': location_id,
     }

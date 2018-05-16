@@ -12,7 +12,8 @@
     }
 </script>
 <body onload="on_page_load()">
-    <form action={% url 'email' location_id destination %} method="post" class="email">
+    <form action={% url 'email' location_id destination %} method="post" enctype="multipart/form-data" class="email" multiple="multiple" data-is-stacked="0">
+    {% csrf_token %}
         <h2>Email</h2>
         {% csrf_token %}
         <ul>
