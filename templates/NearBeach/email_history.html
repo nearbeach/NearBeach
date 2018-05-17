@@ -9,7 +9,7 @@
         </tr>
         {% for row in email_results %}
             <tr>
-                <td><a href="#">{{ row.email_subject }}</a></td>
+                <td><a href="{% url 'email_information' row.email_content_id %}">{{ row.email_subject }}</a></td>
                 <td>{{ row.date_created }}</td>
                 <td>{{ row.change_user }}</td>
             </tr>

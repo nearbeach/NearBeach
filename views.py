@@ -1552,6 +1552,44 @@ def email_history(request,location_id,destination):
 
 
 @login_required(login_url='login')
+def email_information(request,email_content_id):
+    email_content_results = email_content.objects.filter(
+        is_deleted="FALSE",
+        email_content_id=email_content_id,
+    )
+
+    to_email_results = email_contact.objects.filter(
+        is_deleted="FALSE",
+        email_content_id=email_content_id,
+        to_customers__isnull=False,
+    )
+    cc_email_results = email_contact.objects.filter(
+        is_deleted="FALSE",
+        email_content_id=email_content_id,
+        cc_customers__isnull=False,
+    )
+    bcc_email_results = email_contact.objects.filter(
+        is_deleted="FALSE",
+        email_content_id=email_content_id,
+        bcc_customers__isnull=False,
+    )
+
+    # Template
+    t = loader.get_template('NearBeach/email_information.html')
+
+    # context
+    c = {
+        'email_content_results': email_content_results,
+        'to_email_results': to_email_results,
+        'cc_email_results': cc_email_results,
+        'bcc_email_results': bcc_email_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
 def index(request):
     """
 	The index page determines if a particular user has logged in. It will

@@ -5,10 +5,35 @@
     <ul>
         <li>
             To:
-            {% for row in to_email %}
-                {{ row.customer_id.customer_email }}
+            {% for row in to_email_results %}
+                {% if forloop.first %}
+                    {{ row.to_customers.customer_email }}
+                {% else %}
+                    , {{ row.to_customers.customer_email }}
+                {% endif %}
             {% endfor %}
         </li>
+        <li>
+            Carbon Copy:
+            {% for row in cc_email_results %}
+                {% if forloop.first %}
+                    {{ row.cc_customers.customer_email }}
+                {% else %}
+                    , {{ row.cc_customers.customer_email }}
+                {% endif %}
+            {% endfor %}
+        </li>
+        <li>
+            Blind Carbon Copy:
+            {% for ro win bcc_email_results %}
+                {% if forloop.first %}
+                    {{ row.bcc_customers.customer_email }}
+                {% else %}
+                    , {{ row.bcc_customers.customer_email }}
+                {% endif %}
+            {% endfor %}
+        </li>
+        <li>{{  }}</li>
     </ul>
 
 {% endblock %}

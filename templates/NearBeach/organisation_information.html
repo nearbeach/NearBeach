@@ -62,6 +62,11 @@
         Loading...
     </form>
 
+    <div id="email_history">
+        <h2>Email History</h2>
+        Loading...
+    </div>
+
     <form method="post" class="organisation_documents_list" id="organisation_documents_list" enctype="multipart/form-data">
         <h2>Organisation Documents List</h2>
         Loading...
@@ -238,6 +243,21 @@
         });
     };
 
+    function load_email_history() {
+        $.ajax({
+            url: '/email_history/{{ organisation_results.organisations_id }}/organisation',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $("#email_history").html(data);
+            },
+            error: function() {
+                alert("Sorry, the email history could not load");
+            }
+        })
+    };
+
 
     function load_organisation_documents_list() {
         //Load Project History
@@ -305,6 +325,7 @@
 	    //Load AJAX components
         load_contact_history();
         load_organisation_documents_list();
+        load_email_history();
 
         //Autoscale all textarea
         autoscale_textarea();
