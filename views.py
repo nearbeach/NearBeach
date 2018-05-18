@@ -1388,6 +1388,14 @@ def delete_document(request, document_key):
 
 @login_required(login_url='login')
 def email(request,location_id,destination):
+    """
+    organisation
+    customer
+    project
+    task
+    opportunity
+    quote
+    """
     if request.method == "POST":
         form = email_form(
             request.POST,
@@ -1492,11 +1500,53 @@ def email(request,location_id,destination):
         initial = {
             'organisation_email': organisation_results.organisation_email,
         }
-    else:
-        customer_results = customers.objects.get(customer_id=location_id)
+    elif destination == "customer":
+        customer_results = customers.objects.get(
+            is_deleted="FALSE",
+            customer_id=location_id
+        )
         initial = {
             'to_email': customer_results.customer_id,
         }
+    elif destination == "project":
+        customer_results = customers.objects.get(
+            is_deleted="FALSE",
+            customer_id__in=project_customers.objects.filter(
+                is_deleted="FALSE",
+                project_id=location_id,
+            ).values('customer_id')
+        )
+        initial = {
+            'to_email': customer_results.customer_id,
+        }
+    elif destination == "task":
+        customer_results = customers.objects.filter(
+            is_deleted="FALSE",
+            customer_id = tasks_customers.objects.filter(
+                is_deleted="FALSE",
+                tasks_id=location_id,
+            ).values('customer_id')
+        )
+        initial = {
+            'to_email': customer_results.customer_id,
+        }
+    elif destination == "opportunity":
+        print("OPPORTUNITY")
+
+    elif destination == "quote":
+        customer_results = customers.objects.filter(
+            is_deleted="FALSE",
+            customer_id=quote_responsible_customers.objects.filter(
+                is_deleted="FALSE",
+                quote_id=location_id,
+            ).values('customer_id')
+        )
+        initial = {
+            'to_email': customer_results.customer_id,
+        }
+    else:
+        print("FUCK! Something went wrong")
+
 
     # context
     c = {
