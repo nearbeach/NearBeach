@@ -4595,6 +4595,17 @@ def task_information(request, task_id):
 
 
 @login_required(login_url='login')
+def timeline(request):
+    # Template
+    t = loader.get_template('NearBeach/timeline.html')
+
+    # context
+    c = {}
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
 def to_do_list(request, location_id, destination):
     if request.method == "POST":
         form = to_do_form(request.POST)

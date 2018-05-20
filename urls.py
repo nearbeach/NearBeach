@@ -276,7 +276,7 @@ url(r'^to_do_complete/(?P<to_do_id>[0-9]+)/$', views.to_do_complete, name='to_do
 url(r'^email/(?P<location_id>[0-9]+)/(?P<destination>["organisation","customer","project","task","opportunity","quote"]+)/$', views.email,name='email'),
 url(r'^email_history/(?P<location_id>[0-9]+)/(?P<destination>["organisation","customer","project","task","opportunity","quote"]+)/$', views.email_history,name='email_history'),
 url(r'^email_information/(?P<email_content_id>[0-9]+)/$', views.email_information,name='email_information'),
-
+url(r'^timeline/$', views.timeline, name='timeline'),
 
 ]
 
