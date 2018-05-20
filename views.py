@@ -1531,12 +1531,27 @@ def email(request,location_id,destination):
             'to_email': customer_results.customer_id,
         }
     elif destination == "opportunity":
-        print("OPPORTUNITY")
+        customer_results = customers.objects.filter(
+            Q(is_deleted="FALSE") &
+            Q(
+                Q(customer_id__in=opportunity.objects.filter(
+                    is_deleted="FALSE",
+                    opportunity_id=location_id,
+                ).values('customer_id')) |
+                Q(customer_id__in=customers.objects.filter(
+                    is_deleted="FALSE",
+                    organisations_id__in=opportunity.objects.filter(
+                        opportunity_id=location_id
+                    ).values('organisations_id')
+                ).values('customer_id')
+                )
+            )
+        )
 
     elif destination == "quote":
         customer_results = customers.objects.filter(
             is_deleted="FALSE",
-            customer_id=quote_responsible_customers.objects.filter(
+            customer_id__in=quote_responsible_customers.objects.filter(
                 is_deleted="FALSE",
                 quote_id=location_id,
             ).values('customer_id')
