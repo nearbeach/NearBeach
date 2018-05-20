@@ -436,12 +436,34 @@ class email_form(ModelForm):
                 organisations_id=location_id
             )
             self.fields['to_email'].required=False
-        else:
+        elif destination == "customer":
             customer_results = customers.objects.filter(
                 is_deleted="FALSE",
                 organisations_id__in=customers.objects.filter(customer_id=location_id).values('organisations_id')
             )
             self.fields['to_email'].required = True
+        elif destination == "project":
+            customer_results = customers.objects.filter(
+                is_deleted="FALSE",
+                organisations_id=project.objects.get(project_id=location_id).organisations_id.organisations_id
+            )
+        elif destination == "task":
+            customer_results = customers.objects.filter(
+                is_deleted="FALSE",
+                organisations_id=tasks.objects.get(tasks_id=location_id).organisations_id.organisations_id
+            )
+        elif destination == "opportunity":
+            customer_results = customers.objects.filter(
+                is_deleted="FALSE",
+                organisations_id=opportunity.objects.get(opportunity_id=location_id).organisations_id.organisations_id
+            )
+        elif destination == "quote":
+            customer_results = customers.objects.filter(
+                is_deleted="FALSE",
+                organisations_id=quotes.objects.get(quote_id=location_id).organisation_id.organisations_id
+            )
+        else:
+            customer_results = ''
 
         self.fields['to_email'].queryset = customer_results
         self.fields['cc_email'].queryset = customer_results

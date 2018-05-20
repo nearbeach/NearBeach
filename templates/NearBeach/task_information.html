@@ -20,6 +20,7 @@
         load_to_do();
         load_bug_list();
         load_bug_search();
+        load_email_history();
 
         load_document_tree_list();
         load_document_tree_create_folder();
@@ -85,6 +86,12 @@
         <h2>Task History</h2>
         Loading...
     </form>
+
+    <div id="email_history">
+        <h2>Email History</h2>
+        Loading...
+    </div>
+
     <h2>Associated Projects</h2>
     {% if task_permissions > 1 %}
         {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
@@ -455,6 +462,21 @@
                 $('#document_tree_list').html('<h2>Document Tree</h2>Sorry, document tree encounted an error and did not load.');
             }
         });
+    };
+
+    function load_email_history() {
+        $.ajax({
+            url: '/email_history/{{ task_id }}/task',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $("#email_history").html(data);
+            },
+            error: function() {
+                alert("Sorry, the email history could not load");
+            }
+        })
     };
 
 

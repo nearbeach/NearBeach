@@ -25,7 +25,7 @@
         </li>
         <li>
             Blind Carbon Copy:
-            {% for ro win bcc_email_results %}
+            {% for row in bcc_email_results %}
                 {% if forloop.first %}
                     {{ row.bcc_customers.customer_email }}
                 {% else %}
@@ -33,7 +33,9 @@
                 {% endif %}
             {% endfor %}
         </li>
-        <li>{{  }}</li>
+        <li><input type="text" value="{{ email_content_results.email_subject }}"></li>
+        <li><textarea>{{ email_content_results.email_content }}</textarea></li>
+        <li><a href="javascript:history.back()">Go Back</a></li>
     </ul>
 
 {% endblock %}

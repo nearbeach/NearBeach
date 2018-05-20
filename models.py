@@ -496,6 +496,30 @@ class email_contact(models.Model):
 		blank=True,
 		null=True,
 	)
+	project=models.ForeignKey(
+		'project',
+		on_delete=models.CASCADE,
+		blank=True,
+		null=True,
+	)
+	tasks=models.ForeignKey(
+		'tasks',
+		on_delete=models.CASCADE,
+		blank=True,
+		null=True,
+	)
+	opportunity=models.ForeignKey(
+		'opportunity',
+		on_delete=models.CASCADE,
+		blank=True,
+		null=True,
+	)
+	quotes=models.ForeignKey(
+		'quotes',
+		on_delete=models.CASCADE,
+		blank=True,
+		null=True,
+	)
 	date_created=models.DateTimeField(auto_now_add=True)
 	date_modified=models.DateTimeField(auto_now=True)
 	change_user=models.ForeignKey(

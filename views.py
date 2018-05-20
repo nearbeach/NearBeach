@@ -905,7 +905,7 @@ def customer_information(request, customer_id):
             print(form.errors)
 
     # Get the instance
-    customer_results = customers.objects.get(pk=customer_id)
+    customer_results = customers.objects.get(customer_id=customer_id)
     add_campus_results = organisations_campus.objects.filter(organisations_id=customer_results.organisations_id)
     quote_results = quotes.objects.filter(
         is_deleted="FALSE",
@@ -1470,20 +1470,61 @@ def email(request,location_id,destination):
                 )
                 email_contact_submit.save()
 
-            if organisation_email:
+
+            if destination == "organisation":
                 email_contact_submit = email_contact(
                     email_content=email_content_submit,
                     organisations=organisations.objects.get(organisations_id=location_id),
                     change_user=request.user,
                 )
                 email_contact_submit.save()
+            elif destination == "project":
+                email_contact_submit = email_contact(
+                    email_content=email_content_submit,
+                    project=project.objects.get(project_id=location_id),
+                    change_user=request.user,
+                )
+                email_contact_submit.save()
+            elif destination == "task":
+                email_contact_submit = email_contact(
+                    email_content=email_content_submit,
+                    tasks=tasks.objects.get(tasks_id=location_id),
+                    change_user=request.user,
+                )
+                email_contact_submit.save()
+            elif destination == "opportunity":
+                email_contact_submit = email_contact(
+                    email_content=email_content_submit,
+                    opportunity=opportunity.objects.get(opportunity_id=location_id),
+                    change_user=request.user,
+                )
+                email_contact_submit.save()
+            elif destination == "quote":
+                email_contact_submit = email_contact(
+                    email_content=email_content_submit,
+                    quotes=quotes.objects.get(quote_id=location_id),
+                    change_user=request.user,
+                )
+                email_contact_submit.save()
+
+
 
 
             #Now go back where you came from
             if destination == "organisation":
                 return HttpResponseRedirect(reverse('organisation_information', args={location_id}))
-            else:
+            elif destination == "customer":
                 return HttpResponseRedirect(reverse('customer_information', args={location_id}))
+            elif destination == "project":
+                return HttpResponseRedirect(reverse('project_information', args={location_id}))
+            elif destination == "task":
+                return HttpResponseRedirect(reverse('task_information', args={location_id}))
+            elif destination == "opportunity":
+                return HttpResponseRedirect(reverse('opportunity_information', args={location_id}))
+            elif destination == "quote":
+                return HttpResponseRedirect(reverse('quote_information', args={location_id}))
+            else:
+                return HttpResponseRedirect(reverse('dashboard'))
 
 
 
@@ -1509,15 +1550,15 @@ def email(request,location_id,destination):
             'to_email': customer_results.customer_id,
         }
     elif destination == "project":
-        customer_results = customers.objects.get(
-            is_deleted="FALSE",
+        customer_results = customers.objects.filter(
             customer_id__in=project_customers.objects.filter(
                 is_deleted="FALSE",
                 project_id=location_id,
             ).values('customer_id')
         )
+        print(customer_results)
         initial = {
-            'to_email': customer_results.customer_id,
+            'to_email': customer_results,
         }
     elif destination == "task":
         customer_results = customers.objects.filter(
@@ -1528,7 +1569,7 @@ def email(request,location_id,destination):
             ).values('customer_id')
         )
         initial = {
-            'to_email': customer_results.customer_id,
+            'to_email': customer_results,
         }
     elif destination == "opportunity":
         customer_results = customers.objects.filter(
@@ -1547,6 +1588,9 @@ def email(request,location_id,destination):
                 )
             )
         )
+        initial = {
+            'to_email': customer_results,
+        }
 
     elif destination == "quote":
         customer_results = customers.objects.filter(
@@ -1557,7 +1601,7 @@ def email(request,location_id,destination):
             ).values('customer_id')
         )
         initial = {
-            'to_email': customer_results.customer_id,
+            'to_email': customer_results,
         }
     else:
         print("FUCK! Something went wrong")
@@ -1599,7 +1643,36 @@ def email_history(request,location_id,destination):
                 & Q(is_deleted="FALSE"),
             ).values('email_content_id')
         )
-        #Item.objects.filter(Q(creator=owner) | Q(moderated=False))
+    elif destination == "project":
+        email_results = email_content.objects.filter(
+            is_deleted="FALSE",
+            email_content_id__in=email_contact.objects.filter(
+                project__isnull=False,
+            )
+        )
+    elif destination == "task":
+        email_results = email_content.objects.filter(
+            is_deleted="FALSE",
+            email_content_id__in=email_contact.objects.filter(
+                tasks__isnull=False,
+            )
+        )
+    elif destination == "opportunity":
+        email_results = email_content.objects.filter(
+            is_deleted="FALSE",
+            email_content_id__in=email_contact.objects.filter(
+                opportunity__isnull=False,
+            )
+        )
+    elif destination == "quote":
+        email_results = email_content.objects.filter(
+            is_deleted="FALSE",
+            email_content_id__in=email_contact.objects.filter(
+                quotes__isnull=False,
+            )
+        )
+    else:
+        email_results = ''
 
     # Template
     t = loader.get_template('NearBeach/email_history.html')
@@ -1618,7 +1691,7 @@ def email_history(request,location_id,destination):
 
 @login_required(login_url='login')
 def email_information(request,email_content_id):
-    email_content_results = email_content.objects.filter(
+    email_content_results = email_content.objects.get(
         is_deleted="FALSE",
         email_content_id=email_content_id,
     )
