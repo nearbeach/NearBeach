@@ -4600,7 +4600,9 @@ def timeline(request):
     t = loader.get_template('NearBeach/timeline.html')
 
     # context
-    c = {}
+    c = {
+        'timeline_form': timeline_form(),
+    }
 
     return HttpResponse(t.render(c, request))
 

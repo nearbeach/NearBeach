@@ -1,6 +1,37 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
-<h2>Timeline</h2>
-    <canvas id="timeline_canvas"></canvas>
+    <script src="{% static 'NearBeach/javascript/svg.js/svg.js' %}"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <h2>Timeline</h2>
+    <ul>
+        <li>Start Date: {{ timeline_form.start_date }}</li>
+        <li>End Date:{{ timeline_form.end_date }}</li>
+    </ul>
+    <div id="timeline"></div>
+<script>
+$( "#id_start_date" ).datepicker();
+$("#id_end_date").datepicker();
+
+var draw = SVG('timeline').size('100%','100%');
+
+// draw transformed rect
+//var rect = draw.rect(175,175).move(75,75).rotate(20).scale(1, 0.5);
+
+
+// draw bbox
+//var b = rect.bbox()
+//draw.rect(b.width, b.height).addClass('box').move(b.x, b.y);
+
+$("#timeline").height(500);
+//$('#example').height( $("#example").height() + 20 );
+
+draw.line(0, 0, 200, 200).stroke({ width: 5, color: '#fff', dasharray: '5,5' });
+draw.rect(100,100)
+
+alert("Finished");
+
+</script>
+
 {% endblock %}
+

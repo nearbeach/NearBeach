@@ -2066,6 +2066,11 @@ class task_information_form(ModelForm):
         }
 
 
+class timeline_form(forms.Form):
+    start_date = forms.DateField()
+    end_date = forms.DateField()
+
+
 class to_do_form(ModelForm):
     to_do = forms.CharField(
         max_length=255,
