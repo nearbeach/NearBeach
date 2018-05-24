@@ -4599,9 +4599,16 @@ def timeline(request):
     # Template
     t = loader.get_template('NearBeach/timeline.html')
 
+    initial = {
+        'start_date': datetime.datetime.now(),
+        'end_date': datetime.datetime.now() + datetime.timedelta(days=31)
+    }
+
+    #print((dt.datetime.combine(dt.date(1,1,1),t) + delta).time())
+
     # context
     c = {
-        'timeline_form': timeline_form(),
+        'timeline_form': timeline_form(initial=initial),
     }
 
     return HttpResponse(t.render(c, request))

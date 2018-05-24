@@ -8,6 +8,7 @@
         <li>Start Date: {{ timeline_form.start_date }}</li>
         <li>End Date:{{ timeline_form.end_date }}</li>
     </ul>
+    <br/>
     <div id="timeline"></div>
 <script>
 $( "#id_start_date" ).datepicker();
@@ -24,13 +25,52 @@ var draw = SVG('timeline').size('100%','100%');
 //draw.rect(b.width, b.height).addClass('box').move(b.x, b.y);
 
 $("#timeline").height(500);
-//$('#example').height( $("#example").height() + 20 );
 
-draw.line(0, 0, 200, 200).stroke({ width: 5, color: '#fff', dasharray: '5,5' });
-draw.rect(100,100)
+//draw.line(0, 0, 200, 200).stroke({ width: 5, color: '#fff', dasharray: '5,5' });
+draw.rect(600,90).fill("#fff").stroke({ width: 1, color: 'black' });
+
+/*
+//Test drawing dates
+draw.rect(50,30).fill("#fff").stroke({ width: 1, color: 'black' }).move(600,60);
+draw.rect(50,30).fill("#fff").stroke({ width: 1, color: 'black' }).move(650,60);
+
+draw.rect(100,30).fill("#fff").stroke({ width: 1, color: 'black' }).move(600,30);
+*/
+var start_distance = 600;
+var month_start = 600;
+//var start_date = new date();
+for (var i = 0; i < 10; i++) {
+    //Day number
+    draw.rect(100,30).fill("#fff").stroke({ width: 1, color: 'black' }).move(600 + i*100,30);
+
+    //Hour number
+    draw.rect(50,30).fill("#fff").stroke({ width: 1, color: 'black' }).move(600 + i*100, 60);
+    draw.rect(50,30).fill("#fff").stroke({ width: 1, color: 'black' }).move(650 + i*100, 60);
+
+}
+
+
+/*
+//Next line test
+draw.rect(600,25).fill("#fff").stroke({ width: 1, color: 'black' }).move(0,90);
+draw.text("PRO1 - Construction of a timeline").move(5,95);
+*/
+
+
 
 alert("Finished");
 
+
+function end_of_month(date) {
+    var next_day = date.setDate(date.getDate() + 1)
+
+    //If the month is the same tomorrow then we are still in the same month
+    if (next_day.getMonth() == date.getMonth()) {
+        return false; //Not the end of the month
+    } else {
+        return true; //end of the month
+    }
+}
 </script>
 
 {% endblock %}
