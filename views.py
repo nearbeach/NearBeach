@@ -4608,7 +4608,9 @@ def timeline(request):
 
     # context
     c = {
-        'timeline_form': timeline_form(initial=initial),
+        'timeline_form': timeline_form(),
+        'start_date': datetime.datetime.now(),
+        'end_date': datetime.datetime.now() + datetime.timedelta(days=31),
     }
 
     return HttpResponse(t.render(c, request))

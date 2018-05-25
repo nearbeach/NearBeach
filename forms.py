@@ -2067,7 +2067,11 @@ class task_information_form(ModelForm):
 
 
 class timeline_form(forms.Form):
-    start_date = forms.DateField()
+    start_date = forms.DateField(
+        widget=forms.DateInput(attrs={
+
+        })
+    )
     end_date = forms.DateField()
 
 
