@@ -11,7 +11,9 @@
     <br/>
     <div id="timeline"></div>
 <script>
-$( "#id_start_date" ).datepicker();
+$( "#id_start_date" ).datepicker({
+    dateFormat: "yyyy-mm-dd"
+});
 $("#id_end_date").datepicker();
 
 var draw = SVG('timeline').size('100%','100%');
@@ -27,18 +29,16 @@ var draw = SVG('timeline').size('100%','100%');
 $("#timeline").height(500);
 
 //draw.line(0, 0, 200, 200).stroke({ width: 5, color: '#fff', dasharray: '5,5' });
-draw.rect(600,90).fill("#fff").stroke({ width: 1, color: 'black' });
 
-/*
-//Test drawing dates
-draw.rect(50,30).fill("#fff").stroke({ width: 1, color: 'black' }).move(600,60);
-draw.rect(50,30).fill("#fff").stroke({ width: 1, color: 'black' }).move(650,60);
-
-draw.rect(100,30).fill("#fff").stroke({ width: 1, color: 'black' }).move(600,30);
-*/
 var start_distance = 600;
 var month_start = 600;
-//var start_date = new date();
+//oDate = $("#oDP").datepicker("getDate");
+var start_date = $("id_start_date").datepicker("getDate");
+var end_date = $("id_end_date").datepicker("getDate");
+//alert(end_date.getDate());
+alert(end_date - start_date);
+
+draw.rect(600,90).fill("#fff").stroke({ width: 1, color: 'black' });
 for (var i = 0; i < 10; i++) {
     //Day number
     draw.rect(100,30).fill("#fff").stroke({ width: 1, color: 'black' }).move(600 + i*100,30);
