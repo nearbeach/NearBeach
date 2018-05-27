@@ -123,6 +123,10 @@ function render_timeline() {
                 //Obtain the information we require
                 var project_string = "PRO" + project_results[i]['pk'] + " - " + project_results[i]['fields']['project_name'];
                 project_string=project_string.substring(0,60);
+                var timeline_start = start_distance;    //Used to determine the start of the timeline block
+                var timeline_length = 0; //Used to determine the length of the rendered block
+                var project_start_time = new Date(project_results[i]['fields']['project_start_date']);
+                var project_end_time = new Date(project_results[i]['fields']['project_end_date']);
 
 
                 //Start drawing what we need.
@@ -140,6 +144,24 @@ function render_timeline() {
                 }
 
                 //DRAW TOP LINE!!!
+                if (project_start_time>=start_date) {
+                    //Find out how many days and then add on the appropriate amount of time
+                    timeline_start = timeline_start + 50 + 100*(project_start_time-start_date)/_MS_PER_DAY;
+
+                    //Adjust the timeline start back.
+                    if (timeline_start.Now.hour < 12) {
+                        timeline_start = timeline_start - 50;
+
+                    }
+
+                    //TEMP - make the line to the end date
+                    timeline_length = timeline_length + (end_date-project_start_time)/_MS_PER_DAY;
+                } else {
+                    //TEMP - make the line to the end date
+                    timeline_length = timeline_length + 100*(end_date-start_date)/_MS_PER_DAY;
+                }
+
+                draw.rect(timeline_length,30).fill('red').move(timeline_start,y_cord);
 
 
                 //Adjust variables
