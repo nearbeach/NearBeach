@@ -277,6 +277,7 @@ url(r'^email/(?P<location_id>[0-9]+)/(?P<destination>["organisation","customer",
 url(r'^email_history/(?P<location_id>[0-9]+)/(?P<destination>["organisation","customer","project","task","opportunity","quote"]+)/$', views.email_history,name='email_history'),
 url(r'^email_information/(?P<email_content_id>[0-9]+)/$', views.email_information,name='email_information'),
 url(r'^timeline/$', views.timeline, name='timeline'),
+url(r'^timeline_data/(?P<destination>["project","task"]+)/$', views.timeline_data, name='timeline_data'),
 
 ]
 

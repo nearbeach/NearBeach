@@ -4599,13 +4599,6 @@ def timeline(request):
     # Template
     t = loader.get_template('NearBeach/timeline.html')
 
-    initial = {
-        'start_date': datetime.datetime.now(),
-        'end_date': datetime.datetime.now() + datetime.timedelta(days=31)
-    }
-
-    #print((dt.datetime.combine(dt.date(1,1,1),t) + delta).time())
-
     # context
     c = {
         'timeline_form': timeline_form(),
@@ -4614,6 +4607,42 @@ def timeline(request):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def timeline_data(request, destination):
+    if destination == "project":
+        json_results = serializers.serialize(
+            'json',
+            project.objects.filter(
+                is_deleted="FALSE",
+                # ADD IN OTHER OPTIONS LATER
+            ),
+            fields={
+                'project_id',
+                'project_name',
+                'project_start_date',
+                'project_end_date',
+            }
+        )
+    else:
+        json_results = serializers.serialize(
+            'json',
+            tasks.objects.filter(
+                is_deleted="FALSE",
+                # ADD IN OTHER OPTIONS LATER
+            ),
+            fields={
+                'task_id',
+                'task_short_description',
+                'task_start_date',
+                'task_end_date',
+            }
+
+        )
+
+    return HttpResponse(json_results,content_type='application/json')
 
 
 @login_required(login_url='login')

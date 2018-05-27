@@ -1,6 +1,11 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
+    <style>
+    svg {
+   overflow-x: scroll;
+}
+    </style>
     <script src="{% static 'NearBeach/javascript/svg.js/svg.js' %}"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <h2>Timeline</h2>
@@ -9,11 +14,26 @@
         <li>End Date:{{ timeline_form.end_date }}</li>
     </ul>
     <br/>
-    <div id="timeline" style="overflow-x: auto;"></div>
+    <div id="timeline"></div>
+    {{ project_results }}
+
 <script>
 const month_names = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
+
+$( "#id_start_date" ).datepicker({
+    dateFormat: "yy-mm-dd"
+});
+$( "#id_start_date" ).val("{{ start_date|date:'Y-m-d' }}");
+//$("#id_start_date").setDate("{{ start_date }}");
+$("#id_end_date").datepicker({
+    dateFormat: "yy-mm-dd"
+});
+$("#id_end_date").val("{{ end_date|date:'Y-m-d' }}");
+
+$(document).ready(render_timeline());
+
 
 
 function end_of_month(input_date) {
@@ -30,70 +50,115 @@ function end_of_month(input_date) {
     }
 }
 
-$( "#id_start_date" ).datepicker({
-    dateFormat: "yy-mm-dd"
-});
-$( "#id_start_date" ).val("{{ start_date|date:'Y-m-d' }}");
-//$("#id_start_date").setDate("{{ start_date }}");
-$("#id_end_date").datepicker({
-    dateFormat: "yy-mm-dd"
-});
-$("#id_end_date").val("{{ end_date|date:'Y-m-d' }}");
+function render_timeline() {
+    //Start drawing the board
+    var draw = SVG('timeline').size('100%','100%');
+    $("#timeline").height(500);
 
 
-//Start drawing the board
-var draw = SVG('timeline').size('100%','100%');
-$("#timeline").height(500);
-
-
-//Required Variables
-var start_distance = 600;
-var month_start_location = 600;
-var month_end_length = 0;
-var stroke_prop = { width: 1, color: 'black' }
-var _MS_PER_DAY = 1000 * 60 * 60 * 24;
-var start_date = new Date("{{ start_date|date:'Y-m-d' }}");
-var end_date = new Date("{{ end_date|date:'Y-m-d' }}");
+    //Required Variables
+    var start_distance = 600;
+    var month_start_location = 600;
+    var month_end_length = 0;
+    var stroke_prop = { width: 1, color: 'black' }
+    var _MS_PER_DAY = 1000 * 60 * 60 * 24;
+    var start_date = new Date("{{ start_date|date:'Y-m-d' }}");
+    var end_date = new Date("{{ end_date|date:'Y-m-d' }}");
 
 
 
-draw.rect(start_distance,90).fill("#fff").stroke(stroke_prop);
-for (var i = 0; i < (end_date - start_date)/_MS_PER_DAY; i++) {
-    //Loop variables
-    var x_cord = 600 + i*100;
-    month_end_length = month_end_length + 100;
+    draw.rect(start_distance,90).fill("#fff").stroke(stroke_prop);
+    for (var i = 0; i < (end_date - start_date)/_MS_PER_DAY; i++) {
+        //Loop variables
+        var x_cord = 600 + i*100;
+        month_end_length = month_end_length + 100;
 
-    //Get the date
-    var current_date = new Date();
-    current_date.setDate(start_date.getDate() + i);
+        //Get the date
+        var current_date = new Date();
+        current_date.setDate(start_date.getDate() + i);
 
-    //Day number
-    draw.rect(100,30).fill("#fff").stroke(stroke_prop).move(x_cord,30);
-    draw.text(current_date.getDate().toString()).move(x_cord,30);
-
-
-    //Hour number
-    draw.rect(50,30).fill("#fff").stroke({ width: 1, color: 'black' }).move(x_cord, 60);
-    draw.rect(50,30).fill("#fff").stroke({ width: 1, color: 'black' }).move(x_cord+50, 60);
-    draw.text("0h").move(x_cord,60);
-    draw.text("12h").move(x_cord+50,60);
+        //Day number
+        draw.rect(100,30).fill("#fff").stroke(stroke_prop).move(x_cord,30);
+        draw.text(current_date.getDate().toString()).move(x_cord,30);
 
 
-    if (end_of_month(current_date)) {
-        draw.rect(month_end_length,30).fill("#fff").stroke(stroke_prop).move(month_start_location,0);
-        draw.text(month_names[current_date.getMonth()]).move(month_start_location,0);
+        //Hour number
+        draw.rect(50,30).fill("#fff").stroke({ width: 1, color: 'black' }).move(x_cord, 60);
+        draw.rect(50,30).fill("#fff").stroke({ width: 1, color: 'black' }).move(x_cord+50, 60);
+        draw.text("0h").move(x_cord,60);
+        draw.text("12h").move(x_cord+50,60);
 
 
-        //Adjust the variables now
-        month_start_location = month_start_location + month_end_length;
-        month_end_length = 0;
+        if (end_of_month(current_date)) {
+            draw.rect(month_end_length,30).fill("#fff").stroke(stroke_prop).move(month_start_location,0);
+            draw.text(month_names[current_date.getMonth()]).move(month_start_location,0);
+
+
+            //Adjust the variables now
+            month_start_location = month_start_location + month_end_length;
+            month_end_length = 0;
+        }
     }
+    //After loop ends we need to add in the last month block
+    draw.rect(month_end_length,30).fill("#fff").stroke(stroke_prop).move(month_start_location,0);
+    draw.text(month_names[current_date.getMonth()]).move(month_start_location,0);
+
+
+    //Get the required data
+    //Declare variables being used
+    var project_results = '';
+    var task_results = '';
+    var x_positon = 0;
+    var y_position = 90;
+
+    $.ajax({
+        url: '/timeline_data/project',
+        data: {},
+        dataType: 'JSON',
+        type: 'GET',
+        success: function(data) {
+            project_results = data;
+
+            for (var i=0; i<project_results.length;i++) {
+                //Obtain the information we require
+                var project_string = "PRO" + project_results[i]['pk'] + " - " + project_results[i]['fields']['project_name'];
+                project_string=project_string.substring(0,60);
+
+
+                //Start drawing what we need.
+                draw.rect(start_distance,30).fill("#fff").stroke(stroke_prop).move(0,y_position);
+                draw.text(project_string).move(0,y_position);
+
+                //Layout all the blocks
+                for (var j = 0; j < (end_date - start_date)/_MS_PER_DAY; j++) {
+                    //Setup variables
+                    var x_cord = 600 + j*100;
+                    var y_cord = 90 + i*30;
+
+                    draw.rect(50,30).fill("#fff").stroke(stroke_prop).move(x_cord, y_cord);
+                    draw.rect(50,30).fill("#fff").stroke(stroke_prop).move(x_cord+50,y_cord);
+                }
+
+                //DRAW TOP LINE!!!
+
+
+                //Adjust variables
+                y_position=y_position+30;
+            }
+
+        },
+        error: function() {
+            alert("There is no project data");
+        }
+    });
+
+
 
 
 }
-//After loop ends we need to add in the last month block
-draw.rect(month_end_length,30).fill("#fff").stroke(stroke_prop).move(month_start_location,0);
-draw.text(month_names[current_date.getMonth()]).move(month_start_location,0);
+
+
+
 
 alert("Finished");
 
