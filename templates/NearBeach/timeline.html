@@ -9,10 +9,14 @@
     <script src="{% static 'NearBeach/javascript/svg.js/svg.js' %}"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <h2>Timeline</h2>
-    <ul>
-        <li>Start Date: {{ timeline_form.start_date }}</li>
-        <li>End Date:{{ timeline_form.end_date }}</li>
-    </ul>
+    <form id="date_form">
+    {% csrf_token %}
+        <ul>
+            <li>Start Date: {{ timeline_form.start_date }}</li>
+            <li>End Date:{{ timeline_form.end_date }}</li>
+        </ul>
+    </form>
+
     <br/>
     <div id="timeline"></div>
     {{ project_results }}
@@ -53,6 +57,7 @@ function end_of_month(input_date) {
 function render_timeline() {
     //Start drawing the board
     var draw = SVG('timeline').size('100%','100%');
+    draw.style({minWidth: 100, minHeight: 100});
     $("#timeline").height(500);
 
 
@@ -112,10 +117,10 @@ function render_timeline() {
     var y_position = 90;
 
     $.ajax({
-        url: '/timeline_data/project',
-        data: {},
+        url: '/timeline_data/project/',
+        data: $("#date_form").serialize(),
         dataType: 'JSON',
-        type: 'GET',
+        type: 'POST',
         success: function(data) {
             project_results = data;
 

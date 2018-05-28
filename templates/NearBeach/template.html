@@ -45,6 +45,7 @@
         <nav>
             <ul id="main-nav">
                 <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'timeline' %}">Timeline</a></li>
                 {% if new_item_permission >= 3 %}
                     <li onclick="toggleSub(0)">
                         <a href="#" class="main-nav-dropdown">New Item<div class="down-arrow"></div></a>
