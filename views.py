@@ -4596,7 +4596,6 @@ def task_information(request, task_id):
 
 @login_required(login_url='login')
 def timeline(request):
-    # Template
     t = loader.get_template('NearBeach/timeline.html')
 
     # context

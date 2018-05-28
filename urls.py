@@ -279,6 +279,7 @@ url(r'^email_information/(?P<email_content_id>[0-9]+)/$', views.email_informatio
 url(r'^timeline/$', views.timeline, name='timeline'),
 url(r'^timeline_data/(?P<destination>["project","task"]+)/$', views.timeline_data, name='timeline_data'),
 
+
 ]
 
 
