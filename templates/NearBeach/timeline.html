@@ -134,6 +134,7 @@ function render_timeline() {
                 var project_end_time = new Date(project_results[i]['fields']['project_end_date']);
 
 
+
                 //Start drawing what we need.
                 draw.rect(start_distance,30).fill("#fff").stroke(stroke_prop).move(0,y_position);
                 draw.text(project_string).move(0,y_position);
@@ -148,29 +149,38 @@ function render_timeline() {
                     draw.rect(50,30).fill("#fff").stroke(stroke_prop).move(x_cord+50,y_cord);
                 }
 
-                //DRAW TOP LINE!!!
-                if (project_start_time>=start_date) {
-                    //Find out how many days and then add on the appropriate amount of time
-                    timeline_start = timeline_start + 50 + 100*(project_start_time-start_date)/_MS_PER_DAY;
-
-                    //Adjust the timeline start back.
-                    if (timeline_start.Now.hour < 12) {
-                        timeline_start = timeline_start - 50;
-
-                    }
-
-                    //TEMP - make the line to the end date
-                    timeline_length = timeline_length + (end_date-project_start_time)/_MS_PER_DAY;
-                } else {
-                    //TEMP - make the line to the end date
-                    timeline_length = timeline_length + 100*(end_date-start_date)/_MS_PER_DAY;
+                //Figure out the starting position
+                //Move the timeline start to the start date. Assume is starting in PM
+                if (Date.parse(project_start_time) < Date.parse(start_date)) {
+                    project_start_time = start_date;
                 }
 
-                draw.rect(timeline_length,30).fill('red').move(timeline_start,y_cord);
+                timeline_start = timeline_start + 50 + 100*Math.floor((project_start_time-start_date)/_MS_PER_DAY);
 
+                //Move the timeline start back to AM if starting in AM
+                if (project_start_time.getHours()<12) {
+                    timeline_start = timeline_start - 50;
+                }
+
+
+
+                //Figure out the timeline length
+                timeline_length = 100*(project_start_time-start_date)/_MS_PER_DAY;
+
+                if ((project_start_time.getHours() < 12) && (project_end_time.getHours() < 12)) {
+                    timeline_length = timeline_length + 50;
+                } else if ((project_start_time.getHours() < 12) && (project_end_time.getHours() >= 12)) {
+                    timeline_length = timeline_length + 100;
+                } else if ((project_start_time.getHours() >= 12) && (project_end_time.getHours() >= 12)) {
+                    timeline_length = timeline_length + 50;
+                }
+
+                //alert("Starting position=" + (timeline_start) + "\nTimeline length=" + (timeline_length));
+                draw.rect(timeline_length,30).fill("red").move(timeline_start,y_cord);
 
                 //Adjust variables
                 y_position=y_position+30;
+
             }
 
         },
