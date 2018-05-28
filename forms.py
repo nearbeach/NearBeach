@@ -2077,10 +2077,14 @@ class timeline_form(forms.Form):
 class timeline_form(forms.Form):
     start_date = forms.DateField(
         widget=forms.DateInput(attrs={
-
+            'onchange': 'render_timeline()',
         })
     )
-    end_date = forms.DateField()
+    end_date = forms.DateField(
+        widget=forms.DateInput(attrs={
+            'onchange': 'render_timeline()',
+        })
+    )
 
 
 class to_do_form(ModelForm):

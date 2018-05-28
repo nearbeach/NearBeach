@@ -18,7 +18,7 @@
     </form>
 
     <br/>
-    <div id="timeline"></div>
+    <div id="timeline" style="overflow-x: scroll;"></div>
     {{ project_results }}
 
 <script>
@@ -90,8 +90,8 @@ function render_timeline() {
         //Hour number
         draw.rect(50,30).fill("#fff").stroke({ width: 1, color: 'black' }).move(x_cord, 60);
         draw.rect(50,30).fill("#fff").stroke({ width: 1, color: 'black' }).move(x_cord+50, 60);
-        draw.text("0h").move(x_cord,60);
-        draw.text("12h").move(x_cord+50,60);
+        draw.text("AM").move(x_cord,60);
+        draw.text("PM").move(x_cord+50,60);
 
 
         if (end_of_month(current_date)) {
@@ -165,7 +165,7 @@ function render_timeline() {
 
 
                 //Figure out the timeline length
-                timeline_length = 100*(project_start_time-start_date)/_MS_PER_DAY;
+                timeline_length = 100*Math.floor((project_end_time-project_start_time)/_MS_PER_DAY);
 
                 if ((project_start_time.getHours() < 12) && (project_end_time.getHours() < 12)) {
                     timeline_length = timeline_length + 50;
@@ -204,3 +204,4 @@ alert("Finished");
 </script>
 
 {% endblock %}
+
