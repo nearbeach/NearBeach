@@ -423,6 +423,123 @@ class document_tree_upload_form(forms.Form):
     )
 
 
+class email_form(ModelForm):
+    def __init__(self, *args, **kwargs):
+        location_id = kwargs.pop('location_id')
+        destination = kwargs.pop('destination',None)
+
+        super(email_form, self).__init__(*args, **kwargs)
+
+        if destination == 'organisation':
+            customer_results = customers.objects.filter(
+                is_deleted="FALSE",
+                organisations_id=location_id
+            )
+            self.fields['to_email'].required=False
+        elif destination == "customer":
+            customer_results = customers.objects.filter(
+                is_deleted="FALSE",
+                organisations_id__in=customers.objects.filter(customer_id=location_id).values('organisations_id')
+            )
+            self.fields['to_email'].required = True
+        elif destination == "project":
+            customer_results = customers.objects.filter(
+                is_deleted="FALSE",
+                organisations_id=project.objects.get(project_id=location_id).organisations_id.organisations_id
+            )
+        elif destination == "task":
+            customer_results = customers.objects.filter(
+                is_deleted="FALSE",
+                organisations_id=tasks.objects.get(tasks_id=location_id).organisations_id.organisations_id
+            )
+        elif destination == "opportunity":
+            customer_results = customers.objects.filter(
+                is_deleted="FALSE",
+                organisations_id=opportunity.objects.get(opportunity_id=location_id).organisations_id.organisations_id
+            )
+        elif destination == "quote":
+            customer_results = customers.objects.filter(
+                is_deleted="FALSE",
+                organisations_id=quotes.objects.get(quote_id=location_id).organisation_id.organisations_id
+            )
+        else:
+            customer_results = ''
+
+        self.fields['to_email'].queryset = customer_results
+        self.fields['cc_email'].queryset = customer_results
+        self.fields['bcc_email'].queryset = customer_results
+
+    organisation_email = forms.EmailField(
+        max_length=200,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'style': 'display: none;',
+        }),
+    )
+    to_email = forms.ModelMultipleChoiceField(
+        queryset=customers.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': "Choose the users(s)",
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+            'width': '500px',
+        }),
+    )
+    to_email = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=customers.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': "Choose the users(s)",
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+            'width': '500px',
+        }),
+
+    )
+    cc_email = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=customers.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': "Choose the users(s)",
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+            'width': '500px',
+        }),
+    )
+    bcc_email = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=customers.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': "Choose the users(s)",
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+            'width': '500px',
+        }),
+    )
+    email_subject = forms.CharField(
+        required=True,
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Email Subject',
+        }),
+    )
+    email_content = forms.CharField(
+        required=True,
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Place email content here',
+        })
+    )
+    private_email = forms.BooleanField(
+        required=False,
+    )
+
+    class Meta:
+        model = customers
+        fields = {
+
+        }
+
+
 class groups_form(ModelForm):
     group_name = forms.CharField(
         max_length=50,
@@ -1955,6 +2072,15 @@ class timeline_form(forms.Form):
     end_date=forms.DateField(
         required=True
     )
+
+
+class timeline_form(forms.Form):
+    start_date = forms.DateField(
+        widget=forms.DateInput(attrs={
+
+        })
+    )
+    end_date = forms.DateField()
 
 
 class to_do_form(ModelForm):

@@ -10,7 +10,8 @@
         //Load AJAX components
         reload_list_of_line_items();
         reload_new_line_item();
-        reload_responsible_customer();
+        reload_responsible_customer();\
+        load_email_history();
 
         set_permissions({{ quote_permission }})
     }
@@ -134,6 +135,11 @@
         <form method="post" class="list_of_responsible_customers" id="list_of_responsible_customers"></form>
     {% endif %}
 
+    <div id="email_history">
+        <h2>Email History</h2>
+        Loading...
+    </div>
+
 
 
 
@@ -154,9 +160,24 @@
         })
     });
     function csrfSafeMethod(method) {
-            // these HTTP methods do not require CSRF protection
-            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-        }
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    function load_email_history() {
+        $.ajax({
+            url: '/email_history/{{ quote_id }}/quote',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $("#email_history").html(data);
+            },
+            error: function() {
+                alert("Sorry, the email history could not load");
+            }
+        })
+    };
 
     // using jQuery to extract the CSRFToken
     function getCookie(name) {

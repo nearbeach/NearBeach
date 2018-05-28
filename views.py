@@ -19,7 +19,7 @@ from .misc_functions import *
 from .user_permissions import return_user_permission_level
 from datetime import timedelta
 from django.db.models import Max
-
+from django.core.mail import EmailMessage
 from geolocation.main import GoogleMaps
 
 
@@ -905,7 +905,7 @@ def customer_information(request, customer_id):
             print(form.errors)
 
     # Get the instance
-    customer_results = customers.objects.get(pk=customer_id)
+    customer_results = customers.objects.get(customer_id=customer_id)
     add_campus_results = organisations_campus.objects.filter(organisations_id=customer_results.organisations_id)
     quote_results = quotes.objects.filter(
         is_deleted="FALSE",
@@ -1384,6 +1384,346 @@ def delete_document(request, document_key):
 
     return HttpResponse(t.render(c, request))
     #SoMuchFun
+
+
+@login_required(login_url='login')
+def email(request,location_id,destination):
+    """
+    organisation
+    customer
+    project
+    task
+    opportunity
+    quote
+    """
+    if request.method == "POST":
+        form = email_form(
+            request.POST,
+            location_id=location_id,
+            destination=destination,
+        )
+        if form.is_valid():
+            #Extract form data
+            organisation_email = form.cleaned_data['organisation_email']
+
+            to_email = []
+            cc_email = []
+            bcc_email = []
+
+            if organisation_email:
+                to_email.append(organisation_email)
+
+            for row in form.cleaned_data['to_email']:
+                to_email.append(row.customer_email)
+
+            for row in form.cleaned_data['cc_email']:
+                cc_email.append(row.customer_email)
+
+            for row in form.cleaned_data['bcc_email']:
+                bcc_email.append(row.customer_email)
+
+            email = EmailMessage(
+                form.cleaned_data['email_subject'],
+                form.cleaned_data['email_content'],
+                'nearbeach@tpg.com.au',
+                to_email,
+                bcc_email,
+                cc=cc_email,
+                reply_to=['nearbeach@tpg.com.au'],
+            )
+            email.send(fail_silently=False)
+
+            """
+            Once the email has been sent with no errors. Then we save the content. :)
+            First create the content email
+            Then apply who got sent the email.
+            """
+            print(email_content)
+            email_content_submit=email_content(
+                email_subject= form.cleaned_data['email_subject'],
+                email_content=form.cleaned_data['email_content'],
+                change_user=request.user,
+            )
+            email_content_submit.save()
+
+            for row in form.cleaned_data['to_email']:
+                email_contact_submit=email_contact(
+                    email_content=email_content_submit,
+                    to_customers=customers.objects.get(customer_id=row.customer_id),
+                    change_user=request.user,
+                )
+                email_contact_submit.save()
+
+            for row in form.cleaned_data['cc_email']:
+                email_contact_submit = email_contact(
+                    email_content=email_content_submit,
+                    cc_customers=customers.objects.get(customer_id=row.customer_id),
+                    change_user = request.user,
+                )
+                email_contact_submit.save()
+
+            for row in form.cleaned_data['bcc_email']:
+                email_contact_submit = email_contact(
+                    email_content=email_content_submit,
+                    bcc_customers=customers.objects.get(customer_id=row.customer_id),
+                    change_user=request.user,
+                )
+                email_contact_submit.save()
+
+
+            if destination == "organisation":
+                email_contact_submit = email_contact(
+                    email_content=email_content_submit,
+                    organisations=organisations.objects.get(organisations_id=location_id),
+                    change_user=request.user,
+                )
+                email_contact_submit.save()
+            elif destination == "project":
+                email_contact_submit = email_contact(
+                    email_content=email_content_submit,
+                    project=project.objects.get(project_id=location_id),
+                    change_user=request.user,
+                )
+                email_contact_submit.save()
+            elif destination == "task":
+                email_contact_submit = email_contact(
+                    email_content=email_content_submit,
+                    tasks=tasks.objects.get(tasks_id=location_id),
+                    change_user=request.user,
+                )
+                email_contact_submit.save()
+            elif destination == "opportunity":
+                email_contact_submit = email_contact(
+                    email_content=email_content_submit,
+                    opportunity=opportunity.objects.get(opportunity_id=location_id),
+                    change_user=request.user,
+                )
+                email_contact_submit.save()
+            elif destination == "quote":
+                email_contact_submit = email_contact(
+                    email_content=email_content_submit,
+                    quotes=quotes.objects.get(quote_id=location_id),
+                    change_user=request.user,
+                )
+                email_contact_submit.save()
+
+
+
+
+            #Now go back where you came from
+            if destination == "organisation":
+                return HttpResponseRedirect(reverse('organisation_information', args={location_id}))
+            elif destination == "customer":
+                return HttpResponseRedirect(reverse('customer_information', args={location_id}))
+            elif destination == "project":
+                return HttpResponseRedirect(reverse('project_information', args={location_id}))
+            elif destination == "task":
+                return HttpResponseRedirect(reverse('task_information', args={location_id}))
+            elif destination == "opportunity":
+                return HttpResponseRedirect(reverse('opportunity_information', args={location_id}))
+            elif destination == "quote":
+                return HttpResponseRedirect(reverse('quote_information', args={location_id}))
+            else:
+                return HttpResponseRedirect(reverse('dashboard'))
+
+
+
+        else:
+            print("ERROR with email form.")
+            print(form.errors)
+
+    #Template
+    t = loader.get_template('NearBeach/email.html')
+
+    #Initiate form
+    if destination == "organisation":
+        organisation_results = organisations.objects.get(organisations_id=location_id)
+        initial = {
+            'organisation_email': organisation_results.organisation_email,
+        }
+    elif destination == "customer":
+        customer_results = customers.objects.get(
+            is_deleted="FALSE",
+            customer_id=location_id
+        )
+        initial = {
+            'to_email': customer_results.customer_id,
+        }
+    elif destination == "project":
+        customer_results = customers.objects.filter(
+            customer_id__in=project_customers.objects.filter(
+                is_deleted="FALSE",
+                project_id=location_id,
+            ).values('customer_id')
+        )
+        print(customer_results)
+        initial = {
+            'to_email': customer_results,
+        }
+    elif destination == "task":
+        customer_results = customers.objects.filter(
+            is_deleted="FALSE",
+            customer_id = tasks_customers.objects.filter(
+                is_deleted="FALSE",
+                tasks_id=location_id,
+            ).values('customer_id')
+        )
+        initial = {
+            'to_email': customer_results,
+        }
+    elif destination == "opportunity":
+        customer_results = customers.objects.filter(
+            Q(is_deleted="FALSE") &
+            Q(
+                Q(customer_id__in=opportunity.objects.filter(
+                    is_deleted="FALSE",
+                    opportunity_id=location_id,
+                ).values('customer_id')) |
+                Q(customer_id__in=customers.objects.filter(
+                    is_deleted="FALSE",
+                    organisations_id__in=opportunity.objects.filter(
+                        opportunity_id=location_id
+                    ).values('organisations_id')
+                ).values('customer_id')
+                )
+            )
+        )
+        initial = {
+            'to_email': customer_results,
+        }
+
+    elif destination == "quote":
+        customer_results = customers.objects.filter(
+            is_deleted="FALSE",
+            customer_id__in=quote_responsible_customers.objects.filter(
+                is_deleted="FALSE",
+                quote_id=location_id,
+            ).values('customer_id')
+        )
+        initial = {
+            'to_email': customer_results,
+        }
+    else:
+        print("FUCK! Something went wrong")
+
+
+    # context
+    c = {
+        'email_form': email_form(
+            initial=initial,
+            location_id=location_id,
+            destination=destination,
+        ),
+        'destination': destination,
+        'location_id': location_id,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def email_history(request,location_id,destination):
+    #Get data
+    if destination == "organisation":
+        email_results = email_content.objects.filter(
+            is_deleted="FALSE",
+            email_content_id__in=email_contact.objects.filter(
+                is_deleted="FALSE",
+                organisations_id=location_id,
+            ).values('email_content_id')
+        )
+    elif destination == "customer":
+        email_results = email_content.objects.filter(
+            is_deleted="FALSE",
+            email_content_id__in=email_contact.objects.filter(
+                (
+                        Q(to_customers=location_id) |
+                        Q(cc_customers=location_id)
+                )
+                & Q(is_deleted="FALSE"),
+            ).values('email_content_id')
+        )
+    elif destination == "project":
+        email_results = email_content.objects.filter(
+            is_deleted="FALSE",
+            email_content_id__in=email_contact.objects.filter(
+                project__isnull=False,
+            )
+        )
+    elif destination == "task":
+        email_results = email_content.objects.filter(
+            is_deleted="FALSE",
+            email_content_id__in=email_contact.objects.filter(
+                tasks__isnull=False,
+            )
+        )
+    elif destination == "opportunity":
+        email_results = email_content.objects.filter(
+            is_deleted="FALSE",
+            email_content_id__in=email_contact.objects.filter(
+                opportunity__isnull=False,
+            )
+        )
+    elif destination == "quote":
+        email_results = email_content.objects.filter(
+            is_deleted="FALSE",
+            email_content_id__in=email_contact.objects.filter(
+                quotes__isnull=False,
+            )
+        )
+    else:
+        email_results = ''
+
+    # Template
+    t = loader.get_template('NearBeach/email_history.html')
+
+    print(email_results)
+
+    # context
+    c = {
+        'destination': destination,
+        'location_id': location_id,
+        'email_results': email_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def email_information(request,email_content_id):
+    email_content_results = email_content.objects.get(
+        is_deleted="FALSE",
+        email_content_id=email_content_id,
+    )
+
+    to_email_results = email_contact.objects.filter(
+        is_deleted="FALSE",
+        email_content_id=email_content_id,
+        to_customers__isnull=False,
+    )
+    cc_email_results = email_contact.objects.filter(
+        is_deleted="FALSE",
+        email_content_id=email_content_id,
+        cc_customers__isnull=False,
+    )
+    bcc_email_results = email_contact.objects.filter(
+        is_deleted="FALSE",
+        email_content_id=email_content_id,
+        bcc_customers__isnull=False,
+    )
+
+    # Template
+    t = loader.get_template('NearBeach/email_information.html')
+
+    # context
+    c = {
+        'email_content_results': email_content_results,
+        'to_email_results': to_email_results,
+        'cc_email_results': cc_email_results,
+        'bcc_email_results': bcc_email_results,
+    }
+
+    return HttpResponse(t.render(c, request))
 
 
 
@@ -4256,17 +4596,87 @@ def task_information(request, task_id):
 
 @login_required(login_url='login')
 def timeline(request):
-    #Extract required data
-
-
-    # Load the template
     t = loader.get_template('NearBeach/timeline.html')
 
     # context
     c = {
+        'timeline_form': timeline_form(),
+        'start_date': datetime.datetime.now(),
+        'end_date': datetime.datetime.now() + datetime.timedelta(days=31),
     }
 
     return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def timeline_data(request, destination):
+    if request.method == "POST":
+        form = timeline_form(request.POST)
+        if form.is_valid():
+            #Get Variables
+            start_date = form.cleaned_data['start_date']
+            end_date = form.cleaned_data['end_date']
+
+            #Get json_data
+            if destination == "project":
+                json_results = serializers.serialize(
+                    'json',
+                    project.objects.filter(
+                        Q(is_deleted="FALSE") &
+                        Q(
+                            # Start and end date out of bounds
+                            Q(
+                                project_start_date__lte=start_date,
+                                project_end_date__gte=end_date,
+                            ) |
+
+                            # Start date between start and end date
+                            Q(
+                                project_start_date__gte=start_date,
+                                project_start_date__lte=end_date,
+                            ) |
+
+                            # End date betweeen start and end date
+                            Q(
+                                project_end_date__gte=start_date,
+                                project_end_date__lte=end_date,
+                            )
+                        )
+
+                        # ADD IN OTHER OPTIONS LATER
+                    ),
+                    fields={
+                        'project_id',
+                        'project_name',
+                        'project_start_date',
+                        'project_end_date',
+                    }
+                )
+                print(json_results)
+            else:
+                json_results = serializers.serialize(
+                    'json',
+                    tasks.objects.filter(
+                        is_deleted="FALSE",
+                        # ADD IN OTHER OPTIONS LATER
+                    ),
+                    fields={
+                        'task_id',
+                        'task_short_description',
+                        'task_start_date',
+                        'task_end_date',
+                    }
+
+                )
+
+            return HttpResponse(json_results, content_type='application/json')
+        else:
+            print(form.errors)
+
+    else:
+        return HttpResponseBadRequest("timeline date has to be done in post!")
+
 
 
 

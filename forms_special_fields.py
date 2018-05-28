@@ -1,11 +1,12 @@
 from django import forms
 from django.core.validators import ValidationError
 from django.utils.encoding import smart_unicode
-from NearBeach.models import products_and_services, list_of_countries_regions, list_of_countries
+from NearBeach.models import products_and_services, list_of_countries_regions, list_of_countries, customers
 from django.utils.html import escape, mark_safe
 
 
 import gettext
+
 
 class ProductOrServiceSelect(forms.Select):
     def render(self, name, value, attrs=None, choices=()):
@@ -96,6 +97,45 @@ class RegionSelect(forms.Select):
         output = output + u'</optgroup></option>'
         return output
 
+    def clean(self, value):
+
+        value = super(forms.ChoiceField, self).clean(value)
+        if value in (None, ''):
+            value = u''
+        value = forms.util.smart_unicode(value)
+        if value == u'':
+            return value
+        valid_values = []
+        for group_label, group in self.choices:
+            valid_values += [str(k) for k, v in group]
+        if value not in valid_values:
+            raise ValidationError(gettext(u'Select a valid choice. That choice is not one of the available choices.'))
+        return value
+
+
+class ToEmailSelect(forms.SelectMultiple):
+    def render(self, name, value, attrs=None, choices=()):
+        if value is None: value = ''
+
+        # Get SQL Objects
+        customer_results = customers.objects.filter(
+            is_deleted="FALSE"
+        )
+
+        # Start the rendering
+        output = u'<select name="to_email" id="id_to_email" class="chosen-select"><option value="------" selected disabled> Select an Email </option>'
+
+        # Render the emails
+        for option in customer_results:
+            option_value = smart_unicode(option.customer_id)
+            option_label = smart_unicode(option.customer_email)
+            output = output + u'<option value="%s">%s' % (escape(option_value), escape(option_label))
+            output = output + u'</option>'
+
+        #Close off select
+        output = output + u'</select>'
+
+        return output
     def clean(self, value):
 
         value = super(forms.ChoiceField, self).clean(value)
