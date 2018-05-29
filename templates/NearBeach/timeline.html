@@ -55,6 +55,10 @@ function end_of_month(input_date) {
 }
 
 function render_timeline() {
+    //Clear the board
+    $("#timeline").html("");
+
+
     //Start drawing the board
     var draw = SVG('timeline').size('100%','100%');
     draw.style({minWidth: 100, minHeight: 100});
@@ -67,19 +71,19 @@ function render_timeline() {
     var month_end_length = 0;
     var stroke_prop = { width: 1, color: 'black' }
     var _MS_PER_DAY = 1000 * 60 * 60 * 24;
-    var start_date = new Date("{{ start_date|date:'Y-m-d' }}");
-    var end_date = new Date("{{ end_date|date:'Y-m-d' }}");
+    var start_date = $("#id_start_date").datepicker("getDate");
+    var end_date = $("#id_end_date").datepicker("getDate");
 
-
+    var current_date = new Date();
+    current_date.setDate(start_date.getDate());
 
     draw.rect(start_distance,90).fill("#fff").stroke(stroke_prop);
-    for (var i = 0; i < (end_date - start_date)/_MS_PER_DAY; i++) {
+    for (var i = 0; i < (Date.parse(end_date) - Date.parse(start_date))/_MS_PER_DAY; i++) {
         //Loop variables
         var x_cord = 600 + i*100;
         month_end_length = month_end_length + 100;
 
         //Get the date
-        var current_date = new Date();
         current_date.setDate(start_date.getDate() + i);
 
         //Day number
@@ -188,16 +192,7 @@ function render_timeline() {
             alert("There is no project data");
         }
     });
-
-
-
-
 }
-
-
-
-
-alert("Finished");
 
 
 
