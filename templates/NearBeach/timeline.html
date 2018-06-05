@@ -83,8 +83,8 @@ function render_timeline() {
         var x_cord = 600 + i*100;
         month_end_length = month_end_length + 100;
 
-        //Get the date
-        current_date.setDate(start_date.getDate() + i);
+        //Get the date - please note you set it in the TIME. setDate has issues.
+        current_date.setTime(start_date.getTime() + i*_MS_PER_DAY);
 
         //Day number
         draw.rect(100,30).fill("#fff").stroke(stroke_prop).move(x_cord,30);
