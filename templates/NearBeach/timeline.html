@@ -18,7 +18,7 @@
     </form>
 
     <br/>
-    <div id="timeline" style="overflow-x: scroll;"></div>
+    <div id="timeline" style="width: 100%; overflow: auto;"></div>
     {{ project_results }}
 
 <script>
@@ -60,7 +60,7 @@ function render_timeline() {
 
 
     //Start drawing the board
-    var draw = SVG('timeline').size('100%','100%');
+    var draw = SVG('timeline').size('30000','100%'); //The width will need to be calculated dynamically in the future.
     draw.style({minWidth: 100, minHeight: 100});
     $("#timeline").height(500);
 
