@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
 from django import forms
 
 
@@ -485,17 +486,6 @@ class email_form(ModelForm):
             'width': '500px',
         }),
     )
-    to_email = forms.ModelMultipleChoiceField(
-        required=False,
-        queryset=customers.objects.all(),
-        widget=forms.SelectMultiple(attrs={
-            'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
-            'multiple tabindex': '4',
-            'width': '500px',
-        }),
-
-    )
     cc_email = forms.ModelMultipleChoiceField(
         required=False,
         queryset=customers.objects.all(),
@@ -525,10 +515,11 @@ class email_form(ModelForm):
     )
     email_content = forms.CharField(
         required=True,
-        widget=forms.Textarea(attrs={
-            'placeholder': 'Place email content here',
+        widget=forms.CharField(attrs={
+            'placeholder': 'Email Content',
         })
     )
+
     is_private = forms.BooleanField(
         required=False,
     )

@@ -3,51 +3,48 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
 <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
-<!--<script src="{% static 'NearBeach/javascript/tinymce/tinymce.min.js' %}"></script>-->
+
+
+
+<form action={% url 'email' location_id destination %} method="post" enctype="multipart/form-data" class="email" multiple="multiple" data-is-stacked="0">
+{% csrf_token %}
+    <h2>Email</h2>
+    {% csrf_token %}
+    <ul>
+        <li>
+            {{ email_form.organisation_email  }}
+            {% if destination == "organisation" %}
+                <a id="remove_organisation_id" href="javascript:void(0)" onclick="remove_organisation()">Click here to remove organisation from email list</a>
+            {% endif %}
+        </li>
+        <li>To: {{ email_form.to_email }}</li>
+        <li>CC: {{ email_form.cc_email }}</li>
+        <li>BCC: {{ email_form.bcc_email }}</li>
+        <li>{{ email_form.email_subject }}</li>
+        <li>{{ email_form.email_content }}</li>
+        <li>Private Email: {{ email_form.is_private }}</li>
+        <li>
+            <input type="submit" value="Send Email">
+            {% if destination == "customer" %}
+                <a href="{% url 'customer_information' location_id %}">Cancel Email</a>
+            {% else %}
+                <a href="{% url 'organisation_information' location_id %}">Cancel Email</a>
+            {% endif %}
+        </li>
+    </ul>
+
+    <table>
+        {{ email_form.as_table }}
+    </table>
+</form>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
 <script>
-    function on_page_load() {
-        /*tinymce.init({
-            selector: '#id_email_content'
-        });--*/
+    function remove_organisation() {
+        $("#id_organisation_email").val("");
+        $("#remove_organisation_id").html("");
+        $("#id_to_email").prop('required',true);
     }
 </script>
-<body onload="on_page_load()">
-    <form action={% url 'email' location_id destination %} method="post" enctype="multipart/form-data" class="email" multiple="multiple" data-is-stacked="0">
-    {% csrf_token %}
-        <h2>Email</h2>
-        {% csrf_token %}
-        <ul>
-            <li>
-                {{ email_form.organisation_email  }}
-                {% if destination == "organisation" %}
-                    <a id="remove_organisation_id" href="javascript:void(0)" onclick="remove_organisation()">Click here to remove organisation from email list</a>
-                {% endif %}
-            </li>
-            <li>To: {{ email_form.to_email }}</li>
-            <li>CC: {{ email_form.cc_email }}</li>
-            <li>BCC: {{ email_form.bcc_email }}</li>
-            <li>{{ email_form.email_subject }}</li>
-            <li>{{ email_form.email_content }}</li>
-            <li>Private Email: {{ email_form.is_private }}</li>
-            <li>
-                <input type="submit" value="Send Email">
-                {% if destination == "customer" %}
-                    <a href="{% url 'customer_information' location_id %}">Cancel Email</a>
-                {% else %}
-                    <a href="{% url 'organisation_information' location_id %}">Cancel Email</a>
-                {% endif %}
-            </li>
-        </ul>
-    </form>
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
-    <script>
-        function remove_organisation() {
-            $("#id_organisation_email").val("");
-            $("#remove_organisation_id").html("");
-            $("#id_to_email").prop('required',true);
-        }
-    </script>
-</body>
 {% endblock %}
