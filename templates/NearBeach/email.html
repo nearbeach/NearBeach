@@ -28,7 +28,7 @@
             <li>BCC: {{ email_form.bcc_email }}</li>
             <li>{{ email_form.email_subject }}</li>
             <li>{{ email_form.email_content }}</li>
-            <li>Private Email: {{ email_form.private_email }}</li>
+            <li>Private Email: {{ email_form.is_private }}</li>
             <li>
                 <input type="submit" value="Send Email">
                 {% if destination == "customer" %}

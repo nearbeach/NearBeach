@@ -529,7 +529,7 @@ class email_form(ModelForm):
             'placeholder': 'Place email content here',
         })
     )
-    private_email = forms.BooleanField(
+    is_private = forms.BooleanField(
         required=False,
     )
 
