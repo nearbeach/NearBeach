@@ -515,7 +515,7 @@ class email_form(ModelForm):
     )
     email_content = forms.CharField(
         required=True,
-        widget=forms.TextInput(attrs={
+        widget=forms.Textarea(attrs={
             'placeholder': 'Email Content'
         })
     )
