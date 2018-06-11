@@ -81,7 +81,6 @@ def information_customer_contact_history(request, customer_id):
                     contact_history=contact_history_notes,
                     user_id=current_user,
                     change_user=request.user,
-                    document_key=documents_save,
                 )
                 if contact_attachment:
                     submit_history.document_key = documents_save
