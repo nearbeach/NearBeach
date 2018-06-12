@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
 from django import forms
 
 
