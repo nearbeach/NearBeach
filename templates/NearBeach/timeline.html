@@ -7,7 +7,9 @@
 }
     </style>
     <script src="{% static 'NearBeach/javascript/svg.js/svg.js' %}"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="{% static 'NearBeach/javascript/jquery/jquery-ui.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'NearBeach/javascript/jquery/jquery-ui.css' %}">
+
     <h2>Timeline</h2>
     <form id="date_form">
     {% csrf_token %}
@@ -18,7 +20,7 @@
     </form>
 
     <br/>
-    <div id="timeline"></div>
+    <div id="timeline" style="width: 100%; overflow: auto;"></div>
     {{ project_results }}
 
 <script>
@@ -55,8 +57,12 @@ function end_of_month(input_date) {
 }
 
 function render_timeline() {
+    //Clear the board
+    $("#timeline").html("");
+
+
     //Start drawing the board
-    var draw = SVG('timeline').size('100%','100%');
+    var draw = SVG('timeline').size('30000','100%'); //The width will need to be calculated dynamically in the future.
     draw.style({minWidth: 100, minHeight: 100});
     $("#timeline").height(500);
 
@@ -67,20 +73,20 @@ function render_timeline() {
     var month_end_length = 0;
     var stroke_prop = { width: 1, color: 'black' }
     var _MS_PER_DAY = 1000 * 60 * 60 * 24;
-    var start_date = new Date("{{ start_date|date:'Y-m-d' }}");
-    var end_date = new Date("{{ end_date|date:'Y-m-d' }}");
+    var start_date = $("#id_start_date").datepicker("getDate");
+    var end_date = $("#id_end_date").datepicker("getDate");
 
-
+    var current_date = new Date();
+    current_date.setDate(start_date.getDate());
 
     draw.rect(start_distance,90).fill("#fff").stroke(stroke_prop);
-    for (var i = 0; i < (end_date - start_date)/_MS_PER_DAY; i++) {
+    for (var i = 0; i < (Date.parse(end_date) - Date.parse(start_date))/_MS_PER_DAY; i++) {
         //Loop variables
         var x_cord = 600 + i*100;
         month_end_length = month_end_length + 100;
 
-        //Get the date
-        var current_date = new Date();
-        current_date.setDate(start_date.getDate() + i);
+        //Get the date - please note you set it in the TIME. setDate has issues.
+        current_date.setTime(start_date.getTime() + i*_MS_PER_DAY);
 
         //Day number
         draw.rect(100,30).fill("#fff").stroke(stroke_prop).move(x_cord,30);
@@ -90,8 +96,8 @@ function render_timeline() {
         //Hour number
         draw.rect(50,30).fill("#fff").stroke({ width: 1, color: 'black' }).move(x_cord, 60);
         draw.rect(50,30).fill("#fff").stroke({ width: 1, color: 'black' }).move(x_cord+50, 60);
-        draw.text("0h").move(x_cord,60);
-        draw.text("12h").move(x_cord+50,60);
+        draw.text("AM").move(x_cord,60);
+        draw.text("PM").move(x_cord+50,60);
 
 
         if (end_of_month(current_date)) {
@@ -165,7 +171,7 @@ function render_timeline() {
 
 
                 //Figure out the timeline length
-                timeline_length = 100*(project_start_time-start_date)/_MS_PER_DAY;
+                timeline_length = 100*Math.floor((project_end_time-project_start_time)/_MS_PER_DAY);
 
                 if ((project_start_time.getHours() < 12) && (project_end_time.getHours() < 12)) {
                     timeline_length = timeline_length + 50;
@@ -188,19 +194,11 @@ function render_timeline() {
             alert("There is no project data");
         }
     });
-
-
-
-
 }
-
-
-
-
-alert("Finished");
 
 
 
 </script>
 
 {% endblock %}
+

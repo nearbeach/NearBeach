@@ -485,17 +485,6 @@ class email_form(ModelForm):
             'width': '500px',
         }),
     )
-    to_email = forms.ModelMultipleChoiceField(
-        required=False,
-        queryset=customers.objects.all(),
-        widget=forms.SelectMultiple(attrs={
-            'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
-            'multiple tabindex': '4',
-            'width': '500px',
-        }),
-
-    )
     cc_email = forms.ModelMultipleChoiceField(
         required=False,
         queryset=customers.objects.all(),
@@ -526,10 +515,11 @@ class email_form(ModelForm):
     email_content = forms.CharField(
         required=True,
         widget=forms.Textarea(attrs={
-            'placeholder': 'Place email content here',
+            'placeholder': 'Email Content'
         })
     )
-    private_email = forms.BooleanField(
+
+    is_private = forms.BooleanField(
         required=False,
     )
 
@@ -2077,10 +2067,14 @@ class timeline_form(forms.Form):
 class timeline_form(forms.Form):
     start_date = forms.DateField(
         widget=forms.DateInput(attrs={
-
+            'onchange': 'render_timeline()',
         })
     )
-    end_date = forms.DateField()
+    end_date = forms.DateField(
+        widget=forms.DateInput(attrs={
+            'onchange': 'render_timeline()',
+        })
+    )
 
 
 class to_do_form(ModelForm):

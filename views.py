@@ -1409,6 +1409,15 @@ def email(request,location_id,destination):
             to_email = []
             cc_email = []
             bcc_email = []
+            from_email = ''
+
+            #Get the current user's email
+            current_user = User.objects.get(id=request.user.id)
+
+            if current_user.email == '':
+                from_email = settings.EMAIL_HOST_USER
+            else:
+                from_email = current_user.email
 
             if organisation_email:
                 to_email.append(organisation_email)
@@ -1425,7 +1434,7 @@ def email(request,location_id,destination):
             email = EmailMessage(
                 form.cleaned_data['email_subject'],
                 form.cleaned_data['email_content'],
-                'nearbeach@tpg.com.au',
+                from_email,
                 to_email,
                 bcc_email,
                 cc=cc_email,
@@ -1443,6 +1452,7 @@ def email(request,location_id,destination):
                 email_subject= form.cleaned_data['email_subject'],
                 email_content=form.cleaned_data['email_content'],
                 change_user=request.user,
+                is_private=form.cleaned_data['is_private'],
             )
             email_content_submit.save()
 
@@ -1451,6 +1461,7 @@ def email(request,location_id,destination):
                     email_content=email_content_submit,
                     to_customers=customers.objects.get(customer_id=row.customer_id),
                     change_user=request.user,
+                    is_private=form.cleaned_data['is_private'],
                 )
                 email_contact_submit.save()
 
@@ -1459,6 +1470,7 @@ def email(request,location_id,destination):
                     email_content=email_content_submit,
                     cc_customers=customers.objects.get(customer_id=row.customer_id),
                     change_user = request.user,
+                    is_private=form.cleaned_data['is_private'],
                 )
                 email_contact_submit.save()
 
@@ -1467,15 +1479,16 @@ def email(request,location_id,destination):
                     email_content=email_content_submit,
                     bcc_customers=customers.objects.get(customer_id=row.customer_id),
                     change_user=request.user,
+                    is_private=form.cleaned_data['is_private'],
                 )
                 email_contact_submit.save()
-
 
             if destination == "organisation":
                 email_contact_submit = email_contact(
                     email_content=email_content_submit,
                     organisations=organisations.objects.get(organisations_id=location_id),
                     change_user=request.user,
+                    is_private=form.cleaned_data['is_private'],
                 )
                 email_contact_submit.save()
             elif destination == "project":
@@ -1483,6 +1496,7 @@ def email(request,location_id,destination):
                     email_content=email_content_submit,
                     project=project.objects.get(project_id=location_id),
                     change_user=request.user,
+                    is_private=form.cleaned_data['is_private'],
                 )
                 email_contact_submit.save()
             elif destination == "task":
@@ -1490,6 +1504,7 @@ def email(request,location_id,destination):
                     email_content=email_content_submit,
                     tasks=tasks.objects.get(tasks_id=location_id),
                     change_user=request.user,
+                    is_private=form.cleaned_data['is_private'],
                 )
                 email_contact_submit.save()
             elif destination == "opportunity":
@@ -1497,6 +1512,7 @@ def email(request,location_id,destination):
                     email_content=email_content_submit,
                     opportunity=opportunity.objects.get(opportunity_id=location_id),
                     change_user=request.user,
+                    is_private=form.cleaned_data['is_private'],
                 )
                 email_contact_submit.save()
             elif destination == "quote":
@@ -1504,8 +1520,12 @@ def email(request,location_id,destination):
                     email_content=email_content_submit,
                     quotes=quotes.objects.get(quote_id=location_id),
                     change_user=request.user,
+                    is_private=form.cleaned_data['is_private'],
                 )
                 email_contact_submit.save()
+
+
+
 
 
 
@@ -1628,8 +1648,12 @@ def email_history(request,location_id,destination):
         email_results = email_content.objects.filter(
             is_deleted="FALSE",
             email_content_id__in=email_contact.objects.filter(
-                is_deleted="FALSE",
-                organisations_id=location_id,
+                Q(is_deleted="FALSE") &
+                Q(organisations_id=location_id) &
+                Q(
+                    Q(is_private=False) |
+                    Q(change_user=request.user)
+                )
             ).values('email_content_id')
         )
     elif destination == "customer":
@@ -1639,36 +1663,60 @@ def email_history(request,location_id,destination):
                 (
                         Q(to_customers=location_id) |
                         Q(cc_customers=location_id)
+                ) &
+                Q(is_deleted="FALSE") &
+                Q(
+                    Q(is_private=False) |
+                    Q(change_user=request.user)
                 )
-                & Q(is_deleted="FALSE"),
             ).values('email_content_id')
         )
     elif destination == "project":
         email_results = email_content.objects.filter(
             is_deleted="FALSE",
             email_content_id__in=email_contact.objects.filter(
-                project__isnull=False,
-            )
+                Q(project=location_id) &
+                Q(is_deleted="FALSE") &
+                Q(
+                    Q(is_private=False) |
+                    Q(change_user=request.user)
+                )
+            ).values('email_content_id')
         )
     elif destination == "task":
         email_results = email_content.objects.filter(
             is_deleted="FALSE",
             email_content_id__in=email_contact.objects.filter(
-                tasks__isnull=False,
-            )
+                Q(tasks_id=location_id) &
+                Q(is_deleted="FALSE") &
+                Q(
+                    Q(is_private=False) |
+                    Q(change_user=request.user)
+                )
+            ).values('email_content_id')
         )
     elif destination == "opportunity":
         email_results = email_content.objects.filter(
             is_deleted="FALSE",
             email_content_id__in=email_contact.objects.filter(
-                opportunity__isnull=False,
+                Q(opportunity__isnull=False) &
+                Q(is_deleted="FALSE") &
+                Q(
+                    Q(is_private=False) |
+                    Q(change_user=request.user)
+                )
             )
         )
     elif destination == "quote":
         email_results = email_content.objects.filter(
             is_deleted="FALSE",
             email_content_id__in=email_contact.objects.filter(
-                quotes__isnull=False,
+                Q(quotes__isnull=False) &
+                Q(is_deleted="FALSE") &
+                Q(
+                    Q(is_private=False) |
+                    Q(change_user=request.user)
+                )
             )
         )
     else:
@@ -1711,6 +1759,11 @@ def email_information(request,email_content_id):
         email_content_id=email_content_id,
         bcc_customers__isnull=False,
     )
+
+    #Check to make sure it isn't private
+    if email_content_results.is_private == True and not email_content_results.change_user == request.user:
+        #The email is private and the user is not the original creator
+        return HttpResponseRedirect(reverse('permission_denied'))
 
     # Template
     t = loader.get_template('NearBeach/email_information.html')
