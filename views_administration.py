@@ -552,7 +552,7 @@ def permission_set_information_edit(request, permission_set_id):
     c = {
         'permission_set_form': permission_set_form(initial=initial),
         'save_errors': save_errors,
-        'permission_set_id': permission_set_id
+        'permission_set_id': permission_set_id,
     }
 
     return HttpResponse(t.render(c, request))

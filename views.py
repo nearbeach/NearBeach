@@ -4668,6 +4668,8 @@ def task_information(request, task_id):
 
 @login_required(login_url='login')
 def timeline(request):
+    permission_results = return_user_permission_level(request, [],[])
+
     t = loader.get_template('NearBeach/timeline.html')
 
     # context
@@ -4675,6 +4677,8 @@ def timeline(request):
         'timeline_form': timeline_form(),
         'start_date': datetime.datetime.now(),
         'end_date': datetime.datetime.now() + datetime.timedelta(days=31),
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
