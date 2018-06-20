@@ -345,7 +345,7 @@ def requirement_items_new_link(request, requirement_item_id, location_id= '', de
     cursor = connection.cursor()
 
     cursor.execute("""
-    SELECT 
+    SELECT DISTINCT 
       project.project_id
     , project.project_name
 
@@ -369,7 +369,7 @@ def requirement_items_new_link(request, requirement_item_id, location_id= '', de
     project_results = namedtuplefetchall(cursor)
 
     cursor.execute("""
-    select 
+    select DISTINCT 
      tasks.tasks_id
     , tasks.task_short_description
     
@@ -495,7 +495,7 @@ def requirement_new_link(request, requirement_id, location_id='', destination=''
     cursor = connection.cursor()
 
     cursor.execute("""
-        SELECT 
+        SELECT DISTINCT 
           project.project_id
         , project.project_name
 
@@ -519,7 +519,7 @@ def requirement_new_link(request, requirement_id, location_id='', destination=''
     project_results = namedtuplefetchall(cursor)
 
     cursor.execute("""
-        select 
+        select DISTINCT 
          tasks.tasks_id
         , tasks.task_short_description
 

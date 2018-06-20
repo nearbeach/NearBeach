@@ -122,6 +122,7 @@
                 dataType: "HTML",
                 success: function(data) {
                     $("#new_card_form").html(data);
+                    $("#id_kanban_card_text").focus();
                 },
                 error: function() {
                     alert("We are sorry, something went wrong with getting the new card ready.");

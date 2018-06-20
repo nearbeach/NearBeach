@@ -1509,6 +1509,7 @@ class permission_set_manager(models.Manager):
             bug,
             bug_client,
             customer,
+            email,
             invoice,
             invoice_product,
             kanban,
@@ -1540,6 +1541,7 @@ class permission_set_manager(models.Manager):
             bug=bug,
             bug_client=bug_client,
             customer=customer,
+            email=email,
             invoice=invoice,
             invoice_product=invoice_product,
             kanban=kanban,
@@ -1599,6 +1601,10 @@ class permission_set(models.Model):
         default=0,
     )
     bug_client = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
+    email = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
     )

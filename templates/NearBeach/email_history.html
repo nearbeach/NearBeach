@@ -1,6 +1,6 @@
 <h2>Email History</h2>
 <a href="{% url 'email' location_id destination %}">Create a new email</a>
-{% if email_results %}
+{% if email_results and not email_permission == 0 %}
     <table>
         <tr>
             <td width="70%">Subject</td>
@@ -9,7 +9,9 @@
         </tr>
         {% for row in email_results %}
             <tr>
-                <td><a href="{% url 'email_information' row.email_content_id %}">{{ row.email_subject }}</a></td>
+                {% if email_permission > 1 %}
+                    <td><a href="{% url 'email_information' row.email_content_id %}">{{ row.email_subject }}</a></td>
+                {% endif %}
                 <td>{{ row.date_created }}</td>
                 <td>{{ row.change_user }}</td>
             </tr>

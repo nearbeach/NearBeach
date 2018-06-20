@@ -460,7 +460,7 @@ class email_form(ModelForm):
         elif destination == "quote":
             customer_results = customers.objects.filter(
                 is_deleted="FALSE",
-                organisations_id=quotes.objects.get(quote_id=location_id).organisation_id.organisations_id
+                organisations_id=quotes.objects.get(quote_id=location_id).project_id.organisations_id.organisations_id
             )
         else:
             customer_results = ''

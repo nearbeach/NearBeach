@@ -162,8 +162,11 @@ def information_project_customers(request, project_id):
         organisations_id=project_results.organisations_id,
         is_deleted="FALSE",
     ).exclude(
-        customer_id__in=tasks_customers.objects.filter(tasks_id=project_results.project_id).values('customer_id')
+        customer_id__in=project_customers.objects.filter(
+            project_id=project_results.project_id
+        ).values('customer_id')
     )
+
 
     #Cursor for custom SQL :)
     cursor = connection.cursor()

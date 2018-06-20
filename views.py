@@ -1388,6 +1388,11 @@ def delete_document(request, document_key):
 
 @login_required(login_url='login')
 def email(request,location_id,destination):
+    permission_results = return_user_permission_level(request, None, 'email')
+
+    if permission_results['email'] < 2:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     """
     organisation
     customer
@@ -1636,6 +1641,9 @@ def email(request,location_id,destination):
         ),
         'destination': destination,
         'location_id': location_id,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+
     }
 
     return HttpResponse(t.render(c, request))
@@ -1643,6 +1651,8 @@ def email(request,location_id,destination):
 
 @login_required(login_url='login')
 def email_history(request,location_id,destination):
+    permission_results = return_user_permission_level(request, None, 'email')
+
     #Get data
     if destination == "organisation":
         email_results = email_content.objects.filter(
@@ -1699,25 +1709,25 @@ def email_history(request,location_id,destination):
         email_results = email_content.objects.filter(
             is_deleted="FALSE",
             email_content_id__in=email_contact.objects.filter(
-                Q(opportunity__isnull=False) &
+                Q(opportunity_id=location_id) &
                 Q(is_deleted="FALSE") &
                 Q(
                     Q(is_private=False) |
                     Q(change_user=request.user)
                 )
-            )
+            ).values('email_content_id')
         )
     elif destination == "quote":
         email_results = email_content.objects.filter(
             is_deleted="FALSE",
             email_content_id__in=email_contact.objects.filter(
-                Q(quotes__isnull=False) &
+                Q(quotes=location_id) &
                 Q(is_deleted="FALSE") &
                 Q(
                     Q(is_private=False) |
                     Q(change_user=request.user)
                 )
-            )
+            ).values('email_content_id')
         )
     else:
         email_results = ''
@@ -1732,6 +1742,7 @@ def email_history(request,location_id,destination):
         'destination': destination,
         'location_id': location_id,
         'email_results': email_results,
+        'email_permission': permission_results['email'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -1739,6 +1750,11 @@ def email_history(request,location_id,destination):
 
 @login_required(login_url='login')
 def email_information(request,email_content_id):
+    permission_results = return_user_permission_level(request, None, 'email')
+
+    if permission_results['email'] < 1:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     email_content_results = email_content.objects.get(
         is_deleted="FALSE",
         email_content_id=email_content_id,
@@ -1774,6 +1790,9 @@ def email_information(request,email_content_id):
         'to_email_results': to_email_results,
         'cc_email_results': cc_email_results,
         'bcc_email_results': bcc_email_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+
     }
 
     return HttpResponse(t.render(c, request))
@@ -2353,18 +2372,26 @@ def login(request):
                         administration_create_users=4,
                         assign_campus_to_customer=4,
                         associate_project_and_tasks=4,
+                        bug=4,
+                        bug_client=4,
                         customer=4,
+                        email=4,
                         invoice=4,
                         invoice_product=4,
+                        kanban=4,
+                        kanban_card=4,
                         opportunity=4,
                         organisation=4,
                         organisation_campus=4,
                         project=4,
+                        quote=4,
                         requirement=4,
                         requirement_link=4,
                         task=4,
+                        tax=4,
                         documents=1,
                         contact_history=1,
+                        kanban_comment=1,
                         project_history=1,
                         task_history=1,
                         change_user=request.user,
@@ -4649,6 +4676,8 @@ def task_information(request, task_id):
 
 @login_required(login_url='login')
 def timeline(request):
+    permission_results = return_user_permission_level(request, [],[])
+
     t = loader.get_template('NearBeach/timeline.html')
 
     # context
@@ -4656,6 +4685,8 @@ def timeline(request):
         'timeline_form': timeline_form(),
         'start_date': datetime.datetime.now(),
         'end_date': datetime.datetime.now() + datetime.timedelta(days=31),
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))

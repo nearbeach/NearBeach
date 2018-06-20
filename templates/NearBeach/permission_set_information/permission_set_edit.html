@@ -1,4 +1,7 @@
 {% csrf_token %}
+{% if permission_set_id == '1' %}
+    <p>Can not edit administration</p>
+{% else %}
 <ul style="background-color: lightgreen">
     {% if save_errors %}
         <li><b>THERE WAS AN ERROR SAVING!</b></li>
@@ -9,3 +12,4 @@
     <li><input type="submit" value="Submit Permission Set"></li>
     <li id="permission_set_id" value="{{ permission_set_id }}"></li>
 </ul>
+{% endif %}
