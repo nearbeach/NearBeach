@@ -80,6 +80,7 @@
     }
 
     function load_permission_edit(permission_set_id) {
+        if (permission_set_id == 1) {return false; }
         $.ajax({
             url: '/permission_set_information_edit/' + permission_set_id + '/',
             data: {},

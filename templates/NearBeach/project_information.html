@@ -355,6 +355,8 @@
 
 
     function complete_to_do(to_do_id) {
+        $("#to_do_"+to_do_id).html("Completing...");
+
         //Send data to the database
         $.ajaxSetup({
             beforeSend: function (xhr, settings) {
@@ -373,6 +375,7 @@
             },
             error: function() {
                 alert("Can not complete To do :(");
+                $("#to_do_"+to_do_id).html('<a href="javascript:void(0)" onclick="complete_to_do(' + to_do_id + '">Complete</a>')
             }
         });
     }
