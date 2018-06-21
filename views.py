@@ -19,7 +19,7 @@ from .misc_functions import *
 from .user_permissions import return_user_permission_level
 from datetime import timedelta
 from django.db.models import Max
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, EmailMultiAlternatives
 from geolocation.main import GoogleMaps
 
 
@@ -1436,7 +1436,7 @@ def email(request,location_id,destination):
             for row in form.cleaned_data['bcc_email']:
                 bcc_email.append(row.customer_email)
 
-            email = EmailMessage(
+            email = EmailMultiAlternatives(
                 form.cleaned_data['email_subject'],
                 form.cleaned_data['email_content'],
                 from_email,
@@ -1445,7 +1445,10 @@ def email(request,location_id,destination):
                 cc=cc_email,
                 reply_to=['nearbeach@tpg.com.au'],
             )
+            email.attach_alternative(form.cleaned_data['email_content'],"text/html")
             email.send(fail_silently=False)
+
+
 
             """
             Once the email has been sent with no errors. Then we save the content. :)

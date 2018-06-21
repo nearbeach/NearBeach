@@ -11,6 +11,7 @@ from django.forms import ModelForm, BaseModelFormSet
 from django.forms.widgets import TextInput
 from forms_special_fields import *
 
+from tinymce import TinyMCE
 
 #Used for login
 from django.contrib.auth import authenticate, get_user_model, login, logout
@@ -513,12 +514,15 @@ class email_form(ModelForm):
         }),
     )
     email_content = forms.CharField(
-        required=True,
-        widget=forms.Textarea(attrs={
-            'placeholder': 'Email Content'
-        })
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Email content'
+            }
+        )
     )
-
     is_private = forms.BooleanField(
         required=False,
     )

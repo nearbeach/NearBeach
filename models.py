@@ -3,6 +3,7 @@ from django.db import models, connection
 from .private_media import *
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
+from tinymce import HTMLField
 import uuid
 
 # ENUM choices
@@ -542,7 +543,7 @@ class email_contact(models.Model):
 class email_content(models.Model):
     email_content_id = models.AutoField(primary_key=True)
     email_subject = models.CharField(max_length=255)
-    email_content = models.TextField()
+    email_content = HTMLField('email_content')
     is_private = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
