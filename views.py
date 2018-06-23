@@ -1784,12 +1784,18 @@ def email_information(request,email_content_id):
         #The email is private and the user is not the original creator
         return HttpResponseRedirect(reverse('permission_denied'))
 
+    initial = {
+        'email_subject': email_content_results.email_subject,
+        'email_content': email_content_results.email_content,
+    }
+
     # Template
     t = loader.get_template('NearBeach/email_information.html')
 
     # context
     c = {
         'email_content_results': email_content_results,
+        'email_information_form': email_information_form(initial=initial),
         'to_email_results': to_email_results,
         'cc_email_results': cc_email_results,
         'bcc_email_results': bcc_email_results,

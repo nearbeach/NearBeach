@@ -533,6 +533,24 @@ class email_form(ModelForm):
 
         }
 
+class email_information_form(ModelForm):
+    email_content = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Email content',
+            }
+        )
+    )
+    class Meta:
+        model=email_content
+        fields = {
+            'email_subject',
+            'email_content',
+        }
 
 class groups_form(ModelForm):
     group_name = forms.CharField(
