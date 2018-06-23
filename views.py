@@ -2989,12 +2989,14 @@ def new_project(request, location_id='', destination=''):
             submit_project = project(
                 project_name=project_name,
                 project_description=project_description,
-                organisations_id=organisations_id_form,
+                #organisations_id=organisations_id_form,
                 project_start_date=project_start_date,
                 project_end_date=project_end_date,
                 project_status='New',
                 change_user=request.user,
             )
+            if organisations_id_form:
+                submit_project.organisations_id=organisations_id_form
 
             # Submit the data
             submit_project.save()

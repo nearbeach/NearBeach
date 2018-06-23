@@ -1799,6 +1799,15 @@ class project(models.Model):
     organisations_id = models.ForeignKey(
         'organisations',
         on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    #Only fill this field out if there are no organisations
+    customers = models.ForeignKey(
+        'customers',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
     )
     project_start_date = models.DateTimeField()
     project_end_date = models.DateTimeField()
