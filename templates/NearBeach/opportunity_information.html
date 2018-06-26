@@ -205,12 +205,7 @@
                 //State that the function has saved
                 var current_time = Date();
                 $("#save_state").html("Saved last on " + current_time);
-
-                //If we have the resolve button, we will need to navigate to the resolved project url.
-                if (which_button == "Resolve Project") {
-                    //Navigate to the resolve project URL
-                    document.location = "{% url 'resolve_project' project_id %}"
-                }            },
+            },
             error: function() {
                 alert("Sorry, project information did not save. Please try again.");
             }
