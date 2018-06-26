@@ -2406,6 +2406,8 @@ class tasks(models.Model):
     organisations_id = models.ForeignKey(
         'organisations',
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
     task_start_date = models.DateTimeField(auto_now=True)
     task_end_date = models.DateTimeField()

@@ -1130,43 +1130,16 @@ def dashboard_active_tasks(request):
 
 @login_required(login_url='login')
 def dashboard_group_active_projects(request):
-    #Data
-    # Get username_id from User
-    current_user = request.user
-
-    # Setup connection to the database and query it
-    cursor = connection.cursor()
-
-    cursor.execute("""
-    SELECT DISTINCT
-      project.project_id AS "project_id"
-    , '' AS "task_id"
-    , project.project_name AS "description"
-    , project.project_end_date AS "end_date"
-    , organisations.organisation_name AS "organisation_name"
-    , organisations.organisations_id AS "organisations_id"
-
-
-
-    from 
-      project left join project_tasks
-        on project.project_id = project_tasks.project_id
-        and project_tasks.is_deleted = 'FALSE'
-    , project_groups
-    , user_groups
-    , organisations
-
-
-    where 1 = 1
-    and project.project_status IN ('New','Open')
-    and project.is_deleted = 'FALSE'
-    and project.project_id = project_groups.project_id_id
-    and project_groups.groups_id_id = user_groups.groups_id
-    and user_groups.username_id = %s
-    and project.organisations_id_id=organisations.organisations_id
-    """, [current_user.id])
-
-    active_projects_results = namedtuplefetchall(cursor)
+    active_projects_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_id__in=project_groups.objects.filter(
+            is_deleted="FALSE",
+            groups_id__in=user_groups.objects.filter(
+                is_deleted="FALSE",
+                username_id=request.user.id
+            ).values('groups'),
+        ).values('project_id'),
+    )
 
     # Load the template
     t = loader.get_template('NearBeach/dashboard_widgets/group_active_projects.html')
@@ -1181,37 +1154,16 @@ def dashboard_group_active_projects(request):
 
 @login_required(login_url='login')
 def dashboard_group_active_tasks(request):
-    # Get username_id from User
-    current_user = request.user
-
-    # Setup connection to the database and query it
-    cursor = connection.cursor()
-
-    cursor.execute("""
-       SELECT DISTINCT
-          tasks.tasks_id
-        , tasks.task_short_description
-        , tasks.task_end_date
-        , organisations.organisation_name
-        , organisations.organisations_id
-        FROM 
-          tasks
-        , organisations
-        , tasks_groups
-        , user_groups
-        
-        WHERE 1=1
-        
-        AND tasks.is_deleted = 'FALSE'
-        AND tasks.task_status IN ('New','Open')
-        AND tasks.organisations_id_id=organisations.organisations_id
-        AND tasks.tasks_id = tasks_groups.tasks_id_id
-        AND tasks_groups.groups_id_id = user_groups.groups_id
-        AND user_groups.username_id = %s
-       """, [ current_user.id])
-
-    active_tasks_results = namedtuplefetchall(cursor)
-
+    active_tasks_results = tasks.objects.filter(
+        is_deleted="FALSE",
+        tasks_id__in=tasks_groups.objects.filter(
+            is_deleted="FALSE",
+            groups_id__in=user_groups.objects.filter(
+                is_deleted="FALSE",
+                username_id=request.user.id
+            ).values('groups')
+        ).values('tasks_id')
+    )
     # Load the template
     t = loader.get_template('NearBeach/dashboard_widgets/group_active_tasks.html')
 
@@ -2963,6 +2915,7 @@ def new_project(request, location_id='', destination=''):
     if request.method == "POST":
         form = new_project_form(request.POST)
         if form.is_valid():
+            print("Form is valid")
             project_name = form.cleaned_data['project_name']
             project_description = form.cleaned_data['project_description']
             organisations_id_form = form.cleaned_data['organisations_id']
@@ -3048,6 +3001,9 @@ def new_project(request, location_id='', destination=''):
                 return HttpResponseRedirect(reverse(opportunity_information, args={location_id}))
             else:
                 return HttpResponseRedirect(reverse(project_information, args={submit_project.pk}))
+        else:
+            print("Form is not valid")
+            print(form.errors)
 
     else:
         # Obtain the groups the user is associated with
@@ -3282,12 +3238,15 @@ def new_task(request, location_id='', destination=''):
             submit_task = tasks(
                 task_short_description=task_short_description,
                 task_long_description=task_long_description,
-                organisations_id=organisations_id_form,
+                #organisations_id=organisations_id_form,
                 task_start_date=task_start_date,
                 task_end_date=task_end_date,
                 task_status='New',
                 change_user = request.user,
             )
+
+            if organisations_id_form:
+                submit_task.organisations_id = organisations_id_form
 
             # Submit the data
             submit_task.save()
@@ -3313,8 +3272,8 @@ def new_task(request, location_id='', destination=''):
             """
             if destination == "customer":
                 customer_instance = customers.objects.get(customer_id=location_id)
-                save_project_customers = project_customers(
-                    project_id=submit_task,
+                save_project_customers = tasks_customers(
+                    tasks_id=submit_task,
                     customer_id=customer_instance,
                     change_user=request.user,
                 )

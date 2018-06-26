@@ -1466,7 +1466,8 @@ class new_task_form(forms.Form):
     organisations_id=forms.ModelChoiceField(
         label="Organisation",
         widget=forms.Select,
-        queryset=organisations_results
+        queryset=organisations_results,
+        required=False,
     )
     start_date_year=forms.ChoiceField(
         choices=YEAR_CHOICES,

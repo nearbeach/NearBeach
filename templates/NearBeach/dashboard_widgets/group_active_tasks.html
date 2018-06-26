@@ -12,7 +12,11 @@
     {% for row in active_tasks_results %}
         <tr {% if row.task_end_date|hours_ago:24 %}style="background-color:lightcoral"{% endif %}>
             <td><a href="{% url 'task_information' row.tasks_id %}">TASK{{ row.tasks_id }}</a></td>
-            <td><a href="{% url 'organisation_information' row.organisations_id %}">{{ row.organisation_name }}</a><br/><br/>{{ row.task_short_description }}</td>
+            <td>
+                {% if not row.organisations_id == Null %}
+                    <a href="{% url 'organisation_information' row.organisations_id.organisations_id %}">{{ row.organistaions_id }}</a><br/><br/>
+                {% endif %}
+                {{ row.task_short_description }}</td>
             <td>{{ row.task_end_date }}</td>
         </tr>
     {% endfor %}
