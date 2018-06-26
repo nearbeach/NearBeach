@@ -3,6 +3,7 @@ from django.db import models, connection
 from .private_media import *
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
+from tinymce import HTMLField
 import uuid
 
 # ENUM choices
@@ -542,7 +543,7 @@ class email_contact(models.Model):
 class email_content(models.Model):
     email_content_id = models.AutoField(primary_key=True)
     email_subject = models.CharField(max_length=255)
-    email_content = models.TextField()
+    email_content = HTMLField('email_content')
     is_private = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -1798,6 +1799,15 @@ class project(models.Model):
     organisations_id = models.ForeignKey(
         'organisations',
         on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    #Only fill this field out if there are no organisations
+    customers = models.ForeignKey(
+        'customers',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
     )
     project_start_date = models.DateTimeField()
     project_end_date = models.DateTimeField()
@@ -2396,6 +2406,8 @@ class tasks(models.Model):
     organisations_id = models.ForeignKey(
         'organisations',
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
     task_start_date = models.DateTimeField(auto_now=True)
     task_end_date = models.DateTimeField()

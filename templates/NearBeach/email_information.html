@@ -32,9 +32,9 @@
                     , {{ row.bcc_customers.customer_email }}
                 {% endif %}
             {% endfor %}
-        </li>
-        <li><input type="text" value="{{ email_content_results.email_subject }}"></li>
-        <li><textarea>{{ email_content_results.email_content }}</textarea></li>
+        </li>{{ email_information_form.media }}
+        <li>{{ email_information_form.email_subject }}</li>
+        <li>{{ email_information_form.email_content|safe }}</li>
         <li><a href="javascript:history.back()">Go Back</a></li>
     </ul>
 

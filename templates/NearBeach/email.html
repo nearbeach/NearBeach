@@ -10,6 +10,7 @@
 {% csrf_token %}
     <h2>Email</h2>
     {% csrf_token %}
+{{ email_form.media }}
     <ul>
         <li>
             {{ email_form.organisation_email  }}

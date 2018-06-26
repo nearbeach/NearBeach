@@ -11,6 +11,7 @@ from django.forms import ModelForm, BaseModelFormSet
 from django.forms.widgets import TextInput
 from forms_special_fields import *
 
+from tinymce import TinyMCE
 
 #Used for login
 from django.contrib.auth import authenticate, get_user_model, login, logout
@@ -513,12 +514,15 @@ class email_form(ModelForm):
         }),
     )
     email_content = forms.CharField(
-        required=True,
-        widget=forms.Textarea(attrs={
-            'placeholder': 'Email Content'
-        })
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Email content'
+            }
+        )
     )
-
     is_private = forms.BooleanField(
         required=False,
     )
@@ -529,6 +533,24 @@ class email_form(ModelForm):
 
         }
 
+class email_information_form(ModelForm):
+    email_content = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Email content',
+            }
+        )
+    )
+    class Meta:
+        model=email_content
+        fields = {
+            'email_subject',
+            'email_content',
+        }
 
 class groups_form(ModelForm):
     group_name = forms.CharField(
@@ -1444,7 +1466,8 @@ class new_task_form(forms.Form):
     organisations_id=forms.ModelChoiceField(
         label="Organisation",
         widget=forms.Select,
-        queryset=organisations_results
+        queryset=organisations_results,
+        required=False,
     )
     start_date_year=forms.ChoiceField(
         choices=YEAR_CHOICES,
