@@ -11,9 +11,10 @@
 
 
 <body onload="on_page_load()">
-    <form action="{% url 'opportunity_information' opportunity_id %}" method="POST" enctype="multipart/form-data">
+    <form id="opportunity_information" action="{% url 'opportunity_information' opportunity_id %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <h2>Opportunity Information</h2>
+        <div id="save_state"></div>
         <ul>
             <li>{{ opportunity_information_form.opportunity_name }}</li>
             <li>{{ opportunity_information_form.opportunity_description }}</li>
@@ -185,6 +186,34 @@
            error: function() {
                alert("Sorry, something went wrong with the group permissions");
            }
+        })
+    });
+
+    $("#opportunity_information").on('submit', function(e) {
+        //State the save_state is currently saving
+        $("#save_state").html("Currently Saving Project");
+
+        //Grab which button was pressed
+        var which_button = $("input[type=submit][clicked=true]").val()
+
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/opportunity_information/{{ opportunity_id }}/',
+            data: $(this).serialize(),
+            success: function() {
+                //State that the function has saved
+                var current_time = Date();
+                $("#save_state").html("Saved last on " + current_time);
+
+                //If we have the resolve button, we will need to navigate to the resolved project url.
+                if (which_button == "Resolve Project") {
+                    //Navigate to the resolve project URL
+                    document.location = "{% url 'resolve_project' project_id %}"
+                }            },
+            error: function() {
+                alert("Sorry, project information did not save. Please try again.");
+            }
         })
     });
 
