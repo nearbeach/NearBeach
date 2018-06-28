@@ -1245,6 +1245,7 @@ class new_organisation_form(forms.Form):
         widget=forms.TextInput(attrs={
             'width': '99%',
             'placeholder': 'organisations@email.com',
+            'type': 'email',
         })
     )
 
