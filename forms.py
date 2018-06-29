@@ -1002,8 +1002,9 @@ class new_customer_form(forms.Form):
     customer_email=forms.EmailField(
         max_length=200,
         widget=forms.TextInput(attrs={
-        'placeholder': 'customer@email.com',
-    }),
+            'placeholder': 'customer@email.com',
+            'type':'email',
+        }),
     )
     organisations_id=forms.ModelChoiceField(
         label="Organisation",
