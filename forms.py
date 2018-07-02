@@ -442,6 +442,11 @@ class email_form(ModelForm):
                 is_deleted="FALSE",
                 organisations_id__in=customers.objects.filter(customer_id=location_id).values('organisations_id')
             )
+
+            #If customer has no organisation associated with it
+            if not customer_results:
+                customer_results = customers.objects.filter(customer_id=location_id)
+
             self.fields['to_email'].required = True
         elif destination == "project":
             customer_results = customers.objects.filter(
