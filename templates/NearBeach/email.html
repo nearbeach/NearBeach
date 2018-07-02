@@ -10,29 +10,29 @@
 {% csrf_token %}
     <h2>Email</h2>
     {% csrf_token %}
-{{ email_form.media }}
-    <ul>
-        <li>
+    {{ email_form.media }}
+    <table>
+        <tr><td>
             {{ email_form.organisation_email  }}
             {% if destination == "organisation" %}
                 <a id="remove_organisation_id" href="javascript:void(0)" onclick="remove_organisation()">Click here to remove organisation from email list</a>
             {% endif %}
-        </li>
-        <li>To: {{ email_form.to_email }}</li>
-        <li>CC: {{ email_form.cc_email }}</li>
-        <li>BCC: {{ email_form.bcc_email }}</li>
-        <li>{{ email_form.email_subject }}</li>
-        <li>{{ email_form.email_content }}</li>
-        <li>Private Email: {{ email_form.is_private }}</li>
-        <li>
+        </td></tr>
+        <tr><td>To: {{ email_form.to_email }}</td></tr>
+        <tr><td>CC: {{ email_form.cc_email }}</td></tr>
+        <tr><td>BCC: {{ email_form.bcc_email }}</td></tr>
+        <tr><td>{{ email_form.email_subject }}</td></tr>
+        <tr><td>{{ email_form.email_content }}</td></tr>
+        <tr><td>Private Email: {{ email_form.is_private }}</td></tr>
+        <tr><td>
             <input type="submit" value="Send Email">
             {% if destination == "customer" %}
                 <a href="{% url 'customer_information' location_id %}">Cancel Email</a>
             {% else %}
                 <a href="{% url 'organisation_information' location_id %}">Cancel Email</a>
             {% endif %}
-        </li>
-    </ul>
+        </td></tr>
+    </table>
 </form>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>

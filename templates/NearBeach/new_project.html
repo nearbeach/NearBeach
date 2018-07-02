@@ -27,11 +27,15 @@
                 {{ new_project_form.finish_date_hour }}:{{ new_project_form.finish_date_minute }} {{ new_project_form.finish_date_meridiems }}</li>
 
             <li><h2>Assigned to Group(s)</h2></li>
-            <li>{{ new_project_form.assigned_groups }}</li>
+            <li>
+                <table>
+                    <tr><td>{{ new_project_form.assigned_groups }}</td></tr>
+                    <tr><td>Please note: you will not be able to submit this project without selecting at least one group</td></tr>
+                </table>
+            </li>
             <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
             <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
             <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
-            <li>Please note: you will not be able to submit this project without selecting at least one group</li>
             <li><input type="submit" value="Submit New Project"><a href="{% url 'dashboard' %}">Cancel</a></li>
         </ul>
     </form>
