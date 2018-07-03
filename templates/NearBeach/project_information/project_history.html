@@ -1,22 +1,23 @@
 {% csrf_token %}
 <h2>Project History</h2>
-<ul>
+{{ information_project_history_form.media }}
+<table>
     {% if project_permissions > 1 or project_history_permissions > 0 %}
-        <li>{{ information_project_history_form.project_history }}</li>
-        <li>
+        <tr><td>{{ information_project_history_form.project_history }}</td></tr>
+        <tr><td>
             <input type="submit" name="project_history_submit" value="Submit">
             <a onclick="clear_history()" href="javascript:void(0);">Clear</a>
-        </li>
+        </td></tr>
     {% endif %}
     {% if project_history_results %}
         {% for row in project_history_results %}
-            <li>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}</li>
-            <li><textarea readonly>{{ row.project_history }}</textarea></li>
+            <tr><td>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}</td></tr>
+            <tr><td><textarea readonly>{{ row.project_history }}</textarea></td></tr>
         {% endfor %}
     {% else %}
-        <li>There is currently no history</li>
+        <tr><td>There is currently no history</td></tr>
     {% endif %}
-</ul>
+</table>
 <script>
     function clear_history() {
         $("#id_project_history").val("");

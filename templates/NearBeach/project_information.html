@@ -355,6 +355,28 @@
         })
     });
 
+    function delete_costs(cost_id,project_id) {
+        //Send data to the database
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            url: '/delete_cost/' + cost_id + '/' + project_id + '/P/',
+            data: $(this).serialize(),
+            type: "POST",
+            success: function(data) {
+                load_project_costs();
+            },
+            error: function() {
+                alert("Sorry, could not delete costs");
+            }
+        });
+    }
 
     function complete_to_do(to_do_id) {
         $("#to_do_"+to_do_id).html("Completing...");

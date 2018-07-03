@@ -24,7 +24,7 @@
                 <td>{{ row.cost_description }}</td>
                 <td name="cost_amount">{{ row.cost_amount|intcomma }}</td>
                 <td name="running_total">--filled-by-javascript--</td>
-                <td><a href="{% url 'delete_cost' row.cost_id row.project_id.project_id 'P' %}">Remove Cost</a></td>
+                <td><a href="javascript:void(0)" onclick="delete_costs({{ row.cost_id }},{{ row.project_id.project_id }})">Remove Cost</a></td>
             </tr>
         {% endfor %}
         <tr>
