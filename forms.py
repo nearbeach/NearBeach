@@ -1285,9 +1285,14 @@ class new_project_form(forms.Form):
         })
     )
     project_description=forms.CharField(
-        widget=forms.Textarea(attrs={
-            'placeholder': 'Project Description',
-        })
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Project Description',
+            }
+        )
     )
     organisations_id=forms.ModelChoiceField(
         label="Organisation",

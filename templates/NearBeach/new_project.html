@@ -17,6 +17,7 @@
         <a href="{% url 'new_organisation' %}">Can you please create an organisation first.</a>
     {% else %}
         <ul>
+            {{ new_project_form.media }}
             <li>{{ new_project_form.project_name }}</li>
             <li>{{ new_project_form.project_description }}</li>
             <li>Organisation: {{ new_project_form.organisations_id }}</li>

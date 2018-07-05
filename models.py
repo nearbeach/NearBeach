@@ -1795,7 +1795,7 @@ class products_and_services(models.Model):
 class project(models.Model):
     project_id = models.AutoField(primary_key=True)
     project_name = models.CharField(max_length=255)
-    project_description = models.TextField()
+    project_description = HTMLField('project_description')
     organisations_id = models.ForeignKey(
         'organisations',
         on_delete=models.CASCADE,
@@ -1906,7 +1906,7 @@ class project_history(models.Model):
         null=True
     )
     user_infomation = models.CharField(max_length=255)
-    project_history = models.TextField()
+    project_history = HTMLField('project_history')
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
