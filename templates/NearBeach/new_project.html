@@ -16,29 +16,26 @@
     {% if organisations_count == 0 %}
         <a href="{% url 'new_organisation' %}">Can you please create an organisation first.</a>
     {% else %}
-        <ul>
+        <table>
             {{ new_project_form.media }}
-            <li>{{ new_project_form.project_name }}</li>
-            <li>{{ new_project_form.project_description }}</li>
-            <li>Organisation: {{ new_project_form.organisations_id }}</li>
-            <li>Time zone: {{ timezone }}</li>
-            <li>Project Start: {{ new_project_form.start_date_year }}/{{ new_project_form.start_date_month }}/{{ new_project_form.start_date_day }}<br/>
-                {{ new_project_form.start_date_hour }}:{{ new_project_form.start_date_minute }} {{ new_project_form.start_date_meridiems }}</li>
-            <li>Project Finish: {{ new_project_form.finish_date_year }}/{{ new_project_form.finish_date_month }}/{{ new_project_form.finish_date_day }}<br/>
-                {{ new_project_form.finish_date_hour }}:{{ new_project_form.finish_date_minute }} {{ new_project_form.finish_date_meridiems }}</li>
-
-            <li><h2>Assigned to Group(s)</h2></li>
-            <li>
-                <table>
-                    <tr><td>{{ new_project_form.assigned_groups }}</td></tr>
-                    <tr><td>Please note: you will not be able to submit this project without selecting at least one group</td></tr>
-                </table>
-            </li>
-            <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
-            <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
-            <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
-            <li><input type="submit" value="Submit New Project"><a href="{% url 'dashboard' %}">Cancel</a></li>
-        </ul>
+            <tr><td>{{ new_project_form.project_name }}</td></tr>
+            <tr><td>{{ new_project_form.project_description }}</td></tr>
+            <tr><td>Organisation: {{ new_project_form.organisations_id }}</td></tr>
+            <tr><td>Time zone: {{ timezone }}</td></tr>
+            <tr><td>Project Start: {{ new_project_form.start_date_year }}/{{ new_project_form.start_date_month }}/{{ new_project_form.start_date_day }}<br/>
+                {{ new_project_form.start_date_hour }}:{{ new_project_form.start_date_minute }} {{ new_project_form.start_date_meridiems }}</td></tr>
+            <tr><td>Project Finish: {{ new_project_form.finish_date_year }}/{{ new_project_form.finish_date_month }}/{{ new_project_form.finish_date_day }}<br/>
+                {{ new_project_form.finish_date_hour }}:{{ new_project_form.finish_date_minute }} {{ new_project_form.finish_date_meridiems }}</td></tr>
+        </table>
+        <h2>Assigned to Group(s)</h2>
+        <table>
+            <tr><td>{{ new_project_form.assigned_groups }}</td></tr>
+            <tr><td>Please note: you will not be able to submit this project without selecting at least one group</td></tr>
+            <tr><td><input type="submit" value="Submit New Project"><a href="{% url 'dashboard' %}">Cancel</a></td></tr>
+        </table>
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
     </form>
     {% endif %}
 </body>

@@ -1,6 +1,5 @@
 {% csrf_token %}
 <h2>Project History</h2>
-{{ information_project_history_form.media }}
 <table>
     {% if project_permissions > 1 or project_history_permissions > 0 %}
         <tr><td>{{ information_project_history_form.project_history }}</td></tr>
