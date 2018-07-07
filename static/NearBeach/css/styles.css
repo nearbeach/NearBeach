@@ -15,7 +15,7 @@ select option:disabled {
     display:none;
 }
 
-input[type="text"], input[type="password"], textarea {
+input[type="text"], input[type="password"],input[type="email"], textarea {
     box-sizing: border-box;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -30,7 +30,7 @@ input[type="text"], input[type="password"], textarea {
     max-width: 900px;
 }
 
-input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+input[type="text"]:focus, input[type="password"]:focus,input[type="email"]:focus, textarea:focus {
     box-shadow: 0 0 5px #b0cfe0;
     border: 1px solid #b0cfe0;
 }
@@ -303,7 +303,7 @@ h2 {
     }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 1400px) {
 
     #main-header {
         width: 300px;

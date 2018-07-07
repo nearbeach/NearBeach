@@ -442,6 +442,11 @@ class email_form(ModelForm):
                 is_deleted="FALSE",
                 organisations_id__in=customers.objects.filter(customer_id=location_id).values('organisations_id')
             )
+
+            #If customer has no organisation associated with it
+            if not customer_results:
+                customer_results = customers.objects.filter(customer_id=location_id)
+
             self.fields['to_email'].required = True
         elif destination == "project":
             customer_results = customers.objects.filter(
@@ -483,7 +488,7 @@ class email_form(ModelForm):
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select',
             'multiple tabindex': '4',
-            'width': '500px',
+            'style': 'width: 90%',
         }),
     )
     cc_email = forms.ModelMultipleChoiceField(
@@ -493,7 +498,7 @@ class email_form(ModelForm):
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select',
             'multiple tabindex': '4',
-            'width': '500px',
+            'style': 'width: 90%',
         }),
     )
     bcc_email = forms.ModelMultipleChoiceField(
@@ -503,7 +508,7 @@ class email_form(ModelForm):
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select',
             'multiple tabindex': '4',
-            'width': '500px',
+            'style': 'width: 90%',
         }),
     )
     email_subject = forms.CharField(
@@ -698,12 +703,16 @@ class information_project_costs_form(forms.Form):
 
 class information_project_history_form(forms.Form):
     project_history=forms.CharField(
-        widget=forms.Textarea(attrs={
-            'placeholder': 'Please update any history here and then click on the submit button'
-        })
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Please update any history here and then click on the submit button'
+            }
+        )
         , required=False
     )
-
 
 
 
@@ -972,6 +981,7 @@ class new_campus_form(forms.Form):
         widget=RegionSelect(attrs={
             'class': 'chosen-select',
             'tag': forms.HiddenInput(),
+            'style': 'width: 100%',
         }),
     )
 
@@ -1002,8 +1012,9 @@ class new_customer_form(forms.Form):
     customer_email=forms.EmailField(
         max_length=200,
         widget=forms.TextInput(attrs={
-        'placeholder': 'customer@email.com',
-    }),
+            'placeholder': 'customer@email.com',
+            'type':'email',
+        }),
     )
     organisations_id=forms.ModelChoiceField(
         label="Organisation",
@@ -1194,7 +1205,7 @@ class new_opportunity_form(ModelForm):
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select',
             'multiple tabindex': '4',
-            'width': '100%',
+            'style': 'width: 100%',
         }),
     )
 
@@ -1205,7 +1216,7 @@ class new_opportunity_form(ModelForm):
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select',
             'multiple tabindex': '4',
-            'width': '500px',
+            'style': 'width: 100%',
         }),
     )
 
@@ -1245,6 +1256,7 @@ class new_organisation_form(forms.Form):
         widget=forms.TextInput(attrs={
             'width': '99%',
             'placeholder': 'organisations@email.com',
+            'type': 'email',
         })
     )
 
@@ -1260,6 +1272,7 @@ class new_project_form(forms.Form):
             'placeholder': 'Select Groups to Assign to Project',
             'class': 'chosen-select',
             'multiple tabindex': '4',
+            'style': 'width: 100%',
         }),
         required=True,
         queryset=group_results,
@@ -1272,9 +1285,14 @@ class new_project_form(forms.Form):
         })
     )
     project_description=forms.CharField(
-        widget=forms.Textarea(attrs={
-            'placeholder': 'Project Description',
-        })
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Project Description',
+            }
+        )
     )
     organisations_id=forms.ModelChoiceField(
         label="Organisation",
@@ -1447,7 +1465,7 @@ class new_task_form(forms.Form):
             'placeholder': 'Select Groups to Assign to Project',
             'class': 'chosen-select',
             'multiple tabindex': '4',
-            'width': '100%',
+            'style': 'width: 100%',
         }),
         required=True,
         queryset=group_results,
@@ -1572,7 +1590,7 @@ class opportunity_information_form(ModelForm):
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select',
             'multiple tabindex': '4',
-            'width': '500px',
+            'style': 'width: 100%',
         }),
     )
 
@@ -1583,7 +1601,7 @@ class opportunity_information_form(ModelForm):
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select',
             'multiple tabindex': '4',
-            'width': '500px',
+            'style': 'width: 100%',
         }),
     )
 
@@ -1792,6 +1810,14 @@ class project_information_form(ModelForm):
             'width':'100%',
             'onkeyup':'enable_submit()'
         })
+    )
+
+    project_description = forms.CharField(
+        widget=forms.Textarea(
+            attrs={
+                'placeholder': 'Please Enter your project description',
+            }
+        )
     )
 
 
