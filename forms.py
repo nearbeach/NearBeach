@@ -1813,10 +1813,7 @@ class project_information_form(ModelForm):
     )
 
     project_description = forms.CharField(
-        widget=TinyMCE(
-            mce_attrs={
-                'width': '100%',
-            },
+        widget=forms.Textarea(
             attrs={
                 'placeholder': 'Please Enter your project description',
             }
