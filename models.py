@@ -2372,6 +2372,49 @@ class requirement_links(models.Model):
         db_table = "requirement_permissions"
 
 
+class requirement_permissions(models.Model):
+    requirement_permissions_id = models.AutoField(primary_key=True)
+    requirements = models.ForeignKey(
+        'requirements',
+        on_delete=models.CASCADE
+    )
+    assigned_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_assigned_user',
+        null=True,
+        blank=True,
+    )
+    groups_id = models.ForeignKey(
+        'groups',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    all_users = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE',
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    class Meta:
+        db_table = "requirement_permission"
+
+
 class stages(models.Model):
     stages_id = models.AutoField(primary_key=True)
     group_id = models.ForeignKey(

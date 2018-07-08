@@ -1426,7 +1426,10 @@ class new_requirement_form(ModelForm):
         is_deleted='FALSE',
         requirement_status_is_closed='FALSE',
     )
+    groups_results=groups.objects.filter(is_deleted="FALSE")
+    user_results=auth.models.User.objects.all()
 
+    #Fields
     requirement_title = forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
@@ -1442,6 +1445,28 @@ class new_requirement_form(ModelForm):
         label="Quote Stage",
         widget=forms.Select,
         queryset=requirement_status_results,
+    )
+
+    select_groups = forms.ModelMultipleChoiceField(
+        queryset=groups_results,
+        required=False,
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': "Choose the users(s)",
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+            'style': 'width: 100%',
+        }),
+    )
+
+    select_users = forms.ModelMultipleChoiceField(
+        queryset=user_results,
+        required=False,
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': "Choose the users(s)",
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+            'style': 'width: 100%',
+        }),
     )
 
     class Meta:

@@ -1,5 +1,9 @@
 {% extends "./template.html" %}
 {% block content %}
+{% load static %}
+    <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
+    <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
+
 <form action={% url 'new_requirement' %} method="post" class="new_requirement">
     {% csrf_token %}
     <h2>New Requirement</h2>
@@ -8,6 +12,20 @@
         <li>{{ new_requirement_form.requirement_scope }}</li>
         <li>Requirement Type: {{ new_requirement_form.requirement_type }}</li>
         <li>Requirement Status: {{ new_requirement_form.requirement_status }}</li>
+
+        <h1>Grant Access to Opportunity</h1>
+        <table>
+            <tr><td>Select which groups are required to have access</td></tr>
+            <tr><td>{{ new_requirement_form.select_groups }}</td></tr>
+            <tr><td></td></tr>
+            <tr><td>Select which users are required to have access</td></tr>
+            <tr><td>{{ new_requirement_form.select_users }}</td></tr>
+            <tr><td>If no Groups or Users are selected, then access will be granted for everyone. This can be changed at a later date.</td></tr>
+        </table>
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
+
         <li><input type="submit" value="Submit New Requirement"></li>
     </ul>
 </form>

@@ -913,33 +913,21 @@ def customer_information(request, customer_id):
     )
 
     # Setup connection to the database and query it
-    cursor = connection.cursor()
+    project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_id__in=project_customers.objects.filter(
+            is_deleted="FALSE",
+            project_customers_id=customer_id,
+        ).values('project_id')
+    )
 
-    cursor.execute("""
-		SELECT DISTINCT
-		project.*
-		FROM
-		project_customers
-		, project
-		WHERE 1=1
-		AND project_customers.is_deleted='FALSE'
-		AND project_customers.project_id_id=project.project_id
-		AND project_customers.project_customers_id = %s
-	""", [customer_id])
-    project_results = namedtuplefetchall(cursor)
-
-    cursor.execute("""
-		SELECT DISTINCT
-		tasks.*
-		FROM
-		tasks_customers
-		, tasks
-		WHERE 1=1
-		AND tasks_customers.is_deleted='FALSE'
-		AND tasks_customers.tasks_id_id=tasks.tasks_id
-		AND tasks_customers.tasks_customers_id = %s
-		""", [customer_id])
-    task_results = namedtuplefetchall(cursor)
+    task_results = tasks.objects.filter(
+        is_deleted="FALSE",
+        tasks_id__in=tasks_customers.objects.filter(
+            is_deleted="FALSE",
+            tasks_customers_id=customer_id,
+        ).values('tasks_id')
+    )
 
     # The campus the customer is associated to
     """
