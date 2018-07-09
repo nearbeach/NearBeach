@@ -5,10 +5,12 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.urls import reverse
 from django.template import  loader
+from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from .models import *
 from .misc_functions import *
 from .user_permissions import return_user_permission_level
+from .views import permission_denied
 
 
 
@@ -25,6 +27,8 @@ def new_requirement(request):
             requirement_title = form.cleaned_data['requirement_title']
             requirement_scope = form.cleaned_data['requirement_scope']
             requirement_type = form.cleaned_data['requirement_type']
+            select_groups = form.cleaned_data['select_groups']
+            select_users = form.cleaned_data['select_users']
 
 
             requirements_save = requirements(
@@ -35,6 +39,44 @@ def new_requirement(request):
                 change_user=request.user,
             )
             requirements_save.save()
+
+            """
+            Permissions granting
+            """
+            give_all_access = True
+
+            if (select_groups):
+                give_all_access = False
+
+                for row in select_groups:
+                    group_instance = groups.objects.get(group_name=row)
+                    permission_save = requirement_permissions(
+                        requirements_id=requirements_save.requirement_id,
+                        groups_id=group_instance,
+                        change_user=request.user,
+                    )
+                    permission_save.save()
+
+            if (select_users):
+                give_all_access = False
+
+                for row in select_users:
+                    assigned_user_instance = auth.models.User.objects.get(username=row)
+                    permission_save = requirement_permissions(
+                        requirements_id=requirements_save.requirement_id,
+                        assigned_user=assigned_user_instance,
+                        change_user=request.user,
+                    )
+                    permission_save.save()
+
+            if (give_all_access):
+                permission_save = requirement_permissions(
+                    requirements_id=requirements_save.requirement_id,
+                    all_users='TRUE',
+                    change_user=request.user,
+                )
+                permission_save.save()
+
 
             return HttpResponseRedirect(reverse(requirement_information, args={requirements_save.requirement_id}))
         else:
@@ -150,6 +192,35 @@ def requirement_information(request, requirement_id):
                 row.save()
         else:
             print(form.errors)
+    else:
+        """
+        We want to limit who can see what requirement. The exception to this is for the user
+        who just created the opportunity. (I should program in a warning stating that they
+        might not be able to see the opportunity again unless they add themselfs to the 
+        permissions list.
+
+        The user has to meet at least one of these conditions;
+        1.) User has permission
+        2.) User's group has permission
+        3.) All users have permission
+        """
+        user_groups_results = user_groups.objects.filter(username=request.user)
+
+        requirement_permission_results = requirement_permissions.objects.filter(
+            Q(
+                Q(assigned_user=request.user) # User has permission
+                | Q(groups_id__in=user_groups_results.values('groups_id')) # User's group have permission
+                | Q(all_users='TRUE') # All users have access
+            )
+            & Q(requirements=requirement_id)
+        )
+
+        if (not requirement_permission_results):
+            return HttpResponseRedirect(
+                reverse(
+                    permission_denied,
+                )
+            )
 
     #Setup the initial data for the form
     requirement_results = requirements.objects.get(requirement_id=requirement_id)
