@@ -52,6 +52,7 @@
                 <fieldset disabled="disabled">
             {% endif %}
             <ul>
+            {{ task_information_form.media }}
                 <li>{{ task_information_form.task_short_description }}</li>
                 <li>{{ task_information_form.task_long_description }}</li>
                 <li>Current Task Status: {{ task_results.task_status }}</li>

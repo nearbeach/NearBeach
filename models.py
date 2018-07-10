@@ -2445,7 +2445,7 @@ class stages(models.Model):
 class tasks(models.Model):
     tasks_id = models.AutoField(primary_key=True)
     task_short_description = models.CharField(max_length=255)
-    task_long_description = models.TextField()
+    task_long_description = HTMLField()
     organisations_id = models.ForeignKey(
         'organisations',
         on_delete=models.CASCADE,

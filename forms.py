@@ -701,19 +701,12 @@ class information_project_costs_form(forms.Form):
 
 
 
-class information_project_history_form(forms.Form):
-    project_history=forms.CharField(
-        widget=TinyMCE(
-            mce_attrs={
-                'width': '100%',
-            },
-            attrs={
-                'placeholder': 'Please update any history here and then click on the submit button'
-            }
-        )
-        , required=False
-    )
-
+class information_project_history_form(ModelForm):
+    class Meta:
+        model = project_history
+        fields = {
+            'project_history'
+        }
 
 
 
@@ -745,13 +738,18 @@ class information_task_costs_form(forms.Form):
 
 
 
-class information_task_history_form(forms.Form):
+class information_task_history_form(ModelForm):
     task_history=forms.CharField(
         widget=forms.Textarea(attrs={
             'placeholder': 'Please update any history here and then click on the submit button'
         })
         , required=False
     )
+    class Meta:
+        model=tasks_history
+        fields={
+            'task_history',
+        }
 
 
 class kanban_card_form(ModelForm):

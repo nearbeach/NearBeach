@@ -599,6 +599,8 @@
             type: 'GET',
             success: function(data) {
                 $('#project_history').html(data);
+
+                //tinymce.init({selector: '#id_project_history'});
             },
             error: function() {
                 $('#project_history').html('<h2>Project History</h2>Sorry, project history encounted an error and did not load.');
