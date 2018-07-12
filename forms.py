@@ -293,7 +293,7 @@ class campus_information_form(ModelForm):
     )
 
     class Meta:
-        model=organisations_campus
+        model=campus
         fields='__all__'
         exclude=[
             'campus_region_id',

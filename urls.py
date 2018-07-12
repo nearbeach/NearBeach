@@ -54,7 +54,7 @@ url(r'dashboard/active_requirements', views.dashboard_active_requirements, name=
 
 	url(r'^login', views.login, name='login'),
 	url(r'^logout', views.logout, name='logout'),
-	url(r'^new_campus/(?P<organisations_id>[0-9]+)/', views.new_campus, name='new_campus'),
+	url(r'^new_campus/(?P<location_id>[0-9]+)/(?P<destination>["organisation","customer"]+)/$', views.new_campus, name='new_campus'),
 	url(r'^new_customer/(?P<organisations_id>[0-9]+)/', views.new_customer, name='new_customer'),
 	url(r'^new_opportunity/$', views.new_opportunity, name='new_opportunity'),
 	#url(r'^new_opportunity/(?P<organisation_id>[0-9]+)/$', views.new_opportunity, name='new_opportunity'),

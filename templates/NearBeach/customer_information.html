@@ -52,7 +52,7 @@
                 <input type="submit" name="update" value="Update Details"/>
             {% endif %}
             <h2>Campus Contact Information</h2>
-            {% if add_campus_results and assign_campus_to_customer_permission > 1%}
+            {% if add_campus_results and assign_campus_to_customer_permission > 1 and customer_results.organisations_id %}
 
                     <select name="add_campus_select" id="id_add_cammpus_select" onchange="enable_disable_add_campus()">
                         <option value="---------"> ---------</option>
@@ -61,9 +61,32 @@
                         {% endfor %}
                     </select>
                     <input type="submit" name="add_campus_submit" value="Add Campus" disabled id="id_add_cammpus_submit">
-
+            {% elif assign_campus_to_customer_permission > 1 %}
+                <a href="{% url 'new_campus' customer_results.customer_id 'customer' %}">New Campus</a>
             {% endif %}
-            {% if campus_results %}
+            {% if customer_campus_results %}
+                <table>
+                    <tr class="header">
+                        <td>Campus nickname</td>
+                        <td>Contact's Phone</td>
+                        <td>Contact's Fax</td>
+                        <td>Campus Suburb</td>
+                        <td>Campus Region</td>
+                        <td>Campus Country</td>
+                        <td>Delete</td>
+                    </tr>
+                    {% for row in customer_campus_results %}
+                        <tr>
+                            <td><a href="{% url 'campus_information' 1 %}">{{ row.campus_nickname }}</a></td>
+                            <td>{{ row.campus_phone }}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+
+            {% elif campus_results %}
                 <table>
                     <tr class="header">
                         <td>Campus nickname</td>

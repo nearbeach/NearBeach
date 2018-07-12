@@ -670,7 +670,7 @@ def campus_information(request, campus_information):
         return HttpResponseRedirect(reverse('permission_denied'))
 
     # Obtain data (before POST if statement as it is used insude)
-    campus_results = organisations_campus.objects.get(pk=campus_information)
+    campus_results = campus.objects.get(pk=campus_information)
 
     if campus_results.campus_longitude == None:
         update_coordinates(campus_information)
@@ -709,7 +709,7 @@ def campus_information(request, campus_information):
 
             # Get the SQL Instances
             customer_instance = customers.objects.get(customer_id=customer_results)
-            campus_instances = organisations_campus.objects.get(organisations_campus_id=campus_information)
+            campus_instances = campus.objects.get(organisations_campus_id=campus_information)
 
 
             # Save the new campus
@@ -799,7 +799,7 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
 
     # Get Data
     customer_campus_results = customers_campus.objects.get(customers_campus_id=customer_campus_id)
-    campus_results = organisations_campus.objects.get(pk=customer_campus_results.campus_id.organisations_campus_id)
+    campus_results = campus.objects.get(pk=customer_campus_results.campus_id.organisations_campus_id)
 
 
     # Setup the initial results
@@ -885,7 +885,7 @@ def customer_information(request, customer_id):
 
                 # Get the SQL Instances
                 customer_instance = customers.objects.get(customer_id=customer_id)
-                campus_instances = organisations_campus.objects.get(
+                campus_instances = campus.objects.get(
                     organisations_campus_id=int(campus_id_results)
                 )
 
@@ -906,7 +906,7 @@ def customer_information(request, customer_id):
 
     # Get the instance
     customer_results = customers.objects.get(customer_id=customer_id)
-    add_campus_results = organisations_campus.objects.filter(organisations_id=customer_results.organisations_id)
+    add_campus_results = campus.objects.filter(organisations_id=customer_results.organisations_id)
     quote_results = quotes.objects.filter(
         is_deleted="FALSE",
         customer_id=customer_id,
@@ -946,9 +946,15 @@ def customer_information(request, customer_id):
         customer_id=customer_id,
         opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
     )
+    #For when customers have an organisation
     campus_results = customers_campus.objects.filter(
         customer_id=customer_id,
         is_deleted='FALSE',
+    )
+    #For when customers do not have an organistion
+    customer_campus_results = campus.objects.filter(
+        is_deleted="FALSE",
+        customers=customer_id,
     )
 
 
@@ -992,6 +998,7 @@ def customer_information(request, customer_id):
                 'start_date_meridiems': meridiems,
             }),
         'campus_results': campus_results,
+        'customer_campus_results': customer_campus_results,
         'add_campus_results': add_campus_results,
         'customer_results': customer_results,
         'media_url': settings.MEDIA_URL,
@@ -2442,7 +2449,7 @@ def new_bug_client(request):
     return HttpResponse(t.render(c, request))
 
 @login_required(login_url='login')
-def new_campus(request, organisations_id):
+def new_campus(request, location_id, destination):
     permission_results = return_user_permission_level(request, None, 'organisation_campus')
 
     if permission_results['organisation_campus'] < 3:
@@ -2472,13 +2479,13 @@ def new_campus(request, organisations_id):
             campus_address3 = form.cleaned_data['campus_address3']
             campus_suburb = form.cleaned_data['campus_suburb']
 
-            organisation = organisations.objects.get(organisations_id=organisations_id)
+            #organisation = organisations.objects.get(organisations_id)
 
             # BUG - some simple validation should go here?
 
             # Submitting the data
-            submit_form = organisations_campus(
-                organisations_id=organisation,
+            submit_form = campus(
+                #organisations_id=organisation,
                 campus_nickname=campus_nickname,
                 campus_phone=campus_phone,
                 campus_fax=campus_fax,
@@ -2490,16 +2497,23 @@ def new_campus(request, organisations_id):
                 campus_country_id=region_instance.country_id,
                 change_user = request.user,
             )
+            if destination == "organisation":
+                submit_form.organisations_id = organisations.objects.get(organisations_id=location_id)
+            else:
+                submit_form.customers = customers.objects.get(customer_id=location_id)
             submit_form.save()
 
             #Get the coordinates and update them into the system
             print(submit_form.organisations_campus_id)
             update_coordinates(submit_form.organisations_campus_id)
 
-            return HttpResponseRedirect(reverse(organisation_information, args={organisations_id}))
+            if destination == "organisation":
+                return HttpResponseRedirect(reverse(organisation_information, args={location_id}))
+            else:
+                return HttpResponseRedirect(reverse(customer_information, args={location_id}))
         else:
             print(form.errors)
-            return HttpResponseRedirect(reverse(new_campus, args={organisations_id}))
+            return HttpResponseRedirect(reverse(new_campus, args={location_id,destination}))
 
     # SQL
     countries_results = list_of_countries.objects.all().order_by('country_name')
@@ -2510,7 +2524,9 @@ def new_campus(request, organisations_id):
 
     # context
     c = {
-        'organisations_id': organisations_id,
+        #'organisations_id': organisations_id,
+        'location_id': location_id,
+        'destination': destination,
         'new_campus_form': new_campus_form(),
         'countries_results': countries_results,
         'countries_regions_results': countries_regions_results,
@@ -3733,7 +3749,7 @@ def organisation_information(request, organisations_id):
 
     # Query the database for organisation information
     organisation_results = organisations.objects.get(pk=organisations_id)
-    campus_results = organisations_campus.objects.filter(organisations_id=organisations_id)
+    campus_results = campus.objects.filter(organisations_id=organisations_id)
     customers_results = customers.objects.filter(organisations_id=organisation_results)
     quote_results = quotes.objects.filter(
         is_deleted="FALSE",
@@ -4810,7 +4826,7 @@ def handler500(request):
 
 
 def update_coordinates(campus_id):
-    campus_results = organisations_campus.objects.get(pk=campus_id)
+    campus_results = campus.objects.get(pk=campus_id)
 
     #Set the address up
     address = campus_results.campus_address1 + " " + \
