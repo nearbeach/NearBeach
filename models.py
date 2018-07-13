@@ -222,7 +222,7 @@ class bug_client(models.Model):
 
 
 class campus(models.Model):
-    organisations_campus_id = models.AutoField(primary_key=True)
+    campus_id = models.AutoField(primary_key=True)
     organisations_id = models.ForeignKey(
         'organisations',
         on_delete=models.CASCADE,

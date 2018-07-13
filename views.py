@@ -2504,8 +2504,7 @@ def new_campus(request, location_id, destination):
             submit_form.save()
 
             #Get the coordinates and update them into the system
-            print(submit_form.organisations_campus_id)
-            update_coordinates(submit_form.organisations_campus_id)
+            update_coordinates(submit_form.campus_id)
 
             if destination == "organisation":
                 return HttpResponseRedirect(reverse(organisation_information, args={location_id}))
