@@ -21,12 +21,41 @@ from datetime import timedelta
 from django.db.models import Max
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from geolocation.main import GoogleMaps
-
+from django.http import JsonResponse
 
 #import python modules
 import datetime, json, simplejson, urllib, urllib2
 import pytz
 from django.utils import timezone
+
+@login_required(login_url='login')
+def add_campus_to_customer(request, customer_id, campus_id):
+    if request.method == "POST":
+        # Get the SQL Instances
+        customer_instance = customers.objects.get(customer_id=customer_id)
+        campus_instances = campus.objects.get(
+            campus_id=campus_id,
+        )
+
+        # Save the new campus
+        submit_campus = customers_campus(
+            customer_id=customer_instance,
+            campus_id=campus_instances,
+            customer_phone='',
+            customer_fax='',
+            change_user=request.user,
+        )
+        submit_campus.save()
+
+        response_data = {}
+        response_data['customers_campus_id'] = submit_campus.customers_campus_id
+
+        # Go to the form.
+        #return HttpResponseRedirect(reverse('customers_campus_information', args={submit_campus.customers_campus_id, 'CUST'}))
+        #return HttpResponse(json.dumps(response_data), content_type="application/json")
+        return JsonResponse({'customers_campus_id': submit_campus.customers_campus_id})
+    else:
+        return HttpResponseBadRequest("Sorry, you can only do this in post.")
 
 
 @login_required(login_url='login')
@@ -799,7 +828,7 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
 
     # Get Data
     customer_campus_results = customers_campus.objects.get(customers_campus_id=customer_campus_id)
-    campus_results = campus.objects.get(pk=customer_campus_results.campus_id.organisations_campus_id)
+    campus_results = campus.objects.get(pk=customer_campus_results.campus_id.campus_id)
 
 
     # Setup the initial results
@@ -873,34 +902,6 @@ def customer_information(request, customer_id):
                 save_data.customer_profile_picture = update_profile_picture
 
             save_data.save()
-
-
-
-
-
-            # If we are adding a new campus
-            if 'add_campus_submit' in request.POST:
-                # Obtain the id of the campus_id
-                campus_id_results = request.POST.get("add_campus_select")
-
-                # Get the SQL Instances
-                customer_instance = customers.objects.get(customer_id=customer_id)
-                campus_instances = campus.objects.get(
-                    organisations_campus_id=int(campus_id_results)
-                )
-
-                # Save the new campus
-                submit_campus = customers_campus(
-                    customer_id=customer_instance,
-                    campus_id=campus_instances,
-                    customer_phone='',
-                    customer_fax='',
-                    change_user=request.user,
-                )
-                submit_campus.save()
-
-                # Go to the form.
-                return HttpResponseRedirect(reverse('customers_campus_information', args={submit_campus.customers_campus_id, 'CUST'}))
         else:
             print(form.errors)
 
