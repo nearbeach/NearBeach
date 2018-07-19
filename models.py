@@ -2044,11 +2044,11 @@ class quotes(models.Model):
         default='DRAFT',
     )
 
-    quote_terms = models.TextField(
+    quote_terms = HTMLField(
         null=True,
         blank=True,
     )
-    customer_notes = models.TextField(
+    customer_notes = HTMLField(
         null=True,
         blank=True,
     )
@@ -2229,7 +2229,7 @@ class requirements(models.Model):
     requirement_title = models.CharField(
         max_length=255,
     )
-    requirement_scope = models.TextField(
+    requirement_scope = HTMLField(
         null=True,
         blank=True,
     )

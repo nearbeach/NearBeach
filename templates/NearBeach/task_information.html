@@ -51,18 +51,18 @@
             {% if task_results.task_status == 'Resolved' or task_results.task_status == 'Closed' %}
                 <fieldset disabled="disabled">
             {% endif %}
-            <ul>
+            <table>
             {{ task_information_form.media }}
-                <li>{{ task_information_form.task_short_description }}</li>
-                <li>{{ task_information_form.task_long_description }}</li>
-                <li>Current Task Status: {{ task_results.task_status }}</li>
+                <tr><td>{{ task_information_form.task_short_description }}</td></tr>
+                <tr><td>{{ task_information_form.task_long_description }}</td></tr>
+                <tr><td>Current Task Status: {{ task_results.task_status }}</td></tr>
                 {% if not task_results.organisations_id == Null %}
-                    <li><a href="{% url 'organisation_information' task_results.organisations_id.organisations_id %}">{{ task_results.organisations_id }}</a></li>
+                    <tr><td><a href="{% url 'organisation_information' task_results.organisations_id.organisations_id %}">{{ task_results.organisations_id }}</a></td></tr>
                 {% endif %}
-                <li>Time Zone - {{ timezone }}</li>
-                <li>Task Start - {{ task_information_form.start_date_year }}/{{ task_information_form.start_date_month }}/{{ task_information_form.start_date_day }} @ {{ task_information_form.start_date_hour }}:{{ task_information_form.start_date_minute }} {{ task_information_form.start_date_meridiems }}<br/></li>
-                <li>Task finish Date - {{ task_information_form.finish_date_year }}/{{ task_information_form.finish_date_month }}/{{ task_information_form.finish_date_day }} @ {{ task_information_form.finish_date_hour }}:{{ task_information_form.finish_date_minute }} {{ task_information_form.finish_date_meridiems }}<br/></li>
-            </ul>
+                <tr><td>Time Zone - {{ timezone }}</td></tr>
+                <tr><td>Task Start - {{ task_information_form.start_date_year }}/{{ task_information_form.start_date_month }}/{{ task_information_form.start_date_day }} @ {{ task_information_form.start_date_hour }}:{{ task_information_form.start_date_minute }} {{ task_information_form.start_date_meridiems }}<br/></td></tr>
+                <tr><td>Task finish Date - {{ task_information_form.finish_date_year }}/{{ task_information_form.finish_date_month }}/{{ task_information_form.finish_date_day }} @ {{ task_information_form.finish_date_hour }}:{{ task_information_form.finish_date_minute }} {{ task_information_form.finish_date_meridiems }}<br/></td></tr>
+            </table>
 
             {% if task_permissions > 1 %}
                 <input type="submit" name="update" value="Update"/>
