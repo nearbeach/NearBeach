@@ -293,7 +293,7 @@ class campus_information_form(ModelForm):
     )
 
     class Meta:
-        model=organisations_campus
+        model=campus
         fields='__all__'
         exclude=[
             'campus_region_id',
@@ -1396,14 +1396,24 @@ class new_quote_form(ModelForm):
     )
 
     quote_terms=forms.CharField(
-        widget=forms.Textarea(attrs={
-            "placeholder": 'Quote Terms',
-        }),
+        widget=TinyMCE(
+            mce_attrs={
+                'style': 'width: 100%',
+            },
+            attrs={
+                "placeholder": 'Quote Terms',
+            }
+        ),
     )
     customer_notes = forms.CharField(
-        widget=forms.Textarea(attrs={
-            "placeholder": 'Customer Notes',
-        }),
+        widget=TinyMCE(
+            mce_attrs={
+                'style': 'width: 100%',
+            },
+            attrs={
+                "placeholder": 'Customer Notes',
+            }
+        ),
         required=False,
     )
 
@@ -1435,9 +1445,14 @@ class new_requirement_form(ModelForm):
         }),
     )
     requirement_scope = forms.CharField(
-        widget=forms.Textarea(attrs={
-            'placeholder': 'Requirement Scope'
-        }),
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Requirement Scope'
+            }
+        ),
     )
     requirement_status=forms.ModelChoiceField(
         label="Quote Stage",
@@ -1500,9 +1515,14 @@ class new_task_form(forms.Form):
         }),
     )
     task_long_description=forms.CharField(
-        widget=forms.Textarea(attrs={
-            "placeholder": 'Task Long Description',
-        }),
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                "placeholder": 'Task Long Description',
+            }
+        ),
     )
     organisations_id=forms.ModelChoiceField(
         label="Organisation",
@@ -1902,14 +1922,25 @@ class quote_information_form(ModelForm):
 
 
     quote_terms=forms.CharField(
-        widget=forms.Textarea(attrs={
-            "placeholder": 'Quote Terms',
-        }),
+        widget=TinyMCE(
+            mce_attrs={
+                'style': 'width: 100%;'
+            },
+            attrs={
+                "placeholder": 'Quote Terms',
+            },
+
+        ),
     )
     customer_notes = forms.CharField(
-        widget=forms.Textarea(attrs={
-            "placeholder": 'Customer Notes',
-        }),
+        widget=TinyMCE(
+            mce_attrs={
+              'style': 'width: 100%',
+            },
+            attrs={
+                "placeholder": 'Customer Notes',
+            }
+        ),
         required=False,
     )
 
@@ -1935,6 +1966,16 @@ class search_form(forms.Form):
 
 
 class requirement_information_form(ModelForm):
+    requirement_scope = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Requirement Scope'
+            }
+        ),
+    )
     class Meta:
         model=requirements
         exclude=[

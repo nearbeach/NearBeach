@@ -7,13 +7,14 @@
     <h2>Requirement Information - {{ requirement_id }}</h2>
     <form id="requirement_information" name="requirement_information" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <ul>
-            <li>{{ requirement_information_form.requirement_title }}</li>
-            <li>{{ requirement_information_form.requirement_scope }}</li>
-            <li>Requirement Type: {{ requirement_information_form.requirement_type }}</li>
-            <li>Requirement Status: {{ requirement_information_form.requirement_status }}</li>
-            <li><input type="submit" value="Update"><input type="submit" value="Resolve" name="resolve"></li>
-        </ul>
+        {{ requirement_information_form.media }}
+        <table>
+            <tr><td>{{ requirement_information_form.requirement_title }}</td></tr>
+            <tr><td>{{ requirement_information_form.requirement_scope }}</td></tr>
+            <tr><td>Requirement Type: {{ requirement_information_form.requirement_type }}</td></tr>
+            <tr><td>Requirement Status: {{ requirement_information_form.requirement_status }}</td></tr>
+            <tr><td><input type="submit" value="Update"><input type="submit" value="Resolve" name="resolve"></td></tr>
+        </table>
     </form>
     <h2>Requirement Items</h2>
 

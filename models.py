@@ -221,6 +221,83 @@ class bug_client(models.Model):
         db_table = "bug_client"
 
 
+class campus(models.Model):
+    campus_id = models.AutoField(primary_key=True)
+    organisations_id = models.ForeignKey(
+        'organisations',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    customers = models.ForeignKey(
+        'customers',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    campus_nickname = models.CharField(max_length=100)
+    campus_phone = models.CharField(
+        max_length=11,
+        null=True
+    )
+    campus_fax = models.CharField(
+        max_length=11,
+        null=True
+    )
+    campus_address1 = models.CharField(
+        max_length=255,
+        null=True
+    )
+    campus_address2 = models.CharField(
+        max_length=255,
+        null=True
+    )
+    campus_address3 = models.CharField(
+        max_length=255,
+        null=True
+    )
+    campus_suburb = models.CharField(max_length=50)
+    campus_region_id = models.ForeignKey(
+        'list_of_countries_regions',
+        on_delete=models.CASCADE,
+    )
+    campus_country_id = models.ForeignKey(
+        'list_of_countries',
+        on_delete=models.CASCADE,
+    )
+    campus_longitude = models.DecimalField(
+        decimal_places=13,
+        max_digits=16,
+        null=True,  # If use has no mapping software, we want to leave this blank
+        blank=True,
+    )
+    campus_latitude = models.DecimalField(
+        decimal_places=13,
+        max_digits=16,
+        null=True,  # If use has no mapping software, we want to leave this blank
+        blank=True,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    def __str__(self):
+        return self.campus_nickname.encode('utf8')
+
+    class Meta:
+        db_table = "campus"
+
+
+
 class costs(models.Model):
     cost_id = models.AutoField(primary_key=True)
     project_id = models.ForeignKey(
@@ -308,7 +385,7 @@ class customers_campus(models.Model):
         on_delete=models.CASCADE,
     )
     campus_id = models.ForeignKey(
-        'organisations_campus',
+        'campus',
         on_delete=models.CASCADE,
     )
     customer_phone = models.CharField(max_length=11)
@@ -1428,73 +1505,6 @@ class organisations(models.Model):
         db_table = "organisations"
 
 
-class organisations_campus(models.Model):
-    organisations_campus_id = models.AutoField(primary_key=True)
-    organisations_id = models.ForeignKey(
-        'organisations',
-        on_delete=models.CASCADE,
-    )
-    campus_nickname = models.CharField(max_length=100)
-    campus_phone = models.CharField(
-        max_length=11,
-        null=True
-    )
-    campus_fax = models.CharField(
-        max_length=11,
-        null=True
-    )
-    campus_address1 = models.CharField(
-        max_length=255,
-        null=True
-    )
-    campus_address2 = models.CharField(
-        max_length=255,
-        null=True
-    )
-    campus_address3 = models.CharField(
-        max_length=255,
-        null=True
-    )
-    campus_suburb = models.CharField(max_length=50)
-    campus_region_id = models.ForeignKey(
-        'list_of_countries_regions',
-        on_delete=models.CASCADE,
-    )
-    campus_country_id = models.ForeignKey(
-        'list_of_countries',
-        on_delete=models.CASCADE,
-    )
-    campus_longitude = models.DecimalField(
-        decimal_places=13,
-        max_digits=16,
-        null=True,  # If use has no mapping software, we want to leave this blank
-        blank=True,
-    )
-    campus_latitude = models.DecimalField(
-        decimal_places=13,
-        max_digits=16,
-        null=True,  # If use has no mapping software, we want to leave this blank
-        blank=True,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
-    )
-
-    def __str__(self):
-        return self.campus_nickname.encode('utf8')
-
-    class Meta:
-        db_table = "organisations_campus"
-
 
 class permission_set_manager(models.Manager):
     def get_by_natural_key(
@@ -2034,11 +2044,11 @@ class quotes(models.Model):
         default='DRAFT',
     )
 
-    quote_terms = models.TextField(
+    quote_terms = HTMLField(
         null=True,
         blank=True,
     )
-    customer_notes = models.TextField(
+    customer_notes = HTMLField(
         null=True,
         blank=True,
     )
@@ -2219,7 +2229,7 @@ class requirements(models.Model):
     requirement_title = models.CharField(
         max_length=255,
     )
-    requirement_scope = models.TextField(
+    requirement_scope = HTMLField(
         null=True,
         blank=True,
     )

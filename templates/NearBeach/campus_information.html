@@ -18,11 +18,15 @@
 {% endif %}
 <body onload="on_page_load('{{ campus_results.campus_country_id_id }}', '{{ campus_results.campus_region_id }}')">
 	<h2>Campus Information - {{ campus_results.campus_nickname }}</h2>
-	<form action="{% url 'campus_information' campus_results.organisations_campus_id %}" method="post" class="campus_information">
+	<form action="{% url 'campus_information' campus_results.campus_id %}" method="post" class="campus_information">
 		{% csrf_token %}
 		<ul>
-			<li><a href="{% url 'organisation_information' campus_results.organisations_id.organisations_id %}">{{ campus_results.organisations_id }}</a></li>
-			<li>{{ campus_information_form.campus_nickname }}</li>
+            {% if campus_results.organisations_id %}
+			    <li><a href="{% url 'organisation_information' campus_results.organisations_id.organisations_id %}">{{ campus_results.organisations_id }}</a></li>
+			{% else %}
+                <li><a href="{% url 'customer_information' campus_results.customers.customer_id %}">{{ campus_results.customers }}</a></li>
+            {% endif %}
+            <li>{{ campus_information_form.campus_nickname }}</li>
 			<li>{{ campus_information_form.campus_phone }}</li>
 			<li>{{ campus_information_form.campus_fax }}</li>
 			<li>{{ campus_information_form.campus_address1 }}</li>
@@ -50,37 +54,39 @@
 		</ul>
 		<input type="submit" value="Save">
 	</form>
-	<h2>Campus Contacts</h2>
-	{% if add_customers_results %}
-		<form action="{% url 'campus_information' campus_results.organisations_campus_id %}" method="POST" class="campus_information">
-			{% csrf_token %}
-			<select name="add_customer_select" id="id_add_customer_select" onchange="enable_disable_add_customer()">
-				<option value="---------"> ---------</option>
-				{% for row in add_customers_results %}
-					<option value="{{ row.customer_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
-				{% endfor %}
-			</select>
-			<input type="submit" name="add_customer_submit" value="Add Customer" disabled id="id_add_customer_submit">
-		</form>
-	{% endif %}
-	<br/>
-	{% if customer_campus_results %}
-		<table>
-			<tr class="header"><td>First Name</td><td>Last Name</td><td>Email</td><td>Phone</td><td>Fax</td><td>Delete</td></tr>
-			{% for row in customer_campus_results %}
-				<tr>
-					<td><a href="{% url 'customers_campus_information' row.customers_campus_id 'CAMP' %}">{{ row.customer_id.customer_first_name }}</a></td>
-					<td>{{ row.customer_id.customer_last_name }}</td>
-					<td>{{ row.customer_id.customer_email }}</td>
-					<td>{{ row.customer_phone }}</td>
-					<td>{{ row.customer_fax }}</td>
-					<td><a href="{% url 'delete_campus_contact' row.customers_campus_id 'CAMP' %}">Delete</a></td>
-				</tr>
-			{% endfor %}
-		</table>
-	{% else %}
-		<p>There are no customers at this campus</p>
-	{% endif %}
+    {% if campus_results.organisations_id %}
+        <h2>Campus Contacts</h2>
+        {% if add_customers_results %}
+            <form action="{% url 'campus_information' campus_results.campus_id %}" method="POST" class="campus_information">
+                {% csrf_token %}
+                <select name="add_customer_select" id="id_add_customer_select" onchange="enable_disable_add_customer()">
+                    <option value="---------"> ---------</option>
+                    {% for row in add_customers_results %}
+                        <option value="{{ row.customer_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
+                    {% endfor %}
+                </select>
+                <input type="submit" name="add_customer_submit" value="Add Customer" disabled id="id_add_customer_submit">
+            </form>
+        {% endif %}
+        <br/>
+        {% if customer_campus_results %}
+            <table>
+                <tr class="header"><td>First Name</td><td>Last Name</td><td>Email</td><td>Phone</td><td>Fax</td><td>Delete</td></tr>
+                {% for row in customer_campus_results %}
+                    <tr>
+                        <td><a href="{% url 'customers_campus_information' row.customers_campus_id 'CAMP' %}">{{ row.customer_id.customer_first_name }}</a></td>
+                        <td>{{ row.customer_id.customer_last_name }}</td>
+                        <td>{{ row.customer_id.customer_email }}</td>
+                        <td>{{ row.customer_phone }}</td>
+                        <td>{{ row.customer_fax }}</td>
+                        <td><a href="{% url 'delete_campus_contact' row.customers_campus_id 'CAMP' %}">Delete</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>There are no customers at this campus</p>
+        {% endif %}
+    {% endif %}
 	<h2>Map</h2>
 	<div id='map'></div>
 

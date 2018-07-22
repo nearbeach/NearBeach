@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
     <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
     <h2>New Campus</h2>
-    <form id="input-form" action="{% url 'new_campus' organisations_id %}" method="post" class="new_campus">
+    <form id="input-form" action="{% url 'new_campus' location_id destination %}" method="post" class="new_campus">
         {% csrf_token %}
         <ul>
             <li>{{ new_campus_form.campus_nickname }}</li>
@@ -20,8 +20,11 @@
 
         <br/>
         <input id="submit" type="submit" value="Submit new campus" disabled="disabled">
-        <a href="{% url 'organisation_information' organisations_id %}">Cancel</a>
-
+        {% if destination == "organisation" %}
+            <a href="{% url 'organisation_information' location_id %}">Cancel</a>
+        {% else %}
+            <a href="{% url 'customer_information' location_id %}">Cancel</a>
+        {% endif %}
 
 
         <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>

@@ -26,70 +26,104 @@
 <body onload="on_page_load()">
     <form action="{% url 'customer_information' customer_results.customer_id %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-            <h2>Customer Information</h2>
-            <ul>
-                {% if profile_picture %}
-                    <li><img src="{{ profile_picture }}" height="160px"><br/> {{ organisation_information_form.update_profile_picture }}</li>
-                {% else %}
-                    <li><img src="{% static 'NearBeach/images/icons/star.svg' %}" height="160px"><br/> {{ organisation_information_form.update_profile_picture }}</li>
-                {% endif %}
-                {% if customer_permissions > 1 %}
-                    <li>{{ customer_information_form.update_profile_picture }}</li>
-                {% endif %}
-                <table>
-                    <tr>
-                        <td width="10%">{{ customer_information_form.customer_title }}</td>
-                        <td width="45%">{{ customer_information_form.customer_first_name }}</td>
-                        <td width="45%">{{ customer_information_form.customer_last_name }}</td>
-                    </tr>
-                </table>
-                <li>{{ customer_information_form.customer_email }}</li>
-                {% if not customer_results.organisations_id == Null %}
-                    <li>Organisation: <a href="{% url 'organisation_information' customer_results.organisations_id.organisations_id %}">{{ customer_results.organisations_id }}</a></li>
-                {% endif %}
-            </ul>
-            {% if customer_permissions > 1 %}
-                <input type="submit" name="update" value="Update Details"/>
-            {% endif %}
-            <h2>Campus Contact Information</h2>
-            {% if add_campus_results and assign_campus_to_customer_permission > 1%}
-
-                    <select name="add_campus_select" id="id_add_cammpus_select" onchange="enable_disable_add_campus()">
-                        <option value="---------"> ---------</option>
-                        {% for row in add_campus_results %}
-                            <option value="{{ row.organisations_campus_id }}">{{ row.campus_nickname }}</option>
-                        {% endfor %}
-                    </select>
-                    <input type="submit" name="add_campus_submit" value="Add Campus" disabled id="id_add_cammpus_submit">
-
-            {% endif %}
-            {% if campus_results %}
-                <table>
-                    <tr class="header">
-                        <td>Campus nickname</td>
-                        <td>Contact's Phone</td>
-                        <td>Contact's Fax</td>
-                        <td>Campus Suburb</td>
-                        <td>Campus Region</td>
-                        <td>Campus Country</td>
-                        <td>Delete</td>
-                    </tr>
-                    {% for row in campus_results %}
-                        <tr>
-                            <td><a href="{% url 'customers_campus_information' row.customers_campus_id 'CUST' %}">{{ row.campus_id }}</a></td>
-                            <td>{{ row.customer_phone }}</td>
-                            <td>{{ row.customer_fax }}</td>
-                            <td>{{ row.campus_id.campus_suburb }}</td>
-                            <td>{{ row.campus_id.campus_region_id }}</td>
-                            <td>{{ row.campus_id.campus_country_id }}</td>
-                            <td><a href="{% url 'delete_campus_contact' row.customers_campus_id 'CUST' %}">Delete</a></td>
-                        </tr>
-                    {% endfor %}
-                </table>
+        <h2>Customer Information</h2>
+        <ul>
+            {% if profile_picture %}
+                <li><img src="{{ profile_picture }}" height="160px"><br/> {{ organisation_information_form.update_profile_picture }}</li>
             {% else %}
-                <p>There are currently no campuses</p>
+                <li><img src="{% static 'NearBeach/images/icons/star.svg' %}" height="160px"><br/> {{ organisation_information_form.update_profile_picture }}</li>
             {% endif %}
+            {% if customer_permissions > 1 %}
+                <li>{{ customer_information_form.update_profile_picture }}</li>
+            {% endif %}
+            <table>
+                <tr>
+                    <td width="10%">{{ customer_information_form.customer_title }}</td>
+                    <td width="45%">{{ customer_information_form.customer_first_name }}</td>
+                    <td width="45%">{{ customer_information_form.customer_last_name }}</td>
+                </tr>
+            </table>
+            <li>{{ customer_information_form.customer_email }}</li>
+            {% if not customer_results.organisations_id == Null %}
+                <li>Organisation: <a href="{% url 'organisation_information' customer_results.organisations_id.organisations_id %}">{{ customer_results.organisations_id }}</a></li>
+            {% endif %}
+        </ul>
+        {% if customer_permissions > 1 %}
+            <input type="submit" name="update" value="Update Details"/>
+        {% endif %}
     </form>
+    <h2>Campus Contact Information</h2>
+    {% if add_campus_results and assign_campus_to_customer_permission > 1 and customer_results.organisations_id %}
+        <form id="customer_campus_form">
+            <select name="add_campus_select" id="id_add_cammpus_select" onchange="enable_disable_add_campus()">
+                <option value="---------"> ---------</option>
+                {% for row in add_campus_results %}
+                    <option value="{{ row.campus_id }}">{{ row.campus_nickname }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" name="add_campus_submit" value="Add Campus" disabled id="id_add_cammpus_submit">
+        </form>
+    {% elif assign_campus_to_customer_permission > 1 and not customer_results.organisations_id %}
+        <a href="{% url 'new_campus' customer_results.customer_id 'customer' %}">New Campus</a>
+    {% endif %}
+    {% if customer_campus_results %}
+        <table>
+            <tr class="header">
+                <td>Campus nickname</td>
+                <td>Campus's Phone</td>
+                <td>Campus's Fax</td>
+                <td>Campus Suburb</td>
+                <td>Campus Region</td>
+                <td>Campus Country</td>
+                {% if customer_permissions == 4 or administration_permission %}
+                    <td>Delete</td>
+                {% endif %}
+            </tr>
+            {% for row in customer_campus_results %}
+                <tr>
+                    <td><a href="{% url 'campus_information' row.campus_id %}">{{ row.campus_nickname }}</a></td>
+                    <td>{{ row.campus_phone }}</td>
+                    <td>{{ row.campus_fax }}</td>
+                    <td>{{ row.campus_suburb }}</td>
+                    <td>{{ row.campus_region_id }}</td>
+                    <td>{{ row.campus_country_id }}</td>
+                    {% if customer_permissions == 4 or administration_permission %}
+                        <td>Delete</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+
+    {% elif campus_results %}
+        <table>
+            <tr class="header">
+                <td>Campus nickname</td>
+                <td>Contact's Phone</td>
+                <td>Contact's Fax</td>
+                <td>Campus Suburb</td>
+                <td>Campus Region</td>
+                <td>Campus Country</td>
+                {% if customer_permissions == 4 or administration_permission %}
+                    <td>Delete</td>
+                {% endif %}
+            </tr>
+            {% for row in campus_results %}
+                <tr>
+                    <td><a href="{% url 'customers_campus_information' row.customers_campus_id 'CUST' %}">{{ row.campus_id }}</a></td>
+                    <td>{{ row.customer_phone }}</td>
+                    <td>{{ row.customer_fax }}</td>
+                    <td>{{ row.campus_id.campus_suburb }}</td>
+                    <td>{{ row.campus_id.campus_region_id }}</td>
+                    <td>{{ row.campus_id.campus_country_id }}</td>
+                    {% if customer_permissions == 4 or administration_permission %}
+                        <td><a href="{% url 'delete_campus_contact' row.customers_campus_id 'CUST' %}">Delete</a></td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>There are currently no campuses</p>
+    {% endif %}
     <form method="post" class="customer_contact_history" id="customer_contact_history" enctype="multipart/form-data">
         <h2>Contact History</h2>
         Loading...
@@ -203,6 +237,35 @@
     </form>
 </body>
 <script>
+    $("#customer_campus_form").on('submit', function(e) {
+        e.preventDefault();
+
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        var id_add_cammpus_select = document.getElementById("id_add_cammpus_select");
+
+        $.ajax({
+            type: "POST",
+            data: {},
+            url: '/add_campus_to_customer/{{ customer_id }}/' + id_add_cammpus_select.value + '/',
+            success: function(data){
+
+                $.each(data, function(index, element) {
+                    window.location.href = "/customers_campus_information/" + element + "/CUST/";
+                });
+            },
+            error: function () {
+                alert("Sorry, but adding that campus failed.")
+            }
+        })
+    });
+
     $("#customer_contact_history").on('submit', function(e) {
         e.preventDefault();
 

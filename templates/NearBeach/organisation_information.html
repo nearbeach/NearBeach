@@ -25,7 +25,7 @@
         {% if organisation_campus_permissions > 0 %}
             <h2>Organisation Campus'</h2>
             {% if organisation_campus_permissions > 1 %}
-                <a href="{% url 'new_campus' organisation_results.organisations_id %}">New Campus</a>
+                <a href="{% url 'new_campus' organisations_id 'organisation' %}">New Campus</a>
             {% endif %}
             <table>
             <tr class="header"><td>Campus Nickname</td><td>Campus Location</td><td>Campus Address</td></tr>

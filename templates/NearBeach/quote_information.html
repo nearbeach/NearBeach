@@ -113,15 +113,16 @@
     <form action={% url 'quote_information' quote_id %} method="post" class="new_quote">
     {% csrf_token %}
         <h2>{{ quote_or_invoice }}{{ quotes_results.quote_id }}</h2>
-        <ul>
-            <li>{{ quote_information_form.quote_title }}</li>
-            <li>{{ quote_information_form.quote_terms }}</li>
-            <li>{{ quote_or_invoice }} Stage: {{ quote_information_form.quote_stage_id }}</li>
-            <li>Time zone: {{ timezone }}</li>
-            <li>{{ quote_or_invoice }} Valid To: {{ quote_information_form.quote_valid_till_year }}/{{ quote_information_form.quote_valid_till_month }}/{{ quote_information_form.quote_valid_till_day }}<br/>
-                {{ quote_information_form.quote_valid_till_hour }}:{{ quote_information_form.quote_valid_till_minute }} {{ quote_information_form.quote_valid_till_meridiems }}</li>
-            <li>{{ quote_information_form.customer_notes }}</li>
-        </ul>
+        <table>
+            {{ quote_information_form.media }}
+            <tr><td></td>{{ quote_information_form.quote_title }}</tr>
+            <tr><td>{{ quote_information_form.quote_terms }}</td></tr>
+            <tr><td>{{ quote_or_invoice }} Stage: {{ quote_information_form.quote_stage_id }}</td></tr>
+            <tr><td>Time zone: {{ timezone }}</td></tr>
+            <tr><td>{{ quote_or_invoice }} Valid To: {{ quote_information_form.quote_valid_till_year }}/{{ quote_information_form.quote_valid_till_month }}/{{ quote_information_form.quote_valid_till_day }}<br/>
+                {{ quote_information_form.quote_valid_till_hour }}:{{ quote_information_form.quote_valid_till_minute }} {{ quote_information_form.quote_valid_till_meridiems }}</td></tr>
+            <tr><td>{{ quote_information_form.customer_notes }}</td></tr>
+        </table>
         <input type="submit" value="Update {{ quote_or_invoice }}">
         {% if quote_or_invoice == 'Quote' %}
             <input type="submit" value="Create Invoice" name="create_invoice" id="create_invoice">

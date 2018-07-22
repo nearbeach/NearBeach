@@ -54,7 +54,7 @@ url(r'dashboard/active_requirements', views.dashboard_active_requirements, name=
 
 	url(r'^login', views.login, name='login'),
 	url(r'^logout', views.logout, name='logout'),
-	url(r'^new_campus/(?P<organisations_id>[0-9]+)/', views.new_campus, name='new_campus'),
+	url(r'^new_campus/(?P<location_id>[0-9]+)/(?P<destination>["organisation","customer"]+)/$', views.new_campus, name='new_campus'),
 	url(r'^new_customer/(?P<organisations_id>[0-9]+)/', views.new_customer, name='new_customer'),
 	url(r'^new_opportunity/$', views.new_opportunity, name='new_opportunity'),
 	#url(r'^new_opportunity/(?P<organisation_id>[0-9]+)/$', views.new_opportunity, name='new_opportunity'),
@@ -278,7 +278,7 @@ url(r'^email_history/(?P<location_id>[0-9]+)/(?P<destination>["organisation","cu
 url(r'^email_information/(?P<email_content_id>[0-9]+)/$', views.email_information,name='email_information'),
 url(r'^timeline/$', views.timeline, name='timeline'),
 url(r'^timeline_data/(?P<destination>["project","task"]+)/$', views.timeline_data, name='timeline_data'),
-
+url(r'^add_campus_to_customer/(?P<customer_id>[0-9]+)/(?P<campus_id>[0-9]+)/', views.add_campus_to_customer,name='add_campus_to_customer'),
 
 ]
 
