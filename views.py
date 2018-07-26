@@ -2445,6 +2445,8 @@ def new_bug_client(request):
     c = {
         'bug_client_form': bug_client_form(),
         'form_errors': form_errors,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))

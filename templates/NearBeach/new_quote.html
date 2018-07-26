@@ -9,13 +9,13 @@
             <table>
                 {{ new_quote_form.media }}
                 <tr><td>{{ new_quote_form.quote_title }}</td></tr>
-                <tr><td>{{ new_quote_form.quote_terms }}</td></tr>
+                <tr><td>Quote Terms<br/>{{ new_quote_form.quote_terms }}</td></tr>
                 <tr><td>Quote Stage: {{ new_quote_form.quote_stage_id }}</td></tr>
                 <tr><td>Quote Approval Status: {{ new_quote_form.quote_approval_status_id }}</td></tr>
                 <tr><td>Time zone: {{ timezone }}</td></tr>
                 <tr><td>Quote Valid To: {{ new_quote_form.quote_valid_till_year }}/{{ new_quote_form.quote_valid_till_month }}/{{ new_quote_form.quote_valid_till_day }}<br/>
                     {{ new_quote_form.quote_valid_till_hour }}:{{ new_quote_form.quote_valid_till_minute }} {{ new_quote_form.quote_valid_till_meridiems }}</td></tr>
-                <tr><td>{{ new_quote_form.customer_notes }}</td></tr>
+                <tr><td>Customer Notes<br/>{{ new_quote_form.customer_notes }}</td></tr>
             </table>
             <input type="submit" value="Submit new quote">
         </form>
