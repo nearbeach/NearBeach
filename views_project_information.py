@@ -167,28 +167,11 @@ def information_project_customers(request, project_id):
         ).values('customer_id')
     )
 
+    project_customers_results = project_customers.objects.filter(
+        is_deleted="FALSE",
+        project_id=project_id,
 
-    #Cursor for custom SQL :)
-    cursor = connection.cursor()
-    cursor.execute("""
-    		SELECT DISTINCT
-    		  customers.customer_id
-    		, customers.customer_first_name
-    		, customers.customer_last_name
-    		, project_customers.customer_description
-    		, customers.customer_email
-    		, customers_campus_information.campus_nickname
-    		, customers_campus_information.customer_phone
-    		FROM
-    		  customers LEFT JOIN 
-    			(SELECT customers_campus_id, customer_phone, customer_fax, campus_id_id, customer_id_id, organisations_campus_id, campus_nickname, campus_phone, campus_fax, campus_address1, campus_address2, campus_address3, campus_suburb, campus_country_id_id, campus_region_id_id, organisations_id_id FROM customers_campus join organisations_campus ON customers_campus.campus_id_id = organisations_campus.organisations_campus_id) as customers_campus_information
-    			ON customers.customer_id = customers_campus_information.customer_id_id
-    		, project_customers
-    		WHERE 1=1
-    		AND customers.customer_id = project_customers.customer_id_id
-    		AND project_customers.project_id_id = %s
-    	""", [project_id])
-    project_customers_results = namedtuplefetchall(cursor)
+    )
 
     t = loader.get_template('NearBeach/project_information/project_customers.html')
 

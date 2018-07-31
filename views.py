@@ -138,20 +138,26 @@ def assign_customer_project_task(request, customer_id):
         """
 		We will now assign these projects and tasks in bulk to the customer
 		"""
+        print("Assigning customer projects")
         for row in assign_projects:
             project_instance = project.objects.get(project_id=row)
+            print("Assigning project: " + project_instance.project_name + " for customer: " + customer_instance.customer_first_name)
 
             # Project customers
-            assign_save = project_customers(
+            project_customers_submit = project_customers(
                 project_id=project_instance,
                 customer_id=customer_instance,
                 change_user=request.user,
                 # Customer description will have to be programmed in at a later date
             )
-            assign_save.save()
+            if not project_customers_submit.save():
+                print("Error saving")
 
+
+        print("Assigning customer tasks")
         for row in assign_tasks:
             task_instance = tasks.objects.get(tasks_id=row)
+            print("Assigning task: " + task_instance.task_short_description + " for customer: " + customer_instance.customer_first_name)
 
             assign_save = tasks_customers(
                 tasks_id=task_instance,
@@ -918,7 +924,7 @@ def customer_information(request, customer_id):
         is_deleted="FALSE",
         project_id__in=project_customers.objects.filter(
             is_deleted="FALSE",
-            project_customers_id=customer_id,
+            customer_id=customer_id,
         ).values('project_id')
     )
 
@@ -926,7 +932,7 @@ def customer_information(request, customer_id):
         is_deleted="FALSE",
         tasks_id__in=tasks_customers.objects.filter(
             is_deleted="FALSE",
-            tasks_customers_id=customer_id,
+            customer_id=customer_id,
         ).values('tasks_id')
     )
 
