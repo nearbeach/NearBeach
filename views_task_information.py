@@ -163,26 +163,10 @@ def information_task_customers(request, task_id):
         customer_id__in=tasks_customers.objects.filter(tasks_id=task_results.tasks_id).values('customer_id')
     )
 
-    # task_customers_results
-    cursor = connection.cursor()
-    cursor.execute("""
-    		SELECT DISTINCT
-    		  customers.customer_first_name
-    		, customers.customer_last_name
-    		, tasks_customers.customers_description
-    		, customers.customer_email
-    		, customers_campus_information.campus_nickname
-    		, customers_campus_information.customer_phone
-    		FROM
-    		  customers LEFT JOIN 
-    			(SELECT customers_campus_id, customer_phone, customer_fax, campus_id_id, customer_id_id, organisations_campus_id, campus_nickname, campus_phone, campus_fax, campus_address1, campus_address2, campus_address3, campus_suburb, campus_country_id_id, campus_region_id_id, organisations_id_id FROM customers_campus join organisations_campus ON customers_campus.campus_id_id = organisations_campus.organisations_campus_id ) as customers_campus_information
-    			ON customers.customer_id = customers_campus_information.customer_id_id
-    		, tasks_customers
-    		WHERE 1=1
-    		AND customers.customer_id = tasks_customers.customer_id_id
-    		AND tasks_customers.tasks_id_id = %s
-    	""", [task_id])
-    tasks_customers_results = namedtuplefetchall(cursor)
+    tasks_customers_results=tasks_customers.objects.filter(
+        is_deleted="FALSE",
+        tasks_id=task_id
+    )
 
     #Load template
     t = loader.get_template('NearBeach/task_information/task_customers.html')

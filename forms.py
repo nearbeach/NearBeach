@@ -459,15 +459,67 @@ class email_form(ModelForm):
                 organisations_id=tasks.objects.get(tasks_id=location_id).organisations_id.organisations_id
             )
         elif destination == "opportunity":
-            customer_results = customers.objects.filter(
-                is_deleted="FALSE",
-                organisations_id=opportunity.objects.get(opportunity_id=location_id).organisations_id.organisations_id
-            )
+            opportunity_results=opportunity.objects.get(opportunity_id=location_id)
+            if opportunity_results.organisations_id:
+                customer_results = customers.objects.filter(
+                    is_deleted="FALSE",
+                    organisations_id=opportunity_results.organisations_id.organisations_id
+                )
+            else:
+                customer_results = customers.objects.filter(
+                    is_deleted="FALSE",
+                    customer_id=opportunity_results.customer_id.customer_id
+                )
         elif destination == "quote":
-            customer_results = customers.objects.filter(
-                is_deleted="FALSE",
-                organisations_id=quotes.objects.get(quote_id=location_id).project_id.organisations_id.organisations_id
-            )
+            """
+            We need to determine who the quote is for to determine the customer list. For example a quote can be for;
+            - Project
+            - Task
+            - Opportunity
+            - Customer
+            - Organistaion
+            
+            Once we know who it is for we then extract the relevant customer list.
+            """
+            quote_results = quotes.objects.get(quote_id=location_id)
+
+            if quote_results.project_id:
+                customer_results = customers.objects.filter(
+                    is_deleted="FALSE",
+                    organisations_id=project.objects.get(project_id=quote_results.project_id.project_id).organisations_id.organisations_id
+                )
+            elif quote_results.task_id:
+                customer_results = customers.objects.filter(
+                    is_deleted="FALSE",
+                    organisations_id=tasks.objects.get(tasks_id=quote_results.task_id.tasks_id).organisations_id.organisations_id
+                )
+            elif quote_results.opportunity_id:
+                opportunity_results=opportunity.objects.get(
+                        opportunity_id=quote_results.opportunity_id.opportunity_id
+                )
+                if opportunity_results.organisations_id:
+                    customer_results = customers.objects.filter(
+                        is_deleted="FALSE",
+                        organisations_id=opportunity_results.organisations_id.organisations_id
+                    )
+                else:
+                    customer_results = customers.objects.filter(
+                        is_deleted="FALSE",
+                        customer_id=opportunity_results.customer_id.customer_id
+                    )
+            elif quote_results.customer_id:
+                customer_results=customers.objects.filter(
+                    is_deleted="FALSE",
+                    customer_id=quote_results.customer_id.customer_id
+                )
+            elif quote_results.organisation_id:
+                customer_results = customers.objects.filter(
+                    is_deleted="FALSE",
+                    organisations_id=opportunity.objects.get(
+                        opportunity_id=quote_results.organisation_id.organisations_id).organisations_id.organisations_id
+                )
+            else:
+                print("SOMETHING FUCKED UP!!!")
         else:
             customer_results = ''
 
@@ -1423,6 +1475,7 @@ class new_quote_form(ModelForm):
         fields={
             'quote_title',
             'quote_stage_id',
+            'quote_approval_status_id',
             'quote_terms',
             'customer_notes',
         }

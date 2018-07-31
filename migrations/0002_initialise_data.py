@@ -25,6 +25,19 @@ def initialise_data(apps, schema_editor):
         list_of_amount_type(amount_type_description="Per Hour",list_order=6),
     ])
 
+
+    # List of bug clients
+    list_of_bug_client = apps.get_model("NearBeach","list_of_bug_client")
+    list_of_bug_client.objects.using(db_alias).bulk_create([
+        list_of_bug_client(
+            bug_client_name="Bugzilla",
+            bug_client_api_url="/rest/",
+            api_open_bugs="?open_status='True'",
+            api_search_bugs="bug?quicksearch=",
+            api_bug="/show_bug.cgi?id=",
+        )
+    ])
+
     list_of_currency=apps.get_model("NearBeach","list_of_currency")
     list_of_currency.objects.using(db_alias).bulk_create([
         list_of_currency(currency_description='Australian dollar', currency_short_description='AUD', list_order='1'),
