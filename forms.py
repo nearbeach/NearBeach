@@ -2224,24 +2224,19 @@ class task_information_form(ModelForm):
             'task_long_description',
         }
 
-class timeline_form(forms.Form):
-    start_date=forms.DateField(
-        required=True
-    )
-    end_date=forms.DateField(
-        required=True
-    )
 
 
 class timeline_form(forms.Form):
     start_date = forms.DateField(
         widget=forms.DateInput(attrs={
             'onchange': 'render_timeline()',
+            'style': 'width: 100px;',
         })
     )
     end_date = forms.DateField(
         widget=forms.DateInput(attrs={
             'onchange': 'render_timeline()',
+            'style': 'width: 100px;',
         })
     )
 
