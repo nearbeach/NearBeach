@@ -1350,49 +1350,26 @@ class new_project_form(forms.Form):
         queryset=organisations_results,
         required=False,
     )
-    start_date_year=forms.ChoiceField(
-        choices=YEAR_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
+    project_start_date=forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'style': 'width: 200px',
         })
     )
-    start_date_month=forms.ChoiceField(
-        choices=MONTH_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
+    project_end_date=forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'style': 'width: 200px'
         })
     )
-    start_date_day=forms.ChoiceField(
-        choices=DAY_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
+    """
+    end_date = forms.DateField(
+        widget=forms.DateInput(attrs={
+            'onchange': 'render_timeline()',
+            'style': 'width: 100px;',
         })
     )
-    start_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
-    start_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
-    start_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
-
-    finish_date_year=forms.ChoiceField(
-        choices=YEAR_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_month=forms.ChoiceField(
-        choices=MONTH_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_day=forms.ChoiceField(
-        choices=DAY_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
-    finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
-    finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
+    """
 
     class Meta:
         model = project
@@ -1400,6 +1377,8 @@ class new_project_form(forms.Form):
             'project_name',
             'project_description',
             'organisations_id',
+            'project_start_date',
+            'project_end_date',
         }
 
 

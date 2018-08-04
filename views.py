@@ -2933,30 +2933,13 @@ def new_project(request, location_id='', destination=''):
             organisations_id_form = form.cleaned_data['organisations_id']
 
             # Create the final start/end date fields
-            project_start_date = convert_to_utc(
-                int(form.cleaned_data['start_date_year']),
-                int(form.cleaned_data['start_date_month']),
-                int(form.cleaned_data['start_date_day']),
-                int(form.cleaned_data['start_date_hour']),
-                int(form.cleaned_data['start_date_minute']),
-                form.cleaned_data['start_date_meridiems']
-            )
-
-            project_end_date = convert_to_utc(
-                int(form.cleaned_data['finish_date_year']),
-                int(form.cleaned_data['finish_date_month']),
-                int(form.cleaned_data['finish_date_day']),
-                int(form.cleaned_data['finish_date_hour']),
-                int(form.cleaned_data['finish_date_minute']),
-                form.cleaned_data['finish_date_meridiems']
-            )
+            ### GET THE DATE START AND FINISH HERE
 
             submit_project = project(
                 project_name=project_name,
                 project_description=project_description,
-                #organisations_id=organisations_id_form,
-                project_start_date=project_start_date,
-                project_end_date=project_end_date,
+                project_start_date=form.cleaned_data['project_start_date'],
+                project_end_date=form.cleaned_data['project_end_date'],
                 project_status='New',
                 change_user=request.user,
             )
@@ -3005,6 +2988,7 @@ def new_project(request, location_id='', destination=''):
             """
             We want to return the user to the original location. This is dependent on the destination
             """
+            print("New project now compeleted - going to location.")
             if destination == "organisation":
                 return HttpResponseRedirect(reverse(organisation_information, args={location_id}))
             elif destination == "customer":
@@ -3017,106 +3001,74 @@ def new_project(request, location_id='', destination=''):
             print("Form is not valid")
             print(form.errors)
 
-    else:
-        # Obtain the groups the user is associated with
-        current_user = request.user
-        cursor = connection.cursor()
+    # Obtain the groups the user is associated with
+    current_user = request.user
+    cursor = connection.cursor()
 
-        cursor.execute(
-            """
-		SELECT DISTINCT
-		  groups.group_id
-		, groups.group_name
-
-		FROM 
-		  user_groups join groups
-			on user_groups.groups_id = groups.group_id
-
-		WHERE 1=1
-		AND user_groups.is_deleted = "FALSE"
-		AND user_groups.username_id = %s
-		""", [current_user.id])
-        groups_results = namedtuplefetchall(cursor)
-
-        organisations_results = organisations.objects.filter(is_deleted='FALSE')
-
-        # Setup dates for initalising
-        today = datetime.datetime.now()
-        next_week = today + datetime.timedelta(days=31)
-
+    cursor.execute(
         """
-		We need to do some basic formulations with the hour and and minutes.
-		For the hour we need to find all those who are in the PM and
-		change both the hour and meridiem accordingly.
-		For the minute, we have to create it in 5 minute blocks.
-		"""
-        hour = today.hour
-        minute = int(5 * round(today.minute / 5.0))
-        meridiems = 'AM'
+    SELECT DISTINCT
+      groups.group_id
+    , groups.group_name
 
-        if hour > 12:
-            hour = hour - 12
-            meridiems = 'PM'
-        elif hour == 0:
-            hour = 12
+    FROM 
+      user_groups join groups
+        on user_groups.groups_id = groups.group_id
 
-        #FIGURE OUT HOW TO GET ORGANISATION HERE!
-        if destination == "" or destination == None:
-            organisations_id = None
-            customer_id = None
-            opportunity_id = None
-        elif destination == "organisation":
-            organisations_id = location_id
-            customer_id = None
-            opportunity_id = None
-        elif destination == "customer":
-            customer_instance = customers.objects.get(customer_id=location_id)
+    WHERE 1=1
+    AND user_groups.is_deleted = "FALSE"
+    AND user_groups.username_id = %s
+    """, [current_user.id])
+    groups_results = namedtuplefetchall(cursor)
 
-            organisations_id = customers.organisations_id
-            customer_id = customers.customer_id
-            opportunity_id = None
-        elif destination == "opportunity":
-            opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
-
-            organisations_id = opportunity_instance.organisations_id
-            customer_id = opportunity_instance.customer_id
-            opportunity_id = opportunity_instance.opportunity_id
+    organisations_results = organisations.objects.filter(is_deleted='FALSE')
 
 
-        # Load the template
-        t = loader.get_template('NearBeach/new_project.html')
+    #FIGURE OUT HOW TO GET ORGANISATION HERE!
+    if destination == "" or destination == None:
+        organisations_id = None
+        customer_id = None
+        opportunity_id = None
+    elif destination == "organisation":
+        organisations_id = location_id
+        customer_id = None
+        opportunity_id = None
+    elif destination == "customer":
+        customer_instance = customers.objects.get(customer_id=location_id)
 
-        print(request.user.id)
+        organisations_id = customers.organisations_id
+        customer_id = customers.customer_id
+        opportunity_id = None
+    elif destination == "opportunity":
+        opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
 
-        # context
-        c = {
-            'new_project_form': new_project_form(initial={
-                'organisations_id': organisations_id,
-                'start_date_year': today.year,
-                'start_date_month': today.month,
-                'start_date_day': today.day,
-                'start_date_hour': hour,
-                'start_date_minute': minute,
-                'start_date_meridiems': meridiems,
-                'finish_date_year': next_week.year,
-                'finish_date_month': next_week.month,
-                'finish_date_day': next_week.day,
-                'finish_date_hour': hour,
-                'finish_date_minute': minute,
-                'finish_date_meridiems': meridiems,}
-            ),
-            'groups_results': groups_results,
-            'groups_count': groups_results.__len__(),
-            'opportunity_id': opportunity_id,
-            'organisations_count': organisations_results.count(),
+        organisations_id = opportunity_instance.organisations_id
+        customer_id = opportunity_instance.customer_id
+        opportunity_id = opportunity_instance.opportunity_id
+
+
+    # Load the template
+    t = loader.get_template('NearBeach/new_project.html')
+
+    print(request.user.id)
+
+    # context
+    c = {
+        'new_project_form': new_project_form(initial={
             'organisations_id': organisations_id,
-            'customer_id': customer_id,
-            'timezone': settings.TIME_ZONE,
-            'new_item_permission': permission_results['new_item'],
-            'administration_permission': permission_results['administration'],
-            'destination': destination,
-            'location_id': location_id,
-        }
+        }),
+        'groups_results': groups_results,
+        'groups_count': groups_results.__len__(),
+        'opportunity_id': opportunity_id,
+        'organisations_count': organisations_results.count(),
+        'organisations_id': organisations_id,
+        'customer_id': customer_id,
+        'timezone': settings.TIME_ZONE,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'destination': destination,
+        'location_id': location_id,
+    }
 
     return HttpResponse(t.render(c, request))
 
