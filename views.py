@@ -4051,6 +4051,8 @@ def quote_information(request, quote_id):
 
     return HttpResponse(t.render(c, request))
 
+
+
 @login_required(login_url='login')
 def rename_document(request, document_key):
     if request.method == "POST":
@@ -4283,6 +4285,21 @@ def search_projects_tasks(request):
 
 
     }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def search_quote_template(request):
+    permission_results = return_user_permission_level(request, None, 'templates') #UPDATE IN DATABASE AND PERMISSIONS FUNCTION
+    if permission_results['bug_client'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    # Load the template
+    t = loader.get_template('NearBeach/blank.html')
+
+    # context
+    c = { }
 
     return HttpResponse(t.render(c, request))
 

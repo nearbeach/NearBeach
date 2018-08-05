@@ -279,7 +279,7 @@ url(r'^email_information/(?P<email_content_id>[0-9]+)/$', views.email_informatio
 url(r'^timeline/$', views.timeline, name='timeline'),
 url(r'^timeline_data/(?P<destination>["project","task"]+)/$', views.timeline_data, name='timeline_data'),
 url(r'^add_campus_to_customer/(?P<customer_id>[0-9]+)/(?P<campus_id>[0-9]+)/', views.add_campus_to_customer,name='add_campus_to_customer'),
-
+url(r'^search_quote_template/',views.search_quote_template,name='search_quote_template'),
 ]
 
 
