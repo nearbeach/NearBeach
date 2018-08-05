@@ -3180,31 +3180,13 @@ def new_task(request, location_id='', destination=''):
             task_long_description = form.cleaned_data['task_long_description']
             organisations_id_form = form.cleaned_data['organisations_id']
 
-            # Create the final start/end date fields
-            task_start_date = convert_to_utc(
-                int(form.cleaned_data['start_date_year']),
-                int(form.cleaned_data['start_date_month']),
-                int(form.cleaned_data['start_date_day']),
-                int(form.cleaned_data['start_date_hour']),
-                int(form.cleaned_data['start_date_minute']),
-                form.cleaned_data['start_date_meridiems']
-            )
-
-            task_end_date = convert_to_utc(
-                int(form.cleaned_data['finish_date_year']),
-                int(form.cleaned_data['finish_date_month']),
-                int(form.cleaned_data['finish_date_day']),
-                int(form.cleaned_data['finish_date_hour']),
-                int(form.cleaned_data['finish_date_minute']),
-                form.cleaned_data['finish_date_meridiems']
-            )
 
             submit_task = tasks(
                 task_short_description=task_short_description,
                 task_long_description=task_long_description,
                 #organisations_id=organisations_id_form,
-                task_start_date=task_start_date,
-                task_end_date=task_end_date,
+                task_start_date=form.cleaned_data['task_start_date'],
+                task_end_date=form.cleaned_data['task_end_date'],
                 task_status='New',
                 change_user = request.user,
             )
@@ -3333,18 +3315,6 @@ def new_task(request, location_id='', destination=''):
         c = {
             'new_task_form': new_task_form(
                 initial={
-                    'start_date_year': today.year,
-                    'start_date_month': today.month,
-                    'start_date_day': today.day,
-                    'start_date_hour': hour,
-                    'start_date_minute': minute,
-                    'start_date_meridiems': meridiems,
-                    'finish_date_year': next_week.year,
-                    'finish_date_month': next_week.month,
-                    'finish_date_day': next_week.day,
-                    'finish_date_hour': hour,
-                    'finish_date_minute': minute,
-                    'finish_date_meridiems': meridiems,
                     'organisations_id': organisations_id,
                 }),
             'groups_results': groups_results,
@@ -3856,25 +3826,8 @@ def project_information(request, project_id):
 
             project_results.project_name = form.cleaned_data['project_name']
             project_results.project_description = form.cleaned_data['project_description']
-
-            # Create the final start/end date fields
-            project_results.project_start_date = convert_to_utc(
-                int(form.cleaned_data['start_date_year']),
-                int(form.cleaned_data['start_date_month']),
-                int(form.cleaned_data['start_date_day']),
-                int(form.cleaned_data['start_date_hour']),
-                int(form.cleaned_data['start_date_minute']),
-                form.cleaned_data['start_date_meridiems']
-            )
-
-            project_results.project_end_date = convert_to_utc(
-                int(form.cleaned_data['finish_date_year']),
-                int(form.cleaned_data['finish_date_month']),
-                int(form.cleaned_data['finish_date_day']),
-                int(form.cleaned_data['finish_date_hour']),
-                int(form.cleaned_data['finish_date_minute']),
-                form.cleaned_data['finish_date_meridiems']
-            )
+            project_results.project_start_date = form.cleaned_data['project_start_date']
+            project_results.project_end_date = form.cleaned_data['project_end_date']
 
             # Check to make sure the resolve button was hit
             if 'Resolve' in request.POST:
@@ -3947,18 +3900,8 @@ def project_information(request, project_id):
     initial = {
         'project_name': project_results.project_name,
         'project_description': project_results.project_description,
-        'start_date_year': project_start_results['year'],
-        'start_date_month': project_start_results['month'],
-        'start_date_day': project_start_results['day'],
-        'start_date_hour': project_start_results['hour'],
-        'start_date_minute': project_start_results['minute'],
-        'start_date_meridiems': project_start_results['meridiem'],
-        'finish_date_year': project_end_results['year'],
-        'finish_date_month': project_end_results['month'],
-        'finish_date_day': project_end_results['day'],
-        'finish_date_hour': project_end_results['hour'],
-        'finish_date_minute': project_end_results['minute'],
-        'finish_date_meridiems': project_end_results['meridiem'],
+        'project_start_date': project_results.project_start_date,
+        'project_end_date': project_results.project_end_date,
     }
 
     # Query the database for associated task information
@@ -4396,24 +4339,8 @@ def task_information(request, task_id):
             # Extract all the information from the form and save
             task_results.task_short_description = form.cleaned_data['task_short_description']
             task_results.task_long_description = form.cleaned_data['task_long_description']
-
-            # Calendar values
-            task_results.task_start_date = convert_to_utc(
-                int(form.cleaned_data['start_date_year']),
-                int(form.cleaned_data['start_date_month']),
-                int(form.cleaned_data['start_date_day']),
-                int(form.cleaned_data['start_date_hour']),
-                int(form.cleaned_data['start_date_minute']),
-                form.cleaned_data['start_date_meridiems']
-            )
-            task_results.task_end_date = convert_to_utc(
-                int(form.cleaned_data['finish_date_year']),
-                int(form.cleaned_data['finish_date_month']),
-                int(form.cleaned_data['finish_date_day']),
-                int(form.cleaned_data['finish_date_hour']),
-                int(form.cleaned_data['finish_date_minute']),
-                form.cleaned_data['finish_date_meridiems']
-            )
+            task_results.task_start_date = form.cleaned_data['task_start_date']
+            task_results.task_end_date = form.cleaned_data['task_end_date']
 
             # Check to make sure the resolve button was hit
             if 'Resolve' in request.POST:
@@ -4546,20 +4473,8 @@ def task_information(request, task_id):
     initial = {
         'task_short_description': task_results.task_short_description,
         'task_long_description': task_results.task_long_description,
-        'start_date_year': task_start_results['year'],
-        'start_date_month': task_start_results['month'],
-        'start_date_day': task_start_results['day'],
-        'start_date_hour': task_start_results['hour'],
-        'start_date_minute': task_start_results['minute'],
-        'start_date_meridiems': task_start_results['meridiem'],
-        'finish_date_year': task_end_results['year'],
-        'finish_date_month': task_end_results['month'],
-        'finish_date_day': task_end_results['day'],
-        'finish_date_hour': task_end_results['hour'],
-        'finish_date_minute': task_end_results['minute'],
-        'finish_date_meridiems': task_end_results['meridiem'],
-        'new_item_permission': permission_results['new_item'],
-        'administration_permission': permission_results['administration'],
+        'task_start_date': task_results.task_start_date,
+        'task_end_date': task_results.task_end_date,
     }
 
     # Query the database for associated project information

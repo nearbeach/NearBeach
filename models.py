@@ -2462,7 +2462,7 @@ class tasks(models.Model):
         null=True,
         blank=True,
     )
-    task_start_date = models.DateTimeField(auto_now=True)
+    task_start_date = models.DateTimeField()
     task_end_date = models.DateTimeField()
     task_assigned_to = models.ForeignKey(
         User,
