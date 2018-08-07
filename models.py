@@ -17,6 +17,11 @@ IS_DELETED_CHOICE = (
     ('FALSE', 'FALSE'),
 )
 
+PAGE_LAYOUT = (
+    ('Landscape','Landscape'),
+    ('Portrait','Portrait'),
+)
+
 PERMISSION_LEVEL = (
     (0, 'No Permission'),
     (1, 'Read Only'),
@@ -1566,6 +1571,7 @@ class permission_set_manager(models.Manager):
             requirement_link=requirement_link,
             task=task,
             tax=tax,
+            template=template,
             documents=documents,
             contact_history=contact_history,
             kanban_comment=kanban_comment,
@@ -1672,6 +1678,10 @@ class permission_set(models.Model):
         default=0,
     )
     tax = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
+    template = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
     )
@@ -2222,6 +2232,106 @@ class quote_responsible_customers(models.Model):
 
     class Meta:
         db_table = "quote_responsible_customers"
+
+
+class quote_template(models.Model):
+    """
+    Fields
+    ~~~~~~
+    -- Header
+    -- Company Header
+    -- Payment terms
+    -- Notes
+    -- State if it is draft/quote/invoice (not stored in template)
+    -- Business Details
+    -- Product line items
+    -- Service line items
+    -- How to pay/payment methods
+    -- Footer
+
+    Variables
+    ~~~~~~~~~
+    -- Landscape/Portrait
+    -- Margins - left, right, top, bottom, header, footer
+    """
+    header=HTMLField(
+        null=True,
+        blank=True,
+    )
+    #To clarify - this is YOUR company
+    company_letter_head=HTMLField(
+        null=True,
+        blank=True,
+    )
+    payment_terms=models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+    notes=models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+    #The Organisation's details you are sending the quote to
+    organisation_details=HTMLField(
+        null=True,
+        blank=True,
+    )
+    #For project/service lines - it will store the order of fields in as a variable :)
+    product_line=models.TextField()
+    service_line=models.TextField()
+    payment_method=HTMLField(
+        null=True,
+        blank=True,
+    )
+    footer=HTMLField(
+        null=True,
+        blank=True,
+    )
+
+    # Landscape/Portrait
+    # Margins - left, right, top, bottom, header, footer
+    page_layout=models.CharField(
+        max_length=50,
+        choices=PAGE_LAYOUT,
+        default='Landscape',
+    )
+    margin_left=models.IntegerField(
+        default=1,
+    )
+    margin_right = models.IntegerField(
+        default=1,
+    )
+    margin_top = models.IntegerField(
+        default=1,
+    )
+    margin_bottom = models.IntegerField(
+        default=1,
+    )
+    margin_header = models.IntegerField(
+        default=1,
+    )
+    margin_footer = models.IntegerField(
+        default=1,
+    )
+
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    class Meta:
+        db_table = "quote_template"
+
 
 
 class requirements(models.Model):

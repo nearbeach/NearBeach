@@ -3164,6 +3164,21 @@ def new_quote(request,destination,primary_key):
 
     return HttpResponse(t.render(c, request))
 
+@login_required(login_url='login')
+def new_quote_template(request):
+    permission_results = return_user_permission_level(request, None, 'templates')
+
+    if permission_results['templates'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    # Define if the page is loading in POST
+    if request.method == "POST":
+        print("This is what we want")
+        return HttpResponseBadRequest("IT IS WHAT WE WANT :)")
+    else:
+        return HttpResponseBadRequest("Sorry, but new template can only be requested by a post command")
+
+
 
 @login_required(login_url='login')
 def new_task(request, location_id='', destination=''):
@@ -4280,6 +4295,8 @@ def search_projects_tasks(request):
     # Load the template
     t = loader.get_template('NearBeach/search_projects_and_tasks.html')
 
+    print("Search project and tasks")
+
     # context
     c = {
 
@@ -4290,18 +4307,23 @@ def search_projects_tasks(request):
 
 
 @login_required(login_url='login')
-def search_quote_template(request):
-    permission_results = return_user_permission_level(request, None, 'templates') #UPDATE IN DATABASE AND PERMISSIONS FUNCTION
-    if permission_results['bug_client'] == 0:
-        return HttpResponseRedirect(reverse('permission_denied'))
+def search_templates(request):
+    #permission_results = return_user_permission_level(request, None, 'templates') #UPDATE IN DATABASE AND PERMISSIONS FUNCTION
+    #if permission_results['templates'] == 0:
+    #    return HttpResponseRedirect(reverse('permission_denied'))
 
     # Load the template
-    t = loader.get_template('NearBeach/blank.html')
+    t = loader.get_template('NearBeach/search_templates.html')
+
+    print("Search templates")
 
     # context
-    c = { }
+    c = {
+        'search_templates_form': search_templates_form(),
+    }
 
     return HttpResponse(t.render(c, request))
+
 
 
 @login_required(login_url='login')

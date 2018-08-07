@@ -2020,6 +2020,15 @@ class search_tasks_form(forms.Form):
         choices=INCLUDE_CLOSED
     )
 
+class search_templates_form(forms.Form):
+    search_templates=forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Search Templates',
+        }),
+    )
+
 class search_users_form(forms.Form):
     search_users=forms.CharField(
         max_length=255,

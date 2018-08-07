@@ -1,0 +1,53 @@
+{% extends "./template.html" %}
+{% block content %}
+<h2>Search Templates</h2>
+<form class="search_templates">
+    {% csrf_token %}
+    <table>
+        <tr>
+            <td width="80%">{{ search_templates_form.search_templates }}</td>
+            <td width="20%"><input hidden type="submit" value="Search Templates"></td>
+        <tr>
+    </table>
+</form>
+<table>
+    <tr>
+        <td width="10%">New Template</td>
+        <td width="70%">
+            <select id="new_template" style="width: 100%;">
+                <option value="">------</option>
+                <option value="Quote">Quote</option>
+            </select>
+        </td>
+        <td width="20%">
+            <input type="submit" value="New Template" id="new_template_submit">
+        </td>
+    </tr>
+</table>
+
+<script>
+    ("#search_templates").on('submit', function(e) {
+        e.preventDefault();
+    };
+
+    function create_new_template() {
+        var selected_template=$("#new_template").val();
+
+        if (selected_template == "Quote") {
+            //We want to create a new quote.
+            $.ajax({
+                url: '/new_quote_template/',
+                date: $(this).serialize(),
+                type: 'POST',
+                dataType: 'HTML',
+                success: function(data) {
+                    alert("SUCCESS");
+                },
+                error: function() {
+                    alert("DID NOT WORK");
+                }
+            })
+        }
+    }
+</script>
+{% endblock %}
