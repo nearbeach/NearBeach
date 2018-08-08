@@ -2235,25 +2235,10 @@ class quote_responsible_customers(models.Model):
 
 
 class quote_template(models.Model):
-    """
-    Fields
-    ~~~~~~
-    -- Header
-    -- Company Header
-    -- Payment terms
-    -- Notes
-    -- State if it is draft/quote/invoice (not stored in template)
-    -- Business Details
-    -- Product line items
-    -- Service line items
-    -- How to pay/payment methods
-    -- Footer
-
-    Variables
-    ~~~~~~~~~
-    -- Landscape/Portrait
-    -- Margins - left, right, top, bottom, header, footer
-    """
+    quote_template_id=models.AutoField(primary_key=True)
+    quote_template_description=models.CharField(
+        max_length=255,
+    )
     header=HTMLField(
         null=True,
         blank=True,

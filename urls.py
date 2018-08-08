@@ -281,6 +281,7 @@ url(r'^timeline_data/(?P<destination>["project","task"]+)/$', views.timeline_dat
 url(r'^add_campus_to_customer/(?P<customer_id>[0-9]+)/(?P<campus_id>[0-9]+)/', views.add_campus_to_customer,name='add_campus_to_customer'),
 url(r'^search_templates/',views.search_templates,name='search_templates'),
     url(r'^new_quote_template/',views.new_quote_template,name='new_quote_template'),
+	url(r'^quote_template_information/(?P<quote_template_id>[0-9]+)/',views.quote_template_information,name='quote_template_information'),
 ]
 
 

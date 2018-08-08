@@ -1835,6 +1835,18 @@ class project_information_form(ModelForm):
         }
 
 
+class quote_template_form(ModelForm):
+    class Meta:
+        model=quote_template
+        exclude={
+            'date_created',
+            'date_modified',
+            'change_user',
+            'is_deleted',
+        }
+
+
+
 class quote_information_form(ModelForm):
     #Get data for form
     list_of_quote_stages=list_of_quote_stages.objects.filter(
@@ -1910,7 +1922,6 @@ class quote_information_form(ModelForm):
             'quote_terms',
             'customer_notes',
         }
-
 
 class search_form(forms.Form):
     #Just have a simple search field

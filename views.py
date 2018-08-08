@@ -3173,8 +3173,21 @@ def new_quote_template(request):
 
     # Define if the page is loading in POST
     if request.method == "POST":
-        print("This is what we want")
-        return HttpResponseBadRequest("IT IS WHAT WE WANT :)")
+        #User has requested new quote template
+        quote_template_submit=quote_template(
+            change_user_id=request.user.id,
+            quote_template_description = "Quote Template",
+            product_line = "Temp product line",
+            service_line = "Temp service line",
+        )
+        quote_template_submit.save()
+
+        #Send back the quote number
+        json_data = {}
+        json_data['quote_template_id'] = quote_template_submit.pk
+        #json_data['quote_template_id'] = '1'
+
+        return JsonResponse(json_data)
     else:
         return HttpResponseBadRequest("Sorry, but new template can only be requested by a post command")
 
@@ -4067,6 +4080,38 @@ def quote_information(request, quote_id):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
+def quote_template_information(request,quote_template_id):
+    permission_results = return_user_permission_level(request, None, 'template')
+
+    if permission_results['template'] == 0:
+        return HttpResponseRedirect(reverse(permission_denied))
+
+    if request.method == "POST":
+        print("SAVE THE DATA")
+
+    #Get data
+    quote_template_results = quote_template.objects.get(quote_template_id=quote_template_id)
+
+    # Load the template
+    t = loader.get_template('NearBeach/quote_template.html')
+
+
+    # context
+    c = {
+        'quote_template_form': quote_template_form(initial={
+            'quote_template_description': quote_template_results.quote_template_description,
+
+        }),
+        'quote_permission': permission_results['template'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
 
 @login_required(login_url='login')
 def rename_document(request, document_key):
@@ -4308,9 +4353,14 @@ def search_projects_tasks(request):
 
 @login_required(login_url='login')
 def search_templates(request):
-    #permission_results = return_user_permission_level(request, None, 'templates') #UPDATE IN DATABASE AND PERMISSIONS FUNCTION
-    #if permission_results['templates'] == 0:
-    #    return HttpResponseRedirect(reverse('permission_denied'))
+    permission_results = return_user_permission_level(request, None, 'templates')
+    if permission_results['templates'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
+    quote_template_results=quote_template.objects.filter(
+        is_deleted="FALSE",
+    )
 
     # Load the template
     t = loader.get_template('NearBeach/search_templates.html')
@@ -4319,6 +4369,7 @@ def search_templates(request):
 
     # context
     c = {
+        'quote_template_results': quote_template_results,
         'search_templates_form': search_templates_form(),
     }
 
