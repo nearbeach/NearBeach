@@ -1836,6 +1836,22 @@ class project_information_form(ModelForm):
 
 
 class quote_template_form(ModelForm):
+    quote_temmplate_description=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Quote Template Description',
+        })
+    )
+    header=forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Please Enter Template Header',
+            }
+        )
+    )
     class Meta:
         model=quote_template
         exclude={

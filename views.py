@@ -3177,8 +3177,54 @@ def new_quote_template(request):
         quote_template_submit=quote_template(
             change_user_id=request.user.id,
             quote_template_description = "Quote Template",
+            header="NearBeach Quote Number {{ quote_id }}",
+            company_letter_head="<p>NearBeach Incorporated<br />Melbourne 3000<br />Australia</p>",
+            payment_terms="Please pay within 30 days",
+            notes="{{ quote_terms }}",
+            organisation_details="""
+                <table style="border-collapse: collapse; width: 100%;" border="1">
+                <tbody>
+                <tr>
+                <td style="width: 100%;">{{ organisation_name }}</td>
+                </tr>
+                <tr>
+                <td style="width: 100%;">
+                <p>{{ organisation_address_1 }}<br />{{ organisation_address_2 }}<br />{{ organisation_address_3 }}</p>
+                </td>
+                </tr>
+                <tr>
+                <td style="width: 100%;">{{ organisation_suburb }} {{ organisation_postcode }}</td>
+                </tr>
+                <tr>
+                <td style="width: 100%;">{{ organisation_region }}</td>
+                </tr>
+                <tr>
+                <td style="width: 100%;">{{ organisation_country }}</td>
+                </tr>
+                </tbody>
+                </table>
+            """,
             product_line = "Temp product line",
             service_line = "Temp service line",
+            payment_method="""
+                <table style="border-collapse: collapse; width: 100%;" border="1">
+                <tbody>
+                <tr>
+                <td style="width: 50%;">Account</td>
+                <td style="width: 50%;">0000 0000</td>
+                </tr>
+                <tr>
+                <td style="width: 50%;">BSB</td>
+                <td style="width: 50%;">000 000</td>
+                </tr>
+                <tr>
+                <td style="width: 50%;">Acount Name</td>
+                <td style="width: 50%;">NearBeach Holdings</td>
+                </tr>
+                </tbody>
+                </table>    
+            """,
+            footer="{{ page_number }}",
         )
         quote_template_submit.save()
 
@@ -4088,21 +4134,41 @@ def quote_template_information(request,quote_template_id):
         return HttpResponseRedirect(reverse(permission_denied))
 
     if request.method == "POST":
-        print("SAVE THE DATA")
+        form=quote_template_form(request.POST)
+        if form.is_valid():
+            form.save()
+        else:
+            print(form.errors)
 
     #Get data
     quote_template_results = quote_template.objects.get(quote_template_id=quote_template_id)
 
     # Load the template
-    t = loader.get_template('NearBeach/quote_template.html')
+    t = loader.get_template('NearBeach/quote_template_information.html')
 
 
     # context
     c = {
         'quote_template_form': quote_template_form(initial={
             'quote_template_description': quote_template_results.quote_template_description,
-
+            'header': quote_template_results.header,
+            'company_letter_head': quote_template_results.company_letter_head,
+            'payment_terms': quote_template_results.payment_terms,
+            'notes': quote_template_results.notes,
+            'organisation_details': quote_template_results.organisation_details,
+            'product_line': quote_template_results.product_line,
+            'service_line': quote_template_results.service_line,
+            'payment_method': quote_template_results.payment_method,
+            'footer': quote_template_results.footer,
+            'page_layout': quote_template_results.page_layout,
+            'margin_left': quote_template_results.margin_left,
+            'margin_right': quote_template_results.margin_right,
+            'margin_top': quote_template_results.margin_top,
+            'margin_bottom': quote_template_results.margin_bottom,
+            'margin_header': quote_template_results.margin_header,
+            'margin_footer': quote_template_results.margin_footer,
         }),
+        'quote_template_id': quote_template_id,
         'quote_permission': permission_results['template'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
