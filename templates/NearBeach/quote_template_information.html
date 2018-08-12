@@ -93,7 +93,12 @@
                 <td>Margin Footer</td>
                 <td>{{ quote_template_form.margin_footer }}</td>
             </tr>
-            <tr><td colspan="2"><input type="submit" value="Save Quote Template"></td></tr>
+            <tr>
+                <td colspan="2">
+                    <input type="submit" value="Save Quote Template" name="save_quote_template">
+                    <input type="submit" value="Delete Quote Template" name="delete_quote_template">
+                </td>
+            </tr>
         </table>
     </form>
 {% endblock %}

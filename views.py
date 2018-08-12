@@ -4136,7 +4136,35 @@ def quote_template_information(request,quote_template_id):
     if request.method == "POST":
         form=quote_template_form(request.POST)
         if form.is_valid():
-            form.save()
+            quote_template_save=quote_template.objects.get(
+                quote_template_id=quote_template_id,
+            )
+            quote_template_save.change_user=request.user
+            quote_template_save.quote_template_description=form.cleaned_data['quote_template_description']
+            quote_template_save.header= form.cleaned_data['header']
+            quote_template_save.company_letter_head= form.cleaned_data['company_letter_head']
+            quote_template_save.payment_terms= form.cleaned_data['payment_terms']
+            quote_template_save.notes= form.cleaned_data['notes']
+            quote_template_save.organisation_details= form.cleaned_data['organisation_details']
+            quote_template_save.product_line= form.cleaned_data['product_line']
+            quote_template_save.service_line= form.cleaned_data['service_line']
+            quote_template_save.payment_method= form.cleaned_data['payment_method']
+            quote_template_save.footer= form.cleaned_data['footer']
+            quote_template_save.page_layout= form.cleaned_data['page_layout']
+            quote_template_save.margin_left= form.cleaned_data['margin_left']
+            quote_template_save.margin_right= form.cleaned_data['margin_right']
+            quote_template_save.margin_top= form.cleaned_data['margin_top']
+            quote_template_save.margin_bottom= form.cleaned_data['margin_bottom']
+            quote_template_save.margin_header= form.cleaned_data['margin_header']
+            quote_template_save.margin_footer= form.cleaned_data['margin_footer']
+
+            if request.POST.get("delete_quote_template"):
+                quote_template_save.is_deleted="TRUE"
+                quote_template_save.save()
+                return HttpResponseRedirect(reverse(search_templates))
+
+            quote_template_save.save()
+
         else:
             print(form.errors)
 
