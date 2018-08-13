@@ -4126,6 +4126,8 @@ def quote_information(request, quote_id):
     return HttpResponse(t.render(c, request))
 
 
+
+
 @login_required(login_url='login')
 def quote_template_information(request,quote_template_id):
     permission_results = return_user_permission_level(request, None, 'template')
@@ -4141,6 +4143,7 @@ def quote_template_information(request,quote_template_id):
             )
             quote_template_save.change_user=request.user
             quote_template_save.quote_template_description=form.cleaned_data['quote_template_description']
+            quote_template_save.template_css=form.cleaned_data['template_css']
             quote_template_save.header= form.cleaned_data['header']
             quote_template_save.company_letter_head= form.cleaned_data['company_letter_head']
             quote_template_save.payment_terms= form.cleaned_data['payment_terms']
