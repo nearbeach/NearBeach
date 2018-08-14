@@ -3,8 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <title>NearBeach - quote template</title>
+    <style>{{ template_css|safe }}</style>
 </head>
+<header>
+    {{ header }}
+</header>
 <body>
-
+    <div id="company_letter_head">{{ company_letter_head|safe }}</div>
+    <div id="payment_terms">{{ payment_terms|safe }}</div>
+    <div id="notes">{{ notes|safe }}</div>
+    <div id="organisation_details">{{ organisation_details|safe }}</div>
+    {% if product_line %}
+        <div id="product_line">
+            <h4>Product Lines</h4>
+            {{ product_line|safe }}
+        </div>
+        <div id="product_line_total">
+            <h4>Product Totals</h4>
+            <table>
+                <tr>
+                    <td>Unadjusted Price</td>
+                    <td>{{ product_unadjusted_price.product_price__sum }}</td>
+                </tr>
+                <tr>
+                    <td>Product Discount</td>
+                    <td>{{ product_discount.discount_amount__sum }}</td>
+                </tr>
+                <tr>
+                    <td>Sales Price</td>
+                    <td>{{ product_sales_price.sales_price__sum }}</td>
+                </tr>
+                <tr>
+                    <td>Product Tax</td>
+                    <td>{{ product_tax.tax__sum }}</td>
+                </tr>
+                <tr>
+                    <td>Total</td>
+                    <td>{{ product_total.total__sum }}</td>
+                </tr>
+            </table>
+        </div>
+    {% endif %}
+    {% if service_line %}
+        <div id="service_line">
+            <h4>Service Lines</h4>
+            {{ service_line|safe }}
+        </div>
+        <div id="service_line_total">
+            <h4>Service Totals</h4>
+            <table>
+                <tr>
+                    <td>Unadjusted Price</td>
+                    <td>{{ service_unadjusted_price.product_price__sum }}</td>
+                </tr>
+                <tr>
+                    <td>service Discount</td>
+                    <td>{{ service_discount.discount_amount__sum }}</td>
+                </tr>
+                <tr>
+                    <td>Sales Price</td>
+                    <td>{{ service_sales_price.sales_price__sum }}</td>
+                </tr>
+                <tr>
+                    <td>service Tax</td>
+                    <td>{{ service_tax.tax__sum }}</td>
+                </tr>
+                <tr>
+                    <td>Total</td>
+                    <td>{{ service_total.total__sum }}</td>
+                </tr>
+            </table>
+        </div>
+    {% endif %}
+    <div id="totals">
+        <h4>Grand Totals</h4>
+        <table>
+            <tr>
+                <td>Unadjusted Price</td>
+                <td>{{ service_unadjusted_price.product_price__sum|add:product_unadjusted_price.product_price__sum }}</td>
+            </tr>
+            <tr>
+                <td>Discount</td>
+                <td>{{ service_discount.discount_amount__sum|add:product_discount.discount_amount__sum }}</td>
+            </tr>
+            <tr>
+                <td>Sales Price</td>
+                <td>{{ service_sales_price.sales_price__sum|add:product_sales_price.sales_price__sum }}</td>
+            </tr>
+            <tr>
+                <td>Tax</td>
+                <td>{{ service_tax.tax__sum|add:product_tax.tax__sum }}</td>
+            </tr>
+            <tr style="background-color: lightsteelblue">
+                <td>Grand Total</td>
+                <td>{{ service_total.total__sum|add:product_total.total__sum }}</td>
+            </tr>
+        </table>
+    </div>
+    <div id="payment_method">
+        <h4>Payment Details</h4>
+        {{ payment_method|safe }}
+    </div>
 </body>
+<footer>
+    {{ footer|safe }}
+</footer>
 </html>
+
+
+

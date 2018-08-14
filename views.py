@@ -3839,6 +3839,106 @@ def permission_denied(request):
 
 
 
+@login_required(login_url='login')
+def preview_quote(request,quote_id,quote_template_id):
+    #Get data
+    product_results = quotes_products_and_services.objects.filter(
+        is_deleted="FALSE",
+        #products_and_services.product_or_service = "product",
+        products_and_services__in=products_and_services.objects.filter(
+            product_or_service="Product",
+        ).values('pk'),
+        quote_id=quote_id,
+    )
+    service_results = quotes_products_and_services.objects.filter(
+        is_deleted="FALSE",
+        # products_and_services.product_or_service = "product",
+        products_and_services__in=products_and_services.objects.filter(
+            product_or_service="Service",
+        ).values('pk'),
+        quote_id=quote_id,
+    )
+    quote_results = quotes.objects.get(quote_id=quote_id)
+    quote_template_results = quote_template.objects.get(quote_template_id=quote_template_id)
+
+    """
+    The following section will extract the template fields and then do a simple mail merge until all the required
+    template fields are JUST strings.
+    """
+    mail_merge_array = [
+        'customer_id',
+        'customer_id',
+        'date_created',
+        'date_modified',
+        'is_invoice',
+        'opportunity_id',
+        'organisation_email',
+        'organisation_id',
+        'organisation_name',
+        'organisation_profile_picture',
+        'organisation_website',
+        'organisations_id',
+        'project_id',
+        'quote_approval_status_id',
+        'quote_id',
+        'quote_terms',
+        'task_id',
+    ]
+    template_css = quote_template_results.template_css
+    header = quote_template_results.header
+    company_letter_head = quote_template_results.company_letter_head
+    payment_terms = quote_template_results.payment_terms
+    notes = quote_template_results.notes
+    organisation_details = quote_template_results.organisation_details
+    product_line = quote_template_results.product_line
+    service_line = quote_template_results.service_line
+    payment_method = quote_template_results.payment_method
+    footer = quote_template_results.footer
+
+    #Collect all the SUM information
+    product_unadjusted_price=product_results.aggregate(Sum('product_price'))
+    product_discount=product_results.aggregate(Sum('discount_amount'))
+    product_sales_price=product_results.aggregate(Sum('sales_price'))
+    product_tax=product_results.aggregate(Sum('tax'))
+    product_total=product_results.aggregate(Sum('total'))
+
+    service_unadjusted_price=service_results.aggregate(Sum('product_price'))
+    service_discount=service_results.aggregate(Sum('discount_amount'))
+    service_sales_price=service_results.aggregate(Sum('sales_price'))
+    service_tax=service_results.aggregate(Sum('tax'))
+    service_total=service_results.aggregate(Sum('total'))
+
+    # Load the template
+    t = loader.get_template('NearBeach/render_templates/quote_template.html')
+
+    # context
+    c = {
+        'template_css': template_css,
+        'header': header,
+        'company_letter_head': company_letter_head,
+        'payment_terms': payment_terms,
+        'notes': notes,
+        'organisation_details': organisation_details,
+        'product_line': product_line,
+        'service_line': service_line,
+        'payment_method': payment_method,
+        'footer': footer,
+        'product_unadjusted_price': product_unadjusted_price,
+        'product_discount': product_discount,
+        'product_sales_price': product_sales_price,
+        'product_tax': product_tax,
+        'product_total': product_total,
+        'service_unadjusted_price': service_unadjusted_price,
+        'service_discount': service_discount,
+        'service_sales_price': service_sales_price,
+        'service_tax': service_tax,
+        'service_total': service_total,
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+
 """
 TEMP CODE
 """
@@ -3865,6 +3965,7 @@ def private_document(request, document_key):
     #    else:
     #        raise Http404('File not found')
     return server.serve(request, path=path)
+
 
 """
 END TEMP DOCUMENT
