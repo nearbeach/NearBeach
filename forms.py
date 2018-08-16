@@ -1835,31 +1835,6 @@ class project_information_form(ModelForm):
         }
 
 
-class quote_template_form(ModelForm):
-    quote_template_description=forms.CharField(
-        max_length=255,
-        widget=forms.TextInput(attrs={
-            'placeholder': 'Quote Template Description',
-        })
-    )
-    header=forms.CharField(
-        widget=TinyMCE(
-            mce_attrs={
-                'width': '100%',
-            },
-            attrs={
-                'placeholder': 'Please Enter Template Header',
-            }
-        )
-    )
-    class Meta:
-        model=quote_template
-        exclude={
-            'date_created',
-            'date_modified',
-            'change_user',
-            'is_deleted',
-        }
 
 
 
@@ -1938,6 +1913,35 @@ class quote_information_form(ModelForm):
             'quote_terms',
             'customer_notes',
         }
+
+
+class quote_template_form(ModelForm):
+    quote_template_description=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Quote Template Description',
+        })
+    )
+    header=forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Please Enter Template Header',
+            }
+        )
+    )
+    class Meta:
+        model=quote_template
+        exclude={
+            'date_created',
+            'date_modified',
+            'change_user',
+            'is_deleted',
+        }
+
+
 
 class search_form(forms.Form):
     #Just have a simple search field

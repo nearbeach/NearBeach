@@ -2239,7 +2239,7 @@ class quote_template(models.Model):
     quote_template_description=models.CharField(
         max_length=255,
     )
-    template_css=HTMLField(
+    template_css=models.TextField(
         null=True,
         blank=True,
     )

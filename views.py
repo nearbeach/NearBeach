@@ -4283,6 +4283,7 @@ def quote_template_information(request,quote_template_id):
     c = {
         'quote_template_form': quote_template_form(initial={
             'quote_template_description': quote_template_results.quote_template_description,
+            'template_css': quote_template_results.template_css,
             'header': quote_template_results.header,
             'company_letter_head': quote_template_results.company_letter_head,
             'payment_terms': quote_template_results.payment_terms,
