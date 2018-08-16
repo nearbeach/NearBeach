@@ -4569,6 +4569,8 @@ def search_templates(request):
     c = {
         'quote_template_results': quote_template_results,
         'search_templates_form': search_templates_form(),
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
