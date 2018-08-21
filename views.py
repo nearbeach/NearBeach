@@ -1764,7 +1764,7 @@ def email_information(request,email_content_id):
 @login_required(login_url='login')
 def extract_quote(request, quote_uuid,quote_template_id):
     #Create the PDF
-    url_path = "http://" + request.get_host() + "/preview_quote/" + quote_uuid + "/" + quote_template_id + "/"
+    url_path = "https://" + request.get_host() + "/preview_quote/" + quote_uuid + "/" + quote_template_id + "/"
     #url_path = request.get_host() + "/preview_quote/" + quote_uuid + "/" + quote_template_id + "/"
 
     pdf_results=pdfkit.from_url(url_path, False)
