@@ -2037,6 +2037,12 @@ class project_tasks(models.Model):
 
 class quotes(models.Model):
     quote_id = models.AutoField(primary_key=True)
+    quote_uuid = models.UUIDField(
+        default=uuid.uuid4,
+        editable=False,
+        primary_key=False,
+        unique=True,
+    )
     quote_title = models.CharField(max_length=255)
     quote_valid_till = models.DateTimeField()
     quote_stage_id = models.ForeignKey(
@@ -2792,6 +2798,20 @@ class user_groups(models.Model):
         'permission_set',
         on_delete=models.CASCADE,
     )
+    reports_to=models.ForeignKey(
+        User,
+        related_name='reports_to',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    group_leader=models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default="FALSE",
+    )
+    #reports to
+    # group leader - true/false
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(

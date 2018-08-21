@@ -282,7 +282,9 @@ url(r'^add_campus_to_customer/(?P<customer_id>[0-9]+)/(?P<campus_id>[0-9]+)/', v
 url(r'^search_templates/',views.search_templates,name='search_templates'),
     url(r'^new_quote_template/',views.new_quote_template,name='new_quote_template'),
 	url(r'^quote_template_information/(?P<quote_template_id>[0-9]+)/',views.quote_template_information,name='quote_template_information'),
-	url(r'^preview_quote/(?P<quote_id>[0-9]+)/(?P<quote_template_id>[0-9]+)/',views.preview_quote,name='preview_quote'),
+	url(r'^preview_quote/(?P<quote_uuid>[0-9A-Za-z_\-]+)/(?P<quote_template_id>[0-9]+)/',views.preview_quote,name='preview_quote'),
+	url(r'^extract_quote/(?P<quote_uuid>[0-9A-Za-z_\-]+)/(?P<quote_template_id>[0-9]+)/', views.extract_quote,
+		name='extract_quote'),
 
 ]
 

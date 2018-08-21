@@ -24,7 +24,7 @@ from geolocation.main import GoogleMaps
 from django.http import JsonResponse
 
 #import python modules
-import datetime, json, simplejson, urllib, urllib2
+import datetime, json, simplejson, urllib, urllib2, pdfkit
 import pytz
 from django.utils import timezone
 
@@ -1761,6 +1761,22 @@ def email_information(request,email_content_id):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
+def extract_quote(request, quote_uuid,quote_template_id):
+    #Create the PDF
+    url_path = "http://" + request.get_host() + "/preview_quote/" + quote_uuid + "/" + quote_template_id + "/"
+
+    pdf_results=pdfkit.from_url(url_path, False)
+
+    #Setup the response
+    response = HttpResponse(pdf_results,content_type='application/pdf')
+    response['Content-Disposition']='attachment; filename="NearBeach Quote.pdf"'
+
+    return response
+
+
+
+
 
 @login_required(login_url='login')
 def index(request):
@@ -3177,52 +3193,62 @@ def new_quote_template(request):
         quote_template_submit=quote_template(
             change_user_id=request.user.id,
             quote_template_description = "Quote Template",
+            template_css="""
+            .table_header {
+                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+                border-collapse: collapse;
+                width: 100%;
+            }
+            
+            .table_header {
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+            
+            .table_header {
+                padding-top: 12px;
+                padding-bottom: 12px;
+                text-align: left;
+                background-color: #4CAF50;
+                color: white;
+            }
+            
+            table td, table td * {
+                vertical-align: top;
+            }
+            """,
             header="NearBeach Quote Number {{ quote_id }}",
             company_letter_head="<p>NearBeach Incorporated<br />Melbourne 3000<br />Australia</p>",
             payment_terms="Please pay within 30 days",
             notes="{{ quote_terms }}",
             organisation_details="""
-                <table style="border-collapse: collapse; width: 100%;" border="1">
-                <tbody>
-                <tr>
-                <td style="width: 100%;">{{ organisation_name }}</td>
-                </tr>
-                <tr>
-                <td style="width: 100%;">
-                <p>{{ organisation_address_1 }}<br />{{ organisation_address_2 }}<br />{{ organisation_address_3 }}</p>
-                </td>
-                </tr>
-                <tr>
-                <td style="width: 100%;">{{ organisation_suburb }} {{ organisation_postcode }}</td>
-                </tr>
-                <tr>
-                <td style="width: 100%;">{{ organisation_region }}</td>
-                </tr>
-                <tr>
-                <td style="width: 100%;">{{ organisation_country }}</td>
-                </tr>
-                </tbody>
-                </table>
+                <p>{{ organisation_name }}<br />
+                {{ organisation_address_1 }}<br />
+                {{ organisation_address_2 }}<br />
+                {{ organisation_address_3 }}<br />
+                {{ organisation_suburb }} {{ organisation_postcode }}<br />
+                {{ organisation_region }}<br />
+                {{ organisation_country }}</p>
             """,
             product_line = "Temp product line",
             service_line = "Temp service line",
             payment_method="""
-                <table style="border-collapse: collapse; width: 100%;" border="1">
-                <tbody>
-                <tr>
-                <td style="width: 50%;">Account</td>
-                <td style="width: 50%;">0000 0000</td>
-                </tr>
-                <tr>
-                <td style="width: 50%;">BSB</td>
-                <td style="width: 50%;">000 000</td>
-                </tr>
-                <tr>
-                <td style="width: 50%;">Acount Name</td>
-                <td style="width: 50%;">NearBeach Holdings</td>
-                </tr>
-                </tbody>
-                </table>    
+            <table>
+            <tbody>
+            <tr style="height: 18px;">
+            <td style="width: 50%; height: 18px;">Account</td>
+            <td style="width: 50%; height: 18px;">0000 0000</td>
+            </tr>
+            <tr style="height: 18px;">
+            <td style="width: 50%; height: 18px;">BSB</td>
+            <td style="width: 50%; height: 18px;">000 000</td>
+            </tr>
+            <tr style="height: 18px;">
+            <td style="width: 50%; height: 18px;">Acount Name</td>
+            <td style="width: 50%; height: 18px;">NearBeach Holdings</td>
+            </tr>
+            </tbody>
+            </table>
             """,
             footer="{{ page_number }}",
         )
@@ -3839,9 +3865,15 @@ def permission_denied(request):
 
 
 
-@login_required(login_url='login')
-def preview_quote(request,quote_id,quote_template_id):
+"""
+Issue - preview_quote will ask extract_quote to login. To remove this issue we have added the ability for UUID,
+so the chances of a random user guessing the URL will be very small.
+"""
+def preview_quote(request,quote_uuid,quote_template_id):
     #Get data
+    quote_results = quotes.objects.get(quote_uuid=quote_uuid)
+    quote_id = quote_results.quote_id
+
     product_results = quotes_products_and_services.objects.filter(
         is_deleted="FALSE",
         #products_and_services.product_or_service = "product",
@@ -3858,7 +3890,7 @@ def preview_quote(request,quote_id,quote_template_id):
         ).values('pk'),
         quote_id=quote_id,
     )
-    quote_results = quotes.objects.get(quote_id=quote_id)
+
     quote_template_results = quote_template.objects.get(quote_template_id=quote_template_id)
 
     """
@@ -3908,6 +3940,9 @@ def preview_quote(request,quote_id,quote_template_id):
     service_tax=service_results.aggregate(Sum('tax'))
     service_total=service_results.aggregate(Sum('total'))
 
+    #Get Date
+    current_date = datetime.datetime.now()
+
     # Load the template
     t = loader.get_template('NearBeach/render_templates/quote_template.html')
 
@@ -3933,6 +3968,12 @@ def preview_quote(request,quote_id,quote_template_id):
         'service_sales_price': service_sales_price,
         'service_tax': service_tax,
         'service_total': service_total,
+        'current_user': request.user,
+        'quote_id': quote_id,
+        'current_date': current_date,
+        'quote_results': quote_results,
+        'product_results': product_results,
+        'service_results': service_results,
     }
 
     return HttpResponse(t.render(c,request))
@@ -4133,6 +4174,9 @@ def quote_information(request, quote_id):
         return HttpResponseRedirect(reverse(permission_denied))
 
     quotes_results = quotes.objects.get(quote_id=quote_id)
+    quote_template_results = quote_template.objects.filter(
+        is_deleted="FALSE",
+    )
 
     if request.method == "POST":
         form = quote_information_form(request.POST)
@@ -4219,6 +4263,7 @@ def quote_information(request, quote_id):
         'quote_id': quote_id,
         'quote_or_invoice': quote_or_invoice,
         'timezone': settings.TIME_ZONE,
+        'quote_template_results': quote_template_results,
         'quote_permission': permission_results['quote'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
@@ -4250,8 +4295,8 @@ def quote_template_information(request,quote_template_id):
             quote_template_save.payment_terms= form.cleaned_data['payment_terms']
             quote_template_save.notes= form.cleaned_data['notes']
             quote_template_save.organisation_details= form.cleaned_data['organisation_details']
-            quote_template_save.product_line= form.cleaned_data['product_line']
-            quote_template_save.service_line= form.cleaned_data['service_line']
+            #quote_template_save.product_line= form.cleaned_data['product_line']
+            #quote_template_save.service_line= form.cleaned_data['service_line']
             quote_template_save.payment_method= form.cleaned_data['payment_method']
             quote_template_save.footer= form.cleaned_data['footer']
             quote_template_save.page_layout= form.cleaned_data['page_layout']

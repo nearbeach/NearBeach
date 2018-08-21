@@ -1939,6 +1939,8 @@ class quote_template_form(ModelForm):
             'date_modified',
             'change_user',
             'is_deleted',
+            'product_line',
+            'service_line',
         }
 
 

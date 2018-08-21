@@ -10,17 +10,75 @@
 </header>
 <body>
     <div id="company_letter_head">{{ company_letter_head|safe }}</div>
-    <div id="payment_terms">{{ payment_terms|safe }}</div>
-    <div id="notes">{{ notes|safe }}</div>
-    <div id="organisation_details">{{ organisation_details|safe }}</div>
-    {% if product_line %}
+    <table>
+        <tr class="table_header">
+            <td style="width: 50%;">Prepared For</td> <!--Organisation details-->
+            <td style="width: 50%;">Prepared By</td>  <!--Current User -->
+        </tr>
+        <tr>
+            <td>{{ organisation_details|safe }}</td>
+            <td>{{ current_user }}</td>
+        </tr>
+        <tr class="table_header">
+            <td>Quotation Date</td>
+            <td>Valid Until</td>
+        </tr>
+        <tr>
+            <td>{{ current_date }}</td>
+            <td>{{ quote_results.quote_valid_till }}</td>
+        </tr>
+        <tr class="table_header">
+            <td>Quote Number</td>
+            <td>Payment Terms</td>
+        </tr>
+        <tr>
+            <td>{{ quote_id }}</td>
+            <td>{{ payment_terms|safe }}</td>
+        </tr>
+    </table>
+
+    <div id="notes">Quote Notes: {{ notes|safe }}</div>
+
+    {% if product_results %}
         <div id="product_line">
             <h4>Product Lines</h4>
-            {{ product_line|safe }}
-        </div>
-        <div id="product_line_total">
-            <h4>Product Totals</h4>
-            <table>
+            <table id="product_line_table">
+                <tr class="table_header">
+                    <td>Product</td>
+                    <td>Price</td>
+                    <td>Quantity</td>
+                    <td>Discount Amount</td>
+                    <td>Sales Price</td>
+                    <td>Tax %</td>
+                    <td>Tax Amount</td>
+                    <td>Total</td>
+                </tr>
+                    {% for row in product_results %}
+                    <tr>
+                        <td>{{ row.products_and_services }}</td>
+                        <td name="product_price">{{ row.product_price }}</td>
+                        <td name="product_quantity">{{ row.quantity }}</td>
+                        {% if row.discount_choice == "Percentage" %}
+                            <td>{{ row.discount_percent }}% = {{ row.discount_amount }}</td>
+                            <td style="display: none;" name="product_discount">{{ row.discount_amount }}</td> <!--this is hidden here so I can calculate the discount amount! SHH DO NOT TELL MUM -->
+                        {% else %}
+                            <td name="product_discount">{{ row.discount_amount }}</td>
+                        {% endif %}
+                        <td name="product_sales_price">{{ row.sales_price }}</td>
+                        <td>{{ row.tax }}</td>
+                        <td name="product_tax">{{ row.tax_amount }}</td>
+                        <td>{{ row.total }}</td>
+                    </tr>
+                    {% if not row.product_note == "" %}
+                        <tr>
+                            <td>Product Note:</td>
+                            <td colspan="7">{{ row.product_note }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            <tr class="table_header">
+                    <td colspan="2">Product Totals</td>
+                </tr>
                 <tr>
                     <td>Unadjusted Price</td>
                     <td>{{ product_unadjusted_price.product_price__sum }}</td>
@@ -47,11 +105,43 @@
     {% if service_line %}
         <div id="service_line">
             <h4>Service Lines</h4>
-            {{ service_line|safe }}
-        </div>
-        <div id="service_line_total">
-            <h4>Service Totals</h4>
-            <table>
+            <table id="service_line_table">
+                <tr class="table_header">
+                <td>Service</td>
+                <td>Price</td>
+                <td>Quantity</td>
+                <td>Discount Amount</td>
+                <td>Sales Price</td>
+                <td>Tax %</td>
+                <td>Tax Amount</td>
+                <td>Total</td>
+                </tr>
+                {% for row in service_results %}
+                    <tr>
+                        <td>{{ row.products_and_services }}</td>
+                        <td name="service_price">{{ row.product_price }}</td>
+                        <td name="service_quantity">{{ row.quantity }}</td>
+                        {% if row.discount_choice == "Percentage" %}
+                            <td>{{ row.discount_percent }}% = {{ row.discount_amount }}</td>
+                            <td style="display: none;" name="service_discount">{{ row.discount_amount }}</td> <!--this is hidden here so I can calculate the discount amount! SHH DO NOT TELL MUM -->
+                        {% else %}
+                            <td name="service_discount">{{ row.discount_amount }}</td>
+                        {% endif %}
+                        <td name="service_sales_price">{{ row.sales_price }}</td>
+                        <td>{{ row.tax }}</td>
+                        <td name="service_tax">{{ row.tax_amount }}</td>
+                        <td>{{ row.total }}</td>
+                    </tr>
+                    {% if not row.product_note == "" %}
+                        <tr>
+                            <td>Product Note:</td>
+                            <td colspan="7">{{ row.product_note }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                <tr class="table_header">
+                    <td colspan="2">Service Totals</td>
+                </tr>
                 <tr>
                     <td>Unadjusted Price</td>
                     <td>{{ service_unadjusted_price.product_price__sum }}</td>
@@ -74,10 +164,13 @@
                 </tr>
             </table>
         </div>
+
     {% endif %}
     <div id="totals">
-        <h4>Grand Totals</h4>
         <table>
+            <tr class="table_header">
+                <td colspan="2">Grand Total</td>
+            </tr>
             <tr>
                 <td>Unadjusted Price</td>
                 <td>{{ service_unadjusted_price.product_price__sum|add:product_unadjusted_price.product_price__sum }}</td>
@@ -94,7 +187,7 @@
                 <td>Tax</td>
                 <td>{{ service_tax.tax__sum|add:product_tax.tax__sum }}</td>
             </tr>
-            <tr style="background-color: lightsteelblue">
+            <tr>
                 <td>Grand Total</td>
                 <td>{{ service_total.total__sum|add:product_total.total__sum }}</td>
             </tr>

@@ -95,7 +95,7 @@
                 <td>{{ row.total }}</td>
                 <td><a onclick="delete_line_item({{ row.quotes_products_and_services_id }})" href="javascript:void(0);">Delete</a></td>
             </tr>
-            {% if not row.service_note == "" %}
+            {% if not row.product_note == "" %}
                 <tr>
                     <td>Product Note:</td>
                     <td colspan="7">{{ row.product_note }}</td>

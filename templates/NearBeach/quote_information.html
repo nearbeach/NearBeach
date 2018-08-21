@@ -140,6 +140,18 @@
         <h2>Email History</h2>
         Loading...
     </div>
+    {% if quote_template_results %}
+        <div id="quote_preview">
+            <h2>Quote Preview</h2>
+            <select id="quote_template">
+                {% for row in quote_template_results %}
+                    <option value="{{ row.quote_template_id }}">{{ row.quote_template_description }}</option>
+                {% endfor %}
+            </select>
+            <input type="button" value="Preview Quote" onclick="preview_quote()">
+            <input type="button" value="Download PDF" onclick="download_quote()">
+        </div>
+    {% endif %}
 
 
 
@@ -219,6 +231,35 @@
             }
         })
     }
+
+    function preview_quote() {
+        //Get value of template selected
+        var template_id = $("#quote_template").val();
+
+        //Go to the preview page
+        var new_tab = window.open("/preview_quote/{{ quotes_results.quote_uuid }}/" + template_id + "/","_blank")
+        if (new_tab) {
+            new_tab.focus();
+        } else {
+            //Append a link - do not worry about the error.
+            $("#quote_preview").append("<a href='" + new_tab.url + "' target='_blank'>Quote Preview - click here</a>");
+        }
+    }
+
+    function download_quote() {
+        //Get value of template selected
+        var template_id = $("#quote_template").val();
+
+        //Go to the preview page
+        var new_tab = window.open("/extract_quote/{{ quotes_results.quote_uuid }}/" + template_id + "/","_blank")
+        if (new_tab) {
+            new_tab.focus();
+        } else {
+            //Append a link - do not worry about the error.
+            $("#quote_preview").append("<a href='" + new_tab.url + "' target='_blank'>Quote Preview - click here</a>");
+        }
+    }
+
 </script>
 </body>
 {% endblock %}

@@ -378,3 +378,8 @@ h2 {
  position: absolute;
  left: 50%;
 }
+
+#footer-wrapper {
+    margin-top: 100px;
+    overflow: hidden;
+}
