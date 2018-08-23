@@ -2049,6 +2049,12 @@ class quotes(models.Model):
         'list_of_quote_stages',
         on_delete=models.CASCADE,
     )
+    quote_billing_address=models.ForeignKey(
+        'campus',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     is_invoice = models.CharField(
         max_length=5,
         choices=IS_DELETED_CHOICE,

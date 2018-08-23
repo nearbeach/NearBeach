@@ -625,32 +625,29 @@ def bug_search(request, location_id=None, destination=None):
         form = bug_search_form(request.POST)
         if form.is_valid():
             #Get the bug client instance
-            bug_client_instance = form.cleaned_data['list_of_bug_client']
-            bug_client_id = bug_client_instance.list_of_bug_client_id
-
-            #Get the bug client information
-            bug_client_results = bug_client.objects.get(
-                bug_client_id=bug_client_instance.list_of_bug_client_id
-            )
+            bug_client_instance = bug_client.objects.get(bug_client_id=form.data['list_of_bug_client'])
+            bug_client_id = bug_client_instance.bug_client_id
+            print(bug_client_instance)
+            print(bug_client_id)
 
             #Get bugs ids that we want to remove
             if destination == "project":
                 existing_bugs = bug.objects.filter(
                     is_deleted="FALSE",
                     project=location_id,
-                    bug_client_id=bug_client_instance.list_of_bug_client_id,
+                    bug_client_id=bug_client_id,
                 )
             elif destination == "task":
                 existing_bugs = bug.objects.filter(
                     is_deleted="FALSE",
                     tasks=location_id,
-                    bug_client_id=bug_client_instance.list_of_bug_client_id,
+                    bug_client_id=bug_client_id,
                 )
             else:
                 existing_bugs = bug.objects.filter(
                     is_deleted="FALSE",
                     requirements=location_id,
-                    bug_client_id=bug_client_instance.list_of_bug_client_id,
+                    bug_client_id=bug_client_id,
                 )
             #The values in the URL
             f_bugs = ''
@@ -667,8 +664,8 @@ def bug_search(request, location_id=None, destination=None):
             exclude_url = f_bugs + o_notequals + v_values
 
 
-            url = bug_client_results.bug_client_url \
-                  + bug_client_results.list_of_bug_client.bug_client_api_url \
+            url = bug_client_instance.bug_client_url \
+                  + bug_client_instance.list_of_bug_client.bug_client_api_url \
                   + bug_client_instance.list_of_bug_client.api_search_bugs + form.cleaned_data['search'] \
                   + exclude_url
 
@@ -3928,37 +3925,19 @@ def preview_quote(request,quote_uuid,quote_template_id):
 
     """
     The following section will extract the template fields and then do a simple mail merge until all the required
-    template fields are JUST strings.
+    template fields are JUST strings. This is the function update_template_strings
     """
-    mail_merge_array = [
-        'customer_id',
-        'customer_id',
-        'date_created',
-        'date_modified',
-        'is_invoice',
-        'opportunity_id',
-        'organisation_email',
-        'organisation_id',
-        'organisation_name',
-        'organisation_profile_picture',
-        'organisation_website',
-        'organisations_id',
-        'project_id',
-        'quote_approval_status_id',
-        'quote_id',
-        'quote_terms',
-        'task_id',
-    ]
-    template_css = quote_template_results.template_css
-    header = quote_template_results.header
-    company_letter_head = quote_template_results.company_letter_head
-    payment_terms = quote_template_results.payment_terms
-    notes = quote_template_results.notes
-    organisation_details = quote_template_results.organisation_details
-    product_line = quote_template_results.product_line
-    service_line = quote_template_results.service_line
-    payment_method = quote_template_results.payment_method
-    footer = quote_template_results.footer
+
+    template_css = update_template_strings(quote_template_results.template_css,quote_results)
+    header = update_template_strings(quote_template_results.header,quote_results)
+    company_letter_head = update_template_strings(quote_template_results.company_letter_head,quote_results)
+    payment_terms = update_template_strings(quote_template_results.payment_terms,quote_results)
+    notes = update_template_strings(quote_template_results.notes,quote_results)
+    organisation_details = update_template_strings(quote_template_results.organisation_details,quote_results)
+    product_line = update_template_strings(quote_template_results.product_line,quote_results)
+    service_line = update_template_strings(quote_template_results.service_line,quote_results)
+    payment_method = update_template_strings(quote_template_results.payment_method,quote_results)
+    footer = update_template_strings(quote_template_results.footer,quote_results)
 
     #Collect all the SUM information
     product_unadjusted_price=product_results.aggregate(Sum('product_price'))
@@ -4212,7 +4191,7 @@ def quote_information(request, quote_id):
     )
 
     if request.method == "POST":
-        form = quote_information_form(request.POST)
+        form = quote_information_form(request.POST,quote_instance=quotes_results)
         if form.is_valid():
             #Extract the information from the forms
             quotes_results.quote_title = form.cleaned_data['quote_title']
@@ -4292,7 +4271,10 @@ def quote_information(request, quote_id):
     # context
     c = {
         'quotes_results': quotes_results,
-        'quote_information_form': quote_information_form(initial=initial),
+        'quote_information_form': quote_information_form(
+            initial=initial,
+            quote_instance=quotes_results,
+        ),
         'quote_id': quote_id,
         'quote_or_invoice': quote_or_invoice,
         'timezone': settings.TIME_ZONE,
@@ -5139,3 +5121,67 @@ def update_coordinates(campus_id):
         except:
             print("Address Failed")
         """
+
+def update_template_strings(variable,quote_results):
+    """
+    The following function will replace all {{ tag }} variables in the template with the results from the quote
+    results. The current variables are;
+
+    Groups
+    ~~~~~~
+    1.) Quotes
+    2.) Organisatiions
+    3.) Quote Billing Address
+    """
+    variable = variable.replace('{{ customer_id }}', str(quote_results.customer_id))
+    variable = variable.replace('{{ customer_notes }}', quote_results.customer_notes)
+    variable = variable.replace('{{ is_invoice }}', quote_results.is_invoice)
+    variable = variable.replace('{{ opportunity_id }}', str(quote_results.opportunity_id))
+    variable = variable.replace('{{ organisation_id }}', str(quote_results.organisation_id))
+    variable = variable.replace('{{ project_id }}', str(quote_results.project_id))
+    variable = variable.replace('{{ quote_approval_status_id }}', str(quote_results.quote_approval_status_id))
+    variable = variable.replace('{{ quote_billing_address }}', str(quote_results.quote_billing_address))
+    variable = variable.replace('{{ quote_id }}', str(quote_results.quote_id))
+    variable = variable.replace('{{ quote_stage_id }}', str(quote_results.quote_stage_id))
+    variable = variable.replace('{{ quote_terms }}', quote_results.quote_terms)
+    variable = variable.replace('{{ quote_title }}', quote_results.quote_title)
+    variable = variable.replace('{{ quote_valid_till }}', str(quote_results.quote_valid_till))
+    variable = variable.replace('{{ task_id }}', str(quote_results.task_id))
+
+    #Group 2
+    if quote_results.organisation_id:
+        variable = variable.replace('{{ organisation_name }}', quote_results.organisation_id.organisation_name)
+        variable = variable.replace('{{ organisation_website }}', quote_results.organisation_id.organisation_website)
+        variable = variable.replace('{{ organisation_email }}', quote_results.organisation_id.organisation_email)
+    else:
+        variable = variable.replace('{{ organisation_name }}', '')
+        variable = variable.replace('{{ organisation_website }}', '')
+        variable = variable.replace('{{ organisation_email }}', '')
+
+    #Group 3
+    if quote_results.quote_billing_address:
+        variable = variable.replace('{{ billing_address1 }}', quote_results.quote_billing_address.campus_address1)
+        variable = variable.replace('{{ billing_address2 }}', quote_results.quote_billing_address.campus_address2)
+        variable = variable.replace('{{ billing_address3 }}', quote_results.quote_billing_address.campus_address3)
+        variable = variable.replace('{{ campus_id }}', str(quote_results.quote_billing_address.campus_id))
+        variable = variable.replace('{{ campus_nickname }}', quote_results.quote_billing_address.campus_nickname)
+        variable = variable.replace('{{ campus_phone }}', quote_results.quote_billing_address.campus_phone)
+        variable = variable.replace('{{ campus_region_id }}', str(quote_results.quote_billing_address.campus_region_id))
+        variable = variable.replace('{{ billing_suburb }}', quote_results.quote_billing_address.campus_suburb)
+        variable = variable.replace('{{ billing_suburb }}', quote_results.quote_billing_address.campus_postcode)
+        variable = variable.replace('{{ billing_region }}', str(quote_results.quote_billing_address.campus_region_id))
+        variable = variable.replace('{{ billing_country }}', str(quote_results.quote_billing_address.campus_country_id))
+    else:
+        variable = variable.replace('{{ billing_address1 }}', '')
+        variable = variable.replace('{{ billing_address2 }}', '')
+        variable = variable.replace('{{ billing_address3 }}', '')
+        variable = variable.replace('{{ billing_postcode }}', '')
+        variable = variable.replace('{{ campus_id }}', '')
+        variable = variable.replace('{{ campus_nickname }}', '')
+        variable = variable.replace('{{ campus_phone }}', '')
+        variable = variable.replace('{{ campus_region_id }}', '')
+        variable = variable.replace('{{ billing_suburb }}', '')
+        variable = variable.replace('{{ billing_region }}', '')
+        variable = variable.replace('{{ billing_country }}', '')
+
+    return variable

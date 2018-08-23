@@ -65,7 +65,7 @@ input[type="submit"]:disabled, input[type="button"]:disabled {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    width:100%;
 }
 
 #main-nav a, #menu-toggle {

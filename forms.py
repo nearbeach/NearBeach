@@ -1839,9 +1839,45 @@ class project_information_form(ModelForm):
 
 
 class quote_information_form(ModelForm):
+    def __init__(self,*args,**kwargs):
+        """
+        Method
+        ~~~~~~
+        1.) Extract the quote id
+        2.) Look at quote inforomation
+        3.) If quote has an organisation - take the organisation's campus
+        4.) If the quote does not have an organisation - take the customer's campus
+        5.) Return the campus results into quote_billing_campus 
+        """
+        quote_instance=kwargs.pop('quote_instance',None)
+        print("ORGANISATION ID")
+        print(quote_instance)
+
+        super(quote_information_form,self).__init__(*args,**kwargs)
+
+        if quote_instance.organisation_id:
+            campus_results = campus.objects.filter(
+                is_deleted="FALSE",
+                organisations_id=quote_instance.organisation_id,
+            )
+        elif quote_instance.customer_id:
+            campus_results = campus.objects.filter(
+                is_deleted="FALSE",
+                customers=quote_instance.customer_id,
+            )
+        else:
+            #Blank object set
+            campus_results = campus.objects.filter(pk=0)
+
+        self.fields['quote_billing_address'].queryset = campus_results
     #Get data for form
     list_of_quote_stages=list_of_quote_stages.objects.filter(
         is_deleted='FALSE',
+    )
+
+    quote_billing_address = forms.ModelChoiceField(
+        required=False,
+        queryset=campus.objects.all(),
     )
 
 

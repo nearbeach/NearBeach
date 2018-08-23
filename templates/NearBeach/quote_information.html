@@ -122,6 +122,7 @@
             <tr><td>{{ quote_or_invoice }} Valid To: {{ quote_information_form.quote_valid_till_year }}/{{ quote_information_form.quote_valid_till_month }}/{{ quote_information_form.quote_valid_till_day }}<br/>
                 {{ quote_information_form.quote_valid_till_hour }}:{{ quote_information_form.quote_valid_till_minute }} {{ quote_information_form.quote_valid_till_meridiems }}</td></tr>
             <tr><td>{{ quote_information_form.customer_notes }}</td></tr>
+            <tr><td>Quote Billing Address: {{ quote_information_form.quote_billing_address }}</td></tr>
         </table>
         <input type="submit" value="Update {{ quote_or_invoice }}">
         {% if quote_or_invoice == 'Quote' %}
