@@ -1350,49 +1350,18 @@ class new_project_form(forms.Form):
         queryset=organisations_results,
         required=False,
     )
-    start_date_year=forms.ChoiceField(
-        choices=YEAR_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
+    project_start_date=forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'style': 'width: 200px',
         })
     )
-    start_date_month=forms.ChoiceField(
-        choices=MONTH_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
+    project_end_date=forms.DateTimeField(
+        initial=datetime.datetime.now()+datetime.timedelta(days=31),
+        widget=forms.DateTimeInput(attrs={
+            'style': 'width: 200px'
         })
     )
-    start_date_day=forms.ChoiceField(
-        choices=DAY_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
-        })
-    )
-    start_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
-    start_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
-    start_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
-
-    finish_date_year=forms.ChoiceField(
-        choices=YEAR_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_month=forms.ChoiceField(
-        choices=MONTH_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_day=forms.ChoiceField(
-        choices=DAY_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
-    finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
-    finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
 
     class Meta:
         model = project
@@ -1400,6 +1369,8 @@ class new_project_form(forms.Form):
             'project_name',
             'project_description',
             'organisations_id',
+            'project_start_date',
+            'project_end_date',
         }
 
 
@@ -1583,50 +1554,18 @@ class new_task_form(forms.Form):
         queryset=organisations_results,
         required=False,
     )
-    start_date_year=forms.ChoiceField(
-        choices=YEAR_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
+    task_start_date=forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'style': 'width: 200px',
         })
     )
-    start_date_month=forms.ChoiceField(
-        choices=MONTH_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
+    task_end_date=forms.DateTimeField(
+        initial=datetime.datetime.now()+datetime.timedelta(days=31),
+        widget=forms.DateTimeInput(attrs={
+            'style': 'width: 200px'
         })
     )
-    start_date_day=forms.ChoiceField(
-        choices=DAY_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
-        })
-    )
-    start_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
-    start_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
-    start_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
-
-    finish_date_year=forms.ChoiceField(
-        choices=YEAR_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_month=forms.ChoiceField(
-        choices=MONTH_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_day=forms.ChoiceField(
-        choices=DAY_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
-    finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
-    finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
-
 
 class opportunity_group_permission_form(forms.Form):
     def __init__(self,*args,**kwargs):
@@ -1831,52 +1770,6 @@ class project_information_form(ModelForm):
     Project information will need to abide by the stricked laws of the new
     project datetime edits!!
     """
-
-    start_date_year=forms.ChoiceField(
-        choices=YEAR_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
-        })
-    )
-    start_date_month=forms.ChoiceField(
-        choices=MONTH_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
-        })
-    )
-    start_date_day=forms.ChoiceField(
-        choices=DAY_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
-        })
-    )
-    start_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
-    start_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
-    start_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
-
-    finish_date_year=forms.ChoiceField(
-        choices=YEAR_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_month=forms.ChoiceField(
-        choices=MONTH_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_day=forms.ChoiceField(
-        choices=DAY_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
-    finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
-    finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
-
-
     document=forms.FileField(
         required=False,
         widget=forms.FileInput(attrs={
@@ -1918,6 +1811,16 @@ class project_information_form(ModelForm):
             }
         )
     )
+    project_start_date=forms.DateTimeField(
+        widget=forms.DateTimeInput(attrs={
+            'style': 'width: 200px',
+        })
+    )
+    project_end_date=forms.DateTimeField(
+        widget=forms.DateTimeInput(attrs={
+            'style': 'width: 200px'
+        })
+    )
 
 
 
@@ -1927,13 +1830,54 @@ class project_information_form(ModelForm):
         fields={
             'project_name',
             'project_description',
+            'project_start_date',
+            'project_end_date',
         }
 
 
+
+
+
 class quote_information_form(ModelForm):
+    def __init__(self,*args,**kwargs):
+        """
+        Method
+        ~~~~~~
+        1.) Extract the quote id
+        2.) Look at quote inforomation
+        3.) If quote has an organisation - take the organisation's campus
+        4.) If the quote does not have an organisation - take the customer's campus
+        5.) Return the campus results into quote_billing_campus 
+        """
+        quote_instance=kwargs.pop('quote_instance',None)
+        print("ORGANISATION ID")
+        print(quote_instance)
+
+        super(quote_information_form,self).__init__(*args,**kwargs)
+
+        if quote_instance.organisation_id:
+            campus_results = campus.objects.filter(
+                is_deleted="FALSE",
+                organisations_id=quote_instance.organisation_id,
+            )
+        elif quote_instance.customer_id:
+            campus_results = campus.objects.filter(
+                is_deleted="FALSE",
+                customers=quote_instance.customer_id,
+            )
+        else:
+            #Blank object set
+            campus_results = campus.objects.filter(pk=0)
+
+        self.fields['quote_billing_address'].queryset = campus_results
     #Get data for form
     list_of_quote_stages=list_of_quote_stages.objects.filter(
         is_deleted='FALSE',
+    )
+
+    quote_billing_address = forms.ModelChoiceField(
+        required=False,
+        queryset=campus.objects.all(),
     )
 
 
@@ -2005,6 +1949,36 @@ class quote_information_form(ModelForm):
             'quote_terms',
             'customer_notes',
         }
+
+
+class quote_template_form(ModelForm):
+    quote_template_description=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Quote Template Description',
+        })
+    )
+    header=forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Please Enter Template Header',
+            }
+        )
+    )
+    class Meta:
+        model=quote_template
+        exclude={
+            'date_created',
+            'date_modified',
+            'change_user',
+            'is_deleted',
+            'product_line',
+            'service_line',
+        }
+
 
 
 class search_form(forms.Form):
@@ -2115,6 +2089,15 @@ class search_tasks_form(forms.Form):
         choices=INCLUDE_CLOSED
     )
 
+class search_templates_form(forms.Form):
+    search_templates=forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Search Templates',
+        }),
+    )
+
 class search_users_form(forms.Form):
     search_users=forms.CharField(
         max_length=255,
@@ -2134,54 +2117,6 @@ class task_information_form(ModelForm):
         widget=forms.TextInput(attrs={
             "class":'task_short_description'
         })
-    )
-
-    start_date_year=forms.ChoiceField(
-        choices=YEAR_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
-        })
-    )
-    start_date_month=forms.ChoiceField(
-        choices=MONTH_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
-        })
-    )
-    start_date_day=forms.ChoiceField(
-        choices=DAY_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
-        })
-    )
-    start_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
-    start_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
-    start_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
-
-    finish_date_year=forms.ChoiceField(
-        choices=YEAR_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_month=forms.ChoiceField(
-        choices=MONTH_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_day=forms.ChoiceField(
-        choices=DAY_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
-    finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
-    finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
-    task_history_text=forms.CharField(
-        widget=forms.Textarea,
-        required=False
     )
 
     document=forms.FileField(
@@ -2217,31 +2152,39 @@ class task_information_form(ModelForm):
         )
     )
 
+    task_start_date = forms.DateTimeField(
+        widget=forms.DateTimeInput(attrs={
+            'style': 'width: 200px',
+        })
+    )
+    task_end_date = forms.DateTimeField(
+        widget=forms.DateTimeInput(attrs={
+            'style': 'width: 200px'
+        })
+    )
+
     class Meta:
         model=tasks
         fields={
             'task_short_description',
             'task_long_description',
+            #'task_start_date',
+            #'task_end_date',
         }
 
-class timeline_form(forms.Form):
-    start_date=forms.DateField(
-        required=True
-    )
-    end_date=forms.DateField(
-        required=True
-    )
 
 
 class timeline_form(forms.Form):
     start_date = forms.DateField(
         widget=forms.DateInput(attrs={
             'onchange': 'render_timeline()',
+            'style': 'width: 100px;',
         })
     )
     end_date = forms.DateField(
         widget=forms.DateInput(attrs={
             'onchange': 'render_timeline()',
+            'style': 'width: 100px;',
         })
     )
 

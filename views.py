@@ -22,6 +22,8 @@ from django.db.models import Max
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from geolocation.main import GoogleMaps
 from django.http import JsonResponse
+#from weasyprint import HTML
+
 
 #import python modules
 import datetime, json, simplejson, urllib, urllib2
@@ -623,32 +625,29 @@ def bug_search(request, location_id=None, destination=None):
         form = bug_search_form(request.POST)
         if form.is_valid():
             #Get the bug client instance
-            bug_client_instance = form.cleaned_data['list_of_bug_client']
-            bug_client_id = bug_client_instance.list_of_bug_client_id
-
-            #Get the bug client information
-            bug_client_results = bug_client.objects.get(
-                bug_client_id=bug_client_instance.list_of_bug_client_id
-            )
+            bug_client_instance = bug_client.objects.get(bug_client_id=form.data['list_of_bug_client'])
+            bug_client_id = bug_client_instance.bug_client_id
+            print(bug_client_instance)
+            print(bug_client_id)
 
             #Get bugs ids that we want to remove
             if destination == "project":
                 existing_bugs = bug.objects.filter(
                     is_deleted="FALSE",
                     project=location_id,
-                    bug_client_id=bug_client_instance.list_of_bug_client_id,
+                    bug_client_id=bug_client_id,
                 )
             elif destination == "task":
                 existing_bugs = bug.objects.filter(
                     is_deleted="FALSE",
                     tasks=location_id,
-                    bug_client_id=bug_client_instance.list_of_bug_client_id,
+                    bug_client_id=bug_client_id,
                 )
             else:
                 existing_bugs = bug.objects.filter(
                     is_deleted="FALSE",
                     requirements=location_id,
-                    bug_client_id=bug_client_instance.list_of_bug_client_id,
+                    bug_client_id=bug_client_id,
                 )
             #The values in the URL
             f_bugs = ''
@@ -665,8 +664,8 @@ def bug_search(request, location_id=None, destination=None):
             exclude_url = f_bugs + o_notequals + v_values
 
 
-            url = bug_client_results.bug_client_url \
-                  + bug_client_results.list_of_bug_client.bug_client_api_url \
+            url = bug_client_instance.bug_client_url \
+                  + bug_client_instance.list_of_bug_client.bug_client_api_url \
                   + bug_client_instance.list_of_bug_client.api_search_bugs + form.cleaned_data['search'] \
                   + exclude_url
 
@@ -1759,6 +1758,53 @@ def email_information(request,email_content_id):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def extract_quote(request, quote_uuid,quote_template_id):
+    #Create the PDF
+    #url_path = "http://" + request.get_host() + "/preview_quote/" + quote_uuid + "/" + quote_template_id + "/"
+    #url_path = request.get_host() + "/preview_quote/" + quote_uuid + "/" + quote_template_id + "/"
+    url_path = "/preview_quote/" + quote_uuid + "/" + quote_template_id + "/"
+
+    #pdf_results=pdfkit.from_url(url_path, False)
+
+    #Setup the response
+    #response = HttpResponse(pdf_results,content_type='application/pdf')
+    #response['Content-Disposition']='attachment; filename="NearBeach Quote.pdf"'
+
+    #return response
+    html_string = loader.render_to_string(url_path)
+    #html = HTML(string=html_string)
+    #pdf_results = html.write_pdf()
+    pdf_results = ''
+
+    #Setup the response
+    response = HttpResponse(pdf_results,content_type='application/pdf')
+    response['Content-Disposition']='attachment; filename="NearBeach Quote.pdf"'
+
+    return response
+
+
+    """
+
+    # Rendered
+    html_string = render_to_string('bedjango/pdf.html', {'people': people})
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+
+    # Creating http response
+    response['Content-Transfer-Encoding'] = 'binary'
+    with tempfile.NamedTemporaryFile(delete=True) as output:
+        output.write(result)
+        output.flush()
+        output = open(output.name, 'r')
+        response.write(output.read())
+
+    return response
+    """
+
+
 
 
 
@@ -2933,30 +2979,13 @@ def new_project(request, location_id='', destination=''):
             organisations_id_form = form.cleaned_data['organisations_id']
 
             # Create the final start/end date fields
-            project_start_date = convert_to_utc(
-                int(form.cleaned_data['start_date_year']),
-                int(form.cleaned_data['start_date_month']),
-                int(form.cleaned_data['start_date_day']),
-                int(form.cleaned_data['start_date_hour']),
-                int(form.cleaned_data['start_date_minute']),
-                form.cleaned_data['start_date_meridiems']
-            )
-
-            project_end_date = convert_to_utc(
-                int(form.cleaned_data['finish_date_year']),
-                int(form.cleaned_data['finish_date_month']),
-                int(form.cleaned_data['finish_date_day']),
-                int(form.cleaned_data['finish_date_hour']),
-                int(form.cleaned_data['finish_date_minute']),
-                form.cleaned_data['finish_date_meridiems']
-            )
+            ### GET THE DATE START AND FINISH HERE
 
             submit_project = project(
                 project_name=project_name,
                 project_description=project_description,
-                #organisations_id=organisations_id_form,
-                project_start_date=project_start_date,
-                project_end_date=project_end_date,
+                project_start_date=form.cleaned_data['project_start_date'],
+                project_end_date=form.cleaned_data['project_end_date'],
                 project_status='New',
                 change_user=request.user,
             )
@@ -3005,6 +3034,7 @@ def new_project(request, location_id='', destination=''):
             """
             We want to return the user to the original location. This is dependent on the destination
             """
+            print("New project now compeleted - going to location.")
             if destination == "organisation":
                 return HttpResponseRedirect(reverse(organisation_information, args={location_id}))
             elif destination == "customer":
@@ -3017,106 +3047,74 @@ def new_project(request, location_id='', destination=''):
             print("Form is not valid")
             print(form.errors)
 
-    else:
-        # Obtain the groups the user is associated with
-        current_user = request.user
-        cursor = connection.cursor()
+    # Obtain the groups the user is associated with
+    current_user = request.user
+    cursor = connection.cursor()
 
-        cursor.execute(
-            """
-		SELECT DISTINCT
-		  groups.group_id
-		, groups.group_name
-
-		FROM 
-		  user_groups join groups
-			on user_groups.groups_id = groups.group_id
-
-		WHERE 1=1
-		AND user_groups.is_deleted = "FALSE"
-		AND user_groups.username_id = %s
-		""", [current_user.id])
-        groups_results = namedtuplefetchall(cursor)
-
-        organisations_results = organisations.objects.filter(is_deleted='FALSE')
-
-        # Setup dates for initalising
-        today = datetime.datetime.now()
-        next_week = today + datetime.timedelta(days=31)
-
+    cursor.execute(
         """
-		We need to do some basic formulations with the hour and and minutes.
-		For the hour we need to find all those who are in the PM and
-		change both the hour and meridiem accordingly.
-		For the minute, we have to create it in 5 minute blocks.
-		"""
-        hour = today.hour
-        minute = int(5 * round(today.minute / 5.0))
-        meridiems = 'AM'
+    SELECT DISTINCT
+      groups.group_id
+    , groups.group_name
 
-        if hour > 12:
-            hour = hour - 12
-            meridiems = 'PM'
-        elif hour == 0:
-            hour = 12
+    FROM 
+      user_groups join groups
+        on user_groups.groups_id = groups.group_id
 
-        #FIGURE OUT HOW TO GET ORGANISATION HERE!
-        if destination == "" or destination == None:
-            organisations_id = None
-            customer_id = None
-            opportunity_id = None
-        elif destination == "organisation":
-            organisations_id = location_id
-            customer_id = None
-            opportunity_id = None
-        elif destination == "customer":
-            customer_instance = customers.objects.get(customer_id=location_id)
+    WHERE 1=1
+    AND user_groups.is_deleted = "FALSE"
+    AND user_groups.username_id = %s
+    """, [current_user.id])
+    groups_results = namedtuplefetchall(cursor)
 
-            organisations_id = customers.organisations_id
-            customer_id = customers.customer_id
-            opportunity_id = None
-        elif destination == "opportunity":
-            opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
-
-            organisations_id = opportunity_instance.organisations_id
-            customer_id = opportunity_instance.customer_id
-            opportunity_id = opportunity_instance.opportunity_id
+    organisations_results = organisations.objects.filter(is_deleted='FALSE')
 
 
-        # Load the template
-        t = loader.get_template('NearBeach/new_project.html')
+    #FIGURE OUT HOW TO GET ORGANISATION HERE!
+    if destination == "" or destination == None:
+        organisations_id = None
+        customer_id = None
+        opportunity_id = None
+    elif destination == "organisation":
+        organisations_id = location_id
+        customer_id = None
+        opportunity_id = None
+    elif destination == "customer":
+        customer_instance = customers.objects.get(customer_id=location_id)
 
-        print(request.user.id)
+        organisations_id = customers.organisations_id
+        customer_id = customers.customer_id
+        opportunity_id = None
+    elif destination == "opportunity":
+        opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
 
-        # context
-        c = {
-            'new_project_form': new_project_form(initial={
-                'organisations_id': organisations_id,
-                'start_date_year': today.year,
-                'start_date_month': today.month,
-                'start_date_day': today.day,
-                'start_date_hour': hour,
-                'start_date_minute': minute,
-                'start_date_meridiems': meridiems,
-                'finish_date_year': next_week.year,
-                'finish_date_month': next_week.month,
-                'finish_date_day': next_week.day,
-                'finish_date_hour': hour,
-                'finish_date_minute': minute,
-                'finish_date_meridiems': meridiems,}
-            ),
-            'groups_results': groups_results,
-            'groups_count': groups_results.__len__(),
-            'opportunity_id': opportunity_id,
-            'organisations_count': organisations_results.count(),
+        organisations_id = opportunity_instance.organisations_id
+        customer_id = opportunity_instance.customer_id
+        opportunity_id = opportunity_instance.opportunity_id
+
+
+    # Load the template
+    t = loader.get_template('NearBeach/new_project.html')
+
+    print(request.user.id)
+
+    # context
+    c = {
+        'new_project_form': new_project_form(initial={
             'organisations_id': organisations_id,
-            'customer_id': customer_id,
-            'timezone': settings.TIME_ZONE,
-            'new_item_permission': permission_results['new_item'],
-            'administration_permission': permission_results['administration'],
-            'destination': destination,
-            'location_id': location_id,
-        }
+        }),
+        'groups_results': groups_results,
+        'groups_count': groups_results.__len__(),
+        'opportunity_id': opportunity_id,
+        'organisations_count': organisations_results.count(),
+        'organisations_id': organisations_id,
+        'customer_id': customer_id,
+        'timezone': settings.TIME_ZONE,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'destination': destination,
+        'location_id': location_id,
+    }
 
     return HttpResponse(t.render(c, request))
 
@@ -3212,6 +3210,90 @@ def new_quote(request,destination,primary_key):
 
     return HttpResponse(t.render(c, request))
 
+@login_required(login_url='login')
+def new_quote_template(request):
+    permission_results = return_user_permission_level(request, None, 'templates')
+
+    if permission_results['templates'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    # Define if the page is loading in POST
+    if request.method == "POST":
+        #User has requested new quote template
+        quote_template_submit=quote_template(
+            change_user_id=request.user.id,
+            quote_template_description = "Quote Template",
+            template_css="""
+            .table_header {
+                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+                border-collapse: collapse;
+                width: 100%;
+            }
+            
+            .table_header {
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+            
+            .table_header {
+                padding-top: 12px;
+                padding-bottom: 12px;
+                text-align: left;
+                background-color: #4CAF50;
+                color: white;
+            }
+            
+            table td, table td * {
+                vertical-align: top;
+            }
+            """,
+            header="NearBeach Quote Number {{ quote_id }}",
+            company_letter_head="<p>NearBeach Incorporated<br />Melbourne 3000<br />Australia</p>",
+            payment_terms="Please pay within 30 days",
+            notes="{{ quote_terms }}",
+            organisation_details="""
+                <p>{{ organisation_name }}<br />
+                {{ organisation_address_1 }}<br />
+                {{ organisation_address_2 }}<br />
+                {{ organisation_address_3 }}<br />
+                {{ organisation_suburb }} {{ organisation_postcode }}<br />
+                {{ organisation_region }}<br />
+                {{ organisation_country }}</p>
+            """,
+            product_line = "Temp product line",
+            service_line = "Temp service line",
+            payment_method="""
+            <table>
+            <tbody>
+            <tr style="height: 18px;">
+            <td style="width: 50%; height: 18px;">Account</td>
+            <td style="width: 50%; height: 18px;">0000 0000</td>
+            </tr>
+            <tr style="height: 18px;">
+            <td style="width: 50%; height: 18px;">BSB</td>
+            <td style="width: 50%; height: 18px;">000 000</td>
+            </tr>
+            <tr style="height: 18px;">
+            <td style="width: 50%; height: 18px;">Acount Name</td>
+            <td style="width: 50%; height: 18px;">NearBeach Holdings</td>
+            </tr>
+            </tbody>
+            </table>
+            """,
+            footer="{{ page_number }}",
+        )
+        quote_template_submit.save()
+
+        #Send back the quote number
+        json_data = {}
+        json_data['quote_template_id'] = quote_template_submit.pk
+        #json_data['quote_template_id'] = '1'
+
+        return JsonResponse(json_data)
+    else:
+        return HttpResponseBadRequest("Sorry, but new template can only be requested by a post command")
+
+
 
 @login_required(login_url='login')
 def new_task(request, location_id='', destination=''):
@@ -3228,31 +3310,13 @@ def new_task(request, location_id='', destination=''):
             task_long_description = form.cleaned_data['task_long_description']
             organisations_id_form = form.cleaned_data['organisations_id']
 
-            # Create the final start/end date fields
-            task_start_date = convert_to_utc(
-                int(form.cleaned_data['start_date_year']),
-                int(form.cleaned_data['start_date_month']),
-                int(form.cleaned_data['start_date_day']),
-                int(form.cleaned_data['start_date_hour']),
-                int(form.cleaned_data['start_date_minute']),
-                form.cleaned_data['start_date_meridiems']
-            )
-
-            task_end_date = convert_to_utc(
-                int(form.cleaned_data['finish_date_year']),
-                int(form.cleaned_data['finish_date_month']),
-                int(form.cleaned_data['finish_date_day']),
-                int(form.cleaned_data['finish_date_hour']),
-                int(form.cleaned_data['finish_date_minute']),
-                form.cleaned_data['finish_date_meridiems']
-            )
 
             submit_task = tasks(
                 task_short_description=task_short_description,
                 task_long_description=task_long_description,
                 #organisations_id=organisations_id_form,
-                task_start_date=task_start_date,
-                task_end_date=task_end_date,
+                task_start_date=form.cleaned_data['task_start_date'],
+                task_end_date=form.cleaned_data['task_end_date'],
                 task_status='New',
                 change_user = request.user,
             )
@@ -3381,18 +3445,6 @@ def new_task(request, location_id='', destination=''):
         c = {
             'new_task_form': new_task_form(
                 initial={
-                    'start_date_year': today.year,
-                    'start_date_month': today.month,
-                    'start_date_day': today.day,
-                    'start_date_hour': hour,
-                    'start_date_minute': minute,
-                    'start_date_meridiems': meridiems,
-                    'finish_date_year': next_week.year,
-                    'finish_date_month': next_week.month,
-                    'finish_date_day': next_week.day,
-                    'finish_date_hour': hour,
-                    'finish_date_minute': minute,
-                    'finish_date_meridiems': meridiems,
                     'organisations_id': organisations_id,
                 }),
             'groups_results': groups_results,
@@ -3844,6 +3896,103 @@ def permission_denied(request):
 
 
 """
+Issue - preview_quote will ask extract_quote to login. To remove this issue we have added the ability for UUID,
+so the chances of a random user guessing the URL will be very small.
+"""
+def preview_quote(request,quote_uuid,quote_template_id):
+    #Get data
+    quote_results = quotes.objects.get(quote_uuid=quote_uuid)
+    quote_id = quote_results.quote_id
+
+    product_results = quotes_products_and_services.objects.filter(
+        is_deleted="FALSE",
+        #products_and_services.product_or_service = "product",
+        products_and_services__in=products_and_services.objects.filter(
+            product_or_service="Product",
+        ).values('pk'),
+        quote_id=quote_id,
+    )
+    service_results = quotes_products_and_services.objects.filter(
+        is_deleted="FALSE",
+        # products_and_services.product_or_service = "product",
+        products_and_services__in=products_and_services.objects.filter(
+            product_or_service="Service",
+        ).values('pk'),
+        quote_id=quote_id,
+    )
+
+    quote_template_results = quote_template.objects.get(quote_template_id=quote_template_id)
+
+    """
+    The following section will extract the template fields and then do a simple mail merge until all the required
+    template fields are JUST strings. This is the function update_template_strings
+    """
+
+    template_css = update_template_strings(quote_template_results.template_css,quote_results)
+    header = update_template_strings(quote_template_results.header,quote_results)
+    company_letter_head = update_template_strings(quote_template_results.company_letter_head,quote_results)
+    payment_terms = update_template_strings(quote_template_results.payment_terms,quote_results)
+    notes = update_template_strings(quote_template_results.notes,quote_results)
+    organisation_details = update_template_strings(quote_template_results.organisation_details,quote_results)
+    product_line = update_template_strings(quote_template_results.product_line,quote_results)
+    service_line = update_template_strings(quote_template_results.service_line,quote_results)
+    payment_method = update_template_strings(quote_template_results.payment_method,quote_results)
+    footer = update_template_strings(quote_template_results.footer,quote_results)
+
+    #Collect all the SUM information
+    product_unadjusted_price=product_results.aggregate(Sum('product_price'))
+    product_discount=product_results.aggregate(Sum('discount_amount'))
+    product_sales_price=product_results.aggregate(Sum('sales_price'))
+    product_tax=product_results.aggregate(Sum('tax'))
+    product_total=product_results.aggregate(Sum('total'))
+
+    service_unadjusted_price=service_results.aggregate(Sum('product_price'))
+    service_discount=service_results.aggregate(Sum('discount_amount'))
+    service_sales_price=service_results.aggregate(Sum('sales_price'))
+    service_tax=service_results.aggregate(Sum('tax'))
+    service_total=service_results.aggregate(Sum('total'))
+
+    #Get Date
+    current_date = datetime.datetime.now()
+
+    # Load the template
+    t = loader.get_template('NearBeach/render_templates/quote_template.html')
+
+    # context
+    c = {
+        'template_css': template_css,
+        'header': header,
+        'company_letter_head': company_letter_head,
+        'payment_terms': payment_terms,
+        'notes': notes,
+        'organisation_details': organisation_details,
+        'product_line': product_line,
+        'service_line': service_line,
+        'payment_method': payment_method,
+        'footer': footer,
+        'product_unadjusted_price': product_unadjusted_price,
+        'product_discount': product_discount,
+        'product_sales_price': product_sales_price,
+        'product_tax': product_tax,
+        'product_total': product_total,
+        'service_unadjusted_price': service_unadjusted_price,
+        'service_discount': service_discount,
+        'service_sales_price': service_sales_price,
+        'service_tax': service_tax,
+        'service_total': service_total,
+        'current_user': request.user,
+        'quote_id': quote_id,
+        'current_date': current_date,
+        'quote_results': quote_results,
+        'product_results': product_results,
+        'service_results': service_results,
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+
+"""
 TEMP CODE
 """
 @login_required(login_url='login')
@@ -3869,6 +4018,7 @@ def private_document(request, document_key):
     #    else:
     #        raise Http404('File not found')
     return server.serve(request, path=path)
+
 
 """
 END TEMP DOCUMENT
@@ -3904,25 +4054,8 @@ def project_information(request, project_id):
 
             project_results.project_name = form.cleaned_data['project_name']
             project_results.project_description = form.cleaned_data['project_description']
-
-            # Create the final start/end date fields
-            project_results.project_start_date = convert_to_utc(
-                int(form.cleaned_data['start_date_year']),
-                int(form.cleaned_data['start_date_month']),
-                int(form.cleaned_data['start_date_day']),
-                int(form.cleaned_data['start_date_hour']),
-                int(form.cleaned_data['start_date_minute']),
-                form.cleaned_data['start_date_meridiems']
-            )
-
-            project_results.project_end_date = convert_to_utc(
-                int(form.cleaned_data['finish_date_year']),
-                int(form.cleaned_data['finish_date_month']),
-                int(form.cleaned_data['finish_date_day']),
-                int(form.cleaned_data['finish_date_hour']),
-                int(form.cleaned_data['finish_date_minute']),
-                form.cleaned_data['finish_date_meridiems']
-            )
+            project_results.project_start_date = form.cleaned_data['project_start_date']
+            project_results.project_end_date = form.cleaned_data['project_end_date']
 
             # Check to make sure the resolve button was hit
             if 'Resolve' in request.POST:
@@ -3995,18 +4128,8 @@ def project_information(request, project_id):
     initial = {
         'project_name': project_results.project_name,
         'project_description': project_results.project_description,
-        'start_date_year': project_start_results['year'],
-        'start_date_month': project_start_results['month'],
-        'start_date_day': project_start_results['day'],
-        'start_date_hour': project_start_results['hour'],
-        'start_date_minute': project_start_results['minute'],
-        'start_date_meridiems': project_start_results['meridiem'],
-        'finish_date_year': project_end_results['year'],
-        'finish_date_month': project_end_results['month'],
-        'finish_date_day': project_end_results['day'],
-        'finish_date_hour': project_end_results['hour'],
-        'finish_date_minute': project_end_results['minute'],
-        'finish_date_meridiems': project_end_results['meridiem'],
+        'project_start_date': project_results.project_start_date,
+        'project_end_date': project_results.project_end_date,
     }
 
     # Query the database for associated task information
@@ -4063,9 +4186,12 @@ def quote_information(request, quote_id):
         return HttpResponseRedirect(reverse(permission_denied))
 
     quotes_results = quotes.objects.get(quote_id=quote_id)
+    quote_template_results = quote_template.objects.filter(
+        is_deleted="FALSE",
+    )
 
     if request.method == "POST":
-        form = quote_information_form(request.POST)
+        form = quote_information_form(request.POST,quote_instance=quotes_results)
         if form.is_valid():
             #Extract the information from the forms
             quotes_results.quote_title = form.cleaned_data['quote_title']
@@ -4145,16 +4271,106 @@ def quote_information(request, quote_id):
     # context
     c = {
         'quotes_results': quotes_results,
-        'quote_information_form': quote_information_form(initial=initial),
+        'quote_information_form': quote_information_form(
+            initial=initial,
+            quote_instance=quotes_results,
+        ),
         'quote_id': quote_id,
         'quote_or_invoice': quote_or_invoice,
         'timezone': settings.TIME_ZONE,
+        'quote_template_results': quote_template_results,
         'quote_permission': permission_results['quote'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
+
+
+
+
+@login_required(login_url='login')
+def quote_template_information(request,quote_template_id):
+    permission_results = return_user_permission_level(request, None, 'template')
+
+    if permission_results['template'] == 0:
+        return HttpResponseRedirect(reverse(permission_denied))
+
+    if request.method == "POST":
+        form=quote_template_form(request.POST)
+        if form.is_valid():
+            quote_template_save=quote_template.objects.get(
+                quote_template_id=quote_template_id,
+            )
+            quote_template_save.change_user=request.user
+            quote_template_save.quote_template_description=form.cleaned_data['quote_template_description']
+            quote_template_save.template_css=form.cleaned_data['template_css']
+            quote_template_save.header= form.cleaned_data['header']
+            quote_template_save.company_letter_head= form.cleaned_data['company_letter_head']
+            quote_template_save.payment_terms= form.cleaned_data['payment_terms']
+            quote_template_save.notes= form.cleaned_data['notes']
+            quote_template_save.organisation_details= form.cleaned_data['organisation_details']
+            #quote_template_save.product_line= form.cleaned_data['product_line']
+            #quote_template_save.service_line= form.cleaned_data['service_line']
+            quote_template_save.payment_method= form.cleaned_data['payment_method']
+            quote_template_save.footer= form.cleaned_data['footer']
+            quote_template_save.page_layout= form.cleaned_data['page_layout']
+            quote_template_save.margin_left= form.cleaned_data['margin_left']
+            quote_template_save.margin_right= form.cleaned_data['margin_right']
+            quote_template_save.margin_top= form.cleaned_data['margin_top']
+            quote_template_save.margin_bottom= form.cleaned_data['margin_bottom']
+            quote_template_save.margin_header= form.cleaned_data['margin_header']
+            quote_template_save.margin_footer= form.cleaned_data['margin_footer']
+
+            if request.POST.get("delete_quote_template"):
+                quote_template_save.is_deleted="TRUE"
+                quote_template_save.save()
+                return HttpResponseRedirect(reverse(search_templates))
+
+            quote_template_save.save()
+
+        else:
+            print(form.errors)
+
+    #Get data
+    quote_template_results = quote_template.objects.get(quote_template_id=quote_template_id)
+
+    # Load the template
+    t = loader.get_template('NearBeach/quote_template_information.html')
+
+
+    # context
+    c = {
+        'quote_template_form': quote_template_form(initial={
+            'quote_template_description': quote_template_results.quote_template_description,
+            'template_css': quote_template_results.template_css,
+            'header': quote_template_results.header,
+            'company_letter_head': quote_template_results.company_letter_head,
+            'payment_terms': quote_template_results.payment_terms,
+            'notes': quote_template_results.notes,
+            'organisation_details': quote_template_results.organisation_details,
+            'product_line': quote_template_results.product_line,
+            'service_line': quote_template_results.service_line,
+            'payment_method': quote_template_results.payment_method,
+            'footer': quote_template_results.footer,
+            'page_layout': quote_template_results.page_layout,
+            'margin_left': quote_template_results.margin_left,
+            'margin_right': quote_template_results.margin_right,
+            'margin_top': quote_template_results.margin_top,
+            'margin_bottom': quote_template_results.margin_bottom,
+            'margin_header': quote_template_results.margin_header,
+            'margin_footer': quote_template_results.margin_footer,
+        }),
+        'quote_template_id': quote_template_id,
+        'quote_permission': permission_results['template'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
 
 @login_required(login_url='login')
 def rename_document(request, document_key):
@@ -4383,6 +4599,8 @@ def search_projects_tasks(request):
     # Load the template
     t = loader.get_template('NearBeach/search_projects_and_tasks.html')
 
+    print("Search project and tasks")
+
     # context
     c = {
 
@@ -4390,6 +4608,34 @@ def search_projects_tasks(request):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def search_templates(request):
+    permission_results = return_user_permission_level(request, None, 'templates')
+    if permission_results['templates'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
+    quote_template_results=quote_template.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    # Load the template
+    t = loader.get_template('NearBeach/search_templates.html')
+
+    print("Search templates")
+
+    # context
+    c = {
+        'quote_template_results': quote_template_results,
+        'search_templates_form': search_templates_form(),
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
 
 
 @login_required(login_url='login')
@@ -4444,24 +4690,8 @@ def task_information(request, task_id):
             # Extract all the information from the form and save
             task_results.task_short_description = form.cleaned_data['task_short_description']
             task_results.task_long_description = form.cleaned_data['task_long_description']
-
-            # Calendar values
-            task_results.task_start_date = convert_to_utc(
-                int(form.cleaned_data['start_date_year']),
-                int(form.cleaned_data['start_date_month']),
-                int(form.cleaned_data['start_date_day']),
-                int(form.cleaned_data['start_date_hour']),
-                int(form.cleaned_data['start_date_minute']),
-                form.cleaned_data['start_date_meridiems']
-            )
-            task_results.task_end_date = convert_to_utc(
-                int(form.cleaned_data['finish_date_year']),
-                int(form.cleaned_data['finish_date_month']),
-                int(form.cleaned_data['finish_date_day']),
-                int(form.cleaned_data['finish_date_hour']),
-                int(form.cleaned_data['finish_date_minute']),
-                form.cleaned_data['finish_date_meridiems']
-            )
+            task_results.task_start_date = form.cleaned_data['task_start_date']
+            task_results.task_end_date = form.cleaned_data['task_end_date']
 
             # Check to make sure the resolve button was hit
             if 'Resolve' in request.POST:
@@ -4594,20 +4824,8 @@ def task_information(request, task_id):
     initial = {
         'task_short_description': task_results.task_short_description,
         'task_long_description': task_results.task_long_description,
-        'start_date_year': task_start_results['year'],
-        'start_date_month': task_start_results['month'],
-        'start_date_day': task_start_results['day'],
-        'start_date_hour': task_start_results['hour'],
-        'start_date_minute': task_start_results['minute'],
-        'start_date_meridiems': task_start_results['meridiem'],
-        'finish_date_year': task_end_results['year'],
-        'finish_date_month': task_end_results['month'],
-        'finish_date_day': task_end_results['day'],
-        'finish_date_hour': task_end_results['hour'],
-        'finish_date_minute': task_end_results['minute'],
-        'finish_date_meridiems': task_end_results['meridiem'],
-        'new_item_permission': permission_results['new_item'],
-        'administration_permission': permission_results['administration'],
+        'task_start_date': task_results.task_start_date,
+        'task_end_date': task_results.task_end_date,
     }
 
     # Query the database for associated project information
@@ -4903,3 +5121,67 @@ def update_coordinates(campus_id):
         except:
             print("Address Failed")
         """
+
+def update_template_strings(variable,quote_results):
+    """
+    The following function will replace all {{ tag }} variables in the template with the results from the quote
+    results. The current variables are;
+
+    Groups
+    ~~~~~~
+    1.) Quotes
+    2.) Organisatiions
+    3.) Quote Billing Address
+    """
+    variable = variable.replace('{{ customer_id }}', str(quote_results.customer_id))
+    variable = variable.replace('{{ customer_notes }}', quote_results.customer_notes)
+    variable = variable.replace('{{ is_invoice }}', quote_results.is_invoice)
+    variable = variable.replace('{{ opportunity_id }}', str(quote_results.opportunity_id))
+    variable = variable.replace('{{ organisation_id }}', str(quote_results.organisation_id))
+    variable = variable.replace('{{ project_id }}', str(quote_results.project_id))
+    variable = variable.replace('{{ quote_approval_status_id }}', str(quote_results.quote_approval_status_id))
+    variable = variable.replace('{{ quote_billing_address }}', str(quote_results.quote_billing_address))
+    variable = variable.replace('{{ quote_id }}', str(quote_results.quote_id))
+    variable = variable.replace('{{ quote_stage_id }}', str(quote_results.quote_stage_id))
+    variable = variable.replace('{{ quote_terms }}', quote_results.quote_terms)
+    variable = variable.replace('{{ quote_title }}', quote_results.quote_title)
+    variable = variable.replace('{{ quote_valid_till }}', str(quote_results.quote_valid_till))
+    variable = variable.replace('{{ task_id }}', str(quote_results.task_id))
+
+    #Group 2
+    if quote_results.organisation_id:
+        variable = variable.replace('{{ organisation_name }}', quote_results.organisation_id.organisation_name)
+        variable = variable.replace('{{ organisation_website }}', quote_results.organisation_id.organisation_website)
+        variable = variable.replace('{{ organisation_email }}', quote_results.organisation_id.organisation_email)
+    else:
+        variable = variable.replace('{{ organisation_name }}', '')
+        variable = variable.replace('{{ organisation_website }}', '')
+        variable = variable.replace('{{ organisation_email }}', '')
+
+    #Group 3
+    if quote_results.quote_billing_address:
+        variable = variable.replace('{{ billing_address1 }}', quote_results.quote_billing_address.campus_address1)
+        variable = variable.replace('{{ billing_address2 }}', quote_results.quote_billing_address.campus_address2)
+        variable = variable.replace('{{ billing_address3 }}', quote_results.quote_billing_address.campus_address3)
+        variable = variable.replace('{{ campus_id }}', str(quote_results.quote_billing_address.campus_id))
+        variable = variable.replace('{{ campus_nickname }}', quote_results.quote_billing_address.campus_nickname)
+        variable = variable.replace('{{ campus_phone }}', quote_results.quote_billing_address.campus_phone)
+        variable = variable.replace('{{ campus_region_id }}', str(quote_results.quote_billing_address.campus_region_id))
+        variable = variable.replace('{{ billing_suburb }}', quote_results.quote_billing_address.campus_suburb)
+        variable = variable.replace('{{ billing_suburb }}', quote_results.quote_billing_address.campus_postcode)
+        variable = variable.replace('{{ billing_region }}', str(quote_results.quote_billing_address.campus_region_id))
+        variable = variable.replace('{{ billing_country }}', str(quote_results.quote_billing_address.campus_country_id))
+    else:
+        variable = variable.replace('{{ billing_address1 }}', '')
+        variable = variable.replace('{{ billing_address2 }}', '')
+        variable = variable.replace('{{ billing_address3 }}', '')
+        variable = variable.replace('{{ billing_postcode }}', '')
+        variable = variable.replace('{{ campus_id }}', '')
+        variable = variable.replace('{{ campus_nickname }}', '')
+        variable = variable.replace('{{ campus_phone }}', '')
+        variable = variable.replace('{{ campus_region_id }}', '')
+        variable = variable.replace('{{ billing_suburb }}', '')
+        variable = variable.replace('{{ billing_region }}', '')
+        variable = variable.replace('{{ billing_country }}', '')
+
+    return variable

@@ -101,7 +101,7 @@ url(r'opportunity_information/opportunity_user_permission/(?P<opportunity_id>[0-
 	url(r'^search_users', views_administration.search_users, name='search_users'),
 	url(r'^task_information/(?P<task_id>[0-9]+)', views.task_information, name='task_information'),
 	#Bug - if this line is before the other search functions, it will override other functions
-	url(r'^search', views.search, name='search'),
+	url(r'^search/', views.search, name='search'),
 
 
 	#Quotes Modules
@@ -279,6 +279,12 @@ url(r'^email_information/(?P<email_content_id>[0-9]+)/$', views.email_informatio
 url(r'^timeline/$', views.timeline, name='timeline'),
 url(r'^timeline_data/(?P<destination>["project","task"]+)/$', views.timeline_data, name='timeline_data'),
 url(r'^add_campus_to_customer/(?P<customer_id>[0-9]+)/(?P<campus_id>[0-9]+)/', views.add_campus_to_customer,name='add_campus_to_customer'),
+url(r'^search_templates/',views.search_templates,name='search_templates'),
+    url(r'^new_quote_template/',views.new_quote_template,name='new_quote_template'),
+	url(r'^quote_template_information/(?P<quote_template_id>[0-9]+)/',views.quote_template_information,name='quote_template_information'),
+	url(r'^preview_quote/(?P<quote_uuid>[0-9A-Za-z_\-]+)/(?P<quote_template_id>[0-9]+)/',views.preview_quote,name='preview_quote'),
+	url(r'^extract_quote/(?P<quote_uuid>[0-9A-Za-z_\-]+)/(?P<quote_template_id>[0-9]+)/', views.extract_quote,
+		name='extract_quote'),
 
 ]
 

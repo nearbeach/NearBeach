@@ -63,3 +63,25 @@ Link: https://blueimp.github.io/jQuery-File-Upload/
 License : MIT
 
 Note: jQuery File Upload is used when there is a file to be uploaded through the AJAX method.
+
+
+
+### jQuery Plugin Date and Time Picker
+Creator(s): Valeriy Chupurnov
+
+Github: https://github.com/xdan/datetimepicker
+
+License: MIT
+
+Note: This plugin is a widget used to help improve picking dates and time.
+
+
+
+### TinyMCE
+Creator(s):  Tiny Technologies Inc.
+
+Github: https://github.com/tinymce/tinymce
+
+License: GNU Lesser General Public License v2.1
+
+Note: TinyMCE is used for rich text within NearBeach
