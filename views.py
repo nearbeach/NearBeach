@@ -23,12 +23,10 @@ from django.core.mail import EmailMessage, EmailMultiAlternatives
 from geolocation.main import GoogleMaps
 from django.http import JsonResponse
 #from weasyprint import HTML
-
+from urllib.request import urlopen
 
 #import python modules
-import datetime, json, simplejson, urllib, urllib2
-import pytz
-from django.utils import timezone
+import datetime, json, simplejson
 
 @login_required(login_url='login')
 def add_campus_to_customer(request, customer_id, campus_id):
@@ -432,8 +430,8 @@ def bug_add(request,location_id, destination,bug_id, bug_client_id):
         url = bug_client_instance.bug_client_url + bug_client_instance.list_of_bug_client.bug_client_api_url + \
                 'bug?id=' + bug_id # This will be implemented into the database as a field
         print(url)
-        req = urllib2.Request(url)
-        response = urllib2.urlopen(req)
+
+        response = urlopen(url)
         json_data = json.load(response)
 
         #Save the bug
@@ -507,8 +505,7 @@ def bug_client_information(request, bug_client_id):
             try:
                 url = bug_client_url + list_of_bug_client.bug_client_api_url + 'bug?bug_status=__open__'
                 print(url)
-                req = urllib2.Request(url)
-                response = urllib2.urlopen(req)
+                response = urlopen(url)
                 print("Response gotten")
                 data = json.load(response)
                 print("Got the JSON")
@@ -670,8 +667,7 @@ def bug_search(request, location_id=None, destination=None):
                   + exclude_url
 
             print(url)
-            req = urllib2.Request(url)
-            response = urllib2.urlopen(req)
+            response = urlopen(url)
             json_data = json.load(response)
             bug_results = json_data['bugs'] #This could change depending on the API
 
@@ -2342,9 +2338,7 @@ def login(request):
                     'secret': RECAPTCHA_PRIVATE_KEY,
                     'response': recaptcha_response
                 }
-                data = urllib.urlencode(values)
-                req = urllib2.Request(url, data)
-                response = urllib2.urlopen(req)
+                response = urlopen(url)
                 result = json.load(response)
 
                 # Check to see if the user is a robot. Success = human
@@ -2468,9 +2462,7 @@ def new_bug_client(request):
             try:
                 url = bug_client_url + list_of_bug_client.bug_client_api_url + 'bug?bug_status=__open__'
                 print(url)
-                req = urllib2.Request(url)
-                response = urllib2.urlopen(req)
-                print("Response gotten")
+                response = urlopen(url)
                 data = json.load(response)
                 print("Got the JSON")
 

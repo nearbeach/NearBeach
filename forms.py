@@ -9,7 +9,8 @@ from django.contrib import auth
 #Import ModelForm
 from django.forms import ModelForm, BaseModelFormSet
 from django.forms.widgets import TextInput
-from forms_special_fields import *
+#from forms_special_fields import *
+from NearBeach.forms_special_fields import *
 
 from tinymce import TinyMCE
 

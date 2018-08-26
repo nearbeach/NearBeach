@@ -1,5 +1,5 @@
 # requirements.txt
-Django==1.11
+Django
 simplejson
 pillow
 geolocation-python

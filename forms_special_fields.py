@@ -1,6 +1,7 @@
 from django import forms
 from django.core.validators import ValidationError
-from django.utils.encoding import smart_unicode
+from django.utils.encoding import smart_str
+
 from NearBeach.models import products_and_services, list_of_countries_regions, list_of_countries, customers
 from django.utils.html import escape, mark_safe
 
@@ -24,11 +25,11 @@ class ProductOrServiceSelect(forms.Select):
 
         #Render the PRODUCTS
         for option in row_results.filter(product_or_service='Product'):
-            option_value = smart_unicode(option.product_id)
-            option_label = smart_unicode(option.product_name)
+            option_value = smart_str(option.product_id)
+            option_label = smart_str(option.product_name)
             output = output + u'<option value="%s">%s' % (escape(option_value), escape(option_label))
             if ((not option.product_part_number == '') and (not option.product_part_number == None)):
-                output = output + u' -- %s' % (escape(smart_unicode(option.product_part_number)))
+                output = output + u' -- %s' % (escape(smart_str(option.product_part_number)))
             output = output + u'</option>'
 
         #Close off the optgroup PRODUCTS, start the optgroup SERVICES
@@ -36,11 +37,11 @@ class ProductOrServiceSelect(forms.Select):
 
         #Render the Services
         for option in row_results.filter(product_or_service='Service'):
-            option_value = smart_unicode(option.product_id)
-            option_label = smart_unicode(option.product_name)
+            option_value = smart_str(option.product_id)
+            option_label = smart_str(option.product_name)
             output = output + u'<option value="%s">%s' % (escape(option_value), escape(option_label))
             if ((not option.product_part_number == '') and (not option.product_part_number == None)):
-                output = output + u' -- %s' % (escape(smart_unicode(option.product_part_number)))
+                output = output + u' -- %s' % (escape(smart_str(option.product_part_number)))
             output = output + u'</option>'
 
         #Close everything off
@@ -53,7 +54,7 @@ class ProductOrServiceSelect(forms.Select):
         value = super(forms.ChoiceField, self).clean(value)
         if value in (None, ''):
             value = u''
-        value = forms.util.smart_unicode(value)
+        value = forms.util.smart_str(value)
         if value == u'':
             return value
         valid_values = []
@@ -87,8 +88,8 @@ class RegionSelect(forms.Select):
 
             #Loop to place in the regions
             for region in region_results.filter(country_id=country.country_id):
-                option_value = smart_unicode(region.region_id)
-                option_label = smart_unicode(region.region_name)
+                option_value = smart_str(region.region_id)
+                option_label = smart_str(region.region_name)
                 output = output + u'<option value="%s">%s' % (escape(option_value), escape(option_label))
                 output = output + u'</option>'
 
@@ -102,7 +103,7 @@ class RegionSelect(forms.Select):
         value = super(forms.ChoiceField, self).clean(value)
         if value in (None, ''):
             value = u''
-        value = forms.util.smart_unicode(value)
+        value = forms.util.smart_str(value)
         if value == u'':
             return value
         valid_values = []
@@ -127,8 +128,8 @@ class ToEmailSelect(forms.SelectMultiple):
 
         # Render the emails
         for option in customer_results:
-            option_value = smart_unicode(option.customer_id)
-            option_label = smart_unicode(option.customer_email)
+            option_value = smart_str(option.customer_id)
+            option_label = smart_str(option.customer_email)
             output = output + u'<option value="%s">%s' % (escape(option_value), escape(option_label))
             output = output + u'</option>'
 
@@ -141,7 +142,7 @@ class ToEmailSelect(forms.SelectMultiple):
         value = super(forms.ChoiceField, self).clean(value)
         if value in (None, ''):
             value = u''
-        value = forms.util.smart_unicode(value)
+        value = forms.util.smart_str(value)
         if value == u'':
             return value
         valid_values = []
