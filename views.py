@@ -1760,13 +1760,8 @@ def email_information(request,email_content_id):
 @login_required(login_url='login')
 def extract_quote(request, quote_uuid,quote_template_id):
     #Create the PDF
-    #url_path = "http://" + request.get_host() + "/preview_quote/" + quote_uuid + "/" + quote_template_id + "/"
-    #url_path = request.get_host() + "/preview_quote/" + quote_uuid + "/" + quote_template_id + "/"
-    url_path = "/preview_quote/" + quote_uuid + "/" + quote_template_id + "/"
-
-    #return response
-    html_string = loader.render_to_string(url_path)
-    html = HTML(string=html_string)
+    url_path = "http://" + request.get_host() + "/preview_quote/" + quote_uuid + "/" + quote_template_id + "/"
+    html = HTML(url_path)
     pdf_results = html.write_pdf()
 
     #Setup the response

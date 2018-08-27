@@ -16,6 +16,7 @@ from django.contrib.auth.views import \
 	password_reset_complete
 """
 
+from django.contrib.auth import views as auth_views
 
 from . import views, \
 	views_lookup, \
