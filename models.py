@@ -192,7 +192,7 @@ class bug(models.Model):
     )
 
     def __str__(self):
-        return self.bug_description.encode('utf8')
+        return str(self.bug_description)
 
     class Meta:
         db_table = "bug"
@@ -220,7 +220,7 @@ class bug_client(models.Model):
     )
 
     def __str__(self):
-        return self.bug_client_name.encode('utf8')
+        return str(self.bug_client_name)
 
     class Meta:
         db_table = "bug_client"
@@ -296,7 +296,7 @@ class campus(models.Model):
     )
 
     def __str__(self):
-        return self.campus_nickname.encode('utf8')
+        return str(self.campus_nickname)
 
     class Meta:
         db_table = "campus"
@@ -336,7 +336,7 @@ class costs(models.Model):
     )
 
     def __str__(self):
-        return '$' + str(self.cost_amount)
+        return str('$' + str(self.cost_amount))
 
     class Meta:
         db_table = "costs"
@@ -376,8 +376,13 @@ class customers(models.Model):
     )
 
     def __str__(self):
-        return str(self.customer_id) + ' - ' + self.customer_first_name.encode(
-            'utf8') + ' ' + self.customer_last_name.encode('utf8')
+        return str(
+            str(self.customer_id)
+            + ' - '
+            + self.customer_first_name
+            + ' '
+            + self.customer_last_name
+        )
 
     class Meta:
         db_table = "customers"
@@ -446,7 +451,7 @@ class documents(models.Model):
         db_table = "documents"
 
     def __str__(self):
-        return self.document_description
+        return str(self.document_description)
 
 
 class documents_folder(models.Model):
@@ -679,7 +684,7 @@ class folders(models.Model):
     )
 
     def __str__(self):
-        return self.folder_description.encode('utf8')
+        return str(self.folder_description)
 
     class Meta:
         db_table = "folder"
@@ -711,7 +716,7 @@ class groups(models.Model):
         )
 
     def __str__(self):
-        return self.group_name.encode('utf8')
+        return str(self.group_name)
 
     class Meta:
         db_table = "groups"
@@ -773,7 +778,7 @@ class kanban_board(models.Model):
         db_table = "kanban_board"
 
     def __str__(self):
-        return self.kanban_board_name
+        return str(self.kanban_board_name)
 
 
 class kanban_card(models.Model):
@@ -827,7 +832,7 @@ class kanban_card(models.Model):
         db_table = "kanban_card"
 
     def __str__(self):
-        return self.kanban_card_text
+        return str(self.kanban_card_text)
 
 
 class kanban_column(models.Model):
@@ -855,7 +860,7 @@ class kanban_column(models.Model):
         db_table = "kanban_column"
 
     def __str__(self):
-        return self.kanban_column_name
+        return str(self.kanban_column_name)
 
 
 class kanban_comment(models.Model):
@@ -896,7 +901,7 @@ class kanban_comment(models.Model):
         db_table = "kanban_comment"
 
     def __str__(self):
-        return self.kanban_comment
+        return str(self.kanban_comment)
 
 
 class kanban_level(models.Model):
@@ -924,7 +929,7 @@ class kanban_level(models.Model):
         db_table = "kanban_level"
 
     def __str__(self):
-        return self.kanban_level_name
+        return str(self.kanban_level_name)
 
 
 class list_of_amount_type(models.Model):
@@ -947,7 +952,7 @@ class list_of_amount_type(models.Model):
     )
 
     def __str__(self):
-        return self.amount_type_description.encode('utf8')
+        return str(self.amount_type_description)
 
     class Meta:
         db_table = "list_of_amount_type"
@@ -982,7 +987,7 @@ class list_of_bug_client(models.Model):
     )
 
     def __str__(self):
-        return self.bug_client_name.encode('utf8')
+        return str(self.bug_client_name)
 
     class Meta:
         db_table = "list_of_bug_client"
@@ -1011,7 +1016,7 @@ class list_of_currency(models.Model):
     )
 
     def __str__(self):
-        return self.currency_description.encode('utf8')
+        return str(self.currency_description)
 
     class Meta:
         db_table = "list_of_currency"
@@ -1036,7 +1041,7 @@ class list_of_contact_types(models.Model):
     )
 
     def __str__(self):
-        return self.contact_type.encode('utf8')
+        return str(self.contact_type)
 
     class Meta:
         db_table = "list_of_contact_types"
@@ -1061,7 +1066,7 @@ class list_of_countries(models.Model):
     )
 
     def __str__(self):
-        return self.country_name.encode('utf8')
+        return str(self.country_name)
 
     class Meta:
         db_table = "list_of_countries"
@@ -1089,7 +1094,7 @@ class list_of_countries_regions(models.Model):
     )
 
     def __str__(self):
-        return self.region_name.encode('utf8')
+        return str(self.region_name)
 
     class Meta:
         db_table = "list_of_countries_regions"
@@ -1117,7 +1122,7 @@ class list_of_lead_source(models.Model):
     )
 
     def __str__(self):
-        return self.lead_source_description.encode('utf8')
+        return str(self.lead_source_description)
 
     class Meta:
         db_table = "list_of_lead_source"
@@ -1160,7 +1165,7 @@ class list_of_opportunity_stage(models.Model):
     )
 
     def __str__(self):
-        return self.opportunity_stage_description.encode('utf8')
+        return str(self.opportunity_stage_description)
 
     class Meta:
         db_table = "list_of_opportunity_stage"
@@ -1201,7 +1206,7 @@ class list_of_quote_stages(models.Model):
     )
 
     def __str__(self):
-        return self.quote_stage.encode('utf8')
+        return str(self.quote_stage)
 
     class Meta:
         db_table = "list_of_quote_stages"
@@ -1374,7 +1379,7 @@ class list_of_titles(models.Model):
     )
 
     def __str__(self):
-        return self.title.encode('utf8')
+        return str(self.title)
 
     class Meta:
         db_table = "list_of_titles"
@@ -1504,7 +1509,7 @@ class organisations(models.Model):
     )
 
     def __str__(self):
-        return self.organisation_name.encode('utf8')
+        return str(self.organisation_name)
 
     class Meta:
         db_table = "organisations"
@@ -1755,7 +1760,7 @@ class permission_set(models.Model):
     #    unique_together = (('first_name', 'last_name'),)
 
     def __str__(self):
-        return self.permission_set_name.encode('utf8')
+        return str(self.permission_set_name)
 
     class Meta:
         db_table = "permission_set"
@@ -1806,7 +1811,7 @@ class products_and_services(models.Model):
     )
 
     def __str__(self):
-        return self.product_name.encode('utf8')
+        return str(self.product_name)
 
     class Meta:
         db_table = "products_and_services"
@@ -1850,7 +1855,7 @@ class project(models.Model):
     )
 
     def __str__(self):
-        return self.project_name.encode('utf8')
+        return str(self.project_name)
 
     class Meta:
         db_table = "project"
@@ -1941,7 +1946,7 @@ class project_history(models.Model):
     )
 
     def __str__(self):
-        return self.region.encode('utf8')
+        return str(self.region)
 
     class Meta:
         db_table = "project_history"
@@ -2123,7 +2128,7 @@ class quotes(models.Model):
     )
 
     def __str__(self):
-        return self.quote_title.encode('utf8')
+        return str(self.quote_title)
 
     class Meta:
         db_table = "quotes"
@@ -2213,7 +2218,7 @@ class quotes_products_and_services(models.Model):
     )
 
     def __str__(self):
-        return str(self.quotes_products_and_services_id) + "| " + self.product_description.encode('utf8')
+        return str(self.quotes_products_and_services_id) + "| " + self.product_description
 
     class Meta:
         db_table = "quotes_products_and_services"
@@ -2557,7 +2562,7 @@ class stages(models.Model):
     )
 
     def __str__(self):
-        return self.stage.encode('utf8')
+        return str(self.stage)
 
     class Meta:
         db_table = "stages"
@@ -2600,7 +2605,7 @@ class tasks(models.Model):
     )
 
     def __str__(self):
-        return self.task_short_description.encode('utf8')
+        return str(self.task_short_description)
 
     class Meta:
         db_table = "tasks"

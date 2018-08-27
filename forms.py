@@ -1851,9 +1851,6 @@ class quote_information_form(ModelForm):
         5.) Return the campus results into quote_billing_campus 
         """
         quote_instance=kwargs.pop('quote_instance',None)
-        print("ORGANISATION ID")
-        print(quote_instance)
-
         super(quote_information_form,self).__init__(*args,**kwargs)
 
         if quote_instance.organisation_id:

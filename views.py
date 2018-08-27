@@ -24,6 +24,7 @@ from geolocation.main import GoogleMaps
 from django.http import JsonResponse
 #from weasyprint import HTML
 from urllib.request import urlopen
+from weasyprint import HTML
 
 #import python modules
 import datetime, json, simplejson
@@ -1763,45 +1764,16 @@ def extract_quote(request, quote_uuid,quote_template_id):
     #url_path = request.get_host() + "/preview_quote/" + quote_uuid + "/" + quote_template_id + "/"
     url_path = "/preview_quote/" + quote_uuid + "/" + quote_template_id + "/"
 
-    #pdf_results=pdfkit.from_url(url_path, False)
-
-    #Setup the response
-    #response = HttpResponse(pdf_results,content_type='application/pdf')
-    #response['Content-Disposition']='attachment; filename="NearBeach Quote.pdf"'
-
     #return response
     html_string = loader.render_to_string(url_path)
-    #html = HTML(string=html_string)
-    #pdf_results = html.write_pdf()
-    pdf_results = ''
+    html = HTML(string=html_string)
+    pdf_results = html.write_pdf()
 
     #Setup the response
     response = HttpResponse(pdf_results,content_type='application/pdf')
     response['Content-Disposition']='attachment; filename="NearBeach Quote.pdf"'
 
     return response
-
-
-    """
-
-    # Rendered
-    html_string = render_to_string('bedjango/pdf.html', {'people': people})
-    html = HTML(string=html_string)
-    result = html.write_pdf()
-
-    # Creating http response
-    response['Content-Transfer-Encoding'] = 'binary'
-    with tempfile.NamedTemporaryFile(delete=True) as output:
-        output.write(result)
-        output.flush()
-        output = open(output.name, 'r')
-        response.write(output.read())
-
-    return response
-    """
-
-
-
 
 
 @login_required(login_url='login')
