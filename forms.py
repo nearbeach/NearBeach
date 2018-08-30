@@ -9,7 +9,8 @@ from django.contrib import auth
 #Import ModelForm
 from django.forms import ModelForm, BaseModelFormSet
 from django.forms.widgets import TextInput
-from forms_special_fields import *
+#from forms_special_fields import *
+from NearBeach.forms_special_fields import *
 
 from tinymce import TinyMCE
 
@@ -1076,12 +1077,12 @@ class new_customer_form(forms.Form):
 
 class new_line_item_form(ModelForm):
     #Get the data
-    products_and_services = forms.ModelChoiceField(
-        required=False,
-        queryset=products_and_services.objects.filter(is_deleted='FALSE'),
-        empty_label="Please pick a product/service",
-        widget=ProductOrServiceSelect(),
-    )
+    #products_and_services = forms.ModelChoiceField(
+    #    required=False,
+    #    queryset=products_and_services.objects.filter(is_deleted='FALSE'),
+    #    empty_label="Please pick a product/service",
+    #    widget=ProductOrServiceSelect(),
+    #)
     quantity = forms.IntegerField(
 		widget=forms.TextInput(attrs={
 			'value': '1',
@@ -1850,9 +1851,6 @@ class quote_information_form(ModelForm):
         5.) Return the campus results into quote_billing_campus 
         """
         quote_instance=kwargs.pop('quote_instance',None)
-        print("ORGANISATION ID")
-        print(quote_instance)
-
         super(quote_information_form,self).__init__(*args,**kwargs)
 
         if quote_instance.organisation_id:

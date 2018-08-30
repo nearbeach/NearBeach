@@ -18,9 +18,8 @@ from django.urls import reverse
 from .misc_functions import *
 from .user_permissions import return_user_permission_level
 
-
 #import python modules
-import datetime, json, simplejson, urllib, urllib2
+import datetime, json, simplejson
 
 #permission_set_form
 

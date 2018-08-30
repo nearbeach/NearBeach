@@ -113,22 +113,6 @@ def new_line_item(request,quote_id):
             if ((discount_percent == '') or (not discount_percent)): discount_percent = 0
             if ((discount_amount == '') or (not discount_amount)) : discount_amount = 0
 
-
-            print("products_and_services: " + str(products_and_services))
-            print("quantity: " + str(quantity))
-            print("product_description: " + str(product_description))
-            print("product_price: " + str(product_price))
-            print("discount_choice: " + str(discount_choice))
-            print("discount_percent: " + str(discount_percent))
-            print("discount_amount: " + str(discount_amount))
-            print("product_price: " + str(product_price))
-            print("tax: " + str(tax))
-            print("tax_amount: " + str(tax_amount))
-            print("total: " + str(total))
-            print("product_note: " + str(product_note))
-            print("quote_id: " + str(quote_instance))
-
-
             #Save line item
             submit_line_item = quotes_products_and_services(
                 products_and_services = product_instance,
