@@ -8,14 +8,6 @@ from django.urls import re_path
 
 
 #Password reset
-"""
-from django.contrib.auth.views import \
-	password_reset, \
-	password_reset_done, \
-	password_reset_confirm, \
-	password_reset_complete
-"""
-
 from django.contrib.auth import views as auth_views
 
 from . import views, \
@@ -179,6 +171,12 @@ re_path(r'^to_do_complete/(?P<to_do_id>[0-9]+)/$', views.to_do_complete, name='t
 re_path(r'^to_do/(?P<location_id>[0-9]+)/(?P<destination>["project","task","opportunity"]+)/$', views.to_do_list, name='to_do'),
 re_path(r'^user_information/(?P<user_id>[0-9]+)/$', views_administration.user_information, name='user_information'),
 re_path(r'^user_permissions', views_lookup.lookup_user_permissions, name='user_permissions'),
+
+path(
+	'password_reset',
+	auth_views.PasswordResetView,
+	name='password_reset'
+),
 
 
 ]

@@ -94,7 +94,7 @@
                 <li><div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_PUBLIC_KEY }}"></div></li>
             {% endif %}
             <li><input type="submit" value="Login" class="login_button" /></li>
-            <li><a href="#">Forgotten Password</a></li>
+            <li><a href="{% url 'password_reset' %}">Forgotten Password</a></li>
             <li></li>
         </ul>
 </body>
