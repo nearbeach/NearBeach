@@ -4352,6 +4352,7 @@ def search(request):
 	"""
     search_results = ''
 
+
     # Define if the page is loading in POST
     if request.method == "POST":
         form = search_form(request.POST)
@@ -4369,6 +4370,19 @@ def search(request):
         search_like += split_row
         search_like += '%'
 
+
+    """
+    Due to POSTGRESQL being a bit fussy when it comes to LIKE statements,
+    we have had to make a work around. If the post results come back as an
+    INT, we will feed them into the results as an INT. Otherwise 0 will be fed
+    in.
+    """
+    int_results = 0
+    if not search_results == '':
+        if isinstance(int(search_results),int):
+            int_results = int(search_results)
+
+
     # Query the database for organisations
     project_results = project.objects.extra(
         where=[
@@ -4382,7 +4396,7 @@ def search(request):
             """
         ],
         params=[
-            search_like,
+            int(int_results),
             search_like,
             search_like,
         ]
@@ -4401,7 +4415,7 @@ def search(request):
             """
         ],
         params=[
-            search_like,
+            int(int_results),
             search_like,
             search_like,
         ]
