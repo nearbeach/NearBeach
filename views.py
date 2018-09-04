@@ -4373,7 +4373,7 @@ def search(request):
     project_results = project.objects.extra(
         where=[
             """
-            project_id LIKE %s
+            project_id = %s
             OR project_name LIKE %s
             OR project_description LIKE %s
             """,
@@ -4392,7 +4392,7 @@ def search(request):
     task_results = tasks.objects.extra(
         where=[
             """
-            tasks_id LIKE %s
+            tasks_id = %s
             OR task_short_description LIKE %s
             OR task_long_description LIKE %s
             """,
