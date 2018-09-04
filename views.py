@@ -3327,24 +3327,15 @@ def new_task(request, location_id='', destination=''):
                 # Lets go back to the customer
     else:
         # Obtain the groups the user is associated with
-        current_user = request.user
-        cursor = connection.cursor()
+        groups_results = groups.objects.filter(
+            is_deleted="FALSE",
+            group_id__in=user_groups.objects.filter(
+                is_deleted="FALSE",
+                username_id=current_user.id
+            ).values('groups_id')
+        )
 
-        cursor.execute(
-            """
-		SELECT DISTINCT
-		  groups.group_id
-		, groups.group_name
-
-		FROM 
-		  user_groups join groups
-			on user_groups.groups_id = groups.group_id
-
-		WHERE 1=1
-		AND user_groups.is_deleted = "FALSE"
-		AND user_groups.username_id = %s
-		""",[current_user.id])
-        groups_results = namedtuplefetchall(cursor)
+        organisations_results = organisations.objects.filter(is_deleted='FALSE')
 
         # Setup dates for initalising
         today = datetime.datetime.now()
