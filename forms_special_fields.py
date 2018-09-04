@@ -1,6 +1,7 @@
 from django import forms
 from django.core.validators import ValidationError
 from django.utils.encoding import smart_str
+from django.forms.renderers import get_default_renderer
 
 from NearBeach.models import products_and_services, list_of_countries_regions, list_of_countries, customers
 from django.utils.html import escape, mark_safe
@@ -10,7 +11,7 @@ import gettext
 
 
 class ProductOrServiceSelect(forms.Select):
-    def render(self, name, value, attrs=None, choices=()):
+    def _render(self, name, value, attrs=None, choices=()):
         if value is None: value = ''
 
         #Get SQL Objects
@@ -66,7 +67,7 @@ class ProductOrServiceSelect(forms.Select):
 
 
 class RegionSelect(forms.Select):
-    def render(self, name, value, attrs=None, choices=()):
+    def _render(self, name, value, attrs=None, choices=()):
         if value is None: value = ''
 
         #Get SQL Objects

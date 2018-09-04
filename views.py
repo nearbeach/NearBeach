@@ -2537,7 +2537,6 @@ def new_campus(request, location_id, destination):
 
     # context
     c = {
-        #'organisations_id': organisations_id,
         'location_id': location_id,
         'destination': destination,
         'new_campus_form': new_campus_form(),
@@ -2548,6 +2547,7 @@ def new_campus(request, location_id, destination):
     }
 
     return HttpResponse(t.render(c, request))
+
 
 
 @login_required(login_url='login')
