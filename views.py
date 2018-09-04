@@ -2923,7 +2923,6 @@ def new_organisation(request):
 
 @login_required(login_url='login')
 def new_project(request, location_id='', destination=''):
-    print("DESTINATION IS: " + str(destination))
     permission_results = return_user_permission_level(request, None, 'project')
 
     if permission_results['project'] < 3:
@@ -3010,21 +3009,13 @@ def new_project(request, location_id='', destination=''):
     current_user = request.user
     cursor = connection.cursor()
 
-    cursor.execute(
-        """
-    SELECT DISTINCT
-      groups.group_id
-    , groups.group_name
-
-    FROM 
-      user_groups join groups
-        on user_groups.groups_id = groups.group_id
-
-    WHERE 1=1
-    AND user_groups.is_deleted = "FALSE"
-    AND user_groups.username_id = %s
-    """, [current_user.id])
-    groups_results = namedtuplefetchall(cursor)
+    groups_results = groups.objects.filter(
+        is_deleted="FALSE",
+        group_id__in=user_groups.objects.filter(
+            is_deleted="FALSE",
+            username_id=current_user.id
+        ).values('groups_id')
+    )
 
     organisations_results = organisations.objects.filter(is_deleted='FALSE')
 
