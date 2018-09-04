@@ -3331,7 +3331,7 @@ def new_task(request, location_id='', destination=''):
             is_deleted="FALSE",
             group_id__in=user_groups.objects.filter(
                 is_deleted="FALSE",
-                username_id=current_user.id
+                username_id=request.user.id
             ).values('groups_id')
         )
 
@@ -4370,37 +4370,42 @@ def search(request):
         search_like += '%'
 
     # Query the database for organisations
-    cursor = connection.cursor()
-    cursor.execute("""
-		SELECT DISTINCT
-		project.*
-		, organisations.organisation_name
-		FROM project JOIN organisations
-		ON project.organisations_id_id = organisations.organisations_id
-		WHERE 1=1
-		AND (
-			project.project_id like %s
-			or project.project_name like %s
-			or project.project_description like %s
-			)
-		""", [search_like, search_like, search_like])
-    project_results = namedtuplefetchall(cursor)
+    project_results = project.objects.extra(
+        where=[
+            """
+            project_id LIKE %s
+            OR project_name LIKE %s
+            OR project_description LIKE %s
+            """,
+            """
+            is_deleted="FALSE"
+            """
+        ],
+        params=[
+            search_like,
+            search_like,
+            search_like,
+        ]
+    )
 
     # Get list of tasks
-    cursor.execute("""
-		SELECT DISTINCT
-		tasks.*
-		, organisations.organisation_name
-		FROM tasks JOIN organisations
-		ON tasks.organisations_id_id = organisations.organisations_id
-		WHERE 1=1
-		AND (
-			tasks.tasks_id like %s
-			or tasks.task_short_description like %s
-			or tasks.task_long_description like %s
-		)
-	""", [search_like, search_like, search_like])
-    task_results = namedtuplefetchall(cursor)
+    task_results = tasks.objects.extra(
+        where=[
+            """
+            tasks_id LIKE %s
+            OR task_short_description LIKE %s
+            OR task_long_description LIKE %s
+            """,
+            """
+            is_deleted="FALSE"
+            """
+        ],
+        params=[
+            search_like,
+            search_like,
+            search_like,
+        ]
+    )
 
     opportunity_results = opportunity.objects.all()
     requirement_results = requirements.objects.all()
