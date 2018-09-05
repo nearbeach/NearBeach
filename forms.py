@@ -516,8 +516,7 @@ class email_form(ModelForm):
             elif quote_results.organisation_id:
                 customer_results = customers.objects.filter(
                     is_deleted="FALSE",
-                    organisations_id=opportunity.objects.get(
-                        opportunity_id=quote_results.organisation_id.organisations_id).organisations_id.organisations_id
+                    organisations_id=quote_results.organisation_id
                 )
             else:
                 print("SOMETHING FUCKED UP!!!")
