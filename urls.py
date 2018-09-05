@@ -182,19 +182,19 @@ path('change-password/', auth_views.PasswordChangeView.as_view()),
 	),
 	path(
 		'password_reset/done/', auth_views.PasswordResetDoneView.as_view(
-			template_name='Nearbeach/password_reset_done.html'
+			template_name='NearBeach/password_reset_done.html',
 		),
 		name='password_reset_done',
 	),
 	path(
 		'reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
-			template_name='NearBeach/reset.html'
+			template_name='NearBeach/reset.html',
 		),
 		name='password_reset_confirm',
 	),
 	path(
 		'reset/done', auth_views.PasswordResetCompleteView.as_view(
-			template_name='NearBeach/reset_done.html'
+			template_name='NearBeach/reset_done.html',
 		),
 		name='password_reset_complete'
 	),
