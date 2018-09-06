@@ -516,8 +516,7 @@ class email_form(ModelForm):
             elif quote_results.organisation_id:
                 customer_results = customers.objects.filter(
                     is_deleted="FALSE",
-                    organisations_id=opportunity.objects.get(
-                        opportunity_id=quote_results.organisation_id.organisations_id).organisations_id.organisations_id
+                    organisations_id=quote_results.organisation_id
                 )
             else:
                 print("SOMETHING FUCKED UP!!!")
@@ -1077,12 +1076,6 @@ class new_customer_form(forms.Form):
 
 class new_line_item_form(ModelForm):
     #Get the data
-    #products_and_services = forms.ModelChoiceField(
-    #    required=False,
-    #    queryset=products_and_services.objects.filter(is_deleted='FALSE'),
-    #    empty_label="Please pick a product/service",
-    #    widget=ProductOrServiceSelect(),
-    #)
     quantity = forms.IntegerField(
 		widget=forms.TextInput(attrs={
 			'value': '1',
@@ -1096,16 +1089,12 @@ class new_line_item_form(ModelForm):
             'style': 'background-color: aliceblue',
         })
     )
-    product_description = forms.CharField(
-        required=False,
-		max_length=255,
-		widget=forms.TextInput(attrs={
-			'readonly': True,
-            'placeholder': 'Product/Service Description',
-            'style': 'background-color: aliceblue',
-            'style': 'display: none;',
-		})
-	)
+    products_and_services = forms.ModelChoiceField(
+        required=True,
+        queryset=products_and_services.objects.filter(is_deleted='FALSE'),
+        empty_label="Please pick a product/service",
+        widget=ProductOrServiceSelect(),
+    )
     discount_amount = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={

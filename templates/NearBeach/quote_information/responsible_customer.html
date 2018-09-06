@@ -1,12 +1,14 @@
 <h2>Responsible Customers</h2>
-Assign Responsible Customer
 {% if quote_permission > 1 %}
-    <select id="responsible_customer" onchange="responsible_customer_changed()">
-        <option value="">------</option>
-        {% for row in customer_results %}
-            <option value="{{ row.customer_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
-        {% endfor %}
-    </select>
+    {% if customer_results %}
+        Assign Responsible Customer
+        <select id="responsible_customer" onchange="responsible_customer_changed()">
+            <option value="">------</option>
+            {% for row in customer_results %}
+                <option value="{{ row.customer_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
+            {% endfor %}
+        </select>
+    {% endif %}
 {% endif %}
 {% if responsible_customer_results %}
     <table>

@@ -2537,7 +2537,6 @@ def new_campus(request, location_id, destination):
 
     # context
     c = {
-        #'organisations_id': organisations_id,
         'location_id': location_id,
         'destination': destination,
         'new_campus_form': new_campus_form(),
@@ -2548,6 +2547,7 @@ def new_campus(request, location_id, destination):
     }
 
     return HttpResponse(t.render(c, request))
+
 
 
 @login_required(login_url='login')
@@ -2923,7 +2923,6 @@ def new_organisation(request):
 
 @login_required(login_url='login')
 def new_project(request, location_id='', destination=''):
-    print("DESTINATION IS: " + str(destination))
     permission_results = return_user_permission_level(request, None, 'project')
 
     if permission_results['project'] < 3:
@@ -3010,21 +3009,13 @@ def new_project(request, location_id='', destination=''):
     current_user = request.user
     cursor = connection.cursor()
 
-    cursor.execute(
-        """
-    SELECT DISTINCT
-      groups.group_id
-    , groups.group_name
-
-    FROM 
-      user_groups join groups
-        on user_groups.groups_id = groups.group_id
-
-    WHERE 1=1
-    AND user_groups.is_deleted = "FALSE"
-    AND user_groups.username_id = %s
-    """, [current_user.id])
-    groups_results = namedtuplefetchall(cursor)
+    groups_results = groups.objects.filter(
+        is_deleted="FALSE",
+        group_id__in=user_groups.objects.filter(
+            is_deleted="FALSE",
+            username_id=current_user.id
+        ).values('groups_id')
+    )
 
     organisations_results = organisations.objects.filter(is_deleted='FALSE')
 
@@ -3336,24 +3327,15 @@ def new_task(request, location_id='', destination=''):
                 # Lets go back to the customer
     else:
         # Obtain the groups the user is associated with
-        current_user = request.user
-        cursor = connection.cursor()
+        groups_results = groups.objects.filter(
+            is_deleted="FALSE",
+            group_id__in=user_groups.objects.filter(
+                is_deleted="FALSE",
+                username_id=request.user.id
+            ).values('groups_id')
+        )
 
-        cursor.execute(
-            """
-		SELECT DISTINCT
-		  groups.group_id
-		, groups.group_name
-
-		FROM 
-		  user_groups join groups
-			on user_groups.groups_id = groups.group_id
-
-		WHERE 1=1
-		AND user_groups.is_deleted = "FALSE"
-		AND user_groups.username_id = %s
-		""",[current_user.id])
-        groups_results = namedtuplefetchall(cursor)
+        organisations_results = organisations.objects.filter(is_deleted='FALSE')
 
         # Setup dates for initalising
         today = datetime.datetime.now()
@@ -4370,6 +4352,7 @@ def search(request):
 	"""
     search_results = ''
 
+
     # Define if the page is loading in POST
     if request.method == "POST":
         form = search_form(request.POST)
@@ -4387,38 +4370,56 @@ def search(request):
         search_like += split_row
         search_like += '%'
 
+
+    """
+    Due to POSTGRESQL being a bit fussy when it comes to LIKE statements,
+    we have had to make a work around. If the post results come back as an
+    INT, we will feed them into the results as an INT. Otherwise 0 will be fed
+    in.
+    """
+    int_results = 0
+    if not search_results == '':
+        if isinstance(int(search_results),int):
+            int_results = int(search_results)
+
+
     # Query the database for organisations
-    cursor = connection.cursor()
-    cursor.execute("""
-		SELECT DISTINCT
-		project.*
-		, organisations.organisation_name
-		FROM project JOIN organisations
-		ON project.organisations_id_id = organisations.organisations_id
-		WHERE 1=1
-		AND (
-			project.project_id like %s
-			or project.project_name like %s
-			or project.project_description like %s
-			)
-		""", [search_like, search_like, search_like])
-    project_results = namedtuplefetchall(cursor)
+    project_results = project.objects.extra(
+        where=[
+            """
+            project_id = %s
+            OR project_name LIKE %s
+            OR project_description LIKE %s
+            """,
+            """
+            is_deleted="FALSE"
+            """
+        ],
+        params=[
+            int(int_results),
+            search_like,
+            search_like,
+        ]
+    )
 
     # Get list of tasks
-    cursor.execute("""
-		SELECT DISTINCT
-		tasks.*
-		, organisations.organisation_name
-		FROM tasks JOIN organisations
-		ON tasks.organisations_id_id = organisations.organisations_id
-		WHERE 1=1
-		AND (
-			tasks.tasks_id like %s
-			or tasks.task_short_description like %s
-			or tasks.task_long_description like %s
-		)
-	""", [search_like, search_like, search_like])
-    task_results = namedtuplefetchall(cursor)
+    task_results = tasks.objects.extra(
+        where=[
+            """
+            tasks_id = %s
+            OR task_short_description LIKE %s
+            OR task_long_description LIKE %s
+            """,
+            """
+            is_deleted="FALSE"
+            """
+        ],
+        params=[
+            int(int_results),
+            search_like,
+            search_like,
+        ]
+    )
 
     opportunity_results = opportunity.objects.all()
     requirement_results = requirements.objects.all()

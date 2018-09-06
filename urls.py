@@ -172,14 +172,44 @@ re_path(r'^to_do/(?P<location_id>[0-9]+)/(?P<destination>["project","task","oppo
 re_path(r'^user_information/(?P<user_id>[0-9]+)/$', views_administration.user_information, name='user_information'),
 re_path(r'^user_permissions', views_lookup.lookup_user_permissions, name='user_permissions'),
 
-path(
-	'password_reset',
-	auth_views.PasswordResetView,
-	name='password_reset'
-),
+path('change-password/', auth_views.PasswordChangeView.as_view()),
 
+	path(
+		'password_reset/', auth_views.PasswordResetView.as_view(
+			template_name='NearBeach/password_reset.html',
+		),
+		name='password_reset',
+	),
+	path(
+		'password_reset/done/', auth_views.PasswordResetDoneView.as_view(
+			template_name='NearBeach/password_reset_done.html',
+		),
+		name='password_reset_done',
+	),
+	path(
+		'reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+			template_name='NearBeach/reset.html',
+		),
+		name='password_reset_confirm',
+	),
+	path(
+		'reset/done', auth_views.PasswordResetCompleteView.as_view(
+			template_name='NearBeach/reset_done.html',
+		),
+		name='password_reset_complete'
+	),
 
 ]
+
+"""
+#        auth_views.PasswordChangeView.as_view(template_name='change-password.html'),
+
+
+accounts/password_reset/ [name='password_reset']
+accounts/password_reset/done/ [name='password_reset_done']
+accounts/reset/<uidb64>/<token>/ [name='password_reset_confirm']
+accounts/reset/done/ [name='password_reset_complete']
+"""
 
 
 if settings.DEBUG:

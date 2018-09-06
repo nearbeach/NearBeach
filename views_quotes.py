@@ -183,23 +183,32 @@ def responsible_customer(request,quote_id, customer_id=''):
     """
     if not quote_results.project_id == None:
         customer_results = customers.objects.filter(
-            organisations_id=quote_results.project_id.organisations_id.organisations_id)
+            organisations_id=quote_results.project_id.organisations_id.organisations_id,
+        ).exclude(customer_id__in=responsible_customer_results.values('customer_id'),)
     elif not quote_results.task_id == None:
         customer_results = customers.objects.filter(
-            organisations_id=quote_results.task_id.organisations_id.organisations_id)
+            organisations_id=quote_results.task_id.organisations_id.organisations_id
+        ).exclude(customer_id__in=responsible_customer_results.values('customer_id'),)
     elif not quote_results.opportunity_id == None:
         try:
-            customer_results = customers.objects.filter(organisations_id=quote_results.opportunity_id.organisations_id.organisations_id)
+            customer_results = customers.objects.filter(
+                organisations_id=quote_results.opportunity_id.organisations_id.organisations_id
+            ).exclude(customer_id__in=responsible_customer_results.values('customer_id'),)
         except:
             try:
                 customer_results = customers.objects.filter(
-                    organisations_id=quote_results.opportunity_id.customer_id.customer_id)
+                    organisations_id=quote_results.opportunity_id.customer_id.customer_id
+                ).exclude(customer_id__in=responsible_customer_results.values('customer_id'),)
             except:
                 customer_results = ''
     elif not quote_results.customer_id == None:
-        customer_results = customers.objects.filter(customer_id=quote_results.customer_id.customer_id)
+        customer_results = customers.objects.filter(
+            customer_id=quote_results.customer_id.customer_id
+        ).exclude(customer_id__in=responsible_customer_results.values('customer_id'),)
     elif not quote_results.organisation_id == None:
-        customer_results = customers.objects.filter(organisations_id=quote_results.organisation_id)
+        customer_results = customers.objects.filter(
+            organisations_id=quote_results.organisation_id
+        ).exclude(customer_id__in=responsible_customer_results.values('customer_id'),)
 
     # Load the template
     t = loader.get_template('NearBeach/quote_information/responsible_customer.html')
