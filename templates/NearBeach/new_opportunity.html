@@ -26,36 +26,37 @@
 <body onload="initialise();">
     <form action="{% url 'new_opportunity' location_id destination %}" method="post" class="new_opportunity">
         {% csrf_token %}
+        {{ new_opportunity_form.media }}
         <h1>New Opportunity</h1>
         {% if organisations_count == 0 %}
             <a href="{% url 'new_organisation' %}">Can you please create an organisation first.</a>
         {% else %}
-            <ul>
-                <li>{{ new_opportunity_form.opportunity_name }}</li>
-                <li>{{ new_opportunity_form.opportunity_description }}</li>
-                <li>Organisation: {{ new_opportunity_form.organisations_id }}</li>
-                <li>Customer: <select id="customer_id" name="customer_id">
+            <table>
+                <tr><td>{{ new_opportunity_form.opportunity_name }}</td></tr>
+                <tr><td>{{ new_opportunity_form.opportunity_description }}</td></tr>
+                <tr><td>Organisation: {{ new_opportunity_form.organisations_id }}</td></tr>
+                <tr><td>Customer: <select id="customer_id" name="customer_id">
                     <option value="" selected>---------</option>
                     {% for row in customer_results %}
                         <option value="{{ row.customer_id }}" organisation_id="{{ row.organisations_id.organisations_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
                     {% endfor %}
                     </select>
-                </li>
-                <li>Opportunity Budget: {{ new_opportunity_form.currency_id }}{{ new_opportunity_form.opportunity_amount }}{{ new_opportunity_form.amount_type_id }}</li>
-                <li>Time zone: {{ timezone }}</li>
-                <li>Opportunity Expected Closure: {{ new_opportunity_form.finish_date_year }} - {{ new_opportunity_form.finish_date_month }} - {{ new_opportunity_form.finish_date_day }}<br/>
-                    {{ new_opportunity_form.finish_date_hour }}:{{ new_opportunity_form.finish_date_minute }} {{ new_opportunity_form.finish_date_meridiems }}</li>
-                <li>Stage of Opportunity:
+                </td></tr>
+                <tr><td>Opportunity Budget: {{ new_opportunity_form.currency_id }}{{ new_opportunity_form.opportunity_amount }}{{ new_opportunity_form.amount_type_id }}</td></tr>
+                <tr><td>Time zone: {{ timezone }}</td></tr>
+                <tr><td>Opportunity Expected Closure: {{ new_opportunity_form.finish_date_year }} - {{ new_opportunity_form.finish_date_month }} - {{ new_opportunity_form.finish_date_day }}<br/>
+                    {{ new_opportunity_form.finish_date_hour }}:{{ new_opportunity_form.finish_date_minute }} {{ new_opportunity_form.finish_date_meridiems }}</td></tr>
+                <tr><td>Stage of Opportunity:
                     <select id="opportunity_stage" name="opportunity_stage" required="True" onchange="probability_update()">
                         <option value="---------" selected disabled="disabled">---------</option>
                         {% for row in opportunity_stage_results %}
                             <option value="{{ row.opportunity_stage_id }}" probability="{{ row.probability_success }}">{{ row.opportunity_stage_description }}</option>
                         {% endfor %}
                     </select>
-                </li>
-                <li>Success Probability: {{ new_opportunity_form.opportunity_success_probability }}%</li>
-                <li>Lead Source: {{ new_opportunity_form.lead_source_id }}</li>
-            </ul>
+                </td></tr>
+                <tr><td>Success Probability: {{ new_opportunity_form.opportunity_success_probability }}%</td></tr>
+                <tr><td>Lead Source: {{ new_opportunity_form.lead_source_id }}</td></tr>
+            </table>
             <h1>Grant Access to Opportunity</h1>
             <table>
                 <tr><td>Select which groups are required to have access</td></tr>

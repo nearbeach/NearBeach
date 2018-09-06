@@ -1198,9 +1198,14 @@ class new_opportunity_form(ModelForm):
         })
     )
     opportunity_description=forms.CharField(
-        widget=forms.Textarea(attrs={
-            'placeholder': 'Opportunity Description',
-        })
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Opportunity Description',
+            }
+        )
     )
     organisations_id=forms.ModelChoiceField(
         label="Organisations",
@@ -1579,6 +1584,16 @@ class opportunity_information_form(ModelForm):
     groups_results=groups.objects.filter(is_deleted="FALSE")
     user_results=auth.models.User.objects.all()
 
+    opportunity_description = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Opportunity Description',
+            }
+        )
+    )
 
     next_step=forms.CharField(
         max_length=255,

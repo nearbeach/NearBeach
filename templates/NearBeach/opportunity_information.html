@@ -13,6 +13,7 @@
 <body onload="on_page_load()">
     <form id="opportunity_information" action="{% url 'opportunity_information' opportunity_id %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
+        {{ opportunity_infromation_form.media }}
         <h2>Opportunity Information</h2>
         <div id="save_state"></div>
         <ul>
