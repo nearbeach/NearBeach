@@ -2687,6 +2687,7 @@ def new_opportunity(request, location_id,destination):
             lead_source_id = form.cleaned_data['lead_source_id']
             select_groups = form.cleaned_data['select_groups']
             select_users = form.cleaned_data['select_users']
+            opportunity_expected_close_date = form.cleaned_data['opportunity_expected_close_date']
 
 
 
@@ -2697,28 +2698,18 @@ def new_opportunity(request, location_id,destination):
                 opportunity_stage_id=request.POST.get('opportunity_stage')
             )
 
-            opportunity_end_date = convert_to_utc(
-                int(form.cleaned_data['finish_date_year']),
-                int(form.cleaned_data['finish_date_month']),
-                int(form.cleaned_data['finish_date_day']),
-                int(form.cleaned_data['finish_date_hour']),
-                int(form.cleaned_data['finish_date_minute']),
-                form.cleaned_data['finish_date_meridiems']
-            )
-
             """
 			SAVE THE DATA
 			"""
             submit_opportunity = opportunity(
                 opportunity_name=opportunity_name,
                 opportunity_description=opportunity_description,
-                #organisations_id=organisations_id,
                 currency_id=currency_id,
                 opportunity_amount=opportunity_amount,
                 amount_type_id=amount_type_id,
                 opportunity_success_probability=opportunity_success_probability,
                 lead_source_id=lead_source_id,
-                opportunity_expected_close_date=opportunity_end_date,
+                opportunity_expected_close_date=opportunity_expected_close_date,
                 opportunity_stage_id=stage_of_opportunity_instance,
                 user_id=current_user,
                 change_user=request.user,
@@ -2803,40 +2794,10 @@ def new_opportunity(request, location_id,destination):
     customer_results = customers.objects.all()
     opportunity_stage_results = list_of_opportunity_stage.objects.filter(is_deleted="FALSE")
 
-
-    # Setup dates for initalising
-    next_week = datetime.datetime.now() + datetime.timedelta(days=31)
-
-    """
-	We need to do some basic formulations with the hour and and minutes.
-	For the hour we need to find all those who are in the PM and
-	change both the hour and meridiem accordingly.
-	For the minute, we have to create it in 5 minute blocks.
-	"""
-    hour = next_week.hour
-    minute = int(5 * round(next_week.minute / 5.0))
-    meridiems = 'AM'
-
-    if hour > 12:
-        hour = hour - 12
-        meridiems = 'PM'
-    elif hour == 0:
-        hour = 12
-
-
-
     # context
     c = {
-        'new_opportunity_form': new_opportunity_form(initial={
-            'finish_date_year': next_week.year,
-            'finish_date_month': next_week.month,
-            'finish_date_day': next_week.day,
-            'finish_date_hour': hour,
-            'finish_date_minute': minute,
-            'finish_date_meridiems': meridiems, }),
+        'new_opportunity_form': new_opportunity_form(),
         'customer_results': customer_results,
-        #'organisation_id': organisation_id,
-        #'customer_id': customer_id,
         'location_id': location_id,
         'destination': destination,
         'opportunity_stage_results': opportunity_stage_results,
@@ -3483,6 +3444,7 @@ def opportunity_information(request, opportunity_id):
             save_opportunity.opportunity_description = form.cleaned_data['opportunity_description']
             save_opportunity.opportunity_amount = form.cleaned_data['opportunity_amount']
             save_opportunity.opportunity_success_probability = form.cleaned_data['opportunity_success_probability']
+            save_opportunity.opportunity_expected_close_date=form.cleaned_data['opportunity_expected_close_date']
             save_opportunity.change_user=request.user
 
             # Instance needed
@@ -3492,15 +3454,6 @@ def opportunity_information(request, opportunity_id):
             save_opportunity.opportunity_stage_id = list_of_opportunity_stage.objects.get(
                 opportunity_stage_id=int(request.POST['opportunity_stage_id']))
 
-
-            save_opportunity.opportunity_expected_close_date = convert_to_utc(
-                int(form.cleaned_data['finish_date_year']),
-                int(form.cleaned_data['finish_date_month']),
-                int(form.cleaned_data['finish_date_day']),
-                int(form.cleaned_data['finish_date_hour']),
-                int(form.cleaned_data['finish_date_minute']),
-                form.cleaned_data['finish_date_meridiems']
-            )
 
             #Save the opportunity
             save_opportunity.save()

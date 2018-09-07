@@ -1207,6 +1207,12 @@ class new_opportunity_form(ModelForm):
             }
         )
     )
+    opportunity_expected_close_date=forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'style': 'width: 200px',
+        })
+    )
     organisations_id=forms.ModelChoiceField(
         label="Organisations",
         queryset=organisaion_results,
@@ -1220,29 +1226,6 @@ class new_opportunity_form(ModelForm):
         widget=forms.Select,
         queryset=amount_type_results,
     )
-    finish_date_year=forms.ChoiceField(
-        choices=YEAR_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_month=forms.ChoiceField(
-        choices=MONTH_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_day=forms.ChoiceField(
-        choices=DAY_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
-    finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
-    finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
-
-
     select_groups=forms.ModelMultipleChoiceField(
         queryset=groups_results,
         required=False,
@@ -1271,7 +1254,6 @@ class new_opportunity_form(ModelForm):
 
 
         exclude={
-            'opportunity_expected_close_date',
             'opportunity_stage_id',
             'customer_id',
             'date_created',
@@ -1595,33 +1577,18 @@ class opportunity_information_form(ModelForm):
         )
     )
 
+    opportunity_expected_close_date = forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'style': 'width: 200px',
+        })
+    )
+
     next_step=forms.CharField(
         max_length=255,
         required=False,
     )
 
-    finish_date_year=forms.ChoiceField(
-        choices=YEAR_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-
-    finish_date_month=forms.ChoiceField(
-        choices=MONTH_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_day=forms.ChoiceField(
-        choices=DAY_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
-    finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
-    finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
 
     select_groups=forms.ModelMultipleChoiceField(
         queryset=groups_results,
@@ -1652,7 +1619,6 @@ class opportunity_information_form(ModelForm):
         exclude={
             'customer_id',
             'organisations_id',
-            'opportunity_expected_close_date',
             'lead_source_id',
             'date_created',
             'date_modified',
