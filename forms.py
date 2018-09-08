@@ -633,43 +633,28 @@ class information_customer_contact_history_form(forms.Form):
         queryset=contact_type_results,
         empty_label=None
     )
-
-
-    start_date_year=forms.ChoiceField(
-        choices=YEAR_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
-        })
-    )
-    start_date_month=forms.ChoiceField(
-        choices=MONTH_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
-        })
-    )
-    start_date_day=forms.ChoiceField(
-        choices=DAY_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
-        })
-    )
-    start_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
-    start_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
-    start_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
-
-
-    contact_history=forms.CharField(
-        widget=forms.Textarea(attrs={
-            'width': '99%',
-            'max-height': '300px'
-        }),
-        required=False
-    )
-
     contact_attachment=forms.FileField(
         required=False,
         widget=forms.FileInput(attrs={
             'onChange':'enable_submit()'
+        })
+    )
+
+    contact_history=forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Opportunity Description',
+            }
+        ),
+        required=False,
+    )
+    contact_date=forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'style': 'width: 200px',
         })
     )
 

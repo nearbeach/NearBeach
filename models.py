@@ -123,7 +123,7 @@ class contact_history(models.Model):
         on_delete=models.CASCADE,
     )
     contact_date = models.DateTimeField()
-    contact_history = models.TextField()
+    contact_history = HTMLField('contact_history')
     document_key = models.ForeignKey(
         'documents',
         on_delete=models.CASCADE,

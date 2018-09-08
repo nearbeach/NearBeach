@@ -37,20 +37,11 @@ def information_customer_contact_history(request, customer_id):
             If the user has written something in the contact section, we want to save it
             """
             contact_history_notes = form.cleaned_data['contact_history']
-            print(contact_history_notes)
 
             if not contact_history_notes == '':
                 # Lets save some contact history
                 contact_type = form.cleaned_data['contact_type']
-
-                contact_date = convert_to_utc(
-                    int(form.cleaned_data['start_date_year']),
-                    int(form.cleaned_data['start_date_month']),
-                    int(form.cleaned_data['start_date_day']),
-                    int(form.cleaned_data['start_date_hour']),
-                    int(form.cleaned_data['start_date_minute']),
-                    form.cleaned_data['start_date_meridiems']
-                )
+                contact_date = form.cleaned_data['contact_date']
 
 
                 # documents
