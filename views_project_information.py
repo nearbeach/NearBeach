@@ -227,7 +227,6 @@ def information_project_history(request, project_id):
 
     # context
     c = {
-        'information_project_history_form': information_project_history_form(),
         'project_history_results': project_history_results,
         'project_id': project_id,
         'project_permissions': permission_results['project'],

@@ -1,13 +1,4 @@
-{% csrf_token %}
-<h2>Project History</h2>
 <table>
-    {% if project_permissions > 1 or project_history_permissions > 0 %}
-        <tr><td>{{ information_project_history_form.project_history }}</td></tr>
-        <tr><td>
-            <input type="submit" name="project_history_submit" value="Submit">
-            <a onclick="clear_history()" href="javascript:void(0);">Clear</a>
-        </td></tr>
-    {% endif %}
     {% if project_history_results %}
         {% for row in project_history_results %}
             <tr><td>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}</td></tr>

@@ -4054,6 +4054,7 @@ def project_information(request, project_id):
     # context
     c = {
         'project_information_form': project_information_form(initial=initial),
+        'information_project_history_form': information_project_history_form(),
         'project_results': project_results,
         'associated_tasks_results': associated_tasks_results,
         'project_history_results': project_history_results,
@@ -4770,6 +4771,7 @@ def task_information(request, task_id):
     c = {
         'task_results': task_results,
         'task_information_form': task_information_form(initial=initial),
+        'information_task_history_form': information_task_history_form(),
         'associated_project_results': associated_project_results,
         'documents_results': simplejson.dumps(documents_results,encoding='utf-8'),
         'folders_results': serializers.serialize('json', folders_results),

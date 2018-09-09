@@ -4,7 +4,6 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/expand_sections.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/task_information.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
 <script tpye="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
@@ -134,7 +133,7 @@
                 {% endif %}
             {% else %}
                 </fieldset>
-            {% endif %}
+            {% endif %}task_history
     </form>
 
     <br/>
@@ -144,10 +143,24 @@
     </form>
 
 
-    <form method="post" class="task_history" id="task_history" style="">
+    <form method="post" class="task_history" id="task_history">
+        {% csrf_token %}
         <h2>Task History</h2>
-        Loading...
+        {% if task_permissions > 1 %}
+            {{ information_task_history.media }}
+            <table>
+                <tr><td>{{ information_task_history_form.task_history }}</td></tr>
+                <tr><td>
+                    <input type="submit" name="task_history_submit" value="Submit">
+                    <a onclick="clear_history()" href="javascript:void(0);">Clear</a>
+                </td></tr>
+            </table>
+        {% endif %}
     </form>
+
+    <div id="task_history_results">
+        Loading Task History Results...
+    </div>
 
     <div id="email_history">
         <h2>Email History</h2>
@@ -573,7 +586,7 @@
                 running_total();
             },
             error: function() {
-                $('#task_history').html('<h2>Project Costs</h2>Sorry, task costs encounted an error and did not load.');
+                $('#task_costs').html('<h2>Project Costs</h2>Sorry, task costs encounted an error and did not load.');
             }
         });
     };
@@ -602,11 +615,10 @@
             dataType: 'HTML',
             type: 'GET',
             success: function(data) {
-                $('#task_history').html(data);
-                $('#task_history').css('display','');
+                $('#task_history_results').html(data);
             },
             error: function() {
-                $('#task_history').html('<h2>Project History</h2>Sorry, task history encounted an error and did not load.');
+                $('#task_history_results').html('<h2>Project History</h2>Sorry, task history encounted an error and did not load.');
             }
         });
     };

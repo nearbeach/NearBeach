@@ -739,6 +739,17 @@ class information_project_costs_form(forms.Form):
 
 
 class information_project_history_form(ModelForm):
+    project_history = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Project Description',
+            }
+        )
+    )
+
     class Meta:
         model = project_history
         fields = {
@@ -777,10 +788,14 @@ class information_task_costs_form(forms.Form):
 
 class information_task_history_form(ModelForm):
     task_history=forms.CharField(
-        widget=forms.Textarea(attrs={
-            'placeholder': 'Please update any history here and then click on the submit button'
-        })
-        , required=False
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Project Description',
+            }
+        )
     )
     class Meta:
         model=tasks_history
@@ -1777,9 +1792,6 @@ class project_information_form(ModelForm):
             'style': 'width: 200px'
         })
     )
-
-
-
 
     class Meta:
         model=project
