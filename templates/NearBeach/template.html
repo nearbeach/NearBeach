@@ -16,6 +16,12 @@
         }
 
         function toggleSub(sub) {
+            //Close all menus first
+            $("#sub-menu-main").slideUp();
+            $("#sub-menu-item").slideUp();
+            $("#sub-menu-admin").slideUp();
+            $("#sub-menu-configuration").slideUp();
+
             if (sub == 0) {
                 $("#sub-menu-main").slideToggle(300);
             } else if (sub == 1) {
@@ -32,7 +38,7 @@
     <header id="main-header">
         <div id="menu">
             <h1>
-                <a href="#">NearBeach</a>
+                <a>NearBeach</a>
             </h1>
             <a href="#" id="menu-toggle" onclick="toggleMenu()">
                 <img src="{{ MEDIA_URL }}/static/NearBeach/images/burger.png" width="24" height="24">

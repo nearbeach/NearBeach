@@ -42,16 +42,7 @@ def information_organisation_contact_history(request, organisation_id):
                 # Lets save some contact history
                 # organisation_id = form.cleaned_data['organisations_id'] #Not going to work :( #organisations_results.organisations_id
                 contact_type = form.cleaned_data['contact_type']
-
-                # Create the final start/end date fields
-                contact_date = convert_to_utc(
-                    int(form.cleaned_data['start_date_year']),
-                    int(form.cleaned_data['start_date_month']),
-                    int(form.cleaned_data['start_date_day']),
-                    int(form.cleaned_data['start_date_hour']),
-                    int(form.cleaned_data['start_date_minute']),
-                    form.cleaned_data['start_date_meridiems']
-                )
+                contact_date = form.cleaned_data['contact_date']
 
                 # documents
                 if request.FILES == None:

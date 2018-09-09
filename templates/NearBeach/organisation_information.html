@@ -6,6 +6,9 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'NearBeach/javascript/datetimepicker/jquery.datetimepicker.min.css' %}">
+
 <body onload="on_page_load()">
     <form action="{% url 'organisation_information' organisation_results.organisations_id %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}

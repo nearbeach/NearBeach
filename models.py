@@ -123,7 +123,7 @@ class contact_history(models.Model):
         on_delete=models.CASCADE,
     )
     contact_date = models.DateTimeField()
-    contact_history = models.TextField()
+    contact_history = HTMLField('contact_history')
     document_key = models.ForeignKey(
         'documents',
         on_delete=models.CASCADE,
@@ -1394,7 +1394,7 @@ class list_of_titles(models.Model):
 class opportunity(models.Model):
     opportunity_id = models.AutoField(primary_key=True)
     opportunity_name = models.CharField(max_length=255)
-    opportunity_description = models.TextField()
+    opportunity_description = HTMLField('oppertunity_description')
     organisations_id = models.ForeignKey(
         'organisations',
         on_delete=models.CASCADE,

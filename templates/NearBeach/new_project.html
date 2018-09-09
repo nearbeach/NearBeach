@@ -28,7 +28,7 @@
         <table>
             <tr><td>{{ new_project_form.assigned_groups }}</td></tr>
             <tr><td>Please note: you will not be able to submit this project without selecting at least one group</td></tr>
-            <tr><td><input type="submit" value="Submit New Project"><a href="{% url 'dashboard' %}">Cancel</a></td></tr>
+            <tr><td><input type="submit" value="Submit New Project"><a href={% url 'dashboard' %}>Cancel</a></td></tr>
         </table>
         <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
         <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>

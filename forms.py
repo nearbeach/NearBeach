@@ -633,43 +633,28 @@ class information_customer_contact_history_form(forms.Form):
         queryset=contact_type_results,
         empty_label=None
     )
-
-
-    start_date_year=forms.ChoiceField(
-        choices=YEAR_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
-        })
-    )
-    start_date_month=forms.ChoiceField(
-        choices=MONTH_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
-        })
-    )
-    start_date_day=forms.ChoiceField(
-        choices=DAY_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
-        })
-    )
-    start_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
-    start_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
-    start_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
-
-
-    contact_history=forms.CharField(
-        widget=forms.Textarea(attrs={
-            'width': '99%',
-            'max-height': '300px'
-        }),
-        required=False
-    )
-
     contact_attachment=forms.FileField(
         required=False,
         widget=forms.FileInput(attrs={
             'onChange':'enable_submit()'
+        })
+    )
+
+    contact_history=forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Opportunity Description',
+            }
+        ),
+        required=False,
+    )
+    contact_date=forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'style': 'width: 200px',
         })
     )
 
@@ -688,40 +673,27 @@ class information_organisation_contact_history_form(forms.Form):
         queryset=contact_type_results,
         empty_label=None
     )
-
-    start_date_year = forms.ChoiceField(
-        choices=YEAR_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange": 'check_start_date()'
-        })
-    )
-    start_date_month = forms.ChoiceField(
-        choices=MONTH_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange": 'check_start_date()'
-        })
-    )
-    start_date_day = forms.ChoiceField(
-        choices=DAY_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange": 'check_start_date()'
-        })
-    )
-
-    start_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
-    start_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
-    start_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
-
     contact_history = forms.CharField(
-        widget=forms.Textarea(attrs={
-            'width': '99%'
-        })
-        , required=False
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Opportunity Description',
+            }
+        ),
+        required=False,
     )
     contact_attachment = forms.FileField(
         required=False,
         widget=forms.FileInput(attrs={
             'onChange': 'enable_submit()'
+        })
+    )
+    contact_date = forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'style': 'width: 200px',
         })
     )
 
@@ -754,6 +726,17 @@ class information_project_costs_form(forms.Form):
 
 
 class information_project_history_form(ModelForm):
+    project_history = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Project Description',
+            }
+        )
+    )
+
     class Meta:
         model = project_history
         fields = {
@@ -792,10 +775,14 @@ class information_task_costs_form(forms.Form):
 
 class information_task_history_form(ModelForm):
     task_history=forms.CharField(
-        widget=forms.Textarea(attrs={
-            'placeholder': 'Please update any history here and then click on the submit button'
-        })
-        , required=False
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Project Description',
+            }
+        )
     )
     class Meta:
         model=tasks_history
@@ -1198,8 +1185,19 @@ class new_opportunity_form(ModelForm):
         })
     )
     opportunity_description=forms.CharField(
-        widget=forms.Textarea(attrs={
-            'placeholder': 'Opportunity Description',
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Opportunity Description',
+            }
+        )
+    )
+    opportunity_expected_close_date=forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'style': 'width: 200px',
         })
     )
     organisations_id=forms.ModelChoiceField(
@@ -1215,29 +1213,6 @@ class new_opportunity_form(ModelForm):
         widget=forms.Select,
         queryset=amount_type_results,
     )
-    finish_date_year=forms.ChoiceField(
-        choices=YEAR_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_month=forms.ChoiceField(
-        choices=MONTH_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_day=forms.ChoiceField(
-        choices=DAY_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
-    finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
-    finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
-
-
     select_groups=forms.ModelMultipleChoiceField(
         queryset=groups_results,
         required=False,
@@ -1266,7 +1241,6 @@ class new_opportunity_form(ModelForm):
 
 
         exclude={
-            'opportunity_expected_close_date',
             'opportunity_stage_id',
             'customer_id',
             'date_created',
@@ -1579,34 +1553,29 @@ class opportunity_information_form(ModelForm):
     groups_results=groups.objects.filter(is_deleted="FALSE")
     user_results=auth.models.User.objects.all()
 
+    opportunity_description = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Opportunity Description',
+            }
+        )
+    )
+
+    opportunity_expected_close_date = forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'style': 'width: 200px',
+        })
+    )
 
     next_step=forms.CharField(
         max_length=255,
         required=False,
     )
 
-    finish_date_year=forms.ChoiceField(
-        choices=YEAR_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-
-    finish_date_month=forms.ChoiceField(
-        choices=MONTH_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_day=forms.ChoiceField(
-        choices=DAY_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_end_date()'
-        })
-    )
-    finish_date_hour=forms.ChoiceField(choices=HOUR_CHOICES)
-    finish_date_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
-    finish_date_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
 
     select_groups=forms.ModelMultipleChoiceField(
         queryset=groups_results,
@@ -1637,7 +1606,6 @@ class opportunity_information_form(ModelForm):
         exclude={
             'customer_id',
             'organisations_id',
-            'opportunity_expected_close_date',
             'lead_source_id',
             'date_created',
             'date_modified',
@@ -1811,9 +1779,6 @@ class project_information_form(ModelForm):
             'style': 'width: 200px'
         })
     )
-
-
-
 
     class Meta:
         model=project

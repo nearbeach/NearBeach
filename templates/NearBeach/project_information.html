@@ -143,9 +143,22 @@
     </form>
 
     <form method="post" class="project_history" id="project_history">
+        {% csrf_token %}
         <h2>Project History</h2>
-        Loading...
+        {% if project_permissions > 1 or project_history_permissions > 0 %}
+            <table>
+                <tr><td>{{ information_project_history_form.project_history }}</td></tr>
+                <tr><td>
+                    <input type="submit" name="project_history_submit" value="Submit">
+                    <a onclick="clear_history()" href="javascript:void(0)" onclick="clear_project_history()">Clear</a>
+                </td></tr>
+            </table>
+    {% endif %}
     </form>
+
+    <div id="project_history_results">
+        Loading History Results...
+    </div>
 
 
     <div id="email_history">
@@ -396,7 +409,10 @@
             data: $(this).serialize(),
             success: function() {
                 //Reload the project history :)
+                tinyMCE.get("id_project_history").setContent('');
+
                 load_project_history();
+
             },
             error: function() {
                 alert("Sorry, project history did not save. Please try again.");
@@ -440,6 +456,10 @@
                 alert("Sorry, could not delete costs");
             }
         });
+    }
+
+    function clear_project_history() {
+        tinyMCE.get("id_project_history").setContent('');
     }
 
     function complete_to_do(to_do_id) {
@@ -659,7 +679,7 @@
             dataType: 'HTML',
             type: 'GET',
             success: function(data) {
-                $('#project_history').html(data);
+                $('#project_history_results').html(data);
 
                 //tinymce.init({selector: '#id_project_history'});
             },

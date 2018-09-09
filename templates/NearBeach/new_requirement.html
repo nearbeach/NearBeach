@@ -13,6 +13,7 @@
         <tr><td>{{ new_requirement_form.requirement_scope }}</td></tr>
         <tr><td>Requirement Type: {{ new_requirement_form.requirement_type }}</td></tr>
         <tr><td>Requirement Status: {{ new_requirement_form.requirement_status }}</td></tr>
+
     </table>
 
     <h1>Grant Access to Opportunity</h1>
@@ -29,5 +30,7 @@
     <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
 
     <input type="submit" value="Submit New Requirement">
+    <a href={% url 'dashboard' %}>Cancel</a>
+
 </form>
 {% endblock %}

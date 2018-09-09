@@ -224,7 +224,6 @@ def information_task_history(request, task_id):
 
     # context
     c = {
-        'information_task_history_form': information_task_history_form(),
         'task_history_results': task_history_results,
         'task_permissions': permission_results['task'],
         'task_history_permissions': permission_results['task_history'],

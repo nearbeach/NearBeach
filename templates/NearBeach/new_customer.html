@@ -10,6 +10,6 @@
             <li>{{ new_customer_form.customer_email }}</li>
             <li>Organisation: {{ new_customer_form.organisations_id }}</li>
         </ul>
-        <input type="submit" value="Submit new customer">
+        <input type="submit" value="Submit new customer"><a href={% url 'dashboard' %}>Cancel</a>
     </form>
 {% endblock %}
