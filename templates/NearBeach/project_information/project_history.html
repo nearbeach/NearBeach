@@ -1,16 +1,12 @@
-<table>
-    {% if project_history_results %}
-        {% for row in project_history_results %}
+<br/>
+{% if project_history_results %}
+    {% for row in project_history_results %}
+        <table>
             <tr><td>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}</td></tr>
-            <tr><td><textarea readonly>{{ row.project_history }}</textarea></td></tr>
-        {% endfor %}
-    {% else %}
-        <tr><td>There is currently no history</td></tr>
-    {% endif %}
-</table>
-<script>
-    function clear_history() {
-        $("#id_project_history").val("");
-    }
-
-</script>
+            <tr><td><span>{{ row.project_history|safe }}</span></td></tr>
+        </table>
+        <br/>
+    {% endfor %}
+{% else %}
+    <p>There is currently no history</p>
+{% endif %}
