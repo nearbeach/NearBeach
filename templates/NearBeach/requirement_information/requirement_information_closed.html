@@ -1,0 +1,16 @@
+{% extends "../template.html" %}
+{% block content %}
+{% load static %}
+
+<body onload="on_page_load()">
+    <h2>Requirements Information - {{ requirement_id }}</h2>
+    <table>
+        <tr><td>{{ requirement_results.requirement_title }}</td></tr>
+        <tr><td>
+            <span>{{ requirement_results.requirement_scope|safe }}</span>
+        </td></tr>
+        <tr><td>Requirement Type: {{ requirement_results.requirement_type }}</td></tr>
+        <tr><td>Requirement Status: Closed</td></tr>
+    </table>
+</body>
+{% endblock %}

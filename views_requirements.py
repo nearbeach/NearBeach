@@ -232,10 +232,14 @@ def requirement_information(request, requirement_id):
     }
 
     #Load template
-    t = loader.get_template('NearBeach/requirement_information.html')
+    if requirement_results.requirement_status.requirement_status == "Completed":
+        t = loader.get_template('NearBeach/requirement_information/requirement_information_closed.html')
+    else:
+        t = loader.get_template('NearBeach/requirement_information.html')
 
     # context
     c = {
+        'requirement_results': requirement_results,
         'requirement_id': requirement_id,
         'requirement_information_form': requirement_information_form(initial=initial),
         'permission': permission_results['requirement'],
