@@ -1945,42 +1945,6 @@ class search_form(forms.Form):
 
 
 class requirement_information_form(ModelForm):
-    def __init__(self, *args, **kwargs):
-        requirement_id = kwargs.pop('requirement_id')
-
-        super(requirement_information_form, self).__init__(*args, **kwargs)
-
-        """
-        If a requirement is closed, we want to make sure the tinyMCE widgets are;
-        - Read Only
-        - Have no menu
-        """
-        requirement_results = requirements.objects.get(requirement_id=requirement_id)
-
-        if requirement_results.requirement_status.requirement_status == "Completed":
-            self.fields['requirement_scope'].widget=TinyMCE(
-                mce_attrs={
-                    'width': '100%',
-                    'readonly': 1,
-                    'menubar': False,
-                    'toolbar': False,
-                },
-                attrs={
-                    'placeholder': 'Requirement Scope',
-                }
-            )
-        else:
-            self.fields['requirement_scope'].widget = TinyMCE(
-                mce_attrs={
-                    'width': '100%',
-                },
-                attrs={
-                    'placeholder': 'Requirement Scope',
-                }
-            )
-            #self.fields['nested_folder'].queryset = folders_results
-
-    """
     requirement_scope = forms.CharField(
         widget=TinyMCE(
             mce_attrs={
@@ -1991,7 +1955,6 @@ class requirement_information_form(ModelForm):
             }
         ),
     )
-    """
 
     class Meta:
         model=requirements
@@ -2033,7 +1996,25 @@ class requirement_items_form(forms.ModelForm):
         ]
 
 
+class requirement_readonly_form(ModelForm):
+    requirement_scope = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+            },
+            attrs={
+                'placeholder': 'Requirement Scope'
+            }
+        ),
+    )
 
+    class Meta:
+        model=requirements
+        fields=[
+            'requirement_scope',
+        ]
 
 class search_customers_form(forms.Form):
     #Just have a simple search field

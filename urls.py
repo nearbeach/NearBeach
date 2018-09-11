@@ -156,6 +156,7 @@ re_path(r'^requirement_items_new/(?P<requirement_id>[0-9]+)/', views_requirement
 re_path(r'^requirement_links_list/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_links_list,name="requirement_links_list"),
 re_path(r'^requirement_new_link/(?P<requirement_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<destination>["project","task","organisation"]+)', views_requirements.requirement_new_link,name="requirement_new_link"),
 re_path(r'^requirement_new_link/(?P<requirement_id>[0-9]+)/$', views_requirements.requirement_new_link,name="requirement_new_link"),
+re_path(r'^requirement_readonly/(?P<requirement_id>[0-9]+)/$', views_requirements.requirement_readonly,name="requirement_readonly"),
 re_path(r'^resolve_project/(?P<project_id>[0-9]+)/', views.resolve_project,    name='resolve_project'),
 re_path(r'^resolve_task/(?P<task_id>[0-9]+)/', views.resolve_task, name='resolve_task'),
 re_path(r'^search_customers', views.search_customers, name='search_customers'),
