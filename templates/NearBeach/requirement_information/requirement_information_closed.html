@@ -7,7 +7,8 @@
     <table>
         <tr><td>{{ requirement_results.requirement_title }}</td></tr>
         <tr><td>
-            <span>{{ requirement_results.requirement_scope|safe }}</span>
+            {{ requirement_information_form.media }}
+            <span>{{ requirement_information_form.requirement_scope }}</span>
         </td></tr>
         <tr><td>Requirement Type: {{ requirement_results.requirement_type }}</td></tr>
         <tr><td>Requirement Status: Closed</td></tr>

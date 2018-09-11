@@ -241,7 +241,10 @@ def requirement_information(request, requirement_id):
     c = {
         'requirement_results': requirement_results,
         'requirement_id': requirement_id,
-        'requirement_information_form': requirement_information_form(initial=initial),
+        'requirement_information_form': requirement_information_form(
+            initial=initial,
+            requirement_id=requirement_id,
+        ),
         'permission': permission_results['requirement'],
         'requirement_link_permissions': permission_results['requirement_link'],
         'new_item_permission': permission_results['new_item'],
