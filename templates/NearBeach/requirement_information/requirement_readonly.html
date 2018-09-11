@@ -102,17 +102,17 @@
         <h2>Requirement Bugs</h2>
         <table>
             <tr>
-                <td>Select</td>
                 <td>Bug ID</td>
+                <td>Bug Client</td>
                 <td>Bug Description</td>
                 <td>Bug Status</td>
             </tr>
             {% for row in bug_results %}
                 <tr>
-                    <td id="id_{{ row.id }}_{{ bug_client_id }}"><a href="javascript:void(0)" onclick="add_bug({{ location_id }},'{{ destination }}',{{ row.id }}, {{ bug_client_id }})">Add Bug</a></td>
-                    <td>{{ row.id }}</td>
-                    <td>{{ row.summary|escape|safe }}</td>
-                    <td>{{ row.status }}</td>
+                    <td>{{ row.bug_code }}</td><!--get this to be hyperlinked to the bug :)-->
+                    <td>{{ row.bug_client }}</td>
+                    <td><a href="{{ row.bug_client.bug_client_url }}{{ row.bug_client.list_of_bug_client.api_bug }}{{ row.bug_code }}" target="_blank">{{ row.bug_description }}</a></td>
+                    <td>{{ row.bug_status }}</td>
                 </tr>
             {% endfor %}
         </table>
