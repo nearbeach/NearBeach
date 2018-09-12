@@ -137,6 +137,7 @@ re_path(r'^product_and_service_edit/(?P<product_id>[0-9]+)/', views_administrati
 re_path(r'^product_and_service_new/', views_administration.product_and_service_new, name='product_and_service_new'),
 re_path(r'^product_and_service_search/', views_administration.product_and_service_search, name='product_and_service_search'),
 re_path(r'^project_information/(?P<project_id>[0-9]+)/', views.project_information, name='project_information'),
+re_path(r'^project_readonly/(?P<project_id>[0-9]+)/', views_project_information.project_readonly, name='project_readonly'),
 re_path(r'^quote_delete_line_item/(?P<line_item_id>[0-9]+)/$', views_quotes.delete_line_item, name='quote_delete_line_item'),
 re_path(r'^quote_delete_responsible_customer/(?P<quote_id>[0-9]+)/(?P<customer_id>[0-9]+)/$', views_quotes.delete_responsible_customer, name='quote_delete_responsible_customer'),
 re_path(r'^quote_information/(?P<quote_id>[0-9]+)/$', views.quote_information, name='quote_information'),

@@ -16,19 +16,25 @@
         }
 
         function toggleSub(sub) {
-            //Close all menus first
-            $("#sub-menu-main").slideUp();
-            $("#sub-menu-item").slideUp();
-            $("#sub-menu-admin").slideUp();
-            $("#sub-menu-configuration").slideUp();
-
             if (sub == 0) {
+                $("#sub-menu-item").slideUp();
+                $("#sub-menu-admin").slideUp();
+                $("#sub-menu-configuration").slideUp();
                 $("#sub-menu-main").slideToggle(300);
             } else if (sub == 1) {
+                $("#sub-menu-main").slideUp();
+                $("#sub-menu-admin").slideUp();
+                $("#sub-menu-configuration").slideUp();
                 $("#sub-menu-item").slideToggle(300);
             } else if (sub == 2) {
+                $("#sub-menu-main").slideUp();
+                $("#sub-menu-item").slideUp();
+                $("#sub-menu-configuration").slideUp();
                 $("#sub-menu-admin").slideToggle(300);
             } else if (sub == 3) {
+                $("#sub-menu-main").slideUp();
+                $("#sub-menu-item").slideUp();
+                $("#sub-menu-admin").slideUp();
                 $("#sub-menu-configuration").slideToggle(300);
             }
         }

@@ -672,9 +672,6 @@ def bug_search(request, location_id=None, destination=None):
             json_data = json.load(response)
             bug_results = json_data['bugs'] #This could change depending on the API
 
-            #print bug_results['bugs']
-
-            #END TEMP CODE#
         else:
             print(form.errors)
 
@@ -2828,6 +2825,7 @@ def new_organisation(request):
 	form and shown the possible duplicates. If the user accepts this, then
 	the organisation is created.	
 	"""
+    form_errors = ""
     form = new_organisation_form(request.POST or None)
     duplicate_results = None
     if request.method == 'POST':
@@ -2855,6 +2853,8 @@ def new_organisation(request):
                 submit_form.save()
 
                 return HttpResponseRedirect(reverse(organisation_information, args={submit_form.organisations_id}))
+        else:
+            form_errors = form.errors
 
     """
 	Now that we have determined if the organisations should be saved or not
@@ -2877,6 +2877,7 @@ def new_organisation(request):
         'duplication_count': duplication_count,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'form_errors': form_errors,
     }
 
     return HttpResponse(t.render(c, request))

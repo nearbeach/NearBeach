@@ -237,3 +237,21 @@ def information_project_history(request, project_id):
 
 
 
+@login_required(login_url='login')
+def project_readonly(request, project_id):
+    #Get data
+    project_results = project.objects.get(project_id=project_id)
+
+    #Get Template
+    t = loader.get_template('NearBeach/project_information/project_readonly.html')
+
+    # context
+    c = {
+        'project_id': project_id,
+        'project_results': project_results,
+        'project_readonly_form': project_readonly_form(
+            initial={'project_description': project_results.project_description}
+        )
+    }
+
+    return HttpResponse(t.render(c, request))

@@ -1260,14 +1260,14 @@ class new_organisation_form(forms.Form):
     )
     organisation_website=forms.URLField(
         max_length=255,
-        widget=forms.TextInput(attrs={
-            'width': '99%',
-            'placeholder': 'https://organisations_website.com',
+        widget=forms.URLInput(attrs={
+            'style': 'width: 99%;',
+            'placeholder': 'https://organisation_website.com',
         })
     )
     organisation_email=forms.EmailField(
         max_length=255,
-        widget=forms.TextInput(attrs={
+        widget=forms.EmailInput(attrs={
             'width': '99%',
             'placeholder': 'organisations@email.com',
             'type': 'email',
@@ -1789,7 +1789,25 @@ class project_information_form(ModelForm):
             'project_end_date',
         }
 
+class project_readonly_form(ModelForm):
+    project_description = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+            },
+            attrs={
+                'placeholder': 'Requirement Scope'
+            }
+        ),
+    )
 
+    class Meta:
+        model=project
+        fields = {
+            'project_description'
+        }
 
 
 

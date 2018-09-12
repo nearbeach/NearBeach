@@ -1,0 +1,19 @@
+{% extends 'NearBeach/template.html' %}
+{% block content %}
+{% load static %}
+    <h2>Project Information - {{ project_id }}</h2>
+    <table>
+        <tr><td>{{ project_results.project_name }}</td></tr>
+        <tr><td>
+            {{ project_readonly_form.media }}
+            {{ project_readonly_form.project_description }}
+        </td></tr>
+        <tr><td>Organisation: {{ project_results.organisations_id }}</td></tr>
+        <tr><td>Project Status: Completed</td></tr>
+        <tr><td>Start Date: {{ project_results.project_start_date }}</td></tr>
+        <tr><td>End Date: {{ project_results.project_end_date }}</td></tr>
+    </table>
+
+    <h2>Project To Do</h2>
+
+{% endblock %}
