@@ -15,5 +15,39 @@
     </table>
 
     <h2>Project To Do</h2>
+    <table>
+        <tr>
+            <td width="80%">To Do Item</td>
+            <td width="10%">Status</td>
+            <td width="10%">Closed by</td>
+        </tr>
+        {% for row in to_do_results %}
+            <tr>
+                <td>{{ row.to_do }}</td>
+                <td>
+                    {% if row.to_do_completed %}
+                        Completed
+                    {% else %}
+                        Not Completed
+                    {% endif %}
+                </td>
+                <td>
+                    {% if row.to_do_completed %}
+                        {{ row.change_user }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    {% if project_history_collective %}
+        <h2>Project History</h2>
+        <table>
+            {% for row in project_history_collective %}
+                <tr><td>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}</td></tr>
+                <tr><td>{{ row.project_history }}</td></tr>
+            {% endfor %}
+        </table>
+    {% endif %}
 
 {% endblock %}

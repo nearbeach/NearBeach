@@ -1723,6 +1723,41 @@ class product_and_service_form(ModelForm):
         }
 
 
+class project_history_readonly_form(ModelForm):
+    def __init__(self, *args, **kwargs):
+        """
+        The project descriptioon will each need to be stored in a readonly tinyMCE widget. The issue here is that
+        each widget will need it's own ID other wise it will apply the tinyMCE widget to only one.
+
+        This widget can be used in both the project_readonly and project_information mode
+        """
+        project_history_id = kwargs.pop('project_history_id', None)
+        super(project_history_readonly_form, self).__init__(*args, **kwargs)
+
+        #self.fields['quote_billing_address'].queryset = campus_results
+
+        self.fields['project_history'].widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+            },
+            attrs={
+                'placeholder': 'Requirement Scope',
+                'id': 'id_project_history_' + str(project_history_id),
+            },
+
+        )
+
+        #Definition of the tinyMCE widget
+    project_history = forms.CharField()
+    class Meta:
+        model=project_history
+        fields={
+            'project_history',
+        }
+
+
 class project_information_form(ModelForm):
     """
     Project information will need to abide by the stricked laws of the new

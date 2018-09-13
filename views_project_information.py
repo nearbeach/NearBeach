@@ -241,6 +241,30 @@ def information_project_history(request, project_id):
 def project_readonly(request, project_id):
     #Get data
     project_results = project.objects.get(project_id=project_id)
+    to_do_results = to_do.objects.filter(
+        is_deleted="FALSE",
+        project_id=project_id,
+    )
+    project_history_results = project_history.objects.filter(
+        is_deleted="FALSE",
+        project_id=project_id,
+    )
+
+    """
+    We want to bring through the project history's tinyMCE widget as a read only. However there are 
+    most likely multiple results so we will create a collective.
+    """
+    project_history_collective =[]
+    for row in project_history_results:
+        project_history_collective.append(
+            project_history_readonly_form(
+                initial={
+                    'project_history': row.project_history,
+                },
+                project_history_id=row.project_history_id,
+            )
+        )
+
 
     #Get Template
     t = loader.get_template('NearBeach/project_information/project_readonly.html')
@@ -251,7 +275,9 @@ def project_readonly(request, project_id):
         'project_results': project_results,
         'project_readonly_form': project_readonly_form(
             initial={'project_description': project_results.project_description}
-        )
+        ),
+        'to_do_results': to_do_results,
+        'project_history_collective': project_history_collective,
     }
 
     return HttpResponse(t.render(c, request))
