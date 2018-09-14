@@ -1952,7 +1952,7 @@ class project_history(models.Model):
     )
 
     def __str__(self):
-        return str(self.region)
+        return str(self.project_id)
 
     class Meta:
         db_table = "project_history"

@@ -1,5 +1,6 @@
 {% extends 'NearBeach/template.html' %}
 {% block content %}
+{% load humanize %}
 {% load static %}
     <h2>Project Information - {{ project_id }}</h2>
     <table>
@@ -44,10 +45,113 @@
         <h2>Project History</h2>
         <table>
             {% for row in project_history_collective %}
-                <tr><td>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}</td></tr>
+                <tr><td>{{ row.submit_history }}</td></tr>
                 <tr><td>{{ row.project_history }}</td></tr>
             {% endfor %}
         </table>
     {% endif %}
+
+    {% if email_results %}
+        <h2>Project Email History</h2>
+        <table>
+            <tr>
+                <td width="70%">Subject</td>
+                <td width="15%">Date</td>
+                <td width="15%">Sent By</td>
+            </tr>
+            {% for row in email_results %}
+                <tr>
+                    <td>
+                        {% if email_permission > 1 %}
+                            <a href="{% url 'email_information' row.email_content_id %}">{{ row.email_subject }}</a>
+                        {% else %}
+                            {{ row.email_subject }}
+                        {% endif %}
+                    </td>
+                    <td>{{ row.date_created }}</td>
+                    <td>{{ row.change_user }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+
+    {% if associated_tasks_results %}
+        <h2>Associated Tasks</h2>
+        <table>
+        <tr class="header"><td>Task Id</td><td>Short Description</td><td>End Date</td></tr>
+        {% for associated_task_row in associated_tasks_results %}
+            <tr>
+            <td><a href="{% url 'task_information' associated_task_row.tasks_id %}">Task - {{ associated_task_row.tasks_id }}</a></td>
+            <td>{{ associated_task_row.task_short_description }}</td>
+            <td>{{ associated_task_row.task_end_date }}</td>
+            </tr>
+        {% endfor %}
+
+        </table>
+    {% endif %}
+
+    {% if project_customers_results %}
+    <h2>Project Customers</h2>
+    <table>
+        <tr class="header">
+            <td>Customer Name</td>
+            <td>Customer Description</td>
+            <td>Customer Email</td>
+        </tr>
+        {% for row in project_customers_results %}
+            <tr>
+                <td><a href="{% url 'customer_information' row.customer_id.customer_id %}">{{ row.customer_id.customer_first_name }} {{ row.customer_id.customer_last_name }}</a></td>
+                <td>{{ row.customer_description }}</td>
+                <td>{{ row.customer_id.customer_email }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+    {% if project_costs_results %}
+        <table>
+            <tr class="header">
+                <td>Item</td>
+                <td>Cost</td>
+                <td>Running Total</td>
+            </tr>
+            {% for row in costs_results %}
+                <tr>
+                    <td>{{ row.cost_description }}</td>
+                    <td name="cost_amount">{{ row.cost_amount|intcomma }}</td>
+                    <td name="running_total">--filled-by-javascript--</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td>GRAND TOTAL</td>
+                <td id="grand_total">--fill out--</td>
+            </tr>
+    </table>
+    {% endif %}
+
+    {% if project_documents_cost %}
+        <h2>Project Documents</h2>
+        Project documents will be re-written. Once rewritten the new documents will be stored here.
+    {% endif %}
+
+    {% if project_quotes_results %}
+        <h2>Project Quotes</h2>
+        <table>
+            <tr>
+                <td width="50%">Quote Title</td>
+                <td width="25%">Valid Till</td>
+                <td width="25%">Quote Stage</td>
+            </tr>
+            {% for row in quote_results %}
+                <tr>
+                    <td><a href="{% url 'quote_information' row.quote_id %}">{{ row.quote_title }}</a></td>
+                    <td>{{ row.quote_valid_till }}</td>
+                    <td>{{ row.quote_stage_id }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
 
 {% endblock %}

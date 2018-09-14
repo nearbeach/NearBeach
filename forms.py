@@ -1751,6 +1751,13 @@ class project_history_readonly_form(ModelForm):
 
         #Definition of the tinyMCE widget
     project_history = forms.CharField()
+    submit_history = forms.CharField(
+        widget=TextInput(attrs={
+            'width': '100%',
+            'readonly': True,
+        })
+    )
+
     class Meta:
         model=project_history
         fields={

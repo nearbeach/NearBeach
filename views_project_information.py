@@ -16,6 +16,8 @@ from NearBeach.forms import *
 from .models import *
 from .misc_functions import *
 from .user_permissions import return_user_permission_level
+from django.db.models import Sum, Q, Min
+
 
 
 @login_required(login_url='login')
@@ -249,6 +251,17 @@ def project_readonly(request, project_id):
         is_deleted="FALSE",
         project_id=project_id,
     )
+    email_results = email_content.objects.filter(
+        is_deleted="FALSE",
+        email_content_id__in=email_contact.objects.filter(
+            Q(project=project_id) &
+            Q(is_deleted="FALSE") &
+            Q(
+                Q(is_private=False) |
+                Q(change_user=request.user)
+            )
+        ).values('email_content_id')
+    )
 
     """
     We want to bring through the project history's tinyMCE widget as a read only. However there are 
@@ -256,10 +269,13 @@ def project_readonly(request, project_id):
     """
     project_history_collective =[]
     for row in project_history_results:
+        #First deal with the datetime
         project_history_collective.append(
             project_history_readonly_form(
                 initial={
                     'project_history': row.project_history,
+                    'submit_history': row.user_infomation + " - " + str(row.user_id) + " - "\
+                                      + row.date_created.strftime("%d %B %Y %H:%M.%S"),
                 },
                 project_history_id=row.project_history_id,
             )
@@ -278,6 +294,7 @@ def project_readonly(request, project_id):
         ),
         'to_do_results': to_do_results,
         'project_history_collective': project_history_collective,
+        'email_results': email_results,
     }
 
     return HttpResponse(t.render(c, request))
