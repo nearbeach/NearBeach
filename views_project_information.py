@@ -263,6 +263,10 @@ def project_readonly(request, project_id):
         ).values('email_content_id')
     )
 
+    associated_tasks_results = project_tasks.objects.filter(
+        is_deleted="FALSE",
+        project_id=project_id,
+    )
     """
     We want to bring through the project history's tinyMCE widget as a read only. However there are 
     most likely multiple results so we will create a collective.
@@ -295,6 +299,7 @@ def project_readonly(request, project_id):
         'to_do_results': to_do_results,
         'project_history_collective': project_history_collective,
         'email_results': email_results,
+        #'associated_tasks_results': associated_tasks_results,
     }
 
     return HttpResponse(t.render(c, request))

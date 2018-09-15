@@ -80,11 +80,11 @@
         <h2>Associated Tasks</h2>
         <table>
         <tr class="header"><td>Task Id</td><td>Short Description</td><td>End Date</td></tr>
-        {% for associated_task_row in associated_tasks_results %}
+        {% for row in associated_tasks_results %}
             <tr>
-            <td><a href="{% url 'task_information' associated_task_row.tasks_id %}">Task - {{ associated_task_row.tasks_id }}</a></td>
-            <td>{{ associated_task_row.task_short_description }}</td>
-            <td>{{ associated_task_row.task_end_date }}</td>
+            <td><a href="{% url 'task_information' row.tasks_id %}">Task - {{ row.task_id.task_id }}</a></td>
+            <td>{{ row.task_id }}</td>
+            <td>{{ row.task_id.task_end_date }}</td>
             </tr>
         {% endfor %}
 
@@ -153,5 +153,45 @@
         </table>
     {% endif %}
 
+    {% if bug_results %}
+        <h2>Assigned Bugs</h2>
+        <table>
+            <tr>
+                <td>Bug ID</td>
+                <td>Bug Client</td>
+                <td>Bug Description</td>
+                <td>Bug Status</td>
+                {% if bug_permission == 4 %}
+                    <td>Remove Bug</td>
+                {% endif %}
+            </tr>
+            {% for row in bug_results %}
+                <tr>
+                    <td>{{ row.bug_code }}</td><!--get this to be hyperlinked to the bug :)-->
+                    <td>{{ row.bug_client }}</td>
+                    <td><a href="{{ row.bug_client.bug_client_url }}{{ row.bug_client.list_of_bug_client.api_bug }}{{ row.bug_code }}" target="_blank">{{ row.bug_description }}</a></td>
+                    <td>{{ row.bug_status }}</td>
+                    {% if bug_permission == 4 %}
+                        <td><a href="javascript:void(0)" onclick="">Remove Bug</a></td><!--add in the javascript to allow this-->
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
 
+
+    {% if group_list_results %}
+        <table>
+            <tr>
+                <td>Assigned Group Name</td>
+                <td>Delete Assigned Group</td>
+            </tr>
+            {% for row in group_list_results %}
+                <tr>
+                    <td>{{ row.groups_id }}</td>
+                    <td><a href="javascript:void(0)" onclick="delete_group_item({{ row.id }})">Delete Group</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
 {% endblock %}
