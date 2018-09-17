@@ -82,7 +82,7 @@
         <tr class="header"><td>Task Id</td><td>Short Description</td><td>End Date</td></tr>
         {% for row in associated_tasks_results %}
             <tr>
-            <td><a href="{% url 'task_information' row.tasks_id %}">Task - {{ row.task_id.task_id }}</a></td>
+            <td><a href="{% url 'task_information' row.task_id.tasks_id %}">Task - {{ row.task_id.task_id }}</a></td>
             <td>{{ row.task_id }}</td>
             <td>{{ row.task_id.task_end_date }}</td>
             </tr>
@@ -109,7 +109,8 @@
     </table>
     {% endif %}
 
-    {% if project_costs_results %}
+    {% if costs_results %}
+        <h2>Project Costs</h2>
         <table>
             <tr class="header">
                 <td>Item</td>
