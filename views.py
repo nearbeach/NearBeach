@@ -504,7 +504,7 @@ def bug_client_information(request, bug_client_id):
 
             #Test the link first before doing ANYTHING!
             try:
-                url = bug_client_url + list_of_bug_client.bug_client_api_url + 'bug?bug_status=__open__'
+                url = bug_client_url + list_of_bug_client.bug_client_api_url + 'version'
                 print(url)
                 response = urlopen(url)
                 print("Response gotten")
@@ -2424,7 +2424,7 @@ def new_bug_client(request):
 
             #Test the link first before doing ANYTHING!
             try:
-                url = bug_client_url + list_of_bug_client.bug_client_api_url + 'bug?bug_status=__open__'
+                url = bug_client_url + list_of_bug_client.bug_client_api_url + 'version'
                 print(url)
                 response = urlopen(url)
                 data = json.load(response)

@@ -1,9 +1,8 @@
 {% load nearbeach_extras %}
 <h2>Group Active Projects</h2>
 {% if active_projects_results %}
-    <input type="text" id="Search_Active_Projects" onkeyup="Search_Active_Projects()" placeholder="Search for Active Projects" class="search">
     <table id="Active_Projects_Table">
-    <tr>
+    <tr class="header">
         <td width="10%">Project</td>
         <td width="70%;">Description</td>
         <td width="20%;">End Date</td>

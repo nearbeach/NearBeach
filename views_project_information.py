@@ -279,6 +279,32 @@ def project_readonly(request, project_id):
         is_deleted='FALSE'
     )
 
+    quote_results = quotes.objects.filter(
+        is_deleted="FALSE",
+        project_id=project_id,
+    )
+
+    bug_results = bug.objects.filter(
+        is_deleted="FALSE",
+        project_id=project_id,
+    )
+
+    assigned_results = assigned_users.objects.filter(
+        project_id=project_id,
+        is_deleted="FALSE",
+    ).values(
+        'user_id__id',
+        'user_id',
+        'user_id__username',
+        'user_id__first_name',
+        'user_id__last_name',
+    ).distinct()
+
+    group_list_results = project_groups.objects.filter(
+        is_deleted="FALSE",
+        project_id=project_id,
+    )
+
     """
     We want to bring through the project history's tinyMCE widget as a read only. However there are 
     most likely multiple results so we will create a collective.
@@ -314,6 +340,10 @@ def project_readonly(request, project_id):
         'associated_tasks_results': associated_tasks_results,
         'project_customers_results': project_customers_results,
         'costs_results': costs_results,
+        'quote_results': quote_results,
+        'bug_results': bug_results,
+        'assigned_results': assigned_results,
+        'group_list_results': group_list_results,
     }
 
     return HttpResponse(t.render(c, request))

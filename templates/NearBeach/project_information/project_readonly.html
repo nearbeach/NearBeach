@@ -136,7 +136,7 @@
         Project documents will be re-written. Once rewritten the new documents will be stored here.
     {% endif %}
 
-    {% if project_quotes_results %}
+    {% if quote_results %}
         <h2>Project Quotes</h2>
         <table>
             <tr>
@@ -180,8 +180,29 @@
         </table>
     {% endif %}
 
+    {% if assigned_results %}
+        <h2>Project Assigned Users</h2>
+        <table>
+            <tr class="header">
+                <td>Username</td>
+                <td>First Name</td>
+                <td>Last name</td>
+            </tr>
+            {% if assigned_results %}
+                {% for row in assigned_results %}
+                    <tr>
+                        <td>{{ row.user_id__username }}</td>
+                        <td>{{ row.user_id__first_name }}</td>
+                        <td>{{ row.user_id__last_name }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </table>
+    {% endif %}
+
 
     {% if group_list_results %}
+        <h2>Project Assigned Groups</h2>
         <table>
             <tr>
                 <td>Assigned Group Name</td>
