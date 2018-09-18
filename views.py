@@ -2554,6 +2554,7 @@ def new_customer(request, organisations_id):
     if permission_results['customer'] < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
 
+    form_errors = ''
     if request.method == 'POST':
         form = new_customer_form(request.POST)
         if form.is_valid():
@@ -2578,22 +2579,29 @@ def new_customer(request, organisations_id):
             submit_form.save()
 
             return HttpResponseRedirect(reverse(customer_information, args={submit_form.customer_id}))
+        else:
+            form_errors = form.errors
     else:
-        form = new_customer_form()
+        initial = {
+            'organisations_id': organisations_id,
+        }
+
+        form = new_customer_form(initial=initial)
+
 
     # load template
     t = loader.get_template('NearBeach/new_customer.html')
 
-    initial = {
-        'organisations_id': organisations_id,
-    }
+
 
     # context
     c = {
-        'new_customer_form': new_customer_form(initial=initial),
+        #'new_customer_form': new_customer_form(initial=initial),
+        'new_customer_form': form,
         'organisations_id': organisations_id,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'form_errors': form_errors,
     }
 
     return HttpResponse(t.render(c, request))
@@ -3976,6 +3984,10 @@ def project_information(request, project_id):
     project_results = get_object_or_404(project, project_id=project_id)
     project_start_results = convert_extracted_time(project_results.project_start_date)
     project_end_results = convert_extracted_time(project_results.project_end_date)
+
+    #If project is completed - send user to read only module
+    if project_results.project_status == "Closed":
+        return HttpResponseRedirect(reverse('project_readonly', args={project_id}))
 
     # Obtain the required data
     project_history_results = project_history.objects.filter(project_id=project_id, is_deleted='FALSE')

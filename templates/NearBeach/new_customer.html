@@ -4,6 +4,7 @@
 	<form action={% url 'new_customer' organisations_id %} method="post" class="new_customer" id="input-form">
         {% csrf_token %}
         <ul>
+            <li>{{ form_errors }}</li>
             <li>Title: {{ new_customer_form.customer_title }}
             <li>{{ new_customer_form.customer_first_name }}</li>
             <li>{{ new_customer_form.customer_last_name }}</li>

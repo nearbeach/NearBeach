@@ -224,12 +224,6 @@ def requirement_information(request, requirement_id):
 
     #Setup the initial data for the form
     requirement_results = requirements.objects.get(requirement_id=requirement_id)
-    initial = {
-        'requirement_title': requirement_results.requirement_title,
-        'requirement_scope': requirement_results.requirement_scope,
-        'requirement_type': requirement_results.requirement_type,
-        'requirement_status': requirement_results.requirement_status,
-    }
 
     """
     If the requirement is completed, then we want to send the user to the readonly version. There is no need
@@ -237,6 +231,15 @@ def requirement_information(request, requirement_id):
     """
     if requirement_results.requirement_status.requirement_status == "Completed":
         return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_id}))
+
+
+    initial = {
+        'requirement_title': requirement_results.requirement_title,
+        'requirement_scope': requirement_results.requirement_scope,
+        'requirement_type': requirement_results.requirement_type,
+        'requirement_status': requirement_results.requirement_status,
+    }
+
 
     #Load template
     t = loader.get_template('NearBeach/requirement_information.html')
