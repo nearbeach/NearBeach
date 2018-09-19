@@ -2305,6 +2305,8 @@ def login(request):
                 response = urlopen(url)
                 result = json.load(response)
 
+                print(result)
+
                 # Check to see if the user is a robot. Success = human
                 if result['success']:
                     user = auth.authenticate(username=username, password=password)
