@@ -25,6 +25,7 @@ from django.http import JsonResponse
 #from weasyprint import HTML
 from urllib.request import urlopen
 from weasyprint import HTML
+from django.core.mail import send_mail
 
 #import python modules
 import datetime, json, simplejson
@@ -2319,14 +2320,15 @@ def login(request):
                     the reCaptcha is not allowing users to log in. So I will get the program to
                     email me the results.
                     """
-                    email = EmailMultiAlternatives(
-                        'reCaptcha details [private]',
+
+                    send_mail(
+                        '[private] reCaptcha Results',
                         result,
                         'support@nearbeach.org',
-                        {'luke@nearbeach.org'},
+                        ['luke@nearbeach.org'],
+                        fail_silently=False,
                     )
-                    email.attach_alternative(result, "text/html")
-                    email.send(fail_silently=False)
+                    #email.send(fail_silently=False)
 
 
             else:
