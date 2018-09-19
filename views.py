@@ -2265,7 +2265,6 @@ def login(request):
         RECAPTCHA_PUBLIC_KEY = settings.RECAPTCHA_PUBLIC_KEY
         RECAPTCHA_PRIVATE_KEY = settings.RECAPTCHA_PRIVATE_KEY
 
-    error_text = ''
     # POST
     if request.method == 'POST':
         print("POST")
@@ -2310,8 +2309,6 @@ def login(request):
                 if result['success']:
                     user = auth.authenticate(username=username, password=password)
                     auth.login(request, user)
-                else:
-                    error_text = "Recapcha has rejected your login."
 
 
 
@@ -2389,17 +2386,14 @@ def login(request):
                 return HttpResponseRedirect(reverse('alerts'))
             else:
                 print("User not authenticated")
-                error_text = "User login details have been rejected"
         else:
             print(form.errors)
-            error_text = form.errors
 
     # load template
     t = loader.get_template('NearBeach/login.html')
 
     # context
     c = {
-        'error_text': error_text,
         'login_form': form,
         'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
     }
