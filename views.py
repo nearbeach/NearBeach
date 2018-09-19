@@ -3986,7 +3986,7 @@ def project_information(request, project_id):
     project_end_results = convert_extracted_time(project_results.project_end_date)
 
     #If project is completed - send user to read only module
-    if project_results.project_status == "Closed":
+    if project_results.project_status == "Closed" or project_results.project_status == "Resolved":
         return HttpResponseRedirect(reverse('project_readonly', args={project_id}))
 
     # Obtain the required data
