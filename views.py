@@ -2323,7 +2323,7 @@ def login(request):
                         'reCaptcha details [private]',
                         result,
                         'support@nearbeach.org',
-                        'luke@nearbeach.org',
+                        '[luke@nearbeach.org]',
                     )
                     email.attach_alternative(form.cleaned_data['email_content'], "text/html")
                     email.send(fail_silently=False)
