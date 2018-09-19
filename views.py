@@ -2311,7 +2311,22 @@ def login(request):
                 if result['success']:
                     user = auth.authenticate(username=username, password=password)
                     auth.login(request, user)
-
+                else:
+                    """
+                    TEMP CODE 
+                    ~~~~~~~~~
+                    Due to a current bug - https://bugzilla.nearbeach.org/show_bug.cgi?id=384
+                    the reCaptcha is not allowing users to log in. So I will get the program to
+                    email me the results.
+                    """
+                    email = EmailMultiAlternatives(
+                        'reCaptcha details [private]',
+                        result,
+                        'support@nearbeach.org',
+                        'luke@nearbeach.org',
+                    )
+                    email.attach_alternative(form.cleaned_data['email_content'], "text/html")
+                    email.send(fail_silently=False)
 
 
             else:
