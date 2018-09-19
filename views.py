@@ -2325,7 +2325,7 @@ def login(request):
                         'support@nearbeach.org',
                         {'luke@nearbeach.org'},
                     )
-                    email.attach_alternative(form.cleaned_data['email_content'], "text/html")
+                    email.attach_alternative(result, "text/html")
                     email.send(fail_silently=False)
 
 
