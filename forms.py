@@ -1260,14 +1260,14 @@ class new_organisation_form(forms.Form):
     )
     organisation_website=forms.URLField(
         max_length=255,
-        widget=forms.TextInput(attrs={
-            'width': '99%',
-            'placeholder': 'https://organisations_website.com',
+        widget=forms.URLInput(attrs={
+            'style': 'width: 99%;',
+            'placeholder': 'https://organisation_website.com',
         })
     )
     organisation_email=forms.EmailField(
         max_length=255,
-        widget=forms.TextInput(attrs={
+        widget=forms.EmailInput(attrs={
             'width': '99%',
             'placeholder': 'organisations@email.com',
             'type': 'email',
@@ -1723,6 +1723,48 @@ class product_and_service_form(ModelForm):
         }
 
 
+class project_history_readonly_form(ModelForm):
+    def __init__(self, *args, **kwargs):
+        """
+        The project descriptioon will each need to be stored in a readonly tinyMCE widget. The issue here is that
+        each widget will need it's own ID other wise it will apply the tinyMCE widget to only one.
+
+        This widget can be used in both the project_readonly and project_information mode
+        """
+        project_history_id = kwargs.pop('project_history_id', None)
+        super(project_history_readonly_form, self).__init__(*args, **kwargs)
+
+        #self.fields['quote_billing_address'].queryset = campus_results
+
+        self.fields['project_history'].widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+            },
+            attrs={
+                'placeholder': 'Requirement Scope',
+                'id': 'id_project_history_' + str(project_history_id),
+            },
+
+        )
+
+        #Definition of the tinyMCE widget
+    project_history = forms.CharField()
+    submit_history = forms.CharField(
+        widget=TextInput(attrs={
+            'width': '100%',
+            'readonly': True,
+        })
+    )
+
+    class Meta:
+        model=project_history
+        fields={
+            'project_history',
+        }
+
+
 class project_information_form(ModelForm):
     """
     Project information will need to abide by the stricked laws of the new
@@ -1789,7 +1831,25 @@ class project_information_form(ModelForm):
             'project_end_date',
         }
 
+class project_readonly_form(ModelForm):
+    project_description = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+            },
+            attrs={
+                'placeholder': 'Requirement Scope'
+            }
+        ),
+    )
 
+    class Meta:
+        model=project
+        fields = {
+            'project_description'
+        }
 
 
 
@@ -1955,6 +2015,7 @@ class requirement_information_form(ModelForm):
             }
         ),
     )
+
     class Meta:
         model=requirements
         exclude=[
@@ -1995,7 +2056,25 @@ class requirement_items_form(forms.ModelForm):
         ]
 
 
+class requirement_readonly_form(ModelForm):
+    requirement_scope = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+            },
+            attrs={
+                'placeholder': 'Requirement Scope'
+            }
+        ),
+    )
 
+    class Meta:
+        model=requirements
+        fields=[
+            'requirement_scope',
+        ]
 
 class search_customers_form(forms.Form):
     #Just have a simple search field

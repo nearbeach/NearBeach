@@ -224,6 +224,15 @@ def requirement_information(request, requirement_id):
 
     #Setup the initial data for the form
     requirement_results = requirements.objects.get(requirement_id=requirement_id)
+
+    """
+    If the requirement is completed, then we want to send the user to the readonly version. There is no need
+    for the user to edit any of the results after the requirement has been completed.
+    """
+    if requirement_results.requirement_status.requirement_status == "Completed":
+        return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_id}))
+
+
     initial = {
         'requirement_title': requirement_results.requirement_title,
         'requirement_scope': requirement_results.requirement_scope,
@@ -231,13 +240,17 @@ def requirement_information(request, requirement_id):
         'requirement_status': requirement_results.requirement_status,
     }
 
+
     #Load template
     t = loader.get_template('NearBeach/requirement_information.html')
 
     # context
     c = {
+        'requirement_results': requirement_results,
         'requirement_id': requirement_id,
-        'requirement_information_form': requirement_information_form(initial=initial),
+        'requirement_information_form': requirement_information_form(
+            initial=initial,
+        ),
         'permission': permission_results['requirement'],
         'requirement_link_permissions': permission_results['requirement_link'],
         'new_item_permission': permission_results['new_item'],
@@ -483,14 +496,6 @@ def requirement_links_list(request, requirement_id):
     if permission_results['requirement'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
-    """
-    links_results = requirement_links.objects.filter(
-        requirements=requirement_id,
-        is_deleted="FALSE",
-    )
-    item_links_results = requirement_item_links.objects.filter(requirement_item__in=item_results)
-    """
-
     item_results = requirement_item.objects.filter(
         is_deleted="FALSE",
         requirement_id=requirement_id,
@@ -500,7 +505,6 @@ def requirement_links_list(request, requirement_id):
         requirement_id=requirement_id,
         is_deleted="FALSE",
     )
-
 
 
     #Load template
@@ -619,6 +623,43 @@ def requirement_new_link(request, requirement_id, location_id='', destination=''
         'project_results': project_results,
         'task_results': task_results,
 
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def requirement_readonly(request,requirement_id):
+    permission_results = return_user_permission_level(request, None, 'requirement_link')
+
+    if permission_results['requirement_link'] < 2:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #Get Data
+    requirement_results = requirements.objects.get(requirement_id=requirement_id)
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    )
+    bug_results = bug.objects.filter(
+        is_deleted="FALSE",
+        requirements_id=requirement_id,
+    )
+
+    #Load template
+    t = loader.get_template('NearBeach/requirement_information/requirement_readonly.html')
+
+    # context
+    c = {
+        'requirement_readonly_form': requirement_readonly_form(initial={
+            'requirement_scope': requirement_results.requirement_scope,
+        }),
+        'requirement_results': requirement_results,
+        'requirement_item_results': requirement_item_results,
+        'requirement_id': requirement_id,
+        'bug_results': bug_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
