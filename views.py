@@ -2265,6 +2265,7 @@ def login(request):
         RECAPTCHA_PUBLIC_KEY = settings.RECAPTCHA_PUBLIC_KEY
         RECAPTCHA_PRIVATE_KEY = settings.RECAPTCHA_PRIVATE_KEY
 
+    error_text = ''
     # POST
     if request.method == 'POST':
         print("POST")
@@ -2309,6 +2310,8 @@ def login(request):
                 if result['success']:
                     user = auth.authenticate(username=username, password=password)
                     auth.login(request, user)
+                else:
+                    error_text = "Recapcha has rejected your login."
 
 
 
@@ -2386,14 +2389,17 @@ def login(request):
                 return HttpResponseRedirect(reverse('alerts'))
             else:
                 print("User not authenticated")
+                error_text = "User login details have been rejected"
         else:
             print(form.errors)
+            error_text = form.errors
 
     # load template
     t = loader.get_template('NearBeach/login.html')
 
     # context
     c = {
+        'error_text': error_text,
         'login_form': form,
         'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
     }
@@ -3173,12 +3179,12 @@ def new_quote_template(request):
             notes="{{ quote_terms }}",
             organisation_details="""
                 <p>{{ organisation_name }}<br />
-                {{ organisation_address_1 }}<br />
-                {{ organisation_address_2 }}<br />
-                {{ organisation_address_3 }}<br />
-                {{ organisation_suburb }} {{ organisation_postcode }}<br />
-                {{ organisation_region }}<br />
-                {{ organisation_country }}</p>
+                {{ billing_address1 }}<br />
+                {{ billing_address2 }}<br />
+                {{ billing_address3 }}<br />
+                {{ billing_suburb }} {{ billing_postcode }}<br />
+                {{ billing_region }}<br />
+                {{ billing_country }}</p>
             """,
             product_line = "Temp product line",
             service_line = "Temp service line",
@@ -4106,6 +4112,7 @@ def quote_information(request, quote_id):
             quotes_results.quote_terms = form.cleaned_data['quote_terms']
             quotes_results.quote_stage_id = form.cleaned_data['quote_stage_id']
             quotes_results.customer_notes = form.cleaned_data['customer_notes']
+            quotes_results.quote_billing_address = form.cleaned_data['quote_billing_address']
 
             quotes_results.quote_valid_till = convert_to_utc(
                 int(form.cleaned_data['quote_valid_till_year']),
@@ -4170,6 +4177,7 @@ def quote_information(request, quote_id):
         'quote_valid_till_minute': quotes_results.quote_valid_till.minute,
         'quote_valid_till_meridiem': quote_valid_till_meridiem,
         'customer_notes': quotes_results.customer_notes,
+        'quote_billing_address': quotes_results.quote_billing_address,
     }
 
     # Load the template
@@ -5096,7 +5104,10 @@ def update_template_strings(variable,quote_results):
         variable = variable.replace('{{ campus_phone }}', quote_results.quote_billing_address.campus_phone)
         variable = variable.replace('{{ campus_region_id }}', str(quote_results.quote_billing_address.campus_region_id))
         variable = variable.replace('{{ billing_suburb }}', quote_results.quote_billing_address.campus_suburb)
-        variable = variable.replace('{{ billing_suburb }}', quote_results.quote_billing_address.campus_postcode)
+        if quote_results.quote_billing_address.campus_postcode == None:
+            variable = variable.replace('{{ billing_postcode }}', '')
+        else:
+            variable = variable.replace('{{ billing_postcode }}', str(quote_results.quote_billing_address.campus_postcode))
         variable = variable.replace('{{ billing_region }}', str(quote_results.quote_billing_address.campus_region_id))
         variable = variable.replace('{{ billing_country }}', str(quote_results.quote_billing_address.campus_country_id))
     else:

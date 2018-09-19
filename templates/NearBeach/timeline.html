@@ -56,16 +56,18 @@ function end_of_month(input_date) {
     }
 }
 
+
+
 function render_timeline() {
-    //Clear the board
-    $("#timeline").html("");
-
-
-    //Start drawing the board
-    var draw = SVG('timeline').size('30000','100%'); //The width will need to be calculated dynamically in the future.
-    draw.style({minWidth: 100, minHeight: 100});
-    $("#timeline").height(500);
-
+    /*
+    First check that both datepickers are actual dates. If they are not then we will;
+    1.) Alert the user
+    2.) Exit out of this funciton - DO NOT RUN with incorrect dates
+     */
+    if (!Date.parse($("#id_start_date").val()) || !Date.parse($("#id_end_date").val())) {
+        alert("Sorry, but one of the dates is not a functional date and will cause issues!");
+        return;
+    }
 
     //Required Variables
     var start_distance = 600;
@@ -75,6 +77,18 @@ function render_timeline() {
     var _MS_PER_DAY = 1000 * 60 * 60 * 24;
     var start_date = $("#id_start_date").datepicker("getDate");
     var end_date = $("#id_end_date").datepicker("getDate");
+
+
+
+    //Clear the board
+    $("#timeline").html("");
+
+
+    //Start drawing the board
+    var draw = SVG('timeline').size('30000','100%'); //The width will need to be calculated dynamically in the future.
+    draw.style({minWidth: 100, minHeight: 100});
+    $("#timeline").height(500);
+
 
     var current_date = new Date();
     current_date.setDate(start_date.getDate());

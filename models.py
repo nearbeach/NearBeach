@@ -266,6 +266,11 @@ class campus(models.Model):
         'list_of_countries_regions',
         on_delete=models.CASCADE,
     )
+    campus_postcode = models.CharField(
+        max_length=10,
+        null=True,
+        blank=True,
+    )
     campus_country_id = models.ForeignKey(
         'list_of_countries',
         on_delete=models.CASCADE,

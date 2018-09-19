@@ -87,6 +87,7 @@
                     <li>{{ error }}</li>
                 {% endfor %}
             {% endif %}
+            <li>{{ error_text }}</li>
             <li>{{ login_form.username }}</li>
             <li>{{ login_form.password }}</li>
             {% if not RECAPTCHA_SITE_KEY == '' %}
