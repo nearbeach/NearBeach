@@ -2303,7 +2303,7 @@ def login(request):
                     'secret': RECAPTCHA_PRIVATE_KEY,
                     'response': recaptcha_response
                 }
-                response = urlopen(url)
+                response = urlopen(url, urllib.parse.quote_plus(values))
                 result = json.load(response)
 
                 print(result)
