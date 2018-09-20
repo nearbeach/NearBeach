@@ -28,7 +28,8 @@ from weasyprint import HTML
 from django.core.mail import send_mail
 
 #import python modules
-import datetime, json, simplejson
+import datetime, json, simplejson, urllib.parse
+
 
 @login_required(login_url='login')
 def add_campus_to_customer(request, customer_id, campus_id):
