@@ -2304,8 +2304,7 @@ def login(request):
                     'secret': RECAPTCHA_PRIVATE_KEY,
                     'response': recaptcha_response
                 }
-		data = urllib.parse.urlencode(values)
-                response = urlopen(url, data.encode('utf8')
+                response = urlopen(url, urllib.parse.urlencode(values).encode('utf8'))
                 result = json.load(response)
 
                 print(result)
