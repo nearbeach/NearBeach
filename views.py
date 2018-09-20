@@ -25,9 +25,11 @@ from django.http import JsonResponse
 #from weasyprint import HTML
 from urllib.request import urlopen
 from weasyprint import HTML
+from django.core.mail import send_mail
 
 #import python modules
-import datetime, json, simplejson
+import datetime, json, simplejson, urllib.parse
+
 
 @login_required(login_url='login')
 def add_campus_to_customer(request, customer_id, campus_id):
@@ -2302,15 +2304,15 @@ def login(request):
                     'secret': RECAPTCHA_PRIVATE_KEY,
                     'response': recaptcha_response
                 }
-                response = urlopen(url)
+                response = urlopen(url, urllib.parse.urlencode(values).encode('utf8'))
                 result = json.load(response)
+
+                print(result)
 
                 # Check to see if the user is a robot. Success = human
                 if result['success']:
                     user = auth.authenticate(username=username, password=password)
                     auth.login(request, user)
-
-
 
             else:
                 user = auth.authenticate(username=username, password=password)
@@ -3173,12 +3175,12 @@ def new_quote_template(request):
             notes="{{ quote_terms }}",
             organisation_details="""
                 <p>{{ organisation_name }}<br />
-                {{ organisation_address_1 }}<br />
-                {{ organisation_address_2 }}<br />
-                {{ organisation_address_3 }}<br />
-                {{ organisation_suburb }} {{ organisation_postcode }}<br />
-                {{ organisation_region }}<br />
-                {{ organisation_country }}</p>
+                {{ billing_address1 }}<br />
+                {{ billing_address2 }}<br />
+                {{ billing_address3 }}<br />
+                {{ billing_suburb }} {{ billing_postcode }}<br />
+                {{ billing_region }}<br />
+                {{ billing_country }}</p>
             """,
             product_line = "Temp product line",
             service_line = "Temp service line",
@@ -4106,6 +4108,7 @@ def quote_information(request, quote_id):
             quotes_results.quote_terms = form.cleaned_data['quote_terms']
             quotes_results.quote_stage_id = form.cleaned_data['quote_stage_id']
             quotes_results.customer_notes = form.cleaned_data['customer_notes']
+            quotes_results.quote_billing_address = form.cleaned_data['quote_billing_address']
 
             quotes_results.quote_valid_till = convert_to_utc(
                 int(form.cleaned_data['quote_valid_till_year']),
@@ -4170,6 +4173,7 @@ def quote_information(request, quote_id):
         'quote_valid_till_minute': quotes_results.quote_valid_till.minute,
         'quote_valid_till_meridiem': quote_valid_till_meridiem,
         'customer_notes': quotes_results.customer_notes,
+        'quote_billing_address': quotes_results.quote_billing_address,
     }
 
     # Load the template
@@ -5096,7 +5100,10 @@ def update_template_strings(variable,quote_results):
         variable = variable.replace('{{ campus_phone }}', quote_results.quote_billing_address.campus_phone)
         variable = variable.replace('{{ campus_region_id }}', str(quote_results.quote_billing_address.campus_region_id))
         variable = variable.replace('{{ billing_suburb }}', quote_results.quote_billing_address.campus_suburb)
-        variable = variable.replace('{{ billing_suburb }}', quote_results.quote_billing_address.campus_postcode)
+        if quote_results.quote_billing_address.campus_postcode == None:
+            variable = variable.replace('{{ billing_postcode }}', '')
+        else:
+            variable = variable.replace('{{ billing_postcode }}', str(quote_results.quote_billing_address.campus_postcode))
         variable = variable.replace('{{ billing_region }}', str(quote_results.quote_billing_address.campus_region_id))
         variable = variable.replace('{{ billing_country }}', str(quote_results.quote_billing_address.campus_country_id))
     else:

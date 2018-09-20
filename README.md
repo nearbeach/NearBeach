@@ -85,3 +85,26 @@ Github: https://github.com/tinymce/tinymce
 License: GNU Lesser General Public License v2.1
 
 Note: TinyMCE is used for rich text within NearBeach
+
+
+### Geolocation - Python
+Creator(s): Sławomir Kabik
+
+Github: https://github.com/slawek87/geolocation-python
+
+License: BSD 3-Clause
+
+Note: Geolocation-Python is used to contact both Google Maps and Mapbox's API.
+
+
+
+### Weasy Print
+Creator(s): Kozea 
+
+Website: https://weasyprint.org/
+
+Github: https://github.com/Kozea/WeasyPrint
+
+License: BSD 3-Clause
+
+Note: Weasy print is used to render PDF's in NearBeach
