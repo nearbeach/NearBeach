@@ -131,6 +131,44 @@
             <input type="submit" value="Revert to Quote" name="revert_quote" id="revert_quote">
         {% endif %}
     </form>
+    <h2>Quote Links</h2>
+    <table>
+        <tr>
+            <td>Link</td>
+            <td>Description</td>
+        </tr>
+        {% if quotes_results.project_id %}
+            <tr>
+                <td><a href="{% url 'project_information' quotes_results.project_id.project_id %}">PRO{{ quotes_results.project_id.project_id }}</a></td>
+                <td>{{ quotes_results.project_id }}</td>
+            </tr>
+        {% elif quotes_results.task_id %}
+            <tr>
+                <td><a href="{% url 'task_information' quotes_results.task_id.tasks_id %}">TASK{{ quotes_results.task_id.tasks_id }}</a></td>
+                <td>{{ quotes_results.task_id }}</td>
+            </tr>
+        {% elif quotes_results.organisation_id %}
+            <tr>
+                <td><a href="{% url 'organisation_information' quotes_results.organisation_id.organisations_id %}">ORG{{ quotes_results.organisation_id.organisations_id }}</a></td>
+                <td>{{ quotes_results.organisation_id }}</td>
+            </tr>
+        {% elif quotes_results.customer_id %}
+            <tr>
+                <td><a href="{% url 'customer_information' quotes_results.customer_id.customer_id %}">CUST{{ quotes_results.customer_id.customer_id }}</a></td>
+                <td>{{ quotes_results.customer_id }}</td>
+            </tr>
+        {% elif quotes_results.opportunity_id %}
+            <tr>
+                <td><a href="{% url 'opportunity_information' quotes_results.opportunity_id.opportunity_id %}">OPP{{ quotes_results.opportunity_id.opportunity_id }}</a></td>
+                <td>{{ quotes_results.opportunity_id.opportunity_name }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td>NA</td>
+                <td>Sorry, this quote is not linked.</td>
+            </tr>
+        {% endif %}
+    </table>
     <form method="post" class="new_line_item" id="new_line_item"></form>
     <form method="post" class="list_of_line_items" id="list_of_line_items"></form>
     {% if quote_permission > 1 %}
