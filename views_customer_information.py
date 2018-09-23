@@ -65,7 +65,7 @@ def information_customer_contact_history(request, customer_id):
                 customer_instance = customer.objects.get(customer_id=customer_id)
 
                 submit_history = contact_history(
-                    organisations_id=customer_instance.organisations_id,
+                    organisation_id=customer_instance.organisation_id,
                     customer_id=customer_instance,
                     contact_type=contact_type,
                     contact_date=contact_date,
@@ -108,7 +108,7 @@ def information_customer_contact_history(request, customer_id):
 
 
 @login_required(login_url='login')
-def information_customer_documents_list(request, customer_id, organisations_id=''):
+def information_customer_documents_list(request, customer_id, organisation_id=''):
     permission_results = return_user_permission_level(request, None,['customer','document'])
 
     if permission_results['customer'] == 0:
@@ -122,7 +122,7 @@ def information_customer_documents_list(request, customer_id, organisations_id='
     )
     try:
         organisation_document_results = document_permission.objects.filter(
-            organisations_id=organisations_id,
+            organisation_id=organisation_id,
             customer_id__isnull=True,
             is_deleted="FALSE",
         )
@@ -172,7 +172,7 @@ def information_customer_documents_upload(request, customer_id):
 
         document_permissions_save = document_permission(
             document_key=document_save,
-            organisations_id=customer_results.organisations_id,
+            organisation_id=customer_results.organisation_id,
             customer_id=customer_results,
             change_user=request.user,
         )

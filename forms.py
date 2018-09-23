@@ -435,13 +435,13 @@ class email_form(ModelForm):
         if destination == 'organisation':
             customer_results = customer.objects.filter(
                 is_deleted="FALSE",
-                organisations_id=location_id
+                organisation_id=location_id
             )
             self.fields['to_email'].required=False
         elif destination == "customer":
             customer_results = customer.objects.filter(
                 is_deleted="FALSE",
-                organisations_id__in=customer.objects.filter(customer_id=location_id).values('organisations_id')
+                organisation_id__in=customer.objects.filter(customer_id=location_id).values('organisation_id')
             )
 
             #If customer has no organisation associated with it
@@ -452,19 +452,19 @@ class email_form(ModelForm):
         elif destination == "project":
             customer_results = customer.objects.filter(
                 is_deleted="FALSE",
-                organisations_id=project.objects.get(project_id=location_id).organisations_id.organisations_id
+                organisation_id=project.objects.get(project_id=location_id).organisation_id.organisation_id
             )
         elif destination == "task":
             customer_results = customer.objects.filter(
                 is_deleted="FALSE",
-                organisations_id=task.objects.get(tasks_id=location_id).organisations_id.organisations_id
+                organisation_id=task.objects.get(tasks_id=location_id).organisation_id.organisation_id
             )
         elif destination == "opportunity":
             opportunity_results=opportunity.objects.get(opportunity_id=location_id)
-            if opportunity_results.organisations_id:
+            if opportunity_results.organisation_id:
                 customer_results = customer.objects.filter(
                     is_deleted="FALSE",
-                    organisations_id=opportunity_results.organisations_id.organisations_id
+                    organisation_id=opportunity_results.organisation_id.organisation_id
                 )
             else:
                 customer_results = customer.objects.filter(
@@ -487,21 +487,21 @@ class email_form(ModelForm):
             if quote_results.project_id:
                 customer_results = customer.objects.filter(
                     is_deleted="FALSE",
-                    organisations_id=project.objects.get(project_id=quote_results.project_id.project_id).organisations_id.organisations_id
+                    organisation_id=project.objects.get(project_id=quote_results.project_id.project_id).organisation_id.organisation_id
                 )
             elif quote_results.task_id:
                 customer_results = customer.objects.filter(
                     is_deleted="FALSE",
-                    organisations_id=task.objects.get(tasks_id=quote_results.task_id.tasks_id).organisations_id.organisations_id
+                    organisation_id=task.objects.get(tasks_id=quote_results.task_id.tasks_id).organisation_id.organisation_id
                 )
             elif quote_results.opportunity_id:
                 opportunity_results=opportunity.objects.get(
                         opportunity_id=quote_results.opportunity_id.opportunity_id
                 )
-                if opportunity_results.organisations_id:
+                if opportunity_results.organisation_id:
                     customer_results = customer.objects.filter(
                         is_deleted="FALSE",
-                        organisations_id=opportunity_results.organisations_id.organisations_id
+                        organisation_id=opportunity_results.organisation_id.organisation_id
                     )
                 else:
                     customer_results = customer.objects.filter(
@@ -516,7 +516,7 @@ class email_form(ModelForm):
             elif quote_results.organisation_id:
                 customer_results = customer.objects.filter(
                     is_deleted="FALSE",
-                    organisations_id=quote_results.organisation_id
+                    organisation_id=quote_results.organisation_id
                 )
             else:
                 print("SOMETHING FUCKED UP!!!")
@@ -1053,7 +1053,7 @@ class new_customer_form(forms.Form):
             'type':'email',
         }),
     )
-    organisations_id=forms.ModelChoiceField(
+    organisation_id=forms.ModelChoiceField(
         label="Organisation",
         widget=forms.Select,
         queryset=organisations_results,
@@ -1200,7 +1200,7 @@ class new_opportunity_form(ModelForm):
             'style': 'width: 200px',
         })
     )
-    organisations_id=forms.ModelChoiceField(
+    organisation_id=forms.ModelChoiceField(
         label="Organisations",
         queryset=organisaion_results,
         required=False,
@@ -1308,7 +1308,7 @@ class new_project_form(forms.Form):
             }
         )
     )
-    organisations_id=forms.ModelChoiceField(
+    organisation_id=forms.ModelChoiceField(
         label="Organisation",
         widget=forms.Select,
         queryset=organisations_results,
@@ -1512,7 +1512,7 @@ class new_task_form(forms.Form):
             }
         ),
     )
-    organisations_id=forms.ModelChoiceField(
+    organisation_id=forms.ModelChoiceField(
         label="Organisation",
         widget=forms.Select,
         queryset=organisations_results,
@@ -1870,7 +1870,7 @@ class quote_information_form(ModelForm):
         if quote_instance.organisation_id:
             campus_results = campus.objects.filter(
                 is_deleted="FALSE",
-                organisations_id=quote_instance.organisation_id,
+                organisation_id=quote_instance.organisation_id,
             )
         elif quote_instance.customer_id:
             campus_results = campus.objects.filter(

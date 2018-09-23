@@ -31,14 +31,14 @@ def new_requirement(request):
             select_users = form.cleaned_data['select_users']
 
 
-            requirements_save = requirement(
+            requirement_save = requirement(
                 requirement_title=requirement_title,
                 requirement_scope=requirement_scope,
                 requirement_type=requirement_type,
                 requirement_status=form.cleaned_data['requirement_status'],
                 change_user=request.user,
             )
-            requirements_save.save()
+            requirement_save.save()
 
             """
             Permissions granting
@@ -51,8 +51,8 @@ def new_requirement(request):
                 for row in select_groups:
                     group_instance = group.objects.get(group_name=row)
                     permission_save = requirement_permission(
-                        requirements_id=requirements_save.requirement_id,
-                        groups_id=group_instance,
+                        requirement_id=requirement_save.requirement_id,
+                        group_id=group_instance,
                         change_user=request.user,
                     )
                     permission_save.save()
@@ -63,7 +63,7 @@ def new_requirement(request):
                 for row in select_users:
                     assigned_user_instance = auth.models.User.objects.get(username=row)
                     permission_save = requirement_permission(
-                        requirements_id=requirements_save.requirement_id,
+                        requirement_id=requirement_save.requirement_id,
                         assigned_user=assigned_user_instance,
                         change_user=request.user,
                     )
@@ -71,14 +71,14 @@ def new_requirement(request):
 
             if (give_all_access):
                 permission_save = requirement_permission(
-                    requirements_id=requirements_save.requirement_id,
-                    all_users='TRUE',
+                    requirement_id=requirement_save.requirement_id,
+                    all_user='TRUE',
                     change_user=request.user,
                 )
                 permission_save.save()
 
 
-            return HttpResponseRedirect(reverse(requirement_information, args={requirements_save.requirement_id}))
+            return HttpResponseRedirect(reverse(requirement_information, args={requirement_save.requirement_id}))
         else:
             print(form.errors)
 
@@ -126,7 +126,7 @@ def requirement_documents_uploads(request, location_id, destination):
             change_user=request.user,
         )
         if destination == "requirement":
-            document_permissions_save.requirements = requirement.objects.get(requirement_id=location_id)
+            document_permissions_save.requirement = requirement.objects.get(requirement_id=location_id)
         else:
             document_permissions_save.requirement_item = requirement_item.objects.get(requirement_item_id=location_id)
 
@@ -135,7 +135,7 @@ def requirement_documents_uploads(request, location_id, destination):
     if destination == "requirement":
         document_results = document_permission.objects.filter(
             is_deleted='FALSE',
-            requirements=location_id,
+            requirement=location_id,
         )
     else:
         document_results = document_permission.objects.filter(
@@ -171,20 +171,20 @@ def requirement_information(request, requirement_id):
     if request.method == "POST" and permission_results['requirement'] > 1:
         form = requirement_information_form(request.POST)
         if form.is_valid():
-            requirements_update = requirement.objects.get(requirement_id=requirement_id)
-            requirements_update.requirement_title = form.cleaned_data['requirement_title']
-            requirements_update.requirement_scope = form.cleaned_data['requirement_scope']
-            requirements_update.requirement_type = form.cleaned_data['requirement_type']
-            requirements_update.requirement_status = form.cleaned_data['requirement_status']
-            requirements_update.change_user = request.user
-            requirements_update.save()
+            requirement_update = requirement.objects.get(requirement_id=requirement_id)
+            requirement_update.requirement_title = form.cleaned_data['requirement_title']
+            requirement_update.requirement_scope = form.cleaned_data['requirement_scope']
+            requirement_update.requirement_type = form.cleaned_data['requirement_type']
+            requirement_update.requirement_status = form.cleaned_data['requirement_status']
+            requirement_update.change_user = request.user
+            requirement_update.save()
 
             """
             Now we need to update any kanban board cards connected to this project.
             """
             kanban_card_results = kanban_card.objects.filter(
                 is_deleted="FALSE",
-                requirements=requirement_id,
+                requirement=requirement_id,
             )
             for row in kanban_card_results:
                 print('hello world')
@@ -209,10 +209,10 @@ def requirement_information(request, requirement_id):
         requirement_permission_results = requirement_permission.objects.filter(
             Q(
                 Q(assigned_user=request.user) # User has permission
-                | Q(groups_id__in=user_groups_results.values('groups_id')) # User's group have permission
-                | Q(all_users='TRUE') # All users have access
+                | Q(group_id__in=user_groups_results.values('group_id')) # User's group have permission
+                | Q(all_user='TRUE') # All users have access
             )
-            & Q(requirements=requirement_id)
+            & Q(requirement=requirement_id)
         )
 
         if (not requirement_permission_results):
@@ -404,7 +404,7 @@ def requirement_items_new_link(request, requirement_item_id, location_id= '', de
             requirement_item_link_save.task_id = task_instance
         elif destination == "organisation":
             organisation_instance = organisation.objects.get(organisation_id=location_id)
-            requirement_item_link_save.organisations_id = organisation_instance
+            requirement_item_link_save.organisation_id = organisation_instance
         else:
             return HttpResponseBadRequest("You can only choose: project, task, or organisation")
 
@@ -447,7 +447,7 @@ def requirement_items_new_link(request, requirement_item_id, location_id= '', de
     and project.project_status IN ('New','Open')
     and project.project_status IN ('New','Open')
     and project.project_id = project_group.project_id_id
-    and project_group.groups_id_id = user_group.groups_id
+    and project_group.group_id_id = user_group.group_id
     and user_group.username_id = %s
     """, [request.user.id])
     project_results = namedtuplefetchall(cursor)
@@ -467,9 +467,9 @@ def requirement_items_new_link(request, requirement_item_id, location_id= '', de
     where 1 = 1
     and task.task_status in ('New','Open')
     and task.tasks_id = tasks_group.tasks_id_id
-    and tasks_group.groups_id_id = user_group.groups_id
+    and tasks_group.group_id_id = user_group.group_id
     and user_group.username_id = %s
-    and task.organisations_id_id=organisation.organisations_id    
+    and task.organisation_id_id=organisation.organisation_id    
     """, [request.user.id])
     task_results = namedtuplefetchall(cursor)
 
@@ -537,7 +537,7 @@ def requirement_new_link(request, requirement_id, location_id='', destination=''
 
         print("Trying to save")
         requirement_link_save = requirement_link(
-            requirements=requirement.objects.get(requirement_id=requirement_id),
+            requirement=requirement.objects.get(requirement_id=requirement_id),
             change_user=request.user,
         )
 
@@ -549,7 +549,7 @@ def requirement_new_link(request, requirement_id, location_id='', destination=''
             requirement_link_save.task_id = task_instance
         elif destination == "organisation":
             organisation_instance = organisation.objects.get(organisation_id=location_id)
-            requirement_link_save.organisations_id = organisation_instance
+            requirement_link_save.organisation_id = organisation_instance
         else:
             return HttpResponseBadRequest("You can only choose: project, task, or organisation")
 
@@ -588,7 +588,7 @@ def requirement_new_link(request, requirement_id, location_id='', destination=''
         and project.project_status IN ('New','Open')
         and project.project_status IN ('New','Open')
         and project.project_id = project_group.project_id_id
-        and project_group.groups_id_id = user_group.groups_id
+        and project_group.group_id_id = user_group.group_id
         and user_group.username_id = %s
         """, [request.user.id])
     project_results = namedtuplefetchall(cursor)
@@ -608,9 +608,9 @@ def requirement_new_link(request, requirement_id, location_id='', destination=''
         where 1 = 1
         and task.task_status in ('New','Open')
         and task.tasks_id = tasks_group.tasks_id_id
-        and tasks_group.groups_id_id = user_group.groups_id
+        and tasks_group.group_id_id = user_group.group_id
         and user_group.username_id = %s
-        and task.organisations_id_id=organisation.organisations_id    
+        and task.organisation_id_id=organisation.organisation_id    
         """, [request.user.id])
     task_results = namedtuplefetchall(cursor)
 
@@ -643,7 +643,7 @@ def requirement_readonly(request,requirement_id):
     )
     bug_results = bug.objects.filter(
         is_deleted="FALSE",
-        requirements_id=requirement_id,
+        requirement_id=requirement_id,
     )
 
     #Load template

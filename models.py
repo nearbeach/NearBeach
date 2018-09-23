@@ -584,7 +584,7 @@ class email_contact(models.Model):
         blank=True,
         null=True,
     )
-    organisations = models.ForeignKey(
+    organisation = models.ForeignKey(
         'organisation',
         on_delete=models.CASCADE,
         blank=True,

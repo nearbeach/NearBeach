@@ -171,13 +171,13 @@
     <h2>Associated Tasks</h2>
     {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
         {% if project_permissions > 1 %}
-            <a href="{% url 'associated_tasks' project_results.project_id %}">Associate Task</a>
+            <a href="{% url 'associated_task' project_results.project_id %}">Associate Task</a>
         {% endif %}
     {% endif %}
-    {% if associated_tasks_results %}
+    {% if associated_task_results %}
             <table>
             <tr class="header"><td>Task Id</td><td>Short Description</td><td>End Date</td></tr>
-            {% for associated_task_row in associated_tasks_results %}
+            {% for associated_task_row in associated_task_results %}
                 <tr>
                 <td><a href="{% url 'task_information' associated_task_row.tasks_id %}">Task - {{ associated_task_row.tasks_id }}</a></td>
                 <td>{{ associated_task_row.task_short_description }}</td>

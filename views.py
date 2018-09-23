@@ -41,7 +41,7 @@ def add_campus_to_customer(request, customer_id, campus_id):
         )
 
         # Save the new campus
-        submit_campus = customers_campus(
+        submit_campus = customer_campus(
             customer_id=customer_instance,
             campus_id=campus_instances,
             customer_phone='',
@@ -51,12 +51,12 @@ def add_campus_to_customer(request, customer_id, campus_id):
         submit_campus.save()
 
         response_data = {}
-        response_data['customers_campus_id'] = submit_campus.customers_campus_id
+        response_data['customer_campus_id'] = submit_campus.customer_campus_id
 
         # Go to the form.
-        #return HttpResponseRedirect(reverse('customers_campus_information', args={submit_campus.customers_campus_id, 'CUST'}))
+        #return HttpResponseRedirect(reverse('customer_campus_information', args={submit_campus.customer_campus_id, 'CUST'}))
         #return HttpResponse(json.dumps(response_data), content_type="application/json")
-        return JsonResponse({'customers_campus_id': submit_campus.customers_campus_id})
+        return JsonResponse({'customer_campus_id': submit_campus.customer_campus_id})
     else:
         return HttpResponseBadRequest("Sorry, you can only do this in post.")
 
@@ -133,7 +133,7 @@ def assign_customer_project_task(request, customer_id):
     if request.POST:
 
         assign_projects = request.POST.getlist('project_checkbox')
-        assign_tasks = request.POST.getlist('task_checkbox')
+        assign_task = request.POST.getlist('task_checkbox')
 
         # Instance
         customer_instance = customer.objects.get(customer_id=customer_id)
@@ -147,22 +147,22 @@ def assign_customer_project_task(request, customer_id):
             print("Assigning project: " + project_instance.project_name + " for customer: " + customer_instance.customer_first_name)
 
             # Project customer
-            project_customers_submit = project_customer(
+            project_customer_submit = project_customer(
                 project_id=project_instance,
                 customer_id=customer_instance,
                 change_user=request.user,
                 # Customer description will have to be programmed in at a later date
             )
-            if not project_customers_submit.save():
+            if not project_customer_submit.save():
                 print("Error saving")
 
 
         print("Assigning customer task")
-        for row in assign_tasks:
+        for row in assign_task:
             task_instance = task.objects.get(task_id=row)
             print("Assigning task: " + task_instance.task_short_description + " for customer: " + customer_instance.customer_first_name)
 
-            assign_save = tasks_customer(
+            assign_save = task_customer(
                 task_id=task_instance,
                 customer_id=customer_instance,
                 change_user=request.user,
@@ -189,7 +189,7 @@ def assign_customer_project_task(request, customer_id):
 		-- USER_GROUPS CONDITIONS
 		AND user_group.username_id = %s -- INSERT FILTER HERE!
 		-- JOINS --
-		AND user_group.groups_id = project_group.groups_id_id
+		AND user_group.group_id = project_group.group_id_id
 		AND project_group.project_id_id = project.project_id
 		-- END JOINS --	
 	""", [current_user.id])
@@ -200,14 +200,14 @@ def assign_customer_project_task(request, customer_id):
 		task.*
 		FROM
 		user_group
-		, tasks_group
+		, task_group
 		, task
 		WHERE 1=1
 		-- USER_GROUPS CONDITIONS
 		AND user_group.username_id = %s
 		-- JOINS --
-		AND user_group.groups_id = tasks_group.groups_id_id
-		AND tasks_group.task_id_id=task.task_id
+		AND user_group.group_id = task_group.group_id_id
+		AND task_group.task_id_id=task.task_id
 		-- END JOINS --
 	""", [current_user.id])
     task_results = namedtuplefetchall(cursor)
@@ -232,17 +232,17 @@ def assigned_group_add(request, location_id, destination, group_id=None):
         if destination == "project":
             project_groups_submit = project_group(
                 project_id=project.objects.get(project_id=location_id),
-                groups_id=group.objects.get(group_id=group_id),
+                group_id=group.objects.get(group_id=group_id),
                 change_user=request.user,
             )
             project_groups_submit.save()
         elif destination == "task":
-            tasks_groups_submit = tasks_group(
+            task_groups_submit = task_group(
                 task_id=task.objects.get(task_id=location_id),
-                groups_id=group.objects.get(group_id=group_id),
+                group_id=group.objects.get(group_id=group_id),
                 change_user=request.user,
             )
-            tasks_groups_submit.save()
+            task_groups_submit.save()
 
 
     if destination == "project":
@@ -252,16 +252,16 @@ def assigned_group_add(request, location_id, destination, group_id=None):
             group_id__in = project_group.objects.filter(
                 is_deleted="FALSE",
                 project_id=location_id,
-            ).values('groups_id')
+            ).values('group_id')
         )
     elif destination == "task":
         groups_add_results = group.objects.filter(
             is_deleted="FALSE",
         ).exclude(
-            group_id__in=tasks_group.objects.filter(
+            group_id__in=task_group.objects.filter(
                 is_deleted="FALSE",
                 task_id=location_id,
-            ).values('groups_id')
+            ).values('group_id')
         )
 
     # Load the template
@@ -285,9 +285,9 @@ def assigned_group_delete(request, location_id, destination):
 
 
     elif destination == "task":
-        tasks_groups_save = tasks_group.objects.get(id = location_id)
-        tasks_groups_save.is_deleted = "TRUE"
-        if not tasks_groups_save.save():
+        task_groups_save = task_group.objects.get(id = location_id)
+        task_groups_save.is_deleted = "TRUE"
+        if not task_groups_save.save():
             print("Error saving task")
 
 
@@ -310,7 +310,7 @@ def assigned_group_list(request, location_id, destination):
             project_id = location_id
         )
     elif destination=="task":
-        group_list_results = tasks_group.objects.filter(
+        group_list_results = task_group.objects.filter(
             is_deleted="FALSE",
             task_id=location_id,
         )
@@ -378,29 +378,29 @@ def associated_projects(request, task_id):
 
 
 @login_required(login_url='login')
-def associated_tasks(request, project_id):
+def associated_task(request, project_id):
     """
 	We want the ability for the user to assign any task to the current
 	project that their group owns. The user will have the ability to
 	check to see if they want only new or open, or if they would like
 	to see closed task too.
 	"""
-    search_tasks = search_task_form()
+    search_task = search_task_form()
 
     # POST
     if request.method == "POST":
         # TO DO! EXTRACT POST AND FILTER RESULTS!!!
-        tasks_results = task.objects.filter()
+        task_results = task.objects.filter()
     else:
-        tasks_results = task.objects.filter()
+        task_results = task.objects.filter()
 
     # Load the template
-    t = loader.get_template('NearBeach/associated_tasks.html')
+    t = loader.get_template('NearBeach/associated_task.html')
 
     # context
     c = {
-        'tasks_results': tasks_results,
-        'search_tasks': search_tasks,
+        'task_results': task_results,
+        'search_task': search_task,
         'project_id': project_id,
     }
 
@@ -448,9 +448,9 @@ def bug_add(request,location_id, destination,bug_id, bug_client_id):
         if destination=="project":
             bug_submit.project=project.objects.get(project_id=location_id)
         elif destination=="task":
-            bug_submit.tasks = task.objects.get(task_id=location_id)
+            bug_submit.task = task.objects.get(task_id=location_id)
         else:
-            bug_submit.requirements=requirement.objects.get(requirement_id=location_id)
+            bug_submit.requirement=requirement.objects.get(requirement_id=location_id)
 
         #Save the bug
         bug_submit.save()
@@ -590,12 +590,12 @@ def bug_list(request, location_id=None, destination=None):
     elif destination == "task":
         bug_results = bug.objects.filter(
             is_deleted="FALSE",
-            tasks=location_id,
+            task=location_id,
         )
     elif destination == "requirement":
         bug_results = bug.objects.filter(
             is_deleted="FALSE",
-            requirements=location_id,
+            requirement=location_id,
         )
     else:
         bug_results = bug.objects.filter(
@@ -640,13 +640,13 @@ def bug_search(request, location_id=None, destination=None):
             elif destination == "task":
                 existing_bugs = bug.objects.filter(
                     is_deleted="FALSE",
-                    tasks=location_id,
+                    task=location_id,
                     bug_client_id=bug_client_id,
                 )
             else:
                 existing_bugs = bug.objects.filter(
                     is_deleted="FALSE",
-                    requirements=location_id,
+                    requirement=location_id,
                     bug_client_id=bug_client_id,
                 )
             #The values in the URL
@@ -743,7 +743,7 @@ def campus_information(request, campus_information):
 
 
             # Save the new campus
-            submit_campus = customers_campus(
+            submit_campus = customer_campus(
                 customer_id=customer_instance,
                 campus_id=campus_instances,
                 customer_phone='',
@@ -753,15 +753,15 @@ def campus_information(request, campus_information):
             submit_campus.save()
 
             # Go to the form.
-            return HttpResponseRedirect(reverse('customers_campus_information', args={submit_campus.customers_campus_id,'CAMP'}))
+            return HttpResponseRedirect(reverse('customer_campus_information', args={submit_campus.customer_campus_id,'CAMP'}))
 
 
     # Get Data
-    customer_campus_results = customers_campus.objects.filter(
+    customer_campus_results = customer_campus.objects.filter(
         campus_id=campus_information,
         is_deleted='FALSE',
     )
-    add_customers_results = customer.objects.filter(organisation_id=campus_results.organisation_id)
+    add_customer_results = customer.objects.filter(organisation_id=campus_results.organisation_id)
     countries_regions_results = list_of_country_region.objects.all()
     countries_results = list_of_country.objects.all()
 
@@ -785,7 +785,7 @@ def campus_information(request, campus_information):
         'campus_results': campus_results,
         'campus_information_form': campus_information_form(instance=campus_results),
         'customer_campus_results': customer_campus_results,
-        'add_customers_results': add_customers_results,
+        'add_customer_results': add_customer_results,
         'countries_regions_results': countries_regions_results,
         'countries_results': countries_results,
         'permission': permission_results['organisation_campus'],
@@ -799,7 +799,7 @@ def campus_information(request, campus_information):
 
 
 @login_required(login_url='login')
-def customers_campus_information(request, customer_campus_id, customer_or_org):
+def customer_campus_information(request, customer_campus_id, customer_or_org):
     permission_results = return_user_permission_level(request, None, 'organisation_campus')
 
     if permission_results['organisation_campus'] == 0:
@@ -810,7 +810,7 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
         form = customer_campus_form(request.POST)
         if form.is_valid():
             # Save the data
-            save_data = customers_campus.objects.get(customers_campus_id=customer_campus_id)
+            save_data = customer_campus.objects.get(customer_campus_id=customer_campus_id)
 
             save_data.customer_phone = form.cleaned_data['customer_phone']
             save_data.customer_fax = form.cleaned_data['customer_fax']
@@ -828,7 +828,7 @@ def customers_campus_information(request, customer_campus_id, customer_or_org):
                 return HttpResponseRedirect(reverse('customer_information', args={save_data.customer_id.customer_id}))
 
     # Get Data
-    customer_campus_results = customers_campus.objects.get(customers_campus_id=customer_campus_id)
+    customer_campus_results = customer_campus.objects.get(customer_campus_id=customer_campus_id)
     campus_results = campus.objects.get(pk=customer_campus_results.campus_id.campus_id)
 
 
@@ -925,7 +925,7 @@ def customer_information(request, customer_id):
 
     task_results = task.objects.filter(
         is_deleted="FALSE",
-        task_id__in=tasks_customer.objects.filter(
+        task_id__in=task_customer.objects.filter(
             is_deleted="FALSE",
             customer_id=customer_id,
         ).values('task_id')
@@ -940,8 +940,8 @@ def customer_information(request, customer_id):
     opportunity_permissions_results = opportunity_permission.objects.filter(
         Q(
             Q(assigned_user=request.user)  # User has permission
-            | Q(groups_id__in=user_groups_results.values('groups_id'))  # User's group have permission
-            | Q(all_users='TRUE')  # All users have access
+            | Q(group_id__in=user_groups_results.values('group_id'))  # User's group have permission
+            | Q(all_user='TRUE')  # All users have access
         )
     )
     opportunity_results = opportunity.objects.filter(
@@ -949,14 +949,14 @@ def customer_information(request, customer_id):
         opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
     )
     #For when customer have an organisation
-    campus_results = customers_campus.objects.filter(
+    campus_results = customer_campus.objects.filter(
         customer_id=customer_id,
         is_deleted='FALSE',
     )
     #For when customer do not have an organistion
     customer_campus_results = campus.objects.filter(
         is_deleted="FALSE",
-        customers=customer_id,
+        customer=customer_id,
     )
 
 
@@ -1080,7 +1080,7 @@ def dashboard_active_quotes(request):
 
 
 @login_required(login_url='login')
-def dashboard_active_requirements(request):
+def dashboard_active_requirement(request):
     requirement_results = requirement.objects.filter(
         is_deleted="FALSE",
         requirement_status__in=list_of_requirement_status.objects.filter(
@@ -1091,7 +1091,7 @@ def dashboard_active_requirements(request):
     )
 
     # Load the template
-    t = loader.get_template('NearBeach/dashboard_widgets/active_requirements.html')
+    t = loader.get_template('NearBeach/dashboard_widgets/active_requirement.html')
 
 
     # context
@@ -1103,7 +1103,7 @@ def dashboard_active_requirements(request):
 
 
 @login_required(login_url='login')
-def dashboard_active_tasks(request):
+def dashboard_active_task(request):
     # Get Data
     assigned_users_results = assigned_user.objects.filter(
         is_deleted='FALSE',
@@ -1115,7 +1115,7 @@ def dashboard_active_tasks(request):
         .values('task_id__task_id','task_id__task_short_description','task_id__task_end_date').distinct()
 
     # Load the template
-    t = loader.get_template('NearBeach/dashboard_widgets/active_tasks.html')
+    t = loader.get_template('NearBeach/dashboard_widgets/active_task.html')
 
     # context
     c = {
@@ -1131,7 +1131,7 @@ def dashboard_group_active_projects(request):
         is_deleted="FALSE",
         project_id__in=project_group.objects.filter(
             is_deleted="FALSE",
-            groups_id__in=user_group.objects.filter(
+            group_id__in=user_group.objects.filter(
                 is_deleted="FALSE",
                 username_id=request.user.id
             ).values('groups'),
@@ -1150,23 +1150,23 @@ def dashboard_group_active_projects(request):
 
 
 @login_required(login_url='login')
-def dashboard_group_active_tasks(request):
-    active_tasks_results = task.objects.filter(
+def dashboard_group_active_task(request):
+    active_task_results = task.objects.filter(
         is_deleted="FALSE",
-        task_id__in=tasks_group.objects.filter(
+        task_id__in=task_group.objects.filter(
             is_deleted="FALSE",
-            groups_id__in=user_group.objects.filter(
+            group_id__in=user_group.objects.filter(
                 is_deleted="FALSE",
                 username_id=request.user.id
             ).values('groups')
         ).values('task_id')
     )
     # Load the template
-    t = loader.get_template('NearBeach/dashboard_widgets/group_active_tasks.html')
+    t = loader.get_template('NearBeach/dashboard_widgets/group_active_task.html')
 
     # context
     c = {
-        'active_tasks_results': active_tasks_results,
+        'active_task_results': active_task_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -1214,7 +1214,7 @@ def dashboard_group_opportunities(request):
         AND user_group.is_deleted = 'FALSE'
         )	
         -- All users
-        OR opportunity_permission.all_users = 'TRUE'
+        OR opportunity_permission.all_user = 'TRUE'
         )
         AND opportunity_permission.is_deleted = 'FALSE'
     """,[current_user.id,current_user.id])
@@ -1280,19 +1280,19 @@ def dashboard_opportunities(request):
 
 
 @login_required(login_url='login')
-def delete_campus_contact(request, customers_campus_id, cust_or_camp):
+def delete_campus_contact(request, customer_campus_id, cust_or_camp):
     """
     So... I will need to add in security to define IF a user can do this action
     """
-    save_customers_campus = customers_campus.objects.get(pk=customers_campus_id)
-    save_customers_campus.is_deleted = "TRUE"
-    save_customers_campus.change_user = request.user
-    save_customers_campus.save()
+    save_customer_campus = customer_campus.objects.get(pk=customer_campus_id)
+    save_customer_campus.is_deleted = "TRUE"
+    save_customer_campus.change_user = request.user
+    save_customer_campus.save()
 
     if cust_or_camp=="CAMP":
-        return HttpResponseRedirect(reverse('campus_information', args={save_customers_campus.campus_id.organisations_campus_id}))
+        return HttpResponseRedirect(reverse('campus_information', args={save_customer_campus.campus_id.organisations_campus_id}))
     else:
-        return HttpResponseRedirect(reverse('customer_information', args={save_customers_campus.customer_id.customer_id}))
+        return HttpResponseRedirect(reverse('customer_information', args={save_customer_campus.customer_id.customer_id}))
 
 
 @login_required(login_url='login')
@@ -1416,7 +1416,7 @@ def email(request,location_id,destination):
             for row in form.cleaned_data['to_email']:
                 email_contact_submit=email_contact(
                     email_content=email_content_submit,
-                    to_customers=customer.objects.get(customer_id=row.customer_id),
+                    to_customer=customer.objects.get(customer_id=row.customer_id),
                     change_user=request.user,
                     is_private=form.cleaned_data['is_private'],
                 )
@@ -1425,7 +1425,7 @@ def email(request,location_id,destination):
             for row in form.cleaned_data['cc_email']:
                 email_contact_submit = email_contact(
                     email_content=email_content_submit,
-                    cc_customers=customer.objects.get(customer_id=row.customer_id),
+                    cc_customer=customer.objects.get(customer_id=row.customer_id),
                     change_user = request.user,
                     is_private=form.cleaned_data['is_private'],
                 )
@@ -1434,7 +1434,7 @@ def email(request,location_id,destination):
             for row in form.cleaned_data['bcc_email']:
                 email_contact_submit = email_contact(
                     email_content=email_content_submit,
-                    bcc_customers=customer.objects.get(customer_id=row.customer_id),
+                    bcc_customer=customer.objects.get(customer_id=row.customer_id),
                     change_user=request.user,
                     is_private=form.cleaned_data['is_private'],
                 )
@@ -1459,7 +1459,7 @@ def email(request,location_id,destination):
             elif destination == "task":
                 email_contact_submit = email_contact(
                     email_content=email_content_submit,
-                    tasks=task.objects.get(task_id=location_id),
+                    task=task.objects.get(task_id=location_id),
                     change_user=request.user,
                     is_private=form.cleaned_data['is_private'],
                 )
@@ -1540,7 +1540,7 @@ def email(request,location_id,destination):
     elif destination == "task":
         customer_results = customer.objects.filter(
             is_deleted="FALSE",
-            customer_id = tasks_customer.objects.filter(
+            customer_id = task_customer.objects.filter(
                 is_deleted="FALSE",
                 task_id=location_id,
             ).values('customer_id')
@@ -1623,8 +1623,8 @@ def email_history(request,location_id,destination):
             is_deleted="FALSE",
             email_content_id__in=email_contact.objects.filter(
                 (
-                        Q(to_customers=location_id) |
-                        Q(cc_customers=location_id)
+                        Q(to_customer=location_id) |
+                        Q(cc_customer=location_id)
                 ) &
                 Q(is_deleted="FALSE") &
                 Q(
@@ -1715,17 +1715,17 @@ def email_information(request,email_content_id):
     to_email_results = email_contact.objects.filter(
         is_deleted="FALSE",
         email_content_id=email_content_id,
-        to_customers__isnull=False,
+        to_customer__isnull=False,
     )
     cc_email_results = email_contact.objects.filter(
         is_deleted="FALSE",
         email_content_id=email_content_id,
-        cc_customers__isnull=False,
+        cc_customer__isnull=False,
     )
     bcc_email_results = email_contact.objects.filter(
         is_deleted="FALSE",
         email_content_id=email_content_id,
-        bcc_customers__isnull=False,
+        bcc_customer__isnull=False,
     )
 
     #Check to make sure it isn't private
@@ -1798,8 +1798,8 @@ def kanban_edit_card(request,kanban_card_id):
     kanban_card_results = kanban_card.objects.get(kanban_card_id=kanban_card_id)
     if (
         kanban_card_results.project
-        or kanban_card_results.tasks
-        or kanban_card_results.requirements
+        or kanban_card_results.task
+        or kanban_card_results.requirement
     ):
         linked_card = True
     else:
@@ -1812,7 +1812,7 @@ def kanban_edit_card(request,kanban_card_id):
         return HttpResponseRedirect(reverse('permission_denied'))
 
 
-    if request.method == "POST" and permission_results > 1:
+    if request.method == "POST" and permission_results['kanban'] > 1:
         form = kanban_card_form(
             request.POST,
             kanban_board_id=kanban_card_results.kanban_board_id,
@@ -2080,7 +2080,7 @@ def kanban_new_link(request,kanban_board_id,location_id='',destination=''):
             if (
                     (kanban_card.objects.filter(project_id=location_id,is_deleted="FALSE") and destination == "project")
                     or (kanban_card.objects.filter(task_id=location_id,is_deleted="FALSE") and destination == "task")
-                    or (kanban_card.objects.filter(requirements_id=location_id,is_deleted="FALSE") and destination == "requirement")
+                    or (kanban_card.objects.filter(requirement_id=location_id,is_deleted="FALSE") and destination == "requirement")
                 ):
                 #Sorry, this already exists
                 return HttpResponseBadRequest("Card already exists") #How do we fix these for AJAX - send back an error message
@@ -2115,11 +2115,11 @@ def kanban_new_link(request,kanban_board_id,location_id='',destination=''):
                 kanban_card_submit.project = project.objects.get(project_id=location_id)
                 kanban_card_submit.kanban_card_text = "PRO" + location_id + " - " + kanban_card_submit.project.project_name
             elif destination == "task":
-                kanban_card_submit.tasks = task.objects.get(task_id=location_id)
-                kanban_card_submit.kanban_card_text = "TASK" + location_id + " - " + kanban_card_submit.tasks.task_short_description
+                kanban_card_submit.task = task.objects.get(task_id=location_id)
+                kanban_card_submit.kanban_card_text = "TASK" + location_id + " - " + kanban_card_submit.task.task_short_description
             elif destination == "requirement":
-                kanban_card_submit.requirements = requirement.objects.get(requirement_id=location_id)
-                kanban_card_submit.kanban_card_text = "REQ" + location_id + " - " + kanban_card_submit.requirements.requirement_title
+                kanban_card_submit.requirement = requirement.objects.get(requirement_id=location_id)
+                kanban_card_submit.kanban_card_text = "REQ" + location_id + " - " + kanban_card_submit.requirement.requirement_title
             else:
                 #Oh no, something went wrong.
                 return HttpResponseBadRequest("Sorry, that type of destination does not exist")
@@ -2144,11 +2144,11 @@ def kanban_new_link(request,kanban_board_id,location_id='',destination=''):
         is_deleted="FALSE",
         project_status__in=('New','Open'),
     )
-    tasks_results = task.objects.filter(
+    task_results = task.objects.filter(
         is_deleted="FALSE",
         task_status__in=('New','Open'),
     )
-    requirements_results = requirement.objects.filter(
+    requirement_results = requirement.objects.filter(
         is_deleted="FALSE",
         #There is no requirement status - BUG275
     )
@@ -2158,8 +2158,8 @@ def kanban_new_link(request,kanban_board_id,location_id='',destination=''):
     # context
     c = {
         'project_results': project_results,
-        'tasks_results': tasks_results,
-        'requirements_results': requirements_results,
+        'task_results': task_results,
+        'requirement_results': requirement_results,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
         'kanban_new_link_form': kanban_new_link_form(
@@ -2185,7 +2185,7 @@ def kanban_properties(request,kanban_board_id):
     SET Designed module.
     """
     kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
-    if kanban_board_results.requirements:
+    if kanban_board_results.requirement:
         return HttpResponseBadRequest("Sorry, but users are not permitted to edit a Requirement Kanban Board.")
 
     if request.method == "POST":
@@ -2514,7 +2514,7 @@ def new_campus(request, location_id, destination):
             if destination == "organisation":
                 submit_form.organisation_id = organisation.objects.get(organisation_id=location_id)
             else:
-                submit_form.customers = customer.objects.get(customer_id=location_id)
+                submit_form.customer = customer.objects.get(customer_id=location_id)
             submit_form.save()
 
             #Get the coordinates and update them into the system
@@ -2761,7 +2761,7 @@ def new_opportunity(request, location_id,destination):
                     group_instance = group.objects.get(group_name=row)
                     permission_save = opportunity_permission(
                         opportunity_id=opportunity_instance,
-                        groups_id=group_instance,
+                        group_id=group_instance,
                         change_user=request.user,
                     )
                     permission_save.save()
@@ -2781,7 +2781,7 @@ def new_opportunity(request, location_id,destination):
             if (give_all_access):
                 permission_save = opportunity_permission(
                     opportunity_id=opportunity_instance,
-                    all_users='TRUE',
+                    all_user='TRUE',
                     change_user=request.user,
                 )
                 permission_save.save()
@@ -2936,7 +2936,7 @@ def new_project(request, location_id='', destination=''):
             for row in assigned_to_groups:
                 submit_group = project_group(
                     project_id_id=submit_project.pk,
-                    groups_id_id=row.group_id,
+                    group_id_id=row.group_id,
                     change_user=request.user,
                 )
                 submit_group.save()
@@ -2947,12 +2947,12 @@ def new_project(request, location_id='', destination=''):
             print("CURRENT DESTINATION IS: " + str(destination))
             if destination == "customer":
                 customer_instance = customer.objects.get(customer_id=location_id)
-                save_project_customers = project_customer(
+                save_project_customer = project_customer(
                     project_id=submit_project,
                     customer_id=customer_instance,
                     change_user=request.user,
                 )
-                save_project_customers.save()
+                save_project_customer.save()
             elif destination == "opportunity":
                 opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
                 save_project_opportunity = project_opportunity(
@@ -2987,7 +2987,7 @@ def new_project(request, location_id='', destination=''):
         group_id__in=user_group.objects.filter(
             is_deleted="FALSE",
             username_id=current_user.id
-        ).values('groups_id')
+        ).values('group_id')
     )
 
     organisations_results = organisation.objects.filter(is_deleted='FALSE')
@@ -3258,9 +3258,9 @@ def new_task(request, location_id='', destination=''):
             assigned_to_groups = form.cleaned_data['assigned_groups']
 
             for row in assigned_to_groups:
-                submit_group = tasks_group(
+                submit_group = task_group(
                     task_id_id=submit_task.pk,
-                    groups_id_id=row.group_id,
+                    group_id_id=row.group_id,
                     change_user=request.user,
                 )
                 submit_group.save()
@@ -3271,15 +3271,15 @@ def new_task(request, location_id='', destination=''):
             """
             if destination == "customer":
                 customer_instance = customer.objects.get(customer_id=location_id)
-                save_project_customers = tasks_customer(
+                save_project_customer = task_customer(
                     task_id=submit_task,
                     customer_id=customer_instance,
                     change_user=request.user,
                 )
-                save_project_customers.save()
+                save_project_customer.save()
             elif destination == "opportunity":
                 opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
-                save_project_opportunity = tasks_opportunity(
+                save_project_opportunity = task_opportunity(
                     task_id=submit_task,
                     opportunity_id=opportunity_instance,
                     change_user=request.user,
@@ -3305,7 +3305,7 @@ def new_task(request, location_id='', destination=''):
             group_id__in=user_group.objects.filter(
                 is_deleted="FALSE",
                 username_id=request.user.id
-            ).values('groups_id')
+            ).values('group_id')
         )
 
         organisations_results = organisation.objects.filter(is_deleted='FALSE')
@@ -3402,7 +3402,7 @@ def opportunity_group_permission(request, opportunity_id):
         if form.is_valid():
             opportunity_permissions_submit = opportunity_permission(
                 change_user=request.user,
-                groups_id=form.cleaned_data['group'],
+                group_id=form.cleaned_data['group'],
                 opportunity_id=opportunity.objects.get(opportunity_id=opportunity_id),
             )
             opportunity_permissions_submit.save()
@@ -3413,13 +3413,13 @@ def opportunity_group_permission(request, opportunity_id):
         is_deleted="FALSE",
         opportunity_id=opportunity_id,
     ).exclude(
-        groups_id__isnull=True,
+        group_id__isnull=True,
     )
 
     group_results = group.objects.filter(
         is_deleted="FALSE",
     ).exclude(
-        group_id__in=group_permissions.values_list('groups_id')
+        group_id__in=group_permissions.values_list('group_id')
     )
 
     # Loaed the template
@@ -3489,7 +3489,7 @@ def opportunity_information(request, opportunity_id):
                     group_instance = group.objects.get(group_id=row.group_id)
                     permission_save = opportunity_permission(
                         opportunity_id=opportunity_instance,
-                        groups_id=group_instance,
+                        group_id=group_instance,
                         user_id=current_user,
                         change_user=request.user,
                     )
@@ -3497,7 +3497,7 @@ def opportunity_information(request, opportunity_id):
                 #Will remove the ALL USERS permissions now that we have limited the permissions
                 opportunity_permission.objects.filter(
                     opportunity_id=opportunity_id,
-                    all_users='TRUE',
+                    all_user='TRUE',
                     is_deleted='FALSE'
                 ).update(is_deleted='TRUE')
 
@@ -3516,7 +3516,7 @@ def opportunity_information(request, opportunity_id):
                 #Will remove the ALL USERS permissions now that we have limited the permissions
                 opportunity_permission.objects.filter(
                     opportunity_id=opportunity_id,
-                    all_users='TRUE',
+                    all_user='TRUE',
                     is_deleted='FALSE'
                 ).update(is_deleted='TRUE')
         else:
@@ -3539,8 +3539,8 @@ def opportunity_information(request, opportunity_id):
         opportunity_permission_results = opportunity_permission.objects.filter(
             Q(
                 Q(assigned_user=request.user)  # User has permission
-                | Q(groups_id__in=user_groups_results.values('groups_id'))  # User's group have permission
-                | Q(all_users='TRUE')  # All users have access
+                | Q(group_id__in=user_groups_results.values('group_id'))  # User's group have permission
+                | Q(all_user='TRUE')  # All users have access
             )
             & Q(opportunity_id=opportunity_id)
         )
@@ -3559,14 +3559,14 @@ def opportunity_information(request, opportunity_id):
         opportunity_id=opportunity_id,
         is_deleted='FALSE',
     )
-    tasks_results = tasks_opportunity.objects.filter(
+    task_results = task_opportunity.objects.filter(
         opportunity_id=opportunity_id,
         is_deleted='FALSE',
     )
     opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
     customer_results = customer.objects.filter(organisation_id=opportunity_results.organisation_id)
     group_permissions = opportunity_permission.objects.filter(
-        groups_id__isnull=False,
+        group_id__isnull=False,
         opportunity_id=opportunity_id,
         is_deleted='FALSE',
     ).distinct()
@@ -3619,7 +3619,7 @@ def opportunity_information(request, opportunity_id):
         'group_permission': group_permissions,
         'user_permissions': user_permissions,
         'project_results': project_results,
-        'tasks_results': tasks_results,
+        'task_results': task_results,
         'quote_results': quote_results,
         'opportunity_perm': permission_results['opportunity'],
         'timezone': settings.TIME_ZONE,
@@ -3716,7 +3716,7 @@ def organisation_information(request, organisation_id):
     # Query the database for organisation information
     organisation_results = organisation.objects.get(pk=organisation_id)
     campus_results = campus.objects.filter(organisation_id=organisation_id)
-    customers_results = customer.objects.filter(organisation_id=organisation_results)
+    customer_results = customer.objects.filter(organisation_id=organisation_results)
     quote_results = quote.objects.filter(
         is_deleted="FALSE",
         organisation_id=organisation_id,
@@ -3735,7 +3735,7 @@ def organisation_information(request, organisation_id):
         Q(
             Q(assigned_user=request.user)  # User has permission
             | Q(group_id__in=user_groups_results.values('group_id'))  # User's group have permission
-            | Q(all_users='TRUE')  # All users have access
+            | Q(all_user='TRUE')  # All users have access
         )
     )
     opportunity_results = opportunity.objects.filter(
@@ -3763,7 +3763,7 @@ def organisation_information(request, organisation_id):
     c = {
         'organisation_results': organisation_results,
         'campus_results': campus_results,
-        'customers_results': customers_results,
+        'customer_results': customer_results,
         'organisation_information_form': organisation_information_form(
             instance=organisation_results,
             initial={
@@ -3937,7 +3937,7 @@ def project_information(request, project_id):
     project_groups_results = project_group.objects.filter(
         is_deleted="FALSE",
         project_id=project.objects.get(project_id=project_id),
-    ).values('groups_id_id')
+    ).values('group_id_id')
 
     permission_results = return_user_permission_level(request, project_groups_results,['project','project_history'])
 
@@ -4002,7 +4002,7 @@ def project_information(request, project_id):
         , document.document_description
         , document.document_url_location
         , document.document
-        , documents_folder.folder_id_id
+        , document_folder.folder_id_id
         
         FROM 
           document
@@ -4013,9 +4013,9 @@ def project_information(request, project_id):
 				folder
 				ON folder.project_id_id = %s
 		LEFT JOIN
-				documents_folder
-				ON documents_folder.folder_id_id = folder.folder_id
-				AND documents_folder.document_key_id = document.document_key
+				document_folder
+				ON document_folder.folder_id_id = folder.folder_id
+				AND document_folder.document_key_id = document.document_key
 
         
         WHERE 1=1
@@ -4055,7 +4055,7 @@ def project_information(request, project_id):
 			AND project_task.is_deleted = 'FALSE'
 			AND project_id = %s
 		""", [project_id])
-    associated_tasks_results = namedtuplefetchall(cursor)
+    associated_task_results = namedtuplefetchall(cursor)
 
 
     quote_results = quote.objects.filter(
@@ -4072,7 +4072,7 @@ def project_information(request, project_id):
         'project_information_form': project_information_form(initial=initial),
         'information_project_history_form': information_project_history_form(),
         'project_results': project_results,
-        'associated_tasks_results': associated_tasks_results,
+        'associated_task_results': associated_task_results,
         'project_history_results': project_history_results,
         'documents_results': simplejson.dumps(documents_results,encoding='utf-8'),
         'folders_results': serializers.serialize('json', folders_results),
@@ -4411,34 +4411,34 @@ def search(request):
 
 
 @login_required(login_url='login')
-def search_customers(request):
+def search_customer(request):
     permission_results = return_user_permission_level(request, None, 'project')
 
     # Load the template
-    t = loader.get_template('NearBeach/search_customers.html')
+    t = loader.get_template('NearBeach/search_customer.html')
 
     """
 	We will use the POST varable to help filter the results from the 
 	database. The results will then appear below
 	"""
-    search_customers_results = ''
+    search_customer_results = ''
 
     # Define if the page is loading in POST
     if request.method == "POST":
         form = search_customer_form(request.POST)
         if form.is_valid():
-            search_customers_results = form.cleaned_data['search_customers']
+            search_customer_results = form.cleaned_data['search_customer']
 
     """
 	This is where the magic happens. I will remove all spaces and replace
 	them with a wild card. This will be used to search the concatenated
 	first and last name fields
 	"""
-    search_customers_like = '%'
+    search_customer_like = '%'
 
-    for split_row in search_customers_results.split(' '):
-        search_customers_like += split_row
-        search_customers_like += '%'
+    for split_row in search_customer_results.split(' '):
+        search_customer_like += split_row
+        search_customer_like += '%'
 
     # Query the database for organisation
     cursor = connection.cursor()
@@ -4453,13 +4453,13 @@ def search_customers(request):
 			ON customer.organisation_id_id = organisation.organisation_id
 		WHERE 1=1
 		AND UPPER(customer.customer_first_name || ' ' || customer.customer_last_name) LIKE %s
-		""", [search_customers_like])
-    customers_results = namedtuplefetchall(cursor)
+		""", [search_customer_like])
+    customer_results = namedtuplefetchall(cursor)
 
     # context
     c = {
-        'search_customer_form': search_customer_form(initial={'search_customers': search_customers_results}),
-        'customers_results': customers_results,
+        'search_customer_form': search_customer_form(initial={'search_customer': search_customer_results}),
+        'customer_results': customer_results,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
     }
@@ -4468,37 +4468,37 @@ def search_customers(request):
 
 
 @login_required(login_url='login')
-def search_organisations(request):
+def search_organisation(request):
     permission_results = return_user_permission_level(request, None, 'project')
 
     # Load the template
-    t = loader.get_template('NearBeach/search_organisations.html')
+    t = loader.get_template('NearBeach/search_organisation.html')
 
     """
 	We will use the following varable to help filterer our database
 	results. ***WrTIE BETTER TOO TIRED TO DESCRIBE THIS!!!***
 	"""
-    search_organisations_results = ''
+    search_organisation_results = ''
 
     # Define if the page is loading in POST
     if request.method == "POST":
         form = search_organisation_form(request.POST)
         if form.is_valid():
-            search_organisations_results = form.cleaned_data['search_organisations']
+            search_organisation_results = form.cleaned_data['search_organisation']
 
     """
 	This is where the magic happens. I will remove all spaces and replace
 	them with a wild card. This will be used to search the concatenated
 	first and last name fields
 	"""
-    search_organisations_like = '%'
+    search_organisation_like = '%'
 
-    for split_row in search_organisations_results.split(' '):
-        search_organisations_like += split_row
-        search_organisations_like += '%'
+    for split_row in search_organisation_results.split(' '):
+        search_organisation_like += split_row
+        search_organisation_like += '%'
 
     # Now search the organisation
-    # organisations_results = organisation.objects.filter(organisation_name__contains = search_organisations_like)
+    # organisations_results = organisation.objects.filter(organisation_name__contains = search_organisation_like)
 
     # Query the database for organisation
     cursor = connection.cursor()
@@ -4511,13 +4511,13 @@ def search_organisations(request):
 		FROM organisation
 		WHERE 1=1
 		AND organisation.organisation_name LIKE %s
-		""", [search_organisations_like])
+		""", [search_organisation_like])
     organisations_results = namedtuplefetchall(cursor)
 
     # context
     c = {
         'search_organisation_form': search_organisation_form(
-            initial={'search_organisations': search_organisations_results}),
+            initial={'search_organisation': search_organisation_results}),
         'organisations_results': organisations_results,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
@@ -4527,9 +4527,9 @@ def search_organisations(request):
 
 
 @login_required(login_url='login')
-def search_projects_tasks(request):
+def search_projects_task(request):
     # Load the template
-    t = loader.get_template('NearBeach/search_projects_and_tasks.html')
+    t = loader.get_template('NearBeach/search_projects_and_task.html')
 
     print("Search project and task")
 
@@ -4573,10 +4573,10 @@ def search_templates(request):
 @login_required(login_url='login')
 def task_information(request, task_id):
     #First look at the user's permissions for the project's group.
-    task_groups_results = tasks_group.objects.filter(
+    task_groups_results = task_group.objects.filter(
         is_deleted="FALSE",
         task_id=task.objects.get(task_id=task_id),
-    ).values('groups_id_id')
+    ).values('group_id_id')
 
     permission_results = return_user_permission_level(request, task_groups_results,['task','task_history'])
 
@@ -4592,14 +4592,14 @@ def task_information(request, task_id):
     cursor.execute("""
 		SELECT COUNT(*)
 		FROM
-		  tasks_group
+		  task_group
 		, user_group
 		WHERE 1=1
-		AND tasks_group.groups_id_id = user_group.groups_id
-		AND tasks_group.is_deleted = 'FALSE'
+		AND task_group.group_id_id = user_group.group_id
+		AND task_group.is_deleted = 'FALSE'
 		AND user_group.is_deleted = 'FALSE'
 		AND user_group.username_id = %s
-		AND tasks_group.task_id_id = %s
+		AND task_group.task_id_id = %s
 	""", [current_user.id, task_id])
     has_permission = cursor.fetchall()
 
@@ -4670,12 +4670,12 @@ def task_information(request, task_id):
 
                 #If the document is under a folder
                 if isinstance(parent_folder_id, int):
-                    submit_documents_folder = documents_folder(
+                    submit_document_folder = document_folder(
                         document_key=submit_document,
                         change_user=request.user,
                         folder_id=int(parent_folder_id),
                     )
-                    submit_documents_folder.save()
+                    submit_document_folder.save()
 
 
                 #Submit the document permissions
@@ -4717,7 +4717,7 @@ def task_information(request, task_id):
         , document.document_description
         , document.document_url_location
         , document.document
-        , documents_folder.folder_id_id
+        , document_folder.folder_id_id
         
         FROM 
           document
@@ -4728,9 +4728,9 @@ def task_information(request, task_id):
 				folder
 				ON folder.task_id_id = %s
 		LEFT JOIN
-				documents_folder
-				ON documents_folder.folder_id_id = folder.folder_id
-				AND documents_folder.document_key_id = document.document_key
+				document_folder
+				ON document_folder.folder_id_id = folder.folder_id
+				AND document_folder.document_key_id = document.document_key
 
         
         WHERE 1=1
@@ -4909,7 +4909,7 @@ def to_do_list(request, location_id, destination):
             if destination == "project":
                 to_do_submit.project = project.objects.get(project_id=location_id)
             elif destination == "task":
-                to_do_submit.tasks = task.objects.get(task_id=location_id)
+                to_do_submit.task = task.objects.get(task_id=location_id)
             else:
                 to_do_submit.opportunity = opportunity.objects.get(opportunity_id=location_id)
             to_do_submit.save()

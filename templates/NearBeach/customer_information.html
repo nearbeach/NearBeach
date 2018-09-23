@@ -47,8 +47,8 @@
                 </tr>
             </table>
             <li>{{ customer_information_form.customer_email }}</li>
-            {% if not customer_results.organisations_id == Null %}
-                <li>Organisation: <a href="{% url 'organisation_information' customer_results.organisations_id.organisations_id %}">{{ customer_results.organisations_id }}</a></li>
+            {% if not customer_results.organisation_id == Null %}
+                <li>Organisation: <a href="{% url 'organisation_information' customer_results.organisation_id.organisation_id %}">{{ customer_results.organisation_id }}</a></li>
             {% endif %}
         </ul>
         {% if customer_permissions > 1 %}
@@ -56,7 +56,7 @@
         {% endif %}
     </form>
     <h2>Campus Contact Information</h2>
-    {% if add_campus_results and assign_campus_to_customer_permission > 1 and customer_results.organisations_id %}
+    {% if add_campus_results and assign_campus_to_customer_permission > 1 and customer_results.organisation_id %}
         <form id="customer_campus_form">
             <select name="add_campus_select" id="id_add_cammpus_select" onchange="enable_disable_add_campus()">
                 <option value="---------"> ---------</option>
@@ -66,7 +66,7 @@
             </select>
             <input type="submit" name="add_campus_submit" value="Add Campus" disabled id="id_add_cammpus_submit">
         </form>
-    {% elif assign_campus_to_customer_permission > 1 and not customer_results.organisations_id %}
+    {% elif assign_campus_to_customer_permission > 1 and not customer_results.organisation_id %}
         <a href="{% url 'new_campus' customer_results.customer_id 'customer' %}">New Campus</a>
     {% endif %}
     {% if customer_campus_results %}
@@ -209,7 +209,7 @@
                         </tr>
                         {% for row in task_results %}
                             <tr>
-                                <td><a href="{% url 'task_information' row.tasks_id %}">TASK{{ row.tasks_id }}</a></td>
+                                <td><a href="{% url 'task_information' row.task_id %}">TASK{{ row.task_id }}</a></td>
                                 <td>{{ row.task_short_description }}</td>
                                 <td>{{ row.task_end_date }}</td>
                                 <td>{{ row.task_status }}</td>
@@ -312,7 +312,7 @@
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: '/information_customer_documents_list/{{ customer_id }}/{{ customer_results.organisations_id.organisations_id }}',
+            url: '/information_customer_documents_list/{{ customer_id }}/{{ customer_results.organisation_id.organisation_id }}',
             data: $(this).serialize(),
             success: function() {
                 //Reload the project history :)
@@ -391,7 +391,7 @@
     function load_customer_documents_list() {
         //Load Project History
         $.ajax({
-            url: '/information_customer_documents_list/{{ customer_id }}/{{ customer_results.organisations_id.organisations_id }}',
+            url: '/information_customer_documents_list/{{ customer_id }}/{{ customer_results.organisation_id.organisation_id }}',
             data: {},
             dataType: 'HTML',
             type: 'GET',

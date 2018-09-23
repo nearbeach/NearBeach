@@ -137,7 +137,7 @@ def information_project_costs(request, project_id):
 
 
 @login_required(login_url='login')
-def information_project_customers(request, project_id):
+def information_project_customer(request, project_id):
     project_groups_results = project_group.objects.filter(
         is_deleted="FALSE",
         project_id=project.objects.get(project_id=project_id),
@@ -161,7 +161,7 @@ def information_project_customers(request, project_id):
 
     #Obtain a list of customer not already added to this task
     new_customers_results = customer.objects.filter(
-        organisations_id=project_results.organisations_id,
+        organisation_id=project_results.organisation_id,
         is_deleted="FALSE",
     ).exclude(
         customer_id__in=project_customer.objects.filter(
