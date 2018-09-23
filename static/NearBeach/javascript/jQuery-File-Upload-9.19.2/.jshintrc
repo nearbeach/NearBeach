@@ -16,8 +16,8 @@
   "quotmark"      : "single", // Quotation mark consistency:
                               //   false    : do nothing (default)
                               //   true     : ensure whatever is used is consistent
-                              //   "single" : require single quotes
-                              //   "double" : require double quotes
+                              //   "single" : require single quote
+                              //   "double" : require double quote
   "undef"         : true,     // true: Require all non-global variables to be declared (prevents global leaks)
   "unused"        : true,     // true: Require all defined variables be used
   "strict"        : true,     // true: Requires all functions run in ES5 Strict Mode

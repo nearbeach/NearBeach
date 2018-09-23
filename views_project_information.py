@@ -22,7 +22,7 @@ from django.db.models import Sum, Q, Min
 
 @login_required(login_url='login')
 def information_project_assigned_users(request, project_id):
-    project_groups_results = project_groups.objects.filter(
+    project_groups_results = project_group.objects.filter(
         is_deleted="FALSE",
         project_id=project.objects.get(project_id=project_id),
     ).values('groups_id_id')
@@ -32,21 +32,21 @@ def information_project_assigned_users(request, project_id):
     if request.method == "POST":
         user_results = int(request.POST.get("add_user_select"))
         user_instance = auth.models.User.objects.get(pk=user_results)
-        submit_associate_user = assigned_users(
+        submit_associate_user = assigned_user(
             user_id=user_instance,
             project_id=project.objects.get(pk=project_id),
             change_user=request.user,
         )
         submit_associate_user.save()
 
-    assigned_results = assigned_users.objects.filter(
+    assigned_results = assigned_user.objects.filter(
         project_id=project_id,
         is_deleted="FALSE",
     )
 
-    users_results = user_groups.objects.filter(
+    users_results = user_group.objects.filter(
         is_deleted="FALSE",
-        groups_id__in=project_groups.objects.filter(
+        groups_id__in=project_group.objects.filter(
             is_deleted="FALSE",
             project_id=project_id,
         ).values('groups_id'))\
@@ -81,7 +81,7 @@ def information_project_assigned_users(request, project_id):
 
 @login_required(login_url='login')
 def information_project_delete_assigned_users(request, project_id, location_id):
-    assigned_users_save = assigned_users.objects.filter(
+    assigned_users_save = assigned_user.objects.filter(
         project_id=project_id,
         user_id=location_id,
     )
@@ -99,7 +99,7 @@ def information_project_delete_assigned_users(request, project_id, location_id):
 
 @login_required(login_url='login')
 def information_project_costs(request, project_id):
-    project_groups_results = project_groups.objects.filter(
+    project_groups_results = project_group.objects.filter(
         is_deleted="FALSE",
         project_id=project.objects.get(project_id=project_id),
     ).values('groups_id_id')
@@ -107,12 +107,12 @@ def information_project_costs(request, project_id):
     permission_results = return_user_permission_level(request, project_groups_results,'project')
 
     if request.method == "POST":
-        form = information_project_costs_form(request.POST, request.FILES)
+        form = information_project_cost_form(request.POST, request.FILES)
         if form.is_valid():
             cost_description = form.cleaned_data['cost_description']
             cost_amount = form.cleaned_data['cost_amount']
             if ((not cost_description == '') and ((cost_amount <= 0) or (cost_amount >= 0))):
-                submit_cost = costs(
+                submit_cost = cost(
                     project_id=project.objects.get(pk=project_id),
                     cost_description=cost_description,
                     cost_amount=cost_amount,
@@ -121,14 +121,14 @@ def information_project_costs(request, project_id):
                 submit_cost.save()
 
     #Get data
-    costs_results = costs.objects.filter(project_id=project_id, is_deleted='FALSE')
+    costs_results = cost.objects.filter(project_id=project_id, is_deleted='FALSE')
 
     #Load template
     t = loader.get_template('NearBeach/project_information/project_costs.html')
 
     # context
     c = {
-        'information_project_costs_form': information_project_costs_form(),
+        'information_project_cost_form': information_project_cost_form(),
         'costs_results': costs_results,
         'project_permissions': permission_results['project'],
     }
@@ -138,7 +138,7 @@ def information_project_costs(request, project_id):
 
 @login_required(login_url='login')
 def information_project_customers(request, project_id):
-    project_groups_results = project_groups.objects.filter(
+    project_groups_results = project_group.objects.filter(
         is_deleted="FALSE",
         project_id=project.objects.get(project_id=project_id),
     ).values('groups_id_id')
@@ -149,9 +149,9 @@ def information_project_customers(request, project_id):
         # The user has tried adding a customer
         customer_id = int(request.POST.get("add_customer_select"))
 
-        submit_customer = project_customers(
+        submit_customer = project_customer(
             project_id=project.objects.get(pk=project_id),
-            customer_id=customers.objects.get(pk=customer_id),
+            customer_id=customer.objects.get(pk=customer_id),
             change_user=request.user,
         )
         submit_customer.save()
@@ -159,17 +159,17 @@ def information_project_customers(request, project_id):
     #Get data
     project_results = project.objects.get(project_id=project_id)
 
-    #Obtain a list of customers not already added to this task
-    new_customers_results = customers.objects.filter(
+    #Obtain a list of customer not already added to this task
+    new_customers_results = customer.objects.filter(
         organisations_id=project_results.organisations_id,
         is_deleted="FALSE",
     ).exclude(
-        customer_id__in=project_customers.objects.filter(
+        customer_id__in=project_customer.objects.filter(
             project_id=project_results.project_id
         ).values('customer_id')
     )
 
-    project_customers_results = project_customers.objects.filter(
+    project_customers_results = project_customer.objects.filter(
         is_deleted="FALSE",
         project_id=project_id,
 
@@ -192,7 +192,7 @@ def information_project_customers(request, project_id):
 
 @login_required(login_url='login')
 def information_project_history(request, project_id):
-    project_groups_results = project_groups.objects.filter(
+    project_groups_results = project_group.objects.filter(
         is_deleted="FALSE",
         project_id=project.objects.get(project_id=project_id),
     ).values('groups_id_id')
@@ -263,23 +263,23 @@ def project_readonly(request, project_id):
         ).values('email_content_id')
     )
 
-    associated_tasks_results = project_tasks.objects.filter(
+    associated_tasks_results = project_task.objects.filter(
         is_deleted="FALSE",
         project_id=project_id,
     )
 
-    project_customers_results = project_customers.objects.filter(
+    project_customers_results = project_customer.objects.filter(
         is_deleted="FALSE",
         project_id=project_id,
 
     )
 
-    costs_results = costs.objects.filter(
+    costs_results = cost.objects.filter(
         project_id=project_id,
         is_deleted='FALSE'
     )
 
-    quote_results = quotes.objects.filter(
+    quote_results = quote.objects.filter(
         is_deleted="FALSE",
         project_id=project_id,
     )
@@ -289,7 +289,7 @@ def project_readonly(request, project_id):
         project_id=project_id,
     )
 
-    assigned_results = assigned_users.objects.filter(
+    assigned_results = assigned_user.objects.filter(
         project_id=project_id,
         is_deleted="FALSE",
     ).values(
@@ -300,7 +300,7 @@ def project_readonly(request, project_id):
         'user_id__last_name',
     ).distinct()
 
-    group_list_results = project_groups.objects.filter(
+    group_list_results = project_group.objects.filter(
         is_deleted="FALSE",
         project_id=project_id,
     )

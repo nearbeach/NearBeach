@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="{% static 'NearBeach/javascript/datetimepicker/jquery.datetimepicker.min.css' %}">
 
 <body onload="on_page_load()">
-    <form action="{% url 'organisation_information' organisation_results.organisations_id %}" method="POST" enctype="multipart/form-data">
+    <form action="{% url 'organisation_information' organisation_results.organisation_id %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <h2>{{ organisation_results.organisation_name }}</h2>
         <ul>
@@ -28,7 +28,7 @@
         {% if organisation_campus_permissions > 0 %}
             <h2>Organisation Campus'</h2>
             {% if organisation_campus_permissions > 1 %}
-                <a href="{% url 'new_campus' organisations_id 'organisation' %}">New Campus</a>
+                <a href="{% url 'new_campus' organisation_id 'organisation' %}">New Campus</a>
             {% endif %}
             <table>
             <tr class="header"><td>Campus Nickname</td><td>Campus Location</td><td>Campus Address</td></tr>
@@ -44,7 +44,7 @@
         {% if customer_permissions > 0 %}
             <h2>Organisation Contacts</h2>
             {% if customer_permissions > 1 %}
-                <a href="{% url 'new_customer' organisation_results.organisations_id%}">New Customer</a>
+                <a href="{% url 'new_customer' organisation_results.organisation_id%}">New Customer</a>
             {% endif %}
             <table>
             <tr class="header"><td>Name</td><td>Email</td></tr>
@@ -76,7 +76,7 @@
     </form>
 
     <h2>Organisation Quotes</h2>
-    <a href="{% url 'new_quote' organisation_results.organisations_id 'organisation' %}">New Quote</a>
+    <a href="{% url 'new_quote' organisation_results.organisation_id 'organisation' %}">New Quote</a>
     {% if quote_results %}
         <table>
             <tr>
@@ -99,8 +99,8 @@
         <h2>Associated Projects & Tasks</h2>
         {% if organisation_permissions > 1 %}
             <ul>
-                <li><a href="{% url 'new_project' organisation_results.organisations_id 'organisation' %}">Create New Project</a></li>
-                <li><a href="{% url 'new_task' organisation_results.organisations_id 'organisation' %}">Create New Task</a></li>
+                <li><a href="{% url 'new_project' organisation_results.organisation_id 'organisation' %}">Create New Project</a></li>
+                <li><a href="{% url 'new_task' organisation_results.organisation_id 'organisation' %}">Create New Task</a></li>
             </ul>
         {% endif %}
 
@@ -148,7 +148,7 @@
             <p>There are no associated tasks. Please create a new task</p>
         {% endif %}
         <h2>Organisation Opportunities</h2>
-        <a href="{% url 'new_opportunity' organisation_results.organisations_id 'organisation' %}">Add a new opportuninity</a>
+        <a href="{% url 'new_opportunity' organisation_results.organisation_id 'organisation' %}">Add a new opportuninity</a>
         {% if opportunity_results %}
             <table>
                 <tr class="header">
@@ -198,7 +198,7 @@
                    return xhr;
             },
             type: 'POST',
-            url: '/information_organisation_contact_history/{{ organisation_results.organisations_id }}/',
+            url: '/information_organisation_contact_history/{{ organisation_results.organisation_id }}/',
             data: form_data,
             processData: false,
             contentType: false,
@@ -217,7 +217,7 @@
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: '/information_organisation_documents_list/{{ organisations_id }}',
+            url: '/information_organisation_documents_list/{{ organisation_id }}',
             data: $(this).serialize(),
             success: function() {
                 //Reload the project history :)
@@ -233,7 +233,7 @@
     function load_contact_history() {
         //Load Project History
         $.ajax({
-            url: '/information_organisation_contact_history/{{ organisation_results.organisations_id }}/',
+            url: '/information_organisation_contact_history/{{ organisation_results.organisation_id }}/',
             data: {},
             dataType: 'HTML',
             type: 'GET',
@@ -248,7 +248,7 @@
 
     function load_email_history() {
         $.ajax({
-            url: '/email_history/{{ organisation_results.organisations_id }}/organisation',
+            url: '/email_history/{{ organisation_results.organisation_id }}/organisation',
             data: {},
             dataType: 'HTML',
             type: 'GET',
@@ -265,7 +265,7 @@
     function load_organisation_documents_list() {
         //Load Project History
         $.ajax({
-            url: '/information_organisation_documents_list/{{ organisations_id }}/',
+            url: '/information_organisation_documents_list/{{ organisation_id }}/',
             data: {},
             dataType: 'HTML',
             type: 'GET',

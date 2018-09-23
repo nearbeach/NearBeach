@@ -40,11 +40,11 @@ def information_organisation_contact_history(request, organisation_id):
 
             if not contact_history_notes == '':
                 # Lets save some contact history
-                # organisation_id = form.cleaned_data['organisations_id'] #Not going to work :( #organisations_results.organisations_id
+                # organisation_id = form.cleaned_data['organisation_id'] #Not going to work :( #organisations_results.organisation_id
                 contact_type = form.cleaned_data['contact_type']
                 contact_date = form.cleaned_data['contact_date']
 
-                # documents
+                # document
                 if request.FILES == None:
                     print("No files uploaded in contacts")
 
@@ -52,7 +52,7 @@ def information_organisation_contact_history(request, organisation_id):
                 
                 if contact_attachment:
                     print("There was a document")
-                    documents_save = documents(
+                    documents_save = document(
                         document_description=contact_attachment,
                         document=contact_attachment,
                         change_user=request.user,
@@ -60,9 +60,9 @@ def information_organisation_contact_history(request, organisation_id):
                     documents_save.save()
 
                     #Add to document permissions
-                    document_permissions_save = document_permissions(
+                    document_permissions_save = document_permission(
                         document_key=documents_save,
-                        organisations_id=organisations.objects.get(organisations_id=organisation_id),
+                        organisation_id=organisation.objects.get(organisation_id=organisation_id),
                         change_user=request.user,
                     )
                     document_permissions_save.save()
@@ -71,7 +71,7 @@ def information_organisation_contact_history(request, organisation_id):
 
 
                 submit_history = contact_history(
-                    organisations_id=organisations.objects.get(organisations_id=organisation_id),
+                    organisation_id=organisation.objects.get(organisation_id=organisation_id),
                     contact_type=contact_type,
                     contact_date=contact_date,
                     contact_history=contact_history_notes,
@@ -85,7 +85,7 @@ def information_organisation_contact_history(request, organisation_id):
             print(form.errors)
     #Get data
     contact_history_results = contact_history.objects.filter(
-        organisations_id=organisations.objects.get(organisations_id=organisation_id)
+        organisation_id=organisation.objects.get(organisation_id=organisation_id)
     )
 
     contact_date = datetime.datetime.now()
@@ -111,19 +111,19 @@ def information_organisation_contact_history(request, organisation_id):
 
 @login_required(login_url='login')
 def information_organisation_documents_list(request, organisation_id):
-    permission_results = return_user_permission_level(request, None,['organisation','documents'])
+    permission_results = return_user_permission_level(request, None,['organisation','document'])
 
     if permission_results['organisation'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     #Get data
-    customer_document_results = document_permissions.objects.filter(
-        organisations_id=organisation_id,
+    customer_document_results = document_permission.objects.filter(
+        organisation_id=organisation_id,
         customer_id__isnull=False,
         is_deleted="FALSE",
     )
-    organisation_document_results = document_permissions.objects.filter(
-        organisations_id=organisation_id,
+    organisation_document_results = document_permission.objects.filter(
+        organisation_id=organisation_id,
         customer_id__isnull=True,
         is_deleted="FALSE",
     )
@@ -137,8 +137,8 @@ def information_organisation_documents_list(request, organisation_id):
         'customer_document_results': customer_document_results,
         'organisation_document_results': organisation_document_results,
         'organisation_permissions': permission_results['organisation'],
-        'document_permissions': document_permissions,
-        'document_perm': permission_results['documents'],
+        'document_permission': document_permission,
+        'document_perm': permission_results['document'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -161,17 +161,17 @@ def information_organisation_documents_upload(request, organisation_id):
         """
         File Uploads
         """
-        organisation_instance = organisations.objects.get(organisations_id=organisation_id)
-        document_save = documents(
+        organisation_instance = organisation.objects.get(organisation_id=organisation_id)
+        document_save = document(
             document_description=filename,
             document=file,
             change_user=request.user,
         )
         document_save.save()
 
-        document_permissions_save = document_permissions(
+        document_permissions_save = document_permission(
             document_key=document_save,
-            organisations_id=organisation_instance,
+            organisation_id=organisation_instance,
             change_user=request.user,
         )
         document_permissions_save.save()

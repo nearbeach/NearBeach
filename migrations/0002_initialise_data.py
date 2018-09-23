@@ -81,7 +81,7 @@ def initialise_data(apps, schema_editor):
     ])
 
     # List of contact types
-    list_of_contact_types = apps.get_model("NearBeach", "list_of_contact_types")
+    list_of_contact_types = apps.get_model("NearBeach", "list_of_contact_type")
     list_of_contact_types.objects.using(db_alias).bulk_create([
         list_of_contact_types(contact_type="Notes"),
         list_of_contact_types(contact_type="Phone"),
@@ -152,7 +152,7 @@ def initialise_data(apps, schema_editor):
 
 
     # List of titles
-    list_of_titles = apps.get_model("NearBeach", "list_of_titles")
+    list_of_titles = apps.get_model("NearBeach", "list_of_title")
     list_of_titles.objects.using(db_alias).bulk_create([
         list_of_titles(title="Mr"),
         list_of_titles(title="Ms"),
@@ -161,8 +161,8 @@ def initialise_data(apps, schema_editor):
     ])
 
 
-    # list_of_countries
-    list_of_countries = apps.get_model("NearBeach", "list_of_countries")
+    # list_of_country
+    list_of_countries = apps.get_model("NearBeach", "list_of_country")
     list_of_countries.objects.using(db_alias).bulk_create([
         list_of_countries(country_id=u"AD", country_name=u"ANDORRA"),
         list_of_countries(country_id=u"AE", country_name=u"UNITED ARAB EMIRATES"),
@@ -416,7 +416,7 @@ def initialise_data(apps, schema_editor):
     ])
 
     # list_of_countries_states
-    list_of_countries_regions = apps.get_model("NearBeach", "list_of_countries_regions")
+    list_of_countries_regions = apps.get_model("NearBeach", "list_of_country_region")
     list_of_countries_regions.objects.using(db_alias).bulk_create([
         list_of_countries_regions(country_id_id=u"AO", region_name=u"Huíla", region_type=u"Province"),
         list_of_countries_regions(country_id_id=u"AO", region_name=u"Lunda Norte", region_type=u"Province"),
@@ -5535,7 +5535,7 @@ def initialise_data(apps, schema_editor):
     ])
 
 
-    list_of_quote_stages = apps.get_model("NearBeach", "list_of_quote_stages")
+    list_of_quote_stages = apps.get_model("NearBeach", "list_of_quote_stage")
     db_alias = schema_editor.connection.alias
     list_of_quote_stages.objects.using(db_alias).bulk_create([
         #Quote Stage

@@ -44,10 +44,10 @@ def information_customer_contact_history(request, customer_id):
                 contact_date = form.cleaned_data['contact_date']
 
 
-                # documents
+                # document
                 contact_attachment = request.FILES.get('contact_attachment')
                 if contact_attachment:
-                    documents_save = documents(
+                    documents_save = document(
                         document_description=contact_attachment,
                         document=contact_attachment,
                         change_user=request.user,
@@ -55,14 +55,14 @@ def information_customer_contact_history(request, customer_id):
                     documents_save.save()
 
                     # Add to document permissions
-                    document_permissions_save = document_permissions(
+                    document_permissions_save = document_permission(
                         document_key=documents_save,
-                        customer_id=customers.objects.get(customer_id=customer_id),
+                        customer_id=customer.objects.get(customer_id=customer_id),
                         change_user=request.user,
                     )
                     document_permissions_save.save()
 
-                customer_instance = customers.objects.get(customer_id=customer_id)
+                customer_instance = customer.objects.get(customer_id=customer_id)
 
                 submit_history = contact_history(
                     organisations_id=customer_instance.organisations_id,
@@ -81,7 +81,7 @@ def information_customer_contact_history(request, customer_id):
 
     #Data
     customer_contact_history = contact_history.objects.filter(
-        customer_id=customers.objects.get(customer_id=customer_id)
+        customer_id=customer.objects.get(customer_id=customer_id)
     )
 
     contact_date = datetime.datetime.now()
@@ -109,19 +109,19 @@ def information_customer_contact_history(request, customer_id):
 
 @login_required(login_url='login')
 def information_customer_documents_list(request, customer_id, organisations_id=''):
-    permission_results = return_user_permission_level(request, None,['customer','documents'])
+    permission_results = return_user_permission_level(request, None,['customer','document'])
 
     if permission_results['customer'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
 
     #Get Data
-    customer_document_results = document_permissions.objects.filter(
+    customer_document_results = document_permission.objects.filter(
         customer_id=customer_id,
         is_deleted="FALSE",
     )
     try:
-        organisation_document_results = document_permissions.objects.filter(
+        organisation_document_results = document_permission.objects.filter(
             organisations_id=organisations_id,
             customer_id__isnull=True,
             is_deleted="FALSE",
@@ -139,7 +139,7 @@ def information_customer_documents_list(request, customer_id, organisations_id='
         'customer_document_results': customer_document_results,
         'organisation_document_results': organisation_document_results,
         'customer_permissions': permission_results['customer'],
-        'document_perm': permission_results['documents'],
+        'document_perm': permission_results['document'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -162,15 +162,15 @@ def information_customer_documents_upload(request, customer_id):
         """
         File Uploads
         """
-        customer_results = customers.objects.get(customer_id=customer_id)
-        document_save = documents(
+        customer_results = customer.objects.get(customer_id=customer_id)
+        document_save = document(
             document_description=filename,
             document=file,
             change_user=request.user,
         )
         document_save.save()
 
-        document_permissions_save = document_permissions(
+        document_permissions_save = document_permission(
             document_key=document_save,
             organisations_id=customer_results.organisations_id,
             customer_id=customer_results,

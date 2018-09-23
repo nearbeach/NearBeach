@@ -25,9 +25,9 @@ import datetime, json, simplejson
 
 @login_required(login_url='login')
 def group_information(request):
-    permission_results = return_user_permission_level(request, None, 'administration_create_groups')
+    permission_results = return_user_permission_level(request, None, 'administration_create_group')
 
-    if permission_results['administration_create_groups'] == 0:
+    if permission_results['administration_create_group'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     #Load template
@@ -44,18 +44,18 @@ def group_information(request):
 
 @login_required(login_url='login')
 def group_information_add_permission_set(request, group_id):
-    permission_results = return_user_permission_level(request, None, ['administration_create_groups','administration_create_permission_sets'])
+    permission_results = return_user_permission_level(request, None, ['administration_create_group','administration_create_permission_set'])
 
-    if permission_results['administration_create_groups'] == 0:
+    if permission_results['administration_create_group'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
 
-    if request.method == "POST" and permission_results['administration_create_groups'] > 2:
+    if request.method == "POST" and permission_results['administration_create_group'] > 2:
         form = add_permission_set_to_group_form(request.POST)
         if form.is_valid():
-            submit_group_permission = group_permissions(
+            submit_group_permission = group_permission(
                 permission_set=form.cleaned_data['permission_set_name'],
-                groups=groups.objects.get(group_id=group_id),
+                group=group.objects.get(group_id=group_id),
             )
             submit_group_permission.save()
             print("SAVED")
@@ -83,15 +83,15 @@ def group_information_add_permission_set(request, group_id):
 
 @login_required(login_url='login')
 def group_information_create(request):
-    permission_results = return_user_permission_level(request, None, 'administration_create_groups')
+    permission_results = return_user_permission_level(request, None, 'administration_create_group')
 
-    if permission_results['administration_create_groups'] < 3:
+    if permission_results['administration_create_group'] < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST":
-        form = groups_form(request.POST)
+        form = group_form(request.POST)
         if form.is_valid():
-            submit_group = groups(
+            submit_group = group(
                 group_name=form.cleaned_data['group_name'],
                 change_user=request.user,
             )
@@ -104,7 +104,7 @@ def group_information_create(request):
 
     # context
     c = {
-        'groups_form': groups_form(),
+        'group_form': group_form(),
     }
 
     return HttpResponse(t.render(c, request))
@@ -113,13 +113,13 @@ def group_information_create(request):
 
 @login_required(login_url='login')
 def group_information_edit(request, group_id):
-    permission_results = return_user_permission_level(request, None,['administration_assign_users_to_groups','administration_create_groups'])
+    permission_results = return_user_permission_level(request, None,['administration_assign_user_to_group','administration_create_group'])
 
-    if permission_results['administration_create_groups'] == 0:
+    if permission_results['administration_create_group'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST":
-        form = groups_form(request.POST, instance=groups.objects.get(group_id=group_id))
+        form = group_form(request.POST, instance=group.objects.get(group_id=group_id))
         if form.is_valid():
             form.save()
         else:
@@ -130,9 +130,9 @@ def group_information_edit(request, group_id):
 
     # context
     c = {
-        'groups_form': groups_form(instance=groups.objects.get(group_id=group_id)),
-        'user_permission': permission_results['administration_assign_users_to_groups'],
-        'group_permission': permission_results['administration_create_groups'],
+        'group_form': group_form(instance=group.objects.get(group_id=group_id)),
+        'user_permission': permission_results['administration_assign_user_to_group'],
+        'group_permission': permission_results['administration_create_group'],
         'group_id': group_id,
     }
 
@@ -142,36 +142,36 @@ def group_information_edit(request, group_id):
 
 @login_required(login_url='login')
 def group_information_edit_users(request, group_id):
-    permission_results = return_user_permission_level(request, None,'administration_assign_users_to_groups')
+    permission_results = return_user_permission_level(request, None,'administration_assign_user_to_group')
 
-    if permission_results['administration_assign_users_to_groups'] == 0:
+    if permission_results['administration_assign_user_to_group'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
 
-    if request.method == "POST" and permission_results['administration_assign_users_to_groups'] > 2:
+    if request.method == "POST" and permission_results['administration_assign_user_to_group'] > 2:
         print(request.POST.get('permission_set'))
         permission_set_instance=permission_set.objects.get(permission_set_id=request.POST.get('permission_set'))
         #Get the new user
-        submit_user_groups = user_groups(
+        submit_user_groups = user_group(
             username = User.objects.get(id=request.POST.get('user_id')),
             permission_set=permission_set_instance,
             change_user = request.user,
-            #groups_id=groups.objects.get(group_id=group_id),
-            groups_id=group_id,
+            #group_id=group.objects.get(group_id=group_id),
+            group_id=group_id,
         )
         print("Saving user permissions")
         submit_user_groups.save()
 
     #List of users in group, and list of users to add
-    user_groups_results = user_groups.objects.filter(
+    user_groups_results = user_group.objects.filter(
         is_deleted="FALSE",
-        groups_id=group_id,
+        group_id=group_id,
     ).order_by('username','permission_set')
     #.distinct().orderby('username','permission_set')
     user_results = User.objects.all()
-    permission_set_results = group_permissions.objects.filter(
+    permission_set_results = group_permission.objects.filter(
         #is_deleted='FALSE',
-        groups_id=group_id,
+        group_id=group_id,
     )
 
 
@@ -181,7 +181,7 @@ def group_information_edit_users(request, group_id):
     c = {
         'user_groups_results': user_groups_results,
         'user_results': user_results,
-        'user_permission': permission_results['administration_assign_users_to_groups'],
+        'user_permission': permission_results['administration_assign_user_to_group'],
         'permission_set_results': permission_set_results,
         'group_id': group_id,
     }
@@ -194,13 +194,13 @@ def group_information_edit_users(request, group_id):
 
 @login_required(login_url='login')
 def group_information_list(request):
-    permission_results = return_user_permission_level(request, None,'administration_create_groups')
+    permission_results = return_user_permission_level(request, None,'administration_create_group')
 
 
-    if permission_results['administration_create_groups'] == 0:
+    if permission_results['administration_create_group'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
-    group_results = groups.objects.filter(
+    group_results = group.objects.filter(
         is_deleted="FALSE"
     )
 
@@ -210,7 +210,7 @@ def group_information_list(request):
     # context
     c = {
         'group_results': group_results,
-        'group_permissions': group_permissions,
+        'group_permission': group_permission,
     }
 
     return HttpResponse(t.render(c, request))
@@ -219,7 +219,7 @@ def group_information_list(request):
 @login_required(login_url='login')
 def list_of_taxes_deactivate(request,tax_id):
     if request.method == "POST":
-        tax_instance = list_of_taxes.objects.get(tax_id=tax_id)
+        tax_instance = list_of_tax.objects.get(tax_id=tax_id)
         if tax_instance.is_deleted == "FALSE":
             tax_instance.is_deleted = "TRUE"
         else:
@@ -238,9 +238,9 @@ def list_of_taxes_deactivate(request,tax_id):
 
 @login_required(login_url='login')
 def list_of_taxes_edit(request,tax_id):
-    tax_result = list_of_taxes.objects.get(pk=tax_id)
+    tax_result = list_of_tax.objects.get(pk=tax_id)
     if request.method == "POST":
-        form = list_of_taxes_form(request.POST)
+        form = list_of_tax_form(request.POST)
         if form.is_valid():
             tax_result.tax_amount = form.cleaned_data['tax_amount']
             tax_result.tax_description = form.cleaned_data['tax_description']
@@ -251,7 +251,7 @@ def list_of_taxes_edit(request,tax_id):
 
     # context
     c = {
-        'list_of_taxes_form': list_of_taxes_form(instance=tax_result),
+        'list_of_tax_form': list_of_tax_form(instance=tax_result),
         'tax_id': tax_id,
     }
 
@@ -287,7 +287,7 @@ def list_of_taxes_list(request):
     if permission_results['tax'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
-    list_of_taxes_results = list_of_taxes.objects.all().order_by('tax_amount') #No taxes are deleted, only disabled.
+    list_of_taxes_results = list_of_tax.objects.all().order_by('tax_amount') #No taxes are deleted, only disabled.
 
     #Load template
     t = loader.get_template('NearBeach/list_of_taxes/list_of_taxes_list.html')
@@ -303,9 +303,9 @@ def list_of_taxes_list(request):
 @login_required(login_url='login')
 def list_of_taxes_new(request):
     if request.method == "POST":
-        form = list_of_taxes_form(request.POST)
+        form = list_of_tax_form(request.POST)
         if form.is_valid():
-            tax_submit = list_of_taxes(
+            tax_submit = list_of_tax(
                 tax_amount = form.cleaned_data['tax_amount'],
                 tax_description = form.cleaned_data['tax_description'],
                 change_user = request.user,
@@ -319,7 +319,7 @@ def list_of_taxes_new(request):
 
     # context
     c = {
-        'list_of_taxes_form': list_of_taxes_form()
+        'list_of_tax_form': list_of_tax_form()
     }
 
     return HttpResponse(t.render(c, request))
@@ -385,9 +385,9 @@ def new_user(request):
 
 @login_required(login_url='login')
 def permission_set_information(request):
-    permission_results = return_user_permission_level(request, None,'administration_create_permission_sets')
+    permission_results = return_user_permission_level(request, None,'administration_create_permission_set')
 
-    if permission_results['administration_create_permission_sets'] == 0:
+    if permission_results['administration_create_permission_set'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     #Load template
@@ -404,9 +404,9 @@ def permission_set_information(request):
 
 @login_required(login_url='login')
 def permission_set_information_create(request):
-    permission_results = return_user_permission_level(request, None, 'administration_create_permission_sets')
+    permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
 
-    if permission_results['administration_create_permission_sets'] < 3:
+    if permission_results['administration_create_permission_set'] < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
 
 
@@ -418,12 +418,12 @@ def permission_set_information_create(request):
         if form.is_valid():
             #Try and save the form.
             permission_set_name = form.cleaned_data['permission_set_name']
-            administration_assign_users_to_groups = form.cleaned_data['administration_assign_users_to_groups']
-            administration_create_groups = form.cleaned_data['administration_create_groups']
-            administration_create_permission_sets = form.cleaned_data['administration_create_permission_sets']
-            administration_create_users = form.cleaned_data['administration_create_users']
+            administration_assign_user_to_group = form.cleaned_data['administration_assign_user_to_group']
+            administration_create_group = form.cleaned_data['administration_create_group']
+            administration_create_permission_set = form.cleaned_data['administration_create_permission_set']
+            administration_create_user = form.cleaned_data['administration_create_user']
             assign_campus_to_customer = form.cleaned_data['assign_campus_to_customer']
-            associate_project_and_tasks = form.cleaned_data['associate_project_and_tasks']
+            associate_project_and_task = form.cleaned_data['associate_project_and_task']
             customer = form.cleaned_data['customer']
             invoice = form.cleaned_data['invoice']
             invoice_product = form.cleaned_data['invoice_product']
@@ -434,19 +434,19 @@ def permission_set_information_create(request):
             requirement = form.cleaned_data['requirement']
             requirement_link = form.cleaned_data['requirement_link']
             task = form.cleaned_data['task']
-            documents = form.cleaned_data['documents']
+            document = form.cleaned_data['document']
             contact_history = form.cleaned_data['contact_history']
             project_history = form.cleaned_data['project_history']
             task_history = form.cleaned_data['task_history']
 
             submit_permission_set = permission_set(
                 permission_set_name=permission_set_name,
-                administration_assign_users_to_groups=administration_assign_users_to_groups,
-                administration_create_groups=administration_create_groups,
-                administration_create_permission_sets=administration_create_permission_sets,
-                administration_create_users=administration_create_users,
+                administration_assign_user_to_group=administration_assign_user_to_group,
+                administration_create_group=administration_create_group,
+                administration_create_permission_set=administration_create_permission_set,
+                administration_create_user=administration_create_user,
                 assign_campus_to_customer=assign_campus_to_customer,
-                associate_project_and_tasks=associate_project_and_tasks,
+                associate_project_and_task=associate_project_and_task,
                 customer=customer,
                 invoice=invoice,
                 invoice_product=invoice_product,
@@ -457,7 +457,7 @@ def permission_set_information_create(request):
                 requirement=requirement,
                 requirement_link=requirement_link,
                 task=task,
-                documents=documents,
+                document=document,
                 contact_history=contact_history,
                 project_history=project_history,
                 task_history=task_history,
@@ -492,9 +492,9 @@ def permission_set_information_create(request):
 
 @login_required(login_url='login')
 def permission_set_information_edit(request, permission_set_id):
-    permission_results = return_user_permission_level(request, None, 'administration_create_permission_sets')
+    permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
 
-    if permission_results['administration_create_permission_sets'] < 2:
+    if permission_results['administration_create_permission_set'] < 2:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     save_errors = None
@@ -525,9 +525,9 @@ def permission_set_information_edit(request, permission_set_id):
 
     initial = {
         'permission_set_name' : permission_set_results.permission_set_name,
-        'administration_assign_users_to_groups' : permission_set_results.administration_assign_users_to_groups,
-        'administration_create_groups' : permission_set_results.administration_create_groups,
-        'administration_create_permission_sets' : permission_set_results.administration_create_permission_sets,
+        'administration_assign_user_to_group' : permission_set_results.administration_assign_user_to_groups,
+        'administration_create_group' : permission_set_results.administration_create_groups,
+        'administration_create_permission_set' : permission_set_results.administration_create_permission_set,
         'administration_create_users' : permission_set_results.administration_create_users,
         'assign_campus_to_customer' : permission_set_results.assign_campus_to_customer,
         'associate_project_and_tasks' : permission_set_results.associate_project_and_tasks,
@@ -541,7 +541,7 @@ def permission_set_information_edit(request, permission_set_id):
         'requirement' : permission_set_results.requirement,
         'requirement_link' : permission_set_results.requirement_link,
         'task' : permission_set_results.task,
-        'documents' : permission_set_results.documents,
+        'document' : permission_set_results.documents,
         'contact_history' : permission_set_results.contact_history,
         'project_history' : permission_set_results.project_history,
         'task_history' : permission_set_results.task_history,
@@ -559,9 +559,9 @@ def permission_set_information_edit(request, permission_set_id):
 
 @login_required(login_url='login')
 def permission_set_information_list(request):
-    permission_results =  return_user_permission_level(request, None, 'administration_create_permission_sets')
+    permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
 
-    if permission_results['administration_create_permission_sets'] == 0:
+    if permission_results['administration_create_permission_set'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     #Get data
@@ -580,7 +580,7 @@ def permission_set_information_list(request):
 
 @login_required(login_url='login')
 def product_and_service_discontinued(request, product_id):
-    product_instance = products_and_services.objects.get(product_id=product_id)
+    product_instance = product_and_service.objects.get(product_id=product_id)
 
     if product_instance.is_deleted == "FALSE":
         product_instance.is_deleted = "TRUE"
@@ -593,13 +593,13 @@ def product_and_service_discontinued(request, product_id):
 
 @login_required(login_url='login')
 def product_and_service_edit(request, product_id):
-    permission_results = return_user_permission_level(request, None, 'administration_create_permission_sets')
+    permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
 
-    if permission_results['administration_create_permission_sets'] == 0:
+    if permission_results['administration_create_permission_set'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
-    if request.method == "POST" and permission_results['administration_create_permission_sets'] > 2:
-        form = product_and_service_form(request.POST, instance=products_and_services.objects.get(product_id=product_id))
+    if request.method == "POST" and permission_results['administration_create_permission_set'] > 2:
+        form = product_and_service_form(request.POST, instance=product_and_service.objects.get(product_id=product_id))
         if form.is_valid():
             form.save()
 
@@ -613,7 +613,7 @@ def product_and_service_edit(request, product_id):
     # context
     c = {
         'product_and_service_form': product_and_service_form(
-            instance=products_and_services.objects.get(product_id=product_id)
+            instance=product_and_service.objects.get(product_id=product_id)
         ),
         'product_id': product_id,
         'new_item_permission': permission_results['new_item'],
@@ -626,15 +626,15 @@ def product_and_service_edit(request, product_id):
 
 @login_required(login_url='login')
 def product_and_service_new(request):
-    permission_results = return_user_permission_level(request, None, 'administration_create_permission_sets')
+    permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
 
-    if permission_results['administration_create_permission_sets'] < 2:
+    if permission_results['administration_create_permission_set'] < 2:
         return HttpResponseRedirect(reverse('permission_denied'))
 
-    if request.method == "POST" and permission_results['administration_create_permission_sets'] > 3:
+    if request.method == "POST" and permission_results['administration_create_permission_set'] > 3:
         form = product_and_service_form(request.POST,)
         if form.is_valid():
-            submit_product = products_and_services(
+            submit_product = product_and_service(
                 product_or_service=form.cleaned_data['product_or_service'],
                 product_name=form.cleaned_data['product_name'],
                 product_part_number=form.cleaned_data['product_part_number'],
@@ -673,11 +673,11 @@ def product_and_service_search(request):
         return HttpResponseRedirect(reverse('permission_denied'))
 
     #Get Data
-    product_results = products_and_services.objects.filter(
+    product_results = product_and_service.objects.filter(
         product_or_service='Product',
         #Is deleted becomes 'DISCONTINUED' in the table. We can then recontinue it :)
     )
-    service_results = products_and_services.objects.filter(
+    service_results = product_and_service.objects.filter(
         product_or_service='Service',
         # Is deleted becomes 'DISCONTINUED' in the table. We can then recontinue it :)
     )

@@ -6,7 +6,7 @@ import simplejson
 
 @login_required(login_url='login')
 def lookup_product(request, product_id):
-    product_results = products_and_services.objects.filter(product_id=product_id)
+    product_results = product_and_service.objects.filter(product_id=product_id)
     data = serializers.serialize("json", product_results)
     return HttpResponse(data, content_type='application/json')
 
@@ -21,8 +21,8 @@ def lookup_user_permissions(request):
     """
     data = serializers.serialize(
         'json',
-        #group_permissions.objects.all(),
-        user_groups.objects.filter(
+        #group_permission.objects.all(),
+        user_group.objects.filter(
             username=request.user,
             is_deleted="FALSE",
         ),
