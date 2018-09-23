@@ -112,8 +112,8 @@ def document_tree_list(request, location_id, project_or_task, folder_id='',):
         We only want those document who are not in a folder. So we look up all document that were in a folder
         and exclude them from the document results.
         """
-        documents_folder_results = documents_folder.objects.filter(is_deleted="FALSE")
-        document_results = document_results.filter(~Q(document_key__in=documents_folder_results.values('document_key')))
+        document_folder_results = document_folder.objects.filter(is_deleted="FALSE")
+        document_results = document_results.filter(~Q(document_key__in=document_folder_results.values('document_key')))
     else:
         folder_instance = folder.objects.get(folder_id=folder_id)
         folder_results = folder_results.filter(parent_folder_id=folder_instance)
@@ -122,11 +122,11 @@ def document_tree_list(request, location_id, project_or_task, folder_id='',):
         We only want those document who are contained in the folder specified. So we look up all the 
         document that are in that specific folder and only include them.
         """
-        documents_folder_results = documents_folder.objects.filter(
+        document_folder_results = document_folder.objects.filter(
             is_deleted="FALSE",
             folder_id=folder_instance
         )
-        document_results = document_results.filter(Q(document_key__in=documents_folder_results.values('document_key')))
+        document_results = document_results.filter(Q(document_key__in=document_folder_results.values('document_key')))
 
     # Load the template
     t = loader.get_template('NearBeach/document_tree/document_tree_list.html')
@@ -190,12 +190,12 @@ def document_tree_upload(request, location_id, project_or_task):
             print("")
             #PYTHON BUG HERE - this is the work around
         else:
-            documents_folder_save = documents_folder(
+            document_folder_save = document_folder(
                 document_key=document_save,
                 folder_id=folder.objects.get(folder_id=nested_folder),
                 change_user=request.user,
             )
-            documents_folder_save.save()
+            document_folder_save.save()
 
         result = []
         result.append({

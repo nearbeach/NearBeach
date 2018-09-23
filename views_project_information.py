@@ -25,7 +25,7 @@ def information_project_assigned_users(request, project_id):
     project_groups_results = project_group.objects.filter(
         is_deleted="FALSE",
         project_id=project.objects.get(project_id=project_id),
-    ).values('groups_id_id')
+    ).values('group_id_id')
 
     permission_results = return_user_permission_level(request, project_groups_results,'project')
 
@@ -46,10 +46,10 @@ def information_project_assigned_users(request, project_id):
 
     users_results = user_group.objects.filter(
         is_deleted="FALSE",
-        groups_id__in=project_group.objects.filter(
+        group_id__in=project_group.objects.filter(
             is_deleted="FALSE",
             project_id=project_id,
-        ).values('groups_id'))\
+        ).values('group_id'))\
         .exclude(username_id__in=assigned_results.values('user_id'))\
         .values(
             'username_id',
@@ -102,7 +102,7 @@ def information_project_costs(request, project_id):
     project_groups_results = project_group.objects.filter(
         is_deleted="FALSE",
         project_id=project.objects.get(project_id=project_id),
-    ).values('groups_id_id')
+    ).values('group_id_id')
 
     permission_results = return_user_permission_level(request, project_groups_results,'project')
 
@@ -141,7 +141,7 @@ def information_project_customer(request, project_id):
     project_groups_results = project_group.objects.filter(
         is_deleted="FALSE",
         project_id=project.objects.get(project_id=project_id),
-    ).values('groups_id_id')
+    ).values('group_id_id')
 
     permission_results = return_user_permission_level(request, project_groups_results,'project')
 
@@ -195,7 +195,7 @@ def information_project_history(request, project_id):
     project_groups_results = project_group.objects.filter(
         is_deleted="FALSE",
         project_id=project.objects.get(project_id=project_id),
-    ).values('groups_id_id')
+    ).values('group_id_id')
 
     permission_results = return_user_permission_level(request, project_groups_results,['project','project_history'])
 

@@ -2874,9 +2874,6 @@ def new_project(request, location_id='', destination=''):
             project_description = form.cleaned_data['project_description']
             organisation_id_form = form.cleaned_data['organisation_id']
 
-            # Create the final start/end date fields
-            ### GET THE DATE START AND FINISH HERE
-
             submit_project = project(
                 project_name=project_name,
                 project_description=project_description,
