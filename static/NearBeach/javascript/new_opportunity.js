@@ -6,7 +6,7 @@ function update_customers() {
     Issue
     ~~~~~
     We do not want the user to pick an organisation and then a customer from a different organisation. This function
-    will limit which customers are seen in the "Customer" field to those only belonging to that particular organisation.
+    will limit which customer are seen in the "Customer" field to those only belonging to that particular organisation.
     This will work similarly to the Country/Region javascript.
 
     Method

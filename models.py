@@ -55,8 +55,8 @@ QUOTE_APPROVAL_STATUS = (
 
 
 # List of tables - in alphabetical order
-class assigned_users(models.Model):
-    assigned_users_id = models.AutoField(primary_key=True)
+class assigned_user(models.Model):
+    assigned_user_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -68,7 +68,7 @@ class assigned_users(models.Model):
         null=True
     )
     task_id = models.ForeignKey(
-        'tasks',
+        'task',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -93,13 +93,13 @@ class assigned_users(models.Model):
     )
 
     class Meta:
-        db_table = "assigned_users"
+        db_table = "assigned_user"
 
 
 """
-Contact History is a simple form that users will fill out every time they
+Contact History is a simple form that user will fill out every time they
 have some form of contact with the customer. This table will store both
-contact history for Customers and Organisations. The customer field in
+contact history for customer and Organisations. The customer field in
 this instance is not required, and implies that the contact history is 
 applied to the organisation. The organisation field will fill out automatically
 when a user applies it to a customer. :)
@@ -108,24 +108,24 @@ when a user applies it to a customer. :)
 
 class contact_history(models.Model):
     contact_history_id = models.AutoField(primary_key=True)
-    organisations_id = models.ForeignKey(
-        'organisations',
+    organisation_id = models.ForeignKey(
+        'organisation',
         on_delete=models.CASCADE,
     )
     customer_id = models.ForeignKey(
-        'customers',
+        'customer',
         on_delete=models.CASCADE,
         blank=True,
         null=True
     )
     contact_type = models.ForeignKey(
-        'list_of_contact_types',
+        'list_of_contact_type',
         on_delete=models.CASCADE,
     )
     contact_date = models.DateTimeField()
     contact_history = HTMLField('contact_history')
     document_key = models.ForeignKey(
-        'documents',
+        'document',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -166,14 +166,14 @@ class bug(models.Model):
         null=True,
         blank=True,
     )
-    tasks = models.ForeignKey(
-        'tasks',
+    task = models.ForeignKey(
+        'task',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
-    requirements = models.ForeignKey(
-        'requirements',
+    requirement = models.ForeignKey(
+        'requirement',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -228,14 +228,14 @@ class bug_client(models.Model):
 
 class campus(models.Model):
     campus_id = models.AutoField(primary_key=True)
-    organisations_id = models.ForeignKey(
-        'organisations',
+    organisation_id = models.ForeignKey(
+        'organisation',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    customers = models.ForeignKey(
-        'customers',
+    customer = models.ForeignKey(
+        'customer',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -263,7 +263,7 @@ class campus(models.Model):
     )
     campus_suburb = models.CharField(max_length=50)
     campus_region_id = models.ForeignKey(
-        'list_of_countries_regions',
+        'list_of_country_region',
         on_delete=models.CASCADE,
     )
     campus_postcode = models.CharField(
@@ -272,7 +272,7 @@ class campus(models.Model):
         blank=True,
     )
     campus_country_id = models.ForeignKey(
-        'list_of_countries',
+        'list_of_country',
         on_delete=models.CASCADE,
     )
     campus_longitude = models.DecimalField(
@@ -308,7 +308,7 @@ class campus(models.Model):
 
 
 
-class costs(models.Model):
+class cost(models.Model):
     cost_id = models.AutoField(primary_key=True)
     project_id = models.ForeignKey(
         'project',
@@ -317,7 +317,7 @@ class costs(models.Model):
         null=True
     )
     task_id = models.ForeignKey(
-        'tasks',
+        'task',
         on_delete=models.CASCADE,
         blank=True,
         null=True
@@ -344,13 +344,13 @@ class costs(models.Model):
         return str('$' + str(self.cost_amount))
 
     class Meta:
-        db_table = "costs"
+        db_table = "cost"
 
 
-class customers(models.Model):
+class customer(models.Model):
     customer_id = models.AutoField(primary_key=True)
     customer_title = models.ForeignKey(
-        'list_of_titles',
+        'list_of_title',
         on_delete=models.CASCADE,
     )
     customer_first_name = models.CharField(max_length=50)
@@ -361,8 +361,8 @@ class customers(models.Model):
         null=True,
         upload_to='profile_pictures'
     )
-    organisations_id = models.ForeignKey(
-        'organisations',
+    organisation_id = models.ForeignKey(
+        'organisation',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -390,13 +390,13 @@ class customers(models.Model):
         )
 
     class Meta:
-        db_table = "customers"
+        db_table = "customer"
 
 
-class customers_campus(models.Model):
-    customers_campus_id = models.AutoField(primary_key=True)
+class customer_campus(models.Model):
+    customer_campus_id = models.AutoField(primary_key=True)
     customer_id = models.ForeignKey(
-        'customers',
+        'customer',
         on_delete=models.CASCADE,
     )
     campus_id = models.ForeignKey(
@@ -419,10 +419,10 @@ class customers_campus(models.Model):
     )
 
     class Meta:
-        db_table = "customers_campus"
+        db_table = "customer_campus"
 
 
-class documents(models.Model):
+class document(models.Model):
     document_key = models.UUIDField(
         default=uuid.uuid4,
         editable=False,
@@ -453,20 +453,20 @@ class documents(models.Model):
     )
 
     class Meta:
-        db_table = "documents"
+        db_table = "document"
 
     def __str__(self):
         return str(self.document_description)
 
 
-class documents_folder(models.Model):
-    documents_folder_id = models.AutoField(primary_key=True)
+class document_folder(models.Model):
+    document_folder_id = models.AutoField(primary_key=True)
     document_key = models.ForeignKey(
-        'documents',
+        'document',
         on_delete=models.CASCADE,
     )
     folder_id = models.ForeignKey(
-        'folders',
+        'folder',
         on_delete=models.CASCADE,
     )
     date_created = models.DateTimeField(auto_now_add=True)
@@ -483,13 +483,13 @@ class documents_folder(models.Model):
     )
 
     class Meta:
-        db_table = "documents_folder"
+        db_table = "document_folder"
 
 
-class document_permissions(models.Model):
-    document_permisssions_id = models.AutoField(primary_key=True)
+class document_permission(models.Model):
+    document_permisssion_id = models.AutoField(primary_key=True)
     document_key = models.ForeignKey(
-        'documents',
+        'document',
         on_delete=models.CASCADE,
     )
     project_id = models.ForeignKey(
@@ -499,19 +499,19 @@ class document_permissions(models.Model):
         on_delete=models.CASCADE,
     )
     task_id = models.ForeignKey(
-        'tasks',
+        'task',
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
-    organisations_id = models.ForeignKey(
-        'organisations',
+    organisation_id = models.ForeignKey(
+        'organisation',
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
     customer_id = models.ForeignKey(
-        'customers',
+        'customer',
         blank=True,
         null=True,
         on_delete=models.CASCADE,
@@ -522,8 +522,8 @@ class document_permissions(models.Model):
         null=True,
         on_delete=models.CASCADE,
     )
-    requirements = models.ForeignKey(
-        'requirements',
+    requirement = models.ForeignKey(
+        'requirement',
         blank=True,
         null=True,
         on_delete=models.CASCADE,
@@ -554,7 +554,7 @@ class document_permissions(models.Model):
     )
 
     class Meta:
-        db_table = "document_permissions"
+        db_table = "document_permission"
 
 
 class email_contact(models.Model):
@@ -563,29 +563,29 @@ class email_contact(models.Model):
         'email_content',
         on_delete=models.CASCADE,
     )
-    to_customers = models.ForeignKey(
-        'customers',
-        related_name='%(class)s_to_customers',
+    to_customer = models.ForeignKey(
+        'customer',
+        related_name='%(class)s_to_customer',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    cc_customers = models.ForeignKey(
-        'customers',
-        related_name='%(class)s_cc_customers',
+    cc_customer = models.ForeignKey(
+        'customer',
+        related_name='%(class)s_cc_customer',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    bcc_customers = models.ForeignKey(
-        'customers',
-        related_name='%(class)s_bcc_customers',
+    bcc_customer = models.ForeignKey(
+        'customer',
+        related_name='%(class)s_bcc_customer',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    organisations = models.ForeignKey(
-        'organisations',
+    organisation = models.ForeignKey(
+        'organisation',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -596,8 +596,8 @@ class email_contact(models.Model):
         blank=True,
         null=True,
     )
-    tasks = models.ForeignKey(
-        'tasks',
+    task = models.ForeignKey(
+        'task',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -609,7 +609,7 @@ class email_contact(models.Model):
         null=True,
     )
     quotes = models.ForeignKey(
-        'quotes',
+        'quote',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -654,7 +654,7 @@ class email_content(models.Model):
         db_table = "email_content"
 
 
-class folders(models.Model):
+class folder(models.Model):
     folder_id = models.AutoField(primary_key=True)
     project_id = models.ForeignKey(
         'project',
@@ -663,7 +663,7 @@ class folders(models.Model):
         null=True
     )
     task_id = models.ForeignKey(
-        'tasks',
+        'task',
         on_delete=models.CASCADE,
         blank=True,
         null=True
@@ -695,7 +695,7 @@ class folders(models.Model):
         db_table = "folder"
 
 
-class groups(models.Model):
+class group(models.Model):
     group_id = models.AutoField(primary_key=True)
     group_name = models.CharField(
         max_length=50,
@@ -730,10 +730,10 @@ class groups(models.Model):
         return str(self.group_name)
 
     class Meta:
-        db_table = "groups"
+        db_table = "group"
 
 
-class groups_manager(models.Manager):
+class group_manager(models.Manager):
     def get_by_natural_key(
             self,
             group_id,
@@ -745,14 +745,14 @@ class groups_manager(models.Manager):
         )
 
 
-class group_permissions(models.Model):
-    group_permissions_id = models.AutoField(primary_key=True)
+class group_permission(models.Model):
+    group_permission_id = models.AutoField(primary_key=True)
     permission_set = models.ForeignKey(
         'permission_set',
         on_delete=models.CASCADE,
     )
-    groups = models.ForeignKey(
-        'groups',
+    group = models.ForeignKey(
+        'group',
         on_delete=models.CASCADE
     )
 
@@ -760,14 +760,14 @@ class group_permissions(models.Model):
         return str(self.permission_set)
 
     class Meta:
-        db_table = "group_permissions"
+        db_table = "group_permission"
 
 
 class kanban_board(models.Model):
     kanban_board_id = models.AutoField(primary_key=True)
     kanban_board_name = models.CharField(max_length=255)
-    requirements = models.ForeignKey(
-        'requirements',
+    requirement = models.ForeignKey(
+        'requirement',
         null=True,
         blank=True,
         on_delete=models.CASCADE,
@@ -814,14 +814,14 @@ class kanban_card(models.Model):
         null=True,
         blank=True,
     )
-    tasks = models.ForeignKey(
-        'tasks',
+    task = models.ForeignKey(
+        'task',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
-    requirements = models.ForeignKey(
-        'requirements',
+    requirement = models.ForeignKey(
+        'requirement',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -1033,7 +1033,7 @@ class list_of_currency(models.Model):
         db_table = "list_of_currency"
 
 
-class list_of_contact_types(models.Model):
+class list_of_contact_type(models.Model):
     contact_type_id = models.AutoField(primary_key=True)
     contact_type = models.CharField(max_length=50)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -1055,10 +1055,10 @@ class list_of_contact_types(models.Model):
         return str(self.contact_type)
 
     class Meta:
-        db_table = "list_of_contact_types"
+        db_table = "list_of_contact_type"
 
 
-class list_of_countries(models.Model):
+class list_of_country(models.Model):
     country_id = models.CharField(primary_key=True, max_length=2)
     country_name = models.CharField(max_length=50)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -1080,13 +1080,13 @@ class list_of_countries(models.Model):
         return str(self.country_name)
 
     class Meta:
-        db_table = "list_of_countries"
+        db_table = "list_of_country"
 
 
-class list_of_countries_regions(models.Model):
+class list_of_country_region(models.Model):
     region_id = models.AutoField(primary_key=True)
     country_id = models.ForeignKey(
-        'list_of_countries',
+        'list_of_country',
         on_delete=models.CASCADE,
     )
     region_name = models.CharField(max_length=150)
@@ -1108,7 +1108,7 @@ class list_of_countries_regions(models.Model):
         return str(self.region_name)
 
     class Meta:
-        db_table = "list_of_countries_regions"
+        db_table = "list_of_country_region"
 
 
 class list_of_lead_source(models.Model):
@@ -1183,8 +1183,8 @@ class list_of_opportunity_stage(models.Model):
         ordering = ['list_order']
 
 
-class list_of_quote_stages(models.Model):
-    quote_stages_id = models.AutoField(primary_key=True)
+class list_of_quote_stage(models.Model):
+    quote_stage_id = models.AutoField(primary_key=True)
     quote_stage = models.CharField(
         max_length=50,
         unique=True,
@@ -1220,7 +1220,7 @@ class list_of_quote_stages(models.Model):
         return str(self.quote_stage)
 
     class Meta:
-        db_table = "list_of_quote_stages"
+        db_table = "list_of_quote_stage"
 
 
 class list_of_requirement_item_status(models.Model):
@@ -1336,7 +1336,7 @@ class list_of_requirement_type(models.Model):
         db_table = "list_of_requirement_type"
 
 
-class list_of_taxes(models.Model):
+class list_of_tax(models.Model):
     tax_id = models.AutoField(primary_key=True)
     tax_amount = models.DecimalField(
         max_digits=6,
@@ -1368,10 +1368,10 @@ class list_of_taxes(models.Model):
         return str(self.tax_amount)  # No need to encode as it is a decimal point
 
     class Meta:
-        db_table = "list_of_taxes"
+        db_table = "list_of_tax"
 
 
-class list_of_titles(models.Model):
+class list_of_title(models.Model):
     title_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=10)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -1393,21 +1393,21 @@ class list_of_titles(models.Model):
         return str(self.title)
 
     class Meta:
-        db_table = "list_of_titles"
+        db_table = "list_of_title"
 
 
 class opportunity(models.Model):
     opportunity_id = models.AutoField(primary_key=True)
     opportunity_name = models.CharField(max_length=255)
     opportunity_description = HTMLField('oppertunity_description')
-    organisations_id = models.ForeignKey(
-        'organisations',
+    organisation_id = models.ForeignKey(
+        'organisation',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
     customer_id = models.ForeignKey(
-        'customers',
+        'customer',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -1454,8 +1454,8 @@ class opportunity(models.Model):
         db_table = "opportunities"
 
 
-class opportunity_permissions(models.Model):
-    opportunity_permissions_id = models.AutoField(primary_key=True)
+class opportunity_permission(models.Model):
+    opportunity_permission_id = models.AutoField(primary_key=True)
     opportunity_id = models.ForeignKey(
         'opportunity',
         on_delete=models.CASCADE
@@ -1467,13 +1467,13 @@ class opportunity_permissions(models.Model):
         null=True,
         blank=True,
     )
-    groups_id = models.ForeignKey(
-        'groups',
+    group_id = models.ForeignKey(
+        'group',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
-    all_users = models.CharField(
+    all_user = models.CharField(
         max_length=5,
         choices=IS_DELETED_CHOICE,
         default='FALSE',
@@ -1497,8 +1497,8 @@ class opportunity_permissions(models.Model):
         db_table = "opportunity_permission"
 
 
-class organisations(models.Model):
-    organisations_id = models.AutoField(primary_key=True)
+class organisation(models.Model):
+    organisation_id = models.AutoField(primary_key=True)
     organisation_name = models.CharField(max_length=255)
     organisation_website = models.CharField(max_length=50)
     organisation_email = models.CharField(max_length=100)
@@ -1523,7 +1523,7 @@ class organisations(models.Model):
         return str(self.organisation_name)
 
     class Meta:
-        db_table = "organisations"
+        db_table = "organisation"
 
 
 
@@ -1532,12 +1532,12 @@ class permission_set_manager(models.Manager):
             self,
             permission_set_id,
             permission_set_name,
-            administration_assign_users_to_groups,
-            administration_create_groups,
-            administration_create_permission_sets,
-            administration_create_users,
+            administration_assign_user_to_group,
+            administration_create_group,
+            administration_create_permission_set,
+            administration_create_user,
             assign_campus_to_customer,
-            associate_project_and_tasks,
+            associate_project_and_task,
             bug,
             bug_client,
             customer,
@@ -1555,7 +1555,7 @@ class permission_set_manager(models.Manager):
             requirement_link,
             task,
             tax,
-            documents,
+            document,
             contact_history,
             kanban_comment,
             project_history,
@@ -1564,12 +1564,12 @@ class permission_set_manager(models.Manager):
         return self.get(
             permission_set_id=permission_set_id,
             permission_set_name=permission_set_name,
-            administration_assign_users_to_groups=administration_assign_users_to_groups,
-            administration_create_groups=administration_create_groups,
-            administration_create_permission_sets=administration_create_permission_sets,
-            administration_create_users=administration_create_users,
+            administration_assign_user_to_group=administration_assign_user_to_group,
+            administration_create_group=administration_create_group,
+            administration_create_permission_set=administration_create_permission_set,
+            administration_create_user=administration_create_user,
             assign_campus_to_customer=assign_campus_to_customer,
-            associate_project_and_tasks=associate_project_and_tasks,
+            associate_project_and_task=associate_project_and_task,
             bug=bug,
             bug_client=bug_client,
             customer=customer,
@@ -1588,7 +1588,7 @@ class permission_set_manager(models.Manager):
             task=task,
             tax=tax,
             template=template,
-            documents=documents,
+            document=document,
             contact_history=contact_history,
             kanban_comment=kanban_comment,
             project_history=project_history,
@@ -1604,20 +1604,20 @@ class permission_set(models.Model):
         max_length=255,
         unique=True,
     )
-    # BASELINE PERMISSIONS
-    administration_assign_users_to_groups = models.IntegerField(
+    # BASELINE permission
+    administration_assign_user_to_group = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
     )
-    administration_create_groups = models.IntegerField(
+    administration_create_group = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
     )
-    administration_create_permission_sets = models.IntegerField(
+    administration_create_permission_set = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
     )
-    administration_create_users = models.IntegerField(
+    administration_create_user = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
     )
@@ -1625,7 +1625,7 @@ class permission_set(models.Model):
         choices=PERMISSION_LEVEL,
         default=0,
     )
-    associate_project_and_tasks = models.IntegerField(
+    associate_project_and_task = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
     )
@@ -1702,13 +1702,13 @@ class permission_set(models.Model):
         default=0,
     )
     """
-    ADDITIVE PERMISSIONS
+    ADDITIVE permission
     ~~~~~~~~~~~~~~~~~~~~
-    Designed to add on extra abilities to those users who have "READ ONLY" for certain modules.
+    Designed to add on extra abilities to those user who have "READ ONLY" for certain modules.
     If a user has the ability to "EDIT" for any of these modules, then this section does not 
     need to be populated with data.
     """
-    documents = models.IntegerField(
+    document = models.IntegerField(
         choices=PERMISSION_BOOLEAN,
         default=0,
     )
@@ -1745,12 +1745,12 @@ class permission_set(models.Model):
         return (
             self.permission_set_id,  # 0
             self.permission_set_name,  # 1
-            self.administration_assign_users_to_groups,  # 2
-            self.administration_create_groups,  # 3
-            self.administration_create_permission_sets,  # 4
-            self.administration_create_users,  # 5
+            self.administration_assign_user_to_group,  # 2
+            self.administration_create_group,  # 3
+            self.administration_create_permission_set,  # 4
+            self.administration_create_user,  # 5
             self.assign_campus_to_customer,  # 6
-            self.associate_project_and_tasks,  # 7
+            self.associate_project_and_task,  # 7
             self.customer,  # 8
             self.invoice,  # 9
             self.invoice_product,  # 10
@@ -1761,7 +1761,7 @@ class permission_set(models.Model):
             self.requirement,  # 15
             self.requirement_link,  # 16
             self.task,  # 17
-            self.documents,  # 18
+            self.document,  # 18
             self.contact_history,  # 19
             self.project_history,  # 20
             self.task_history  # 21
@@ -1777,10 +1777,10 @@ class permission_set(models.Model):
         db_table = "permission_set"
 
 
-class products_and_services(models.Model):
+class product_and_service(models.Model):
     """
-	For naming convention, products and services will be shorten to
-	just product. The product name contains both products and services
+	For naming convention, product and service will be shorten to
+	just product. The product name contains both product and service
 	"""
     product_id = models.AutoField(primary_key=True)
     product_or_service = models.CharField(
@@ -1825,22 +1825,22 @@ class products_and_services(models.Model):
         return str(self.product_name)
 
     class Meta:
-        db_table = "products_and_services"
+        db_table = "product_and_service"
 
 
 class project(models.Model):
     project_id = models.AutoField(primary_key=True)
     project_name = models.CharField(max_length=255)
     project_description = HTMLField('project_description')
-    organisations_id = models.ForeignKey(
-        'organisations',
+    organisation_id = models.ForeignKey(
+        'organisation',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    #Only fill this field out if there are no organisations
-    customers = models.ForeignKey(
-        'customers',
+    #Only fill this field out if there are no organisation
+    customer = models.ForeignKey(
+        'customer',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1872,14 +1872,14 @@ class project(models.Model):
         db_table = "project"
 
 
-class project_customers(models.Model):
-    project_customers_id = models.AutoField(primary_key=True)
+class project_customer(models.Model):
+    project_customer_id = models.AutoField(primary_key=True)
     project_id = models.ForeignKey(
         'project',
         on_delete=models.CASCADE,
     )
     customer_id = models.ForeignKey(
-        'customers',
+        'customer',
         on_delete=models.CASCADE,
     )
     customer_description = models.CharField(
@@ -1901,16 +1901,16 @@ class project_customers(models.Model):
     )
 
     class Meta:
-        db_table = "project_customers"
+        db_table = "project_customer"
 
 
-class project_groups(models.Model):
+class project_group(models.Model):
     project_id = models.ForeignKey(
         'project',
         on_delete=models.CASCADE,
     )
-    groups_id = models.ForeignKey(
-        'groups',
+    group_id = models.ForeignKey(
+        'group',
         on_delete=models.CASCADE,
     )
     date_created = models.DateTimeField(auto_now_add=True)
@@ -1927,7 +1927,7 @@ class project_groups(models.Model):
     )
 
     class Meta:
-        db_table = "project_groups"
+        db_table = "project_group"
 
 
 class project_history(models.Model):
@@ -1995,14 +1995,14 @@ class project_opportunity(models.Model):
         db_table = "project_opportunity"
 
 
-class project_stages(models.Model):
-    project_stages_id = models.AutoField(primary_key=True)
+class project_stage(models.Model):
+    project_stage_id = models.AutoField(primary_key=True)
     project_id = models.ForeignKey(
         'project',
         on_delete=models.CASCADE,
     )
-    stages_id = models.ForeignKey(
-        'stages',
+    stage_id = models.ForeignKey(
+        'stage',
         on_delete=models.CASCADE,
     )
     date_created = models.DateTimeField(auto_now_add=True)
@@ -2019,18 +2019,18 @@ class project_stages(models.Model):
     )
 
     class Meta:
-        db_table = "project_stages"
+        db_table = "project_stage"
 
 
-class project_tasks(models.Model):
-    project_tasks_id = models.AutoField(primary_key=True)
+class project_task(models.Model):
+    project_task_id = models.AutoField(primary_key=True)
     project_id = models.ForeignKey(
         'project',
         on_delete=models.CASCADE,
         db_column='project_id'
     )
     task_id = models.ForeignKey(
-        'tasks',
+        'task',
         on_delete=models.CASCADE,
         db_column='task_id'
     )
@@ -2048,10 +2048,10 @@ class project_tasks(models.Model):
     )
 
     class Meta:
-        db_table = "project_tasks"
+        db_table = "project_task"
 
 
-class quotes(models.Model):
+class quote(models.Model):
     quote_id = models.AutoField(primary_key=True)
     quote_uuid = models.UUIDField(
         default=uuid.uuid4,
@@ -2062,7 +2062,7 @@ class quotes(models.Model):
     quote_title = models.CharField(max_length=255)
     quote_valid_till = models.DateTimeField()
     quote_stage_id = models.ForeignKey(
-        'list_of_quote_stages',
+        'list_of_quote_stage',
         on_delete=models.CASCADE,
     )
     quote_billing_address=models.ForeignKey(
@@ -2098,7 +2098,7 @@ class quotes(models.Model):
         blank=True,
     )
     task_id = models.ForeignKey(
-        'tasks',
+        'task',
         on_delete=models.CASCADE,
         db_column='task_id',
         null=True,
@@ -2112,16 +2112,16 @@ class quotes(models.Model):
         blank=True,
     )
     customer_id = models.ForeignKey(
-        'customers',
+        'customer',
         on_delete=models.CASCADE,
         db_column='customer_id',
         null=True,
         blank=True,
     )
     organisation_id = models.ForeignKey(
-        'organisations',
+        'organisation',
         on_delete=models.CASCADE,
-        db_column='organisations_id',
+        db_column='organisation_id',
         null=True,
         blank=True,
     )
@@ -2142,17 +2142,17 @@ class quotes(models.Model):
         return str(self.quote_title)
 
     class Meta:
-        db_table = "quotes"
+        db_table = "quote"
 
 
-class quotes_products_and_services(models.Model):
-    quotes_products_and_services_id = models.AutoField(primary_key=True)
+class quote_product_and_service(models.Model):
+    quotes_product_and_service_id = models.AutoField(primary_key=True)
     quote = models.ForeignKey(
-        'quotes',
+        'quote',
         on_delete=models.CASCADE,
     )
-    products_and_services = models.ForeignKey(
-        'products_and_services',
+    product_and_service = models.ForeignKey(
+        'product_and_service',
         on_delete=models.CASCADE,
     )
     # Price of the product BEFORE Discounts
@@ -2195,7 +2195,7 @@ class quotes_products_and_services(models.Model):
         validators=[MaxValueValidator(1000000000), MinValueValidator(0)]  # Could I use this for the money too? :D
     )
     tax = models.ForeignKey(
-        'list_of_taxes',
+        'list_of_tax',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -2229,20 +2229,20 @@ class quotes_products_and_services(models.Model):
     )
 
     def __str__(self):
-        return str(self.quotes_products_and_services_id) + "| " + self.product_description
+        return str(self.quotes_product_and_service_id) + "| " + self.product_description
 
     class Meta:
-        db_table = "quotes_products_and_services"
+        db_table = "quote_product_and_service"
 
 
-class quote_responsible_customers(models.Model):
-    quote_responsible_customers_id = models.AutoField(primary_key=True)
+class quote_responsible_customer(models.Model):
+    quote_responsible_customer_id = models.AutoField(primary_key=True)
     quote_id = models.ForeignKey(
-        'quotes',
+        'quote',
         on_delete=models.CASCADE,
     )
     customer_id = models.ForeignKey(
-        'customers',
+        'customer',
         on_delete=models.CASCADE,
     )
     date_created = models.DateTimeField(auto_now_add=True)
@@ -2259,7 +2259,7 @@ class quote_responsible_customers(models.Model):
     )
 
     class Meta:
-        db_table = "quote_responsible_customers"
+        db_table = "quote_responsible_customer"
 
 
 class quote_template(models.Model):
@@ -2351,7 +2351,7 @@ class quote_template(models.Model):
 
 
 
-class requirements(models.Model):
+class requirement(models.Model):
     requirement_id = models.AutoField(primary_key=True)
     requirement_title = models.CharField(
         max_length=255,
@@ -2385,13 +2385,13 @@ class requirements(models.Model):
         return str(self.requirement_title)
 
     class Meta:
-        db_table = "requirements"
+        db_table = "requirement"
 
 
 class requirement_item(models.Model):
     requirement_item_id = models.AutoField(primary_key=True)
     requirement_id = models.ForeignKey(
-        'requirements',
+        'requirement',
         on_delete=models.CASCADE,
     )
     requirement_item_title = models.CharField(max_length=255)
@@ -2427,8 +2427,8 @@ class requirement_item(models.Model):
         db_table = "requirement_item"
 
 
-class requirement_item_links(models.Model):
-    requirement_item_links_id = models.AutoField(primary_key=True)
+class requirement_item_link(models.Model):
+    requirement_item_link_id = models.AutoField(primary_key=True)
     requirement_item = models.ForeignKey(
         'requirement_item',
         on_delete=models.CASCADE,
@@ -2440,13 +2440,13 @@ class requirement_item_links(models.Model):
         on_delete=models.CASCADE,
     )
     task_id = models.ForeignKey(
-        'tasks',
+        'task',
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
-    organisations_id = models.ForeignKey(
-        'organisations',
+    organisation_id = models.ForeignKey(
+        'organisation',
         blank=True,
         null=True,
         on_delete=models.CASCADE,
@@ -2465,13 +2465,13 @@ class requirement_item_links(models.Model):
     )
 
     class Meta:
-        db_table = "requirement_item_permissions"
+        db_table = "requirement_item_permission"
 
 
-class requirement_links(models.Model):
-    requirement_links_id = models.AutoField(primary_key=True)
-    requirements = models.ForeignKey(
-        'requirements',
+class requirement_link(models.Model):
+    requirement_link_id = models.AutoField(primary_key=True)
+    requirement = models.ForeignKey(
+        'requirement',
         on_delete=models.CASCADE,
     )
     project_id = models.ForeignKey(
@@ -2481,13 +2481,13 @@ class requirement_links(models.Model):
         on_delete=models.CASCADE,
     )
     task_id = models.ForeignKey(
-        'tasks',
+        'task',
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
-    organisations_id = models.ForeignKey(
-        'organisations',
+    organisation_id = models.ForeignKey(
+        'organisation',
         blank=True,
         null=True,
         on_delete=models.CASCADE,
@@ -2506,13 +2506,13 @@ class requirement_links(models.Model):
     )
 
     class Meta:
-        db_table = "requirement_permissions"
+        db_table = "requirement_link"
 
 
-class requirement_permissions(models.Model):
-    requirement_permissions_id = models.AutoField(primary_key=True)
-    requirements = models.ForeignKey(
-        'requirements',
+class requirement_permission(models.Model):
+    requirement_permission_id = models.AutoField(primary_key=True)
+    requirement = models.ForeignKey(
+        'requirement',
         on_delete=models.CASCADE
     )
     assigned_user = models.ForeignKey(
@@ -2522,13 +2522,13 @@ class requirement_permissions(models.Model):
         null=True,
         blank=True,
     )
-    groups_id = models.ForeignKey(
-        'groups',
+    group_id = models.ForeignKey(
+        'group',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
-    all_users = models.CharField(
+    all_user = models.CharField(
         max_length=5,
         choices=IS_DELETED_CHOICE,
         default='FALSE',
@@ -2552,10 +2552,10 @@ class requirement_permissions(models.Model):
         db_table = "requirement_permission"
 
 
-class stages(models.Model):
-    stages_id = models.AutoField(primary_key=True)
+class stage(models.Model):
+    stage_id = models.AutoField(primary_key=True)
     group_id = models.ForeignKey(
-        'groups',
+        'group',
         on_delete=models.CASCADE,
     )
     stage = models.CharField(max_length=45)
@@ -2576,15 +2576,15 @@ class stages(models.Model):
         return str(self.stage)
 
     class Meta:
-        db_table = "stages"
+        db_table = "stage"
 
 
-class tasks(models.Model):
-    tasks_id = models.AutoField(primary_key=True)
+class task(models.Model):
+    task_id = models.AutoField(primary_key=True)
     task_short_description = models.CharField(max_length=255)
     task_long_description = HTMLField()
-    organisations_id = models.ForeignKey(
-        'organisations',
+    organisation_id = models.ForeignKey(
+        'organisation',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -2619,13 +2619,13 @@ class tasks(models.Model):
         return str(self.task_short_description)
 
     class Meta:
-        db_table = "tasks"
+        db_table = "task"
 
 
-class tasks_actions(models.Model):
-    tasks_actions_id = models.AutoField(primary_key=True)
-    tasks_id = models.ForeignKey(
-        'tasks',
+class task_action(models.Model):
+    task_action_id = models.AutoField(primary_key=True)
+    task_id = models.ForeignKey(
+        'task',
         on_delete=models.CASCADE,
     )
     task_action = models.TextField()
@@ -2647,20 +2647,20 @@ class tasks_actions(models.Model):
     )
 
     class Meta:
-        db_table = "tasks_actions"
+        db_table = "task_action"
 
 
-class tasks_customers(models.Model):
-    tasks_customers_id = models.AutoField(primary_key=True)
-    tasks_id = models.ForeignKey(
-        'tasks',
+class task_customer(models.Model):
+    task_customer_id = models.AutoField(primary_key=True)
+    task_id = models.ForeignKey(
+        'task',
         on_delete=models.CASCADE,
     )
     customer_id = models.ForeignKey(
-        'customers',
+        'customer',
         on_delete=models.CASCADE,
     )
-    customers_description = models.CharField(
+    customer_description = models.CharField(
         max_length=155,
         null=True,
         blank=True
@@ -2679,17 +2679,17 @@ class tasks_customers(models.Model):
     )
 
     class Meta:
-        db_table = "tasks_customers"
+        db_table = "task_customer"
 
 
-class tasks_groups(models.Model):
-    tasks_groups_id = models.AutoField(primary_key=True)
-    tasks_id = models.ForeignKey(
-        'tasks',
+class task_group(models.Model):
+    task_group_id = models.AutoField(primary_key=True)
+    task_id = models.ForeignKey(
+        'task',
         on_delete=models.CASCADE,
     )
-    groups_id = models.ForeignKey(
-        'groups',
+    group_id = models.ForeignKey(
+        'group',
         on_delete=models.CASCADE,
     )
     date_created = models.DateTimeField(auto_now_add=True)
@@ -2706,13 +2706,13 @@ class tasks_groups(models.Model):
     )
 
     class Meta:
-        db_table = "tasks_groups"
+        db_table = "task_group"
 
 
-class tasks_history(models.Model):
-    tasks_history_id = models.AutoField(primary_key=True)
-    tasks_id = models.ForeignKey(
-        'tasks',
+class task_history(models.Model):
+    task_history_id = models.AutoField(primary_key=True)
+    task_id = models.ForeignKey(
+        'task',
         on_delete=models.CASCADE,
     )
     user_id = models.ForeignKey(
@@ -2735,13 +2735,13 @@ class tasks_history(models.Model):
     )
 
     class Meta:
-        db_table = "tasks_history"
+        db_table = "task_history"
 
 
-class tasks_opportunity(models.Model):
-    tasks_opportunity_id = models.AutoField(primary_key=True)
-    tasks_id = models.ForeignKey(
-        'tasks',
+class task_opportunity(models.Model):
+    task_opportunity_id = models.AutoField(primary_key=True)
+    task_id = models.ForeignKey(
+        'task',
         on_delete=models.CASCADE,
     )
     opportunity_id = models.ForeignKey(
@@ -2762,7 +2762,7 @@ class tasks_opportunity(models.Model):
     )
 
     class Meta:
-        db_table = "tasks_opportunity"
+        db_table = "task_opportunity"
 
 
 class to_do(models.Model):
@@ -2777,8 +2777,8 @@ class to_do(models.Model):
         null=True,
         blank=True,
     )
-    tasks = models.ForeignKey(
-        'tasks',
+    task = models.ForeignKey(
+        'task',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -2806,23 +2806,23 @@ class to_do(models.Model):
         db_table = "to_do"
 
 
-class user_groups(models.Model):
-    user_groups_id = models.AutoField(primary_key=True)
+class user_group(models.Model):
+    user_group_id = models.AutoField(primary_key=True)
     username = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
     )
-    groups = models.ForeignKey(
-        'groups',
+    group = models.ForeignKey(
+        'group',
         on_delete=models.CASCADE,
     )
     permission_set = models.ForeignKey(
         'permission_set',
         on_delete=models.CASCADE,
     )
-    reports_to=models.ForeignKey(
+    report_to=models.ForeignKey(
         User,
-        related_name='reports_to',
+        related_name='report_to',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -2832,7 +2832,7 @@ class user_groups(models.Model):
         choices=IS_DELETED_CHOICE,
         default="FALSE",
     )
-    #reports to
+    #report to
     # group leader - true/false
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -2848,5 +2848,5 @@ class user_groups(models.Model):
     )
 
     class Meta:
-        db_table = "user_groups"
+        db_table = "user_group"
 

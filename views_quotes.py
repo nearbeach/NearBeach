@@ -11,7 +11,7 @@ from NearBeach.user_permissions import *
 @login_required(login_url='login')
 def delete_line_item(request, line_item_id):
     # Delete the line item
-    line_item = quotes_products_and_services.objects.get(quotes_products_and_services_id = line_item_id)
+    line_item = quote_product_and_service.objects.get(quotes_products_and_services_id = line_item_id)
     line_item.is_deleted = "TRUE"
     line_item.change_user=request.user
     line_item.save()
@@ -29,10 +29,10 @@ def delete_line_item(request, line_item_id):
 @login_required(login_url='login')
 def delete_responsible_customer(request,quote_id,customer_id):
     if request.method == "POST":
-        quote_responsible_customers.objects.filter(
+        quote_responsible_customer.objects.filter(
             is_deleted="FALSE",
-            quote_id=quotes.objects.get(quote_id=quote_id),
-            customer_id=customers.objects.get(customer_id=customer_id)
+            quote_id=quote.objects.get(quote_id=quote_id),
+            customer_id=customer.objects.get(customer_id=customer_id)
         ).update(is_deleted="TRUE")
         #Return a blank page for fun
         t = loader.get_template('NearBeach/blank.html')
@@ -49,18 +49,18 @@ def delete_responsible_customer(request,quote_id,customer_id):
 @login_required(login_url='login')
 def list_of_line_items(request, quote_id):
     #Get data
-    line_item_results = quotes_products_and_services.objects.filter(
+    line_item_results = quote_product_and_service.objects.filter(
         is_deleted='FALSE',
         quote_id=quote_id,
     )
 
-    product_line_items = quotes_products_and_services.objects.filter(
+    product_line_items = quote_product_and_service.objects.filter(
         quote_id=quote_id,
         products_and_services__product_or_service='Product',
         is_deleted="FALSE",
     )
 
-    service_line_items = quotes_products_and_services.objects.filter(
+    service_line_items = quote_product_and_service.objects.filter(
         quote_id=quote_id,
         products_and_services__product_or_service='Service',
         is_deleted="FALSE",
@@ -84,7 +84,7 @@ def list_of_line_items(request, quote_id):
 
 @login_required(login_url='login')
 def new_line_item(request,quote_id):
-    quotes_results = quotes.objects.get(quote_id=quote_id)
+    quotes_results = quote.objects.get(quote_id=quote_id)
 
     permission_results =  return_user_permission_level(request, None,'quote')
 
@@ -106,15 +106,15 @@ def new_line_item(request,quote_id):
             product_note = form.cleaned_data['product_note']
 
             #Instances needed
-            quote_instance = quotes.objects.get(quote_id=quote_id)
-            product_instance = products_and_services.objects.get(product_name = extracted_product_and_services)
+            quote_instance = quote.objects.get(quote_id=quote_id)
+            product_instance = product_and_service.objects.get(product_name = extracted_product_and_services)
 
             #Check to make sure they are not blank - default = 0
             if ((discount_percent == '') or (not discount_percent)): discount_percent = 0
             if ((discount_amount == '') or (not discount_amount)) : discount_amount = 0
 
             #Save line item
-            submit_line_item = quotes_products_and_services(
+            submit_line_item = quote_product_and_service(
                 products_and_services = product_instance,
                 quantity = quantity,
                 product_description = product_description,
@@ -159,55 +159,55 @@ def responsible_customer(request,quote_id, customer_id=''):
         if customer_id == '':
             return HttpResponseBadRequest("Customer ID is required!")
 
-        customer_instance = customers.objects.get(customer_id=customer_id)
-        quote_instance = quotes.objects.get(quote_id=quote_id)
+        customer_instance = customer.objects.get(customer_id=customer_id)
+        quote_instance = quote.objects.get(quote_id=quote_id)
 
-        responsible_customer_save = quote_responsible_customers(
+        responsible_customer_save = quote_responsible_customer(
             customer_id=customer_instance,
             quote_id=quote_instance,
             change_user=request.user,
         )
         responsible_customer_save.save()
     #Get data
-    responsible_customer_results = customers.objects.filter(
-        customer_id__in=quote_responsible_customers.objects.filter(
+    responsible_customer_results = customer.objects.filter(
+        customer_id__in=quote_responsible_customer.objects.filter(
             quote_id=quote_id,
             is_deleted="FALSE"
         ).values('customer_id').distinct())
 
-    quote_results = quotes.objects.get(quote_id=quote_id)
+    quote_results = quote.objects.get(quote_id=quote_id)
 
 
     """
-    Obtain a list of all customers depending where the quote is connected to
+    Obtain a list of all customer depending where the quote is connected to
     """
     if not quote_results.project_id == None:
-        customer_results = customers.objects.filter(
-            organisations_id=quote_results.project_id.organisations_id.organisations_id,
+        customer_results = customer.objects.filter(
+            organisation_id=quote_results.project_id.organisation_id.organisation_id,
         ).exclude(customer_id__in=responsible_customer_results.values('customer_id'),)
     elif not quote_results.task_id == None:
-        customer_results = customers.objects.filter(
-            organisations_id=quote_results.task_id.organisations_id.organisations_id
+        customer_results = customer.objects.filter(
+            organisation_id=quote_results.task_id.organisation_id.organisation_id
         ).exclude(customer_id__in=responsible_customer_results.values('customer_id'),)
     elif not quote_results.opportunity_id == None:
         try:
-            customer_results = customers.objects.filter(
-                organisations_id=quote_results.opportunity_id.organisations_id.organisations_id
+            customer_results = customer.objects.filter(
+                organisation_id=quote_results.opportunity_id.organisation_id.organisation_id
             ).exclude(customer_id__in=responsible_customer_results.values('customer_id'),)
         except:
             try:
-                customer_results = customers.objects.filter(
-                    organisations_id=quote_results.opportunity_id.customer_id.customer_id
+                customer_results = customer.objects.filter(
+                    organisation_id=quote_results.opportunity_id.customer_id.customer_id
                 ).exclude(customer_id__in=responsible_customer_results.values('customer_id'),)
             except:
                 customer_results = ''
     elif not quote_results.customer_id == None:
-        customer_results = customers.objects.filter(
+        customer_results = customer.objects.filter(
             customer_id=quote_results.customer_id.customer_id
         ).exclude(customer_id__in=responsible_customer_results.values('customer_id'),)
     elif not quote_results.organisation_id == None:
-        customer_results = customers.objects.filter(
-            organisations_id=quote_results.organisation_id
+        customer_results = customer.objects.filter(
+            organisation_id=quote_results.organisation_id
         ).exclude(customer_id__in=responsible_customer_results.values('customer_id'),)
 
     # Load the template

@@ -1,7 +1,7 @@
 {% extends "./template.html" %}
 {% block content %}
 	<h2>New Customer</h2>
-	<form action={% url 'new_customer' organisations_id %} method="post" class="new_customer" id="input-form">
+	<form action={% url 'new_customer' organisation_id %} method="post" class="new_customer" id="input-form">
         {% csrf_token %}
         <ul>
             <li>{{ form_errors }}</li>
@@ -9,7 +9,7 @@
             <li>{{ new_customer_form.customer_first_name }}</li>
             <li>{{ new_customer_form.customer_last_name }}</li>
             <li>{{ new_customer_form.customer_email }}</li>
-            <li>Organisation: {{ new_customer_form.organisations_id }}</li>
+            <li>Organisation: {{ new_customer_form.organisation_id }}</li>
         </ul>
         <input type="submit" value="Submit new customer"><a href={% url 'dashboard' %}>Cancel</a>
     </form>

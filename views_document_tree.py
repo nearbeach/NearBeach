@@ -14,7 +14,7 @@ import simplejson
 
 @login_required(login_url='login')
 def document_tree_create_folder(request, location_id, project_or_task):
-    permission_results = return_user_permission_level(request, None,['project','documents','task'])
+    permission_results = return_user_permission_level(request, None,['project','document','task'])
 
     #Permission for either project or task
     if project_or_task == "P":
@@ -30,8 +30,8 @@ def document_tree_create_folder(request, location_id, project_or_task):
             nested_folder = request.POST.get('nested_folder')
 
 
-            #Save the folders
-            folders_save = folders(
+            #Save the folder
+            folders_save = folder(
                 folder_description=folder_description,
                 change_user=request.user,
             )
@@ -46,12 +46,12 @@ def document_tree_create_folder(request, location_id, project_or_task):
                 condition I want.
                 """
             else:
-                folders_save.parent_folder_id = folders.objects.get(folder_id=int(nested_folder))
+                folders_save.parent_folder_id = folder.objects.get(folder_id=int(nested_folder))
 
             if project_or_task == 'P':
                 folders_save.project_id = project.objects.get(project_id=location_id)
             else:
-                folders_save.project_id = tasks.objects.get(task_id=location_id)
+                folders_save.project_id = task.objects.get(task_id=location_id)
 
             folders_save.save()
 
@@ -72,7 +72,7 @@ def document_tree_create_folder(request, location_id, project_or_task):
             project_or_task=project_or_task,
         ),
         'general_permission': general_permission,
-        'document_permission': permission_results['documents'],
+        'document_permission': permission_results['document'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -81,8 +81,8 @@ def document_tree_create_folder(request, location_id, project_or_task):
 @login_required(login_url='login')
 def document_tree_list(request, location_id, project_or_task, folder_id='',):
     #Get Data
-    folder_results = folders.objects.filter(is_deleted="FALSE")
-    document_results = document_permissions.objects.filter(is_deleted="FALSE")
+    folder_results = folder.objects.filter(is_deleted="FALSE")
+    document_results = document_permission.objects.filter(is_deleted="FALSE")
 
 
 
@@ -95,7 +95,7 @@ def document_tree_list(request, location_id, project_or_task, folder_id='',):
         document_results = document_results.filter(project_id=project_instance)
     elif project_or_task == 'T':
         #Tasks
-        task_instance=tasks.objects.get(tasks_id=location_id)
+        task_instance=task.objects.get(tasks_id=location_id)
 
         folder_results = folder_results.filter(task_id=task_instance)
         document_results = document_results.filter(task_id=task_instance)
@@ -109,24 +109,24 @@ def document_tree_list(request, location_id, project_or_task, folder_id='',):
         folder_results = folder_results.filter(parent_folder_id=None)
 
         """
-        We only want those documents who are not in a folder. So we look up all documents that were in a folder
+        We only want those document who are not in a folder. So we look up all document that were in a folder
         and exclude them from the document results.
         """
-        documents_folder_results = documents_folder.objects.filter(is_deleted="FALSE")
-        document_results = document_results.filter(~Q(document_key__in=documents_folder_results.values('document_key')))
+        document_folder_results = document_folder.objects.filter(is_deleted="FALSE")
+        document_results = document_results.filter(~Q(document_key__in=document_folder_results.values('document_key')))
     else:
-        folder_instance = folders.objects.get(folder_id=folder_id)
+        folder_instance = folder.objects.get(folder_id=folder_id)
         folder_results = folder_results.filter(parent_folder_id=folder_instance)
 
         """
-        We only want those documents who are contained in the folder specified. So we look up all the 
-        documents that are in that specific folder and only include them.
+        We only want those document who are contained in the folder specified. So we look up all the 
+        document that are in that specific folder and only include them.
         """
-        documents_folder_results = documents_folder.objects.filter(
+        document_folder_results = document_folder.objects.filter(
             is_deleted="FALSE",
             folder_id=folder_instance
         )
-        document_results = document_results.filter(Q(document_key__in=documents_folder_results.values('document_key')))
+        document_results = document_results.filter(Q(document_key__in=document_folder_results.values('document_key')))
 
     # Load the template
     t = loader.get_template('NearBeach/document_tree/document_tree_list.html')
@@ -165,14 +165,14 @@ def document_tree_upload(request, location_id, project_or_task):
         """
         File Uploads
         """
-        document_save = documents(
+        document_save = document(
             document_description=filename,
             document=file,
             change_user=request.user,
         )
         document_save.save()
 
-        document_permissions_save = document_permissions(
+        document_permissions_save = document_permission(
             document_key=document_save,
             change_user=request.user,
         )
@@ -182,7 +182,7 @@ def document_tree_upload(request, location_id, project_or_task):
             document_permissions_save.project_id = project_instance
         else:
             #Task
-            task_instance = tasks.objects.get(tasks_id=location_id)
+            task_instance = task.objects.get(tasks_id=location_id)
             document_permissions_save.task_id = task_instance
         document_permissions_save.save()
 
@@ -190,12 +190,12 @@ def document_tree_upload(request, location_id, project_or_task):
             print("")
             #PYTHON BUG HERE - this is the work around
         else:
-            documents_folder_save = documents_folder(
+            document_folder_save = document_folder(
                 document_key=document_save,
-                folder_id=folders.objects.get(folder_id=nested_folder),
+                folder_id=folder.objects.get(folder_id=nested_folder),
                 change_user=request.user,
             )
-            documents_folder_save.save()
+            document_folder_save.save()
 
         result = []
         result.append({
@@ -214,7 +214,7 @@ def document_tree_upload(request, location_id, project_or_task):
 
 
 def document_tree_upload_documents(request, location_id, project_or_task):
-    permission_results = return_user_permission_level(request, None,['project','task','documents'])
+    permission_results = return_user_permission_level(request, None,['project','task','document'])
     if project_or_task == "P":
         general_permission = permission_results['project']
     else:
@@ -232,7 +232,7 @@ def document_tree_upload_documents(request, location_id, project_or_task):
             project_or_task=project_or_task,
         ),
         'general_permission': general_permission,
-        'document_permission': permission_results['documents'],
+        'document_permission': permission_results['document'],
     }
 
     return HttpResponse(t.render(c, request))

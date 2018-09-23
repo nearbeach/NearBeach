@@ -232,7 +232,7 @@ class customer_campus_form(ModelForm):
     )
 
     class Meta:
-        model=customers_campus
+        model=customer_campus
         fields={
                     'customer_phone',
                     'customer_fax'
@@ -241,7 +241,7 @@ class customer_campus_form(ModelForm):
 
 class campus_information_form(ModelForm):
     #SQL
-    #region_results=list_of_countries_regions.objects.all()
+    #region_results=list_of_country_region.objects.all()
 
     # Fields
     campus_nickname=forms.CharField(
@@ -299,7 +299,7 @@ class campus_information_form(ModelForm):
         exclude=[
             'campus_region_id',
             'campus_country_id',
-            'organisations_id',
+            'organisation_id',
             'is_deleted',
             'change_user',
         ]
@@ -319,11 +319,11 @@ class customer_information_form(ModelForm):
     update_profile_picture=forms.ImageField(required=False,)
 
     class Meta:
-        model=customers
+        model=customer
         fields='__all__'
         exclude=[
             'is_deleted',
-            'organisations_id',
+            'organisation_id',
             'change_user',
         ]
 
@@ -362,13 +362,13 @@ class document_tree_create_folder_form(forms.Form):
 
         if project_or_task == "P":
             project_instance = project.objects.get(project_id=location_id)
-            folders_results = folders.objects.filter(
+            folders_results = folder.objects.filter(
                 is_deleted="FALSE",
                 project_id=project_instance,
             )
         elif project_or_task == "T":
-            task_instance = tasks.objects.get(tasks_id=location_id)
-            folders_results = folders.objects.filter(
+            task_instance = task.objects.get(tasks_id=location_id)
+            folders_results = folder.objects.filter(
                 is_deleted="FALSE",
                 task_id=task_instance,
             )
@@ -386,7 +386,7 @@ class document_tree_create_folder_form(forms.Form):
     )
     nested_folder = forms.ModelChoiceField(
         required=False,
-        queryset=folders.objects.all(),
+        queryset=folder.objects.all(),
     )
 
 
@@ -399,13 +399,13 @@ class document_tree_upload_form(forms.Form):
 
         if project_or_task == "P":
             project_instance = project.objects.get(project_id=location_id)
-            folders_results = folders.objects.filter(
+            folders_results = folder.objects.filter(
                 is_deleted="FALSE",
                 project_id=project_instance,
             )
         elif project_or_task == "T":
-            task_instance = tasks.objects.get(tasks_id=location_id)
-            folders_results = folders.objects.filter(
+            task_instance = task.objects.get(tasks_id=location_id)
+            folders_results = folder.objects.filter(
                 is_deleted="FALSE",
                 task_id=task_instance,
             )
@@ -414,7 +414,7 @@ class document_tree_upload_form(forms.Form):
 
     nested_folder = forms.ModelChoiceField(
         required=False,
-        queryset=folders.objects.all(),
+        queryset=folder.objects.all(),
     )
     document = forms.FileField(
         required=True,
@@ -433,41 +433,51 @@ class email_form(ModelForm):
         super(email_form, self).__init__(*args, **kwargs)
 
         if destination == 'organisation':
-            customer_results = customers.objects.filter(
+            customer_results = customer.objects.filter(
                 is_deleted="FALSE",
-                organisations_id=location_id
+                organisation_id=location_id
             )
             self.fields['to_email'].required=False
         elif destination == "customer":
-            customer_results = customers.objects.filter(
+            customer_results = customer.objects.filter(
                 is_deleted="FALSE",
-                organisations_id__in=customers.objects.filter(customer_id=location_id).values('organisations_id')
+                organisation_id__in=customer.objects.filter(customer_id=location_id).values('organisation_id')
             )
 
             #If customer has no organisation associated with it
             if not customer_results:
-                customer_results = customers.objects.filter(customer_id=location_id)
+                customer_results = customer.objects.filter(customer_id=location_id)
 
             self.fields['to_email'].required = True
         elif destination == "project":
-            customer_results = customers.objects.filter(
-                is_deleted="FALSE",
-                organisations_id=project.objects.get(project_id=location_id).organisations_id.organisations_id
-            )
+            """
+            If there is no organisationn assigned to this project then we want to pull out ALL customers that are not
+            associated with a organisation.
+            """
+            project_results = project.objects.get(project_id=location_id)
+            if project_results.organisation_id:
+                customer_results = customer.objects.filter(
+                    is_deleted="FALSE",
+                    organisation_id=project.objects.get(project_id=location_id).organisation_id.organisation_id
+                )
+            else:
+                customer_results = customer.objects.filter(
+                    customer_id=project_results.customer_id
+                )
         elif destination == "task":
-            customer_results = customers.objects.filter(
+            customer_results = customer.objects.filter(
                 is_deleted="FALSE",
-                organisations_id=tasks.objects.get(tasks_id=location_id).organisations_id.organisations_id
+                organisation_id=task.objects.get(tasks_id=location_id).organisation_id.organisation_id
             )
         elif destination == "opportunity":
             opportunity_results=opportunity.objects.get(opportunity_id=location_id)
-            if opportunity_results.organisations_id:
-                customer_results = customers.objects.filter(
+            if opportunity_results.organisation_id:
+                customer_results = customer.objects.filter(
                     is_deleted="FALSE",
-                    organisations_id=opportunity_results.organisations_id.organisations_id
+                    organisation_id=opportunity_results.organisation_id.organisation_id
                 )
             else:
-                customer_results = customers.objects.filter(
+                customer_results = customer.objects.filter(
                     is_deleted="FALSE",
                     customer_id=opportunity_results.customer_id.customer_id
                 )
@@ -482,41 +492,41 @@ class email_form(ModelForm):
             
             Once we know who it is for we then extract the relevant customer list.
             """
-            quote_results = quotes.objects.get(quote_id=location_id)
+            quote_results = quote.objects.get(quote_id=location_id)
 
             if quote_results.project_id:
-                customer_results = customers.objects.filter(
+                customer_results = customer.objects.filter(
                     is_deleted="FALSE",
-                    organisations_id=project.objects.get(project_id=quote_results.project_id.project_id).organisations_id.organisations_id
+                    organisation_id=project.objects.get(project_id=quote_results.project_id.project_id).organisation_id.organisation_id
                 )
             elif quote_results.task_id:
-                customer_results = customers.objects.filter(
+                customer_results = customer.objects.filter(
                     is_deleted="FALSE",
-                    organisations_id=tasks.objects.get(tasks_id=quote_results.task_id.tasks_id).organisations_id.organisations_id
+                    organisation_id=task.objects.get(tasks_id=quote_results.task_id.tasks_id).organisation_id.organisation_id
                 )
             elif quote_results.opportunity_id:
                 opportunity_results=opportunity.objects.get(
                         opportunity_id=quote_results.opportunity_id.opportunity_id
                 )
-                if opportunity_results.organisations_id:
-                    customer_results = customers.objects.filter(
+                if opportunity_results.organisation_id:
+                    customer_results = customer.objects.filter(
                         is_deleted="FALSE",
-                        organisations_id=opportunity_results.organisations_id.organisations_id
+                        organisation_id=opportunity_results.organisation_id.organisation_id
                     )
                 else:
-                    customer_results = customers.objects.filter(
+                    customer_results = customer.objects.filter(
                         is_deleted="FALSE",
                         customer_id=opportunity_results.customer_id.customer_id
                     )
             elif quote_results.customer_id:
-                customer_results=customers.objects.filter(
+                customer_results=customer.objects.filter(
                     is_deleted="FALSE",
                     customer_id=quote_results.customer_id.customer_id
                 )
             elif quote_results.organisation_id:
-                customer_results = customers.objects.filter(
+                customer_results = customer.objects.filter(
                     is_deleted="FALSE",
-                    organisations_id=quote_results.organisation_id
+                    organisation_id=quote_results.organisation_id
                 )
             else:
                 print("SOMETHING FUCKED UP!!!")
@@ -535,7 +545,7 @@ class email_form(ModelForm):
         }),
     )
     to_email = forms.ModelMultipleChoiceField(
-        queryset=customers.objects.all(),
+        queryset=customer.objects.all(),
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select',
@@ -545,7 +555,7 @@ class email_form(ModelForm):
     )
     cc_email = forms.ModelMultipleChoiceField(
         required=False,
-        queryset=customers.objects.all(),
+        queryset=customer.objects.all(),
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select',
@@ -555,7 +565,7 @@ class email_form(ModelForm):
     )
     bcc_email = forms.ModelMultipleChoiceField(
         required=False,
-        queryset=customers.objects.all(),
+        queryset=customer.objects.all(),
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select',
@@ -585,7 +595,7 @@ class email_form(ModelForm):
     )
 
     class Meta:
-        model = customers
+        model = customer
         fields = {
 
         }
@@ -609,7 +619,7 @@ class email_information_form(ModelForm):
             'email_content',
         }
 
-class groups_form(ModelForm):
+class group_form(ModelForm):
     group_name = forms.CharField(
         max_length=50,
         widget=forms.TextInput(attrs={
@@ -617,7 +627,7 @@ class groups_form(ModelForm):
         })
     )
     class Meta:
-        model=groups
+        model=group
         fields = {
             'group_name',
         }
@@ -625,7 +635,7 @@ class groups_form(ModelForm):
 
 class information_customer_contact_history_form(forms.Form):
     # Get data for choice boxes
-    contact_type_results = list_of_contact_types.objects.filter(is_deleted='FALSE')
+    contact_type_results = list_of_contact_type.objects.filter(is_deleted='FALSE')
 
     contact_type = forms.ModelChoiceField(
         label='Contact Type',
@@ -664,7 +674,7 @@ class information_customer_contact_history_form(forms.Form):
 
 class information_organisation_contact_history_form(forms.Form):
     # Get data for choice boxes
-    contact_type_results = list_of_contact_types.objects.filter(is_deleted='FALSE')
+    contact_type_results = list_of_contact_type.objects.filter(is_deleted='FALSE')
 
     # The Fields
     contact_type = forms.ModelChoiceField(
@@ -698,7 +708,7 @@ class information_organisation_contact_history_form(forms.Form):
     )
 
 
-class information_project_costs_form(forms.Form):
+class information_project_cost_form(forms.Form):
     cost_description = forms.CharField(
         max_length=255,
         required=False,
@@ -746,7 +756,7 @@ class information_project_history_form(ModelForm):
 
 
 
-class information_task_costs_form(forms.Form):
+class information_task_cost_form(forms.Form):
     cost_description = forms.CharField(
         max_length=255,
         required=False,
@@ -785,7 +795,7 @@ class information_task_history_form(ModelForm):
         )
     )
     class Meta:
-        model=tasks_history
+        model=task_history
         fields={
             'task_history',
         }
@@ -891,9 +901,9 @@ class kanban_new_link_form(ModelForm):
         }
 
 
-class list_of_taxes_form(ModelForm):
+class list_of_tax_form(ModelForm):
     class Meta:
-        model = list_of_taxes
+        model = list_of_tax
         fields = {
             'tax_amount',
             'tax_description',
@@ -929,7 +939,7 @@ class login_form(forms.Form):
             cases are met
             -- Login is not valid
             -- Login is currently not active
-            -- If the user does not have groups associated with them
+            -- If the user does not have group associated with them
             
             Exception
             ~~~~~~~~~
@@ -946,10 +956,10 @@ class login_form(forms.Form):
                 #If this exists, continue
                 if not permission_set.objects.filter(permission_set_id=1).count() == 0: #Sometimes this piece of code will throw an error
                     #Continue
-                    if (user_groups.objects.filter(username_id=user.id, is_deleted='FALSE').count() == 0): #If the system has not been setup ignore this rule.
+                    if (user_group.objects.filter(username_id=user.id, is_deleted='FALSE').count() == 0): #If the system has not been setup ignore this rule.
                         raise forms.ValidationError("Please contact your system administrator. Your account has no group access")
                 else:
-                    print("Currently the user has been setup with: " + str(user_groups.objects.filter(username_id=user.id, is_deleted='FALSE').count()) + " user groups")
+                    print("Currently the user has been setup with: " + str(user_group.objects.filter(username_id=user.id, is_deleted='FALSE').count()) + " user group")
 
             except ObjectDoesNotExist:
                 print("First time setup " + str(datetime.datetime.now()))
@@ -959,8 +969,8 @@ class login_form(forms.Form):
 
 class new_campus_form(forms.Form):
     #Get data for choice boxes
-    #countries_results=list_of_countries.objects.all()
-    #regions_results=list_of_countries_regions.objects.all()
+    #countries_results=list_of_country.objects.all()
+    #regions_results=list_of_country_region.objects.all()
 
     #Fields
     campus_nickname=forms.CharField(
@@ -1013,7 +1023,7 @@ class new_campus_form(forms.Form):
     )
     country_and_region = forms.ModelChoiceField(
         required=False,
-        queryset=list_of_countries.objects.filter(is_deleted='FALSE'),
+        queryset=list_of_country.objects.filter(is_deleted='FALSE'),
         empty_label="Please pick a Country/Region",
         widget=RegionSelect(attrs={
             'class': 'chosen-select',
@@ -1025,8 +1035,8 @@ class new_campus_form(forms.Form):
 
 class new_customer_form(forms.Form):
     #Get data for choice boxes
-    titles_results=list_of_titles.objects.all()
-    organisations_results=organisations.objects.filter(is_deleted='FALSE')
+    titles_results=list_of_title.objects.all()
+    organisations_results=organisation.objects.filter(is_deleted='FALSE')
 
     #Fields
     customer_title=forms.ModelChoiceField(
@@ -1053,7 +1063,7 @@ class new_customer_form(forms.Form):
             'type':'email',
         }),
     )
-    organisations_id=forms.ModelChoiceField(
+    organisation_id=forms.ModelChoiceField(
         label="Organisation",
         widget=forms.Select,
         queryset=organisations_results,
@@ -1078,7 +1088,7 @@ class new_line_item_form(ModelForm):
     )
     products_and_services = forms.ModelChoiceField(
         required=True,
-        queryset=products_and_services.objects.filter(is_deleted='FALSE'),
+        queryset=product_and_service.objects.filter(is_deleted='FALSE'),
         empty_label="Please pick a product/service",
         widget=ProductOrServiceSelect(),
     )
@@ -1127,7 +1137,7 @@ class new_line_item_form(ModelForm):
     tax = forms.ModelChoiceField(
         required=False,
         label="Organisations",
-        queryset=list_of_taxes.objects.filter(is_deleted='FALSE'),
+        queryset=list_of_tax.objects.filter(is_deleted='FALSE'),
         widget=forms.Select(attrs={
             "onChange": 'update_total()'
         }),
@@ -1151,7 +1161,7 @@ class new_line_item_form(ModelForm):
 
 
     class Meta:
-        model = quotes_products_and_services
+        model = quote_product_and_service
         fields = '__all__'
 
         exclude = {
@@ -1173,8 +1183,8 @@ class new_opportunity_form(ModelForm):
     #Get data for choice boxes
     opportunity_stage_results=list_of_opportunity_stage.objects.filter(is_deleted='FALSE')
     amount_type_results=list_of_amount_type.objects.filter(is_deleted='FALSE')
-    organisaion_results=organisations.objects.filter(is_deleted='FALSE')
-    groups_results=groups.objects.filter(is_deleted="FALSE")
+    organisaion_results=organisation.objects.filter(is_deleted='FALSE')
+    groups_results=group.objects.filter(is_deleted="FALSE")
     user_results=auth.models.User.objects.all()
 
     # Fields
@@ -1200,7 +1210,7 @@ class new_opportunity_form(ModelForm):
             'style': 'width: 200px',
         })
     )
-    organisations_id=forms.ModelChoiceField(
+    organisation_id=forms.ModelChoiceField(
         label="Organisations",
         queryset=organisaion_results,
         required=False,
@@ -1269,7 +1279,7 @@ class new_organisation_form(forms.Form):
         max_length=255,
         widget=forms.EmailInput(attrs={
             'width': '99%',
-            'placeholder': 'organisations@email.com',
+            'placeholder': 'organisation@email.com',
             'type': 'email',
         })
     )
@@ -1277,8 +1287,8 @@ class new_organisation_form(forms.Form):
 
 class new_project_form(forms.Form):
     #Get data for choice boxes
-    organisations_results=organisations.objects.filter(is_deleted='FALSE')
-    group_results=groups.objects.filter(is_deleted='FALSE')
+    organisations_results=organisation.objects.filter(is_deleted='FALSE')
+    group_results=group.objects.filter(is_deleted='FALSE')
 
     # Fields
     assigned_groups=forms.ModelMultipleChoiceField(
@@ -1308,7 +1318,7 @@ class new_project_form(forms.Form):
             }
         )
     )
-    organisations_id=forms.ModelChoiceField(
+    organisation_id=forms.ModelChoiceField(
         label="Organisation",
         widget=forms.Select,
         queryset=organisations_results,
@@ -1332,7 +1342,7 @@ class new_project_form(forms.Form):
         fields = {
             'project_name',
             'project_description',
-            'organisations_id',
+            'organisation_id',
             'project_start_date',
             'project_end_date',
         }
@@ -1340,7 +1350,7 @@ class new_project_form(forms.Form):
 
 class new_quote_form(ModelForm):
     #Get data for form
-    list_of_quote_stages=list_of_quote_stages.objects.filter(
+    list_of_quote_stages=list_of_quote_stage.objects.filter(
         is_deleted='FALSE',
         is_invoice='FALSE',
     )
@@ -1406,7 +1416,7 @@ class new_quote_form(ModelForm):
 
 
     class Meta:
-        model=quotes
+        model=quote
         fields={
             'quote_title',
             'quote_stage_id',
@@ -1422,7 +1432,7 @@ class new_requirement_form(ModelForm):
         is_deleted='FALSE',
         requirement_status_is_closed='FALSE',
     )
-    groups_results=groups.objects.filter(is_deleted="FALSE")
+    groups_results=group.objects.filter(is_deleted="FALSE")
     user_results=auth.models.User.objects.all()
 
     #Fields
@@ -1471,7 +1481,7 @@ class new_requirement_form(ModelForm):
     )
 
     class Meta:
-        model=requirements
+        model=requirement
         fields={
             'requirement_title',
             'requirement_scope',
@@ -1482,8 +1492,8 @@ class new_requirement_form(ModelForm):
 
 class new_task_form(forms.Form):
     # Get data for choice boxes
-    organisations_results=organisations.objects.filter(is_deleted='FALSE')
-    group_results = groups.objects.filter(is_deleted='FALSE')
+    organisations_results=organisation.objects.filter(is_deleted='FALSE')
+    group_results = group.objects.filter(is_deleted='FALSE')
 
     # Fields
     assigned_groups=forms.ModelMultipleChoiceField(
@@ -1512,7 +1522,7 @@ class new_task_form(forms.Form):
             }
         ),
     )
-    organisations_id=forms.ModelChoiceField(
+    organisation_id=forms.ModelChoiceField(
         label="Organisation",
         widget=forms.Select,
         queryset=organisations_results,
@@ -1543,14 +1553,14 @@ class opportunity_group_permission_form(forms.Form):
 
     group = forms.ModelChoiceField(
         required=True,
-        queryset=groups.objects.filter(is_deleted="BLANK") #This will make the queryset a blank set
+        queryset=group.objects.filter(is_deleted="BLANK") #This will make the queryset a blank set
     )
 
 
 
 class opportunity_information_form(ModelForm):
     #Get data for form
-    groups_results=groups.objects.filter(is_deleted="FALSE")
+    groups_results=group.objects.filter(is_deleted="FALSE")
     user_results=auth.models.User.objects.all()
 
     opportunity_description = forms.CharField(
@@ -1605,7 +1615,7 @@ class opportunity_information_form(ModelForm):
         fields='__all__'
         exclude={
             'customer_id',
-            'organisations_id',
+            'organisation_id',
             'lead_source_id',
             'date_created',
             'date_modified',
@@ -1626,7 +1636,7 @@ class organisation_information_form(ModelForm):
     document=forms.FileField(required=False)
 
     class Meta:
-        model=organisations
+        model=organisation
         fields={
                 'organisation_name',
                 'organisation_website',
@@ -1669,7 +1679,7 @@ class opportunity_user_permission_form(forms.Form):
 
     user = forms.ModelChoiceField(
         required=True,
-        #queryset=groups.objects.filter(is_deleted="BLANK") #This will make the queryset a blank set
+        #queryset=group.objects.filter(is_deleted="BLANK") #This will make the queryset a blank set
         queryset=User.objects.filter(username=None)
     )
 
@@ -1715,7 +1725,7 @@ class product_and_service_form(ModelForm):
         }),
     )
     class Meta:
-        model=products_and_services
+        model=product_and_service
         fields='__all__'
         exclude = {
             'is_deleted',
@@ -1862,7 +1872,7 @@ class quote_information_form(ModelForm):
         2.) Look at quote inforomation
         3.) If quote has an organisation - take the organisation's campus
         4.) If the quote does not have an organisation - take the customer's campus
-        5.) Return the campus results into quote_billing_campus 
+        5.) Return the campus results into quote_billing_campus
         """
         quote_instance=kwargs.pop('quote_instance',None)
         super(quote_information_form,self).__init__(*args,**kwargs)
@@ -1870,7 +1880,7 @@ class quote_information_form(ModelForm):
         if quote_instance.organisation_id:
             campus_results = campus.objects.filter(
                 is_deleted="FALSE",
-                organisations_id=quote_instance.organisation_id,
+                organisation_id=quote_instance.organisation_id,
             )
         elif quote_instance.customer_id:
             campus_results = campus.objects.filter(
@@ -1883,7 +1893,7 @@ class quote_information_form(ModelForm):
 
         self.fields['quote_billing_address'].queryset = campus_results
     #Get data for form
-    list_of_quote_stages=list_of_quote_stages.objects.filter(
+    list_of_quote_stages=list_of_quote_stage.objects.filter(
         is_deleted='FALSE',
     )
 
@@ -1954,7 +1964,7 @@ class quote_information_form(ModelForm):
     )
 
     class Meta:
-        model=quotes
+        model=quote
         fields={
             'quote_title',
             'quote_stage_id',
@@ -2017,7 +2027,7 @@ class requirement_information_form(ModelForm):
     )
 
     class Meta:
-        model=requirements
+        model=requirement
         exclude=[
             'change_user',
             'is_deleted',
@@ -2025,7 +2035,7 @@ class requirement_information_form(ModelForm):
 
 
 
-class requirement_items_form(forms.ModelForm):
+class requirement_item_form(forms.ModelForm):
     """
     This is used for both
     -- New requirement items
@@ -2071,12 +2081,12 @@ class requirement_readonly_form(ModelForm):
     )
 
     class Meta:
-        model=requirements
+        model=requirement
         fields=[
             'requirement_scope',
         ]
 
-class search_customers_form(forms.Form):
+class search_customer_form(forms.Form):
     #Just have a simple search field
     search_customers=forms.CharField(
         max_length=255,
@@ -2086,7 +2096,7 @@ class search_customers_form(forms.Form):
         }),
     )
 
-class search_organisations_form(forms.Form):
+class search_organisation_form(forms.Form):
     #Just have a simple search field
     search_organisations=forms.CharField(
         max_length=255,
@@ -2097,7 +2107,7 @@ class search_organisations_form(forms.Form):
     )
 
 
-class search_projects_form(forms.Form):
+class search_project_form(forms.Form):
     search_projects=forms.CharField(
         max_length=255,
         required=False
@@ -2107,7 +2117,7 @@ class search_projects_form(forms.Form):
         choices=INCLUDE_CLOSED
     )
 
-class search_tasks_form(forms.Form):
+class search_task_form(forms.Form):
     search_tasks=forms.CharField(
         max_length=255,
         required=False,
@@ -2120,7 +2130,7 @@ class search_tasks_form(forms.Form):
         choices=INCLUDE_CLOSED
     )
 
-class search_templates_form(forms.Form):
+class search_template_form(forms.Form):
     search_templates=forms.CharField(
         max_length=255,
         required=False,
@@ -2129,7 +2139,7 @@ class search_templates_form(forms.Form):
         }),
     )
 
-class search_users_form(forms.Form):
+class search_user_form(forms.Form):
     search_users=forms.CharField(
         max_length=255,
         required=False,
@@ -2195,7 +2205,7 @@ class task_information_form(ModelForm):
     )
 
     class Meta:
-        model=tasks
+        model=task
         fields={
             'task_short_description',
             'task_long_description',

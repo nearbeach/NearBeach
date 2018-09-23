@@ -2,16 +2,16 @@
 NearBeach is in currently alpha development. If you find any issues, please do not hesitate to submit an issue. Alternatively you can submit through https://nearbeach.atlassian.net/servicedesk/customer/portal/1 (login not required)
 
 ## What is NearBeach?
-NearBeach is a project and task management tool (PATMT) with a basic customer relationship management tool to help you manage your projects and tasks. The phillosophy of NearBeach is to be easy to install and use, be open sourced, be flexible, and aimed at small/personal organisations to large enterprises. Each new module brought to NearBeach expands it's capability tenfold and brings it closer to a competing product.
+NearBeach is a project and task management tool (PATMT) with a basic customer relationship management tool to help you manage your projects and task. The phillosophy of NearBeach is to be easy to install and use, be open sourced, be flexible, and aimed at small/personal organisation to large enterprises. Each new module brought to NearBeach expands it's capability tenfold and brings it closer to a competing product.
 
 ## Features
-NearBeach's main focus is to create both projects and tasks. Each task can then be assigned to as many projects required (sometimes multiple projects will need to have the same task completed). Each project and task can also be assigned to multiple users to complete.
+NearBeach's main focus is to create both projects and task. Each task can then be assigned to as many projects required (sometimes multiple projects will need to have the same task completed). Each project and task can also be assigned to multiple users to complete.
 ![NearBeach - Project Information](https://github.com/robotichead/Store_Github_Pictures/blob/master/NearBeach%20-%20project%20information.png?raw=true)
 
-However projects and tasks are but a small feature to a PATMT system. You will need to store user requirements and be able to assign those requirement items to projects/tasks for completion. You will need to track these requirements to make sure they are completed. NearBeach has recently implemented a requirement module to help you store all your customer's requirements
+However projects and task are but a small feature to a PATMT system. You will need to store user requirement and be able to assign those requirement items to projects/task for completion. You will need to track these requirement to make sure they are completed. NearBeach has recently implemented a requirement module to help you store all your customer's requirement
 ![NearBeach - Requirements](https://github.com/robotichead/Store_Github_Pictures/blob/master/NearBeach%20-%20Requirements.png?raw=true)
 
-What if you have an opportunity? You do not have the user's full requirements yet, but there could easily be a sale involved. NearBeach has also implemented the opportunity module, to help you store each potential opportunity that comes through the pipeline.
+What if you have an opportunity? You do not have the user's full requirement yet, but there could easily be a sale involved. NearBeach has also implemented the opportunity module, to help you store each potential opportunity that comes through the pipeline.
 ![NearBeach - Opportunity](https://github.com/robotichead/Store_Github_Pictures/blob/master/NearBeach%20-%20Opportunity?raw=true)
 
 

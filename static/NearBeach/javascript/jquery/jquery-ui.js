@@ -4916,7 +4916,7 @@ var widgetsResizable = $.ui.resizable;
 
 //>>label: Selectable
 //>>group: Interactions
-//>>description: Allows groups of elements to be selected with the mouse.
+//>>description: Allows group of elements to be selected with the mouse.
 //>>docs: http://api.jqueryui.com/selectable/
 //>>demos: http://jqueryui.com/selectable/
 //>>css.structure: ../../themes/base/selectable.css
@@ -8663,7 +8663,7 @@ var widgetsAutocomplete = $.ui.autocomplete;
 
 //>>label: Controlgroup
 //>>group: Widgets
-//>>description: Visually groups form control widgets
+//>>description: Visually group form control widgets
 //>>docs: http://api.jqueryui.com/controlgroup/
 //>>demos: http://jqueryui.com/controlgroup/
 //>>css.structure: ../../themes/base/core.css
@@ -9625,7 +9625,7 @@ function datepicker_getZindex( elem ) {
 }
 /* Date picker manager.
    Use the singleton instance of this class, $.datepicker, to interact with the date picker.
-   Settings for (groups of) date pickers are maintained in an instance object,
+   Settings for (group of) date pickers are maintained in an instance object,
    allowing multiple different settings on the same page. */
 
 function Datepicker() {

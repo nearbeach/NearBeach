@@ -3965,7 +3965,7 @@ SVG.Doc = SVG.invent({
         element
 
       // If the target is an svg element, use that element as the main wrapper.
-      // This allows svg.js to work with svg documents as well.
+      // This allows svg.js to work with svg document as well.
       if (element.nodeName == 'svg') {
         this.constructor.call(this, element)
       } else {
@@ -5553,4 +5553,4 @@ if (typeof window.CustomEvent !== 'function') {
 
 return SVG
 
-}));
+}));

@@ -20,32 +20,32 @@ from .user_permissions import return_user_permission_level
 
 @login_required(login_url='login')
 def information_task_assigned_users(request, task_id):
-    task_groups_results = tasks_groups.objects.filter(
+    task_groups_results = task_group.objects.filter(
         is_deleted="FALSE",
-        tasks_id=tasks.objects.get(tasks_id=task_id),
-    ).values('groups_id_id')
+        task_id=task.objects.get(task_id=task_id),
+    ).values('group_id_id')
 
     permission_results = return_user_permission_level(request, task_groups_results,'task')
 
     if request.method == "POST":
         user_results = int(request.POST.get("add_user_select"))
         user_instance = auth.models.User.objects.get(pk=user_results)
-        submit_associate_user = assigned_users(
+        submit_associate_user = assigned_user(
             user_id=user_instance,
-            task_id=tasks.objects.get(tasks_id=task_id),
+            task_id=task.objects.get(task_id=task_id),
             change_user=request.user,
         )
         submit_associate_user.save()
 
     #Get data
-    assigned_results = assigned_users.objects.filter(task_id=task_id,is_deleted="FALSE")
+    assigned_results = assigned_user.objects.filter(task_id=task_id, is_deleted="FALSE")
 
-    users_results = user_groups.objects.filter(
+    users_results = user_group.objects.filter(
         is_deleted="FALSE",
-        groups_id__in=tasks_groups.objects.filter(
+        group_id__in=task_group.objects.filter(
             is_deleted="FALSE",
-            tasks_id=task_id,
-        ).values('groups_id')) \
+            task_id=task_id,
+        ).values('group_id')) \
         .exclude(username_id__in=assigned_results.values('user_id')) \
         .values(
         'username_id',
@@ -74,7 +74,7 @@ def information_task_assigned_users(request, task_id):
 
 @login_required(login_url='login')
 def information_task_delete_assigned_users(request, task_id, user_id):
-    assigned_users_save = assigned_users.objects.filter(
+    assigned_users_save = assigned_user.objects.filter(
         task_id=task_id,
         user_id=user_id,
     )
@@ -91,32 +91,32 @@ def information_task_delete_assigned_users(request, task_id, user_id):
 
 @login_required(login_url='login')
 def information_task_costs(request, task_id):
-    task_groups_results = tasks_groups.objects.filter(
+    task_groups_results = task_group.objects.filter(
         is_deleted="FALSE",
-        tasks_id=tasks.objects.get(tasks_id=task_id),
-    ).values('groups_id_id')
+        task_id=task.objects.get(task_id=task_id),
+    ).values('group_id_id')
 
     permission_results = return_user_permission_level(request, task_groups_results,'task')
 
     # Get the data from the form
     if request.method == "POST":
-        form = information_task_costs_form(request.POST, request.FILES)
+        form = information_task_cost_form(request.POST, request.FILES)
         if form.is_valid():
             # Extract information
             cost_description = form.cleaned_data['cost_description']
             cost_amount = form.cleaned_data['cost_amount']
             # SAve
-            submit_cost = costs(
+            submit_cost = cost(
                 cost_description=cost_description,
                 cost_amount=cost_amount,
-                task_id=tasks.objects.get(tasks_id=task_id),
+                task_id=task.objects.get(task_id=task_id),
                 change_user=request.user,
             )
             submit_cost.save()
 
     #Get data
-    task_results = tasks.objects.get(tasks_id=task_id)
-    costs_results = costs.objects.filter(task_id=task_id, is_deleted='FALSE')
+    task_results = task.objects.get(task_id=task_id)
+    costs_results = cost.objects.filter(task_id=task_id, is_deleted='FALSE')
 
     #Load template
     t = loader.get_template('NearBeach/task_information/task_costs.html')
@@ -124,7 +124,7 @@ def information_task_costs(request, task_id):
     # context
     c = {
         'costs_results': costs_results,
-        'information_task_costs_form': information_task_costs_form(),
+        'information_task_cost_form': information_task_cost_form(),
         'task_id': task_id,
         'task_permissions': permission_results['task'],
     }
@@ -133,11 +133,11 @@ def information_task_costs(request, task_id):
 
 
 @login_required(login_url='login')
-def information_task_customers(request, task_id):
-    task_groups_results = tasks_groups.objects.filter(
+def information_task_customer(request, task_id):
+    task_groups_results = task_group.objects.filter(
         is_deleted="FALSE",
-        tasks_id=tasks.objects.get(tasks_id=task_id),
-    ).values('groups_id_id')
+        task_id=task.objects.get(task_id=task_id),
+    ).values('group_id_id')
 
     permission_results = return_user_permission_level(request, task_groups_results,'task')
 
@@ -145,27 +145,27 @@ def information_task_customers(request, task_id):
         # The user has tried adding a customer
         customer_id = int(request.POST.get("add_customer_select"))
 
-        submit_customer = tasks_customers(
-            tasks_id=tasks.objects.get(pk=task_id),
-            customer_id=customers.objects.get(pk=customer_id),
+        submit_customer = task_customer(
+            task_id=task.objects.get(pk=task_id),
+            customer_id=customer.objects.get(pk=customer_id),
             change_user=request.user,
         )
         submit_customer.save()
 
     #Get Data
-    task_results = tasks.objects.get(tasks_id=task_id)
+    task_results = task.objects.get(task_id=task_id)
 
-    #Obtain a list of customers not already added to this task
-    new_customers_results = customers.objects.filter(
-        organisations_id=task_results.organisations_id,
+    #Obtain a list of customer not already added to this task
+    new_customers_results = customer.objects.filter(
+        organisation_id=task_results.organisation_id,
         is_deleted="FALSE",
     ).exclude(
-        customer_id__in=tasks_customers.objects.filter(tasks_id=task_results.tasks_id).values('customer_id')
+        customer_id__in=task_customer.objects.filter(task_id=task_results.task_id).values('customer_id')
     )
 
-    tasks_customers_results=tasks_customers.objects.filter(
+    task_customers_results=task_customer.objects.filter(
         is_deleted="FALSE",
-        tasks_id=task_id
+        task_id=task_id
     )
 
     #Load template
@@ -175,7 +175,7 @@ def information_task_customers(request, task_id):
     c = {
         'task_results': task_results,
         'new_customers_results': new_customers_results,
-        'tasks_customers_results': tasks_customers_results,
+        'task_customers_results': task_customers_results,
         'task_permissions': permission_results['task'],
     }
 
@@ -184,10 +184,10 @@ def information_task_customers(request, task_id):
 
 @login_required(login_url='login')
 def information_task_history(request, task_id):
-    task_groups_results = tasks_groups.objects.filter(
+    task_groups_results = task_group.objects.filter(
         is_deleted="FALSE",
-        tasks_id=tasks.objects.get(tasks_id=task_id),
-    ).values('groups_id_id')
+        task_id=task.objects.get(task_id=task_id),
+    ).values('group_id_id')
 
     permission_results = return_user_permission_level(request, task_groups_results,['task','task_history'])
 
@@ -202,10 +202,10 @@ def information_task_history(request, task_id):
             if not task_history_results == '':
                 current_user = request.user
 
-                task_id_connection = tasks.objects.get(tasks_id=task_id)
+                task_id_connection = task.objects.get(task_id=task_id)
 
-                data = tasks_history(
-                    tasks_id=task_id_connection,
+                data = task_history(
+                    task_id=task_id_connection,
                     user_id=current_user,
                     task_history=task_history_results,
                     user_infomation=current_user.id,
@@ -214,8 +214,8 @@ def information_task_history(request, task_id):
                 data.save()
 
     #Get data
-    task_history_results = tasks_history.objects.filter(
-        tasks_id=task_id,
+    task_history_results = task_history.objects.filter(
+        task_id=task_id,
         is_deleted='FALSE',
     )
 

@@ -76,20 +76,20 @@ class Check_Permissions(object):
 
         cursor.execute("""
         SELECT 
-        count(project_groups.groups_id_id)
-        + CASE WHEN document_permissions.organisations_id_id IS NULL THEN 0 ELSE 1 END
-        + CASE WHEN document_permissions.customer_id_id IS NULL THEN 0 ELSE 1 END
+        count(project_group.groups_id_id)
+        + CASE WHEN document_permission.organisations_id_id IS NULL THEN 0 ELSE 1 END
+        + CASE WHEN document_permission.customer_id_id IS NULL THEN 0 ELSE 1 END
         AS PERMISSION
         
         FROM
-        user_groups
-        , document_permissions
-            left join project_groups
-              on document_permissions.project_id_id = project_groups.project_id_id
-              AND project_groups.groups_id_id = user_groups.group_id_id
-            left join tasks_groups
-              on document_permissions.task_id_id = tasks_groups.tasks_id_id
-              AND tasks_groups.groups_id_id = user_groups.group_id_id
+        user_group
+        , document_permission
+            left join project_group
+              on document_permission.project_id_id = project_group.project_id_id
+              AND project_group.groups_id_id = user_group.group_id_id
+            left join tasks_group
+              on document_permission.task_id_id = tasks_group.tasks_id_id
+              AND tasks_group.groups_id_id = user_group.group_id_id
         /*
         MISSING
         ~~~~~~~
@@ -100,13 +100,13 @@ class Check_Permissions(object):
         
         WHERE 1=1
         -- THE USER INPUT
-        AND user_groups.username_id = %s
+        AND user_group.username_id = %s
         
         --THE DOCUMENT INPUT
-        AND document_permissions.document_key_id = %s
+        AND document_permission.document_key_id = %s
         
         -- Make sure the doc is not deleted
-        AND document_permissions.is_deleted = 'FALSE'
+        AND document_permission.is_deleted = 'FALSE'
        	""", [current_user.id, object])
         has_permission = cursor.fetchall()
 

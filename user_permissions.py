@@ -12,7 +12,7 @@ def return_user_permission_level(request, group_list,permission_field):
     """
 
     :param request:
-    :param groups: limits data to a certain group - Null if no group
+    :param group: limits data to a certain group - Null if no group
     :param permission_field: which permission field we will be looking at. The available list is;
         permission_set_id
         permission_set_name
@@ -33,13 +33,13 @@ def return_user_permission_level(request, group_list,permission_field):
         requirement
         requirement_link
         task
-        documents
+        document
         contact_history
         project_history
         task_history
 
         Please note - if you want to look up more than ONE permission, please include them in [] brackets. For example if
-        you would like to look up; project, project_history, and documents, then you would use ['project','project_history','documents']
+        you would like to look up; project, project_history, and document, then you would use ['project','project_history','document']
     :param min_permission_level: tells us what is the minimum level the user has to be, if they do not meet this requirement
         then the system will formward them onto the permission denied page. Default is 1 (read only)
     :return:
@@ -71,8 +71,8 @@ def return_user_permission_level(request, group_list,permission_field):
     """
     for row in permission_field:
         if group_list == None:
-            #There is no groups. Select the max value :)
-            user_groups_results = user_groups.objects.filter(
+            #There is no group. Select the max value :)
+            user_groups_results = user_group.objects.filter(
                 is_deleted="FALSE",
                 username=request.user,
                 permission_set__is_deleted="FALSE",
@@ -82,10 +82,10 @@ def return_user_permission_level(request, group_list,permission_field):
             #There is a group, lets find all permissions connected with this group :) and return the max :)
             group_permission = 0
             for group_id in group_list:
-                group_instance = groups.objects.get(group_id=group_id['groups_id_id'])
+                group_instance = group.objects.get(group_id=group_id['groups_id_id'])
 
                 #Grab user's permission for that group
-                user_groups_results = user_groups.objects.filter(
+                user_groups_results = user_group.objects.filter(
                     is_deleted="FALSE",
                     username=request.user,
                     permission_set__is_deleted="FALSE",
@@ -103,7 +103,7 @@ def return_user_permission_level(request, group_list,permission_field):
     The following code is for the menu. We will need to find out if a user can actually ADD any items and do any
     administration.
     """
-    permission_results = user_groups.objects.filter(
+    permission_results = user_group.objects.filter(
         is_deleted="FALSE",
         username=request.user,
         permission_set__is_deleted="FALSE",

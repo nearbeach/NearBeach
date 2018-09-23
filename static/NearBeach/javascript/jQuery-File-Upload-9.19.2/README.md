@@ -47,12 +47,12 @@ Supports cross-domain, chunked and resumable file uploads and client-side image 
 
 ## Requirements
 
-### Mandatory requirements
+### Mandatory requirement
 * [jQuery](https://jquery.com/) v. 1.6+
 * [jQuery UI widget factory](https://api.jqueryui.com/jQuery.widget/) v. 1.9+ (included): Required for the basic File Upload plugin, but very lightweight without any other dependencies from the jQuery UI suite.
 * [jQuery Iframe Transport plugin](https://github.com/blueimp/jQuery-File-Upload/blob/master/js/jquery.iframe-transport.js) (included): Required for [browsers without XHR file upload support](https://github.com/blueimp/jQuery-File-Upload/wiki/Browser-support).
 
-### Optional requirements
+### Optional requirement
 * [JavaScript Templates engine](https://github.com/blueimp/JavaScript-Templates) v. 2.5.4+: Used to render the selected and uploaded files for the Basic Plus UI and jQuery UI versions.
 * [JavaScript Load Image library](https://github.com/blueimp/JavaScript-Load-Image) v. 1.13.0+: Required for the image previews and resizing functionality.
 * [JavaScript Canvas to Blob polyfill](https://github.com/blueimp/JavaScript-Canvas-to-Blob) v. 2.1.1+:Required for the image previews and resizing functionality.
@@ -62,7 +62,7 @@ Supports cross-domain, chunked and resumable file uploads and client-side image 
 
 The user interface of all versions, except the jQuery UI version, is built with [Bootstrap](http://getbootstrap.com/) and icons from [Glyphicons](http://glyphicons.com/).
 
-### Cross-domain requirements
+### Cross-domain requirement
 [Cross-domain File Uploads](https://github.com/blueimp/jQuery-File-Upload/wiki/Cross-domain-uploads) using the [Iframe Transport plugin](https://github.com/blueimp/jQuery-File-Upload/blob/master/js/jquery.iframe-transport.js) require a redirect back to the origin server to retrieve the upload results. The [example implementation](https://github.com/blueimp/jQuery-File-Upload/blob/master/js/main.js) makes use of [result.html](https://github.com/blueimp/jQuery-File-Upload/blob/master/cors/result.html) as a static redirect page for the origin server.
 
 The repository also includes the [jQuery XDomainRequest Transport plugin](https://github.com/blueimp/jQuery-File-Upload/blob/master/js/cors/jquery.xdr-transport.js), which enables limited cross-domain AJAX requests in Microsoft Internet Explorer 8 and 9 (IE 10 supports cross-domain XHR requests).  

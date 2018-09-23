@@ -3,7 +3,7 @@ from django.core.validators import ValidationError
 from django.utils.encoding import smart_str
 from django.forms.renderers import get_default_renderer
 
-from NearBeach.models import products_and_services, list_of_countries_regions, list_of_countries, customers
+from NearBeach.models import product_and_service, list_of_country_region, list_of_country, customer
 from django.utils.html import escape, mark_safe
 
 
@@ -15,12 +15,12 @@ class ProductOrServiceSelect(forms.Select):
         if value is None: value = ''
 
         #Get SQL Objects
-        row_results = products_and_services.objects\
+        row_results = product_and_service.objects\
             .filter(is_deleted='FALSE')\
             .order_by('product_or_service','product_name')
 
         #Start the rendering
-        output = u'<select name="products_and_services" id="id_products_and_services" class="chosen-select"><option value="------" selected disabled> Add Product or Service </option>'
+        output = u'<select name="product_and_service" id="id_products_and_services" class="chosen-select"><option value="------" selected disabled> Add Product or Service </option>'
         output = output + u'<optgroup label="Products">'
 
 
@@ -71,10 +71,10 @@ class RegionSelect(forms.Select):
         if value is None: value = ''
 
         #Get SQL Objects
-        country_results = list_of_countries.objects\
+        country_results = list_of_country.objects\
             .filter(is_deleted="FALSE")\
             .order_by('country_name')
-        region_results = list_of_countries_regions.objects\
+        region_results = list_of_country_region.objects\
             .filter(is_deleted="FALSE")\
             .order_by('country_id','region_name')
 
@@ -120,7 +120,7 @@ class ToEmailSelect(forms.SelectMultiple):
         if value is None: value = ''
 
         # Get SQL Objects
-        customer_results = customers.objects.filter(
+        customer_results = customer.objects.filter(
             is_deleted="FALSE"
         )
 
