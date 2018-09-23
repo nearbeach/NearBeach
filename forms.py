@@ -450,10 +450,20 @@ class email_form(ModelForm):
 
             self.fields['to_email'].required = True
         elif destination == "project":
-            customer_results = customer.objects.filter(
-                is_deleted="FALSE",
-                organisation_id=project.objects.get(project_id=location_id).organisation_id.organisation_id
-            )
+            """
+            If there is no organisationn assigned to this project then we want to pull out ALL customers that are not
+            associated with a organisation.
+            """
+            project_results = project.objects.get(project_id=location_id)
+            if project_results.organisation_id:
+                customer_results = customer.objects.filter(
+                    is_deleted="FALSE",
+                    organisation_id=project.objects.get(project_id=location_id).organisation_id.organisation_id
+                )
+            else:
+                customer_results = customer.objects.filter(
+                    customer_id=project_results.customer_id
+                )
         elif destination == "task":
             customer_results = customer.objects.filter(
                 is_deleted="FALSE",

@@ -1091,7 +1091,7 @@ def dashboard_active_requirement(request):
     )
 
     # Load the template
-    t = loader.get_template('NearBeach/dashboard_widgets/active_requirement.html')
+    t = loader.get_template('NearBeach/dashboard_widgets/active_requirements.html')
 
 
     # context
@@ -1115,7 +1115,7 @@ def dashboard_active_task(request):
         .values('task_id__task_id','task_id__task_short_description','task_id__task_end_date').distinct()
 
     # Load the template
-    t = loader.get_template('NearBeach/dashboard_widgets/active_task.html')
+    t = loader.get_template('NearBeach/dashboard_widgets/active_tasks.html')
 
     # context
     c = {
@@ -1134,7 +1134,7 @@ def dashboard_group_active_projects(request):
             group_id__in=user_group.objects.filter(
                 is_deleted="FALSE",
                 username_id=request.user.id
-            ).values('groups'),
+            ).values('group'),
         ).values('project_id'),
     )
 
@@ -1158,11 +1158,11 @@ def dashboard_group_active_task(request):
             group_id__in=user_group.objects.filter(
                 is_deleted="FALSE",
                 username_id=request.user.id
-            ).values('groups')
+            ).values('group')
         ).values('task_id')
     )
     # Load the template
-    t = loader.get_template('NearBeach/dashboard_widgets/group_active_task.html')
+    t = loader.get_template('NearBeach/dashboard_widgets/group_active_tasks.html')
 
     # context
     c = {
@@ -1177,8 +1177,12 @@ def dashboard_group_opportunities(request):
     active_group_opportunities = opportunity.objects.filter(
         is_deleted="FALSE",
         opportunity_id__in=opportunity_permission.objects.filter(
-            is_deleted="FALSE"
-        ).values('opportunity_id')
+            is_deleted="FALSE",
+            group_id__in=user_group.objects.filter(
+                is_deleted="FALSE",
+                username_id=request.user,
+            ).values('group_id'),
+        ).values('opportunity_id'),
     )
 
     # Load the template
