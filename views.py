@@ -1174,51 +1174,12 @@ def dashboard_group_active_task(request):
 
 @login_required(login_url='login')
 def dashboard_group_opportunities(request):
-    # Get username_id from User
-    current_user = request.user
-
-    # Setup connection to the database and query it
-    cursor = connection.cursor()
-
-    cursor.execute("""
-        SELECT DISTINCT
-        opportunity.opportunity_id
-        , opportunity.opportunity_name
-        , organisation.organisation_id
-        , organisation.organisation_name
-        , customer.customer_id
-        , customer.customer_first_name
-        , customer.customer_last_name
-        , list_of_opportunity_stage.opportunity_stage_description
-        , opportunity.opportunity_expected_close_date
-        
-        
-        FROM 
-        opportunity_permission LEFT JOIN user_group
-        ON opportunity_permission.assigned_user_id = user_group.username_id
-        , opportunity JOIN organisation
-        ON opportunity.organisation_id_id = organisation.organisation_id
-        LEFT JOIN customer
-        ON opportunity.customer_id_id = customer.customer_id
-        JOIN list_of_opportunity_stage
-        ON opportunity.opportunity_stage_id_id = list_of_opportunity_stage.opportunity_stage_id
-        WHERE 1=1
-        AND opportunity_permission.opportunity_id_id = opportunity.opportunity_id
-        AND list_of_opportunity_stage.opportunity_stage_description NOT LIKE '%%Close%%'
-        AND (
-        -- Assigned user
-        opportunity_permission.assigned_user_id = %s
-        -- Group ID
-        OR (
-        user_group.username_id = %s
-        AND user_group.is_deleted = 'FALSE'
-        )	
-        -- All users
-        OR opportunity_permission.all_user = 'TRUE'
-        )
-        AND opportunity_permission.is_deleted = 'FALSE'
-    """,[current_user.id,current_user.id])
-    active_group_opportunities = namedtuplefetchall(cursor)
+    active_group_opportunities = opportunity.objects.filter(
+        is_deleted="FALSE",
+        opportunity_id__in=opportunity_permission.objects.filter(
+            is_deleted="FALSE"
+        ).values('opportunity_id')
+    )
 
     # Load the template
     t = loader.get_template('NearBeach/dashboard_widgets/group_opportunities.html')
@@ -4472,7 +4433,7 @@ def search_organisation(request):
     permission_results = return_user_permission_level(request, None, 'project')
 
     # Load the template
-    t = loader.get_template('NearBeach/search_organisation.html')
+    t = loader.get_template('NearBeach/search_organisations.html')
 
     """
 	We will use the following varable to help filterer our database
