@@ -12,10 +12,10 @@
             <td></td>
         </tr>
     {% endif %}
-    {% if group_permissions %}
-        {% for row in group_permissions %}
+    {% if group_permission %}
+        {% for row in group_permission %}
             <tr>
-                <td>{{ row.groups_id }}</td>
+                <td>{{ row.group_id }}</td>
                 <td><a href="javascript:void(0)" onclick="delete_permission({{ row.opportunity_permissions_id }})">Delete Permission</a></td>
             </tr>
         {% endfor %}

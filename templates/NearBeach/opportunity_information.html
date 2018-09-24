@@ -84,7 +84,7 @@
             </tr>
             {% for row in project_results %}
                 <tr>
-                    <td><a href="#">PRO{{ row.project_id.project_id }}</a></td>
+                    <td><a href="{% url 'project_information' row.project_id.project_id %}">PRO{{ row.project_id.project_id }}</a></td>
                     <td>{{ row.project_id.project_name }}</td>
                     <td>{{ row.project_id.project_end_date }}</td>
                     <td>{{ row.project_id.project_status }}</td>
