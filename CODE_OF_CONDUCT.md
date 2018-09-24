@@ -38,6 +38,11 @@ Instances of abusive, harassing, or otherwise unacceptable behavior may be repor
 
 Project maintainers who do not follow or enforce the Code of Conduct in good faith may face temporary or permanent repercussions as determined by other members of the project's leadership.
 
+
+## Separation of art from artist clause
+
+Any code, wiki, or other form of submitted work will not be judged based on but not limited to age, body size, disability, ethnicity, gender identity and expression, level of experience, nationality, personal appearance, race, religion, or sexual identity and orientation. The content submitted will be judged by the validity of said content and not the person or persons whom created the content.
+
 ## Attribution
 
 This Code of Conduct is adapted from the [Contributor Covenant][homepage], version 1.4, available at [http://contributor-covenant.org/version/1/4][version]
