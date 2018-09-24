@@ -161,6 +161,24 @@
     </div>
 
 
+    {% if opportunity_results %}
+    <div>
+        <h2>Opportunity Links</h2>
+        <table>
+            <tr>
+                <td width="20%">Opportunity ID</td>
+                <td width="80%">Opportunity Description</td>
+            </tr>
+            {% for row in opportunity_results %}
+                <tr>
+                    <td><a href="{% url 'opportunity_information' row.opportunity_id.opportunity_id %}">OPP{{ row.opportunity_id.opportunity_id }}</a></td>
+                    <td>{{ row.opportunity_id.opportunity_name }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+
     <div id="email_history">
         <h2>Email History</h2>
         Loading...

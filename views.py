@@ -3371,7 +3371,7 @@ def opportunity_group_permission(request, opportunity_id):
         else:
             print(form.errors)
 
-    group_permissions = opportunity_permission.objects.filter(
+    group_permission = opportunity_permission.objects.filter(
         is_deleted="FALSE",
         opportunity_id=opportunity_id,
     ).exclude(
@@ -3381,14 +3381,14 @@ def opportunity_group_permission(request, opportunity_id):
     group_results = group.objects.filter(
         is_deleted="FALSE",
     ).exclude(
-        group_id__in=group_permissions.values_list('group_id')
+        group_id__in=group_permission.values_list('group_id')
     )
 
     # Loaed the template
     t = loader.get_template('NearBeach/opportunity/opportunity_group_permission.html')
 
     c = {
-        'group_permission': group_permissions,
+        'group_permission': group_permission,
         'group_results': group_results,
         'opportunity_permission_form': opportunity_group_permission_form(group_results=group_results),
     }
@@ -3608,7 +3608,7 @@ def opportunity_user_permission(request, opportunity_id):
         else:
             print(form.errors)
 
-    group_permissions = opportunity_permission.objects.filter(
+    group_permission = opportunity_permission.objects.filter(
         is_deleted="FALSE",
         opportunity_id=opportunity_id,
     ).exclude(
@@ -3618,14 +3618,14 @@ def opportunity_user_permission(request, opportunity_id):
     user_results = User.objects.filter(
         #is_deleted="FALSE",
     ).exclude(
-        id__in=group_permissions.values_list('assigned_user_id')
+        id__in=group_permission.values_list('assigned_user_id')
     )
 
     # Loaed the template
     t = loader.get_template('NearBeach/opportunity/opportunity_user_permission.html')
 
     c = {
-        'group_permission': group_permissions,
+        'group_permission': group_permission,
         'user_results': user_results,
         'opportunity_user_permission_form': opportunity_user_permission_form(user_results=user_results),
     }
@@ -3947,8 +3947,10 @@ def project_information(request, project_id):
             print(form.errors)
 
     project_results = get_object_or_404(project, project_id=project_id)
-    project_start_results = convert_extracted_time(project_results.project_start_date)
-    project_end_results = convert_extracted_time(project_results.project_end_date)
+    opportunity_results = project_opportunity.objects.filter(
+        is_deleted="FALSE",
+        project_id=project_id,
+    )
 
     #If project is completed - send user to read only module
     if project_results.project_status == "Closed" or project_results.project_status == "Resolved":
@@ -4046,6 +4048,7 @@ def project_information(request, project_id):
         'timezone': settings.TIME_ZONE,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'opportunity_results': opportunity_results,
     }
 
     return HttpResponse(t.render(c, request))
