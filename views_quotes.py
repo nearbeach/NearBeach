@@ -56,13 +56,13 @@ def list_of_line_items(request, quote_id):
 
     product_line_items = quote_product_and_service.objects.filter(
         quote_id=quote_id,
-        products_and_services__product_or_service='Product',
+        product_and_service__product_or_service='Product',
         is_deleted="FALSE",
     )
 
     service_line_items = quote_product_and_service.objects.filter(
         quote_id=quote_id,
-        products_and_services__product_or_service='Service',
+        product_and_service__product_or_service='Service',
         is_deleted="FALSE",
     )
 

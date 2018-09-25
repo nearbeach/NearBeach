@@ -596,6 +596,11 @@ class email_form(ModelForm):
     email_quote = forms.BooleanField(
         required=False,
     )
+    quote_template_description=forms.ModelChoiceField(
+        queryset=quote_template.objects.filter(is_deleted='FALSE'),
+        empty_label=None,
+    )
+
 
     class Meta:
         model = customer

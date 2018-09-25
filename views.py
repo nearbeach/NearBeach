@@ -1366,14 +1366,28 @@ def email(request,location_id,destination):
             If this is a quote and the email_quote is ticked, then we send the quote information
             """
             if email_quote == True:
-                contents = urllib.request.urlopen("/extract_quote/").read()
-                print("FIX THIS UP SOMEHOW")
-                #msg.attach("Plan.pdf", filepdf, 'application/pdf')
-                email.attach("Quote", contents, 'application/pdf')
+                """
+                Method
+                ~~~~~~
+                1.) Get quote instance to extract UUID
+                2.) Get the template ID from form
+                3.) Use the above information to get the PDF
+                4.) Attach PDF
+                """
+                quote_results = quote.objects.get(quote_id=location_id)
+                quote_template_id = form.cleaned_data['quote_template_description']
+                print("Quote Template ID: " + str(quote_template_id))
 
-                url_path = "http://" + request.get_host() + "/preview_quote/" #+ quote_uuid + "/" + quote_template_id + "/"
+                #Generating PDF
+                url_path = "http://" + request.get_host() + "/preview_quote/" + str(quote_results.quote_uuid) + "/" + str(quote_template_id) + "/"
+                print("URL LOCATION:")
+                print(url_path)
                 html = HTML(url_path)
                 pdf_results = html.write_pdf()
+
+                #Attach the PDF
+                email.attach("Quote", pdf_results, 'application/pdf')
+
 
             email.send(fail_silently=False)
 
@@ -3796,7 +3810,7 @@ def preview_quote(request,quote_uuid,quote_template_id):
     product_results = quote_product_and_service.objects.filter(
         is_deleted="FALSE",
         #product_and_service.product_or_service = "product",
-        products_and_services__in=product_and_service.objects.filter(
+        product_and_service__in=product_and_service.objects.filter(
             product_or_service="Product",
         ).values('pk'),
         quote_id=quote_id,
@@ -3804,7 +3818,7 @@ def preview_quote(request,quote_uuid,quote_template_id):
     service_results = quote_product_and_service.objects.filter(
         is_deleted="FALSE",
         # product_and_service.product_or_service = "product",
-        products_and_services__in=product_and_service.objects.filter(
+        product_and_service__in=product_and_service.objects.filter(
             product_or_service="Service",
         ).values('pk'),
         quote_id=quote_id,

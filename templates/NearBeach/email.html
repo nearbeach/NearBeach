@@ -26,11 +26,7 @@
         <tr><td>Private Email: {{ email_form.is_private }}</td></tr>
         {% if destination == 'quote' %}
             <tr><td>Send Quote: {{ email_form.email_quote }}</td></tr>
-            <tr><td>Quote Template: <select id="quote_template">
-                {% for row in quote_template_results %}
-                    <option value="{{ row.quote_template_id }}">{{ row.quote_template_description }}</option>
-                {% endfor %}
-            </select></td></tr>
+            <tr><td>Quote Template: {{ email_form.quote_template_description }}</td></tr>
 
         {% endif %}
         <tr><td>
