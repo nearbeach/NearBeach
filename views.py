@@ -1324,6 +1324,7 @@ def email(request,location_id,destination):
         if form.is_valid():
             #Extract form data
             organisation_email = form.cleaned_data['organisation_email']
+            email_quote = form.cleaned_data['email_quote']
 
             to_email = []
             cc_email = []
@@ -1360,6 +1361,20 @@ def email(request,location_id,destination):
                 reply_to=['nearbeach@tpg.com.au'],
             )
             email.attach_alternative(form.cleaned_data['email_content'],"text/html")
+
+            """
+            If this is a quote and the email_quote is ticked, then we send the quote information
+            """
+            if email_quote == True:
+                contents = urllib.request.urlopen("/extract_quote/").read()
+                print("FIX THIS UP SOMEHOW")
+                #msg.attach("Plan.pdf", filepdf, 'application/pdf')
+                email.attach("Quote", contents, 'application/pdf')
+
+                url_path = "http://" + request.get_host() + "/preview_quote/" #+ quote_uuid + "/" + quote_template_id + "/"
+                html = HTML(url_path)
+                pdf_results = html.write_pdf()
+
             email.send(fail_silently=False)
 
 
@@ -1477,6 +1492,8 @@ def email(request,location_id,destination):
     #Template
     t = loader.get_template('NearBeach/email.html')
 
+    quote_template_results = ''
+
     #Initiate form
     if destination == "organisation":
         organisation_results = organisation.objects.get(organisation_id=location_id)
@@ -1535,6 +1552,9 @@ def email(request,location_id,destination):
         }
 
     elif destination == "quote":
+        quote_template_results = quote_template.objects.filter(
+            is_deleted="FALSE",
+        )
         customer_results = customer.objects.filter(
             is_deleted="FALSE",
             customer_id__in=quote_responsible_customer.objects.filter(
@@ -1560,6 +1580,7 @@ def email(request,location_id,destination):
         'location_id': location_id,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'quote_template_results': quote_template_results,
 
     }
 
@@ -3819,6 +3840,7 @@ def preview_quote(request,quote_uuid,quote_template_id):
     service_sales_price=service_results.aggregate(Sum('sales_price'))
     service_tax=service_results.aggregate(Sum('tax'))
     service_total=service_results.aggregate(Sum('total'))
+
 
     #Get Date
     current_date = datetime.datetime.now()

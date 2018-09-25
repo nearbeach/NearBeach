@@ -593,6 +593,9 @@ class email_form(ModelForm):
     is_private = forms.BooleanField(
         required=False,
     )
+    email_quote = forms.BooleanField(
+        required=False,
+    )
 
     class Meta:
         model = customer
