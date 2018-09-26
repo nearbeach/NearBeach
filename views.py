@@ -1375,7 +1375,7 @@ def email(request,location_id,destination):
                 4.) Attach PDF
                 """
                 quote_results = quote.objects.get(quote_id=location_id)
-                quote_template_id = form.cleaned_data['quote_template_description']
+                quote_template_id = request.POST.get('quote_template_description')
                 print("Quote Template ID: " + str(quote_template_id))
 
                 #Generating PDF
@@ -1386,7 +1386,7 @@ def email(request,location_id,destination):
                 pdf_results = html.write_pdf()
 
                 #Attach the PDF
-                email.attach("Quote", pdf_results, 'application/pdf')
+                email.attach("Quote - " + str(quote_results.quote_id), pdf_results, 'application/pdf')
 
 
             email.send(fail_silently=False)
