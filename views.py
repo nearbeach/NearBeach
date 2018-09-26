@@ -1324,6 +1324,7 @@ def email(request,location_id,destination):
         if form.is_valid():
             #Extract form data
             organisation_email = form.cleaned_data['organisation_email']
+            email_quote = form.cleaned_data['email_quote']
 
             to_email = []
             cc_email = []
@@ -1360,6 +1361,34 @@ def email(request,location_id,destination):
                 reply_to=['nearbeach@tpg.com.au'],
             )
             email.attach_alternative(form.cleaned_data['email_content'],"text/html")
+
+            """
+            If this is a quote and the email_quote is ticked, then we send the quote information
+            """
+            if email_quote == True:
+                """
+                Method
+                ~~~~~~
+                1.) Get quote instance to extract UUID
+                2.) Get the template ID from form
+                3.) Use the above information to get the PDF
+                4.) Attach PDF
+                """
+                quote_results = quote.objects.get(quote_id=location_id)
+                quote_template_id = request.POST.get('quote_template_description')
+                print("Quote Template ID: " + str(quote_template_id))
+
+                #Generating PDF
+                url_path = "http://" + request.get_host() + "/preview_quote/" + str(quote_results.quote_uuid) + "/" + str(quote_template_id) + "/"
+                print("URL LOCATION:")
+                print(url_path)
+                html = HTML(url_path)
+                pdf_results = html.write_pdf()
+
+                #Attach the PDF
+                email.attach("Quote - " + str(quote_results.quote_id), pdf_results, 'application/pdf')
+
+
             email.send(fail_silently=False)
 
 
@@ -1477,6 +1506,8 @@ def email(request,location_id,destination):
     #Template
     t = loader.get_template('NearBeach/email.html')
 
+    quote_template_results = ''
+
     #Initiate form
     if destination == "organisation":
         organisation_results = organisation.objects.get(organisation_id=location_id)
@@ -1535,6 +1566,9 @@ def email(request,location_id,destination):
         }
 
     elif destination == "quote":
+        quote_template_results = quote_template.objects.filter(
+            is_deleted="FALSE",
+        )
         customer_results = customer.objects.filter(
             is_deleted="FALSE",
             customer_id__in=quote_responsible_customer.objects.filter(
@@ -1560,6 +1594,7 @@ def email(request,location_id,destination):
         'location_id': location_id,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'quote_template_results': quote_template_results,
 
     }
 
@@ -3775,7 +3810,7 @@ def preview_quote(request,quote_uuid,quote_template_id):
     product_results = quote_product_and_service.objects.filter(
         is_deleted="FALSE",
         #product_and_service.product_or_service = "product",
-        products_and_services__in=product_and_service.objects.filter(
+        product_and_service__in=product_and_service.objects.filter(
             product_or_service="Product",
         ).values('pk'),
         quote_id=quote_id,
@@ -3783,7 +3818,7 @@ def preview_quote(request,quote_uuid,quote_template_id):
     service_results = quote_product_and_service.objects.filter(
         is_deleted="FALSE",
         # product_and_service.product_or_service = "product",
-        products_and_services__in=product_and_service.objects.filter(
+        product_and_service__in=product_and_service.objects.filter(
             product_or_service="Service",
         ).values('pk'),
         quote_id=quote_id,
@@ -3819,6 +3854,7 @@ def preview_quote(request,quote_uuid,quote_template_id):
     service_sales_price=service_results.aggregate(Sum('sales_price'))
     service_tax=service_results.aggregate(Sum('tax'))
     service_total=service_results.aggregate(Sum('total'))
+
 
     #Get Date
     current_date = datetime.datetime.now()

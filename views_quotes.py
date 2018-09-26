@@ -11,7 +11,7 @@ from NearBeach.user_permissions import *
 @login_required(login_url='login')
 def delete_line_item(request, line_item_id):
     # Delete the line item
-    line_item = quote_product_and_service.objects.get(quotes_products_and_services_id = line_item_id)
+    line_item = quote_product_and_service.objects.get(quotes_product_and_service_id = line_item_id)
     line_item.is_deleted = "TRUE"
     line_item.change_user=request.user
     line_item.save()
@@ -56,13 +56,13 @@ def list_of_line_items(request, quote_id):
 
     product_line_items = quote_product_and_service.objects.filter(
         quote_id=quote_id,
-        products_and_services__product_or_service='Product',
+        product_and_service__product_or_service='Product',
         is_deleted="FALSE",
     )
 
     service_line_items = quote_product_and_service.objects.filter(
         quote_id=quote_id,
-        products_and_services__product_or_service='Service',
+        product_and_service__product_or_service='Service',
         is_deleted="FALSE",
     )
 
@@ -92,7 +92,7 @@ def new_line_item(request,quote_id):
         form = new_line_item_form(request.POST, request.FILES)
         if form.is_valid():
             #All data
-            extracted_product_and_services = form.cleaned_data['products_and_services']
+            extracted_product_and_services = form.cleaned_data['product_and_service']
             quantity = form.cleaned_data['quantity']
             product_description = form.cleaned_data['product_description']
             discount_choice = form.cleaned_data['discount_choice']
@@ -115,7 +115,7 @@ def new_line_item(request,quote_id):
 
             #Save line item
             submit_line_item = quote_product_and_service(
-                products_and_services = product_instance,
+                product_and_service = product_instance,
                 quantity = quantity,
                 product_description = product_description,
                 product_cost = product_instance.product_cost,

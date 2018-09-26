@@ -2346,6 +2346,9 @@ class quote_template(models.Model):
         default='FALSE'
     )
 
+    def __str__(self):
+        return self.quote_template_description
+
     class Meta:
         db_table = "quote_template"
 

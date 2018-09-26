@@ -593,6 +593,14 @@ class email_form(ModelForm):
     is_private = forms.BooleanField(
         required=False,
     )
+    email_quote = forms.BooleanField(
+        required=False,
+    )
+    quote_template_description=forms.ModelChoiceField(
+        queryset=quote_template.objects.filter(is_deleted='FALSE'),
+        empty_label=None,
+    )
+
 
     class Meta:
         model = customer
@@ -1086,7 +1094,7 @@ class new_line_item_form(ModelForm):
             'style': 'background-color: aliceblue',
         })
     )
-    products_and_services = forms.ModelChoiceField(
+    product_and_service = forms.ModelChoiceField(
         required=True,
         queryset=product_and_service.objects.filter(is_deleted='FALSE'),
         empty_label="Please pick a product/service",
