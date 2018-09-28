@@ -1,0 +1,57 @@
+{% extends "./template.html" %}
+{% block content %}
+{% load static %}
+<h2>My Profile</h2>
+    <form id="user_information_form">
+    {% csrf_token %}
+        <table>
+            <tr>
+                <td width="25%">First Name:</td>
+                <td width="75%"></td>
+            </tr>
+            <tr>
+                <td>Last Name:</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Email:</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="2">Password: Leave fields blank if you do not require to change your password</td>
+            </tr>
+            <tr>
+                <td>New Password:</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Retype Password:</td>
+                <td></td>
+            </tr>
+            <tr><td colspan="2">About You:</td></tr>
+            <tr><td colspan="2">__Place in TinyMCE Field__</td></tr>
+        </table>
+    <input type="button" value="Update Profile">
+    </form>
+
+    {% if project_results %}
+        <h2>Projects Worked on</h2>
+        <table>
+            <tr>
+                <td width="20%">Project Link</td>
+                <td width="60%">Project Name</td>
+                <td width="20%">Project Status</td>
+            </tr>
+            {% for row in project_results %}
+                <tr>
+                    <td><a href="{% url 'project_information' row.project_id %}">PRO{{ row.project_id }}</a></td>
+                    <td>{{ row.project_name }}</td>
+                    <td>{{ row.project_status }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+
+
+{% endblock %}

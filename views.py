@@ -2411,6 +2411,34 @@ def logout(request):
 
 
 @login_required(login_url='login')
+def my_profile(request):
+    permission_results = return_user_permission_level(request, None,None)
+
+    #Get data
+    user_results = User.objects.get(id=request.user.id)
+    project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_id__in=assigned_user.objects.filter(
+            is_deleted="FALSE",
+            user_id=request.user.id,
+        ).values('project_id').distinct()
+    )
+
+    # load template
+    t = loader.get_template('NearBeach/my_profile.html')
+
+    # context
+    c = {
+        'project_results': project_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
 def new_bug_client(request):
     permission_results = return_user_permission_level(request, None, 'bug_client')
 

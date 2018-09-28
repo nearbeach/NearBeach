@@ -44,7 +44,7 @@
     <header id="main-header">
         <div id="menu">
             <h1>
-                <a>NearBeach</a>
+                <a href="{% url 'dashboard' %}">NearBeach</a>
             </h1>
             <a href="#" id="menu-toggle" onclick="toggleMenu()">
                 <img src="{{ MEDIA_URL }}/static/NearBeach/images/burger.png" width="24" height="24">
@@ -52,7 +52,7 @@
         </div>
         <nav>
             <ul id="main-nav">
-                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'my_profile' %}">My Profile</a></li>
                 <li><a href="{% url 'timeline' %}">Timeline</a></li>
                 {% if new_item_permission >= 3 %}
                     <li onclick="toggleSub(0)">
