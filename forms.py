@@ -2096,7 +2096,7 @@ class requirement_readonly_form(ModelForm):
 
 class search_customer_form(forms.Form):
     #Just have a simple search field
-    search_customers=forms.CharField(
+    search_customer=forms.CharField(
         max_length=255,
         required=False,
         widget=forms.TextInput(attrs={
@@ -2106,7 +2106,7 @@ class search_customer_form(forms.Form):
 
 class search_organisation_form(forms.Form):
     #Just have a simple search field
-    search_organisations=forms.CharField(
+    search_organisation=forms.CharField(
         max_length=255,
         required=False,
         widget=forms.TextInput(attrs={

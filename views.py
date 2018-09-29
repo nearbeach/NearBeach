@@ -10,7 +10,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.core.files.storage import FileSystemStorage
-from django.db.models import Sum, Q, Min
+from django.db.models import Sum, Q, Min, Value
+from django.db.models.functions import Concat
 from django.http import HttpResponse,HttpResponseForbidden, HttpResponseRedirect, Http404, HttpResponseBadRequest
 from django.shortcuts import render, get_object_or_404, render_to_response
 from django.template import RequestContext, loader
@@ -4380,7 +4381,7 @@ def search(request):
     """
     int_results = 0
     if not search_results == '':
-        if isinstance(int(search_results),int):
+        if isinstance(search_results,int):
             int_results = int(search_results)
 
 
@@ -4469,21 +4470,30 @@ def search_customer(request):
         search_customer_like += split_row
         search_customer_like += '%'
 
-    # Query the database for organisation
-    cursor = connection.cursor()
-    cursor.execute("""
-		SELECT DISTINCT
-		  customer.customer_id
-		, customer.customer_first_name
-		, customer.customer_last_name
-		, organisation.organisation_name
-
-		FROM customer LEFT OUTER JOIN organisation
-			ON customer.organisation_id_id = organisation.organisation_id
-		WHERE 1=1
-		AND UPPER(customer.customer_first_name || ' ' || customer.customer_last_name) LIKE %s
-		""", [search_customer_like])
-    customer_results = namedtuplefetchall(cursor)
+    """
+    The annotate function gives the ability to concat the first and last name.
+    This gives us the ability to;
+    1.) Filter on the joined field
+    2.) Display it as is to the customer
+    """
+    customer_results = customer.objects.filter(
+        is_deleted="FALSE"
+    ).annotate(
+        customer_full_name=Concat(
+            'customer_first_name',
+            Value(' '),
+            'customer_last_name',
+        )
+    ).extra(
+        where=[
+            """
+            customer_full_name LIKE %s
+            """
+        ],
+        params=[
+            search_customer_like,
+        ]
+    )
 
     # context
     c = {
