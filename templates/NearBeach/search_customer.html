@@ -1,7 +1,7 @@
 {% extends "./template.html" %}
 {% block content %}
 <h2>Search Customers</h2>
-<form action={% url 'search_customers' %} method="post" class="search_customers">
+<form action={% url 'search_customer' %} method="post" class="search_customer">
     {% csrf_token %}
     <table>
         <tr>
