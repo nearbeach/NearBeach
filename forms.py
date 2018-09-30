@@ -34,9 +34,13 @@ DISCOUNT_CHOICE=(
 	('Percentage','Percentage'),
 	('Amount','Amount'),
 )
+
 NOTHING_CHOICE=(
     ('','-----'),
 )
+
+
+
 YEAR_CHOICES=(
     ('2010','2010'),
     ('2011','2011'),
@@ -2308,4 +2312,35 @@ class user_information_form(ModelForm):
             'is_active',
             'is_superuser',
             'email',
+        }
+
+
+class user_want_form(ModelForm):
+    want_choice_text=forms.CharField(
+        max_length=50,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Please input a want or do not want',
+        })
+    )
+    class Meta:
+        model=user_want
+        fields = {
+            'want_choice',
+            'want_choice_text',
+            'want_skill',
+        }
+
+
+class user_weblink_form(ModelForm):
+    user_weblink_url=forms.URLField(
+        widget=forms.URLInput(attrs={
+            'placeholder': 'https://nearbeach.org',
+        }),
+    )
+
+    class Meta:
+        fields = {
+            'user_weblink_url',
+            'user_weblink_source',
         }

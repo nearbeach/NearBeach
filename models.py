@@ -53,6 +53,28 @@ QUOTE_APPROVAL_STATUS = (
     ('APPROVED', 'APPROVED'),
 )
 
+WANT_CHOICE=(
+    ('0','Do not want to do'),
+    ('1','Want to do'),
+)
+SKILL_CHOICE=(
+    ('0','Can not do'),
+    ('1','Willing to learn'),
+    ('2','Knows a little'),
+    ('3','Knows a lot'),
+    ('4','Proficient'),
+)
+
+WEBSITE_SOURCE=(
+    ('0','Twitter'),
+    ('1','Facebook'),
+    ('2','Github'),
+    ('3','Gitlab'),
+    ('4','Website'),
+    ('5','LinkedIn'),
+    ('6','Staff page'),
+    ('7','Other'),
+)
 
 # List of tables - in alphabetical order
 class assigned_user(models.Model):
@@ -2853,3 +2875,65 @@ class user_group(models.Model):
     class Meta:
         db_table = "user_group"
 
+
+
+class user_want(models.Model):
+    user_want_id=models.AutoField(
+        primary_key=True,
+    )
+    want_choice=models.CharField(
+        max_length=50,
+        choices=WANT_CHOICE,
+    )
+    want_choice_text=models.CharField(
+        max_length=50,
+    )
+    want_skill=models.CharField(
+        max_length=50,
+        choices=SKILL_CHOICE,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    def __str__(self):
+        return self.want_choice_text
+
+    class Meta:
+        db_table = "user_want"
+
+
+class user_weblink(models.Model):
+    user_weblink_id=models.AutoField(primary_key=True)
+    user_weblink_url=models.URLField(max_length=50)
+    user_weblink_source=models.CharField(
+        max_length=50,
+        choices=WEBSITE_SOURCE,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    def __str__(self):
+        return self.user_weblinks_url
+
+    class Meta:
+        db_table = "user_weblink"

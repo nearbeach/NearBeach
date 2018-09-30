@@ -5000,6 +5000,91 @@ def to_do_complete(request, to_do_id):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
+def user_want_view(request):
+    if request.method=="POST":
+        form = user_want_form(request.POST)
+        if form.is_valid():
+            user_want_submit=user_want()
+            user_want_submit.change_user = request.user
+            user_want_submit.want_choice = form.cleaned_data['want_choice']
+            user_want_submit.want_choice_text = form.cleaned_data['want_choice_text']
+            user_want_submit.want_skill = form.cleaned_data['want_skill']
+            user_want_submit.save()
+        else:
+            print(form.errors)
+
+    want_results = user_want.objects.filter(
+        is_deleted="FALSE",
+        want_choice="1" #User wants
+    )
+
+    not_want_results = user_want.objects.filter(
+        is_deleted="FALSE",
+        want_choice="0" #Does not want
+    )
+
+    t = loader.get_template('NearBeach/my_profile/user_want.html')
+
+    c = {
+        'user_want_form': user_want_form(),
+        'want_results': want_results,
+        'not_want_results': not_want_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def user_want_remove(request,user_want_id):
+    if request.method=="POST":
+        user_want_save = user_want.objects.get(pk=user_want_id)
+        user_want_save.is_deleted="TRUE"
+        user_want_save.save()
+
+        #Send back blank page
+        t = loader.get_template('NearBeach/blank.html')
+
+        c = {}
+
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("Sorry, this function can only be done in POST")
+
+
+@login_required(login_url='login')
+def user_weblink_view(request):
+    if request.method == "POST":
+        form = user_weblink_form(request.POST)
+        if form.is_valid():
+            user_weblink_submit = user_weblink(
+                change_user=request.user,
+                user_weblink_url=form.cleaned_data['user_weblink_url'],
+                user_weblink_submit=form.cleaned_data['user_weblink_submit'],
+            )
+            user_weblink_submit.save()
+        else:
+            print(form.errors)
+
+    #Data
+    user_weblink_results=user_weblink.objects.filter(
+        is_deleted="FALSE",
+        change_user=request.user,
+    )
+
+    #Template
+    t = loader.get_template('NearBeach/my_profile/user_weblink.html')
+
+    c = {
+        'user_weblink_form': user_weblink_form(),
+        'user_weblink_results': user_weblink_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+
 """
 The following def are designed to help display a customer 404 and 500 pages
 """

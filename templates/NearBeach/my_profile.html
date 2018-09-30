@@ -1,8 +1,10 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
-<h2>My Profile</h2>
-    <form id="user_information_form">
+<script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+<body onload="on_page_load()">
+    <h2>My Profile</h2>
+    <form id="user_information_form" name="user_information_form" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
         <table>
             <tr>
@@ -31,7 +33,17 @@
             <tr><td colspan="2">About You:</td></tr>
             <tr><td colspan="2">__Place in TinyMCE Field__</td></tr>
         </table>
-    <input type="button" value="Update Profile">
+    <input type="submit" value="Update Profile">
+    </form>
+
+    <form id="user_weblink" name="user_weblink" method="POST" enctype="multipart/form-data">
+        <h2>User Weblinks</h2>
+        Loading...
+    </form>
+
+    <form id="user_want" name="user_want" method="POST" enctype="multipart/form-data">
+        <h2>User Wants</h2>
+        Loading...
     </form>
 
     {% if project_results %}
@@ -52,6 +64,99 @@
         </table>
     {% endif %}
 
+    <script>
+        $("#user_weblink").on("submit", function (e) {
+            e.preventDefault();
 
+            $.ajax({
+                url: '/user_weblink_view/',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (data) {
+                    $("#user_weblink").html(data);
+                },
+                error: function () {
+                    alert("Sorry, something went wrong submitting user weblink");
+                }
+            })
+        })
+
+        $("#user_want").on("submit", function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                type: 'POST',
+                url: '/user_want_view/',
+                data: $(this).serialize(),
+                success: function(data) {
+                    $("#user_want").html(data);
+                },
+                error: function() {
+                    alert("Sorry, submitting the user want caused an error");
+                }
+            })
+        });
+
+        function on_page_load() {
+            load_user_want();
+            load_user_weblink();
+        }
+
+        function load_user_weblink() {
+            $.ajax({
+                url: '/user_weblink_view/',
+                type: 'GET',
+                data:  {},
+                dataType: 'HTML',
+                success: function (data) {
+                    $("#user_weblink").html(data);
+                },
+                error: function () {
+                    alert("Sorry, the user weblinks did not load correctly");
+                }
+            })
+        }
+
+        function load_user_want() {
+            $.ajax({
+                url: '/user_want_view/',
+                type: 'GET',
+                data: {},
+                dataType: 'html',
+                success: function (data) {
+                    $("#user_want").html(data);
+                },
+                error: function() {
+                    alert("Sorry, the User Wants did not load correctly");
+                }
+            })
+        }
+
+        function user_want_remove(user_want_id) {
+            //Send data to the database
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/user_want_remove/' + user_want_id + '/',
+                type: 'POST',
+                data: {},
+                success: function (data) {
+                    load_user_want();
+                },
+                error: function () {
+                    alert("Sorry, removing the user want failed")
+                }
+            })
+        }
+
+    </script>
+
+</body>
 
 {% endblock %}
