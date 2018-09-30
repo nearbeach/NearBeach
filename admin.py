@@ -67,6 +67,8 @@ admin.site.register(task_history)
 admin.site.register(task)
 admin.site.register(to_do)
 admin.site.register(user_group)
+admin.site.register(user_want)
+admin.site.register(user_weblink)
 
 
 

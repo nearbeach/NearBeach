@@ -66,14 +66,14 @@ SKILL_CHOICE=(
 )
 
 WEBSITE_SOURCE=(
-    ('0','Twitter'),
-    ('1','Facebook'),
-    ('2','Github'),
-    ('3','Gitlab'),
-    ('4','Website'),
-    ('5','LinkedIn'),
-    ('6','Staff page'),
-    ('7','Other'),
+    ('Twitter','Twitter'),
+    ('Facebook','Facebook'),
+    ('Github','Github'),
+    ('Gitlab','Gitlab'),
+    ('Website','Website'),
+    ('LinkedIn','LinkedIn'),
+    ('Staff Page','Staff page'),
+    ('Other','Other'),
 )
 
 # List of tables - in alphabetical order

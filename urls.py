@@ -176,6 +176,7 @@ re_path(r'^user_information/(?P<user_id>[0-9]+)/$', views_administration.user_in
 re_path(r'^user_permissions', views_lookup.lookup_user_permissions, name='user_permissions'),
 re_path(r'^user_want_view', views.user_want_view,name='user_want_view'),
 re_path(r'^user_want_remove/(?P<user_want_id>[0-9]+)', views.user_want_remove,name="user_want_remove"),
+re_path(r'^user_weblink_view',views.user_weblink_view,name='user_weblink_view'),
 
 path('change-password/', auth_views.PasswordChangeView.as_view()),
 

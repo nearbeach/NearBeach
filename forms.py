@@ -2336,10 +2336,12 @@ class user_weblink_form(ModelForm):
     user_weblink_url=forms.URLField(
         widget=forms.URLInput(attrs={
             'placeholder': 'https://nearbeach.org',
+            'style': 'width: 100%;'
         }),
     )
 
     class Meta:
+        model=user_weblink
         fields = {
             'user_weblink_url',
             'user_weblink_source',
