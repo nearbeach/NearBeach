@@ -173,6 +173,15 @@ INCLUDE_DEACTIVATED={
 MAX_PICTURE_SIZE=1000 * 1024 #1Mb wow
 
 
+class about_user_form(ModelForm):
+    class Meta:
+        model=about_user
+        fields = {
+            'about_user_text'
+        }
+
+
+
 class add_permission_set_to_group_form(forms.Form):
     permission_set_name = forms.ModelChoiceField(
         label = "Permission Set Name",

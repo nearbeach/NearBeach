@@ -77,6 +77,29 @@ WEBSITE_SOURCE=(
 )
 
 # List of tables - in alphabetical order
+class about_user(models.Model):
+    about_user_id=models.AutoField(primary_key=True)
+    about_user_text=HTMLField()
+    user=models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user',
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE',
+    )
+
+    class Meta:
+        db_table = "about_user"
+
 class assigned_user(models.Model):
     assigned_user_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(

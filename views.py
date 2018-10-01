@@ -2425,12 +2425,26 @@ def my_profile(request):
         ).values('project_id').distinct()
     )
 
+    ui_form = user_information_form(
+        instance=User.objects.get(id=request.user.id)
+    )
+
+    #Initialise about user form
+    about_user_results=about_user.objects.filter(
+        is_deleted="FALSE",
+        user=request.user,
+    ) #WILL ORDER BY CREATED DATE AND HAVE LATEST VERSION HERE
+
     # load template
     t = loader.get_template('NearBeach/my_profile.html')
 
     # context
     c = {
         'project_results': project_results,
+        'ui_form': ui_form,
+        'about_user_form': about_user_form(initial={
+            'about_user_text': about_user_results[0].about_user_text,
+        }),
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
     }
@@ -5001,6 +5015,24 @@ def to_do_complete(request, to_do_id):
 
 
 @login_required(login_url='login')
+def user_want_remove(request,user_want_id):
+    if request.method=="POST":
+        user_want_save = user_want.objects.get(pk=user_want_id)
+        user_want_save.is_deleted="TRUE"
+        user_want_save.save()
+
+        #Send back blank page
+        t = loader.get_template('NearBeach/blank.html')
+
+        c = {}
+
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("Sorry, this function can only be done in POST")
+
+
+
+@login_required(login_url='login')
 def user_want_view(request):
     if request.method=="POST":
         form = user_want_form(request.POST)
@@ -5035,21 +5067,24 @@ def user_want_view(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
-def user_want_remove(request,user_want_id):
-    if request.method=="POST":
-        user_want_save = user_want.objects.get(pk=user_want_id)
-        user_want_save.is_deleted="TRUE"
-        user_want_save.save()
 
-        #Send back blank page
+
+@login_required(login_url='login')
+def user_weblink_remove(request,user_weblink_id):
+    if request.method == "POST":
+        weblink_save = user_weblink.objects.get(pk=user_weblink_id)
+        weblink_save.is_deleted="TRUE"
+        weblink_save.save()
+
+        #Return blank page
         t = loader.get_template('NearBeach/blank.html')
 
         c = {}
 
-        return HttpResponse(t.render(c, request))
+        return HttpResponse(t.render(c,request))
     else:
-        return HttpResponseBadRequest("Sorry, this function can only be done in POST")
+        #Can only do this through post
+        return HttpResponseBadRequest("Can only do this through post")
 
 
 @login_required(login_url='login')
@@ -5081,6 +5116,9 @@ def user_weblink_view(request):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+
 
 
 

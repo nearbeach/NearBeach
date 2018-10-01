@@ -174,8 +174,9 @@ re_path(r'^to_do_complete/(?P<to_do_id>[0-9]+)/$', views.to_do_complete, name='t
 re_path(r'^to_do/(?P<location_id>[0-9]+)/(?P<destination>["project","task","opportunity"]+)/$', views.to_do_list, name='to_do'),
 re_path(r'^user_information/(?P<user_id>[0-9]+)/$', views_administration.user_information, name='user_information'),
 re_path(r'^user_permissions', views_lookup.lookup_user_permissions, name='user_permissions'),
-re_path(r'^user_want_view', views.user_want_view,name='user_want_view'),
 re_path(r'^user_want_remove/(?P<user_want_id>[0-9]+)', views.user_want_remove,name="user_want_remove"),
+re_path(r'^user_want_view', views.user_want_view,name='user_want_view'),
+re_path(r'^user_weblink_remove/(?P<user_weblink_id>[0-9]+)',views.user_weblink_remove,name='user_weblink_remove'),
 re_path(r'^user_weblink_view',views.user_weblink_view,name='user_weblink_view'),
 
 path('change-password/', auth_views.PasswordChangeView.as_view()),
