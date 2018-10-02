@@ -3151,6 +3151,8 @@ def new_quote(request,destination,primary_key):
             quote_terms=form.cleaned_data['quote_terms']
             quote_stage_id=form.cleaned_data['quote_stage_id']
             customer_notes=form.cleaned_data['customer_notes']
+            select_groups = form.cleaned_data['select_groups']
+            select_users = form.cleaned_data['select_users']
 
             # Create the final start/end date fields
             quote_valid_till = convert_to_utc(
@@ -3200,6 +3202,46 @@ def new_quote(request,destination,primary_key):
                 submit_quotes.opportunity_id = opportunity.objects.get(opportunity_id=primary_key)
 
             submit_quotes.save()
+
+            """
+            Permissions
+            ~~~~~~~~~~~
+            If the user left BOTH the user and group permissions empty then we give everyone access.
+            Otherwise we will loop through BOTH and add the correct permissions.
+            """
+            give_all_access = True
+
+            if (select_groups):
+                give_all_access = False
+
+                for row in select_groups:
+                    group_instance = group.objects.get(group_name=row)
+                    permission_save = quote_permission(
+                        quote_id=submit_quotes.quote_id,
+                        group_id=group_instance,
+                        change_user=request.user,
+                    )
+                    permission_save.save()
+
+            if (select_users):
+                give_all_access = False
+
+                for row in select_users:
+                    assigned_user_instance = auth.models.User.objects.get(username=row)
+                    permission_save = quote_permission(
+                        quote_id=submit_quotes.quote_id,
+                        assigned_user=assigned_user_instance,
+                        change_user=request.user,
+                    )
+                    permission_save.save()
+
+            if (give_all_access):
+                permission_save = quote_permission(
+                    quote_id=submit_quotes.quote_id,
+                    all_user='TRUE',
+                    change_user=request.user,
+                )
+                permission_save.save()
 
             #Now to go to the quote information page
             return HttpResponseRedirect(reverse(quote_information, args={submit_quotes.quote_id}))
@@ -4235,6 +4277,35 @@ def quote_information(request, quote_id):
 
         else:
             print(form.errors)
+    else:
+        """
+        We want to limit who can see what quote. The exception to this is for the user
+        who just created the quote. (I should program in a warning stating that they
+        might not be able to see the quote again unless they add themselves to the 
+        permissions list.
+
+        The user has to meet at least one of these conditions;
+        1.) User has permission
+        2.) User's group has permission
+        3.) All users have permission
+        """
+        user_groups_results = user_group.objects.filter(username=request.user)
+
+        quote_permission_results = quote_permission.objects.filter(
+            Q(
+                Q(assigned_user=request.user) # User has permission
+                | Q(group_id__in=user_groups_results.values('group_id')) # User's group have permission
+                | Q(all_user='TRUE') # All users have access
+            )
+            & Q(quote_id=quote_id)
+        )
+
+        if (not quote_permission_results):
+            return HttpResponseRedirect(
+                reverse(
+                    permission_denied,
+                )
+            )
 
 
 
