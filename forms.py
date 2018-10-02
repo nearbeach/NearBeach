@@ -1418,6 +1418,10 @@ class new_project_form(forms.Form):
 
 
 class new_quote_form(ModelForm):
+    #Get data for forms
+    groups_results = group.objects.filter(is_deleted="FALSE")
+    user_results = auth.models.User.objects.all()
+
     #Get data for form
     list_of_quote_stages=list_of_quote_stage.objects.filter(
         is_deleted='FALSE',
@@ -1481,6 +1485,28 @@ class new_quote_form(ModelForm):
             }
         ),
         required=False,
+    )
+
+    select_groups = forms.ModelMultipleChoiceField(
+        queryset=groups_results,
+        required=False,
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': "Choose the users(s)",
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+            'style': 'width: 100%',
+        }),
+    )
+
+    select_users = forms.ModelMultipleChoiceField(
+        queryset=user_results,
+        required=False,
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': "Choose the users(s)",
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+            'style': 'width: 100%',
+        }),
     )
 
 
