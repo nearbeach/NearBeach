@@ -988,6 +988,54 @@ class login_form(forms.Form):
         return super(login_form, self).clean()
 
 
+class my_profile_form(ModelForm):
+    password1 = forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'type': 'password',
+            'placeholder': 'Password',
+            'onkeyup': 'enable_submit()',
+            'autocomplete': 'off',
+        })
+    )
+    password2 = forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'type': 'password',
+            'placeholder': 'Repeate Password',
+            'onkeyup': 'enable_submit()',
+            'autocomplete': 'off',
+        })
+    )
+    first_name = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'First Name'
+        })
+    )
+    last_name = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Last Name'
+        })
+    )
+    email = forms.EmailField(
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Email Address'
+        })
+    )
+    class Meta:
+        model=User
+        fields={
+            'first_name',
+            'last_name',
+            'email',
+        }
+
 class new_campus_form(forms.Form):
     #Get data for choice boxes
     #countries_results=list_of_country.objects.all()
@@ -2291,7 +2339,7 @@ class user_information_form(ModelForm):
         max_length=50,
         widget=forms.TextInput(attrs={
             'placeholder': 'Username'
-        })
+        }),
     )
     first_name = forms.CharField(
         max_length=100,

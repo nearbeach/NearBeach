@@ -2415,21 +2415,7 @@ def logout(request):
 def my_profile(request):
     permission_results = return_user_permission_level(request, None,None)
 
-    #Get data
-    user_results = User.objects.get(id=request.user.id)
-    project_results = project.objects.filter(
-        is_deleted="FALSE",
-        project_id__in=assigned_user.objects.filter(
-            is_deleted="FALSE",
-            user_id=request.user.id,
-        ).values('project_id').distinct()
-    )
-
-    ui_form = user_information_form(
-        instance=User.objects.get(id=request.user.id)
-    )
-
-    #Initialise about user form, if there is no about_user use a blank ""
+    #Data required in both POST and GET
     about_user_results=about_user.objects.filter(
         is_deleted="FALSE",
         user=request.user,
@@ -2439,6 +2425,68 @@ def my_profile(request):
     else:
         about_user_text = ""
 
+    user_instance = User.objects.get(id=request.user.id)
+
+    if request.method == "POST":
+        """
+        User Information
+        ~~~~~~~~~~~~~~~~
+        We want to always update the user information. Give the User the option to also update
+        their password.
+        """
+        form = my_profile_form(request.POST)
+        if form.is_valid():
+            user_instance.first_name=form.cleaned_data['first_name']
+            user_instance.last_name=form.cleaned_data['last_name']
+            user_instance.email=form.cleaned_data['email']
+            user_instance.save()
+
+            password1 = form.cleaned_data['password1']
+            password2 = form.cleaned_data['password2']
+
+            if password1 == password2:
+                # Change passwords
+                if not password1 == "":
+                    user_instance = User.objects.get(id=request.user.id)
+                    user_instance.set_password(password1)
+                    user_instance.save()
+
+        else:
+            print(form.errors)
+
+        """
+        About User Text
+        ~~~~~~~~~~~~~~~
+        If there is a difference between the current about user and what the user has submitted,
+        we want to update the database.
+        If there is no change - we will ignore. No need to flood the database with the exact same data over
+        and over again.
+        """
+        form = about_user_form(request.POST)
+        if form.is_valid():
+            if not about_user_text == form.cleaned_data['about_user_text'] and not about_user_text == None:
+                about_user_text == form.cleaned_data['about_user_text']
+
+                about_user_submit = about_user(
+                    change_user=request.user,
+                    about_user_text=about_user_text,
+                    user_id=request.user.id
+                )
+                about_user_submit.save()
+        else:
+            print(form.errors)
+
+    #Get data
+    project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_id__in=assigned_user.objects.filter(
+            is_deleted="FALSE",
+            user_id=request.user.id,
+        ).values('project_id').distinct()
+    )
+
+    #Initialise about user form, if there is no about_user use a blank ""
+
 
     # load template
     t = loader.get_template('NearBeach/my_profile.html')
@@ -2446,7 +2494,9 @@ def my_profile(request):
     # context
     c = {
         'project_results': project_results,
-        'ui_form': ui_form,
+        'my_profile_form': my_profile_form(
+            instance=user_instance,
+        ),
         'about_user_form': about_user_form(initial={
             'about_user_text': about_user_text,
         }),

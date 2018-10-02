@@ -5,35 +5,35 @@
 <body onload="on_page_load()">
     <h2>My Profile</h2>
     <form id="user_information_form" name="user_information_form" method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
+        {% csrf_token %}
         <table>
             <tr>
                 <td width="25%">First Name:</td>
-                <td width="75%">{{ ui_form.first_name }}</td>
+                <td width="75%">{{ my_profile_form.first_name }}</td>
             </tr>
             <tr>
                 <td>Last Name:</td>
-                <td>{{ ui_form.last_name }}</td>
+                <td>{{ my_profile_form.last_name }}</td>
             </tr>
             <tr>
                 <td>Email:</td>
-                <td>{{ ui_form.email }}</td>
+                <td>{{ my_profile_form.email }}</td>
             </tr>
             <tr>
                 <td colspan="2">Password: Leave fields blank if you do not require to change your password</td>
             </tr>
             <tr>
                 <td>New Password:</td>
-                <td>{{ ui_form.password1 }}</td>
+                <td>{{ my_profile_form.password1 }}</td>
             </tr>
             <tr>
                 <td>Retype Password:</td>
-                <td>{{ ui_form.password2 }}</td>
+                <td>{{ my_profile_form.password2 }}</td>
             </tr>
             <tr><td colspan="2">About You:</td></tr>
             <tr><td colspan="2">{{ about_user_form.media }}{{ about_user_form.about_user_text }}</td></tr>
         </table>
-    <input type="submit" value="Update Profile" id="submit_user">
+    <input type="submit" value="Update Profile" id="submit_user" onclick="update_user()">
     </form>
 
     <form id="user_weblink" name="user_weblink" method="POST" enctype="multipart/form-data">
@@ -65,6 +65,12 @@
     {% endif %}
 
     <script>
+        $("#user_information_form").on("submit", function(e) {
+            e.preventDefault();
+
+            update_user();
+        });
+
         $("#user_weblink").on("submit", function (e) {
             e.preventDefault();
 
@@ -145,6 +151,21 @@
                     alert("Sorry, the User Wants did not load correctly");
                 }
             })
+        }
+
+        function update_user() {
+            $.ajax({
+                url: '/my_profile/',
+                type: "POST",
+                data: $("#user_information_form").serialize(),
+                success: function(data) {
+                    //Do nothing yet. I think...
+                    alert("Saved");
+                },
+                error: function () {
+                    alert("Sorry, but saving this has not worked");
+                }
+            });
         }
 
         function user_want_remove(user_want_id) {
