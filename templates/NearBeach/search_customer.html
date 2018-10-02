@@ -1,0 +1,28 @@
+{% extends "./template.html" %}
+{% block content %}
+<h2>Search Customers</h2>
+<form action={% url 'search_customer' %} method="post" class="search_customer">
+    {% csrf_token %}
+    <table>
+        <tr>
+            <td width="80%">{{ search_customer_form.search_customer }}</td>
+            <td width="20%"><input hidden type="submit"></td>
+        </tr>
+    </table>
+
+
+    <table>
+    <tr class="header">
+        <td width="30%">Customer Name</td>
+        <td>Organisation</td>
+    </tr>
+    {% for customer in customer_results %}
+        <tr>
+            <td><a href="{% url 'customer_information' customer.customer_id %}">{{ customer.customer_full_name }}</td>
+            <td>{{ customer.organisation_id }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</form>
+{% endblock %}
+

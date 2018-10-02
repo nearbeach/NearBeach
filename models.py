@@ -53,8 +53,53 @@ QUOTE_APPROVAL_STATUS = (
     ('APPROVED', 'APPROVED'),
 )
 
+WANT_CHOICE=(
+    ('0','Do not want to do'),
+    ('1','Want to do'),
+)
+SKILL_CHOICE=(
+    ('0','Can not do'),
+    ('1','Willing to learn'),
+    ('2','Knows a little'),
+    ('3','Knows a lot'),
+    ('4','Proficient'),
+)
+
+WEBSITE_SOURCE=(
+    ('Twitter','Twitter'),
+    ('Facebook','Facebook'),
+    ('Github','Github'),
+    ('Gitlab','Gitlab'),
+    ('Website','Website'),
+    ('LinkedIn','LinkedIn'),
+    ('Staff Page','Staff page'),
+    ('Other','Other'),
+)
 
 # List of tables - in alphabetical order
+class about_user(models.Model):
+    about_user_id=models.AutoField(primary_key=True)
+    about_user_text=HTMLField()
+    user=models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user',
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE',
+    )
+
+    class Meta:
+        db_table = "about_user"
+
 class assigned_user(models.Model):
     assigned_user_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(
@@ -2145,6 +2190,49 @@ class quote(models.Model):
         db_table = "quote"
 
 
+class quote_permission(models.Model):
+    quote_permission_id = models.AutoField(primary_key=True)
+    quote = models.ForeignKey(
+        'quote',
+        on_delete=models.CASCADE
+    )
+    assigned_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_assigned_user',
+        null=True,
+        blank=True,
+    )
+    group_id = models.ForeignKey(
+        'group',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    all_user = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE',
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    class Meta:
+        db_table = "quote_permission"
+
+
 class quote_product_and_service(models.Model):
     quotes_product_and_service_id = models.AutoField(primary_key=True)
     quote = models.ForeignKey(
@@ -2853,3 +2941,65 @@ class user_group(models.Model):
     class Meta:
         db_table = "user_group"
 
+
+
+class user_want(models.Model):
+    user_want_id=models.AutoField(
+        primary_key=True,
+    )
+    want_choice=models.CharField(
+        max_length=50,
+        choices=WANT_CHOICE,
+    )
+    want_choice_text=models.CharField(
+        max_length=50,
+    )
+    want_skill=models.CharField(
+        max_length=50,
+        choices=SKILL_CHOICE,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    def __str__(self):
+        return self.want_choice_text
+
+    class Meta:
+        db_table = "user_want"
+
+
+class user_weblink(models.Model):
+    user_weblink_id=models.AutoField(primary_key=True)
+    user_weblink_url=models.URLField(max_length=50)
+    user_weblink_source=models.CharField(
+        max_length=50,
+        choices=WEBSITE_SOURCE,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    def __str__(self):
+        return self.user_weblinks_url
+
+    class Meta:
+        db_table = "user_weblink"

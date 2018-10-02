@@ -34,9 +34,13 @@ DISCOUNT_CHOICE=(
 	('Percentage','Percentage'),
 	('Amount','Amount'),
 )
+
 NOTHING_CHOICE=(
     ('','-----'),
 )
+
+
+
 YEAR_CHOICES=(
     ('2010','2010'),
     ('2011','2011'),
@@ -167,6 +171,15 @@ INCLUDE_DEACTIVATED={
 
 #Global Variables
 MAX_PICTURE_SIZE=1000 * 1024 #1Mb wow
+
+
+class about_user_form(ModelForm):
+    class Meta:
+        model=about_user
+        fields = {
+            'about_user_text'
+        }
+
 
 
 class add_permission_set_to_group_form(forms.Form):
@@ -974,6 +987,54 @@ class login_form(forms.Form):
 
         return super(login_form, self).clean()
 
+
+class my_profile_form(ModelForm):
+    password1 = forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'type': 'password',
+            'placeholder': 'Password',
+            'onkeyup': 'enable_submit()',
+            'autocomplete': 'off',
+        })
+    )
+    password2 = forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'type': 'password',
+            'placeholder': 'Repeate Password',
+            'onkeyup': 'enable_submit()',
+            'autocomplete': 'off',
+        })
+    )
+    first_name = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'First Name'
+        })
+    )
+    last_name = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Last Name'
+        })
+    )
+    email = forms.EmailField(
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Email Address'
+        })
+    )
+    class Meta:
+        model=User
+        fields={
+            'first_name',
+            'last_name',
+            'email',
+        }
 
 class new_campus_form(forms.Form):
     #Get data for choice boxes
@@ -2096,7 +2157,7 @@ class requirement_readonly_form(ModelForm):
 
 class search_customer_form(forms.Form):
     #Just have a simple search field
-    search_customers=forms.CharField(
+    search_customer=forms.CharField(
         max_length=255,
         required=False,
         widget=forms.TextInput(attrs={
@@ -2106,7 +2167,7 @@ class search_customer_form(forms.Form):
 
 class search_organisation_form(forms.Form):
     #Just have a simple search field
-    search_organisations=forms.CharField(
+    search_organisation=forms.CharField(
         max_length=255,
         required=False,
         widget=forms.TextInput(attrs={
@@ -2278,7 +2339,7 @@ class user_information_form(ModelForm):
         max_length=50,
         widget=forms.TextInput(attrs={
             'placeholder': 'Username'
-        })
+        }),
     )
     first_name = forms.CharField(
         max_length=100,
@@ -2308,4 +2369,37 @@ class user_information_form(ModelForm):
             'is_active',
             'is_superuser',
             'email',
+        }
+
+
+class user_want_form(ModelForm):
+    want_choice_text=forms.CharField(
+        max_length=50,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Please input a want or do not want',
+        })
+    )
+    class Meta:
+        model=user_want
+        fields = {
+            'want_choice',
+            'want_choice_text',
+            'want_skill',
+        }
+
+
+class user_weblink_form(ModelForm):
+    user_weblink_url=forms.URLField(
+        widget=forms.URLInput(attrs={
+            'placeholder': 'https://nearbeach.org',
+            'style': 'width: 100%;'
+        }),
+    )
+
+    class Meta:
+        model=user_weblink
+        fields = {
+            'user_weblink_url',
+            'user_weblink_source',
         }

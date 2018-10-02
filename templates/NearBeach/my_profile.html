@@ -1,0 +1,221 @@
+{% extends "./template.html" %}
+{% block content %}
+{% load static %}
+<script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+<body onload="on_page_load()">
+    <h2>My Profile</h2>
+    <form id="user_information_form" name="user_information_form" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <td width="25%">First Name:</td>
+                <td width="75%">{{ my_profile_form.first_name }}</td>
+            </tr>
+            <tr>
+                <td>Last Name:</td>
+                <td>{{ my_profile_form.last_name }}</td>
+            </tr>
+            <tr>
+                <td>Email:</td>
+                <td>{{ my_profile_form.email }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">Password: Leave fields blank if you do not require to change your password</td>
+            </tr>
+            <tr>
+                <td>New Password:</td>
+                <td>{{ my_profile_form.password1 }}</td>
+            </tr>
+            <tr>
+                <td>Retype Password:</td>
+                <td>{{ my_profile_form.password2 }}</td>
+            </tr>
+            <tr><td colspan="2">About You:</td></tr>
+            <tr><td colspan="2">{{ about_user_form.media }}{{ about_user_form.about_user_text }}</td></tr>
+        </table>
+    <input type="submit" value="Update Profile" id="submit_user" onclick="update_user()">
+    </form>
+
+    <form id="user_weblink" name="user_weblink" method="POST" enctype="multipart/form-data">
+        <h2>User Weblinks</h2>
+        Loading...
+    </form>
+
+    <form id="user_want" name="user_want" method="POST" enctype="multipart/form-data">
+        <h2>User Wants</h2>
+        Loading...
+    </form>
+
+    {% if project_results %}
+        <h2>Projects Worked on</h2>
+        <table>
+            <tr>
+                <td width="20%">Project Link</td>
+                <td width="60%">Project Name</td>
+                <td width="20%">Project Status</td>
+            </tr>
+            {% for row in project_results %}
+                <tr>
+                    <td><a href="{% url 'project_information' row.project_id %}">PRO{{ row.project_id }}</a></td>
+                    <td>{{ row.project_name }}</td>
+                    <td>{{ row.project_status }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    <script>
+        $("#user_information_form").on("submit", function(e) {
+            e.preventDefault();
+
+            update_user();
+        });
+
+        $("#user_weblink").on("submit", function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: '/user_weblink_view/',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (data) {
+                    $("#user_weblink").html(data);
+                },
+                error: function () {
+                    alert("Sorry, something went wrong submitting user weblink");
+                }
+            })
+        })
+
+        $("#user_want").on("submit", function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                type: 'POST',
+                url: '/user_want_view/',
+                data: $(this).serialize(),
+                success: function(data) {
+                    $("#user_want").html(data);
+                },
+                error: function() {
+                    alert("Sorry, submitting the user want caused an error");
+                }
+            })
+        });
+
+        function enable_submit() {
+            /*
+            The password fields have been changed. We will look at the passwords fields and if both fields contain the
+            same data, then we enable the submit button. Otherwise we disable it.
+             */
+            var password1 = $("#id_password1").val(),
+                password2 = $("#id_password2").val();
+
+            if (password1 == password2) {
+                $("#submit_user").prop("disabled",false);
+            } else {
+                $("#submit_user").prop("disabled",true)
+            }
+        }
+
+        function on_page_load() {
+            load_user_want();
+            load_user_weblink();
+        }
+
+        function load_user_weblink() {
+            $.ajax({
+                url: '/user_weblink_view/',
+                type: 'GET',
+                data:  {},
+                dataType: 'HTML',
+                success: function (data) {
+                    $("#user_weblink").html(data);
+                },
+                error: function () {
+                    alert("Sorry, the user weblinks did not load correctly");
+                }
+            })
+        }
+
+        function load_user_want() {
+            $.ajax({
+                url: '/user_want_view/',
+                type: 'GET',
+                data: {},
+                dataType: 'html',
+                success: function (data) {
+                    $("#user_want").html(data);
+                },
+                error: function() {
+                    alert("Sorry, the User Wants did not load correctly");
+                }
+            })
+        }
+
+        function update_user() {
+            $.ajax({
+                url: '/my_profile/',
+                type: "POST",
+                data: $("#user_information_form").serialize(),
+                success: function(data) {
+                    //Do nothing yet. I think...
+                    alert("Saved");
+                },
+                error: function () {
+                    alert("Sorry, but saving this has not worked");
+                }
+            });
+        }
+
+        function user_want_remove(user_want_id) {
+            //Send data to the database
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/user_want_remove/' + user_want_id + '/',
+                type: 'POST',
+                data: {},
+                success: function (data) {
+                    load_user_want();
+                },
+                error: function () {
+                    alert("Sorry, removing the user want failed")
+                }
+            })
+        }
+
+        function user_weblink_remove(user_weblink_id) {
+            //Send data to the database
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/user_weblink_remove/' + user_weblink_id + '/',
+                type: 'POST',
+                data: {},
+                success: function (data) {
+                    load_user_weblink();
+                },
+                error: function () {
+                    alert("Sorry, removing the user weblink failed")
+                }
+            })
+        }
+
+    </script>
+
+</body>
+
+{% endblock %}

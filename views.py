@@ -10,7 +10,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.core.files.storage import FileSystemStorage
-from django.db.models import Sum, Q, Min
+from django.db.models import Sum, Q, Min, Value
+from django.db.models.functions import Concat
 from django.http import HttpResponse,HttpResponseForbidden, HttpResponseRedirect, Http404, HttpResponseBadRequest
 from django.shortcuts import render, get_object_or_404, render_to_response
 from django.template import RequestContext, loader
@@ -2411,6 +2412,103 @@ def logout(request):
 
 
 @login_required(login_url='login')
+def my_profile(request):
+    permission_results = return_user_permission_level(request, None,None)
+
+    #Data required in both POST and GET
+    about_user_results=about_user.objects.filter(
+        is_deleted="FALSE",
+        user=request.user,
+    ).order_by('-date_created')
+    if about_user_results:
+        about_user_text = about_user_results[0].about_user_text
+    else:
+        about_user_text = ""
+
+    user_instance = User.objects.get(id=request.user.id)
+
+    if request.method == "POST":
+        """
+        User Information
+        ~~~~~~~~~~~~~~~~
+        We want to always update the user information. Give the User the option to also update
+        their password.
+        """
+        form = my_profile_form(request.POST)
+        if form.is_valid():
+            user_instance.first_name=form.cleaned_data['first_name']
+            user_instance.last_name=form.cleaned_data['last_name']
+            user_instance.email=form.cleaned_data['email']
+            user_instance.save()
+
+            password1 = form.cleaned_data['password1']
+            password2 = form.cleaned_data['password2']
+
+            if password1 == password2:
+                # Change passwords
+                if not password1 == "":
+                    user_instance = User.objects.get(id=request.user.id)
+                    user_instance.set_password(password1)
+                    user_instance.save()
+
+        else:
+            print(form.errors)
+
+        """
+        About User Text
+        ~~~~~~~~~~~~~~~
+        If there is a difference between the current about user and what the user has submitted,
+        we want to update the database.
+        If there is no change - we will ignore. No need to flood the database with the exact same data over
+        and over again.
+        """
+        form = about_user_form(request.POST)
+        if form.is_valid():
+            if not about_user_text == form.cleaned_data['about_user_text'] and not about_user_text == None:
+                about_user_text == form.cleaned_data['about_user_text']
+
+                about_user_submit = about_user(
+                    change_user=request.user,
+                    about_user_text=about_user_text,
+                    user_id=request.user.id
+                )
+                about_user_submit.save()
+        else:
+            print(form.errors)
+
+    #Get data
+    project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_id__in=assigned_user.objects.filter(
+            is_deleted="FALSE",
+            user_id=request.user.id,
+        ).values('project_id').distinct()
+    )
+
+    #Initialise about user form, if there is no about_user use a blank ""
+
+
+    # load template
+    t = loader.get_template('NearBeach/my_profile.html')
+
+    # context
+    c = {
+        'project_results': project_results,
+        'my_profile_form': my_profile_form(
+            instance=user_instance,
+        ),
+        'about_user_form': about_user_form(initial={
+            'about_user_text': about_user_text,
+        }),
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
 def new_bug_client(request):
     permission_results = return_user_permission_level(request, None, 'bug_client')
 
@@ -4352,7 +4450,7 @@ def search(request):
     """
     int_results = 0
     if not search_results == '':
-        if isinstance(int(search_results),int):
+        if isinstance(search_results,int):
             int_results = int(search_results)
 
 
@@ -4441,21 +4539,30 @@ def search_customer(request):
         search_customer_like += split_row
         search_customer_like += '%'
 
-    # Query the database for organisation
-    cursor = connection.cursor()
-    cursor.execute("""
-		SELECT DISTINCT
-		  customer.customer_id
-		, customer.customer_first_name
-		, customer.customer_last_name
-		, organisation.organisation_name
-
-		FROM customer LEFT OUTER JOIN organisation
-			ON customer.organisation_id_id = organisation.organisation_id
-		WHERE 1=1
-		AND UPPER(customer.customer_first_name || ' ' || customer.customer_last_name) LIKE %s
-		""", [search_customer_like])
-    customer_results = namedtuplefetchall(cursor)
+    """
+    The annotate function gives the ability to concat the first and last name.
+    This gives us the ability to;
+    1.) Filter on the joined field
+    2.) Display it as is to the customer
+    """
+    customer_results = customer.objects.filter(
+        is_deleted="FALSE"
+    ).annotate(
+        customer_full_name=Concat(
+            'customer_first_name',
+            Value(' '),
+            'customer_last_name',
+        )
+    ).extra(
+        where=[
+            """
+            customer_full_name LIKE %s
+            """
+        ],
+        params=[
+            search_customer_like,
+        ]
+    )
 
     # context
     c = {
@@ -4960,6 +5067,115 @@ def to_do_complete(request, to_do_id):
     c = {}
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def user_want_remove(request,user_want_id):
+    if request.method=="POST":
+        user_want_save = user_want.objects.get(pk=user_want_id)
+        user_want_save.is_deleted="TRUE"
+        user_want_save.save()
+
+        #Send back blank page
+        t = loader.get_template('NearBeach/blank.html')
+
+        c = {}
+
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("Sorry, this function can only be done in POST")
+
+
+
+@login_required(login_url='login')
+def user_want_view(request):
+    if request.method=="POST":
+        form = user_want_form(request.POST)
+        if form.is_valid():
+            user_want_submit=user_want()
+            user_want_submit.change_user = request.user
+            user_want_submit.want_choice = form.cleaned_data['want_choice']
+            user_want_submit.want_choice_text = form.cleaned_data['want_choice_text']
+            user_want_submit.want_skill = form.cleaned_data['want_skill']
+            user_want_submit.save()
+        else:
+            print(form.errors)
+
+    want_results = user_want.objects.filter(
+        is_deleted="FALSE",
+        want_choice="1" #User wants
+    )
+
+    not_want_results = user_want.objects.filter(
+        is_deleted="FALSE",
+        want_choice="0" #Does not want
+    )
+
+    t = loader.get_template('NearBeach/my_profile/user_want.html')
+
+    c = {
+        'user_want_form': user_want_form(),
+        'want_results': want_results,
+        'not_want_results': not_want_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+
+@login_required(login_url='login')
+def user_weblink_remove(request,user_weblink_id):
+    if request.method == "POST":
+        weblink_save = user_weblink.objects.get(pk=user_weblink_id)
+        weblink_save.is_deleted="TRUE"
+        weblink_save.save()
+
+        #Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+
+        c = {}
+
+        return HttpResponse(t.render(c,request))
+    else:
+        #Can only do this through post
+        return HttpResponseBadRequest("Can only do this through post")
+
+
+@login_required(login_url='login')
+def user_weblink_view(request):
+    if request.method == "POST":
+        form = user_weblink_form(request.POST)
+        if form.is_valid():
+            user_weblink_submit = user_weblink(
+                change_user=request.user,
+                user_weblink_url=form.cleaned_data['user_weblink_url'],
+                user_weblink_source=form.cleaned_data['user_weblink_source'],
+            )
+            user_weblink_submit.save()
+        else:
+            print(form.errors)
+
+    #Data
+    user_weblink_results=user_weblink.objects.filter(
+        is_deleted="FALSE",
+        change_user=request.user,
+    )
+
+    #Template
+    t = loader.get_template('NearBeach/my_profile/user_weblink.html')
+
+    c = {
+        'user_weblink_form': user_weblink_form(),
+        'user_weblink_results': user_weblink_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+
+
 
 
 """
