@@ -2429,11 +2429,16 @@ def my_profile(request):
         instance=User.objects.get(id=request.user.id)
     )
 
-    #Initialise about user form
+    #Initialise about user form, if there is no about_user use a blank ""
     about_user_results=about_user.objects.filter(
         is_deleted="FALSE",
         user=request.user,
-    ) #WILL ORDER BY CREATED DATE AND HAVE LATEST VERSION HERE
+    ).order_by('-date_created')
+    if about_user_results:
+        about_user_text = about_user_results[0].about_user_text
+    else:
+        about_user_text = ""
+
 
     # load template
     t = loader.get_template('NearBeach/my_profile.html')
@@ -2443,7 +2448,7 @@ def my_profile(request):
         'project_results': project_results,
         'ui_form': ui_form,
         'about_user_form': about_user_form(initial={
-            'about_user_text': about_user_results[0].about_user_text,
+            'about_user_text': about_user_text,
         }),
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
