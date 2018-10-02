@@ -2190,6 +2190,49 @@ class quote(models.Model):
         db_table = "quote"
 
 
+class quote_permission(models.Model):
+    quote_permission_id = models.AutoField(primary_key=True)
+    quote = models.ForeignKey(
+        'quote',
+        on_delete=models.CASCADE
+    )
+    assigned_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_assigned_user',
+        null=True,
+        blank=True,
+    )
+    group_id = models.ForeignKey(
+        'group',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    all_user = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE',
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    class Meta:
+        db_table = "quote_permission"
+
+
 class quote_product_and_service(models.Model):
     quotes_product_and_service_id = models.AutoField(primary_key=True)
     quote = models.ForeignKey(
