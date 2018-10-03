@@ -1,0 +1,51 @@
+{% extends "./template.html" %}
+{% block content %}
+<h2>Diagnostics</h2>
+    Please leave this page running. It will run through the diagnostic tools automatically.
+    <table>
+        <tr>
+            <td width="30%">Diagnostic Test</td>
+            <td width="70%">Status</td>
+        </tr>
+        <tr>
+            <td>Email Test</td>
+            <td>
+                Method<br/>
+                ~~~~~~<br/>
+                1.) NearBeach will send out an email to your email address<br/>
+                2.) If there is an error it will post it here<br/>
+                3.) If you receive the email - this functionality works<br/>
+            </td>
+        </tr>
+        <tr>
+            <td>Database Issue</td>
+            <td>
+                Method<br/>
+                ~~~~~~<br/>
+                1.) NearBeach will select ALL users from the database<br/>
+                2.) If there is no error - this functionality works<br/>
+            </td>
+        </tr>
+        <tr>
+            <td>Location Services</td>
+            <td>
+                Method<br/>
+                ~~~~~~<br/>
+                1.) NearBeach will find out if your location services work<br/>
+                2.) It will ping the following in the order of<br/>
+                a.) Mapbox<br/>
+                b.) Google Maps</br/
+                3.) If there are no errors - this functionality works<br/>
+            </td>
+        </tr>
+        <tr>
+            <td>Recaptcha</td>
+            <td>
+                Method<br/>
+                ~~~~~~<br/>
+                1.) NearBeach will contact Recapture with your details<br/>
+                2.) If your details are valid and a recaptcha response appeares here - this functionality works<br/>
+            </td>
+        </tr>
+    </table>
+{% endblock %}

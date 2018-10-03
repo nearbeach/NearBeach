@@ -56,6 +56,7 @@ re_path(r'^dashboard/opportunities', views.dashboard_opportunities, name='dashbo
 re_path(r'^delete_campus_contact/(?P<customer_campus_id>[0-9]+)/(?P<cust_or_camp>["CUST","CAMP"]+)',views.delete_campus_contact, name='delete_campus_contact'),
 re_path(r'^delete_cost/(?P<cost_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])', views.delete_cost,name='delete_cost'),
 re_path(r'^delete_document/(?P<document_key>[0-9A-Za-z_\-]+)/$', views.delete_document, name='delete_document'),
+re_path(r'^diagnostic_information/', views.diagnostic_information, name='diagnostic_information'),
 re_path(r'^document_tree_create_folder/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])/', views_document_tree.document_tree_create_folder, name='document_tree_create_folder'),
 re_path(r'^document_tree_list/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])/(?P<folder_id>[0-9]+)/', views_document_tree.document_tree_list,name='document_tree_list'),
 re_path(r'^document_tree_list/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])/$', views_document_tree.document_tree_list,name='document_tree_list'),

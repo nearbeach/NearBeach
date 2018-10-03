@@ -1302,6 +1302,16 @@ def delete_document(request, document_key):
 
 
 @login_required(login_url='login')
+def diagnostic_information(request):
+    # Diagnostic Template
+    t = loader.get_template('NearBeach/diagnostic_information.html')
+
+    c = {}
+
+    return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login')
 def email(request,location_id,destination):
     permission_results = return_user_permission_level(request, None, 'email')
 
