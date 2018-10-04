@@ -27,6 +27,7 @@ from django.http import JsonResponse
 from urllib.request import urlopen
 from weasyprint import HTML
 from django.core.mail import send_mail
+from urllib.parse import urlparse, urlencode, quote_plus
 
 #import python modules
 import datetime, json, simplejson, urllib.parse
@@ -1305,12 +1306,18 @@ def delete_document(request, document_key):
 def diagnostic_information(request):
     permission_results = return_user_permission_level(request, None, None)
 
+    # reCAPTCHA
+    RECAPTCHA_PUBLIC_KEY = ''
+    if hasattr(settings, 'RECAPTCHA_PUBLIC_KEY'):
+        RECAPTCHA_PUBLIC_KEY = settings.RECAPTCHA_PUBLIC_KEY
+
     # Diagnostic Template
     t = loader.get_template('NearBeach/diagnostic_information.html')
 
     c = {
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
     }
 
     return HttpResponse(t.render(c,request))
@@ -1393,6 +1400,35 @@ def diagnostic_test_location_services(request):
     7.) No keys, return error
     """
 
+    try:
+        MAPBOX_API_TOKEN = settings.MAPBOX_API_TOKEN
+
+        try:
+            address_coded = urllib.parse.quote_plus("Flinders Street Melbourne")
+            print(address_coded)
+
+            url = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + address_coded + ".json?access_token=" + settings.MAPBOX_API_TOKEN
+            # response = urllib.urlopen(url)
+            response = urllib.request.urlopen(url)
+            data = json.loads(response.read())
+
+            longatude = data["features"][0]["center"][0]
+            latitude = data["features"][0]["center"][1]
+            #It worked - now it will just leave
+        except:
+            return HttpResponseBadRequest("Sorry, could not contact Mapbox")
+    except:
+        try:
+            google_maps = GoogleMaps(api_key=settings.GOOGLE_MAP_API_TOKEN)
+            location = google_maps.search(location="Flinders Street Melbourne")
+            first_location = location.first()
+
+            #Save the data
+            ongitude = first_location.lng
+            latitude = first_location.lat
+        except:
+            return HttpResponseBadRequest("Could not contact Google Server")
+
     t = loader.get_template('NearBeach/blank.html')
 
     c = {}
@@ -1402,15 +1438,54 @@ def diagnostic_test_location_services(request):
 
 @login_required(login_url='login')
 def diagnostic_test_recaptcha(request):
-    """
-    Method
-    ~~~~~~
-    1.) Check to make sure reCAPTCHA keys are inplace
-    2.) If exists, test keys
-    3.) If pass, returns pass. If fails, return fail
+    if request.method == "POST":
+        """
+        Method
+        ~~~~~~
+        1.) Check to make sure reCAPTCHA keys are inplace
+        2.) If exists, test keys
+        3.) If pass, returns pass. If fails, return fail
+    
+        4.) No keys, return error
+        """
+        # reCAPTCHA
+        RECAPTCHA_PUBLIC_KEY = ''
+        RECAPTCHA_PRIVATE_KEY = ''
+        if hasattr(settings, 'RECAPTCHA_PUBLIC_KEY') and hasattr(settings, 'RECAPTCHA_PRIVATE_KEY'):
+            RECAPTCHA_PUBLIC_KEY = settings.RECAPTCHA_PUBLIC_KEY
+            RECAPTCHA_PRIVATE_KEY = settings.RECAPTCHA_PRIVATE_KEY
+        else:
+            #Getting data from settings file has failed.
+            return HttpResponseBadRequest("Either RECAPTCHA_PUBLIC_KEY or RECAPTCHA_PRIVATE_KEY has not been correctly setup in your settings file.")
 
-    4.) No keys, return error
-    """
+        """
+        As the Google documentation states. I have to send the request back to
+        the given URL. It gives back a JSON object, which will contain the
+        success results.
+    
+        Method
+        ~~~~~~
+        1.) Collect the variables
+        2.) With the data - encode the variables into URL format
+        3.) Send the request to the given URL
+        4.) The response will open and store the response from GOOGLE
+        5.) The results will contain the JSON Object
+        """
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+        print("RECAPTCHA RESPONSE:" + str(recaptcha_response))
+        url = 'https://www.google.com/recaptcha/api/siteverify'
+        values = {
+            'secret': RECAPTCHA_PRIVATE_KEY,
+            'response': recaptcha_response
+        }
+        response = urlopen(url, urllib.parse.urlencode(values).encode('utf8'))
+        result = json.load(response)
+
+        print(result)
+
+        # Check to see if the user is a robot. Success = human
+        if not result['success']:
+            return HttpResponseBadRequest("Failed recaptcha!\n" + str(result))
 
     t = loader.get_template('NearBeach/blank.html')
 
@@ -5421,17 +5496,13 @@ def update_coordinates(campus_id):
             print("Sorry, there was an error getting the location details for this address.")
 
     elif hasattr(settings, 'MAPBOX_API_TOKEN'):
-        print("Mapbox token exists")
-
         #Get address ready for HTML
 
-        address_coded = urllib.quote_plus(address)
-        print(address_coded)
-
+        address_coded = urllib.parse.quote_plus(address)
 
         url = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + address_coded + ".json?access_token=" + settings.MAPBOX_API_TOKEN
 
-        response = urllib.urlopen(url)
+        response = urllib.request.urlopen(url)
         data = json.loads(response.read())
         print(data)
         try:
@@ -5442,24 +5513,6 @@ def update_coordinates(campus_id):
             print(data["features"][0]["center"])
         except:
             print("No data for the address: " + address)
-
-        """
-        #Python 3
-        try:
-            with urllib.request.urlopen(url) as results:
-                data = json.loads(results.read().decode())
-
-                try:
-                    campus_results.campus_longitude = data["features"][0]["center"][0]
-                    campus_results.campus_latitude = data["features"][0]["center"][1]
-                    campus_results.save()
-
-                    print(data["features"][0]["center"])
-                except:
-                    print("No data for the address: " + address)
-        except:
-            print("Address Failed")
-        """
 
 def update_template_strings(variable,quote_results):
     """

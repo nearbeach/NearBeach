@@ -39,19 +39,49 @@
                 3.) If there are no errors - this functionality works<br/>
             </td>
         </tr>
-        <tr id="test_recaptcha">
-            <td>Recaptcha</td>
-            <td>
-                Method<br/>
-                ~~~~~~<br/>
-                1.) NearBeach will contact Recapture with your details<br/>
-                2.) If your details are valid and a recaptcha response appeares here - this functionality works<br/>
-            </td>
-        </tr>
+
     </table>
     <h2>Manual Diagnostics</h2>
     The following tests will require you to follow the instructions.
+    <table>
+        <tr>
+            <td width="30%">Diagnostic Test</td>
+            <td width="70%">Status</td>
+        </tr>
+        {% if RECAPTCHA_PUBLIC_KEY == "" %}
+            <tr id="test_recaptcha" style="background-color: red;">
+                <td>Recaptcha</td>
+                <td>RECAPTCHA_PUBLIC_KEY has not been filled out in the settings.py file</td>
+            </tr>
+        {% else %}
+            <tr id="test_recaptcha">
+                <td>Recaptcha</td>
+                <td>
+                    Method<br/>
+                    ~~~~~~<br/>
+                    1.) Fill out the reCaptcha<br/>
+                    2.) Once you have a valid reCaptcha, click on the "Submit" button<br/>
+                    Results will be displayed here
+                    <form id="recaptcha_form" method="post">
+                        {% csrf_token %}
+                        <script src='https://www.google.com/recaptcha/api.js'></script>
+                        <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_PUBLIC_KEY }}"></div>
+                        <input type="submit" value="Check reCAPTCHA">
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td>Upload/Download</td>
+                <td>This is a placeholder. Re-working download</td>
+            </tr>
+        {% endif %}
+    </table>
 <script>
+    $("#test_recaptcha").on("submit", function(e) {
+        e.preventDefault();
+        test_recaptcha();
+    });
+
     function on_page_load() {
         /*
         When the page loads we want to run each diagnostic issue. Each diagnostic issue has it's own function.
@@ -60,7 +90,6 @@
         test_email();
         test_database();
         test_location_services();
-        test_recaptcha();
     }
 
     function test_email() {
@@ -228,7 +257,7 @@
             url: '/diagnostic_test_recaptcha/',
             type: 'GET',
             datatype: 'HTML',
-            data: {},
+            data: $("#test_recaptcha").serialize(),
             success: function(data) {
                 $("#test_recaptcha td")[1].innerHTML = "Test Successful";
                 $("#test_recaptcha").css("background-color", "lightgreen");
