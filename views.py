@@ -1303,8 +1303,116 @@ def delete_document(request, document_key):
 
 @login_required(login_url='login')
 def diagnostic_information(request):
+    permission_results = return_user_permission_level(request, None, None)
+
     # Diagnostic Template
     t = loader.get_template('NearBeach/diagnostic_information.html')
+
+    c = {
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+
+@login_required(login_url='login')
+def diagnostic_test_database(request):
+    """
+    Ping the user's database. If there is an issue then report it
+    """
+    User.objects.filter(username=request.user)
+
+    t = loader.get_template('NearBeach/blank.html')
+
+    c = {}
+
+    return HttpResponse(t.render(c,request))
+
+
+
+@login_required(login_url='login')
+def diagnostic_test_email(request):
+    """
+    Method
+    ~~~~~~
+    1.) Gather the required variables
+    2.) Send an email to noreply@nearbeach.org
+    3.) If the email fails at ANY point, send back an error
+    4.) If the email works, send back a blank page
+    """
+    try:
+        #Check variables
+        EMAIL_HOST_USER = settings.EMAIL_HOST_USER
+        EMAIL_BACKEND = settings.EMAIL_BACKEND
+        EMAIL_USE_TLS = settings.EMAIL_USE_TLS
+        EMAIL_HOST = settings.EMAIL_HOST
+        EMAIL_PORT = settings.EMAIL_PORT
+        EMAIL_HOST_USER = settings.EMAIL_HOST_USER
+        EMAIL_HOST_PASSWORD = settings.EMAIL_HOST_PASSWORD
+
+    except:
+        #It failed. Send back an error
+        return HttpResponseBadRequest("Variables have not been fully setup in settings.py")
+
+    try:
+        email = EmailMultiAlternatives(
+            'NearBeach Diagnostic Test',
+            'Ignore email - diagnostic test',
+            settings.EMAIL_HOST_USER,
+            ['noreply@nearbeach.org'],
+        )
+        if not email.send():
+            return HttpResponseBadRequest("Email did not send correctly.")
+    except:
+        return HttpResponseBadRequest("Email failed")
+
+    # Diagnostic Template
+    t = loader.get_template('NearBeach/blank.html')
+
+    c = {
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login')
+def diagnostic_test_location_services(request):
+    """
+    Method
+    ~~~~~~
+    1.) Check to make sure MAPBOX keys are inplace
+    2.) If exists, test keys
+    3.) If pass, returns pass. If fails, return fail
+
+    4.) Check to make sure GOOGLE keys are inplace
+    5.) If exists, test keys
+    6.) If pass, returns pass. If fails, return fail
+
+    7.) No keys, return error
+    """
+
+    t = loader.get_template('NearBeach/blank.html')
+
+    c = {}
+
+    return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login')
+def diagnostic_test_recaptcha(request):
+    """
+    Method
+    ~~~~~~
+    1.) Check to make sure reCAPTCHA keys are inplace
+    2.) If exists, test keys
+    3.) If pass, returns pass. If fails, return fail
+
+    4.) No keys, return error
+    """
+
+    t = loader.get_template('NearBeach/blank.html')
 
     c = {}
 
