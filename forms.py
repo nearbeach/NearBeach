@@ -365,6 +365,11 @@ class customer_information_form(ModelForm):
         return profile_picture
 
 
+class diagnostic_test_document_upload_form(forms.Form):
+    document = forms.FileField(
+        required=True,
+    )
+
 
 class document_tree_create_folder_form(forms.Form):
     def __init__(self, *args, **kwargs):

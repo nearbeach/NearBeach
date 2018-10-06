@@ -27,6 +27,7 @@ from django.http import JsonResponse
 from urllib.request import urlopen
 from weasyprint import HTML
 from django.core.mail import send_mail
+from urllib.parse import urlparse, urlencode, quote_plus
 
 #import python modules
 import datetime, json, simplejson, urllib.parse
@@ -1299,6 +1300,251 @@ def delete_document(request, document_key):
 
     return HttpResponse(t.render(c, request))
     #SoMuchFun
+
+
+@login_required(login_url='login')
+def diagnostic_information(request):
+    permission_results = return_user_permission_level(request, None, None)
+
+    # reCAPTCHA
+    RECAPTCHA_PUBLIC_KEY = ''
+    if hasattr(settings, 'RECAPTCHA_PUBLIC_KEY'):
+        RECAPTCHA_PUBLIC_KEY = settings.RECAPTCHA_PUBLIC_KEY
+
+    # Diagnostic Template
+    t = loader.get_template('NearBeach/diagnostic_information.html')
+
+    c = {
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
+        'diagnostic_test_document_upload_form': diagnostic_test_document_upload_form(),
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+
+@login_required(login_url='login')
+def diagnostic_test_database(request):
+    """
+    Ping the user's database. If there is an issue then report it
+    """
+    User.objects.filter(username=request.user)
+
+    t = loader.get_template('NearBeach/blank.html')
+
+    c = {}
+
+    return HttpResponse(t.render(c,request))
+
+
+
+
+@login_required(login_url='login')
+def diagnostic_test_document_upload(request):
+    """
+    Upload user's document and send back a link to the document. Please note the document will be fetched using
+    ajax so test for any issues
+    """
+    print("Sending in test")
+    if request.method == "POST":
+        print("Request is in post")
+        if request.FILES == None:
+            print("There was an error with the file")
+            return HttpResponseBadRequest('File needs to be uploaded. Refresh the page and try again')
+
+        # Get the file data
+        print("Checking the file")
+        file = request.FILES['document']
+
+        # Data objects required
+        print("Getting the filename string")
+        filename = str(file)
+
+        """
+        File Uploads
+        """
+        print("Saving the document")
+        document_save = document(
+            document_description=filename,
+            document=file,
+            change_user=request.user,
+        )
+        document_save.save()
+
+        print("Saving document permissions")
+        document_permissions_save = document_permission(
+            document_key=document_save,
+            change_user=request.user,
+        )
+        document_permissions_save.save()
+
+        #Time to send back the link to the user
+        t = loader.get_template('NearBeach/diagnostic/test_document_download.html')
+
+        c = {
+            'document_key': document_save.document_key,
+        }
+
+        return HttpResponse(t.render(c,request))
+
+    return HttpResponseBadRequest("Something went wrong")
+
+
+@login_required(login_url='login')
+def diagnostic_test_email(request):
+    """
+    Method
+    ~~~~~~
+    1.) Gather the required variables
+    2.) Send an email to noreply@nearbeach.org
+    3.) If the email fails at ANY point, send back an error
+    4.) If the email works, send back a blank page
+    """
+    try:
+        #Check variables
+        EMAIL_HOST_USER = settings.EMAIL_HOST_USER
+        EMAIL_BACKEND = settings.EMAIL_BACKEND
+        EMAIL_USE_TLS = settings.EMAIL_USE_TLS
+        EMAIL_HOST = settings.EMAIL_HOST
+        EMAIL_PORT = settings.EMAIL_PORT
+        EMAIL_HOST_USER = settings.EMAIL_HOST_USER
+        EMAIL_HOST_PASSWORD = settings.EMAIL_HOST_PASSWORD
+
+    except:
+        #It failed. Send back an error
+        return HttpResponseBadRequest("Variables have not been fully setup in settings.py")
+
+    try:
+        email = EmailMultiAlternatives(
+            'NearBeach Diagnostic Test',
+            'Ignore email - diagnostic test',
+            settings.EMAIL_HOST_USER,
+            ['donotreply@nearbeach.org'],
+        )
+        if not email.send():
+            return HttpResponseBadRequest("Email did not send correctly.")
+    except:
+        return HttpResponseBadRequest("Email failed")
+
+    # Diagnostic Template
+    t = loader.get_template('NearBeach/blank.html')
+
+    c = {
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login')
+def diagnostic_test_location_services(request):
+    """
+    Method
+    ~~~~~~
+    1.) Check to make sure MAPBOX keys are inplace
+    2.) If exists, test keys
+    3.) If pass, returns pass. If fails, return fail
+
+    4.) Check to make sure GOOGLE keys are inplace
+    5.) If exists, test keys
+    6.) If pass, returns pass. If fails, return fail
+
+    7.) No keys, return error
+    """
+
+    try:
+        MAPBOX_API_TOKEN = settings.MAPBOX_API_TOKEN
+
+        try:
+            address_coded = urllib.parse.quote_plus("Flinders Street Melbourne")
+            print(address_coded)
+
+            url = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + address_coded + ".json?access_token=" + settings.MAPBOX_API_TOKEN
+            # response = urllib.urlopen(url)
+            response = urllib.request.urlopen(url)
+            data = json.loads(response.read())
+
+            longatude = data["features"][0]["center"][0]
+            latitude = data["features"][0]["center"][1]
+            #It worked - now it will just leave
+        except:
+            return HttpResponseBadRequest("Sorry, could not contact Mapbox")
+    except:
+        try:
+            google_maps = GoogleMaps(api_key=settings.GOOGLE_MAP_API_TOKEN)
+            location = google_maps.search(location="Flinders Street Melbourne")
+            first_location = location.first()
+
+            #Save the data
+            ongitude = first_location.lng
+            latitude = first_location.lat
+        except:
+            return HttpResponseBadRequest("Could not contact Google Server")
+
+    t = loader.get_template('NearBeach/blank.html')
+
+    c = {}
+
+    return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login')
+def diagnostic_test_recaptcha(request):
+    if request.method == "POST":
+        """
+        Method
+        ~~~~~~
+        1.) Check to make sure reCAPTCHA keys are inplace
+        2.) If exists, test keys
+        3.) If pass, returns pass. If fails, return fail
+    
+        4.) No keys, return error
+        """
+        # reCAPTCHA
+        RECAPTCHA_PUBLIC_KEY = ''
+        RECAPTCHA_PRIVATE_KEY = ''
+        if hasattr(settings, 'RECAPTCHA_PUBLIC_KEY') and hasattr(settings, 'RECAPTCHA_PRIVATE_KEY'):
+            RECAPTCHA_PUBLIC_KEY = settings.RECAPTCHA_PUBLIC_KEY
+            RECAPTCHA_PRIVATE_KEY = settings.RECAPTCHA_PRIVATE_KEY
+        else:
+            #Getting data from settings file has failed.
+            return HttpResponseBadRequest("Either RECAPTCHA_PUBLIC_KEY or RECAPTCHA_PRIVATE_KEY has not been correctly setup in your settings file.")
+
+        """
+        As the Google documentation states. I have to send the request back to
+        the given URL. It gives back a JSON object, which will contain the
+        success results.
+    
+        Method
+        ~~~~~~
+        1.) Collect the variables
+        2.) With the data - encode the variables into URL format
+        3.) Send the request to the given URL
+        4.) The response will open and store the response from GOOGLE
+        5.) The results will contain the JSON Object
+        """
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+        print("RECAPTCHA RESPONSE:" + str(recaptcha_response))
+        url = 'https://www.google.com/recaptcha/api/siteverify'
+        values = {
+            'secret': RECAPTCHA_PRIVATE_KEY,
+            'response': recaptcha_response
+        }
+        response = urlopen(url, urllib.parse.urlencode(values).encode('utf8'))
+        result = json.load(response)
+
+        print(result)
+
+        # Check to see if the user is a robot. Success = human
+        if not result['success']:
+            return HttpResponseBadRequest("Failed recaptcha!\n" + str(result))
+
+    t = loader.get_template('NearBeach/blank.html')
+
+    c = {}
+
+    return HttpResponse(t.render(c,request))
 
 
 @login_required(login_url='login')
@@ -5303,17 +5549,13 @@ def update_coordinates(campus_id):
             print("Sorry, there was an error getting the location details for this address.")
 
     elif hasattr(settings, 'MAPBOX_API_TOKEN'):
-        print("Mapbox token exists")
-
         #Get address ready for HTML
 
-        address_coded = urllib.quote_plus(address)
-        print(address_coded)
-
+        address_coded = urllib.parse.quote_plus(address)
 
         url = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + address_coded + ".json?access_token=" + settings.MAPBOX_API_TOKEN
 
-        response = urllib.urlopen(url)
+        response = urllib.request.urlopen(url)
         data = json.loads(response.read())
         print(data)
         try:
@@ -5324,24 +5566,6 @@ def update_coordinates(campus_id):
             print(data["features"][0]["center"])
         except:
             print("No data for the address: " + address)
-
-        """
-        #Python 3
-        try:
-            with urllib.request.urlopen(url) as results:
-                data = json.loads(results.read().decode())
-
-                try:
-                    campus_results.campus_longitude = data["features"][0]["center"][0]
-                    campus_results.campus_latitude = data["features"][0]["center"][1]
-                    campus_results.save()
-
-                    print(data["features"][0]["center"])
-                except:
-                    print("No data for the address: " + address)
-        except:
-            print("Address Failed")
-        """
 
 def update_template_strings(variable,quote_results):
     """
