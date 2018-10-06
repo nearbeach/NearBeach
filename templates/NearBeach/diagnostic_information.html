@@ -110,10 +110,7 @@
         test_database();
         test_location_services();
     }
-    
-    function test_download_document() {
-        
-    }
+
 
     function test_email() {
         /*
@@ -373,6 +370,16 @@
                 $("#upload_progress").css("width","0%");
             },
         });
+    }
+
+    function document_yes() {
+        $('#test_document_upload td')[1].innerHTML = "Test Successful";
+        $("#test_document_upload").css("background-color","lightgreen");
+    }
+
+    function document_no() {
+        $('#test_document_upload td')[1].innerHTML = "Errors have been found";
+        $("#test_document_upload").css("background-color", "red");
     }
 
 </script>
