@@ -1318,6 +1318,7 @@ def diagnostic_information(request):
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
         'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
+        'diagnostic_test_document_upload_form': diagnostic_test_document_upload_form(),
     }
 
     return HttpResponse(t.render(c,request))
@@ -1337,6 +1338,58 @@ def diagnostic_test_database(request):
 
     return HttpResponse(t.render(c,request))
 
+
+
+
+@login_required(login_url='login')
+def diagnostic_test_document_upload(request):
+    """
+    Upload user's document and send back a link to the document. Please note the document will be fetched using
+    ajax so test for any issues
+    """
+    print("Sending in test")
+    if request.method == "POST":
+        print("Request is in post")
+        if request.FILES == None:
+            print("There was an error with the file")
+            return HttpResponseBadRequest('File needs to be uploaded. Refresh the page and try again')
+
+        # Get the file data
+        print("Checking the file")
+        file = request.FILES['document']
+
+        # Data objects required
+        print("Getting the filename string")
+        filename = str(file)
+
+        """
+        File Uploads
+        """
+        print("Saving the document")
+        document_save = document(
+            document_description=filename,
+            document=file,
+            change_user=request.user,
+        )
+        document_save.save()
+
+        print("Saving document permissions")
+        document_permissions_save = document_permission(
+            document_key=document_save,
+            change_user=request.user,
+        )
+        document_permissions_save.save()
+
+        #Time to send back the link to the user
+        t = loader.get_template('NearBeach/diagnostic/test_document_download.html')
+
+        c = {
+            'document_key': document_save.document_key,
+        }
+
+        return HttpResponse(t.render(c,request))
+
+    return HttpResponseBadRequest("Something went wrong")
 
 
 @login_required(login_url='login')
@@ -1368,7 +1421,7 @@ def diagnostic_test_email(request):
             'NearBeach Diagnostic Test',
             'Ignore email - diagnostic test',
             settings.EMAIL_HOST_USER,
-            ['noreply@nearbeach.org'],
+            ['donotreply@nearbeach.org'],
         )
         if not email.send():
             return HttpResponseBadRequest("Email did not send correctly.")

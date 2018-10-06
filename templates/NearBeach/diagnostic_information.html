@@ -70,11 +70,30 @@
                     </form>
                 </td>
             </tr>
-            <tr>
-                <td>Upload/Download</td>
-                <td>This is a placeholder. Re-working download</td>
-            </tr>
         {% endif %}
+        <tr id="test_document_upload">
+            <td>Document Uploading/Downloading</td>
+            <td>
+                <form id="document_upload">
+                    Method<br/>
+                    ~~~~~~<br/>
+                    1.) Click on the "Browse..." button and select a document to upload<br/>
+                    2.) Click on the "Upload" hyperlink<br/>
+                    3.) Follow part 2 method<br/>
+                    {% csrf_token %}<br/>
+                    {{ diagnostic_test_document_upload_form.document }}<br/>
+
+                </form>
+            </td>
+        </tr>
+        <tr id="document_row_uploads">
+            <td colspan="2">
+                <div id="progress" style="border: none; width: 100%;">
+                    <span id="upload_percent"><a href="javascript:void(0)" onclick="upload_document()">Upload Document</a></span>
+                    <div id="upload_progress" style="background-color: green; width: 0%; height: 20px;"></div>
+                </div>
+            </td>
+        </tr>
     </table>
 <script>
     $("#test_recaptcha").on("submit", function(e) {
@@ -90,6 +109,10 @@
         test_email();
         test_database();
         test_location_services();
+    }
+    
+    function test_download_document() {
+        
     }
 
     function test_email() {
@@ -288,6 +311,70 @@
                 },
         });
     }
+
+    function upload_document() {
+        //Get form data
+        var form_data = new FormData(document.querySelector('#document_upload'));
+
+        $.ajax({
+            xhr: function() {
+                var xhr = new window.XMLHttpRequest();
+
+                // Upload progress
+                xhr.upload.addEventListener("progress", function(evt){
+                    if (evt.lengthComputable) {
+                        var percentComplete = evt.loaded / evt.total;
+                        //Do something with upload progress
+                        console.log(percentComplete);
+
+                        $("#upload_percent").html(parseFloat(percentComplete * 100).toFixed(2) + "%");
+                        $("#upload_progress").css(
+                            'width', percentComplete * 100 + '%'
+                        );
+                    }
+               }, false);
+               return xhr;
+            },
+
+            url: '/diagnostic_test_document_upload/',
+            data: form_data,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: function(data) {
+                $("#upload_percent").html("");
+                $("#upload_progress").css("width","0%");
+                $("#document_upload").html(data);
+            },
+            error: function (jqXHR, exception) {
+                /*
+                Email failed. The reason will be written here.
+                */
+                var error_message = '';
+
+                if (jqXHR.status === 0) {
+                    error_message = 'No connection, please verify that you have a network connection.';
+                } else if (jqXHR.status == 404) {
+                    error_message = '404 returned - please check to make sure that the connection to the email server is existing';
+                } else if (jqXHR.status == 500) {
+                    error_message = 'Internal Server Error [500].';
+                } else if (exception === 'parsererror') {
+                    error_message = 'Requested JSON parse failed.';
+                } else if (exception === 'timeout') {
+                    error_message = 'Time out error.';
+                } else if (exception === 'abort') {
+                    error_message = 'Ajax request aborted.';
+                } else {
+                    error_message = 'There was a database error\n~~~~~~~~~~~\n' + jqXHR.responseText;
+                }
+                $('#test_document_upload td')[1].innerHTML = error_message;
+                $("#test_document_upload").css("background-color", "red");
+                $("#upload_percent").html("");
+                $("#upload_progress").css("width","0%");
+            },
+        });
+    }
+
 </script>
 </body>
 {% endblock %}
