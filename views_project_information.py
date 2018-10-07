@@ -241,6 +241,11 @@ def information_project_history(request, project_id):
 
 @login_required(login_url='login')
 def project_readonly(request, project_id):
+    project_groups_results = project_group.objects.filter(
+        is_deleted="FALSE",
+        project_id=project.objects.get(project_id=project_id),
+    ).values('group_id_id')
+
     permission_results = return_user_permission_level(request, project_groups_results, 'project')
 
     #Get data
