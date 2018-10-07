@@ -246,7 +246,7 @@ def project_readonly(request, project_id):
         project_id=project.objects.get(project_id=project_id),
     ).values('group_id_id')
 
-    permission_results = return_user_permission_level(request, project_groups_results, 'project')
+    permission_results = return_user_permission_level(request, project_groups_results, ['project', 'project_history'])
 
     #Get data
     project_results = project.objects.get(project_id=project_id)
@@ -353,6 +353,8 @@ def project_readonly(request, project_id):
         'group_list_results': group_list_results,
         'project_permissions': permission_results['project'],
         'project_history_permissions': permission_results['project_history'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
 
     }
 
