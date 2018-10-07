@@ -241,6 +241,8 @@ def information_project_history(request, project_id):
 
 @login_required(login_url='login')
 def project_readonly(request, project_id):
+    permission_results = return_user_permission_level(request, project_groups_results, 'project')
+
     #Get data
     project_results = project.objects.get(project_id=project_id)
     to_do_results = to_do.objects.filter(
@@ -344,6 +346,9 @@ def project_readonly(request, project_id):
         'bug_results': bug_results,
         'assigned_results': assigned_results,
         'group_list_results': group_list_results,
+        'project_permissions': permission_results['project'],
+        'project_history_permissions': permission_results['project_history'],
+
     }
 
     return HttpResponse(t.render(c, request))
