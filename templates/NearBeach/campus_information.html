@@ -22,7 +22,7 @@
 		{% csrf_token %}
 		<ul>
             {% if campus_results.organisation_id %}
-			    <li><a href="{% url 'organisation_information' campus_results.organisations_id.organisations_id %}">{{ campus_results.organisations_id }}</a></li>
+			    <li><a href="{% url 'organisation_information' campus_results.organisation_id.organisation_id %}">{{ campus_results.organisations_id }}</a></li>
 			{% elif campus_results.customer_id %}
                 <li><a href="{% url 'customer_information' campus_results.customer.customer_id %}">{{ campus_results.customer }}</a></li>
             {% else %}
