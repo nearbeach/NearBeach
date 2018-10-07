@@ -21,10 +21,12 @@
 	<form action="{% url 'campus_information' campus_results.campus_id %}" method="post" class="campus_information">
 		{% csrf_token %}
 		<ul>
-            {% if campus_results.organisations_id %}
+            {% if campus_results.organisation_id %}
 			    <li><a href="{% url 'organisation_information' campus_results.organisations_id.organisations_id %}">{{ campus_results.organisations_id }}</a></li>
-			{% else %}
+			{% elif campus_results.customer_id %}
                 <li><a href="{% url 'customer_information' campus_results.customer.customer_id %}">{{ campus_results.customer }}</a></li>
+            {% else %}
+                <li>Error</li>
             {% endif %}
             <li>{{ campus_information_form.campus_nickname }}</li>
 			<li>{{ campus_information_form.campus_phone }}</li>
