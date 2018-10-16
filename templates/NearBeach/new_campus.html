@@ -4,13 +4,30 @@
 <body onload="on_page_load()">
     <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
     <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
+    <link rel="stylesheet" href="{% static 'NearBeach/javascript/intl-tel-input/css/intlTelInput.css' %}">
+    <script src="{% static 'NearBeach/javascript/intl-tel-input/js/intlTelInput.js' %}"></script>
+    <style>
+        .iti-flag {background-image: url("{% static 'NearBeach/javascript/intl-tel-input/img/flags.png' %}");}
+
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+          .iti-flag {background-image: url("{% static 'NearBeach/javascript/intl-tel-input/img/flags@2x.png' %}");}
+        }
+    </style>
     <h2>New Campus</h2>
     <form id="input-form" action="{% url 'new_campus' location_id destination %}" method="post" class="new_campus">
         {% csrf_token %}
         <ul>
             <li>{{ new_campus_form.campus_nickname }}</li>
-            <li>{{ new_campus_form.campus_phone }}</li>
-            <li>{{ new_campus_form.campus_fax }}</li>
+            <li>
+                Phone: {{ new_campus_form.campus_phone }}
+                <span id="valid-phone-msg" class="hide">✓ Valid</span>
+                <span id="error-phone-msg" class="hide"></span>
+            </li>
+            <li>
+                Fax: {{ new_campus_form.campus_fax }}
+                <span id="valid-fax-msg" class="hide">✓ Valid</span>
+                <span id="error-fax-msg" class="hide"></span>
+            </li>
             <li>{{ new_campus_form.campus_address1 }}</li>
             <li>{{ new_campus_form.campus_address2 }}</li>
             <li>{{ new_campus_form.campus_address3 }}</li>
@@ -36,10 +53,15 @@
 <script>
     $("#input-form").on('change', function() {
         enable_disable_submit();
+        validate_phone_numbers();
     });
     $("#input-form").on('onkeyup', function() {
         enable_disable_submit();
+        validate_phone_numbers();
     });
+
+
+
 
     function enable_disable_submit() {
         if (($("#id_country_and_regions").val() != '') &&
@@ -49,6 +71,76 @@
             $("#submit").prop("disabled",true)
         }
     };
+
+    function on_page_load() {
+        var campus_phone = document.querySelector("#id_campus_phone"),
+            campus_fax = document.querySelector("#id_campus_fax");
+
+        window.intlTelInput(campus_phone);
+        window.intlTelInput(campus_fax);
+    }
+
+    function validate_phone_numbers() {
+        //Get the campus_phone and campus_fax objects
+        var campus_phone = document.querySelector("#id_campus_phone"),
+            campus_fax = document.querySelector("#id_campus_fax"),
+
+            //Get the error and validation messages
+            error_phone_message = document.querySelector("#error-phone-msg"),
+            error_fax_message = document.querySelector("#error-fax-msg"),
+            valid_phone_message = document.querySelector("#valid-phone-msg"),
+            valid_fax_message = document.querySelector("#valid-fax-msg");
+
+        var errorMap = [ "Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"];
+
+        campus_phone.classList.remove("error");
+        campus_fax.classList.remove("error");
+
+        //Sets error messages to null
+        error_phone_message.innerHTML = "";
+        error_fax_message.innerHTML = "";
+
+        //Hides any error messages
+        error_phone_message.classList.add("hide");
+        error_fax_message.classList.add("hide");
+
+        // initialise plugin
+        var iti_phone = window.intlTelInput(campus_phone, {
+            utilsScript: "{% static 'NearBeach/javascript/intl-tel-input/js/utils.js' %}"
+        });
+
+        var iti_fax = window.intlTelInput(campus_fax, {
+            utilsScript: "{% static 'NearBeach/javascript/intl-tel-input/js/utils.js' %}"
+        });
+
+        //Check the phone number
+        if (campus_phone.value.trim()) {
+            if (iti_phone.isValidNumber()) {
+                valid_phone_message.classList.remove("hide");
+                error_phone_message.classList.add("hide");
+            } else {
+                campus_phone.classList.add("error");
+                var error_code = iti_phone.getValidationError();
+                error_phone_message.innerHTML = errorMap[error_code];
+                error_phone_message.classList.remove("hide");
+                valid_phone_message.classList.add("hide");
+            }
+        }
+
+        //Check the phone number
+        if (campus_fax.value.trim()) {
+            if (iti_fax.isValidNumber()) {
+                valid_fax_message.classList.remove("hide");
+                error_faxd_message.classList.add("hide");
+            } else {
+                campus_fax.classList.add("error");
+                var error_code = campus_fax.getValidationError();
+                error_fax_message.innerHTML = errorMap[error_code];
+                error_fax_message.classList.remove("hide");
+                valid_fax_message.classList.add("hide");
+            }
+        }
+    }
 </script>
 </body>
 {% endblock %}

@@ -287,11 +287,11 @@ class campus(models.Model):
     )
     campus_nickname = models.CharField(max_length=100)
     campus_phone = models.CharField(
-        max_length=11,
+        max_length=20,
         null=True
     )
     campus_fax = models.CharField(
-        max_length=11,
+        max_length=20,
         null=True
     )
     campus_address1 = models.CharField(
@@ -448,8 +448,8 @@ class customer_campus(models.Model):
         'campus',
         on_delete=models.CASCADE,
     )
-    customer_phone = models.CharField(max_length=11)
-    customer_fax = models.CharField(max_length=11)
+    customer_phone = models.CharField(max_length=20)
+    customer_fax = models.CharField(max_length=20)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(

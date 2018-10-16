@@ -267,14 +267,16 @@ class campus_information_form(ModelForm):
         max_length=255,
         required=False,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Campus Phone (03) 9999 9999',
+            'placeholder': 'Campus Phone',
+            'type': 'tel',
         })
     )
     campus_fax=forms.CharField(
         max_length=255,
         required=False,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Campus Fax (03) 9999 9999',
+            'placeholder': 'Campus Fax',
+            'type': 'tel',
         })
     )
     campus_address1=forms.CharField(
@@ -1057,14 +1059,16 @@ class new_campus_form(forms.Form):
         max_length=255,
         required=False,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Campus Phone (03) 9999 9999',
+            'placeholder': 'Campus Phone',
+            'type': 'tel',
         })
     )
     campus_fax=forms.CharField(
         max_length=255,
         required=False,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Campus Fax (03) 9999 9999',
+            'placeholder': 'Campus Fax',
+            'type': 'tel',
         })
     )
     campus_address1=forms.CharField(

@@ -133,6 +133,13 @@
             set_permissions({{ permission }});
             initMap({{ campus_results.campus_latitude }},{{ campus_results.campus_longitude }},"{{ campus_results.campus_nickname }}");
 
+            //Initialise the international phone number widget
+            var campus_phone = document.querySelector("#id_campus_phone"),
+            campus_fax = document.querySelector("#id_campus_fax");
+
+            window.intlTelInput(campus_phone);
+            window.intlTelInput(campus_fax);
+
         }
 	</script>
 
