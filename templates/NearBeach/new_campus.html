@@ -20,13 +20,11 @@
             <li>{{ new_campus_form.campus_nickname }}</li>
             <li>
                 Phone: {{ new_campus_form.campus_phone }}
-                <span id="valid-phone-msg" class="hide">✓ Valid</span>
-                <span id="error-phone-msg" class="hide"></span>
+                <span id="phone_number_status"></span>
             </li>
             <li>
                 Fax: {{ new_campus_form.campus_fax }}
-                <span id="valid-fax-msg" class="hide">✓ Valid</span>
-                <span id="error-fax-msg" class="hide"></span>
+                <span id="fax_number_status" class="hide"></span>
             </li>
             <li>{{ new_campus_form.campus_address1 }}</li>
             <li>{{ new_campus_form.campus_address2 }}</li>
@@ -61,9 +59,70 @@
     });
 
 
-
-
     function enable_disable_submit() {
+        /*
+        We need to check that the phone numbers are;
+        - either blank or
+        - contains a valid number
+
+        Then the formula checks ALL required data
+         */
+        var valid_phone = false,
+            valid_fax = false,
+            phone = document.querySelector("#id_campus_phone"),
+            fax = document.querySelector("#id_campus_fax"),
+            phone_number_status = document.querySelector("#phone_number_status"),
+            fax_number_status = document.querySelector("#fax_number_status"),
+            errorMap = [ "Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"];
+
+        //Initialise plugin for both phone and fax
+        var phone_iti = window.intlTelInput(
+                phone,
+                {
+                    utilsScript: "{% static 'NearBeach/javascript/intl-tel-input/js/utils.js' %}"
+                }),
+            fax_iti = window.intlTelInput(
+                fax,
+                {
+                    utilsScript: "{% static 'NearBeach/javascript/intl-tel-input/js/utils.js' %}"
+                }
+            );
+
+        //Remove any messages
+        phone_number_status.innerHTML = "";
+        fax_number_status.innerHTML = "";
+
+        //Validate phone number
+        if (phone.value.trim()) {
+            if (phone_iti.isValidNumber()) {
+                valid_phone = true;
+                phone_number_status.innerHTML = "✓ Valid";
+            } else {
+                valid_phone = false;
+                //ADD CODE HERE
+            }
+        }
+
+        /*
+
+// on blur: validate
+  if (input.value.trim()) {
+    if (iti.isValidNumber()) {
+      validMsg.classList.remove("hide");
+    } else {
+      input.classList.add("error");
+      var errorCode = iti.getValidationError();
+      errorMsg.innerHTML = errorMap[errorCode];
+      errorMsg.classList.remove("hide");
+    }
+  }
+});
+
+// on keyup / change flag: reset
+input.addEventListener('change', reset);
+input.addEventListener('keyup', reset);
+         */
+
         if (($("#id_country_and_regions").val() != '') &&
             ($("#id_campus_nickname").val() != '')) {
             $("#submit").prop("disabled",false)
@@ -79,68 +138,7 @@
         window.intlTelInput(campus_phone);
         window.intlTelInput(campus_fax);
     }
-
-    function validate_phone_numbers() {
-        //Get the campus_phone and campus_fax objects
-        var campus_phone = document.querySelector("#id_campus_phone"),
-            campus_fax = document.querySelector("#id_campus_fax"),
-
-            //Get the error and validation messages
-            error_phone_message = document.querySelector("#error-phone-msg"),
-            error_fax_message = document.querySelector("#error-fax-msg"),
-            valid_phone_message = document.querySelector("#valid-phone-msg"),
-            valid_fax_message = document.querySelector("#valid-fax-msg");
-
-        var errorMap = [ "Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"];
-
-        campus_phone.classList.remove("error");
-        campus_fax.classList.remove("error");
-
-        //Sets error messages to null
-        error_phone_message.innerHTML = "";
-        error_fax_message.innerHTML = "";
-
-        //Hides any error messages
-        error_phone_message.classList.add("hide");
-        error_fax_message.classList.add("hide");
-
-        // initialise plugin
-        var iti_phone = window.intlTelInput(campus_phone, {
-            utilsScript: "{% static 'NearBeach/javascript/intl-tel-input/js/utils.js' %}"
-        });
-
-        var iti_fax = window.intlTelInput(campus_fax, {
-            utilsScript: "{% static 'NearBeach/javascript/intl-tel-input/js/utils.js' %}"
-        });
-
-        //Check the phone number
-        if (campus_phone.value.trim()) {
-            if (iti_phone.isValidNumber()) {
-                valid_phone_message.classList.remove("hide");
-                error_phone_message.classList.add("hide");
-            } else {
-                campus_phone.classList.add("error");
-                var error_code = iti_phone.getValidationError();
-                error_phone_message.innerHTML = errorMap[error_code];
-                error_phone_message.classList.remove("hide");
-                valid_phone_message.classList.add("hide");
-            }
-        }
-
-        //Check the phone number
-        if (campus_fax.value.trim()) {
-            if (iti_fax.isValidNumber()) {
-                valid_fax_message.classList.remove("hide");
-                error_faxd_message.classList.add("hide");
-            } else {
-                campus_fax.classList.add("error");
-                var error_code = campus_fax.getValidationError();
-                error_fax_message.innerHTML = errorMap[error_code];
-                error_fax_message.classList.remove("hide");
-                valid_fax_message.classList.add("hide");
-            }
-        }
-    }
+    //✓ Valid
 </script>
 </body>
 {% endblock %}
