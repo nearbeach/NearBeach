@@ -49,80 +49,32 @@
 
 
 <script>
+    /*
+    Global Variables
+    ~~~~~~~~~~~~~~~~
+    valid phone - will start out blank which is valid
+    valid fax - will start out blank which is valid
+    error_map - contains the different errors for intl-tel-input
+     */
+    var valid_phone = true,
+        valid_fax = true,
+        error_map = [ "Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"];
+
     $("#input-form").on('change', function() {
         enable_disable_submit();
-        validate_phone_numbers();
     });
-    $("#input-form").on('onkeyup', function() {
+    $("#input-form").on('keyup', function() {
         enable_disable_submit();
-        validate_phone_numbers();
     });
+
+
+    $("#id_campus_phone").on('change', function() {
+        validate_phone_number();
+    });
+
 
 
     function enable_disable_submit() {
-        /*
-        We need to check that the phone numbers are;
-        - either blank or
-        - contains a valid number
-
-        Then the formula checks ALL required data
-         */
-        var valid_phone = false,
-            valid_fax = false,
-            phone = document.querySelector("#id_campus_phone"),
-            fax = document.querySelector("#id_campus_fax"),
-            phone_number_status = document.querySelector("#phone_number_status"),
-            fax_number_status = document.querySelector("#fax_number_status"),
-            errorMap = [ "Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"];
-
-        //Initialise plugin for both phone and fax
-        var phone_iti = window.intlTelInput(
-                phone,
-                {
-                    utilsScript: "{% static 'NearBeach/javascript/intl-tel-input/js/utils.js' %}"
-                }),
-            fax_iti = window.intlTelInput(
-                fax,
-                {
-                    utilsScript: "{% static 'NearBeach/javascript/intl-tel-input/js/utils.js' %}"
-                }
-            );
-
-        //Remove any messages
-        phone_number_status.innerHTML = "";
-        fax_number_status.innerHTML = "";
-
-        //Validate phone number
-        if (phone.value.trim()) {
-            if (phone_iti.isValidNumber()) {
-                valid_phone = true;
-                phone_number_status.innerHTML = "✓ Valid";
-            } else {
-                valid_phone = false;
-                //ADD CODE HERE
-            }
-        }
-
-        /*
-
-// on blur: validate
-  if (input.value.trim()) {
-    if (iti.isValidNumber()) {
-      validMsg.classList.remove("hide");
-    } else {
-      input.classList.add("error");
-      var errorCode = iti.getValidationError();
-      errorMsg.innerHTML = errorMap[errorCode];
-      errorMsg.classList.remove("hide");
-    }
-  }
-});
-
-// on keyup / change flag: reset
-input.addEventListener('change', reset);
-input.addEventListener('keyup', reset);
-         */
-
         if (($("#id_country_and_regions").val() != '') &&
             ($("#id_campus_nickname").val() != '')) {
             $("#submit").prop("disabled",false)
@@ -135,10 +87,51 @@ input.addEventListener('keyup', reset);
         var campus_phone = document.querySelector("#id_campus_phone"),
             campus_fax = document.querySelector("#id_campus_fax");
 
-        window.intlTelInput(campus_phone);
-        window.intlTelInput(campus_fax);
+        window.intlTelInput(
+            campus_phone,
+            autoHideDialCode=false,
+            nationalMode=false,
+        );
+        window.intlTelInput(campus_fax,autoHideDialCode=false);
     }
     //✓ Valid
+
+    function validate_phone_number() {
+        /*
+        The phone number will be validated. If validated it will add true to the valid_phone number. If not a false.
+        From there it will call the enable_disable_submit() function
+         */
+        var phone = document.querySelector("#id_campus_phone"),
+            phone_number_status = document.querySelector("#phone_number_status");
+
+
+        //Initialise plugin for both phone and fax
+        var phone_iti = window.intlTelInput(
+                phone,
+                {
+                    utilsScript: "{% static 'NearBeach/javascript/intl-tel-input/js/utils.js' %}"
+                });
+
+
+        //Remove any messages
+        phone_number_status.innerHTML = "";
+
+        //Validate phone number
+        if (phone.value.trim()) {
+            if (phone_iti.isValidNumber()) {
+                valid_phone = true;
+                phone_number_status.innerHTML = "✓ Valid";
+            } else {
+                valid_phone = false;
+                var error = phone_iti.getValidationError();
+                phone_number_status.innerHTML = error_map[error];
+            }
+        }
+    }
+
+    function validate_fax_number() {
+        //ADD CODE
+    }
 </script>
 </body>
 {% endblock %}
