@@ -6,7 +6,8 @@ function initMap(latitude,longitude,title) {
     var map = new mapboxgl.Map({
         container: 'map', // container id
         style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
-        center: [latitude,longitude], // starting position [lng, lat]
+        //center: [latitude,longitude], // starting position [lng, lat]
+        center: [longitude,latitude],
         zoom: 15 // starting zoom
     });
     map.on('load', function() {
@@ -21,7 +22,8 @@ function initMap(latitude,longitude,title) {
                         "type": "Feature",
                         "geometry": {
                             "type": "Point",
-                            "coordinates": [latitude,longitude]
+                            //"coordinates": [latitude,longitude]
+                            "coordinates": [longitude,latitude]
                         },
                         "properties": {
                             "title": title,
