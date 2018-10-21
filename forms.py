@@ -387,7 +387,7 @@ class document_tree_create_folder_form(forms.Form):
                 project_id=project_instance,
             )
         elif project_or_task == "T":
-            task_instance = task.objects.get(tasks_id=location_id)
+            task_instance = task.objects.get(task_id=location_id)
             folders_results = folder.objects.filter(
                 is_deleted="FALSE",
                 task_id=task_instance,
@@ -424,7 +424,7 @@ class document_tree_upload_form(forms.Form):
                 project_id=project_instance,
             )
         elif project_or_task == "T":
-            task_instance = task.objects.get(tasks_id=location_id)
+            task_instance = task.objects.get(task_id=location_id)
             folders_results = folder.objects.filter(
                 is_deleted="FALSE",
                 task_id=task_instance,
@@ -485,10 +485,19 @@ class email_form(ModelForm):
                     customer_id=project_results.customer_id
                 )
         elif destination == "task":
-            customer_results = customer.objects.filter(
-                is_deleted="FALSE",
-                organisation_id=task.objects.get(tasks_id=location_id).organisation_id.organisation_id
-            )
+            task_results = task.objects.get(task_id=location_id)
+            if task_results.organisation_id:
+                customer_results = customer.objects.filter(
+                    is_deleted="FALSE",
+                    organisation_id=task.objects.get(task_id=location_id).organisation_id.organisation_id
+                )
+            else:
+                customer_results = customer.objects.filter(
+                    customer_id__in= task_customer.objects.filter(
+                        is_deleted="FALSE",
+                        task_id=location_id,
+                    ).values('customer_id')
+                )
         elif destination == "opportunity":
             opportunity_results=opportunity.objects.get(opportunity_id=location_id)
             if opportunity_results.organisation_id:
@@ -522,7 +531,7 @@ class email_form(ModelForm):
             elif quote_results.task_id:
                 customer_results = customer.objects.filter(
                     is_deleted="FALSE",
-                    organisation_id=task.objects.get(tasks_id=quote_results.task_id.tasks_id).organisation_id.organisation_id
+                    organisation_id=task.objects.get(task_id=quote_results.task_id.task_id).organisation_id.organisation_id
                 )
             elif quote_results.opportunity_id:
                 opportunity_results=opportunity.objects.get(

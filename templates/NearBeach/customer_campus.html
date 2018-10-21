@@ -25,7 +25,7 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <body onload="on_page_load()">
     <h2>Customer Campus</h2>
-    <form action="{% url 'customers_campus_information' customer_campus_id customer_or_org %}" method="POST">
+    <form action="{% url 'customer_campus_information' customer_campus_id customer_or_org %}" method="POST">
         {% csrf_token %}
         <table>
             <tr class="header"><td width="150px">Field</td><td>Input</td></tr>
@@ -34,7 +34,7 @@
             <tr><td>Email:</td><td>{{ customer_campus_results.customer_id.customer_email }}</td></tr>
             <tr><td>Customer phone:</td><td>{{ customer_campus_form.customer_phone }}</td></tr>
             <tr><td>Customer fax:</td><td>{{ customer_campus_form.customer_fax }}</td></tr>
-            <tr><td>Organisation:</td><td><a href="{% url 'organisation_information' customer_campus_results.campus_id.organisations_id.organisations_id  %}">{{ customer_campus_results.campus_id.organisations_id }}</a></td></tr>
+            <tr><td>Organisation:</td><td><a href="{% url 'organisation_information' customer_campus_results.campus_id.organisation_id.organisation_id  %}">{{ customer_campus_results.campus_id.organisations_id }}</a></td></tr>
             <tr><td>Campus:</td><td><a href="{% url 'campus_information' customer_campus_results.campus_id.campus_id %}">{{ customer_campus_results.campus_id }}</a></td></tr>
             <tr><td>Suburb:</td><td>{{ customer_campus_results.campus_id.campus_suburb }}</td></tr>
             <tr><td>State</td><td>{{ customer_campus_results.campus_id.campus_region_id }}</td></tr>

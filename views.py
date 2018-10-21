@@ -56,8 +56,6 @@ def add_campus_to_customer(request, customer_id, campus_id):
         response_data['customer_campus_id'] = submit_campus.customer_campus_id
 
         # Go to the form.
-        #return HttpResponseRedirect(reverse('customer_campus_information', args={submit_campus.customer_campus_id, 'CUST'}))
-        #return HttpResponse(json.dumps(response_data), content_type="application/json")
         return JsonResponse({'customer_campus_id': submit_campus.customer_campus_id})
     else:
         return HttpResponseBadRequest("Sorry, you can only do this in post.")
@@ -1781,13 +1779,22 @@ def email(request,location_id,destination):
             'to_email': customer_results,
         }
     elif destination == "task":
-        customer_results = customer.objects.filter(
-            is_deleted="FALSE",
-            customer_id = task_customer.objects.filter(
+        task_results = task.objects.get(task_id=location_id)
+        if task_results.organisation_id:
+            customer_results = customer.objects.filter(
                 is_deleted="FALSE",
-                task_id=location_id,
-            ).values('customer_id')
-        )
+                customer_id = task_customer.objects.filter(
+                    is_deleted="FALSE",
+                    task_id=location_id,
+                ).values('customer_id')
+            )
+        else:
+            customer_results = customer.objects.filter(
+                customer_id__in=task_customer.objects.filter(
+                    is_deleted="FALSE",
+                    task_id=location_id,
+                ).values('customer_id')
+            )
         initial = {
             'to_email': customer_results,
         }
