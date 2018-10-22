@@ -540,10 +540,26 @@ class email_form(ModelForm):
                     organisation_id=project.objects.get(project_id=quote_results.project_id.project_id).organisation_id.organisation_id
                 )
             elif quote_results.task_id:
-                customer_results = customer.objects.filter(
-                    is_deleted="FALSE",
-                    organisation_id=task.objects.get(task_id=quote_results.task_id.task_id).organisation_id.organisation_id
-                )
+                """
+                A task can be assigned to an organisation or not. If the task is assigned to an organisaton then it will
+                obtain a list of customers from the organisation.
+                
+                If the task is not assigned to the organisation, then it will obtain a list of customers from the 
+                task customers table
+                """
+                if quote_results.task_id.organisation_id:
+                    customer_results = customer.objects.filter(
+                        is_deleted="FALSE",
+                        organisation_id=task.objects.get(task_id=quote_results.task_id.task_id).organisation_id.organisation_id
+                    )
+                else:
+                    customer_results = customer.objects.filter(
+                        is_deleted="FALSE",
+                        customer_id__in=task_customer.objects.filter(
+                            is_deleted="FALSE",
+                            task_id=quote_results.task_id_id
+                        )
+                    )
             elif quote_results.opportunity_id:
                 opportunity_results=opportunity.objects.get(
                         opportunity_id=quote_results.opportunity_id.opportunity_id
@@ -639,6 +655,7 @@ class email_form(ModelForm):
     quote_template_description=forms.ModelChoiceField(
         queryset=quote_template.objects.filter(is_deleted='FALSE'),
         empty_label=None,
+        required=False,
     )
 
 

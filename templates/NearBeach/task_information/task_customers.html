@@ -13,7 +13,7 @@
         <input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Task" disabled="disabled">
     {% endif %}
 {% endif %}
-{% if tasks_customers_results %}
+{% if task_customers_results %}
 
     <table>
         <tr class="header">
@@ -21,7 +21,7 @@
             <td>Customer Description</td>
             <td>Customer Email</td>
         </tr>
-        {% for row in tasks_customers_results %}
+        {% for row in task_customers_results %}
             <tr>
                 <td>{{ row.customer_id.customer_first_name }} {{ row.customer_id.customer_last_name }}</td>
                 <td>{{ row.customer_description }}</td>

@@ -336,7 +336,7 @@
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: '/information_task_customers/{{ task_id }}/',
+            url: '/information_task_customer/{{ task_id }}/',
             data: $(this).serialize(),
             success: function() {
                 //Reload the task history :)
@@ -592,9 +592,9 @@
     };
 
     function load_task_customers() {
-        //Load Project Customers
+        //Load Task Customers
         $.ajax({
-            url: '/information_task_customers/{{ task_id }}/',
+            url: '/information_task_customer/{{ task_id }}/',
             data: {},
             dataType: 'HTML',
             type: 'GET',
@@ -602,7 +602,7 @@
                 $('#task_customers').html(data);
             },
             error: function() {
-                $('#task_customers').html('<h2>Project Customers</h2>Sorry, task customers encounted an error and did not load.');
+                $('#task_customers').html('<h2>Task Customers</h2>Sorry, task customers encounted an error and did not load.');
             }
         });
     };
