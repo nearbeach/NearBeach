@@ -174,6 +174,17 @@ MAX_PICTURE_SIZE=1000 * 1024 #1Mb wow
 
 
 class about_user_form(ModelForm):
+    about_user_text = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Give a good description about yourself',
+            }
+        ),
+        required=False,
+    )
     class Meta:
         model=about_user
         fields = {

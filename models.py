@@ -2980,7 +2980,7 @@ class user_want(models.Model):
 
 class user_weblink(models.Model):
     user_weblink_id=models.AutoField(primary_key=True)
-    user_weblink_url=models.URLField(max_length=50)
+    user_weblink_url=models.URLField(max_length=255)
     user_weblink_source=models.CharField(
         max_length=50,
         choices=WEBSITE_SOURCE,

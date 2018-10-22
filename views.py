@@ -2718,7 +2718,7 @@ def my_profile(request):
         form = about_user_form(request.POST)
         if form.is_valid():
             if not about_user_text == form.cleaned_data['about_user_text'] and not about_user_text == None:
-                about_user_text == form.cleaned_data['about_user_text']
+                about_user_text = form.cleaned_data['about_user_text']
 
                 about_user_submit = about_user(
                     change_user=request.user,
