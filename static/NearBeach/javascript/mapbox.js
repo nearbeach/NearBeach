@@ -1,8 +1,8 @@
-function initMap(latitude,longitude,title) {
+function initMap(latitude,longitude,title,api_key) {
 
 
 
-    mapboxgl.accessToken  = "{{ MAPBOX_API_TOKEN }}";
+    mapboxgl.accessToken  = api_key;
     var map = new mapboxgl.Map({
         container: 'map', // container id
         style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location

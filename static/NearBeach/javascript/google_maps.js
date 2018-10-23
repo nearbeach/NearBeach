@@ -1,5 +1,5 @@
 var map;
-function initMap(latitude,longitude,title) {
+function initMap(latitude,longitude,title,api_key) {
     var location = {lat: latitude, lng: longitude};
     map = new google.maps.Map(document.getElementById('map'), {
     center:location,

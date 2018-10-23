@@ -12,8 +12,8 @@
 
 
 {% if not MAPBOX_API_TOKEN == '' %}
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.css' rel='stylesheet' />
     <script type="text/javascript" src="{% static 'NearBeach/javascript/mapbox.js' %}"></script>
 {% elif not GOOGLE_MAP_API_TOKEN == '' %}
     <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAP_API_TOKEN }}&callback=initMap" async defer></script>
@@ -133,8 +133,23 @@
                 }
             }
 
-            set_permissions({{ permission }});
-            initMap({{ campus_results.campus_latitude }},{{ campus_results.campus_longitude }},"{{ campus_results.campus_nickname }}");
+            {% if MAPBOX_API_TOKEN %}
+                initMap(
+                    {{ campus_results.campus_latitude }},
+                    {{ campus_results.campus_longitude }},
+                    "{{ campus_results.campus_nickname }}",
+                    "{{ MAPBOX_API_TOKEN }}"
+                );
+            {% elif GOOGLE_MAP_API_TOKEN %}
+                initMap(
+                    {{ campus_results.campus_latitude }},
+                    {{ campus_results.campus_longitude }},
+                    "{{ campus_results.campus_nickname }}",
+                    "{{ GOOGLE_MAP_API_TOKEN }}"
+                );
+            {% else %}
+                $("#map").html("No map API has been installed.");
+            {% endif %}
 
             //Initialise the international phone number widget
             var campus_phone = document.querySelector("#id_campus_phone"),
