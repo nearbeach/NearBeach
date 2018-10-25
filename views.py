@@ -365,7 +365,7 @@ def associated_projects(request, task_id):
         projects_results = project.objects.filter()
 
     # Load the template
-    t = loader.get_template('NearBeach/associated_projects.html')
+    t = loader.get_template('NearBeach/associated_project.html')
 
     # context
     c = {
@@ -4072,10 +4072,6 @@ def organisation_information(request, organisation_id):
     if request.method == "POST" and permission_results['organisation'] > 1:
         form = organisation_information_form(request.POST, request.FILES)
         if form.is_valid():
-            current_user = request.user
-            # Define the data we will edit
-            #			save_data = customer.objects.get(customer_id=customer_id)
-
             save_data = organisation.objects.get(organisation_id=organisation_id)
 
 
@@ -4091,17 +4087,6 @@ def organisation_information(request, organisation_id):
 
             # Save
             save_data.save()
-
-
-            """
-			Document Uploads
-			        if request.FILES == None:
-            return HttpResponseBadRequest('File needs to be uploaded')
-
-        #Get the file data
-        file = request.FILES['file']
-			
-			"""
 
     # Query the database for organisation information
     organisation_results = organisation.objects.get(pk=organisation_id)
