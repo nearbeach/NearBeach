@@ -4865,7 +4865,7 @@ def search_customer(request):
     ).extra(
         where=[
             """
-            customer_full_name LIKE %s
+            customer_first_name || customer_last_name LIKE %s
             """
         ],
         params=[
