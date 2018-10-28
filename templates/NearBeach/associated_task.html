@@ -17,7 +17,7 @@
             <td width="10%">Task Assigned To</td>
             <td width="10%">Task Status</td>
         </tr>
-        {% for task_row in tasks_results %}
+        {% for task_row in task_results %}
             <tr>
                 <td><a href="{% url 'associate' project_id task_row.task_id 'P' %}">{{ task_row.task_short_description }}</a></td>
                 <td>{{ task_row.organisations_id.organisation_name }}</td>
