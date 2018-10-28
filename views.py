@@ -4468,20 +4468,13 @@ def project_information(request, project_id):
         'project_end_date': project_results.project_end_date,
     }
 
-    # Query the database for associated task information
-    cursor = connection.cursor()
-    cursor.execute("""
-		SELECT DISTINCT
-		  task.task_id
-		, task.task_short_description
-		, task.task_end_date
-		FROM task
-			JOIN project_task
-			ON task.task_id = project_task.task_id
-			AND project_task.is_deleted = 'FALSE'
-			AND project_id = %s
-		""", [project_id])
-    associated_task_results = namedtuplefetchall(cursor)
+    associated_task_results = task.objects.filter(
+        is_deleted="FALSE",
+        task_id__in=project_task.objects.filter(
+            is_deleted="FALSE",
+            project_id=project_id,
+        ).values('task_id')
+    )
 
 
     quote_results = quote.objects.filter(
