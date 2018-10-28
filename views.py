@@ -373,6 +373,18 @@ def associated_projects(request, task_id):
 	check to see if they want only new or open, or if they would like
 	to see closed task too.
 	"""
+    task_groups_results = task_group.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_id,
+    ).values('group_id_id')
+
+    permission_results = return_user_permission_level(request, task_groups_results, ['task'])
+
+    if permission_results['task'] == 0:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse(permission_denied))
+
+
     search_projects = search_project_form()
 
     # POST
@@ -390,6 +402,8 @@ def associated_projects(request, task_id):
         'projects_results': projects_results,
         'search_projects': search_projects,
         'task_id': task_id,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -403,6 +417,20 @@ def associated_task(request, project_id):
 	check to see if they want only new or open, or if they would like
 	to see closed task too.
 	"""
+    project_groups_results = project_group.objects.filter(
+        is_deleted="FALSE",
+        project_id=project.objects.get(project_id=project_id),
+    ).values('group_id_id')
+
+
+    permission_results = return_user_permission_level(request, project_groups_results,['project'])
+
+    if permission_results['project'] == 0:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse(permission_denied))
+
+
+
     search_task = search_task_form()
 
     # POST
@@ -420,6 +448,8 @@ def associated_task(request, project_id):
         'task_results': task_results,
         'search_task': search_task,
         'project_id': project_id,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
