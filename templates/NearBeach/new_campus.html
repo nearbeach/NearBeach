@@ -4,13 +4,28 @@
 <body onload="on_page_load()">
     <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
     <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
+    <link rel="stylesheet" href="{% static 'NearBeach/javascript/intl-tel-input/css/intlTelInput.css' %}">
+    <script src="{% static 'NearBeach/javascript/intl-tel-input/js/intlTelInput.js' %}"></script>
+    <style>
+        .iti-flag {background-image: url("{% static 'NearBeach/javascript/intl-tel-input/img/flags.png' %}");}
+
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+          .iti-flag {background-image: url("{% static 'NearBeach/javascript/intl-tel-input/img/flags@2x.png' %}");}
+        }
+    </style>
     <h2>New Campus</h2>
     <form id="input-form" action="{% url 'new_campus' location_id destination %}" method="post" class="new_campus">
         {% csrf_token %}
         <ul>
             <li>{{ new_campus_form.campus_nickname }}</li>
-            <li>{{ new_campus_form.campus_phone }}</li>
-            <li>{{ new_campus_form.campus_fax }}</li>
+            <li>
+                Phone: {{ new_campus_form.campus_phone }}
+                <span id="phone_number_status"></span>
+            </li>
+            <li>
+                Fax: {{ new_campus_form.campus_fax }}
+                <span id="fax_number_status" class="hide"></span>
+            </li>
             <li>{{ new_campus_form.campus_address1 }}</li>
             <li>{{ new_campus_form.campus_address2 }}</li>
             <li>{{ new_campus_form.campus_address3 }}</li>
@@ -37,7 +52,7 @@
     $("#input-form").on('change', function() {
         enable_disable_submit();
     });
-    $("#input-form").on('onkeyup', function() {
+    $("#input-form").on('keyup', function() {
         enable_disable_submit();
     });
 
@@ -49,6 +64,14 @@
             $("#submit").prop("disabled",true)
         }
     };
+
+    function on_page_load() {
+        var campus_phone = document.querySelector("#id_campus_phone"),
+            campus_fax = document.querySelector("#id_campus_fax");
+
+        window.intlTelInput(campus_phone);
+        window.intlTelInput(campus_fax);
+    }
 </script>
 </body>
 {% endblock %}

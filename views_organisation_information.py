@@ -155,7 +155,7 @@ def information_organisation_documents_upload(request, organisation_id):
 
         #Data objects required
         filename = str(file)
-        file_size = file._size
+        file_size = file.size
         print("File name: " + filename + "\nFile Size: " + str(file_size))
 
         """

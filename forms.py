@@ -174,6 +174,17 @@ MAX_PICTURE_SIZE=1000 * 1024 #1Mb wow
 
 
 class about_user_form(ModelForm):
+    about_user_text = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Give a good description about yourself',
+            }
+        ),
+        required=False,
+    )
     class Meta:
         model=about_user
         fields = {
@@ -267,14 +278,16 @@ class campus_information_form(ModelForm):
         max_length=255,
         required=False,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Campus Phone (03) 9999 9999',
+            'placeholder': 'Campus Phone',
+            'type': 'tel',
         })
     )
     campus_fax=forms.CharField(
         max_length=255,
         required=False,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Campus Fax (03) 9999 9999',
+            'placeholder': 'Campus Fax',
+            'type': 'tel',
         })
     )
     campus_address1=forms.CharField(
@@ -385,7 +398,7 @@ class document_tree_create_folder_form(forms.Form):
                 project_id=project_instance,
             )
         elif project_or_task == "T":
-            task_instance = task.objects.get(tasks_id=location_id)
+            task_instance = task.objects.get(task_id=location_id)
             folders_results = folder.objects.filter(
                 is_deleted="FALSE",
                 task_id=task_instance,
@@ -422,7 +435,7 @@ class document_tree_upload_form(forms.Form):
                 project_id=project_instance,
             )
         elif project_or_task == "T":
-            task_instance = task.objects.get(tasks_id=location_id)
+            task_instance = task.objects.get(task_id=location_id)
             folders_results = folder.objects.filter(
                 is_deleted="FALSE",
                 task_id=task_instance,
@@ -483,10 +496,19 @@ class email_form(ModelForm):
                     customer_id=project_results.customer_id
                 )
         elif destination == "task":
-            customer_results = customer.objects.filter(
-                is_deleted="FALSE",
-                organisation_id=task.objects.get(tasks_id=location_id).organisation_id.organisation_id
-            )
+            task_results = task.objects.get(task_id=location_id)
+            if task_results.organisation_id:
+                customer_results = customer.objects.filter(
+                    is_deleted="FALSE",
+                    organisation_id=task.objects.get(task_id=location_id).organisation_id.organisation_id
+                )
+            else:
+                customer_results = customer.objects.filter(
+                    customer_id__in= task_customer.objects.filter(
+                        is_deleted="FALSE",
+                        task_id=location_id,
+                    ).values('customer_id')
+                )
         elif destination == "opportunity":
             opportunity_results=opportunity.objects.get(opportunity_id=location_id)
             if opportunity_results.organisation_id:
@@ -518,10 +540,26 @@ class email_form(ModelForm):
                     organisation_id=project.objects.get(project_id=quote_results.project_id.project_id).organisation_id.organisation_id
                 )
             elif quote_results.task_id:
-                customer_results = customer.objects.filter(
-                    is_deleted="FALSE",
-                    organisation_id=task.objects.get(tasks_id=quote_results.task_id.tasks_id).organisation_id.organisation_id
-                )
+                """
+                A task can be assigned to an organisation or not. If the task is assigned to an organisaton then it will
+                obtain a list of customers from the organisation.
+                
+                If the task is not assigned to the organisation, then it will obtain a list of customers from the 
+                task customers table
+                """
+                if quote_results.task_id.organisation_id:
+                    customer_results = customer.objects.filter(
+                        is_deleted="FALSE",
+                        organisation_id=task.objects.get(task_id=quote_results.task_id.task_id).organisation_id.organisation_id
+                    )
+                else:
+                    customer_results = customer.objects.filter(
+                        is_deleted="FALSE",
+                        customer_id__in=task_customer.objects.filter(
+                            is_deleted="FALSE",
+                            task_id=quote_results.task_id_id
+                        )
+                    )
             elif quote_results.opportunity_id:
                 opportunity_results=opportunity.objects.get(
                         opportunity_id=quote_results.opportunity_id.opportunity_id
@@ -617,6 +655,7 @@ class email_form(ModelForm):
     quote_template_description=forms.ModelChoiceField(
         queryset=quote_template.objects.filter(is_deleted='FALSE'),
         empty_label=None,
+        required=False,
     )
 
 
@@ -1057,14 +1096,16 @@ class new_campus_form(forms.Form):
         max_length=255,
         required=False,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Campus Phone (03) 9999 9999',
+            'placeholder': 'Campus Phone',
+            'type': 'tel',
         })
     )
     campus_fax=forms.CharField(
         max_length=255,
         required=False,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Campus Fax (03) 9999 9999',
+            'placeholder': 'Campus Fax',
+            'type': 'tel',
         })
     )
     campus_address1=forms.CharField(

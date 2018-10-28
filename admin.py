@@ -3,6 +3,7 @@ from django.contrib import admin
 # Register your models here.
 from .models import *
 
+admin.site.register(about_user)
 admin.site.register(assigned_user)
 admin.site.register(bug)
 admin.site.register(bug_client)

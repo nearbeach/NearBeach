@@ -56,8 +56,6 @@ def add_campus_to_customer(request, customer_id, campus_id):
         response_data['customer_campus_id'] = submit_campus.customer_campus_id
 
         # Go to the form.
-        #return HttpResponseRedirect(reverse('customer_campus_information', args={submit_campus.customer_campus_id, 'CUST'}))
-        #return HttpResponse(json.dumps(response_data), content_type="application/json")
         return JsonResponse({'customer_campus_id': submit_campus.customer_campus_id})
     else:
         return HttpResponseBadRequest("Sorry, you can only do this in post.")
@@ -329,6 +327,24 @@ def assigned_group_list(request, location_id, destination):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
+def assigned_user_add(request, location_id, destination):
+    """
+    Assigned user add is a POST function where it will ADD a user to a project/task/opportunity/requirement.
+    :param request:
+    :param location_id:
+    :param destination:
+    :return:
+    """
+    # Load the template
+    t = loader.get_template('NearBeach/blank.html')
+
+    # context
+    c = {
+    }
+
+    return HttpResponse(t.render(c, request))
+
 
 
 @login_required(login_url='login')
@@ -357,6 +373,18 @@ def associated_projects(request, task_id):
 	check to see if they want only new or open, or if they would like
 	to see closed task too.
 	"""
+    task_groups_results = task_group.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_id,
+    ).values('group_id_id')
+
+    permission_results = return_user_permission_level(request, task_groups_results, ['task'])
+
+    if permission_results['task'] == 0:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse(permission_denied))
+
+
     search_projects = search_project_form()
 
     # POST
@@ -367,13 +395,15 @@ def associated_projects(request, task_id):
         projects_results = project.objects.filter()
 
     # Load the template
-    t = loader.get_template('NearBeach/associated_projects.html')
+    t = loader.get_template('NearBeach/associated_project.html')
 
     # context
     c = {
         'projects_results': projects_results,
         'search_projects': search_projects,
         'task_id': task_id,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -387,6 +417,20 @@ def associated_task(request, project_id):
 	check to see if they want only new or open, or if they would like
 	to see closed task too.
 	"""
+    project_groups_results = project_group.objects.filter(
+        is_deleted="FALSE",
+        project_id=project.objects.get(project_id=project_id),
+    ).values('group_id_id')
+
+
+    permission_results = return_user_permission_level(request, project_groups_results,['project'])
+
+    if permission_results['project'] == 0:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse(permission_denied))
+
+
+
     search_task = search_task_form()
 
     # POST
@@ -404,6 +448,8 @@ def associated_task(request, project_id):
         'task_results': task_results,
         'search_task': search_task,
         'project_id': project_id,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -1781,13 +1827,22 @@ def email(request,location_id,destination):
             'to_email': customer_results,
         }
     elif destination == "task":
-        customer_results = customer.objects.filter(
-            is_deleted="FALSE",
-            customer_id = task_customer.objects.filter(
+        task_results = task.objects.get(task_id=location_id)
+        if task_results.organisation_id:
+            customer_results = customer.objects.filter(
                 is_deleted="FALSE",
-                task_id=location_id,
-            ).values('customer_id')
-        )
+                customer_id = task_customer.objects.filter(
+                    is_deleted="FALSE",
+                    task_id=location_id,
+                ).values('customer_id')
+            )
+        else:
+            customer_results = customer.objects.filter(
+                customer_id__in=task_customer.objects.filter(
+                    is_deleted="FALSE",
+                    task_id=location_id,
+                ).values('customer_id')
+            )
         initial = {
             'to_email': customer_results,
         }
@@ -2711,7 +2766,7 @@ def my_profile(request):
         form = about_user_form(request.POST)
         if form.is_valid():
             if not about_user_text == form.cleaned_data['about_user_text'] and not about_user_text == None:
-                about_user_text == form.cleaned_data['about_user_text']
+                about_user_text = form.cleaned_data['about_user_text']
 
                 about_user_submit = about_user(
                     change_user=request.user,
@@ -4065,10 +4120,6 @@ def organisation_information(request, organisation_id):
     if request.method == "POST" and permission_results['organisation'] > 1:
         form = organisation_information_form(request.POST, request.FILES)
         if form.is_valid():
-            current_user = request.user
-            # Define the data we will edit
-            #			save_data = customer.objects.get(customer_id=customer_id)
-
             save_data = organisation.objects.get(organisation_id=organisation_id)
 
 
@@ -4084,17 +4135,6 @@ def organisation_information(request, organisation_id):
 
             # Save
             save_data.save()
-
-
-            """
-			Document Uploads
-			        if request.FILES == None:
-            return HttpResponseBadRequest('File needs to be uploaded')
-
-        #Get the file data
-        file = request.FILES['file']
-			
-			"""
 
     # Query the database for organisation information
     organisation_results = organisation.objects.get(pk=organisation_id)
@@ -4428,20 +4468,13 @@ def project_information(request, project_id):
         'project_end_date': project_results.project_end_date,
     }
 
-    # Query the database for associated task information
-    cursor = connection.cursor()
-    cursor.execute("""
-		SELECT DISTINCT
-		  task.task_id
-		, task.task_short_description
-		, task.task_end_date
-		FROM task
-			JOIN project_task
-			ON task.task_id = project_task.task_id
-			AND project_task.is_deleted = 'FALSE'
-			AND project_id = %s
-		""", [project_id])
-    associated_task_results = namedtuplefetchall(cursor)
+    associated_task_results = task.objects.filter(
+        is_deleted="FALSE",
+        task_id__in=project_task.objects.filter(
+            is_deleted="FALSE",
+            project_id=project_id,
+        ).values('task_id')
+    )
 
 
     quote_results = quote.objects.filter(
@@ -4873,7 +4906,7 @@ def search_customer(request):
     ).extra(
         where=[
             """
-            customer_full_name LIKE %s
+            customer_first_name || customer_last_name LIKE %s
             """
         ],
         params=[

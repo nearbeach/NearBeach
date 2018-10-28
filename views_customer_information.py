@@ -156,7 +156,7 @@ def information_customer_documents_upload(request, customer_id):
 
         #Data objects required
         filename = str(file)
-        file_size = file._size
+        file_size = file.size
         print("File name: " + filename + "\nFile Size: " + str(file_size))
 
         """
