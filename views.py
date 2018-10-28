@@ -327,6 +327,24 @@ def assigned_group_list(request, location_id, destination):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
+def assigned_user_add(request, location_id, destination):
+    """
+    Assigned user add is a POST function where it will ADD a user to a project/task/opportunity/requirement.
+    :param request:
+    :param location_id:
+    :param destination:
+    :return:
+    """
+    # Load the template
+    t = loader.get_template('NearBeach/blank.html')
+
+    # context
+    c = {
+    }
+
+    return HttpResponse(t.render(c, request))
+
 
 
 @login_required(login_url='login')

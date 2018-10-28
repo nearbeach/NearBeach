@@ -197,7 +197,7 @@
             <tr class="header"><td>Task Id</td><td>Short Description</td><td>End Date</td></tr>
             {% for associated_task_row in associated_task_results %}
                 <tr>
-                <td><a href="{% url 'task_information' associated_task_row.tasks_id %}">Task - {{ associated_task_row.tasks_id }}</a></td>
+                <td><a href="{% url 'task_information' associated_task_row.task_id %}">Task - {{ associated_task_row.task_id }}</a></td>
                 <td>{{ associated_task_row.task_short_description }}</td>
                 <td>{{ associated_task_row.task_end_date }}</td>
                 </tr>
@@ -262,20 +262,16 @@
         Loading...
     </form>
 
-
-
-
-    <form method="post" class="project_assigned_users" id="project_assigned_users">
-        <h2>Assigned Users</h2>
-        Loading...
-    </form>
-
     {% if project_permissions >= 3 %}
-    <h2>Assigned Groups</h2>
-    <form method="post" class="project_assigned_groups" id="project_assigned_groups">
-        Loading add...
-    </form>
-    <div id="assigned_group_list">Loading list...</div>
+        <form method="post" class="project_assigned_users" id="project_assigned_users">
+            <h2>Assigned Users</h2>
+            Loading...
+        </form>
+        <h2>Assigned Groups</h2>
+        <form method="post" class="project_assigned_groups" id="project_assigned_groups">
+            Loading add...
+        </form>
+        <div id="assigned_group_list">Loading list...</div>
     {% endif %}
 
 

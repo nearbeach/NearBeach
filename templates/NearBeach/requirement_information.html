@@ -67,6 +67,20 @@
         Loading...
     </form>
 
+    {% if permission >= 3 %}
+        <form method="post" class="requirement_assigned_users" id="requirement_assigned_users">
+            <h2>Assigned Users</h2>
+            Loading...
+        </form>
+
+        <h2>Assigned Groups</h2>
+        <form method="post" class="requirement_assigned_groups" id="requirement_assigned_groups">
+            Loading add...
+        </form>
+        <div id="assigned_group_list">Loading list...</div>
+    {% endif %}
+
+
     <script>
         $("#bug_search").on('submit', function(e) {
            e.preventDefault();
@@ -124,6 +138,39 @@
                 }
             })
         });
+
+    $("#requirement_assigned_users").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/information_project_assign_users/{{ requirement_id }}/',
+            data: $(this).serialize(),
+            success: function() {
+                //Reload the project history :)
+                load_project_assigned_users();
+            },
+            error: function() {
+                alert("Sorry, project assigned users did not save. Please try again.");
+            }
+        })
+    });
+
+
+    $("#requirement_assigned_groups").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/assigned_group_add/{{ requirement_id }}/requirement/' + $("#id_add_group").val() + '/',
+            data: $(this).serialize(),
+            success: function() {
+                load_project_group_add();
+                load_project_group_list();
+            },
+            error: function() {
+                alert("Sorry, project assigned users did not save. Please try again.");
+            }
+        })
+    });
 
 
         function load_bug_list() {
