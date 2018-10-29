@@ -5,12 +5,15 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/campus_information.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/jquery/jquery-3.2.1.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'NearBeach/javascript/intl-tel-input/css/intlTelInput.css' %}">
+<script src="{% static 'NearBeach/javascript/intl-tel-input/js/intlTelInput.js' %}"></script>
+
 
 
 
 {% if not MAPBOX_API_TOKEN == '' %}
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.css' rel='stylesheet' />
     <script type="text/javascript" src="{% static 'NearBeach/javascript/mapbox.js' %}"></script>
 {% elif not GOOGLE_MAP_API_TOKEN == '' %}
     <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAP_API_TOKEN }}&callback=initMap" async defer></script>
@@ -21,10 +24,12 @@
 	<form action="{% url 'campus_information' campus_results.campus_id %}" method="post" class="campus_information">
 		{% csrf_token %}
 		<ul>
-            {% if campus_results.organisations_id %}
-			    <li><a href="{% url 'organisation_information' campus_results.organisations_id.organisations_id %}">{{ campus_results.organisations_id }}</a></li>
-			{% else %}
-                <li><a href="{% url 'customer_information' campus_results.customers.customer_id %}">{{ campus_results.customers }}</a></li>
+            {% if campus_results.organisation_id %}
+			    <li><a href="{% url 'organisation_information' campus_results.organisation_id.organisation_id %}">{{ campus_results.organisations_id }}</a></li>
+			{% elif campus_results.customer_id %}
+                <li><a href="{% url 'customer_information' campus_results.customer.customer_id %}">{{ campus_results.customer }}</a></li>
+            {% else %}
+                <li>Error</li>
             {% endif %}
             <li>{{ campus_information_form.campus_nickname }}</li>
 			<li>{{ campus_information_form.campus_phone }}</li>
@@ -128,8 +133,30 @@
                 }
             }
 
-            set_permissions({{ permission }});
-            initMap({{ campus_results.campus_latitude }},{{ campus_results.campus_longitude }},"{{ campus_results.campus_nickname }}");
+            {% if MAPBOX_API_TOKEN %}
+                initMap(
+                    {{ campus_results.campus_latitude }},
+                    {{ campus_results.campus_longitude }},
+                    "{{ campus_results.campus_nickname }}",
+                    "{{ MAPBOX_API_TOKEN }}"
+                );
+            {% elif GOOGLE_MAP_API_TOKEN %}
+                initMap(
+                    {{ campus_results.campus_latitude }},
+                    {{ campus_results.campus_longitude }},
+                    "{{ campus_results.campus_nickname }}",
+                    "{{ GOOGLE_MAP_API_TOKEN }}"
+                );
+            {% else %}
+                $("#map").html("No map API has been installed.");
+            {% endif %}
+
+            //Initialise the international phone number widget
+            var campus_phone = document.querySelector("#id_campus_phone"),
+            campus_fax = document.querySelector("#id_campus_fax");
+
+            window.intlTelInput(campus_phone);
+            window.intlTelInput(campus_fax);
 
         }
 	</script>

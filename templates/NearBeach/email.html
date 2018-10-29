@@ -33,8 +33,16 @@
             <input type="submit" value="Send Email">
             {% if destination == "customer" %}
                 <a href="{% url 'customer_information' location_id %}">Cancel Email</a>
-            {% else %}
+            {% elif destination == 'organisation' %}
                 <a href="{% url 'organisation_information' location_id %}">Cancel Email</a>
+            {% elif destination == 'task' %}
+                <a href="{% url 'task_information' location_id %}">Cancel Email</a>
+            {% elif destination == 'quote' %}
+                <a href="{% url 'quote_information' location_id %}">Cancel Email</a>
+            {% elif destination == 'project' %}
+                <a href="{% url 'project_information' location_id %}">Cancel Email</a>
+            {% else %}
+                <a href="{% url 'dashboard' %}">Cancel Email</a>
             {% endif %}
         </td></tr>
     </table>

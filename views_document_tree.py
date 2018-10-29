@@ -95,7 +95,7 @@ def document_tree_list(request, location_id, project_or_task, folder_id='',):
         document_results = document_results.filter(project_id=project_instance)
     elif project_or_task == 'T':
         #Tasks
-        task_instance=task.objects.get(tasks_id=location_id)
+        task_instance=task.objects.get(task_id=location_id)
 
         folder_results = folder_results.filter(task_id=task_instance)
         document_results = document_results.filter(task_id=task_instance)

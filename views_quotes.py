@@ -185,10 +185,17 @@ def responsible_customer(request,quote_id, customer_id=''):
         customer_results = customer.objects.filter(
             organisation_id=quote_results.project_id.organisation_id.organisation_id,
         ).exclude(customer_id__in=responsible_customer_results.values('customer_id'),)
-    elif not quote_results.task_id == None:
+    elif not quote_results.task_id.organisation_id == None:
         customer_results = customer.objects.filter(
             organisation_id=quote_results.task_id.organisation_id.organisation_id
         ).exclude(customer_id__in=responsible_customer_results.values('customer_id'),)
+    elif not quote_results.task_id == None:
+        customer_results = customer.objects.filter(
+            customer_id__in=task_customer.objects.filter(
+                is_deleted="FALSE",
+                task_id=quote_results.task_id_id,
+            ).values('customer_id')
+        ).exclude(customer_id__in=responsible_customer_results.values('customer_id'))
     elif not quote_results.opportunity_id == None:
         try:
             customer_results = customer.objects.filter(

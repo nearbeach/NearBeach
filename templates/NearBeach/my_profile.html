@@ -4,6 +4,7 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
 <body onload="on_page_load()">
     <h2>My Profile</h2>
+    <div id="save_state"></div>
     <form id="user_information_form" name="user_information_form" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <table>
@@ -154,13 +155,16 @@
         }
 
         function update_user() {
+            $("#save_state").html("Currently Saving Project");
+
             $.ajax({
                 url: '/my_profile/',
                 type: "POST",
                 data: $("#user_information_form").serialize(),
                 success: function(data) {
-                    //Do nothing yet. I think...
-                    alert("Saved");
+                    //State that the function has saved
+                    var current_time = Date();
+                    $("#save_state").html("Saved last on " + current_time);
                 },
                 error: function () {
                     alert("Sorry, but saving this has not worked");
