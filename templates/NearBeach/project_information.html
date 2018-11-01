@@ -5,7 +5,6 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/expand_sections.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/project_information.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/bug.js' %}"></script>
@@ -628,7 +627,6 @@
             type: 'GET',
             success: function(data) {
                 $('#project_costs').html(data);
-                running_total();
             },
             error: function() {
                 $('#project_history').html('<h2>Project Costs</h2>Sorry, project costs encounted an error and did not load.');

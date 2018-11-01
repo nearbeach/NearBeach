@@ -11,7 +11,7 @@
     </table>
 {% endif %}
 <br/>
-{% if costs_results %}
+{% if cost_zip_results %}
     <table>
         <tr class="header">
             <td>Item</td>
@@ -19,17 +19,21 @@
             <td>Running Total</td>
             <td>Delete</td>
         </tr>
-        {% for row in costs_results %}
+        {% for row, running_total in cost_zip_results %}
             <tr>
                 <td>{{ row.cost_description }}</td>
                 <td name="cost_amount">{{ row.cost_amount|intcomma }}</td>
-                <td name="running_total">--filled-by-javascript--</td>
-                <td><a href="javascript:void(0)" onclick="delete_cost({{ row.cost_id }},{{ row.project_id.project_id }})">Remove Cost</a></td>
+                <td name="running_total">{{ running_total|intcomma }}</td>
+                <td>
+                    {% if project_permissions > 1 %}
+                        <a href="javascript:void(0)" onclick="delete_cost({{ row.cost_id }},{{ row.project_id.project_id }})">Remove Cost</a>
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
         <tr>
             <td>GRAND TOTAL</td>
-            <td id="grand_total">--fill out--</td>
+            <td id="grand_total">{{ grand_total }}</td>
         </tr>
     </table>
 {% else %}

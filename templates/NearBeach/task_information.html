@@ -4,7 +4,6 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/expand_sections.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/task_information.js' %}"></script>
-<script tpye="text/javascript" src="{% static 'NearBeach/javascript/costs_running_total.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/bug.js' %}"></script>
@@ -30,9 +29,6 @@
 
         load_task_group_add();
         load_task_group_list();
-
-        //Running total currently stops the javascript.
-        running_total();
 
         //Finally set the permissions
         //set_permissions({{ task_permissions }});
@@ -579,10 +575,9 @@
             type: 'GET',
             success: function(data) {
                 $('#task_costs').html(data);
-                running_total();
             },
             error: function() {
-                $('#task_costs').html('<h2>Project Costs</h2>Sorry, task costs encounted an error and did not load.');
+                $('#task_costs').html('<h2>Task Costs</h2>Sorry, task costs encounted an error and did not load.');
             }
         });
     };

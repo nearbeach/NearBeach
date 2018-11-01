@@ -116,14 +116,32 @@ def information_task_costs(request, task_id):
 
     #Get data
     task_results = task.objects.get(task_id=task_id)
+
+    """
+    Cost results and running total.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Due to Django not having the ability to have a runnning total, I needed to extract all the costs and manually create
+    the running total as a separate array. Now I need to combine both sets of data into one loop. To do that we use a 
+    zip function to bring them together. Then we can just use a simple
+    for a,b in zip_results
+    """
     costs_results = cost.objects.filter(task_id=task_id, is_deleted='FALSE')
+
+    running_total = []
+    grand_total = 0 #Used to calculate the grand total in the loop
+    for line_item in costs_results:
+        grand_total = grand_total + float(line_item.cost_amount)
+        running_total.append(grand_total)
+
+    cost_zip_results = zip(costs_results, running_total)
 
     #Load template
     t = loader.get_template('NearBeach/task_information/task_costs.html')
 
     # context
     c = {
-        'costs_results': costs_results,
+        'cost_zip_results': cost_zip_results,
+        'grand_total': grand_total,
         'information_task_cost_form': information_task_cost_form(),
         'task_id': task_id,
         'task_permissions': permission_results['task'],
