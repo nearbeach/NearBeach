@@ -1827,11 +1827,12 @@ def email(request,location_id,destination):
             'to_email': customer_results,
         }
     elif destination == "task":
+        print("Selected TASK")
         task_results = task.objects.get(task_id=location_id)
         if task_results.organisation_id:
             customer_results = customer.objects.filter(
                 is_deleted="FALSE",
-                customer_id = task_customer.objects.filter(
+                customer_id__in = task_customer.objects.filter(
                     is_deleted="FALSE",
                     task_id=location_id,
                 ).values('customer_id')
@@ -1846,6 +1847,7 @@ def email(request,location_id,destination):
         initial = {
             'to_email': customer_results,
         }
+        print(customer_results)
     elif destination == "opportunity":
         customer_results = customer.objects.filter(
             Q(is_deleted="FALSE") &

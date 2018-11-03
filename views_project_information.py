@@ -121,7 +121,24 @@ def information_project_costs(request, project_id):
                 submit_cost.save()
 
     #Get data
+    """
+    Cost results and running total.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Due to Django not having the ability to have a runnning total, I needed to extract all the costs and manually create
+    the running total as a separate array. Now I need to combine both sets of data into one loop. To do that we use a 
+    zip function to bring them together. Then we can just use a simple
+    for a,b in zip_results
+    """
     costs_results = cost.objects.filter(project_id=project_id, is_deleted='FALSE')
+
+    #Get running totals
+    running_total = []
+    grand_total = 0 #use to calculate the grand total through the look
+    for line_item in costs_results:
+        grand_total = grand_total + float(line_item.cost_amount)
+        running_total.append(grand_total)
+
+    cost_zip_results = zip(costs_results,running_total)
 
     #Load template
     t = loader.get_template('NearBeach/project_information/project_costs.html')
@@ -129,8 +146,9 @@ def information_project_costs(request, project_id):
     # context
     c = {
         'information_project_cost_form': information_project_cost_form(),
-        'costs_results': costs_results,
+        'cost_zip_results':cost_zip_results,
         'project_permissions': permission_results['project'],
+        'grand_total': grand_total,
     }
 
     return HttpResponse(t.render(c, request))
