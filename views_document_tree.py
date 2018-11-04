@@ -159,7 +159,7 @@ def document_tree_upload(request, location_id, project_or_task):
 
         #Data objects required
         filename = str(file)
-        file_size = file._size
+        file_size = file.size
         print("File name: " + filename + "\nFile Size: " + str(file_size))
 
         """

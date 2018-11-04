@@ -10,6 +10,7 @@ from django.urls import re_path
 #Password reset
 from django.contrib.auth import views as auth_views
 
+
 from . import views, \
 	views_lookup, \
 	views_quotes, \
@@ -27,8 +28,7 @@ re_path(r'^$', views.index, name='index'),
 re_path(r'^add_campus_to_customer/(?P<customer_id>[0-9]+)/(?P<campus_id>[0-9]+)/', views.add_campus_to_customer,name='add_campus_to_customer'),
 re_path(r'^alerts/',views.alerts,name='alerts'),
 re_path(r'^assign_customer_project_task/(?P<customer_id>[0-9]+)/', views.assign_customer_project_task,name='assign_customer_project_task'),
-re_path(r'^assigned_group_add/(?P<location_id>[0-9]+)/(?P<destination>["project","task","organisation"]+)/(?P<group_id>[0-9]+)', views.assigned_group_add , name='assigned_group_add'),
-re_path(r'^assigned_group_add/(?P<location_id>[0-9]+)/(?P<destination>["project","task","organisation"]+)/$', views.assigned_group_add , name='assigned_group_add'),
+re_path(r'^assigned_group_add/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board"]+)/$', views.assigned_group_add , name='assigned_group_add'),
 re_path(r'^assigned_group_delete/(?P<location_id>[0-9]+)/(?P<destination>["project","task","organisation"]+)/', views.assigned_group_delete , name='assigned_group_delete'),
 re_path(r'^assigned_group_list/(?P<location_id>[0-9]+)/(?P<destination>["project","task","organisation"]+)/', views.assigned_group_list , name='assigned_group_list'),
 re_path(r'^assigned_user_add/(?P<location_id>[0-9]+)/(?P<destination>["project","task","organisation","requirement"]+)/$',views.assigned_user_add,name='assigned_user_add'),

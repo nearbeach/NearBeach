@@ -224,49 +224,65 @@ def assign_customer_project_task(request, customer_id):
 
 
 @login_required(login_url='login')
-def assigned_group_add(request, location_id, destination, group_id=None):
+def assigned_group_add(request, location_id, destination):
     if request.method == "POST":
-        if destination == "project":
-            project_groups_submit = project_group(
-                project_id=project.objects.get(project_id=location_id),
-                group_id=group.objects.get(group_id=group_id),
-                change_user=request.user,
-            )
-            project_groups_submit.save()
-        elif destination == "task":
-            task_groups_submit = task_group(
-                task_id=task.objects.get(task_id=location_id),
-                group_id=group.objects.get(group_id=group_id),
-                change_user=request.user,
-            )
-            task_groups_submit.save()
-
-
-    if destination == "project":
-        groups_add_results = group.objects.filter(
-            is_deleted="FALSE"
-        ).exclude(
-            group_id__in = project_group.objects.filter(
-                is_deleted="FALSE",
-                project_id=location_id,
-            ).values('group_id')
+        form = assign_group_add_form(
+            request.POST,
+            location_id=location_id,
+            destination=destination,
         )
-    elif destination == "task":
-        groups_add_results = group.objects.filter(
-            is_deleted="FALSE",
-        ).exclude(
-            group_id__in=task_group.objects.filter(
-                is_deleted="FALSE",
-                task_id=location_id,
-            ).values('group_id')
-        )
+        if form.is_valid():
+            if destination == "project":
+                project_groups_submit = project_group(
+                    project_id=project.objects.get(project_id=location_id),
+                    group_id=form.cleaned_data['add_group'],
+                    change_user=request.user,
+                )
+                project_groups_submit.save()
+            elif destination == "task":
+                task_groups_submit = task_group(
+                    task_id=task.objects.get(task_id=location_id),
+                    group_id=form.cleaned_data['add_group'],
+                    change_user=request.user,
+                )
+                task_groups_submit.save()
+            elif destination == "requirement":
+                requirement_group_submit = requirement_group(
+                    requirement_id=requirement.objects.get(requirement_id=location_id),
+                    group_id = form.cleaned_data['add_group'],
+                    change_user = request.user,
+                )
+                requirement_group_submit.save()
+            elif destination == "quote":
+                quote_group_submit = quote_group(
+                    quote_id=quote.objects.get(quote_id=location_id),
+                    group_id=form.cleaned_data['add_group'],
+                    change_user=request.user,
+                )
+                quote.save()
+            elif destination == "kanban_board":
+                kanban_board_submit = kanban_board_group(
+                    kanban_board_id=kanban_board.objects.get(kanban_board_id=location_id),
+                    group_id=form.cleaned_data['add_group'],
+                    change_user=request.user,
+                )
+                kanban_board.save()
+
+        else:
+            print(form.errors)
+        print("NOW WILL DO IT THROUGH THE FORM :)")
+        """
+            """
 
     # Load the template
     t = loader.get_template('NearBeach/assigned_groups/assigned_groups_add.html')
 
     # context
     c = {
-        'groups_add_results': groups_add_results,
+        'assign_group_add_form': assign_group_add_form(
+            location_id=location_id,
+            destination=destination,
+        )
     }
 
     return HttpResponse(t.render(c, request))

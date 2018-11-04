@@ -837,6 +837,33 @@ class kanban_board(models.Model):
         return str(self.kanban_board_name)
 
 
+
+class kanban_board_group(models.Model):
+    kanban_board_id = models.ForeignKey(
+        'kanban_board',
+        on_delete=models.CASCADE,
+    )
+    group_id = models.ForeignKey(
+        'group',
+        on_delete=models.CASCADE,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    class Meta:
+        db_table = "kanban_board_group"
+
+
 class kanban_card(models.Model):
     kanban_card_id = models.AutoField(primary_key=True)
     kanban_card_text = models.CharField(max_length=255)
@@ -958,6 +985,8 @@ class kanban_comment(models.Model):
 
     def __str__(self):
         return str(self.kanban_comment)
+
+
 
 
 class kanban_level(models.Model):
@@ -2190,6 +2219,32 @@ class quote(models.Model):
         db_table = "quote"
 
 
+class quote_group(models.Model):
+    quote_id = models.ForeignKey(
+        'quote',
+        on_delete=models.CASCADE,
+    )
+    group_id = models.ForeignKey(
+        'group',
+        on_delete=models.CASCADE,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    class Meta:
+        db_table = "quote_group"
+
+
 class quote_permission(models.Model):
     quote_permission_id = models.AutoField(primary_key=True)
     quote = models.ForeignKey(
@@ -2477,6 +2532,32 @@ class requirement(models.Model):
 
     class Meta:
         db_table = "requirement"
+
+
+class requirement_group(models.Model):
+    requirement_id = models.ForeignKey(
+        'requirement',
+        on_delete=models.CASCADE,
+    )
+    group_id = models.ForeignKey(
+        'group',
+        on_delete=models.CASCADE,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    class Meta:
+        db_table = "requirement_group"
 
 
 class requirement_item(models.Model):

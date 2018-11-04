@@ -335,7 +335,7 @@
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: '/assigned_group_add/{{ project_id }}/project/' + $("#id_add_group").val() + '/',
+            url: '/assigned_group_add/{{ project_id }}/project/',
             data: $(this).serialize(),
             success: function() {
                 load_project_group_add();
@@ -661,7 +661,7 @@
                 $('#project_assigned_groups').html(data);
             },
             error: function() {
-                $('#project_assigned_groups').html('<h2>Project History</h2>Sorry, project history encounted an error and did not load.');
+                $('#project_assigned_groups').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
             }
         });
     };
@@ -724,7 +724,8 @@
             dataType: 'HTML',
             type: 'GET',
             success: function(data) {
-                load_project_group_list()
+                load_project_group_list();
+                load_project_group_add();
             },
             error: function() {
                 alert("Sorry, there was an issue deleting the Assigned Group")
