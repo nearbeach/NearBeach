@@ -270,9 +270,6 @@ def assigned_group_add(request, location_id, destination):
 
         else:
             print(form.errors)
-        print("NOW WILL DO IT THROUGH THE FORM :)")
-        """
-            """
 
     # Load the template
     t = loader.get_template('NearBeach/assigned_groups/assigned_groups_add.html')
@@ -327,6 +324,23 @@ def assigned_group_list(request, location_id, destination):
             is_deleted="FALSE",
             task_id=location_id,
         )
+    elif destination == "requirement":
+        group_list_results = requirement_group.objects.filter(
+            is_deleted="FALSE",
+            requirement_id=location_id,
+        )
+    elif destination == "quote":
+        group_list_results = quote_group.objects.filter(
+            is_deleted="FALSE",
+            quote_id=location_id,
+        )
+    elif destination == "kanban_board":
+        group_list_results = kanban_board_group.objects.filter(
+            is_deleted="FALSE",
+            kanban_board_id=location_id,
+        )
+    else:
+        group_list_results = ''
 
     # Load the template
     t = loader.get_template('NearBeach/assigned_groups/assigned_groups_list.html')
@@ -342,18 +356,42 @@ def assigned_group_list(request, location_id, destination):
 
 @login_required(login_url='login')
 def assigned_user_add(request, location_id, destination):
-    """
-    Assigned user add is a POST function where it will ADD a user to a project/task/opportunity/requirement.
-    :param request:
-    :param location_id:
-    :param destination:
-    :return:
-    """
+
     # Load the template
-    t = loader.get_template('NearBeach/blank.html')
+    t = loader.get_template('NearBeach/assigned_users/assigned_user_add.html')
 
     # context
     c = {
+        'assign_user_add_form': assign_user_add_form(
+            location_id=location_id,
+            destination=destination,
+        )
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def assigned_user_list(request, location_id, destination):
+    # Get SQL
+    if destination == 'project':
+        assigned_user_results = ''
+    elif destination == 'task':
+        assigned_user_results = ''
+    elif destination == 'requirement':
+        assigned_user_results = ''
+    elif destination == 'quote':
+        assigned_user_results = ''
+    else:
+        assigned_user_results = ''
+
+    # Load the template
+    t = loader.get_template('NearBeach/assigned_users/assigned_user_list.html')
+
+    # context
+    c = {
+        'assigned_user_results': assigned_user_results,
     }
 
     return HttpResponse(t.render(c, request))
