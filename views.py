@@ -127,8 +127,16 @@ def alerts(request):
 
 @login_required(login_url='login')
 def assign_customer_project_task(request, customer_id):
-    # Get username_id from User
-    current_user = request.user
+    user_group_results = user_group.objects.filter(
+        is_deleted="FALSE",
+        username=request.user.id,
+    ).values('group_id')
+
+    permission_results = return_user_permission_level(request, user_group_results, ['task','project'])
+
+    if permission_results['task'] <= 1 or permission_results['project'] <= 1:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse(permission_denied))
 
     if request.POST:
 
@@ -175,42 +183,29 @@ def assign_customer_project_task(request, customer_id):
     # Get Data
     customer_results = customer.objects.get(customer_id=customer_id)
 
-    # Setup connection to the database and query it
-    cursor = connection.cursor()
+    project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_status__in=('New','Open'),
+        project_id__in=project_group.objects.filter(
+            is_deleted="FALSE",
+            group_id__in=user_group.objects.filter(
+                is_deleted="FALSE",
+                username_id = request.user.id,
+            ).values('group_id')
+        ).values('project_id')
+    )
 
-    cursor.execute("""
-		SELECT DISTINCT
-		  project.*
-		FROM
-		  user_group
-		, project_group
-		, project
-		WHERE 1=1
-		-- USER_GROUPS CONDITIONS
-		AND user_group.username_id = %s -- INSERT FILTER HERE!
-		-- JOINS --
-		AND user_group.group_id = project_group.group_id_id
-		AND project_group.project_id_id = project.project_id
-		-- END JOINS --	
-	""", [current_user.id])
-    project_results = namedtuplefetchall(cursor)
-
-    cursor.execute("""
-		SELECT DISTINCT
-		task.*
-		FROM
-		user_group
-		, task_group
-		, task
-		WHERE 1=1
-		-- USER_GROUPS CONDITIONS
-		AND user_group.username_id = %s
-		-- JOINS --
-		AND user_group.group_id = task_group.group_id_id
-		AND task_group.task_id_id=task.task_id
-		-- END JOINS --
-	""", [current_user.id])
-    task_results = namedtuplefetchall(cursor)
+    task_results = task.objects.filter(
+        is_deleted="FALSE",
+        task_status__in=('New', 'Open'),
+        task_id__in=task_group.objects.filter(
+            is_deleted="FALSE",
+            group_id__in=user_group.objects.filter(
+                is_deleted="FALSE",
+                username_id= request.user.id,
+            ).values('group_id')
+        ).values('task_id')
+    )
 
     # Load the template
     t = loader.get_template('NearBeach/assign_customer_project_task.html')
@@ -220,6 +215,8 @@ def assign_customer_project_task(request, customer_id):
         'project_results': project_results,
         'task_results': task_results,
         'customer_results': customer_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
