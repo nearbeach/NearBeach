@@ -356,6 +356,13 @@ def assigned_group_list(request, location_id, destination):
 
 @login_required(login_url='login')
 def assigned_user_add(request, location_id, destination):
+    """
+    We want the ability for the User to grant permission to anyone. For example, if a group owns this requirement,
+    however we need someone from a different group, i.e. IT, then we can assign them to this requirement as a
+    permission and they should be able to access it.
+    """
+    if request.method == "POST":
+        print("We will apply post code soon")
 
     # Load the template
     t = loader.get_template('NearBeach/assigned_users/assigned_user_add.html')
@@ -371,18 +378,48 @@ def assigned_user_add(request, location_id, destination):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
+def assigned_user_delete(request, location_id, destination):
+    #TEMP CODE
+    t = loader.get_template('NearBeach/blank.html')
+
+    # context
+    c = {
+
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
 
 @login_required(login_url='login')
 def assigned_user_list(request, location_id, destination):
     # Get SQL
     if destination == 'project':
-        assigned_user_results = ''
+        assigned_user_results = assigned_user.objects.filter(
+            is_deleted="FALSE",
+            project_id=location_id,
+        )
     elif destination == 'task':
-        assigned_user_results = ''
+        assigned_user_results = assigned_user.objects.filter(
+            is_deleted="FALSE",
+            task_id=location_id,
+        )
     elif destination == 'requirement':
-        assigned_user_results = ''
+        assigned_user_results = assigned_user.objects.filter(
+            is_deleted="FALSE",
+            requirement_id=location_id,
+        )
     elif destination == 'quote':
-        assigned_user_results = ''
+        assigned_user_results = assigned_user.objects.filter(
+            is_deleted="FALSE",
+            quote_id=location_id,
+        )
+    elif destination == 'opportunity':
+        assigned_user_results = assigned_user.objects.filter(
+            is_deleted="FALSE",
+            opportunity_id=location_id,
+        )
     else:
         assigned_user_results = ''
 

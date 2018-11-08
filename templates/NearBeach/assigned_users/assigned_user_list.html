@@ -1,0 +1,26 @@
+{% if assigned_user_results %}
+    <table>
+        <tr class="header">
+            <td>Username</td>
+            <td>First Name</td>
+            <td>Last name</td>
+            {% if project_permissions > 3 %}
+                <td>Remove User</td>
+            {% endif %}
+        </tr>
+        {% if assigned_user_results %}
+            {% for row in assigned_user_results %}
+                <tr>
+                    <td>{{ row.user_id__username }}</td>
+                    <td>{{ row.user_id__first_name }}</td>
+                    <td>{{ row.user_id__last_name }}</td>
+                    {% if project_permissions > 3 %}
+                        <td><a href="javascript:void(0)" onclick="remove_user({{ row.user_id }})">Remove User</a></td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </table>
+{% else %}
+    <p>There are currently no staff members assigned to this project</p>
+{% endif %}

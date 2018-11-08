@@ -325,10 +325,6 @@ class assign_user_add_form(forms.Form):
                     ).values('group_id')
                 ).values('username')
             )
-
-        print("FINAL OUTPUT")
-        print(user_results)
-
         self.fields['add_user'].queryset = user_results
 
 

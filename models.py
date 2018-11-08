@@ -124,6 +124,24 @@ class assigned_user(models.Model):
         blank=True,
         null=True,
     )
+    requirement_id = models.ForeignKey(
+        'requirement',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    quote_id = models.ForeignKey(
+        'quote',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    kanban_board_id = models.ForeignKey(
+        'kanban_board',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
