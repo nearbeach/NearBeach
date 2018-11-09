@@ -28,7 +28,7 @@
             </tr>
             {% for row in task_results %}
                 <tr style="background-color: lightcoral">
-                    <td><a href="{% url 'task_information' row.tasks_id %}">TASK{{ row.tasks_id }}</a></td>
+                    <td><a href="{% url 'task_information' row.task_id %}">TASK{{ row.task_id }}</a></td>
                     <td>{{ row.task_short_description }}</td>
                     <td>{{ row.task_end_date }}</td>
                 </tr>

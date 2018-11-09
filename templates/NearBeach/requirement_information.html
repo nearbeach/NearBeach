@@ -1,9 +1,13 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
+<body onload="on_page_load()">
     <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
     <script type="text/javascript" src="{% static 'NearBeach/javascript/bug.js' %}"></script>
-<body onload="on_page_load()">
+        <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/vendor/jquery.ui.widget.js' %}"></script>
+        <script src="{% static '/NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.iframe-transport.js' %}"></script>
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/jQuery-File-Upload-9.19.2/js/jquery.fileupload.js' %}"></script>
+
     <h2>Requirement Information - {{ requirement_id }}</h2>
     <form id="requirement_information" name="requirement_information" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
@@ -72,6 +76,7 @@
             <h2>Assigned Users</h2>
             Loading...
         </form>
+        <div id="assigned_user_list">Loading list...</div>
 
         <h2>Assigned Groups</h2>
         <form method="post" class="requirement_assigned_groups" id="requirement_assigned_groups">
@@ -143,11 +148,11 @@
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: '/information_project_assign_users/{{ requirement_id }}/',
+            url: '/assigned_user_add/{{ requirement_id }}/requirement/',
             data: $(this).serialize(),
             success: function() {
-                //Reload the project history :)
-                load_project_assigned_users();
+                load_assigned_user_list();
+                load_assigned_user_add();
             },
             error: function() {
                 alert("Sorry, project assigned users did not save. Please try again.");
@@ -160,11 +165,11 @@
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: '/assigned_group_add/{{ requirement_id }}/requirement/' + $("#id_add_group").val() + '/',
+            url: '/assigned_group_add/{{ requirement_id }}/requirement/',
             data: $(this).serialize(),
             success: function() {
-                load_project_group_add();
-                load_project_group_list();
+                load_assigned_group_list();
+                load_requirement_group_add();
             },
             error: function() {
                 alert("Sorry, project assigned users did not save. Please try again.");
@@ -206,6 +211,7 @@
     }
 
 
+
         function load_requirement_documents() {
             //Get the requirement documents
             $.ajax({
@@ -238,6 +244,67 @@
             })
         }
 
+        function load_requirement_group_add() {
+            $.ajax({
+                url: '/assigned_group_add/{{ requirement_id }}/requirement/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $('#requirement_assigned_groups').html(data);
+                },
+                error: function() {
+                    $('#requirement_assigned_groups').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
+                }
+            });
+        };
+
+
+        function load_assigned_group_list() {
+            $.ajax({
+                url: '/assigned_group_list/{{ requirement_id }}/requirement/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $('#assigned_group_list').html(data);
+                },
+                error: function() {
+                    $('#assigned_group_list').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
+                }
+            });
+        };
+
+        function load_assigned_user_add() {
+            $.ajax({
+                url: '/assigned_user_add/{{ requirement_id }}/requirement/',
+                data:  {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $("#requirement_assigned_users").html(data);
+                },
+                error: function() {
+                    $("#requirement_assigned_users").html("<h2>Assigned Users</h2>Sorry, users encounted an error and did not load");
+                }
+            })
+        };
+
+        function load_assigned_user_list() {
+            $.ajax({
+                url: '/assigned_user_list/{{ requirement_id }}/requirement/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $("#assigned_user_list").html(data);
+                },
+                error: function(data) {
+                    $("#assigned_user_list").html("<p>User list failed to load</p>")
+                }
+            })
+        }
+
 
         function load_requirement_items_list() {
             //New Requirement Item
@@ -255,6 +322,9 @@
             })
 
         }
+
+
+
 
 
 
@@ -420,11 +490,16 @@
 
         function on_page_load() {
             //Load all ajax modules
+            load_assigned_group_list();
+            load_requirement_group_add();
+            load_assigned_user_list();
+            load_assigned_user_add();
             load_requirement_items_list();
             requirement_links_list();
             load_requirement_documents();
             load_bug_search();
             load_bug_list();
+
 
             set_permissions({{ permission }})
         }

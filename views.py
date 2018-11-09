@@ -127,8 +127,16 @@ def alerts(request):
 
 @login_required(login_url='login')
 def assign_customer_project_task(request, customer_id):
-    # Get username_id from User
-    current_user = request.user
+    user_group_results = user_group.objects.filter(
+        is_deleted="FALSE",
+        username=request.user.id,
+    ).values('group_id')
+
+    permission_results = return_user_permission_level(request, user_group_results, ['task','project'])
+
+    if permission_results['task'] <= 1 or permission_results['project'] <= 1:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse(permission_denied))
 
     if request.POST:
 
@@ -175,42 +183,29 @@ def assign_customer_project_task(request, customer_id):
     # Get Data
     customer_results = customer.objects.get(customer_id=customer_id)
 
-    # Setup connection to the database and query it
-    cursor = connection.cursor()
+    project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_status__in=('New','Open'),
+        project_id__in=project_group.objects.filter(
+            is_deleted="FALSE",
+            group_id__in=user_group.objects.filter(
+                is_deleted="FALSE",
+                username_id = request.user.id,
+            ).values('group_id')
+        ).values('project_id')
+    )
 
-    cursor.execute("""
-		SELECT DISTINCT
-		  project.*
-		FROM
-		  user_group
-		, project_group
-		, project
-		WHERE 1=1
-		-- USER_GROUPS CONDITIONS
-		AND user_group.username_id = %s -- INSERT FILTER HERE!
-		-- JOINS --
-		AND user_group.group_id = project_group.group_id_id
-		AND project_group.project_id_id = project.project_id
-		-- END JOINS --	
-	""", [current_user.id])
-    project_results = namedtuplefetchall(cursor)
-
-    cursor.execute("""
-		SELECT DISTINCT
-		task.*
-		FROM
-		user_group
-		, task_group
-		, task
-		WHERE 1=1
-		-- USER_GROUPS CONDITIONS
-		AND user_group.username_id = %s
-		-- JOINS --
-		AND user_group.group_id = task_group.group_id_id
-		AND task_group.task_id_id=task.task_id
-		-- END JOINS --
-	""", [current_user.id])
-    task_results = namedtuplefetchall(cursor)
+    task_results = task.objects.filter(
+        is_deleted="FALSE",
+        task_status__in=('New', 'Open'),
+        task_id__in=task_group.objects.filter(
+            is_deleted="FALSE",
+            group_id__in=user_group.objects.filter(
+                is_deleted="FALSE",
+                username_id= request.user.id,
+            ).values('group_id')
+        ).values('task_id')
+    )
 
     # Load the template
     t = loader.get_template('NearBeach/assign_customer_project_task.html')
@@ -220,6 +215,8 @@ def assign_customer_project_task(request, customer_id):
         'project_results': project_results,
         'task_results': task_results,
         'customer_results': customer_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -227,49 +224,62 @@ def assign_customer_project_task(request, customer_id):
 
 
 @login_required(login_url='login')
-def assigned_group_add(request, location_id, destination, group_id=None):
+def assigned_group_add(request, location_id, destination):
     if request.method == "POST":
-        if destination == "project":
-            project_groups_submit = project_group(
-                project_id=project.objects.get(project_id=location_id),
-                group_id=group.objects.get(group_id=group_id),
-                change_user=request.user,
-            )
-            project_groups_submit.save()
-        elif destination == "task":
-            task_groups_submit = task_group(
-                task_id=task.objects.get(task_id=location_id),
-                group_id=group.objects.get(group_id=group_id),
-                change_user=request.user,
-            )
-            task_groups_submit.save()
-
-
-    if destination == "project":
-        groups_add_results = group.objects.filter(
-            is_deleted="FALSE"
-        ).exclude(
-            group_id__in = project_group.objects.filter(
-                is_deleted="FALSE",
-                project_id=location_id,
-            ).values('group_id')
+        form = assign_group_add_form(
+            request.POST,
+            location_id=location_id,
+            destination=destination,
         )
-    elif destination == "task":
-        groups_add_results = group.objects.filter(
-            is_deleted="FALSE",
-        ).exclude(
-            group_id__in=task_group.objects.filter(
-                is_deleted="FALSE",
-                task_id=location_id,
-            ).values('group_id')
-        )
+        if form.is_valid():
+            if destination == "project":
+                project_groups_submit = project_group(
+                    project_id=project.objects.get(project_id=location_id),
+                    group_id=form.cleaned_data['add_group'],
+                    change_user=request.user,
+                )
+                project_groups_submit.save()
+            elif destination == "task":
+                task_groups_submit = task_group(
+                    task_id=task.objects.get(task_id=location_id),
+                    group_id=form.cleaned_data['add_group'],
+                    change_user=request.user,
+                )
+                task_groups_submit.save()
+            elif destination == "requirement":
+                requirement_group_submit = requirement_group(
+                    requirement_id=requirement.objects.get(requirement_id=location_id),
+                    group_id = form.cleaned_data['add_group'],
+                    change_user = request.user,
+                )
+                requirement_group_submit.save()
+            elif destination == "quote":
+                quote_group_submit = quote_group(
+                    quote_id=quote.objects.get(quote_id=location_id),
+                    group_id=form.cleaned_data['add_group'],
+                    change_user=request.user,
+                )
+                quote.save()
+            elif destination == "kanban_board":
+                kanban_board_submit = kanban_board_group(
+                    kanban_board_id=kanban_board.objects.get(kanban_board_id=location_id),
+                    group_id=form.cleaned_data['add_group'],
+                    change_user=request.user,
+                )
+                kanban_board.save()
+
+        else:
+            print(form.errors)
 
     # Load the template
     t = loader.get_template('NearBeach/assigned_groups/assigned_groups_add.html')
 
     # context
     c = {
-        'groups_add_results': groups_add_results,
+        'assign_group_add_form': assign_group_add_form(
+            location_id=location_id,
+            destination=destination,
+        )
     }
 
     return HttpResponse(t.render(c, request))
@@ -314,6 +324,23 @@ def assigned_group_list(request, location_id, destination):
             is_deleted="FALSE",
             task_id=location_id,
         )
+    elif destination == "requirement":
+        group_list_results = requirement_group.objects.filter(
+            is_deleted="FALSE",
+            requirement_id=location_id,
+        )
+    elif destination == "quote":
+        group_list_results = quote_group.objects.filter(
+            is_deleted="FALSE",
+            quote_id=location_id,
+        )
+    elif destination == "kanban_board":
+        group_list_results = kanban_board_group.objects.filter(
+            is_deleted="FALSE",
+            kanban_board_id=location_id,
+        )
+    else:
+        group_list_results = ''
 
     # Load the template
     t = loader.get_template('NearBeach/assigned_groups/assigned_groups_list.html')
@@ -330,17 +357,78 @@ def assigned_group_list(request, location_id, destination):
 @login_required(login_url='login')
 def assigned_user_add(request, location_id, destination):
     """
-    Assigned user add is a POST function where it will ADD a user to a project/task/opportunity/requirement.
-    :param request:
-    :param location_id:
-    :param destination:
-    :return:
+    We want the ability for the User to grant permission to anyone. For example, if a group owns this requirement,
+    however we need someone from a different group, i.e. IT, then we can assign them to this requirement as a
+    permission and they should be able to access it.
     """
+    if request.method == "POST":
+        print("We will apply post code soon")
+
     # Load the template
+    t = loader.get_template('NearBeach/assigned_users/assigned_user_add.html')
+
+    # context
+    c = {
+        'assign_user_add_form': assign_user_add_form(
+            location_id=location_id,
+            destination=destination,
+        )
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def assigned_user_delete(request, location_id, destination):
+    #TEMP CODE
     t = loader.get_template('NearBeach/blank.html')
 
     # context
     c = {
+
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def assigned_user_list(request, location_id, destination):
+    # Get SQL
+    if destination == 'project':
+        assigned_user_results = assigned_user.objects.filter(
+            is_deleted="FALSE",
+            project_id=location_id,
+        )
+    elif destination == 'task':
+        assigned_user_results = assigned_user.objects.filter(
+            is_deleted="FALSE",
+            task_id=location_id,
+        )
+    elif destination == 'requirement':
+        assigned_user_results = assigned_user.objects.filter(
+            is_deleted="FALSE",
+            requirement_id=location_id,
+        )
+    elif destination == 'quote':
+        assigned_user_results = assigned_user.objects.filter(
+            is_deleted="FALSE",
+            quote_id=location_id,
+        )
+    elif destination == 'opportunity':
+        assigned_user_results = assigned_user.objects.filter(
+            is_deleted="FALSE",
+            opportunity_id=location_id,
+        )
+    else:
+        assigned_user_results = ''
+
+    # Load the template
+    t = loader.get_template('NearBeach/assigned_users/assigned_user_list.html')
+
+    # context
+    c = {
+        'assigned_user_results': assigned_user_results,
     }
 
     return HttpResponse(t.render(c, request))

@@ -29,7 +29,7 @@
     <tr class="header"><td>Task ID</td><td>Task Description</td><td>Organisation</td><td>Task Status</td><td>Task End Date</td></tr>
     {% for row in task_results %}
         <tr>
-        <td><a href="{% url 'task_information' row.tasks_id %}">TASK{{ row.tasks_id }}</a></td>
+        <td><a href="{% url 'task_information' row.task_id %}">TASK{{ row.task_id }}</a></td>
         <td>{{ row.task_short_description }}</td>
         <td>{{ row.organisation_id.organisation_name }}</td>
         <Td>{{ row.task_status }}</Td>
