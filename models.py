@@ -1488,6 +1488,89 @@ class list_of_title(models.Model):
         db_table = "list_of_title"
 
 
+class object_permission(models.Model):
+    """
+    Object permissions is the centralised permissions for all objects
+    - Opportunity
+    - Quote
+    - Requirement
+    - Project
+    - Task
+    - Kanban board
+
+    These permission are only "ACCESS" permissions. The user/group's over riding permissions determine if the user
+    can add, edit etc.
+    """
+    object_permission_id=models.AutoField(primary_key=True)
+    assigned_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_assigned_user',
+        null=True,
+        blank=True,
+    )
+    group_id=models.ForeignKey(
+        'group',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    opportunity_id=models.ForeignKey(
+        'opportunity',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    quote_id = models.ForeignKey(
+        'quote',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    requirement_id = models.ForeignKey(
+        'requirement',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    project_id = models.ForeignKey(
+        'project',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    task_id = models.ForeignKey(
+        'task',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    kanban_baord_id = models.ForeignKey(
+        'kanban_board',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    class Meta:
+        db_table = "object_permission"
+
+
+
 class opportunity(models.Model):
     opportunity_id = models.AutoField(primary_key=True)
     opportunity_name = models.CharField(max_length=255)
@@ -1545,7 +1628,7 @@ class opportunity(models.Model):
     class Meta:
         db_table = "opportunities"
 
-
+"""
 class opportunity_permission(models.Model):
     opportunity_permission_id = models.AutoField(primary_key=True)
     opportunity_id = models.ForeignKey(
@@ -1587,7 +1670,7 @@ class opportunity_permission(models.Model):
 
     class Meta:
         db_table = "opportunity_permission"
-
+"""
 
 class organisation(models.Model):
     organisation_id = models.AutoField(primary_key=True)
@@ -1996,6 +2079,7 @@ class project_customer(models.Model):
         db_table = "project_customer"
 
 
+"""
 class project_group(models.Model):
     project_id = models.ForeignKey(
         'project',
@@ -2020,6 +2104,7 @@ class project_group(models.Model):
 
     class Meta:
         db_table = "project_group"
+"""
 
 
 class project_history(models.Model):
@@ -2263,6 +2348,8 @@ class quote_group(models.Model):
         db_table = "quote_group"
 
 
+
+"""
 class quote_permission(models.Model):
     quote_permission_id = models.AutoField(primary_key=True)
     quote = models.ForeignKey(
@@ -2304,6 +2391,7 @@ class quote_permission(models.Model):
 
     class Meta:
         db_table = "quote_permission"
+"""
 
 
 class quote_product_and_service(models.Model):
@@ -2698,7 +2786,7 @@ class requirement_link(models.Model):
     class Meta:
         db_table = "requirement_link"
 
-
+"""
 class requirement_permission(models.Model):
     requirement_permission_id = models.AutoField(primary_key=True)
     requirement = models.ForeignKey(
@@ -2740,6 +2828,7 @@ class requirement_permission(models.Model):
 
     class Meta:
         db_table = "requirement_permission"
+"""
 
 
 class stage(models.Model):

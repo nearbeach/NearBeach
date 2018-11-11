@@ -27,8 +27,7 @@ def new_requirement(request):
             requirement_title = form.cleaned_data['requirement_title']
             requirement_scope = form.cleaned_data['requirement_scope']
             requirement_type = form.cleaned_data['requirement_type']
-            select_groups = form.cleaned_data['select_groups']
-            select_users = form.cleaned_data['select_users']
+            requirement_permission = form.cleaned_data['requirement_permission']
 
 
             requirement_save = requirement(
@@ -43,40 +42,13 @@ def new_requirement(request):
             """
             Permissions granting
             """
-            give_all_access = True
-
-            if (select_groups):
-                give_all_access = False
-
-                for row in select_groups:
-                    group_instance = group.objects.get(group_name=row)
-                    permission_save = requirement_permission(
-                        requirement_id=requirement_save.requirement_id,
-                        group_id=group_instance,
-                        change_user=request.user,
-                    )
-                    permission_save.save()
-
-            if (select_users):
-                give_all_access = False
-
-                for row in select_users:
-                    assigned_user_instance = auth.models.User.objects.get(username=row)
-                    permission_save = requirement_permission(
-                        requirement_id=requirement_save.requirement_id,
-                        assigned_user=assigned_user_instance,
-                        change_user=request.user,
-                    )
-                    permission_save.save()
-
-            if (give_all_access):
-                permission_save = requirement_permission(
-                    requirement_id=requirement_save.requirement_id,
-                    all_user='TRUE',
+            for row in requirement_permission:
+                submit_permission = object_permission(
+                    requirement_id=requirement_save,
+                    group_id=row,
                     change_user=request.user,
                 )
-                permission_save.save()
-
+                submit_permission.save()
 
             return HttpResponseRedirect(reverse(requirement_information, args={requirement_save.requirement_id}))
         else:
@@ -206,13 +178,12 @@ def requirement_information(request, requirement_id):
         """
         user_groups_results = user_group.objects.filter(username=request.user)
 
-        requirement_permission_results = requirement_permission.objects.filter(
+        requirement_permission_results = object_permission.objects.filter(
             Q(
                 Q(assigned_user=request.user) # User has permission
                 | Q(group_id__in=user_groups_results.values('group_id')) # User's group have permission
-                | Q(all_user='TRUE') # All users have access
             )
-            & Q(requirement=requirement_id)
+            & Q(requirement_id=requirement_id)
         )
 
         if (not requirement_permission_results):

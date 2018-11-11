@@ -2,10 +2,10 @@
 {% block content %}
 {% load static %}
 <script type="text/javascript" src="{% static 'NearBeach/javsascript/check_dates.js' %}"></script>
-<link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
-<link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
-<script type="text/javascript" src="{% static 'NearBeach/javascript/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
-<link rel="stylesheet" href="{% static 'NearBeach/javascript/datetimepicker/jquery.datetimepicker.min.css' %}">
+<link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
+<link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
+<script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
 
 <body onload="on_page_load();">
     {% if destination %}
@@ -24,13 +24,13 @@
             <tr><td>Task Start: {{ new_task_form.task_start_date }}</td></tr>
             <tr><td>Task Finish: {{ new_task_form.task_end_date }}</td></tr>
         </table>
-            <h2>Assigned to Group(s)</h2>
+            <h2>Task Permissions</h2>
         <table>
-            <tr><td>{{ new_task_form.assigned_groups }}</td></tr>
-            <tr><td>Please note: you will not be able to submit this project without selecting at least one group</td></tr>
-            <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
-            <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
-            <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
+            <tr><td>Please give permissions to one or more groups. Please note: you will not be able to submit this request without selecting at least one group</td></tr>
+            <tr><td>{{ new_task_form.task_permission }}</td></tr>
+            <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
+            <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
+            <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
             <tr><td><input type="submit" value="Submit new Task"><a href={% url 'dashboard' %}>Cancel</a></td></tr>
         </table>
 	</form>

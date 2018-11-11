@@ -29,9 +29,9 @@ re_path(r'^add_campus_to_customer/(?P<customer_id>[0-9]+)/(?P<campus_id>[0-9]+)/
 re_path(r'^alerts/',views.alerts,name='alerts'),
 re_path(r'^assign_customer_project_task/(?P<customer_id>[0-9]+)/', views.assign_customer_project_task,name='assign_customer_project_task'),
 re_path(r'^assigned_group_add/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/$', views.assigned_group_add , name='assigned_group_add'),
-re_path(r'^assigned_group_delete/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/', views.assigned_group_delete , name='assigned_group_delete'),
-re_path(r'^assigned_group_list/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/', views.assigned_group_list , name='assigned_group_list'),
-re_path(r'^assigned_user_add/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/$',views.assigned_user_add,name='assigned_user_add'),
+#re_path(r'^assigned_group_delete/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/', views.assigned_group_delete , name='assigned_group_delete'),
+#re_path(r'^assigned_group_list/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/', views.assigned_group_list , name='assigned_group_list'),
+#re_path(r'^assigned_user_add/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/$',views.assigned_user_add,name='assigned_user_add'),
 re_path(r'^assigned_user_delete/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/', views.assigned_user_delete , name='assigned_user_delete'),
 re_path(r'^assigned_user_list/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/$',views.assigned_user_list,name='assigned_user_list'),
 re_path(r'^associate/(?P<project_id>[0-9]+)/(?P<task_id>[0-9]+)/(?P<project_or_task>[P,T])', views.associate,name='associate'),
@@ -132,11 +132,15 @@ re_path(r'^new_task/(?P<location_id>[0-9]+)/(?P<destination>["organisation","cus
 re_path(r'^new_task/$', views.new_task, name='new_task'),
 re_path(r'^new_user/$', views_administration.new_user, name='new_user'),
 re_path(r'^opportunity_information/(?P<opportunity_id>[0-9]+)/', views.opportunity_information,name='opportunity_information'),
-re_path(r'^opportunity_information/opportunity_delete_permission/(?P<opportunity_permissions_id>[0-9]+)',views.opportunity_delete_permission,name='opportunity_delete_permission'),
-re_path(r'^opportunity_information/opportunity_group_permission/(?P<opportunity_id>[0-9]+)',views.opportunity_group_permission,name='opportunity_group_permission'),
-re_path(r'^opportunity_information/opportunity_user_permission/(?P<opportunity_id>[0-9]+)',views.opportunity_user_permission,name='opportunity_user_permission'),
+#re_path(r'^opportunity_information/opportunity_delete_permission/(?P<opportunity_permissions_id>[0-9]+)',views.opportunity_delete_permission,name='opportunity_delete_permission'),
+#re_path(r'^opportunity_information/opportunity_group_permission/(?P<opportunity_id>[0-9]+)',views.opportunity_group_permission,name='opportunity_group_permission'),
+#re_path(r'^opportunity_information/opportunity_user_permission/(?P<opportunity_id>[0-9]+)',views.opportunity_user_permission,name='opportunity_user_permission'),
 re_path(r'^organisation_information/(?P<organisation_id>[0-9]+)/', views.organisation_information,name='organisation_information'),
 re_path(r'^permission_denied', views.permission_denied, name='permission_denied'),
+#permission_group_list <- both add and list
+#permission_group_delete
+#permission_user_list <- both add and list
+#permission_user_delete
 re_path(r'^permission_set_information_create/', views_administration.permission_set_information_create,name='permission_set_information_create'),
 re_path(r'^permission_set_information_edit/(?P<permission_set_id>[0-9]+)/$', views_administration.permission_set_information_edit,name='permission_set_information_edit'),
 re_path(r'^permission_set_information_list/',views_administration.permission_set_information_list, name='permission_set_information_list'),

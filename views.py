@@ -89,7 +89,7 @@ def alerts(request):
 
     opportunity_results = opportunity.objects.filter(
         is_deleted="FALSE",
-        opportunity_id__in=opportunity_permission.objects.filter(
+        opportunity_id__in=object_permission.objects.filter(
             is_deleted="FALSE",
             assigned_user=request.user,
         ).values('opportunity_id'),
@@ -98,6 +98,7 @@ def alerts(request):
             opportunity_closed="FALSE",
         ).values('opportunity_stage_id'),
     )
+
 
     quote_results = quote.objects.filter(
         is_deleted="FALSE",
@@ -1073,11 +1074,10 @@ def customer_information(request, customer_id):
     """
     user_groups_results = user_group.objects.filter(username=request.user)
 
-    opportunity_permissions_results = opportunity_permission.objects.filter(
+    opportunity_permissions_results = object_permission.objects.filter(
         Q(
             Q(assigned_user=request.user)  # User has permission
             | Q(group_id__in=user_groups_results.values('group_id'))  # User's group have permission
-            | Q(all_user='TRUE')  # All users have access
         )
     )
     opportunity_results = opportunity.objects.filter(
@@ -1312,7 +1312,7 @@ def dashboard_group_active_task(request):
 def dashboard_group_opportunities(request):
     active_group_opportunities = opportunity.objects.filter(
         is_deleted="FALSE",
-        opportunity_id__in=opportunity_permission.objects.filter(
+        opportunity_id__in=object_permission.objects.filter(
             is_deleted="FALSE",
             group_id__in=user_group.objects.filter(
                 is_deleted="FALSE",
@@ -1337,37 +1337,21 @@ def dashboard_opportunities(request):
     # Get username_id from User
     current_user = request.user
 
-    # Setup connection to the database and query it
-    cursor = connection.cursor()
+    active_opportunities = opportunity.objects.filter(
+        is_delete="FALSE",
+        opportunity_stage_id__in=list_of_opportunity_stage.objects.filter(
+            opportunity_closed="FALSE",
+        ),
+        opportunity_id__in=object_permission.objects.filter(
+            Q(
+                Q(assigned_user=request.user) or
+                Q(group_id__in=user_group.objects.filter(
+                    #username=request.user,
+                ))
+            )
 
-    cursor.execute("""
-        SELECT DISTINCT
-        opportunities.opportunity_id
-        , opportunities.opportunity_name
-        , organisation.organisation_id
-        , organisation.organisation_name
-        , customer.customer_id
-        , customer.customer_first_name
-        , customer.customer_last_name
-        , list_of_opportunity_stage.opportunity_stage_description
-        , opportunities.opportunity_expected_close_date
-
-
-        FROM 
-        opportunity_permission LEFT JOIN user_group
-        ON opportunity_permission.assigned_user_id = user_group.username_id
-        , opportunities JOIN organisation
-        ON opportunities.organisation_id_id = organisation.organisation_id
-        LEFT JOIN customer
-        ON opportunities.customer_id_id = customer.customer_id
-        JOIN list_of_opportunity_stage
-        ON opportunities.opportunity_stage_id_id = list_of_opportunity_stage.opportunity_stage_id
-        WHERE 1=1
-        AND opportunity_permission.opportunity_id_id = opportunities.opportunity_id
-        AND list_of_opportunity_stage.opportunity_stage_description NOT LIKE '%%Close%%'
-        AND opportunity_permission.assigned_user_id = %s
-    """, [current_user.id])
-    active_opportunities = namedtuplefetchall(cursor)
+        )
+    )
 
     # Load the template
     t = loader.get_template('NearBeach/dashboard_widgets/opportunities.html')
@@ -3393,7 +3377,6 @@ def new_project(request, location_id='', destination=''):
     if request.method == "POST":
         form = new_project_form(request.POST)
         if form.is_valid():
-            print("Form is valid")
             project_name = form.cleaned_data['project_name']
             project_description = form.cleaned_data['project_description']
             organisation_id_form = form.cleaned_data['organisation_id']
@@ -3415,14 +3398,14 @@ def new_project(request, location_id='', destination=''):
             """
 			Once the new project has been created, we will obtain a 
 			primary key. Using this new primary key we will allocate
-			group to the new project.
+			permissions to the new project.
 			"""
-            assigned_to_groups = form.cleaned_data['assigned_groups']
+            project_permission = form.cleaned_data['project_permission']
 
-            for row in assigned_to_groups:
-                submit_group = project_group(
-                    project_id_id=submit_project.pk,
-                    group_id_id=row.group_id,
+            for row in project_permission:
+                submit_group = object_permission(
+                    project_id=submit_project,
+                    group_id=group.objects.get(group_id=row.group_id),
                     change_user=request.user,
                 )
                 submit_group.save()
@@ -3466,7 +3449,6 @@ def new_project(request, location_id='', destination=''):
 
     # Obtain the group the user is associated with
     current_user = request.user
-    cursor = connection.cursor()
 
     groups_results = group.objects.filter(
         is_deleted="FALSE",
@@ -3783,10 +3765,10 @@ def new_task(request, location_id='', destination=''):
 			primary key. Using this new primary key we will allocate
 			group to the new project.
 			"""
-            assigned_to_groups = form.cleaned_data['assigned_groups']
+            task_permission = form.cleaned_data['task_permission']
 
-            for row in assigned_to_groups:
-                submit_group = task_group(
+            for row in task_permission:
+                submit_group = object_permission(
                     task_id_id=submit_task.pk,
                     group_id_id=row.group_id,
                     change_user=request.user,
@@ -4238,23 +4220,15 @@ def organisation_information(request, organisation_id):
 
     project_results = project.objects.filter(organisation_id=organisation_id)
     task_results = task.objects.filter(organisation_id=organisation_id)
-    #opportunity_results = opportunity.objects.filter(organisation_id=organisation_id)
     """
     We need to limit the amount of opportunities to those that the user has access to.
     """
-    user_groups_results = user_group.objects.filter(username=request.user)
+    #user_groups_results = user_group.objects.filter(username=request.user)
 
-    opportunity_permissions_results = opportunity_permission.objects.filter(
-        Q(
-            Q(assigned_user=request.user)  # User has permission
-            | Q(group_id__in=user_groups_results.values('group_id'))  # User's group have permission
-            | Q(all_user='TRUE')  # All users have access
-        )
-    )
+
     opportunity_results = opportunity.objects.filter(
         is_deleted="FALSE",
         organisation_id=organisation_id,
-        #opportunity_id__in=opportunity_permissions_results.values('opportunity_id') #There a bug with this line
     )
 
 
@@ -4448,9 +4422,9 @@ END TEMP DOCUMENT
 @login_required(login_url='login')
 def project_information(request, project_id):
     #First look at the user's permissions for the project's group.
-    project_groups_results = project_group.objects.filter(
+    project_groups_results = object_permission.objects.filter(
         is_deleted="FALSE",
-        project_id=project.objects.get(project_id=project_id),
+        project_id=project_id,
     ).values('group_id_id')
 
     permission_results = return_user_permission_level(request, project_groups_results,['project','project_history'])

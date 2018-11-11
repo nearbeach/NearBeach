@@ -1544,7 +1544,7 @@ class new_project_form(forms.Form):
     group_results=group.objects.filter(is_deleted='FALSE')
 
     # Fields
-    assigned_groups=forms.ModelMultipleChoiceField(
+    project_permission=forms.ModelMultipleChoiceField(
         widget=forms.SelectMultiple(attrs={
             'placeholder': 'Select Groups to Assign to Project',
             'class': 'chosen-select',
@@ -1712,7 +1712,6 @@ class new_requirement_form(ModelForm):
         requirement_status_is_closed='FALSE',
     )
     groups_results=group.objects.filter(is_deleted="FALSE")
-    user_results=auth.models.User.objects.all()
 
     #Fields
     requirement_title = forms.CharField(
@@ -1737,9 +1736,9 @@ class new_requirement_form(ModelForm):
         queryset=requirement_status_results,
     )
 
-    select_groups = forms.ModelMultipleChoiceField(
+    requirement_permission = forms.ModelMultipleChoiceField(
         queryset=groups_results,
-        required=False,
+        required=True,
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select',
@@ -1748,16 +1747,6 @@ class new_requirement_form(ModelForm):
         }),
     )
 
-    select_users = forms.ModelMultipleChoiceField(
-        queryset=user_results,
-        required=False,
-        widget=forms.SelectMultiple(attrs={
-            'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
-            'multiple tabindex': '4',
-            'style': 'width: 100%',
-        }),
-    )
 
     class Meta:
         model=requirement
@@ -1775,7 +1764,7 @@ class new_task_form(forms.Form):
     group_results = group.objects.filter(is_deleted='FALSE')
 
     # Fields
-    assigned_groups=forms.ModelMultipleChoiceField(
+    task_permission=forms.ModelMultipleChoiceField(
         widget=forms.SelectMultiple(attrs={
             'placeholder': 'Select Groups to Assign to Project',
             'class': 'chosen-select',
