@@ -1265,7 +1265,7 @@ def dashboard_active_task(request):
 def dashboard_group_active_projects(request):
     active_projects_results = project.objects.filter(
         is_deleted="FALSE",
-        project_id__in=project_group.objects.filter(
+        project_id__in=object_permission.objects.filter(
             is_deleted="FALSE",
             group_id__in=user_group.objects.filter(
                 is_deleted="FALSE",
@@ -1335,18 +1335,21 @@ def dashboard_group_opportunities(request):
 @login_required(login_url='login')
 def dashboard_opportunities(request):
     # Get username_id from User
-    current_user = request.user
+    #current_user = request.user
+
 
     active_opportunities = opportunity.objects.filter(
-        is_delete="FALSE",
+        is_deleted="FALSE",
         opportunity_stage_id__in=list_of_opportunity_stage.objects.filter(
             opportunity_closed="FALSE",
         ),
         opportunity_id__in=object_permission.objects.filter(
+            Q(is_deleted="FALSE") and
             Q(
                 Q(assigned_user=request.user) or
                 Q(group_id__in=user_group.objects.filter(
-                    #username=request.user,
+                    username=request.user,
+                    is_deleted="FALSE",
                 ))
             )
 
@@ -3232,7 +3235,7 @@ def new_opportunity(request, location_id,destination):
 
                 for row in select_groups:
                     group_instance = group.objects.get(group_name=row)
-                    permission_save = opportunity_permission(
+                    permission_save = object_permission(
                         opportunity_id=opportunity_instance,
                         group_id=group_instance,
                         change_user=request.user,
@@ -3244,7 +3247,7 @@ def new_opportunity(request, location_id,destination):
 
                 for row in select_users:
                     assigned_user_instance = auth.models.User.objects.get(username=row)
-                    permission_save = opportunity_permission(
+                    permission_save = object_permission(
                         opportunity_id=opportunity_instance,
                         assigned_user=assigned_user_instance,
                         change_user=request.user,
@@ -3252,7 +3255,7 @@ def new_opportunity(request, location_id,destination):
                     permission_save.save()
 
             if (give_all_access):
-                permission_save = opportunity_permission(
+                permission_save = object_permission(
                     opportunity_id=opportunity_instance,
                     all_user='TRUE',
                     change_user=request.user,
@@ -3589,8 +3592,8 @@ def new_quote(request,destination,primary_key):
 
                 for row in select_groups:
                     group_instance = group.objects.get(group_name=row)
-                    permission_save = quote_permission(
-                        quote_id=submit_quotes.quote_id,
+                    permission_save = object_permission(
+                        quote_id=submit_quotes,
                         group_id=group_instance,
                         change_user=request.user,
                     )
@@ -3601,15 +3604,15 @@ def new_quote(request,destination,primary_key):
 
                 for row in select_users:
                     assigned_user_instance = auth.models.User.objects.get(username=row)
-                    permission_save = quote_permission(
-                        quote_id=submit_quotes.quote_id,
+                    permission_save = object_permission(
+                        quote_id=submit_quotes,
                         assigned_user=assigned_user_instance,
                         change_user=request.user,
                     )
                     permission_save.save()
 
             if (give_all_access):
-                permission_save = quote_permission(
+                permission_save = object_permission(
                     quote_id=submit_quotes.quote_id,
                     all_user='TRUE',
                     change_user=request.user,
@@ -4046,11 +4049,10 @@ def opportunity_information(request, opportunity_id):
         """
         user_groups_results = user_group.objects.filter(username=request.user)
 
-        opportunity_permission_results = opportunity_permission.objects.filter(
+        opportunity_permission_results = object_permission.objects.filter(
             Q(
                 Q(assigned_user=request.user)  # User has permission
                 | Q(group_id__in=user_groups_results.values('group_id'))  # User's group have permission
-                | Q(all_user='TRUE')  # All users have access
             )
             & Q(opportunity_id=opportunity_id)
         )
@@ -4075,13 +4077,13 @@ def opportunity_information(request, opportunity_id):
     )
     opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
     customer_results = customer.objects.filter(organisation_id=opportunity_results.organisation_id)
-    group_permissions = opportunity_permission.objects.filter(
+    group_permissions = object_permission.objects.filter(
         group_id__isnull=False,
         opportunity_id=opportunity_id,
         is_deleted='FALSE',
     ).distinct()
     user_permissions = auth.models.User.objects.filter(
-        id__in=opportunity_permission.objects.filter(
+        id__in=object_permission.objects.filter(
             assigned_user__isnull=False,
             opportunity_id=opportunity_id,
             is_deleted='FALSE',
@@ -4634,13 +4636,13 @@ def quote_information(request, quote_id):
         """
         user_groups_results = user_group.objects.filter(username=request.user)
 
-        quote_permission_results = quote_permission.objects.filter(
+        quote_permission_results = object_permission.objects.filter(
             Q(
                 Q(assigned_user=request.user) # User has permission
                 | Q(group_id__in=user_groups_results.values('group_id')) # User's group have permission
-                | Q(all_user='TRUE') # All users have access
             )
             & Q(quote_id=quote_id)
+            & Q(is_deleted="FALSE")
         )
 
         if (not quote_permission_results):
