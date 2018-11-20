@@ -2,10 +2,10 @@
 {% block content %}
 {% load static %}
 
-<link rel="stylesheet" href="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/chosen-js/chosen.css' %}">
-<link rel="stylesheet" href="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
-<script type="text/javascript" src="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
-<link rel="stylesheet" href="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
+<link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
+<link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
+<script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
 
 
 
@@ -138,27 +138,58 @@
         </table>
     {% endif %}
 
-{% if opportunity_results.opportunity_stage_id.opportunity_closed != "TRUE" %}
-    <h2>Opportunity Permissions</h2>
-    <p>Please note - if there are NO permissions added to an opportunity then everyone will have access to the
-        opportunity</p>
-    <form id="group_permissions">
-        <h3>Group Permissions</h3>
-        Loading...
-    </form>
+    {% if permission >= 3 %}
+        <form method="post" class="opportunity_assigned_users" id="opportunity_assigned_users">
+            <h2>Assigned Users</h2>
+            Loading...
+        </form>
+        <div id="assigned_user_list">Loading list...</div>
 
+        <h2>Assigned Groups</h2>
+        <form method="post" class="opportunity_assigned_groups" id="opportunity_assigned_groups">
+            Loading add...
+        </form>
+        <div id="assigned_group_list">Loading list...</div>
+    {% endif %}
 
-    <form id="user_permissions">
-        <h3>User Permissions</h3>
-        Loading...
-    </form>
+    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
 
-{% endif %}
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
-<div name="blank_space" style="margin-bottom: 150px;"></div>
 <script>
+    $("#opportunity_assigned_users").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/assigned_user_add/{{ requirement_id }}/requirement/',
+            data: $(this).serialize(),
+            success: function() {
+                load_assigned_user_list();
+                load_assigned_user_add();
+            },
+            error: function() {
+                alert("Sorry, project assigned users did not save. Please try again.");
+            }
+        })
+    });
+
+
+    $("#opportunity_assigned_groups").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/assigned_group_add/{{ requirement_id }}/requirement/',
+            data: $(this).serialize(),
+            success: function() {
+                load_assigned_group_list();
+                load_requirement_group_add();
+            },
+            error: function() {
+                alert("Sorry, project assigned users did not save. Please try again.");
+            }
+        })
+    });
+
     $("#to_do").on('submit', function(e){
        e.preventDefault();
        $.ajax({
@@ -174,20 +205,6 @@
        })
     });
 
-    $("#group_permissions").on('submit', function(e){
-        e.preventDefault();
-        $.ajax({
-           url: '/opportunity_information/opportunity_group_permission/{{ opportunity_id }}/',
-           data: $(this).serialize(),
-           type: "POST",
-           success: function(data) {
-               $("#group_permissions").html(data);
-           },
-           error: function() {
-               alert("Sorry, something went wrong with the group permissions");
-           }
-        })
-    });
 
     $("#opportunity_information").on('submit', function(e) {
         //State the save_state is currently saving
@@ -212,20 +229,6 @@
         })
     });
 
-    $("#user_permissions").on('submit', function(e){
-        e.preventDefault();
-        $.ajax({
-            url: '/opportunity_information/opportunity_user_permission/{{ opportunity_id }}/',
-            data: $(this).serialize(),
-            type: "POST",
-            success: function(data) {
-                $("#user_permissions").html(data);
-            },
-            error: function() {
-                alert("Sorry, something went wrong with the user permisions");
-            }
-        })
-    })
 
     function complete_to_do(to_do_id) {
         //Send data to the database
@@ -275,8 +278,10 @@
         }
 
         load_to_do();
-        load_group_permissions();
-        load_user_permissions();
+        load_assigned_group_list();
+        load_assigned_group_add();
+        load_assigned_user_add();
+        load_assigned_user_list();
         load_email_history();
 
         $("#id_opportunity_expected_close_date").datetimepicker({
@@ -340,35 +345,66 @@
         });
     }
 
-    function load_group_permissions() {
-        $.ajax({
-            url: '/opportunity_information/opportunity_group_permission/{{ opportunity_id }}/',
-            data: {},
-            type: "GET",
-            datatype: "HTML",
-            success: function(data) {
-                $("#group_permissions").html(data);
-            },
-            error: function() {
-                alert("Sorry, could not load group permissions");
-            },
-        })
-    }
+        function load_assigned_group_add() {
+            $.ajax({
+                url: '/assigned_group_add/{{ opportunity_id }}/opportunity/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $('#opportunity_assigned_groups').html(data);
+                },
+                error: function() {
+                    $('#opportunity_assigned_groups').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
+                }
+            });
+        };
 
-    function load_user_permissions() {
-        $.ajax({
-            url: '/opportunity_information/opportunity_user_permission/{{ opportunity_id }}/',
-            data: {},
-            type: "GET",
-            datatype: "HTML",
-            success: function(data) {
-                $("#user_permissions").html(data);
-            },
-            error: function() {
-                alert("Sorry, could not load user permissions");
-            },
-        })
-    }
+
+        function load_assigned_group_list() {
+            $.ajax({
+                url: '/assigned_group_list/{{ opportunity_id }}/opportunity/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $('#assigned_group_list').html(data);
+                },
+                error: function() {
+                    $('#assigned_group_list').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
+                }
+            });
+        };
+
+        function load_assigned_user_add() {
+            $.ajax({
+                url: '/assigned_user_add/{{ opportunity_id }}/opportunity/',
+                data:  {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $("#opportunity_assigned_users").html(data);
+                },
+                error: function() {
+                    $("#opportunity_assigned_users").html("<h2>Assigned Users</h2>Sorry, users encounted an error and did not load");
+                }
+            })
+        };
+
+        function load_assigned_user_list() {
+            $.ajax({
+                url: '/assigned_user_list/{{ opportunity_id }}/opportunity/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $("#assigned_user_list").html(data);
+                },
+                error: function(data) {
+                    $("#assigned_user_list").html("<p>User list failed to load</p>")
+                }
+            })
+        }
 
     function delete_permission(opportunity_permissions_id) {
         //Send data to the database

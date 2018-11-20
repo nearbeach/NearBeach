@@ -161,7 +161,7 @@ def initialise_data(apps, schema_editor):
     ])
 
 
-    # list_of_country
+    # list_of_countries
     list_of_countries = apps.get_model("NearBeach", "list_of_country")
     list_of_countries.objects.using(db_alias).bulk_create([
         list_of_countries(country_id=u"AD", country_name=u"ANDORRA"),

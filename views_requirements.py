@@ -43,7 +43,7 @@ def new_requirement(request):
             Permissions granting
             """
             for row in requirement_permission:
-                submit_permission = object_permission(
+                submit_permission = object_assignment(
                     requirement_id=requirement_save,
                     group_id=row,
                     change_user=request.user,
@@ -178,7 +178,7 @@ def requirement_information(request, requirement_id):
         """
         user_groups_results = user_group.objects.filter(username=request.user)
 
-        requirement_permission_results = object_permission.objects.filter(
+        requirement_permission_results = object_assignment.objects.filter(
             Q(
                 Q(assigned_user=request.user) # User has permission
                 | Q(group_id__in=user_groups_results.values('group_id')) # User's group have permission

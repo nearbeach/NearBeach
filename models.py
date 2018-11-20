@@ -100,6 +100,8 @@ class about_user(models.Model):
     class Meta:
         db_table = "about_user"
 
+
+"""
 class assigned_user(models.Model):
     assigned_user_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(
@@ -157,6 +159,7 @@ class assigned_user(models.Model):
 
     class Meta:
         db_table = "assigned_user"
+"""
 
 
 """
@@ -855,7 +858,7 @@ class kanban_board(models.Model):
         return str(self.kanban_board_name)
 
 
-
+"""
 class kanban_board_group(models.Model):
     kanban_board_id = models.ForeignKey(
         'kanban_board',
@@ -880,7 +883,7 @@ class kanban_board_group(models.Model):
 
     class Meta:
         db_table = "kanban_board_group"
-
+"""
 
 class kanban_card(models.Model):
     kanban_card_id = models.AutoField(primary_key=True)
@@ -1488,7 +1491,7 @@ class list_of_title(models.Model):
         db_table = "list_of_title"
 
 
-class object_permission(models.Model):
+class object_assignment(models.Model):
     """
     Object permissions is the centralised permissions for all objects
     - Opportunity
@@ -1567,7 +1570,7 @@ class object_permission(models.Model):
     )
 
     class Meta:
-        db_table = "object_permission"
+        db_table = "object_assignment"
 
 
 
@@ -2322,6 +2325,7 @@ class quote(models.Model):
         db_table = "quote"
 
 
+"""
 class quote_group(models.Model):
     quote_id = models.ForeignKey(
         'quote',
@@ -2346,7 +2350,7 @@ class quote_group(models.Model):
 
     class Meta:
         db_table = "quote_group"
-
+"""
 
 
 """
@@ -2639,7 +2643,7 @@ class requirement(models.Model):
     class Meta:
         db_table = "requirement"
 
-
+"""
 class requirement_group(models.Model):
     requirement_id = models.ForeignKey(
         'requirement',
@@ -2664,6 +2668,7 @@ class requirement_group(models.Model):
 
     class Meta:
         db_table = "requirement_group"
+"""
 
 
 class requirement_item(models.Model):
@@ -2960,7 +2965,7 @@ class task_customer(models.Model):
     class Meta:
         db_table = "task_customer"
 
-
+"""
 class task_group(models.Model):
     task_group_id = models.AutoField(primary_key=True)
     task_id = models.ForeignKey(
@@ -2986,7 +2991,7 @@ class task_group(models.Model):
 
     class Meta:
         db_table = "task_group"
-
+"""
 
 class task_history(models.Model):
     task_history_id = models.AutoField(primary_key=True)

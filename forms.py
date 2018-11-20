@@ -216,35 +216,35 @@ class assign_group_add_form(forms.Form):
 
         if destination == "project":
             group_results = group_results.exclude(
-                group_id__in=project_group.objects.filter(
+                group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     project_id=location_id,
                 ).values('group_id')
             )
         elif destination == "task":
             group_results = group_results.exclude(
-                group_id__in=task_group.objects.filter(
+                group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     task_id=location_id,
                 ).values('group_id')
             )
         elif destination == "requirement":
             group_results = group_results.exclude(
-                group_id__in=requirement_group.objects.filter(
+                group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     requirement_id=location_id,
                 ).values('group_id')
             )
         elif destination == "quote":
             group_results = group_results.exclude(
-                group_id__in=quote_group.objects.filter(
+                group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     quote_id=location_id,
                 ).values('group_id')
             )
         elif destination == "kanban_board":
             group_results = group_results.exclude(
-                group_id__in=kanban_board_group.objects.filter(
+                group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     kanban_id=location_id,
                 ).values('group_id')
@@ -279,51 +279,103 @@ class assign_user_add_form(forms.Form):
             user_results = User.objects.filter(
                 id__in=user_group.objects.filter(
                     is_deleted="FALSE",
-                    group_id__in=project_group.objects.filter(
+                    group_id__in=object_assignment.objects.filter(
                         is_deleted="FALSE",
                         project_id=location_id,
                     ).values('group_id')
                 ).values('username')
+            ).exclude(
+                id__in=object_assignment.objects.filter(
+                    is_deleted="FALSE",
+                    project_id=location_id,
+                ).exclude(
+                    assigned_user=None,
+                ).values('assigned_user')
             )
         elif destination == "task":
             user_results = User.objects.filter(
                 id__in=user_group.objects.filter(
                     is_deleted="FALSE",
-                    group_id__in=task_group.objects.filter(
+                    group_id__in=object_assignment.objects.filter(
                         is_deleted="FALSE",
                         task_id=location_id,
                     ).values('group_id')
                 ).values('username')
+            ).exclude(
+                id__in=object_assignment.objects.filter(
+                    is_deleted="FALSE",
+                    task_id=location_id,
+                ).exclude(
+                    assigned_user=None,
+                ).values('assigned_user')
             )
         elif destination == "requirement":
             user_results = User.objects.filter(
                 id__in=user_group.objects.filter(
                     is_deleted="FALSE",
-                    group_id__in=requirement_group.objects.filter(
+                    group_id__in=object_assignment.objects.filter(
                         is_deleted="FALSE",
                         requirement_id=location_id,
                     ).values('group_id')
                 ).values('username')
+            ).exclude(
+                id__in=object_assignment.objects.filter(
+                    is_deleted="FALSE",
+                    requirement_id=location_id,
+                ).exclude(
+                    assigned_user=None,
+                ).values('assigned_user')
             )
         elif destination == "quote":
             user_results = User.objects.filter(
                 id__in=user_group.objects.filter(
                     is_deleted="FALSE",
-                    group_id__in=quote_group.objects.filter(
+                    group_id__in=object_assignment.objects.filter(
                         is_deleted="FALSE",
                         quote_id=location_id,
                     ).values('group_id')
                 ).values('username')
+            ).exclude(
+                id__in=object_assignment.objects.filter(
+                    is_deleted="FALSE",
+                    quote_id=location_id,
+                ).exclude(
+                    assigned_user=None,
+                ).values('assigned_user')
             )
         elif destination == "kanban_board":
             user_results = User.objects.filter(
                 id__in=user_group.objects.filter(
                     is_deleted="FALSE",
-                    group_id__in=kanban_board_group.objects.filter(
+                    group_id__in=object_assignment.objects.filter(
                         is_deleted="FALSE",
                         kanban_board_id=location_id,
                     ).values('group_id')
                 ).values('username')
+            ).exclude(
+                id__in=object_assignment.objects.filter(
+                    is_deleted="FALSE",
+                    kanban_board_id=location_id,
+                ).exclude(
+                    assigned_user=None,
+                ).values('assigned_user')
+            )
+        elif destination == "opportunity":
+            user_results = User.objects.filter(
+                id__in=user_group.objects.filter(
+                    is_deleted="FALSE",
+                    group_id__in=object_assignment.objects.filter(
+                        is_deleted="FALSE",
+                        opportunity_id=location_id,
+                    ).values('group_id')
+                ).values('username')
+            ).exclude(
+                id__in=object_assignment.objects.filter(
+                    is_deleted="FALSE",
+                    opportunity_id=location_id,
+                ).exclude(
+                    assigned_user=None,
+                ).values('assigned_user')
             )
         self.fields['add_user'].queryset = user_results
 
