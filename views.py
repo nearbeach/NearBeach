@@ -4164,6 +4164,7 @@ def opportunity_information(request, opportunity_id):
         'timezone': settings.TIME_ZONE,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'permission': permission_results['opportunity'],
     }
 
     return HttpResponse(t.render(c, request))
