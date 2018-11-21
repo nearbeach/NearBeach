@@ -251,7 +251,7 @@ class assign_group_add_form(forms.Form):
             )
         elif destination == "opportunity":
             group_results = group_results.exclude(
-                groups_id__in=object_assignment.objects.filter(
+                group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     opportunity_id=location_id,
                 ).values('group_id')
