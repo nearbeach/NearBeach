@@ -384,6 +384,9 @@ class assign_user_add_form(forms.Form):
                     assigned_user=None,
                 ).values('assigned_user')
             )
+        else:
+            print("SOMETHING FUCKED UP!!!")
+            print("DESTINATION: " + destination)
         self.fields['add_user'].queryset = user_results
 
 
@@ -1732,7 +1735,7 @@ class new_quote_form(ModelForm):
 
     select_groups = forms.ModelMultipleChoiceField(
         queryset=groups_results,
-        required=False,
+        required=True,
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select',
@@ -1740,18 +1743,6 @@ class new_quote_form(ModelForm):
             'style': 'width: 100%',
         }),
     )
-
-    select_users = forms.ModelMultipleChoiceField(
-        queryset=user_results,
-        required=False,
-        widget=forms.SelectMultiple(attrs={
-            'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
-            'multiple tabindex': '4',
-            'style': 'width: 100%',
-        }),
-    )
-
 
     class Meta:
         model=quote

@@ -3562,7 +3562,7 @@ def new_quote(request,destination,primary_key):
             quote_stage_id=form.cleaned_data['quote_stage_id']
             customer_notes=form.cleaned_data['customer_notes']
             select_groups = form.cleaned_data['select_groups']
-            select_users = form.cleaned_data['select_users']
+
 
             # Create the final start/end date fields
             quote_valid_till = convert_to_utc(
@@ -3613,17 +3613,7 @@ def new_quote(request,destination,primary_key):
 
             submit_quotes.save()
 
-            """
-            Permissions
-            ~~~~~~~~~~~
-            If the user left BOTH the user and group permissions empty then we give everyone access.
-            Otherwise we will loop through BOTH and add the correct permissions.
-            """
-            give_all_access = True
-
             if (select_groups):
-                give_all_access = False
-
                 for row in select_groups:
                     group_instance = group.objects.get(group_name=row)
                     permission_save = object_assignment(
@@ -3633,25 +3623,6 @@ def new_quote(request,destination,primary_key):
                     )
                     permission_save.save()
 
-            if (select_users):
-                give_all_access = False
-
-                for row in select_users:
-                    assigned_user_instance = auth.models.User.objects.get(username=row)
-                    permission_save = object_assignment(
-                        quote_id=submit_quotes,
-                        assigned_user=assigned_user_instance,
-                        change_user=request.user,
-                    )
-                    permission_save.save()
-
-            if (give_all_access):
-                permission_save = object_assignment(
-                    quote_id=submit_quotes.quote_id,
-                    all_user='TRUE',
-                    change_user=request.user,
-                )
-                permission_save.save()
 
             #Now to go to the quote information page
             return HttpResponseRedirect(reverse(quote_information, args={submit_quotes.quote_id}))
@@ -4742,7 +4713,7 @@ def quote_information(request, quote_id):
         'quote_or_invoice': quote_or_invoice,
         'timezone': settings.TIME_ZONE,
         'quote_template_results': quote_template_results,
-        'quote_permission': permission_results['quote'],
+        'permission': permission_results['quote'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
     }

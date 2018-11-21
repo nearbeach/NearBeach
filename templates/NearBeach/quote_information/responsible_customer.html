@@ -15,6 +15,9 @@
         <tr>
             <td>Customer Name</td>
             <td>Customer email</td>
+            {% if quote_permission > 3 %}
+                <td></td>
+            {% endif %}
         </tr>
         {% for row in responsible_customer_results %}
             <tr>
