@@ -161,7 +161,7 @@
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: '/assigned_user_add/{{ requirement_id }}/requirement/',
+            url: '/assigned_user_add/{{ opportunity_id }}/opportunity/',
             data: $(this).serialize(),
             success: function() {
                 load_assigned_user_list();
@@ -178,7 +178,7 @@
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: '/assigned_group_add/{{ requirement_id }}/requirement/',
+            url: '/assigned_group_add/{{ opportunity_id }}/opportunity/',
             data: $(this).serialize(),
             success: function() {
                 load_assigned_group_list();

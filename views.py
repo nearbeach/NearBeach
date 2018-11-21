@@ -392,34 +392,45 @@ def assigned_user_add(request, location_id, destination):
             if destination == "project":
                 object_assignment_submit = object_assignment(
                     project_id=project.objects.get(project_id=location_id),
-                    assigned_user=form.cleaned_data['add_user'],
+                    #assigned_user=form.cleaned_data['add_user'],
                     change_user=request.user,
                 )
+                object_assignment_submit.save()
             elif destination == "task":
                 object_assignment_submit = object_assignment(
                     task_id=task.objects.get(task_id=location_id),
-                    assigned_user=form.cleaned_data['add_user'],
+                    #assigned_user=form.cleaned_data['add_user'],
                     change_user=request.user,
                 )
+                object_assignment_submit.save()
             elif destination == "requirement":
                 object_assignment_submit = object_assignment(
                     requirement_id=requirement.objects.get(requirement_id=location_id),
-                    assigned_user=form.cleaned_data['add_user'],
+                    #assigned_user=form.cleaned_data['add_user'],
                     change_user=request.user,
                 )
+                object_assignment_submit.save()
             elif destination == "quote":
                 object_assignment_submit = object_assignment(
                     quote_id=quote.objects.get(quote_id=location_id),
-                    assigned_user=form.cleaned_data['add_user'],
+                    #assigned_user=form.cleaned_data['add_user'],
                     change_user=request.user,
                 )
+                object_assignment_submit.save()
             elif destination == "kanban_board":
                 object_assignment_submit = object_assignment(
                     kanban_board_id=kanban_board.objects.get(kanban_board_id=location_id),
-                    assigned_user=form.cleaned_data['add_user'],
+                    #assigned_user=form.cleaned_data['add_user'],
                     change_user=request.user,
                 )
-            object_assignment_submit.save()
+                object_assignment_submit.save()
+            elif destination == "opportunity":
+                object_assignment_submit = object_assignment(
+                    opportunity_id=opportunity.objects.get(opportunity_id=location_id),
+                    #assigned_user=form.cleaned_data['add_user'],
+                    change_user=request.user,
+                )
+                object_assignment_submit.save()
         else:
             print(form.errors)
 
