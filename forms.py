@@ -249,6 +249,13 @@ class assign_group_add_form(forms.Form):
                     kanban_id=location_id,
                 ).values('group_id')
             )
+        elif destination == "opportunity":
+            group_results = group_results.exclude(
+                groups_id__in=object_assignment.objects.filter(
+                    is_deleted="FALSE",
+                    opportunity_id=location_id,
+                ).values('group_id')
+            )
 
         self.fields['add_group'].queryset = group_results
 
