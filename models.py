@@ -1504,7 +1504,7 @@ class object_assignment(models.Model):
     These permission are only "ACCESS" permissions. The user/group's over riding permissions determine if the user
     can add, edit etc.
     """
-    object_permission_id=models.AutoField(primary_key=True)
+    object_assignment_id=models.AutoField(primary_key=True)
     assigned_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

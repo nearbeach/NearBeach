@@ -219,42 +219,42 @@ class assign_group_add_form(forms.Form):
                 group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     project_id=location_id,
-                ).values('group_id')
+                ).exclude(group_id=None).values('group_id')
             )
         elif destination == "task":
             group_results = group_results.exclude(
                 group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     task_id=location_id,
-                ).values('group_id')
+                ).exclude(group_id=None).values('group_id')
             )
         elif destination == "requirement":
             group_results = group_results.exclude(
                 group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     requirement_id=location_id,
-                ).values('group_id')
+                ).exclude(group_id=None).values('group_id')
             )
         elif destination == "quote":
             group_results = group_results.exclude(
                 group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     quote_id=location_id,
-                ).values('group_id')
+                ).exclude(group_id=None).values('group_id')
             )
         elif destination == "kanban_board":
             group_results = group_results.exclude(
                 group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     kanban_id=location_id,
-                ).values('group_id')
+                ).exclude(group_id=None).values('group_id')
             )
         elif destination == "opportunity":
             group_results = group_results.exclude(
                 group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     opportunity_id=location_id,
-                ).values('group_id')
+                ).exclude(group_id=None).values('group_id')
             )
 
         self.fields['add_group'].queryset = group_results

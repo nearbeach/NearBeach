@@ -290,29 +290,25 @@ def assigned_group_add(request, location_id, destination):
 
 
 @login_required(login_url='login')
-def assigned_group_delete(request, location_id, destination):
-    if destination == "project":
-        project_groups_save = project_group.objects.get(id = location_id)
-        project_groups_save.is_deleted = "TRUE"
-        if not project_groups_save.save():
-            print("Error saving project")
+def assigned_group_delete(request, object_assignment_id):
+    """
+    assigned group delete will delete an assigned group against an object. Please note this has to be through
+    POST. This is a security measure
+    """
+    if request.method == "POST":
+        object_assignment_update = object_assignment.objects.get(object_assignment_id=object_assignment_id)
+        object_assignment_update.is_deleted = "TRUE"
+        object_assignment_update.save()
 
+        #Load blank page and send back
+        t = loader.get_template('NearBeach/blank.html')
 
-    elif destination == "task":
-        task_groups_save = task_group.objects.get(id = location_id)
-        task_groups_save.is_deleted = "TRUE"
-        if not task_groups_save.save():
-            print("Error saving task")
+        c = {}
 
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("Action can only be done through POST")
 
-    # Load the template
-    t = loader.get_template('NearBeach/blank.html')
-
-    # context
-    c = {
-    }
-
-    return HttpResponse(t.render(c, request))
 
 
 
@@ -392,7 +388,7 @@ def assigned_user_add(request, location_id, destination):
             if destination == "project":
                 object_assignment_submit = object_assignment(
                     project_id=project.objects.get(project_id=location_id),
-                    #assigned_user=form.cleaned_data['add_user'],
+                    assigned_user=form.cleaned_data['add_user'],
                     change_user=request.user,
                 )
                 object_assignment_submit.save()
@@ -4603,7 +4599,7 @@ def project_information(request, project_id):
         'media_url': settings.MEDIA_URL,
         'quote_results': quote_results,
         'project_id': project_id,
-        'project_permissions': permission_results['project'],
+        'permission': permission_results['project'],
         'project_history_permissions': permission_results['project_history'],
         'timezone': settings.TIME_ZONE,
         'new_item_permission': permission_results['new_item'],
@@ -5136,7 +5132,7 @@ def search_templates(request):
 @login_required(login_url='login')
 def task_information(request, task_id):
     #First look at the user's permissions for the project's group.
-    task_groups_results = task_group.objects.filter(
+    task_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         task_id=task.objects.get(task_id=task_id),
     ).values('group_id_id')
@@ -5150,21 +5146,8 @@ def task_information(request, task_id):
     current_user = request.user
 
     # Setup connection to the database and query it
-    cursor = connection.cursor()
+    cursor = connection.cursor() #LETS REMOVE THIS CRAP
 
-    cursor.execute("""
-		SELECT COUNT(*)
-		FROM
-		  task_group
-		, user_group
-		WHERE 1=1
-		AND task_group.group_id_id = user_group.group_id
-		AND task_group.is_deleted = 'FALSE'
-		AND user_group.is_deleted = 'FALSE'
-		AND user_group.username_id = %s
-		AND task_group.task_id_id = %s
-	""", [current_user.id, task_id])
-    has_permission = cursor.fetchall()
 
 
     """
@@ -5173,10 +5156,7 @@ def task_information(request, task_id):
 	the task.
 	"""
     # Define the data we will edit
-    # task_results = task.objects.get(task_id = task_id)
     task_results = get_object_or_404(task, task_id=task_id)
-    task_start_results = convert_extracted_time(task_results.task_start_date)
-    task_end_results = convert_extracted_time(task_results.task_end_date)
 
     # Get the data from the form
     if request.method == "POST":
@@ -5358,7 +5338,7 @@ def task_information(request, task_id):
         'folders_results': serializers.serialize('json', folders_results),
         'media_url': settings.MEDIA_URL,
         'task_id': task_id,
-        'task_permissions': permission_results['task'],
+        'permission': permission_results['task'],
         'task_history_permissions': permission_results['task_history'],
         'quote_results': quote_results,
         'task_results': task_results,

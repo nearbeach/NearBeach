@@ -139,14 +139,14 @@
     {% endif %}
 
     {% if permission >= 3 %}
-        <form method="post" class="opportunity_assigned_users" id="opportunity_assigned_users">
+        <form method="post" class="assigned_users" id="assigned_users">
             <h2>Assigned Users</h2>
             Loading...
         </form>
         <div id="assigned_user_list">Loading list...</div>
 
         <h2>Assigned Groups</h2>
-        <form method="post" class="opportunity_assigned_groups" id="opportunity_assigned_groups">
+        <form method="post" class="assigned_groups" id="assigned_groups">
             Loading add...
         </form>
         <div id="assigned_group_list">Loading list...</div>
@@ -157,7 +157,7 @@
     <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
 
 <script>
-    $("#opportunity_assigned_users").on('submit', function(e) {
+    $("#assigned_users").on('submit', function(e) {
         e.preventDefault();
         $.ajax({
             type: 'POST',
@@ -174,7 +174,7 @@
     });
 
 
-    $("#opportunity_assigned_groups").on('submit', function(e) {
+    $("#assigned_groups").on('submit', function(e) {
         e.preventDefault();
         $.ajax({
             type: 'POST',
@@ -352,10 +352,33 @@
                 dataType: 'HTML',
                 type: 'GET',
                 success: function(data) {
-                    $('#opportunity_assigned_groups').html(data);
+                    $('#assigned_groups').html(data);
                 },
                 error: function() {
-                    $('#opportunity_assigned_groupss').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
+                    $('#assigned_groups').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
+                }
+            });
+        };
+
+        function delete_group_item(group_item) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/assigned_group_delete/' + group_item + '/',
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    load_assigned_group_add();
+                    load_assigned_group_list();                },
+                error: function() {
+                    alert("Sorry, there was an issue deleting the Assigned Group")
                 }
             });
         };
@@ -383,10 +406,10 @@
                 dataType: 'HTML',
                 type: 'GET',
                 success: function(data) {
-                    $("#opportunity_assigned_users").html(data);
+                    $("#assigned_users").html(data);
                 },
                 error: function() {
-                    $("#opportunity_assigned_users").html("<h2>Assigned Users</h2>Sorry, users encounted an error and did not load");
+                    $("#assigned_users").html("<h2>Assigned Users</h2>Sorry, users encounted an error and did not load");
                 }
             })
         };
@@ -406,30 +429,6 @@
             })
         }
 
-    function delete_permission(opportunity_permissions_id) {
-        //Send data to the database
-        $.ajaxSetup({
-            beforeSend: function (xhr, settings) {
-                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                }
-            }
-        });
-
-        $.ajax({
-            url: '/opportunity_information/opportunity_delete_permission/' + opportunity_permissions_id + '/',
-            data: {},
-            type: "POST",
-            datatype: "HTML",
-            success: function(data) {
-                load_group_permissions();
-                load_user_permissions();
-            },
-            error: function() {
-                alert("There was an error removing that permission");
-            }
-        })
-    }
 </script>
 </body>
 {% endblock %}

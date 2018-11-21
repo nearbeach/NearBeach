@@ -7,14 +7,13 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/bug.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
-<link rel="stylesheet" href="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
+<script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
 
 
 <script>
     function on_page_load() {
         //Initiate AJAX modules
-        load_task_assigned_users();
         load_task_costs();
         load_task_customers();
         load_task_history();
@@ -27,11 +26,10 @@
         load_document_tree_create_folder();
         load_document_tree_upload_documents();
 
-        load_task_group_add();
-        load_task_group_list();
-
-        //Finally set the permissions
-        //set_permissions({{ task_permissions }});
+        load_assigned_user_add();
+        load_assigned_user_list();
+        load_assigned_group_add();
+        load_assigned_group_list();
 
         //Setup the datetime widgets
         $("#id_task_start_date").datetimepicker({
@@ -116,7 +114,7 @@
                 <tr><td>Task finish Date - {{ task_information_form.task_end_date }}</td></tr>
             </table>
 
-            {% if task_permissions > 1 %}
+            {% if permission > 1 %}
                 <input type="submit" name="update" value="Update"/>
                 {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
                     <input type="submit" name="Resolve" value="Resolve Project"/>
@@ -138,7 +136,7 @@
     <form method="post" class="task_history" id="task_history">
         {% csrf_token %}
         <h2>Task History</h2>
-        {% if task_permissions > 1 %}
+        {% if permission  > 1 %}
             {{ information_task_history.media }}
             <table>
                 <tr><td>{{ information_task_history_form.task_history }}</td></tr>
@@ -160,7 +158,7 @@
     </div>
 
     <h2>Associated Projects</h2>
-    {% if task_permissions > 1 %}
+    {% if permission > 1 %}
         {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
             <a href="{% url 'associated_projects' task_results.task_id %}">Associate Project</a>
         {% endif %}
@@ -240,20 +238,55 @@
     </form>
 
 
-    <form method="post" class="task_assigned_users" id="task_assigned_users" style="">
-        <h2>Task Assigned Users</h2>
-        Loading...
-    </form>
+    {% if permission >= 3 %}
+        <form method="post" class="assigned_users" id="assigned_users">
+            <h2>Assigned Users</h2>
+            Loading...
+        </form>
+        <div id="assigned_user_list">Loading list...</div>
 
-    {% if task_permissions >= 3 %}
-    <h2>Assigned Groups</h2>
-    <form method="post" class="task_assigned_groups" id="task_assigned_groups">
-        Loading add...
-    </form>
-    <div id="assigned_group_list">Loading list...</div>
+        <h2>Assigned Groups</h2>
+        <form method="post" class="assigned_groups" id="assigned_groups">
+            Loading add...
+        </form>
+        <div id="assigned_group_list">Loading list...</div>
     {% endif %}
 
 <script>
+    $("#assigned_users").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/assigned_user_add/{{ task_id }}/task/',
+            data: $(this).serialize(),
+            success: function() {
+                load_assigned_user_list();
+                load_assigned_user_add();
+            },
+            error: function() {
+                alert("Sorry, project assigned users did not save. Please try again.");
+            }
+        })
+    });
+
+
+    $("#assigned_groups").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/assigned_group_add/{{ task_id }}/task/',
+            data: $(this).serialize(),
+            success: function() {
+                load_assigned_group_add();
+                load_assigned_group_list();
+            },
+            error: function() {
+                alert("Sorry, project assigned users did not save. Please try again.");
+            }
+        })
+    });
+
+
     $("#bug_search").on('submit', function(e) {
        e.preventDefault();
 
@@ -320,39 +353,6 @@
             },
             error: function() {
                 alert("Sorry, task costs did not save. Please try again.");
-            }
-        })
-    });
-
-    $("#task_customers").on('submit', function(e) {
-        e.preventDefault();
-        $.ajax({
-            type: 'POST',
-            url: '/information_task_customer/{{ task_id }}/',
-            data: $(this).serialize(),
-            success: function() {
-                //Reload the task history :)
-                load_task_customers();
-            },
-            error: function() {
-                alert("Sorry, task customers did not save. Please try again.");
-            }
-        })
-    });
-
-
-    $("#task_assigned_groups").on('submit', function(e) {
-        e.preventDefault();
-        $.ajax({
-            type: 'POST',
-            url: '/assigned_group_add/{{ task_id }}/task/',
-            data: $(this).serialize(),
-            success: function() {
-                load_task_group_add();
-                load_task_group_list();
-            },
-            error: function() {
-                alert("Sorry, project assigned users did not save. Please try again.");
             }
         })
     });
@@ -547,21 +547,6 @@
     };
 
 
-    function load_task_assigned_users() {
-        //Load Project History
-        $.ajax({
-            url: '/information_task_assign_users/{{ task_id }}/',
-            data: {},
-            dataType: 'HTML',
-            type: 'GET',
-            success: function(data) {
-                $('#task_assigned_users').html(data);
-            },
-            error: function() {
-                $('#task_assigned_users').html('<h2>Assigned Users</h2>Sorry, assigned users encounted an error and did not load.');
-            }
-        });
-    };
 
     function load_task_costs() {
         //Load Project History
@@ -612,67 +597,12 @@
     };
 
 
-    function load_task_group_add() {
-        $.ajax({
-            url: '/assigned_group_add/{{ task_id }}/task/',
-            data: {},
-            dataType: 'HTML',
-            type: 'GET',
-            success: function(data) {
-                $('#task_assigned_groups').html(data);
-            },
-            error: function() {
-                $('#task_assigned_groups').html('<h2>Project History</h2>Sorry, Task .');
-            }
-        });
-    };
 
 
-    function load_task_group_list() {
-        $.ajax({
-            url: '/assigned_group_list/{{ task_id }}/task/',
-            data: {},
-            dataType: 'HTML',
-            type: 'GET',
-            success: function(data) {
-                $('#assigned_group_list').html(data);
-            },
-            error: function() {
-                $('#assigned_group_list').html('<h2>Project History</h2>Sorry, task history encounted an error and did not load.');
-            }
-        });
-    };
-
-    function delete_group_item(group_item) {
-        $.ajax({
-            url: '/assigned_group_delete/' + group_item + '/task/',
-            data: {},
-            dataType: 'HTML',
-            type: 'GET',
-            success: function(data) {
-                load_task_group_list()
-            },
-            error: function() {
-                alert("Sorry, there was an issue deleting the Assigned Group")
-            }
-        });
-    };
 
 
-    function remove_user(location_id) {
-        $.ajax({
-            url: '/information_task_delete_assigned_users/{{ task_id }}/' + location_id + '/' ,
-            data: {},
-            dataType: 'HTML',
-            type: 'GET',
-            success: function(data) {
-                load_task_assigned_users();
-            },
-            error: function() {
-                alert("Sorry, there was an issue deleting the Assigned Users")
-            }
-        });
-    }
+
+
 
     function upload_document() {
         //Get form data
@@ -728,6 +658,92 @@
             }
         })
     }
+
+    function load_assigned_user_add() {
+        $.ajax({
+            url: '/assigned_user_add/{{ task_id }}/task/',
+            data:  {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $("#assigned_users").html(data);
+            },
+            error: function() {
+                $("#assigned_users").html("<h2>Assigned Users</h2>Sorry, users encounted an error and did not load");
+            }
+        })
+    };
+
+    function load_assigned_user_list() {
+        $.ajax({
+            url: '/assigned_user_list/{{ task_id }}/task/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $("#assigned_user_list").html(data);
+            },
+            error: function(data) {
+                $("#assigned_user_list").html("<p>User list failed to load</p>")
+            }
+        })
+    };
+
+    function delete_group_item(group_item) {
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            url: '/assigned_group_delete/' + group_item + '/',
+            data: {},
+            dataType: 'HTML',
+            type: 'POST',
+            success: function(data) {
+                load_assigned_group_add();
+                load_assigned_group_list();
+            },
+            error: function() {
+                alert("Sorry, there was an issue deleting the Assigned Group")
+            }
+        });
+    };
+
+
+    function load_assigned_group_add() {
+        $.ajax({
+            url: '/assigned_group_add/{{ task_id }}/task/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#assigned_groups').html(data);
+            },
+            error: function() {
+                $('#assigned_groups').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
+            }
+        });
+    };
+
+
+    function load_assigned_group_list() {
+        $.ajax({
+            url: '/assigned_group_list/{{ task_id }}/task/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#assigned_group_list').html(data);
+            },
+            error: function() {
+                $('#assigned_group_list').html('<h2>Assigned Group</h2>Sorry, project history encounted an error and did not load.');
+            }
+        });
+    };
 </script>
 
 </body>

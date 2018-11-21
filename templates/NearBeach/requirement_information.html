@@ -169,7 +169,7 @@
             data: $(this).serialize(),
             success: function() {
                 load_assigned_group_list();
-                load_requirement_group_add();
+                load_assigned_group_add();
             },
             error: function() {
                 alert("Sorry, project assigned users did not save. Please try again.");
@@ -244,7 +244,7 @@
             })
         }
 
-        function load_requirement_group_add() {
+        function load_assigned_group_add() {
             $.ajax({
                 url: '/assigned_group_add/{{ requirement_id }}/requirement/',
                 data: {},
@@ -417,6 +417,30 @@
 
         }
 
+        function delete_group_item(group_item) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/assigned_group_delete/' + group_item + '/',
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    load_assigned_group_list();
+                    load_assigned_group_add();
+                },
+                error: function() {
+                    alert("Sorry, there was an issue deleting the Assigned Group")
+                }
+            });
+        };
+
 
         function send_requirement_link(requirement_id, location_id, task_or_project) {
             $.ajaxSetup({
@@ -491,7 +515,7 @@
         function on_page_load() {
             //Load all ajax modules
             load_assigned_group_list();
-            load_requirement_group_add();
+            load_assigned_group_add();
             load_assigned_user_list();
             load_assigned_user_add();
             load_requirement_items_list();
