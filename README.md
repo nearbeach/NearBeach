@@ -108,3 +108,28 @@ Github: https://github.com/Kozea/WeasyPrint
 License: BSD 3-Clause
 
 Note: Weasy print is used to render PDF's in NearBeach
+
+
+
+### D3.js (Data-Driven Documents)
+Creator(s): Mike Bostock, Jason Davies, Jeffrey Heer, Vadim Ogievetsky
+
+Website: https://d3js.org/
+
+Github: https://github.com/d3/d3
+
+License: BSD 3-Clause
+
+Note: D3 is used for producing graphical representatives of data for NearBeach
+
+
+
+
+### Gantt-Chart
+Creator(s): Dimitry Kudryavtsev
+
+Github: https://github.com/dk8996/Gantt-Chart
+
+License: Apache-2.0
+
+Note: Gantt-Chart will be used for NearBeach's timeline feature.
