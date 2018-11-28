@@ -5,6 +5,37 @@
         svg {
            overflow-x: scroll;
         }
+
+        .chart {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+        }
+
+        .axis path,.axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+        .bar {
+            fill: #33b5e5;
+        }
+
+        .bar-failed {
+            fill: #CC0000;
+        }
+
+        .bar-running {
+            fill: #669900;
+        }
+
+        .bar-succeeded {
+            fill: #33b5e5;
+        }
+
+        .bar-killed {
+            fill: #ffbb33;
+        }
     </style>
     <script src="{% static 'NearBeach/widgets/svg.js/svg.js' %}"></script>
     <script src="{% static 'NearBeach/widgets/jquery/jquery-ui.js' %}"></script>
@@ -51,16 +82,14 @@
         TEMP CODE
         ~~~~~~~~~
         The following code will help create a gnantt chart. Hopefully.
-         */
 
-        var tasks = [
-            {
-                "startDate":new Date("Sun Dec 09 01:36:45 EST 2012"),
-                "endDate":new Date("Sun Dec 09 02:36:45 EST 2012"),
-                "taskName":"E Job",
-                "status":"RUNNING"
-            }
-        ];
+        Method
+        ~~~~~~
+        1.) Extract the project information from NearBeach using AJAX
+        2.) Information comes in an AJAX form
+        3.) Collect the variables, i.e. start and end dates
+        4.) Create the chart by inputting the variables
+         */
 
         var taskStatus = {
             "SUCCEEDED" : "bar",
@@ -69,80 +98,58 @@
             "KILLED" : "bar-killed"
         };
 
+        var tasks = [
+            {
+                "startDate":new Date("Sun Dec 09 00:00:00 EST 2012"),
+                "endDate":new Date("Sun Dec 12 23:59:59 EST 2012"),
+                "taskName":"E Job",
+                "status":"RUNNING"
+            }
+        ];
+
         var taskNames = [
-            "D Job",
+            "Pro1",
             "P Job",
             "E Job",
             "A Job",
             "N Job"
         ];
 
+        /*
+        NO NEED TO SORT AS DJANGO WILL DO THIS FOR US
         tasks.sort(function(a, b) {
             return a.endDate - b.endDate;
-        });
+        });*/
 
-        var maxDate = tasks[tasks.length - 1].endDate;
+        //var maxDate = tasks[tasks.length - 1].endDate;
 
-        tasks.sort(function(a, b) {
-            return a.startDate - b.startDate;
-        });
 
-        var minDate = tasks[0].startDate;
 
-        var format = "%H:%M";
-        var timeDomainString = "1week";
+        var gantt = d3.gantt()
+            .taskTypes(taskNames)
+            .taskStatus(taskStatus)
+            .tickFormat(format)
+            .height(450)
+            .width(1600) //WILL BE FORMULA DEPENDING ON HOW MANY DAYS THERE ARE BETWEEN START AND END DATES
+            .selector("#timeline");
 
-        var gantt = d3.gantt().taskTypes(taskNames).taskStatus(taskStatus).tickFormat(format).height(450).width(1600).selector("#timeline");
 
 
         gantt.timeDomainMode("fixed");
-        changeTimeDomain(timeDomainString);
+        //gantt.timeDomain([ d3.time.day.offset(getEndDate(), -7), getEndDate() ]);
+        gantt.timeDomain([
+            new Date(document.getElementById("id_start_date").value),
+            new Date(document.getElementById("id_end_date").value)
+        ]);
+
+        var format = "%b %d, %Y"; //HARD CODED
+        gantt.tickFormat(format);
+
+        gantt.redraw(tasks);
 
 
-        function changeTimeDomain(timeDomainString) {
-            this.timeDomainString = timeDomainString;
-            switch (timeDomainString) {
-            case "1hr":
-            format = "%H:%M:%S";
-            gantt.timeDomain([ d3.time.hour.offset(getEndDate(), -1), getEndDate() ]);
-            break;
-            case "3hr":
-            format = "%H:%M";
-            gantt.timeDomain([ d3.time.hour.offset(getEndDate(), -3), getEndDate() ]);
-            break;
-
-            case "6hr":
-            format = "%H:%M";
-            gantt.timeDomain([ d3.time.hour.offset(getEndDate(), -6), getEndDate() ]);
-            break;
-
-            case "1day":
-            format = "%H:%M";
-            gantt.timeDomain([ d3.time.day.offset(getEndDate(), -1), getEndDate() ]);
-            break;
-
-            case "1week":
-            format = "%a %H:%M";
-            gantt.timeDomain([ d3.time.day.offset(getEndDate(), -7), getEndDate() ]);
-            break;
-            default:
-            format = "%H:%M"
-
-            }
-            gantt.tickFormat(format);
-            gantt.redraw(tasks);
-        }
 
         gantt(tasks);
-
-        function getEndDate() {
-            var lastEndDate = Date.now();
-            if (tasks.length > 0) {
-            lastEndDate = tasks[tasks.length - 1].endDate;
-            }
-
-            return lastEndDate;
-        }
     </script>
 
 {% endblock %}
