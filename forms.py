@@ -2536,13 +2536,13 @@ class task_information_form(ModelForm):
 class timeline_form(forms.Form):
     start_date = forms.DateField(
         widget=forms.DateInput(attrs={
-            'onchange': 'render_timeline()',
+            'onchange': 'render_gantt_chart()',
             'style': 'width: 100px;',
         })
     )
     end_date = forms.DateField(
         widget=forms.DateInput(attrs={
-            'onchange': 'render_timeline()',
+            'onchange': 'render_gantt_chart()',
             'style': 'width: 100px;',
         })
     )

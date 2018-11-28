@@ -17,24 +17,20 @@
             shape-rendering: crispEdges;
         }
 
-        .bar {
-            fill: #33b5e5;
+        .bar-new {
+            fill: #5077bd;
         }
 
-        .bar-failed {
-            fill: #CC0000;
+        .bar-open {
+            fill: #339900;
         }
 
-        .bar-running {
-            fill: #669900;
+        .bar-resolved {
+            fill: #ec4424;
         }
 
-        .bar-succeeded {
-            fill: #33b5e5;
-        }
-
-        .bar-killed {
-            fill: #ffbb33;
+        .bar-closed {
+            fill: #41042c;
         }
     </style>
     <script src="{% static 'NearBeach/widgets/svg.js/svg.js' %}"></script>
@@ -53,7 +49,7 @@
 
     <h2>Timeline</h2>
     <form id="date_form">
-    {% csrf_token %}
+        {% csrf_token %}
         <ul>
             <li>Start Date: {{ timeline_form.start_date }}</li>
             <li>End Date:{{ timeline_form.end_date }}</li>
@@ -64,92 +60,120 @@
     <div id="timeline" style="width: 100%; overflow: auto;"></div>
 
     <script>
-        const month_names = ["January", "February", "March", "April", "May", "June",
-          "July", "August", "September", "October", "November", "December"
-        ];
+        //Global varables
+        var taskStatus = {
+            "New" : "bar-new",
+            "Open" : "bar-open",
+            "Resolved" : "bar-resolved",
+            "Closed" : "bar-closed"
+        };
 
+        /*
+        Setup both the start_date and end_date fields with the
+        datetime picker widget
+         */
         $( "#id_start_date" ).datepicker({
             dateFormat: "yy-mm-dd"
         });
         $( "#id_start_date" ).val("{{ start_date|date:'Y-m-d' }}");
-        //$("#id_start_date").setDate("{{ start_date }}");
+
         $("#id_end_date").datepicker({
             dateFormat: "yy-mm-dd"
         });
         $("#id_end_date").val("{{ end_date|date:'Y-m-d' }}");
 
-        /*
-        TEMP CODE
-        ~~~~~~~~~
-        The following code will help create a gnantt chart. Hopefully.
 
-        Method
-        ~~~~~~
-        1.) Extract the project information from NearBeach using AJAX
-        2.) Information comes in an AJAX form
-        3.) Collect the variables, i.e. start and end dates
-        4.) Create the chart by inputting the variables
-         */
+        function render_gantt_chart() {
+            /*
+            The following function will render a gantt chart (timeline).
 
-        var taskStatus = {
-            "SUCCEEDED" : "bar",
-            "FAILED" : "bar-failed",
-            "RUNNING" : "bar-running",
-            "KILLED" : "bar-killed"
-        };
+            Method
+            ~~~~~~
+            1.) Collect variables, like start and end date
+            2.) Send - as POST - to collect the JSON of the data for gantt chart
+            3.) Use the data from the JSON to construct the rest of the variables
+            4.) Use those newly created variables to create the gantt chart using the D3_gantt_chart library
+             */
 
-        var tasks = [
-            {
-                "startDate":new Date("Sun Dec 09 00:00:00 EST 2012"),
-                "endDate":new Date("Sun Dec 12 23:59:59 EST 2012"),
-                "taskName":"E Job",
-                "status":"RUNNING"
+            //Clear the board
+            $("#timeline").html("");
+
+            //Check dates
+            if (!Date.parse($("#id_start_date").val()) || !Date.parse($("#id_end_date").val())) {
+                alert("Sorry, but one of the dates is not a functional date and will cause issues!");
+                return;
             }
-        ];
 
-        var taskNames = [
-            "Pro1",
-            "P Job",
-            "E Job",
-            "A Job",
-            "N Job"
-        ];
-
-        /*
-        NO NEED TO SORT AS DJANGO WILL DO THIS FOR US
-        tasks.sort(function(a, b) {
-            return a.endDate - b.endDate;
-        });*/
-
-        //var maxDate = tasks[tasks.length - 1].endDate;
+            // 1.) Collect Variables
+            var start_date = new Date(document.getElementById("id_start_date").value),
+                end_date = new Date(document.getElementById("id_end_date").value),
+                no_days = (end_date - start_date)/(1000*60*60*24),
+                chart_width = 50 * no_days,
+                objects = [],       //Could be project or task
+                object_names = [];  //Project/tasks ID
 
 
+            // 2.) Send a POST to get JSON data
+            $.ajax({
+                url: '/timeline_data/',
+                data: $("#date_form").serialize(),
+                dataType: "JSON",
+                type: "POST",
+                success: function(data) {
+                    //Obtained the JSON data
+                    json_data = data;
 
-        var gantt = d3.gantt()
-            .taskTypes(taskNames)
-            .taskStatus(taskStatus)
-            .tickFormat(format)
-            .height(450)
-            .width(1600) //WILL BE FORMULA DEPENDING ON HOW MANY DAYS THERE ARE BETWEEN START AND END DATES
-            .selector("#timeline");
+                    // 3.) Construct more variables... who the fuck does not love variables
+                    // A loop is used to navigate the JSON
+                    for (var i=0; i<json_data.length;i++) {
+                        var object_start_date = new Date(json_data[i]['fields']['project_start_date']),
+                            object_end_date = new Date(json_data[i]['fields']['project_end_date']),
+                            object_name = "PRO" + json_data[i]['pk'],
+                            object_status = json_data[i]['fields']['project_status'];
+
+                        //Shove that lovely data into the array
+                        objects.push({
+                            "startDate":object_start_date,
+                            "endDate": object_end_date,
+                            "taskName": object_name,
+                            "status": object_status
+                        });
+
+                        object_names.push(object_name);
+                    }
+
+                    // 4.) Create that GANTT chart
+                    var gantt = d3.gantt()
+                        .taskTypes(object_names)
+                        .taskStatus(taskStatus)
+                        .tickFormat("%b %d, %Y")
+                        .height(json_data.length * 50 + 25)
+                        .width(chart_width)
+                        .selector("#timeline")
+                        .timeDomainMode("fixed")
+                        .timeDomain([
+                            start_date,
+                            end_date
+                        ]);
 
 
+                    //gantt.redraw(objects);
+                    gantt(objects);
 
-        gantt.timeDomainMode("fixed");
-        //gantt.timeDomain([ d3.time.day.offset(getEndDate(), -7), getEndDate() ]);
-        gantt.timeDomain([
-            new Date(document.getElementById("id_start_date").value),
-            new Date(document.getElementById("id_end_date").value)
-        ]);
+                    // CONSOLE LOG EVERYTHING!!!
+                    console.log(objects);
+                    console.log(object_names);
+                },
+                error: function() {
+                    alert("Sorry, rendering the timeline is not possible at the moment due to errors.");
+                    return false;
+                }
 
-        var format = "%b %d, %Y"; //HARD CODED
-        gantt.tickFormat(format);
+            });
+        }
 
-        gantt.redraw(tasks);
-
-
-
-        gantt(tasks);
+        //Render the gantt chart
+        render_gantt_chart();
     </script>
 
 {% endblock %}

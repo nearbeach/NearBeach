@@ -5341,50 +5341,57 @@ def timeline(request):
 
 
 @login_required(login_url='login')
-def timeline_data(request, destination):
+def timeline_data(request):
     if request.method == "POST":
         form = timeline_form(request.POST)
         if form.is_valid():
+            """
+            FUTURE NOTE - WE WILL NEED TO WRITE THIS SO THAT IT WILL AUTOMATICALLY DEPLOY EITHER PROJECT/TASKS OR 
+            ANY OTHER OBJECT DEPENDING ON THE CHOICES MADE ON THE FORM!!!
+            """
             #Get Variables
             start_date = form.cleaned_data['start_date']
             end_date = form.cleaned_data['end_date']
 
             #Get json_data
-            if destination == "project":
-                json_results = serializers.serialize(
-                    'json',
-                    project.objects.filter(
-                        Q(is_deleted="FALSE") &
+            json_results = serializers.serialize(
+                'json',
+                project.objects.filter(
+                    Q(is_deleted="FALSE") &
+                    Q(
+                        # Start and end date out of bounds
                         Q(
-                            # Start and end date out of bounds
-                            Q(
-                                project_start_date__lte=start_date,
-                                project_end_date__gte=end_date,
-                            ) |
+                            project_start_date__lte=start_date,
+                            project_end_date__gte=end_date,
+                        ) |
 
-                            # Start date between start and end date
-                            Q(
-                                project_start_date__gte=start_date,
-                                project_start_date__lte=end_date,
-                            ) |
+                        # Start date between start and end date
+                        Q(
+                            project_start_date__gte=start_date,
+                            project_start_date__lte=end_date,
+                        ) |
 
-                            # End date betweeen start and end date
-                            Q(
-                                project_end_date__gte=start_date,
-                                project_end_date__lte=end_date,
-                            )
+                        # End date betweeen start and end date
+                        Q(
+                            project_end_date__gte=start_date,
+                            project_end_date__lte=end_date,
                         )
-
-                        # ADD IN OTHER OPTIONS LATER
-                    ),
-                    fields={
-                        'project_id',
-                        'project_name',
-                        'project_start_date',
-                        'project_end_date',
-                    }
-                )
-                print(json_results)
+                    )
+                ).order_by(
+                    'project_start_date',
+                    'project_end_date',
+                    'project_id',
+                ),
+                fields={
+                    'project_id',
+                    'project_name',
+                    'project_start_date',
+                    'project_end_date',
+                    'project_status',
+                }
+            )
+            print(json_results)
+            """
             else:
                 json_results = serializers.serialize(
                     'json',
@@ -5400,8 +5407,10 @@ def timeline_data(request, destination):
                     }
 
                 )
+            """
 
             return HttpResponse(json_results, content_type='application/json')
+
         else:
             print(form.errors)
 
