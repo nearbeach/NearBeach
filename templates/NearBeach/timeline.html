@@ -53,6 +53,7 @@
         <ul>
             <li>Start Date: {{ timeline_form.start_date }}</li>
             <li>End Date:{{ timeline_form.end_date }}</li>
+            <li>Object: {{ timeline_form.object_type }}</li>
         </ul>
     </form>
 
@@ -110,7 +111,8 @@
                 no_days = (end_date - start_date)/(1000*60*60*24),
                 chart_width = 50 * no_days,
                 objects = [],       //Could be project or task
-                object_names = [];  //Project/tasks ID
+                object_names = [],  //Project/tasks ID
+                object_type = document.getElementById("id_object_type").value;
 
 
             // 2.) Send a POST to get JSON data
@@ -126,10 +128,29 @@
                     // 3.) Construct more variables... who the fuck does not love variables
                     // A loop is used to navigate the JSON
                     for (var i=0; i<json_data.length;i++) {
-                        var object_start_date = new Date(json_data[i]['fields']['project_start_date']),
-                            object_end_date = new Date(json_data[i]['fields']['project_end_date']),
-                            object_name = "PRO" + json_data[i]['pk'],
-                            object_status = json_data[i]['fields']['project_status'];
+                        if (object_type == "Project") {
+                            var object_start_date = new Date(json_data[i]['fields']['project_start_date']),
+                                object_end_date = new Date(json_data[i]['fields']['project_end_date']),
+                                object_name = "PRO" + json_data[i]['pk'],
+                                object_status = json_data[i]['fields']['project_status'];
+                        } else if (object_type == "Task") {
+                            var object_start_date = new Date(json_data[i]['fields']['task_start_date']),
+                                object_end_date = new Date(json_data[i]['fields']['task_end_date']),
+                                object_name = "TASK" + json_data[i]['pk'],
+                                object_status = json_data[i]['fields']['task_status'];
+
+                        } else if (object_type == "Quote") {
+                            var object_start_date = new Date(json_data[i]['fileds']['date_created']),
+                                object_end_date = new Date(json_data[i]['fields']['quote_valid_till']),
+                                object_name = "QUOTE" + json_data[i]['pk'],
+                                object_status = json_data[i]['fields']['quote_stage_id'];
+                        } else if (object_type == "Opportunity") {
+                            var object_start_date = new Date(json_data[i]['fileds']['date_created']),
+                                object_end_date = new Date(json_data[i]['fields']['opportunity_expected_close_date']),
+                                object_name = "QUOTE" + json_data[i]['pk'],
+                                object_status = json_data[i]['fields']['opportunity_id'];
+                        }
+
 
                         //Shove that lovely data into the array
                         objects.push({

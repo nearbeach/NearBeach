@@ -5352,62 +5352,135 @@ def timeline_data(request):
             #Get Variables
             start_date = form.cleaned_data['start_date']
             end_date = form.cleaned_data['end_date']
+            object_type = form.cleaned_data['object_type']
 
-            #Get json_data
-            json_results = serializers.serialize(
-                'json',
-                project.objects.filter(
-                    Q(is_deleted="FALSE") &
-                    Q(
-                        # Start and end date out of bounds
-                        Q(
-                            project_start_date__lte=start_date,
-                            project_end_date__gte=end_date,
-                        ) |
+            if object_type == "Project":
 
-                        # Start date between start and end date
+                #Get json_data
+                json_results = serializers.serialize(
+                    'json',
+                    project.objects.filter(
+                        Q(is_deleted="FALSE") &
                         Q(
-                            project_start_date__gte=start_date,
-                            project_start_date__lte=end_date,
-                        ) |
+                            # Start and end date out of bounds
+                            Q(
+                                project_start_date__lte=start_date,
+                                project_end_date__gte=end_date,
+                            ) |
 
-                        # End date betweeen start and end date
-                        Q(
-                            project_end_date__gte=start_date,
-                            project_end_date__lte=end_date,
+                            # Start date between start and end date
+                            Q(
+                                project_start_date__gte=start_date,
+                                project_start_date__lte=end_date,
+                            ) |
+
+                            # End date betweeen start and end date
+                            Q(
+                                project_end_date__gte=start_date,
+                                project_end_date__lte=end_date,
+                            )
                         )
-                    )
-                ).order_by(
-                    'project_start_date',
-                    'project_end_date',
-                    'project_id',
-                ),
-                fields={
-                    'project_id',
-                    'project_name',
-                    'project_start_date',
-                    'project_end_date',
-                    'project_status',
-                }
-            )
-            print(json_results)
-            """
-            else:
+                    ).order_by(
+                        'project_start_date',
+                        'project_end_date',
+                        'project_id',
+                    ),
+                    fields={
+                        'project_id',
+                        'project_name',
+                        'project_start_date',
+                        'project_end_date',
+                        'project_status',
+                    }
+                )
+            elif object_type == "Task":
                 json_results = serializers.serialize(
                     'json',
                     task.objects.filter(
-                        is_deleted="FALSE",
-                        # ADD IN OTHER OPTIONS LATER
+                        Q(is_deleted="FALSE") &
+                        Q(
+                            # Start and end date out of bounds
+                            Q(
+                                task_start_date__lte=start_date,
+                                task_end_date__gte=end_date,
+                            ) |
+
+                            # Start date between start and end date
+                            Q(
+                                task_start_date__gte=start_date,
+                                task_start_date__lte=end_date,
+                            ) |
+
+                            # End date betweeen start and end date
+                            Q(
+                                task_end_date__gte=start_date,
+                                task_end_date__lte=end_date,
+                            )
+                        )
+                    ).order_by(
+                        'task_start_date',
+                        'task_end_date',
+                        'task_id',
                     ),
                     fields={
                         'task_id',
-                        'task_short_description',
+                        'task_name',
                         'task_start_date',
                         'task_end_date',
+                        'task_status',
                     }
-
                 )
-            """
+            elif object_type == "Quote":
+                """
+                Quote will only have a "quote_valid_till" date. Thus the start date will automatically be the date 
+                it was created.
+                """
+                json_results = serializers.serialize(
+                    'json',
+                    quote.objects.filter(
+                        is_deleted="FALSE",
+                        quote_valid_till__gte=start_date,
+                        quote_valid_till__lte=end_date,
+                    ).order_by(
+                        'date_created',
+                        'quote_valid_till',
+                        'quote_id',
+                    ),
+                    fields={
+                        'quote_id',
+                        'quote_title',
+                        'date_created',
+                        'quote_valid_till',
+                        'quote_stage',
+                    }
+                )
+            elif object_type == "Opportunity":
+                """
+                Opportunity will only have a "Opportunity Only Valid Till" date. Thus the start date will automatically
+                be the date it was created
+                """
+                json_results = serializers.serialize(
+                    'json',
+                    opportunity.objects.filter(
+                        is_deleted="FALSE",
+                        opportunity_expected_close_date__gte=start_date,
+                        opportunity_expected_close_date__lte=end_date,
+                    ).order_by(
+                        'date_created',
+                        'opportunity_expected_close_date',
+                        'opportunity_id',
+                    ),
+                    fields={
+                        'opportunity_id',
+                        'opportunity_name',
+                        'date_created',
+                        'opportunity_expected_close_date',
+                        'opportunity_stage_id',
+                    }
+                )
+            else:
+                #Something went wrong
+                return HttpResponseBadRequest("Sorry, there is no object that fits that situation")
 
             return HttpResponse(json_results, content_type='application/json')
 

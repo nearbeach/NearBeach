@@ -40,6 +40,14 @@ NOTHING_CHOICE=(
 )
 
 
+OBJECT_CHOICES=(
+    ('Project','Project'),
+    ('Task','Task'),
+    ('Quote','Quote'),
+    ('Opportunity','Opportunity'),
+)
+
+
 
 YEAR_CHOICES=(
     ('2010','2010'),
@@ -2537,13 +2545,19 @@ class timeline_form(forms.Form):
     start_date = forms.DateField(
         widget=forms.DateInput(attrs={
             'onchange': 'render_gantt_chart()',
-            'style': 'width: 100px;',
+            'style': 'width: 120px;',
         })
     )
     end_date = forms.DateField(
         widget=forms.DateInput(attrs={
             'onchange': 'render_gantt_chart()',
-            'style': 'width: 100px;',
+            'style': 'width: 120px;',
+        })
+    )
+    object_type = forms.ChoiceField(
+        choices=OBJECT_CHOICES,
+        widget=forms.Select(attrs={
+            'onchange': 'render_gantt_chart()',
         })
     )
 
