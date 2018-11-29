@@ -5454,6 +5454,7 @@ def timeline_data(request):
                         'quote_stage',
                     }
                 )
+                print(json_results)
             elif object_type == "Opportunity":
                 """
                 Opportunity will only have a "Opportunity Only Valid Till" date. Thus the start date will automatically
@@ -5478,6 +5479,7 @@ def timeline_data(request):
                         'opportunity_stage_id',
                     }
                 )
+                print(json_results)
             else:
                 #Something went wrong
                 return HttpResponseBadRequest("Sorry, there is no object that fits that situation")
