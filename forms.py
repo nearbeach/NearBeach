@@ -40,6 +40,14 @@ NOTHING_CHOICE=(
 )
 
 
+OBJECT_CHOICES=(
+    ('Project','Project'),
+    ('Task','Task'),
+    ('Quote','Quote'),
+    ('Opportunity','Opportunity'),
+)
+
+
 
 YEAR_CHOICES=(
     ('2010','2010'),
@@ -216,38 +224,45 @@ class assign_group_add_form(forms.Form):
 
         if destination == "project":
             group_results = group_results.exclude(
-                group_id__in=project_group.objects.filter(
+                group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     project_id=location_id,
-                ).values('group_id')
+                ).exclude(group_id=None).values('group_id')
             )
         elif destination == "task":
             group_results = group_results.exclude(
-                group_id__in=task_group.objects.filter(
+                group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     task_id=location_id,
-                ).values('group_id')
+                ).exclude(group_id=None).values('group_id')
             )
         elif destination == "requirement":
             group_results = group_results.exclude(
-                group_id__in=requirement_group.objects.filter(
+                group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     requirement_id=location_id,
-                ).values('group_id')
+                ).exclude(group_id=None).values('group_id')
             )
         elif destination == "quote":
             group_results = group_results.exclude(
-                group_id__in=quote_group.objects.filter(
+                group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     quote_id=location_id,
-                ).values('group_id')
+                ).exclude(group_id=None).values('group_id')
             )
         elif destination == "kanban_board":
             group_results = group_results.exclude(
-                group_id__in=kanban_board_group.objects.filter(
+                group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     kanban_id=location_id,
-                ).values('group_id')
+                ).exclude(group_id=None).values('group_id')
+            )
+        elif destination == "opportunity":
+            group_results = group_results.exclude(
+                group_id__in=object_assignment.objects.filter(
+                    is_deleted="FALSE",
+                    opportunity_id=location_id,
+                ).exclude(group_id=None).values('group_id')
             )
 
         self.fields['add_group'].queryset = group_results
@@ -279,52 +294,107 @@ class assign_user_add_form(forms.Form):
             user_results = User.objects.filter(
                 id__in=user_group.objects.filter(
                     is_deleted="FALSE",
-                    group_id__in=project_group.objects.filter(
+                    group_id__in=object_assignment.objects.filter(
                         is_deleted="FALSE",
                         project_id=location_id,
                     ).values('group_id')
                 ).values('username')
+            ).exclude(
+                id__in=object_assignment.objects.filter(
+                    is_deleted="FALSE",
+                    project_id=location_id,
+                ).exclude(
+                    assigned_user=None,
+                ).values('assigned_user')
             )
         elif destination == "task":
             user_results = User.objects.filter(
                 id__in=user_group.objects.filter(
                     is_deleted="FALSE",
-                    group_id__in=task_group.objects.filter(
+                    group_id__in=object_assignment.objects.filter(
                         is_deleted="FALSE",
                         task_id=location_id,
                     ).values('group_id')
                 ).values('username')
+            ).exclude(
+                id__in=object_assignment.objects.filter(
+                    is_deleted="FALSE",
+                    task_id=location_id,
+                ).exclude(
+                    assigned_user=None,
+                ).values('assigned_user')
             )
         elif destination == "requirement":
             user_results = User.objects.filter(
                 id__in=user_group.objects.filter(
                     is_deleted="FALSE",
-                    group_id__in=requirement_group.objects.filter(
+                    group_id__in=object_assignment.objects.filter(
                         is_deleted="FALSE",
                         requirement_id=location_id,
                     ).values('group_id')
                 ).values('username')
+            ).exclude(
+                id__in=object_assignment.objects.filter(
+                    is_deleted="FALSE",
+                    requirement_id=location_id,
+                ).exclude(
+                    assigned_user=None,
+                ).values('assigned_user')
             )
         elif destination == "quote":
             user_results = User.objects.filter(
                 id__in=user_group.objects.filter(
                     is_deleted="FALSE",
-                    group_id__in=quote_group.objects.filter(
+                    group_id__in=object_assignment.objects.filter(
                         is_deleted="FALSE",
                         quote_id=location_id,
                     ).values('group_id')
                 ).values('username')
+            ).exclude(
+                id__in=object_assignment.objects.filter(
+                    is_deleted="FALSE",
+                    quote_id=location_id,
+                ).exclude(
+                    assigned_user=None,
+                ).values('assigned_user')
             )
         elif destination == "kanban_board":
             user_results = User.objects.filter(
                 id__in=user_group.objects.filter(
                     is_deleted="FALSE",
-                    group_id__in=kanban_board_group.objects.filter(
+                    group_id__in=object_assignment.objects.filter(
                         is_deleted="FALSE",
                         kanban_board_id=location_id,
                     ).values('group_id')
                 ).values('username')
+            ).exclude(
+                id__in=object_assignment.objects.filter(
+                    is_deleted="FALSE",
+                    kanban_board_id=location_id,
+                ).exclude(
+                    assigned_user=None,
+                ).values('assigned_user')
             )
+        elif destination == "opportunity":
+            user_results = User.objects.filter(
+                id__in=user_group.objects.filter(
+                    is_deleted="FALSE",
+                    group_id__in=object_assignment.objects.filter(
+                        is_deleted="FALSE",
+                        opportunity_id=location_id,
+                    ).values('group_id')
+                ).values('username')
+            ).exclude(
+                id__in=object_assignment.objects.filter(
+                    is_deleted="FALSE",
+                    opportunity_id=location_id,
+                ).exclude(
+                    assigned_user=None,
+                ).values('assigned_user')
+            )
+        else:
+            print("SOMETHING FUCKED UP!!!")
+            print("DESTINATION: " + destination)
         self.fields['add_user'].queryset = user_results
 
 
@@ -1544,7 +1614,7 @@ class new_project_form(forms.Form):
     group_results=group.objects.filter(is_deleted='FALSE')
 
     # Fields
-    assigned_groups=forms.ModelMultipleChoiceField(
+    project_permission=forms.ModelMultipleChoiceField(
         widget=forms.SelectMultiple(attrs={
             'placeholder': 'Select Groups to Assign to Project',
             'class': 'chosen-select',
@@ -1673,7 +1743,7 @@ class new_quote_form(ModelForm):
 
     select_groups = forms.ModelMultipleChoiceField(
         queryset=groups_results,
-        required=False,
+        required=True,
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select',
@@ -1681,18 +1751,6 @@ class new_quote_form(ModelForm):
             'style': 'width: 100%',
         }),
     )
-
-    select_users = forms.ModelMultipleChoiceField(
-        queryset=user_results,
-        required=False,
-        widget=forms.SelectMultiple(attrs={
-            'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
-            'multiple tabindex': '4',
-            'style': 'width: 100%',
-        }),
-    )
-
 
     class Meta:
         model=quote
@@ -1712,7 +1770,6 @@ class new_requirement_form(ModelForm):
         requirement_status_is_closed='FALSE',
     )
     groups_results=group.objects.filter(is_deleted="FALSE")
-    user_results=auth.models.User.objects.all()
 
     #Fields
     requirement_title = forms.CharField(
@@ -1737,9 +1794,9 @@ class new_requirement_form(ModelForm):
         queryset=requirement_status_results,
     )
 
-    select_groups = forms.ModelMultipleChoiceField(
+    requirement_permission = forms.ModelMultipleChoiceField(
         queryset=groups_results,
-        required=False,
+        required=True,
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select',
@@ -1748,16 +1805,6 @@ class new_requirement_form(ModelForm):
         }),
     )
 
-    select_users = forms.ModelMultipleChoiceField(
-        queryset=user_results,
-        required=False,
-        widget=forms.SelectMultiple(attrs={
-            'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
-            'multiple tabindex': '4',
-            'style': 'width: 100%',
-        }),
-    )
 
     class Meta:
         model=requirement
@@ -1775,7 +1822,7 @@ class new_task_form(forms.Form):
     group_results = group.objects.filter(is_deleted='FALSE')
 
     # Fields
-    assigned_groups=forms.ModelMultipleChoiceField(
+    task_permission=forms.ModelMultipleChoiceField(
         widget=forms.SelectMultiple(attrs={
             'placeholder': 'Select Groups to Assign to Project',
             'class': 'chosen-select',
@@ -2497,14 +2544,20 @@ class task_information_form(ModelForm):
 class timeline_form(forms.Form):
     start_date = forms.DateField(
         widget=forms.DateInput(attrs={
-            'onchange': 'render_timeline()',
-            'style': 'width: 100px;',
+            'onchange': 'render_gantt_chart()',
+            'style': 'width: 120px;',
         })
     )
     end_date = forms.DateField(
         widget=forms.DateInput(attrs={
-            'onchange': 'render_timeline()',
-            'style': 'width: 100px;',
+            'onchange': 'render_gantt_chart()',
+            'style': 'width: 120px;',
+        })
+    )
+    object_type = forms.ChoiceField(
+        choices=OBJECT_CHOICES,
+        widget=forms.Select(attrs={
+            'onchange': 'render_gantt_chart()',
         })
     )
 

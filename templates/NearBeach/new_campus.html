@@ -2,15 +2,15 @@
 {% block content %}
 {% load static %}
 <body onload="on_page_load()">
-    <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
-    <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
-    <link rel="stylesheet" href="{% static 'NearBeach/javascript/intl-tel-input/css/intlTelInput.css' %}">
-    <script src="{% static 'NearBeach/javascript/intl-tel-input/js/intlTelInput.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/intl-tel-input/css/intlTelInput.css' %}">
+    <script src="{% static 'NearBeach/widgets/intl-tel-input/js/intlTelInput.js' %}"></script>
     <style>
-        .iti-flag {background-image: url("{% static 'NearBeach/javascript/intl-tel-input/img/flags.png' %}");}
+        .iti-flag {background-image: url("{% static 'NearBeach/widgets/intl-tel-input/img/flags.png' %}");}
 
         @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-          .iti-flag {background-image: url("{% static 'NearBeach/javascript/intl-tel-input/img/flags@2x.png' %}");}
+          .iti-flag {background-image: url("{% static 'NearBeach/widgets/intl-tel-input/img/flags@2x.png' %}");}
         }
     </style>
     <h2>New Campus</h2>
@@ -42,9 +42,9 @@
         {% endif %}
 
 
-        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
-        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
-        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
     </form>
 
 

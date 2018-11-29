@@ -19,10 +19,10 @@ from .user_permissions import return_user_permission_level
 from django.db.models import Sum, Q, Min
 
 
-
+"""
 @login_required(login_url='login')
 def information_project_assigned_users(request, project_id):
-    project_groups_results = project_group.objects.filter(
+    project_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         project_id=project.objects.get(project_id=project_id),
     ).values('group_id_id')
@@ -94,12 +94,12 @@ def information_project_delete_assigned_users(request, project_id, location_id):
     c = {}
 
     return HttpResponse(t.render(c, request))
-
+"""
 
 
 @login_required(login_url='login')
 def information_project_costs(request, project_id):
-    project_groups_results = project_group.objects.filter(
+    project_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         project_id=project.objects.get(project_id=project_id),
     ).values('group_id_id')
@@ -156,10 +156,10 @@ def information_project_costs(request, project_id):
 
 @login_required(login_url='login')
 def information_project_customer(request, project_id):
-    project_groups_results = project_group.objects.filter(
+    project_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         project_id=project.objects.get(project_id=project_id),
-    ).values('group_id_id')
+    ).values('group_id')
 
     permission_results = return_user_permission_level(request, project_groups_results,'project')
 
@@ -210,7 +210,7 @@ def information_project_customer(request, project_id):
 
 @login_required(login_url='login')
 def information_project_history(request, project_id):
-    project_groups_results = project_group.objects.filter(
+    project_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         project_id=project.objects.get(project_id=project_id),
     ).values('group_id_id')
@@ -259,7 +259,7 @@ def information_project_history(request, project_id):
 
 @login_required(login_url='login')
 def project_readonly(request, project_id):
-    project_groups_results = project_group.objects.filter(
+    project_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         project_id=project.objects.get(project_id=project_id),
     ).values('group_id_id')

@@ -67,10 +67,10 @@ def alerts(request):
 
     project_results = project.objects.filter(
         is_deleted="FALSE",
-        project_id__in=assigned_user.objects.filter(
+        project_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             project_id__isnull=False,
-            user_id=request.user,
+            assigned_user=request.user,
         ).values('project_id'),
         project_end_date__lte=compare_time,
         project_status__in={'New','Open'},
@@ -78,10 +78,10 @@ def alerts(request):
 
     task_results = task.objects.filter(
         is_deleted="FALSE",
-        task_id__in=assigned_user.objects.filter(
+        task_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             task_id__isnull=False,
-            user_id=request.user,
+            assigned_user=request.user,
         ).values('task_id'),
         task_end_date__lte=compare_time,
         task_status__in={'New','Open'},
@@ -89,7 +89,7 @@ def alerts(request):
 
     opportunity_results = opportunity.objects.filter(
         is_deleted="FALSE",
-        opportunity_id__in=opportunity_permission.objects.filter(
+        opportunity_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             assigned_user=request.user,
         ).values('opportunity_id'),
@@ -98,6 +98,7 @@ def alerts(request):
             opportunity_closed="FALSE",
         ).values('opportunity_stage_id'),
     )
+
 
     quote_results = quote.objects.filter(
         is_deleted="FALSE",
@@ -233,40 +234,43 @@ def assigned_group_add(request, location_id, destination):
         )
         if form.is_valid():
             if destination == "project":
-                project_groups_submit = project_group(
+                object_assignment_submit = object_assignment(
                     project_id=project.objects.get(project_id=location_id),
                     group_id=form.cleaned_data['add_group'],
                     change_user=request.user,
                 )
-                project_groups_submit.save()
             elif destination == "task":
-                task_groups_submit = task_group(
+                object_assignment_submit = object_assignment(
                     task_id=task.objects.get(task_id=location_id),
                     group_id=form.cleaned_data['add_group'],
                     change_user=request.user,
                 )
-                task_groups_submit.save()
             elif destination == "requirement":
-                requirement_group_submit = requirement_group(
+                object_assignment_submit = object_assignment(
                     requirement_id=requirement.objects.get(requirement_id=location_id),
                     group_id = form.cleaned_data['add_group'],
                     change_user = request.user,
                 )
-                requirement_group_submit.save()
             elif destination == "quote":
-                quote_group_submit = quote_group(
+                object_assignment_submit = object_assignment(
                     quote_id=quote.objects.get(quote_id=location_id),
                     group_id=form.cleaned_data['add_group'],
                     change_user=request.user,
                 )
-                quote.save()
             elif destination == "kanban_board":
-                kanban_board_submit = kanban_board_group(
+                object_assignment_submit = object_assignment(
                     kanban_board_id=kanban_board.objects.get(kanban_board_id=location_id),
                     group_id=form.cleaned_data['add_group'],
                     change_user=request.user,
                 )
-                kanban_board.save()
+            elif destination == "opportunity":
+                object_assignment_submit = object_assignment(
+                    opportunity_id=opportunity.objects.get(opportunity_id=location_id),
+                    group_id=form.cleaned_data['add_group'],
+                    change_user=request.user,
+                )
+            object_assignment_submit.save()
+
 
         else:
             print(form.errors)
@@ -286,58 +290,71 @@ def assigned_group_add(request, location_id, destination):
 
 
 @login_required(login_url='login')
-def assigned_group_delete(request, location_id, destination):
-    if destination == "project":
-        project_groups_save = project_group.objects.get(id = location_id)
-        project_groups_save.is_deleted = "TRUE"
-        if not project_groups_save.save():
-            print("Error saving project")
+def assigned_group_delete(request, object_assignment_id):
+    """
+    assigned group delete will delete an assigned group against an object. Please note this has to be through
+    POST. This is a security measure
+    """
+    if request.method == "POST":
+        object_assignment_update = object_assignment.objects.get(object_assignment_id=object_assignment_id)
+        object_assignment_update.is_deleted = "TRUE"
+        object_assignment_update.save()
 
+        #Load blank page and send back
+        t = loader.get_template('NearBeach/blank.html')
 
-    elif destination == "task":
-        task_groups_save = task_group.objects.get(id = location_id)
-        task_groups_save.is_deleted = "TRUE"
-        if not task_groups_save.save():
-            print("Error saving task")
+        c = {}
 
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("Action can only be done through POST")
 
-    # Load the template
-    t = loader.get_template('NearBeach/blank.html')
-
-    # context
-    c = {
-    }
-
-    return HttpResponse(t.render(c, request))
 
 
 
 @login_required(login_url='login')
 def assigned_group_list(request, location_id, destination):
     if destination == "project":
-        group_list_results = project_group.objects.filter(
+        group_list_results = object_assignment.objects.filter(
             is_deleted="FALSE",
             project_id = location_id
+        ).exclude(
+            group_id=None,
         )
     elif destination=="task":
-        group_list_results = task_group.objects.filter(
+        group_list_results = object_assignment.objects.filter(
             is_deleted="FALSE",
             task_id=location_id,
+        ).exclude(
+            group_id=None,
         )
     elif destination == "requirement":
-        group_list_results = requirement_group.objects.filter(
+        group_list_results = object_assignment.objects.filter(
             is_deleted="FALSE",
             requirement_id=location_id,
+        ).exclude(
+            group_id=None,
         )
     elif destination == "quote":
-        group_list_results = quote_group.objects.filter(
+        group_list_results = object_assignment.objects.filter(
             is_deleted="FALSE",
             quote_id=location_id,
+        ).exclude(
+            group_id=None,
         )
     elif destination == "kanban_board":
-        group_list_results = kanban_board_group.objects.filter(
+        group_list_results = object_assignment.objects.filter(
             is_deleted="FALSE",
             kanban_board_id=location_id,
+        ).exclude(
+            group_id=None,
+        )
+    elif destination == "opportunity":
+        group_list_results = object_assignment.objects.filter(
+            is_deleted="FALSE",
+            opportunity_id=location_id,
+        ).exclude(
+            group_id=None,
         )
     else:
         group_list_results = ''
@@ -362,7 +379,56 @@ def assigned_user_add(request, location_id, destination):
     permission and they should be able to access it.
     """
     if request.method == "POST":
-        print("We will apply post code soon")
+        form = assign_user_add_form(
+            request.POST,
+            location_id=location_id,
+            destination=destination,
+        )
+        if form.is_valid():
+            if destination == "project":
+                object_assignment_submit = object_assignment(
+                    project_id=project.objects.get(project_id=location_id),
+                    assigned_user=form.cleaned_data['add_user'],
+                    change_user=request.user,
+                )
+                object_assignment_submit.save()
+            elif destination == "task":
+                object_assignment_submit = object_assignment(
+                    task_id=task.objects.get(task_id=location_id),
+                    assigned_user=form.cleaned_data['add_user'],
+                    change_user=request.user,
+                )
+                object_assignment_submit.save()
+            elif destination == "requirement":
+                object_assignment_submit = object_assignment(
+                    requirement_id=requirement.objects.get(requirement_id=location_id),
+                    assigned_user=form.cleaned_data['add_user'],
+                    change_user=request.user,
+                )
+                object_assignment_submit.save()
+            elif destination == "quote":
+                object_assignment_submit = object_assignment(
+                    quote_id=quote.objects.get(quote_id=location_id),
+                    assigned_user=form.cleaned_data['add_user'],
+                    change_user=request.user,
+                )
+                object_assignment_submit.save()
+            elif destination == "kanban_board":
+                object_assignment_submit = object_assignment(
+                    kanban_board_id=kanban_board.objects.get(kanban_board_id=location_id),
+                    assigned_user=form.cleaned_data['add_user'],
+                    change_user=request.user,
+                )
+                object_assignment_submit.save()
+            elif destination == "opportunity":
+                object_assignment_submit = object_assignment(
+                    opportunity_id=opportunity.objects.get(opportunity_id=location_id),
+                    assigned_user=form.cleaned_data['add_user'],
+                    change_user=request.user,
+                )
+                object_assignment_submit.save()
+        else:
+            print(form.errors)
 
     # Load the template
     t = loader.get_template('NearBeach/assigned_users/assigned_user_add.html')
@@ -396,29 +462,39 @@ def assigned_user_delete(request, location_id, destination):
 def assigned_user_list(request, location_id, destination):
     # Get SQL
     if destination == 'project':
-        assigned_user_results = assigned_user.objects.filter(
+        assigned_user_results = object_assignment.objects.filter(
             is_deleted="FALSE",
             project_id=location_id,
+        ).exclude(
+            assigned_user =None,
         )
     elif destination == 'task':
-        assigned_user_results = assigned_user.objects.filter(
+        assigned_user_results = object_assignment.objects.filter(
             is_deleted="FALSE",
             task_id=location_id,
+        ).exclude(
+            assigned_user =None,
         )
     elif destination == 'requirement':
-        assigned_user_results = assigned_user.objects.filter(
+        assigned_user_results = object_assignment.objects.filter(
             is_deleted="FALSE",
             requirement_id=location_id,
+        ).exclude(
+            assigned_user =None,
         )
     elif destination == 'quote':
-        assigned_user_results = assigned_user.objects.filter(
+        assigned_user_results = object_assignment.objects.filter(
             is_deleted="FALSE",
             quote_id=location_id,
+        ).exclude(
+            assigned_user =None,
         )
     elif destination == 'opportunity':
-        assigned_user_results = assigned_user.objects.filter(
+        assigned_user_results = object_assignment.objects.filter(
             is_deleted="FALSE",
             opportunity_id=location_id,
+        ).exclude(
+            assigned_user =None,
         )
     else:
         assigned_user_results = ''
@@ -1073,11 +1149,10 @@ def customer_information(request, customer_id):
     """
     user_groups_results = user_group.objects.filter(username=request.user)
 
-    opportunity_permissions_results = opportunity_permission.objects.filter(
+    opportunity_permissions_results = object_assignment.objects.filter(
         Q(
             Q(assigned_user=request.user)  # User has permission
             | Q(group_id__in=user_groups_results.values('group_id'))  # User's group have permission
-            | Q(all_user='TRUE')  # All users have access
         )
     )
     opportunity_results = opportunity.objects.filter(
@@ -1174,9 +1249,9 @@ def dashboard(request):
 @login_required(login_url='login')
 def dashboard_active_projects(request):
     #Get Data
-    assigned_users_results = assigned_user.objects.filter(
+    assigned_users_results = object_assignment.objects.filter(
         is_deleted='FALSE',
-        user_id=request.user,
+        assigned_user=request.user,
         project_id__isnull=False,
     )\
         .exclude(project_id__project_status='Resolved').exclude(project_id__project_status='Closed')\
@@ -1241,9 +1316,9 @@ def dashboard_active_requirement(request):
 @login_required(login_url='login')
 def dashboard_active_task(request):
     # Get Data
-    assigned_users_results = assigned_user.objects.filter(
+    assigned_users_results = object_assignment.objects.filter(
         is_deleted='FALSE',
-        user_id=request.user,
+        assigned_user=request.user,
         task_id__isnull=False,
     )\
         .exclude(task_id__task_status='Resolved')\
@@ -1265,7 +1340,7 @@ def dashboard_active_task(request):
 def dashboard_group_active_projects(request):
     active_projects_results = project.objects.filter(
         is_deleted="FALSE",
-        project_id__in=project_group.objects.filter(
+        project_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             group_id__in=user_group.objects.filter(
                 is_deleted="FALSE",
@@ -1289,7 +1364,7 @@ def dashboard_group_active_projects(request):
 def dashboard_group_active_task(request):
     active_task_results = task.objects.filter(
         is_deleted="FALSE",
-        task_id__in=task_group.objects.filter(
+        task_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             group_id__in=user_group.objects.filter(
                 is_deleted="FALSE",
@@ -1312,7 +1387,7 @@ def dashboard_group_active_task(request):
 def dashboard_group_opportunities(request):
     active_group_opportunities = opportunity.objects.filter(
         is_deleted="FALSE",
-        opportunity_id__in=opportunity_permission.objects.filter(
+        opportunity_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             group_id__in=user_group.objects.filter(
                 is_deleted="FALSE",
@@ -1335,39 +1410,26 @@ def dashboard_group_opportunities(request):
 @login_required(login_url='login')
 def dashboard_opportunities(request):
     # Get username_id from User
-    current_user = request.user
-
-    # Setup connection to the database and query it
-    cursor = connection.cursor()
-
-    cursor.execute("""
-        SELECT DISTINCT
-        opportunities.opportunity_id
-        , opportunities.opportunity_name
-        , organisation.organisation_id
-        , organisation.organisation_name
-        , customer.customer_id
-        , customer.customer_first_name
-        , customer.customer_last_name
-        , list_of_opportunity_stage.opportunity_stage_description
-        , opportunities.opportunity_expected_close_date
+    #current_user = request.user
 
 
-        FROM 
-        opportunity_permission LEFT JOIN user_group
-        ON opportunity_permission.assigned_user_id = user_group.username_id
-        , opportunities JOIN organisation
-        ON opportunities.organisation_id_id = organisation.organisation_id
-        LEFT JOIN customer
-        ON opportunities.customer_id_id = customer.customer_id
-        JOIN list_of_opportunity_stage
-        ON opportunities.opportunity_stage_id_id = list_of_opportunity_stage.opportunity_stage_id
-        WHERE 1=1
-        AND opportunity_permission.opportunity_id_id = opportunities.opportunity_id
-        AND list_of_opportunity_stage.opportunity_stage_description NOT LIKE '%%Close%%'
-        AND opportunity_permission.assigned_user_id = %s
-    """, [current_user.id])
-    active_opportunities = namedtuplefetchall(cursor)
+    active_opportunities = opportunity.objects.filter(
+        is_deleted="FALSE",
+        opportunity_stage_id__in=list_of_opportunity_stage.objects.filter(
+            opportunity_closed="FALSE",
+        ),
+        opportunity_id__in=object_assignment.objects.filter(
+            Q(is_deleted="FALSE") and
+            Q(
+                Q(assigned_user=request.user) or
+                Q(group_id__in=user_group.objects.filter(
+                    username=request.user,
+                    is_deleted="FALSE",
+                ))
+            )
+
+        )
+    )
 
     # Load the template
     t = loader.get_template('NearBeach/dashboard_widgets/opportunities.html')
@@ -2870,9 +2932,9 @@ def my_profile(request):
     #Get data
     project_results = project.objects.filter(
         is_deleted="FALSE",
-        project_id__in=assigned_user.objects.filter(
+        project_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
-            user_id=request.user.id,
+            assigned_user=request.user.id,
         ).values('project_id').distinct()
     )
 
@@ -3183,7 +3245,6 @@ def new_opportunity(request, location_id,destination):
             opportunity_success_probability = form.cleaned_data['opportunity_success_probability']
             lead_source_id = form.cleaned_data['lead_source_id']
             select_groups = form.cleaned_data['select_groups']
-            select_users = form.cleaned_data['select_users']
             opportunity_expected_close_date = form.cleaned_data['opportunity_expected_close_date']
 
 
@@ -3223,14 +3284,6 @@ def new_opportunity(request, location_id,destination):
                 #If a customer has a null for an organisation it will pass through as null
                 submit_opportunity.organisation_id = customer_instance.organisation_id
             else:
-                """
-                try:
-                    organisation_instance = organisation.objects.get(organisation_id=form.cleaned_data['organisation_id'])
-                    submit_opportunity.organisation_id = organisation_instance
-                except:
-                    organisation_instance = None
-                    submit_opportunity.organisation_id = organisation_instance
-                """
                 organisations_instance = form.cleaned_data['organisation_id']
                 if organisations_instance:
                     submit_opportunity.organisation_id = organisations_instance
@@ -3240,45 +3293,15 @@ def new_opportunity(request, location_id,destination):
             """
             Permissions granting
             """
-            give_all_access = True
-
-            if (select_groups):
-                give_all_access = False
-
-
-                for row in select_groups:
-                    group_instance = group.objects.get(group_name=row)
-                    permission_save = opportunity_permission(
-                        opportunity_id=opportunity_instance,
-                        group_id=group_instance,
-                        change_user=request.user,
-                    )
-                    permission_save.save()
-
-            if (select_users):
-                give_all_access = False
-
-                for row in select_users:
-                    assigned_user_instance = auth.models.User.objects.get(username=row)
-                    permission_save = opportunity_permission(
-                        opportunity_id=opportunity_instance,
-                        assigned_user=assigned_user_instance,
-                        change_user=request.user,
-                    )
-                    permission_save.save()
-
-            if (give_all_access):
-                permission_save = opportunity_permission(
+            for row in select_groups:
+                group_instance = group.objects.get(group_name=row)
+                permission_save = object_assignment(
                     opportunity_id=opportunity_instance,
-                    all_user='TRUE',
+                    group_id=group_instance,
                     change_user=request.user,
                 )
                 permission_save.save()
 
-            """
-			Now we go to the opportunity information page so the user can start
-			inputting the require information (like document), and task.
-			"""
             return HttpResponseRedirect(reverse(opportunity_information, args={submit_opportunity.opportunity_id}))
         else:
             print(form.errors)
@@ -3301,8 +3324,6 @@ def new_opportunity(request, location_id,destination):
         'timezone': settings.TIME_ZONE,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
-        'destination': destination,
-        'location_id': location_id,
     }
 
     return HttpResponse(t.render(c, request))
@@ -3393,7 +3414,6 @@ def new_project(request, location_id='', destination=''):
     if request.method == "POST":
         form = new_project_form(request.POST)
         if form.is_valid():
-            print("Form is valid")
             project_name = form.cleaned_data['project_name']
             project_description = form.cleaned_data['project_description']
             organisation_id_form = form.cleaned_data['organisation_id']
@@ -3415,14 +3435,14 @@ def new_project(request, location_id='', destination=''):
             """
 			Once the new project has been created, we will obtain a 
 			primary key. Using this new primary key we will allocate
-			group to the new project.
+			permissions to the new project.
 			"""
-            assigned_to_groups = form.cleaned_data['assigned_groups']
+            project_permission = form.cleaned_data['project_permission']
 
-            for row in assigned_to_groups:
-                submit_group = project_group(
-                    project_id_id=submit_project.pk,
-                    group_id_id=row.group_id,
+            for row in project_permission:
+                submit_group = object_assignment(
+                    project_id=submit_project,
+                    group_id=group.objects.get(group_id=row.group_id),
                     change_user=request.user,
                 )
                 submit_group.save()
@@ -3466,7 +3486,6 @@ def new_project(request, location_id='', destination=''):
 
     # Obtain the group the user is associated with
     current_user = request.user
-    cursor = connection.cursor()
 
     groups_results = group.objects.filter(
         is_deleted="FALSE",
@@ -3543,7 +3562,7 @@ def new_quote(request,destination,primary_key):
             quote_stage_id=form.cleaned_data['quote_stage_id']
             customer_notes=form.cleaned_data['customer_notes']
             select_groups = form.cleaned_data['select_groups']
-            select_users = form.cleaned_data['select_users']
+
 
             # Create the final start/end date fields
             quote_valid_till = convert_to_utc(
@@ -3594,45 +3613,16 @@ def new_quote(request,destination,primary_key):
 
             submit_quotes.save()
 
-            """
-            Permissions
-            ~~~~~~~~~~~
-            If the user left BOTH the user and group permissions empty then we give everyone access.
-            Otherwise we will loop through BOTH and add the correct permissions.
-            """
-            give_all_access = True
-
             if (select_groups):
-                give_all_access = False
-
                 for row in select_groups:
                     group_instance = group.objects.get(group_name=row)
-                    permission_save = quote_permission(
-                        quote_id=submit_quotes.quote_id,
+                    permission_save = object_assignment(
+                        quote_id=submit_quotes,
                         group_id=group_instance,
                         change_user=request.user,
                     )
                     permission_save.save()
 
-            if (select_users):
-                give_all_access = False
-
-                for row in select_users:
-                    assigned_user_instance = auth.models.User.objects.get(username=row)
-                    permission_save = quote_permission(
-                        quote_id=submit_quotes.quote_id,
-                        assigned_user=assigned_user_instance,
-                        change_user=request.user,
-                    )
-                    permission_save.save()
-
-            if (give_all_access):
-                permission_save = quote_permission(
-                    quote_id=submit_quotes.quote_id,
-                    all_user='TRUE',
-                    change_user=request.user,
-                )
-                permission_save.save()
 
             #Now to go to the quote information page
             return HttpResponseRedirect(reverse(quote_information, args={submit_quotes.quote_id}))
@@ -3783,10 +3773,10 @@ def new_task(request, location_id='', destination=''):
 			primary key. Using this new primary key we will allocate
 			group to the new project.
 			"""
-            assigned_to_groups = form.cleaned_data['assigned_groups']
+            task_permission = form.cleaned_data['task_permission']
 
-            for row in assigned_to_groups:
-                submit_group = task_group(
+            for row in task_permission:
+                submit_group = object_assignment(
                     task_id_id=submit_task.pk,
                     group_id_id=row.group_id,
                     change_user=request.user,
@@ -4064,11 +4054,10 @@ def opportunity_information(request, opportunity_id):
         """
         user_groups_results = user_group.objects.filter(username=request.user)
 
-        opportunity_permission_results = opportunity_permission.objects.filter(
+        opportunity_permission_results = object_assignment.objects.filter(
             Q(
                 Q(assigned_user=request.user)  # User has permission
                 | Q(group_id__in=user_groups_results.values('group_id'))  # User's group have permission
-                | Q(all_user='TRUE')  # All users have access
             )
             & Q(opportunity_id=opportunity_id)
         )
@@ -4093,13 +4082,13 @@ def opportunity_information(request, opportunity_id):
     )
     opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
     customer_results = customer.objects.filter(organisation_id=opportunity_results.organisation_id)
-    group_permissions = opportunity_permission.objects.filter(
+    group_permissions = object_assignment.objects.filter(
         group_id__isnull=False,
         opportunity_id=opportunity_id,
         is_deleted='FALSE',
     ).distinct()
     user_permissions = auth.models.User.objects.filter(
-        id__in=opportunity_permission.objects.filter(
+        id__in=object_assignment.objects.filter(
             assigned_user__isnull=False,
             opportunity_id=opportunity_id,
             is_deleted='FALSE',
@@ -4153,6 +4142,7 @@ def opportunity_information(request, opportunity_id):
         'timezone': settings.TIME_ZONE,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'permission': permission_results['opportunity'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -4238,23 +4228,15 @@ def organisation_information(request, organisation_id):
 
     project_results = project.objects.filter(organisation_id=organisation_id)
     task_results = task.objects.filter(organisation_id=organisation_id)
-    #opportunity_results = opportunity.objects.filter(organisation_id=organisation_id)
     """
     We need to limit the amount of opportunities to those that the user has access to.
     """
-    user_groups_results = user_group.objects.filter(username=request.user)
+    #user_groups_results = user_group.objects.filter(username=request.user)
 
-    opportunity_permissions_results = opportunity_permission.objects.filter(
-        Q(
-            Q(assigned_user=request.user)  # User has permission
-            | Q(group_id__in=user_groups_results.values('group_id'))  # User's group have permission
-            | Q(all_user='TRUE')  # All users have access
-        )
-    )
+
     opportunity_results = opportunity.objects.filter(
         is_deleted="FALSE",
         organisation_id=organisation_id,
-        #opportunity_id__in=opportunity_permissions_results.values('opportunity_id') #There a bug with this line
     )
 
 
@@ -4448,9 +4430,9 @@ END TEMP DOCUMENT
 @login_required(login_url='login')
 def project_information(request, project_id):
     #First look at the user's permissions for the project's group.
-    project_groups_results = project_group.objects.filter(
+    project_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
-        project_id=project.objects.get(project_id=project_id),
+        project_id=project_id,
     ).values('group_id_id')
 
     permission_results = return_user_permission_level(request, project_groups_results,['project','project_history'])
@@ -4588,7 +4570,7 @@ def project_information(request, project_id):
         'media_url': settings.MEDIA_URL,
         'quote_results': quote_results,
         'project_id': project_id,
-        'project_permissions': permission_results['project'],
+        'permission': permission_results['project'],
         'project_history_permissions': permission_results['project_history'],
         'timezone': settings.TIME_ZONE,
         'new_item_permission': permission_results['new_item'],
@@ -4660,13 +4642,13 @@ def quote_information(request, quote_id):
         """
         user_groups_results = user_group.objects.filter(username=request.user)
 
-        quote_permission_results = quote_permission.objects.filter(
+        quote_permission_results = object_assignment.objects.filter(
             Q(
                 Q(assigned_user=request.user) # User has permission
                 | Q(group_id__in=user_groups_results.values('group_id')) # User's group have permission
-                | Q(all_user='TRUE') # All users have access
             )
             & Q(quote_id=quote_id)
+            & Q(is_deleted="FALSE")
         )
 
         if (not quote_permission_results):
@@ -4731,7 +4713,7 @@ def quote_information(request, quote_id):
         'quote_or_invoice': quote_or_invoice,
         'timezone': settings.TIME_ZONE,
         'quote_template_results': quote_template_results,
-        'quote_permission': permission_results['quote'],
+        'permission': permission_results['quote'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
     }
@@ -5121,7 +5103,7 @@ def search_templates(request):
 @login_required(login_url='login')
 def task_information(request, task_id):
     #First look at the user's permissions for the project's group.
-    task_groups_results = task_group.objects.filter(
+    task_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         task_id=task.objects.get(task_id=task_id),
     ).values('group_id_id')
@@ -5135,21 +5117,8 @@ def task_information(request, task_id):
     current_user = request.user
 
     # Setup connection to the database and query it
-    cursor = connection.cursor()
+    cursor = connection.cursor() #LETS REMOVE THIS CRAP
 
-    cursor.execute("""
-		SELECT COUNT(*)
-		FROM
-		  task_group
-		, user_group
-		WHERE 1=1
-		AND task_group.group_id_id = user_group.group_id
-		AND task_group.is_deleted = 'FALSE'
-		AND user_group.is_deleted = 'FALSE'
-		AND user_group.username_id = %s
-		AND task_group.task_id_id = %s
-	""", [current_user.id, task_id])
-    has_permission = cursor.fetchall()
 
 
     """
@@ -5158,10 +5127,7 @@ def task_information(request, task_id):
 	the task.
 	"""
     # Define the data we will edit
-    # task_results = task.objects.get(task_id = task_id)
     task_results = get_object_or_404(task, task_id=task_id)
-    task_start_results = convert_extracted_time(task_results.task_start_date)
-    task_end_results = convert_extracted_time(task_results.task_end_date)
 
     # Get the data from the form
     if request.method == "POST":
@@ -5343,7 +5309,7 @@ def task_information(request, task_id):
         'folders_results': serializers.serialize('json', folders_results),
         'media_url': settings.MEDIA_URL,
         'task_id': task_id,
-        'task_permissions': permission_results['task'],
+        'permission': permission_results['task'],
         'task_history_permissions': permission_results['task_history'],
         'quote_results': quote_results,
         'task_results': task_results,
@@ -5375,16 +5341,22 @@ def timeline(request):
 
 
 @login_required(login_url='login')
-def timeline_data(request, destination):
+def timeline_data(request):
     if request.method == "POST":
         form = timeline_form(request.POST)
         if form.is_valid():
+            """
+            FUTURE NOTE - WE WILL NEED TO WRITE THIS SO THAT IT WILL AUTOMATICALLY DEPLOY EITHER PROJECT/TASKS OR 
+            ANY OTHER OBJECT DEPENDING ON THE CHOICES MADE ON THE FORM!!!
+            """
             #Get Variables
             start_date = form.cleaned_data['start_date']
             end_date = form.cleaned_data['end_date']
+            object_type = form.cleaned_data['object_type']
 
-            #Get json_data
-            if destination == "project":
+            if object_type == "Project":
+
+                #Get json_data
                 json_results = serializers.serialize(
                     'json',
                     project.objects.filter(
@@ -5408,34 +5380,112 @@ def timeline_data(request, destination):
                                 project_end_date__lte=end_date,
                             )
                         )
-
-                        # ADD IN OTHER OPTIONS LATER
+                    ).order_by(
+                        'project_start_date',
+                        'project_end_date',
+                        'project_id',
                     ),
                     fields={
                         'project_id',
                         'project_name',
                         'project_start_date',
                         'project_end_date',
+                        'project_status',
+                    }
+                )
+            elif object_type == "Task":
+                json_results = serializers.serialize(
+                    'json',
+                    task.objects.filter(
+                        Q(is_deleted="FALSE") &
+                        Q(
+                            # Start and end date out of bounds
+                            Q(
+                                task_start_date__lte=start_date,
+                                task_end_date__gte=end_date,
+                            ) |
+
+                            # Start date between start and end date
+                            Q(
+                                task_start_date__gte=start_date,
+                                task_start_date__lte=end_date,
+                            ) |
+
+                            # End date betweeen start and end date
+                            Q(
+                                task_end_date__gte=start_date,
+                                task_end_date__lte=end_date,
+                            )
+                        )
+                    ).order_by(
+                        'task_start_date',
+                        'task_end_date',
+                        'task_id',
+                    ),
+                    fields={
+                        'task_id',
+                        'task_name',
+                        'task_start_date',
+                        'task_end_date',
+                        'task_status',
+                    }
+                )
+            elif object_type == "Quote":
+                """
+                Quote will only have a "quote_valid_till" date. Thus the start date will automatically be the date 
+                it was created.
+                """
+                json_results = serializers.serialize(
+                    'json',
+                    quote.objects.filter(
+                        is_deleted="FALSE",
+                        quote_valid_till__gte=start_date,
+                        quote_valid_till__lte=end_date,
+                    ).order_by(
+                        'date_created',
+                        'quote_valid_till',
+                        'quote_id',
+                    ),
+                    fields={
+                        'quote_id',
+                        'quote_title',
+                        'date_created',
+                        'quote_valid_till',
+                        'quote_stage',
+                    }
+                )
+                print(json_results)
+            elif object_type == "Opportunity":
+                """
+                Opportunity will only have a "Opportunity Only Valid Till" date. Thus the start date will automatically
+                be the date it was created
+                """
+                json_results = serializers.serialize(
+                    'json',
+                    opportunity.objects.filter(
+                        is_deleted="FALSE",
+                        opportunity_expected_close_date__gte=start_date,
+                        opportunity_expected_close_date__lte=end_date,
+                    ).order_by(
+                        'date_created',
+                        'opportunity_expected_close_date',
+                        'opportunity_id',
+                    ),
+                    fields={
+                        'opportunity_id',
+                        'opportunity_name',
+                        'date_created',
+                        'opportunity_expected_close_date',
+                        'opportunity_stage_id',
                     }
                 )
                 print(json_results)
             else:
-                json_results = serializers.serialize(
-                    'json',
-                    task.objects.filter(
-                        is_deleted="FALSE",
-                        # ADD IN OTHER OPTIONS LATER
-                    ),
-                    fields={
-                        'task_id',
-                        'task_short_description',
-                        'task_start_date',
-                        'task_end_date',
-                    }
-
-                )
+                #Something went wrong
+                return HttpResponseBadRequest("Sorry, there is no object that fits that situation")
 
             return HttpResponse(json_results, content_type='application/json')
+
         else:
             print(form.errors)
 

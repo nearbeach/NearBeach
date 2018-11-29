@@ -1,10 +1,10 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
-    <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
-    <link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'NearBeach/javascript/datetimepicker/jquery.datetimepicker.min.css' %}">
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
+    <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
 
 
 <body onload="on_page_load();">
@@ -24,15 +24,20 @@
             <tr><td>Project Start: {{ new_project_form.project_start_date }}</td></tr>
             <tr><td>Project Finish: {{ new_project_form.project_end_date }}</td></tr>
         </table>
-        <h2>Assigned to Group(s)</h2>
+        <h2>Project Permissions</h2>
         <table>
-            <tr><td>{{ new_project_form.assigned_groups }}</td></tr>
-            <tr><td>Please note: you will not be able to submit this project without selecting at least one group</td></tr>
+            <tr>
+                <td>
+                    Please give permissions to one or more groups. Please note: you will not be able to submit this project
+                    without selecting at least one group
+                </td>
+            </tr>
+            <tr><td>{{ new_project_form.project_permission }}</td></tr>
             <tr><td><input type="submit" value="Submit New Project"><a href={% url 'dashboard' %}>Cancel</a></td></tr>
         </table>
-        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/chosen.jquery.js' %}"></script>
-        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.js' %}"></script>
-        <script type="text/javascript" src="{% static 'NearBeach/javascript/chosen-js/docsupport/init.js' %}"></script>
+        <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
+        <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
+        <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
     </form>
 
 

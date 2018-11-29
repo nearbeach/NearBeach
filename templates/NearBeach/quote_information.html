@@ -13,7 +13,10 @@
         reload_responsible_customer();
         load_email_history();
 
-        set_permissions({{ quote_permission }})
+        load_assigned_group_list();
+        load_assigned_group_add();
+        load_assigned_user_list();
+        load_assigned_user_add();
     }
 
     function reload_new_line_item() {
@@ -105,8 +108,8 @@
 
 </script>
 
-<link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/chosen.css' %}">
-<link rel="stylesheet" href="{% static 'NearBeach/javascript/chosen-js/docsupport/prism.css' %}">
+<link rel="stylesheet" href="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/chosen-js/chosen.css' %}">
+<link rel="stylesheet" href="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
 
 <body onload="on_page_load()">
 
@@ -171,7 +174,7 @@
     </table>
     <form method="post" class="new_line_item" id="new_line_item"></form>
     <form method="post" class="list_of_line_items" id="list_of_line_items"></form>
-    {% if quote_permission > 1 %}
+    {% if permission > 1 %}
         <form method="post" class="list_of_responsible_customers" id="list_of_responsible_customers"></form>
     {% endif %}
 
@@ -194,8 +197,55 @@
 
 
 
+    {% if permission >= 3 %}
+        <form method="post" class="assigned_users" id="assigned_users">
+            <h2>Assigned Users</h2>
+            Loading...
+        </form>
+        <div id="assigned_user_list">Loading list...</div>
+
+        <h2>Assigned Groups</h2>
+        <form method="post" class="assigned_groups" id="assigned_groups">
+            Loading add...
+        </form>
+        <div id="assigned_group_list">Loading list...</div>
+    {% endif %}
+
 
 <script>
+    $("#assigned_users").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/assigned_user_add/{{ quote_id }}/quote/',
+            data: $(this).serialize(),
+            success: function() {
+                load_assigned_user_list();
+                load_assigned_user_add();
+            },
+            error: function() {
+                alert("Sorry, project assigned users did not save. Please try again.");
+            }
+        })
+    });
+
+
+    $("#assigned_groups").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/assigned_group_add/{{ quote_id }}/quote/',
+            data: $(this).serialize(),
+            success: function() {
+                load_assigned_group_add();
+                load_assigned_group_list();
+            },
+            error: function() {
+                alert("Sorry, project assigned users did not save. Please try again.");
+            }
+        })
+    });
+
     $("#new_line_item").on('submit', function (e) {
         e.preventDefault();
         $.ajax({
@@ -298,6 +348,93 @@
             $("#quote_preview").append("<a href='" + new_tab.url + "' target='_blank'>Quote Preview - click here</a>");
         }
     }
+
+
+    function load_assigned_user_add() {
+        $.ajax({
+            url: '/assigned_user_add/{{ quote_id }}/quote/',
+            data:  {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $("#assigned_users").html(data);
+            },
+            error: function() {
+                $("#assigned_users").html("<h2>Assigned Users</h2>Sorry, users encounted an error and did not load");
+            }
+        })
+    };
+
+    function load_assigned_user_list() {
+        $.ajax({
+            url: '/assigned_user_list/{{ quote_id }}/quote/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $("#assigned_user_list").html(data);
+            },
+            error: function(data) {
+                $("#assigned_user_list").html("<p>User list failed to load</p>")
+            }
+        })
+    };
+
+    function delete_group_item(group_item) {
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            url: '/assigned_group_delete/' + group_item + '/',
+            data: {},
+            dataType: 'HTML',
+            type: 'POST',
+            success: function(data) {
+                load_assigned_group_add();
+                load_assigned_group_list();
+            },
+            error: function() {
+                alert("Sorry, there was an issue deleting the Assigned Group")
+            }
+        });
+    };
+
+
+    function load_assigned_group_add() {
+        $.ajax({
+            url: '/assigned_group_add/{{ quote_id }}/quote/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#assigned_groups').html(data);
+            },
+            error: function() {
+                $('#assigned_groups').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
+            }
+        });
+    };
+
+
+    function load_assigned_group_list() {
+        $.ajax({
+            url: '/assigned_group_list/{{ quote_id }}/quote/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $('#assigned_group_list').html(data);
+            },
+            error: function() {
+                $('#assigned_group_list').html('<h2>Assigned Group</h2>Sorry, project history encounted an error and did not load.');
+            }
+        });
+    };
 
 </script>
 </body>
