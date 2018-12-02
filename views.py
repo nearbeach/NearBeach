@@ -3202,6 +3202,20 @@ def new_kanban_board(request):
                 kanban_level_submit.save()
                 level_count = level_count + 1
 
+            """
+            Permissions granting
+            """
+            select_groups = form.cleaned_data['select_groups']
+            for row in select_groups:
+                group_instance = group.objects.get(group_name=row)
+                permission_save = object_assignment(
+                    kanban_board_id=kanban_board_submit,
+                    group_id=group_instance,
+                    change_user=request.user,
+                )
+                permission_save.save()
+
+
             #Send you to the kanban information center
             return HttpResponseRedirect(reverse('kanban_information', args={kanban_board_submit.kanban_board_id}))
 

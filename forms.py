@@ -1108,6 +1108,10 @@ class kanban_card_form(ModelForm):
 
 
 class kanban_board_form(forms.Form):
+    #Required python Modules
+    group_results = group.objects.filter(is_deleted="FALSE")
+
+    #Fields
     kanban_board_name = forms.CharField(
         max_length=255,
         widget=TextInput(attrs={
@@ -1125,6 +1129,16 @@ class kanban_board_form(forms.Form):
             'placeholder': 'Please place each new level on a new line. Each name will be truncated to 255 characters',
         }),
         required=True,
+    )
+    select_groups = forms.ModelMultipleChoiceField(
+        queryset=group_results,
+        required=True,
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': "Choose the users(s)",
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+            'style': 'width: 100%',
+        }),
     )
 
 
