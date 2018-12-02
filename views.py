@@ -2646,12 +2646,11 @@ def kanban_new_link(request,kanban_board_id,location_id='',destination=''):
 
 @login_required(login_url='login')
 def kanban_properties(request,kanban_board_id):
+    print("Kanban Properties")
     permission_results = return_user_permission_level(request, None,['kanban'])
 
     if permission_results['kanban'] < 4:
         return HttpResponseRedirect(reverse('permission_denied'))
-
-
 
     """
     If this requirement is connected to a requirement, then the user should NOT edit the properties, as it is a
@@ -2659,6 +2658,7 @@ def kanban_properties(request,kanban_board_id):
     """
     kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
     if kanban_board_results.requirement:
+        print("Sorry, can not edit these")
         return HttpResponseBadRequest("Sorry, but users are not permitted to edit a Requirement Kanban Board.")
 
     if request.method == "POST":
