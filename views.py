@@ -2710,6 +2710,7 @@ def kanban_properties(request,kanban_board_id):
         }),
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'permission': permission_results['kanban'],
     }
 
     return HttpResponse(t.render(c, request))

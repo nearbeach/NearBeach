@@ -254,7 +254,7 @@ class assign_group_add_form(forms.Form):
             group_results = group_results.exclude(
                 group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
-                    kanban_id=location_id,
+                    kanban_board_id=location_id,
                 ).exclude(group_id=None).values('group_id')
             )
         elif destination == "opportunity":
