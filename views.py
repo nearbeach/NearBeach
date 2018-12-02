@@ -2374,6 +2374,25 @@ def kanban_information(request,kanban_board_id):
     if permission_results['kanban'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
+    """
+    Test User Access
+    ~~~~~~~~~~~~~~~~
+    A user who wants to access this Kanban Board will need to meet one of these two conditions
+    1. They have an access to  a group whom has been granted access to this kanban board
+    2. They are a super user (they should be getting access to all objects)
+    """
+    object_access = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        kanban_board_id=kanban_board_id,
+        group_id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            username=request.user,
+        ).values('group_id')
+    )
+    if object_access.count() and not permission_results['administration'] == 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
     #Get the required information
     kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
     kanban_level_results = kanban_level.objects.filter(
@@ -3975,6 +3994,24 @@ def opportunity_information(request, opportunity_id):
     if permission_results['opportunity']  == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
+    """
+    Test User Access
+    ~~~~~~~~~~~~~~~~
+    A user who wants to access this Opportunity will need to meet one of these two conditions
+    1. They have an access to  a group whom has been granted access to this Opportunity
+    2. They are a super user (they should be getting access to all objects)
+    """
+    object_access = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        opportunity_id=opportunity_id,
+        group_id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            username=request.user,
+        ).values('group_id')
+    )
+    if object_access.count() and not permission_results['administration'] == 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
 
     if request.method == "POST":
         form = opportunity_information_form(request.POST, request.FILES)
@@ -4455,6 +4492,25 @@ def project_information(request, project_id):
         # Send them to permission denied!!
         return HttpResponseRedirect(reverse(permission_denied))
 
+    """
+    Test User Access
+    ~~~~~~~~~~~~~~~~
+    A user who wants to access this project will need to meet one of these two conditions
+    1. They have an access to  a group whom has been granted access to this project
+    2. They are a super user (they should be getting access to all objects)
+    """
+    object_access = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        project_id=project_id,
+        group_id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            username=request.user,
+        ).values('group_id')
+    )
+    if object_access.count() and not permission_results['administration'] == 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
 
     """
 	There are two buttons on the project information page. Both will come
@@ -4601,6 +4657,25 @@ def quote_information(request, quote_id):
 
     if permission_results['quote'] == 0:
         return HttpResponseRedirect(reverse(permission_denied))
+
+    """
+    Test User Access
+    ~~~~~~~~~~~~~~~~
+    A user who wants to access this quote will need to meet one of these two conditions
+    1. They have an access to  a group whom has been granted access to this quote
+    2. They are a super user (they should be getting access to all objects)
+    """
+    object_access = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        quote_id=quote_id,
+        group_id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            username=request.user,
+        ).values('group_id')
+    )
+    if object_access.count() and not permission_results['administration'] == 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
 
     quotes_results = quote.objects.get(quote_id=quote_id)
     quote_template_results = quote_template.objects.filter(
@@ -5128,7 +5203,26 @@ def task_information(request, task_id):
         # Send them to permission denied!!
         return HttpResponseRedirect(reverse(permission_denied))
 
-    current_user = request.user
+
+    """
+    Test User Access
+    ~~~~~~~~~~~~~~~~
+    A user who wants to access this task will need to meet one of these two conditions
+    1. They have an access to  a group whom has been granted access to this task
+    2. They are a super user (they should be getting access to all objects)
+    """
+    object_access = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_id,
+        group_id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            username=request.user,
+        ).values('group_id')
+    )
+    if object_access.count() and not permission_results['administration'] == 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
 
     # Setup connection to the database and query it
     cursor = connection.cursor() #LETS REMOVE THIS CRAP

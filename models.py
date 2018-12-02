@@ -1548,7 +1548,7 @@ class object_assignment(models.Model):
         blank=True,
         null=True,
     )
-    kanban_baord_id = models.ForeignKey(
+    kanban_board_id = models.ForeignKey(
         'kanban_board',
         on_delete=models.CASCADE,
         blank=True,

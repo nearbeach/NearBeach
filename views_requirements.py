@@ -140,6 +140,25 @@ def requirement_information(request, requirement_id):
     if permission_results['requirement'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
+    """
+    Test User Access
+    ~~~~~~~~~~~~~~~~
+    A user who wants to access this requirements will need to meet one of these two conditions
+    1. They have an access to  a group whom has been granted access to this requirements
+    2. They are a super user (they should be getting access to all objects)
+    """
+    object_access = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+        group_id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            username=request.user,
+        ).values('group_id')
+    )
+    if object_access.count() and not permission_results['administration'] == 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
     if request.method == "POST" and permission_results['requirement'] > 1:
         form = requirement_information_form(request.POST)
         if form.is_valid():
