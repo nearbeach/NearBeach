@@ -140,6 +140,25 @@ def requirement_information(request, requirement_id):
     if permission_results['requirement'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
+    """
+    Test User Access
+    ~~~~~~~~~~~~~~~~
+    A user who wants to access this requirements will need to meet one of these two conditions
+    1. They have an access to  a group whom has been granted access to this requirements
+    2. They are a super user (they should be getting access to all objects)
+    """
+    object_access = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+        group_id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            username=request.user,
+        ).values('group_id')
+    )
+    if object_access.count() and not permission_results['administration'] == 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
     if request.method == "POST" and permission_results['requirement'] > 1:
         form = requirement_information_form(request.POST)
         if form.is_valid():
@@ -196,6 +215,11 @@ def requirement_information(request, requirement_id):
     #Setup the initial data for the form
     requirement_results = requirement.objects.get(requirement_id=requirement_id)
 
+    kanban_board_results = kanban_board.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    )
+
     """
     If the requirement is completed, then we want to send the user to the readonly version. There is no need
     for the user to edit any of the results after the requirement has been completed.
@@ -222,6 +246,7 @@ def requirement_information(request, requirement_id):
         'requirement_information_form': requirement_information_form(
             initial=initial,
         ),
+        'kanban_board_results': kanban_board_results,
         'permission': permission_results['requirement'],
         'requirement_link_permissions': permission_results['requirement_link'],
         'new_item_permission': permission_results['new_item'],

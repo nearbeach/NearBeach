@@ -254,7 +254,7 @@ class assign_group_add_form(forms.Form):
             group_results = group_results.exclude(
                 group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
-                    kanban_id=location_id,
+                    kanban_board_id=location_id,
                 ).exclude(group_id=None).values('group_id')
             )
         elif destination == "opportunity":
@@ -1108,6 +1108,10 @@ class kanban_card_form(ModelForm):
 
 
 class kanban_board_form(forms.Form):
+    #Required python Modules
+    group_results = group.objects.filter(is_deleted="FALSE")
+
+    #Fields
     kanban_board_name = forms.CharField(
         max_length=255,
         widget=TextInput(attrs={
@@ -1125,6 +1129,16 @@ class kanban_board_form(forms.Form):
             'placeholder': 'Please place each new level on a new line. Each name will be truncated to 255 characters',
         }),
         required=True,
+    )
+    select_groups = forms.ModelMultipleChoiceField(
+        queryset=group_results,
+        required=True,
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': "Choose the users(s)",
+            'class': 'chosen-select',
+            'multiple tabindex': '4',
+            'style': 'width: 100%',
+        }),
     )
 
 

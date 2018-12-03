@@ -2374,8 +2374,35 @@ def kanban_information(request,kanban_board_id):
     if permission_results['kanban'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
+    """
+    Test User Access
+    ~~~~~~~~~~~~~~~~
+    A user who wants to access this Kanban Board will need to meet one of these two conditions
+    1. They have an access to  a group whom has been granted access to this kanban board
+    2. They are a super user (they should be getting access to all objects)
+    """
+    object_access = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        kanban_board_id=kanban_board_id,
+        group_id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            username=request.user,
+        ).values('group_id')
+    )
+    if object_access.count() and not permission_results['administration'] == 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
     #Get the required information
     kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+
+    """
+    If this kanban is connected to a requirement then we need to send it to the 'kanban_requirement_information". This
+    is due to the large difference between this kanban and the requirement's kanban board.
+    """
+    if kanban_board_results.requirement_id:
+        return HttpResponseRedirect(reverse('kanban_requirement_information',args={kanban_board_id}))
+
     kanban_level_results = kanban_level.objects.filter(
         is_deleted="FALSE",
         kanban_board=kanban_board_id,
@@ -2627,12 +2654,11 @@ def kanban_new_link(request,kanban_board_id,location_id='',destination=''):
 
 @login_required(login_url='login')
 def kanban_properties(request,kanban_board_id):
+    print("Kanban Properties")
     permission_results = return_user_permission_level(request, None,['kanban'])
 
     if permission_results['kanban'] < 4:
         return HttpResponseRedirect(reverse('permission_denied'))
-
-
 
     """
     If this requirement is connected to a requirement, then the user should NOT edit the properties, as it is a
@@ -2640,6 +2666,7 @@ def kanban_properties(request,kanban_board_id):
     """
     kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
     if kanban_board_results.requirement:
+        print("Sorry, can not edit these")
         return HttpResponseBadRequest("Sorry, but users are not permitted to edit a Requirement Kanban Board.")
 
     if request.method == "POST":
@@ -2691,12 +2718,76 @@ def kanban_properties(request,kanban_board_id):
         }),
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'permission': permission_results['kanban'],
     }
 
     return HttpResponse(t.render(c, request))
 
 
 
+@login_required(login_url='login')
+def kanban_requirement_information(request, kanban_board_id):
+    permission_results = return_user_permission_level(request, None, ['kanban'])
+
+    if permission_results['kanban'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+
+    """
+    We have to make sure that this particular kanban_board IS actually connected to a requirement.
+    """
+    if not kanban_board_results.requirement_id:
+        return HttpResponseRedirect(reverse('kanban_information', args={kanban_board_id}))
+
+    #Get requirement information and requirement_item information
+    requirement_id = kanban_board_results.requirement_id
+    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id
+    )
+    item_status_results = list_of_requirement_item_status.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    t = loader.get_template('NearBeach/kanban_requirement_information.html')
+
+    # context
+    c = {
+        'requirement_id': requirement_id,
+        'requirement_results': requirement_results,
+        'requirement_item_results': requirement_item_results,
+        'item_status_results': item_status_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'permission': permission_results['kanban'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def kanban_requirement_item_update(request,requirement_item_id,status_id):
+    if request.method == "POST":
+        #Get instance of requirement item
+        requirement_item_update = requirement_item.objects.get(requirement_item_id=requirement_item_id)
+
+        #Update the requirement item's status
+        requirement_item_update.requirement_item_status=list_of_requirement_item_status.objects.get(
+            requirement_item_status_id=status_id,
+        )
+
+        #Save
+        requirement_item_update.save()
+
+        t = loader.get_template('NearBeach/blank.html')
+
+        c = {}
+
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry, but this is a POST request only")
 
 
 def login(request):
@@ -3202,6 +3293,20 @@ def new_kanban_board(request):
                 kanban_level_submit.save()
                 level_count = level_count + 1
 
+            """
+            Permissions granting
+            """
+            select_groups = form.cleaned_data['select_groups']
+            for row in select_groups:
+                group_instance = group.objects.get(group_name=row)
+                permission_save = object_assignment(
+                    kanban_board_id=kanban_board_submit,
+                    group_id=group_instance,
+                    change_user=request.user,
+                )
+                permission_save.save()
+
+
             #Send you to the kanban information center
             return HttpResponseRedirect(reverse('kanban_information', args={kanban_board_submit.kanban_board_id}))
 
@@ -3223,6 +3328,31 @@ def new_kanban_board(request):
 
     return HttpResponse(t.render(c, request))
 
+
+@login_required(login_url='login')
+def new_kanban_requirement_board(request,requirement_id):
+    permission_results = return_user_permission_level(request,None,'kanban_board')
+
+    if permission_results['kanban_board'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #Create the kanban board and link to requirement
+    requirement_instance = requirement.objects.get(requirement_id=requirement_id)
+
+    kanban_board_submit = kanban_board(
+        kanban_board_name=requirement_instance.requirement_title,
+        requirement=requirement_instance,
+        change_user=request.user,
+    )
+    kanban_board_submit.save()
+
+    #Go to the kanban board
+    return HttpResponseRedirect(
+        reverse(
+            'kanban_requirement_information',
+            args={kanban_board_submit.kanban_board_id}
+        )
+    )
 
 @login_required(login_url='login')
 def new_opportunity(request, location_id,destination):
@@ -3961,6 +4091,24 @@ def opportunity_information(request, opportunity_id):
     if permission_results['opportunity']  == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
+    """
+    Test User Access
+    ~~~~~~~~~~~~~~~~
+    A user who wants to access this Opportunity will need to meet one of these two conditions
+    1. They have an access to  a group whom has been granted access to this Opportunity
+    2. They are a super user (they should be getting access to all objects)
+    """
+    object_access = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        opportunity_id=opportunity_id,
+        group_id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            username=request.user,
+        ).values('group_id')
+    )
+    if object_access.count() and not permission_results['administration'] == 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
 
     if request.method == "POST":
         form = opportunity_information_form(request.POST, request.FILES)
@@ -4441,6 +4589,25 @@ def project_information(request, project_id):
         # Send them to permission denied!!
         return HttpResponseRedirect(reverse(permission_denied))
 
+    """
+    Test User Access
+    ~~~~~~~~~~~~~~~~
+    A user who wants to access this project will need to meet one of these two conditions
+    1. They have an access to  a group whom has been granted access to this project
+    2. They are a super user (they should be getting access to all objects)
+    """
+    object_access = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        project_id=project_id,
+        group_id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            username=request.user,
+        ).values('group_id')
+    )
+    if object_access.count() and not permission_results['administration'] == 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
 
     """
 	There are two buttons on the project information page. Both will come
@@ -4587,6 +4754,25 @@ def quote_information(request, quote_id):
 
     if permission_results['quote'] == 0:
         return HttpResponseRedirect(reverse(permission_denied))
+
+    """
+    Test User Access
+    ~~~~~~~~~~~~~~~~
+    A user who wants to access this quote will need to meet one of these two conditions
+    1. They have an access to  a group whom has been granted access to this quote
+    2. They are a super user (they should be getting access to all objects)
+    """
+    object_access = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        quote_id=quote_id,
+        group_id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            username=request.user,
+        ).values('group_id')
+    )
+    if object_access.count() and not permission_results['administration'] == 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
 
     quotes_results = quote.objects.get(quote_id=quote_id)
     quote_template_results = quote_template.objects.filter(
@@ -5114,7 +5300,26 @@ def task_information(request, task_id):
         # Send them to permission denied!!
         return HttpResponseRedirect(reverse(permission_denied))
 
-    current_user = request.user
+
+    """
+    Test User Access
+    ~~~~~~~~~~~~~~~~
+    A user who wants to access this task will need to meet one of these two conditions
+    1. They have an access to  a group whom has been granted access to this task
+    2. They are a super user (they should be getting access to all objects)
+    """
+    object_access = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_id,
+        group_id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            username=request.user,
+        ).values('group_id')
+    )
+    if object_access.count() and not permission_results['administration'] == 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
 
     # Setup connection to the database and query it
     cursor = connection.cursor() #LETS REMOVE THIS CRAP

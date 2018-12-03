@@ -24,6 +24,16 @@ def filter_column_cards(value, arg):
     """
     return value.filter(kanban_column=arg)
 
+
+@register.filter(name='filter_requirement_item_cards')
+def filter_requirement_item_cards(value, arg):
+    """
+    :param value: this is the python object being passed through
+    :param arg: these are the stages of the requirement_item ['draft']
+    :return: the filtered python object i.e. ['draft']
+    """
+    return value.filter(requirement_item_status=arg)
+
 @register.filter
 def hours_ago(time, hours):
     """
