@@ -2727,6 +2727,11 @@ def kanban_properties(request,kanban_board_id):
 
 @login_required(login_url='login')
 def kanban_requirement_information(request, kanban_board_id):
+    permission_results = return_user_permission_level(request, None, ['kanban'])
+
+    if permission_results['kanban'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
 
     """
@@ -2754,6 +2759,9 @@ def kanban_requirement_information(request, kanban_board_id):
         'requirement_results': requirement_results,
         'requirement_item_results': requirement_item_results,
         'item_status_results': item_status_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'permission': permission_results['kanban'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -3320,6 +3328,31 @@ def new_kanban_board(request):
 
     return HttpResponse(t.render(c, request))
 
+
+@login_required(login_url='login')
+def new_kanban_requirement_board(request,requirement_id):
+    permission_results = return_user_permission_level(request,None,'kanban_board')
+
+    if permission_results['kanban_board'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #Create the kanban board and link to requirement
+    requirement_instance = requirement.objects.get(requirement_id=requirement_id)
+
+    kanban_board_submit = kanban_board(
+        kanban_board_name=requirement_instance.requirement_title,
+        requirement=requirement_instance,
+        change_user=request.user,
+    )
+    kanban_board_submit.save()
+
+    #Go to the kanban board
+    return HttpResponseRedirect(
+        reverse(
+            'kanban_requirement_information',
+            args={kanban_board_submit.kanban_board_id}
+        )
+    )
 
 @login_required(login_url='login')
 def new_opportunity(request, location_id,destination):

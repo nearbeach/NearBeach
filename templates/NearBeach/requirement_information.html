@@ -85,6 +85,23 @@
         <div id="assigned_group_list">Loading list...</div>
     {% endif %}
 
+    <h2>Requirement Linked to Kanban Board</h2>
+    {% if kanban_board_results %}
+        <table>
+            <tr><td>Kanban Board Name</td></tr>
+            {% for row in kanban_board_results %}
+                <tr><td>
+                    <a href="{% url 'kanban_requirement_information' row.kanban_board_id %}">{{ row.kanban_board_name }}</a>
+                </td></tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <table>
+            <tr>
+                <td><a href="{% url 'new_kanban_requirement_board' requirement_results.requirement_id %}">Click here to create kanban link</a> </td>
+            </tr>
+        </table>
+    {% endif %}
 
     <script>
         $("#bug_search").on('submit', function(e) {

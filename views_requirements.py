@@ -215,6 +215,11 @@ def requirement_information(request, requirement_id):
     #Setup the initial data for the form
     requirement_results = requirement.objects.get(requirement_id=requirement_id)
 
+    kanban_board_results = kanban_board.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    )
+
     """
     If the requirement is completed, then we want to send the user to the readonly version. There is no need
     for the user to edit any of the results after the requirement has been completed.
@@ -241,6 +246,7 @@ def requirement_information(request, requirement_id):
         'requirement_information_form': requirement_information_form(
             initial=initial,
         ),
+        'kanban_board_results': kanban_board_results,
         'permission': permission_results['requirement'],
         'requirement_link_permissions': permission_results['requirement_link'],
         'new_item_permission': permission_results['new_item'],
