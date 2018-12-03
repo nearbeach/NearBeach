@@ -2395,6 +2395,14 @@ def kanban_information(request,kanban_board_id):
 
     #Get the required information
     kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+
+    """
+    If this kanban is connected to a requirement then we need to send it to the 'kanban_requirement_information". This
+    is due to the large difference between this kanban and the requirement's kanban board.
+    """
+    if kanban_board_results.requirement_id:
+        return HttpResponseRedirect(reverse('kanban_requirement_information',args={kanban_board_id}))
+
     kanban_level_results = kanban_level.objects.filter(
         is_deleted="FALSE",
         kanban_board=kanban_board_id,
@@ -2717,6 +2725,38 @@ def kanban_properties(request,kanban_board_id):
 
 
 
+@login_required(login_url='login')
+def kanban_requirement_information(request, kanban_board_id):
+    kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+
+    """
+    We have to make sure that this particular kanban_board IS actually connected to a requirement.
+    """
+    if not kanban_board_results.requirement_id:
+        return HttpResponseRedirect(reverse('kanban_information', args={kanban_board_id}))
+
+    #Get requirement information and requirement_item information
+    requirement_id = kanban_board_results.requirement_id
+    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id
+    )
+    item_status_results = list_of_requirement_item_status.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    t = loader.get_template('NearBeach/kanban_requirement_information.html')
+
+    # context
+    c = {
+        'requirement_id': requirement_id,
+        'requirement_results': requirement_results,
+        'requirement_item_results': requirement_item_results,
+        'item_status_results': item_status_results,
+    }
+
+    return HttpResponse(t.render(c, request))
 
 
 def login(request):
