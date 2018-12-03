@@ -2759,6 +2759,29 @@ def kanban_requirement_information(request, kanban_board_id):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
+def kanban_requirement_item_update(request,requirement_item_id,status_id):
+    if request.method == "POST":
+        #Get instance of requirement item
+        requirement_item_update = requirement_item.objects.get(requirement_item_id=requirement_item_id)
+
+        #Update the requirement item's status
+        requirement_item_update.requirement_item_status=list_of_requirement_item_status.objects.get(
+            requirement_item_status_id=status_id,
+        )
+
+        #Save
+        requirement_item_update.save()
+
+        t = loader.get_template('NearBeach/blank.html')
+
+        c = {}
+
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry, but this is a POST request only")
+
+
 def login(request):
     """
 	For some reason I can not use the varable "login_form" here as it is already being used.

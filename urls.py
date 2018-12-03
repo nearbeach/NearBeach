@@ -108,6 +108,7 @@ re_path(r'^kanban_new_link/(?P<kanban_board_id>[0-9]+)/(?P<location_id>[0-9]+)/(
 re_path(r'^kanban_new_link/(?P<kanban_board_id>[0-9]+)/$', views.kanban_new_link,name='kanban_new_link'),
 re_path(r'^kanban_properties/(?P<kanban_board_id>[0-9]+)/$', views.kanban_properties,name='kanban_properties'),
 re_path(r'^kanban_requirement_information/(?P<kanban_board_id>[0-9]+)/$',views.kanban_requirement_information,name='kanban_requirement_information'),
+re_path(r'^kanban_requirement_item_update/(?P<requirement_item_id>[0-9]+)/(?P<status_id>[0-9]+)/$',views.kanban_requirement_item_update,name="kanban_requirement_item_update"),
 re_path(r'^list_of_taxes_deactivate/(?P<tax_id>[0-9]+)/', views_administration.list_of_taxes_deactivate, name='list_of_taxes_deactivate'),
 re_path(r'^list_of_taxes_edit/(?P<tax_id>[0-9]+)/', views_administration.list_of_taxes_edit, name='list_of_taxes_edit'),
 re_path(r'^list_of_taxes_information/', views_administration.list_of_taxes_information, name='list_of_taxes_information'),
