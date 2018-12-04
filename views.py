@@ -2389,7 +2389,7 @@ def kanban_information(request,kanban_board_id):
             username=request.user,
         ).values('group_id')
     )
-    if object_access.count() and not permission_results['administration'] == 4:
+    if object_access.count() == 0 and not permission_results['administration'] == 4:
         return HttpResponseRedirect(reverse('permission_denied'))
 
 
@@ -2740,6 +2740,26 @@ def kanban_requirement_information(request, kanban_board_id):
     if not kanban_board_results.requirement_id:
         return HttpResponseRedirect(reverse('kanban_information', args={kanban_board_id}))
 
+
+    """
+    Test User Access
+    ~~~~~~~~~~~~~~~~
+    A user who wants to access this requirement board will need to meet one of these two conditions
+    1. They have an access to  a group whom has been granted access to this requirement
+    2. They are a super user (they should be getting access to all objects)
+    """
+    object_access = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=kanban_board_results.requirement_id,
+        group_id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            username=request.user,
+        ).values('group_id')
+    )
+    if object_access.count() == 0 and not permission_results['administration'] == 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
     #Get requirement information and requirement_item information
     requirement_id = kanban_board_results.requirement_id
     requirement_results = requirement.objects.get(requirement_id=requirement_id)
@@ -2957,7 +2977,7 @@ def logout(request):
 
 @login_required(login_url='login')
 def my_profile(request):
-    permission_results = return_user_permission_level(request, None,None)
+    permission_results = return_user_permission_level(request, None, "")
 
     #Data required in both POST and GET
     about_user_results=about_user.objects.filter(
@@ -4106,7 +4126,7 @@ def opportunity_information(request, opportunity_id):
             username=request.user,
         ).values('group_id')
     )
-    if object_access.count() and not permission_results['administration'] == 4:
+    if object_access.count() == 0 and not permission_results['administration'] == 4:
         return HttpResponseRedirect(reverse('permission_denied'))
 
 
@@ -4604,7 +4624,7 @@ def project_information(request, project_id):
             username=request.user,
         ).values('group_id')
     )
-    if object_access.count() and not permission_results['administration'] == 4:
+    if object_access.count() == 0 and not permission_results['administration'] == 4:
         return HttpResponseRedirect(reverse('permission_denied'))
 
 
@@ -4770,7 +4790,7 @@ def quote_information(request, quote_id):
             username=request.user,
         ).values('group_id')
     )
-    if object_access.count() and not permission_results['administration'] == 4:
+    if object_access.count() == 0 and not permission_results['administration'] == 4:
         return HttpResponseRedirect(reverse('permission_denied'))
 
 
@@ -5316,7 +5336,7 @@ def task_information(request, task_id):
             username=request.user,
         ).values('group_id')
     )
-    if object_access.count() and not permission_results['administration'] == 4:
+    if object_access.count() == 0 and not permission_results['administration'] == 4:
         return HttpResponseRedirect(reverse('permission_denied'))
 
 
