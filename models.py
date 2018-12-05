@@ -524,7 +524,7 @@ class document(models.Model):
     def __str__(self):
         return str(self.document_description)
 
-
+"""
 class document_folder(models.Model):
     document_folder_id = models.AutoField(primary_key=True)
     document_key = models.ForeignKey(
@@ -550,7 +550,7 @@ class document_folder(models.Model):
 
     class Meta:
         db_table = "document_folder"
-
+"""
 
 class document_permission(models.Model):
     document_permisssion_id = models.AutoField(primary_key=True)
@@ -605,6 +605,12 @@ class document_permission(models.Model):
         on_delete=models.CASCADE,
         null=True,
         blank=True
+    )
+    folder_id = models.ForeignKey(
+        'folder',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)

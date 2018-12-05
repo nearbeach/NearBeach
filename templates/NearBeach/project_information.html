@@ -27,8 +27,6 @@
         load_bug_search();
         load_email_history();
 
-        load_document_tree_upload_documents();
-        load_document_tree_create_folder();
         load_document_tree_list();
 
         load_project_group_add();
@@ -213,19 +211,10 @@
     </form>
 
     <h2>Document Uploads</h2>
-    <form method="post" class="document_tree_upload_documents" id="document_tree_upload_documents" enctype="multipart/form-data">
-        <h2>Document Tree Upload Documents</h2>
-        Loading...
-    </form>
-    <form method="post" class="document_tree_create_folder" id="document_tree_create_folder">
-        <h2>Document Tree Create Folder</h2>
-        Loading...
-    </form>
-
-    <form method="post" class="document_tree_list" id="document_tree_list">
+    <div class="document_tree_list" id="document_tree_list">
         <h2>Document Tree List</h2>
         Loading...
-    </form>
+    </div>
 
     <h2>Project Quotes</h2>
     <a href="{% url 'new_quote' project_id 'project' %}">New Quote</a>
@@ -292,22 +281,6 @@
                alert("Sorry, submitting the bug search caused an error");
            }
        })
-    });
-
-    $("#document_tree_create_folder").on('submit', function(e) {
-        e.preventDefault();
-        $.ajax({
-            type: 'POST',
-            url: '/document_tree_create_folder/{{ project_id }}/P/',
-            data: $(this).serialize(),
-            success: function() {
-                load_document_tree_create_folder();
-                load_document_tree_list();
-            },
-            error: function() {
-                alert("Sorry, document tree create folder did not save. Please try again.");
-            }
-        })
     });
 
 
@@ -547,43 +520,10 @@
     };
 
 
-    function load_document_tree_create_folder() {
-        //Load Project History
-        $.ajax({
-            url: '/document_tree_create_folder/{{ project_id }}/P',
-            data: {},
-            dataType: 'HTML',
-            type: 'GET',
-            success: function(data) {
-                $('#document_tree_create_folder').html(data);
-            },
-            error: function() {
-                $('#document_tree_create_folder').html('Sorry, document tree create folder encounted an error and did not load.');
-            }
-        });
-    };
-
-
-    function load_document_tree_upload_documents() {
-        //Load Project History
-        $.ajax({
-            url: '/document_tree_upload_documents/{{ project_id }}/P',
-            data: {},
-            dataType: 'HTML',
-            type: 'GET',
-            success: function(data) {
-                $('#document_tree_upload_documents').html(data);
-            },
-            error: function() {
-                $('#document_tree_upload_documents').html('Sorry, document tree upload documents encounted an error and did not load.');
-            }
-        });
-    };
-
     function load_document_tree_list() {
         //Load Project History
         $.ajax({
-            url: '/document_tree_list/{{ project_id }}/P',
+            url: '/document_tree_list/{{ project_id }}/project',
             data: {},
             dataType: 'HTML',
             type: 'GET',
@@ -721,9 +661,19 @@
         });
     };
 
-    function upload_document() {
+    function upload_document(location_id,destination,folder_id) {
+        //Send data to the database
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
         //Get form data
-        var form_data = new FormData(document.querySelector('#document_tree_upload_documents'));
+        var form = document.querySelector('#upload_document_form'),
+            form_data = $('#upload_document_form').serialize();
 
         $.ajax({
             xhr: function() {
@@ -736,8 +686,8 @@
                         //Do something with upload progress
                         console.log(percentComplete);
 
-                        $("#upload_percent").html(parseFloat(percentComplete * 100).toFixed(2) + "%");
-                        $("#upload_progress").css(
+                        $("#document_upload_progress").html(parseFloat(percentComplete * 100).toFixed(2) + "%");
+                        $("#document_upload_progress").css(
                             'width', percentComplete * 100 + '%'
                         );
                     }
@@ -745,15 +695,13 @@
                return xhr;
             },
 
-            url: '/document_tree_upload/{{ project_id }}/P/',
+            url: '/document_tree_upload/' + location_id + '/' + destination + '/' + folder_id + '/',
             data: form_data,
             processData: false,
             contentType: false,
             type: 'POST',
             success: function(data) {
-                load_document_tree_create_folder();
                 load_document_tree_list();
-                load_document_tree_upload_documents();
             },
             error: function() {
                 alert("Sorry, there was an error uploading the document");

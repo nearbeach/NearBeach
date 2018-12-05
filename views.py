@@ -4680,36 +4680,7 @@ def project_information(request, project_id):
     # Obtain the required data
     project_history_results = project_history.objects.filter(project_id=project_id, is_deleted='FALSE')
     cursor = connection.cursor()
-    cursor.execute(
-        """
-        SELECT DISTINCT
-          document.document_key
-        , document.document_description
-        , document.document_url_location
-        , document.document
-        , document_folder.folder_id_id
-        
-        FROM 
-          document
-          LEFT JOIN
-                document_permission
-                ON document.document_key = document_permission.document_key_id
-		LEFT JOIN
-				folder
-				ON folder.project_id_id = %s
-		LEFT JOIN
-				document_folder
-				ON document_folder.folder_id_id = folder.folder_id
-				AND document_folder.document_key_id = document.document_key
 
-        
-        WHERE 1=1
-        
-        AND document_permission.project_id_id = %s
-        ORDER BY document.document_description 
-        """, [project_id,project_id]
-    )
-    documents_results = cursor.fetchall()
 
     folders_results = folder.objects.filter(
         project_id=project_id,
@@ -4752,7 +4723,6 @@ def project_information(request, project_id):
         'project_results': project_results,
         'associated_task_results': associated_task_results,
         'project_history_results': project_history_results,
-        'documents_results': simplejson.dumps(documents_results,encoding='utf-8'),
         'folders_results': serializers.serialize('json', folders_results),
         'media_url': settings.MEDIA_URL,
         'quote_results': quote_results,
