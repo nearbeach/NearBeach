@@ -1476,10 +1476,10 @@ def delete_cost(request, cost_id, location_id, project_or_task):
 @login_required(login_url='login')
 def delete_document(request, document_key):
     # Delete the document
-    document = document.objects.get(document_key=document_key)
-    document.is_deleted = "TRUE"
-    document.change_user=request.user
-    document.save()
+    document_instance = document.objects.get(document_key=document_key)
+    document_instance.is_deleted = "TRUE"
+    document_instance.change_user=request.user
+    document_instance.save()
 
     document_permission_save = document_permission.objects.get(document_key=document_key)
     document_permission_save.is_deleted = "TRUE"
@@ -1500,7 +1500,7 @@ def delete_document(request, document_key):
 
 @login_required(login_url='login')
 def diagnostic_information(request):
-    permission_results = return_user_permission_level(request, None, None)
+    permission_results = return_user_permission_level(request, None, "")
 
     # reCAPTCHA
     RECAPTCHA_PUBLIC_KEY = ''
