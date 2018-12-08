@@ -671,9 +671,9 @@
             }
         });
 
+
         //Get form data
-        var form = document.querySelector('#upload_document_form'),
-            form_data = $('#upload_document_form').serialize();
+        var form_data = new FormData($('#document_upload_form')[0]);
 
         $.ajax({
             xhr: function() {
@@ -682,14 +682,10 @@
                 // Upload progress
                 xhr.upload.addEventListener("progress", function(evt){
                     if (evt.lengthComputable) {
-                        var percentComplete = evt.loaded / evt.total;
-                        //Do something with upload progress
-                        console.log(percentComplete);
-
-                        $("#document_upload_progress").html(parseFloat(percentComplete * 100).toFixed(2) + "%");
-                        $("#document_upload_progress").css(
-                            'width', percentComplete * 100 + '%'
-                        );
+                        $('#document_upload_progress').attr({
+                            value: evt.loaded,
+                            max: evt.total,
+                        })
                     }
                }, false);
                return xhr;
@@ -701,9 +697,11 @@
             contentType: false,
             type: 'POST',
             success: function(data) {
+                $("#document_upload_modal").modal("hide"); //Remove the modal
                 load_document_tree_list();
             },
             error: function() {
+                $("#document_upload_modal").modal("hide"); //Remove the modal
                 alert("Sorry, there was an error uploading the document");
             }
         });

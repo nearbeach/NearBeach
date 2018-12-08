@@ -591,6 +591,20 @@ class diagnostic_test_document_upload_form(forms.Form):
         required=True,
     )
 
+class document_upload_form(ModelForm):
+    document_description=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Document Description',
+        })
+    )
+    class Meta:
+        model = document
+        fields = {
+            'document',
+            'document_description',
+        }
+
 
 class email_form(ModelForm):
     def __init__(self, *args, **kwargs):
