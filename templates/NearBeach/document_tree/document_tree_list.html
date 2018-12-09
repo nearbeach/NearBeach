@@ -16,7 +16,7 @@ The drop down button that will allow a user to add a new
         <a class="dropdown-item" href="javascript:void(0)">New Folder</a>
     </div>
 </div>
-<progress id="document_upload_progress"></progress>
+
 
 <!--
 The table that will display the current directory.
@@ -68,6 +68,9 @@ The table that will display the current directory.
                     {{ document_upload_form.document }}
                     {{ document_upload_form.document_description }}
                 </form>
+            </div>
+            <div class="progress">
+                <div id="document_upload_progress" class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 0%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
 
             <!-- FOOTER -->
