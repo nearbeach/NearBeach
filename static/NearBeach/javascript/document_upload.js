@@ -1,7 +1,7 @@
-function load_document_tree_list() {
+function load_document_tree_list(location_id, destination) {
     //Load Project History
     $.ajax({
-        url: '/document_tree_list/{{ project_id }}/project',
+        url: '/document_tree_list/' + location_id + '/' + destination + '/',
         data: {},
         dataType: 'HTML',
         type: 'GET',
@@ -54,7 +54,7 @@ function upload_document(location_id,destination,folder_id) {
         success: function(data) {
             $("#document_upload_modal").modal("hide"); //Remove the modal
             $("#document_upload_progress").css('width','0%;');
-            load_document_tree_list();
+            load_document_tree_list(location_id, destination);
         },
         error: function() {
             $("#document_upload_modal").modal("hide"); //Remove the modal
@@ -63,3 +63,13 @@ function upload_document(location_id,destination,folder_id) {
     });
 }
 
+
+/*
+The following code should be inputted into the object you wish to add document list to.
+
+<h2>Document Uploads</h2>
+<div class="document_tree_list" id="document_tree_list">
+    <h2>Document Tree List</h2>
+    Loading...
+</div>
+ */
