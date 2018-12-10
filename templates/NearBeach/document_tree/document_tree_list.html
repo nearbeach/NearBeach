@@ -33,7 +33,11 @@ The table that will display the current directory.
         <!-- LOOP FOR FOLDERS -->
         {% for row in folder_results %}
             <tr>
-                <td><img src="{% static 'NearBeach/widgets/feather-master/icons/folder.svg' %}">{{ row.folder_description }}</td>
+                <td>
+                    <a href="javascript:void(0)" onclick="load_document_tree_list({{ location_id }},'{{ destination }}',{{ row.folder_id }})">
+                        <img src="{% static 'NearBeach/widgets/feather-master/icons/folder.svg' %}">{{ row.folder_description }}
+                    </a>
+                </td>
                 <td></td>
                 <td><img src="{% static 'NearBeach/widgets/feather-master/icons/trash-2.svg' %}"></td>
             </tr>
@@ -41,7 +45,7 @@ The table that will display the current directory.
         <!-- LOOP FOR DOCUMENTS -->
         {% for row in document_permission_results %}
             <tr>
-                <td>{{ row.document_key.document_description }}</td>
+                <td><a href="{% url 'private' row.document_key.document_key %}" target="_blank">{{ row.document_key.document_description }}</a></td>
                 <td>2018-10-03</td>
                 <td><img src="{% static 'NearBeach/widgets/feather-master/icons/trash-2.svg' %}"></td>
             </tr>

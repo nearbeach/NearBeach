@@ -1,7 +1,16 @@
-function load_document_tree_list(location_id, destination) {
+function load_document_tree_list(location_id, destination, folder_id) {
+    /*
+    The URL changes depending on the folder_id. If the folder_id is defined then we want to include it -
+    otherwise we do not.
+     */
+    if (folder_id == null) {
+        var url = '/document_tree_list/' + location_id + '/' + destination + '/';
+    } else {
+        var url = '/document_tree_list/' + location_id + '/' + destination + '/' + folder_id + '/';
+    }
     //Load Project History
     $.ajax({
-        url: '/document_tree_list/' + location_id + '/' + destination + '/',
+        url: url,
         data: {},
         dataType: 'HTML',
         type: 'GET',
@@ -54,7 +63,11 @@ function upload_document(location_id,destination,folder_id) {
         success: function(data) {
             $("#document_upload_modal").modal("hide"); //Remove the modal
             $("#document_upload_progress").css('width','0%;');
-            load_document_tree_list(location_id, destination);
+            if ((folder_id == null) || (folder_id == 0)) {
+                load_document_tree_list(location_id, destination);
+            } else {
+                load_document_tree_list(location_id, destination, folder_id);
+            }
         },
         error: function() {
             $("#document_upload_modal").modal("hide"); //Remove the modal
