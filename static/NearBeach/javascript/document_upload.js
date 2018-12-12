@@ -1,3 +1,96 @@
+function confirm_delete_document(document_key,location_id,destination,folder_id) {
+    //bring up modal
+    //wait 2 seconds
+    //enable button
+
+    $("#confirm_document_delete").modal("show");
+
+    //$(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+    if ((folder_id == null) || (folder_id == 0)) {
+        $("#remove_document_confirmed").attr('onclick','delete_document("' + document_key + '","' + location_id + '","' + destination + '")');
+    } else {
+        $("#remove_document_confirmed").attr('onclick','delete_document("' + document_key + '","' + location_id + '","' + destination + '","' + folder_id + '")');
+    }
+
+
+    setTimeout(function () {
+        document.getElementById("remove_document_confirmed").disabled = false;
+    }, 2000);
+}
+
+
+function confirm_delete_folder(document_key,location_id,destination,folder_id) {
+    //Show the modal - confirm that the user wants to delete the folder
+    $("#confirm_folder_delete").modal("show");
+
+    //We need to pass on the information of where to go when the delete button is clicked
+    if ((folder_id == null) || (folder_id == 0)) {
+        $("#remove_folder_confirmed").attr('onclick','delete_folder("' + document_key + '","' + location_id + '","' + destination + '")');
+    } else {
+        $("#remove_folder_confirmed").attr('onclick','delete_folder("' + document_key + '","' + location_id + '","' + destination + '","' + folder_id + '")');
+    }
+
+    //We want to make sure the delete button is disabled for 2 seconds
+    setTimeout(function () {
+        document.getElementById("remove_folder_confirmed").disabled = false;
+    }, 2000);
+}
+
+
+function delete_document(document_key,location_id,destination,folder_id) {
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    $.ajax({
+        url: '/delete_document/' + document_key + '/',
+        data: {},
+        dataType: "HTML",
+        type: "POST",
+        success: function(data) {
+            $("#confirm_document_delete").modal("hide"); //Remove the modal
+            if ((folder_id == null) || (folder_id == 0)) {
+                load_document_tree_list(location_id, destination);
+            } else {
+                load_document_tree_list(location_id, destination, folder_id);
+            }
+        }
+
+    })
+}
+
+
+function delete_folder(folder_id,location_id,destination,current_folder_id) {
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    $.ajax({
+        url: '/delete_document/' + document_key + '/',
+        data: {},
+        dataType: "HTML",
+        type: "POST",
+        success: function(data) {
+            $("#confirm_document_delete").modal("hide"); //Remove the modal
+            if ((folder_id == null) || (folder_id == 0)) {
+                load_document_tree_list(location_id, destination);
+            } else {
+                load_document_tree_list(location_id, destination, folder_id);
+            }
+        }
+
+    })
+}
+
+
 function load_document_tree_list(location_id, destination, folder_id) {
     /*
     The URL changes depending on the folder_id. If the folder_id is defined then we want to include it -
@@ -22,6 +115,42 @@ function load_document_tree_list(location_id, destination, folder_id) {
         }
     });
 };
+
+
+function new_folder(location_id,destination,folder_id) {
+    console.debug("Sending in new folder information");
+//Send data to the database
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    //Get form data
+    var form_data = new FormData($('#new_folder_form')[0]);
+
+    $.ajax({
+        url: '/document_tree_folder/' + location_id + '/' + destination + '/' + folder_id + '/',
+        data: form_data,
+        processData: false,
+        contentType: false,
+        type: 'POST',
+        success: function(data) {
+            $("#new_folder_modal").modal("hide"); //Remove the modal
+            if ((folder_id == null) || (folder_id == 0)) {
+                load_document_tree_list(location_id, destination);
+            } else {
+                load_document_tree_list(location_id, destination, folder_id);
+            }
+        },
+        error: function() {
+            $("#document_upload_modal").modal("hide"); //Remove the modal
+            alert("Sorry, there was an error uploading the document");
+        }
+    });
+}
 
 
 function upload_document(location_id,destination,folder_id) {
@@ -74,6 +203,43 @@ function upload_document(location_id,destination,folder_id) {
             alert("Sorry, there was an error uploading the document");
         }
     });
+}
+
+
+function upload_url(location_id, destination, folder_id) {
+    //Send data to the database
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    //Get form data
+    var form_data = new FormData($('#document_url_form')[0]);
+
+    $.ajax({
+        url: '/document_tree_url/' + location_id + '/' + destination + '/' + folder_id + '/',
+        data: form_data,
+        processData: false,
+        contentType: false,
+        type: 'POST',
+        success: function(data) {
+            $("#new_url_modal").modal("hide"); //Remove the modal
+            if ((folder_id == null) || (folder_id == 0)) {
+                load_document_tree_list(location_id, destination);
+            } else {
+                load_document_tree_list(location_id, destination, folder_id);
+            }
+        },
+        error: function() {
+            $("#document_upload_modal").modal("hide"); //Remove the modal
+            alert("Sorry, there was an error uploading the document");
+        }
+    });
+
+
 }
 
 

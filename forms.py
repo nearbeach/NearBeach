@@ -598,10 +598,35 @@ class document_upload_form(ModelForm):
             'placeholder': 'Document Description',
         })
     )
+    document_description = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Document Description',
+        })
+    )
     class Meta:
         model = document
         fields = {
             'document',
+            'document_description',
+        }
+
+
+class document_url_form(ModelForm):
+    document_url_location=forms.URLField(
+        widget=forms.URLInput(attrs={
+            'placeholder': 'https://documentlocation.com',
+            'style': 'width: 100%;',
+        }),
+    )
+    document_description=forms.CharField(
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Document Description',
+        })
+    )
+    class Meta:
+        model = document
+        fields = {
+            'document_url_location',
             'document_description',
         }
 
@@ -1347,6 +1372,16 @@ class new_customer_form(forms.Form):
         widget=forms.Select,
         queryset=organisations_results,
         required=False,
+    )
+
+
+class new_folder_form(forms.Form):
+    folder_description=forms.CharField(
+        max_length=255,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Folder Description',
+        })
     )
 
 

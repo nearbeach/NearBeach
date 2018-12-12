@@ -1473,30 +1473,6 @@ def delete_cost(request, cost_id, location_id, project_or_task):
         return HttpResponseRedirect(reverse('task_information', args={location_id}))
 
 
-@login_required(login_url='login')
-def delete_document(request, document_key):
-    # Delete the document
-    document_instance = document.objects.get(document_key=document_key)
-    document_instance.is_deleted = "TRUE"
-    document_instance.change_user=request.user
-    document_instance.save()
-
-    document_permission_save = document_permission.objects.get(document_key=document_key)
-    document_permission_save.is_deleted = "TRUE"
-    document_permission_save.change_user=request.user
-    document_permission_save.save()
-
-    print("Deleted Document: " + document_key)
-
-    #Return a blank page for fun
-    t = loader.get_template('NearBeach/blank.html')
-
-    # context
-    c = {}
-
-    return HttpResponse(t.render(c, request))
-    #SoMuchFun
-
 
 @login_required(login_url='login')
 def diagnostic_information(request):
@@ -4574,6 +4550,9 @@ def private_document(request, document_key):
     PRIVATE_MEDIA_ROOT = settings.PRIVATE_MEDIA_ROOT
     #Now get the document location and return that to the user.
     document_results=document.objects.get(pk=document_key)
+
+    if document_results.document_url_location:
+        return HttpResponseRedirect(document_results.document_url_location)
 
     path = PRIVATE_MEDIA_ROOT + '/' + document_results.document.name
     #path = '/home/luke/Downloads/gog_gods_will_be_watching_2.1.0.9.sh'

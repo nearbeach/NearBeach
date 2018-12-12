@@ -12,8 +12,8 @@ The drop down button that will allow a user to add a new
     <div class="dropdown-menu" aria-labelledby="new_document_item">
         <!-- Give the user the ability to upload the document -->
         <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#document_upload_modal">New File Upload</a>
-        <a class="dropdown-item" href="javascript:void(0)">New File URL Link</a>
-        <a class="dropdown-item" href="javascript:void(0)">New Folder</a>
+        <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#new_url_modal">New File URL Link</a>
+        <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#new_folder_modal">New Folder</a>
     </div>
 </div>
 
@@ -30,6 +30,22 @@ The table that will display the current directory.
         </tr>
     </thead>
     <tbody>
+        <!-- PARENT FOLDER
+        If the parent folder id is none - then just reload with the location and destination.
+        -->
+        {% if current_folder_results %}
+            <tr>
+                <td>
+                    {% if current_folder_results.parent_folder_id %}
+                        <a href="javascript:void(0)" onclick="load_document_tree_list({{ location_id }},'{{ destination }}',{{ current_folder_results.parent_folder_id.folder_id }})">../</a>
+                    {% else %}
+                        <a href="javascript:void(0)" onclick="load_document_tree_list({{ location_id }},'{{ destination }}')">../</a>
+                    {% endif %}
+                </td>
+            </tr>
+            <td></td>
+            <td></td>
+        {% endif %}
         <!-- LOOP FOR FOLDERS -->
         {% for row in folder_results %}
             <tr>
@@ -39,7 +55,7 @@ The table that will display the current directory.
                     </a>
                 </td>
                 <td></td>
-                <td><img src="{% static 'NearBeach/widgets/feather-master/icons/trash-2.svg' %}"></td>
+                <td><img src="{% static 'NearBeach/widgets/feather-master/icons/trash-2.svg' %}" onclick="confirm_delete_folder('{{ row.document_key.document_key }}',{{ location_id }},'{{ destination }}', {{ folder_id }})"></td>
             </tr>
         {% endfor %}
         <!-- LOOP FOR DOCUMENTS -->
@@ -47,7 +63,7 @@ The table that will display the current directory.
             <tr>
                 <td><a href="{% url 'private' row.document_key.document_key %}" target="_blank">{{ row.document_key.document_description }}</a></td>
                 <td>2018-10-03</td>
-                <td><img src="{% static 'NearBeach/widgets/feather-master/icons/trash-2.svg' %}"></td>
+                <td><img src="{% static 'NearBeach/widgets/feather-master/icons/trash-2.svg' %}" onclick="confirm_delete_document('{{ row.document_key.document_key }}',{{ location_id }},'{{ destination }}', {{ folder_id }})"></td>
             </tr>
         {% endfor %}
     </tbody>
@@ -87,3 +103,122 @@ The table that will display the current directory.
 </div>
 
 
+
+<!-- New File URL -->
+<div class="modal" tabindex="-1" role="dialog" id="new_url_modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- HEADER -->
+            <div class="modal-header">
+                <h5 class="modal-title">New File URL</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- BODY -->
+            <div class="modal-body">
+                Please copy the URL and paste into the URL Field. Place a description of the document in the description field
+                <form id="document_url_form" enctype="multipart/form-data">
+                    {{ document_url_form.document_url_location }}
+                    {{ document_url_form.document_description }}
+                </form>
+            </div>
+
+
+            <!-- FOOTER -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="upload_url({{ location_id }},'{{ destination }}', {{ folder_id }})">Link URL</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- New Folder -->
+<div class="modal" tabindex="-1" role="dialog" id="new_folder_modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- HEADER -->
+            <div class="modal-header">
+                <h5 class="modal-title">New Folder</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- BODY -->
+            <div class="modal-body">
+                <form id="new_folder_form" enctype="multipart/form-data">
+                    {{ new_folder_form.folder_description }}
+                </form>
+            </div>
+
+
+            <!-- FOOTER -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="new_folder({{ location_id }},'{{ destination }}', {{ folder_id }})">Link URL</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- CONFIRM DELETION OF DOCUMENT -->
+<div class="modal" tabindex="-1" role="dialog" id="confirm_document_delete">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- HEADER -->
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Document?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- BODY -->
+            <div class="modal-body">
+                <p>Are you sure you want to delete the file?</p>
+            </div>
+
+
+            <!-- FOOTER -->
+            <div class="modal-footer">
+                <button id="remove_document_confirmed" disabled type="button" class="btn btn-danger btn-ok">Delete Document</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- CONFIRM DELETION OF FOLDER -->
+<div class="modal" tabindex="-1" role="dialog" id="confirm_folder_delete">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- HEADER -->
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Folder?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- BODY -->
+            <div class="modal-body">
+                <p>Are you sure you want to delete the folder?</p>
+            </div>
+
+
+            <!-- FOOTER -->
+            <div class="modal-footer">
+                <button id="remove_folder_confirmed" disabled type="button" class="btn btn-danger btn-ok">Delete Document</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
