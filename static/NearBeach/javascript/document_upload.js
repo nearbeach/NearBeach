@@ -19,15 +19,15 @@ function confirm_delete_document(document_key,location_id,destination,folder_id)
 }
 
 
-function confirm_delete_folder(document_key,location_id,destination,folder_id) {
+function confirm_delete_folder(folder_id,location_id,destination,current_folder_id) {
     //Show the modal - confirm that the user wants to delete the folder
     $("#confirm_folder_delete").modal("show");
 
     //We need to pass on the information of where to go when the delete button is clicked
-    if ((folder_id == null) || (folder_id == 0)) {
-        $("#remove_folder_confirmed").attr('onclick','delete_folder("' + document_key + '","' + location_id + '","' + destination + '")');
+    if ((current_folder_id == null) || (current_folder_id == 0)) {
+        $("#remove_folder_confirmed").attr('onclick','delete_folder(' + folder_id + ',' + location_id + ',"' + destination + '")');
     } else {
-        $("#remove_folder_confirmed").attr('onclick','delete_folder("' + document_key + '","' + location_id + '","' + destination + '","' + folder_id + '")');
+        $("#remove_folder_confirmed").attr('onclick','delete_folder(' + folder_id + ',' + location_id + ',"' + destination + '",' + current_folder_id + ')');
     }
 
     //We want to make sure the delete button is disabled for 2 seconds
@@ -58,6 +58,9 @@ function delete_document(document_key,location_id,destination,folder_id) {
             } else {
                 load_document_tree_list(location_id, destination, folder_id);
             }
+        },
+        error: function() {
+            alert("Sorry, there was an issue deletng the file");
         }
 
     })
@@ -74,17 +77,20 @@ function delete_folder(folder_id,location_id,destination,current_folder_id) {
     });
 
     $.ajax({
-        url: '/delete_document/' + document_key + '/',
+        url: '/delete_folder/' + folder_id + '/',
         data: {},
         dataType: "HTML",
         type: "POST",
         success: function(data) {
-            $("#confirm_document_delete").modal("hide"); //Remove the modal
-            if ((folder_id == null) || (folder_id == 0)) {
+            $("#confirm_folder_delete").modal("hide"); //Remove the modal
+            if ((current_folder_id == null) || (current_folder_id == 0)) {
                 load_document_tree_list(location_id, destination);
             } else {
-                load_document_tree_list(location_id, destination, folder_id);
+                load_document_tree_list(location_id, destination, current_folder_id);
             }
+        },
+        error: function() {
+            alert("Sorry - could not remove folder");
         }
 
     })

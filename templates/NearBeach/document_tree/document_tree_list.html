@@ -17,6 +17,8 @@ The drop down button that will allow a user to add a new
     </div>
 </div>
 
+<h5>Permission level</h5>
+{{ permission_results }}
 
 <!--
 The table that will display the current directory.
@@ -26,7 +28,9 @@ The table that will display the current directory.
         <tr>
             <th scope="col" width="70%">Name</th>
             <th scope="col" width="20%">Date Uploaded</th>
-            <th scope="col" width="10%">Delete</th>
+            {% if permission_results >= 3 %}
+                <th scope="col" width="10%">Delete</th>
+            {% endif %}
         </tr>
     </thead>
     <tbody>
@@ -44,7 +48,9 @@ The table that will display the current directory.
                 </td>
             </tr>
             <td></td>
-            <td></td>
+            {% if permission_results >= 3 %}
+                <td></td>
+            {% endif %}
         {% endif %}
         <!-- LOOP FOR FOLDERS -->
         {% for row in folder_results %}
@@ -55,7 +61,9 @@ The table that will display the current directory.
                     </a>
                 </td>
                 <td></td>
-                <td><img src="{% static 'NearBeach/widgets/feather-master/icons/trash-2.svg' %}" onclick="confirm_delete_folder('{{ row.document_key.document_key }}',{{ location_id }},'{{ destination }}', {{ folder_id }})"></td>
+                {% if permission_results >= 3 %}
+                    <td><img src="{% static 'NearBeach/widgets/feather-master/icons/trash-2.svg' %}" onclick="confirm_delete_folder('{{ row.folder_id }}',{{ location_id }},'{{ destination }}', {{ folder_id }})"></td>
+                {% endif %}
             </tr>
         {% endfor %}
         <!-- LOOP FOR DOCUMENTS -->
@@ -63,7 +71,9 @@ The table that will display the current directory.
             <tr>
                 <td><a href="{% url 'private' row.document_key.document_key %}" target="_blank">{{ row.document_key.document_description }}</a></td>
                 <td>2018-10-03</td>
-                <td><img src="{% static 'NearBeach/widgets/feather-master/icons/trash-2.svg' %}" onclick="confirm_delete_document('{{ row.document_key.document_key }}',{{ location_id }},'{{ destination }}', {{ folder_id }})"></td>
+                {% if permission_results %}
+                    <td><img src="{% static 'NearBeach/widgets/feather-master/icons/trash-2.svg' %}" onclick="confirm_delete_document('{{ row.document_key.document_key }}',{{ location_id }},'{{ destination }}', {{ folder_id }})"></td>
+                {% endif %}
             </tr>
         {% endfor %}
     </tbody>

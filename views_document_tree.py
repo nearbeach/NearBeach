@@ -40,6 +40,21 @@ def delete_document(request,document_key):
 
 
 @login_required(login_url='login')
+def delete_folder(request, folder_id):
+    if request.method == "POST":
+        folder_results = folder.objects.get(folder_id=folder_id)
+        folder_results.is_deleted = "TRUE"
+        folder_results.change_user = request.user
+        folder_results.save()
+
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry, this request has to be post")
+
+
+@login_required(login_url='login')
 def document_tree_folder(request, location_id, destination, folder_id=''):
     if request.method == "POST":
         form = new_folder_form(request.POST)
@@ -77,7 +92,7 @@ def document_tree_folder(request, location_id, destination, folder_id=''):
 
 @login_required(login_url='login')
 def document_tree_list(request, location_id, destination, folder_id=''):
-    #NOTE - need to add in permission for read only users.
+    permission_results = return_user_permission_level(request, None, destination)
 
     if destination == "project":
         folder_results = folder.objects.filter(
@@ -128,6 +143,7 @@ def document_tree_list(request, location_id, destination, folder_id=''):
         'document_url_form': document_url_form(),
         'new_folder_form': new_folder_form(),
         'current_folder_results': current_folder_results,
+        'permission_results': permission_results[destination],
     }
 
     return HttpResponse(t.render(c, request))
