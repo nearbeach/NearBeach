@@ -7,6 +7,7 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/bug.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/document_upload.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
 <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
 
@@ -22,9 +23,7 @@
         load_bug_search();
         load_email_history();
 
-        load_document_tree_list();
-        load_document_tree_create_folder();
-        load_document_tree_upload_documents();
+        load_document_tree_list({{ task_id }},'task');
 
         load_assigned_user_add();
         load_assigned_user_list();
@@ -191,20 +190,10 @@
 
 
     <h2>Document Uploads</h2>
-    <form method="post" class="document_tree_upload_documents" id="document_tree_upload_documents" enctype="multipart/form-data">
-        <h2>Document Tree Upload Documents</h2>
-        Loading...
-    </form>
-
-    <form method="post" class="document_tree_create_folder" id="document_tree_create_folder">
-        <h2>Document Tree Create Folder</h2>
-        Loading...
-    </form>
-
-    <form method="post" class="document_tree_list" id="document_tree_list">
+    <div class="document_tree_list" id="document_tree_list">
         <h2>Document Tree List</h2>
         Loading...
-    </form>
+    </div>
 
 
     <h2>Task Quotes</h2>
@@ -482,55 +471,6 @@
     }
 
 
-    function load_document_tree_create_folder() {
-        //Load Project History
-        $.ajax({
-            url: '/document_tree_create_folder/{{ task_id }}/T',
-            data: {},
-            dataType: 'HTML',
-            type: 'GET',
-            success: function(data) {
-                $('#document_tree_create_folder').html(data);
-            },
-            error: function() {
-                $('#document_tree_create_folder').html('Sorry, document tree create folder encounted an error and did not load.');
-            }
-        });
-    };
-
-
-    function load_document_tree_upload_documents() {
-        //Load Project History
-        $.ajax({
-            url: '/document_tree_upload_documents/{{ task_id }}/T',
-            data: {},
-            dataType: 'HTML',
-            type: 'GET',
-            success: function(data) {
-                $('#document_tree_upload_documents').html(data);
-            },
-            error: function() {
-                $('#document_tree_upload_documents').html('Sorry, document tree upload documents encounted an error and did not load.');
-            }
-        });
-    };
-
-    function load_document_tree_list() {
-        //Load Project History
-        $.ajax({
-            url: '/document_tree_list/{{ task_id }}/T',
-            data: {},
-            dataType: 'HTML',
-            type: 'GET',
-            success: function(data) {
-                $('#document_tree_list').html(data);
-            },
-            error: function() {
-                $('#document_tree_list').html('<h2>Document Tree</h2>Sorry, document tree encounted an error and did not load.');
-            }
-        });
-    };
-
     function load_email_history() {
         $.ajax({
             url: '/email_history/{{ task_id }}/task',
@@ -595,54 +535,6 @@
             }
         });
     };
-
-
-
-
-
-
-
-
-
-    function upload_document() {
-        //Get form data
-        var form_data = new FormData(document.querySelector('#document_tree_upload_documents'));
-
-        $.ajax({
-            xhr: function() {
-                var xhr = new window.XMLHttpRequest();
-
-                // Upload progress
-                xhr.upload.addEventListener("progress", function(evt){
-                    if (evt.lengthComputable) {
-                        var percentComplete = evt.loaded / evt.total;
-                        //Do something with upload progress
-                        console.log(percentComplete);
-
-                        $("#upload_percent").html(parseFloat(percentComplete * 100).toFixed(2) + "%");
-                        $("#upload_progress").css(
-                            'width', percentComplete * 100 + '%'
-                        );
-                    }
-               }, false);
-               return xhr;
-            },
-
-            url: '/document_tree_upload/{{ task_id }}/T/',
-            data: form_data,
-            processData: false,
-            contentType: false,
-            type: 'POST',
-            success: function(data) {
-                load_document_tree_create_folder();
-                load_document_tree_list();
-                load_document_tree_upload_documents();
-            },
-            error: function() {
-                alert("Sorry, there was an error uploading the document");
-            }
-        });
-    }
 
     function load_to_do() {
         $.ajax({

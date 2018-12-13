@@ -5395,42 +5395,6 @@ def task_information(request, task_id):
                     submit_folder.save()
 
 
-    # Obtain required data
-
-
-    cursor.execute(
-        """
-        SELECT DISTINCT
-          document.document_key
-        , document.document_description
-        , document.document_url_location
-        , document.document
-        , document_folder.folder_id_id
-        
-        FROM 
-          document
-          LEFT JOIN
-                document_permission
-                ON document.document_key = document_permission.document_key_id
-		LEFT JOIN
-				folder
-				ON folder.task_id_id = %s
-		LEFT JOIN
-				document_folder
-				ON document_folder.folder_id_id = folder.folder_id
-				AND document_folder.document_key_id = document.document_key
-
-        
-        WHERE 1=1
-        
-        AND document_permission.task_id_id = %s
-        ORDER BY document.document_description     
-        """, [task_id,task_id])
-    #documents_results = namedtuplefetchall(cursor)
-    documents_results = cursor.fetchall()
-
-    #print(documents_results)
-
     folders_results = folder.objects.filter(
         task_id=task_id,
         is_deleted='FALSE',
@@ -5479,14 +5443,11 @@ def task_information(request, task_id):
         'task_information_form': task_information_form(initial=initial),
         'information_task_history_form': information_task_history_form(),
         'associated_project_results': associated_project_results,
-        'documents_results': simplejson.dumps(documents_results,encoding='utf-8'),
-        'folders_results': serializers.serialize('json', folders_results),
         'media_url': settings.MEDIA_URL,
         'task_id': task_id,
         'permission': permission_results['task'],
         'task_history_permissions': permission_results['task_history'],
         'quote_results': quote_results,
-        'task_results': task_results,
         'timezone': settings.TIME_ZONE,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],

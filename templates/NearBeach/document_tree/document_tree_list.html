@@ -17,9 +17,6 @@ The drop down button that will allow a user to add a new
     </div>
 </div>
 
-<h5>Permission level</h5>
-{{ permission_results }}
-
 <!--
 The table that will display the current directory.
 -->
@@ -138,7 +135,7 @@ The table that will display the current directory.
 
             <!-- FOOTER -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="upload_url({{ location_id }},'{{ destination }}', {{ folder_id }})">Link URL</button>
+                <button type="button" class="btn btn-primary" onclick="upload_url({{ location_id }},'{{ destination }}', {{ folder_id }})">New Folder</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
