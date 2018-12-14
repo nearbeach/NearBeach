@@ -133,3 +133,24 @@ Github: https://github.com/dk8996/Gantt-Chart
 License: Apache-2.0
 
 Note: Gantt-Chart will be used for NearBeach's timeline feature.
+
+
+### Bootstrap
+Creator(s): Mark Otto, Jacob Thornton
+
+Github: https://github.com/twbs/bootstrap
+
+License: MIT
+
+Note: NearBeach's CSS is currently being migrated to Bootstrap. For easy development.
+
+
+
+### Feather Icons
+Creator(s): Carmelo Pullara, Cole Bemis, Oliver Dumoulin
+
+Github: https://github.com/feathericons/feather
+
+License: MIT
+
+Note: Feather icons are icons being utilised by NearBeach

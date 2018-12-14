@@ -20,7 +20,7 @@ from .user_permissions import return_user_permission_level
 
 @login_required(login_url='login')
 def information_task_assigned_users(request, task_id):
-    task_groups_results = task_group.objects.filter(
+    task_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         task_id=task.objects.get(task_id=task_id),
     ).values('group_id_id')
@@ -91,7 +91,7 @@ def information_task_delete_assigned_users(request, task_id, user_id):
 
 @login_required(login_url='login')
 def information_task_costs(request, task_id):
-    task_groups_results = task_group.objects.filter(
+    task_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         task_id=task.objects.get(task_id=task_id),
     ).values('group_id_id')
@@ -152,10 +152,10 @@ def information_task_costs(request, task_id):
 
 @login_required(login_url='login')
 def information_task_customer(request, task_id):
-    task_groups_results = task_group.objects.filter(
+    task_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
-        task_id=task.objects.get(task_id=task_id),
-    ).values('group_id_id')
+        task_id=task_id,
+    ).values('group_id')
 
     permission_results = return_user_permission_level(request, task_groups_results,'task')
 
@@ -202,7 +202,7 @@ def information_task_customer(request, task_id):
 
 @login_required(login_url='login')
 def information_task_history(request, task_id):
-    task_groups_results = task_group.objects.filter(
+    task_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         task_id=task.objects.get(task_id=task_id),
     ).values('group_id_id')

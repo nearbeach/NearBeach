@@ -13,120 +13,119 @@ from .user_permissions import return_user_permission_level
 import simplejson
 
 @login_required(login_url='login')
-def document_tree_create_folder(request, location_id, project_or_task):
-    permission_results = return_user_permission_level(request, None,['project','document','task'])
-
-    #Permission for either project or task
-    if project_or_task == "P":
-        general_permission = permission_results['project']
-    else:
-        general_permission = permission_results['task']
-
+def delete_document(request,document_key):
     if request.method == "POST":
-        print(request.POST)
-        form = document_tree_create_folder_form(request.POST,location_id=location_id, project_or_task=project_or_task)
-        if form.is_valid():
-            folder_description = form.cleaned_data['folder_description']
-            nested_folder = request.POST.get('nested_folder')
+        # Delete the document
+        document_instance = document.objects.get(document_key=document_key)
+        document_instance.is_deleted = "TRUE"
+        document_instance.change_user = request.user
+        document_instance.save()
 
+        document_permission_save = document_permission.objects.get(document_key=document_key)
+        document_permission_save.is_deleted = "TRUE"
+        document_permission_save.change_user = request.user
+        document_permission_save.save()
 
-            #Save the folder
-            folders_save = folder(
-                folder_description=folder_description,
-                change_user=request.user,
-            )
+        print("Deleted Document: " + document_key)
 
-            if nested_folder == '':
-                print("")
-                """
-                Python bug here. I can not get
-                if not nested_folder == '':
-                to work correctly. So I have a blank print statement for the opposite
-                of the condition I was looking for and then an else to bring in the 
-                condition I want.
-                """
-            else:
-                folders_save.parent_folder_id = folder.objects.get(folder_id=int(nested_folder))
+        # Return a blank page for fun
+        t = loader.get_template('NearBeach/blank.html')
 
-            if project_or_task == 'P':
-                folders_save.project_id = project.objects.get(project_id=location_id)
-            else:
-                folders_save.project_id = task.objects.get(task_id=location_id)
+        # context
+        c = {}
 
-            folders_save.save()
-
-
-
-        else:
-            print(form.errors)
-
-
-    #Load template
-    t = loader.get_template('NearBeach/document_tree/document_tree_create_folder.html')
-
-
-    # context
-    c = {
-        'create_folder_form': document_tree_create_folder_form(
-            location_id=location_id,
-            project_or_task=project_or_task,
-        ),
-        'general_permission': general_permission,
-        'document_permission': permission_results['document'],
-    }
-
-    return HttpResponse(t.render(c, request))
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("Can only do this action in post.")
 
 
 @login_required(login_url='login')
-def document_tree_list(request, location_id, project_or_task, folder_id='',):
-    #Get Data
-    folder_results = folder.objects.filter(is_deleted="FALSE")
-    document_results = document_permission.objects.filter(is_deleted="FALSE")
+def delete_folder(request, folder_id):
+    if request.method == "POST":
+        folder_results = folder.objects.get(folder_id=folder_id)
+        folder_results.is_deleted = "TRUE"
+        folder_results.change_user = request.user
+        folder_results.save()
 
-
-
-    #Filter for project_or_task
-    if project_or_task == 'P':
-        #Project
-        project_instance = project.objects.get(project_id=location_id)
-
-        folder_results = folder_results.filter(project_id=project_instance)
-        document_results = document_results.filter(project_id=project_instance)
-    elif project_or_task == 'T':
-        #Tasks
-        task_instance=task.objects.get(task_id=location_id)
-
-        folder_results = folder_results.filter(task_id=task_instance)
-        document_results = document_results.filter(task_id=task_instance)
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
     else:
-        #ERROR
-        return  HttpResponseBadRequest("Sorry, but we can not tell if this is a project or task!")
+        return HttpResponseBadRequest("Sorry, this request has to be post")
 
-    #Filter for folder_id
-    if folder_id == '':
-        folder_instance = '' #Empty if no folder instance
-        folder_results = folder_results.filter(parent_folder_id=None)
 
-        """
-        We only want those document who are not in a folder. So we look up all document that were in a folder
-        and exclude them from the document results.
-        """
-        document_folder_results = document_folder.objects.filter(is_deleted="FALSE")
-        document_results = document_results.filter(~Q(document_key__in=document_folder_results.values('document_key')))
+@login_required(login_url='login')
+def document_tree_folder(request, location_id, destination, folder_id=''):
+    if request.method == "POST":
+        form = new_folder_form(request.POST)
+        if form.is_valid():
+            folder_submit = folder(
+                folder_description=form.cleaned_data['folder_description'],
+                change_user=request.user,
+            )
+
+            if folder_id == "" or folder_id == None or folder_id == "0" or folder_id == 0:
+                print("There is a bug in python here")
+            else:
+                print("FOLDER ID = " + str(folder_id))
+                folder_submit.parent_folder_id=folder.objects.get(folder_id=folder_id)
+
+            if destination == "project":
+                folder_submit.project_id=project.objects.get(project_id=location_id)
+            elif destination == "task":
+                folder_submit.task_id=task.objects.get(task_id=location_id)
+
+            folder_submit.save()
+
+
+            t = loader.get_template('NearBeach/blank.html')
+
+            c = {}
+
+            return HttpResponse(t.render(c,request))
+        else:
+            print(form.errors)
+            return HttpResponseBadRequest("Form not valid")
     else:
-        folder_instance = folder.objects.get(folder_id=folder_id)
-        folder_results = folder_results.filter(parent_folder_id=folder_instance)
+        return HttpResponseBadRequest("Requst must be a POST")
 
-        """
-        We only want those document who are contained in the folder specified. So we look up all the 
-        document that are in that specific folder and only include them.
-        """
-        document_folder_results = document_folder.objects.filter(
+
+@login_required(login_url='login')
+def document_tree_list(request, location_id, destination, folder_id=''):
+    permission_results = return_user_permission_level(request, None, destination)
+
+    if destination == "project":
+        folder_results = folder.objects.filter(
             is_deleted="FALSE",
-            folder_id=folder_instance
+            project_id=location_id,
         )
-        document_results = document_results.filter(Q(document_key__in=document_folder_results.values('document_key')))
+        document_permission_results = document_permission.objects.filter(
+            is_deleted="FALSE",
+            project_id=location_id,
+        )
+    elif destination == "task":
+        folder_results = folder.objects.filter(
+            is_deleted="FALSE",
+            task_id=location_id,
+        )
+        document_permission_results = document_permission.objects.filter(
+            is_deleted="FALSE",
+            task_id=location_id,
+        )
+    else:
+        #TEMP CODE - will need to expand to utilise other objects
+        document_permission_results = document_permission.all() #haha - ALL
+        folder_results = folder.objects.all()
+
+    if folder_id:
+        folder_results = folder_results.filter(parent_folder_id=folder_id)
+        document_permission_results = document_permission_results.filter(folder_id=folder_id)
+        current_folder_results = folder.objects.get(folder_id=folder_id)
+    else:
+        folder_results = folder_results.filter(parent_folder_id__isnull=True)
+        document_permission_results = document_permission_results.filter(folder_id__isnull=True)
+        folder_id=0 #A non existing folder!
+        current_folder_results=""
 
     # Load the template
     t = loader.get_template('NearBeach/document_tree/document_tree_list.html')
@@ -135,108 +134,126 @@ def document_tree_list(request, location_id, project_or_task, folder_id='',):
 
     # context
     c = {
+        'document_permission_results': document_permission_results,
         'folder_results': folder_results,
-        'document_results': document_results,
-        'folder_id': folder_id,
-        'folder_instance': folder_instance,
+        'destination': destination,
         'location_id': location_id,
-        'project_or_task': project_or_task,
-        'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
+        'folder_id': folder_id,
+        'document_upload_form': document_upload_form(),
+        'document_url_form': document_url_form(),
+        'new_folder_form': new_folder_form(),
+        'current_folder_results': current_folder_results,
+        'permission_results': permission_results[destination],
     }
 
     return HttpResponse(t.render(c, request))
 
 
 @login_required(login_url='login')
-def document_tree_upload(request, location_id, project_or_task):
+def document_tree_upload(request, location_id, destination, folder_id):
     if request.method == "POST":
         if request.FILES == None:
             return HttpResponseBadRequest('File needs to be uploaded')
 
-        #Get the file data
-        file = request.FILES['document']
-        nested_folder = request.POST.get('nested_folder')
+        form = document_upload_form(request.POST, request.FILES)
+        if form.is_valid():
+            #Get form data
+            file = form.cleaned_data['document']
+            document_description = form.cleaned_data['document_description']
 
-        #Data objects required
-        filename = str(file)
-        file_size = file.size
-        print("File name: " + filename + "\nFile Size: " + str(file_size))
+            # Data objects required
+            if document_description == "":
+                document_description = str(file)
+            file_size = file.size
 
-        """
-        File Uploads
-        """
-        document_save = document(
-            document_description=filename,
-            document=file,
-            change_user=request.user,
-        )
-        document_save.save()
-
-        document_permissions_save = document_permission(
-            document_key=document_save,
-            change_user=request.user,
-        )
-        if project_or_task == "P":
-            #Project
-            project_instance = project.objects.get(project_id=location_id)
-            document_permissions_save.project_id = project_instance
-        else:
-            #Task
-            task_instance = task.objects.get(tasks_id=location_id)
-            document_permissions_save.task_id = task_instance
-        document_permissions_save.save()
-
-        if nested_folder == '':
-            print("")
-            #PYTHON BUG HERE - this is the work around
-        else:
-            document_folder_save = document_folder(
-                document_key=document_save,
-                folder_id=folder.objects.get(folder_id=nested_folder),
+            """
+            File Uploads
+            """
+            document_submit = document(
+                document_description=document_description,
+                document=file,
                 change_user=request.user,
             )
-            document_folder_save.save()
+            document_submit.save()
 
-        result = []
-        result.append({
-            "name" : filename,
-            "size" : file_size,
-            "url" : '',
-            "thumbnail_url" : '',
-            "delete_url" : '/',
-            "delete_type" : "POST",
-        })
-        response_data = simplejson.dumps(result)
-        return HttpResponse(response_data, content_type='application/json')
+            document_permissions_submit = document_permission(
+                document_key=document_submit,
+                change_user=request.user,
+            )
+            if destination == "project":
+                document_permissions_submit.project_id = project.objects.get(project_id=location_id)
+            elif destination == "task":
+                document_permissions_submit.task_id = task.objects.get(task_id=location_id)
+            # Must apply other objects
+
+            # NEST UPLOAD TO CURRENT FOLDER
+            if folder_id == 0 or folder_id == '0' or not folder_id:
+                print("Due to a python bug. We have to do this like this :'(")
+            else:
+                print("There is an else")
+                document_permissions_submit.folder_id = folder.objects.get(folder_id=folder_id)
+
+            document_permissions_submit.save()
+
+            result = []
+            result.append({
+                "name": document_description,
+                "size": file_size,
+                "url": '',
+                "thumbnail_url": '',
+                "delete_url": '/',
+                "delete_type": "POST",
+            })
+            response_data = simplejson.dumps(result)
+            return HttpResponse(response_data, content_type='application/json')
+        else:
+            print(form.errors)
+            return HttpResponseBadRequest("Sorry, there was an issue with the form")
     else:
-        return HttpResponseBadRequest('Only POST accepted')
+        return HttpResponseBadRequest("Sorry, this function is only a POST function")
 
 
+@login_required(login_url='login')
+def document_tree_url(request,location_id,destination,folder_id=''):
+    if request.method == "POST":
+        form = document_url_form(request.POST)
+        if form.is_valid():
+            document_submit = document(
+                document_url_location=form.cleaned_data['document_url_location'],
+                document_description=form.cleaned_data['document_description'],
+                change_user=request.user,
+            )
+            document_submit.save()
 
-def document_tree_upload_documents(request, location_id, project_or_task):
-    permission_results = return_user_permission_level(request, None,['project','task','document'])
-    if project_or_task == "P":
-        general_permission = permission_results['project']
+            document_permissions_submit = document_permission(
+                document_key=document_submit,
+                change_user=request.user,
+            )
+            if destination == "project":
+                document_permissions_submit.project_id = project.objects.get(project_id=location_id)
+            elif destination == "task":
+                document_permissions_submit.task_id = task.objects.get(task_id=location_id)
+            # Must apply other objects
+
+            # NEST UPLOAD TO CURRENT FOLDER
+            if folder_id == 0 or folder_id == '0' or not folder_id:
+                print("Due to a python bug. We have to do this like this :'(")
+            else:
+                print("There is an else")
+                document_permissions_submit.folder_id = folder.objects.get(folder_id=folder_id)
+
+            document_permissions_submit.save()
+
+            # send back a blank page
+            t = loader.get_template('NearBeach/blank.html')
+
+            c = {}
+
+            return HttpResponse(t.render(c, request))
+        else:
+            print(form.errors)
+
+            return HttpResponseBadRequest("Form is not valid")
     else:
-        general_permission = permission_results['task']
-
-    # Load the template
-    t = loader.get_template('NearBeach/document_tree/document_tree_upload_documents.html')
-
-    # context
-    c = {
-        'location_id': location_id,
-        'project_or_task': project_or_task,
-        'upload_form': document_tree_upload_form(
-            location_id=location_id,
-            project_or_task=project_or_task,
-        ),
-        'general_permission': general_permission,
-        'document_permission': permission_results['document'],
-    }
-
-    return HttpResponse(t.render(c, request))
-
-
-
+        return HttpResponseBadRequest("Request can only be post")
 

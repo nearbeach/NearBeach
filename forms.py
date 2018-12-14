@@ -591,77 +591,44 @@ class diagnostic_test_document_upload_form(forms.Form):
         required=True,
     )
 
-
-class document_tree_create_folder_form(forms.Form):
-    def __init__(self, *args, **kwargs):
-        location_id = kwargs.pop('location_id')
-        project_or_task = kwargs.pop('project_or_task',None)
-
-        super(document_tree_create_folder_form, self).__init__(*args, **kwargs)
-
-        if project_or_task == "P":
-            project_instance = project.objects.get(project_id=location_id)
-            folders_results = folder.objects.filter(
-                is_deleted="FALSE",
-                project_id=project_instance,
-            )
-        elif project_or_task == "T":
-            task_instance = task.objects.get(task_id=location_id)
-            folders_results = folder.objects.filter(
-                is_deleted="FALSE",
-                task_id=task_instance,
-            )
-
-        self.fields['nested_folder'].queryset = folders_results
-
-    folder_description = forms.CharField(
+class document_upload_form(ModelForm):
+    document_description=forms.CharField(
         max_length=255,
-        required=True,
-        widget=forms.TextInput(
-            attrs={
-                'placeholder': 'Folder Description',
-            }
-        )
-    )
-    nested_folder = forms.ModelChoiceField(
-        required=False,
-        queryset=folder.objects.all(),
-    )
-
-
-class document_tree_upload_form(forms.Form):
-    def __init__(self, *args, **kwargs):
-        location_id = kwargs.pop('location_id')
-        project_or_task = kwargs.pop('project_or_task',None)
-
-        super(document_tree_upload_form, self).__init__(*args, **kwargs)
-
-        if project_or_task == "P":
-            project_instance = project.objects.get(project_id=location_id)
-            folders_results = folder.objects.filter(
-                is_deleted="FALSE",
-                project_id=project_instance,
-            )
-        elif project_or_task == "T":
-            task_instance = task.objects.get(task_id=location_id)
-            folders_results = folder.objects.filter(
-                is_deleted="FALSE",
-                task_id=task_instance,
-            )
-
-        self.fields['nested_folder'].queryset = folders_results
-
-    nested_folder = forms.ModelChoiceField(
-        required=False,
-        queryset=folder.objects.all(),
-    )
-    document = forms.FileField(
-        required=True,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Document Description',
+        })
     )
     document_description = forms.CharField(
-        required=True,
-        max_length=50,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Document Description',
+        })
     )
+    class Meta:
+        model = document
+        fields = {
+            'document',
+            'document_description',
+        }
+
+
+class document_url_form(ModelForm):
+    document_url_location=forms.URLField(
+        widget=forms.URLInput(attrs={
+            'placeholder': 'https://documentlocation.com',
+            'style': 'width: 100%;',
+        }),
+    )
+    document_description=forms.CharField(
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Document Description',
+        })
+    )
+    class Meta:
+        model = document
+        fields = {
+            'document_url_location',
+            'document_description',
+        }
 
 
 class email_form(ModelForm):
@@ -1405,6 +1372,16 @@ class new_customer_form(forms.Form):
         widget=forms.Select,
         queryset=organisations_results,
         required=False,
+    )
+
+
+class new_folder_form(forms.Form):
+    folder_description=forms.CharField(
+        max_length=255,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Folder Description',
+        })
     )
 
 

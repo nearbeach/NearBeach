@@ -1473,34 +1473,10 @@ def delete_cost(request, cost_id, location_id, project_or_task):
         return HttpResponseRedirect(reverse('task_information', args={location_id}))
 
 
-@login_required(login_url='login')
-def delete_document(request, document_key):
-    # Delete the document
-    document = document.objects.get(document_key=document_key)
-    document.is_deleted = "TRUE"
-    document.change_user=request.user
-    document.save()
-
-    document_permission_save = document_permission.objects.get(document_key=document_key)
-    document_permission_save.is_deleted = "TRUE"
-    document_permission_save.change_user=request.user
-    document_permission_save.save()
-
-    print("Deleted Document: " + document_key)
-
-    #Return a blank page for fun
-    t = loader.get_template('NearBeach/blank.html')
-
-    # context
-    c = {}
-
-    return HttpResponse(t.render(c, request))
-    #SoMuchFun
-
 
 @login_required(login_url='login')
 def diagnostic_information(request):
-    permission_results = return_user_permission_level(request, None, None)
+    permission_results = return_user_permission_level(request, None, "")
 
     # reCAPTCHA
     RECAPTCHA_PUBLIC_KEY = ''
@@ -4575,6 +4551,9 @@ def private_document(request, document_key):
     #Now get the document location and return that to the user.
     document_results=document.objects.get(pk=document_key)
 
+    if document_results.document_url_location:
+        return HttpResponseRedirect(document_results.document_url_location)
+
     path = PRIVATE_MEDIA_ROOT + '/' + document_results.document.name
     #path = '/home/luke/Downloads/gog_gods_will_be_watching_2.1.0.9.sh'
 
@@ -4680,36 +4659,7 @@ def project_information(request, project_id):
     # Obtain the required data
     project_history_results = project_history.objects.filter(project_id=project_id, is_deleted='FALSE')
     cursor = connection.cursor()
-    cursor.execute(
-        """
-        SELECT DISTINCT
-          document.document_key
-        , document.document_description
-        , document.document_url_location
-        , document.document
-        , document_folder.folder_id_id
-        
-        FROM 
-          document
-          LEFT JOIN
-                document_permission
-                ON document.document_key = document_permission.document_key_id
-		LEFT JOIN
-				folder
-				ON folder.project_id_id = %s
-		LEFT JOIN
-				document_folder
-				ON document_folder.folder_id_id = folder.folder_id
-				AND document_folder.document_key_id = document.document_key
 
-        
-        WHERE 1=1
-        
-        AND document_permission.project_id_id = %s
-        ORDER BY document.document_description 
-        """, [project_id,project_id]
-    )
-    documents_results = cursor.fetchall()
 
     folders_results = folder.objects.filter(
         project_id=project_id,
@@ -4752,7 +4702,6 @@ def project_information(request, project_id):
         'project_results': project_results,
         'associated_task_results': associated_task_results,
         'project_history_results': project_history_results,
-        'documents_results': simplejson.dumps(documents_results,encoding='utf-8'),
         'folders_results': serializers.serialize('json', folders_results),
         'media_url': settings.MEDIA_URL,
         'quote_results': quote_results,
@@ -5446,42 +5395,6 @@ def task_information(request, task_id):
                     submit_folder.save()
 
 
-    # Obtain required data
-
-
-    cursor.execute(
-        """
-        SELECT DISTINCT
-          document.document_key
-        , document.document_description
-        , document.document_url_location
-        , document.document
-        , document_folder.folder_id_id
-        
-        FROM 
-          document
-          LEFT JOIN
-                document_permission
-                ON document.document_key = document_permission.document_key_id
-		LEFT JOIN
-				folder
-				ON folder.task_id_id = %s
-		LEFT JOIN
-				document_folder
-				ON document_folder.folder_id_id = folder.folder_id
-				AND document_folder.document_key_id = document.document_key
-
-        
-        WHERE 1=1
-        
-        AND document_permission.task_id_id = %s
-        ORDER BY document.document_description     
-        """, [task_id,task_id])
-    #documents_results = namedtuplefetchall(cursor)
-    documents_results = cursor.fetchall()
-
-    #print(documents_results)
-
     folders_results = folder.objects.filter(
         task_id=task_id,
         is_deleted='FALSE',
@@ -5530,14 +5443,11 @@ def task_information(request, task_id):
         'task_information_form': task_information_form(initial=initial),
         'information_task_history_form': information_task_history_form(),
         'associated_project_results': associated_project_results,
-        'documents_results': simplejson.dumps(documents_results,encoding='utf-8'),
-        'folders_results': serializers.serialize('json', folders_results),
         'media_url': settings.MEDIA_URL,
         'task_id': task_id,
         'permission': permission_results['task'],
         'task_history_permissions': permission_results['task_history'],
         'quote_results': quote_results,
-        'task_results': task_results,
         'timezone': settings.TIME_ZONE,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
