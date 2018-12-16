@@ -2183,6 +2183,7 @@ class project_history_readonly_form(ModelForm):
                 'width': '100%',
                 'toolbar': False,
                 'menubar': False,
+                'readonly': 1,
             },
             attrs={
                 'placeholder': 'Requirement Scope',
@@ -2280,6 +2281,7 @@ class project_readonly_form(ModelForm):
                 'width': '100%',
                 'toolbar': False,
                 'menubar': False,
+                'readonly': 1,
             },
             attrs={
                 'placeholder': 'Requirement Scope'

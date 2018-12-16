@@ -318,16 +318,22 @@ def project_readonly(request, project_id):
         project_id=project_id,
         is_deleted="FALSE",
     ).values(
-        'user_id__id',
-        'user_id',
-        'user_id__username',
-        'user_id__first_name',
-        'user_id__last_name',
+        'assigned_user__id',
+        'assigned_user',
+        'assigned_user__username',
+        'assigned_user__first_name',
+        'assigned_user__last_name',
     ).distinct()
+
 
     group_list_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         project_id=project_id,
+    )
+
+    kudos_results = kudos.objects.filter(
+        project_id=project_id,
+        is_deleted="FALSE",
     )
 
     """
@@ -359,6 +365,7 @@ def project_readonly(request, project_id):
         'project_readonly_form': project_readonly_form(
             initial={'project_description': project_results.project_description}
         ),
+        'kudos_results': kudos_results,
         'to_do_results': to_do_results,
         'project_history_collective': project_history_collective,
         'email_results': email_results,

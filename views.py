@@ -3429,6 +3429,90 @@ def new_kanban_requirement_board(request,requirement_id):
         )
     )
 
+
+@login_required(login_url='login')
+def new_kudos(request,project_id):
+    """
+    Method
+    ~~~~~~
+    1. Do checks to see if user is allowed to do this
+    2. Find ALL customers associated with this project
+    3. Create a new kudos for each customer
+    4. Go back to read only
+    :param request: -- basic
+    :param project_id: the project that we will be creating kudos for
+    :return: back to the read only
+    """
+    permission_results = return_user_permission_level(request, None, 'project')
+
+
+
+    print("REQUEST PATH: " + request.path)
+    print("REQUEST PATH INFO: " + request.path_info)
+    print("REQUEST FULL PATH: " + request.get_full_path())
+    print("RAW URI: " + request.get_raw_uri())
+    print("RAW get_host" + request.get_host())
+
+
+    if permission_results['project'] < 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        #Get customers
+        #project_results = project.objects.get(project_id=project_id)
+        project_customer_results = project_customer.objects.filter(
+            is_deleted="FALSE",
+            project_id=project_id,
+        )
+
+        for customer_line in project_customer_results:
+            kudos_submit = kudos(
+                customer=customer_line.customer_id,
+                project_id=project_id,
+                change_user=request.user,
+            )
+            kudos_submit.save()
+
+            #Try and send an email to the customer
+            try:
+                # Check variables
+                EMAIL_HOST_USER = settings.EMAIL_HOST_USER
+                EMAIL_BACKEND = settings.EMAIL_BACKEND
+                EMAIL_USE_TLS = settings.EMAIL_USE_TLS
+                EMAIL_HOST = settings.EMAIL_HOST
+                EMAIL_PORT = settings.EMAIL_PORT
+                EMAIL_HOST_USER = settings.EMAIL_HOST_USER
+                EMAIL_HOST_PASSWORD = settings.EMAIL_HOST_PASSWORD
+
+                email_content = "Hello " \
+                                + str(customer_line.customer_id.customer_first_name) \
+                                + """<br/>We have recently finished working on your project. Can you please evaluate our work at: <a href=\"""" \
+                                + request.get_host() + """/kudos_rating/""" + str(kudos_submit.kudos_key) + """\">""" \
+                                + request.get_host() + """/kudos_rating/""" + str(kudos_submit.kudos_key) + """/</a><br/>Regards<br/>Project Team"""
+
+                email = EmailMultiAlternatives(
+                    'Kudos Evaluation form',
+                    email_content,
+                    'donotreply@nearbeach.org',
+                    [customer_line.customer_id.customer_email],
+                )
+                email.attach_alternative(email_content, "text/html")
+                if not email.send():
+                    return HttpResponseBadRequest("Email did not send correctly.")
+            except:
+                print("Email not sent")
+
+
+        #Redirect back to read only template
+        return HttpResponseRedirect(
+            reverse(
+                'project_readonly',
+                args={project_id}
+            )
+        )
+    else:
+        return HttpResponseBadRequest("Sorry, can only do this request through post")
+
 @login_required(login_url='login')
 def new_opportunity(request, location_id,destination):
     permission_results = return_user_permission_level(request, None, 'opportunity')

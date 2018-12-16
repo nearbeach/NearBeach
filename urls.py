@@ -121,6 +121,7 @@ re_path(r'^new_campus/(?P<location_id>[0-9]+)/(?P<destination>["organisation","c
 re_path(r'^new_customer/(?P<organisation_id>[0-9]+)/', views.new_customer, name='new_customer'),
 re_path(r'^new_kanban_board/$', views.new_kanban_board,name='new_kanban_board'),
 re_path(r'^new_kanban_requirement_board/(?P<requirement_id>[0-9]+)/',views.new_kanban_requirement_board,name='new_kanban_requirement_board'),
+re_path(r'^new_kudos/(?P<project_id>[0-9]+)/',views.new_kudos,name='new_kudos'),
 re_path(r'^new_opportunity/(?P<location_id>[0-9]+)/(?P<destination>["customer","organisation"]+)/$', views.new_opportunity,name='new_opportunity'),
 re_path(r'^new_opportunity/$', views.new_opportunity, name='new_opportunity'),
 re_path(r'^new_organisation', views.new_organisation, name='new_organisation'),
