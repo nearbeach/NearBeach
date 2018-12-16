@@ -105,6 +105,8 @@ re_path(r'^kanban_new_link/(?P<kanban_board_id>[0-9]+)/$', views.kanban_new_link
 re_path(r'^kanban_properties/(?P<kanban_board_id>[0-9]+)/$', views.kanban_properties,name='kanban_properties'),
 re_path(r'^kanban_requirement_information/(?P<kanban_board_id>[0-9]+)/$',views.kanban_requirement_information,name='kanban_requirement_information'),
 re_path(r'^kanban_requirement_item_update/(?P<requirement_item_id>[0-9]+)/(?P<status_id>[0-9]+)/$',views.kanban_requirement_item_update,name="kanban_requirement_item_update"),
+re_path(r'^kudos_rating/(?P<kudos_key>[0-9A-Za-z_\-]+)/$', views.kudos_rating, name='kudos_rating'),
+re_path(r'^kudos_read_only/(?P<kudos_key>[0-9A-Za-z_\-]+)/$', views.kudos_read_only, name='kudos_read_only'),
 re_path(r'^list_of_taxes_deactivate/(?P<tax_id>[0-9]+)/', views_administration.list_of_taxes_deactivate, name='list_of_taxes_deactivate'),
 re_path(r'^list_of_taxes_edit/(?P<tax_id>[0-9]+)/', views_administration.list_of_taxes_edit, name='list_of_taxes_edit'),
 re_path(r'^list_of_taxes_information/', views_administration.list_of_taxes_information, name='list_of_taxes_information'),
@@ -185,44 +187,39 @@ re_path(r'^user_want_view', views.user_want_view,name='user_want_view'),
 re_path(r'^user_weblink_remove/(?P<user_weblink_id>[0-9]+)',views.user_weblink_remove,name='user_weblink_remove'),
 re_path(r'^user_weblink_view',views.user_weblink_view,name='user_weblink_view'),
 
-path('change-password/', auth_views.PasswordChangeView.as_view()),
-
+	path('change-password/', auth_views.PasswordChangeView.as_view()),
 	path(
-		'password_reset/', auth_views.PasswordResetView.as_view(
+		'password_reset/',
+		auth_views.PasswordResetView.as_view(
 			template_name='NearBeach/password_reset.html',
 		),
 		name='password_reset',
 	),
 	path(
-		'password_reset/done/', auth_views.PasswordResetDoneView.as_view(
+		'password_reset/done/',
+		auth_views.PasswordResetDoneView.as_view(
 			template_name='NearBeach/password_reset_done.html',
 		),
 		name='password_reset_done',
 	),
 	path(
-		'reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+		'reset/<uidb64>/<token>/',
+		auth_views.PasswordResetConfirmView.as_view(
 			template_name='NearBeach/reset.html',
 		),
 		name='password_reset_confirm',
 	),
 	path(
-		'reset/done', auth_views.PasswordResetCompleteView.as_view(
+		'reset/done',
+		auth_views.PasswordResetCompleteView.as_view(
 			template_name='NearBeach/reset_done.html',
 		),
 		name='password_reset_complete'
 	),
 
+
+
 ]
-
-"""
-#        auth_views.PasswordChangeView.as_view(template_name='change-password.html'),
-
-
-accounts/password_reset/ [name='password_reset']
-accounts/password_reset/done/ [name='password_reset_done']
-accounts/reset/<uidb64>/<token>/ [name='password_reset_confirm']
-accounts/reset/done/ [name='password_reset_complete']
-"""
 
 
 if settings.DEBUG:

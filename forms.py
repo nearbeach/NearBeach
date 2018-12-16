@@ -47,6 +47,14 @@ OBJECT_CHOICES=(
     ('Opportunity','Opportunity'),
 )
 
+RATING_SCORE = (
+    (1, '1 Star'),
+    (2, '2 Star'),
+    (3, '3 Star'),
+    (4, '4 Star'),
+    (5, '5 Star'),
+)
+
 
 
 YEAR_CHOICES=(
@@ -1152,6 +1160,113 @@ class kanban_new_link_form(ModelForm):
         fields = {
             'kanban_column',
             'kanban_level',
+        }
+
+
+class kudos_form(ModelForm):
+    kudos_rating=forms.ChoiceField(
+        widget=forms.RadioSelect(attrs={
+            'style': 'list-style: none;'
+        }),
+        choices=RATING_SCORE,
+    )
+    improvement_note=forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Improvement Note',
+            },
+        ),
+        required=False,
+    )
+    liked_note=forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Liked Note',
+            }
+        ),
+        required=False,
+    )
+    project_description = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Project Description',
+            },
+        ),
+        required=False,
+    )
+
+    class Meta:
+        model = kudos
+        fields = {
+            'kudos_rating',
+            'extra_kudos',
+            'improvement_note',
+            'liked_note',
+        }
+
+
+
+class kudos_read_only_form(ModelForm):
+    improvement_note=forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Improvement Note',
+            },
+        ),
+        required=False,
+    )
+    liked_note=forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Liked Note',
+            }
+        ),
+        required=False,
+    )
+    project_description = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Project Description',
+            },
+        ),
+        required=False,
+    )
+
+    class Meta:
+        model = kudos
+        fields = {
+            'improvement_note',
+            'liked_note',
         }
 
 

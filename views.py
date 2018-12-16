@@ -2786,6 +2786,85 @@ def kanban_requirement_item_update(request,requirement_item_id,status_id):
         return HttpResponseBadRequest("Sorry, but this is a POST request only")
 
 
+
+#No login needed - as it is aimed at external customers
+def kudos_rating(request,kudos_key):
+    if request.method == "POST":
+        form = kudos_form(request.POST)
+        if form.is_valid():
+            #Save the kudos information
+            kudos_update=kudos.objects.get(kudos_key=kudos_key)
+
+            #Different fields to get data
+            kudos_update.kudos_rating=form.cleaned_data['kudos_rating']
+            kudos_update.improvement_note=form.cleaned_data['improvement_note']
+            kudos_update.liked_note=form.cleaned_data['liked_note']
+            kudos_update.change_user=request.user
+            kudos_update.submitted_kudos="TRUE"
+
+            #Save
+            kudos_update.save()
+
+            #Now go to thank you page
+            t = loader.get_template('NearBeach/kudos_thank_you.html')
+
+            c = {}
+
+            return HttpResponse(t.render(c, request))
+        else:
+            print(form.errors)
+            return HttpResponseBadRequest("Form had errors within it. It failed")
+
+    #Get required data
+    kudos_results = kudos.objects.get(kudos_key=kudos_key)
+    project_results = project.objects.get(project_id=kudos_results.project_id)
+
+
+    #If form has already been submitted, we take them to the thank you page. Other wise use the edited version
+    if kudos_results.submitted_kudos == "TRUE":
+        t = loader.get_template('NearBeach/kudos_read_only.html')
+    else:
+        t = loader.get_template('NearBeach/kudos_rating.html')
+
+    c = {
+        'kudos_form': kudos_form(
+            initial={
+                'project_description': project_results.project_description,
+            }
+        ),
+        'kudos_key': kudos_key,
+        'project_results': project_results,
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+#No login needed - as it is aimed at external customers
+def kudos_read_only(request,kudos_key):
+    # Get required data
+    kudos_results = kudos.objects.get(kudos_key=kudos_key)
+    project_results = project.objects.get(project_id=kudos_results.project_id)
+
+    t = loader.get_template('NearBeach/kudos_read_only.html')
+
+    c = {
+        'kudos_read_only_form': kudos_read_only_form(
+            initial={
+                'project_description': project_results.project_description,
+                'improvement_note': kudos_results.improvement_note,
+                'liked_note': kudos_results.liked_note,
+            }
+        ),
+        'kudos_key': kudos_key,
+        'kudos_results': kudos_results,
+        'star_range': range(kudos_results.kudos_rating),
+        'project_results': project_results,
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+
 def login(request):
     """
 	For some reason I can not use the varable "login_form" here as it is already being used.

@@ -113,15 +113,14 @@
     </header>
 
 	<div id="wrapper">
+        {% if user.is_authenticated %}
+            {% block content %}
+            {% endblock %}
+        {% else %}
+                <h1>Permission denied</h1>
+                <p>You currently do not have permission to view this page!</p>
 
-	{% if user.is_authenticated %}
-		{% block content %}
-		{% endblock %}
-	{% else %}
-			<h1>Permission denied</h1>
-			<p>You currently do not have permission to view this page!</p>
-
-	{% endif %}
-</div>
+        {% endif %}
+    </div>
 </body>
 </html>

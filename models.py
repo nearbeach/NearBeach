@@ -53,6 +53,14 @@ QUOTE_APPROVAL_STATUS = (
     ('APPROVED', 'APPROVED'),
 )
 
+RATING_SCORE = (
+    (1, '1 Star'),
+    (2, '2 Star'),
+    (3, '3 Star'),
+    (4, '4 Star'),
+    (5, '5 Star'),
+)
+
 WANT_CHOICE=(
     ('0','Do not want to do'),
     ('1','Want to do'),
@@ -1042,6 +1050,59 @@ class kanban_level(models.Model):
 
     def __str__(self):
         return str(self.kanban_level_name)
+
+
+class kudos(models.Model):
+    kudos_key = models.UUIDField(
+        default=uuid.uuid4,
+        editable=False,
+        primary_key=True,
+    )
+    kudos_rating = models.IntegerField(
+        choices=RATING_SCORE,
+        default=0,
+    )
+    improvement_note=HTMLField(
+        blank=True,
+        null=True,
+    )
+    liked_note=HTMLField(
+        blank=True,
+        null=True,
+    )
+    extra_kudos=models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    submitted_kudos=models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default="FALSE",
+    )
+    project=models.ForeignKey(
+        'project',
+        on_delete=models.CASCADE,
+
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user',
+        blank=True,
+        null=True
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    class Meta:
+        db_table = "kudos"
 
 
 class list_of_amount_type(models.Model):

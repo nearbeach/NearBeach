@@ -314,7 +314,7 @@ def project_readonly(request, project_id):
         project_id=project_id,
     )
 
-    assigned_results = assigned_user.objects.filter(
+    assigned_results = object_assignment.objects.filter(
         project_id=project_id,
         is_deleted="FALSE",
     ).values(
@@ -325,7 +325,7 @@ def project_readonly(request, project_id):
         'user_id__last_name',
     ).distinct()
 
-    group_list_results = project_group.objects.filter(
+    group_list_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         project_id=project_id,
     )
