@@ -547,6 +547,31 @@ class campus_information_form(ModelForm):
         ]
 
 
+class cost_information_form(forms.Form):
+    cost_description = forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                'width': '70%',
+                'placeholder': 'Cost Description',
+                'onkeyup': 'enable_disable_add_cost()',
+            }
+        )
+    )
+    cost_amount = forms.DecimalField(
+        max_digits=19,
+        decimal_places=2,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                'width': '30%',
+                'placeholder': '$0.00',
+                'onkeyup': 'enable_disable_add_cost()',
+            }
+        )
+    )
+
 
 
 class customer_information_form(ModelForm):
@@ -955,7 +980,7 @@ class information_organisation_contact_history_form(forms.Form):
         })
     )
 
-
+"""
 class information_project_cost_form(forms.Form):
     cost_description = forms.CharField(
         max_length=255,
@@ -980,7 +1005,7 @@ class information_project_cost_form(forms.Form):
             }
         )
     )
-
+"""
 
 
 class information_project_history_form(ModelForm):
@@ -1003,7 +1028,7 @@ class information_project_history_form(ModelForm):
 
 
 
-
+"""
 class information_task_cost_form(forms.Form):
     cost_description = forms.CharField(
         max_length=255,
@@ -1028,7 +1053,7 @@ class information_task_cost_form(forms.Form):
             }
         )
     )
-
+"""
 
 
 class information_task_history_form(ModelForm):

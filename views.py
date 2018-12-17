@@ -1011,6 +1011,76 @@ def campus_information(request, campus_information):
 
 
 @login_required(login_url='login')
+def cost_information(request, location_id, destination):
+    if destination == "project":
+        groups_results = object_assignment.objects.filter(
+            is_deleted="FALSE",
+            project_id=project.objects.get(project_id=location_id),
+        ).values('group_id_id')
+    else:
+        groups_results = object_assignment.objects.filter(
+            is_deleted="FALSE",
+            task_id=task.objects.get(task_id=location_id),
+        ).values('group_id_id')
+
+    permission_results = return_user_permission_level(request, groups_results,destination)
+
+
+    if request.method == "POST":
+        form = cost_information_form(request.POST, request.FILES)
+        if form.is_valid():
+            cost_description = form.cleaned_data['cost_description']
+            cost_amount = form.cleaned_data['cost_amount']
+            if ((not cost_description == '') and ((cost_amount <= 0) or (cost_amount >= 0))):
+                submit_cost = cost(
+                    cost_description=cost_description,
+                    cost_amount=cost_amount,
+                    change_user=request.user,
+                )
+                if destination == "project":
+                    submit_cost.project_id=project.objects.get(project_id=location_id)
+                elif destination == "task":
+                    submit_cost.task_id=task.objects.get(task_id=location_id)
+                submit_cost.save()
+
+    # Get data
+    """
+    Cost results and running total.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Due to Django not having the ability to have a runnning total, I needed to extract all the costs and manually create
+    the running total as a separate array. Now I need to combine both sets of data into one loop. To do that we use a 
+    zip function to bring them together. Then we can just use a simple
+    for a,b in zip_results
+    """
+    if destination == "project":
+        costs_results = cost.objects.filter(project_id=location_id, is_deleted='FALSE')
+    else:
+        costs_results = cost.objects.filter(task_id=location_id, is_deleted="FALSE")
+
+    # Get running totals
+    running_total = []
+    grand_total = 0  # use to calculate the grand total through the look
+    for line_item in costs_results:
+        grand_total = grand_total + float(line_item.cost_amount)
+        running_total.append(grand_total)
+
+    cost_zip_results = zip(costs_results, running_total)
+
+    # Load template
+    t = loader.get_template('NearBeach/costs.html')
+
+    # context
+    c = {
+        'cost_information_form': cost_information_form(),
+        'cost_zip_results': cost_zip_results,
+        'cost_permissions': permission_results[destination],
+        'grand_total': grand_total,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
 def customer_campus_information(request, customer_campus_id, customer_or_org):
     permission_results = return_user_permission_level(request, None, 'organisation_campus')
 

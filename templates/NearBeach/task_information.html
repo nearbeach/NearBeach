@@ -15,7 +15,7 @@
 <script>
     function on_page_load() {
         //Initiate AJAX modules
-        load_task_costs();
+        load_costs();
         load_task_customers();
         load_task_history();
         load_to_do();
@@ -182,7 +182,7 @@
         Loading...
     </form>
 
-    <form method="post" class="task_costs" id="task_costs" style="">
+    <form method="post" class="costs_form" id="costs_form" style="">
         <h2>Task Costs</h2>
         Loading...
     </form>
@@ -330,15 +330,15 @@
         })
     });
 
-    $("#task_costs").on('submit', function(e) {
+    $("#costs_form").on('submit', function(e) {
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: '/information_task_costs/{{ task_id }}/',
+            url: '/cost_information/{{ task_id }}/task/',
             data: $(this).serialize(),
             success: function() {
                 //Reload the task history :)
-                load_task_costs();
+                load_costs();
             },
             error: function() {
                 alert("Sorry, task costs did not save. Please try again.");
@@ -488,18 +488,18 @@
 
 
 
-    function load_task_costs() {
+    function load_costs() {
         //Load Project History
         $.ajax({
-            url: '/information_task_costs/{{ task_id }}/',
+            url: '/cost_information/{{ task_id }}/task/',
             data: {},
             dataType: 'HTML',
             type: 'GET',
             success: function(data) {
-                $('#task_costs').html(data);
+                $('#costs_form').html(data);
             },
             error: function() {
-                $('#task_costs').html('<h2>Task Costs</h2>Sorry, task costs encounted an error and did not load.');
+                $('#costs_form').html('<h2>Task Costs</h2>Sorry, task costs encounted an error and did not load.');
             }
         });
     };
@@ -636,6 +636,29 @@
             }
         });
     };
+
+    function delete_cost(cost_id,task_id) {
+        //Send data to the database
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            url: '/delete_cost/' + cost_id + '/' + task_id + '/T/',
+            data: $(this).serialize(),
+            type: "POST",
+            success: function(data) {
+                load_costs();
+            },
+            error: function() {
+                alert("Sorry, could not delete costs");
+            }
+        });
+    }
 </script>
 
 </body>
