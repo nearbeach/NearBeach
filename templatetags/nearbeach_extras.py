@@ -48,3 +48,19 @@ def hours_ago(time, hours):
         return local_time - time > -datetime.timedelta(hours=hours)
     except:
         return datetime.datetime.now() - time > -datetime.timedelta(hours=hours)
+
+
+@register.filter
+def in_future(time, hours):
+    """
+    :param time:
+    :param hours:
+    :return:
+    """
+    location = pytz.timezone(settings.TIME_ZONE)
+    local_time = location.localize(datetime.datetime.now())
+
+    try:
+        return local_time + datetime.timedelta(hours=hours) < time
+    except:
+        return False

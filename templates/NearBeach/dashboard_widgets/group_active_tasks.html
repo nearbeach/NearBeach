@@ -1,6 +1,6 @@
 {% load nearbeach_extras %}
 <h2>Group Active Tasks</h2>
-{% if active_tasks_results %}
+{% if active_task_results %}
     <table id="Active_Projects_Table">
     <tr class="header">
         <td width="10%">Task</td>
@@ -8,12 +8,18 @@
         <td width="20%;">End Date</td>
     </tr>
 
-    {% for row in active_tasks_results %}
-        <tr {% if row.task_end_date|hours_ago:24 %}style="background-color:lightcoral"{% endif %}>
-            <td><a href="{% url 'task_information' row.tasks_id %}">TASK{{ row.tasks_id }}</a></td>
+    {% for row in active_task_results %}
+        <tr
+                {% if row.task_end_date|hours_ago:24 %}
+                    style="background-color:lightcoral"
+                {% elif row.task_start_date|in_future:24 %}
+                    style="background-color:slategray"
+                {% endif %}
+        >
+            <td><a href="{% url 'task_information' row.task_id %}">TASK{{ row.task_id }}</a></td>
             <td>
                 {% if not row.organisations_id == Null %}
-                    <a href="{% url 'organisation_information' row.organisations_id.organisations_id %}">{{ row.organistaions_id }}</a><br/><br/>
+                    <a href="{% url 'organisation_information' row.organisation_id.organisation_id %}">{{ row.organistaion_id }}</a><br/><br/>
                 {% endif %}
                 {{ row.task_short_description }}</td>
             <td>{{ row.task_end_date }}</td>

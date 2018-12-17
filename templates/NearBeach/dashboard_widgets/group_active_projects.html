@@ -9,7 +9,13 @@
     </tr>
 
     {% for row in active_projects_results %}
-        <tr {% if row.project_end_date|hours_ago:24 %}style="background-color:lightcoral"{% endif %}>
+        <tr
+                {% if row.project_end_date|hours_ago:24 %}
+                    style="background-color:lightcoral"
+                {% elif row.project_start_date|in_future:24 %}
+                    style="background-color:slategray"
+                {% endif %}
+        >
             <td><a href="{% url 'project_information' row.project_id %}">PRO{{ row.project_id }}</a></td>
 
             <td>

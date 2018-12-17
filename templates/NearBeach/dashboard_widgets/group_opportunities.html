@@ -10,7 +10,11 @@
             <td>Expected Close Date</td>
         </tr>
         {% for row in active_group_opportunities %}
-            <tr {% if row.opportunity_expected_close_date|hours_ago:24 %}style="background-color:lightcoral"{% endif %}>
+            <tr
+                    {% if row.opportunity_expected_close_date|hours_ago:24 %}
+                        style="background-color:lightcoral"
+                    {% endif %}
+            >
                 <td><a href="{% url 'opportunity_information' row.opportunity_id %}">{{ row.opportunity_name }}</a></td>
                 {% if row.organisation_id %}
                     <td><a href="{% url 'organisation_information' row.organisation_id.organisation_id %}">{{ row.organisation_id.organisation_name }}</a></td>

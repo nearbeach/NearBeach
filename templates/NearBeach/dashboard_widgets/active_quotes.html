@@ -8,7 +8,11 @@
             <td width="15%">Quote Valid to</td>
         </tr>
         {% for row in quote_results %}
-            <tr {% if row.quote_valid_till|hours_ago:24 %}style="background-color:lightcoral"{% endif %}>
+            <tr
+                    {% if row.quote_valid_till|hours_ago:24 %}
+                        style="background-color:lightcoral"
+                    {% endif %}
+            >
                 <td><a href="{% url 'quote_information' row.quote_id %}">{{ row.quote_title }}</a></td>
                 <td>{{ row.quote_stage_id }}</td>
                 <td>{{ row.quote_valid_till }}</td>

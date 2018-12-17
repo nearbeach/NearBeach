@@ -1323,9 +1323,16 @@ def dashboard_active_projects(request):
         is_deleted='FALSE',
         assigned_user=request.user,
         project_id__isnull=False,
-    )\
-        .exclude(project_id__project_status='Resolved').exclude(project_id__project_status='Closed')\
-        .values('project_id__project_id','project_id__project_name','project_id__project_end_date').distinct()
+    ).exclude(
+        project_id__project_status='Resolved'
+    ).exclude(
+        project_id__project_status='Closed'
+    ).values(
+        'project_id__project_id',
+        'project_id__project_name',
+        'project_id__project_end_date',
+        'project_id__project_start_date',
+    ).distinct()
 
 
     # Load the template
@@ -1390,10 +1397,16 @@ def dashboard_active_task(request):
         is_deleted='FALSE',
         assigned_user=request.user,
         task_id__isnull=False,
-    )\
-        .exclude(task_id__task_status='Resolved')\
-        .exclude(task_id__task_status='Completed')\
-        .values('task_id__task_id','task_id__task_short_description','task_id__task_end_date').distinct()
+    ).exclude(
+        task_id__task_status='Resolved'
+    ).exclude(
+        task_id__task_status='Completed'
+    ).values(
+        'task_id__task_id',
+        'task_id__task_short_description',
+        'task_id__task_end_date',
+        'task_id__task_start_date',
+    ).distinct()
 
     # Load the template
     t = loader.get_template('NearBeach/dashboard_widgets/active_tasks.html')
@@ -1438,10 +1451,11 @@ def dashboard_group_active_task(request):
             is_deleted="FALSE",
             group_id__in=user_group.objects.filter(
                 is_deleted="FALSE",
-                username_id=request.user.id
-            ).values('group')
+                username_id=request.user
+            ).values('group_id')
         ).values('task_id')
     )
+
     # Load the template
     t = loader.get_template('NearBeach/dashboard_widgets/group_active_tasks.html')
 
@@ -1498,7 +1512,7 @@ def dashboard_opportunities(request):
                 ))
             )
 
-        )
+        ).values('opportunity_id')
     )
 
     # Load the template
