@@ -126,6 +126,7 @@ def alerts(request):
 
     return HttpResponse(t.render(c, request))
 
+
 @login_required(login_url='login')
 def assign_customer_project_task(request, customer_id):
     user_group_results = user_group.objects.filter(

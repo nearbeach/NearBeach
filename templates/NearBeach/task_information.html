@@ -379,6 +379,22 @@
         })
     });
 
+    $("#task_customers").on('submit', function(e) {
+        e.preventDefault();
+        alert("PREVENTING DEFAULT");
+        $.ajax({
+            url: '/information_task_customer/{{ task_id }}/',
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function(data) {
+                $("#task_customers").html(data)
+            },
+            error: function() {
+                alert("Sorry, we can not seem to add this customer to this task")
+            },
+        })
+    });
+
     $("#task_history").on('submit', function(e) {
         e.preventDefault();
         $.ajax({
