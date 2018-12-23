@@ -480,9 +480,6 @@ class customer_campus_form(ModelForm):
 
 
 class campus_information_form(ModelForm):
-    #SQL
-    #region_results=list_of_country_region.objects.all()
-
     # Fields
     campus_nickname=forms.CharField(
         max_length=255,
@@ -547,6 +544,7 @@ class campus_information_form(ModelForm):
         ]
 
 
+
 class cost_information_form(forms.Form):
     cost_description = forms.CharField(
         max_length=255,
@@ -573,7 +571,6 @@ class cost_information_form(forms.Form):
     )
 
 
-
 class customer_information_form(ModelForm):
 
 
@@ -583,7 +580,12 @@ class customer_information_form(ModelForm):
         widget=forms.TextInput()
     )
 
-    update_profile_picture=forms.ImageField(required=False,)
+    update_profile_picture=forms.ImageField(
+        required=False,
+        widget=forms.FileInput(attrs={
+            'size': MAX_PICTURE_SIZE,
+        })
+    )
 
     class Meta:
         model=customer
@@ -599,7 +601,7 @@ class customer_information_form(ModelForm):
 
         try:
             """
-            We only want to limit pictures to being under 400kb
+            We only want to limit pictures to being under 1000kb
             """
             picture_errors=""
 
@@ -607,8 +609,8 @@ class customer_information_form(ModelForm):
             if not (main == 'image' and sub in ['jpeg','gif','png']):
                 picture_errors += 'Please use a JPEG, GIF or PNG image'
 
-            if len(profile_picture) > (MAX_PICTURE_SIZE): #400kb
-                picture_errors += '\nPicture profile exceeds 400kb'
+            if len(profile_picture) > (MAX_PICTURE_SIZE):
+                picture_errors += '\nPicture profile exceeds 1000kb'
 
             if not picture_errors == "":
                 raise forms.ValidationError(picture_errors)

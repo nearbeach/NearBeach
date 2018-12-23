@@ -16,6 +16,7 @@
         <ul>
             {% if profile_picture %}
                 <li><img src="{{ profile_picture }}" height="160px"><br/> {% if organisation_permissions > 1 %}{{ organisation_information_form.update_profile_picture }}{% endif %}</li>
+                <li id="upload_errors"></li>
             {% else %}
                 <li><img src="{% static 'NearBeach/images/icons/star.svg' %}" height="160px"><br/> {% if organisation_permissions > 1 %}{{ organisation_information_form.update_profile_picture }}{% endif %}</li>
             {% endif %}
@@ -227,6 +228,21 @@
                 alert("Sorry, project history did not save. Please try again.");
             }
         })
+    });
+
+
+    $("#id_update_profile_picture").on("change",function(e){
+        //Get the file
+        var file = e.currentTarget.files,
+            filesize = (file[0].size/1024/1024).toFixed(4);
+
+        if (filesize >= 1.0) {
+            //Sorry, the file is too big
+            $("#id_update_profile_picture").val('');
+            $("#upload_errors").html("Sorry - the file you tried uploading is too big.")
+        } else {
+            $("#upload_errors").html("")
+        }
     });
 
 
