@@ -419,6 +419,15 @@
         })
     });
 
+    function add_user_change(){
+        var add_user = $("#id_add_user").val();
+        if (add_user == "") {
+            $("#submit_add_user").prop("disabled",true);
+        } else {
+            $("#submit_add_user").prop("disabled",false);
+        }
+    }
+
     function delete_cost(cost_id,project_id) {
         //Send data to the database
         $.ajaxSetup({

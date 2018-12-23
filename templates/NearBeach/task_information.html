@@ -1,7 +1,6 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
-<script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/expand_sections.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/task_information.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
@@ -116,7 +115,7 @@
             {% if permission > 1 %}
                 <input type="submit" name="update" value="Update"/>
                 {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
-                    <input type="submit" name="Resolve" value="Resolve Project"/>
+                    <input type="submit" name="Resolve" value="Resolve Task"/>
                 {% else %}
                     </fieldset>
                 {% endif %}
@@ -411,6 +410,16 @@
         })
     });
 
+    function add_user_change(){
+        var add_user = $("#id_add_user").val();
+        alert("ADD USER = " + str(add_user));
+        if (add_user == "") {
+            $("#submit_add_user").prop("disabled",true);
+        } else {
+            $("#submit_add_user").prop("disabled",false);
+        }
+    }
+
     function load_bug_list() {
         $.ajax({
             url: '/bug_list/{{ task_id }}/task',
@@ -632,7 +641,7 @@
                 $('#assigned_group_list').html(data);
             },
             error: function() {
-                $('#assigned_group_list').html('<h2>Assigned Group</h2>Sorry, project history encounted an error and did not load.');
+                $('#assigned_group_list').html('<h2>Assigned Group</h2>Sorry, task history encounted an error and did not load.');
             }
         });
     };

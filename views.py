@@ -187,7 +187,7 @@ def assign_customer_project_task(request, customer_id):
     project_results = project.objects.filter(
         is_deleted="FALSE",
         project_status__in=('New','Open'),
-        project_id__in=project_group.objects.filter(
+        project_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             group_id__in=user_group.objects.filter(
                 is_deleted="FALSE",
@@ -199,7 +199,7 @@ def assign_customer_project_task(request, customer_id):
     task_results = task.objects.filter(
         is_deleted="FALSE",
         task_status__in=('New', 'Open'),
-        task_id__in=task_group.objects.filter(
+        task_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             group_id__in=user_group.objects.filter(
                 is_deleted="FALSE",

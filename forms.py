@@ -2344,7 +2344,7 @@ class quote_information_form(ModelForm):
         elif quote_instance.customer_id:
             campus_results = campus.objects.filter(
                 is_deleted="FALSE",
-                customers=quote_instance.customer_id,
+                customer_id=quote_instance.customer_id,
             )
         else:
             #Blank object set
