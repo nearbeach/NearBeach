@@ -19,60 +19,6 @@ from .user_permissions import return_user_permission_level
 
 
 @login_required(login_url='login')
-def information_task_assigned_users(request, task_id):
-    task_groups_results = object_assignment.objects.filter(
-        is_deleted="FALSE",
-        task_id=task.objects.get(task_id=task_id),
-    ).values('group_id_id')
-
-    permission_results = return_user_permission_level(request, task_groups_results,'task')
-
-    if request.method == "POST":
-        user_results = int(request.POST.get("add_user_select"))
-        user_instance = auth.models.User.objects.get(pk=user_results)
-        submit_associate_user = assigned_user(
-            user_id=user_instance,
-            task_id=task.objects.get(task_id=task_id),
-            change_user=request.user,
-        )
-        submit_associate_user.save()
-
-    #Get data
-    assigned_results = assigned_user.objects.filter(task_id=task_id, is_deleted="FALSE")
-
-    users_results = user_group.objects.filter(
-        is_deleted="FALSE",
-        group_id__in=task_group.objects.filter(
-            is_deleted="FALSE",
-            task_id=task_id,
-        ).values('group_id')) \
-        .exclude(username_id__in=assigned_results.values('user_id')) \
-        .values(
-        'username_id',
-        'username',
-        'username_id__first_name',
-        'username_id__last_name', ) \
-        .distinct()
-
-    #Load template
-    t = loader.get_template('NearBeach/task_information/task_assigned_users.html')
-
-    # context
-    c = {
-        'users_results': users_results,
-        'assigned_results': assigned_results.values(
-            'user_id__id',
-            'user_id__username',
-            'user_id__first_name',
-            'user_id__last_name',
-        ).distinct(),
-        'task_permissions': permission_results['task'],
-    }
-
-    return HttpResponse(t.render(c, request))
-
-
-@login_required(login_url='login')
 def information_task_delete_assigned_users(request, task_id, user_id):
     assigned_users_save = assigned_user.objects.filter(
         task_id=task_id,

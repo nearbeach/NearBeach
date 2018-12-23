@@ -410,16 +410,6 @@
         })
     });
 
-    function add_user_change(){
-        var add_user = $("#id_add_user").val();
-        alert("ADD USER = " + str(add_user));
-        if (add_user == "") {
-            $("#submit_add_user").prop("disabled",true);
-        } else {
-            $("#submit_add_user").prop("disabled",false);
-        }
-    }
-
     function load_bug_list() {
         $.ajax({
             url: '/bug_list/{{ task_id }}/task',
