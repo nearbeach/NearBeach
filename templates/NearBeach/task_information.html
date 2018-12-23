@@ -528,6 +528,15 @@
             type: 'GET',
             success: function(data) {
                 $('#task_history_results').html(data);
+
+                //Initialise tinyMCE for task history
+                tinyMCE.init({
+                    selector: '.old_task_history',
+                    readonly: true,
+                    'menubar': false,
+                    'toolbar': false,
+                    'height': '300px',
+                });
             },
             error: function() {
                 $('#task_history_results').html('<h2>Project History</h2>Sorry, task history encounted an error and did not load.');

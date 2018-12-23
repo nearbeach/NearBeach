@@ -397,6 +397,7 @@
 
                 load_project_history();
 
+
             },
             error: function() {
                 alert("Sorry, project history did not save. Please try again.");
@@ -608,7 +609,14 @@
             success: function(data) {
                 $('#project_history_results').html(data);
 
-                //tinymce.init({selector: '#id_project_history'});
+                //initialise project history
+                tinyMCE.init({
+                    selector: '.old_project_history',
+                    readonly: true,
+                    'toolbar': false,
+                    'menubar': false,
+                    'height': '300px',
+                });
             },
             error: function() {
                 $('#project_history').html('<h2>Project History</h2>Sorry, project history encounted an error and did not load.');
