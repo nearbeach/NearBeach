@@ -1,14 +1,11 @@
 function initMap(latitude,longitude,title,api_key) {
-
-
-
     mapboxgl.accessToken  = api_key;
     var map = new mapboxgl.Map({
         container: 'map', // container id
         style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
         //center: [latitude,longitude], // starting position [lng, lat]
         center: [longitude,latitude],
-        zoom: 15 // starting zoom
+        zoom: 15, // starting zoom
     });
     map.on('load', function() {
         map.addLayer({
@@ -41,6 +38,18 @@ function initMap(latitude,longitude,title,api_key) {
             }
         })
 
+    });
+
+    map['scrollZoom'].disable();
+
+    $(window).bind('mousewheel DOMMouseScroll', function(event)
+    {
+        if(event.ctrlKey == true) {
+            map['scrollZoom'].enable();
+        }
+        else {
+            map['scrollZoom'].disable();
+        }
     });
 
     //Quickly, relayout the map before anyone knows
