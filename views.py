@@ -582,7 +582,7 @@ def associated_task(request, project_id):
 	check to see if they want only new or open, or if they would like
 	to see closed task too.
 	"""
-    project_groups_results = project_group.objects.filter(
+    project_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         project_id=project.objects.get(project_id=project_id),
     ).values('group_id_id')
