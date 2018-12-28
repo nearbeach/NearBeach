@@ -28,7 +28,7 @@
                 <td>{{ row.tax }}</td>
                 <td name="product_tax">{{ row.tax_amount }}</td>
                 <td>{{ row.total }}</td>
-                <td><a onclick="delete_line_item({{ row.quotes_products_and_services_id }})" href="javascript:void(0);">Delete</a></td>
+                <td><a onclick="delete_line_item({{ row.quotes_product_and_service_id }})" href="javascript:void(0);">Delete</a></td>
             </tr>
             {% if not row.product_note == "" %}
                 <tr>
@@ -93,7 +93,7 @@
                 <td>{{ row.tax }}</td>
                 <td name="service_tax">{{ row.tax_amount }}</td>
                 <td>{{ row.total }}</td>
-                <td><a onclick="delete_line_item({{ row.quotes_products_and_services_id }})" href="javascript:void(0);">Delete</a></td>
+                <td><a onclick="delete_line_item({{ row.quotes_product_and_service_id }})" href="javascript:void(0);">Delete</a></td>
             </tr>
             {% if not row.product_note == "" %}
                 <tr>

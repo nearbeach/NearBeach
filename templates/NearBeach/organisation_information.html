@@ -6,8 +6,10 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
-<link rel="stylesheet" href="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
+<script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
+<script type="text/javascript" src="{% static 'NearBeach/javascript/document_upload.js' %}"></script>
+
 
 <body onload="on_page_load()">
     <form action="{% url 'organisation_information' organisation_results.organisation_id %}" method="POST" enctype="multipart/form-data">
@@ -16,6 +18,7 @@
         <ul>
             {% if profile_picture %}
                 <li><img src="{{ profile_picture }}" height="160px"><br/> {% if organisation_permissions > 1 %}{{ organisation_information_form.update_profile_picture }}{% endif %}</li>
+                <li id="upload_errors"></li>
             {% else %}
                 <li><img src="{% static 'NearBeach/images/icons/star.svg' %}" height="160px"><br/> {% if organisation_permissions > 1 %}{{ organisation_information_form.update_profile_picture }}{% endif %}</li>
             {% endif %}
@@ -48,12 +51,10 @@
             {% endif %}
             <table>
             <tr class="header"><td>Name</td><td>Email</td></tr>
-            {% for customer in customers_results %}
+            {% for customer in customer_results %}
                 <tr>
-                <td><a href="{% url 'customer_information' customer.customer_id %}">{{ customer.customer_first_name }} {{ customer.customer_last_name }}</a></td>
-                <td>{{ customer.customer_email }}</td>
-
-
+                    <td><a href="{% url 'customer_information' customer.customer_id %}">{{ customer.customer_first_name }} {{ customer.customer_last_name }}</a></td>
+                    <td>{{ customer.customer_email }}</td>
                 </tr>
             {% endfor %}
             </table>
@@ -70,10 +71,11 @@
         Loading...
     </div>
 
-    <form method="post" class="organisation_documents_list" id="organisation_documents_list" enctype="multipart/form-data">
-        <h2>Organisation Documents List</h2>
+    <h2>Document Uploads</h2>
+    <div class="document_tree_list" id="document_tree_list">
+        <h2>Document Tree List</h2>
         Loading...
-    </form>
+    </div>
 
     <h2>Organisation Quotes</h2>
     <a href="{% url 'new_quote' organisation_results.organisation_id 'organisation' %}">New Quote</a>
@@ -213,20 +215,19 @@
     });
 
 
-    $("#organisation_documents_list").on('submit', function(e) {
-        e.preventDefault();
-        $.ajax({
-            type: 'POST',
-            url: '/information_organisation_documents_list/{{ organisation_id }}',
-            data: $(this).serialize(),
-            success: function() {
-                //Reload the project history :)
-                load_organisation_documents_list();
-            },
-            error: function() {
-                alert("Sorry, project history did not save. Please try again.");
-            }
-        })
+
+    $("#id_update_profile_picture").on("change",function(e){
+        //Get the file
+        var file = e.currentTarget.files,
+            filesize = (file[0].size/1024/1024).toFixed(4);
+
+        if (filesize >= 1.0) {
+            //Sorry, the file is too big
+            $("#id_update_profile_picture").val('');
+            $("#upload_errors").html("Sorry - the file you tried uploading is too big.")
+        } else {
+            $("#upload_errors").html("")
+        }
     });
 
 
@@ -262,49 +263,12 @@
     };
 
 
-    function load_organisation_documents_list() {
-        //Load Project History
-        $.ajax({
-            url: '/information_organisation_documents_list/{{ organisation_id }}/',
-            data: {},
-            dataType: 'HTML',
-            type: 'GET',
-            success: function(data) {
-                $('#organisation_documents_list').html(data);
-            },
-            error: function() {
-                $('#organisation_documents_list').html('<h2>Contact Documents</h2>Sorry, organisations documents encounted an error and did not load.');
-            }
-        });
-    };
-
 
     function csrfSafeMethod(method) {
         // these HTTP methods do not require CSRF protection
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
 
-    function delete_document(document_key) {
-        $.ajaxSetup({
-            beforeSend: function (xhr, settings) {
-                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                }
-            }
-        });
-        $.ajax({
-            url: "/delete_document/" + document_key + "/",
-            data: {},
-            dataType: 'HTML',
-            type: 'POST',
-            success: function(data) {
-                load_organisation_documents_list();
-            },
-            error: function() {
-                alert("There was an issue deleting the document");
-            }
-        })
-    }
 
     // using jQuery to extract the CSRFToken
     function getCookie(name) {
@@ -327,17 +291,8 @@
 	function on_page_load() {
 	    //Load AJAX components
         load_contact_history();
-        load_organisation_documents_list();
+        load_document_tree_list({{ organisation_id }},'organisation');
         load_email_history();
-
-        //Autoscale all textarea
-        autoscale_textarea();
-
-        //Fix up just contact history's input textarea
-        //document.getElementById("id_contact_history").style.height = "200px";
-
-        //THIS WILL NEED TO BE MOVED TO THE MODULE!!
-        //initiate_dates();
 
         //Setup the user permissions
         set_permissions({{ organisation_permissions }})

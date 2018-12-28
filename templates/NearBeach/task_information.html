@@ -1,7 +1,6 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
-<script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/expand_sections.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/task_information.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
@@ -15,7 +14,7 @@
 <script>
     function on_page_load() {
         //Initiate AJAX modules
-        load_task_costs();
+        load_costs();
         load_task_customers();
         load_task_history();
         load_to_do();
@@ -116,7 +115,7 @@
             {% if permission > 1 %}
                 <input type="submit" name="update" value="Update"/>
                 {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
-                    <input type="submit" name="Resolve" value="Resolve Project"/>
+                    <input type="submit" name="Resolve" value="Resolve Task"/>
                 {% else %}
                     </fieldset>
                 {% endif %}
@@ -182,7 +181,7 @@
         Loading...
     </form>
 
-    <form method="post" class="task_costs" id="task_costs" style="">
+    <form method="post" class="costs_form" id="costs_form" style="">
         <h2>Task Costs</h2>
         Loading...
     </form>
@@ -330,15 +329,15 @@
         })
     });
 
-    $("#task_costs").on('submit', function(e) {
+    $("#costs_form").on('submit', function(e) {
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: '/information_task_costs/{{ task_id }}/',
+            url: '/cost_information/{{ task_id }}/task/',
             data: $(this).serialize(),
             success: function() {
                 //Reload the task history :)
-                load_task_costs();
+                load_costs();
             },
             error: function() {
                 alert("Sorry, task costs did not save. Please try again.");
@@ -377,6 +376,22 @@
             error: function() {
                 alert("Sorry, task information did not save. Please try again.");
             }
+        })
+    });
+
+    $("#task_customers").on('submit', function(e) {
+        e.preventDefault();
+        alert("PREVENTING DEFAULT");
+        $.ajax({
+            url: '/information_task_customer/{{ task_id }}/',
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function(data) {
+                $("#task_customers").html(data)
+            },
+            error: function() {
+                alert("Sorry, we can not seem to add this customer to this task")
+            },
         })
     });
 
@@ -488,18 +503,18 @@
 
 
 
-    function load_task_costs() {
+    function load_costs() {
         //Load Project History
         $.ajax({
-            url: '/information_task_costs/{{ task_id }}/',
+            url: '/cost_information/{{ task_id }}/task/',
             data: {},
             dataType: 'HTML',
             type: 'GET',
             success: function(data) {
-                $('#task_costs').html(data);
+                $('#costs_form').html(data);
             },
             error: function() {
-                $('#task_costs').html('<h2>Task Costs</h2>Sorry, task costs encounted an error and did not load.');
+                $('#costs_form').html('<h2>Task Costs</h2>Sorry, task costs encounted an error and did not load.');
             }
         });
     };
@@ -529,6 +544,15 @@
             type: 'GET',
             success: function(data) {
                 $('#task_history_results').html(data);
+
+                //Initialise tinyMCE for task history
+                tinyMCE.init({
+                    selector: '.old_task_history',
+                    readonly: true,
+                    'menubar': false,
+                    'toolbar': false,
+                    'height': '300px',
+                });
             },
             error: function() {
                 $('#task_history_results').html('<h2>Project History</h2>Sorry, task history encounted an error and did not load.');
@@ -632,10 +656,33 @@
                 $('#assigned_group_list').html(data);
             },
             error: function() {
-                $('#assigned_group_list').html('<h2>Assigned Group</h2>Sorry, project history encounted an error and did not load.');
+                $('#assigned_group_list').html('<h2>Assigned Group</h2>Sorry, task history encounted an error and did not load.');
             }
         });
     };
+
+    function delete_cost(cost_id,task_id) {
+        //Send data to the database
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            url: '/delete_cost/' + cost_id + '/' + task_id + '/T/',
+            data: $(this).serialize(),
+            type: "POST",
+            success: function(data) {
+                load_costs();
+            },
+            error: function() {
+                alert("Sorry, could not delete costs");
+            }
+        });
+    }
 </script>
 
 </body>

@@ -8,7 +8,13 @@
             <td>End Date</td>
         </tr>
         {% for row in assigned_users_results %}
-            <tr {% if row.project_id__project_end_date|hours_ago:24 %}style="background-color:lightcoral"{% endif %}>
+            <tr
+                    {% if row.project_id__project_end_date|hours_ago:24 %}
+                        style="background-color:lightcoral;"
+                    {% elif row.project_id__project_start_date|in_future:24 %}
+                        style="background-color:slategray;"
+                    {% endif %}
+            >
                 <td><a href="{% url 'project_information' row.project_id__project_id %}">PRO{{ row.project_id__project_id }}</a></td>
                 <td>{{ row.project_id__project_name }}</td>
                 <td>{{ row.project_id__project_end_date }}</td>

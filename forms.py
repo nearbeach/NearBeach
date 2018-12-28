@@ -47,6 +47,14 @@ OBJECT_CHOICES=(
     ('Opportunity','Opportunity'),
 )
 
+RATING_SCORE = (
+    (1, '1 Star'),
+    (2, '2 Star'),
+    (3, '3 Star'),
+    (4, '4 Star'),
+    (5, '5 Star'),
+)
+
 
 
 YEAR_CHOICES=(
@@ -472,9 +480,6 @@ class customer_campus_form(ModelForm):
 
 
 class campus_information_form(ModelForm):
-    #SQL
-    #region_results=list_of_country_region.objects.all()
-
     # Fields
     campus_nickname=forms.CharField(
         max_length=255,
@@ -540,6 +545,31 @@ class campus_information_form(ModelForm):
 
 
 
+class cost_information_form(forms.Form):
+    cost_description = forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                'width': '70%',
+                'placeholder': 'Cost Description',
+                'onkeyup': 'enable_disable_add_cost()',
+            }
+        )
+    )
+    cost_amount = forms.DecimalField(
+        max_digits=19,
+        decimal_places=2,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                'width': '30%',
+                'placeholder': '$0.00',
+                'onkeyup': 'enable_disable_add_cost()',
+            }
+        )
+    )
+
 
 class customer_information_form(ModelForm):
 
@@ -550,7 +580,12 @@ class customer_information_form(ModelForm):
         widget=forms.TextInput()
     )
 
-    update_profile_picture=forms.ImageField(required=False,)
+    update_profile_picture=forms.ImageField(
+        required=False,
+        widget=forms.FileInput(attrs={
+            'size': MAX_PICTURE_SIZE,
+        })
+    )
 
     class Meta:
         model=customer
@@ -566,7 +601,7 @@ class customer_information_form(ModelForm):
 
         try:
             """
-            We only want to limit pictures to being under 400kb
+            We only want to limit pictures to being under 1000kb
             """
             picture_errors=""
 
@@ -574,8 +609,8 @@ class customer_information_form(ModelForm):
             if not (main == 'image' and sub in ['jpeg','gif','png']):
                 picture_errors += 'Please use a JPEG, GIF or PNG image'
 
-            if len(profile_picture) > (MAX_PICTURE_SIZE): #400kb
-                picture_errors += '\nPicture profile exceeds 400kb'
+            if len(profile_picture) > (MAX_PICTURE_SIZE):
+                picture_errors += '\nPicture profile exceeds 1000kb'
 
             if not picture_errors == "":
                 raise forms.ValidationError(picture_errors)
@@ -947,7 +982,7 @@ class information_organisation_contact_history_form(forms.Form):
         })
     )
 
-
+"""
 class information_project_cost_form(forms.Form):
     cost_description = forms.CharField(
         max_length=255,
@@ -972,7 +1007,7 @@ class information_project_cost_form(forms.Form):
             }
         )
     )
-
+"""
 
 
 class information_project_history_form(ModelForm):
@@ -995,7 +1030,7 @@ class information_project_history_form(ModelForm):
 
 
 
-
+"""
 class information_task_cost_form(forms.Form):
     cost_description = forms.CharField(
         max_length=255,
@@ -1020,7 +1055,7 @@ class information_task_cost_form(forms.Form):
             }
         )
     )
-
+"""
 
 
 class information_task_history_form(ModelForm):
@@ -1152,6 +1187,113 @@ class kanban_new_link_form(ModelForm):
         fields = {
             'kanban_column',
             'kanban_level',
+        }
+
+
+class kudos_form(ModelForm):
+    kudos_rating=forms.ChoiceField(
+        widget=forms.RadioSelect(attrs={
+            'style': 'list-style: none;'
+        }),
+        choices=RATING_SCORE,
+    )
+    improvement_note=forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Improvement Note',
+            },
+        ),
+        required=False,
+    )
+    liked_note=forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Liked Note',
+            }
+        ),
+        required=False,
+    )
+    project_description = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Project Description',
+            },
+        ),
+        required=False,
+    )
+
+    class Meta:
+        model = kudos
+        fields = {
+            'kudos_rating',
+            'extra_kudos',
+            'improvement_note',
+            'liked_note',
+        }
+
+
+
+class kudos_read_only_form(ModelForm):
+    improvement_note=forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Improvement Note',
+            },
+        ),
+        required=False,
+    )
+    liked_note=forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Liked Note',
+            }
+        ),
+        required=False,
+    )
+    project_description = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Project Description',
+            },
+        ),
+        required=False,
+    )
+
+    class Meta:
+        model = kudos
+        fields = {
+            'improvement_note',
+            'liked_note',
         }
 
 
@@ -2068,6 +2210,7 @@ class project_history_readonly_form(ModelForm):
                 'width': '100%',
                 'toolbar': False,
                 'menubar': False,
+                'readonly': 1,
             },
             attrs={
                 'placeholder': 'Requirement Scope',
@@ -2165,6 +2308,7 @@ class project_readonly_form(ModelForm):
                 'width': '100%',
                 'toolbar': False,
                 'menubar': False,
+                'readonly': 1,
             },
             attrs={
                 'placeholder': 'Requirement Scope'
@@ -2202,7 +2346,7 @@ class quote_information_form(ModelForm):
         elif quote_instance.customer_id:
             campus_results = campus.objects.filter(
                 is_deleted="FALSE",
-                customers=quote_instance.customer_id,
+                customer_id=quote_instance.customer_id,
             )
         else:
             #Blank object set

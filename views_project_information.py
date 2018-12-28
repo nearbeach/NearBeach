@@ -19,141 +19,6 @@ from .user_permissions import return_user_permission_level
 from django.db.models import Sum, Q, Min
 
 
-"""
-@login_required(login_url='login')
-def information_project_assigned_users(request, project_id):
-    project_groups_results = object_assignment.objects.filter(
-        is_deleted="FALSE",
-        project_id=project.objects.get(project_id=project_id),
-    ).values('group_id_id')
-
-    permission_results = return_user_permission_level(request, project_groups_results,'project')
-
-    if request.method == "POST":
-        user_results = int(request.POST.get("add_user_select"))
-        user_instance = auth.models.User.objects.get(pk=user_results)
-        submit_associate_user = assigned_user(
-            user_id=user_instance,
-            project_id=project.objects.get(pk=project_id),
-            change_user=request.user,
-        )
-        submit_associate_user.save()
-
-    assigned_results = assigned_user.objects.filter(
-        project_id=project_id,
-        is_deleted="FALSE",
-    )
-
-    users_results = user_group.objects.filter(
-        is_deleted="FALSE",
-        group_id__in=project_group.objects.filter(
-            is_deleted="FALSE",
-            project_id=project_id,
-        ).values('group_id'))\
-        .exclude(username_id__in=assigned_results.values('user_id'))\
-        .values(
-            'username_id',
-            'username',
-            'username_id__first_name',
-            'username_id__last_name',)\
-        .distinct()
-
-
-    #Load template
-    t = loader.get_template('NearBeach/project_information/project_assigned_users.html')
-
-    # context
-    c = {
-        'users_results': users_results,
-        'assigned_results': assigned_results.values(
-            'user_id__id',
-            'user_id',
-            'user_id__username',
-            'user_id__first_name',
-            'user_id__last_name',
-        ).distinct(),
-        'project_permissions': permission_results['project'],
-    }
-
-    return HttpResponse(t.render(c, request))
-
-
-
-@login_required(login_url='login')
-def information_project_delete_assigned_users(request, project_id, location_id):
-    assigned_users_save = assigned_user.objects.filter(
-        project_id=project_id,
-        user_id=location_id,
-    )
-    assigned_users_save.update(is_deleted="TRUE")
-
-    #Load template
-    t = loader.get_template('NearBeach/blank.html')
-
-    # context
-    c = {}
-
-    return HttpResponse(t.render(c, request))
-"""
-
-
-@login_required(login_url='login')
-def information_project_costs(request, project_id):
-    project_groups_results = object_assignment.objects.filter(
-        is_deleted="FALSE",
-        project_id=project.objects.get(project_id=project_id),
-    ).values('group_id_id')
-
-    permission_results = return_user_permission_level(request, project_groups_results,'project')
-
-    if request.method == "POST":
-        form = information_project_cost_form(request.POST, request.FILES)
-        if form.is_valid():
-            cost_description = form.cleaned_data['cost_description']
-            cost_amount = form.cleaned_data['cost_amount']
-            if ((not cost_description == '') and ((cost_amount <= 0) or (cost_amount >= 0))):
-                submit_cost = cost(
-                    project_id=project.objects.get(pk=project_id),
-                    cost_description=cost_description,
-                    cost_amount=cost_amount,
-                    change_user=request.user,
-                )
-                submit_cost.save()
-
-    #Get data
-    """
-    Cost results and running total.
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Due to Django not having the ability to have a runnning total, I needed to extract all the costs and manually create
-    the running total as a separate array. Now I need to combine both sets of data into one loop. To do that we use a 
-    zip function to bring them together. Then we can just use a simple
-    for a,b in zip_results
-    """
-    costs_results = cost.objects.filter(project_id=project_id, is_deleted='FALSE')
-
-    #Get running totals
-    running_total = []
-    grand_total = 0 #use to calculate the grand total through the look
-    for line_item in costs_results:
-        grand_total = grand_total + float(line_item.cost_amount)
-        running_total.append(grand_total)
-
-    cost_zip_results = zip(costs_results,running_total)
-
-    #Load template
-    t = loader.get_template('NearBeach/project_information/project_costs.html')
-
-    # context
-    c = {
-        'information_project_cost_form': information_project_cost_form(),
-        'cost_zip_results':cost_zip_results,
-        'project_permissions': permission_results['project'],
-        'grand_total': grand_total,
-    }
-
-    return HttpResponse(t.render(c, request))
-
-
 @login_required(login_url='login')
 def information_project_customer(request, project_id):
     project_groups_results = object_assignment.objects.filter(
@@ -314,20 +179,26 @@ def project_readonly(request, project_id):
         project_id=project_id,
     )
 
-    assigned_results = assigned_user.objects.filter(
+    assigned_results = object_assignment.objects.filter(
         project_id=project_id,
         is_deleted="FALSE",
     ).values(
-        'user_id__id',
-        'user_id',
-        'user_id__username',
-        'user_id__first_name',
-        'user_id__last_name',
+        'assigned_user__id',
+        'assigned_user',
+        'assigned_user__username',
+        'assigned_user__first_name',
+        'assigned_user__last_name',
     ).distinct()
 
-    group_list_results = project_group.objects.filter(
+
+    group_list_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         project_id=project_id,
+    )
+
+    kudos_results = kudos.objects.filter(
+        project_id=project_id,
+        is_deleted="FALSE",
     )
 
     """
@@ -359,6 +230,7 @@ def project_readonly(request, project_id):
         'project_readonly_form': project_readonly_form(
             initial={'project_description': project_results.project_description}
         ),
+        'kudos_results': kudos_results,
         'to_do_results': to_do_results,
         'project_history_collective': project_history_collective,
         'email_results': email_results,

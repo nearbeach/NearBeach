@@ -45,6 +45,7 @@ re_path(r'^bug_list/(?P<location_id>[0-9]+)/(?P<destination>["project","task","r
 re_path(r'^bug_list/$', views.bug_list, name='bug_list'),
 re_path(r'^bug_search/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement"]+)/$', views.bug_search, name='bug_search'),
 re_path(r'^campus_information/(?P<campus_information>[0-9]+)/', views.campus_information, name='campus_information'),
+re_path(r'^cost_information/(?P<location_id>[0-9]+)/(?P<destination>["project","task"]+)/$',views.cost_information,name='cost_information'),
 re_path(r'^customer_information/(?P<customer_id>[0-9]+)/', views.customer_information, name='customer_information'),
 re_path(r'^customer_campus_information/(?P<customer_campus_id>[0-9]+)/(?P<customer_or_org>["CUST","CAMP"]+)',views.customer_campus_information, name="customer_campus_information"),
 re_path(r'^dashboard/$', views.dashboard,name='dashboard'),
@@ -66,11 +67,11 @@ re_path(r'^diagnostic_test_document_upload/',views.diagnostic_test_document_uplo
 re_path(r'^diagnostic_test_email/',views.diagnostic_test_email,name='diagnostic_test_email'),
 re_path(r'^diagnostic_test_location_services/',views.diagnostic_test_location_services,name='diagnostic_test_location_services'),
 re_path(r'^diagnostic_test_recaptcha/',views.diagnostic_test_recaptcha,name='diagnostic_test_recaptcha'),
-re_path(r'^document_tree_folder/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/(?P<folder_id>[0-9]+)/$', views_document_tree.document_tree_folder,name='document_tree_folder'),
-re_path(r'^document_tree_list/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/(?P<folder_id>[0-9]+)/', views_document_tree.document_tree_list,name='document_tree_list'),
-re_path(r'^document_tree_list/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/$', views_document_tree.document_tree_list,name='document_tree_list'),
-re_path(r'^document_tree_upload/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/(?P<folder_id>[0-9]+)/$', views_document_tree.document_tree_upload,name="document_tree_upload"),
-re_path(r'^document_tree_url/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/(?P<folder_id>[0-9]+)/$', views_document_tree.document_tree_url,name='document_tree_url'),
+re_path(r'^document_tree_folder/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity","organisation","customer"]+)/(?P<folder_id>[0-9]+)/$', views_document_tree.document_tree_folder,name='document_tree_folder'),
+re_path(r'^document_tree_list/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity","organisation","customer"]+)/(?P<folder_id>[0-9]+)/', views_document_tree.document_tree_list,name='document_tree_list'),
+re_path(r'^document_tree_list/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity","organisation","customer"]+)/$', views_document_tree.document_tree_list,name='document_tree_list'),
+re_path(r'^document_tree_upload/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity","organisation","customer"]+)/(?P<folder_id>[0-9]+)/$', views_document_tree.document_tree_upload,name="document_tree_upload"),
+re_path(r'^document_tree_url/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity","organisation","customer"]+)/(?P<folder_id>[0-9]+)/$', views_document_tree.document_tree_url,name='document_tree_url'),
 re_path(r'^email_history/(?P<location_id>[0-9]+)/(?P<destination>["organisation","customer","project","task","opportunity","quote"]+)/$', views.email_history,name='email_history'),
 re_path(r'^email_information/(?P<email_content_id>[0-9]+)/$', views.email_information,name='email_information'),
 re_path(r'^email/(?P<location_id>[0-9]+)/(?P<destination>["organisation","customer","project","task","opportunity","quote"]+)/$', views.email,name='email'),
@@ -82,16 +83,16 @@ re_path(r'^group_information_edit/(?P<group_id>[0-9]+)/', views_administration.g
 re_path(r'^group_information_list/', views_administration.group_information_list, name='group_information_list'),
 re_path(r'^group_information/', views_administration.group_information, name='group_information'),
 re_path(r'^information_customer_contact_history/(?P<customer_id>[0-9]+)/$',views_customer_information.information_customer_contact_history,name='information_customer_contact_history'),
-re_path(r'^information_customer_documents_list/(?P<customer_id>[0-9]+)/(?P<organisation_id>[0-9]+)/$',views_customer_information.information_customer_documents_list,name='information_customer_documents_list'),
-re_path(r'^information_customer_documents_list/(?P<customer_id>[0-9]+)/$',views_customer_information.information_customer_documents_list,name='information_customer_documents_list'),
-re_path(r'^information_customer_documents_upload/(?P<customer_id>[0-9]+)/$',views_customer_information.information_customer_documents_upload,name='information_customer_documents_upload'),
+#re_path(r'^information_customer_documents_list/(?P<customer_id>[0-9]+)/(?P<organisation_id>[0-9]+)/$',views_customer_information.information_customer_documents_list,name='information_customer_documents_list'),
+#re_path(r'^information_customer_documents_list/(?P<customer_id>[0-9]+)/$',views_customer_information.information_customer_documents_list,name='information_customer_documents_list'),
+#re_path(r'^information_customer_documents_upload/(?P<customer_id>[0-9]+)/$',views_customer_information.information_customer_documents_upload,name='information_customer_documents_upload'),
 re_path(r'^information_organisation_contact_history/(?P<organisation_id>[0-9]+)/$',views_organisation_information.information_organisation_contact_history,name='information_organisation_contact_history'),
-re_path(r'^information_organisation_documents_list/(?P<organisation_id>[0-9]+)/$',views_organisation_information.information_organisation_documents_list,name='information_organisation_documents_list'),
-re_path(r'^information_organisation_documents_uploads/(?P<organisation_id>[0-9]+)/$',views_organisation_information.information_organisation_documents_upload,name='information_organisation_documents_uploads'),
-re_path(r'^information_project_costs/(?P<project_id>[0-9]+)/$', views_project_information.information_project_costs, name='information_project_costs'),
+#re_path(r'^information_organisation_documents_list/(?P<organisation_id>[0-9]+)/$',views_organisation_information.information_organisation_documents_list,name='information_organisation_documents_list'),
+#re_path(r'^information_organisation_documents_uploads/(?P<organisation_id>[0-9]+)/$',views_organisation_information.information_organisation_documents_upload,name='information_organisation_documents_uploads'),
+#re_path(r'^information_project_costs/(?P<project_id>[0-9]+)/$', views_project_information.information_project_costs, name='information_project_costs'),
 re_path(r'^information_project_customer/(?P<project_id>[0-9]+)/$', views_project_information.information_project_customer, name='information_project_customer'),
 re_path(r'^information_project_history/(?P<project_id>[0-9]+)/$', views_project_information.information_project_history, name='information_project_history'),
-re_path(r'^information_task_costs/(?P<task_id>[0-9]+)/$', views_task_information.information_task_costs,name='information_task_costs'),
+#re_path(r'^information_task_costs/(?P<task_id>[0-9]+)/$', views_task_information.information_task_costs,name='information_task_costs'),
 re_path(r'^information_task_customer/(?P<task_id>[0-9]+)/$', views_task_information.information_task_customer,name='information_task_customer'),
 re_path(r'^information_task_history/(?P<task_id>[0-9]+)/$', views_task_information.information_task_history,name='information_task_history'),
 re_path(r'^kanban_edit_card/(?P<kanban_card_id>[0-9]+)/$', views.kanban_edit_card,name='kanban_edit_card'),
@@ -105,6 +106,8 @@ re_path(r'^kanban_new_link/(?P<kanban_board_id>[0-9]+)/$', views.kanban_new_link
 re_path(r'^kanban_properties/(?P<kanban_board_id>[0-9]+)/$', views.kanban_properties,name='kanban_properties'),
 re_path(r'^kanban_requirement_information/(?P<kanban_board_id>[0-9]+)/$',views.kanban_requirement_information,name='kanban_requirement_information'),
 re_path(r'^kanban_requirement_item_update/(?P<requirement_item_id>[0-9]+)/(?P<status_id>[0-9]+)/$',views.kanban_requirement_item_update,name="kanban_requirement_item_update"),
+re_path(r'^kudos_rating/(?P<kudos_key>[0-9A-Za-z_\-]+)/$', views.kudos_rating, name='kudos_rating'),
+re_path(r'^kudos_read_only/(?P<kudos_key>[0-9A-Za-z_\-]+)/$', views.kudos_read_only, name='kudos_read_only'),
 re_path(r'^list_of_taxes_deactivate/(?P<tax_id>[0-9]+)/', views_administration.list_of_taxes_deactivate, name='list_of_taxes_deactivate'),
 re_path(r'^list_of_taxes_edit/(?P<tax_id>[0-9]+)/', views_administration.list_of_taxes_edit, name='list_of_taxes_edit'),
 re_path(r'^list_of_taxes_information/', views_administration.list_of_taxes_information, name='list_of_taxes_information'),
@@ -119,6 +122,7 @@ re_path(r'^new_campus/(?P<location_id>[0-9]+)/(?P<destination>["organisation","c
 re_path(r'^new_customer/(?P<organisation_id>[0-9]+)/', views.new_customer, name='new_customer'),
 re_path(r'^new_kanban_board/$', views.new_kanban_board,name='new_kanban_board'),
 re_path(r'^new_kanban_requirement_board/(?P<requirement_id>[0-9]+)/',views.new_kanban_requirement_board,name='new_kanban_requirement_board'),
+re_path(r'^new_kudos/(?P<project_id>[0-9]+)/',views.new_kudos,name='new_kudos'),
 re_path(r'^new_opportunity/(?P<location_id>[0-9]+)/(?P<destination>["customer","organisation"]+)/$', views.new_opportunity,name='new_opportunity'),
 re_path(r'^new_opportunity/$', views.new_opportunity, name='new_opportunity'),
 re_path(r'^new_organisation', views.new_organisation, name='new_organisation'),
@@ -185,44 +189,39 @@ re_path(r'^user_want_view', views.user_want_view,name='user_want_view'),
 re_path(r'^user_weblink_remove/(?P<user_weblink_id>[0-9]+)',views.user_weblink_remove,name='user_weblink_remove'),
 re_path(r'^user_weblink_view',views.user_weblink_view,name='user_weblink_view'),
 
-path('change-password/', auth_views.PasswordChangeView.as_view()),
-
+	path('change-password/', auth_views.PasswordChangeView.as_view()),
 	path(
-		'password_reset/', auth_views.PasswordResetView.as_view(
+		'password_reset/',
+		auth_views.PasswordResetView.as_view(
 			template_name='NearBeach/password_reset.html',
 		),
 		name='password_reset',
 	),
 	path(
-		'password_reset/done/', auth_views.PasswordResetDoneView.as_view(
+		'password_reset/done/',
+		auth_views.PasswordResetDoneView.as_view(
 			template_name='NearBeach/password_reset_done.html',
 		),
 		name='password_reset_done',
 	),
 	path(
-		'reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+		'reset/<uidb64>/<token>/',
+		auth_views.PasswordResetConfirmView.as_view(
 			template_name='NearBeach/reset.html',
 		),
 		name='password_reset_confirm',
 	),
 	path(
-		'reset/done', auth_views.PasswordResetCompleteView.as_view(
+		'reset/done',
+		auth_views.PasswordResetCompleteView.as_view(
 			template_name='NearBeach/reset_done.html',
 		),
 		name='password_reset_complete'
 	),
 
+
+
 ]
-
-"""
-#        auth_views.PasswordChangeView.as_view(template_name='change-password.html'),
-
-
-accounts/password_reset/ [name='password_reset']
-accounts/password_reset/done/ [name='password_reset_done']
-accounts/reset/<uidb64>/<token>/ [name='password_reset_confirm']
-accounts/reset/done/ [name='password_reset_complete']
-"""
 
 
 if settings.DEBUG:

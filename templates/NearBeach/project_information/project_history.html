@@ -3,7 +3,7 @@
     {% for row in project_history_results %}
         <table>
             <tr><td>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}</td></tr>
-            <tr><td><span>{{ row.project_history|safe }}</span></td></tr>
+            <tr><td><textarea class="old_project_history">{{ row.project_history|safe }}</textarea></td></tr>
         </table>
         <br/>
     {% endfor %}

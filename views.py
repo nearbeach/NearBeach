@@ -126,6 +126,7 @@ def alerts(request):
 
     return HttpResponse(t.render(c, request))
 
+
 @login_required(login_url='login')
 def assign_customer_project_task(request, customer_id):
     user_group_results = user_group.objects.filter(
@@ -187,7 +188,7 @@ def assign_customer_project_task(request, customer_id):
     project_results = project.objects.filter(
         is_deleted="FALSE",
         project_status__in=('New','Open'),
-        project_id__in=project_group.objects.filter(
+        project_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             group_id__in=user_group.objects.filter(
                 is_deleted="FALSE",
@@ -199,7 +200,7 @@ def assign_customer_project_task(request, customer_id):
     task_results = task.objects.filter(
         is_deleted="FALSE",
         task_status__in=('New', 'Open'),
-        task_id__in=task_group.objects.filter(
+        task_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             group_id__in=user_group.objects.filter(
                 is_deleted="FALSE",
@@ -581,7 +582,7 @@ def associated_task(request, project_id):
 	check to see if they want only new or open, or if they would like
 	to see closed task too.
 	"""
-    project_groups_results = project_group.objects.filter(
+    project_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         project_id=project.objects.get(project_id=project_id),
     ).values('group_id_id')
@@ -923,11 +924,6 @@ def campus_information(request, campus_information):
         # Other save button must have been pressed
         form = campus_information_form(request.POST)
         if form.is_valid():
-            # SQL instance
-            campus_region_instance = list_of_country_region.objects.get(
-                region_id=int(request.POST.get('campus_region_id')))
-            campus_country_instance = list_of_country.objects.get(country_id=request.POST.get('campus_country_id'))
-
             # Save all the data
             campus_results.campus_nickname = form.cleaned_data['campus_nickname']
             campus_results.campus_phone = form.cleaned_data['campus_phone']
@@ -936,8 +932,6 @@ def campus_information(request, campus_information):
             campus_results.campus_address2 = form.cleaned_data['campus_address2']
             campus_results.campus_address3 = form.cleaned_data['campus_address3']
             campus_results.campus_suburb = form.cleaned_data['campus_suburb']
-            campus_results.campus_region_id = campus_region_instance
-            campus_results.campus_country_id = campus_country_instance
             campus_results.change_user=request.user
 
             campus_results.save()
@@ -995,7 +989,9 @@ def campus_information(request, campus_information):
     # context
     c = {
         'campus_results': campus_results,
-        'campus_information_form': campus_information_form(instance=campus_results),
+        'campus_information_form': campus_information_form(
+            instance=campus_results,
+        ),
         'customer_campus_results': customer_campus_results,
         'add_customer_results': add_customer_results,
         'countries_regions_results': countries_regions_results,
@@ -1005,6 +1001,76 @@ def campus_information(request, campus_information):
         'administration_permission': permission_results['administration'],
         'MAPBOX_API_TOKEN': MAPBOX_API_TOKEN,
         'GOOGLE_MAP_API_TOKEN': GOOGLE_MAP_API_TOKEN,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def cost_information(request, location_id, destination):
+    if destination == "project":
+        groups_results = object_assignment.objects.filter(
+            is_deleted="FALSE",
+            project_id=project.objects.get(project_id=location_id),
+        ).values('group_id_id')
+    else:
+        groups_results = object_assignment.objects.filter(
+            is_deleted="FALSE",
+            task_id=task.objects.get(task_id=location_id),
+        ).values('group_id_id')
+
+    permission_results = return_user_permission_level(request, groups_results,destination)
+
+
+    if request.method == "POST":
+        form = cost_information_form(request.POST, request.FILES)
+        if form.is_valid():
+            cost_description = form.cleaned_data['cost_description']
+            cost_amount = form.cleaned_data['cost_amount']
+            if ((not cost_description == '') and ((cost_amount <= 0) or (cost_amount >= 0))):
+                submit_cost = cost(
+                    cost_description=cost_description,
+                    cost_amount=cost_amount,
+                    change_user=request.user,
+                )
+                if destination == "project":
+                    submit_cost.project_id=project.objects.get(project_id=location_id)
+                elif destination == "task":
+                    submit_cost.task_id=task.objects.get(task_id=location_id)
+                submit_cost.save()
+
+    # Get data
+    """
+    Cost results and running total.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Due to Django not having the ability to have a runnning total, I needed to extract all the costs and manually create
+    the running total as a separate array. Now I need to combine both sets of data into one loop. To do that we use a 
+    zip function to bring them together. Then we can just use a simple
+    for a,b in zip_results
+    """
+    if destination == "project":
+        costs_results = cost.objects.filter(project_id=location_id, is_deleted='FALSE')
+    else:
+        costs_results = cost.objects.filter(task_id=location_id, is_deleted="FALSE")
+
+    # Get running totals
+    running_total = []
+    grand_total = 0  # use to calculate the grand total through the look
+    for line_item in costs_results:
+        grand_total = grand_total + float(line_item.cost_amount)
+        running_total.append(grand_total)
+
+    cost_zip_results = zip(costs_results, running_total)
+
+    # Load template
+    t = loader.get_template('NearBeach/costs.html')
+
+    # context
+    c = {
+        'cost_information_form': cost_information_form(),
+        'cost_zip_results': cost_zip_results,
+        'cost_permissions': permission_results[destination],
+        'grand_total': grand_total,
     }
 
     return HttpResponse(t.render(c, request))
@@ -1253,9 +1319,16 @@ def dashboard_active_projects(request):
         is_deleted='FALSE',
         assigned_user=request.user,
         project_id__isnull=False,
-    )\
-        .exclude(project_id__project_status='Resolved').exclude(project_id__project_status='Closed')\
-        .values('project_id__project_id','project_id__project_name','project_id__project_end_date').distinct()
+    ).exclude(
+        project_id__project_status='Resolved'
+    ).exclude(
+        project_id__project_status='Closed'
+    ).values(
+        'project_id__project_id',
+        'project_id__project_name',
+        'project_id__project_end_date',
+        'project_id__project_start_date',
+    ).distinct()
 
 
     # Load the template
@@ -1320,10 +1393,16 @@ def dashboard_active_task(request):
         is_deleted='FALSE',
         assigned_user=request.user,
         task_id__isnull=False,
-    )\
-        .exclude(task_id__task_status='Resolved')\
-        .exclude(task_id__task_status='Completed')\
-        .values('task_id__task_id','task_id__task_short_description','task_id__task_end_date').distinct()
+    ).exclude(
+        task_id__task_status='Resolved'
+    ).exclude(
+        task_id__task_status='Completed'
+    ).values(
+        'task_id__task_id',
+        'task_id__task_short_description',
+        'task_id__task_end_date',
+        'task_id__task_start_date',
+    ).distinct()
 
     # Load the template
     t = loader.get_template('NearBeach/dashboard_widgets/active_tasks.html')
@@ -1368,10 +1447,11 @@ def dashboard_group_active_task(request):
             is_deleted="FALSE",
             group_id__in=user_group.objects.filter(
                 is_deleted="FALSE",
-                username_id=request.user.id
-            ).values('group')
+                username_id=request.user
+            ).values('group_id')
         ).values('task_id')
     )
+
     # Load the template
     t = loader.get_template('NearBeach/dashboard_widgets/group_active_tasks.html')
 
@@ -1428,7 +1508,7 @@ def dashboard_opportunities(request):
                 ))
             )
 
-        )
+        ).values('opportunity_id')
     )
 
     # Load the template
@@ -2786,6 +2866,85 @@ def kanban_requirement_item_update(request,requirement_item_id,status_id):
         return HttpResponseBadRequest("Sorry, but this is a POST request only")
 
 
+
+#No login needed - as it is aimed at external customers
+def kudos_rating(request,kudos_key):
+    if request.method == "POST":
+        form = kudos_form(request.POST)
+        if form.is_valid():
+            #Save the kudos information
+            kudos_update=kudos.objects.get(kudos_key=kudos_key)
+
+            #Different fields to get data
+            kudos_update.kudos_rating=form.cleaned_data['kudos_rating']
+            kudos_update.improvement_note=form.cleaned_data['improvement_note']
+            kudos_update.liked_note=form.cleaned_data['liked_note']
+            kudos_update.change_user=request.user
+            kudos_update.submitted_kudos="TRUE"
+
+            #Save
+            kudos_update.save()
+
+            #Now go to thank you page
+            t = loader.get_template('NearBeach/kudos_thank_you.html')
+
+            c = {}
+
+            return HttpResponse(t.render(c, request))
+        else:
+            print(form.errors)
+            return HttpResponseBadRequest("Form had errors within it. It failed")
+
+    #Get required data
+    kudos_results = kudos.objects.get(kudos_key=kudos_key)
+    project_results = project.objects.get(project_id=kudos_results.project_id)
+
+
+    #If form has already been submitted, we take them to the thank you page. Other wise use the edited version
+    if kudos_results.submitted_kudos == "TRUE":
+        t = loader.get_template('NearBeach/kudos_read_only.html')
+    else:
+        t = loader.get_template('NearBeach/kudos_rating.html')
+
+    c = {
+        'kudos_form': kudos_form(
+            initial={
+                'project_description': project_results.project_description,
+            }
+        ),
+        'kudos_key': kudos_key,
+        'project_results': project_results,
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+#No login needed - as it is aimed at external customers
+def kudos_read_only(request,kudos_key):
+    # Get required data
+    kudos_results = kudos.objects.get(kudos_key=kudos_key)
+    project_results = project.objects.get(project_id=kudos_results.project_id)
+
+    t = loader.get_template('NearBeach/kudos_read_only.html')
+
+    c = {
+        'kudos_read_only_form': kudos_read_only_form(
+            initial={
+                'project_description': project_results.project_description,
+                'improvement_note': kudos_results.improvement_note,
+                'liked_note': kudos_results.liked_note,
+            }
+        ),
+        'kudos_key': kudos_key,
+        'kudos_results': kudos_results,
+        'star_range': range(kudos_results.kudos_rating),
+        'project_results': project_results,
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+
 def login(request):
     """
 	For some reason I can not use the varable "login_form" here as it is already being used.
@@ -3349,6 +3508,90 @@ def new_kanban_requirement_board(request,requirement_id):
             args={kanban_board_submit.kanban_board_id}
         )
     )
+
+
+@login_required(login_url='login')
+def new_kudos(request,project_id):
+    """
+    Method
+    ~~~~~~
+    1. Do checks to see if user is allowed to do this
+    2. Find ALL customers associated with this project
+    3. Create a new kudos for each customer
+    4. Go back to read only
+    :param request: -- basic
+    :param project_id: the project that we will be creating kudos for
+    :return: back to the read only
+    """
+    permission_results = return_user_permission_level(request, None, 'project')
+
+
+
+    print("REQUEST PATH: " + request.path)
+    print("REQUEST PATH INFO: " + request.path_info)
+    print("REQUEST FULL PATH: " + request.get_full_path())
+    print("RAW URI: " + request.get_raw_uri())
+    print("RAW get_host" + request.get_host())
+
+
+    if permission_results['project'] < 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        #Get customers
+        #project_results = project.objects.get(project_id=project_id)
+        project_customer_results = project_customer.objects.filter(
+            is_deleted="FALSE",
+            project_id=project_id,
+        )
+
+        for customer_line in project_customer_results:
+            kudos_submit = kudos(
+                customer=customer_line.customer_id,
+                project_id=project_id,
+                change_user=request.user,
+            )
+            kudos_submit.save()
+
+            #Try and send an email to the customer
+            try:
+                # Check variables
+                EMAIL_HOST_USER = settings.EMAIL_HOST_USER
+                EMAIL_BACKEND = settings.EMAIL_BACKEND
+                EMAIL_USE_TLS = settings.EMAIL_USE_TLS
+                EMAIL_HOST = settings.EMAIL_HOST
+                EMAIL_PORT = settings.EMAIL_PORT
+                EMAIL_HOST_USER = settings.EMAIL_HOST_USER
+                EMAIL_HOST_PASSWORD = settings.EMAIL_HOST_PASSWORD
+
+                email_content = "Hello " \
+                                + str(customer_line.customer_id.customer_first_name) \
+                                + """<br/>We have recently finished working on your project. Can you please evaluate our work at: <a href=\"""" \
+                                + request.get_host() + """/kudos_rating/""" + str(kudos_submit.kudos_key) + """\">""" \
+                                + request.get_host() + """/kudos_rating/""" + str(kudos_submit.kudos_key) + """/</a><br/>Regards<br/>Project Team"""
+
+                email = EmailMultiAlternatives(
+                    'Kudos Evaluation form',
+                    email_content,
+                    'donotreply@nearbeach.org',
+                    [customer_line.customer_id.customer_email],
+                )
+                email.attach_alternative(email_content, "text/html")
+                if not email.send():
+                    return HttpResponseBadRequest("Email did not send correctly.")
+            except:
+                print("Email not sent")
+
+
+        #Redirect back to read only template
+        return HttpResponseRedirect(
+            reverse(
+                'project_readonly',
+                args={project_id}
+            )
+        )
+    else:
+        return HttpResponseBadRequest("Sorry, can only do this request through post")
 
 @login_required(login_url='login')
 def new_opportunity(request, location_id,destination):

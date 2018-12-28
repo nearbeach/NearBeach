@@ -74,6 +74,10 @@ def document_tree_folder(request, location_id, destination, folder_id=''):
                 folder_submit.project_id=project.objects.get(project_id=location_id)
             elif destination == "task":
                 folder_submit.task_id=task.objects.get(task_id=location_id)
+            elif destination == "customer":
+                folder_submit.customer_id=customer.objects.get(customer_id=location_id)
+            elif destination == "organisation":
+                folder_submit.organisation_id=organisation.objects.get(organisation_id=location_id)
 
             folder_submit.save()
 
@@ -111,6 +115,24 @@ def document_tree_list(request, location_id, destination, folder_id=''):
         document_permission_results = document_permission.objects.filter(
             is_deleted="FALSE",
             task_id=location_id,
+        )
+    elif destination == "customer":
+        folder_results = folder.objects.filter(
+            is_deleted="FALSE",
+            customer_id=location_id,
+        )
+        document_permission_results = document_permission.objects.filter(
+            is_deleted="FALSE",
+            customer_id=location_id,
+        )
+    elif destination == "organisation":
+        folder_results = folder.objects.filter(
+            is_deleted="FALSE",
+            organisation_id=location_id,
+        )
+        document_permission_results = document_permission.objects.filter(
+            is_deleted="FALSE",
+            organisation_id=location_id,
         )
     else:
         #TEMP CODE - will need to expand to utilise other objects
@@ -184,6 +206,10 @@ def document_tree_upload(request, location_id, destination, folder_id):
                 document_permissions_submit.project_id = project.objects.get(project_id=location_id)
             elif destination == "task":
                 document_permissions_submit.task_id = task.objects.get(task_id=location_id)
+            elif destination == "customer":
+                document_permissions_submit.customer_id = customer.objects.get(customer_id=location_id)
+            elif destination == "organisation":
+                document_permissions_submit.organisation_id = organisation.objects.get(organisation_id=location_id)
             # Must apply other objects
 
             # NEST UPLOAD TO CURRENT FOLDER
@@ -233,6 +259,10 @@ def document_tree_url(request,location_id,destination,folder_id=''):
                 document_permissions_submit.project_id = project.objects.get(project_id=location_id)
             elif destination == "task":
                 document_permissions_submit.task_id = task.objects.get(task_id=location_id)
+            elif destination == "customer":
+                document_permissions_submit.customer_id = customer.objects.get(customer_id=location_id)
+            elif destination == "organisation":
+                document_permissions_submit.organisation_id = organisation.objects.get(organisation_id=location_id)
             # Must apply other objects
 
             # NEST UPLOAD TO CURRENT FOLDER

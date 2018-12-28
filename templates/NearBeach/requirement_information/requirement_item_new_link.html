@@ -22,8 +22,8 @@
         </tr>
         {% for row in task_results %}
             <tr>
-                <td><a href="javascript:void(0)" onclick="send_requirement_item_link({{ requirement_item_id }}, {{ row.tasks_id }}, 'task')">Task - {{ row.tasks_id }}</a></td>
-                <td><a href="javascript:void(0)" onclick="send_requirement_item_link({{ requirement_item_id }}, {{ row.tasks_id }}, 'task')">{{ row.task_short_description }}</a></td>
+                <td><a href="javascript:void(0)" onclick="send_requirement_item_link({{ requirement_item_id }}, {{ row.task_id }}, 'task')">Task - {{ row.task_id }}</a></td>
+                <td><a href="javascript:void(0)" onclick="send_requirement_item_link({{ requirement_item_id }}, {{ row.task_id }}, 'task')">{{ row.task_short_description }}</a></td>
             </tr>
         {% endfor %}
     </table>

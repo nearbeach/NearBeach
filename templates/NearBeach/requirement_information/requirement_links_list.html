@@ -11,13 +11,13 @@
             <td>Current Requirement</td>
             <td>{{ row.requirement_title }}</td>
             <td>
-                {% for link in row.requirement_links_set.all %}
+                {% for link in row.requirement_link_set.all %}
                     {% if not link.project_id == None %}
                         <a href="{% url 'project_information' link.project_id.project_id %}">Project - {{ link.project_id.project_id }}</a><br/>
                     {% elif not link.task_id == None %}
-                        <a href="{% url 'task_information' link.task_id.tasks_id %}">Task - {{ link.task_id.tasks_id }}</a><br/>
+                        <a href="{% url 'task_information' link.task_id.task_id %}">Task - {{ link.task_id.task_id }}</a><br/>
                     {% elif not link.organisations_id == None %}
-                        <a href="{% url 'organisation_information' link.organisations_id.organisations_id %}">Organisations - {{ link.organisations_id.organisations_id }}</a><br/>
+                        <a href="{% url 'organisation_information' link.organisation_id.organisation_id %}">Organisations - {{ link.organisation_id.organisation_id }}</a><br/>
                     {% else %}
                         Error with link {{ link.requirement_links_id }}<br/>
                     {% endif %}
@@ -31,13 +31,13 @@
             <td>{{ row.requirement_item_id }}</td>
             <td>{{ row.requirement_item_title }}</td>
             <td>
-                {% for link in row.requirement_item_links_set.all %}
+                {% for link in row.requirement_item_link_set.all %}
                     {% if not link.project_id == None %}
                         <a href="{% url 'project_information' link.project_id.project_id %}">Project - {{ link.project_id.project_id }}</a><br/>
                     {% elif not link.task_id == None %}
-                        <a href="{% url 'task_information' link.task_id.tasks_id %}">Task - {{ link.task_id.tasks_id }}</a><br/>
-                    {% elif not link.organisations_id == None %}
-                        <a href="{% url 'organisation_information' link.organisations_id.organisations_id %}">Organisations - {{ link.organisations_id.organisations_id }}</a><br/>
+                        <a href="{% url 'task_information' link.task_id.task_id %}">Task - {{ link.task_id.task_id }}</a><br/>
+                    {% elif not link.organisation_id == None %}
+                        <a href="{% url 'organisation_information' link.organisation_id.organisation_id %}">Organisations - {{ link.organisation_id.organisation_id }}</a><br/>
                     {% else %}
                         Error with link {{ link.requirement_links_id }}<br/>
                     {% endif %}

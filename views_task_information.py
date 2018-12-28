@@ -19,60 +19,6 @@ from .user_permissions import return_user_permission_level
 
 
 @login_required(login_url='login')
-def information_task_assigned_users(request, task_id):
-    task_groups_results = object_assignment.objects.filter(
-        is_deleted="FALSE",
-        task_id=task.objects.get(task_id=task_id),
-    ).values('group_id_id')
-
-    permission_results = return_user_permission_level(request, task_groups_results,'task')
-
-    if request.method == "POST":
-        user_results = int(request.POST.get("add_user_select"))
-        user_instance = auth.models.User.objects.get(pk=user_results)
-        submit_associate_user = assigned_user(
-            user_id=user_instance,
-            task_id=task.objects.get(task_id=task_id),
-            change_user=request.user,
-        )
-        submit_associate_user.save()
-
-    #Get data
-    assigned_results = assigned_user.objects.filter(task_id=task_id, is_deleted="FALSE")
-
-    users_results = user_group.objects.filter(
-        is_deleted="FALSE",
-        group_id__in=task_group.objects.filter(
-            is_deleted="FALSE",
-            task_id=task_id,
-        ).values('group_id')) \
-        .exclude(username_id__in=assigned_results.values('user_id')) \
-        .values(
-        'username_id',
-        'username',
-        'username_id__first_name',
-        'username_id__last_name', ) \
-        .distinct()
-
-    #Load template
-    t = loader.get_template('NearBeach/task_information/task_assigned_users.html')
-
-    # context
-    c = {
-        'users_results': users_results,
-        'assigned_results': assigned_results.values(
-            'user_id__id',
-            'user_id__username',
-            'user_id__first_name',
-            'user_id__last_name',
-        ).distinct(),
-        'task_permissions': permission_results['task'],
-    }
-
-    return HttpResponse(t.render(c, request))
-
-
-@login_required(login_url='login')
 def information_task_delete_assigned_users(request, task_id, user_id):
     assigned_users_save = assigned_user.objects.filter(
         task_id=task_id,
@@ -85,67 +31,6 @@ def information_task_delete_assigned_users(request, task_id, user_id):
 
     # context
     c = {}
-
-    return HttpResponse(t.render(c, request))
-
-
-@login_required(login_url='login')
-def information_task_costs(request, task_id):
-    task_groups_results = object_assignment.objects.filter(
-        is_deleted="FALSE",
-        task_id=task.objects.get(task_id=task_id),
-    ).values('group_id_id')
-
-    permission_results = return_user_permission_level(request, task_groups_results,'task')
-
-    # Get the data from the form
-    if request.method == "POST":
-        form = information_task_cost_form(request.POST, request.FILES)
-        if form.is_valid():
-            # Extract information
-            cost_description = form.cleaned_data['cost_description']
-            cost_amount = form.cleaned_data['cost_amount']
-            # SAve
-            submit_cost = cost(
-                cost_description=cost_description,
-                cost_amount=cost_amount,
-                task_id=task.objects.get(task_id=task_id),
-                change_user=request.user,
-            )
-            submit_cost.save()
-
-    #Get data
-    task_results = task.objects.get(task_id=task_id)
-
-    """
-    Cost results and running total.
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Due to Django not having the ability to have a runnning total, I needed to extract all the costs and manually create
-    the running total as a separate array. Now I need to combine both sets of data into one loop. To do that we use a 
-    zip function to bring them together. Then we can just use a simple
-    for a,b in zip_results
-    """
-    costs_results = cost.objects.filter(task_id=task_id, is_deleted='FALSE')
-
-    running_total = []
-    grand_total = 0 #Used to calculate the grand total in the loop
-    for line_item in costs_results:
-        grand_total = grand_total + float(line_item.cost_amount)
-        running_total.append(grand_total)
-
-    cost_zip_results = zip(costs_results, running_total)
-
-    #Load template
-    t = loader.get_template('NearBeach/task_information/task_costs.html')
-
-    # context
-    c = {
-        'cost_zip_results': cost_zip_results,
-        'grand_total': grand_total,
-        'information_task_cost_form': information_task_cost_form(),
-        'task_id': task_id,
-        'task_permissions': permission_results['task'],
-    }
 
     return HttpResponse(t.render(c, request))
 
