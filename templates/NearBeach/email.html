@@ -1,8 +1,8 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/chosen-js/chosen.css' %}">
-<link rel="stylesheet" href="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
+<link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
+<link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
 
 
 
@@ -47,9 +47,9 @@
         </td></tr>
     </table>
 </form>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
 <script>
     function remove_organisation() {
         $("#id_organisation_email").val("");

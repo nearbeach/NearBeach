@@ -26,7 +26,7 @@
 		{% csrf_token %}
 		<table>
             {% if campus_results.organisation_id %}
-			    <tr><td><a href="{% url 'organisation_information' campus_results.organisation_id.organisation_id %}">{{ campus_results.organisations_id }}</a></td></tr>
+			    <tr><td><a href="{% url 'organisation_information' campus_results.organisation_id.organisation_id %}">{{ campus_results.organisation_id }}</a></td></tr>
 			{% elif campus_results.customer_id %}
                 <tr><td><a href="{% url 'customer_information' campus_results.customer.customer_id %}">{{ campus_results.customer }}</a></td></tr>
             {% else %}

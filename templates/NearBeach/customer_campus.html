@@ -42,9 +42,8 @@
         </table>
         {% if permission > 1 %}
             <input type="submit" name="Save" value="Save and Return"/>
-        {% else %}
-            <a href="{% url 'customer_information' customer_campus_results.customer_id.customer_id %}">Return</a>
         {% endif %}
+        <a href="{% url 'customer_information' customer_campus_results.customer_id.customer_id %}">Return</a>
     </form>
     <h2>Map</h2>
     <div id='map' style='width: 100%; height: 680px; align-content: center'></div>

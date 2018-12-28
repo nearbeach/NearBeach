@@ -591,24 +591,42 @@ def requirement_new_link(request, requirement_id, location_id='', destination=''
 
     cursor.execute("""
         select DISTINCT 
-         task.tasks_id
+         task.task_id
         , task.task_short_description
 
         from 
           task 
-        , tasks_group
+        , task_group
         , user_group
         , organisation
 
 
         where 1 = 1
-        and task.task_status in ('New','Open')
-        and task.tasks_id = tasks_group.tasks_id_id
+        #and task.task_status in ('New','Open')
+        
+        and task.task_id = tasks_group.task_id_id
         and tasks_group.group_id_id = user_group.group_id
         and user_group.username_id = %s
         and task.organisation_id_id=organisation.organisation_id    
         """, [request.user.id])
     task_results = namedtuplefetchall(cursor)
+
+    task_results = task.objects.filter(
+        Q(
+            is_deleted="FALSE",
+            task_id__in=object_assignment.objects.filter(
+                group_id__in=user_group.objects.filter(
+                    username=request.user,
+                    is_deleted="FALSE",
+                ).distinct('group_id'),
+                is_deleted="FALSE",
+            ).values('task_id').distinct('task_id')
+        ) and
+        Q(
+            Q(task_status='New') or
+            Q(task_status='Open')
+        )
+    )
 
     #Load template
     t = loader.get_template('NearBeach/requirement_information/requirement_new_link.html')

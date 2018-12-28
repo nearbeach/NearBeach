@@ -5,7 +5,8 @@
     <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
     <link rel='stylesheet' href='{% static "NearBeach/css/kanban_board.css" %}' />
     <h2>Kanban Requirement</h2>
-    <h4>{{ requirement_results.requirement_title }}</h4>
+    <h4><a href="{% url 'requirement_information' requirement_results.requirement_id %}">{{ requirement_results.requirement_title }}</a></h4>
+
 
     <table>
         <!--render the header-->

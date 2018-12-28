@@ -49,12 +49,10 @@
             {% endif %}
             <table>
             <tr class="header"><td>Name</td><td>Email</td></tr>
-            {% for customer in customers_results %}
+            {% for customer in customer_results %}
                 <tr>
-                <td><a href="{% url 'customer_information' customer.customer_id %}">{{ customer.customer_first_name }} {{ customer.customer_last_name }}</a></td>
-                <td>{{ customer.customer_email }}</td>
-
-
+                    <td><a href="{% url 'customer_information' customer.customer_id %}">{{ customer.customer_first_name }} {{ customer.customer_last_name }}</a></td>
+                    <td>{{ customer.customer_email }}</td>
                 </tr>
             {% endfor %}
             </table>

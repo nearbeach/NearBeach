@@ -14,7 +14,7 @@
     {% for row in project_results %}
         <tr>
             <td><a href="javascript:void(0)" onclick="kanban_link_object({{ row.project_id }},'project')">PRO{{ row.project_id }}</a></td>
-            <td>{{ row.organisations_id }}<br/>{{ row.project_name }}</td>
+            <td>{{ row.organisation_id }}<br/>{{ row.project_name }}</td>
             <td>{{ row.project_end_date }}</td>
         </tr>
     {% endfor %}
@@ -26,10 +26,10 @@
         <td>Description</td>
         <td>End Date</td>
     </tr>
-    {% for row in tasks_results %}
+    {% for row in task_results %}
         <tr>
-            <td><a href="javascript:void(0)" onclick="kanban_link_object({{ row.tasks_id }},'task')">TASK{{ row.tasks_id }}</a></td>
-            <td>{{ row.organisations_id }}<br/>{{ row.task_short_description }}</td>
+            <td><a href="javascript:void(0)" onclick="kanban_link_object({{ row.task_id }},'task')">TASK{{ row.task_id }}</a></td>
+            <td>{{ row.organisation_id }}<br/>{{ row.task_short_description }}</td>
             <td>{{ row.task_end_date }}</td>
         </tr>
     {% endfor %}
@@ -41,7 +41,7 @@
         <td>Description</td>
         <td>Requirement Type</td>
     </tr>
-    {% for row in requirements_results %}
+    {% for row in requirement_results %}
         <tr>
             <td><a href="javascript:void(0)" onclick="kanban_link_object({{ row.requirement_id }},'requirement')">REQ{{ row.requirement_id }}</a></td>
             <td>{{ row.requirement_title }}</td>

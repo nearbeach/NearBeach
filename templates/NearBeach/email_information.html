@@ -2,40 +2,49 @@
 {% block content %}
 {% load static %}
     <h2>Email Information</h2>
-    <ul>
-        <li>
-            To:
-            {% for row in to_email_results %}
-                {% if forloop.first %}
-                    {{ row.to_customers.customer_email }}
-                {% else %}
-                    , {{ row.to_customers.customer_email }}
-                {% endif %}
-            {% endfor %}
-        </li>
-        <li>
-            Carbon Copy:
-            {% for row in cc_email_results %}
-                {% if forloop.first %}
-                    {{ row.cc_customers.customer_email }}
-                {% else %}
-                    , {{ row.cc_customers.customer_email }}
-                {% endif %}
-            {% endfor %}
-        </li>
-        <li>
-            Blind Carbon Copy:
-            {% for row in bcc_email_results %}
-                {% if forloop.first %}
-                    {{ row.bcc_customers.customer_email }}
-                {% else %}
-                    , {{ row.bcc_customers.customer_email }}
-                {% endif %}
-            {% endfor %}
-        </li>{{ email_information_form.media }}
-        <li>{{ email_information_form.email_subject }}</li>
-        <li>{{ email_information_form.email_content|safe }}</li>
-        <li><a href="javascript:history.back()">Go Back</a></li>
-    </ul>
+
+    <table>
+        {% if to_email_results %}
+            <tr><td>
+                To:
+                {% for row in to_email_results %}
+                    {% if forloop.first %}
+                        {{ row.to_customer.customer_email }}
+                    {% else %}
+                        , {{ row.to_customer.customer_email }}
+                    {% endif %}
+                {% endfor %}
+
+            </td></tr>
+        {% endif %}
+        {% if cc_email_results %}
+            <tr><td>
+                Carbon Copy:
+                {% for row in cc_email_results %}
+                    {% if forloop.first %}
+                        {{ row.cc_customer.customer_email }}
+                    {% else %}
+                        , {{ row.cc_customer.customer_email }}
+                    {% endif %}
+                {% endfor %}
+            </td></tr>
+        {% endif %}
+        {% if bcc_email_results %}
+            <tr><td>
+                Blind Carbon Copy:
+                {% for row in bcc_email_results %}
+                    {% if forloop.first %}
+                        {{ row.bcc_customer.customer_email }}
+                    {% else %}
+                        , {{ row.bcc_customer.customer_email }}
+                    {% endif %}
+                {% endfor %}
+            </td></tr>
+        {% endif %}
+        <tr><td>{{ email_information_form.media }}</td></tr>
+        <tr><td>{{ email_information_form.email_subject }}</td></tr>
+        <tr><td>{{ email_information_form.email_content|safe }}</td></tr>
+        <tr><td><a href="javascript:history.back()">Go Back</a></td></tr>
+    </table>
 
 {% endblock %}
