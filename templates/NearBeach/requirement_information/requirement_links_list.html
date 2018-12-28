@@ -11,7 +11,7 @@
             <td>Current Requirement</td>
             <td>{{ row.requirement_title }}</td>
             <td>
-                {% for link in row.requirement_links_set.all %}
+                {% for link in row.requirement_link_set.all %}
                     {% if not link.project_id == None %}
                         <a href="{% url 'project_information' link.project_id.project_id %}">Project - {{ link.project_id.project_id }}</a><br/>
                     {% elif not link.task_id == None %}
@@ -31,7 +31,7 @@
             <td>{{ row.requirement_item_id }}</td>
             <td>{{ row.requirement_item_title }}</td>
             <td>
-                {% for link in row.requirement_item_links_set.all %}
+                {% for link in row.requirement_item_link_set.all %}
                     {% if not link.project_id == None %}
                         <a href="{% url 'project_information' link.project_id.project_id %}">Project - {{ link.project_id.project_id }}</a><br/>
                     {% elif not link.task_id == None %}
