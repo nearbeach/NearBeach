@@ -396,7 +396,7 @@ def requirement_items_new_link(request, requirement_item_id, location_id= '', de
             project_instance = project.objects.get(project_id=location_id)
             requirement_item_link_save.project_id = project_instance
         elif destination == "task":
-            task_instance = task.objects.get(tasks_id=location_id)
+            task_instance = task.objects.get(task_id=location_id)
             requirement_item_link_save.task_id = task_instance
         elif destination == "organisation":
             organisation_instance = organisation.objects.get(organisation_id=location_id)
@@ -404,10 +404,7 @@ def requirement_items_new_link(request, requirement_item_id, location_id= '', de
         else:
             return HttpResponseBadRequest("You can only choose: project, task, or organisation")
 
-        if requirement_item_link_save.save():
-            print("Save successful")
-        else:
-            print("Save unsuccessful")
+        requirement_item_link_save.save()
 
         #Return blank page\
         # Load template
@@ -422,52 +419,39 @@ def requirement_items_new_link(request, requirement_item_id, location_id= '', de
     """
     The linked items will only link to items the user has access to. Nothing else.
     """
-    cursor = connection.cursor()
+    project_results = project.objects.filter(
+        Q(
+            is_deleted="FALSE",
+            project_id__in=object_assignment.objects.filter(
+                is_deleted="FALSE",
+                group_id__in=user_group.objects.filter(
+                    is_deleted="FALSE",
+                    username=request.user,
+                ).values('group_id').distinct(),
+            ).values('project_id').distinct(),
+        ) and
+        Q(
+            Q(project_status='New') or
+            Q(project_status='Open')
+        )
+    )
 
-    cursor.execute("""
-    SELECT DISTINCT 
-      project.project_id
-    , project.project_name
-
-
-
-    from 
-      project left join project_task
-        on project.project_id = project_task.project_id
-        and project_task.is_deleted = 'FALSE'
-    , project_group
-    , user_group
-
-
-    where 1 = 1
-    and project.project_status IN ('New','Open')
-    and project.project_status IN ('New','Open')
-    and project.project_id = project_group.project_id_id
-    and project_group.group_id_id = user_group.group_id
-    and user_group.username_id = %s
-    """, [request.user.id])
-    project_results = namedtuplefetchall(cursor)
-
-    cursor.execute("""
-    select DISTINCT 
-     task.tasks_id
-    , task.task_short_description
-    
-    from 
-      task 
-    , tasks_group
-    , user_group
-    , organisation
-    
-    
-    where 1 = 1
-    and task.task_status in ('New','Open')
-    and task.tasks_id = tasks_group.tasks_id_id
-    and tasks_group.group_id_id = user_group.group_id
-    and user_group.username_id = %s
-    and task.organisation_id_id=organisation.organisation_id    
-    """, [request.user.id])
-    task_results = namedtuplefetchall(cursor)
+    task_results = task.objects.filter(
+        Q(
+            is_deleted="FALSE",
+            task_id__in=object_assignment.objects.filter(
+                is_deleted="FALSE",
+                group_id__in=user_group.objects.filter(
+                    is_deleted="FALSE",
+                    username=request.user,
+                ).values('group_id').distinct(),
+            ).values('task_id').distinct(),
+        ) and
+        Q(
+            Q(task_status='New') or
+            Q(task_status='Open')
+        )
+    )
 
     #Load template
     t = loader.get_template('NearBeach/requirement_information/requirement_item_new_link.html')
@@ -541,7 +525,7 @@ def requirement_new_link(request, requirement_id, location_id='', destination=''
             project_instance = project.objects.get(project_id=location_id)
             requirement_link_save.project_id = project_instance
         elif destination == "task":
-            task_instance = task.objects.get(tasks_id=location_id)
+            task_instance = task.objects.get(task_id=location_id)
             requirement_link_save.task_id = task_instance
         elif destination == "organisation":
             organisation_instance = organisation.objects.get(organisation_id=location_id)
@@ -563,53 +547,22 @@ def requirement_new_link(request, requirement_id, location_id='', destination=''
     """
     The linked requirement will only link to requirement the user has access to. Nothing else.
     """
-    cursor = connection.cursor()
-
-    cursor.execute("""
-        SELECT DISTINCT 
-          project.project_id
-        , project.project_name
-
-
-
-        from 
-          project left join project_task
-            on project.project_id = project_task.project_id
-            and project_task.is_deleted = 'FALSE'
-        , project_group
-        , user_group
-
-
-        where 1 = 1
-        and project.project_status IN ('New','Open')
-        and project.project_status IN ('New','Open')
-        and project.project_id = project_group.project_id_id
-        and project_group.group_id_id = user_group.group_id
-        and user_group.username_id = %s
-        """, [request.user.id])
-    project_results = namedtuplefetchall(cursor)
-
-    cursor.execute("""
-        select DISTINCT 
-         task.task_id
-        , task.task_short_description
-
-        from 
-          task 
-        , task_group
-        , user_group
-        , organisation
-
-
-        where 1 = 1
-        #and task.task_status in ('New','Open')
-        
-        and task.task_id = tasks_group.task_id_id
-        and tasks_group.group_id_id = user_group.group_id
-        and user_group.username_id = %s
-        and task.organisation_id_id=organisation.organisation_id    
-        """, [request.user.id])
-    task_results = namedtuplefetchall(cursor)
+    project_results = project.objects.filter(
+        Q(
+            is_deleted="FALSE",
+            project_id__in=object_assignment.objects.filter(
+                group_id__in=user_group.objects.filter(
+                    username=request.user,
+                    is_deleted="FALSE",
+                ).values('group_id'),
+                is_deleted="FALSE",
+            ).values('project_id').distinct()
+        ) and
+        Q(
+            Q(project_status='New') or
+            Q(project_status='Open')
+        )
+    )
 
     task_results = task.objects.filter(
         Q(
@@ -618,9 +571,9 @@ def requirement_new_link(request, requirement_id, location_id='', destination=''
                 group_id__in=user_group.objects.filter(
                     username=request.user,
                     is_deleted="FALSE",
-                ).distinct('group_id'),
+                ).values('group_id'),
                 is_deleted="FALSE",
-            ).values('task_id').distinct('task_id')
+            ).values('task_id').distinct()
         ) and
         Q(
             Q(task_status='New') or
