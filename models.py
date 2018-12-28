@@ -748,6 +748,18 @@ class folder(models.Model):
         blank=True,
         null=True
     )
+    customer_id=models.ForeignKey(
+        'customer',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    organisation_id=models.ForeignKey(
+        'organisation',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
     folder_description = models.CharField(max_length=255)
     parent_folder_id = models.ForeignKey(
         'self',

@@ -7,19 +7,16 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
 <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
+<script type="text/javascript" src="{% static 'NearBeach/javascript/document_upload.js' %}"></script>
+
 
 <script>
 	function on_page_load() {
 	    //Load AJAX components
         load_contact_history();
-        load_customer_documents_list();
         load_email_history();
 
-        //Autoscale all textarea
-        autoscale_textarea();
-
-        //Fix up autoscaling for id_contact_history
-        //document.getElementById("id_contact_history").style.height = "200px";
+        load_document_tree_list({{ customer_id }},'customer');
 
         //Move these to a proper set
         set_permissions({{ customer_permissions }});
@@ -138,10 +135,11 @@
     </div>
 
 
-    <form method="post" class="customer_documents_list" id="customer_documents_list" enctype="multipart/form-data">
-        <h2>Customer Documents List</h2>
+    <h2>Document Uploads</h2>
+    <div class="document_tree_list" id="document_tree_list">
+        <h2>Document Tree List</h2>
         Loading...
-    </form>
+    </div>
 
     <h2>Customer Quotes</h2>
     <a href="{% url 'new_quote' customer_id 'customer' %}">New Quote</a>
@@ -308,22 +306,6 @@
     });
 
 
-    $("#customer_documents_list").on('submit', function(e) {
-        e.preventDefault();
-        $.ajax({
-            type: 'POST',
-            url: '/information_customer_documents_list/{{ customer_id }}/{{ customer_results.organisation_id.organisation_id }}',
-            data: $(this).serialize(),
-            success: function() {
-                //Reload the project history :)
-                load_customer_documents_list();
-            },
-            error: function() {
-                alert("Sorry, project history did not save. Please try again.");
-            }
-        })
-    });
-
 
     $("#id_update_profile_picture").on("change",function(e){
         //Get the file
@@ -404,54 +386,11 @@
     };
 
 
-    function load_customer_documents_list() {
-        //Load Project History
-        $.ajax({
-            url: '/information_customer_documents_list/{{ customer_id }}/{{ customer_results.organisation_id.organisation_id }}',
-            data: {},
-            dataType: 'HTML',
-            type: 'GET',
-            success: function(data) {
-                $('#customer_documents_list').html(data);
-            },
-            error: function() {
-                $('#customer_documents_list').html('<h2>Contact Documents</h2>Sorry, contact documents encounted an error and did not load.');
-            }
-        });
-    };
-
-
-
-    function edit_document_description(document_key) {
-        //alert(document_key);
-    }
-
     function csrfSafeMethod(method) {
         // these HTTP methods do not require CSRF protection
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
 
-    function delete_document(document_key) {
-        $.ajaxSetup({
-            beforeSend: function (xhr, settings) {
-                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                }
-            }
-        });
-        $.ajax({
-            url: "/delete_document/" + document_key + "/",
-            data: {},
-            dataType: 'HTML',
-            type: 'POST',
-            success: function(data) {
-                load_customer_documents_list();
-            },
-            error: function() {
-                alert("There was an issue deleting the document");
-            }
-        })
-    }
 
     // using jQuery to extract the CSRFToken
     function getCookie(name) {
