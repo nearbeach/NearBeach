@@ -229,3 +229,20 @@ The table that will display the current directory.
         </div>
     </div>
 </div>
+
+<script>
+    /*
+    The following will prevent the "Enter" key from submitting the
+    forms by mistake. This will limit it to getting the user to press
+    the button instead.
+     */
+    $("#document_upload_form").on("submit", function(e){
+        e.preventDefault();
+    });
+    $("#document_url_form").on("submit", function(e){
+        e.preventDefault();
+    });
+    $("#new_folder_form").on("submit", function(e){
+        e.preventDefault();
+    });
+</script>
