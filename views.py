@@ -3934,14 +3934,8 @@ def new_quote(request,destination,primary_key):
 
 
             # Create the final start/end date fields
-            quote_valid_till = convert_to_utc(
-                int(form.cleaned_data['quote_valid_till_year']),
-                int(form.cleaned_data['quote_valid_till_month']),
-                int(form.cleaned_data['quote_valid_till_day']),
-                int(form.cleaned_data['quote_valid_till_hour']),
-                int(form.cleaned_data['quote_valid_till_minute']),
-                form.cleaned_data['quote_valid_till_meridiems']
-            )
+            quote_valid_till = form.cleaned_data['quote_valid_till']
+
             quote_stage_instance = list_of_quote_stage.objects.get(quote_stage_id=quote_stage_id.quote_stage_id)
 
             submit_quotes = quote(
