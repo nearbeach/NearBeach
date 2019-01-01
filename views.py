@@ -4994,15 +4994,7 @@ def quote_information(request, quote_id):
             quotes_results.quote_stage_id = form.cleaned_data['quote_stage_id']
             quotes_results.customer_notes = form.cleaned_data['customer_notes']
             quotes_results.quote_billing_address = form.cleaned_data['quote_billing_address']
-
-            quotes_results.quote_valid_till = convert_to_utc(
-                int(form.cleaned_data['quote_valid_till_year']),
-                int(form.cleaned_data['quote_valid_till_month']),
-                int(form.cleaned_data['quote_valid_till_day']),
-                int(form.cleaned_data['quote_valid_till_hour']),
-                int(form.cleaned_data['quote_valid_till_minute']),
-                form.cleaned_data['quote_valid_till_meridiems']
-            )
+            quotes_results.quote_valid_till = form.cleaned_data['quote_valid_till']
 
             #Check to see if we have to move quote to invoice
             if 'create_invoice' in request.POST:
