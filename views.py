@@ -446,16 +446,20 @@ def assigned_user_add(request, location_id, destination):
 
 
 @login_required(login_url='login')
-def assigned_user_delete(request, location_id, destination):
-    #TEMP CODE
-    t = loader.get_template('NearBeach/blank.html')
+def assigned_user_delete(request, object_assignment_id):
+    if request.method == "POST":
+        object_assignment_update = object_assignment.objects.get(object_assignment_id=object_assignment_id)
+        object_assignment_update.change_user=request.user
+        object_assignment_update.is_deleted="TRUE"
+        object_assignment_update.save()
 
-    # context
-    c = {
 
-    }
-
-    return HttpResponse(t.render(c, request))
+        #Return blank back
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("Sorry - can only do this in POST")
 
 
 

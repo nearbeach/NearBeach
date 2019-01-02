@@ -15,7 +15,7 @@
                     <td>{{ row.assigned_user.first_name }}</td>
                     <td>{{ row.assigned_user.last_name }}</td>
                     {% if permissions > 3 %}
-                        <td><a href="javascript:void(0)" onclick="assigned_user_delete({{ row.assigned_user.id }})">Remove User</a></td>
+                        <td><a href="javascript:void(0)" onclick="assigned_user_delete({{ row.object_assignment_id }})">Remove User</a></td>
                     {% endif %}
                 </tr>
             {% endfor %}

@@ -32,7 +32,7 @@ re_path(r'^assigned_group_add/(?P<location_id>[0-9]+)/(?P<destination>["project"
 re_path(r'^assigned_group_delete/(?P<object_assignment_id>[0-9]+)/', views.assigned_group_delete , name='assigned_group_delete'),
 re_path(r'^assigned_group_list/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/', views.assigned_group_list , name='assigned_group_list'),
 re_path(r'^assigned_user_add/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/$',views.assigned_user_add,name='assigned_user_add'),
-re_path(r'^assigned_user_delete/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/', views.assigned_user_delete , name='assigned_user_delete'),
+re_path(r'^assigned_user_delete/(?P<object_assignment_id>[0-9]+)/', views.assigned_user_delete , name='assigned_user_delete'),
 re_path(r'^assigned_user_list/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/$',views.assigned_user_list,name='assigned_user_list'),
 re_path(r'^associate/(?P<project_id>[0-9]+)/(?P<task_id>[0-9]+)/(?P<project_or_task>[P,T])', views.associate,name='associate'),
 re_path(r'^associated_projects/(?P<task_id>[0-9]+)/', views.associated_projects, name='associated_projects'),
