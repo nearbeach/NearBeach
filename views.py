@@ -2713,17 +2713,31 @@ def kanban_new_link(request,kanban_board_id,location_id='',destination=''):
 
 
     #Get data
+    kanban_card_results = kanban_card.objects.filter(
+        is_deleted="FALSE",
+        kanban_board_id=kanban_board_id,
+    )
+
     project_results = project.objects.filter(
         is_deleted="FALSE",
         project_status__in=('New','Open'),
+    ).exclude(
+        is_deleted="FALSE",
+        project_id__in=kanban_card_results.filter(project_id__isnull=False).values('project_id')
     )
     task_results = task.objects.filter(
         is_deleted="FALSE",
         task_status__in=('New','Open'),
+        task_id__in=kanban_card_results.filter(task_id__isnull=False).values('task_id')
     )
     requirement_results = requirement.objects.filter(
         is_deleted="FALSE",
-        #There is no requirement status - BUG275
+        requirement_status_id__in=list_of_requirement_status.objects.filter(
+            requirement_status_is_closed="FALSE",
+        ).values('requirement_status_id')
+    ).exclude(
+        is_deleted="FALSE",
+        requirement_id__in=kanban_card_results.filter(requirement_id__isnull=False).values('requirement_id')
     )
 
     t = loader.get_template('NearBeach/kanban/kanban_new_link.html')
