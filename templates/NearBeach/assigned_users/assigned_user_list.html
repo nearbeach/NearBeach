@@ -4,7 +4,7 @@
             <td>Username</td>
             <td>First Name</td>
             <td>Last name</td>
-            {% if project_permissions > 3 %}
+            {% if permissions > 3 %}
                 <td>Remove User</td>
             {% endif %}
         </tr>
@@ -14,8 +14,8 @@
                     <td>{{ row.assigned_user.username }}</td>
                     <td>{{ row.assigned_user.first_name }}</td>
                     <td>{{ row.assigned_user.last_name }}</td>
-                    {% if project_permissions > 3 %}
-                        <td><a href="javascript:void(0)" onclick="remove_user({{ row.assigned_user }})">Remove User</a></td>
+                    {% if permissions > 3 %}
+                        <td><a href="javascript:void(0)" onclick="assigned_user_delete({{ row.assigned_user.id }})">Remove User</a></td>
                     {% endif %}
                 </tr>
             {% endfor %}

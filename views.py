@@ -461,6 +461,8 @@ def assigned_user_delete(request, location_id, destination):
 
 @login_required(login_url='login')
 def assigned_user_list(request, location_id, destination):
+    permission_results = return_user_permission_level(request, None, destination)
+
     # Get SQL
     if destination == 'project':
         assigned_user_results = object_assignment.objects.filter(
@@ -506,6 +508,7 @@ def assigned_user_list(request, location_id, destination):
     # context
     c = {
         'assigned_user_results': assigned_user_results,
+        'permissions': permission_results[destination],
     }
 
     return HttpResponse(t.render(c, request))
