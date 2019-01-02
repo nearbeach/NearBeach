@@ -57,6 +57,7 @@ re_path(r'^dashboard/group_active_projects', views.dashboard_group_active_projec
 re_path(r'^dashboard/group_active_task', views.dashboard_group_active_task,name='dashboard_group_active_task'),
 re_path(r'^dashboard/group_opportunities', views.dashboard_group_opportunities, name='dashboard_group_opportunities'),
 re_path(r'^dashboard/opportunities', views.dashboard_opportunities, name='dashboard_opportunities'),
+re_path(r'^deactivate_campus/(?P<campus_id>[0-9]+)/$',views.deactivate_campus,name='deactivate_campus'),
 re_path(r'^delete_campus_contact/(?P<customer_campus_id>[0-9]+)/(?P<cust_or_camp>["CUST","CAMP"]+)',views.delete_campus_contact, name='delete_campus_contact'),
 re_path(r'^delete_cost/(?P<cost_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])', views.delete_cost,name='delete_cost'),
 re_path(r'^delete_document/(?P<document_key>[0-9A-Za-z_\-]+)/$', views_document_tree.delete_document, name='delete_document'),

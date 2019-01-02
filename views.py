@@ -1185,8 +1185,14 @@ def customer_information(request, customer_id):
             print(form.errors)
 
     # Get the instance
-    customer_results = customer.objects.get(customer_id=customer_id)
-    add_campus_results = campus.objects.filter(organisation_id=customer_results.organisation_id)
+    customer_results = customer.objects.get(
+        customer_id=customer_id,
+        is_deleted="FALSE",
+    )
+    add_campus_results = campus.objects.filter(
+        organisation_id=customer_results.organisation_id,
+        is_deleted="FALSE",
+    )
     quote_results = quote.objects.filter(
         is_deleted="FALSE",
         customer_id=customer_id,
@@ -1520,6 +1526,29 @@ def dashboard_opportunities(request):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def deactivate_campus(request, campus_id):
+    if request.method == "POST":
+        #Setting the campus as deleted
+        campus_update = campus.objects.get(campus_id=campus_id)
+        campus_update.is_deleted="TRUE"
+        campus_update.save()
+
+        #Deleting all customers connected with the campus
+        #ModelClass.objects.filter(name='bar').update(name="foo")
+        customer_campus.objects.filter(
+            is_deleted="FALSE",
+            campus_id=campus_id,
+        ).update(is_deleted="TRUE")
+
+        #Return blank page :)
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry, this request is only for POST")
 
 
 @login_required(login_url='login')
@@ -4599,16 +4628,28 @@ def organisation_information(request, organisation_id):
 
     # Query the database for organisation information
     organisation_results = organisation.objects.get(pk=organisation_id)
-    campus_results = campus.objects.filter(organisation_id=organisation_id)
-    customer_results = customer.objects.filter(organisation_id=organisation_results)
+    campus_results = campus.objects.filter(
+        organisation_id=organisation_id,
+        is_deleted="FALSE",
+    )
+    customer_results = customer.objects.filter(
+        organisation_id=organisation_results,
+        is_deleted="FALSE",
+    )
     quote_results = quote.objects.filter(
         is_deleted="FALSE",
         organisation_id=organisation_id,
     )
 
 
-    project_results = project.objects.filter(organisation_id=organisation_id)
-    task_results = task.objects.filter(organisation_id=organisation_id)
+    project_results = project.objects.filter(
+        organisation_id=organisation_id,
+        is_deleted="FALSE",
+    )
+    task_results = task.objects.filter(
+        organisation_id=organisation_id,
+        is_deleted="FALSE",
+    )
     """
     We need to limit the amount of opportunities to those that the user has access to.
     """

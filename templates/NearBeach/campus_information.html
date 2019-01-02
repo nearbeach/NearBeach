@@ -6,6 +6,7 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/widgets/jquery/jquery-3.2.1.min.js' %}"></script>
 <link rel="stylesheet" href="{% static 'NearBeach/widgets/intl-tel-input/css/intlTelInput.css' %}">
+<script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
 <script src="{% static 'NearBeach/widgets/intl-tel-input/js/intlTelInput.js' %}"></script>
 
 
@@ -44,6 +45,34 @@
             <tr><td><input type="text" readonly value="{{ campus_results.campus_country_id }}"></td></tr>
 		</table>
 		<input type="submit" value="Save">
+        {% if permission >= 3 %}
+            <a class="btn btn-danger" href="javascript:void(0)" onclick="confirm_deactivate_campus()">Deactivate Campus</a>
+            <!-- Deactivate Campus
+            If the user has permissions 3 or 4, they can deactivate a campus. The campus will deactivate and not be
+            deleted.
+            -->
+            <div class="modal fade" id="confirm_deactivate_campus" tabindex="-1" role="dialog" aria-labelledby="deactivate_campus" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deactivate_campus_title">Deactivate Campus</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to deactivate this campus. Deactivating this campus will not delete the data,
+                            however it will remove it from being found on NearBeach. All customer's campuses for this campus
+                            will be deactivated also.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="deactivate_campus_confirmed" class="btn btn-danger btn-ok" disabled onclick="deactivate_campus()">Deactivate Campus</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
 
 	</form>
     {% if campus_results.organisations_id %}
@@ -83,6 +112,7 @@
 	<div id='map'></div>
 
 
+
 	<script type="text/javascript">
         function on_page_load() {
 
@@ -111,6 +141,49 @@
             window.intlTelInput(campus_phone);
             window.intlTelInput(campus_fax);
 
+        }
+
+        function confirm_deactivate_campus() {
+            //bring up modal
+            //wait 2 seconds
+            //enable button
+
+            $("#confirm_deactivate_campus").modal("show");
+
+            setTimeout(function () {
+                document.getElementById("deactivate_campus_confirmed").disabled = false;
+            }, 2000);
+        }
+
+        function deactivate_campus() {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/deactivate_campus/{{ campus_results.campus_id }}/',
+                data: {},
+                dataType: "HTML",
+                type: "POST",
+                success: function(data) {
+                    $("#confirm_deactivate_campus").modal("hide"); //Remove the modal
+                    //Go to organisation/customer??
+                    {% if campus_results.organisation_id %}
+                        window.location.href = "/organisation_information/{{ campus_results.organisation_id.organisation_id }}/";
+                    {% elif campus_results.customer_id %}
+                        window.location.href = "/organisation_information/{{ campus_results.customer.customer_id }}/";
+                    {% else %}
+                        window.location.href = "/";
+                    {% endif %}                },
+                error: function() {
+                    alert("Sorry, there was an issue deactivating the campus");
+                }
+
+            })
         }
 	</script>
 
