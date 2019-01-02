@@ -19,12 +19,18 @@
             <td>Customer Name</td>
             <td>Customer Description</td>
             <td>Customer Email</td>
+            {% if project_permissions >= 3 %}
+                <td>Remove Customer</td>
+            {% endif %}
         </tr>
         {% for row in project_customers_results %}
             <tr>
                 <td><a href="{% url 'customer_information' row.customer_id.customer_id %}">{{ row.customer_id.customer_first_name }} {{ row.customer_id.customer_last_name }}</a></td>
                 <td>{{ row.customer_description }}</td>
                 <td>{{ row.customer_id.customer_email }}</td>
+                {% if project_permissions >= 3 %}
+                    <td><a href="javascript:void(0)" onclick="remove_customer({{ row.project_customer_id }})">Remove</a></td>
+                {% endif %}
             </tr>
         {% endfor %}
     </table>

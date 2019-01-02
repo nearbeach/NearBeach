@@ -5017,6 +5017,24 @@ def project_information(request, project_id):
 
 
 @login_required(login_url='login')
+def project_remove_customer(request,project_customer_id):
+    if request.method == "POST":
+        project_customer_update = project_customer.objects.filter(
+            project_customer_id=project_customer_id,
+        )
+        project_customer_update.is_deleted="FALSE"
+        project_customer_update.change_user=request.user
+        project_customer_update.save()
+
+        #Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("Can only do this through POST")
+
+
+@login_required(login_url='login')
 def quote_information(request, quote_id):
     permission_results = return_user_permission_level(request, None, 'quote')
 
