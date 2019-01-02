@@ -22,7 +22,7 @@
         <br/>
         <table>
             <tr><td>{{ row.contact_type }} - Submitted by {{ row.user_id }} on {{ row.contact_date }}</td></tr>
-            <tr><td><span>{{ row.contact_history|safe }}</span></td></tr>
+            <tr><td><textarea class="old_customer_contact_history">{{ row.contact_history|safe }}</textarea></td></tr>
             {% if row.document_key %}
                 <tr><td>
                     <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}" target="_blank">{{ row.document_key.document_description }}</a>

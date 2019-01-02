@@ -240,6 +240,14 @@
             type: 'GET',
             success: function(data) {
                 $('#organisation_contact_history').html(data);
+
+                tinyMCE.init({
+                    selector: '.old_organisation_contact_history',
+                    readonly: true,
+                    'toolbar': false,
+                    'menubar': false,
+                    'height': '300px',
+                });
             },
             error: function() {
                 $('#organisation_contact_history').html('<h2>Contact History</h2>Sorry, contact history encounted an error and did not load.');
