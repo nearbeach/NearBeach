@@ -63,7 +63,10 @@ def information_task_customer(request, task_id):
         organisation_id=task_results.organisation_id,
         is_deleted="FALSE",
     ).exclude(
-        customer_id__in=task_customer.objects.filter(task_id=task_results.task_id).values('customer_id')
+        customer_id__in=task_customer.objects.filter(
+            is_deleted="FALSE",
+            task_id=task_results.task_id,
+        ).values('customer_id')
     )
 
     task_customers_results=task_customer.objects.filter(

@@ -5765,6 +5765,23 @@ def task_information(request, task_id):
 
     return HttpResponse(t.render(c, request))
 
+@login_required(login_url='login')
+def task_remove_customer(request,task_customer_id):
+    if request.method == "POST":
+        task_customer_update =task_customer.objects.get(
+            task_customer_id=task_customer_id,
+        )
+        task_customer_update.change_user=request.user
+        task_customer_update.is_deleted="TRUE"
+        task_customer_update.save()
+
+        #Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry, can only do this in POST")
+
 
 @login_required(login_url='login')
 def timeline(request):
