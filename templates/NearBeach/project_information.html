@@ -483,6 +483,29 @@
     }
 
 
+    function remove_customer(project_customer_id) {
+        //Send data to the database
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            url: '/project_remove_customer/' + project_customer_id + '/',
+            data: {},
+            type: "POST",
+            success: function(data) {
+                load_project_customers();
+            },
+            error: function() {
+                alert("Sorry - there is something wrong with removing this customer");
+            }
+        });
+    }
+
     function load_bug_list() {
         $.ajax({
             url: '/bug_list/{{ project_id }}/project',

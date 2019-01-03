@@ -48,7 +48,8 @@ def information_project_customer(request, project_id):
         is_deleted="FALSE",
     ).exclude(
         customer_id__in=project_customer.objects.filter(
-            project_id=project_results.project_id
+            is_deleted="FALSE",
+            project_id=project_results.project_id,
         ).values('customer_id')
     )
 
