@@ -1823,28 +1823,12 @@ class new_quote_form(ModelForm):
         })
     )
 
-    quote_valid_till_year=forms.ChoiceField(
-        choices=YEAR_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
+    quote_valid_till = forms.DateTimeField(
+        initial=datetime.datetime.now()+datetime.timedelta(days=31),
+        widget=forms.DateTimeInput(attrs={
+            'style': 'width: 200px',
         })
     )
-    quote_valid_till_month=forms.ChoiceField(
-        choices=MONTH_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
-        })
-    )
-    quote_valid_till_day=forms.ChoiceField(
-        choices=DAY_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
-        })
-    )
-    quote_valid_till_hour=forms.ChoiceField(choices=HOUR_CHOICES)
-    quote_valid_till_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
-    quote_valid_till_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
-
 
     quote_stage_id = forms.ModelChoiceField(
         label="Quote Stage",
@@ -1893,6 +1877,7 @@ class new_quote_form(ModelForm):
             'quote_approval_status_id',
             'quote_terms',
             'customer_notes',
+            'quote_valid_till',
         }
 
 
@@ -2371,28 +2356,12 @@ class quote_information_form(ModelForm):
         })
     )
 
-    quote_valid_till_year=forms.ChoiceField(
-        choices=YEAR_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
+    quote_valid_till = forms.DateTimeField(
+        initial=datetime.datetime.now() + datetime.timedelta(days=31),
+        widget=forms.DateTimeInput(attrs={
+            'style': 'width: 200px',
         })
     )
-    quote_valid_till_month=forms.ChoiceField(
-        choices=MONTH_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
-        })
-    )
-    quote_valid_till_day=forms.ChoiceField(
-        choices=DAY_CHOICES,
-        widget=forms.Select(attrs={
-            "onChange":'check_start_date()'
-        })
-    )
-    quote_valid_till_hour=forms.ChoiceField(choices=HOUR_CHOICES)
-    quote_valid_till_minute=forms.ChoiceField(choices=MINUTE_CHOICES)
-    quote_valid_till_meridiems=forms.ChoiceField(choices=MERIDIEMS_CHOICES)
-
 
     quote_stage_id = forms.ModelChoiceField(
         label="Quote Stage",
@@ -2431,6 +2400,7 @@ class quote_information_form(ModelForm):
             'quote_stage_id',
             'quote_terms',
             'customer_notes',
+            'quote_valid_till',
         }
 
 

@@ -2,21 +2,22 @@
 {% block content %}
 {% load static %}
 <script type="text/javascript" src="{% static 'NearBeach/javascript/campus_information.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/jquery/jquery-3.2.1.min.js' %}"></script>
-<link rel="stylesheet" href="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/intl-tel-input/css/intlTelInput.css' %}">
-<script src="{% static 'NearBeach/javascript/../../static/NearBeach/widgets/intl-tel-input/js/intlTelInput.js' %}"></script>
+<link rel="stylesheet" href="{% static 'NearBeach/widgets/intl-tel-input/css/intlTelInput.css' %}">
+<script src="{% static 'NearBeach/widgets/intl-tel-input/js/intlTelInput.js' %}"></script>
+
+
 <style>
-    .iti-flag {background-image: url("{% static 'NearBeach/javascript/../../static/NearBeach/widgets/intl-tel-input/img/flags.png' %}");}
+    .iti-flag {background-image: url("{% static 'NearBeach/widgets/intl-tel-input/img/flags.png' %}");}
 
     @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-      .iti-flag {background-image: url("{% static 'NearBeach/javascript/../../static/NearBeach/widgets/intl-tel-input/img/flags@2x.png' %}");}
+      .iti-flag {background-image: url("{% static 'NearBeach/widgets/intl-tel-input/img/flags@2x.png' %}");}
     }
 </style>
 
 {% if not MAPBOX_API_TOKEN == '' %}
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/mapbox.js' %}"></script>
+<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
+<script type="text/javascript" src="{% static 'NearBeach/javascript/mapbox.js' %}"></script>
 {% elif not GOOGLE_MAP_API_TOKEN == '' %}
     <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAP_API_TOKEN }}&callback=initMap" async defer></script>
     <script type="text/javascript" src="{% static 'NearBeach/javascript/google_maps.js' %}"></script>
@@ -51,17 +52,17 @@
         function on_page_load() {
             set_permissions({{ permission }});
 
-
-            initMap(
-                {{ campus_results.campus_latitude }},
-                {{ campus_results.campus_longitude }},
-                "{{ campus_results.campus_nickname }}"
-            );
-
+            {% if not MAPBOX_API_TOKEN == "" or not GOOGLE_MAP_API_TOKEN == "" %}
+                initMap(
+                    {{ campus_results.campus_latitude }},
+                    {{ campus_results.campus_longitude }},
+                    "{{ campus_results.campus_nickname }}"
+                );
+            {% endif %}
 
             //Initiate the intl-tel-input
-            var campus_phone = document.querySelector("#id_campus_phone"),
-                campus_fax = document.querySelector("#id_campus_fax");
+            var campus_phone = document.querySelector("#id_customer_phone"),
+                campus_fax = document.querySelector("#id_customer_fax");
 
             window.intlTelInput(campus_phone);
             window.intlTelInput(campus_fax);

@@ -446,21 +446,27 @@ def assigned_user_add(request, location_id, destination):
 
 
 @login_required(login_url='login')
-def assigned_user_delete(request, location_id, destination):
-    #TEMP CODE
-    t = loader.get_template('NearBeach/blank.html')
+def assigned_user_delete(request, object_assignment_id):
+    if request.method == "POST":
+        object_assignment_update = object_assignment.objects.get(object_assignment_id=object_assignment_id)
+        object_assignment_update.change_user=request.user
+        object_assignment_update.is_deleted="TRUE"
+        object_assignment_update.save()
 
-    # context
-    c = {
 
-    }
-
-    return HttpResponse(t.render(c, request))
+        #Return blank back
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("Sorry - can only do this in POST")
 
 
 
 @login_required(login_url='login')
 def assigned_user_list(request, location_id, destination):
+    permission_results = return_user_permission_level(request, None, destination)
+
     # Get SQL
     if destination == 'project':
         assigned_user_results = object_assignment.objects.filter(
@@ -506,6 +512,7 @@ def assigned_user_list(request, location_id, destination):
     # context
     c = {
         'assigned_user_results': assigned_user_results,
+        'permissions': permission_results[destination],
     }
 
     return HttpResponse(t.render(c, request))
@@ -1185,8 +1192,14 @@ def customer_information(request, customer_id):
             print(form.errors)
 
     # Get the instance
-    customer_results = customer.objects.get(customer_id=customer_id)
-    add_campus_results = campus.objects.filter(organisation_id=customer_results.organisation_id)
+    customer_results = customer.objects.get(
+        customer_id=customer_id,
+        is_deleted="FALSE",
+    )
+    add_campus_results = campus.objects.filter(
+        organisation_id=customer_results.organisation_id,
+        is_deleted="FALSE",
+    )
     quote_results = quote.objects.filter(
         is_deleted="FALSE",
         customer_id=customer_id,
@@ -1520,6 +1533,29 @@ def dashboard_opportunities(request):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def deactivate_campus(request, campus_id):
+    if request.method == "POST":
+        #Setting the campus as deleted
+        campus_update = campus.objects.get(campus_id=campus_id)
+        campus_update.is_deleted="TRUE"
+        campus_update.save()
+
+        #Deleting all customers connected with the campus
+        #ModelClass.objects.filter(name='bar').update(name="foo")
+        customer_campus.objects.filter(
+            is_deleted="FALSE",
+            campus_id=campus_id,
+        ).update(is_deleted="TRUE")
+
+        #Return blank page :)
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry, this request is only for POST")
 
 
 @login_required(login_url='login')
@@ -2677,17 +2713,31 @@ def kanban_new_link(request,kanban_board_id,location_id='',destination=''):
 
 
     #Get data
+    kanban_card_results = kanban_card.objects.filter(
+        is_deleted="FALSE",
+        kanban_board_id=kanban_board_id,
+    )
+
     project_results = project.objects.filter(
         is_deleted="FALSE",
         project_status__in=('New','Open'),
+    ).exclude(
+        is_deleted="FALSE",
+        project_id__in=kanban_card_results.filter(project_id__isnull=False).values('project_id')
     )
     task_results = task.objects.filter(
         is_deleted="FALSE",
         task_status__in=('New','Open'),
+        task_id__in=kanban_card_results.filter(task_id__isnull=False).values('task_id')
     )
     requirement_results = requirement.objects.filter(
         is_deleted="FALSE",
-        #There is no requirement status - BUG275
+        requirement_status_id__in=list_of_requirement_status.objects.filter(
+            requirement_status_is_closed="FALSE",
+        ).values('requirement_status_id')
+    ).exclude(
+        is_deleted="FALSE",
+        requirement_id__in=kanban_card_results.filter(requirement_id__isnull=False).values('requirement_id')
     )
 
     t = loader.get_template('NearBeach/kanban/kanban_new_link.html')
@@ -3934,14 +3984,8 @@ def new_quote(request,destination,primary_key):
 
 
             # Create the final start/end date fields
-            quote_valid_till = convert_to_utc(
-                int(form.cleaned_data['quote_valid_till_year']),
-                int(form.cleaned_data['quote_valid_till_month']),
-                int(form.cleaned_data['quote_valid_till_day']),
-                int(form.cleaned_data['quote_valid_till_hour']),
-                int(form.cleaned_data['quote_valid_till_minute']),
-                form.cleaned_data['quote_valid_till_meridiems']
-            )
+            quote_valid_till = form.cleaned_data['quote_valid_till']
+
             quote_stage_instance = list_of_quote_stage.objects.get(quote_stage_id=quote_stage_id.quote_stage_id)
 
             submit_quotes = quote(
@@ -4605,16 +4649,28 @@ def organisation_information(request, organisation_id):
 
     # Query the database for organisation information
     organisation_results = organisation.objects.get(pk=organisation_id)
-    campus_results = campus.objects.filter(organisation_id=organisation_id)
-    customer_results = customer.objects.filter(organisation_id=organisation_results)
+    campus_results = campus.objects.filter(
+        organisation_id=organisation_id,
+        is_deleted="FALSE",
+    )
+    customer_results = customer.objects.filter(
+        organisation_id=organisation_results,
+        is_deleted="FALSE",
+    )
     quote_results = quote.objects.filter(
         is_deleted="FALSE",
         organisation_id=organisation_id,
     )
 
 
-    project_results = project.objects.filter(organisation_id=organisation_id)
-    task_results = task.objects.filter(organisation_id=organisation_id)
+    project_results = project.objects.filter(
+        organisation_id=organisation_id,
+        is_deleted="FALSE",
+    )
+    task_results = task.objects.filter(
+        organisation_id=organisation_id,
+        is_deleted="FALSE",
+    )
     """
     We need to limit the amount of opportunities to those that the user has access to.
     """
@@ -4961,6 +5017,25 @@ def project_information(request, project_id):
 
 
 @login_required(login_url='login')
+def project_remove_customer(request,project_customer_id):
+    if request.method == "POST":
+        project_customer_update = project_customer.objects.get(
+            project_customer_id=project_customer_id
+        )
+        project_customer_update.is_deleted="TRUE"
+        project_customer_update.change_user=request.user
+        project_customer_update.save()
+
+
+        #Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("Can only do this through POST")
+
+
+@login_required(login_url='login')
 def quote_information(request, quote_id):
     permission_results = return_user_permission_level(request, None, 'quote')
 
@@ -5000,15 +5075,7 @@ def quote_information(request, quote_id):
             quotes_results.quote_stage_id = form.cleaned_data['quote_stage_id']
             quotes_results.customer_notes = form.cleaned_data['customer_notes']
             quotes_results.quote_billing_address = form.cleaned_data['quote_billing_address']
-
-            quotes_results.quote_valid_till = convert_to_utc(
-                int(form.cleaned_data['quote_valid_till_year']),
-                int(form.cleaned_data['quote_valid_till_month']),
-                int(form.cleaned_data['quote_valid_till_day']),
-                int(form.cleaned_data['quote_valid_till_hour']),
-                int(form.cleaned_data['quote_valid_till_minute']),
-                form.cleaned_data['quote_valid_till_meridiems']
-            )
+            quotes_results.quote_valid_till = form.cleaned_data['quote_valid_till']
 
             #Check to see if we have to move quote to invoice
             if 'create_invoice' in request.POST:
@@ -5697,6 +5764,23 @@ def task_information(request, task_id):
     }
 
     return HttpResponse(t.render(c, request))
+
+@login_required(login_url='login')
+def task_remove_customer(request,task_customer_id):
+    if request.method == "POST":
+        task_customer_update =task_customer.objects.get(
+            task_customer_id=task_customer_id,
+        )
+        task_customer_update.change_user=request.user
+        task_customer_update.is_deleted="TRUE"
+        task_customer_update.save()
+
+        #Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry, can only do this in POST")
 
 
 @login_required(login_url='login')

@@ -8,8 +8,9 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/bug.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/document_upload.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/assigned_user_list.js' %}"></script>
 <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
-
+<script type="text/javascript" src="{% static 'NearBeach/javascript/assigned_user_list.js' %}"></script>
 
 <script>
     function on_page_load() {
@@ -381,7 +382,6 @@
 
     $("#task_customers").on('submit', function(e) {
         e.preventDefault();
-        alert("PREVENTING DEFAULT");
         $.ajax({
             url: '/information_task_customer/{{ task_id }}/',
             type: 'POST',
@@ -680,6 +680,29 @@
             },
             error: function() {
                 alert("Sorry, could not delete costs");
+            }
+        });
+    }
+
+    function remove_customer(task_customer_id) {
+        //Send data to the database
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            url: '/task_remove_customer/' + task_customer_id + '/',
+            data: {},
+            type: "POST",
+            success: function(data) {
+                load_task_customers();
+            },
+            error: function() {
+                alert("Sorry - there is something wrong with removing this customer");
             }
         });
     }
