@@ -1,0 +1,147 @@
+{% extends "./template.html" %}
+{% block content %}
+    <script>
+        function on_page_load() {
+            //EXTRACT Group ACTIVE PROJECTS
+            $.ajax({
+                url: '/dashboard/group_active_projects/',
+                data: {},
+                dataType: 'HTML',
+                type:'GET',
+                success: function(data) {
+                    $('#group_active_projects').html(data);
+                },
+                error: function(){
+                    alert("Sorry, the 'Group Active Projects' had issues loading.");
+                }
+            });
+            //EXTRACT Group ACTIVE TASKS
+            $.ajax({
+                url: '/dashboard/group_active_tasks/',
+                data: {},
+                dataType: 'HTML',
+                type:'GET',
+                success: function(data) {
+                    $('#group_active_tasks').html(data);
+                },
+                error: function(){
+                    alert("Sorry, the 'Group Active Tasks' had issues loading");
+                }
+            });
+            $.ajax({
+                url: '/dashboard/active_quotes/',
+                data: {},
+                dataType: "HTML",
+                type: "GET",
+                success: function(data) {
+                    $("#active_quotes").html(data);
+                },
+                error: function() {
+                    alert("Sorry, the active quotes could not load");
+                }
+            });
+            $.ajax({
+                url: '/dashboard/active_requirements/',
+                data: {},
+                dataType: "HTML",
+                type: "GET",
+                success: function(data) {
+                    $("#active_requirements").html(data);
+                },
+                error: function() {
+                    alert("Sorry, the 'Active Requirements' dashboard widget could not load");
+                }
+            });
+            $.ajax({
+                url: '/dashboard/active_projects/',
+                data: {},
+                dataType: 'HTML',
+                type:'GET',
+                success: function(data) {
+                    $('#active_projects').html(data);
+                },
+                error: function(){
+                    alert("Sorry");
+                }
+            });
+                                    $.ajax({
+                url: '/dashboard/active_tasks/',
+                data: {},
+                dataType: 'HTML',
+                type:'GET',
+                success: function(data) {
+                    $('#active_tasks').html(data);
+                },
+                error: function(){
+                    alert("Sorry, the 'Active Tasks' had issues loading");
+                }
+            });
+            $.ajax({
+                url: '/dashboard/group_opportunities/',
+                data: {},
+                dataType: 'HTML',
+                type:'GET',
+                success: function(data) {
+                    $('#group_opportunities').html(data);
+                },
+                error: function(){
+                    alert("Sorry, the 'Group Opportunities' had issues loading");
+                }
+            });
+            $.ajax({
+                url: '/dashboard/opportunities/',
+                data: {},
+                dataType: 'HTML',
+                type:'GET',
+                success: function(data) {
+                    $('#opportunities').html(data);
+                },
+                error: function(){
+                    alert("Sorry, the 'Opportunities' had issues loading");
+                }
+            });
+        }
+    </script>
+    <body onload="on_page_load()">
+        <h2>NearBeach Dashboard</h2>
+        <input id="filter_tables" type="text" placeholder="Filter..." onkeyup="apply_filters()">
+        <ul>
+            <li id="active_projects"></li>
+            <li id="active_tasks"></li>
+            <li id="active_quotes"></li>
+            <li id="active_requirements"></li>
+            <li id="opportunities"></li>
+            <li id="group_active_projects"></li>
+            <li id="group_active_tasks"></li>
+            <li id="group_opportunities"></li>
+
+        </ul>
+    <script>
+        function apply_filters() {
+            //Varibales used in the function
+            var input,
+                filter,
+                tr,
+                i;
+
+            //Get the value from the search box
+            input = document.getElementById("filter_tables");
+
+            //We want to compare apples with apples, make all uppercase
+            filter = input.value.toUpperCase();
+
+            //Get all table rows
+            tr = document.getElementsByTagName("tr");
+
+            for (i = 0; i < tr.length; i++) {
+                //If the <tr> contains any values of the filter OR has class header, we want to show
+                if (tr[i].innerHTML.toUpperCase().indexOf(filter) > -1 || tr[i].className=="header") {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+    </body>
+{% endblock %}

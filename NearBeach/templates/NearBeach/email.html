@@ -1,0 +1,60 @@
+{% extends "./template.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
+<link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
+
+
+
+<form action={% url 'email' location_id destination %} method="post" enctype="multipart/form-data" class="email" multiple="multiple" data-is-stacked="0">
+{% csrf_token %}
+    <h2>Email</h2>
+    {% csrf_token %}
+    {{ email_form.media }}
+    <table>
+        <tr><td>
+            {{ email_form.organisation_email  }}
+            {% if destination == "organisation" %}
+                <a id="remove_organisation_id" href="javascript:void(0)" onclick="remove_organisation()">Click here to remove organisation from email list</a>
+            {% endif %}
+        </td></tr>
+        <tr><td>To: {{ email_form.to_email }}</td></tr>
+        <tr><td>CC: {{ email_form.cc_email }}</td></tr>
+        <tr><td>BCC: {{ email_form.bcc_email }}</td></tr>
+        <tr><td>{{ email_form.email_subject }}</td></tr>
+        <tr><td>{{ email_form.email_content }}</td></tr>
+        <tr><td>Private Email: {{ email_form.is_private }}</td></tr>
+        {% if destination == 'quote' %}
+            <tr><td>Send Quote: {{ email_form.email_quote }}</td></tr>
+            <tr><td>Quote Template: {{ email_form.quote_template_description }}</td></tr>
+
+        {% endif %}
+        <tr><td>
+            <input type="submit" value="Send Email">
+            {% if destination == "customer" %}
+                <a href="{% url 'customer_information' location_id %}">Cancel Email</a>
+            {% elif destination == 'organisation' %}
+                <a href="{% url 'organisation_information' location_id %}">Cancel Email</a>
+            {% elif destination == 'task' %}
+                <a href="{% url 'task_information' location_id %}">Cancel Email</a>
+            {% elif destination == 'quote' %}
+                <a href="{% url 'quote_information' location_id %}">Cancel Email</a>
+            {% elif destination == 'project' %}
+                <a href="{% url 'project_information' location_id %}">Cancel Email</a>
+            {% else %}
+                <a href="{% url 'dashboard' %}">Cancel Email</a>
+            {% endif %}
+        </td></tr>
+    </table>
+</form>
+<script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
+<script>
+    function remove_organisation() {
+        $("#id_organisation_email").val("");
+        $("#remove_organisation_id").html("");
+        $("#id_to_email").prop('required',true);
+    }
+</script>
+{% endblock %}

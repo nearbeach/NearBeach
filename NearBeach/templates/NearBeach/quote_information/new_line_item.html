@@ -1,0 +1,204 @@
+{% csrf_token %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'NearBeach/javascript/../../../static/NearBeach/widgets/chosen-js/chosen.css' %}">
+<link rel="stylesheet" href="{% static 'NearBeach/javascript/../../../static/NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
+{% if quote_permission > 1 %}
+<h2>New Line Item</h2>
+<table>
+    <tr>
+        <td width="25%">Product Price</td>
+        <td width="50%">Product and Services</td>
+        <td width="25%">Quantity</td>
+    </tr>
+    <tr>
+        <td>{{ new_line_item_form.product_price }}</td>
+        <td>{{ new_line_item_form.product_and_service }}</td>
+        <td>{{ new_line_item_form.quantity }}</td>
+    </tr>
+    <tr>
+        <td colspan="3">{{ new_line_item_form.product_description }}</td>
+    </tr>
+</table>
+<br/>
+<table id="discount_table" style="display: none;">
+    <tr>
+        <td>Discount Type</td>
+        <td>Discount Percentage</td>
+        <td>Discount Amount</td>
+        <td><b>Sales Price</b></td>
+    </tr>
+    <tr>
+        <td>{{ new_line_item_form.discount_choice }}</td>
+        <td>{{ new_line_item_form.discount_percent }}</td>
+        <td>{{ new_line_item_form.discount_amount }}</td>
+        <td>{{ new_line_item_form.sales_price }}</td>
+    </tr>
+</table>
+<br/>
+<table id="tax_table" style="display: none;">
+    <tr>
+        <td>Tax Percent</td>
+        <td>Tax Amount</td>
+        <td><b>Total</b></td>
+    </tr>
+    <tr>
+        <td>{{ new_line_item_form.tax }}</td>
+        <td>{{ new_line_item_form.tax_amount }}</td>
+        <td>{{ new_line_item_form.total}}</td>
+    </tr>
+    <tr>
+        <td colspan="3">{{ new_line_item_form.product_note }}</td>
+    </tr>
+    <tr>
+        <td colspan="3"><input type="submit" value="Submit Line Item" style="width: 100%;"></td>
+    </tr>
+</table>
+{% endif %}
+
+
+<script type="text/javascript" src="{% static 'NearBeach/javascript/../../../static/NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/../../../static/NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/../../../static/NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
+<script>
+    /*
+    Method
+    ~~~~~~
+    1.) When the user changes the product/service the system will determine which one it is
+    2.) It will apply the default values and hide unwanted fields
+    3.) If it is a product, it will extract the base values from the database
+     */
+    $("#id_products_and_services").on('change', function (evt, params) {
+        var label = $(this.options[this.selectedIndex]).closest('optgroup').prop('label');
+        var product_id = $(this.options[this.selectedIndex]).val();
+
+        //Unhide tables
+        $("#discount_table").css("display","");
+        $("#tax_table").css("display","");
+
+
+        // Obtain the product/service information
+        $.getJSON('/lookup_product/' + product_id, function (data) {
+           /*
+           We are now looking up the product information from the JSON function.
+           We now have to look into each element of the JSON (even though there
+           is only one), to extract the values inside.
+           */
+            $.each(data, function (i,f) {
+                /*
+                Now we can extract the required information using the following
+                code f.fields.product_or_service
+                 */
+                $("#id_product_cost").val(f.fields.product_cost);
+                $("#id_product_description").val(f.fields.product_description);
+                $("#id_product_price").val(f.fields.product_price);
+
+
+                //Clear the discount and tax amounts
+                $("#id_discount_choice").val($("#id_discount_choice option:first").val());
+                $("#id_discount_percent").val("0");
+                $("#id_discount_amount").val("0");
+
+                $("#id_tax").val($("#id_tax option:first").val());
+
+
+
+                //Hide the product description IF THERE IS NONE
+                if (f.fields.product_description == "") {
+                    $("#id_product_description").css("display","none");
+                } else {
+                    $("#id_product_description").css("display","");
+                }
+            });
+            //Update the total :)
+            update_total();
+        });
+    });
+
+
+    function discount_type_change() {
+        /*
+        If the discount type is a percentage then the following occurs;
+        -- Discount Percentage is read write
+        -- Discount Amount is read only - automatically updated in update_total() function
+
+        If the discount type is a discount then the following occurs;
+        -- Discount Percentage is read only and zero'ed off
+        -- Discount Amount is read write
+         */
+        if ($("#id_discount_choice").val() == "Percentage") {
+            //Discount Percentage is read write
+            $("#id_discount_percent").prop('readonly', false);
+            $("#id_discount_percent").css("background-color", "");
+            $("#id_discount_percent").val('0');
+
+            //Discount Amount is read only - automatically updated in update_total() function
+            $("#id_discount_amount").prop("readonly", true);
+            $("#id_discount_amount").css("background-color", "aliceblue");
+            $("#id_discount_amount").val('0');
+        } else {
+            //Discount Percentage is read only and zero'ed off
+            $("#id_discount_percent").prop('readonly', true);
+            $("#id_discount_percent").css("background-color", "aliceblue");
+            $("#id_discount_percent").val('0');
+
+            //Discount Amount is read write
+            $("#id_discount_amount").prop("readonly", false);
+            $("#id_discount_amount").css("background-color", "");
+            $("#id_discount_amount").val('0');
+        }
+
+        update_total();
+
+    }
+
+
+    function update_total() {
+        //Get variables
+        var product_price = parseFloat($("#id_product_price").val());
+        var quantity = $("#id_quantity").val(); //Will always be an int
+
+        //Check to make sure quantity is an INT
+        if (quantity != parseFloat($("#id_quantity").val())) {
+            $("#id_quantity").val(quantity);
+        }
+
+        /*
+        If the discount type is nothing, we only need to extract the discount amount value.
+        HOWEVER if it is a percentage, then we need to calculate that percentage, and apply
+        it to the discount amount field (which we will then extract).
+         */
+        if ($("#id_discount_choice").val() == "Percentage") {
+            //We need to calculate that percentage
+            var discount_percent = parseFloat($("#id_discount_percent").val());
+            var discount_amount = parseFloat(product_price * quantity * parseFloat(discount_percent / 100));
+
+            //We will add the discount amount to the page
+            $("#id_discount_amount").val(discount_amount.toFixed(2));
+        }
+
+        //Extract the discount amount
+        var discount_amount = $("#id_discount_amount").val();
+
+        //Calculate the sales price and populate it
+        var sales_price = parseFloat(quantity * product_price - discount_amount);
+        $("#id_sales_price").val(sales_price.toFixed(2));
+
+
+        //Tax is calculated OFF sales price
+        tax_amount = 0;
+        if ($("#id_tax").val() == "") {
+            //There is no tax applied. ZERO
+            $("#id_tax_amount").val(0);
+        } else {
+            //There is a tax amount.
+            tax_percentage = parseFloat($("#id_tax").children("option").filter(":selected").text()/100);
+            tax_amount = parseFloat(tax_percentage * sales_price);
+            $("#id_tax_amount").val(tax_amount.toFixed(2));
+        }
+
+
+        //Total is the sales price + tax
+        var total = parseFloat(sales_price + tax_amount)
+        $("#id_total").val(total.toFixed(2));
+    }
+</script>

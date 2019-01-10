@@ -1,0 +1,23 @@
+{% csrf_token %}
+<h3>User Permissions</h3>
+<table>
+    {% if user_results %}
+        <tr>
+            <td width="80%">{{ opportunity_user_permission_form.user }}</td>
+            <td width="20%"><input type="submit" name="submit_contact" value="Add Group(s)"/></td>
+        </tr>
+    {% else %}
+        <tr>
+            <td width="80%">No more users to add</td>
+            <td></td>
+        </tr>
+    {% endif %}
+    {% if group_permission %}
+        {% for row in group_permission %}
+            <tr>
+                <td>{{ row.assigned_user }} - {{ row.assigned_user.first_name }} {{ row.assigned_user.last_name }}</td>
+                <td><a href="javascript:void(0)" onclick="delete_permission({{ row.opportunity_permissions_id }})">Delete Permission</a></td>
+            </tr>
+        {% endfor %}
+    {% endif %}
+</table>

@@ -1,0 +1,54 @@
+{% extends "./template.html" %}
+{% block content %}
+{% load static %}
+<h2>User Information</h2>
+<form action="{% url 'user_information' user_id %}" method="post" class="user_information">
+    {% csrf_token %}
+    <div id="save_state">{% if not errors %}{{ save_state }}{% endif %}</div>
+    <ul>
+        {% if errors %}
+            {{ errors }}
+        {% endif %}
+        <li>{{ user_information_form.username }}</li>
+        <li>{{ user_information_form.password1 }}</li>
+        <li>{{ user_information_form.password2 }}</li>
+        <li>{{ user_information_form.first_name }}</li>
+        <li>{{ user_information_form.last_name }}</li>
+        <li>{{ user_information_form.email }}</li>
+        <li>Is User Active: {{ user_information_form.is_active }}</li>
+        {% if is_superuser == True %}
+            <li>Is User a SuperUser: {{ user_information_form.is_superuser }}<br/>
+            Giving this user this permission grants them to access /admin/
+            </li>
+        {% endif %}
+        <li><input id="submit_user" type="submit" value="Save User"><a href="{% url 'search_users' %}">Back to Users</a></li>
+    </ul>
+</form>
+    <h4>User Information Notes</h4>
+    <ul style="list-style-type: circle">
+        <li>If creating a new user, and you leave the password fields blank, a randomly generated password will be given to the user.</li>
+        <li>Only users with access to the DJANGO Superuser will be able to assign other users to DJANGO Superuser. Please note, this grants access to the /admin/ section of the site if it is enabled. This role is ONLY recommended for those users who are system administrators.</li>
+        <li>To change a user's password, just fill out the two password fields with the new password and click on the "SAVE" button</li>
+    </ul>
+<script>
+    $(document).ready(function() {
+        //We don't want any explorers to auto fill out the passwords.
+        $("#id_password1").val("");
+        $("#id_password2").val("");
+    });
+
+    $("#save_state").on('submit', function() {
+        //Do not prevent default - as we want to send the data in post
+        $("#save_state").html("Saving current user");
+    });
+
+    function enable_submit() {
+        if ($("#id_password1").val() == $("#id_password2").val()) {
+            $("#submit_user").prop("disabled", false);
+        } else {
+           $("#submit_user").prop("disabled", true);
+        }
+    }
+</script>
+
+{% endblock %}

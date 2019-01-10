@@ -1,0 +1,36 @@
+{% load nearbeach_extras %}
+<h2>Opportunities</h2>
+{% if active_opportunities %}
+    <table>
+        <tr class="header">
+            <td>Opportunity Name</td>
+            <td>Organisation's Name</td>
+            <td>Customer Name</td>
+            <td>Opportunity Stage</td>
+            <td>Expected Close Date</td>
+        </tr>
+        {% for row in active_opportunities %}
+            <tr
+                    {% if row.opportunity_expected_close_date|hours_ago:24 %}
+                        style="background-color:lightcoral"
+                    {% endif %}
+            >
+                <td><a href="{% url 'opportunity_information' row.opportunity_id %}">{{ row.opportunity_name }}</a></td>
+                {% if row.organisation_id %}
+                    <td><a href="{% url 'organisation_information' row.organisation_id.organisation_id %}">{{ row.organisation_name }}</a></td>
+                {% else %}
+                    <td>------</td>
+                {% endif %}
+                {% if row.customer_id %}
+                    <td><a href="{% url 'customer_information' row.customer_id.customer_id %}">{{ row.customer_first_name }} {{ row.customer_last_name }}</a></td>
+                {% else %}
+                    <td>-----</td>
+                {% endif %}
+                <td>{{ row.opportunity_stage_description }}</td>
+                <td>{{ row.opportunity_expected_close_date }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>Sorry, there are no opportunities assigned to your group</p>
+{% endif %}

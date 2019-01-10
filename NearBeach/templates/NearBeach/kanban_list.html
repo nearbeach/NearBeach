@@ -1,0 +1,29 @@
+{% extends "./template.html" %}
+{% block content %}
+{% load static %}
+    <h2>Kanban List</h2>
+    <a href="{% url 'new_kanban_board' %}">New Board</a>
+    <table>
+        <tr>
+            <td>Kanban Board</td>
+            <td>Creation Date</td>
+            {% if kanban_permission == 4 %}
+                <td>Properties</td>
+            {% endif %}
+        </tr>
+        {% for row in kanban_board_results %}
+            <tr>
+                <td><a href="{% url 'kanban_information' row.kanban_board_id %}">{{ row.kanban_board_name }}</a></td>
+                <td>{{ row.date_created }}</td>
+                {% if kanban_permission == 4 %}
+                    {% if row.requirement %}
+                        <td>------</td>
+                    {% else %}
+                        <td><a href="{% url 'kanban_properties' row.kanban_board_id %}">Properties</a></td>
+                    {% endif %}
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}

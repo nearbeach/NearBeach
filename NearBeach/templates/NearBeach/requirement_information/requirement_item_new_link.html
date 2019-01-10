@@ -1,0 +1,31 @@
+<h5>Link Requirement Item - {{ requirement_item_id }}</h5>
+{% if project_results %}
+    <table>
+        <tr>
+            <td width="20%"><b>PROJECT ID</b></td>
+            <td width="80%">Project Name</td>
+        </tr>
+        {% for row in project_results %}
+            <tr>
+                <td><a href="javascript:void(0)" onclick="send_requirement_item_link({{ requirement_item_id }}, {{ row.project_id }}, 'project')">Project - {{ row.project_id }}</a></td>
+                <td><a href="javascript:void(0)" onclick="send_requirement_item_link({{ requirement_item_id }}, {{ row.project_id }}, 'project')">{{ row.project_name }}</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+<br/>
+{% if task_results %}
+    <table>
+        <tr>
+            <td width="20%"><b>TASK ID</b></td>
+            <td width="80%">Task Short Description</td>
+        </tr>
+        {% for row in task_results %}
+            <tr>
+                <td><a href="javascript:void(0)" onclick="send_requirement_item_link({{ requirement_item_id }}, {{ row.task_id }}, 'task')">Task - {{ row.task_id }}</a></td>
+                <td><a href="javascript:void(0)" onclick="send_requirement_item_link({{ requirement_item_id }}, {{ row.task_id }}, 'task')">{{ row.task_short_description }}</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+

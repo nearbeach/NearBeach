@@ -1,0 +1,40 @@
+{% extends "./template.html" %}
+{% block content %}
+<h2>New Organisation</h2>
+{{ form_errors }}
+<form action={% url 'new_organisation' %} method="post" class="new_organisation">
+    {% csrf_token %}
+    <table>
+        <tr><td>{{ new_organisation_form.organisation_name }}</td></tr>
+        <tr><td>{{ new_organisation_form.organisation_website }}</td></tr>
+        <tr><td>{{ new_organisation_form.organisation_email }}</td></tr>
+    </table>
+    {% if duplication_count == 0 %}
+        <div class="input-form-indent">
+            <input id="submit_organisation" type="submit" name="save" value="Submit New Organisation">
+            <a href={% url 'dashboard' %}>Cancel</a>
+        </div>
+    {% else %}
+    <h2>Possible Duplication</h2>
+    <table>
+        <tr>
+            <td>Organisation Name</td>
+            <td>Organisation Website</td>
+            <td>Organisation Email</td>
+        </tr>
+        {% for row in duplicate_results %}
+            <tr>
+                <td>{{ row.organisation_name }}</td>
+                <td>{{ row.organisation_website }}</td>
+                <td>{{ row.organisation_email }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <div class="input-form-indent">
+        <input type="submit" name="save_duplicate" value="Yes Create Organisation">
+        <input type="button" onclick="location.href='{% url 'dashboard' %}'" value="No - Take me away">
+    </div>
+    {% endif %}
+</form>
+{% endblock %}
+

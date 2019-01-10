@@ -1,0 +1,60 @@
+{% extends "./template.html" %}
+{% block content %}
+<h2>Search Templates</h2>
+<form action={% url 'search_templates' %} method="post" class="search_templates" id="search_templates_form">
+    {% csrf_token %}
+    <table>
+        <tr>
+            <td width="80%">{{ search_templates_form.search_templates }}</td>
+            <td width="20%"><input hidden type="submit" value="Search Templates"></td>
+        </tr>
+    </table>
+</form>
+<table>
+    <tr>
+        <td width="10%">New Template</td>
+        <td width="70%">
+            <select id="select_new_template" style="width: 100%;">
+                <option value="">------</option>
+                <option value="Quote">Quote</option>
+            </select>
+        </td>
+        <td width="20%"><input type="submit" value="New Template" id="new_template_submit"> </td>
+    </tr>
+</table>
+
+{% if quote_template_results %}
+    <h2>Quote Templates</h2>
+    <table>
+        <tr>
+            <td>Description</td>
+        </tr>
+        {% for row in quote_template_results %}
+            <tr>
+                <td><a href="{% url 'quote_template_information' row.quote_template_id %}">{{ row.quote_template_description }}</a></td>
+            </tr>
+        {% endfor  %}
+    </table>
+{% endif %}
+
+<script>
+    $("#new_template_submit").on('click', function(e) {
+        var selected_value = $("#select_new_template").val();
+
+        if (selected_value == "Quote") {
+            $.ajax({
+                url: '/new_quote_template/',
+                data: $("#search_templates_form").serialize(),
+                type: 'POST',
+                dataType: 'JSON',
+                success: function(data) {
+                    window.location.href = '/quote_template_information/' + data["quote_template_id"] + '/';
+                },
+                error: function() {
+                    alert("Sorry, could not create a new quote template");
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

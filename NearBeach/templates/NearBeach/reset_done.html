@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <head>
+        <style>
+            body {
+                background-color: #ecf0f1;
+            }
+
+            h1 a {
+                font-size: 1.1s5em;
+                text-align: center;
+                text-decoration: none;
+                color: azure;
+                margin-left: 10px;
+                font-weight: 400;
+            }
+
+            input[type="text"], input[type="password"], textarea {
+                box-sizing: border-box;
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                padding: 8px;
+                outline: none;
+                border: 1px solid #b0cfe0;
+                -webkit-transition: all 0.30s ease-in-out;
+                -moz-transition: all 0.30s ease-in-out;
+                -ms-transition: all 0.30s ease-in-out;
+                -o-transition: all 0.30s ease-in-out;
+                width: 100%;
+                max-width: 900px;
+            }
+
+            input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+                box-shadow: 0 0 5px #b0cfe0;
+                border: 1px solid #b0cfe0;
+            }
+
+            textarea {
+                color: #0a0a0a;
+                margin-bottom: 8px;
+            }
+
+            input[type="submit"], input[type="button"] {
+                -moz-box-shadow: inset 0px 1px 0px 0px #3985b1;
+                -webkit-box-shadow: inset 0px 1px 0px 0px rgba(0, 0, 0, 0.2);
+                box-shadow: inset 0px 1px 0px 0px #33adff;
+                background-color: #33adff;
+                border: 1px solid #33adff;
+                display: inline-block;
+                cursor: pointer;
+                color: #fff;
+                padding: 8px 19px;
+                text-decoration: none;
+                border-radius: 5px;
+            }
+
+            #password-form {
+                max-width: 450px;
+                padding: 30px;
+                margin: -20px auto;
+                list-style: none;
+            }
+
+            #password-form ul {
+                padding: 0;
+                margin: 0;
+            }
+
+            #password-form  ul li {
+                display: block;
+                margin-bottom: 10px;
+                min-height: 35px;
+            }
+
+            #password-form  ul input[type="submit"], #password-form  ul input[type="submit"] {
+                width: 100%;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="password-form">
+            <h1>Password reset complete</h1>
+            <p>Your password has been set.  You may go ahead and log in now.</p>
+            <p><a href="{% url 'login' %}">Log in</a></p>
+        </div>
+    </body>
+</html>
+
+
+

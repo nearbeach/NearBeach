@@ -1,0 +1,26 @@
+{% load nearbeach_extras %}
+<h2>Tasks Assigned to me</h2>
+{% if assigned_users_results %}
+    <table>
+        <tr class="header">
+            <td>Task ID</td>
+            <td>Task Short Description</td>
+            <td>End Date</td>
+        </tr>
+        {% for row in assigned_users_results %}
+            <tr
+                    {% if row.task_id__task_end_date|hours_ago:24 %}
+                        style="background-color:lightcoral"
+                    {% elif row.task_id__task_start_date|in_future:24 %}
+                        style="background-color:slategray;"
+                    {% endif %}
+            >
+                <td><a href="{% url 'task_information' row.task_id__task_id%}">Task{{ row.task_id__task_id }}</a></td>
+                <td>{{ row.task_id__task_short_description}}</td>
+                <td>{{ row.task_id__task_end_date }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>Sorry, no tasks have been assigned to you.</p>
+{% endif %}

@@ -1,0 +1,201 @@
+{% extends "./template.html" %}
+{% block content %}
+{% load static %}
+    <style>
+        svg {
+           overflow-x: scroll;
+        }
+
+        .chart {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+        }
+
+        .axis path,.axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+        .bar-new {
+            fill: #5077bd;
+        }
+
+        .bar-open {
+            fill: #339900;
+        }
+
+        .bar-resolved {
+            fill: #ec4424;
+        }
+
+        .bar-closed {
+            fill: #41042c;
+        }
+    </style>
+    <script src="{% static 'NearBeach/widgets/svg.js/svg.js' %}"></script>
+    <script src="{% static 'NearBeach/widgets/jquery/jquery-ui.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/jquery/jquery-ui.css' %}">
+
+    <!--
+    Due to a bug in d3_gnatt_chart - https://github.com/dk8996/Gantt-Chart/issues/27
+    We have to utilise an older version of D3. This version of D3 is only used here in the timeline.
+    Newer versions of D3 are utilised everywhere else
+    -->
+    <script type="text/javascript" src="{% static 'NearBeach/widgets/d3_gnatt_chart/lib/d3/d3.v3.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/widgets/d3_gnatt_chart/gantt-chart-d3.js' %}"></script>
+
+
+
+    <h2>Timeline</h2>
+    <form id="date_form">
+        {% csrf_token %}
+        <ul>
+            <li>Start Date: {{ timeline_form.start_date }}</li>
+            <li>End Date:{{ timeline_form.end_date }}</li>
+            <li>Object: {{ timeline_form.object_type }}</li>
+        </ul>
+    </form>
+
+    <br/>
+    <div id="timeline" style="width: 100%; overflow: auto;"></div>
+
+    <script>
+        //Global varables
+        var taskStatus = {
+            "New" : "bar-new",
+            "Open" : "bar-open",
+            "Resolved" : "bar-resolved",
+            "Closed" : "bar-closed"
+        };
+
+        /*
+        Setup both the start_date and end_date fields with the
+        datetime picker widget
+         */
+        $( "#id_start_date" ).datepicker({
+            dateFormat: "yy-mm-dd"
+        });
+        $( "#id_start_date" ).val("{{ start_date|date:'Y-m-d' }}");
+
+        $("#id_end_date").datepicker({
+            dateFormat: "yy-mm-dd"
+        });
+        $("#id_end_date").val("{{ end_date|date:'Y-m-d' }}");
+
+
+        function render_gantt_chart() {
+            /*
+            The following function will render a gantt chart (timeline).
+
+            Method
+            ~~~~~~
+            1.) Collect variables, like start and end date
+            2.) Send - as POST - to collect the JSON of the data for gantt chart
+            3.) Use the data from the JSON to construct the rest of the variables
+            4.) Use those newly created variables to create the gantt chart using the D3_gantt_chart library
+             */
+
+            //Clear the board
+            $("#timeline").html("");
+
+            //Check dates
+            if (!Date.parse($("#id_start_date").val()) || !Date.parse($("#id_end_date").val())) {
+                alert("Sorry, but one of the dates is not a functional date and will cause issues!");
+                return;
+            }
+
+            // 1.) Collect Variables
+            var start_date = new Date(document.getElementById("id_start_date").value),
+                end_date = new Date(document.getElementById("id_end_date").value),
+                no_days = (end_date - start_date)/(1000*60*60*24),
+                chart_width = 50 * no_days,
+                objects = [],       //Could be project or task
+                object_names = [],  //Project/tasks ID
+                object_type = document.getElementById("id_object_type").value;
+
+
+            // 2.) Send a POST to get JSON data
+            $.ajax({
+                url: '/timeline_data/',
+                data: $("#date_form").serialize(),
+                dataType: "JSON",
+                type: "POST",
+                success: function(data) {
+                    //Obtained the JSON data
+                    json_data = data;
+
+                    // 3.) Construct more variables... who the fuck does not love variables
+                    // A loop is used to navigate the JSON
+                    for (var i=0; i<json_data.length;i++) {
+                        if (object_type == "Project") {
+                            var object_start_date = new Date(json_data[i]['fields']['project_start_date']),
+                                object_end_date = new Date(json_data[i]['fields']['project_end_date']),
+                                object_name = "PRO" + json_data[i]['pk'],
+                                object_status = json_data[i]['fields']['project_status'];
+                        } else if (object_type == "Task") {
+                            var object_start_date = new Date(json_data[i]['fields']['task_start_date']),
+                                object_end_date = new Date(json_data[i]['fields']['task_end_date']),
+                                object_name = "TASK" + json_data[i]['pk'],
+                                object_status = json_data[i]['fields']['task_status'];
+
+                        } else if (object_type == "Quote") {
+                            var object_start_date = new Date(json_data[i]['fields']['date_created']),
+                                object_end_date = new Date(json_data[i]['fields']['quote_valid_till']),
+                                object_name = "QUOTE" + json_data[i]['pk'],
+                                object_status = json_data[i]['fields']['quote_stage_id'];
+                        } else if (object_type == "Opportunity") {
+                            var object_start_date = new Date(json_data[i]['fields']['date_created']),
+                                object_end_date = new Date(json_data[i]['fields']['opportunity_expected_close_date']),
+                                object_name = "QUOTE" + json_data[i]['pk'],
+                                object_status = json_data[i]['fields']['opportunity_id'];
+                        }
+
+
+                        //Shove that lovely data into the array
+                        objects.push({
+                            "startDate":object_start_date,
+                            "endDate": object_end_date,
+                            "taskName": object_name,
+                            "status": object_status
+                        });
+
+                        object_names.push(object_name);
+                    }
+
+                    // 4.) Create that GANTT chart
+                    var gantt = d3.gantt()
+                        .taskTypes(object_names)
+                        .taskStatus(taskStatus)
+                        .tickFormat("%b %d, %Y")
+                        .height(json_data.length * 50 + 25)
+                        .width(chart_width)
+                        .selector("#timeline")
+                        .timeDomainMode("fixed")
+                        .timeDomain([
+                            start_date,
+                            end_date
+                        ]);
+
+
+                    //gantt.redraw(objects);
+                    gantt(objects);
+
+                    // CONSOLE LOG EVERYTHING!!!
+                    console.log(objects);
+                    console.log(object_names);
+                },
+                error: function() {
+                    alert("Sorry, rendering the timeline is not possible at the moment due to errors.");
+                    return false;
+                }
+
+            });
+        }
+
+        //Render the gantt chart
+        render_gantt_chart();
+    </script>
+
+{% endblock %}
+

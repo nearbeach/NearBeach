@@ -1,0 +1,34 @@
+<h2>Responsible Customers</h2>
+{% if quote_permission > 1 %}
+    {% if customer_results %}
+        Assign Responsible Customer
+        <select id="responsible_customer" onchange="responsible_customer_changed()">
+            <option value="">------</option>
+            {% for row in customer_results %}
+                <option value="{{ row.customer_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
+            {% endfor %}
+        </select>
+    {% endif %}
+{% endif %}
+{% if responsible_customer_results %}
+    <table>
+        <tr>
+            <td>Customer Name</td>
+            <td>Customer email</td>
+            {% if quote_permission > 3 %}
+                <td></td>
+            {% endif %}
+        </tr>
+        {% for row in responsible_customer_results %}
+            <tr>
+                <td><a href="{% url 'customer_information' row.customer_id %}">{{ row.customer_title }} {{ row.customer_first_name }} {{ row.customer_last_name }}</a></td>
+                <td>{{ row.customer_email }}</td>
+                {% if quote_permission > 3 %}
+                    <td><a href="javascript:void(0)" onclick="remove_responsible_customer({{ quote_id }},{{ row.customer_id }})">Remove Customer</a></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+<p>Currently there are no responsible customers for this quote. Please add them</p>
+{% endif %}

@@ -1,0 +1,25 @@
+{% csrf_token %}
+<table>
+    <tr>
+        <td width="80%">{{ to_do_form.to_do }}</td>
+        <td width="20%"><input type="submit" value="Add To Do"></td>
+    </tr>
+    {% if to_do_results %}
+        <tr>
+            <td>To Do</td>
+            <td>------</td>
+        </tr>
+        {% for row in to_do_results %}
+            <tr>
+                <td>{{ row.to_do }}</td>
+                <td id="to_do_{{ row.to_do_id }}" >
+                    {% if row.to_do_completed %}
+                        Completed
+                    {% else %}
+                        <a href="javascript:void(0)" onclick="complete_to_do({{ row.to_do_id }})">Click to Complete</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    {% endif %}
+</table>
