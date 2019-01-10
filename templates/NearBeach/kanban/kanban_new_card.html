@@ -1,8 +1,0 @@
-{% csrf_token %}
-<h2>New Kanban Card</h2>
-<ul>
-    <li>{{ kanban_card_form.kanban_card_text }}</li>
-    <li>Kanban Column: {{ kanban_card_form.kanban_column }}</li>
-    <li>Kanban Level: {{ kanban_card_form.kanban_level }}</li>
-    <li><input type="submit" value="Submit new "><a href="javascript:void(0)" onclick="close_kanban_new_card()">Cancel</a> </li>
-</ul>

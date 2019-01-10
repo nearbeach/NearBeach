@@ -1,8 +1,0 @@
-{% csrf_token %}
-<ul style="background-color: lightskyblue">
-    {% if save_errors %}
-        <li><b>THERE WAS AN ERROR SAVING!</b></li>
-    {% endif %}
-    {{ permission_set_form.as_ul }}
-    <li><input type="submit" value="Submit Permission Set"></li>
-</ul>
