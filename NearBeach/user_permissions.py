@@ -16,8 +16,8 @@ def return_user_permission_level(request, group_list,permission_field):
     :param permission_field: which permission field we will be looking at. The available list is;
         permission_set_id
         permission_set_name
-        administration_assign_users_to_groups
-        administration_create_groups
+        administration_assign_users_to_group
+        administration_create_group
         administration_create_permission_sets
         administration_create_users
         assign_campus_to_customer
@@ -113,10 +113,10 @@ def return_user_permission_level(request, group_list,permission_field):
         Max('permission_set__requirement'),
         Max('permission_set__organisation'),
         Max('permission_set__customer'),
-        Max('permission_set__administration_assign_users_to_groups'),
-        Max('permission_set__administration_create_groups'),
-        Max('permission_set__administration_create_permission_sets'),
-        Max('permission_set__administration_create_users'),
+        Max('permission_set__administration_assign_user_to_group'),
+        Max('permission_set__administration_create_group'),
+        Max('permission_set__administration_create_permission_set'),
+        Max('permission_set__administration_create_user'),
     )
 
     user_permission_level['new_item'] = max(
@@ -127,10 +127,10 @@ def return_user_permission_level(request, group_list,permission_field):
         permission_results['permission_set__customer__max'],
     )
     user_permission_level['administration'] = max(
-        permission_results['permission_set__administration_assign_users_to_groups__max'],
-        permission_results['permission_set__administration_create_groups__max'],
-        permission_results['permission_set__administration_create_permission_sets__max'],
-        permission_results['permission_set__administration_create_users__max'],
+        permission_results['permission_set__administration_assign_user_to_group__max'],
+        permission_results['permission_set__administration_create_group__max'],
+        permission_results['permission_set__administration_create_permission_set__max'],
+        permission_results['permission_set__administration_create_user__max'],
     )
     #END TEMP CODE
 
