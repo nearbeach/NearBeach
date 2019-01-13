@@ -1,0 +1,121 @@
+{% extends "../template.html" %}
+{% block content %}
+{% load static %}
+
+<body onload="on_page_load()">
+    <h2>Requirements Information - {{ requirement_id }}</h2>
+    <table>
+        <tr><td>{{ requirement_results.requirement_title }}</td></tr>
+        <tr><td>
+            {{ requirement_readonly_form.media }}
+            <span>{{ requirement_readonly_form.requirement_scope }}</span>
+        </td></tr>
+        <tr><td>Requirement Type: {{ requirement_results.requirement_type }}</td></tr>
+        <tr><td>Requirement Status: Closed</td></tr>
+    </table>
+
+    <h2>Requirement Links</h2>
+    <table>
+        <tr>
+            <td width="10%">Link</td>
+            <td width="90%">Link Object Description</td>
+        </tr>
+        {% for link in requirement_results.requirement_links_set.all %}
+            {% if not link.project_id == None %}
+                <tr>
+                    <td><a href="{% url 'project_information' link.project_id.project_id %}">Project - {{ link.project_id.project_id }}</a></td>
+                    <td>{{ link.project_id }}</td>
+                </tr>
+            {% elif not link.task_id == None %}
+                <tr>
+                    <td><a href="{% url 'task_information' link.task_id.tasks_id %}">Task - {{ link.task_id.tasks_id }}</a></td>
+                    <td>{{ link.task_id }}</td>
+                </tr>
+
+            {% elif not link.organisations_id == None %}
+                <tr>
+                    <td><a href="{% url 'organisation_information' link.organisations_id.organisations_id %}">Organisations - {{ link.organisations_id.organisations_id }}</a></td>
+                    <td>{{ link.organisations_id }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td> -- </td>
+                    <td>Error with link {{ link.requirement_links_id }}</td>
+                </tr>
+
+            {% endif %}
+        {% endfor %}
+    </table>
+
+
+    <h2>Requirement Items</h2>
+    {% if requirement_item_results %}
+        {% for row in requirement_item_results %}
+            <table>
+                <tr><td colspan="2"><h3>{{ row.requirement_item_title }}</h3></td></tr>
+                <tr><td colspan="2">Requirement Item ID: {{ row.requirement_item_id }}</td></tr>
+                <tr><td colspan="2">{{ row.requirement_item_scope|safe }}</td></tr>
+                <tr><td colspan="2">Requirement Item Status: {{ row.requirement_item_status }}</td></tr>
+                <tr><td colspan="2">Requirement Item Type: {{ row.requirement_item_type }}</td></tr>
+                {% if row.requirement_item_links_set.all %}
+                    <tr><td colspan="2"><h4>Requirement Item Links</h4></td></tr>
+                    <tr>
+                        <td width="10%">Link</td>
+                        <td width="90%">Link Object Description</td>
+                    </tr>
+                    {% for link in row.requirement_item_links_set.all %}
+                        {% if not link.project_id == None %}
+                            <tr>
+                                <td><a href="{% url 'project_information' link.project_id.project_id %}">Project - {{ link.project_id.project_id }}</a></td>
+                                <td>{{ link.project_id }}</td>
+                            </tr>
+                        {% elif not link.task_id == None %}
+                            <tr>
+                                <td><a href="{% url 'task_information' link.task_id.tasks_id %}">Task - {{ link.task_id.tasks_id }}</a></td>
+                                <td>{{ link.task_id }}</td>
+                            </tr>
+                        {% elif not link.organisations_id == None %}
+                            <tr>
+                                <td><a href="{% url 'organisation_information' link.organisations_id.organisations_id %}">Organisations - {{ link.organisations_id.organisations_id }}</a></td>
+                                <td>{{ link.organisations_id }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td> -- </td>
+                                <td>Error with link {{ link.requirement_links_id }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </table>
+            <br/>
+        {% endfor %}
+    {% else %}
+    <p>This requirement did not contain any requirement items</p>
+    {% endif %}
+
+    {% if document_results %}
+        <p>Need to program in document results. Can someone please log this as a bug at https://bugzilla.nearbeach.org</p>
+    {% endif %}
+
+    {% if bug_results %}
+        <h2>Requirement Bugs</h2>
+        <table>
+            <tr>
+                <td>Bug ID</td>
+                <td>Bug Client</td>
+                <td>Bug Description</td>
+                <td>Bug Status</td>
+            </tr>
+            {% for row in bug_results %}
+                <tr>
+                    <td>{{ row.bug_code }}</td><!--get this to be hyperlinked to the bug :)-->
+                    <td>{{ row.bug_client }}</td>
+                    <td><a href="{{ row.bug_client.bug_client_url }}{{ row.bug_client.list_of_bug_client.api_bug }}{{ row.bug_code }}" target="_blank">{{ row.bug_description }}</a></td>
+                    <td>{{ row.bug_status }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+</body>
+{% endblock %}

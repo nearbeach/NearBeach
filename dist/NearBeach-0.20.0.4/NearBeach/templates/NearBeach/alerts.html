@@ -1,0 +1,75 @@
+{% extends "./template.html" %}
+{% block content %}
+    <h2>Alerts</h2>
+    {% if project_results %}
+        <h4>Projects</h4>
+        <table>
+            <tr>
+                <td>Project ID</td>
+                <td>Project Name</td>
+                <td>End Date!</td>
+            </tr>
+            {% for row in project_results %}
+                <tr style="background-color: lightcoral">
+                    <td><a href="{% url 'project_information' row.project_id %}">PRO{{ row.project_id }}</a></td>
+                    <td>{{ row.project_name }}</td>
+                    <td>{{ row.project_end_date }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+    {% if task_results %}
+        <h4>Tasks</h4>
+        <table>
+            <tr>
+                <td>Task ID</td>
+                <td>Task Name</td>
+                <td>End Date!</td>
+            </tr>
+            {% for row in task_results %}
+                <tr style="background-color: lightcoral">
+                    <td><a href="{% url 'task_information' row.task_id %}">TASK{{ row.task_id }}</a></td>
+                    <td>{{ row.task_short_description }}</td>
+                    <td>{{ row.task_end_date }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    {% if opportunity_results %}
+        <h4>Opportunity</h4>
+        <table>
+            <tr>
+                <td>Opportunity ID</td>
+                <td>Opportunity Name</td>
+                <td>End Date!</td>
+            </tr>
+            {% for row in opportunity_results %}
+                <tr style="background-color: lightcoral">
+                    <td><a href="{% url 'opportunity_information' row.opportunity_id %}">OPP{{ row.opportunity_id }}</a></td>
+                    <td>{{ row.opportunity_name }}</td>
+                    <td>{{ row.opportunity_expected_close_date }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    {% if quote_results %}
+        <h4>Quotes</h4>
+        <table>
+            <tr>
+                <td>Quote ID</td>
+                <td>Quote Title</td>
+                <td>End Date!</td>
+            </tr>
+            {% for row in quote_results %}
+                <tr style="background-color: lightcoral">
+                    <td><a href="{% url 'quote_information' row.quote_id %}">QUOTE{{ row.quote_id }}</a></td>
+                    <td>{{ row.quote_title }}</td>
+                    <td>{{ row.quote_valid_till }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+<a href="{% url 'dashboard' %}">Continue onto Dashboard</a>
+{% endblock %}

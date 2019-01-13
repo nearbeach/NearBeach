@@ -1,0 +1,267 @@
+{% extends "../template.html" %}
+{% block content %}
+{% load static %}
+    <style>
+        .drag_element {
+            opacity: 0.4;
+        }
+
+        .over {
+            border-top: 2px solid blue;
+        }
+    </style>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/../../../static/NearBeach/widgets/jquery/jquery-3.2.1.min.js' %}"></script>
+    <h2>Kanban Properties</h2>
+    <form method="post" class="kanban_board_form" id="kanban_properties_form">
+        {% csrf_token %}
+        {{ kanban_properties_form.kanban_board_name }}
+        <h3>Columns</h3>
+        <p>Please sort the columns in the order you would like them to appear on the board. Click on them to either change their name or delete them. Please note - only empty columns can be deleted.</p>
+        <table>
+            <tr>
+                <td>
+                    <ul id="columns">
+                        {% for row in kanban_column_results %}
+                            <li class="column_title" draggable="true" data-id="{{ row.kanban_column_id }}" value="{{ row.kanban_column_id }}">{{ row.kanban_column_name }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        </table>
+
+        <h3>Levels</h3>
+        <p>Please sort the levels in the order you would like them to appear on the board. Click on them to either change their name or delete them. Please note - only empty columns can be deleted.</p>
+        <table>
+            <tr>
+                <td>
+                    <ul id="levels">
+                        {% for row in kanban_level_results %}
+                            <li class="level_title" draggable="true" data-id="{{ row.kanban_level_id }}" value="{{ row.kanban_level_id }}">{{ row.kanban_level_name }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        </table>
+
+    </form>
+
+    {% if permission >= 3 %}
+        <h2>Assigned Groups</h2>
+        <form method="post" class="assigned_groups" id="assigned_groups">
+            Loading add...
+        </form>
+        <div id="assigned_group_list">Loading list...</div>
+    {% endif %}
+
+    <br/>
+     <input id="save_changes" type="submit" value="Save Changes"><a href="{% url 'kanban_list' %}">Cancel and Return</a>
+
+    <script>
+        //Page variables
+        var drag_source_element = null;
+
+        $("#assigned_groups").on('submit', function(e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '/assigned_group_add/{{ kanban_board_id }}/kanban_board/',
+                data: $(this).serialize(),
+                success: function() {
+                    load_assigned_group_add();
+                    load_assigned_group_list();
+                },
+                error: function() {
+                    alert("Sorry, project assigned users did not save. Please try again.");
+                }
+            })
+        });
+
+
+        $("#kanban_properties_form").on('submit', function(event) {
+            event.preventDefault();
+
+            //Get the JSON data ready
+            var columns = $("#columns").find("li").map(function() {
+                var column = {};
+
+                column.id = this.value;
+                column.title = $(this).text();
+
+                return column;
+            });
+
+
+            //Get the JSON data ready
+            var levels = $("#levels").find("li").map(function() {
+                var level = {};
+
+                level.id = this.value;
+                level.title = $(this).text();
+
+                return level;
+            });
+
+
+            data_to_send = {
+                "columns": columns,
+                "levels": levels,
+                "kanban_board_name": ($("#id_kanban_board_name").val())
+            };
+
+
+            //Send data to the database
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/kanban_properties/{{ kanban_board_id }}/',
+                type: 'POST',
+                dataType: 'HTML',
+                data: JSON.stringify(data_to_send),
+                success: function(data) {
+                    //On Success, take the user to the kanban board list
+                    window.location = '/kanban_list/'
+                },
+                error: function () {
+                    alert("SORRY");
+                }
+            });
+        });
+
+        function handle_drag_start(element) {
+            // Set the drag source element as this element
+            drag_source_element = this;
+
+            element.dataTransfer.effectAllowed = 'move';
+            element.dataTransfer.setData('text/html', this.outerHTML);
+
+            this.classList.add('drag_element');
+        }
+
+        function handle_drag_over(element) {
+            if (element.preventDefault) {
+                element.preventDefault();
+            }
+
+            this.classList.add('over');
+
+            element.dataTransfer.dropEffect = 'move';
+
+            return false;
+        }
+
+        function handle_drag_enter(element) {
+            //Left empty at the moment.
+        }
+
+        function handle_drag_leave() {
+            this.classList.remove('over');
+        }
+
+        function handle_drop(element) {
+            if (element.stopPropagation) {
+                element.stopPropagation(); // Stops from redirecting
+            }
+
+            // Don't need to do anything if dropping in the same column
+            if (drag_source_element != this) {
+                this.parentNode.removeChild(drag_source_element);
+                var dropHTML = element.dataTransfer.getData('text/html');
+                this.insertAdjacentHTML('beforebegin', dropHTML);
+                var drop_element = this.previousSibling;
+                add_DnD_handlers(drop_element);
+            }
+
+            this.classList.remove('over');
+            return false;
+        }
+
+        function handle_drag_end() {
+            this.classList.remove('over');
+        }
+
+
+        function add_DnD_handlers(element) {
+            //DnD is not dungeons and dragons
+            element.addEventListener('dragstart', handle_drag_start, false);
+            element.addEventListener('dragenter', handle_drag_enter, false);
+            element.addEventListener('dragover', handle_drag_over, false);
+            element.addEventListener('dragleave', handle_drag_leave, false);
+            element.addEventListener('drop', handle_drop, false);
+            element.addEventListener('dragend', handle_drag_end, false);
+        }
+
+        //Find all the column elements and give them the ability to drag and drop
+        var cols = document.querySelectorAll('#columns .column_title');
+        [].forEach.call(cols,add_DnD_handlers);
+
+        var levels = document.querySelectorAll('#levels .level_title');
+        [].forEach.call(levels,add_DnD_handlers);
+
+        function load_assigned_group_add() {
+            $.ajax({
+                url: '/assigned_group_add/{{ kanban_board_id }}/kanban_board/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $('#assigned_groups').html(data);
+                },
+                error: function() {
+                    $('#assigned_groups').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
+                }
+            });
+        };
+
+        function delete_group_item(group_item) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/assigned_group_delete/' + group_item + '/',
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    load_assigned_group_add();
+                    load_assigned_group_list();                },
+                error: function() {
+                    alert("Sorry, there was an issue deleting the Assigned Group")
+                }
+            });
+        };
+
+
+        function load_assigned_group_list() {
+            $.ajax({
+                url: '/assigned_group_list/{{ kanban_board_id }}/kanban_board/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $('#assigned_group_list').html(data);
+                },
+                error: function() {
+                    $('#assigned_group_list').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
+                }
+            });
+        };
+
+
+        load_assigned_group_list();
+        load_assigned_group_add();
+    </script>
+
+
+{% endblock %}

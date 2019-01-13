@@ -1,0 +1,81 @@
+{% extends "./template.html" %}
+{% block content %}
+{% load nearbeach_extras %}
+{% load static %}
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+    <link rel='stylesheet' href='{% static "NearBeach/css/kanban_board.css" %}' />
+    <h2>Kanban Requirement</h2>
+    <h4><a href="{% url 'requirement_information' requirement_results.requirement_id %}">{{ requirement_results.requirement_title }}</a></h4>
+
+
+    <table>
+        <!--render the header-->
+        <tr>
+            {% for item_status in item_status_results %}
+                <td class="kanban_column_header">{{ item_status.requirement_item_status }}</td>
+            {% endfor %}
+        </tr>
+        <!--render the body-->
+        <tr>
+            {% for item_status in item_status_results %}
+                <td class="kanban_column" data-column="{{ item_status.requirement_item_status_id }}">
+                    {% with requirement_items=requirement_item_results|filter_requirement_item_cards:item_status.requirement_item_status_id %}
+                        {% for row in requirement_items %}
+                            <div id="{{ row.requirement_item_id }}" class="requirement_item_card" draggable="true">
+                                <div class="cardTitle" id="{{ row.requirement_item_id }}">
+                                    {{ row.requirement_item_title }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endwith %}
+                </td>
+            {% endfor %}
+        </tr>
+    </table>
+
+    <script>
+        $('document').ready(on_page_load());d
+
+        function on_page_load(){
+            $('.requirement_item_card').bind('dragstart', function(event) {
+                event.originalEvent.dataTransfer.setData("text/plain", event.target.getAttribute('id'));
+            });
+
+  		    // bind the dragover event on the board sections
+            $('.kanban_column').bind('dragover', function(event) {
+                event.preventDefault();
+            });
+
+			// bind the drop event on the board sections
+            // NEED TO FIX THIS!!!
+  			$('.kanban_column').bind('drop', function(event) {
+                var requirement_card_id = event.originalEvent.dataTransfer.getData("text/plain");
+                event.target.appendChild(document.getElementById(requirement_card_id));
+                event.preventDefault();
+
+                //Send data to the database
+                $.ajaxSetup({
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+
+                $.ajax({
+                    url: '/kanban_requirement_item_update/' + document.getElementById(requirement_card_id).id + '/' + this.dataset.column + '/',
+                    data: {},
+                    dataType: 'HTML',
+                    type: 'POST',
+                    success: function (data) {
+                    },
+                    error: function(request, error) {
+                        alert("We are sorry. Something went wrong when we moved that card. Reloading page");
+                        location.reload()
+                    }
+                })
+			});
+        }
+    </script>
+
+{% endblock %}

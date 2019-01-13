@@ -1,0 +1,20 @@
+<table>
+    <tr>
+        <td>Group Name</td>
+        <td>Date Created</td>
+        <td>Modification Date</td>
+        <td>Delete</td>
+    </tr>
+    {% for row in group_results %}
+        <tr>
+            <td><a href="javascript:void(0)" onclick="load_edit_group({{ row.group_id }})">{{ row.group_name }}</a></td>
+            <td>{{ row.date_created }}</td>
+            <td>{{ row.date_modified }}</td>
+            <td>
+                {% if group_permissions == 4 %}
+                    <a href="javascript:void(0)" onclick="delete_group({{ row.group_id }})">Delete</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>

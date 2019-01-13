@@ -1,0 +1,106 @@
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% load staticfiles %}
+    <h2>Requirement {% if destination == 'requirement_item' %}Item{% endif %} Documents</h2>
+    {% if requirement_permissions > 1 or document_perm > 0 %}
+        <table>
+            <tr>
+                <td>Upload Document:</td>
+                <td><input id="fileupload" type="file" name="file" data-url="{% url 'requirement_documents_uploads' location_id destination %}" multiple></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div id="progress" style="border: none; width: 100%;">
+                        <span id="upload_percent">No uploads occuring</span>
+                        <div id="upload_progress" style="background-color: green; width: 0%; height: 20px;"></div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <script src="{% static '/NearBeach/javascript/../../../static/NearBeach/widgets/jQuery-File-Upload-9.19.2/js/vendor/jquery.ui.widget.js' %}"></script>
+        <script src="{% static '/NearBeach/javascript/../../../static/NearBeach/widgets/jQuery-File-Upload-9.19.2/js/jquery.iframe-transport.js' %}"></script>
+        <script type="text/javascript" src="{% static 'NearBeach/javascript/../../../static/NearBeach/widgets/jQuery-File-Upload-9.19.2/js/jquery.fileupload.js' %}"></script>
+
+    {% endif %}
+
+    {% if document_results %}
+        <h4>Requirement {% if destination == 'requirement_item' %}Item{% endif %} Documents</h4>
+        <table>
+            <tr>
+                <td width="80%">Document(s)</td>
+                <td width="20%">Delete</td>
+            </tr>
+            {% for row in document_results %}
+                <tr id="row.document_key.document_key">
+                    <td>
+                        {% if row.document_description == "" %}
+                           <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">{{ row.document_key.document }}</a>
+                        {% else %}
+                           <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}">{{ row.document_key.document_description }}</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if requirement_permissions > 1 or document_perm > 0 %}
+                            <a onclick="delete_document('{{ row.document_key.document_key }}')" href="javascript:void(0);">Delete</a>
+                        {% else %}
+                            ------
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+    <script>
+    $(function () {
+        $('#fileupload').fileupload({
+            dataType: 'json',
+            done: function (e, data) {
+
+
+            },
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $("#upload_percent").html(progress + "%");
+                $("#upload_progress").css(
+                    'width', progress + '%'
+                );
+                if ((data.loaded / data.total) == 1) {
+                    //This if statement fixes a bug where the "done" section does not work as intended
+                    {% if destination == 'requirement' %}
+                        load_requirement_documents();
+                    {% else %}
+                        load_requirement_item_documents({{ location_id }});
+                    {% endif %}
+                }
+            }
+        });
+    });
+
+    function delete_document(document_key) {
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        $.ajax({
+            url: "/delete_document/" + document_key + "/",
+            data: {},
+            dataType: 'HTML',
+            type: 'POST',
+            success: function(data) {
+                {% if destination == 'requirement' %}
+                    load_requirement_documents();
+                {% else %}
+                    load_requirement_item_documents({{ location_id }});
+                    load_requirement_documents(); //Fixes a bug where this function will override the existing one
+                {% endif %}
+            },
+            error: function() {
+                alert("There was an issue deleting the document");
+            }
+        })
+    }
+    </script>
+</form>

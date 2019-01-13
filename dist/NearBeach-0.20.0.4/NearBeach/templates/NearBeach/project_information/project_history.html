@@ -1,0 +1,12 @@
+<br/>
+{% if project_history_results %}
+    {% for row in project_history_results %}
+        <table>
+            <tr><td>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}</td></tr>
+            <tr><td><textarea class="old_project_history">{{ row.project_history|safe }}</textarea></td></tr>
+        </table>
+        <br/>
+    {% endfor %}
+{% else %}
+    <p>There is currently no history</p>
+{% endif %}

@@ -1,0 +1,23 @@
+{% extends "./template.html" %}
+{% block content %}
+{% load static %}
+<h2>Bug Client Information</h2>
+    <form action={% url 'bug_client_information' bug_client_id %} method="post" class="bug_client_information" id="input-form">
+        {% csrf_token %}
+        <ul>
+            <li>{{ form_errors }}</li>
+            <li>{{ bug_client_form.bug_client_name }}</li>
+            <li>{{ bug_client_form.list_of_bug_client }}</li>
+            <li>{{ bug_client_form.bug_client_url }}</li>
+            <li><input type="submit" value="Update Bug Client"><a href="{% url 'bug_client_list' %}">Cancel</a></li>
+            <li>Please note: NearBeach checks the connection of the bug client by;
+                <ol>
+                    <li>Connecting to the bug client</li>
+                    <li>Extracts a list of open bugs</li>
+                    <li>Converts the JSON into data</li>
+                </ol>
+                This may take some time due to connection speeds etc.
+            </li>
+        </ul>
+    </form>
+{% endblock %}

@@ -1,0 +1,190 @@
+{% extends "./template.html" %}
+{% block content %}
+{% load static %}
+
+<script type="text/javascript" src="{% static 'NearBeach/javascript/campus_information.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
+<link rel="stylesheet" href="{% static 'NearBeach/widgets/intl-tel-input/css/intlTelInput.css' %}">
+<script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+<script src="{% static 'NearBeach/widgets/intl-tel-input/js/intlTelInput.js' %}"></script>
+
+
+
+
+
+{% if not MAPBOX_API_TOKEN == '' %}
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.css' rel='stylesheet' />
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/mapbox.js' %}"></script>
+{% elif not GOOGLE_MAP_API_TOKEN == '' %}
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAP_API_TOKEN }}&callback=initMap" async defer></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/google_maps.js' %}"></script>
+{% endif %}
+<body onload="on_page_load()">
+	<h2>Campus Information - {{ campus_results.campus_nickname }}</h2>
+	<form action="{% url 'campus_information' campus_results.campus_id %}" method="post" class="campus_information">
+		{% csrf_token %}
+		<table>
+            {% if campus_results.organisation_id %}
+			    <tr><td><a href="{% url 'organisation_information' campus_results.organisation_id.organisation_id %}">{{ campus_results.organisation_id }}</a></td></tr>
+			{% elif campus_results.customer_id %}
+                <tr><td><a href="{% url 'customer_information' campus_results.customer.customer_id %}">{{ campus_results.customer }}</a></td></tr>
+            {% else %}
+                <tr><td>Error</td></tr>
+            {% endif %}
+            <tr><td>{{ campus_information_form.campus_nickname }}</td></tr>
+			<tr><td>{{ campus_information_form.campus_phone }}</td></tr>
+			<tr><td>{{ campus_information_form.campus_fax }}</td></tr>
+			<tr><td>{{ campus_information_form.campus_address1 }}</td></tr>
+			<tr><td>{{ campus_information_form.campus_address2 }}</td></tr>
+			<tr><td>{{ campus_information_form.campus_address3 }}</td></tr>
+			<tr><td>{{ campus_information_form.campus_suburb }}</td></tr>
+            <tr><td>Please note - region and country have been solitified. If the address details of this campus have changed we recommend placing in a new campus.</td></tr>
+			<tr><td><input type="text" readonly value="{{ campus_results.campus_region_id }}"></td></tr>
+            <tr><td><input type="text" readonly value="{{ campus_results.campus_country_id }}"></td></tr>
+		</table>
+		<input type="submit" value="Save">
+        {% if permission >= 3 %}
+            <a class="btn btn-danger" href="javascript:void(0)" onclick="confirm_deactivate_campus()">Deactivate Campus</a>
+            <!-- Deactivate Campus
+            If the user has permissions 3 or 4, they can deactivate a campus. The campus will deactivate and not be
+            deleted.
+            -->
+            <div class="modal fade" id="confirm_deactivate_campus" tabindex="-1" role="dialog" aria-labelledby="deactivate_campus" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deactivate_campus_title">Deactivate Campus</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to deactivate this campus. Deactivating this campus will not delete the data,
+                            however it will remove it from being found on NearBeach. All customer's campuses for this campus
+                            will be deactivated also.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="deactivate_campus_confirmed" class="btn btn-danger btn-ok" disabled onclick="deactivate_campus()">Deactivate Campus</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+	</form>
+    {% if campus_results.organisations_id %}
+        <h2>Campus Contacts</h2>
+        {% if add_customers_results %}
+            <form action="{% url 'campus_information' campus_results.campus_id %}" method="POST" class="campus_information">
+                {% csrf_token %}
+                <select name="add_customer_select" id="id_add_customer_select" onchange="enable_disable_add_customer()">
+                    <option value="---------"> ---------</option>
+                    {% for row in add_customers_results %}
+                        <option value="{{ row.customer_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
+                    {% endfor %}
+                </select>
+                <input type="submit" name="add_customer_submit" value="Add Customer" disabled id="id_add_customer_submit">
+            </form>
+        {% endif %}
+        <br/>
+        {% if customer_campus_results %}
+            <table>
+                <tr class="header"><td>First Name</td><td>Last Name</td><td>Email</td><td>Phone</td><td>Fax</td><td>Delete</td></tr>
+                {% for row in customer_campus_results %}
+                    <tr>
+                        <td><a href="{% url 'customers_campus_information' row.customers_campus_id 'CAMP' %}">{{ row.customer_id.customer_first_name }}</a></td>
+                        <td>{{ row.customer_id.customer_last_name }}</td>
+                        <td>{{ row.customer_id.customer_email }}</td>
+                        <td>{{ row.customer_phone }}</td>
+                        <td>{{ row.customer_fax }}</td>
+                        <td><a href="{% url 'delete_campus_contact' row.customers_campus_id 'CAMP' %}">Delete</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>There are no customers at this campus</p>
+        {% endif %}
+    {% endif %}
+	<h2>Map</h2>
+	<div id='map'></div>
+
+
+
+	<script type="text/javascript">
+        function on_page_load() {
+
+            {% if MAPBOX_API_TOKEN %}
+                initMap(
+                    {{ campus_results.campus_latitude }},
+                    {{ campus_results.campus_longitude }},
+                    "{{ campus_results.campus_nickname }}",
+                    "{{ MAPBOX_API_TOKEN }}"
+                );
+            {% elif GOOGLE_MAP_API_TOKEN %}
+                initMap(
+                    {{ campus_results.campus_latitude }},
+                    {{ campus_results.campus_longitude }},
+                    "{{ campus_results.campus_nickname }}",
+                    "{{ GOOGLE_MAP_API_TOKEN }}"
+                );
+            {% else %}
+                $("#map").html("No map API has been installed.");
+            {% endif %}
+
+            //Initialise the international phone number widget
+            var campus_phone = document.querySelector("#id_campus_phone"),
+            campus_fax = document.querySelector("#id_campus_fax");
+
+            window.intlTelInput(campus_phone);
+            window.intlTelInput(campus_fax);
+
+        }
+
+        function confirm_deactivate_campus() {
+            //bring up modal
+            //wait 2 seconds
+            //enable button
+
+            $("#confirm_deactivate_campus").modal("show");
+
+            setTimeout(function () {
+                document.getElementById("deactivate_campus_confirmed").disabled = false;
+            }, 2000);
+        }
+
+        function deactivate_campus() {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/deactivate_campus/{{ campus_results.campus_id }}/',
+                data: {},
+                dataType: "HTML",
+                type: "POST",
+                success: function(data) {
+                    $("#confirm_deactivate_campus").modal("hide"); //Remove the modal
+                    //Go to organisation/customer??
+                    {% if campus_results.organisation_id %}
+                        window.location.href = "/organisation_information/{{ campus_results.organisation_id.organisation_id }}/";
+                    {% elif campus_results.customer_id %}
+                        window.location.href = "/organisation_information/{{ campus_results.customer.customer_id }}/";
+                    {% else %}
+                        window.location.href = "/";
+                    {% endif %}                },
+                error: function() {
+                    alert("Sorry, there was an issue deactivating the campus");
+                }
+
+            })
+        }
+	</script>
+
+</body>
+{% endblock %}

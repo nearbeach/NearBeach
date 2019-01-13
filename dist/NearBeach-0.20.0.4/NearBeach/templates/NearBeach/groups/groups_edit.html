@@ -1,0 +1,20 @@
+{% csrf_token %}
+{% if group_permission > 1 %}
+    <h2>Edit Groups</h2>
+    <ul>
+        <li>{{ group_form.group_name }}</li>
+        <li><input type="submit" value="Save Changes"><a href="javascript:void(0)" onclick="close_group_edit()">Close</a> </li>
+        <li value="{{ group_id }}" id="edit_group_id"></li>
+    </ul>
+{% endif %}
+{% if user_permission > 2 %}
+<br/>
+
+
+
+
+{% endif %}
+
+<script>
+    load_users({{ group_id }});
+</script>

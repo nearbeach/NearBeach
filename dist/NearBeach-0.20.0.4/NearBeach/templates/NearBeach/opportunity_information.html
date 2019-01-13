@@ -1,0 +1,434 @@
+{% extends "./template.html" %}
+{% block content %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
+<link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
+<script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
+
+
+
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
+
+
+<body onload="on_page_load()">
+    <form id="opportunity_information" action="{% url 'opportunity_information' opportunity_id %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ opportunity_information_form.media }}
+        <h2>Opportunity Information</h2>
+        <div id="save_state"></div>
+        <table>
+            <tr><td>{{ opportunity_information_form.opportunity_name }}</td></tr>
+            <tr><td>{{ opportunity_information_form.opportunity_description }}</td></tr>
+            <tr><td>Lead Source: {{ opportunity_results.lead_source_id }}</td></tr>
+            <tr><td>Organisation: {{ opportunity_results.organisations_id }}</td></tr>
+            <tr><td>
+                Customer: <select>
+                    <option value="">-------</option>
+                    {% for row in customer_results %}
+                        {% if row.customer_id == opportunity_results.customer_id.customer_id %}
+                            <option value="{{ row.customer_id }}" selected>
+                        {% else %}
+                            <option value="{{ row.customer_id }}">
+                        {% endif %}
+                        {{ row.customer_first_name }} {{ row.customer_last_name }}</option>
+                    {% endfor %}
+                </select>
+            </td></tr>
+            <tr><td>
+                Opportunity Amount: {{ opportunity_information_form.currency_id }}
+                {{ opportunity_information_form.opportunity_amount }}
+                {{ opportunity_information_form.amount_type_id }}
+            </td></tr>
+            <tr><td>Time Zone: {{ timezone }}</td></tr>
+            <tr><td>Opportunity Expected Close Date: {{ opportunity_information_form.opportunity_expected_close_date }}
+            </td></tr>
+            <tr><td>Opportunity Stage: {{ opportunity_information_form.opportunity_stage_id }}</td></tr>
+            <tr><td>Opportunity Success Probability: {{ opportunity_information_form.opportunity_success_probability }}</td></tr>
+            <tr><td>
+                <input type="submit" name="submit_contact" value="Update"/>
+                {% if opportunity_results.opportunity_stage_id.opportunity_closed == "TRUE" and opportunity_perm == 4 %}
+                    <a href="javascript:void(0)" onclick="reopen_temp()">Reopen</a>
+                {% endif %}
+            </td></tr>
+        </table>
+    </form>
+
+    <h2>To Do</h2>
+    <form id="to_do">
+        Loading...
+    </form>
+
+    <div id="email_history">
+        <h2>Email History</h2>
+        Loading...
+    </div>
+
+    <h2>Associated Projects & Tasks</h2>
+    <ul>
+    {% if opportunity_results.opportunity_stage_id.opportunity_closed != "TRUE" %}
+        <li><a href="{% url 'new_project' opportunity_id 'opportunity'%}">Create New Project</a></li>
+        <li><a href="{% url 'new_task' opportunity_id 'opportunity' %}">Create New Task</a></li>
+    {% endif %}
+    </ul>
+    <h2>Assigned Projects</h2>
+    {% if project_results %}
+        <table>
+            <tr class="header">
+                <td>Project ID</td>
+                <td>Project Name</td>
+                <td>Project End Date</td>
+                <td>Project Status</td>
+            </tr>
+            {% for row in project_results %}
+                <tr>
+                    <td><a href="{% url 'project_information' row.project_id.project_id %}">PRO{{ row.project_id.project_id }}</a></td>
+                    <td>{{ row.project_id.project_name }}</td>
+                    <td>{{ row.project_id.project_end_date }}</td>
+                    <td>{{ row.project_id.project_status }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>There are no associated projects. Please create a new project</p>
+    {% endif %}
+    <br/>
+    <h2>Assigned Tasks</h2>
+    {% if tasks_results %}
+        <table>
+            <tr class="header">
+                <td>Task ID</td>
+                <td>Project Name</td>
+                <td>Project End Date</td>
+                <td>Project Status</td>
+            </tr>
+            {% for row in tasks_results %}
+                <tr>
+                    <td><a href="#">TASK{{ row.tasks_id.tasks_id }}</a></td>
+                    <td>{{ row.tasks_id.task_short_description }}</td>
+                    <td>{{ row.tasks_id.task_end_date }}</td>
+                    <td>{{ row.tasks_id.task_status }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>There are no associated tasks. Please create a new task</p>
+    {% endif %}
+
+    <h2>Opportunity Quotes</h2>
+    {% if opportunity_results.opportunity_stage_id.opportunity_closed != "TRUE" %}
+        <a href="{% url 'new_quote' opportunity_id 'opportunity' %}">New Quote</a>
+    {% endif %}
+    {% if quote_results %}
+        <table>
+            <tr>
+                <td width="50%">Quote Title</td>
+                <td width="25%">Valid Till</td>
+                <td width="25%">Quote Stage</td>
+            </tr>
+            {% for row in quote_results %}
+                <tr>
+                    <td><a href="{% url 'quote_information' row.quote_id %}">{{ row.quote_title }}</a></td>
+                    <td>{{ row.quote_valid_till }}</td>
+                    <td>{{ row.quote_stage_id }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    {% if permission >= 3 %}
+        <form method="post" class="assigned_users" id="assigned_users">
+            <h2>Assigned Users</h2>
+            Loading...
+        </form>
+        <div id="assigned_user_list">Loading list...</div>
+
+        <h2>Assigned Groups</h2>
+        <form method="post" class="assigned_groups" id="assigned_groups">
+            Loading add...
+        </form>
+        <div id="assigned_group_list">Loading list...</div>
+    {% endif %}
+
+    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
+
+<script>
+    $("#assigned_users").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/assigned_user_add/{{ opportunity_id }}/opportunity/',
+            data: $(this).serialize(),
+            success: function() {
+                load_assigned_user_list();
+                load_assigned_user_add();
+            },
+            error: function() {
+                alert("Sorry, project assigned users did not save. Please try again.");
+            }
+        })
+    });
+
+
+    $("#assigned_groups").on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/assigned_group_add/{{ opportunity_id }}/opportunity/',
+            data: $(this).serialize(),
+            success: function() {
+                load_assigned_group_list();
+                load_requirement_group_add();
+            },
+            error: function() {
+                alert("Sorry, project assigned users did not save. Please try again.");
+            }
+        })
+    });
+
+    $("#to_do").on('submit', function(e){
+       e.preventDefault();
+       $.ajax({
+           url: '/to_do/{{ opportunity_id }}/opportunity/',
+           data: $(this).serialize(),
+           type: "POST",
+           success: function(data) {
+               $("#to_do").html(data);
+           },
+           error: function() {
+               alert("Sorry, something went wrong with the TO DO");
+           }
+       })
+    });
+
+
+    $("#opportunity_information").on('submit', function(e) {
+        //State the save_state is currently saving
+        $("#save_state").html("Currently Saving Project");
+
+        //Grab which button was pressed
+        var which_button = $("input[type=submit][clicked=true]").val()
+
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/opportunity_information/{{ opportunity_id }}/',
+            data: $(this).serialize(),
+            success: function() {
+                //State that the function has saved
+                var current_time = Date();
+                $("#save_state").html("Saved last on " + current_time);
+            },
+            error: function() {
+                alert("Sorry, project information did not save. Please try again.");
+            }
+        })
+    });
+
+
+    function complete_to_do(to_do_id) {
+        //Send data to the database
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            url: '/to_do_complete/' + to_do_id + '/',
+            data: {},
+            type: "POST",
+            success: function(data) {
+                load_to_do();
+            },
+            error: function() {
+                alert("Can not complete To do :(");
+            }
+        });
+    }
+
+    function reopen_temp() {
+        $("input").prop("readonly", false);
+
+        //Enable all the select statements
+        $("select").prop("disabled", false);
+
+        //Disable all text area
+        $("textarea").prop("disabled", false);
+
+        //Disable all the buttons.
+        $("input[type=submit]").prop("disabled", false);
+    };
+
+    function on_page_load() {
+        /*
+        If the opportunity_stage_id has the field opportunity_closed == TRUE, we want
+        to turn this opportunity into a read only. As it can not longer be edited.
+         */
+        if ("{{ opportunity_results.opportunity_stage_id.opportunity_closed }}" == "TRUE") {
+            set_permissions(1); //Read only
+        } else {
+            set_permissions({{ opportunity_perm }});
+        }
+
+        load_to_do();
+        load_assigned_group_list();
+        load_assigned_group_add();
+        load_assigned_user_add();
+        load_assigned_user_list();
+        load_email_history();
+
+        $("#id_opportunity_expected_close_date").datetimepicker({
+        format:'Y-m-d H:i:00',
+        allowTimes: [
+            '00:00','00:05','00:10','00:15','00:20','00:25','00:30','00:35','00:40','00:45','00:50','00:55',
+            '01:00','01:05','01:10','01:15','01:20','01:25','01:30','01:35','01:40','01:45','01:50','01:55',
+            '02:00','02:05','02:10','02:15','02:20','02:25','02:30','02:35','02:40','02:45','02:50','02:55',
+            '03:00','03:05','03:10','03:15','03:20','03:25','03:30','03:35','03:40','03:45','03:50','03:55',
+            '04:00','04:05','04:10','04:15','04:20','04:25','04:30','04:35','04:40','04:45','04:50','04:55',
+            '05:00','05:05','05:10','05:15','05:20','05:25','05:30','05:35','05:40','05:45','05:50','05:55',
+            '06:00','06:05','06:10','06:15','06:20','06:25','06:30','06:35','06:40','06:45','06:50','06:55',
+            '07:00','07:05','07:10','07:15','07:20','07:25','07:30','07:35','07:40','07:45','07:50','07:55',
+            '08:00','08:05','08:10','08:15','08:20','08:25','08:30','08:35','08:40','08:45','08:50','08:55',
+            '09:00','09:05','09:10','09:15','09:20','09:25','09:30','09:35','09:40','09:45','09:50','09:55',
+            '10:00','10:05','10:10','10:15','10:20','10:25','10:30','10:35','10:40','10:45','10:50','10:55',
+            '11:00','11:05','11:10','11:15','11:20','11:25','11:30','11:35','11:40','11:45','11:50','11:55',
+            '12:00','12:05','12:10','12:15','12:20','12:25','12:30','12:35','12:40','12:45','12:50','12:55',
+            '13:00','13:05','13:10','13:15','13:20','13:25','13:30','13:35','13:40','13:45','13:50','13:55',
+            '14:00','14:05','14:10','14:15','14:20','14:25','14:30','14:35','14:40','14:45','14:50','14:55',
+            '15:00','15:05','15:10','15:15','15:20','15:25','15:30','15:35','15:40','15:45','15:50','15:55',
+            '16:00','16:05','16:10','16:15','16:20','16:25','16:30','16:35','16:40','16:45','16:50','16:55',
+            '17:00','17:05','17:10','17:15','17:20','17:25','17:30','17:35','17:40','17:45','17:50','17:55',
+            '18:00','18:05','18:10','18:15','18:20','18:25','18:30','18:35','18:40','18:45','18:50','18:55',
+            '19:00','19:05','19:10','19:15','19:20','19:25','19:30','19:35','19:40','19:45','19:50','19:55',
+            '20:00','20:05','20:10','20:15','20:20','20:25','20:30','20:35','20:40','20:45','20:50','20:55',
+            '21:00','21:05','21:10','21:15','21:20','21:25','21:30','21:35','21:40','21:45','21:50','21:55',
+            '22:00','22:05','22:10','22:15','22:20','22:25','22:30','22:35','22:40','22:45','22:50','22:55',
+            '23:00','23:05','23:10','23:15','23:20','23:25','23:30','23:35','23:40','23:45','23:50','23:55'
+        ]
+    });
+    }
+
+    function load_email_history() {
+        $.ajax({
+            url: '/email_history/{{ opportunity_id }}/opportunity',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $("#email_history").html(data);
+            },
+            error: function() {
+                alert("Sorry, the email history could not load");
+            }
+        })
+    };
+
+    function load_to_do() {
+        $.ajax({
+            url: '/to_do/{{ opportunity_id }}/opportunity/',
+            data: {},
+            type: "GET",
+            datatype: "HTML",
+            success: function (data) {
+                $("#to_do").html(data);
+            },
+            error: function() {
+                alert("Sorry, could not load the TO DO list");
+            },
+        });
+    }
+
+        function load_assigned_group_add() {
+            $.ajax({
+                url: '/assigned_group_add/{{ opportunity_id }}/opportunity/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $('#assigned_groups').html(data);
+                },
+                error: function() {
+                    $('#assigned_groups').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
+                }
+            });
+        };
+
+        function delete_group_item(group_item) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/assigned_group_delete/' + group_item + '/',
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    load_assigned_group_add();
+                    load_assigned_group_list();                },
+                error: function() {
+                    alert("Sorry, there was an issue deleting the Assigned Group")
+                }
+            });
+        };
+
+
+        function load_assigned_group_list() {
+            $.ajax({
+                url: '/assigned_group_list/{{ opportunity_id }}/opportunity/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $('#assigned_group_list').html(data);
+                },
+                error: function() {
+                    $('#assigned_group_list').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
+                }
+            });
+        };
+
+        function load_assigned_user_add() {
+            $.ajax({
+                url: '/assigned_user_add/{{ opportunity_id }}/opportunity/',
+                data:  {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $("#assigned_users").html(data);
+                },
+                error: function() {
+                    $("#assigned_users").html("<h2>Assigned Users</h2>Sorry, users encounted an error and did not load");
+                }
+            })
+        };
+
+        function load_assigned_user_list() {
+            $.ajax({
+                url: '/assigned_user_list/{{ opportunity_id }}/opportunity/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $("#assigned_user_list").html(data);
+                },
+                error: function(data) {
+                    $("#assigned_user_list").html("<p>User list failed to load</p>")
+                }
+            })
+        }
+
+</script>
+</body>
+{% endblock %}

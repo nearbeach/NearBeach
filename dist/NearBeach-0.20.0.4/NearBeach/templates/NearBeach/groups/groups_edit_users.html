@@ -1,0 +1,52 @@
+{% csrf_token %}
+<h4>Users</h4>
+<table>
+    <tr>
+        <td>User Name</td>
+        <td>Name</td>
+        <td>Email</td>
+        <td>Permission</td>
+        <td>Remove</td>
+    </tr>
+    {% for row in user_groups_results %}
+        <tr>
+            <td>{{ row.username }}</td>
+            <td>{{ row.username.first_name }} {{ row.username.last_name }}</td>
+            <td>{{ row.username.email }}</td>
+            <td>{{ row.permission_set }}</td>
+            <td>
+                {% if user_permission == 4 %}
+                    <a href="javascript:void(0)" onclick="delete_user_permission({{ row.username.id }})">Delete User Permission</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% if user_permission > 3 and user_results and permission_set_results %}
+<ul>
+    <li>Add user to group:</li>
+    <li>
+        <select id="user_id" name="user_id" onchange="update_add_user_to_group()" required>
+            <option value="------" disabled selected>------</option>
+            {% for row in user_results %}
+                <option value="{{ row.id }}">{{ row.username }} - {{ row.first_name }} {{ row.last_name }}</option>
+            {% endfor %}
+        </select>
+    </li>
+    <li>
+        <select id="permission_set" name="permission_set" onchange="update_add_user_to_group()" required>
+            <option value="------" disabled selected>------</option>
+            {% for row in permission_set_results %}
+                <option value="{{ row.permission_set_id }}">{{ row.permission_set }}</option>
+            {% endfor %}
+        </select>
+    </li>
+    <li><input id="submit_new_user_permission" type="submit" value="Submit New User Permission"></li>
+</ul>
+{% elif not user_results %}
+    <p>There are no users to add.</p>
+{% elif not permission_set_results %}
+    <p>There are no permission sets assigned to this group. Please assign them before adding users.</p>
+{% else %}
+    <p>No permissions granted to add users.</p>
+{% endif %}

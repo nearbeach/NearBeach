@@ -1,0 +1,6 @@
+django
+simplejson
+pillow
+geolocation-python
+django-tinymce4-lite
+weasyprint
