@@ -52,11 +52,19 @@
         function on_page_load() {
             set_permissions({{ permission }});
 
-            {% if not MAPBOX_API_TOKEN == "" or not GOOGLE_MAP_API_TOKEN == "" %}
+            {% if not MAPBOX_API_TOKEN == "" %}
                 initMap(
                     {{ campus_results.campus_latitude }},
                     {{ campus_results.campus_longitude }},
-                    "{{ campus_results.campus_nickname }}"
+                    "{{ campus_results.campus_nickname }}",
+                    "{{ MAPBOX_API_TOKEN }}"
+                );
+            {% elif not GOOGLE_MAP_API_TOKEN == "" %} %}
+                initMap(
+                    {{ campus_results.campus_latitude }},
+                    {{ campus_results.campus_longitude }},
+                    "{{ campus_results.campus_nickname }}",
+                    "{{ GOOGLE_MAP_API_TOKEN }}"
                 );
             {% endif %}
 
