@@ -14,7 +14,7 @@ function update_customers() {
     1.) Extract out the Organisation ID from the organisation field
     2.) Loop through the customer fields and hide those who are not associated to the organisation
      */
-    var organisations_id = document.getElementById('id_organisations_id').value;
+    var organisations_id = document.getElementById('id_organisation_id').value;
     var customer_id = document.getElementById('customer_id');
 
     // Set customer id to ------
@@ -24,7 +24,7 @@ function update_customers() {
     Hide those values we do not want to see anymore
      */
     for (var i=1; i<customer_id.length; i++) {
-        var customer_org_id = customer_id[i].getAttribute("organisation_id")
+        var customer_org_id = customer_id[i].getAttribute("organisation_id");
         if (customer_org_id == organisations_id) {
             customer_id[i].disabled=false;
         } else {
@@ -60,7 +60,7 @@ function apply_organisation_customer(organisation, customer) {
      */
     if (organisation!=null) {
         //Apply the organisation
-        var select_field=document.getElementById("id_organisations_id");
+        var select_field=document.getElementById("id_organisation_id");
         for (i=0;i<select_field.length;i++) {
             if (select_field[i].value==organisation) {
                 select_field[i].selected=true;
