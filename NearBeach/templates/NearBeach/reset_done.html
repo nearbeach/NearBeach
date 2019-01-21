@@ -1,92 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-    <head>
-        <style>
-            body {
-                background-color: #ecf0f1;
-            }
+<head>
+    <meta charset="UTF-8">
+    <title>NearBeach Login Screen</title>
 
-            h1 a {
-                font-size: 1.1s5em;
-                text-align: center;
-                text-decoration: none;
-                color: azure;
-                margin-left: 10px;
-                font-weight: 400;
-            }
+    <!--
+    Bootstrap and jquery are utilised throughout ALL of NearBeach
+    -->
+    {% load staticfiles %}
+    <script src="{% static 'NearBeach/widgets/jquery/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'NearBeach/widgets/bootstrap-4.1.3-dist/js/bootstrap.bundle.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/bootstrap-4.1.3-dist/css/bootstrap.css' %}" />
 
-            input[type="text"], input[type="password"], textarea {
-                box-sizing: border-box;
-                -webkit-box-sizing: border-box;
-                -moz-box-sizing: border-box;
-                padding: 8px;
-                outline: none;
-                border: 1px solid #b0cfe0;
-                -webkit-transition: all 0.30s ease-in-out;
-                -moz-transition: all 0.30s ease-in-out;
-                -ms-transition: all 0.30s ease-in-out;
-                -o-transition: all 0.30s ease-in-out;
-                width: 100%;
-                max-width: 900px;
-            }
+    <style>
+        :root {
+            --input-padding-x: 1.5rem;
+            --input-padding-y: 0.75rem;
+        }
 
-            input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
-                box-shadow: 0 0 5px #b0cfe0;
-                border: 1px solid #b0cfe0;
-            }
+        .login,
+        .image {
+            min-height: 100vh;
+        }
 
-            textarea {
-                color: #0a0a0a;
-                margin-bottom: 8px;
-            }
+        .bg-image {
+            background-image: url('{% static "NearBeach/images/flower_by_luke.jpg" %}');
+            background-size: cover;
+            background-position: center;
+        }
 
-            input[type="submit"], input[type="button"] {
-                -moz-box-shadow: inset 0px 1px 0px 0px #3985b1;
-                -webkit-box-shadow: inset 0px 1px 0px 0px rgba(0, 0, 0, 0.2);
-                box-shadow: inset 0px 1px 0px 0px #33adff;
-                background-color: #33adff;
-                border: 1px solid #33adff;
-                display: inline-block;
-                cursor: pointer;
-                color: #fff;
-                padding: 8px 19px;
-                text-decoration: none;
-                border-radius: 5px;
-            }
+        .login-heading {
+            font-weight: 300;
+        }
 
-            #password-form {
-                max-width: 450px;
-                padding: 30px;
-                margin: -20px auto;
-                list-style: none;
-            }
+        .btn-login {
+            font-size: 0.9rem;
+            letter-spacing: 0.05rem;
+            padding: 0.75rem 1rem;
+            border-radius: 2rem;
+        }
 
-            #password-form ul {
-                padding: 0;
-                margin: 0;
-            }
+        .form-label-group {
+            position: relative;
+            margin-bottom: 1rem;
+        }
 
-            #password-form  ul li {
-                display: block;
-                margin-bottom: 10px;
-                min-height: 35px;
-            }
+        .form-label-group>input,
+        .form-label-group>label {
+            padding: var(--input-padding-y) var(--input-padding-x);
+            height: auto;
+            border-radius: 2rem;
+        }
 
-            #password-form  ul input[type="submit"], #password-form  ul input[type="submit"] {
-                width: 100%;
-            }
+        .form-label-group>label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: block;
+            width: 100%;
+            margin-bottom: 0;
+            /* Override default `<label>` margin */
+            line-height: 1.5;
+            color: #495057;
+            cursor: text;
+            /* Match the input under the label */
+            border: 1px solid transparent;
+            border-radius: .25rem;
+            transition: all .1s ease-in-out;
+        }
 
-        </style>
-    </head>
-    <body>
-        <div id="password-form">
-            <h1>Password reset complete</h1>
-            <p>Your password has been set.  You may go ahead and log in now.</p>
-            <p><a href="{% url 'login' %}">Log in</a></p>
+        .form-label-group input::-webkit-input-placeholder {
+            color: transparent;
+        }
+
+        .form-label-group input:-ms-input-placeholder {
+            color: transparent;
+        }
+
+        .form-label-group input::-ms-input-placeholder {
+            color: transparent;
+        }
+
+        .form-label-group input::-moz-placeholder {
+            color: transparent;
+        }
+
+        .form-label-group input::placeholder {
+            color: transparent;
+        }
+
+        .form-label-group input:not(:placeholder-shown) {
+            padding-top: calc(var(--input-padding-y) + var(--input-padding-y) * (2 / 3));
+            padding-bottom: calc(var(--input-padding-y) / 3);
+        }
+
+        .form-label-group input:not(:placeholder-shown)~label {
+            padding-top: calc(var(--input-padding-y) / 3);
+            padding-bottom: calc(var(--input-padding-y) / 3);
+            font-size: 12px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row no-gutter">
+        <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image"></div>
+        <div class="col-md-8 col-lg-6">
+            <div class="login d-flex align-items-center py-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-9 col-lg-8 mx-auto">
+                            <h3 class="login-heading">NearBeach Password Change Done</h3>
+                            <div class="alert alert-primary" role="alert">
+                                Your password has been updated. <a href="{% url 'login' %}">Click here to go to the login screen.</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </body>
+    </div>
+</div>
+</body>
 </html>
-
-
-
