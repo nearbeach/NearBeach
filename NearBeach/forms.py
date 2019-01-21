@@ -1310,14 +1310,17 @@ class list_of_tax_form(ModelForm):
 class login_form(forms.Form):
     username=forms.CharField(
         widget=forms.TextInput(attrs={
-            'placeholder': 'login',
-            'width': '100%'
+            'placeholder': 'Username',
+            'class': 'form-control',
+            'required': True,
+            'autofocus': True,
         })
     )
     password=forms.CharField(
         widget=forms.PasswordInput(attrs={
-            'placeholder': 'password',
-            'width': '100%'
+            'placeholder': 'Password',
+            'class': 'form-control',
+            'required': True,
         })
     )
 
