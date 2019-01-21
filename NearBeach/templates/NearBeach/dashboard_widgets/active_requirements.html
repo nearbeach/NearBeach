@@ -1,12 +1,13 @@
-<h2>Active Requirements</h2>
 {% if requirement_results %}
-    <table>
-        <tr class="header">
-            <td width="5%">Req</td>
-            <td width="75%">Requirement Name</td>
-            <td width="10%">Requirement Type</td>
-            <td width="10%">Requirement Status</td>
-        </tr>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <td width="5%">Req</td>
+                <td width="75%">Requirement Name</td>
+                <td width="10%">Requirement Type</td>
+                <td width="10%">Requirement Status</td>
+            </tr>
+        </thead>
         {% for row in requirement_results %}
             <tr>
                 <td><a href="{% url 'requirement_information' row.requirement_id %}">REQ{{ row.requirement_id }}</a></td>

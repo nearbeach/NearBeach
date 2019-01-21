@@ -1,16 +1,18 @@
 {% load nearbeach_extras %}
 {% if quote_results %}
     <h2>Active Quotes</h2>
-    <table>
-        <tr class="header">
-            <td width="75%">Quote Title</td>
-            <td width="10%">Quote Stage</td>
-            <td width="15%">Quote Valid to</td>
-        </tr>
+    <table class="table table-hover">
+        <thead>
+            <tr class="header">
+                <td width="75%">Quote Title</td>
+                <td width="10%">Quote Stage</td>
+                <td width="15%">Quote Valid to</td>
+            </tr>
+        </thead>
         {% for row in quote_results %}
             <tr
                     {% if row.quote_valid_till|hours_ago:24 %}
-                        style="background-color:lightcoral"
+                        class="table-danger"
                     {% endif %}
             >
                 <td><a href="{% url 'quote_information' row.quote_id %}">{{ row.quote_title }}</a></td>
@@ -19,4 +21,6 @@
             </tr>
         {% endfor %}
     </table>
+{% else %}
+    <p>There are no quotes.</p>
 {% endif %}

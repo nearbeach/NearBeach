@@ -103,45 +103,109 @@
         }
     </script>
     <body onload="on_page_load()">
-        <h2>NearBeach Dashboard</h2>
-        <input id="filter_tables" type="text" placeholder="Filter..." onkeyup="apply_filters()">
-        <ul>
-            <li id="active_projects"></li>
-            <li id="active_tasks"></li>
-            <li id="active_quotes"></li>
-            <li id="active_requirements"></li>
-            <li id="opportunities"></li>
-            <li id="group_active_projects"></li>
-            <li id="group_active_tasks"></li>
-            <li id="group_opportunities"></li>
+        <h1 class="mt-5">NearBeach Dashboard</h1>
+        <div class="form-label-group">
+            <input id="filter_tables" type="text" placeholder="Filter..." onkeyup="apply_filters()" style="width: 100%;">
+            <label for="filter_tables">Filter...</label>
+        </div>
 
-        </ul>
-    <script>
-        function apply_filters() {
-            //Varibales used in the function
-            var input,
-                filter,
-                tr,
-                i;
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Projects Assigned to me</h2>
+            </div>
+            <div class="card-body" id="active_projects">
+                Loading...
+            </div>
+        </div>
 
-            //Get the value from the search box
-            input = document.getElementById("filter_tables");
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Tasks Assigned to me</h2>
+            </div>
+            <div class="card-body" id="active_tasks">
+                Loading...
+            </div>
+        </div>
 
-            //We want to compare apples with apples, make all uppercase
-            filter = input.value.toUpperCase();
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Active Quotes</h2>
+            </div>
+            <div class="card-body" id="active_quotes">
+                Loading...
+            </div>
+        </div>
 
-            //Get all table rows
-            tr = document.getElementsByTagName("tr");
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Active Requirements</h2>
+            </div>
+            <div class="card-body" id="active_requirements">
+                Loading...
+            </div>
+        </div>
 
-            for (i = 0; i < tr.length; i++) {
-                //If the <tr> contains any values of the filter OR has class header, we want to show
-                if (tr[i].innerHTML.toUpperCase().indexOf(filter) > -1 || tr[i].className=="header") {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Opportunities</h2>
+            </div>
+            <div class="card-body" id="opportunities">
+                Loading...
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Group Active Projects</h2>
+            </div>
+            <div class="card-body" id="group_active_projects">
+                Loading...
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Group Active Tasks</h2>
+            </div>
+            <div class="card-body" id="group_active_tasks">
+                Loading...
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Group Opportunities</h2>
+            </div>
+            <div class="card-body" id="group_opportunities">
+                Loading...
+            </div>
+        </div>
+        <script>
+            function apply_filters() {
+                //Varibales used in the function
+                var input,
+                    filter,
+                    tr,
+                    i;
+
+                //Get the value from the search box
+                input = document.getElementById("filter_tables");
+
+                //We want to compare apples with apples, make all uppercase
+                filter = input.value.toUpperCase();
+
+                //Get all table rows
+                tr = document.getElementsByTagName("tr");
+
+                for (i = 0; i < tr.length; i++) {
+                    //If the <tr> contains any values of the filter OR has class header, we want to show
+                    if (tr[i].innerHTML.toUpperCase().indexOf(filter) > -1 || tr[i].className=="header") {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
                 }
             }
-        }
-    </script>
+        </script>
     </body>
 {% endblock %}
