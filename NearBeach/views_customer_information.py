@@ -65,7 +65,7 @@ def information_customer_contact_history(request, customer_id):
                 customer_instance = customer.objects.get(customer_id=customer_id)
 
                 submit_history = contact_history(
-                    organisation_id=customer_instance.organisation_id,
+                    #organisation_id=customer_instance.organisation_id,
                     customer_id=customer_instance,
                     contact_type=contact_type,
                     contact_date=contact_date,
@@ -73,6 +73,9 @@ def information_customer_contact_history(request, customer_id):
                     user_id=current_user,
                     change_user=request.user,
                 )
+                if not customer_instance.organisation_id == None:
+                    submit_history.organisation_id = customer_instance.organisation_id_id
+
                 if contact_attachment:
                     submit_history.document_key = documents_save
                 submit_history.save()
@@ -106,43 +109,6 @@ def information_customer_contact_history(request, customer_id):
 
     return HttpResponse(t.render(c, request))
 
-
-@login_required(login_url='login')
-def information_customer_documents_list(request, customer_id, organisation_id=''):
-    permission_results = return_user_permission_level(request, None,['customer','document'])
-
-    if permission_results['customer'] == 0:
-        return HttpResponseRedirect(reverse('permission_denied'))
-
-
-    #Get Data
-    customer_document_results = document_permission.objects.filter(
-        customer_id=customer_id,
-        is_deleted="FALSE",
-    )
-    try:
-        organisation_document_results = document_permission.objects.filter(
-            organisation_id=organisation_id,
-            customer_id__isnull=True,
-            is_deleted="FALSE",
-        )
-    except:
-        organisation_document_results = None
-
-
-    #Load template
-    t = loader.get_template('NearBeach/customer_information/customer_documents_list.html')
-
-    # context
-    c = {
-        'customer_id': customer_id,
-        'customer_document_results': customer_document_results,
-        'organisation_document_results': organisation_document_results,
-        'customer_permissions': permission_results['customer'],
-        'document_perm': permission_results['document'],
-    }
-
-    return HttpResponse(t.render(c, request))
 
 
 @login_required(login_url='login')

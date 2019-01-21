@@ -279,8 +279,8 @@ class assign_group_add_form(forms.Form):
         queryset=group.objects.all(),
         required=True,
         widget=forms.Select(attrs={
-            'width': '80%',
             'onchange': 'add_group_change()',
+            'class': 'form-control',
         })
     )
 
@@ -410,8 +410,8 @@ class assign_user_add_form(forms.Form):
         queryset=User.objects.all(),
         required=True,
         widget=forms.Select(attrs={
-            'width': '80%',
             'onchange': 'add_user_change()',
+            'class': 'form-control',
         })
     )
 
@@ -2749,7 +2749,20 @@ class user_want_form(ModelForm):
         required=True,
         widget=forms.TextInput(attrs={
             'placeholder': 'Please input a want or do not want',
+            'class': 'form-control',
         })
+    )
+    want_choice=forms.ChoiceField(
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        choices=WANT_CHOICE,
+    )
+    want_skill=forms.ChoiceField(
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        choices=SKILL_CHOICE,
     )
     class Meta:
         model=user_want
@@ -2764,8 +2777,14 @@ class user_weblink_form(ModelForm):
     user_weblink_url=forms.URLField(
         widget=forms.URLInput(attrs={
             'placeholder': 'https://nearbeach.org',
-            'style': 'width: 100%;'
+            'class': 'form-control',
         }),
+    )
+    user_weblink_source=forms.ChoiceField(
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        choices=WEBSITE_SOURCE,
     )
 
     class Meta:

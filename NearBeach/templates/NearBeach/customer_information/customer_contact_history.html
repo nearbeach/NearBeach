@@ -2,19 +2,24 @@
 {{ contact_history_form.media }}
 <h2>Contact History</h2>
 {% if customer_permissions > 1 or contact_history_perm > 0 %}
-
-<table>
-    <tr><td>Contact Type {{  contact_history_form.contact_type }}</td></tr>
-    <tr><td>Datetime {{ contact_history_form.contact_date }}</td></tr>
-    <tr><td>{{ contact_history_form.contact_history }}</td></tr>
-    <tr><td>{{ contact_history_form.contact_attachment }}</td></tr>
-    <tr><td>
-        <div id="progress" style="border: none; width: 100%;">
-            <span id="upload_percent_contact"><input type="submit" name="submit_contact" value="Submit Contact"/></span>
-            <div id="upload_progress_contact" style="background-color: green; width: 0%; height: 20px;"></div>
-        </div>
-    </td></tr>
-</table>
+    <div class="form-group">
+        <label for="id_contact_type">Contact Type</label>
+        {{  contact_history_form.contact_type }}
+    </div>
+    <div class="form-group">
+        <label for="id_datetime">Datetime</label>
+        {{ contact_history_form.contact_date }}
+    </div>
+    <div class="form-group">
+        {{ contact_history_form.contact_history }}
+    </div>
+    <div class="form-group">
+        {{ contact_history_form.contact_attachment }}
+    </div>
+    <div id="progress" style="border: none; width: 100%;">
+        <span id="upload_percent_contact"><input type="submit" name="submit_contact" value="Submit Contact" class="btn btn-primary"/></span>
+        <div id="upload_progress_contact" style="background-color: green; width: 0%; height: 20px;"></div>
+    </div>
 {% endif %}
 {% if customer_contact_history %}
     <div><h4>Contact History</h4></div>

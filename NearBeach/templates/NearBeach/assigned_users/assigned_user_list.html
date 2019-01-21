@@ -1,13 +1,15 @@
 {% if assigned_user_results %}
-    <table>
-        <tr class="header">
-            <td>Username</td>
-            <td>First Name</td>
-            <td>Last name</td>
-            {% if permissions > 3 %}
-                <td>Remove User</td>
-            {% endif %}
-        </tr>
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr class="header">
+                <td>Username</td>
+                <td>First Name</td>
+                <td>Last name</td>
+                {% if permissions > 3 %}
+                    <td>Remove User</td>
+                {% endif %}
+            </tr>
+        </thead>
         {% if assigned_user_results %}
             {% for row in assigned_user_results %}
                 <tr>

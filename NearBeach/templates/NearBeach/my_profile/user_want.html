@@ -1,26 +1,35 @@
 {% csrf_token %}
-<h2>Input Wants</h2>
-<table>
-    <tr>
-        <td width="10%">Do or Do not</td>
-        <td width="80%">Description</td>
-        <td width="10%">Skill level</td>
-    </tr>
-    <tr>
-        <td>{{ user_want_form.want_choice }}</td>
-        <td>{{ user_want_form.want_choice_text }}</td>
-        <td>{{ user_want_form.want_skill }}</td>
-    </tr>
-    <tr><td colspan="3"><input value="Submit" type="submit"></td> </tr>
-</table>
+<h3>Input Wants</h3>
+
+<div class="form-row">
+    <div class="form-group col-md-2">
+        <label for="id_want_choice">Do or Do not</label>
+        {{ user_want_form.want_choice }}
+    </div>
+    <div class="form-group col-md-6">
+        <label for="id_want_choice_text">Description</label>
+        {{ user_want_form.want_choice_text }}
+    </div>
+    <div class="form-group col-md-2">
+        <label for="id_want_skill">Skill Level</label>
+        {{ user_want_form.want_skill }}
+    </div>
+    <div class="form-group col-md-1">
+        <label for="submit_want">.</label>
+        <input id="submit_want" value="Submit" type="submit" class="btn btn-primary form-control">
+    </div>
+</div>
+
 
 {% if want_results %}
-    <h2>User Wants</h2>
-    <table>
-        <tr>
-            <td width="80%">Description</td>
-            <td width="20%">Remove</td>
-        </tr>
+    <h5 class="mt-4">User Wants</h5>
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <td width="80%">Description</td>
+                <td width="20%">Remove</td>
+            </tr>
+        </thead>
         {% for row in want_results %}
             <tr>
                 <td>{{ row.want_choice_text }}</td>
@@ -31,12 +40,14 @@
 {% endif %}
 
 {% if not_want_results %}
-    <h2>User Does not Want</h2>
-    <table>
-        <tr>
-            <td width="80%">Description</td>
-            <td width="20%">Remove</td>
-        </tr>
+    <h5 class="mt-4">User Does not Want</h5>
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <td width="80%">Description</td>
+                <td width="20%">Remove</td>
+            </tr>
+        </thead>
         {% for row in not_want_results %}
             <tr>
                 <td>{{ row.want_choice_text }}</td>
