@@ -36,8 +36,8 @@
                     <label for="id_product_description">Product Description</label>
                     {{ product_and_service_form.product_description }}
                 </div>
+                <input type="submit" value="Save Changes and return" class="btn btn-primary"><a href="{% url 'product_and_service_search' %}" class="btn btn-danger">Cancel</a>
             </form>
-            <input type="submit" value="Save Changes and return" class="btn btn-primary"><a href="{% url 'product_and_service_search' %}" class="btn btn-danger">Cancel</a>
         </div>
     </div>
 {% endblock %}

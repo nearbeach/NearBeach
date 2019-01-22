@@ -1,10 +1,11 @@
 {% csrf_token %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'NearBeach/javascript/../../../static/NearBeach/widgets/chosen-js/chosen.css' %}">
-<link rel="stylesheet" href="{% static 'NearBeach/javascript/../../../static/NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
+<link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
+<link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
 {% if quote_permission > 1 %}
 <h2>New Line Item</h2>
-<table>
+    <h5>REDO LAYOUT WITH FORMS</h5>
+<table class="table">
     <tr>
         <td width="25%">Product Price</td>
         <td width="50%">Product and Services</td>

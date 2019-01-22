@@ -1,23 +1,9 @@
 {% extends "../template.html" %}
 {% block content %}
 {% load static %}
-<h2>New Product or Service</h2>
-    <form action="{% url 'product_and_service_new' %}" method="post" class="new_product">
-        {% csrf_token %}
-        <ul>
-            <li>{{ product_and_service_form.product_or_service }}</li>
-            <li>{{ product_and_service_form.product_name }}</li>
-            <li>{{ product_and_service_form.product_part_number }}</li>
-            <li>Product/Services Cost: {{ product_and_service_form.product_cost }}</li>
-            <li>Product/Services Price: {{ product_and_service_form.product_price }}</li>
-            <li>{{ product_and_service_form.product_description }}</li>
-            <li><input type="submit" value="Save Changes and return"><a href="{% url 'product_and_service_search' %}">Cancel</a></li>
-        </ul>
-    </form>
-
-    <div class="card">
+    <div class="card mt-4">
         <div class="card-header">
-            <h2>Edit Product or Service</h2>
+            <h2>New Product or Service</h2>
         </div>
         <div class="card-body">
             <form action="{% url 'product_and_service_new' %}" method="post" class="new_product">
@@ -50,8 +36,8 @@
                     <label for="id_product_description">Product Description</label>
                     {{ product_and_service_form.product_description }}
                 </div>
+                <input type="submit" value="Save Changes and return" class="btn btn-primary"><a href="{% url 'product_and_service_search' %}" class="btn btn-danger">Cancel</a>
             </form>
-            <input type="submit" value="Save Changes and return" class="btn btn-primary"><a href="{% url 'product_and_service_search' %}" class="btn btn-danger">Cancel</a>
         </div>
     </div>
 {% endblock %}
