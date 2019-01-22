@@ -73,8 +73,8 @@ def information_customer_contact_history(request, customer_id):
                     user_id=current_user,
                     change_user=request.user,
                 )
-                if not customer_instance.organisation_id == None:
-                    submit_history.organisation_id = customer_instance.organisation_id_id
+                #if not customer_instance.organisation_id == None:
+                #    submit_history.organisation_id = customer_instance.organisation_id
 
                 if contact_attachment:
                     submit_history.document_key = documents_save

@@ -109,40 +109,6 @@ def information_organisation_contact_history(request, organisation_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
-def information_organisation_documents_list(request, organisation_id):
-    permission_results = return_user_permission_level(request, None,['organisation','document'])
-
-    if permission_results['organisation'] == 0:
-        return HttpResponseRedirect(reverse('permission_denied'))
-
-    #Get data
-    customer_document_results = document_permission.objects.filter(
-        organisation_id=organisation_id,
-        customer_id__isnull=False,
-        is_deleted="FALSE",
-    )
-    organisation_document_results = document_permission.objects.filter(
-        organisation_id=organisation_id,
-        customer_id__isnull=True,
-        is_deleted="FALSE",
-    )
-
-    #Load template
-    t = loader.get_template('NearBeach/organisation_information/organisation_documents_list.html')
-
-    # context
-    c = {
-        'organisation_id': organisation_id,
-        'customer_document_results': customer_document_results,
-        'organisation_document_results': organisation_document_results,
-        'organisation_permissions': permission_results['organisation'],
-        'document_permission': document_permission,
-        'document_perm': permission_results['document'],
-    }
-
-    return HttpResponse(t.render(c, request))
-
 
 @login_required(login_url='login')
 def information_organisation_documents_upload(request, organisation_id):

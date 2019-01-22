@@ -914,14 +914,16 @@ class information_customer_contact_history_form(forms.Form):
 
     contact_type = forms.ModelChoiceField(
         label='Contact Type',
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=contact_type_results,
         empty_label=None
     )
     contact_attachment=forms.FileField(
         required=False,
         widget=forms.FileInput(attrs={
-            'onChange':'enable_submit()'
+            'onChange':'enable_submit()',
         })
     )
 
@@ -932,6 +934,7 @@ class information_customer_contact_history_form(forms.Form):
             },
             attrs={
                 'placeholder': 'Opportunity Description',
+                'class': 'form-control',
             }
         ),
         required=False,
@@ -940,6 +943,7 @@ class information_customer_contact_history_form(forms.Form):
         initial=datetime.datetime.now(),
         widget=forms.DateTimeInput(attrs={
             'style': 'width: 200px',
+            'class': 'form-control',
         })
     )
 
@@ -954,7 +958,9 @@ class information_organisation_contact_history_form(forms.Form):
     # The Fields
     contact_type = forms.ModelChoiceField(
         label='Contact Type',
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=contact_type_results,
         empty_label=None
     )
@@ -965,6 +971,7 @@ class information_organisation_contact_history_form(forms.Form):
             },
             attrs={
                 'placeholder': 'Opportunity Description',
+                'class': 'form-control',
             }
         ),
         required=False,
@@ -972,13 +979,15 @@ class information_organisation_contact_history_form(forms.Form):
     contact_attachment = forms.FileField(
         required=False,
         widget=forms.FileInput(attrs={
-            'onChange': 'enable_submit()'
+            'onChange': 'enable_submit()',
+
         })
     )
     contact_date = forms.DateTimeField(
         initial=datetime.datetime.now(),
         widget=forms.DateTimeInput(attrs={
             'style': 'width: 200px',
+            'class': 'form-control',
         })
     )
 
