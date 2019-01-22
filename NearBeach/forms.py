@@ -2172,22 +2172,41 @@ class permission_set_form(ModelForm):
 
 
 class product_and_service_form(ModelForm):
+    product_or_service=forms.ChoiceField(
+        choices=PRODUCT_OR_SERVICE,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    product_cost=forms.DecimalField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    product_price = forms.DecimalField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+        })
+    )
     product_name = forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Product/Service Name'
+            'placeholder': 'Product/Service Name',
+            'class': 'form-control',
         }),
     )
     product_part_number = forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Product/Service Part Number'
+            'placeholder': 'Product/Service Part Number',
+            'class': 'form-control',
         }),
     )
     product_description = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={
-            'placeholder': 'Product/Service Description'
+            'placeholder': 'Product/Service Description',
+            'class': 'form-control',
         }),
     )
     class Meta:
