@@ -1298,6 +1298,16 @@ class kudos_read_only_form(ModelForm):
 
 
 class list_of_tax_form(ModelForm):
+    tax_amount=forms.DecimalField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    tax_description=forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
     class Meta:
         model = list_of_tax
         fields = {
