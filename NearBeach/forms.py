@@ -655,11 +655,13 @@ class document_upload_form(ModelForm):
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Document Description',
+            'class': 'form-control',
         })
     )
     document_description = forms.CharField(
         widget=forms.TextInput(attrs={
             'placeholder': 'Document Description',
+            'class': 'form-control',
         })
     )
     class Meta:
@@ -2305,17 +2307,26 @@ class project_information_form(ModelForm):
     Project information will need to abide by the stricked laws of the new
     project datetime edits!!
     """
+    project_name=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
+
     document=forms.FileField(
         required=False,
         widget=forms.FileInput(attrs={
-            'onChange':'enable_submit()'
+            'onChange':'enable_submit()',
+            'class': 'form-control',
         })
     )
     document_url_location=forms.URLField(
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder':'https://example.com',
-            'onChange':'enable_submit()'
+            'onChange':'enable_submit()',
+            'class': 'form-control',
         })
     )
     document_description=forms.CharField(
@@ -2323,7 +2334,8 @@ class project_information_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'width':'100%',
-            'onkeyup':'enable_submit()'
+            'onkeyup':'enable_submit()',
+            'class': 'form-control',
         })
     )
 
@@ -2332,7 +2344,8 @@ class project_information_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'width':'100%',
-            'onkeyup':'enable_submit()'
+            'onkeyup':'enable_submit()',
+            'class': 'form-control',
         })
     )
 
@@ -2343,17 +2356,18 @@ class project_information_form(ModelForm):
             },
             attrs={
                 'placeholder': 'Please Enter your project description',
+                'class': 'form-control',
             }
         )
     )
     project_start_date=forms.DateTimeField(
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px',
+            'class': 'form-control',
         })
     )
     project_end_date=forms.DateTimeField(
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px'
+            'class': 'form-control',
         })
     )
 

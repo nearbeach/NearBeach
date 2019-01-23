@@ -1,5 +1,4 @@
 {% csrf_token %}
-<h2>Project Customers</h2>
 {% if new_customers_results and project_permissions > 1 %}
     {% if project_results.project_status == 'New' or project_results.project_status == 'Open' %}
         <div class="form-group">

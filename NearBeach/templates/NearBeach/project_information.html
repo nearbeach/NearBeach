@@ -101,38 +101,59 @@
 </script>
 
 <body onload="on_page_load();">
-	<form id="project_information" name="project_information" method="POST" enctype="multipart/form-data">
-        <h2>Project Information - PRO{{ project_results.project_id }}</h2>
-        {% csrf_token %}
-        <div id="save_state"></div>
-        {% if project_results.project_status == 'Resolved' or project_results == 'Closed' %}
-            <fieldset disabled="disabled">
-        {% endif %}
-        <table>
-            <tr><td>{{ project_information_form.media }}</td></tr>
-            <tr><td>{{ project_information_form.project_name }}</td></tr>
-            <tr><td>{{ project_information_form.project_description }}</td></tr>
-            <tr><td>Time Zone - {{ timezone }}</td></tr>
-            {% if not project_results.organisation_id == None %}
-                <tr><td>Organisation - <a href="{% url 'organisation_information' project_results.organisation_id.organisation_id %}">{{ project_results.organisation_id }}</a></td></tr>
-            {% endif %}
-            <tr><td>Project Status - {{ project_results.project_status }}</td></tr>
-            <tr><td>Project Start - {{ project_information_form.project_start_date }}</td></tr>
-            <tr><td>Project Finish - {{ project_information_form.project_end_date }}</td></tr>
-        </table>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Project Information - PRO{{ project_results.project_id }}</h2>
+        </div>
+        <div class="card-body">
+            <form id="project_information" name="project_information" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ project_information_form.media }}
+                <div id="save_state" class="alert-success"></div>
+                <div class="form-group">
+                    <label for="id_project_name">Project Name</label>
+                    {{ project_information_form.project_name }}
+                </div>
+                <div class="form-group">
+                    <label for="id_project_description">Project Description</label>
+                    {{ project_information_form.project_description }}
+                </div>
+                <div class="form-group">
+                    <div>Time Zone - {{ timezone }}</div>
+                    {% if not project_results.organisation_id == None %}
+                        <div>Organisation - <a href="{% url 'organisation_information' project_results.organisation_id.organisation_id %}">{{ project_results.organisation_id }}</a></div>
+                    {% endif %}
+                    <div for="id_project_status">Project Status - {{ project_results.project_status }}</div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="id_project_start_date">Project Start</label>
+                        {{ project_information_form.project_start_date }}
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="id_project_end_date">Project Finish</label>
+                        {{ project_information_form.project_end_date }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <input type="submit" name="update" id="update" value="Update" class="btn btn-primary form-control col-md-6"/>
+                    {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
+                        <input type="submit" name="Resolve" id="resolve" value="Resolve Project" class="btn btn-warning form-control col-md-6"/>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
 
-        {{ project_information_form.project_history_text }}<br/>
-        <input type="submit" name="update" id="update" value="Update"/>
-        {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
-            <input type="submit" name="Resolve" id="resolve" value="Resolve Project"/>
-        {% else %}
-            </fieldset>
-        {% endif %}
-    </form>
-    <br/>
     <form method="post" class="to_do" id="to_do">
-        <h2>To Do</h2>
-        Loading...
+        <div class="card">
+            <div class="card-header">
+                <h2>To Do</h2>
+            </div>
+            <div class="card-body">
+                Loading...
+            </div>
+        </div>
     </form>
 
 
@@ -256,30 +277,39 @@
         </div>
     </form>
 
-    <h2>Document Uploads</h2>
-    <div class="document_tree_list" id="document_tree_list">
-        <h2>Document Tree List</h2>
-        Loading...
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Document Uploads</h2>
+        </div>
+        <div class="card-body" id="document_tree_list">
+            Loading...
+        </div>
     </div>
 
-    <h2>Project Quotes</h2>
-    <a href="{% url 'new_quote' project_id 'project' %}">New Quote</a>
-    {% if quote_results %}
-        <table>
-            <tr>
-                <td width="50%">Quote Title</td>
-                <td width="25%">Valid Till</td>
-                <td width="25%">Quote Stage</td>
-            </tr>
-            {% for row in quote_results %}
-                <tr>
-                    <td><a href="{% url 'quote_information' row.quote_id %}">{{ row.quote_title }}</a></td>
-                    <td>{{ row.quote_valid_till }}</td>
-                    <td>{{ row.quote_stage_id }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Project Quotes</h2>
+        </div>
+        <div class="card-body">
+            <a href="{% url 'new_quote' project_id 'project' %}">New Quote</a>
+            {% if quote_results %}
+                <table class="table table-striped table-hover">
+                    <tr>
+                        <td width="50%">Quote Title</td>
+                        <td width="25%">Valid Till</td>
+                        <td width="25%">Quote Stage</td>
+                    </tr>
+                    {% for row in quote_results %}
+                        <tr>
+                            <td><a href="{% url 'quote_information' row.quote_id %}">{{ row.quote_title }}</a></td>
+                            <td>{{ row.quote_valid_till }}</td>
+                            <td>{{ row.quote_stage_id }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+        </div>
+    </div>
 
     <form method="post" class="bug_list" id="bug_list">
         <h2>Project Bug List</h2>
@@ -292,17 +322,29 @@
     </form>
 
     {% if permission >= 3 %}
-        <form method="post" class="assigned_users" id="assigned_users">
-            <h2>Assigned Users</h2>
-            Loading...
-        </form>
-        <div id="assigned_user_list">Loading list...</div>
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Assigned Users</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" class="assigned_users" id="assigned_users">
+                    Loading...
+                </form>
+                <div id="assigned_user_list">Loading list...</div>
+            </div>
+        </div>
 
-        <h2>Assigned Groups</h2>
-        <form method="post" class="assigned_groups" id="assigned_groups">
-            Loading add...
-        </form>
-        <div id="assigned_group_list">Loading list...</div>
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Assigned Groups</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" class="assigned_groups" id="assigned_groups">
+                    Loading add...
+                </form>
+                <div id="assigned_group_list">Loading list...</div>
+            </div>
+        </div>
     {% endif %}
 
 
