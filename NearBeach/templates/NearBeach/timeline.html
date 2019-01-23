@@ -50,11 +50,26 @@
     <h2>Timeline</h2>
     <form id="date_form">
         {% csrf_token %}
-        <ul>
-            <li>Start Date: {{ timeline_form.start_date }}</li>
-            <li>End Date:{{ timeline_form.end_date }}</li>
-            <li>Object: {{ timeline_form.object_type }}</li>
-        </ul>
+        <div class="form-row">
+            <!-- Start date -->
+            <div class="form-group col-md-3">
+                <label for="id_start_date">Start Date:</label>
+                {{ timeline_form.start_date }}
+            </div>
+
+            <!-- End date -->
+            <div class="form-group col-md-3">
+                <label for="id_end_date">End Date:</label>
+                {{ timeline_form.end_date }}
+            </div>
+
+            <!-- Objects -->
+            <div class="form-group col-md-3">
+                <label for="id_object_type">Object:</label>
+                {{ timeline_form.object_type }}
+            </div>
+        </div>
+
     </form>
 
     <br/>
