@@ -80,7 +80,7 @@ class RegionSelect(forms.Select):
 
 
         #Start the rendering
-        output = u'<select name="country_and_regions" id="id_country_and_regions" class="chosen-select"><option value="" selected> Select a Country/Region </option>'
+        output = u'<select name="country_and_regions" id="id_country_and_regions" class="chosen-select form-control"><option value="" selected> Select a Country/Region </option>'
 
         #Render for ALL Countries
         for country in country_results:
@@ -125,7 +125,7 @@ class ToEmailSelect(forms.SelectMultiple):
         )
 
         # Start the rendering
-        output = u'<select name="to_email" id="id_to_email" class="chosen-select"><option value="------" selected disabled> Select an Email </option>'
+        output = u'<select name="to_email" id="id_to_email" class="chosen-select form-control"><option value="------" selected disabled> Select an Email </option>'
 
         # Render the emails
         for option in customer_results:

@@ -756,6 +756,7 @@ def bug_client_information(request, bug_client_id):
         'bug_client_id': bug_client_id,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'form_errors': form_errors,
     }
 
     return HttpResponse(t.render(c, request))
@@ -940,7 +941,7 @@ def campus_information(request, campus_information):
 
             # Get the SQL Instances
             customer_instance = customer.objects.get(customer_id=customer_results)
-            campus_instances = campus.objects.get(organisations_campus_id=campus_information)
+            campus_instances = campus.objects.get(campus_id=campus_information)
 
 
             # Save the new campus
@@ -1096,7 +1097,7 @@ def customer_campus_information(request, customer_campus_id, customer_or_org):
 			will be the customer information
 			"""
             if customer_or_org == "CAMP":
-                return HttpResponseRedirect(reverse('campus_information', args={save_data.campus_id.organisations_campus_id}))
+                return HttpResponseRedirect(reverse('campus_information', args={save_data.campus_id.campus_id}))
             else:
                 return HttpResponseRedirect(reverse('customer_information', args={save_data.customer_id.customer_id}))
 

@@ -424,17 +424,21 @@ class bug_client_form(ModelForm):
     bug_client_name = forms.CharField(
         widget=forms.TextInput(attrs={
             'placeholder': 'Bug Client Name',
+            'class': 'form-control',
         })
     )
     list_of_bug_client=forms.ModelChoiceField(
         label='Bug Clients',
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=bug_client_results,
         empty_label=None,
     )
     bug_client_url=forms.CharField(
         widget=forms.TextInput(attrs={
             'placeholder': 'Example: https://bugzilla.nearbeach.org',
+            'class': 'form-control',
         })
     )
     class Meta:
@@ -453,30 +457,22 @@ class bug_search_form(forms.Form):
     #Fields
     list_of_bug_client=forms.ModelChoiceField(
         label='Bug Clients',
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=bug_client_results,
         empty_label=None,
     )
-    search = forms.CharField(max_length=255)
-
-
-
-class customer_campus_form(ModelForm):
-    customer_phone=forms.CharField(
-        max_length=11,
-        required=False
-    )
-    customer_fax=forms.CharField(
-        max_length=11,
-        required=False
+    search = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
     )
 
-    class Meta:
-        model=customer_campus
-        fields={
-                    'customer_phone',
-                    'customer_fax'
-                }
+
+
+
 
 
 class campus_information_form(ModelForm):
@@ -485,6 +481,7 @@ class campus_information_form(ModelForm):
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Campus Nickname i.e Melbourne',
+            'class': 'form-control',
         })
     )
     campus_phone=forms.CharField(
@@ -493,6 +490,7 @@ class campus_information_form(ModelForm):
         widget=forms.TextInput(attrs={
             'placeholder': 'Campus Phone',
             'type': 'tel',
+            'class': 'form-control',
         })
     )
     campus_fax=forms.CharField(
@@ -501,6 +499,7 @@ class campus_information_form(ModelForm):
         widget=forms.TextInput(attrs={
             'placeholder': 'Campus Fax',
             'type': 'tel',
+            'class': 'form-control',
         })
     )
     campus_address1=forms.CharField(
@@ -508,6 +507,7 @@ class campus_information_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Address 1',
+            'class': 'form-control',
         })
     )
     campus_address2=forms.CharField(
@@ -515,6 +515,7 @@ class campus_information_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Address 2',
+            'class': 'form-control',
         })
     )
     campus_address3=forms.CharField(
@@ -522,6 +523,7 @@ class campus_information_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Address 3',
+            'class': 'form-control',
         })
     )
     campus_suburb=forms.CharField(
@@ -529,8 +531,10 @@ class campus_information_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Suburb',
+            'class': 'form-control',
         })
     )
+
 
     class Meta:
         model=campus
@@ -554,6 +558,7 @@ class cost_information_form(forms.Form):
                 'width': '70%',
                 'placeholder': 'Cost Description',
                 'onkeyup': 'enable_disable_add_cost()',
+                'class': 'form-control',
             }
         )
     )
@@ -566,9 +571,28 @@ class cost_information_form(forms.Form):
                 'width': '30%',
                 'placeholder': '$0.00',
                 'onkeyup': 'enable_disable_add_cost()',
+                'class': 'form-control',
             }
         )
     )
+
+
+class customer_campus_form(ModelForm):
+    customer_phone=forms.CharField(
+        max_length=11,
+        required=False
+    )
+    customer_fax=forms.CharField(
+        max_length=11,
+        required=False
+    )
+
+    class Meta:
+        model=customer_campus
+        fields={
+                    'customer_phone',
+                    'customer_fax'
+                }
 
 
 class customer_information_form(ModelForm):
