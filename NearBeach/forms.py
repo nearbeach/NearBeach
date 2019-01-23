@@ -2667,21 +2667,23 @@ class task_information_form(ModelForm):
     task_short_description=forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
-            "class":'task_short_description'
+            "class":'form-control',
         })
     )
 
     document=forms.FileField(
         required=False,
         widget=forms.FileInput(attrs={
-            'onChange':'enable_submit()'
+            'onChange':'enable_submit()',
+            "class": 'form-control',
         })
     )
     document_url_location=forms.URLField(
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder':'https://example.com',
-            'onChange':'enable_submit()'
+            'onChange':'enable_submit()',
+            "class": 'form-control',
         })
     )
     document_description=forms.CharField(
@@ -2689,29 +2691,29 @@ class task_information_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'width':'100%',
-            'onkeyup':'enable_submit()'
+            'onkeyup':'enable_submit()',
+            "class": 'form-control',
         })
     )
 
     folder_description=forms.CharField(
         max_length=255,
         required=False,
-        widget=forms.TextInput(
-            attrs={
+        widget=forms.TextInput(attrs={
                 'width': '100%',
-                'onkeyup': 'enable_submit()'
-            }
-        )
+                'onkeyup': 'enable_submit()',
+                "class": 'form-control',
+        })
     )
 
     task_start_date = forms.DateTimeField(
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px',
+            "class": 'form-control',
         })
     )
     task_end_date = forms.DateTimeField(
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px'
+            "class": 'form-control',
         })
     )
 
