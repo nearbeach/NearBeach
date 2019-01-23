@@ -1,100 +1,113 @@
 {% extends "./template.html" %}
 {% block content %}
 <body onload="on_page_load()">
-<h2>Diagnostics</h2>
-    The following diagnostics will run automatically by the system.
-    <table>
-        <tr>
-            <td width="30%">Diagnostic Test</td>
-            <td width="70%">Status</td>
-        </tr>
-        <tr id="test_email">
-            <td>Email Test</td>
-            <td>
-                Method<br/>
-                ~~~~~~<br/>
-                1.) NearBeach will send out an email to your email address<br/>
-                2.) If there is an error it will post it here<br/>
-                3.) If you receive the email - this functionality works<br/>
-            </td>
-        </tr>
-        <tr id="test_database">
-            <td>Database Issue</td>
-            <td>
-                Method<br/>
-                ~~~~~~<br/>
-                1.) NearBeach will select ALL users from the database<br/>
-                2.) If there is no error - this functionality works<br/>
-            </td>
-        </tr>
-        <tr id="test_location_services">
-            <td>Location Services</td>
-            <td>
-                Method<br/>
-                ~~~~~~<br/>
-                1.) NearBeach will find out if your location services work<br/>
-                2.) It will ping the following in the order of<br/>
-                a.) Mapbox<br/>
-                b.) Google Maps</br/
-                3.) If there are no errors - this functionality works<br/>
-            </td>
-        </tr>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Automatic Diagnostics</h2>
+        </div>
+        <div class="card-body">
+            The following diagnostics will run automatically by the system.
+            <table class="table table-hover">
+                <tr>
+                    <td width="30%">Diagnostic Test</td>
+                    <td width="70%">Status</td>
+                </tr>
+                <tr id="test_email">
+                    <td>Email Test</td>
+                    <td>
+                        Method<br/>
+                        ~~~~~~<br/>
+                        1.) NearBeach will send out an email to your email address<br/>
+                        2.) If there is an error it will post it here<br/>
+                        3.) If you receive the email - this functionality works<br/>
+                    </td>
+                </tr>
+                <tr id="test_database">
+                    <td>Database Issue</td>
+                    <td>
+                        Method<br/>
+                        ~~~~~~<br/>
+                        1.) NearBeach will select ALL users from the database<br/>
+                        2.) If there is no error - this functionality works<br/>
+                    </td>
+                </tr>
+                <tr id="test_location_services">
+                    <td>Location Services</td>
+                    <td>
+                        Method<br/>
+                        ~~~~~~<br/>
+                        1.) NearBeach will find out if your location services work<br/>
+                        2.) It will ping the following in the order of<br/>
+                        a.) Mapbox<br/>
+                        b.) Google Maps</br/
+                        3.) If there are no errors - this functionality works<br/>
+                    </td>
+                </tr>
 
-    </table>
-    <h2>Manual Diagnostics</h2>
-    The following tests will require you to follow the instructions.
-    <table>
-        <tr>
-            <td width="30%">Diagnostic Test</td>
-            <td width="70%">Status</td>
-        </tr>
-        {% if RECAPTCHA_PUBLIC_KEY == "" %}
-            <tr id="test_recaptcha" style="background-color: red;">
-                <td>Recaptcha</td>
-                <td>RECAPTCHA_PUBLIC_KEY has not been filled out in the settings.py file</td>
-            </tr>
-        {% else %}
-            <tr id="test_recaptcha">
-                <td>Recaptcha</td>
-                <td>
-                    Method<br/>
-                    ~~~~~~<br/>
-                    1.) Fill out the reCaptcha<br/>
-                    2.) Once you have a valid reCaptcha, click on the "Submit" button<br/>
-                    Results will be displayed here
-                    <form id="recaptcha_form" method="post">
-                        {% csrf_token %}
-                        <script src='https://www.google.com/recaptcha/api.js'></script>
-                        <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_PUBLIC_KEY }}"></div>
-                        <input type="submit" value="Check reCAPTCHA">
-                    </form>
-                </td>
-            </tr>
-        {% endif %}
-        <tr id="test_document_upload">
-            <td>Document Uploading/Downloading</td>
-            <td>
-                <form id="document_upload">
-                    Method<br/>
-                    ~~~~~~<br/>
-                    1.) Click on the "Browse..." button and select a document to upload<br/>
-                    2.) Click on the "Upload" hyperlink<br/>
-                    3.) Follow part 2 method<br/>
-                    {% csrf_token %}<br/>
-                    {{ diagnostic_test_document_upload_form.document }}<br/>
+            </table>
+        </div>
+    </div>
 
-                </form>
-            </td>
-        </tr>
-        <tr id="document_row_uploads">
-            <td colspan="2">
-                <div id="progress" style="border: none; width: 100%;">
-                    <span id="upload_percent"><a href="javascript:void(0)" onclick="upload_document()">Upload Document</a></span>
-                    <div id="upload_progress" style="background-color: green; width: 0%; height: 20px;"></div>
-                </div>
-            </td>
-        </tr>
-    </table>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Manual Diagnostics</h2>
+        </div>
+        <div class="card-body">
+            The following tests will require you to follow the instructions.
+            <table class="table table-hover">
+                <tr>
+                    <td width="30%">Diagnostic Test</td>
+                    <td width="70%">Status</td>
+                </tr>
+                {% if RECAPTCHA_PUBLIC_KEY == "" %}
+                    <tr id="test_recaptcha" style="background-color: red;">
+                        <td>Recaptcha</td>
+                        <td>RECAPTCHA_PUBLIC_KEY has not been filled out in the settings.py file</td>
+                    </tr>
+                {% else %}
+                    <tr id="test_recaptcha">
+                        <td>Recaptcha</td>
+                        <td>
+                            Method<br/>
+                            ~~~~~~<br/>
+                            1.) Fill out the reCaptcha<br/>
+                            2.) Once you have a valid reCaptcha, click on the "Submit" button<br/>
+                            Results will be displayed here
+                            <form id="recaptcha_form" method="post">
+                                {% csrf_token %}
+                                <script src='https://www.google.com/recaptcha/api.js'></script>
+                                <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_PUBLIC_KEY }}"></div>
+                                <input type="submit" value="Check reCAPTCHA">
+                            </form>
+                        </td>
+                    </tr>
+                {% endif %}
+                <tr id="test_document_upload">
+                    <td>Document Uploading/Downloading</td>
+                    <td>
+                        <form id="document_upload">
+                            Method<br/>
+                            ~~~~~~<br/>
+                            1.) Click on the "Browse..." button and select a document to upload<br/>
+                            2.) Click on the "Upload" hyperlink<br/>
+                            3.) Follow part 2 method<br/>
+                            {% csrf_token %}<br/>
+                            {{ diagnostic_test_document_upload_form.document }}<br/>
+
+                        </form>
+                    </td>
+                </tr>
+                <tr id="document_row_uploads">
+                    <td colspan="2">
+                        <div id="progress" style="border: none; width: 100%;">
+                            <span id="upload_percent"><a href="javascript:void(0)" onclick="upload_document()">Upload Document</a></span>
+                            <div id="upload_progress" style="background-color: green; width: 0%; height: 20px;"></div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
 <script>
     $("#test_recaptcha").on("submit", function(e) {
         e.preventDefault();

@@ -3,7 +3,7 @@
 {% load static %}
 <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
 <body onload="on_page_load()">
-    <div class="card">
+    <div class="card mt-4">
         <div class="card-header">
             <h2>My Profile</h2>
         </div>
@@ -55,6 +55,9 @@
 
 
     <div class="card mt-4">
+        <div class="card-header">
+            <h2>Add User Weblinks</h2>
+        </div>
         <div class="card-body">
             <form id="user_weblink" name="user_weblink" method="POST" enctype="multipart/form-data" class="mt-4">
                 Loading...
@@ -63,6 +66,9 @@
     </div>
 
     <div class="card mt-4">
+        <div class="card-header">
+            <h3>Input Wants</h3>
+        </div>
         <div class="card-body">
             <form id="user_want" name="user_want" method="POST" enctype="multipart/form-data" class="mt-4">
                 <h2>User Wants</h2>
