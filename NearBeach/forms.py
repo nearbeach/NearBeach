@@ -1551,17 +1551,24 @@ class new_folder_form(forms.Form):
 
 class new_line_item_form(ModelForm):
     #Get the data
+    product_description=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
     quantity = forms.IntegerField(
-		widget=forms.TextInput(attrs={
+		widget=forms.NumberInput(attrs={
 			'value': '1',
-			'width': '10px',
             'onkeyup': 'update_total()',
+            'class': 'form-control',
 		})
 	)
     product_price = forms.CharField(
         widget=forms.TextInput(attrs={
             'readonly': True,
             'style': 'background-color: aliceblue',
+            'class': 'form-control',
         })
     )
     product_and_service = forms.ModelChoiceField(
@@ -1577,12 +1584,14 @@ class new_line_item_form(ModelForm):
             'step': '1',
             'onkeyup': 'update_total()',
             'readonly': True,
+            'class': 'form-control',
         })
     )
     discount_choice = forms.ChoiceField(
         choices=DISCOUNT_CHOICE,
         widget=forms.Select(attrs={
             'onchange': 'discount_type_change()',
+            'class': 'form-control',
         })
     )
     discount_percent = forms.CharField(
@@ -1592,6 +1601,7 @@ class new_line_item_form(ModelForm):
             'max': '100',
             'step': '5',
             'onchange': 'update_total()',
+            'class': 'form-control',
         })
     )
 
@@ -1601,6 +1611,7 @@ class new_line_item_form(ModelForm):
             'step': '1',
             'readonly': 'true',
             'style': 'background-color: aliceblue',
+            'class': 'form-control',
         })
     )
     tax_amount = forms.CharField(
@@ -1610,6 +1621,7 @@ class new_line_item_form(ModelForm):
 			'value': '0',
 			'step': '1',
             'style': 'background-color: aliceblue',
+            'class': 'form-control',
         })
 	)
     tax = forms.ModelChoiceField(
@@ -1617,7 +1629,8 @@ class new_line_item_form(ModelForm):
         label="Organisations",
         queryset=list_of_tax.objects.filter(is_deleted='FALSE'),
         widget=forms.Select(attrs={
-            "onChange": 'update_total()'
+            "onChange": 'update_total()',
+            'class': 'form-control',
         }),
     )
     total = forms.CharField(
@@ -1627,6 +1640,7 @@ class new_line_item_form(ModelForm):
 			'width': '100px',
 			'value': '0',
             'style': 'background-color: aliceblue',
+            'class': 'form-control',
 		})
 	)
     product_note = forms.CharField(
@@ -1634,6 +1648,7 @@ class new_line_item_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder':'Product Notes',
+            'class': 'form-control',
         })
     )
 
@@ -2387,6 +2402,9 @@ class quote_information_form(ModelForm):
     quote_billing_address = forms.ModelChoiceField(
         required=False,
         queryset=campus.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
     )
 
 
@@ -2394,6 +2412,7 @@ class quote_information_form(ModelForm):
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Quote Title',
+            'class': 'form-control',
         })
     )
 
@@ -2401,12 +2420,15 @@ class quote_information_form(ModelForm):
         initial=datetime.datetime.now() + datetime.timedelta(days=31),
         widget=forms.DateTimeInput(attrs={
             'style': 'width: 200px',
+            'class': 'form-control',
         })
     )
 
     quote_stage_id = forms.ModelChoiceField(
         label="Quote Stage",
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=list_of_quote_stages,
     )
 
@@ -2418,6 +2440,7 @@ class quote_information_form(ModelForm):
             },
             attrs={
                 "placeholder": 'Quote Terms',
+                'class': 'form-control',
             },
 
         ),
@@ -2429,6 +2452,7 @@ class quote_information_form(ModelForm):
             },
             attrs={
                 "placeholder": 'Customer Notes',
+                'class': 'form-control',
             }
         ),
         required=False,
@@ -2713,6 +2737,7 @@ class to_do_form(ModelForm):
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'To do next?',
+            'class': 'form-control',
         })
     )
     class Meta:

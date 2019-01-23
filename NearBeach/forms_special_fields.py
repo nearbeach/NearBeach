@@ -20,7 +20,7 @@ class ProductOrServiceSelect(forms.Select):
             .order_by('product_or_service','product_name')
 
         #Start the rendering
-        output = u'<select name="product_and_service" id="id_products_and_services" class="chosen-select"><option value="------" selected disabled> Add Product or Service </option>'
+        output = u'<select name="product_and_service" id="id_products_and_services" class="chosen-select form-control"><option value="------" selected disabled> Add Product or Service </option>'
         output = output + u'<optgroup label="Products">'
 
 
@@ -46,7 +46,7 @@ class ProductOrServiceSelect(forms.Select):
             output = output + u'</option>'
 
         #Close everything off
-        output = output + u'</optgroup></option>'
+        output = output + u'</optgroup></option></select>'
         #return mark_safe('\n'.join(output))
         return output
 

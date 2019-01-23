@@ -3,63 +3,89 @@
 <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
 <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
 {% if quote_permission > 1 %}
-<h2>New Line Item</h2>
-    <h5>REDO LAYOUT WITH FORMS</h5>
-<table class="table">
-    <tr>
-        <td width="25%">Product Price</td>
-        <td width="50%">Product and Services</td>
-        <td width="25%">Quantity</td>
-    </tr>
-    <tr>
-        <td>{{ new_line_item_form.product_price }}</td>
-        <td>{{ new_line_item_form.product_and_service }}</td>
-        <td>{{ new_line_item_form.quantity }}</td>
-    </tr>
-    <tr>
-        <td colspan="3">{{ new_line_item_form.product_description }}</td>
-    </tr>
-</table>
-<br/>
-<table id="discount_table" style="display: none;">
-    <tr>
-        <td>Discount Type</td>
-        <td>Discount Percentage</td>
-        <td>Discount Amount</td>
-        <td><b>Sales Price</b></td>
-    </tr>
-    <tr>
-        <td>{{ new_line_item_form.discount_choice }}</td>
-        <td>{{ new_line_item_form.discount_percent }}</td>
-        <td>{{ new_line_item_form.discount_amount }}</td>
-        <td>{{ new_line_item_form.sales_price }}</td>
-    </tr>
-</table>
-<br/>
-<table id="tax_table" style="display: none;">
-    <tr>
-        <td>Tax Percent</td>
-        <td>Tax Amount</td>
-        <td><b>Total</b></td>
-    </tr>
-    <tr>
-        <td>{{ new_line_item_form.tax }}</td>
-        <td>{{ new_line_item_form.tax_amount }}</td>
-        <td>{{ new_line_item_form.total}}</td>
-    </tr>
-    <tr>
-        <td colspan="3">{{ new_line_item_form.product_note }}</td>
-    </tr>
-    <tr>
-        <td colspan="3"><input type="submit" value="Submit Line Item" style="width: 100%;"></td>
-    </tr>
-</table>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>New Line Item</h2>
+        </div>
+        <div class="card-body">
+            <!--Select the product or service-->
+            <div class="form-row">
+                <div class="form-group col-md2">
+                    <label for="id_product_price">Product Price</label>
+                    {{ new_line_item_form.product_price }}
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="id_quantity">Quantity</label>
+                    {{ new_line_item_form.quantity }}
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="id_product_and_service">Product and Services</label>
+                    {{ new_line_item_form.product_and_service }}
+                </div>
+            </div>
+
+            <div style="display:none;" id="tax_table">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="id_product_description">Product Description</label>
+                        {{ new_line_item_form.product_description }}
+                    </div>
+                </div>
+
+                <!-- Fine tune it's price/Discount price -->
+                <div class="form-row mt-4">
+                    <div class="form-group col-md-3">
+                        <label  for="id_discount_choice">Discount Type</label>
+                        {{ new_line_item_form.discount_choice }}
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label  for="id_discount_percent">Discount Percentage</label>
+                        {{ new_line_item_form.discount_percent }}
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label  for="id_discount_amount">Discount Amount</label>
+                        {{ new_line_item_form.discount_amount }}
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label  for="id_sales_price">Sales Price</label>
+                        {{ new_line_item_form.sales_price }}
+                    </div>
+                </div>
+
+                <!-- Tax amount -->
+                <div class="form-row mt-4">
+                    <div class="form-group col-md-2">
+                        <label for="">Tax Percent</label>
+                        {{ new_line_item_form.tax }}
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="">Tax Amount</label>
+                        {{ new_line_item_form.tax_amount }}
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="">Total</label>
+                        {{ new_line_item_form.total}}
+                    </div>
+                </div>
+
+                <!-- Product note -->
+                <div class="form-row">
+                    {{ new_line_item_form.product_note }}
+                </div>
+
+                <!-- Save button -->
+                <div class="form-row mt-4">
+                    <input type="submit" value="Submit Line Item" class="btn btn-primary form-control">
+                </div>
+            </div>
+        </div>
+    </div>
 {% endif %}
 
 
-<script type="text/javascript" src="{% static 'NearBeach/javascript/../../../static/NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/../../../static/NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/../../../static/NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
 <script>
     /*
     Method
