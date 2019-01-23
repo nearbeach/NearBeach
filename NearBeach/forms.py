@@ -2603,29 +2603,6 @@ class search_organisation_form(forms.Form):
     )
 
 
-class search_project_form(forms.Form):
-    search_projects=forms.CharField(
-        max_length=255,
-        required=False
-    )
-    include_closed=forms.MultipleChoiceField(
-        widget=forms.CheckboxSelectMultiple,
-        choices=INCLUDE_CLOSED
-    )
-
-class search_task_form(forms.Form):
-    search_tasks=forms.CharField(
-        max_length=255,
-        required=False,
-        widget=forms.TextInput(attrs={
-            'placeholder': 'Search Tasks',
-        }),
-    )
-    include_closed=forms.MultipleChoiceField(
-        widget=forms.CheckboxSelectMultiple,
-        choices=INCLUDE_CLOSED
-    )
-
 class search_template_form(forms.Form):
     search_templates=forms.CharField(
         max_length=255,

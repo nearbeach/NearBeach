@@ -545,7 +545,7 @@ def associated_projects(request, task_id):
 	check to see if they want only new or open, or if they would like
 	to see closed task too.
 	"""
-    task_groups_results = task_group.objects.filter(
+    task_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         task_id=task_id,
     ).values('group_id_id')
@@ -556,15 +556,11 @@ def associated_projects(request, task_id):
         # Send them to permission denied!!
         return HttpResponseRedirect(reverse(permission_denied))
 
-
-    search_projects = search_project_form()
-
-    # POST
-    if request.method == "POST":
-        # TO DO! EXTRACT POST AND FILTER RESULTS!!!
-        projects_results = project.objects.filter()
-    else:
-        projects_results = project.objects.filter()
+    #Get required data
+    projects_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_status__in={'New', 'Open'}
+    )
 
     # Load the template
     t = loader.get_template('NearBeach/associated_project.html')
@@ -572,7 +568,6 @@ def associated_projects(request, task_id):
     # context
     c = {
         'projects_results': projects_results,
-        'search_projects': search_projects,
         'task_id': task_id,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
@@ -601,16 +596,10 @@ def associated_task(request, project_id):
         # Send them to permission denied!!
         return HttpResponseRedirect(reverse(permission_denied))
 
-
-
-    search_task = search_task_form()
-
-    # POST
-    if request.method == "POST":
-        # TO DO! EXTRACT POST AND FILTER RESULTS!!!
-        task_results = task.objects.filter()
-    else:
-        task_results = task.objects.filter()
+    task_results = task.objects.filter(
+        is_deleted="FALSE",
+        task_status__in={'New','Open'}
+    )
 
     # Load the template
     t = loader.get_template('NearBeach/associated_task.html')
@@ -618,7 +607,6 @@ def associated_task(request, project_id):
     # context
     c = {
         'task_results': task_results,
-        'search_task': search_task,
         'project_id': project_id,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
