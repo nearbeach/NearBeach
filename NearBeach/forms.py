@@ -1170,17 +1170,20 @@ class kanban_board_form(forms.Form):
         max_length=255,
         widget=TextInput(attrs={
             'placeholder': 'Board Name',
+            'class': 'form-control',
         }),
     )
     kanban_board_column = forms.CharField(
         widget=forms.Textarea(attrs={
             'placeholder': 'Please place each new column on a new line. Each name will be truncated to 255 characters',
+            'class': 'form-control',
         }),
         required=True,
     )
     kanban_board_level = forms.CharField(
         widget=forms.Textarea(attrs={
             'placeholder': 'Please place each new level on a new line. Each name will be truncated to 255 characters',
+            'class': 'form-control',
         }),
         required=True,
     )
@@ -1189,7 +1192,7 @@ class kanban_board_form(forms.Form):
         required=True,
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
             'style': 'width: 100%',
         }),
@@ -1486,6 +1489,7 @@ class new_campus_form(forms.Form):
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Campus Nickname i.e Melbourne',
+            'class': 'form-control',
         })
     )
     campus_phone=forms.CharField(
@@ -1494,6 +1498,7 @@ class new_campus_form(forms.Form):
         widget=forms.TextInput(attrs={
             'placeholder': 'Campus Phone',
             'type': 'tel',
+            'class': 'form-control',
         })
     )
     campus_fax=forms.CharField(
@@ -1502,6 +1507,7 @@ class new_campus_form(forms.Form):
         widget=forms.TextInput(attrs={
             'placeholder': 'Campus Fax',
             'type': 'tel',
+            'class': 'form-control',
         })
     )
     campus_address1=forms.CharField(
@@ -1509,6 +1515,7 @@ class new_campus_form(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Address 1',
+            'class': 'form-control',
         })
     )
     campus_address2=forms.CharField(
@@ -1516,6 +1523,7 @@ class new_campus_form(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Address 2',
+            'class': 'form-control',
         })
     )
     campus_address3=forms.CharField(
@@ -1523,6 +1531,7 @@ class new_campus_form(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Address 3',
+            'class': 'form-control',
         })
     )
     campus_suburb=forms.CharField(
@@ -1530,6 +1539,7 @@ class new_campus_form(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Suburb',
+            'class': 'form-control',
         })
     )
     country_and_region = forms.ModelChoiceField(
@@ -1537,7 +1547,7 @@ class new_campus_form(forms.Form):
         queryset=list_of_country.objects.filter(is_deleted='FALSE'),
         empty_label="Please pick a Country/Region",
         widget=RegionSelect(attrs={
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'tag': forms.HiddenInput(),
             'style': 'width: 100%',
         }),
@@ -1552,19 +1562,23 @@ class new_customer_form(forms.Form):
     #Fields
     customer_title=forms.ModelChoiceField(
         label='Title',
-        widget=forms.Select(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=titles_results
     )
     customer_first_name=forms.CharField(
         max_length=50,
         widget=forms.TextInput(attrs={
             'placeholder': 'First Name',
+            'class': 'form-control',
         }),
     )
     customer_last_name=forms.CharField(
         max_length=50,
         widget=forms.TextInput(attrs={
-        'placeholder': 'Last Name',
+            'placeholder': 'Last Name',
+            'class': 'form-control',
     }),
     )
     customer_email=forms.EmailField(
@@ -1572,11 +1586,14 @@ class new_customer_form(forms.Form):
         widget=forms.TextInput(attrs={
             'placeholder': 'customer@email.com',
             'type':'email',
+            'class': 'form-control',
         }),
     )
     organisation_id=forms.ModelChoiceField(
         label="Organisation",
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=organisations_results,
         required=False,
     )
@@ -1588,6 +1605,7 @@ class new_folder_form(forms.Form):
         required=True,
         widget=forms.TextInput(attrs={
             'placeholder': 'Folder Description',
+            'class': 'form-control',
         })
     )
 
@@ -1724,10 +1742,39 @@ class new_opportunity_form(ModelForm):
     user_results=auth.models.User.objects.all()
 
     # Fields
+    currency_id=forms.ModelChoiceField(
+        queryset=list_of_currency.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    lead_source_id=forms.ModelChoiceField(
+        queryset=list_of_lead_source.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    opportunity_success_probability=forms.IntegerField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    opportunity_amount=forms.DecimalField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    amount_type_id=forms.ModelChoiceField(
+        queryset=list_of_amount_type.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
     opportunity_name=forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Opportunity Name',
+            'class': 'form-control',
         })
     )
     opportunity_description=forms.CharField(
@@ -1737,13 +1784,14 @@ class new_opportunity_form(ModelForm):
             },
             attrs={
                 'placeholder': 'Opportunity Description',
+                'class': 'form-control',
             }
         )
     )
     opportunity_expected_close_date=forms.DateTimeField(
         initial=datetime.datetime.now(),
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px',
+            'class': 'form-control',
         })
     )
     organisation_id=forms.ModelChoiceField(
@@ -1751,12 +1799,15 @@ class new_opportunity_form(ModelForm):
         queryset=organisaion_results,
         required=False,
         widget=forms.Select(attrs={
-            "onChange":'update_customers()'
+            "onChange":'update_customers()',
+            'class': 'form-control',
         }),
     )
     amount_type_id=forms.ModelChoiceField(
         label="Amount Type",
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=amount_type_results,
     )
     select_groups=forms.ModelMultipleChoiceField(
@@ -1764,9 +1815,8 @@ class new_opportunity_form(ModelForm):
         required=False,
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
-            'style': 'width: 100%',
         }),
     )
 
@@ -1777,7 +1827,7 @@ class new_opportunity_form(ModelForm):
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select',
             'multiple tabindex': '4',
-            'style': 'width: 100%',
+            'class': 'form-control',
         }),
     )
 

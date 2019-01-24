@@ -96,7 +96,7 @@ class RegionSelect(forms.Select):
 
 
         #Close everything off
-        output = output + u'</optgroup></option>'
+        output = output + u'</optgroup></option></select>'
         return output
 
     def clean(self, value):
