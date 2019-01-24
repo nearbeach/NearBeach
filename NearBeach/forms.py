@@ -834,13 +834,14 @@ class email_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'style': 'display: none;',
+            'class': 'form-control',
         }),
     )
     to_email = forms.ModelMultipleChoiceField(
         queryset=customer.objects.all(),
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
             'style': 'width: 90%',
         }),
@@ -850,7 +851,7 @@ class email_form(ModelForm):
         queryset=customer.objects.all(),
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
             'style': 'width: 90%',
         }),
@@ -860,7 +861,7 @@ class email_form(ModelForm):
         queryset=customer.objects.all(),
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
             'style': 'width: 90%',
         }),
@@ -870,6 +871,7 @@ class email_form(ModelForm):
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Email Subject',
+            'class': 'form-control col-md-11',
         }),
     )
     email_content = forms.CharField(
@@ -878,20 +880,28 @@ class email_form(ModelForm):
                 'width': '100%',
             },
             attrs={
-                'placeholder': 'Email content'
+                'placeholder': 'Email content',
+                'class': 'form-control',
             }
         )
     )
     is_private = forms.BooleanField(
         required=False,
+        widget=forms.CheckboxInput(attrs={
+        })
     )
     email_quote = forms.BooleanField(
         required=False,
+        widget=forms.CheckboxInput(attrs={
+        })
     )
     quote_template_description=forms.ModelChoiceField(
         queryset=quote_template.objects.filter(is_deleted='FALSE'),
         empty_label=None,
         required=False,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
     )
 
 
@@ -902,6 +912,12 @@ class email_form(ModelForm):
         }
 
 class email_information_form(ModelForm):
+    email_subject = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control col-md-11',
+        })
+    )
     email_content = forms.CharField(
         widget=TinyMCE(
             mce_attrs={
@@ -910,6 +926,7 @@ class email_information_form(ModelForm):
             },
             attrs={
                 'placeholder': 'Email content',
+                'class': 'form-control',
             }
         )
     )
