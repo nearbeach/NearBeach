@@ -2038,7 +2038,8 @@ class new_requirement_form(ModelForm):
     requirement_title = forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Requirement Title'
+            'placeholder': 'Requirement Title',
+            'class': 'form-control',
         }),
     )
     requirement_scope = forms.CharField(
@@ -2047,13 +2048,16 @@ class new_requirement_form(ModelForm):
                 'width': '100%',
             },
             attrs={
-                'placeholder': 'Requirement Scope'
+                'placeholder': 'Requirement Scope',
+                'class': 'form-control',
             }
         ),
     )
     requirement_status=forms.ModelChoiceField(
         label="Quote Stage",
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=requirement_status_results,
     )
 
@@ -2062,10 +2066,16 @@ class new_requirement_form(ModelForm):
         required=True,
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
             'style': 'width: 100%',
         }),
+    )
+    requirement_type =forms.ModelChoiceField(
+        queryset=list_of_requirement_type.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
     )
 
 
