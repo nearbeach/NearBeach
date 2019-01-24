@@ -1851,20 +1851,20 @@ class new_organisation_form(forms.Form):
         max_length=255,
         widget=forms.TextInput(attrs={
                 'placeholder': 'Organisation\'s Name',
-                'width': '99%',
+                'class': 'form-control',
         })
     )
     organisation_website=forms.URLField(
         max_length=255,
         widget=forms.URLInput(attrs={
-            'style': 'width: 99%;',
+            'class': 'form-control',
             'placeholder': 'https://organisation_website.com',
         })
     )
     organisation_email=forms.EmailField(
         max_length=255,
         widget=forms.EmailInput(attrs={
-            'width': '99%',
+            'class': 'form-control',
             'placeholder': 'organisation@email.com',
             'type': 'email',
         })
@@ -2611,6 +2611,7 @@ class search_form(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Search',
+            'class': 'form-control w-75',
         }),
     )
 
@@ -2694,6 +2695,7 @@ class search_customer_form(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Search Customers',
+            'class': 'form-control w-75',
         }),
     )
 
@@ -2704,6 +2706,7 @@ class search_organisation_form(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Search Organisations',
+            'class': 'form-control w-75',
         }),
     )
 
@@ -2714,6 +2717,7 @@ class search_template_form(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Search Templates',
+            'class': 'form-control w-75',
         }),
     )
 
