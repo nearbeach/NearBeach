@@ -5,8 +5,6 @@
     <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
     <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
-
-
     <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
     <body onload="on_page_load()">
         <form action={% url 'new_quote' primary_key destination %} method="post" class="new_quote">

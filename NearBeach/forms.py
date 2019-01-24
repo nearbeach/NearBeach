@@ -1880,9 +1880,9 @@ class new_project_form(forms.Form):
     project_permission=forms.ModelMultipleChoiceField(
         widget=forms.SelectMultiple(attrs={
             'placeholder': 'Select Groups to Assign to Project',
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
-            'style': 'width: 100%',
+
         }),
         required=True,
         queryset=group_results,
@@ -1892,6 +1892,7 @@ class new_project_form(forms.Form):
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Project Name',
+            'class': 'form-control',
         })
     )
     project_description=forms.CharField(
@@ -1901,25 +1902,28 @@ class new_project_form(forms.Form):
             },
             attrs={
                 'placeholder': 'Project Description',
+                'class': 'form-control',
             }
         )
     )
     organisation_id=forms.ModelChoiceField(
         label="Organisation",
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=organisations_results,
         required=False,
     )
     project_start_date=forms.DateTimeField(
         initial=datetime.datetime.now(),
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px',
+            'class': 'form-control',
         })
     )
     project_end_date=forms.DateTimeField(
         initial=datetime.datetime.now()+datetime.timedelta(days=31),
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px'
+            'class': 'form-control',
         })
     )
 
