@@ -7,36 +7,65 @@
     <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
     <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
     <body onload="on_page_load()">
-        <form action={% url 'new_quote' primary_key destination %} method="post" class="new_quote">
-        {% csrf_token %}
-            <h2>New Quote</h2>
-            <table>
-                {{ new_quote_form.media }}
-                <tr><td>{{ new_quote_form.quote_title }}</td></tr>
-                <tr><td>Quote Terms<br/>{{ new_quote_form.quote_terms }}</td></tr>
-                <tr><td>Quote Stage: {{ new_quote_form.quote_stage_id }}</td></tr>
-                <tr><td>Quote Approval Status: {{ new_quote_form.quote_approval_status_id }}</td></tr>
-                <tr><td>Time zone: {{ timezone }}</td></tr>
-                <tr><td>Quote Valid To: {{ new_quote_form.quote_valid_till }}</td></tr>
-                <tr><td>Customer Notes<br/>{{ new_quote_form.customer_notes }}</td></tr>
-            </table>
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>New Quote</h2>
+            </div>
+            <div class="card-body">
+                <form action={% url 'new_quote' primary_key destination %} method="post" class="new_quote">
+                    {% csrf_token %}
+                    {{ new_quote_form.media }}
+                    <div class="form-group">
+                        <label for="id_quote_title">Quote Title</label>
+                        {{ new_quote_form.quote_title }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_quote_terms">Quote Terms</label>
+                        {{ new_quote_form.quote_terms }}
+                    </div>
 
-            <h1>Opportunity Assignments</h1>
-            <table>
-                <tr>
-                    <td>
-                        Please give permissions to one or more groups. Please note: you will not be able to submit this project
-                        without selecting at least one group
-                    </td>
-                </tr>
-                <tr><td>{{ new_quote_form.select_groups }}</td></tr>
-            </table>
-            <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
-            <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
-            <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
+                    <div class="form-group">
+                        <label>Time zone: {{ timezone }}</label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id_quote_stage_id">Quote Stage</label>
+                        {{ new_quote_form.quote_stage_id }}
+                    </div>
 
-            <input type="submit" value="Submit new quote">
-        </form>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="id_quote_approval_status_id">Quote Approval Status</label>
+                            {{ new_quote_form.quote_approval_status_id }}
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="id_quote_valid_till">Quote Valid Till</label>
+                            {{ new_quote_form.quote_valid_till }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_customer_notes">Customer Notes</label>
+                        {{ new_quote_form.customer_notes }}
+                    </div>
+
+
+                    <h2 mt-4>Opportunity Assignments</h2>
+                    <div class="form-group">
+                        <label for="id_select_groups">Please give permissions to one or more groups. Please note: you will not be able to submit this project without selecting at least one group</label>
+                        {{ new_quote_form.select_groups }}
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Submit new quote" class="btn btn-primary form-control">
+                    </div>
+                    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
+                    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
+                    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
+                </form>
+            </div>
+        </div>
+
         <script>
             /*
             We want the quote's end date to be a default of in two weeks. So the following code extracts the date for in

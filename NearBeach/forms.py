@@ -1954,19 +1954,22 @@ class new_quote_form(ModelForm):
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Quote Title',
+            'class': 'form-control',
         })
     )
 
     quote_valid_till = forms.DateTimeField(
         initial=datetime.datetime.now()+datetime.timedelta(days=31),
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px',
+            'class': 'form-control',
         })
     )
 
     quote_stage_id = forms.ModelChoiceField(
         label="Quote Stage",
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=list_of_quote_stages,
     )
 
@@ -1977,6 +1980,7 @@ class new_quote_form(ModelForm):
             },
             attrs={
                 "placeholder": 'Quote Terms',
+                'class': 'form-control',
             }
         ),
     )
@@ -1987,6 +1991,7 @@ class new_quote_form(ModelForm):
             },
             attrs={
                 "placeholder": 'Customer Notes',
+                'class': 'form-control',
             }
         ),
         required=False,
@@ -1997,10 +2002,16 @@ class new_quote_form(ModelForm):
         required=True,
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
             'style': 'width: 100%',
         }),
+    )
+    quote_approval_status_id=forms.ModelChoiceField(
+        queryset=list_of_quote_stage.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
     )
 
     class Meta:
@@ -2077,9 +2088,8 @@ class new_task_form(forms.Form):
     task_permission=forms.ModelMultipleChoiceField(
         widget=forms.SelectMultiple(attrs={
             'placeholder': 'Select Groups to Assign to Project',
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
-            'style': 'width: 100%',
         }),
         required=True,
         queryset=group_results,
@@ -2088,6 +2098,7 @@ class new_task_form(forms.Form):
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Task Short Description',
+            'class': 'form-control',
         }),
     )
     task_long_description=forms.CharField(
@@ -2097,25 +2108,28 @@ class new_task_form(forms.Form):
             },
             attrs={
                 "placeholder": 'Task Long Description',
+                'class': 'form-control',
             }
         ),
     )
     organisation_id=forms.ModelChoiceField(
         label="Organisation",
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=organisations_results,
         required=False,
     )
     task_start_date=forms.DateTimeField(
         initial=datetime.datetime.now(),
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px',
+            'class': 'form-control',
         })
     )
     task_end_date=forms.DateTimeField(
         initial=datetime.datetime.now()+datetime.timedelta(days=31),
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px'
+            'class': 'form-control',
         })
     )
 
@@ -2850,6 +2864,7 @@ class user_information_form(ModelForm):
             'placeholder': 'Password',
             'onkeyup': 'enable_submit()',
             'autocomplete': 'off',
+            'class': 'form-control',
         })
     )
     password2 = forms.CharField(
@@ -2860,31 +2875,36 @@ class user_information_form(ModelForm):
             'placeholder': 'Repeate Password',
             'onkeyup': 'enable_submit()',
             'autocomplete': 'off',
+            'class': 'form-control',
         })
     )
     username = forms.CharField(
         max_length=50,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Username'
+            'placeholder': 'Username',
+            'class': 'form-control',
         }),
     )
     first_name = forms.CharField(
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': 'First Name'
+            'placeholder': 'First Name',
+            'class': 'form-control',
         })
     )
     last_name = forms.CharField(
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Last Name'
+            'placeholder': 'Last Name',
+            'class': 'form-control',
         })
     )
     email = forms.EmailField(
         max_length=100,
         required=False,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Email Address'
+            'placeholder': 'Email Address',
+            'class': 'form-control',
         })
     )
     class Meta:
