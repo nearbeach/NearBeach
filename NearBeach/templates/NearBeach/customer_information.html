@@ -23,165 +23,221 @@
 	}
 </script>
 <body onload="on_page_load()">
-    <form action="{% url 'customer_information' customer_results.customer_id %}" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <h2>Customer Information</h2>
-        <ul>
-            {% if profile_picture %}
-                <li><img src="{{ profile_picture }}" height="160px"><br/> {{ organisation_information_form.update_profile_picture }}</li>
-                <li id="upload_errors"></li>
-            {% else %}
-                <li><img src="{% static 'NearBeach/images/icons/star.svg' %}" height="160px"><br/> {{ organisation_information_form.update_profile_picture }}</li>
-            {% endif %}
-            {% if customer_permissions > 1 %}
-                <li>{{ customer_information_form.update_profile_picture }}</li>
-            {% endif %}
-            <table>
-                <tr>
-                    <td width="10%">{{ customer_information_form.customer_title }}</td>
-                    <td width="45%">{{ customer_information_form.customer_first_name }}</td>
-                    <td width="45%">{{ customer_information_form.customer_last_name }}</td>
-                </tr>
-            </table>
-            <li>{{ customer_information_form.customer_email }}</li>
-            {% if not customer_results.organisation_id == Null %}
-                <li>Organisation: <a href="{% url 'organisation_information' customer_results.organisation_id.organisation_id %}">{{ customer_results.organisation_id }}</a></li>
-            {% endif %}
-        </ul>
-        {% if customer_permissions > 1 %}
-            <input type="submit" name="update" value="Update Details"/>
-        {% endif %}
-    </form>
-    <h2>Campus Contact Information</h2>
-    {% if add_campus_results and assign_campus_to_customer_permission > 1 and customer_results.organisation_id %}
-        <form id="customer_campus_form">
-            <select name="add_campus_select" id="id_add_cammpus_select" onchange="enable_disable_add_campus()">
-                <option value="---------"> ---------</option>
-                {% for row in add_campus_results %}
-                    <option value="{{ row.campus_id }}">{{ row.campus_nickname }}</option>
-                {% endfor %}
-            </select>
-            <input type="submit" name="add_campus_submit" value="Add Campus" disabled id="id_add_cammpus_submit">
-        </form>
-    {% elif assign_campus_to_customer_permission > 1 and not customer_results.organisation_id %}
-        <a href="{% url 'new_campus' customer_results.customer_id 'customer' %}">New Campus</a>
-    {% endif %}
-    {% if customer_campus_results %}
-        <table>
-            <tr class="header">
-                <td>Campus nickname</td>
-                <td>Campus's Phone</td>
-                <td>Campus's Fax</td>
-                <td>Campus Suburb</td>
-                <td>Campus Region</td>
-                <td>Campus Country</td>
-                {% if customer_permissions == 4 or administration_permission %}
-                    <td>Delete</td>
-                {% endif %}
-            </tr>
-            {% for row in customer_campus_results %}
-                <tr>
-                    <td><a href="{% url 'campus_information' row.campus_id %}">{{ row.campus_nickname }}</a></td>
-                    <td>{{ row.campus_phone }}</td>
-                    <td>{{ row.campus_fax }}</td>
-                    <td>{{ row.campus_suburb }}</td>
-                    <td>{{ row.campus_region_id }}</td>
-                    <td>{{ row.campus_country_id }}</td>
-                    {% if customer_permissions == 4 or administration_permission %}
-                        <td>Delete</td>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Customer Information</h2>
+        </div>
+        <div class="card-body">
+            <form action="{% url 'customer_information' customer_results.customer_id %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group text-center">
+                    {% if profile_picture %}
+                        <label for="id_update_profile_picture"><img src="{{ profile_picture }}" height="160px"></label><br/>
+                        {{ organisation_information_form.update_profile_picture }}
+                    {% else %}
+                        <label for="id_update_profile_picture"><img src="{% static 'NearBeach/images/icons/star.svg' %}" height="160px"></label><br/>
+                        {{ organisation_information_form.update_profile_picture }}
                     {% endif %}
-                </tr>
-            {% endfor %}
-        </table>
+                    {% if customer_permissions > 1 %}
+                        <label>{{ customer_information_form.update_profile_picture }}</label>
+                    {% endif %}
+                    <div class="alert-danger" id="upload_errors"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-2">
+                        <label for="id_customer_title">Title</label>
+                        {{ customer_information_form.customer_title }}
+                    </div>
+                    <div class="form-group col-md-5">
+                        <label for="id_customer_first_name">Customer First Name</label>
+                        {{ customer_information_form.customer_first_name }}
+                    </div>
+                    <div class="form-group col-md-5">
+                        <label for="id_customer_last_name">Customer Last Name</label>
+                        {{ customer_information_form.customer_last_name }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="id_customer_email">Customer Email</label>
+                    {{ customer_information_form.customer_email }}
+                </div>
+                {% if not customer_results.organisation_id == Null %}
+                    <div class="form-group">
+                        <label>Organisation: <a href="{% url 'organisation_information' customer_results.organisation_id.organisation_id %}">{{ customer_results.organisation_id }}</a></label>
+                    </div>
+                {% endif %}
+                {% if customer_permissions > 1 %}
+                    <div class="form-row">
+                        <input type="submit" name="update" value="Update Details" class="form-control btn btn-primary"/>
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
 
-    {% elif campus_results %}
-        <table>
-            <tr class="header">
-                <td>Campus nickname</td>
-                <td>Contact's Phone</td>
-                <td>Contact's Fax</td>
-                <td>Campus Suburb</td>
-                <td>Campus Region</td>
-                <td>Campus Country</td>
-                {% if customer_permissions == 4 or administration_permission %}
-                    <td>Delete</td>
-                {% endif %}
-            </tr>
-            {% for row in campus_results %}
-                <tr>
-                    <td><a href="{% url 'customer_campus_information' row.customer_campus_id 'CUST' %}">{{ row.campus_id }}</a></td>
-                    <td>{{ row.customer_phone }}</td>
-                    <td>{{ row.customer_fax }}</td>
-                    <td>{{ row.campus_id.campus_suburb }}</td>
-                    <td>{{ row.campus_id.campus_region_id }}</td>
-                    <td>{{ row.campus_id.campus_country_id }}</td>
-                    {% if customer_permissions == 4 or administration_permission %}
-                        <td><a href="{% url 'delete_campus_contact' row.customer_campus_id 'CUST' %}">Delete</a></td>
-                    {% endif %}
-                </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <p>There are currently no campuses</p>
-    {% endif %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Campus Contact Information</h2>
+        </div>
+        <div class="card-body">
+            {% if add_campus_results and assign_campus_to_customer_permission > 1 and customer_results.organisation_id %}
+                <form id="customer_campus_form">
+                    <div class="form-row">
+                        <select name="add_campus_select" id="id_add_cammpus_select" onchange="enable_disable_add_campus()" class="form-control">
+                            <option value="---------"> ---------</option>
+                            {% for row in add_campus_results %}
+                                <option value="{{ row.campus_id }}">{{ row.campus_nickname }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="submit" name="add_campus_submit" value="Add Campus" disabled id="id_add_cammpus_submit" class="btn btn-primary form-control">
+                    </div>
+                </form>
+            {% elif assign_campus_to_customer_permission > 1 and not customer_results.organisation_id %}
+                <a href="{% url 'new_campus' customer_results.customer_id 'customer' %}">New Campus</a>
+            {% endif %}
+            {% if customer_campus_results %}
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <td>Campus nickname</td>
+                            <td>Campus's Phone</td>
+                            <td>Campus's Fax</td>
+                            <td>Campus Suburb</td>
+                            <td>Campus Region</td>
+                            <td>Campus Country</td>
+                            {% if customer_permissions == 4 or administration_permission %}
+                                <td>Delete</td>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    {% for row in customer_campus_results %}
+                        <tr>
+                            <td><a href="{% url 'campus_information' row.campus_id %}">{{ row.campus_nickname }}</a></td>
+                            <td>{{ row.campus_phone }}</td>
+                            <td>{{ row.campus_fax }}</td>
+                            <td>{{ row.campus_suburb }}</td>
+                            <td>{{ row.campus_region_id }}</td>
+                            <td>{{ row.campus_country_id }}</td>
+                            {% if customer_permissions == 4 or administration_permission %}
+                                <td>Delete</td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </table>
+
+            {% elif campus_results %}
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <td>Campus nickname</td>
+                            <td>Contact's Phone</td>
+                            <td>Contact's Fax</td>
+                            <td>Campus Suburb</td>
+                            <td>Campus Region</td>
+                            <td>Campus Country</td>
+                            {% if customer_permissions == 4 or administration_permission %}
+                                <td>Delete</td>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    {% for row in campus_results %}
+                        <tr>
+                            <td><a href="{% url 'customer_campus_information' row.customer_campus_id 'CUST' %}">{{ row.campus_id }}</a></td>
+                            <td>{{ row.customer_phone }}</td>
+                            <td>{{ row.customer_fax }}</td>
+                            <td>{{ row.campus_id.campus_suburb }}</td>
+                            <td>{{ row.campus_id.campus_region_id }}</td>
+                            <td>{{ row.campus_id.campus_country_id }}</td>
+                            {% if customer_permissions == 4 or administration_permission %}
+                                <td><a href="{% url 'delete_campus_contact' row.customer_campus_id 'CUST' %}">Delete</a></td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <label>There are currently no campuses</label>
+            {% endif %}
+        </div>
+    </div>
+
+
+
     <form method="post" class="customer_contact_history" id="customer_contact_history" enctype="multipart/form-data">
         <h2>Contact History</h2>
         Loading...
     </form>
 
-    <div id="email_history">
-        <h2>Email History</h2>
-        Loading...
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Email History</h2>
+        </div>
+        <div class="card-body" id="email_history">
+            Loading...
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Document Uploads</h2>
+        </div>
+        <div class="card-body" id="document_tree_list">
+            Loading...
+        </div>
     </div>
 
 
-    <h2>Document Uploads</h2>
-    <div class="document_tree_list" id="document_tree_list">
-        <h2>Document Tree List</h2>
-        Loading...
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Customer Quotes</h2>
+        </div>
+        <div class="card-body">
+            <a href="{% url 'new_quote' customer_id 'customer' %}">New Quote</a>
+            {% if quote_results %}
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td width="50%">Quote Title</td>
+                            <td width="25%">Valid Till</td>
+                            <td width="25%">Quote Stage</td>
+                        </tr>
+                    </thead>
+                    {% for row in quote_results %}
+                        <tr>
+                            <td><a href="{% url 'quote_information' row.quote_id %}">{{ row.quote_title }}</a></td>
+                            <td>{{ row.quote_valid_till }}</td>
+                            <td>{{ row.quote_stage_id }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+        </div>
     </div>
 
-    <h2>Customer Quotes</h2>
-    <a href="{% url 'new_quote' customer_id 'customer' %}">New Quote</a>
-    {% if quote_results %}
-        <table>
-            <tr>
-                <td width="50%">Quote Title</td>
-                <td width="25%">Valid Till</td>
-                <td width="25%">Quote Stage</td>
-            </tr>
-            {% for row in quote_results %}
-                <tr>
-                    <td><a href="{% url 'quote_information' row.quote_id %}">{{ row.quote_title }}</a></td>
-                    <td>{{ row.quote_valid_till }}</td>
-                    <td>{{ row.quote_stage_id }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
-    <br/>
-
-
-
+    <div class="card mt-4">
+        <div class="card-header">
             <h2>Associated Projects & Tasks</h2>
+        </div>
+        <div class="card-body">
             {% if customer_permissions > 1 %}
             <h4>Actions</h4>
-            <ul>
-                <li><a href="{% url 'new_project' customer_results.customer_id 'customer' %}">Create New Project</a></li>
-                <li><a href="{% url 'new_task' customer_results.customer_id 'customer' %}">Create New Task</a></li>
-                <li><a href="{% url 'assign_customer_project_task' customer_results.customer_id %}">Assign Existing Project or Task</a></li>
-            </ul>
+            <div class="list-group">
+                <a href="{% url 'new_project' customer_results.customer_id 'customer' %}">Create New Project</a>
+                <a href="{% url 'new_task' customer_results.customer_id 'customer' %}">Create New Task</a>
+                <a href="{% url 'assign_customer_project_task' customer_results.customer_id %}">Assign Existing Project or Task</a>
+            </div>
             <br/>
             {% endif %}
             <h4>Assigned Projects</h4>
                 {% if project_results %}
-                    <table>
-                        <tr class="header">
-                            <td>Project ID</td>
-                            <td>Project Name</td>
-                            <td>Project End Date</td>
-                            <td>Project Status</td>
-                        </tr>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <td>Project ID</td>
+                                <td>Project Name</td>
+                                <td>Project End Date</td>
+                                <td>Project Status</td>
+                            </tr>
+                        </thead>
                         {% for row in project_results %}
                             <tr>
                                 <td><a href="{% url 'project_information' row.project_id %}">PRO{{ row.project_id }}</a></td>
@@ -198,13 +254,15 @@
 
             <h4>Assigned Tasks</h4>
                 {% if task_results %}
-                    <table>
-                        <tr class="header">
-                            <td>Task ID</td>
-                            <td>Task Name</td>
-                            <td>Task End Date</td>
-                            <td>Task Status</td>
-                        </tr>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <td>Task ID</td>
+                                <td>Task Name</td>
+                                <td>Task End Date</td>
+                                <td>Task Status</td>
+                            </tr>
+                        </thead>
                         {% for row in task_results %}
                             <tr>
                                 <td><a href="{% url 'task_information' row.task_id %}">TASK{{ row.task_id }}</a></td>
@@ -217,15 +275,25 @@
                 {% else %}
                     <p>Sorry. There are currently no tasks for this customer.</p>
                 {% endif %}
+
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
             <h2>Customer Opportunities</h2>
+        </div>
+        <div class="card-body">
             <a href="{% url 'new_opportunity' customer_results.customer_id 'customer' %}">Add a new opportuninity</a>
             {% if opportunity_results %}
-                <table>
-                    <tr class="header">
-                        <td>Opportunity Name</td>
-                        <td>Opportunity Stage</td>
-                        <td>Opportunity End Date</td>
-                    </tr>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Opportunity Name</td>
+                            <td>Opportunity Stage</td>
+                            <td>Opportunity End Date</td>
+                        </tr>
+                    </thead>
                     {% for row in opportunity_results %}
                         <tr>
                             <td><a href="{% url 'opportunity_information' row.opportunity_id %}">{{ row.opportunity_name }}</a></td>
@@ -235,7 +303,8 @@
                     {% endfor %}
                 </table>
             {% endif %}
-    </form>
+        </div>
+    </div>
 </body>
 <script>
     $("#customer_campus_form").on('submit', function(e) {

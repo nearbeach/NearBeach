@@ -12,36 +12,41 @@
             <form id="user_information_form" name="user_information_form" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <!--FIRST NAME-->
-                <div class="form-label-group">
-                    {{ my_profile_form.first_name }}
-                    <label for="id_first_name">First Name</label>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_first_name">First Name</label>
+                        {{ my_profile_form.first_name }}
+                    </div>
+
+                    <!--LAST NAME-->
+                    <div class="form-group col-md-6">
+                        <label for="id_last_name">First Name</label>
+                        {{ my_profile_form.last_name }}
+                    </div>
                 </div>
 
-                <!--LAST NAME-->
-                <div class="form-label-group">
-                    {{ my_profile_form.last_name }}
-                    <label for="id_last_name">First Name</label>
-                </div>
 
                 <!--EMAIL-->
-                <div class="form-label-group">
+                <div class="form-group">
+                    <label for="id_email">Email</label>
                     {{ my_profile_form.email }}
-                    <label for="id_email">First Name</label>
                 </div>
 
                 <!--PASSWORD1-->
                 <label>Password: Leave fields blank if you do not require to change your password</label>
-                <div class="form-label-group">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_password1">Password</label>
+                        {{ my_profile_form.password1 }}
+                    </div>
 
-                    {{ my_profile_form.password1 }}
-                    <label for="id_password1">Password</label>
+                    <!--PASSWORD2-->
+                    <div class="form-group col-md-6">
+                        <label for="id_password2">Repeate Password</label>
+                        {{ my_profile_form.password2 }}
+                    </div>
                 </div>
 
-                <!--PASSWORD2-->
-                <div class="form-label-group">
-                    {{ my_profile_form.password2 }}
-                    <label for="id_password2">Repeate Password</label>
-                </div>
 
                 <!--ABOUT YOU-->
                 <label>About you:</label>

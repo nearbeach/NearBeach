@@ -23,11 +23,6 @@
                     <label for="id_bug_client_url">Bug Client URL</label>
                     {{ bug_client_form.bug_client_url }}
                 </div>
-                <div class="form-row">
-                    <input type="submit" value="Update Bug Client" class="btn btn-primary form-control col-md-6">
-                    <a href="{% url 'bug_client_list' %}" class="btn btn-danger form-control col-md-6">Cancel</a>
-                </div>
-
 
                 Please note: NearBeach checks the connection of the bug client by;
                 <ol>
@@ -36,6 +31,11 @@
                     <li>Converts the JSON into data</li>
                 </ol>
                 This may take some time due to connection speeds etc.
+
+                <div class="form-row">
+                    <input type="submit" value="Update Bug Client" class="btn btn-primary form-control col-md-6">
+                    <a href="{% url 'bug_client_list' %}" class="btn btn-danger form-control col-md-6">Cancel</a>
+                </div>
 
             </form>
         </div>

@@ -599,9 +599,30 @@ class customer_information_form(ModelForm):
 
 
     #The Fields
+    customer_last_name=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    customer_title=forms.ModelChoiceField(
+        queryset=list_of_title.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    customer_email=forms.EmailField(
+        max_length=255,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+        })
+    )
+
     customer_first_name=forms.CharField(
         max_length=255,
-        widget=forms.TextInput()
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
     )
 
     update_profile_picture=forms.ImageField(
@@ -1440,6 +1461,7 @@ class my_profile_form(ModelForm):
             'placeholder': 'Password',
             'onkeyup': 'enable_submit()',
             'autocomplete': 'off',
+            'class': 'form-control',
         })
     )
     password2 = forms.CharField(
@@ -1450,25 +1472,29 @@ class my_profile_form(ModelForm):
             'placeholder': 'Repeate Password',
             'onkeyup': 'enable_submit()',
             'autocomplete': 'off',
+            'class': 'form-control',
         })
     )
     first_name = forms.CharField(
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': 'First Name'
+            'placeholder': 'First Name',
+            'class': 'form-control',
         })
     )
     last_name = forms.CharField(
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Last Name'
+            'placeholder': 'Last Name',
+            'class': 'form-control',
         })
     )
     email = forms.EmailField(
         max_length=100,
         required=False,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Email Address'
+            'placeholder': 'Email Address',
+            'class': 'form-control',
         })
     )
     class Meta:
@@ -2228,13 +2254,20 @@ class opportunity_information_form(ModelForm):
 
 class organisation_information_form(ModelForm):
     #Profile picture
-    update_profile_picture=forms.ImageField(required=False, )
-
-    #Customer Documents
-    document_description=forms.CharField(
+    organisation_name=forms.CharField(
         max_length=255,
-        required=False
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
     )
+    organisation_website=forms.URLField(
+        max_length=255,
+        widget=forms.URLInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    update_profile_picture=forms.ImageField(required=False)
+
     document=forms.FileField(required=False)
 
     class Meta:
