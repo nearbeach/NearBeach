@@ -67,6 +67,11 @@ class ProductOrServiceSelect(forms.Select):
 
 
 class RegionSelect(forms.Select):
+    """
+    Regional Select is a dropdown widget for selecting both
+    - Region
+    - Country
+    """
     def _render(self, name, value, attrs=None, choices=()):
         if value is None: value = ''
 

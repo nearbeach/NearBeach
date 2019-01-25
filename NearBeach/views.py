@@ -35,12 +35,17 @@ import datetime, json, simplejson, urllib.parse
 
 @login_required(login_url='login')
 def add_campus_to_customer(request, customer_id, campus_id):
+    """
+    This function can only exist in POST. It will add a customer to a campus
+    :param request:
+    :param customer_id: the customer's id
+    :param campus_id: the campus's id to add the customer too
+    :return: Success or fail - depending if it worked or not
+    """
     if request.method == "POST":
         # Get the SQL Instances
         customer_instance = customer.objects.get(customer_id=customer_id)
-        campus_instances = campus.objects.get(
-            campus_id=campus_id,
-        )
+        campus_instances = campus.objects.get(campus_id=campus_id)
 
         # Save the new campus
         submit_campus = customer_campus(
@@ -52,6 +57,7 @@ def add_campus_to_customer(request, customer_id, campus_id):
         )
         submit_campus.save()
 
+        #Return the JSON data around the customer's new campus.
         response_data = {}
         response_data['customer_campus_id'] = submit_campus.customer_campus_id
 
@@ -63,8 +69,22 @@ def add_campus_to_customer(request, customer_id, campus_id):
 
 @login_required(login_url='login')
 def alerts(request):
+    """
+    Alerts are shown after the user logs in with any outstanding objects, i.e. Projects that have end dates in the past.
+    :param request:
+    :return: Returns a web page of alerts
+
+    Method
+    ~~~~~~
+    1. get the compare date, that is 24 hours into the future.
+    2. filter projects, tasks, opportunity, and quotes. The filters will be if they are still active (not completed or resolved)
+        and if the end date is less than or equal to the campare time.
+    3. If there are no results for any of the objects - redirect to dashboard
+    4. Loaad the alerts page.
+    """
     compare_time = datetime.datetime.now() + datetime.timedelta(hours=24)
 
+    #Get SQL Data for each object
     project_results = project.objects.filter(
         is_deleted="FALSE",
         project_id__in=object_assignment.objects.filter(
@@ -108,10 +128,10 @@ def alerts(request):
         quote_valid_till__lte=compare_time,
     )
 
+    #If there is no data for every object, lets go to the dashboard... because there are no alerts :)
     if not project_results and not task_results and not opportunity_results and not quote_results:
         #There are no alerts, just redirect to dashboard
         return HttpResponseRedirect(reverse('dashboard'))
-
 
     # Load the template
     t = loader.get_template('NearBeach/alerts.html')
@@ -129,6 +149,21 @@ def alerts(request):
 
 @login_required(login_url='login')
 def assign_customer_project_task(request, customer_id):
+    """
+    This allows the user to allocate multiple projects/tasks to a customer in a single search.
+    :param request:
+    :param customer_id: The customer's id
+    :return: Redirect to the customer's information page
+
+    Method
+    ~~~~~~
+    1. Check current users permission - are they allowed to do this. If not, send them away
+    2. If request is post - create a new row for each project/tasks assigned to the user (read comments in section)
+    3. If request is not post - get project/task/customer infromation
+    4. Render the page
+    """
+
+    #Checking user permission
     user_group_results = user_group.objects.filter(
         is_deleted="FALSE",
         username=request.user.id,
@@ -141,7 +176,7 @@ def assign_customer_project_task(request, customer_id):
         return HttpResponseRedirect(reverse(permission_denied))
 
     if request.POST:
-
+        #Get required data from POST - in this case we want to get the list... getlist... getit?
         assign_projects = request.POST.getlist('project_checkbox')
         assign_task = request.POST.getlist('task_checkbox')
 
@@ -149,14 +184,14 @@ def assign_customer_project_task(request, customer_id):
         customer_instance = customer.objects.get(customer_id=customer_id)
 
         """
-		We will now assign these projects and task in bulk to the customer
+		We will now assign these projects and task in bulk to the customer.
+		This is done in a simple look. It will loop through the data obtained in post
 		"""
-        print("Assigning customer projects")
         for row in assign_projects:
+            #Get the project instance
             project_instance = project.objects.get(project_id=row)
-            print("Assigning project: " + project_instance.project_name + " for customer: " + customer_instance.customer_first_name)
 
-            # Project customer
+            # Project customer - linking projects to customers.
             project_customer_submit = project_customer(
                 project_id=project_instance,
                 customer_id=customer_instance,
@@ -166,18 +201,20 @@ def assign_customer_project_task(request, customer_id):
             if not project_customer_submit.save():
                 print("Error saving")
 
-
-        print("Assigning customer task")
+        """
+        Assign the task to a customer by looking through the results submitted through in POST.
+        It will look through each submitted option and add them to the task_customer table.
+        """
         for row in assign_task:
+            #get the task instance
             task_instance = task.objects.get(task_id=row)
-            print("Assigning task: " + task_instance.task_short_description + " for customer: " + customer_instance.customer_first_name)
 
-            assign_save = task_customer(
+            task_customer_submit = task_customer(
                 task_id=task_instance,
                 customer_id=customer_instance,
                 change_user=request.user,
             )
-            assign_save.save()
+            task_customer_submit.save()
 
         # Now return to the customer's information
         return HttpResponseRedirect(reverse('customer_information', args={customer_id}))
@@ -185,6 +222,12 @@ def assign_customer_project_task(request, customer_id):
     # Get Data
     customer_results = customer.objects.get(customer_id=customer_id)
 
+    """
+    Projects need to be
+    -- NOT DELETED
+    -- User has access to the project via groups
+    -- Projects need to be either NEW or OPEN
+    """
     project_results = project.objects.filter(
         is_deleted="FALSE",
         project_status__in=('New','Open'),
@@ -197,6 +240,12 @@ def assign_customer_project_task(request, customer_id):
         ).values('project_id')
     )
 
+    """
+    Tasks need to be
+    -- NOT DELETED
+    -- User has access to the project via groups
+    -- Projects need to be either NEW or OPEN
+    """
     task_results = task.objects.filter(
         is_deleted="FALSE",
         task_status__in=('New', 'Open'),
@@ -227,6 +276,13 @@ def assign_customer_project_task(request, customer_id):
 
 @login_required(login_url='login')
 def assigned_group_add(request, location_id, destination):
+    """
+
+    :param request:
+    :param location_id:
+    :param destination:
+    :return:
+    """
     if request.method == "POST":
         form = assign_group_add_form(
             request.POST,
@@ -2115,7 +2171,7 @@ def email(request,location_id,destination):
             'to_email': customer_results,
         }
     else:
-        print("FUCK! Something went wrong")
+        print("Something went wrong")
 
 
     # context

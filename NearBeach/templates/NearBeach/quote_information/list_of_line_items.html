@@ -16,7 +16,7 @@
         </thead>
         {% for row in product_line_items %}
             <tr>
-                <td>{{ row.products_and_services }}</td>
+                <td>{{ row.product_and_service }}</td>
                 <td name="product_price">{{ row.product_price }}</td>
                 <td name="product_quantity">{{ row.quantity }}</td>
                 {% if row.discount_choice == "Percentage" %}
