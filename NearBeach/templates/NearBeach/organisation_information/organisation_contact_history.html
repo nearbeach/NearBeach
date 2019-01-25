@@ -1,36 +1,61 @@
-    {% csrf_token %}
-    {% load staticfiles %}
-
 {% csrf_token %}
-<h2>Contact History</h2>
+{% load staticfiles %}
+
 {% if organisation_permissions > 1 or contact_history_permission > 0 %}
-    {{ contact_history_form.media }}
-    <table>
-        <tr><td>Contact Type {{  contact_history_form.contact_type }}</td></tr>
-        <tr><td>Date: {{ contact_history_form.contact_date }}</td></tr>
-        <tr><td>{{ contact_history_form.contact_history }}</td></tr>
-        <tr><td>{{ contact_history_form.contact_attachment }}</td></tr>
-        <tr><td>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Contact History</h2>
+        </div>
+        <div class="card-body">
+            {{ contact_history_form.media }}
+            <div class="form-group">
+                <label for="id_contact_type">Contact Type</label>
+                {{  contact_history_form.contact_type }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_contact_date">Date: </label>
+                {{ contact_history_form.contact_date }}
+            </div>
+
+            <div class="form-group">
+                {{ contact_history_form.contact_history }}
+            </div>
+
+            <div class="form-group">
+                {{ contact_history_form.contact_attachment }}
+            </div>
+
+
+
             <div id="progress" style="border: none; width: 100%;">
-                <span id="upload_percent"><input type="submit" name="submit_contact" value="Submit Contact"/></span>
+                <span id="upload_percent"><input class="btn btn-primary" type="submit" name="submit_contact" value="Submit Contact"/></span>
                 <div id="upload_progress" style="background-color: green; width: 0%; height: 20px;"></div>
             </div>
-        </td></tr>
-    </table>
+        </div>
+    </div>
+{% else %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Contact History</h2>
+        </div>
+    </div>
 {% endif %}
 {% if contact_history_results %}
-    <div><h4>Contact History</h4></div>
     {% for row in contact_history_results %}
-        <table>
-            <tr><td>{{ row.contact_type }} - Submitted by {{ row.user_id }} on {{ row.contact_date }}</td></tr>
-            <tr><td><textarea class="old_organisation_contact_history">{{ row.contact_history|safe }}</textarea></td></tr>
+        <div class="card mt-4">
+            <div class="card-header">
+                {{ row.contact_type }} - Submitted by {{ row.user_id }} on {{ row.contact_date }}
+            </div>
+            <div class="card-body">
+                <textarea class="old_organisation_contact_history">{{ row.contact_history|safe }}</textarea>
+            </div>
             {% if row.document_key %}
-                <tr><td>
+                <div class="card-footer">
                     <a href="https://{{ request.META.HTTP_HOST }}{{ PRIVATE_MEDIA_URL }}{{ row.document_key.document_key }}" target="_blank">{{ row.document_key.document_description }}</a>
-                </td></tr>
+                </div>
             {% endif %}
-        </table>
-        <br/>
+        </div>
     {% endfor %}
 {% endif %}
 <script>

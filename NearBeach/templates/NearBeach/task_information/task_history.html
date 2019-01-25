@@ -1,13 +1,13 @@
-<br/>
 {% if task_history_results %}
     {% for row in task_history_results %}
-        <table>
-            <tr><td>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}</td></tr>
-            <tr><td><textarea class="old_task_history">{{ row.task_history|safe }}</textarea></td></tr>
-        </table>
-        <br/>
+        <div class="card mt-4">
+            <div class="card-header">
+                {{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}
+            </div>
+            <div class="card-body">
+                <textarea class="old_task_history">{{ row.task_history|safe }}</textarea>
+            </div>
+        </div>
     {% endfor %}
-{% else %}
-    <p>Currently no history</p>
 {% endif %}
 

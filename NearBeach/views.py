@@ -545,7 +545,7 @@ def associated_projects(request, task_id):
 	check to see if they want only new or open, or if they would like
 	to see closed task too.
 	"""
-    task_groups_results = task_group.objects.filter(
+    task_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         task_id=task_id,
     ).values('group_id_id')
@@ -556,15 +556,11 @@ def associated_projects(request, task_id):
         # Send them to permission denied!!
         return HttpResponseRedirect(reverse(permission_denied))
 
-
-    search_projects = search_project_form()
-
-    # POST
-    if request.method == "POST":
-        # TO DO! EXTRACT POST AND FILTER RESULTS!!!
-        projects_results = project.objects.filter()
-    else:
-        projects_results = project.objects.filter()
+    #Get required data
+    projects_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_status__in={'New', 'Open'}
+    )
 
     # Load the template
     t = loader.get_template('NearBeach/associated_project.html')
@@ -572,7 +568,6 @@ def associated_projects(request, task_id):
     # context
     c = {
         'projects_results': projects_results,
-        'search_projects': search_projects,
         'task_id': task_id,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
@@ -601,16 +596,10 @@ def associated_task(request, project_id):
         # Send them to permission denied!!
         return HttpResponseRedirect(reverse(permission_denied))
 
-
-
-    search_task = search_task_form()
-
-    # POST
-    if request.method == "POST":
-        # TO DO! EXTRACT POST AND FILTER RESULTS!!!
-        task_results = task.objects.filter()
-    else:
-        task_results = task.objects.filter()
+    task_results = task.objects.filter(
+        is_deleted="FALSE",
+        task_status__in={'New','Open'}
+    )
 
     # Load the template
     t = loader.get_template('NearBeach/associated_task.html')
@@ -618,7 +607,6 @@ def associated_task(request, project_id):
     # context
     c = {
         'task_results': task_results,
-        'search_task': search_task,
         'project_id': project_id,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
@@ -768,6 +756,7 @@ def bug_client_information(request, bug_client_id):
         'bug_client_id': bug_client_id,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'form_errors': form_errors,
     }
 
     return HttpResponse(t.render(c, request))
@@ -952,7 +941,7 @@ def campus_information(request, campus_information):
 
             # Get the SQL Instances
             customer_instance = customer.objects.get(customer_id=customer_results)
-            campus_instances = campus.objects.get(organisations_campus_id=campus_information)
+            campus_instances = campus.objects.get(campus_id=campus_information)
 
 
             # Save the new campus
@@ -1108,7 +1097,7 @@ def customer_campus_information(request, customer_campus_id, customer_or_org):
 			will be the customer information
 			"""
             if customer_or_org == "CAMP":
-                return HttpResponseRedirect(reverse('campus_information', args={save_data.campus_id.organisations_campus_id}))
+                return HttpResponseRedirect(reverse('campus_information', args={save_data.campus_id.campus_id}))
             else:
                 return HttpResponseRedirect(reverse('customer_information', args={save_data.customer_id.customer_id}))
 
@@ -4326,44 +4315,6 @@ def opportunity_delete_permission(request, opportunity_permissions_id):
     else:
         return HttpResponseBadRequest("Sorry, this has to be through post")
 
-@login_required(login_url='login')
-def opportunity_group_permission(request, opportunity_id):
-    if request.method == "POST":
-        form = opportunity_group_permission_form(request.POST, group_results=group.objects.all())
-        if form.is_valid():
-            opportunity_permissions_submit = opportunity_permission(
-                change_user=request.user,
-                group_id=form.cleaned_data['group'],
-                opportunity_id=opportunity.objects.get(opportunity_id=opportunity_id),
-            )
-            opportunity_permissions_submit.save()
-        else:
-            print(form.errors)
-
-    group_permission = opportunity_permission.objects.filter(
-        is_deleted="FALSE",
-        opportunity_id=opportunity_id,
-    ).exclude(
-        group_id__isnull=True,
-    )
-
-    group_results = group.objects.filter(
-        is_deleted="FALSE",
-    ).exclude(
-        group_id__in=group_permission.values_list('group_id')
-    )
-
-    # Loaed the template
-    t = loader.get_template('NearBeach/opportunity/opportunity_group_permission.html')
-
-    c = {
-        'group_permission': group_permission,
-        'group_results': group_results,
-        'opportunity_permission_form': opportunity_group_permission_form(group_results=group_results),
-    }
-
-    return HttpResponse(t.render(c, request))
-
 
 
 
@@ -4579,45 +4530,6 @@ def opportunity_information(request, opportunity_id):
     return HttpResponse(t.render(c, request))
 
 
-
-
-@login_required(login_url='login')
-def opportunity_user_permission(request, opportunity_id):
-    if request.method == "POST":
-        form = opportunity_user_permission_form(request.POST, user_results=User.objects.all())
-        if form.is_valid():
-            opportunity_permissions_submit = opportunity_permission(
-                change_user=request.user,
-                assigned_user=form.cleaned_data['user'],
-                opportunity_id=opportunity.objects.get(opportunity_id=opportunity_id)
-            )
-            opportunity_permissions_submit.save()
-        else:
-            print(form.errors)
-
-    group_permission = opportunity_permission.objects.filter(
-        is_deleted="FALSE",
-        opportunity_id=opportunity_id,
-    ).exclude(
-        assigned_user__isnull=True,
-    )
-
-    user_results = User.objects.filter(
-        #is_deleted="FALSE",
-    ).exclude(
-        id__in=group_permission.values_list('assigned_user_id')
-    )
-
-    # Loaed the template
-    t = loader.get_template('NearBeach/opportunity/opportunity_user_permission.html')
-
-    c = {
-        'group_permission': group_permission,
-        'user_results': user_results,
-        'opportunity_user_permission_form': opportunity_user_permission_form(user_results=user_results),
-    }
-
-    return HttpResponse(t.render(c, request))
 
 
 @login_required(login_url='login')

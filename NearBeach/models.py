@@ -185,6 +185,8 @@ class contact_history(models.Model):
     organisation_id = models.ForeignKey(
         'organisation',
         on_delete=models.CASCADE,
+        blank=True,
+        null=True,
     )
     customer_id = models.ForeignKey(
         'customer',

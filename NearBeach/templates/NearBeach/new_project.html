@@ -5,40 +5,64 @@
     <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
     <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
+ <body onload="on_page_load();">
+    <div class="card">
+        <div class="card-header">
+            <h2>New Project</h2>
+        </div>
+        <div class="card-body">
+            {% if destination %}
+                <form action={% url 'new_project' location_id destination %} method="post" class="new_project">
+            {% else %}
+                <form action={% url 'new_project' %} method="post" class="new_project">
+            {% endif %}
+                {% csrf_token %}
+                {{ new_project_form.media }}
+                <div class="form-group">
+                    <label for="id_product_name">Product Name</label>
+                    {{ new_project_form.project_name }}
+                </div>
+                <div class="form-group">
+                    <label for="id_project_description">Project Description</label>
+                    {{ new_project_form.project_description }}
+                </div>
+                <div class="form-group">
+                    <label for="id_organisation_id">Organisation</label>
+                    {{ new_project_form.organisation_id }}
+                </div>
+                <div class="form-group">
+                    <label>Time zone: {{ timezone }}</label>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_project_start_date">Start Date</label>
+                        {{ new_project_form.project_start_date }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_project_end_date">End Date</label>
+                        {{ new_project_form.project_end_date }}
+                    </div>
+                </div>
+
+                <h2 class="mt-4">Project Permissions</h2>
+                <div class="form-group">
+                    <label for="id_project_permission">Please give permissions to one or more groups. Please note: you will not be able to submit this project without selecting at least one group</label>
+                    {{ new_project_form.project_permission }}
+
+                </div>
+                <div class="form-row">
+                    <input type="submit" value="Submit New Project" class="btn btn-primary form-control w-50">
+                    <a href={% url 'dashboard' %} class="btn btn-warning form-control w-50">Cancel</a>
+                </div>
+                <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
+                <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
+                <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
+            </form>
+        </div>
+    </div>
 
 
-<body onload="on_page_load();">
-{% if destination %}
-    <form action={% url 'new_project' location_id destination %} method="post" class="new_project">
-{% else %}
-    <form action={% url 'new_project' %} method="post" class="new_project">
-{% endif %}
-	{% csrf_token %}
-    <h2>New Project</h2>
-        <table>
-            {{ new_project_form.media }}
-            <tr><td>{{ new_project_form.project_name }}</td></tr>
-            <tr><td>{{ new_project_form.project_description }}</td></tr>
-            <tr><td>Organisation: {{ new_project_form.organisation_id }}</td></tr>
-            <tr><td>Time zone: {{ timezone }}</td></tr>
-            <tr><td>Project Start: {{ new_project_form.project_start_date }}</td></tr>
-            <tr><td>Project Finish: {{ new_project_form.project_end_date }}</td></tr>
-        </table>
-        <h2>Project Permissions</h2>
-        <table>
-            <tr>
-                <td>
-                    Please give permissions to one or more groups. Please note: you will not be able to submit this project
-                    without selecting at least one group
-                </td>
-            </tr>
-            <tr><td>{{ new_project_form.project_permission }}</td></tr>
-            <tr><td><input type="submit" value="Submit New Project"><a href={% url 'dashboard' %}>Cancel</a></td></tr>
-        </table>
-        <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
-        <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
-        <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
-    </form>
+
 
 
 </body>

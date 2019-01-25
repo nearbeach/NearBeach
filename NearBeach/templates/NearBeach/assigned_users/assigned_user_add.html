@@ -1,8 +1,14 @@
-<h2>Assigned Users</h2>
 {% if assign_user_add_form.add_user|length > 1 %}
     {% csrf_token %}
-    {{ assign_user_add_form.add_user }}
-    <input id="submit_add_user" type="submit" value="Assign New User" disabled width="20%">
+    <div class="form-row">
+        <div class="form-group">
+            {{ assign_user_add_form.add_user }}
+        </div>
+        <div class="form-group">
+            <input id="submit_add_user" type="submit" value="Assign New User" disabled class="btn btn-primary form-control">
+        </div>
+    </div>
+
     <script>
         function add_user_change() {
             if ($("#id_add_user").val() != "") {

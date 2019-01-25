@@ -1,18 +1,19 @@
-<h2>Line Items</h2>
 {% if product_line_items %}
     <h3>Product Line Items</h3>
-    <table id="product_line_table">
-        <tr>
-            <td>Product</td>
-            <td>Price</td>
-            <td>Quantity</td>
-            <td>Discount Amount</td>
-            <td>Sales Price</td>
-            <td>Tax %</td>
-            <td>Tax Amount</td>
-            <td>Total</td>
-            <td>Delete</td>
-        </tr>
+    <table id="product_line_table" class="table table-hover">
+        <thead>
+            <tr>
+                <td>Product</td>
+                <td>Price</td>
+                <td>Quantity</td>
+                <td>Discount Amount</td>
+                <td>Sales Price</td>
+                <td>Tax %</td>
+                <td>Tax Amount</td>
+                <td>Total</td>
+                <td>Delete</td>
+            </tr>
+        </thead>
         {% for row in product_line_items %}
             <tr>
                 <td>{{ row.products_and_services }}</td>
@@ -39,7 +40,7 @@
         {% endfor %}
     </table>
     <br/>
-    <table style="width: 30%;">
+    <table style="width: 30%;" class="table table-striped table-hover">
         <tr>
             <td>Unadjusted Price</td>
             <td id="product_unadjusted_price">[JAVASCRIPT TO FILL]</td>
@@ -56,7 +57,7 @@
             <td>Tax</td>
             <td id="product_tax">[JAVASCRIPT TO FILL]</td>
         </tr>
-        <tr>
+        <tr class="table-success">
             <td>Grand Total</td>
             <td id="product_total">[JAVASCRIPT TO FILL]</td>
         </tr>
@@ -66,18 +67,20 @@
 
 {% if service_line_items %}
     <h3>Service Line Items</h3>
-    <table id="service_line_table">
-        <tr>
-            <td>Service</td>
-            <td>Price</td>
-            <td>Quantity</td>
-            <td>Discount Amount</td>
-            <td>Sales Price</td>
-            <td>Tax %</td>
-            <td>Tax Amount</td>
-            <td>Total</td>
-            <td>Delete</td>
-        </tr>
+    <table id="service_line_table" class="table table-hover">
+        <thead>
+            <tr>
+                <td>Service</td>
+                <td>Price</td>
+                <td>Quantity</td>
+                <td>Discount Amount</td>
+                <td>Sales Price</td>
+                <td>Tax %</td>
+                <td>Tax Amount</td>
+                <td>Total</td>
+                <td>Delete</td>
+            </tr>
+        </thead>
         {% for row in service_line_items %}
             <tr>
                 <td>{{ row.products_and_services }}</td>
@@ -104,7 +107,7 @@
         {% endfor %}
     </table>
     <br/>
-    <table style="width: 30%;">
+    <table style="width: 30%;" class="table table-striped table-hover">
         <tr>
             <td>Unadjusted Price</td>
             <td id="service_unadjusted_price">[JAVASCRIPT TO FILL]</td>
@@ -121,7 +124,7 @@
             <td>Tax</td>
             <td id="service_tax">[JAVASCRIPT TO FILL]</td>
         </tr>
-        <tr>
+        <tr class="table-success">
             <td>Grand Total</td>
             <td id="service_total">[JAVASCRIPT TO FILL]</td>
         </tr>
@@ -130,7 +133,7 @@
 
 
 <h2>Totals</h2>
-<table style="width: 30%;">
+<table style="width: 30%;" class="table table-striped table-hover">
     <tr>
         <td>Unadjusted Price</td>
         <td id="unadjusted_price">[JAVASCRIPT TO FILL]</td>
@@ -147,7 +150,7 @@
         <td>Tax</td>
         <td id="tax">[JAVASCRIPT TO FILL]</td>
     </tr>
-    <tr>
+    <tr class="table-success">
         <td>Grand Total</td>
         <td id="total">[JAVASCRIPT TO FILL]</td>
     </tr>

@@ -279,8 +279,8 @@ class assign_group_add_form(forms.Form):
         queryset=group.objects.all(),
         required=True,
         widget=forms.Select(attrs={
-            'width': '80%',
             'onchange': 'add_group_change()',
+            'class': 'form-control',
         })
     )
 
@@ -410,8 +410,8 @@ class assign_user_add_form(forms.Form):
         queryset=User.objects.all(),
         required=True,
         widget=forms.Select(attrs={
-            'width': '80%',
             'onchange': 'add_user_change()',
+            'class': 'form-control',
         })
     )
 
@@ -424,17 +424,21 @@ class bug_client_form(ModelForm):
     bug_client_name = forms.CharField(
         widget=forms.TextInput(attrs={
             'placeholder': 'Bug Client Name',
+            'class': 'form-control',
         })
     )
     list_of_bug_client=forms.ModelChoiceField(
         label='Bug Clients',
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=bug_client_results,
         empty_label=None,
     )
     bug_client_url=forms.CharField(
         widget=forms.TextInput(attrs={
             'placeholder': 'Example: https://bugzilla.nearbeach.org',
+            'class': 'form-control',
         })
     )
     class Meta:
@@ -453,30 +457,22 @@ class bug_search_form(forms.Form):
     #Fields
     list_of_bug_client=forms.ModelChoiceField(
         label='Bug Clients',
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=bug_client_results,
         empty_label=None,
     )
-    search = forms.CharField(max_length=255)
-
-
-
-class customer_campus_form(ModelForm):
-    customer_phone=forms.CharField(
-        max_length=11,
-        required=False
-    )
-    customer_fax=forms.CharField(
-        max_length=11,
-        required=False
+    search = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
     )
 
-    class Meta:
-        model=customer_campus
-        fields={
-                    'customer_phone',
-                    'customer_fax'
-                }
+
+
+
 
 
 class campus_information_form(ModelForm):
@@ -485,6 +481,7 @@ class campus_information_form(ModelForm):
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Campus Nickname i.e Melbourne',
+            'class': 'form-control',
         })
     )
     campus_phone=forms.CharField(
@@ -493,6 +490,7 @@ class campus_information_form(ModelForm):
         widget=forms.TextInput(attrs={
             'placeholder': 'Campus Phone',
             'type': 'tel',
+            'class': 'form-control',
         })
     )
     campus_fax=forms.CharField(
@@ -501,6 +499,7 @@ class campus_information_form(ModelForm):
         widget=forms.TextInput(attrs={
             'placeholder': 'Campus Fax',
             'type': 'tel',
+            'class': 'form-control',
         })
     )
     campus_address1=forms.CharField(
@@ -508,6 +507,7 @@ class campus_information_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Address 1',
+            'class': 'form-control',
         })
     )
     campus_address2=forms.CharField(
@@ -515,6 +515,7 @@ class campus_information_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Address 2',
+            'class': 'form-control',
         })
     )
     campus_address3=forms.CharField(
@@ -522,6 +523,7 @@ class campus_information_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Address 3',
+            'class': 'form-control',
         })
     )
     campus_suburb=forms.CharField(
@@ -529,8 +531,10 @@ class campus_information_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Suburb',
+            'class': 'form-control',
         })
     )
+
 
     class Meta:
         model=campus
@@ -554,6 +558,7 @@ class cost_information_form(forms.Form):
                 'width': '70%',
                 'placeholder': 'Cost Description',
                 'onkeyup': 'enable_disable_add_cost()',
+                'class': 'form-control',
             }
         )
     )
@@ -566,18 +571,58 @@ class cost_information_form(forms.Form):
                 'width': '30%',
                 'placeholder': '$0.00',
                 'onkeyup': 'enable_disable_add_cost()',
+                'class': 'form-control',
             }
         )
     )
+
+
+class customer_campus_form(ModelForm):
+    customer_phone=forms.CharField(
+        max_length=11,
+        required=False
+    )
+    customer_fax=forms.CharField(
+        max_length=11,
+        required=False
+    )
+
+    class Meta:
+        model=customer_campus
+        fields={
+                    'customer_phone',
+                    'customer_fax'
+                }
 
 
 class customer_information_form(ModelForm):
 
 
     #The Fields
+    customer_last_name=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    customer_title=forms.ModelChoiceField(
+        queryset=list_of_title.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    customer_email=forms.EmailField(
+        max_length=255,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+        })
+    )
+
     customer_first_name=forms.CharField(
         max_length=255,
-        widget=forms.TextInput()
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
     )
 
     update_profile_picture=forms.ImageField(
@@ -631,11 +676,13 @@ class document_upload_form(ModelForm):
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Document Description',
+            'class': 'form-control',
         })
     )
     document_description = forms.CharField(
         widget=forms.TextInput(attrs={
             'placeholder': 'Document Description',
+            'class': 'form-control',
         })
     )
     class Meta:
@@ -808,13 +855,14 @@ class email_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'style': 'display: none;',
+            'class': 'form-control',
         }),
     )
     to_email = forms.ModelMultipleChoiceField(
         queryset=customer.objects.all(),
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
             'style': 'width: 90%',
         }),
@@ -824,7 +872,7 @@ class email_form(ModelForm):
         queryset=customer.objects.all(),
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
             'style': 'width: 90%',
         }),
@@ -834,7 +882,7 @@ class email_form(ModelForm):
         queryset=customer.objects.all(),
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
             'style': 'width: 90%',
         }),
@@ -844,6 +892,7 @@ class email_form(ModelForm):
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Email Subject',
+            'class': 'form-control col-md-11',
         }),
     )
     email_content = forms.CharField(
@@ -852,20 +901,28 @@ class email_form(ModelForm):
                 'width': '100%',
             },
             attrs={
-                'placeholder': 'Email content'
+                'placeholder': 'Email content',
+                'class': 'form-control',
             }
         )
     )
     is_private = forms.BooleanField(
         required=False,
+        widget=forms.CheckboxInput(attrs={
+        })
     )
     email_quote = forms.BooleanField(
         required=False,
+        widget=forms.CheckboxInput(attrs={
+        })
     )
     quote_template_description=forms.ModelChoiceField(
         queryset=quote_template.objects.filter(is_deleted='FALSE'),
         empty_label=None,
         required=False,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
     )
 
 
@@ -876,6 +933,12 @@ class email_form(ModelForm):
         }
 
 class email_information_form(ModelForm):
+    email_subject = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control col-md-11',
+        })
+    )
     email_content = forms.CharField(
         widget=TinyMCE(
             mce_attrs={
@@ -884,6 +947,7 @@ class email_information_form(ModelForm):
             },
             attrs={
                 'placeholder': 'Email content',
+                'class': 'form-control',
             }
         )
     )
@@ -914,14 +978,16 @@ class information_customer_contact_history_form(forms.Form):
 
     contact_type = forms.ModelChoiceField(
         label='Contact Type',
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=contact_type_results,
         empty_label=None
     )
     contact_attachment=forms.FileField(
         required=False,
         widget=forms.FileInput(attrs={
-            'onChange':'enable_submit()'
+            'onChange':'enable_submit()',
         })
     )
 
@@ -932,6 +998,7 @@ class information_customer_contact_history_form(forms.Form):
             },
             attrs={
                 'placeholder': 'Opportunity Description',
+                'class': 'form-control',
             }
         ),
         required=False,
@@ -940,6 +1007,7 @@ class information_customer_contact_history_form(forms.Form):
         initial=datetime.datetime.now(),
         widget=forms.DateTimeInput(attrs={
             'style': 'width: 200px',
+            'class': 'form-control',
         })
     )
 
@@ -954,7 +1022,9 @@ class information_organisation_contact_history_form(forms.Form):
     # The Fields
     contact_type = forms.ModelChoiceField(
         label='Contact Type',
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=contact_type_results,
         empty_label=None
     )
@@ -965,6 +1035,7 @@ class information_organisation_contact_history_form(forms.Form):
             },
             attrs={
                 'placeholder': 'Opportunity Description',
+                'class': 'form-control',
             }
         ),
         required=False,
@@ -972,13 +1043,15 @@ class information_organisation_contact_history_form(forms.Form):
     contact_attachment = forms.FileField(
         required=False,
         widget=forms.FileInput(attrs={
-            'onChange': 'enable_submit()'
+            'onChange': 'enable_submit()',
+
         })
     )
     contact_date = forms.DateTimeField(
         initial=datetime.datetime.now(),
         widget=forms.DateTimeInput(attrs={
             'style': 'width: 200px',
+            'class': 'form-control',
         })
     )
 
@@ -1118,17 +1191,20 @@ class kanban_board_form(forms.Form):
         max_length=255,
         widget=TextInput(attrs={
             'placeholder': 'Board Name',
+            'class': 'form-control',
         }),
     )
     kanban_board_column = forms.CharField(
         widget=forms.Textarea(attrs={
             'placeholder': 'Please place each new column on a new line. Each name will be truncated to 255 characters',
+            'class': 'form-control',
         }),
         required=True,
     )
     kanban_board_level = forms.CharField(
         widget=forms.Textarea(attrs={
             'placeholder': 'Please place each new level on a new line. Each name will be truncated to 255 characters',
+            'class': 'form-control',
         }),
         required=True,
     )
@@ -1137,7 +1213,7 @@ class kanban_board_form(forms.Form):
         required=True,
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
             'style': 'width: 100%',
         }),
@@ -1298,6 +1374,16 @@ class kudos_read_only_form(ModelForm):
 
 
 class list_of_tax_form(ModelForm):
+    tax_amount=forms.DecimalField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    tax_description=forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
     class Meta:
         model = list_of_tax
         fields = {
@@ -1375,6 +1461,7 @@ class my_profile_form(ModelForm):
             'placeholder': 'Password',
             'onkeyup': 'enable_submit()',
             'autocomplete': 'off',
+            'class': 'form-control',
         })
     )
     password2 = forms.CharField(
@@ -1385,25 +1472,29 @@ class my_profile_form(ModelForm):
             'placeholder': 'Repeate Password',
             'onkeyup': 'enable_submit()',
             'autocomplete': 'off',
+            'class': 'form-control',
         })
     )
     first_name = forms.CharField(
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': 'First Name'
+            'placeholder': 'First Name',
+            'class': 'form-control',
         })
     )
     last_name = forms.CharField(
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Last Name'
+            'placeholder': 'Last Name',
+            'class': 'form-control',
         })
     )
     email = forms.EmailField(
         max_length=100,
         required=False,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Email Address'
+            'placeholder': 'Email Address',
+            'class': 'form-control',
         })
     )
     class Meta:
@@ -1424,6 +1515,7 @@ class new_campus_form(forms.Form):
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Campus Nickname i.e Melbourne',
+            'class': 'form-control',
         })
     )
     campus_phone=forms.CharField(
@@ -1432,6 +1524,7 @@ class new_campus_form(forms.Form):
         widget=forms.TextInput(attrs={
             'placeholder': 'Campus Phone',
             'type': 'tel',
+            'class': 'form-control',
         })
     )
     campus_fax=forms.CharField(
@@ -1440,6 +1533,7 @@ class new_campus_form(forms.Form):
         widget=forms.TextInput(attrs={
             'placeholder': 'Campus Fax',
             'type': 'tel',
+            'class': 'form-control',
         })
     )
     campus_address1=forms.CharField(
@@ -1447,6 +1541,7 @@ class new_campus_form(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Address 1',
+            'class': 'form-control',
         })
     )
     campus_address2=forms.CharField(
@@ -1454,6 +1549,7 @@ class new_campus_form(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Address 2',
+            'class': 'form-control',
         })
     )
     campus_address3=forms.CharField(
@@ -1461,6 +1557,7 @@ class new_campus_form(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Address 3',
+            'class': 'form-control',
         })
     )
     campus_suburb=forms.CharField(
@@ -1468,6 +1565,7 @@ class new_campus_form(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Suburb',
+            'class': 'form-control',
         })
     )
     country_and_region = forms.ModelChoiceField(
@@ -1475,7 +1573,7 @@ class new_campus_form(forms.Form):
         queryset=list_of_country.objects.filter(is_deleted='FALSE'),
         empty_label="Please pick a Country/Region",
         widget=RegionSelect(attrs={
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'tag': forms.HiddenInput(),
             'style': 'width: 100%',
         }),
@@ -1490,19 +1588,23 @@ class new_customer_form(forms.Form):
     #Fields
     customer_title=forms.ModelChoiceField(
         label='Title',
-        widget=forms.Select(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=titles_results
     )
     customer_first_name=forms.CharField(
         max_length=50,
         widget=forms.TextInput(attrs={
             'placeholder': 'First Name',
+            'class': 'form-control',
         }),
     )
     customer_last_name=forms.CharField(
         max_length=50,
         widget=forms.TextInput(attrs={
-        'placeholder': 'Last Name',
+            'placeholder': 'Last Name',
+            'class': 'form-control',
     }),
     )
     customer_email=forms.EmailField(
@@ -1510,11 +1612,14 @@ class new_customer_form(forms.Form):
         widget=forms.TextInput(attrs={
             'placeholder': 'customer@email.com',
             'type':'email',
+            'class': 'form-control',
         }),
     )
     organisation_id=forms.ModelChoiceField(
         label="Organisation",
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=organisations_results,
         required=False,
     )
@@ -1526,23 +1631,31 @@ class new_folder_form(forms.Form):
         required=True,
         widget=forms.TextInput(attrs={
             'placeholder': 'Folder Description',
+            'class': 'form-control',
         })
     )
 
 
 class new_line_item_form(ModelForm):
     #Get the data
+    product_description=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
     quantity = forms.IntegerField(
-		widget=forms.TextInput(attrs={
+		widget=forms.NumberInput(attrs={
 			'value': '1',
-			'width': '10px',
             'onkeyup': 'update_total()',
+            'class': 'form-control',
 		})
 	)
     product_price = forms.CharField(
         widget=forms.TextInput(attrs={
             'readonly': True,
             'style': 'background-color: aliceblue',
+            'class': 'form-control',
         })
     )
     product_and_service = forms.ModelChoiceField(
@@ -1558,12 +1671,14 @@ class new_line_item_form(ModelForm):
             'step': '1',
             'onkeyup': 'update_total()',
             'readonly': True,
+            'class': 'form-control',
         })
     )
     discount_choice = forms.ChoiceField(
         choices=DISCOUNT_CHOICE,
         widget=forms.Select(attrs={
             'onchange': 'discount_type_change()',
+            'class': 'form-control',
         })
     )
     discount_percent = forms.CharField(
@@ -1573,6 +1688,7 @@ class new_line_item_form(ModelForm):
             'max': '100',
             'step': '5',
             'onchange': 'update_total()',
+            'class': 'form-control',
         })
     )
 
@@ -1582,6 +1698,7 @@ class new_line_item_form(ModelForm):
             'step': '1',
             'readonly': 'true',
             'style': 'background-color: aliceblue',
+            'class': 'form-control',
         })
     )
     tax_amount = forms.CharField(
@@ -1591,6 +1708,7 @@ class new_line_item_form(ModelForm):
 			'value': '0',
 			'step': '1',
             'style': 'background-color: aliceblue',
+            'class': 'form-control',
         })
 	)
     tax = forms.ModelChoiceField(
@@ -1598,7 +1716,8 @@ class new_line_item_form(ModelForm):
         label="Organisations",
         queryset=list_of_tax.objects.filter(is_deleted='FALSE'),
         widget=forms.Select(attrs={
-            "onChange": 'update_total()'
+            "onChange": 'update_total()',
+            'class': 'form-control',
         }),
     )
     total = forms.CharField(
@@ -1608,6 +1727,7 @@ class new_line_item_form(ModelForm):
 			'width': '100px',
 			'value': '0',
             'style': 'background-color: aliceblue',
+            'class': 'form-control',
 		})
 	)
     product_note = forms.CharField(
@@ -1615,6 +1735,7 @@ class new_line_item_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder':'Product Notes',
+            'class': 'form-control',
         })
     )
 
@@ -1647,10 +1768,39 @@ class new_opportunity_form(ModelForm):
     user_results=auth.models.User.objects.all()
 
     # Fields
+    currency_id=forms.ModelChoiceField(
+        queryset=list_of_currency.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    lead_source_id=forms.ModelChoiceField(
+        queryset=list_of_lead_source.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    opportunity_success_probability=forms.IntegerField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    opportunity_amount=forms.DecimalField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    amount_type_id=forms.ModelChoiceField(
+        queryset=list_of_amount_type.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
     opportunity_name=forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Opportunity Name',
+            'class': 'form-control',
         })
     )
     opportunity_description=forms.CharField(
@@ -1660,13 +1810,14 @@ class new_opportunity_form(ModelForm):
             },
             attrs={
                 'placeholder': 'Opportunity Description',
+                'class': 'form-control',
             }
         )
     )
     opportunity_expected_close_date=forms.DateTimeField(
         initial=datetime.datetime.now(),
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px',
+            'class': 'form-control',
         })
     )
     organisation_id=forms.ModelChoiceField(
@@ -1674,12 +1825,15 @@ class new_opportunity_form(ModelForm):
         queryset=organisaion_results,
         required=False,
         widget=forms.Select(attrs={
-            "onChange":'update_customers()'
+            "onChange":'update_customers()',
+            'class': 'form-control',
         }),
     )
     amount_type_id=forms.ModelChoiceField(
         label="Amount Type",
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=amount_type_results,
     )
     select_groups=forms.ModelMultipleChoiceField(
@@ -1687,9 +1841,8 @@ class new_opportunity_form(ModelForm):
         required=False,
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
-            'style': 'width: 100%',
         }),
     )
 
@@ -1700,7 +1853,7 @@ class new_opportunity_form(ModelForm):
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select',
             'multiple tabindex': '4',
-            'style': 'width: 100%',
+            'class': 'form-control',
         }),
     )
 
@@ -1724,20 +1877,20 @@ class new_organisation_form(forms.Form):
         max_length=255,
         widget=forms.TextInput(attrs={
                 'placeholder': 'Organisation\'s Name',
-                'width': '99%',
+                'class': 'form-control',
         })
     )
     organisation_website=forms.URLField(
         max_length=255,
         widget=forms.URLInput(attrs={
-            'style': 'width: 99%;',
+            'class': 'form-control',
             'placeholder': 'https://organisation_website.com',
         })
     )
     organisation_email=forms.EmailField(
         max_length=255,
         widget=forms.EmailInput(attrs={
-            'width': '99%',
+            'class': 'form-control',
             'placeholder': 'organisation@email.com',
             'type': 'email',
         })
@@ -1753,9 +1906,9 @@ class new_project_form(forms.Form):
     project_permission=forms.ModelMultipleChoiceField(
         widget=forms.SelectMultiple(attrs={
             'placeholder': 'Select Groups to Assign to Project',
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
-            'style': 'width: 100%',
+
         }),
         required=True,
         queryset=group_results,
@@ -1765,6 +1918,7 @@ class new_project_form(forms.Form):
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Project Name',
+            'class': 'form-control',
         })
     )
     project_description=forms.CharField(
@@ -1774,25 +1928,28 @@ class new_project_form(forms.Form):
             },
             attrs={
                 'placeholder': 'Project Description',
+                'class': 'form-control',
             }
         )
     )
     organisation_id=forms.ModelChoiceField(
         label="Organisation",
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=organisations_results,
         required=False,
     )
     project_start_date=forms.DateTimeField(
         initial=datetime.datetime.now(),
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px',
+            'class': 'form-control',
         })
     )
     project_end_date=forms.DateTimeField(
         initial=datetime.datetime.now()+datetime.timedelta(days=31),
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px'
+            'class': 'form-control',
         })
     )
 
@@ -1823,19 +1980,22 @@ class new_quote_form(ModelForm):
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Quote Title',
+            'class': 'form-control',
         })
     )
 
     quote_valid_till = forms.DateTimeField(
         initial=datetime.datetime.now()+datetime.timedelta(days=31),
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px',
+            'class': 'form-control',
         })
     )
 
     quote_stage_id = forms.ModelChoiceField(
         label="Quote Stage",
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=list_of_quote_stages,
     )
 
@@ -1846,6 +2006,7 @@ class new_quote_form(ModelForm):
             },
             attrs={
                 "placeholder": 'Quote Terms',
+                'class': 'form-control',
             }
         ),
     )
@@ -1856,6 +2017,7 @@ class new_quote_form(ModelForm):
             },
             attrs={
                 "placeholder": 'Customer Notes',
+                'class': 'form-control',
             }
         ),
         required=False,
@@ -1866,10 +2028,16 @@ class new_quote_form(ModelForm):
         required=True,
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
             'style': 'width: 100%',
         }),
+    )
+    quote_approval_status_id=forms.ModelChoiceField(
+        queryset=list_of_quote_stage.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
     )
 
     class Meta:
@@ -1896,7 +2064,8 @@ class new_requirement_form(ModelForm):
     requirement_title = forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Requirement Title'
+            'placeholder': 'Requirement Title',
+            'class': 'form-control',
         }),
     )
     requirement_scope = forms.CharField(
@@ -1905,13 +2074,16 @@ class new_requirement_form(ModelForm):
                 'width': '100%',
             },
             attrs={
-                'placeholder': 'Requirement Scope'
+                'placeholder': 'Requirement Scope',
+                'class': 'form-control',
             }
         ),
     )
     requirement_status=forms.ModelChoiceField(
         label="Quote Stage",
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=requirement_status_results,
     )
 
@@ -1920,10 +2092,16 @@ class new_requirement_form(ModelForm):
         required=True,
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
             'style': 'width: 100%',
         }),
+    )
+    requirement_type =forms.ModelChoiceField(
+        queryset=list_of_requirement_type.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
     )
 
 
@@ -1946,9 +2124,8 @@ class new_task_form(forms.Form):
     task_permission=forms.ModelMultipleChoiceField(
         widget=forms.SelectMultiple(attrs={
             'placeholder': 'Select Groups to Assign to Project',
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
-            'style': 'width: 100%',
         }),
         required=True,
         queryset=group_results,
@@ -1957,6 +2134,7 @@ class new_task_form(forms.Form):
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Task Short Description',
+            'class': 'form-control',
         }),
     )
     task_long_description=forms.CharField(
@@ -1966,25 +2144,28 @@ class new_task_form(forms.Form):
             },
             attrs={
                 "placeholder": 'Task Long Description',
+                'class': 'form-control',
             }
         ),
     )
     organisation_id=forms.ModelChoiceField(
         label="Organisation",
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=organisations_results,
         required=False,
     )
     task_start_date=forms.DateTimeField(
         initial=datetime.datetime.now(),
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px',
+            'class': 'form-control',
         })
     )
     task_end_date=forms.DateTimeField(
         initial=datetime.datetime.now()+datetime.timedelta(days=31),
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px'
+            'class': 'form-control',
         })
     )
 
@@ -2073,13 +2254,20 @@ class opportunity_information_form(ModelForm):
 
 class organisation_information_form(ModelForm):
     #Profile picture
-    update_profile_picture=forms.ImageField(required=False, )
-
-    #Customer Documents
-    document_description=forms.CharField(
+    organisation_name=forms.CharField(
         max_length=255,
-        required=False
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
     )
+    organisation_website=forms.URLField(
+        max_length=255,
+        widget=forms.URLInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    update_profile_picture=forms.ImageField(required=False)
+
     document=forms.FileField(required=False)
 
     class Meta:
@@ -2153,22 +2341,41 @@ class permission_set_form(ModelForm):
 
 
 class product_and_service_form(ModelForm):
+    product_or_service=forms.ChoiceField(
+        choices=PRODUCT_OR_SERVICE,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    product_cost=forms.DecimalField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    product_price = forms.DecimalField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+        })
+    )
     product_name = forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Product/Service Name'
+            'placeholder': 'Product/Service Name',
+            'class': 'form-control',
         }),
     )
     product_part_number = forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Product/Service Part Number'
+            'placeholder': 'Product/Service Part Number',
+            'class': 'form-control',
         }),
     )
     product_description = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={
-            'placeholder': 'Product/Service Description'
+            'placeholder': 'Product/Service Description',
+            'class': 'form-control',
         }),
     )
     class Meta:
@@ -2228,17 +2435,26 @@ class project_information_form(ModelForm):
     Project information will need to abide by the stricked laws of the new
     project datetime edits!!
     """
+    project_name=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
+
     document=forms.FileField(
         required=False,
         widget=forms.FileInput(attrs={
-            'onChange':'enable_submit()'
+            'onChange':'enable_submit()',
+            'class': 'form-control',
         })
     )
     document_url_location=forms.URLField(
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder':'https://example.com',
-            'onChange':'enable_submit()'
+            'onChange':'enable_submit()',
+            'class': 'form-control',
         })
     )
     document_description=forms.CharField(
@@ -2246,7 +2462,8 @@ class project_information_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'width':'100%',
-            'onkeyup':'enable_submit()'
+            'onkeyup':'enable_submit()',
+            'class': 'form-control',
         })
     )
 
@@ -2255,7 +2472,8 @@ class project_information_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'width':'100%',
-            'onkeyup':'enable_submit()'
+            'onkeyup':'enable_submit()',
+            'class': 'form-control',
         })
     )
 
@@ -2266,17 +2484,18 @@ class project_information_form(ModelForm):
             },
             attrs={
                 'placeholder': 'Please Enter your project description',
+                'class': 'form-control',
             }
         )
     )
     project_start_date=forms.DateTimeField(
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px',
+            'class': 'form-control',
         })
     )
     project_end_date=forms.DateTimeField(
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px'
+            'class': 'form-control',
         })
     )
 
@@ -2349,6 +2568,9 @@ class quote_information_form(ModelForm):
     quote_billing_address = forms.ModelChoiceField(
         required=False,
         queryset=campus.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
     )
 
 
@@ -2356,6 +2578,7 @@ class quote_information_form(ModelForm):
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Quote Title',
+            'class': 'form-control',
         })
     )
 
@@ -2363,12 +2586,15 @@ class quote_information_form(ModelForm):
         initial=datetime.datetime.now() + datetime.timedelta(days=31),
         widget=forms.DateTimeInput(attrs={
             'style': 'width: 200px',
+            'class': 'form-control',
         })
     )
 
     quote_stage_id = forms.ModelChoiceField(
         label="Quote Stage",
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
         queryset=list_of_quote_stages,
     )
 
@@ -2380,6 +2606,7 @@ class quote_information_form(ModelForm):
             },
             attrs={
                 "placeholder": 'Quote Terms',
+                'class': 'form-control',
             },
 
         ),
@@ -2391,6 +2618,7 @@ class quote_information_form(ModelForm):
             },
             attrs={
                 "placeholder": 'Customer Notes',
+                'class': 'form-control',
             }
         ),
         required=False,
@@ -2444,6 +2672,7 @@ class search_form(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Search',
+            'class': 'form-control w-75',
         }),
     )
 
@@ -2527,6 +2756,7 @@ class search_customer_form(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Search Customers',
+            'class': 'form-control w-75',
         }),
     )
 
@@ -2537,32 +2767,10 @@ class search_organisation_form(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Search Organisations',
+            'class': 'form-control w-75',
         }),
     )
 
-
-class search_project_form(forms.Form):
-    search_projects=forms.CharField(
-        max_length=255,
-        required=False
-    )
-    include_closed=forms.MultipleChoiceField(
-        widget=forms.CheckboxSelectMultiple,
-        choices=INCLUDE_CLOSED
-    )
-
-class search_task_form(forms.Form):
-    search_tasks=forms.CharField(
-        max_length=255,
-        required=False,
-        widget=forms.TextInput(attrs={
-            'placeholder': 'Search Tasks',
-        }),
-    )
-    include_closed=forms.MultipleChoiceField(
-        widget=forms.CheckboxSelectMultiple,
-        choices=INCLUDE_CLOSED
-    )
 
 class search_template_form(forms.Form):
     search_templates=forms.CharField(
@@ -2570,6 +2778,7 @@ class search_template_form(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Search Templates',
+            'class': 'form-control w-75',
         }),
     )
 
@@ -2590,21 +2799,23 @@ class task_information_form(ModelForm):
     task_short_description=forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
-            "class":'task_short_description'
+            "class":'form-control',
         })
     )
 
     document=forms.FileField(
         required=False,
         widget=forms.FileInput(attrs={
-            'onChange':'enable_submit()'
+            'onChange':'enable_submit()',
+            "class": 'form-control',
         })
     )
     document_url_location=forms.URLField(
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder':'https://example.com',
-            'onChange':'enable_submit()'
+            'onChange':'enable_submit()',
+            "class": 'form-control',
         })
     )
     document_description=forms.CharField(
@@ -2612,29 +2823,29 @@ class task_information_form(ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'width':'100%',
-            'onkeyup':'enable_submit()'
+            'onkeyup':'enable_submit()',
+            "class": 'form-control',
         })
     )
 
     folder_description=forms.CharField(
         max_length=255,
         required=False,
-        widget=forms.TextInput(
-            attrs={
+        widget=forms.TextInput(attrs={
                 'width': '100%',
-                'onkeyup': 'enable_submit()'
-            }
-        )
+                'onkeyup': 'enable_submit()',
+                "class": 'form-control',
+        })
     )
 
     task_start_date = forms.DateTimeField(
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px',
+            "class": 'form-control',
         })
     )
     task_end_date = forms.DateTimeField(
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px'
+            "class": 'form-control',
         })
     )
 
@@ -2653,19 +2864,20 @@ class timeline_form(forms.Form):
     start_date = forms.DateField(
         widget=forms.DateInput(attrs={
             'onchange': 'render_gantt_chart()',
-            'style': 'width: 120px;',
+            'class': 'form-control',
         })
     )
     end_date = forms.DateField(
         widget=forms.DateInput(attrs={
             'onchange': 'render_gantt_chart()',
-            'style': 'width: 120px;',
+            'class': 'form-control',
         })
     )
     object_type = forms.ChoiceField(
         choices=OBJECT_CHOICES,
         widget=forms.Select(attrs={
             'onchange': 'render_gantt_chart()',
+            'class': 'form-control',
         })
     )
 
@@ -2675,6 +2887,7 @@ class to_do_form(ModelForm):
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'To do next?',
+            'class': 'form-control',
         })
     )
     class Meta:
@@ -2694,6 +2907,7 @@ class user_information_form(ModelForm):
             'placeholder': 'Password',
             'onkeyup': 'enable_submit()',
             'autocomplete': 'off',
+            'class': 'form-control',
         })
     )
     password2 = forms.CharField(
@@ -2704,31 +2918,36 @@ class user_information_form(ModelForm):
             'placeholder': 'Repeate Password',
             'onkeyup': 'enable_submit()',
             'autocomplete': 'off',
+            'class': 'form-control',
         })
     )
     username = forms.CharField(
         max_length=50,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Username'
+            'placeholder': 'Username',
+            'class': 'form-control',
         }),
     )
     first_name = forms.CharField(
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': 'First Name'
+            'placeholder': 'First Name',
+            'class': 'form-control',
         })
     )
     last_name = forms.CharField(
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Last Name'
+            'placeholder': 'Last Name',
+            'class': 'form-control',
         })
     )
     email = forms.EmailField(
         max_length=100,
         required=False,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Email Address'
+            'placeholder': 'Email Address',
+            'class': 'form-control',
         })
     )
     class Meta:
@@ -2749,7 +2968,20 @@ class user_want_form(ModelForm):
         required=True,
         widget=forms.TextInput(attrs={
             'placeholder': 'Please input a want or do not want',
+            'class': 'form-control',
         })
+    )
+    want_choice=forms.ChoiceField(
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        choices=WANT_CHOICE,
+    )
+    want_skill=forms.ChoiceField(
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        choices=SKILL_CHOICE,
     )
     class Meta:
         model=user_want
@@ -2764,8 +2996,14 @@ class user_weblink_form(ModelForm):
     user_weblink_url=forms.URLField(
         widget=forms.URLInput(attrs={
             'placeholder': 'https://nearbeach.org',
-            'style': 'width: 100%;'
+            'class': 'form-control',
         }),
+    )
+    user_weblink_source=forms.ChoiceField(
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        choices=WEBSITE_SOURCE,
     )
 
     class Meta:

@@ -1,39 +1,66 @@
 {% extends "./template.html" %}
 {% block content %}
-<h2>New Organisation</h2>
-{{ form_errors }}
-<form action={% url 'new_organisation' %} method="post" class="new_organisation">
-    {% csrf_token %}
-    <table>
-        <tr><td>{{ new_organisation_form.organisation_name }}</td></tr>
-        <tr><td>{{ new_organisation_form.organisation_website }}</td></tr>
-        <tr><td>{{ new_organisation_form.organisation_email }}</td></tr>
-    </table>
-    {% if duplication_count == 0 %}
-        <div class="input-form-indent">
-            <input id="submit_organisation" type="submit" name="save" value="Submit New Organisation">
-            <a href={% url 'dashboard' %}>Cancel</a>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>New Organisation</h2>
         </div>
-    {% else %}
-    <h2>Possible Duplication</h2>
-    <table>
-        <tr>
-            <td>Organisation Name</td>
-            <td>Organisation Website</td>
-            <td>Organisation Email</td>
-        </tr>
-        {% for row in duplicate_results %}
-            <tr>
-                <td>{{ row.organisation_name }}</td>
-                <td>{{ row.organisation_website }}</td>
-                <td>{{ row.organisation_email }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-    <div class="input-form-indent">
-        <input type="submit" name="save_duplicate" value="Yes Create Organisation">
-        <input type="button" onclick="location.href='{% url 'dashboard' %}'" value="No - Take me away">
+        <div class="card-body">
+            {% if form_errors %}
+                <div class="alert-danger">
+                    {{ form_errors }}
+                </div>
+            {% endif %}
+            <form action={% url 'new_organisation' %} method="post" class="new_organisation">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="id_organisation_name">Organisation Name</label>
+                    {{ new_organisation_form.organisation_name }}
+                </div>
+                <div class="form-group">
+                    <label for="id_organisation_website">Organisation Website</label>
+                    {{ new_organisation_form.organisation_website }}
+                </div>
+                <div class="form-group">
+                    <label for="id_organisation_email">Organisation Email</label>
+                    {{ new_organisation_form.organisation_email }}
+                </div>
+                {% if duplication_count == 0 %}
+                <div class="form-row">
+                    <input id="submit_organisation" type="submit" name="save" value="Submit New Organisation" class="btn btn-primary form-control col-md-6">
+                    <a href={% url 'dashboard' %} class="btn btn-warning form-control col-md-6">Cancel</a>
+                </div>
+                {% endif %}
+        </div>
     </div>
+
+    {% if duplication_count > 0 %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Possible Duplication</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Organisation Name</td>
+                            <td>Organisation Website</td>
+                            <td>Organisation Email</td>
+                        </tr>
+                    </thead>
+                    {% for row in duplicate_results %}
+                        <tr>
+                            <td>{{ row.organisation_name }}</td>
+                            <td>{{ row.organisation_website }}</td>
+                            <td>{{ row.organisation_email }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <div class="form-row">
+                    <input type="submit" name="save_duplicate" value="Yes Create Organisation" class="btn btn-primary form-control col-md-6">
+                    <input type="button" onclick="location.href='{% url 'dashboard' %}'" value="No - Take me away" class="btn btn-warning form-control col-md-6">
+                </div>
+            </div>
+        </div>
     {% endif %}
 </form>
 {% endblock %}

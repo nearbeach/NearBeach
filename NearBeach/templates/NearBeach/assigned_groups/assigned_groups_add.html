@@ -1,7 +1,15 @@
 {% if assign_group_add_form.add_group|length > 1 %}
     {% csrf_token %}
-    {{ assign_group_add_form.add_group }}
-    <input id="submit_add_group" type="submit" value="Assign New Group" disabled width="20%">
+    <div class="form-row">
+        <div class="form-group">
+            {{ assign_group_add_form.add_group }}
+        </div>
+        <div class="form-group">
+            <input id="submit_add_group" type="submit" value="Assign New Group" disabled class="btn btn-primary form-control">
+        </div>
+    </div>
+
+
     <script>
         function add_group_change() {
             if ($("#id_add_group").val() != "") {

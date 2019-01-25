@@ -14,25 +14,54 @@
         <form action="{% url 'new_task' %}" method="post" class="new_project">
 	{% endif %}
     {% csrf_token %}
-    <h2>New Task</h2>
-        <table>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>New Task</h2>
+        </div>
+        <div class="card-body">
             {{ new_task_form.media }}
-            <tr><td>{{ new_task_form.task_short_description }}</td></tr>
-            <tr><td>{{ new_task_form.task_long_description }}</td></tr>
-            <tr><td>Associated Organisation: {{ new_task_form.organisation_id }}</td></tr>
-            <tr><td>Time zone: {{ timezone }}</td></tr>
-            <tr><td>Task Start: {{ new_task_form.task_start_date }}</td></tr>
-            <tr><td>Task Finish: {{ new_task_form.task_end_date }}</td></tr>
-        </table>
-            <h2>Task Permissions</h2>
-        <table>
-            <tr><td>Please give permissions to one or more groups. Please note: you will not be able to submit this request without selecting at least one group</td></tr>
-            <tr><td>{{ new_task_form.task_permission }}</td></tr>
-            <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
-            <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
-            <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
-            <tr><td><input type="submit" value="Submit new Task"><a href={% url 'dashboard' %}>Cancel</a></td></tr>
-        </table>
+            <div class="form-group">
+                <label for="id_task_short_description">Task Short Description</label>
+                {{ new_task_form.task_short_description }}
+            </div>
+            <div class="form-group">
+                <label for="id_task_long_description">Task Description</label>
+                {{ new_task_form.task_long_description }}
+            </div>
+            <div class="form-group">
+                <label for="id_organisation_id">Associated Organisation</label>
+                {{ new_task_form.organisation_id }}
+            </div>
+            <div class="form-group">
+                <label>Time zone: {{ timezone }}</label>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="id_task_start_date">Task Start</label>
+                    {{ new_task_form.task_start_date }}
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="id_task_end_date">Task Finish</label>
+                    {{ new_task_form.task_end_date }}
+                </div>
+            </div>
+
+            <h2 class="mt-4">Task Permissions</h2>
+            <div class="form-group">
+                <label for="id_task_permission">Please give permissions to one or more groups. Please note: you will not be able to submit this request without selecting at least one group</label>
+                {{ new_task_form.task_permission }}
+            </div>
+            <div class="form-row">
+                <input type="submit" value="Submit new Task" class="btn btn-primary form-control col-md-6">
+                <a href="{% url 'dashboard' %}" class="btn btn-warning form-control col-md-6">Cancel</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
+
 	</form>
 </body>
 <script>

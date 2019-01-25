@@ -1,18 +1,19 @@
 {% load nearbeach_extras %}
-<h2>Group Opportunities</h2>
 {% if active_group_opportunities %}
-    <table>
-        <tr class="header">
-            <td>Opportunity Name</td>
-            <td>Organisation's Name</td>
-            <td>Customer Name</td>
-            <td>Opportunity Stage</td>
-            <td>Expected Close Date</td>
-        </tr>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <td>Opportunity Name</td>
+                <td>Organisation's Name</td>
+                <td>Customer Name</td>
+                <td>Opportunity Stage</td>
+                <td>Expected Close Date</td>
+            </tr>
+        </thead>
         {% for row in active_group_opportunities %}
             <tr
                     {% if row.opportunity_expected_close_date|hours_ago:24 %}
-                        style="background-color:lightcoral"
+                        class="table-danger"
                     {% endif %}
             >
                 <td><a href="{% url 'opportunity_information' row.opportunity_id %}">{{ row.opportunity_name }}</a></td>

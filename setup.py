@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="NearBeach",
-    version="0.20.0.6",
+    version="0.20.1.0",
     author="Luke Christopher Clarke",
     author_email="luke@nearbeach.org",
     description="NearBeach - an open source project management tool",
