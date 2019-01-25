@@ -6,27 +6,46 @@
 
 <form action={% url 'new_requirement' %} method="post" class="new_requirement">
     {% csrf_token %}
-    <h2>New Requirement</h2>
-    <table>
-        {{ new_requirement_form.media }}
-        <tr><td>{{ new_requirement_form.requirement_title }}</td></tr>
-        <tr><td>{{ new_requirement_form.requirement_scope }}</td></tr>
-        <tr><td>Requirement Type: {{ new_requirement_form.requirement_type }}</td></tr>
-        <tr><td>Requirement Status: {{ new_requirement_form.requirement_status }}</td></tr>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>New Requirement</h2>
+        </div>
+        <div class="card-body">
+            {{ new_requirement_form.media }}
+            <div class="form-group">
+                <label for="id_requirement_title">Requirement Title</label>
+                {{ new_requirement_form.requirement_title }}
+            </div>
+            <div class="form-group">
+                <label for="id_requirement_scope">Requirement Scope</label>
+                {{ new_requirement_form.requirement_scope }}
+            </div>
+            <div class="form-group">
+                <label for="id_requirement_type">Requirement Type</label>
+                {{ new_requirement_form.requirement_type }}
+            </div>
+            <div class="form-group">
+                <label for="id_requirement_status">Requirement Status</label>
+                {{ new_requirement_form.requirement_status }}
+            </div>
 
-    </table>
+            <h2 class="mt-4">Requirement Permission</h2>
+            <div class="form-group">
+                <label for="id_requirement_permission">Any Group that is assigned to the requirment will have access to the opportunity.</label>
+                {{ new_requirement_form.requirement_permission }}
+            </div>
+            <div class="form-row">
+                <input type="submit" value="Submit New Requirement" class="btn btn-primary w-50 form-control">
+                <a href="{% url 'dashboard' %}" class="btn btn-warning w-50 form-control">Cancel</a>
+            </div>
 
-    <h2>Requirement Permission</h2>
-    <table>
-        <tr><td>Any Group that is assigned to the requirment will have access to the opportunity.</td></tr>
-        <tr><td>{{ new_requirement_form.requirement_permission }}</td></tr>
-    </table>
-    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
+            <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
+            <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
+            <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
+        </div>
+    </div>
 
-    <input type="submit" value="Submit New Requirement">
-    <a href={% url 'dashboard' %}>Cancel</a>
+
 
 </form>
 {% endblock %}

@@ -1,34 +1,77 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
-<h1>New User</h1>
-<form action="{% url 'new_user' %}" method="post" class="user_information">
-    {% csrf_token %}
-    <ul>
-        {% if errors %}
-            {{ errors }}
-        {% endif %}
-        <li>{{ user_information_form.username }}</li>
-        <li>{{ user_information_form.password1 }}</li>
-        <li>{{ user_information_form.password2 }}</li>
-        <li>{{ user_information_form.first_name }}</li>
-        <li>{{ user_information_form.last_name }}</li>
-        <li>{{ user_information_form.email }}</li>
-        <li>Is User Active: {{ user_information_form.is_active }}</li>
-        {% if is_superuser == True %}
-            <li>Is User a SuperUser: {{ user_information_form.is_superuser }}<br/>
-            Giving this user this permission grants them to access /admin/
-            </li>
-        {% endif %}
-        <li><input id="submit_user" type="submit" value="Save User"></li>
-    </ul>
-</form>
-    <h4>User Information Notes</h4>
-    <ul style="list-style-type: circle">
-        <li>If creating a new user, and you leave the password fields blank, a randomly generated password will be given to the user.</li>
-        <li>Only users with access to the DJANGO Superuser will be able to assign other users to DJANGO Superuser. Please note, this grants access to the /admin/ section of the site if it is enabled. This role is ONLY recommended for those users who are system administrators.</li>
-        <li>To change a user's password, just fill out the two password fields with the new password and click on the "SAVE" button</li>
-    </ul>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h4>User Information Notes</h4>
+        </div>
+        <div class="card-body">
+            <ul class="table-hover">
+                <li>If creating a new user, and you leave the password fields blank, a randomly generated password will be given to the user.</li>
+                <li>Only users with access to the DJANGO Superuser will be able to assign other users to DJANGO Superuser. Please note, this grants access to the /admin/ section of the site if it is enabled. This role is ONLY recommended for those users who are system administrators.</li>
+                <li>To change a user's password, just fill out the two password fields with the new password and click on the "SAVE" button</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h1>New User</h1>
+        </div>
+        <div class="card-body">
+            <form action="{% url 'new_user' %}" method="post" class="user_information">
+                {% csrf_token %}
+                {% if errors %}
+                    <div class="alert-danger">{{ errors }}</div>
+                {% endif %}
+                <div class="form-group">
+                    <label for="id_username">User Username</label>
+                    {{ user_information_form.username }}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_first_name">User First Name</label>
+                        {{ user_information_form.first_name }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="id_last_name">User Last Name</label>
+                        {{ user_information_form.last_name }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="id_email">User Email</label>
+                    {{ user_information_form.email }}
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_password1">User Password</label>
+                        {{ user_information_form.password1 }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="id_password2">Repeat User Password</label>
+                        {{ user_information_form.password2 }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_is_active">Is this user active?</label>
+                    {{ user_information_form.is_active }}
+                </div>
+                {% if is_superuser == True %}
+                    <div class="form-group">
+                        <label for="id_is_superuser">Is User a SuperUser? Giving this user this permission grants them to access /admin/</label>
+                        {{ user_information_form.is_superuser }}
+                    </div>
+                {% endif %}
+                <div class="form-group">
+                    <input id="submit_user" type="submit" value="Save User" class="btn btn-primary form-control">
+                </div>
+            </form>
+        </div>
+    </div>
+
+
 <script>
     function enable_submit() {
         if ($("#id_password1").val() == $("#id_password2").val()) {

@@ -49,56 +49,97 @@
     });
     }
     </script>
-
-
-
-
 <body onload="on_page_load();">
-    <form action="{% url 'new_opportunity' location_id destination %}" method="post" class="new_opportunity">
-        {% csrf_token %}
-        {{ new_opportunity_form.media }}
-        <h1>New Opportunity</h1>
-        {% if organisations_count == 0 %}
-            <a href="{% url 'new_organisation' %}">Can you please create an organisation first.</a>
-        {% else %}
-            <table>
-                <tr><td>{{ new_opportunity_form.opportunity_name }}</td></tr>
-                <tr><td>{{ new_opportunity_form.opportunity_description }}</td></tr>
-                <tr><td>Organisation: {{ new_opportunity_form.organisations_id }}</td></tr>
-                <tr><td>Customer: <select id="customer_id" name="customer_id">
-                    <option value="" selected>---------</option>
-                    {% for row in customer_results %}
-                        <option value="{{ row.customer_id }}" organisation_id="{{ row.organisations_id.organisations_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
-                    {% endfor %}
-                    </select>
-                </td></tr>
-                <tr><td>Opportunity Budget: {{ new_opportunity_form.currency_id }}{{ new_opportunity_form.opportunity_amount }}{{ new_opportunity_form.amount_type_id }}</td></tr>
-                <tr><td>Time zone: {{ timezone }}</td></tr>
-                <tr><td>Opportunity Expected Closure: {{ new_opportunity_form.opportunity_expected_close_date }}</td></tr>
-                <tr><td>Stage of Opportunity:
-                    <select id="opportunity_stage" name="opportunity_stage" required="True" onchange="probability_update()">
-                        <option value="---------" selected disabled="disabled">---------</option>
-                        {% for row in opportunity_stage_results %}
-                            <option value="{{ row.opportunity_stage_id }}" probability="{{ row.probability_success }}">{{ row.opportunity_stage_description }}</option>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h1>New Opportunity</h1>
+        </div>
+        <div class="card-body">
+            <form action="{% url 'new_opportunity' location_id destination %}" method="post" class="new_opportunity">
+                {% csrf_token %}
+                {{ new_opportunity_form.media }}
+                <div class="form-group">
+                    <label for="id_opportunity_name">Opportunity Name</label>
+                    {{ new_opportunity_form.opportunity_name }}
+                </div>
+                <div class="form-group">
+                    <label for="id_opportunity_description">Opportunity Description</label>
+                    {{ new_opportunity_form.opportunity_description }}
+                </div>
+                <div class="form-group">
+                    <label for="id_organisation_id">Organisation</label>
+                    {{ new_opportunity_form.organisation_id }}
+                </div>
+                <div class="form-group">
+                    <label for="customer_id">Customer</label>
+                    <select id="customer_id" name="customer_id" class="form-control">
+                        <option value="" selected>---------</option>
+                        {% for row in customer_results %}
+                            <option value="{{ row.customer_id }}" organisation_id="{{ row.organisations_id.organisations_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
                         {% endfor %}
                     </select>
-                </td></tr>
-                <tr><td>Success Probability: {{ new_opportunity_form.opportunity_success_probability }}%</td></tr>
-                <tr><td>Lead Source: {{ new_opportunity_form.lead_source_id }}</td></tr>
-            </table>
-            <h1>Assign Groups to Opportunity</h1>
-            <table>
-                <tr><td>Any Group that is assigned to the opportunity will have access to the opportunity.</td></tr>
-                <tr><td>{{ new_opportunity_form.select_groups }}</td></tr>
-                <tr><td></td></tr>
-            </table>
-            <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
-            <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
-            <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
-            <input type="submit" value="Submit Opportunity">
-        {%  endif %}
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_currency_id">Opportunity Budget - currency</label>
+                        {{ new_opportunity_form.currency_id }}
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="id_opportunity_amount">Amount</label>
+                        {{ new_opportunity_form.opportunity_amount }}
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="id_amount_type_id">Rate of Charge</label>
+                        {{ new_opportunity_form.amount_type_id }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="opportunity_stage">Stage of Opportunity</label>
+                        <select id="opportunity_stage" name="opportunity_stage" required="True" onchange="probability_update()" class="form-control">
+                            <option value="---------" selected disabled="disabled">---------</option>
+                            {% for row in opportunity_stage_results %}
+                                <option value="{{ row.opportunity_stage_id }}" probability="{{ row.probability_success }}">{{ row.opportunity_stage_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <div class="form-group">
+                            <label for="id_opportunity_success_probability">Opportunity Success Probability</label>
+                            <div class="input-group">
+                                {{ new_opportunity_form.opportunity_success_probability }}
+                                <span class="input-group-append">%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Time zone: {{ timezone }}</label>
+                </div>
+                <div class="form-group">
+                    <label for="id_opportunity_expected_close_date">Opportunity Expected Close Date</label>
+                    {{ new_opportunity_form.opportunity_expected_close_date }}
+                </div>
 
+                <div class="form-group">
+                    <label for="id_lead_source_id">Lead Source</label>
+                    {{ new_opportunity_form.lead_source_id }}
+                </div>
 
-    </form>
+                <h3 class="mt-4">Assign Groups to Opportunity</h3>
+                <div class="form-group">
+                    <label for="id_select_groups">Any Group that is assigned to the oportunity will have access to the opportunity.</label>
+                    {{ new_opportunity_form.select_groups }}
+                </div>
+                <div class="form-row">
+                    <input type="submit" value="Submit new Opportunity" class="btn btn-primary form-control col-md-6">
+                    <a href="{% url 'dashboard' %}" class="btn btn-warning form-control col-md-6">Cancel</a>
+                </div>
+                <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
+                <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
+                <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
+            </form>
+        </div>
+    </div>
 </body>
 {% endblock %}

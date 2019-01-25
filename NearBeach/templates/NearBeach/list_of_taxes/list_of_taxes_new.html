@@ -1,8 +1,16 @@
 {%  csrf_token %}
-<table>
-    <tr>
-        <td>Amount: {{ list_of_tax_form.tax_amount }}%</td>
-        <td>{{ list_of_tax_form.tax_description }}</td>
-        <td><input type="submit" value="Submit"></td>
-    </tr>
-</table>
+<div class="form-row">
+    <div class="form-group">
+        <div class="input-group">
+            <span class="input-group-append">Amount:</span>
+            {{ list_of_tax_form.tax_amount }}
+            <span class="input-group-append">%</span>
+        </div>
+    </div>
+    <div class="form-group">
+        {{ list_of_tax_form.tax_description }}
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Save/Update Tax">
+    </div>
+</div>

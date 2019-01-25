@@ -1,26 +1,30 @@
 {% csrf_token %}
-<h2>Add User Weblinks</h2>
-<table>
-    <tr>
-        <td width="80%">Website Link</td>
-        <td width="20%">Source</td>
-    </tr>
-    <tr>
-        <td>{{ user_weblink_form.user_weblink_url }}</td>
-        <td>{{ user_weblink_form.user_weblink_source }}</td>
-    </tr>
-    <tr>
-        <td colspan="2"><input type="submit" value="Submit Weblink"></td>
-    </tr>
-</table>
+<div class="form-row">
+    <div class="form-group col-md-6">
+        <label for="id_user_weblink_url">Website Link</label>
+        {{ user_weblink_form.user_weblink_url }}
+    </div>
+
+    <div class="form-group col-md-2">
+        <label for="id_user_weblink_source">Website Link</label>
+        {{ user_weblink_form.user_weblink_source }}
+    </div>
+
+    <div class="form-group col-md-2">
+        <label for="id_user_weblink_url">.</label>
+        <input type="submit" value="Submit Weblink" class="btn btn-primary form-control">
+    </div>
+</div>
 {% if user_weblink_results %}
-    <h2>User Weblinks</h2>
-    <table>
-        <tr>
-            <td width="70%">Weblink</td>
-            <td width="20%">Source</td>
-            <td width="10%">Remove</td>
-        </tr>
+    <h5>User Weblinks</h5>
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <td width="70%">Weblink</td>
+                <td width="20%">Source</td>
+                <td width="10%">Remove</td>
+            </tr>
+        </thead>
         {% for row in user_weblink_results %}
             <tr>
                 <td><a href="{{ row.user_weblink_url }}" target="_blank">{{ row.user_weblink_url }}</a></td>

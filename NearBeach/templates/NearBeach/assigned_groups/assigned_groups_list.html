@@ -1,9 +1,11 @@
 {% if group_list_results %}
-<table>
-    <tr>
-        <td>Assigned Group Name</td>
-        <td>Delete Assigned Group</td>
-    </tr>
+<table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <td>Assigned Group Name</td>
+            <td>Delete Assigned Group</td>
+        </tr>
+    </thead>
     {% for row in group_list_results %}
         <tr>
             <td>{{ row.group_id }}</td>

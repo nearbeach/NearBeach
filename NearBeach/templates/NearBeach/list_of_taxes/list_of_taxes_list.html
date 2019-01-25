@@ -1,9 +1,11 @@
-<table>
-    <tr>
-        <td>Tax Amount %</td>
-        <td>Tax Description</td>
-        <td>Tax Status</td>
-    </tr>
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <td>Tax Amount %</td>
+            <td>Tax Description</td>
+            <td>Tax Status</td>
+        </tr>
+    </thead>
     {% for row in list_of_taxes_results %}
         <tr>
             <td><a href="javascript:void(0)" onclick="load_list_of_taxes_edit({{ row.tax_id }})">{{ row.tax_amount }}%</a></td>

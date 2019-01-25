@@ -9,108 +9,172 @@
 <script src="{% static 'NearBeach/widgets/intl-tel-input/js/intlTelInput.js' %}"></script>
 
 
-
-
-
 {% if not MAPBOX_API_TOKEN == '' %}
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/v0.52.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v0.52.0/mapbox-gl.css' rel='stylesheet' />
     <script type="text/javascript" src="{% static 'NearBeach/javascript/mapbox.js' %}"></script>
 {% elif not GOOGLE_MAP_API_TOKEN == '' %}
     <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAP_API_TOKEN }}&callback=initMap" async defer></script>
     <script type="text/javascript" src="{% static 'NearBeach/javascript/google_maps.js' %}"></script>
 {% endif %}
 <body onload="on_page_load()">
-	<h2>Campus Information - {{ campus_results.campus_nickname }}</h2>
-	<form action="{% url 'campus_information' campus_results.campus_id %}" method="post" class="campus_information">
-		{% csrf_token %}
-		<table>
-            {% if campus_results.organisation_id %}
-			    <tr><td><a href="{% url 'organisation_information' campus_results.organisation_id.organisation_id %}">{{ campus_results.organisation_id }}</a></td></tr>
-			{% elif campus_results.customer_id %}
-                <tr><td><a href="{% url 'customer_information' campus_results.customer.customer_id %}">{{ campus_results.customer }}</a></td></tr>
-            {% else %}
-                <tr><td>Error</td></tr>
-            {% endif %}
-            <tr><td>{{ campus_information_form.campus_nickname }}</td></tr>
-			<tr><td>{{ campus_information_form.campus_phone }}</td></tr>
-			<tr><td>{{ campus_information_form.campus_fax }}</td></tr>
-			<tr><td>{{ campus_information_form.campus_address1 }}</td></tr>
-			<tr><td>{{ campus_information_form.campus_address2 }}</td></tr>
-			<tr><td>{{ campus_information_form.campus_address3 }}</td></tr>
-			<tr><td>{{ campus_information_form.campus_suburb }}</td></tr>
-            <tr><td>Please note - region and country have been solitified. If the address details of this campus have changed we recommend placing in a new campus.</td></tr>
-			<tr><td><input type="text" readonly value="{{ campus_results.campus_region_id }}"></td></tr>
-            <tr><td><input type="text" readonly value="{{ campus_results.campus_country_id }}"></td></tr>
-		</table>
-		<input type="submit" value="Save">
-        {% if permission >= 3 %}
-            <a class="btn btn-danger" href="javascript:void(0)" onclick="confirm_deactivate_campus()">Deactivate Campus</a>
-            <!-- Deactivate Campus
-            If the user has permissions 3 or 4, they can deactivate a campus. The campus will deactivate and not be
-            deleted.
-            -->
-            <div class="modal fade" id="confirm_deactivate_campus" tabindex="-1" role="dialog" aria-labelledby="deactivate_campus" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="deactivate_campus_title">Deactivate Campus</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            Are you sure you want to deactivate this campus. Deactivating this campus will not delete the data,
-                            however it will remove it from being found on NearBeach. All customer's campuses for this campus
-                            will be deactivated also.
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" id="deactivate_campus_confirmed" class="btn btn-danger btn-ok" disabled onclick="deactivate_campus()">Deactivate Campus</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Campus Information - {{ campus_results.campus_nickname }}</h2>
+            <div class="form-group">
+                {% if campus_results.organisation_id %}
+                    <a href="{% url 'organisation_information' campus_results.organisation_id.organisation_id %}">{{ campus_results.organisation_id }}</a>
+                {% elif campus_results.customer_id %}
+                    <a href="{% url 'customer_information' campus_results.customer.customer_id %}">{{ campus_results.customer }}</a>
+                {% else %}
+                    Error
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body">
+            <form action="{% url 'campus_information' campus_results.campus_id %}" method="post" class="campus_information">
+                {% csrf_token %}
+
+                <div class="form-row">
+                    <label for="id_campus_nickname">Campus Nickname</label>
+                    {{ campus_information_form.campus_nickname }}
+                </div>
+                <div class="form-row mt-2">
+                    <div class="form-row col-md-4">
+                        <label for="id_campus_phone">Campus Phone</label>
+                        {{ campus_information_form.campus_phone }}
+                    </div>
+                    <div class="form-row col-md-4">
+                        <label for="id_campus_fax">Campus Fax</label>
+                        {{ campus_information_form.campus_fax }}
                     </div>
                 </div>
-            </div>
-        {% endif %}
+                <div class="form-group">
+                    <label for="id_campus_address1">Address 1</label>
+                    {{ campus_information_form.campus_address1 }}
+                </div>
+                <div class="form-group">
+                    <label for="id_campus_address2">Address 2</label>
+                    {{ campus_information_form.campus_address2 }}
+                </div>
+                <div class="form-group">
+                    <label for="id_campus_address3">Address 3</label>
+                    {{ campus_information_form.campus_address3 }}
+                </div>
+                <div class="form-group">
+                    <label for="id_campus_suburb">Suburb</label>
+                    {{ campus_information_form.campus_suburb }}
+                </div>
+                <div class="form-group">
+                    <label>Please note - region and country have been solitified. If the address details of this campus have changed we recommend placing in a new campus.</label>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_campus_region_id">Region</label>
+                        <input type="text" readonly value="{{ campus_results.campus_region_id }}" class="form-control">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="id_campus_country_id">Country</label>
+                        <input type="text" readonly value="{{ campus_results.campus_country_id }}" class="form-control">
+                    </div>
+                </div>
+                <div class="form-row">
 
-	</form>
-    {% if campus_results.organisations_id %}
-        <h2>Campus Contacts</h2>
-        {% if add_customers_results %}
-            <form action="{% url 'campus_information' campus_results.campus_id %}" method="POST" class="campus_information">
-                {% csrf_token %}
-                <select name="add_customer_select" id="id_add_customer_select" onchange="enable_disable_add_customer()">
-                    <option value="---------"> ---------</option>
-                    {% for row in add_customers_results %}
-                        <option value="{{ row.customer_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
-                    {% endfor %}
-                </select>
-                <input type="submit" name="add_customer_submit" value="Add Customer" disabled id="id_add_customer_submit">
+                    {% if permission >= 3 %}
+                        <input type="submit" value="Save" class="form-control col-md-6 btn btn-primary">
+                        <a href="javascript:void(0)" onclick="confirm_deactivate_campus()" class="form-control col-md-6 btn btn-danger">Deactivate Campus</a>
+                        <!-- Deactivate Campus
+                        If the user has permissions 3 or 4, they can deactivate a campus. The campus will deactivate and not be
+                        deleted.
+                        -->
+                        <div class="modal fade" id="confirm_deactivate_campus" tabindex="-1" role="dialog" aria-labelledby="deactivate_campus" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deactivate_campus_title">Deactivate Campus</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to deactivate this campus. Deactivating this campus will not delete the data,
+                                        however it will remove it from being found on NearBeach. All customer's campuses for this campus
+                                        will be deactivated also.
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" id="deactivate_campus_confirmed" class="btn btn-danger btn-ok" disabled onclick="deactivate_campus()">Deactivate Campus</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                     {% else %}
+                        <input type="submit" value="Save" class="form-control col-md-12 btn btn-primary">
+                    {% endif %}
+                </div>
             </form>
-        {% endif %}
-        <br/>
-        {% if customer_campus_results %}
-            <table>
-                <tr class="header"><td>First Name</td><td>Last Name</td><td>Email</td><td>Phone</td><td>Fax</td><td>Delete</td></tr>
-                {% for row in customer_campus_results %}
-                    <tr>
-                        <td><a href="{% url 'customers_campus_information' row.customers_campus_id 'CAMP' %}">{{ row.customer_id.customer_first_name }}</a></td>
-                        <td>{{ row.customer_id.customer_last_name }}</td>
-                        <td>{{ row.customer_id.customer_email }}</td>
-                        <td>{{ row.customer_phone }}</td>
-                        <td>{{ row.customer_fax }}</td>
-                        <td><a href="{% url 'delete_campus_contact' row.customers_campus_id 'CAMP' %}">Delete</a></td>
-                    </tr>
-                {% endfor %}
-            </table>
-        {% else %}
-            <p>There are no customers at this campus</p>
-        {% endif %}
+        </div>
+    </div>
+
+
+    {% if campus_results.organisation_id %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Campus Contacts</h2>
+            </div>
+            <div class="card-body">
+                {% if add_customer_results %}
+                    <form action="{% url 'campus_information' campus_results.campus_id %}" method="POST" class="campus_information">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <select name="add_customer_select" id="id_add_customer_select" onchange="enable_disable_add_customer()" class="form-control col-md-4">
+                                <option value="---------"> ---------</option>
+                                {% for row in add_customer_results %}
+                                    <option value="{{ row.customer_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
+                                {% endfor %}
+                            </select>
+                            <input type="submit" name="add_customer_submit" value="Add Customer" disabled id="id_add_customer_submit" class="form-control col-md-2 btn btn-primary">
+                        </div>
+                    </form>
+                {% endif %}
+                {% if customer_campus_results %}
+                    <table class="table table-striped table-hover mt-4">
+                        <thead>
+                            <tr>
+                                <td>First Name</td>
+                                <td>Last Name</td>
+                                <td>Email</td>
+                                <td>Phone</td>
+                                <td>Fax</td>
+                                <td>Delete</td>
+                            </tr>
+                        </thead>
+                        {% for row in customer_campus_results %}
+                            <tr>
+                                <td><a href="{% url 'campus_information' row.campus_id.campus_id %}">{{ row.customer_id.customer_first_name }}</a></td>
+                                <td>{{ row.customer_id.customer_last_name }}</td>
+                                <td>{{ row.customer_id.customer_email }}</td>
+                                <td>{{ row.customer_phone }}</td>
+                                <td>{{ row.customer_fax }}</td>
+                                <td><a href="{% url 'delete_campus_contact' row.campus_id.campus_id 'CAMP' %}">Delete</a></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                    <p>There are no customers at this campus</p>
+                {% endif %}
+            </div>
+        </div>
     {% endif %}
-	<h2>Map</h2>
-	<div id='map'></div>
 
-
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Map</h2>
+        </div>
+        <div class="card-body">
+            <div id='map'></div>
+        </div>
+    </div>
 
 	<script type="text/javascript">
         function on_page_load() {
