@@ -1,4 +1,4 @@
-{% extends "./template.html" %}
+{% extends "./template_wider.html" %}
 {% block content %}
 {% load static %}
     <style>
@@ -46,34 +46,39 @@
     <script type="text/javascript" src="{% static 'NearBeach/widgets/d3_gnatt_chart/gantt-chart-d3.js' %}"></script>
 
 
-
-    <h2>Timeline</h2>
-    <form id="date_form">
-        {% csrf_token %}
-        <div class="form-row">
-            <!-- Start date -->
-            <div class="form-group col-md-3">
-                <label for="id_start_date">Start Date:</label>
-                {{ timeline_form.start_date }}
-            </div>
-
-            <!-- End date -->
-            <div class="form-group col-md-3">
-                <label for="id_end_date">End Date:</label>
-                {{ timeline_form.end_date }}
-            </div>
-
-            <!-- Objects -->
-            <div class="form-group col-md-3">
-                <label for="id_object_type">Object:</label>
-                {{ timeline_form.object_type }}
-            </div>
+    <div class="card text-center">
+        <div class="card-header">
+            <h2>Timeline</h2>
         </div>
+        <div class="card-body text-center">
+            <form id="date_form">
+                {% csrf_token %}
+                <div class="form-row">
+                    <!-- Start date -->
+                    <div class="form-group col-md-4">
+                        <label for="id_start_date">Start Date:</label>
+                        {{ timeline_form.start_date }}
+                    </div>
 
-    </form>
+                    <!-- End date -->
+                    <div class="form-group col-md-4">
+                        <label for="id_end_date">End Date:</label>
+                        {{ timeline_form.end_date }}
+                    </div>
 
-    <br/>
-    <div id="timeline" style="width: 100%; overflow: auto;"></div>
+                    <!-- Objects -->
+                    <div class="form-group col-md-4">
+                        <label for="id_object_type">Object:</label>
+                        {{ timeline_form.object_type }}
+                    </div>
+                </div>
+
+                <div id="timeline" class="mt-4" style="width: 100%; overflow: auto;"></div>
+            </form>
+        </div>
+    </div>
+
+
 
     <script>
         //Global varables

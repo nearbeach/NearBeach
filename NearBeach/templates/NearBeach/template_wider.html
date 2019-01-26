@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+	<title>NearBeach Alpha</title>
+    <!--
+    Bootstrap and jquery are utilised throughout ALL of NearBeach
+    -->
+    {% load staticfiles %}
+    <script src="{% static 'NearBeach/widgets/jquery/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'NearBeach/widgets/bootstrap-4.1.3-dist/js/bootstrap.bundle.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/bootstrap-4.1.3-dist/css/bootstrap.css' %}" />
+    <link rel="stylesheet" href="{% static 'NearBeach/css/NearBeach_CSS.css' %}" />
+</head>
+<body style="padding-bottom: 150px;">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="javascript:void(0)">NearBeach</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <!--DASHBOARD-->
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                    </li>
+
+                    <!--MY PROFILE-->
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'my_profile' %}">My Profile</a>
+                    </li>
+
+                    <!--TIMELINE-->
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'timeline' %}">Timeline</a>
+                    </li>
+
+                    {% if new_item_permission >= 3 %}
+                    <!--NEW ITEMS-->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="new_items_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                New Items
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="new_items_dropdown">
+                                <a class="dropdown-item" href="{% url 'new_customer' 0 %}">New Customer</a>
+                                <a class="dropdown-item" href="{% url 'new_kanban_board' %}">New Kanban Board</a>
+                                <a class="dropdown-item" href="{% url 'new_organisation' %}">New Organisation</a>
+                                <a class="dropdown-item" href="{% url 'new_project' %}">New Project</a>
+                                <a class="dropdown-item" href="{% url 'new_requirement' %}">New Requirement</a>
+                                <a class="dropdown-item" href="{% url 'new_task' %}">New Task</a>
+                            </div>
+                        </li>
+                    {% endif %}
+
+                    <!--SEARCH-->
+                    <!--Temp code - might be replaced by a proper search functionality-->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="list_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            List Objects
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="list_dropdown">
+                            <a class="dropdown-item" href="{% url 'search' %}">List All</a>
+                            <a class="dropdown-item" href="{% url 'search_customer' %}">List Customers</a>
+                            <a class="dropdown-item" href="{% url 'kanban_list' %}">List Kanban Boards</a>
+                            <a class="dropdown-item" href="{% url 'search_organisation' %}">List Organisations</a>
+                        </div>
+                    </li>
+
+                    {% if administration_permission >= 1 %}
+                        <!--CONFIGURATION-->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="administration_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Configuration
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="administration_dropdown">
+                                <a class="dropdown-item" href="{% url 'bug_client_list' %}">Bug Client List</a>
+                                <a class="dropdown-item" href="{% url 'search_templates' %}">Edit Templates</a>
+                                <a class="dropdown-item" href="{% url 'list_of_taxes_information' %}">List of Taxes</a>
+                                <a class="dropdown-item" href="{% url 'product_and_service_search' %}">Products and Services</a>
+                            </div>
+                        </li>
+
+                        <!--ADMINISTRATION-->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="administration_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Administration
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="administration_dropdown">
+                                <a class="dropdown-item" href="{% url 'diagnostic_information' %}">Diagnostics</a>
+                                <a class="dropdown-item" href="{% url 'group_information' %}">Groups</a>
+                                <a class="dropdown-item" href="{% url 'permission_set_information' %}">Permission Sets</a>
+                                <a class="dropdown-item" href="{% url 'search_users' %}">Users</a>
+                            </div>
+                        </li>
+                    {% endif %}
+                </ul>
+
+                <!--SEARCH FIELD-->
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-secondary" type="submit">Search</button>
+                </form>
+
+                <!--LOGOUT-->
+                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+	<main id="wrapper" class="container-lg-desktop" role="main">
+        {% if user.is_authenticated %}
+            {% block content %}
+            {% endblock %}
+        {% else %}
+                <h1>Permission denied</h1>
+                <p>You currently do not have permission to view this page!</p>
+
+        {% endif %}
+    </main>
+</body>
+</html>
