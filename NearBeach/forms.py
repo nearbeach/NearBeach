@@ -2700,8 +2700,8 @@ class project_history_readonly_form(ModelForm):
     project_history = forms.CharField()
     submit_history = forms.CharField(
         widget=TextInput(attrs={
-            'width': '100%',
             'readonly': True,
+            'class': 'form-control',
         })
     )
 
@@ -2800,7 +2800,8 @@ class project_readonly_form(ModelForm):
                 'readonly': 1,
             },
             attrs={
-                'placeholder': 'Requirement Scope'
+                'placeholder': 'Requirement Scope',
+                'class': 'form-control',
             }
         ),
     )
