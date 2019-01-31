@@ -1,0 +1,26 @@
+{% extends "../template.html" %}
+{% block content %}
+{% load static %}
+    <form method="POST" action="{% url 'new_group' %}" class="new_group" id="input-form">
+        {% csrf_token %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>New Group</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_group_name">Group Name</label>
+                        {{ new_group_form.group_name }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="id_parent_group">Parent Group</label>
+                        {{ new_group_form.parent_group }}
+                    </div>
+                </div>
+                <input type="submit" value="Submit New Form" class="btn btn-primary">
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

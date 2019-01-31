@@ -208,13 +208,69 @@ class about_user_form(ModelForm):
         }
 
 
-
 class add_permission_set_to_group_form(forms.Form):
-    permission_set_name = forms.ModelChoiceField(
+    def __init__(self,*args,**kwargs):
+        #Get the group id for this form
+        group_id=kwargs.pop('group_id')
+        super(add_permission_set_to_group_form,self).__init__(*args,**kwargs)
+
+        #Get the dataset
+        permission_set_results = permission_set.objects.filter(
+            is_deleted="FALSE",
+        ).exclude(
+            permission_set_id__in=group_permission.objects.filter(
+                is_deleted="FALSE",
+                group_id=group_id,
+            ).values('permission_set_id')
+        )
+        #Assign it to the field
+        self.fields['add_permission_set'].queryset = permission_set_results
+
+    add_permission_set = forms.ModelChoiceField(
         label = "Permission Set Name",
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'chosen-select form-control',
+            'onchange': 'permission_set_changed()',
+        }),
         queryset=permission_set.objects.filter(is_deleted='FALSE')
     )
+
+
+class add_user_to_group_form(forms.Form):
+    def __init__(self,*args,**kwargs):
+        group_id=kwargs.pop('group_id')
+
+        super(add_user_to_group_form,self).__init__(*args,**kwargs)
+
+        """
+        We want to limit the permission_sets to only those currently applied to the group.
+        """
+        permission_set_results = permission_set.objects.filter(
+            is_deleted="FALSE",
+            permission_set_id__in=group_permission.objects.filter(
+                is_deleted="FALSE",
+                group_id=group_id,
+            ).values('permission_set_id')
+        )
+        self.fields['permission_set'].queryset = permission_set_results
+
+    permission_set=forms.ModelChoiceField(
+        queryset=permission_set.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'chosen-select form-control',
+            'onchange': 'add_user_changed()',
+        })
+    )
+    add_user=forms.ModelChoiceField(
+        queryset=User.objects.filter(
+            is_active=True,
+        ),
+        widget=forms.Select(attrs={
+            'class': 'chosen-select form-control',
+            'onchange': 'add_user_changed()',
+        })
+    )
+
 
 
 class assign_group_add_form(forms.Form):
@@ -959,16 +1015,41 @@ class email_information_form(ModelForm):
         }
 
 class group_form(ModelForm):
+    def __init__(self, *args, **kwargs):
+        """
+        We need to pass the group_id through, as a group should not be it's own parent group.
+        :param args: group_id
+        :param kwargs:
+        """
+        group_id = kwargs.pop('group_id')
+
+        super(group_form, self).__init__(*args, **kwargs)
+
+        group_results = group.objects.filter(
+            is_deleted="FALSE",
+        ).exclude(group_id=group_id)
+
+        self.fields['parent_group'].queryset = group_results
+
     group_name = forms.CharField(
         max_length=50,
         widget=forms.TextInput(attrs={
             'placeholder': 'Group Name',
+            'class': 'form-control',
         })
+    )
+    parent_group=forms.ModelChoiceField(
+        queryset=group.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        required=False,
     )
     class Meta:
         model=group
         fields = {
             'group_name',
+            'parent_group',
         }
 
 
@@ -1634,6 +1715,30 @@ class new_folder_form(forms.Form):
             'class': 'form-control',
         })
     )
+
+
+class new_group_form(ModelForm):
+    group_name=forms.CharField(
+        max_length=50,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Group Name',
+        }),
+    )
+    parent_group=forms.ModelChoiceField(
+        queryset=group.objects.filter(is_deleted="FALSE"),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        required=False,
+    )
+
+    class Meta:
+        model = group
+        fields = {
+            'group_name',
+            'parent_group',
+        }
 
 
 class new_line_item_form(ModelForm):
@@ -2327,6 +2432,183 @@ class permission_set_form(ModelForm):
         label='',
         widget=forms.TextInput(attrs={
             'placeholder': 'Permission Set Name',
+            'class': 'form-control',
+        })
+    )
+    administration_assign_user_to_group=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    administration_create_group=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    administration_create_permission_set=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    administration_create_user=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    assign_campus_to_customer=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    associate_project_and_task=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    bug=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    bug_client=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    customer=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    email=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    invoice=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    invoice_product=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    kanban=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    kanban_card=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    opportunity=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    organisation=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    organisation_campus=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    project=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    quote=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    requirement=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    requirement_link=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    task=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    tax=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    template=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    contact_history=forms.ChoiceField(
+        choices=PERMISSION_BOOLEAN,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    document=forms.ChoiceField(
+        choices=PERMISSION_BOOLEAN,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    kanban_comment=forms.ChoiceField(
+        choices=PERMISSION_BOOLEAN,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    project_history=forms.ChoiceField(
+        choices=PERMISSION_BOOLEAN,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    task_history=forms.ChoiceField(
+        choices=PERMISSION_BOOLEAN,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
         })
     )
     #Used for both edit and create

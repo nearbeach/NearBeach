@@ -1,0 +1,229 @@
+{% extends "../template.html" %}
+{% block content %}
+{% load static %}
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+
+    <!--If there is some form data - render this card-->
+    {% if group_form %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Group Information</h2>
+        </div>
+        <div class="card-body">
+            <div class="alert-success" style="" id="group_information_save_state"></div>
+            <form method="POST" id="group_information_form">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_group_name">Group Name</label>
+                        {{ group_form.group_name }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="id_parent_group">Parent Group</label>
+                        {{ group_form.parent_group }}
+                    </div>
+                </div>
+                <input type="submit" class="btn btn-primary form-control" value="Update Group Information">
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <!-- This must be the adminsitration account... do not render the form!!!-->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Group Information</h2>
+            </div>
+            <div class="card-body">
+                <h5>Administration</h5>
+                This is the administration account - you are not allowed to edit or delete this account. <a href="{% url 'search_group' %}">Back to Search</a>
+            </div>
+        </div>
+    {% endif %}
+
+    <form method="POST" id="add_permission_set">
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Permission Sets</h2>
+            </div>
+            <div class="card-body">Loading...</div>
+        </div>
+    </form>
+
+    <form method="POST" id="add_user">
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Users</h2>
+            </div>
+            <div class="card-body">Loading...</div>
+        </div>
+    </form>
+
+
+
+    <script>
+        //On the document load function
+        $(document).ready(function(){
+            //Load the required modules through AJAX
+            load_add_permission_set();
+            load_add_user();
+        });
+
+        //The following on statement - will restrict the page from reloading.
+        $("#add_permission_set").on('submit',function(e) {
+           e.preventDefault();
+
+           $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+           $.ajax({
+               url: '/admin_permission_set/{{ group_id }}/',
+               data: $("#add_permission_set").serialize(),
+               dataType: "HTML",
+               type: "POST",
+               success: function(data) {
+                   $("#add_permission_set").html(data);
+
+                   //Update the user's section as we have added on a permission_set
+                   $("#add_user").html("Loading");
+                   load_add_user();
+               },
+               error: function(data) {
+                   //Utilising the page_alerts, it will add the error message.
+                    //Add in text first
+                    $("#page_alert_text").append("<hr>Error loading <strong>Add Permission Sets</strong>. The page did not update or load - please read logs.");
+
+                    //Show the alert
+                    $("#page_alert").show();
+               }
+           })
+        });
+
+        $("#add_user").on('submit',function(e) {
+            e.preventDefault();
+
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/admin_add_user/{{ group_id }}/',
+                data: $("#add_user").serialize(),
+                dataType: "HTML",
+                type: "POST",
+                success: function(data) {
+                    $("#add_user").html(data)
+                },
+                error: function() {
+                    //Utilising the page_alerts, it will add the error message.
+                    //Add in text first
+                    $("#page_alert_text").append("<hr>Error loading <strong>Add user</strong>. The page did not update or load - please read logs.");
+
+                    //Show the alert
+                    $("#page_alert").show();
+                }
+            })
+        });
+
+        $("#group_information_form").on('submit',function(e){
+            e.preventDefault();
+            $("#group_information_save_state").html("Currently saving changes");
+            $("#group_information_save_state").show()
+
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/group_information/{{ group_id }}/',
+                data: $("#group_information_form").serialize(),
+                dataType: "HTML",
+                type: "POST",
+                success: function(data) {
+                    //Just update the status
+                    var current_time = Date();
+                    $("#group_information_save_state").html("Saved changes on " + current_time);
+                },
+                error: function() {
+                    //Utilising the page_alerts, it will add the error message.
+                    //Add in text first
+                    $("#page_alert_text").append("<hr>Error loading <strong>Group Information</strong>. The page did not update or load - please read logs.");
+
+                    //Show the alert
+                    $("#page_alert").show();
+                }
+            })
+        });
+
+
+        function add_user_changed() {
+            //If the user and permission set have a value in it - then enable the button. Otherwise not
+            $("#add_user_button").prop(
+                'disabled',
+                //Returns a TRUE/FALSE statement
+                (($("#id_add_user").val() == "") || ($("#id_permission_set").val() == ""))
+            )
+        }
+
+        function load_add_permission_set() {
+            $.ajax({
+                url: '/admin_permission_set/{{ group_id }}/group/',
+                data: {},
+                dataType: "HTML",
+                type: 'GET',
+                success: function(data) {
+                    $("#add_permission_set").html(data);
+                },
+                error: function() {
+                    //Utilising the page_alerts, it will add the error message.
+                    //Add in text first
+                    $("#page_alert_text").append("<hr>Error loading <strong>Add Permission Sets</strong>. The page did not load - please read logs.");
+
+                    //Show the alert
+                    $("#page_alert").show();
+                }
+            });
+        }
+
+        function load_add_user() {
+            $.ajax({
+                url: '/admin_add_user/{{ group_id }}/group/',
+                data: {},
+                dataType: "HTML",
+                type: "GET",
+                success: function(data) {
+                    $("#add_user").html(data);
+                },
+                error: function() {
+                    //Utilising the page_alerts, it will add the error message.
+                    //Add in text first
+                    $("#page_alert_text").append("<hr>Error loading <strong>Add User</strong>. The page did not load - please read logs.");
+
+                    //Show the alert
+                    $("#page_alert").show();
+                }
+            });
+        }
+
+
+        function permission_set_changed() {
+            //If the add permssion set select has a value in it - then enable the button. Otherwise not
+            $("#id_submit_permission_set").prop(
+                'disabled',
+                $("#id_add_permission_set").val() == "" //Returns a TRUE/FALSE statement
+            )
+        }
+    </script>
+{% endblock %}
+

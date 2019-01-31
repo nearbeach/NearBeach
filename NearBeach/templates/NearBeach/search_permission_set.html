@@ -1,0 +1,39 @@
+{% extends "./template.html" %}
+{% block content %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Search Permission Sets</h2>
+        </div>
+        <div class="card-body">
+            <a href="{% url 'new_permission_set' %}">Create new permission set</a>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <td>Permission Set Name</td>
+                        <td>Date Created</td>
+                        <td>Delete/Restor</td>
+                    </tr>
+                </thead>
+                {% for row in permission_set_results %}
+                    <tr>
+                        {% if row.permission_set_id == 1 %}
+                            <td>Administration</td>
+                            <td>{{ row.date_created }}</td>
+                            <td> --- </td>
+                        {% else %}
+                            <td><a href="javascript:void(0)" onclick="load_permission_edit({{ row.permission_set_id }})">{{ row.permission_set_name }}</a></td>
+                            <td>{{ row.date_created }}</td>
+                            <td>
+                                {% if row.is_deleted == 'FALSE' %}
+                                    <a href="javascript:void(0)" onclick="alert('write function')">Delete</a>
+                                {% else %}
+                                    <a href="javascript:void(0)" onclick="alert('write function')">Restore</a>
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}

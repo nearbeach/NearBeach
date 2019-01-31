@@ -3,14 +3,15 @@
 {% load static %}
     <div class="card mt-4">
         <div class="card-header">
-            <h2>Permission Set Information</h2>
+            <h2>New Permission Set</h2>
         </div>
         <div class="card-body">
             {% if save_errors %}
                 <div class="alert-danger">{{ save_errors }}</div>
-                <hr>
             {% endif %}
-            <form action="{% url 'permission_set_information' permission_set_id %}" method="POST" class="new_permission_set">
+            <div class="alert-primary">Please note - duplicated named permission sets will not be created. Instead you will be taken to the permission set.</div>
+            <hr>
+            <form action="{% url 'new_permission_set' %}" method="POST" class="new_permission_set">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="id_permission_set_name">Permission Set Name</label>
@@ -68,13 +69,11 @@
                 <div class='form-group'><label for='id_task_history '>task_history </label> {{ permission_set_form.task_history  }}</div>
 
                 <div class="form-row">
-                    <input type="submit" value="Save Permission Set" class="btn btn-primary col-md-6">
+                    <input type="submit" value="Create New Permission Set" class="btn btn-primary col-md-6">
                     <a href="{% url 'search_permission_set' %}" class="btn btn-warning col-md-6">Cancel</a>
                 </div>
             </form>
         </div>
     </div>
+
 {% endblock %}
-
-
-

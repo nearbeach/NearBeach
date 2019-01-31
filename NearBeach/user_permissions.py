@@ -7,7 +7,14 @@ from django.db.models import Max
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-
+"""
+Permission table
+0 - No permission
+1 - Read only
+2 - Edit permission
+3 - Create permission
+4 - Admin/Delete permission
+"""
 def return_user_permission_level(request, group_list,permission_field):
     """
 

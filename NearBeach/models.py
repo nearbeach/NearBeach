@@ -793,7 +793,6 @@ class group(models.Model):
     group_id = models.AutoField(primary_key=True)
     group_name = models.CharField(
         max_length=50,
-        unique=True
     )
     parent_group = models.ForeignKey(
         "self",
@@ -848,6 +847,18 @@ class group_permission(models.Model):
     group = models.ForeignKey(
         'group',
         on_delete=models.CASCADE
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE',
     )
 
     def __str__(self):
@@ -1865,7 +1876,7 @@ class permission_set(models.Model):
     permission_set_id = models.AutoField(primary_key=True)
     permission_set_name = models.CharField(
         max_length=255,
-        unique=True,
+        #unique=True, #issue when we delete previous permission sets
     )
     # BASELINE permission
     administration_assign_user_to_group = models.IntegerField(

@@ -24,199 +24,6 @@ import datetime, json, simplejson
 #permission_set_form
 
 @login_required(login_url='login')
-def group_information(request):
-    permission_results = return_user_permission_level(request, None, 'administration_create_group')
-
-    if permission_results['administration_create_group'] == 0:
-        return HttpResponseRedirect(reverse('permission_denied'))
-
-    #Load template
-    t = loader.get_template('NearBeach/group_information.html')
-
-    # context
-    c = {
-        'new_item_permission': permission_results['new_item'],
-        'administration_permission': permission_results['administration'],
-    }
-
-    return HttpResponse(t.render(c, request))
-
-
-@login_required(login_url='login')
-def group_information_add_permission_set(request, group_id):
-    permission_results = return_user_permission_level(request, None, ['administration_create_group','administration_create_permission_set'])
-
-    if permission_results['administration_create_group'] == 0:
-        return HttpResponseRedirect(reverse('permission_denied'))
-
-
-    if request.method == "POST" and permission_results['administration_create_group'] > 2:
-        form = add_permission_set_to_group_form(request.POST)
-        if form.is_valid():
-            submit_group_permission = group_permission(
-                permission_set=form.cleaned_data['permission_set_name'],
-                group=group.objects.get(group_id=group_id),
-            )
-            submit_group_permission.save()
-            print("SAVED")
-        else:
-            print(form.errors)
-
-
-    permission_set_results = permission_set.objects.filter(
-        is_deleted='FALSE',
-    )
-
-    #Load template
-    t = loader.get_template('NearBeach/groups/groups_add_permission_set.html')
-
-    # context
-    c = {
-        'permission_set_results': permission_set_results,
-        'form': add_permission_set_to_group_form,
-        'new_item_permission': permission_results['new_item'],
-        'administration_permission': permission_results['administration'],
-    }
-
-    return HttpResponse(t.render(c, request))
-
-
-@login_required(login_url='login')
-def group_information_create(request):
-    permission_results = return_user_permission_level(request, None, 'administration_create_group')
-
-    if permission_results['administration_create_group'] < 3:
-        return HttpResponseRedirect(reverse('permission_denied'))
-
-    if request.method == "POST":
-        form = group_form(request.POST)
-        if form.is_valid():
-            submit_group = group(
-                group_name=form.cleaned_data['group_name'],
-                change_user=request.user,
-            )
-            submit_group.save()
-
-        else:
-            print(form.errors)
-    #Load template
-    t = loader.get_template('NearBeach/groups/groups_create.html')
-
-    # context
-    c = {
-        'group_form': group_form(),
-    }
-
-    return HttpResponse(t.render(c, request))
-
-
-
-@login_required(login_url='login')
-def group_information_edit(request, group_id):
-    permission_results = return_user_permission_level(request, None,['administration_assign_user_to_group','administration_create_group'])
-
-    if permission_results['administration_create_group'] == 0:
-        return HttpResponseRedirect(reverse('permission_denied'))
-
-    if request.method == "POST":
-        form = group_form(request.POST, instance=group.objects.get(group_id=group_id))
-        if form.is_valid():
-            form.save()
-        else:
-            print(form.errors)
-
-    #Load template
-    t = loader.get_template('NearBeach/groups/groups_edit.html')
-
-    # context
-    c = {
-        'group_form': group_form(instance=group.objects.get(group_id=group_id)),
-        'user_permission': permission_results['administration_assign_user_to_group'],
-        'group_permission': permission_results['administration_create_group'],
-        'group_id': group_id,
-    }
-
-    return HttpResponse(t.render(c, request))
-
-
-
-@login_required(login_url='login')
-def group_information_edit_users(request, group_id):
-    permission_results = return_user_permission_level(request, None,'administration_assign_user_to_group')
-
-    if permission_results['administration_assign_user_to_group'] == 0:
-        return HttpResponseRedirect(reverse('permission_denied'))
-
-
-    if request.method == "POST" and permission_results['administration_assign_user_to_group'] > 2:
-        print(request.POST.get('permission_set'))
-        permission_set_instance=permission_set.objects.get(permission_set_id=request.POST.get('permission_set'))
-        #Get the new user
-        submit_user_groups = user_group(
-            username = User.objects.get(id=request.POST.get('user_id')),
-            permission_set=permission_set_instance,
-            change_user = request.user,
-            #group_id=group.objects.get(group_id=group_id),
-            group_id=group_id,
-        )
-        print("Saving user permissions")
-        submit_user_groups.save()
-
-    #List of users in group, and list of users to add
-    user_groups_results = user_group.objects.filter(
-        is_deleted="FALSE",
-        group_id=group_id,
-    ).order_by('username','permission_set')
-    #.distinct().orderby('username','permission_set')
-    user_results = User.objects.all()
-    permission_set_results = group_permission.objects.filter(
-        #is_deleted='FALSE',
-        group_id=group_id,
-    )
-
-
-
-    #Load template
-    t = loader.get_template('NearBeach/groups/groups_edit_users.html')
-    c = {
-        'user_groups_results': user_groups_results,
-        'user_results': user_results,
-        'user_permission': permission_results['administration_assign_user_to_group'],
-        'permission_set_results': permission_set_results,
-        'group_id': group_id,
-    }
-
-    # context
-
-    return HttpResponse(t.render(c, request))
-
-
-
-@login_required(login_url='login')
-def group_information_list(request):
-    permission_results = return_user_permission_level(request, None,'administration_create_group')
-
-
-    if permission_results['administration_create_group'] == 0:
-        return HttpResponseRedirect(reverse('permission_denied'))
-
-    group_results = group.objects.filter(
-        is_deleted="FALSE"
-    )
-
-    #Load template
-    t = loader.get_template('NearBeach/groups/groups_list.html')
-
-    # context
-    c = {
-        'group_results': group_results,
-        'group_permission': group_permission,
-    }
-
-    return HttpResponse(t.render(c, request))
-
-
-@login_required(login_url='login')
 def list_of_taxes_deactivate(request,tax_id):
     if request.method == "POST":
         tax_instance = list_of_tax.objects.get(tax_id=tax_id)
@@ -382,7 +189,7 @@ def new_user(request):
 
     return HttpResponse(t.render(c, request))
 
-
+"""
 @login_required(login_url='login')
 def permission_set_information(request):
     permission_results = return_user_permission_level(request, None,'administration_create_permission_set')
@@ -576,7 +383,7 @@ def permission_set_information_list(request):
     }
 
     return HttpResponse(t.render(c, request))
-
+"""
 
 @login_required(login_url='login')
 def product_and_service_discontinued(request, product_id):
@@ -807,6 +614,11 @@ def user_information(request, user_id):
             print(form.errors)
             errors = form.errors
 
+    #Get data
+    user_group_results = user_group.objects.filter(
+        username_id=user_id
+    )
+
     #forms
     if user_id == None:
         ui_form = user_information_form()
@@ -820,6 +632,7 @@ def user_information(request, user_id):
 
     # context
     c = {
+        'user_group_results': user_group_results,
         'user_information_form': ui_form,
         'is_superuser': request.session['is_superuser'],
         'errors': errors,

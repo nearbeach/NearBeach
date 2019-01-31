@@ -67,6 +67,136 @@ def add_campus_to_customer(request, customer_id, campus_id):
         return HttpResponseBadRequest("Sorry, you can only do this in post.")
 
 
+
+@login_required(login_url='login')
+def admin_group(request,location_id,destination):
+    # Load template
+    t = loader.get_template('NearBeach/administration/admin_group.html')
+
+    c = {}
+
+    return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login')
+def admin_permission_set(request, group_id):
+    """
+    Admin permission set will render a list of all permission set's connected to the current group. This admin def
+    is only appliciable for the group functionality at the moment. Hence it only contains a "Group ID" as input
+
+    If this is rendering for the group - it will allow users to add more permission sets to the group
+    :param request:
+    :param group_id: the primary key for the group
+    :return: A rendered list of permissions
+
+    Method
+    ~~~~~~
+    1. Check the user permissions
+    2. If post - go through post. Check comments here
+    3. Get data for permission sets connected to this group
+    4. Render the template :) and return results to user
+    """
+
+    # Check user permission
+    permission_results = return_user_permission_level(request, [None], ['administration_create_group'])
+
+    if permission_results['administration_create_group'] <= 1:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse(permission_denied))
+
+    if request.method == "POST" and permission_results['administration_create_group'] >= 3:
+        form = add_permission_set_to_group_form(
+            request.POST,
+            group_id=group_id,
+        )
+        if form.is_valid():
+            group_permission_submit=group_permission(
+                group_id=group_id,
+                permission_set=form.cleaned_data['add_permission_set'],
+                change_user=request.user,
+            )
+            group_permission_submit.save()
+        else:
+            print(form.errors)
+
+
+    permission_set_results = group_permission.objects.filter(
+        is_deleted="FALSE",
+        group_id=group_id,
+    )
+
+
+    # Load template
+    t = loader.get_template('NearBeach/administration/admin_permission_set.html')
+
+    c = {
+        'permission_set_results': permission_set_results,
+        'add_permission_set_to_group_form': add_permission_set_to_group_form(group_id=group_id),
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def admin_add_user(request, group_id):
+    """
+    Pulls up a list of users for the group information. This def shows a list and grants you the ability to add new users
+    to a group.
+
+    Please note - as a user can have multiple permission sets per group, it does not restrict duplications.
+    :param request:
+    :param group_id: The group ID we are looking at
+    :return: HTML
+
+    Method
+    ~~~~~~
+    1. Check permissions
+    2. If post - do post method - more comments here
+    3. Obtain information like users already assigned to the group
+    4. Render webpage
+    """
+    # Check user permission
+    permission_results = return_user_permission_level(request, [None], ['administration_create_group'])
+
+    if permission_results['administration_create_group'] <= 1:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse(permission_denied))
+
+    if request.method == "POST":
+        form = add_user_to_group_form(
+            request.POST,
+            group_id=group_id,
+        )
+        if form.is_valid():
+            user_group_submit = user_group(
+                username=form.cleaned_data['add_user'],
+                group=group.objects.get(group_id=group_id),
+                permission_set=form.cleaned_data['permission_set'],
+                change_user=request.user,
+            )
+            user_group_submit.save()
+        else:
+            print(form.errors)
+
+    # Get data
+    user_group_results = user_group.objects.filter(
+        is_deleted="FALSE",
+        group_id=group_id,
+    )
+
+    # Load template
+    t = loader.get_template('NearBeach/administration/admin_user.html')
+
+    c = {
+        'add_user_to_group_form': add_user_to_group_form(group_id=group_id),
+        'administration_permission': permission_results['administration'],
+        'user_group_results': user_group_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
 @login_required(login_url='login')
 def alerts(request):
     """
@@ -271,7 +401,6 @@ def assign_customer_project_task(request, customer_id):
     }
 
     return HttpResponse(t.render(c, request))
-
 
 
 @login_required(login_url='login')
@@ -2362,6 +2491,49 @@ def extract_quote(request, quote_uuid,quote_template_id):
 
 
 @login_required(login_url='login')
+def group_information(request,group_id):
+    """
+    This def will bring up the group information page. If the user makes a change then it will apply those changes.
+    This is assuming that the group_id is not the ADMINISTRATION page - because we do not want to change there AT ALL!!
+    :param request:
+    :param group_id:
+    :return:
+    """
+    permission_results = return_user_permission_level(request, None,['administration'])
+
+    if permission_results['administration'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
+    """
+    If the group is the administration group, we do NOT want to load the form. Instead it will be blank. MWAHAHAHAH
+    """
+    group_results = group.objects.get(group_id=group_id)
+    if group_id == 1 or group_id == '1': #1 is the administration account
+        group_form_results = None
+    else:
+        group_form_results = group_form(
+            group_id=group_id,
+            initial={
+                'group_name': group_results.group_name,
+                'parent_group': group_results.parent_group,
+        })
+
+    # Get template
+    t = loader.get_template('NearBeach/administration/group_information.html')
+
+    # Context
+    c = {
+        'group_form': group_form_results,
+        'group_id': group_id,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login')
 def index(request):
     """
 	The index page determines if a particular user has logged in. It will
@@ -3503,6 +3675,60 @@ def new_customer(request, organisation_id):
 
 
 @login_required(login_url='login')
+def new_group(request):
+    """
+    You need to create a new group. You must be over 3 on your administration create group :)
+    :param request:
+    :return: group_infomration page if in POST or new_group page in GET
+    """
+    # Check user permission
+    permission_results = return_user_permission_level(request, [None], ['administration_create_group'])
+
+    if permission_results['administration_create_group'] <= 1:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse(permission_denied))
+
+    if request.method == "POST":
+        form = new_group_form(request.POST)
+        if form.is_valid():
+            group_name = form.cleaned_data['group_name']
+
+            """
+            We want to check to see if the group name is unique. If there is another group name (excluding the deleted)
+            is available - we will just go to it without any errors. Hidden to the user.
+            """
+            group_results = group.objects.filter(
+                is_deleted="FALSE",
+                group_name=group_name,
+            )
+            if group_results:
+                return HttpResponseRedirect(reverse('group_information', args={ group_results[0].group_id }))
+
+            #Group does not exist - lets make it
+            group_submit = group(
+                group_name=group_name,
+                parent_group=form.cleaned_data['parent_group'],
+                change_user=request.user,
+            )
+            group_submit.save()
+
+            #Done making it - lets go to it
+            return HttpResponseRedirect(reverse('group_information', args={ group_submit.group_id }))
+        else:
+            print(form.errors)
+
+    # Get template
+    t = loader.get_template('NearBeach/administration/new_group.html')
+
+    c = {
+        'new_group_form': new_group_form(),
+        'administration_permission': permission_results['administration'],
+        'new_item_permission': permission_results['new_item'],
+    }
+
+    return HttpResponse(t.render(c,request))
+
+@login_required(login_url='login')
 def new_kanban_board(request):
     permission_results = return_user_permission_level(request, None, 'kanban')
 
@@ -3863,6 +4089,78 @@ def new_organisation(request):
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
         'form_errors': form_errors,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def new_permission_set(request):
+    permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
+
+    if permission_results['administration_create_permission_set'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    save_errors = None
+    if request.method == "POST" and permission_results['administration_create_permission_set'] >= 3:
+        form = permission_set_form(request.POST)
+        if form.is_valid():
+            """
+            If the permission_set name already exists, we won't create it, instead we will load the correct page. This
+            is assuming it has not been deleted. :O
+            """
+            permission_set_name=form.cleaned_data['permission_set_name']
+            permission_set_results=permission_set.objects.filter(
+                is_deleted="FALSE",
+                permission_set_name=permission_set_name,
+            )
+            if permission_set_results:
+                return HttpResponseRedirect(reverse('permission_set_information',args={ permission_set_results[0].permission_set_id }))
+
+            # Try and save the form.
+            submit_permission_set = permission_set(
+                permission_set_name=permission_set_name,
+                administration_assign_user_to_group=form.cleaned_data['administration_assign_user_to_group'],
+                administration_create_group=form.cleaned_data['administration_create_group'],
+                administration_create_permission_set=form.cleaned_data['administration_create_permission_set'],
+                administration_create_user=form.cleaned_data['administration_create_user'],
+                assign_campus_to_customer=form.cleaned_data['assign_campus_to_customer'],
+                associate_project_and_task=form.cleaned_data['associate_project_and_task'],
+                customer=form.cleaned_data['customer'],
+                invoice=form.cleaned_data['invoice'],
+                invoice_product=form.cleaned_data['invoice_product'],
+                opportunity=form.cleaned_data['opportunity'],
+                organisation=form.cleaned_data['organisation'],
+                organisation_campus=form.cleaned_data['organisation_campus'],
+                project=form.cleaned_data['project'],
+                requirement=form.cleaned_data['requirement'],
+                requirement_link=form.cleaned_data['requirement_link'],
+                task=form.cleaned_data['task'],
+                document=form.cleaned_data['document'],
+                contact_history=form.cleaned_data['contact_history'],
+                project_history=form.cleaned_data['project_history'],
+                task_history=form.cleaned_data['task_history'],
+                change_user=request.user,
+            )
+            submit_permission_set.save()
+
+            #Go to the new permission set :)
+            return HttpResponseRedirect(reverse('permission_set_information', args={ submit_permission_set.permission_set_id }))
+
+
+        else:
+            print(form.errors)
+            save_errors = form.errors
+
+    # Load template
+    t = loader.get_template('NearBeach/new_permission_set.html')
+
+    # context
+    c = {
+        'permission_set_form': permission_set_form(request.POST or None),
+        'save_errors': save_errors,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -4706,6 +5004,54 @@ def permission_denied(request):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
+def permission_set_information(request,permission_set_id):
+    permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
+
+    if permission_results['administration_create_permission_set'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #DO POST STUFF HERE
+
+    # Get data
+    permission_set_results = permission_set.objects.get(permission_set_id=permission_set_id)
+
+    # Load the template
+    t = loader.get_template('NearBeach/permission_set_information.html')
+
+    c = {
+        'permission_set_form': permission_set_form(
+            initial={
+                'permission_set_name': permission_set_results.permission_set_name,
+                'administration_assign_user_to_group': permission_set_results.administration_assign_user_to_group,
+                'administration_create_group': permission_set_results.administration_create_group,
+                'administration_create_permission_set': permission_set_results.administration_create_permission_set,
+                'administration_create_user': permission_set_results.administration_create_user,
+                'assign_campus_to_customer': permission_set_results.assign_campus_to_customer,
+                'associate_project_and_task': permission_set_results.associate_project_and_task,
+                'customer': permission_set_results.customer,
+                'invoice': permission_set_results.invoice,
+                'invoice_product': permission_set_results.invoice_product,
+                'opportunity': permission_set_results.opportunity,
+                'organisation': permission_set_results.organisation,
+                'organisation_campus': permission_set_results.organisation_campus,
+                'project': permission_set_results.project,
+                'requirement': permission_set_results.requirement,
+                'requirement_link': permission_set_results.requirement_link,
+                'task': permission_set_results.task,
+                'document': permission_set_results.document,
+                'contact_history': permission_set_results.contact_history,
+                'project_history': permission_set_results.project_history,
+                'task_history': permission_set_results.task_history,
+            }
+        ),
+        'permission_set_id': permission_set_id,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c,request))
+
 
 """
 Issue - preview_quote will ask extract_quote to login. To remove this issue we have added the ability for UUID,
@@ -5431,6 +5777,36 @@ def search_customer(request):
 
 
 @login_required(login_url='login')
+def search_group(request):
+    """
+    Brings up a list of all groups.
+    :param request:
+    :return:
+    """
+    permission_results = return_user_permission_level(request, None, 'administration_create_group')
+
+    if permission_results['administration_create_group'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #Data for group search
+    group_results = group.objects.filter(
+        is_deleted="FALSE"
+    )
+
+    #Load template
+    t = loader.get_template('NearBeach/search_group.html')
+
+    # context
+    c = {
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'group_results': group_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
 def search_organisation(request):
     permission_results = return_user_permission_level(request, None, 'project')
 
@@ -5487,6 +5863,28 @@ def search_organisation(request):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def search_permission_set(request):
+    permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
+
+    if permission_results['administration_create_permission_set'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #Get data
+    permission_set_results = permission_set.objects.filter(is_deleted="FALSE")
+
+    # Load the template
+    t = loader.get_template('NearBeach/search_permission_set.html')
+
+    c = {
+        'permission_set_results': permission_set_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c,request))
 
 
 @login_required(login_url='login')

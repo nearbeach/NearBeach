@@ -1,0 +1,38 @@
+{% load static %}
+<div class="card mt-4">
+    <div class="card-header">
+        <h2>Permission Sets</h2>
+    </div>
+    <div class="card-body">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="id_add_permission_set">Permission Set</label>
+                {{ add_permission_set_to_group_form.add_permission_set }}
+            </div>
+            <div class="form-group col-md-6">
+                <label for="id_submit_permission_set">.</label>
+                <button type="submit" class="btn btn-primary form-control" id="id_submit_permission_set" disabled>Add Permission Set</button>
+            </div>
+        </div>
+        <!-- ADD IN THE ABILITY TO ADD PERMISSION SETS HERE - make sure only high admin can do this :) -->
+        <div class="alert-primary">Please note - if you remove any permission set from this group. It will remove the users within that permission set from the group.</div>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <td>Permission Set</td>
+                    {% if administration_permission == 4 %}
+                        <td>Delete</td> <!-- ONLY IF THE USER HAS PERMISSION TO DO THIS!!!-->
+                    {% endif %}
+                </tr>
+            </thead>
+            {% for permission in permission_set_results %}
+                <tr>
+                    <td>{{ permission.permission_set }}</td>
+                    {% if administration_permission == 4 %}
+                        <td><a href="javascript:void(0)">Delete</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
