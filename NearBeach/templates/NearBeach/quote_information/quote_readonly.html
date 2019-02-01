@@ -1,0 +1,34 @@
+{% extends '../template.html' %}
+{% block content %}
+{% load humanize %}
+{% load static %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Quote Information {{ quote_id }}</h2>
+        </div>
+        <div class="card-body">
+            {{ quote_readonly_form.media }}
+            <h2>{{ quote_results.quote_title }}</h2>
+            <div class="form-group">
+                <label for="id_quote_terms">Quote Terms</label>
+                {{ quote_readonly_form.quote_terms }}
+            </div>
+            <div>Quote Stage: {{ quote_results.quote_stage_id }}</div>
+            <div>Timezone: {{ timezone }}</div>
+            <div>Quote Valid Till: {{ quote_results.quote_valid_till }}</div>
+            {% if quote_results.customer_notes %}
+                <div class="form-group">
+                    <label for="id_quote_customer_notes">Customer Notes</label>
+                    {{ quote_readonly_form.customer_notes }}
+                </div>
+            {% endif %}
+            {% if quote_results.quote_billing_address %}
+                <div class="form-group">
+                    <label for="id_quote_billing_address">Quote Billing Address</label>
+                    {{ quote_results.quote_billing_address }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

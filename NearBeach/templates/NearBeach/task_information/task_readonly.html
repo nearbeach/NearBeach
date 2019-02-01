@@ -1,0 +1,316 @@
+{% extends '../template.html' %}
+{% block content %}
+{% load humanize %}
+{% load static %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Task Information - {{ task_id }}</h2>
+        </div>
+        <div class="card-body">
+            <h4>{{ task_results.task_short_description }}</h4>
+
+            <div class="form-group">
+                <label>Task Description</label>
+                {{ task_readonly_form.media }}
+                {{ task_readonly_form.task_long_description }}
+            </div>
+
+            {% if task_results.organisation_id %}
+                <div class="form-group">
+                    Organisation: {{ task_results.organisation_id }}
+                </div>
+            {% endif %}
+            <div class="form-row">
+                <div class="form-group col-md-4">Task Status: Completed</div>
+                <div class="form-group col-md-4">
+                    Start Date: {{ task_results.task_start_date }}
+                </div>
+                <div class="form-group col-md-4">
+                    End Date: {{ task_results.task_end_date }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {% if to_do_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Task To Do</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td width="80%">To Do Item</td>
+                            <td width="10%">Status</td>
+                            <td width="10%">Closed by</td>
+                        </tr>
+                    </thead>
+                    {% for row in to_do_results %}
+                        <tr>
+                            <td>{{ row.to_do }}</td>
+                            <td>
+                                {% if row.to_do_completed %}
+                                    Completed
+                                {% else %}
+                                    Not Completed
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if row.to_do_completed %}
+                                    {{ row.change_user }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+
+    {% if task_history_collective %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Task History</h2>
+            </div>
+            <div class="card-body">
+                {% for row in task_history_collective %}
+                    <div class="form-group">
+                        {{ row.submit_history }}
+                    </div>
+                    <div class="form-group">
+                        {{ row.task_history }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if email_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Task Email History</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td width="70%">Subject</td>
+                            <td width="15%">Date</td>
+                            <td width="15%">Sent By</td>
+                        </tr>
+                    </thead>
+                    {% for row in email_results %}
+                        <tr>
+                            <td>
+                                {% if email_permission > 1 %}
+                                    <a href="{% url 'email_information' row.email_content_id %}">{{ row.email_subject }}</a>
+                                {% else %}
+                                    {{ row.email_subject }}
+                                {% endif %}
+                            </td>
+                            <td>{{ row.date_created }}</td>
+                            <td>{{ row.change_user }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+
+    {% if associated_project_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Associated Projects</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Project Id</td>
+                            <td>Short Description</td>
+                            <td>End Date</td>
+                        </tr>
+                    </thead>
+                    {% for row in associated_tasks_results %}
+                        <tr>
+                        <td><a href="{% url 'project_information' row.project_id.project_id %}">Project - {{ row.project_id.project_id }}</a></td>
+                        <td>{{ row.project_id }}</td>
+                        <td>{{ row.project_id.project_end_date }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if task_customers_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Task Customers</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Customer Name</td>
+                            <td>Customer Description</td>
+                            <td>Customer Email</td>
+                        </tr>
+                    </thead>
+                    {% for row in task_customers_results %}
+                        <tr>
+                            <td><a href="{% url 'customer_information' row.customer_id.customer_id %}">{{ row.customer_id.customer_first_name }} {{ row.customer_id.customer_last_name }}</a></td>
+                            <td>{{ row.customer_description }}</td>
+                            <td>{{ row.customer_id.customer_email }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if costs_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Task Costs</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Item</td>
+                            <td>Cost</td>
+                            <td>Running Total</td>
+                        </tr>
+                    </thead>
+                    {% for row in costs_results %}
+                        <tr>
+                            <td>{{ row.cost_description }}</td>
+                            <td name="cost_amount">{{ row.cost_amount|intcomma }}</td>
+                            <td name="running_total">--filled-by-javascript--</td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td>GRAND TOTAL</td>
+                        <td id="grand_total">--fill out--</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if quote_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Task Quotes</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td width="50%">Quote Title</td>
+                            <td width="25%">Valid Till</td>
+                            <td width="25%">Quote Stage</td>
+                        </tr>
+                    </thead>
+                    {% for row in quote_results %}
+                        <tr>
+                            <td><a href="{% url 'quote_information' row.quote_id %}">{{ row.quote_title }}</a></td>
+                            <td>{{ row.quote_valid_till }}</td>
+                            <td>{{ row.quote_stage_id }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if bug_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Assigned Bugs</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Bug ID</td>
+                            <td>Bug Client</td>
+                            <td>Bug Description</td>
+                            <td>Bug Status</td>
+                            {% if bug_permission == 4 %}
+                                <td>Remove Bug</td>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    {% for row in bug_results %}
+                        <tr>
+                            <td>{{ row.bug_code }}</td><!--get this to be hyperlinked to the bug :)-->
+                            <td>{{ row.bug_client }}</td>
+                            <td><a href="{{ row.bug_client.bug_client_url }}{{ row.bug_client.list_of_bug_client.api_bug }}{{ row.bug_code }}" target="_blank">{{ row.bug_description }}</a></td>
+                            <td>{{ row.bug_status }}</td>
+                            {% if bug_permission == 4 %}
+                                <td><a href="javascript:void(0)" onclick="">Remove Bug</a></td><!--add in the javascript to allow this-->
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if assigned_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Task Assigned Users</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Username</td>
+                            <td>First Name</td>
+                            <td>Last name</td>
+                        </tr>
+                    </thead>
+                    {% if assigned_results %}
+                        {% for row in assigned_results %}
+                            <tr>
+                                <td>{{ row.assigned_user__username }}</td>
+                                <td>{{ row.assigned_user__first_name }}</td>
+                                <td>{{ row.assigned_user__last_name }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+
+    {% if group_list_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Task Assigned Groups</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Assigned Group Name</td>
+                        </tr>
+                    </thead>
+                    {% for row in group_list_results %}
+                        <tr>
+                            <td>{{ row.group_id }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

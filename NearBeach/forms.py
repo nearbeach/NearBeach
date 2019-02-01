@@ -2138,19 +2138,13 @@ class new_quote_form(ModelForm):
             'style': 'width: 100%',
         }),
     )
-    quote_approval_status_id=forms.ModelChoiceField(
-        queryset=list_of_quote_stage.objects.all(),
-        widget=forms.Select(attrs={
-            'class': 'form-control',
-        })
-    )
+
 
     class Meta:
         model=quote
         fields={
             'quote_title',
             'quote_stage_id',
-            'quote_approval_status_id',
             'quote_terms',
             'customer_notes',
             'quote_valid_till',
@@ -2794,7 +2788,6 @@ class project_readonly_form(ModelForm):
     project_description = forms.CharField(
         widget=TinyMCE(
             mce_attrs={
-                'width': '100%',
                 'toolbar': False,
                 'menubar': False,
                 'readonly': 1,
@@ -2916,6 +2909,35 @@ class quote_information_form(ModelForm):
             'customer_notes',
             'quote_valid_till',
         }
+
+
+class quote_readonly_form(forms.Form):
+    quote_terms = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Requirement Scope',
+                'class': 'form-control',
+            }
+        ),
+    )
+    customer_notes = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Requirement Scope',
+                'class': 'form-control',
+            }
+        ),
+    )
 
 
 class quote_template_form(ModelForm):
@@ -3077,6 +3099,48 @@ class search_user_form(forms.Form):
 
 
 
+class task_history_readonly_form(ModelForm):
+    def __init__(self, *args, **kwargs):
+        """
+        The project descriptioon will each need to be stored in a readonly tinyMCE widget. The issue here is that
+        each widget will need it's own ID other wise it will apply the tinyMCE widget to only one.
+
+        This widget can be used in both the project_readonly and project_information mode
+        """
+        task_history_id = kwargs.pop('task_history_id', None)
+        super(task_history_readonly_form, self).__init__(*args, **kwargs)
+
+        #self.fields['quote_billing_address'].queryset = campus_results
+
+        self.fields['task_history'].widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Requirement Scope',
+                'id': 'id_task_history_' + str(task_history_id),
+            },
+
+        )
+
+    #Definition of the tinyMCE widget
+    task_history = forms.CharField()
+    submit_history = forms.CharField(
+        widget=TextInput(attrs={
+            'readonly': True,
+            'class': 'form-control',
+        })
+    )
+
+    class Meta:
+        model=task_history
+        fields={
+            'task_history',
+        }
+
 
 class task_information_form(ModelForm):
     task_short_description=forms.CharField(
@@ -3141,6 +3205,27 @@ class task_information_form(ModelForm):
             #'task_end_date',
         }
 
+
+class task_readonly_form(ModelForm):
+    task_long_description = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Requirement Scope',
+                'class': 'form-control',
+            }
+        ),
+    )
+
+    class Meta:
+        model=task
+        fields = {
+            'task_long_description'
+        }
 
 
 class timeline_form(forms.Form):

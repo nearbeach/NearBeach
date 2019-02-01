@@ -5505,8 +5505,28 @@ def quote_information(request, quote_id):
     if object_access.count() == 0 and not permission_results['administration'] == 4:
         return HttpResponseRedirect(reverse('permission_denied'))
 
-
+    #Get the quote information
     quotes_results = quote.objects.get(quote_id=quote_id)
+
+    """
+    If any of the following conditions are met, we want to send the user to the read only module.
+    - Quote's status is 'Quote Close Accepted'
+    - Quote's status is 'Quote Close Rejected'
+    - Quote's status is 'Quote Close Lost'
+    - Quote's status is 'Quote Close Dead'
+    - Invoice's status is 'Invoice Close Accepted'
+    - Invoice's status is 'Invoice Close Rejected'
+    - Invoice's status is 'Invoice Close Lost'
+    - Invoice's status is 'Invoice Close Dead'
+    - User only have read only permissions
+    
+    The above quote/invoice status have the "Closed" statement as true in the table 'list_of_quote_stages'. We just 
+    need to check this status in that table.
+    """
+    print("QUOTE STAGE: " + str(quotes_results.quote_stage_id))
+    if quotes_results.quote_stage_id.quote_closed == "TRUE" or permission_results['quote'] == 1:
+        return HttpResponseRedirect(reverse('quote_readonly', args = { quote_id }))
+
     quote_template_results = quote_template.objects.filter(
         is_deleted="FALSE",
     )
@@ -5714,6 +5734,27 @@ def quote_template_information(request,quote_template_id):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
+def quote_readonly(request, quote_id):
+    #Get required data
+    quote_results = quote.objects.get(quote_id=quote_id)
+
+    # Get template
+    t = loader.get_template('NearBeach/quote_information/quote_readonly.html')
+
+    # Context
+    c = {
+        'quote_results': quote_results,
+        'quote_readonly_form': quote_readonly_form(
+            initial={
+                'quote_terms': quote_results.quote_terms,
+                'customer_notes': quote_results.customer_notes,
+            }
+        ),
+        'timezone': settings.TIME_ZONE,
+    }
+
+    return HttpResponse(t.render(c,request))
 
 
 @login_required(login_url='login')
@@ -6096,19 +6137,18 @@ def task_information(request, task_id):
         return HttpResponseRedirect(reverse('permission_denied'))
 
 
-
-    # Setup connection to the database and query it
-    cursor = connection.cursor() #LETS REMOVE THIS CRAP
-
-
-
-    """
-	There are two buttons on the task information page. Both will come
-	here. Both will save the data, however only one of them will resolve
-	the task.
-	"""
     # Define the data we will edit
     task_results = get_object_or_404(task, task_id=task_id)
+
+    """
+    We want to take the user to the read only module if either of the conditions are met;
+    - Task status has been set to 'Resolved'
+    - Task status has been set to 'Completed'
+    - User only have read only status
+    """
+    if task_results.task_status in ('Resolved','Closed') or permission_results['task'] == 1:
+        #Take them to the read only
+        return HttpResponseRedirect(reverse('task_readonly',args={ task_id }))
 
     # Get the data from the form
     if request.method == "POST":
@@ -6120,11 +6160,16 @@ def task_information(request, task_id):
             task_results.task_start_date = form.cleaned_data['task_start_date']
             task_results.task_end_date = form.cleaned_data['task_end_date']
 
-            # Check to make sure the resolve button was hit
+            """
+            There are two buttons on the task information page. Both will come
+            here. Both will save the data, however only one of them will resolve
+            the task.
+            
+            We check here to see if the resolve button has been pressed.
+            """
             if 'Resolve' in request.POST:
                 # Well, we have to now resolve the data
                 task_results.task_status = 'Resolved'
-
             task_results.save()
 
             """
@@ -6137,79 +6182,6 @@ def task_information(request, task_id):
             for row in kanban_card_results:
                 row.kanban_card_text = "TASK" + str(task_id) + " - " + form.cleaned_data['task_short_description']
                 row.save()
-
-            """
-			If the user has submitted a new document. We only upload the document IF and ONLY IF the user
-			has selected the "Submit" button on the "New Document" dialog. We do not want to accidently
-			upload a document if we hit the "SAVE" button from a different location
-			"""
-            if 'new_document' in request.POST:
-                document = request.FILES.get('document')
-                document_description = request.POST.get("document_description")
-                document_url_location = request.POST.get("document_url_location")
-
-                parent_folder_id = request.POST.get("parent_folder_id")
-
-                print(parent_folder_id)
-
-                submit_document = document(
-                    #task_id=task.objects.get(pk=task_id),
-                    document=document,
-                    document_description=document_description,
-                    document_url_location=document_url_location,
-                    change_user=request.user,
-                )
-                submit_document.save()
-
-                print(parent_folder_id)
-
-                #If the document is under a folder
-                if isinstance(parent_folder_id, int):
-                    submit_document_folder = document_folder(
-                        document_key=submit_document,
-                        change_user=request.user,
-                        folder_id=int(parent_folder_id),
-                    )
-                    submit_document_folder.save()
-
-
-                #Submit the document permissions
-                submit_document_permissions = document_permission(
-                    document_key=submit_document,
-                    task_id=task.objects.get(pk=task_id),
-                    change_user=request.user,
-                )
-                submit_document_permissions.save()
-
-            """
-			Fuck - someone wants to create a new folder...
-			"""
-            if 'new_folder' in request.POST:
-                folder_description = form.cleaned_data['folder_description']
-                folder_location = request.POST.get("folder_location")
-
-                submit_folder = folder(
-                    task_id=task.objects.get(pk=task_id),
-                    folder_description=folder_description,
-                    change_user=request.user,
-                )
-
-                try:
-                    submit_folder.parent_folder_id = folder.objects.get(
-                        folder_id=int(folder_location))
-                    submit_folder.save()
-                except:
-                    submit_folder.save()
-
-
-    folders_results = folder.objects.filter(
-        task_id=task_id,
-        is_deleted='FALSE',
-    ).order_by(
-        'folder_description'
-    )
-
-
 
     # Setup the initial
     initial = {
@@ -6261,6 +6233,129 @@ def task_information(request, task_id):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def task_readonly(request,task_id):
+    task_groups_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        task_id=task.objects.get(task_id=task_id),
+    ).values('group_id_id')
+
+    permission_results = return_user_permission_level(request, task_groups_results, ['task', 'task_history'])
+
+    # Get data
+    task_results = task.objects.get(task_id=task_id)
+    to_do_results = to_do.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_id,
+    )
+    task_history_results = task_history.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_id,
+    )
+    email_results = email_content.objects.filter(
+        is_deleted="FALSE",
+        email_content_id__in=email_contact.objects.filter(
+            Q(task_id=task_id) &
+            Q(is_deleted="FALSE") &
+            Q(
+                Q(is_private=False) |
+                Q(change_user=request.user)
+            )
+        ).values('email_content_id')
+    )
+
+    associated_project_results = project_task.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_id,
+    )
+
+    task_customers_results = task_customer.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_id,
+
+    )
+
+    costs_results = cost.objects.filter(
+        task_id=task_id,
+        is_deleted='FALSE'
+    )
+
+    quote_results = quote.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_id,
+    )
+
+    bug_results = bug.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_id,
+    )
+
+    assigned_results = object_assignment.objects.filter(
+        task_id=task_id,
+        is_deleted="FALSE",
+    ).exclude(
+        assigned_user=None,
+    ).values(
+        'assigned_user__id',
+        'assigned_user',
+        'assigned_user__username',
+        'assigned_user__first_name',
+        'assigned_user__last_name',
+    ).distinct()
+
+    group_list_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_id,
+    )
+
+    """
+    We want to bring through the project history's tinyMCE widget as a read only. However there are 
+    most likely multiple results so we will create a collective.
+    """
+    task_history_collective = []
+    for row in task_history_results:
+        # First deal with the datetime
+        task_history_collective.append(
+            task_history_readonly_form(
+                initial={
+                    'task_history': row.task_history,
+                    'submit_history': row.user_infomation + " - " + str(row.user_id) + " - " \
+                                      + row.date_created.strftime("%d %B %Y %H:%M.%S"),
+                },
+                task_history_id=row.task_history_id,
+            )
+        )
+
+
+    # Load template
+    t = loader.get_template('NearBeach/task_information/task_readonly.html')
+
+    # Context
+    c = {
+        'task_id': task_id,
+        'task_results': task_results,
+        'task_readonly_form': task_readonly_form(
+            initial={'task_long_description': task_results.task_long_description}
+        ),
+        'to_do_results': to_do_results,
+        'task_history_collective': task_history_collective,
+        'email_results': email_results,
+        'associated_project_results': associated_project_results,
+        'task_customers_results': task_customers_results,
+        'costs_results': costs_results,
+        'quote_results': quote_results,
+        'bug_results': bug_results,
+        'assigned_results': assigned_results,
+        'group_list_results': group_list_results,
+        'project_permissions': permission_results['task'],
+        'project_history_permissions': permission_results['task_history'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c,request))
 
 @login_required(login_url='login')
 def task_remove_customer(request,task_customer_id):
@@ -6716,7 +6811,7 @@ def update_template_strings(variable,quote_results):
     variable = variable.replace('{{ opportunity_id }}', str(quote_results.opportunity_id))
     variable = variable.replace('{{ organisation_id }}', str(quote_results.organisation_id))
     variable = variable.replace('{{ project_id }}', str(quote_results.project_id))
-    variable = variable.replace('{{ quote_approval_status_id }}', str(quote_results.quote_approval_status_id))
+#    variable = variable.replace('{{ quote_approval_status_id }}', str(quote_results.quote_approval_status_id))
     variable = variable.replace('{{ quote_billing_address }}', str(quote_results.quote_billing_address))
     variable = variable.replace('{{ quote_id }}', str(quote_results.quote_id))
     variable = variable.replace('{{ quote_stage_id }}', str(quote_results.quote_stage_id))

@@ -2352,12 +2352,13 @@ class quote(models.Model):
         choices=IS_DELETED_CHOICE,
         default='FALSE'
     )
+    """
     quote_approval_status_id = models.CharField(
         max_length=10,
         choices=QUOTE_APPROVAL_STATUS,
         default='DRAFT',
     )
-
+    """
     quote_terms = HTMLField(
         null=True,
         blank=True,
