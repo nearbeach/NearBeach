@@ -604,6 +604,48 @@ class campus_information_form(ModelForm):
         ]
 
 
+class contact_history_readonly_form(ModelForm):
+    def __init__(self, *args, **kwargs):
+        """
+        The contact descriptioon will each need to be stored in a readonly tinyMCE widget. The issue here is that
+        each widget will need it's own ID other wise it will apply the tinyMCE widget to only one.
+
+        This widget can be used in both the project_readonly and project_information mode
+        """
+        contact_history_id = kwargs.pop('contact_history_id', None)
+        super(contact_history_readonly_form, self).__init__(*args, **kwargs)
+
+        #self.fields['quote_billing_address'].queryset = campus_results
+
+        self.fields['contact_history'].widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Requirement Scope',
+                'id': 'id_contact_history' + str(contact_history_id),
+            },
+
+        )
+
+    #Definition of the tinyMCE widget
+    contact_history = forms.CharField()
+    submit_history = forms.CharField(
+        widget=TextInput(attrs={
+            'readonly': True,
+            'class': 'form-control',
+        })
+    )
+
+    class Meta:
+        model=contact_history
+        fields={
+            'contact_history',
+        }
+
 
 class cost_information_form(forms.Form):
     cost_description = forms.CharField(
@@ -652,8 +694,6 @@ class customer_campus_form(ModelForm):
 
 
 class customer_information_form(ModelForm):
-
-
     #The Fields
     customer_last_name=forms.CharField(
         max_length=255,
@@ -721,6 +761,56 @@ class customer_information_form(ModelForm):
 
         return profile_picture
 
+
+class customer_readonly_form(ModelForm):
+    #The Fields
+    customer_last_name=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    customer_title=forms.ModelChoiceField(
+        queryset=list_of_title.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+            'disabled': True,
+        })
+    )
+    customer_email=forms.EmailField(
+        max_length=255,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+
+    customer_first_name=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    """
+    There is an issue with the customer read only contact histry. It does not pass through the required media files.
+    This is a simple and effective work around for that issue.  :) This should be a blank field.
+    """
+    customer_media=forms.CharField(
+        widget=TinyMCE(attrs={
+
+        }),
+        required=False,
+    )
+    class Meta:
+        model=customer
+        fields='__all__'
+        exclude=[
+            'is_deleted',
+            'organisation_id',
+            'change_user',
+        ]
 
 class diagnostic_test_document_upload_form(forms.Form):
     document = forms.FileField(

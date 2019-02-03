@@ -1342,6 +1342,10 @@ def customer_information(request, customer_id):
     if permission_results['customer'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
+    #Redirect the user if they only have readonly mode
+    if permission_results['customer'] == 1:
+        return HttpResponseRedirect(reverse('customer_readonly', args = { customer_id }))
+
     if request.method == "POST" and permission_results['customer'] > 1:
         # Save everything!
         form = customer_information_form(request.POST, request.FILES)
@@ -1429,24 +1433,6 @@ def customer_information(request, customer_id):
     except:
         profile_picture = ''
 
-    # Date required to initiate date
-    today = datetime.datetime.now()
-
-    """
-    We need to do some basic formulations with the hour and and minutes.
-    For the hour we need to find all those who are in the PM and
-    change both the hour and meridiem accordingly.
-    For the minute, we have to create it in 5 minute blocks.
-    """
-    hour = today.hour
-    minute = int(5 * round(today.minute / 5.0))
-    meridiems = 'AM'
-
-    if hour > 12:
-        hour = hour - 12
-        meridiems = 'PM'
-    elif hour == 0:
-        hour = 12
 
     # load template
     t = loader.get_template('NearBeach/customer_information.html')
@@ -1455,14 +1441,7 @@ def customer_information(request, customer_id):
     c = {
         'customer_information_form': customer_information_form(
             instance=customer_results,
-            initial={
-                'start_date_year': today.year,
-                'start_date_month': today.month,
-                'start_date_day': today.day,
-                'start_date_hour': hour,
-                'start_date_minute': minute,
-                'start_date_meridiems': meridiems,
-            }),
+            ),
         'campus_results': campus_results,
         'customer_campus_results': customer_campus_results,
         'add_campus_results': add_campus_results,
@@ -1479,6 +1458,130 @@ def customer_information(request, customer_id):
         'quote_results':quote_results,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def customer_readonly(request,customer_id):
+    permission_results = return_user_permission_level(request, None,['assign_campus_to_customer','customer'])
+
+    if permission_results['customer'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    # Get the instance
+    customer_results = customer.objects.get(
+        customer_id=customer_id,
+        is_deleted="FALSE",
+    )
+    add_campus_results = campus.objects.filter(
+        organisation_id=customer_results.organisation_id,
+        is_deleted="FALSE",
+    )
+    quote_results = quote.objects.filter(
+        is_deleted="FALSE",
+        customer_id=customer_id,
+    )
+
+    # Setup connection to the database and query it
+    project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_id__in=project_customer.objects.filter(
+            is_deleted="FALSE",
+            customer_id=customer_id,
+        ).values('project_id')
+    )
+
+    task_results = task.objects.filter(
+        is_deleted="FALSE",
+        task_id__in=task_customer.objects.filter(
+            is_deleted="FALSE",
+            customer_id=customer_id,
+        ).values('task_id')
+    )
+
+    contact_history_results = contact_history.objects.filter(
+        is_deleted="FALSE",
+        customer_id=customer_id,
+    )
+
+    """
+    We want to bring through the project history's tinyMCE widget as a read only. However there are 
+    most likely multiple results so we will create a collective.
+    """
+    contact_history_collective = []
+    for row in contact_history_results:
+        # First deal with the datetime
+        contact_history_collective.append(
+            contact_history_readonly_form(
+                initial={
+                    'contact_history': row.contact_history,
+                    'submit_history': row.user_id.username + " - " + row.date_created.strftime("%d %B %Y %H:%M.%S"),
+                },
+                contact_history_id=row.contact_history_id,
+            ),
+        )
+
+    print(contact_history_collective)
+
+    # The campus the customer is associated to
+    """
+    We need to limit the amount of opportunities to those that the user has access to.
+    """
+    user_groups_results = user_group.objects.filter(username=request.user)
+
+    opportunity_permissions_results = object_assignment.objects.filter(
+        Q(
+            Q(assigned_user=request.user)  # User has permission
+            | Q(group_id__in=user_groups_results.values('group_id'))  # User's group have permission
+        )
+    )
+    opportunity_results = opportunity.objects.filter(
+        customer_id=customer_id,
+        opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
+    )
+    # For when customer have an organisation
+    campus_results = customer_campus.objects.filter(
+        customer_id=customer_id,
+        is_deleted='FALSE',
+    )
+    # For when customer do not have an organistion
+    customer_campus_results = campus.objects.filter(
+        is_deleted="FALSE",
+        customer=customer_id,
+    )
+
+    try:
+        profile_picture = customer_results.customer_profile_picture.url
+    except:
+        profile_picture = ''
+
+    # load template
+    t = loader.get_template('NearBeach/customer_information/customer_readonly.html')
+
+    # context
+    c = {
+        'customer_readonly_form': customer_readonly_form(
+            instance=customer_results,
+        ),
+        'campus_results': campus_results,
+        'customer_campus_results': customer_campus_results,
+        'add_campus_results': add_campus_results,
+        'customer_results': customer_results,
+        'media_url': settings.MEDIA_URL,
+        'profile_picture': profile_picture,
+        'project_results': project_results,
+        'task_results': task_results,
+        'opportunity_results': opportunity_results,
+        'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
+        'customer_id': customer_id,
+        'customer_permissions': permission_results['customer'],
+        'assign_campus_to_customer_permission': permission_results['assign_campus_to_customer'],
+        'quote_results': quote_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'contact_history_collective': contact_history_collective,
     }
 
     return HttpResponse(t.render(c, request))
@@ -5736,8 +5839,68 @@ def quote_template_information(request,quote_template_id):
 
 @login_required(login_url='login')
 def quote_readonly(request, quote_id):
+    permission_results = return_user_permission_level(request, None, 'quote')
+
+    if permission_results['quote'] == 0:
+        return HttpResponseRedirect(reverse(permission_denied))
+
+
     #Get required data
     quote_results = quote.objects.get(quote_id=quote_id)
+
+    line_item_results = quote_product_and_service.objects.filter(
+        is_deleted='FALSE',
+        quote_id=quote_id,
+    )
+
+    product_line_items = quote_product_and_service.objects.filter(
+        quote_id=quote_id,
+        product_and_service__product_or_service='Product',
+        is_deleted="FALSE",
+    )
+
+    service_line_items = quote_product_and_service.objects.filter(
+        quote_id=quote_id,
+        product_and_service__product_or_service='Service',
+        is_deleted="FALSE",
+    )
+
+    responsible_customer_results = customer.objects.filter(
+        customer_id__in=quote_responsible_customer.objects.filter(
+            quote_id=quote_id,
+            is_deleted="FALSE"
+        ).values('customer_id').distinct()
+    )
+
+    email_results = email_content.objects.filter(
+        is_deleted="FALSE",
+        email_content_id__in=email_contact.objects.filter(
+            Q(quotes=quote_id) &
+            Q(is_deleted="FALSE") &
+            Q(
+                Q(is_private=False) |
+                Q(change_user=request.user)
+            )
+        ).values('email_content_id')
+    )
+
+    quote_template_results = quote_template.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    group_list_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        quote_id=quote_id,
+    ).exclude(
+        group_id=None,
+    )
+
+    assigned_user_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        quote_id=quote_id,
+    ).exclude(
+        assigned_user=None,
+    )
 
     # Get template
     t = loader.get_template('NearBeach/quote_information/quote_readonly.html')
@@ -5752,6 +5915,16 @@ def quote_readonly(request, quote_id):
             }
         ),
         'timezone': settings.TIME_ZONE,
+        'line_item_results': line_item_results,
+        'product_line_items': product_line_items,
+        'service_line_items': service_line_items,
+        'responsible_customer_results': responsible_customer_results,
+        'email_results': email_results,
+        'quote_template_results': quote_template_results,
+        'group_list_results': group_list_results,
+        'assigned_user_results': assigned_user_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c,request))
@@ -6327,6 +6500,8 @@ def task_readonly(request,task_id):
                 task_history_id=row.task_history_id,
             )
         )
+
+    print(task_history_collective)
 
 
     # Load template

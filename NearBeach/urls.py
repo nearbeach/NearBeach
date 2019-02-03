@@ -51,6 +51,7 @@ re_path(r'^campus_information/(?P<campus_information>[0-9]+)/', views.campus_inf
 re_path(r'^cost_information/(?P<location_id>[0-9]+)/(?P<destination>["project","task"]+)/$',views.cost_information,name='cost_information'),
 re_path(r'^customer_information/(?P<customer_id>[0-9]+)/', views.customer_information, name='customer_information'),
 re_path(r'^customer_campus_information/(?P<customer_campus_id>[0-9]+)/(?P<customer_or_org>["CUST","CAMP"]+)',views.customer_campus_information, name="customer_campus_information"),
+re_path(r'^customer_readonly/(?P<customer_id>[0-9]+)/', views.customer_readonly, name='customer_readonly'),
 re_path(r'^dashboard/$', views.dashboard,name='dashboard'),
 re_path(r'^dashboard/active_projects', views.dashboard_active_projects,name='dashboard_active_projects'),
 re_path(r'^dashboard/active_quotes', views.dashboard_active_quotes,name='dashboard_active_quotes'),
