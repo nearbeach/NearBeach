@@ -1,0 +1,269 @@
+{% extends '../template.html' %}
+{% block content %}
+{% load humanize %}
+{% load static %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Customer Information</h2>
+        </div>
+        <div class="card-body">
+            <div class="form-group text-center">
+                {% if profile_picture %}
+                    <label><img src="{{ profile_picture }}" height="160px"></label><br/>
+                {% else %}
+                    <label><img src="{% static 'NearBeach/images/icons/star.svg' %}" height="160px"></label><br/>
+                {% endif %}
+            </div>
+            {{ customer_readonly_form.media }}
+            <div class="form-row">
+                <div class="form-group col-md-2">
+                    <label for="id_customer_title">Title</label>
+                    {{ customer_readonly_form.customer_title }}
+                </div>
+                <div class="form-group col-md-5">
+                    <label for="id_customer_first_name">Customer First Name</label>
+                    {{ customer_readonly_form.customer_first_name }}
+                </div>
+                <div class="form-group col-md-5">
+                    <label for="id_customer_last_name">Customer Last Name</label>
+                    {{ customer_readonly_form.customer_last_name }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="id_customer_email">Customer Email</label>
+                {{ customer_readonly_form.customer_email }}
+            </div>
+            {% if not customer_results.organisation_id == Null %}
+                <div class="form-group">
+                    <label>Organisation: <a href="{% url 'organisation_information' customer_results.organisation_id.organisation_id %}">{{ customer_results.organisation_id }}</a></label>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Campus Contact Information</h2>
+        </div>
+        <div class="card-body">
+            {% if customer_campus_results %}
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <td>Campus nickname</td>
+                            <td>Campus's Phone</td>
+                            <td>Campus's Fax</td>
+                            <td>Campus Suburb</td>
+                            <td>Campus Region</td>
+                            <td>Campus Country</td>
+                            {% if customer_permissions == 4 or administration_permission %}
+                                <td>Delete</td>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    {% for row in customer_campus_results %}
+                        {{ row.media }}
+                        <tr>
+                            <td><a href="{% url 'campus_information' row.campus_id %}">{{ row.campus_nickname }}</a></td>
+                            <td>{{ row.campus_phone }}</td>
+                            <td>{{ row.campus_fax }}</td>
+                            <td>{{ row.campus_suburb }}</td>
+                            <td>{{ row.campus_region_id }}</td>
+                            <td>{{ row.campus_country_id }}</td>
+                            {% if customer_permissions == 4 or administration_permission %}
+                                <td>Delete</td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </table>
+
+            {% elif campus_results %}
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <td>Campus nickname</td>
+                            <td>Contact's Phone</td>
+                            <td>Contact's Fax</td>
+                            <td>Campus Suburb</td>
+                            <td>Campus Region</td>
+                            <td>Campus Country</td>
+                            {% if customer_permissions == 4 or administration_permission %}
+                                <td>Delete</td>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    {% for row in campus_results %}
+                        <tr>
+                            <td><a href="{% url 'customer_campus_information' row.customer_campus_id 'CUST' %}">{{ row.campus_id }}</a></td>
+                            <td>{{ row.customer_phone }}</td>
+                            <td>{{ row.customer_fax }}</td>
+                            <td>{{ row.campus_id.campus_suburb }}</td>
+                            <td>{{ row.campus_id.campus_region_id }}</td>
+                            <td>{{ row.campus_id.campus_country_id }}</td>
+                            {% if customer_permissions == 4 or administration_permission %}
+                                <td><a href="{% url 'delete_campus_contact' row.customer_campus_id 'CUST' %}">Delete</a></td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <label>There are currently no campuses</label>
+            {% endif %}
+        </div>
+    </div>
+
+
+
+    {% if contact_history_collective %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Customer History</h2>
+            </div>
+            <div class="card-body">
+                {% for row in contact_history_collective %}
+                    <div class="form-group">
+                        {{ row.submit_history }}
+                    </div>
+                    <div class="form-group">
+                        {{ row.contact_history }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if email_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Email History</h2>
+            </div>
+            <div class="card-body" id="email_history">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td width="70%">Subject</td>
+                            <td width="15%">Date</td>
+                            <td width="15%">Sent By</td>
+                        </tr>
+                    </thead>
+                    {% for row in email_results %}
+                        <tr>
+                            <td><a href="{% url 'email_information' row.email_content_id %}">{{ row.email_subject }}</a></td>
+                            <td>{{ row.date_created }}</td>
+                            <td>{{ row.change_user }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+
+    {% if quote_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Customer Quotes</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td width="50%">Quote Title</td>
+                            <td width="25%">Valid Till</td>
+                            <td width="25%">Quote Stage</td>
+                        </tr>
+                    </thead>
+                    {% for row in quote_results %}
+                        <tr>
+                            <td><a href="{% url 'quote_information' row.quote_id %}">{{ row.quote_title }}</a></td>
+                            <td>{{ row.quote_valid_till }}</td>
+                            <td>{{ row.quote_stage_id }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Associated Projects & Tasks</h2>
+        </div>
+        <div class="card-body">
+            <h4>Assigned Projects</h4>
+                {% if project_results %}
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <td>Project ID</td>
+                                <td>Project Name</td>
+                                <td>Project End Date</td>
+                                <td>Project Status</td>
+                            </tr>
+                        </thead>
+                        {% for row in project_results %}
+                            <tr>
+                                <td><a href="{% url 'project_information' row.project_id %}">PRO{{ row.project_id }}</a></td>
+                                <td>{{ row.project_name }}</td>
+                                <td>{{ row.project_end_date }}</td>
+                                <td>{{ row.project_status }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                    <p>Sorry. There are currently no projects for this customer</p>
+                {% endif %}
+            <br/>
+
+            <h4>Assigned Tasks</h4>
+                {% if task_results %}
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <td>Task ID</td>
+                                <td>Task Name</td>
+                                <td>Task End Date</td>
+                                <td>Task Status</td>
+                            </tr>
+                        </thead>
+                        {% for row in task_results %}
+                            <tr>
+                                <td><a href="{% url 'task_information' row.task_id %}">TASK{{ row.task_id }}</a></td>
+                                <td>{{ row.task_short_description }}</td>
+                                <td>{{ row.task_end_date }}</td>
+                                <td>{{ row.task_status }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+
+        </div>
+    </div>
+
+    {% if opportunity_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Customer Opportunities</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Opportunity Name</td>
+                            <td>Opportunity Stage</td>
+                            <td>Opportunity End Date</td>
+                        </tr>
+                    </thead>
+                    {% for row in opportunity_results %}
+                        <tr>
+                            <td><a href="{% url 'opportunity_information' row.opportunity_id %}">{{ row.opportunity_name }}</a></td>
+                            <td>{{ row.opportunity_stage_id }}</td>
+                            <td>{{ row.opportunity_expected_close_date }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock %}

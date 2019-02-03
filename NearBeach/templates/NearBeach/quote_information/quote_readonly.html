@@ -1,0 +1,499 @@
+{% extends '../template.html' %}
+{% block content %}
+{% load humanize %}
+{% load static %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Quote Information {{ quote_id }}</h2>
+        </div>
+        <div class="card-body">
+            {{ quote_readonly_form.media }}
+            <h2>{{ quote_results.quote_title }}</h2>
+            <div class="form-group">
+                <label for="id_quote_terms">Quote Terms</label>
+                {{ quote_readonly_form.quote_terms }}
+            </div>
+            <div>Quote Stage: {{ quote_results.quote_stage_id }}</div>
+            <div>Timezone: {{ timezone }}</div>
+            <div>Quote Valid Till: {{ quote_results.quote_valid_till }}</div>
+            {% if quote_results.customer_notes %}
+                <div class="form-group">
+                    <label for="id_quote_customer_notes">Customer Notes</label>
+                    {{ quote_readonly_form.customer_notes }}
+                </div>
+            {% endif %}
+            {% if quote_results.quote_billing_address %}
+                <div class="form-group">
+                    <label for="id_quote_billing_address">Quote Billing Address</label>
+                    {{ quote_results.quote_billing_address }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+
+    {% if quote_results.project_id or quote_results.task_id or quote_results.organisation_id or quote_results.customer_id or quote_results.opportunity_id %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Quote Links</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Link</td>
+                            <td>Description</td>
+                        </tr>
+                    </thead>
+                {% if quote_results.project_id %}
+                    <tr>
+                        <td><a href="{% url 'project_information' quote_results.project_id.project_id %}">PRO{{ quote_results.project_id.project_id }}</a></td>
+                        <td>{{ quote_results.project_id }}</td>
+                    </tr>
+                {% elif quote_results.task_id %}
+                    <tr>
+                        <td><a href="{% url 'task_information' quote_results.task_id.task_id %}">TASK{{ quote_results.task_id.task_id }}</a></td>
+                        <td>{{ quote_results.task_id }}</td>
+                    </tr>
+                {% elif quote_results.organisation_id %}
+                    <tr>
+                        <td><a href="{% url 'organisation_information' quote_results.organisation_id.organisation_id %}">ORG{{ quote_results.organisation_id.organisation_id }}</a></td>
+                        <td>{{ quote_results.organisation_id }}</td>
+                    </tr>
+                {% elif quote_results.customer_id %}
+                    <tr>
+                        <td><a href="{% url 'customer_information' quote_results.customer_id.customer_id %}">CUST{{ quote_results.customer_id.customer_id }}</a></td>
+                        <td>{{ quote_results.customer_id }}</td>
+                    </tr>
+                {% elif quote_results.opportunity_id %}
+                    <tr>
+                        <td><a href="{% url 'opportunity_information' quote_results.opportunity_id.opportunity_id %}">OPP{{ quote_results.opportunity_id.opportunity_id }}</a></td>
+                        <td>{{ quote_results.opportunity_id.opportunity_name }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td>NA</td>
+                        <td>Sorry, this quote is not linked.</td>
+                    </tr>
+                {% endif %}
+            </table>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Line Items</h2>
+        </div>
+        <div class="card-body">
+            {% if product_line_items %}
+                <h3>Product Line Items</h3>
+                <table id="product_line_table" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <td>Product</td>
+                            <td>Price</td>
+                            <td>Quantity</td>
+                            <td>Discount Amount</td>
+                            <td>Sales Price</td>
+                            <td>Tax %</td>
+                            <td>Tax Amount</td>
+                            <td>Total</td>
+                            <td>Delete</td>
+                        </tr>
+                    </thead>
+                    {% for row in product_line_items %}
+                        <tr>
+                            <td>{{ row.product_and_service }}</td>
+                            <td name="product_price">{{ row.product_price }}</td>
+                            <td name="product_quantity">{{ row.quantity }}</td>
+                            {% if row.discount_choice == "Percentage" %}
+                                <td>{{ row.discount_percent }}% = {{ row.discount_amount }}</td>
+                                <td style="display: none;" name="product_discount">{{ row.discount_amount }}</td> <!--this is hidden here so I can calculate the discount amount! SHH DO NOT TELL MUM -->
+                            {% else %}
+                                <td name="product_discount">{{ row.discount_amount }}</td>
+                            {% endif %}
+                            <td name="product_sales_price">{{ row.sales_price }}</td>
+                            <td>{{ row.tax }}</td>
+                            <td name="product_tax">{{ row.tax_amount }}</td>
+                            <td>{{ row.total }}</td>
+                            <td><a onclick="delete_line_item({{ row.quotes_product_and_service_id }})" href="javascript:void(0);">Delete</a></td>
+                        </tr>
+                        {% if not row.product_note == "" %}
+                            <tr>
+                                <td>Product Note:</td>
+                                <td colspan="7">{{ row.product_note }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </table>
+                <br/>
+                <table style="width: 30%;" class="table table-striped table-hover">
+                    <tr>
+                        <td>Unadjusted Price</td>
+                        <td id="product_unadjusted_price">[JAVASCRIPT TO FILL]</td>
+                    </tr>
+                    <tr>
+                        <td>Discount</td>
+                        <td id="product_discount">[JAVASCRIPT TO FILL]</td>
+                    </tr>
+                    <tr>
+                        <td>Sales Price</td>
+                        <td id="product_sales_price">[JAVASCRIPT TO FILL]</td>
+                    </tr>
+                    <tr>
+                        <td>Tax</td>
+                        <td id="product_tax">[JAVASCRIPT TO FILL]</td>
+                    </tr>
+                    <tr class="table-success">
+                        <td>Grand Total</td>
+                        <td id="product_total">[JAVASCRIPT TO FILL]</td>
+                    </tr>
+                </table>
+            {% endif %}
+
+
+            {% if service_line_items %}
+                <h3>Service Line Items</h3>
+                <table id="service_line_table" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <td>Service</td>
+                            <td>Price</td>
+                            <td>Quantity</td>
+                            <td>Discount Amount</td>
+                            <td>Sales Price</td>
+                            <td>Tax %</td>
+                            <td>Tax Amount</td>
+                            <td>Total</td>
+                            <td>Delete</td>
+                        </tr>
+                    </thead>
+                    {% for row in service_line_items %}
+                        <tr>
+                            <td>{{ row.products_and_services }}</td>
+                            <td name="service_price">{{ row.product_price }}</td>
+                            <td name="service_quantity">{{ row.quantity }}</td>
+                            {% if row.discount_choice == "Percentage" %}
+                                <td>{{ row.discount_percent }}% = {{ row.discount_amount }}</td>
+                                <td style="display: none;" name="service_discount">{{ row.discount_amount }}</td> <!--this is hidden here so I can calculate the discount amount! SHH DO NOT TELL MUM -->
+                            {% else %}
+                                <td name="service_discount">{{ row.discount_amount }}</td>
+                            {% endif %}
+                            <td name="service_sales_price">{{ row.sales_price }}</td>
+                            <td>{{ row.tax }}</td>
+                            <td name="service_tax">{{ row.tax_amount }}</td>
+                            <td>{{ row.total }}</td>
+                            <td><a onclick="delete_line_item({{ row.quotes_product_and_service_id }})" href="javascript:void(0);">Delete</a></td>
+                        </tr>
+                        {% if not row.product_note == "" %}
+                            <tr>
+                                <td>Product Note:</td>
+                                <td colspan="7">{{ row.product_note }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </table>
+                <br/>
+                <table style="width: 30%;" class="table table-striped table-hover">
+                    <tr>
+                        <td>Unadjusted Price</td>
+                        <td id="service_unadjusted_price">[JAVASCRIPT TO FILL]</td>
+                    </tr>
+                    <tr>
+                        <td>Discount</td>
+                        <td id="service_discount">[JAVASCRIPT TO FILL]</td>
+                    </tr>
+                    <tr>
+                        <td>Sales Price</td>
+                        <td id="service_sales_price">[JAVASCRIPT TO FILL]</td>
+                    </tr>
+                    <tr>
+                        <td>Tax</td>
+                        <td id="service_tax">[JAVASCRIPT TO FILL]</td>
+                    </tr>
+                    <tr class="table-success">
+                        <td>Grand Total</td>
+                        <td id="service_total">[JAVASCRIPT TO FILL]</td>
+                    </tr>
+                </table>
+            {% endif %}
+
+
+            <h2>Totals</h2>
+            <table style="width: 30%;" class="table table-striped table-hover">
+                <tr>
+                    <td>Unadjusted Price</td>
+                    <td id="unadjusted_price">[JAVASCRIPT TO FILL]</td>
+                </tr>
+                <tr>
+                    <td>Discount</td>
+                    <td id="discount">[JAVASCRIPT TO FILL]</td>
+                </tr>
+                <tr>
+                    <td>Sales Price</td>
+                    <td id="sales_price">[JAVASCRIPT TO FILL]</td>
+                </tr>
+                <tr>
+                    <td>Tax</td>
+                    <td id="tax">[JAVASCRIPT TO FILL]</td>
+                </tr>
+                <tr class="table-success">
+                    <td>Grand Total</td>
+                    <td id="total">[JAVASCRIPT TO FILL]</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Responsible Customers</h2>
+        </div>
+        <div class="card-body">
+            {% if responsible_customer_results %}
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Customer Name</td>
+                            <td>Customer email</td>
+                            {% if quote_permission > 3 %}
+                                <td></td>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    {% for row in responsible_customer_results %}
+                        <tr>
+                            <td><a href="{% url 'customer_information' row.customer_id %}">{{ row.customer_title }} {{ row.customer_first_name }} {{ row.customer_last_name }}</a></td>
+                            <td>{{ row.customer_email }}</td>
+                            {% if quote_permission > 3 %}
+                                <td><a href="javascript:void(0)" onclick="remove_responsible_customer({{ quote_id }},{{ row.customer_id }})">Remove Customer</a></td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+            <p>Currently there are no responsible customers for this quote. Please add them</p>
+            {% endif %}
+        </div>
+    </div>
+
+
+    {% if email_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Email History</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td width="70%">Subject</td>
+                            <td width="15%">Date</td>
+                            <td width="15%">Sent By</td>
+                        </tr>
+                    </thead>
+                    {% for row in email_results %}
+                        <tr>
+                            {% if email_permission > 1 %}
+                                <td><a href="{% url 'email_information' row.email_content_id %}">{{ row.email_subject }}</a></td>
+                            {% endif %}
+                            <td>{{ row.date_created }}</td>
+                            <td>{{ row.change_user }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+
+    {% if quote_template_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Quote Preview</h2>
+            </div>
+            <div class="card-body" id="quote_preview">
+                <div class="form-row">
+                    <select id="quote_template">
+                        {% for row in quote_template_results %}
+                            <option value="{{ row.quote_template_id }}">{{ row.quote_template_description }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="button" value="Preview Quote" onclick="preview_quote()" class="btn-primary">
+                    <input type="button" value="Download PDF" onclick="download_quote()" class="btn-secondary">
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+
+    {% if assigned_user_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Assigned Users</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr class="header">
+                            <td>Username</td>
+                            <td>First Name</td>
+                            <td>Last name</td>
+                            {% if permissions > 3 %}
+                                <td>Remove User</td>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    {% if assigned_user_results %}
+                        {% for row in assigned_user_results %}
+                            <tr>
+                                <td>{{ row.assigned_user.username }}</td>
+                                <td>{{ row.assigned_user.first_name }}</td>
+                                <td>{{ row.assigned_user.last_name }}</td>
+                                {% if permissions > 3 %}
+                                    <td><a href="javascript:void(0)" onclick="assigned_user_delete({{ row.object_assignment_id }})">Remove User</a></td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if group_list_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Assigned Groups</h2>
+            </div>
+                <div class="card-body">
+                <table class="table table-hover table-striped">
+                    <thead>
+                    <tr>
+                        <td>Assigned Group Name</td>
+                        <td>Delete Assigned Group</td>
+                    </tr>
+                    </thead>
+                    {% for row in group_list_results %}
+                        <tr>
+                            <td>{{ row.group_id }}</td>
+                            <td>
+                                {% if group_list_results.count == 1 %}
+                                    --- Can not remove last group ---
+                                {% else %}
+                                    <a href="javascript:void(0)" onclick="delete_group_item({{ row.object_assignment_id }})">Delete Group</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    <script>
+        $(document).ready(function () {
+            //Variables
+            var product_discount = 0;
+            var product_sales_price = 0;
+            var product_tax = 0;
+
+            var service_discount = 0;
+            var service_sales_price = 0;
+            var service_tax = 0;
+
+            /*
+            The following loops loop throught the tables and gets the answers needed - by batman
+             */
+            $('[name="product_discount"]').each(function (){
+                if ($.isNumeric($(this).html())) {
+                    product_discount = product_discount + parseFloat($(this).html());
+                };
+            });
+
+            $('[name="product_sales_price"]').each(function (){
+                if ($.isNumeric($(this).html())) {
+                    product_sales_price = product_sales_price + parseFloat($(this).html());
+                };
+            });
+
+            $('[name="product_tax"]').each(function (){
+                if ($.isNumeric($(this).html())) {
+                    product_tax = product_tax + parseFloat($(this).html());
+                };
+            });
+
+                    /*
+            The following loops loop throught the tables and gets the answers needed - by batman
+             */
+            $('[name="service_discount"]').each(function (){
+                if ($.isNumeric($(this).html())) {
+                    service_discount = service_discount + parseFloat($(this).html());
+                };
+            });
+
+            $('[name="service_sales_price"]').each(function (){
+                if ($.isNumeric($(this).html())) {
+                    service_sales_price = service_sales_price + parseFloat($(this).html());
+                };
+            });
+
+            $('[name="service_tax"]').each(function (){
+                if ($.isNumeric($(this).html())) {
+                    service_tax = service_tax + parseFloat($(this).html());
+                };
+            });
+
+            // Adding the values back to the totals :)
+            $("#product_unadjusted_price").html((product_sales_price + product_discount).toFixed(2));
+            $("#product_discount").html((product_discount).toFixed(2));
+            $("#product_sales_price").html((product_sales_price).toFixed(2));
+            $("#product_tax").html((product_tax).toFixed(2));
+            $("#product_total").html((product_sales_price + product_tax).toFixed(2));
+
+            $("#service_unadjusted_price").html((service_sales_price + service_discount).toFixed(2));
+            $("#service_discount").html((service_discount).toFixed(2));
+            $("#service_sales_price").html((service_sales_price).toFixed(2));
+            $("#service_tax").html((service_tax).toFixed(2));
+            $("#service_total").html((service_sales_price + service_tax).toFixed(2));
+
+
+            $("#unadjusted_price").html((service_sales_price + service_discount + product_sales_price + product_discount).toFixed(2));
+            $("#discount").html((service_discount + product_discount).toFixed(2));
+            $("#sales_price").html((service_sales_price + product_sales_price).toFixed(2));
+            $("#tax").html((service_tax + product_tax).toFixed(2));
+            $("#total").html((service_sales_price + service_tax + product_sales_price + product_tax).toFixed(2));
+        });
+
+        function preview_quote() {
+            //Get value of template selected
+            var template_id = $("#quote_template").val();
+
+            //Go to the preview page
+            var new_tab = window.open("/preview_quote/{{ quote_results.quote_uuid }}/" + template_id + "/","_blank")
+            if (new_tab) {
+                new_tab.focus();
+            } else {
+                //Append a link - do not worry about the error.
+                $("#quote_preview").append("<a href='" + new_tab.url + "' target='_blank'>Quote Preview - click here</a>");
+            }
+        }
+
+        function download_quote() {
+            //Get value of template selected
+            var template_id = $("#quote_template").val();
+
+            //Go to the preview page
+            var new_tab = window.open("/extract_quote/{{ quote_results.quote_uuid }}/" + template_id + "/","_blank")
+            if (new_tab) {
+                new_tab.focus();
+            } else {
+                //Append a link - do not worry about the error.
+                $("#quote_preview").append("<a href='" + new_tab.url + "' target='_blank'>Quote Preview - click here</a>");
+            }
+        }
+    </script>
+{% endblock %}

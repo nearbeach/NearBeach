@@ -1,0 +1,28 @@
+{% extends "./template.html" %}
+{% block content %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Search Groups</h2>
+        </div>
+        <div class="card-body">
+            <a href="{% url 'new_group' %}">New Group</a>
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <td>Group Name</td>
+                        <td>Date Created</td>
+                        <td>Modification Date</td>
+                    </tr>
+                </thead>
+                {% for row in group_results %}
+                    <tr>
+                        <td><a href="{% url 'group_information' row.group_id %}">{{ row.group_name }}</a></td>
+                        <td>{{ row.date_created }}</td>
+                        <td>{{ row.date_modified }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

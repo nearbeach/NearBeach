@@ -67,6 +67,136 @@ def add_campus_to_customer(request, customer_id, campus_id):
         return HttpResponseBadRequest("Sorry, you can only do this in post.")
 
 
+
+@login_required(login_url='login')
+def admin_group(request,location_id,destination):
+    # Load template
+    t = loader.get_template('NearBeach/administration/admin_group.html')
+
+    c = {}
+
+    return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login')
+def admin_permission_set(request, group_id):
+    """
+    Admin permission set will render a list of all permission set's connected to the current group. This admin def
+    is only appliciable for the group functionality at the moment. Hence it only contains a "Group ID" as input
+
+    If this is rendering for the group - it will allow users to add more permission sets to the group
+    :param request:
+    :param group_id: the primary key for the group
+    :return: A rendered list of permissions
+
+    Method
+    ~~~~~~
+    1. Check the user permissions
+    2. If post - go through post. Check comments here
+    3. Get data for permission sets connected to this group
+    4. Render the template :) and return results to user
+    """
+
+    # Check user permission
+    permission_results = return_user_permission_level(request, [None], ['administration_create_group'])
+
+    if permission_results['administration_create_group'] <= 1:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse(permission_denied))
+
+    if request.method == "POST" and permission_results['administration_create_group'] >= 3:
+        form = add_permission_set_to_group_form(
+            request.POST,
+            group_id=group_id,
+        )
+        if form.is_valid():
+            group_permission_submit=group_permission(
+                group_id=group_id,
+                permission_set=form.cleaned_data['add_permission_set'],
+                change_user=request.user,
+            )
+            group_permission_submit.save()
+        else:
+            print(form.errors)
+
+
+    permission_set_results = group_permission.objects.filter(
+        is_deleted="FALSE",
+        group_id=group_id,
+    )
+
+
+    # Load template
+    t = loader.get_template('NearBeach/administration/admin_permission_set.html')
+
+    c = {
+        'permission_set_results': permission_set_results,
+        'add_permission_set_to_group_form': add_permission_set_to_group_form(group_id=group_id),
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def admin_add_user(request, group_id):
+    """
+    Pulls up a list of users for the group information. This def shows a list and grants you the ability to add new users
+    to a group.
+
+    Please note - as a user can have multiple permission sets per group, it does not restrict duplications.
+    :param request:
+    :param group_id: The group ID we are looking at
+    :return: HTML
+
+    Method
+    ~~~~~~
+    1. Check permissions
+    2. If post - do post method - more comments here
+    3. Obtain information like users already assigned to the group
+    4. Render webpage
+    """
+    # Check user permission
+    permission_results = return_user_permission_level(request, [None], ['administration_create_group'])
+
+    if permission_results['administration_create_group'] <= 1:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse(permission_denied))
+
+    if request.method == "POST":
+        form = add_user_to_group_form(
+            request.POST,
+            group_id=group_id,
+        )
+        if form.is_valid():
+            user_group_submit = user_group(
+                username=form.cleaned_data['add_user'],
+                group=group.objects.get(group_id=group_id),
+                permission_set=form.cleaned_data['permission_set'],
+                change_user=request.user,
+            )
+            user_group_submit.save()
+        else:
+            print(form.errors)
+
+    # Get data
+    user_group_results = user_group.objects.filter(
+        is_deleted="FALSE",
+        group_id=group_id,
+    )
+
+    # Load template
+    t = loader.get_template('NearBeach/administration/admin_user.html')
+
+    c = {
+        'add_user_to_group_form': add_user_to_group_form(group_id=group_id),
+        'administration_permission': permission_results['administration'],
+        'user_group_results': user_group_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
 @login_required(login_url='login')
 def alerts(request):
     """
@@ -271,7 +401,6 @@ def assign_customer_project_task(request, customer_id):
     }
 
     return HttpResponse(t.render(c, request))
-
 
 
 @login_required(login_url='login')
@@ -1059,6 +1188,64 @@ def campus_information(request, campus_information):
 
 
 @login_required(login_url='login')
+def campus_readonly(request, campus_information):
+    permission_results = return_user_permission_level(request, None, 'organisation_campus')
+
+    if permission_results['organisation_campus'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    # Obtain data (before POST if statement as it is used insude)
+    campus_results = campus.objects.get(pk=campus_information)
+
+    if campus_results.campus_longitude == None:
+        update_coordinates(campus_information)
+
+
+    # Get Data
+    customer_campus_results = customer_campus.objects.filter(
+        campus_id=campus_information,
+        is_deleted='FALSE',
+    )
+    add_customer_results = customer.objects.filter(organisation_id=campus_results.organisation_id)
+    countries_regions_results = list_of_country_region.objects.all()
+    countries_results = list_of_country.objects.all()
+
+    #Get one of the MAP keys
+    MAPBOX_API_TOKEN = ''
+    GOOGLE_MAP_API_TOKEN = ''
+
+    if hasattr(settings, 'MAPBOX_API_TOKEN'):
+        MAPBOX_API_TOKEN = settings.MAPBOX_API_TOKEN
+        print("Got mapbox API token: " + MAPBOX_API_TOKEN)
+    elif hasattr(settings, 'GOOGLE_MAP_API_TOKEN'):
+        GOOGLE_MAP_API_TOKEN = settings.GOOGLE_MAP_API_TOKEN
+        print("Got Google Maps API token: " + GOOGLE_MAP_API_TOKEN)
+
+
+        # Load the template
+    t = loader.get_template('NearBeach/campus_readonly.html')
+
+    # context
+    c = {
+        'campus_results': campus_results,
+        'campus_readonly_form': campus_readonly_form(
+            instance=campus_results,
+        ),
+        'customer_campus_results': customer_campus_results,
+        'add_customer_results': add_customer_results,
+        'countries_regions_results': countries_regions_results,
+        'countries_results': countries_results,
+        'permission': permission_results['organisation_campus'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'MAPBOX_API_TOKEN': MAPBOX_API_TOKEN,
+        'GOOGLE_MAP_API_TOKEN': GOOGLE_MAP_API_TOKEN,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
 def cost_information(request, location_id, destination):
     if destination == "project":
         groups_results = object_assignment.objects.filter(
@@ -1213,6 +1400,10 @@ def customer_information(request, customer_id):
     if permission_results['customer'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
+    #Redirect the user if they only have readonly mode
+    if permission_results['customer'] == 1:
+        return HttpResponseRedirect(reverse('customer_readonly', args = { customer_id }))
+
     if request.method == "POST" and permission_results['customer'] > 1:
         # Save everything!
         form = customer_information_form(request.POST, request.FILES)
@@ -1300,24 +1491,6 @@ def customer_information(request, customer_id):
     except:
         profile_picture = ''
 
-    # Date required to initiate date
-    today = datetime.datetime.now()
-
-    """
-    We need to do some basic formulations with the hour and and minutes.
-    For the hour we need to find all those who are in the PM and
-    change both the hour and meridiem accordingly.
-    For the minute, we have to create it in 5 minute blocks.
-    """
-    hour = today.hour
-    minute = int(5 * round(today.minute / 5.0))
-    meridiems = 'AM'
-
-    if hour > 12:
-        hour = hour - 12
-        meridiems = 'PM'
-    elif hour == 0:
-        hour = 12
 
     # load template
     t = loader.get_template('NearBeach/customer_information.html')
@@ -1326,14 +1499,7 @@ def customer_information(request, customer_id):
     c = {
         'customer_information_form': customer_information_form(
             instance=customer_results,
-            initial={
-                'start_date_year': today.year,
-                'start_date_month': today.month,
-                'start_date_day': today.day,
-                'start_date_hour': hour,
-                'start_date_minute': minute,
-                'start_date_meridiems': meridiems,
-            }),
+            ),
         'campus_results': campus_results,
         'customer_campus_results': customer_campus_results,
         'add_campus_results': add_campus_results,
@@ -1350,6 +1516,143 @@ def customer_information(request, customer_id):
         'quote_results':quote_results,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def customer_readonly(request,customer_id):
+    permission_results = return_user_permission_level(request, None,['assign_campus_to_customer','customer'])
+
+    if permission_results['customer'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    # Get the instance
+    customer_results = customer.objects.get(
+        customer_id=customer_id,
+        is_deleted="FALSE",
+    )
+    add_campus_results = campus.objects.filter(
+        organisation_id=customer_results.organisation_id,
+        is_deleted="FALSE",
+    )
+    quote_results = quote.objects.filter(
+        is_deleted="FALSE",
+        customer_id=customer_id,
+    )
+
+    # Setup connection to the database and query it
+    project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_id__in=project_customer.objects.filter(
+            is_deleted="FALSE",
+            customer_id=customer_id,
+        ).values('project_id')
+    )
+
+    task_results = task.objects.filter(
+        is_deleted="FALSE",
+        task_id__in=task_customer.objects.filter(
+            is_deleted="FALSE",
+            customer_id=customer_id,
+        ).values('task_id')
+    )
+
+    contact_history_results = contact_history.objects.filter(
+        is_deleted="FALSE",
+        customer_id=customer_id,
+    )
+
+    """
+    We want to bring through the project history's tinyMCE widget as a read only. However there are 
+    most likely multiple results so we will create a collective.
+    """
+    contact_history_collective = []
+    for row in contact_history_results:
+        # First deal with the datetime
+        contact_history_collective.append(
+            contact_history_readonly_form(
+                initial={
+                    'contact_history': row.contact_history,
+                    'submit_history': row.user_id.username + " - " + row.date_created.strftime("%d %B %Y %H:%M.%S"),
+                },
+                contact_history_id=row.contact_history_id,
+            ),
+        )
+
+    email_results = email_content.objects.filter(
+        is_deleted="FALSE",
+        email_content_id__in=email_contact.objects.filter(
+            (
+                    Q(to_customer=customer_id) |
+                    Q(cc_customer=customer_id)
+            ) &
+            Q(is_deleted="FALSE") &
+            Q(
+                Q(is_private=False) |
+                Q(change_user=request.user)
+            )
+        ).values('email_content_id')
+    )
+    # The campus the customer is associated to
+    """
+    We need to limit the amount of opportunities to those that the user has access to.
+    """
+    user_groups_results = user_group.objects.filter(username=request.user)
+
+    opportunity_permissions_results = object_assignment.objects.filter(
+        Q(
+            Q(assigned_user=request.user)  # User has permission
+            | Q(group_id__in=user_groups_results.values('group_id'))  # User's group have permission
+        )
+    )
+    opportunity_results = opportunity.objects.filter(
+        customer_id=customer_id,
+        opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
+    )
+    # For when customer have an organisation
+    campus_results = customer_campus.objects.filter(
+        customer_id=customer_id,
+        is_deleted='FALSE',
+    )
+    # For when customer do not have an organistion
+    customer_campus_results = campus.objects.filter(
+        is_deleted="FALSE",
+        customer=customer_id,
+    )
+
+    try:
+        profile_picture = customer_results.customer_profile_picture.url
+    except:
+        profile_picture = ''
+
+    # load template
+    t = loader.get_template('NearBeach/customer_information/customer_readonly.html')
+
+    # context
+    c = {
+        'customer_readonly_form': customer_readonly_form(
+            instance=customer_results,
+        ),
+        'campus_results': campus_results,
+        'customer_campus_results': customer_campus_results,
+        'add_campus_results': add_campus_results,
+        'customer_results': customer_results,
+        'media_url': settings.MEDIA_URL,
+        'profile_picture': profile_picture,
+        'project_results': project_results,
+        'task_results': task_results,
+        'opportunity_results': opportunity_results,
+        'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
+        'customer_id': customer_id,
+        'customer_permissions': permission_results['customer'],
+        'assign_campus_to_customer_permission': permission_results['assign_campus_to_customer'],
+        'quote_results': quote_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'contact_history_collective': contact_history_collective,
+        'email_results': email_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -2017,7 +2320,7 @@ def email(request,location_id,destination):
             if destination == "organisation":
                 email_contact_submit = email_contact(
                     email_content=email_content_submit,
-                    organisations=organisation.objects.get(organisation_id=location_id),
+                    organisation=organisation.objects.get(organisation_id=location_id),
                     change_user=request.user,
                     is_private=form.cleaned_data['is_private'],
                 )
@@ -2359,6 +2662,49 @@ def extract_quote(request, quote_uuid,quote_template_id):
     response['Content-Disposition']='attachment; filename="NearBeach Quote.pdf"'
 
     return response
+
+
+@login_required(login_url='login')
+def group_information(request,group_id):
+    """
+    This def will bring up the group information page. If the user makes a change then it will apply those changes.
+    This is assuming that the group_id is not the ADMINISTRATION page - because we do not want to change there AT ALL!!
+    :param request:
+    :param group_id:
+    :return:
+    """
+    permission_results = return_user_permission_level(request, None,['administration'])
+
+    if permission_results['administration'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
+    """
+    If the group is the administration group, we do NOT want to load the form. Instead it will be blank. MWAHAHAHAH
+    """
+    group_results = group.objects.get(group_id=group_id)
+    if group_id == 1 or group_id == '1': #1 is the administration account
+        group_form_results = None
+    else:
+        group_form_results = group_form(
+            group_id=group_id,
+            initial={
+                'group_name': group_results.group_name,
+                'parent_group': group_results.parent_group,
+        })
+
+    # Get template
+    t = loader.get_template('NearBeach/administration/group_information.html')
+
+    # Context
+    c = {
+        'group_form': group_form_results,
+        'group_id': group_id,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c,request))
 
 
 @login_required(login_url='login')
@@ -3503,6 +3849,60 @@ def new_customer(request, organisation_id):
 
 
 @login_required(login_url='login')
+def new_group(request):
+    """
+    You need to create a new group. You must be over 3 on your administration create group :)
+    :param request:
+    :return: group_infomration page if in POST or new_group page in GET
+    """
+    # Check user permission
+    permission_results = return_user_permission_level(request, [None], ['administration_create_group'])
+
+    if permission_results['administration_create_group'] <= 1:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse(permission_denied))
+
+    if request.method == "POST":
+        form = new_group_form(request.POST)
+        if form.is_valid():
+            group_name = form.cleaned_data['group_name']
+
+            """
+            We want to check to see if the group name is unique. If there is another group name (excluding the deleted)
+            is available - we will just go to it without any errors. Hidden to the user.
+            """
+            group_results = group.objects.filter(
+                is_deleted="FALSE",
+                group_name=group_name,
+            )
+            if group_results:
+                return HttpResponseRedirect(reverse('group_information', args={ group_results[0].group_id }))
+
+            #Group does not exist - lets make it
+            group_submit = group(
+                group_name=group_name,
+                parent_group=form.cleaned_data['parent_group'],
+                change_user=request.user,
+            )
+            group_submit.save()
+
+            #Done making it - lets go to it
+            return HttpResponseRedirect(reverse('group_information', args={ group_submit.group_id }))
+        else:
+            print(form.errors)
+
+    # Get template
+    t = loader.get_template('NearBeach/administration/new_group.html')
+
+    c = {
+        'new_group_form': new_group_form(),
+        'administration_permission': permission_results['administration'],
+        'new_item_permission': permission_results['new_item'],
+    }
+
+    return HttpResponse(t.render(c,request))
+
+@login_required(login_url='login')
 def new_kanban_board(request):
     permission_results = return_user_permission_level(request, None, 'kanban')
 
@@ -3863,6 +4263,78 @@ def new_organisation(request):
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
         'form_errors': form_errors,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def new_permission_set(request):
+    permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
+
+    if permission_results['administration_create_permission_set'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    save_errors = None
+    if request.method == "POST" and permission_results['administration_create_permission_set'] >= 3:
+        form = permission_set_form(request.POST)
+        if form.is_valid():
+            """
+            If the permission_set name already exists, we won't create it, instead we will load the correct page. This
+            is assuming it has not been deleted. :O
+            """
+            permission_set_name=form.cleaned_data['permission_set_name']
+            permission_set_results=permission_set.objects.filter(
+                is_deleted="FALSE",
+                permission_set_name=permission_set_name,
+            )
+            if permission_set_results:
+                return HttpResponseRedirect(reverse('permission_set_information',args={ permission_set_results[0].permission_set_id }))
+
+            # Try and save the form.
+            submit_permission_set = permission_set(
+                permission_set_name=permission_set_name,
+                administration_assign_user_to_group=form.cleaned_data['administration_assign_user_to_group'],
+                administration_create_group=form.cleaned_data['administration_create_group'],
+                administration_create_permission_set=form.cleaned_data['administration_create_permission_set'],
+                administration_create_user=form.cleaned_data['administration_create_user'],
+                assign_campus_to_customer=form.cleaned_data['assign_campus_to_customer'],
+                associate_project_and_task=form.cleaned_data['associate_project_and_task'],
+                customer=form.cleaned_data['customer'],
+                invoice=form.cleaned_data['invoice'],
+                invoice_product=form.cleaned_data['invoice_product'],
+                opportunity=form.cleaned_data['opportunity'],
+                organisation=form.cleaned_data['organisation'],
+                organisation_campus=form.cleaned_data['organisation_campus'],
+                project=form.cleaned_data['project'],
+                requirement=form.cleaned_data['requirement'],
+                requirement_link=form.cleaned_data['requirement_link'],
+                task=form.cleaned_data['task'],
+                document=form.cleaned_data['document'],
+                contact_history=form.cleaned_data['contact_history'],
+                project_history=form.cleaned_data['project_history'],
+                task_history=form.cleaned_data['task_history'],
+                change_user=request.user,
+            )
+            submit_permission_set.save()
+
+            #Go to the new permission set :)
+            return HttpResponseRedirect(reverse('permission_set_information', args={ submit_permission_set.permission_set_id }))
+
+
+        else:
+            print(form.errors)
+            save_errors = form.errors
+
+    # Load template
+    t = loader.get_template('NearBeach/new_permission_set.html')
+
+    # context
+    c = {
+        'permission_set_form': permission_set_form(request.POST or None),
+        'save_errors': save_errors,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -4595,6 +5067,10 @@ def organisation_information(request, organisation_id):
     if permission_results['organisation'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
+    if permission_results['organisation'] == 1:
+        return HttpResponseRedirect(reverse('organisation_readonly',args={ organisation_id }))
+
+
     # Get the data from the form if the information has been submitted
     if request.method == "POST" and permission_results['organisation'] > 1:
         form = organisation_information_form(request.POST, request.FILES)
@@ -4694,6 +5170,119 @@ def organisation_information(request, organisation_id):
     return HttpResponse(t.render(c, request))
 
 @login_required(login_url='login')
+def organisation_readonly(request, organisation_id):
+    permission_results = return_user_permission_level(request, None,
+                                                      ['organisation', 'organisation_campus', 'customer'])
+
+    if permission_results['organisation'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
+    # Query the database for organisation information
+    organisation_results = organisation.objects.get(pk=organisation_id)
+    campus_results = campus.objects.filter(
+        organisation_id=organisation_id,
+        is_deleted="FALSE",
+    )
+    customer_results = customer.objects.filter(
+        organisation_id=organisation_results,
+        is_deleted="FALSE",
+    )
+    quote_results = quote.objects.filter(
+        is_deleted="FALSE",
+        organisation_id=organisation_id,
+    )
+
+    project_results = project.objects.filter(
+        organisation_id=organisation_id,
+        is_deleted="FALSE",
+    )
+    task_results = task.objects.filter(
+        organisation_id=organisation_id,
+        is_deleted="FALSE",
+    )
+    """
+    We need to limit the amount of opportunities to those that the user has access to.
+    """
+    opportunity_results = opportunity.objects.filter(
+        is_deleted="FALSE",
+        organisation_id=organisation_id,
+    )
+
+    contact_history_results = contact_history.objects.filter(
+        is_deleted="FALSE",
+        organisation_id=organisation_id,
+    )
+
+    """
+    We want to bring through the project history's tinyMCE widget as a read only. However there are 
+    most likely multiple results so we will create a collective.
+    """
+    contact_history_collective = []
+    for row in contact_history_results:
+        # First deal with the datetime
+        contact_history_collective.append(
+            contact_history_readonly_form(
+                initial={
+                    'contact_history': row.contact_history,
+                    'submit_history': row.user_id.username + " - " + row.date_created.strftime("%d %B %Y %H:%M.%S"),
+                },
+                contact_history_id=row.contact_history_id,
+            ),
+        )
+
+    email_results = email_content.objects.filter(
+        is_deleted="FALSE",
+        email_content_id__in=email_contact.objects.filter(
+            Q(is_deleted="FALSE") &
+            Q(organisation_id=organisation_id) &
+            Q(
+                Q(is_private=False) |
+                Q(change_user=request.user)
+            )
+        ).values('email_content_id')
+    )
+
+    # Date required to initiate date
+    today = datetime.datetime.now()
+
+    # Loaed the template
+    t = loader.get_template('NearBeach/organisation_information/organisation_readonly.html')
+
+    # profile picture
+
+    try:
+        profile_picture = organisation_results.organisation_profile_picture.url
+    except:
+        profile_picture = ''
+
+    c = {
+        'organisation_results': organisation_results,
+        'campus_results': campus_results,
+        'customer_results': customer_results,
+        'organisation_readonly_form': organisation_readonly_form(
+            instance=organisation_results,
+            ),
+        'profile_picture': profile_picture,
+        'project_results': project_results,
+        'task_results': task_results,
+        'opportunity_results': opportunity_results,
+        'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
+        'organisation_id': organisation_id,
+        'organisation_permissions': permission_results['organisation'],
+        'organisation_campus_permissions': permission_results['organisation_campus'],
+        'customer_permissions': permission_results['customer'],
+        'quote_results': quote_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'contact_history_collective': contact_history_collective,
+        'email_results': email_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
 def permission_denied(request):
     #The user has no access to this page
     # Load the template
@@ -4705,6 +5294,54 @@ def permission_denied(request):
 
     return HttpResponse(t.render(c, request))
 
+
+@login_required(login_url='login')
+def permission_set_information(request,permission_set_id):
+    permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
+
+    if permission_results['administration_create_permission_set'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #DO POST STUFF HERE
+
+    # Get data
+    permission_set_results = permission_set.objects.get(permission_set_id=permission_set_id)
+
+    # Load the template
+    t = loader.get_template('NearBeach/permission_set_information.html')
+
+    c = {
+        'permission_set_form': permission_set_form(
+            initial={
+                'permission_set_name': permission_set_results.permission_set_name,
+                'administration_assign_user_to_group': permission_set_results.administration_assign_user_to_group,
+                'administration_create_group': permission_set_results.administration_create_group,
+                'administration_create_permission_set': permission_set_results.administration_create_permission_set,
+                'administration_create_user': permission_set_results.administration_create_user,
+                'assign_campus_to_customer': permission_set_results.assign_campus_to_customer,
+                'associate_project_and_task': permission_set_results.associate_project_and_task,
+                'customer': permission_set_results.customer,
+                'invoice': permission_set_results.invoice,
+                'invoice_product': permission_set_results.invoice_product,
+                'opportunity': permission_set_results.opportunity,
+                'organisation': permission_set_results.organisation,
+                'organisation_campus': permission_set_results.organisation_campus,
+                'project': permission_set_results.project,
+                'requirement': permission_set_results.requirement,
+                'requirement_link': permission_set_results.requirement_link,
+                'task': permission_set_results.task,
+                'document': permission_set_results.document,
+                'contact_history': permission_set_results.contact_history,
+                'project_history': permission_set_results.project_history,
+                'task_history': permission_set_results.task_history,
+            }
+        ),
+        'permission_set_id': permission_set_id,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c,request))
 
 
 """
@@ -4985,6 +5622,137 @@ def project_information(request, project_id):
 
 
 @login_required(login_url='login')
+def project_readonly(request, project_id):
+    project_groups_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        project_id=project.objects.get(project_id=project_id),
+    ).values('group_id_id')
+
+    permission_results = return_user_permission_level(request, project_groups_results, ['project', 'project_history'])
+
+    #Get data
+    project_results = project.objects.get(project_id=project_id)
+    to_do_results = to_do.objects.filter(
+        is_deleted="FALSE",
+        project_id=project_id,
+    )
+    project_history_results = project_history.objects.filter(
+        is_deleted="FALSE",
+        project_id=project_id,
+    )
+    email_results = email_content.objects.filter(
+        is_deleted="FALSE",
+        email_content_id__in=email_contact.objects.filter(
+            Q(project=project_id) &
+            Q(is_deleted="FALSE") &
+            Q(
+                Q(is_private=False) |
+                Q(change_user=request.user)
+            )
+        ).values('email_content_id')
+    )
+
+    associated_tasks_results = project_task.objects.filter(
+        is_deleted="FALSE",
+        project_id=project_id,
+    )
+
+    project_customers_results = project_customer.objects.filter(
+        is_deleted="FALSE",
+        project_id=project_id,
+
+    )
+
+    costs_results = cost.objects.filter(
+        project_id=project_id,
+        is_deleted='FALSE'
+    )
+
+    quote_results = quote.objects.filter(
+        is_deleted="FALSE",
+        project_id=project_id,
+    )
+
+    bug_results = bug.objects.filter(
+        is_deleted="FALSE",
+        project_id=project_id,
+    )
+
+    assigned_results = object_assignment.objects.filter(
+        project_id=project_id,
+        is_deleted="FALSE",
+    ).exclude(
+        assigned_user=None,
+    ).values(
+        'assigned_user__id',
+        'assigned_user',
+        'assigned_user__username',
+        'assigned_user__first_name',
+        'assigned_user__last_name',
+    ).distinct()
+
+
+    group_list_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        project_id=project_id,
+    )
+
+    kudos_results = kudos.objects.filter(
+        project_id=project_id,
+        is_deleted="FALSE",
+    )
+
+    """
+    We want to bring through the project history's tinyMCE widget as a read only. However there are 
+    most likely multiple results so we will create a collective.
+    """
+    project_history_collective =[]
+    for row in project_history_results:
+        #First deal with the datetime
+        project_history_collective.append(
+            project_history_readonly_form(
+                initial={
+                    'project_history': row.project_history,
+                    'submit_history': row.user_infomation + " - " + str(row.user_id) + " - "\
+                                      + row.date_created.strftime("%d %B %Y %H:%M.%S"),
+                },
+                project_history_id=row.project_history_id,
+            )
+        )
+
+
+    #Get Template
+    t = loader.get_template('NearBeach/project_information/project_readonly.html')
+
+    # context
+    c = {
+        'project_id': project_id,
+        'project_results': project_results,
+        'project_readonly_form': project_readonly_form(
+            initial={'project_description': project_results.project_description}
+        ),
+        'kudos_results': kudos_results,
+        'to_do_results': to_do_results,
+        'project_history_collective': project_history_collective,
+        'email_results': email_results,
+        'associated_tasks_results': associated_tasks_results,
+        'project_customers_results': project_customers_results,
+        'costs_results': costs_results,
+        'quote_results': quote_results,
+        'bug_results': bug_results,
+        'assigned_results': assigned_results,
+        'group_list_results': group_list_results,
+        'project_permissions': permission_results['project'],
+        'project_history_permissions': permission_results['project_history'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
 def project_remove_customer(request,project_customer_id):
     if request.method == "POST":
         project_customer_update = project_customer.objects.get(
@@ -5028,8 +5796,28 @@ def quote_information(request, quote_id):
     if object_access.count() == 0 and not permission_results['administration'] == 4:
         return HttpResponseRedirect(reverse('permission_denied'))
 
-
+    #Get the quote information
     quotes_results = quote.objects.get(quote_id=quote_id)
+
+    """
+    If any of the following conditions are met, we want to send the user to the read only module.
+    - Quote's status is 'Quote Close Accepted'
+    - Quote's status is 'Quote Close Rejected'
+    - Quote's status is 'Quote Close Lost'
+    - Quote's status is 'Quote Close Dead'
+    - Invoice's status is 'Invoice Close Accepted'
+    - Invoice's status is 'Invoice Close Rejected'
+    - Invoice's status is 'Invoice Close Lost'
+    - Invoice's status is 'Invoice Close Dead'
+    - User only have read only permissions
+    
+    The above quote/invoice status have the "Closed" statement as true in the table 'list_of_quote_stages'. We just 
+    need to check this status in that table.
+    """
+    print("QUOTE STAGE: " + str(quotes_results.quote_stage_id))
+    if quotes_results.quote_stage_id.quote_closed == "TRUE" or permission_results['quote'] == 1:
+        return HttpResponseRedirect(reverse('quote_readonly', args = { quote_id }))
+
     quote_template_results = quote_template.objects.filter(
         is_deleted="FALSE",
     )
@@ -5237,6 +6025,97 @@ def quote_template_information(request,quote_template_id):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
+def quote_readonly(request, quote_id):
+    permission_results = return_user_permission_level(request, None, 'quote')
+
+    if permission_results['quote'] == 0:
+        return HttpResponseRedirect(reverse(permission_denied))
+
+
+    #Get required data
+    quote_results = quote.objects.get(quote_id=quote_id)
+
+    line_item_results = quote_product_and_service.objects.filter(
+        is_deleted='FALSE',
+        quote_id=quote_id,
+    )
+
+    product_line_items = quote_product_and_service.objects.filter(
+        quote_id=quote_id,
+        product_and_service__product_or_service='Product',
+        is_deleted="FALSE",
+    )
+
+    service_line_items = quote_product_and_service.objects.filter(
+        quote_id=quote_id,
+        product_and_service__product_or_service='Service',
+        is_deleted="FALSE",
+    )
+
+    responsible_customer_results = customer.objects.filter(
+        customer_id__in=quote_responsible_customer.objects.filter(
+            quote_id=quote_id,
+            is_deleted="FALSE"
+        ).values('customer_id').distinct()
+    )
+
+    email_results = email_content.objects.filter(
+        is_deleted="FALSE",
+        email_content_id__in=email_contact.objects.filter(
+            Q(quotes=quote_id) &
+            Q(is_deleted="FALSE") &
+            Q(
+                Q(is_private=False) |
+                Q(change_user=request.user)
+            )
+        ).values('email_content_id')
+    )
+
+    quote_template_results = quote_template.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    group_list_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        quote_id=quote_id,
+    ).exclude(
+        group_id=None,
+    )
+
+    assigned_user_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        quote_id=quote_id,
+    ).exclude(
+        assigned_user=None,
+    )
+
+    # Get template
+    t = loader.get_template('NearBeach/quote_information/quote_readonly.html')
+
+    # Context
+    c = {
+        'quote_results': quote_results,
+        'quote_readonly_form': quote_readonly_form(
+            initial={
+                'quote_terms': quote_results.quote_terms,
+                'customer_notes': quote_results.customer_notes,
+            }
+        ),
+        'timezone': settings.TIME_ZONE,
+        'line_item_results': line_item_results,
+        'product_line_items': product_line_items,
+        'service_line_items': service_line_items,
+        'responsible_customer_results': responsible_customer_results,
+        'email_results': email_results,
+        'quote_template_results': quote_template_results,
+        'group_list_results': group_list_results,
+        'assigned_user_results': assigned_user_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c,request))
 
 
 @login_required(login_url='login')
@@ -5431,6 +6310,36 @@ def search_customer(request):
 
 
 @login_required(login_url='login')
+def search_group(request):
+    """
+    Brings up a list of all groups.
+    :param request:
+    :return:
+    """
+    permission_results = return_user_permission_level(request, None, 'administration_create_group')
+
+    if permission_results['administration_create_group'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #Data for group search
+    group_results = group.objects.filter(
+        is_deleted="FALSE"
+    )
+
+    #Load template
+    t = loader.get_template('NearBeach/search_group.html')
+
+    # context
+    c = {
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'group_results': group_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
 def search_organisation(request):
     permission_results = return_user_permission_level(request, None, 'project')
 
@@ -5487,6 +6396,28 @@ def search_organisation(request):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def search_permission_set(request):
+    permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
+
+    if permission_results['administration_create_permission_set'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #Get data
+    permission_set_results = permission_set.objects.filter(is_deleted="FALSE")
+
+    # Load the template
+    t = loader.get_template('NearBeach/search_permission_set.html')
+
+    c = {
+        'permission_set_results': permission_set_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c,request))
 
 
 @login_required(login_url='login')
@@ -5567,19 +6498,18 @@ def task_information(request, task_id):
         return HttpResponseRedirect(reverse('permission_denied'))
 
 
-
-    # Setup connection to the database and query it
-    cursor = connection.cursor() #LETS REMOVE THIS CRAP
-
-
-
-    """
-	There are two buttons on the task information page. Both will come
-	here. Both will save the data, however only one of them will resolve
-	the task.
-	"""
     # Define the data we will edit
     task_results = get_object_or_404(task, task_id=task_id)
+
+    """
+    We want to take the user to the read only module if either of the conditions are met;
+    - Task status has been set to 'Resolved'
+    - Task status has been set to 'Completed'
+    - User only have read only status
+    """
+    if task_results.task_status in ('Resolved','Closed') or permission_results['task'] == 1:
+        #Take them to the read only
+        return HttpResponseRedirect(reverse('task_readonly',args={ task_id }))
 
     # Get the data from the form
     if request.method == "POST":
@@ -5591,11 +6521,16 @@ def task_information(request, task_id):
             task_results.task_start_date = form.cleaned_data['task_start_date']
             task_results.task_end_date = form.cleaned_data['task_end_date']
 
-            # Check to make sure the resolve button was hit
+            """
+            There are two buttons on the task information page. Both will come
+            here. Both will save the data, however only one of them will resolve
+            the task.
+            
+            We check here to see if the resolve button has been pressed.
+            """
             if 'Resolve' in request.POST:
                 # Well, we have to now resolve the data
                 task_results.task_status = 'Resolved'
-
             task_results.save()
 
             """
@@ -5608,79 +6543,6 @@ def task_information(request, task_id):
             for row in kanban_card_results:
                 row.kanban_card_text = "TASK" + str(task_id) + " - " + form.cleaned_data['task_short_description']
                 row.save()
-
-            """
-			If the user has submitted a new document. We only upload the document IF and ONLY IF the user
-			has selected the "Submit" button on the "New Document" dialog. We do not want to accidently
-			upload a document if we hit the "SAVE" button from a different location
-			"""
-            if 'new_document' in request.POST:
-                document = request.FILES.get('document')
-                document_description = request.POST.get("document_description")
-                document_url_location = request.POST.get("document_url_location")
-
-                parent_folder_id = request.POST.get("parent_folder_id")
-
-                print(parent_folder_id)
-
-                submit_document = document(
-                    #task_id=task.objects.get(pk=task_id),
-                    document=document,
-                    document_description=document_description,
-                    document_url_location=document_url_location,
-                    change_user=request.user,
-                )
-                submit_document.save()
-
-                print(parent_folder_id)
-
-                #If the document is under a folder
-                if isinstance(parent_folder_id, int):
-                    submit_document_folder = document_folder(
-                        document_key=submit_document,
-                        change_user=request.user,
-                        folder_id=int(parent_folder_id),
-                    )
-                    submit_document_folder.save()
-
-
-                #Submit the document permissions
-                submit_document_permissions = document_permission(
-                    document_key=submit_document,
-                    task_id=task.objects.get(pk=task_id),
-                    change_user=request.user,
-                )
-                submit_document_permissions.save()
-
-            """
-			Fuck - someone wants to create a new folder...
-			"""
-            if 'new_folder' in request.POST:
-                folder_description = form.cleaned_data['folder_description']
-                folder_location = request.POST.get("folder_location")
-
-                submit_folder = folder(
-                    task_id=task.objects.get(pk=task_id),
-                    folder_description=folder_description,
-                    change_user=request.user,
-                )
-
-                try:
-                    submit_folder.parent_folder_id = folder.objects.get(
-                        folder_id=int(folder_location))
-                    submit_folder.save()
-                except:
-                    submit_folder.save()
-
-
-    folders_results = folder.objects.filter(
-        task_id=task_id,
-        is_deleted='FALSE',
-    ).order_by(
-        'folder_description'
-    )
-
-
 
     # Setup the initial
     initial = {
@@ -5732,6 +6594,131 @@ def task_information(request, task_id):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def task_readonly(request,task_id):
+    task_groups_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        task_id=task.objects.get(task_id=task_id),
+    ).values('group_id_id')
+
+    permission_results = return_user_permission_level(request, task_groups_results, ['task', 'task_history'])
+
+    # Get data
+    task_results = task.objects.get(task_id=task_id)
+    to_do_results = to_do.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_id,
+    )
+    task_history_results = task_history.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_id,
+    )
+    email_results = email_content.objects.filter(
+        is_deleted="FALSE",
+        email_content_id__in=email_contact.objects.filter(
+            Q(task_id=task_id) &
+            Q(is_deleted="FALSE") &
+            Q(
+                Q(is_private=False) |
+                Q(change_user=request.user)
+            )
+        ).values('email_content_id')
+    )
+
+    associated_project_results = project_task.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_id,
+    )
+
+    task_customers_results = task_customer.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_id,
+
+    )
+
+    costs_results = cost.objects.filter(
+        task_id=task_id,
+        is_deleted='FALSE'
+    )
+
+    quote_results = quote.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_id,
+    )
+
+    bug_results = bug.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_id,
+    )
+
+    assigned_results = object_assignment.objects.filter(
+        task_id=task_id,
+        is_deleted="FALSE",
+    ).exclude(
+        assigned_user=None,
+    ).values(
+        'assigned_user__id',
+        'assigned_user',
+        'assigned_user__username',
+        'assigned_user__first_name',
+        'assigned_user__last_name',
+    ).distinct()
+
+    group_list_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        task_id=task_id,
+    )
+
+    """
+    We want to bring through the project history's tinyMCE widget as a read only. However there are 
+    most likely multiple results so we will create a collective.
+    """
+    task_history_collective = []
+    for row in task_history_results:
+        # First deal with the datetime
+        task_history_collective.append(
+            task_history_readonly_form(
+                initial={
+                    'task_history': row.task_history,
+                    'submit_history': row.user_infomation + " - " + str(row.user_id) + " - " \
+                                      + row.date_created.strftime("%d %B %Y %H:%M.%S"),
+                },
+                task_history_id=row.task_history_id,
+            )
+        )
+
+    print(task_history_collective)
+
+
+    # Load template
+    t = loader.get_template('NearBeach/task_information/task_readonly.html')
+
+    # Context
+    c = {
+        'task_id': task_id,
+        'task_results': task_results,
+        'task_readonly_form': task_readonly_form(
+            initial={'task_long_description': task_results.task_long_description}
+        ),
+        'to_do_results': to_do_results,
+        'task_history_collective': task_history_collective,
+        'email_results': email_results,
+        'associated_project_results': associated_project_results,
+        'task_customers_results': task_customers_results,
+        'costs_results': costs_results,
+        'quote_results': quote_results,
+        'bug_results': bug_results,
+        'assigned_results': assigned_results,
+        'group_list_results': group_list_results,
+        'project_permissions': permission_results['task'],
+        'project_history_permissions': permission_results['task_history'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c,request))
 
 @login_required(login_url='login')
 def task_remove_customer(request,task_customer_id):
@@ -6187,7 +7174,7 @@ def update_template_strings(variable,quote_results):
     variable = variable.replace('{{ opportunity_id }}', str(quote_results.opportunity_id))
     variable = variable.replace('{{ organisation_id }}', str(quote_results.organisation_id))
     variable = variable.replace('{{ project_id }}', str(quote_results.project_id))
-    variable = variable.replace('{{ quote_approval_status_id }}', str(quote_results.quote_approval_status_id))
+#    variable = variable.replace('{{ quote_approval_status_id }}', str(quote_results.quote_approval_status_id))
     variable = variable.replace('{{ quote_billing_address }}', str(quote_results.quote_billing_address))
     variable = variable.replace('{{ quote_id }}', str(quote_results.quote_id))
     variable = variable.replace('{{ quote_stage_id }}', str(quote_results.quote_stage_id))

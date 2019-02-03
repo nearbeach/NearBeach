@@ -1,0 +1,57 @@
+{% load static %}
+<div class="card mt-4">
+    <div class="card-header">
+        <h2>Users</h2>
+    </div>
+    <div class="card-body">
+        <div class="alert-primary">
+            <strong>Please Note:</strong>
+            <ul>
+                <li>Permission sets need to be added to group</li>
+                <li>Each user will be added to a permission set</li>
+                <li>Permission sets can be stacked</li>
+            </ul>
+        </div>
+        <!-- LIMIT THE ADD USERS TO A PERSON WHO HAS A PERMISSION OF 3 or GREATER -->
+        {% if administration_permission >= 3 %}
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="id_user">Add User</label>
+                    {{ add_user_to_group_form.add_user }}
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="id_permission_set">Select Permission Set</label>
+                    {{ add_user_to_group_form.permission_set }}
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="add_user_button">.</label>
+                    <input type="submit" class="btn btn-primary form-control" value="Submit New User" disabled="" id="add_user_button">
+                </div>
+            </div>
+        {% endif %}
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <td>Username</td>
+                    <td>First Name</td>
+                    <td>Last Name</td>
+                    <td>Permission Set</td>
+                    {% if administration_permission == 4 %}
+                        <td>DELETE</td>
+                    {% endif %}
+                </tr>
+            </thead>
+            {% for user in user_group_results %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.username.first_name }}</td>
+                    <td>{{ user.username.last_name }}</td>
+                    <td>{{ user.permission_set }}</td>
+                    {% if administration_permission == 4 %}
+                        <td><a href="javascript:void(0)">Delete</a></td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>

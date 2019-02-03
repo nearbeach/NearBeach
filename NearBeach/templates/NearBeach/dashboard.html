@@ -103,11 +103,18 @@
         }
     </script>
     <body onload="on_page_load()">
-        <h1 class="mt-5">NearBeach Dashboard</h1>
-        <div class="form-label-group">
-            <input id="filter_tables" type="text" placeholder="Filter..." onkeyup="apply_filters()" style="width: 100%;">
-            <label for="filter_tables">Filter...</label>
+        <div class="card mt-4">
+            <div class="card-header">
+                <h1>NearBeach Dashboard</h1>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="filter_tables">Filter dashboard</label>
+                    <input id="filter_tables" type="text" placeholder="Filter..." onkeyup="apply_filters()" style="width: 100%;">
+                </div>
+            </div>
         </div>
+
 
         <div class="card mt-4">
             <div class="card-header">

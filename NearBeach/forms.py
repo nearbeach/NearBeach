@@ -208,13 +208,69 @@ class about_user_form(ModelForm):
         }
 
 
-
 class add_permission_set_to_group_form(forms.Form):
-    permission_set_name = forms.ModelChoiceField(
+    def __init__(self,*args,**kwargs):
+        #Get the group id for this form
+        group_id=kwargs.pop('group_id')
+        super(add_permission_set_to_group_form,self).__init__(*args,**kwargs)
+
+        #Get the dataset
+        permission_set_results = permission_set.objects.filter(
+            is_deleted="FALSE",
+        ).exclude(
+            permission_set_id__in=group_permission.objects.filter(
+                is_deleted="FALSE",
+                group_id=group_id,
+            ).values('permission_set_id')
+        )
+        #Assign it to the field
+        self.fields['add_permission_set'].queryset = permission_set_results
+
+    add_permission_set = forms.ModelChoiceField(
         label = "Permission Set Name",
-        widget=forms.Select,
+        widget=forms.Select(attrs={
+            'class': 'chosen-select form-control',
+            'onchange': 'permission_set_changed()',
+        }),
         queryset=permission_set.objects.filter(is_deleted='FALSE')
     )
+
+
+class add_user_to_group_form(forms.Form):
+    def __init__(self,*args,**kwargs):
+        group_id=kwargs.pop('group_id')
+
+        super(add_user_to_group_form,self).__init__(*args,**kwargs)
+
+        """
+        We want to limit the permission_sets to only those currently applied to the group.
+        """
+        permission_set_results = permission_set.objects.filter(
+            is_deleted="FALSE",
+            permission_set_id__in=group_permission.objects.filter(
+                is_deleted="FALSE",
+                group_id=group_id,
+            ).values('permission_set_id')
+        )
+        self.fields['permission_set'].queryset = permission_set_results
+
+    permission_set=forms.ModelChoiceField(
+        queryset=permission_set.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'chosen-select form-control',
+            'onchange': 'add_user_changed()',
+        })
+    )
+    add_user=forms.ModelChoiceField(
+        queryset=User.objects.filter(
+            is_active=True,
+        ),
+        widget=forms.Select(attrs={
+            'class': 'chosen-select form-control',
+            'onchange': 'add_user_changed()',
+        })
+    )
+
 
 
 class assign_group_add_form(forms.Form):
@@ -548,6 +604,128 @@ class campus_information_form(ModelForm):
         ]
 
 
+class campus_readonly_form(ModelForm):
+    # Fields
+    campus_nickname=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Campus Nickname i.e Melbourne',
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    campus_phone=forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Campus Phone',
+            'type': 'tel',
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    campus_fax=forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Campus Fax',
+            'type': 'tel',
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    campus_address1=forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Address 1',
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    campus_address2=forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Address 2',
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    campus_address3=forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Address 3',
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    campus_suburb=forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Suburb',
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+
+
+    class Meta:
+        model=campus
+        fields='__all__'
+        exclude=[
+            'campus_region_id',
+            'campus_country_id',
+            'organisation_id',
+            'is_deleted',
+            'change_user',
+        ]
+
+
+class contact_history_readonly_form(ModelForm):
+    def __init__(self, *args, **kwargs):
+        """
+        The contact descriptioon will each need to be stored in a readonly tinyMCE widget. The issue here is that
+        each widget will need it's own ID other wise it will apply the tinyMCE widget to only one.
+
+        This widget can be used in both the project_readonly and project_information mode
+        """
+        contact_history_id = kwargs.pop('contact_history_id', None)
+        super(contact_history_readonly_form, self).__init__(*args, **kwargs)
+
+        #self.fields['quote_billing_address'].queryset = campus_results
+
+        self.fields['contact_history'].widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Requirement Scope',
+                'id': 'id_contact_history' + str(contact_history_id),
+            },
+
+        )
+
+    #Definition of the tinyMCE widget
+    contact_history = forms.CharField()
+    submit_history = forms.CharField(
+        widget=TextInput(attrs={
+            'readonly': True,
+            'class': 'form-control',
+        })
+    )
+
+    class Meta:
+        model=contact_history
+        fields={
+            'contact_history',
+        }
+
 
 class cost_information_form(forms.Form):
     cost_description = forms.CharField(
@@ -596,8 +774,6 @@ class customer_campus_form(ModelForm):
 
 
 class customer_information_form(ModelForm):
-
-
     #The Fields
     customer_last_name=forms.CharField(
         max_length=255,
@@ -665,6 +841,56 @@ class customer_information_form(ModelForm):
 
         return profile_picture
 
+
+class customer_readonly_form(ModelForm):
+    #The Fields
+    customer_last_name=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    customer_title=forms.ModelChoiceField(
+        queryset=list_of_title.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+            'disabled': True,
+        })
+    )
+    customer_email=forms.EmailField(
+        max_length=255,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+
+    customer_first_name=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    """
+    There is an issue with the customer read only contact histry. It does not pass through the required media files.
+    This is a simple and effective work around for that issue.  :) This should be a blank field.
+    """
+    customer_media=forms.CharField(
+        widget=TinyMCE(attrs={
+
+        }),
+        required=False,
+    )
+    class Meta:
+        model=customer
+        fields='__all__'
+        exclude=[
+            'is_deleted',
+            'organisation_id',
+            'change_user',
+        ]
 
 class diagnostic_test_document_upload_form(forms.Form):
     document = forms.FileField(
@@ -959,16 +1185,41 @@ class email_information_form(ModelForm):
         }
 
 class group_form(ModelForm):
+    def __init__(self, *args, **kwargs):
+        """
+        We need to pass the group_id through, as a group should not be it's own parent group.
+        :param args: group_id
+        :param kwargs:
+        """
+        group_id = kwargs.pop('group_id')
+
+        super(group_form, self).__init__(*args, **kwargs)
+
+        group_results = group.objects.filter(
+            is_deleted="FALSE",
+        ).exclude(group_id=group_id)
+
+        self.fields['parent_group'].queryset = group_results
+
     group_name = forms.CharField(
         max_length=50,
         widget=forms.TextInput(attrs={
             'placeholder': 'Group Name',
+            'class': 'form-control',
         })
+    )
+    parent_group=forms.ModelChoiceField(
+        queryset=group.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        required=False,
     )
     class Meta:
         model=group
         fields = {
             'group_name',
+            'parent_group',
         }
 
 
@@ -1636,6 +1887,30 @@ class new_folder_form(forms.Form):
     )
 
 
+class new_group_form(ModelForm):
+    group_name=forms.CharField(
+        max_length=50,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Group Name',
+        }),
+    )
+    parent_group=forms.ModelChoiceField(
+        queryset=group.objects.filter(is_deleted="FALSE"),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        required=False,
+    )
+
+    class Meta:
+        model = group
+        fields = {
+            'group_name',
+            'parent_group',
+        }
+
+
 class new_line_item_form(ModelForm):
     #Get the data
     product_description=forms.CharField(
@@ -2033,19 +2308,13 @@ class new_quote_form(ModelForm):
             'style': 'width: 100%',
         }),
     )
-    quote_approval_status_id=forms.ModelChoiceField(
-        queryset=list_of_quote_stage.objects.all(),
-        widget=forms.Select(attrs={
-            'class': 'form-control',
-        })
-    )
+
 
     class Meta:
         model=quote
         fields={
             'quote_title',
             'quote_stage_id',
-            'quote_approval_status_id',
             'quote_terms',
             'customer_notes',
             'quote_valid_till',
@@ -2302,6 +2571,38 @@ class organisation_information_form(ModelForm):
         return profile_picture
 
 
+class organisation_readonly_form(ModelForm):
+    #Profile picture
+    organisation_name=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    organisation_website=forms.URLField(
+        max_length=255,
+        widget=forms.URLInput(attrs={
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    """
+    The following field clears up an issue with contact history. Contact history needs the .media field for the tinymce
+    to work. A work around is to put an empty field here and just call the .media field.
+    """
+    bug_fixing_field = forms.CharField(
+        widget=TinyMCE(attrs={})
+    )
+
+    class Meta:
+        model=organisation
+        fields={
+                'organisation_name',
+                'organisation_website',
+            }
+
+
 class opportunity_user_permission_form(forms.Form):
     def __init__(self,*args,**kwargs):
         #Extract the variables
@@ -2327,6 +2628,183 @@ class permission_set_form(ModelForm):
         label='',
         widget=forms.TextInput(attrs={
             'placeholder': 'Permission Set Name',
+            'class': 'form-control',
+        })
+    )
+    administration_assign_user_to_group=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    administration_create_group=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    administration_create_permission_set=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    administration_create_user=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    assign_campus_to_customer=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    associate_project_and_task=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    bug=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    bug_client=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    customer=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    email=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    invoice=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    invoice_product=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    kanban=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    kanban_card=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    opportunity=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    organisation=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    organisation_campus=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    project=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    quote=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    requirement=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    requirement_link=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    task=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    tax=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    template=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    contact_history=forms.ChoiceField(
+        choices=PERMISSION_BOOLEAN,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    document=forms.ChoiceField(
+        choices=PERMISSION_BOOLEAN,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    kanban_comment=forms.ChoiceField(
+        choices=PERMISSION_BOOLEAN,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    project_history=forms.ChoiceField(
+        choices=PERMISSION_BOOLEAN,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    task_history=forms.ChoiceField(
+        choices=PERMISSION_BOOLEAN,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
         })
     )
     #Used for both edit and create
@@ -2418,8 +2896,8 @@ class project_history_readonly_form(ModelForm):
     project_history = forms.CharField()
     submit_history = forms.CharField(
         widget=TextInput(attrs={
-            'width': '100%',
             'readonly': True,
+            'class': 'form-control',
         })
     )
 
@@ -2512,13 +2990,13 @@ class project_readonly_form(ModelForm):
     project_description = forms.CharField(
         widget=TinyMCE(
             mce_attrs={
-                'width': '100%',
                 'toolbar': False,
                 'menubar': False,
                 'readonly': 1,
             },
             attrs={
-                'placeholder': 'Requirement Scope'
+                'placeholder': 'Requirement Scope',
+                'class': 'form-control',
             }
         ),
     )
@@ -2633,6 +3111,35 @@ class quote_information_form(ModelForm):
             'customer_notes',
             'quote_valid_till',
         }
+
+
+class quote_readonly_form(forms.Form):
+    quote_terms = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Requirement Scope',
+                'class': 'form-control',
+            }
+        ),
+    )
+    customer_notes = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Requirement Scope',
+                'class': 'form-control',
+            }
+        ),
+    )
 
 
 class quote_template_form(ModelForm):
@@ -2794,6 +3301,48 @@ class search_user_form(forms.Form):
 
 
 
+class task_history_readonly_form(ModelForm):
+    def __init__(self, *args, **kwargs):
+        """
+        The project descriptioon will each need to be stored in a readonly tinyMCE widget. The issue here is that
+        each widget will need it's own ID other wise it will apply the tinyMCE widget to only one.
+
+        This widget can be used in both the project_readonly and project_information mode
+        """
+        task_history_id = kwargs.pop('task_history_id', None)
+        super(task_history_readonly_form, self).__init__(*args, **kwargs)
+
+        #self.fields['quote_billing_address'].queryset = campus_results
+
+        self.fields['task_history'].widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Requirement Scope',
+                'id': 'id_task_history_' + str(task_history_id),
+            },
+
+        )
+
+    #Definition of the tinyMCE widget
+    task_history = forms.CharField()
+    submit_history = forms.CharField(
+        widget=TextInput(attrs={
+            'readonly': True,
+            'class': 'form-control',
+        })
+    )
+
+    class Meta:
+        model=task_history
+        fields={
+            'task_history',
+        }
+
 
 class task_information_form(ModelForm):
     task_short_description=forms.CharField(
@@ -2858,6 +3407,27 @@ class task_information_form(ModelForm):
             #'task_end_date',
         }
 
+
+class task_readonly_form(ModelForm):
+    task_long_description = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Requirement Scope',
+                'class': 'form-control',
+            }
+        ),
+    )
+
+    class Meta:
+        model=task
+        fields = {
+            'task_long_description'
+        }
 
 
 class timeline_form(forms.Form):
