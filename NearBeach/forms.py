@@ -604,6 +604,86 @@ class campus_information_form(ModelForm):
         ]
 
 
+class campus_readonly_form(ModelForm):
+    # Fields
+    campus_nickname=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Campus Nickname i.e Melbourne',
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    campus_phone=forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Campus Phone',
+            'type': 'tel',
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    campus_fax=forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Campus Fax',
+            'type': 'tel',
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    campus_address1=forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Address 1',
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    campus_address2=forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Address 2',
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    campus_address3=forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Address 3',
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    campus_suburb=forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Suburb',
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+
+
+    class Meta:
+        model=campus
+        fields='__all__'
+        exclude=[
+            'campus_region_id',
+            'campus_country_id',
+            'organisation_id',
+            'is_deleted',
+            'change_user',
+        ]
+
+
 class contact_history_readonly_form(ModelForm):
     def __init__(self, *args, **kwargs):
         """
@@ -2489,6 +2569,38 @@ class organisation_information_form(ModelForm):
             pass
 
         return profile_picture
+
+
+class organisation_readonly_form(ModelForm):
+    #Profile picture
+    organisation_name=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    organisation_website=forms.URLField(
+        max_length=255,
+        widget=forms.URLInput(attrs={
+            'class': 'form-control',
+            'readonly': True,
+        })
+    )
+    """
+    The following field clears up an issue with contact history. Contact history needs the .media field for the tinymce
+    to work. A work around is to put an empty field here and just call the .media field.
+    """
+    bug_fixing_field = forms.CharField(
+        widget=TinyMCE(attrs={})
+    )
+
+    class Meta:
+        model=organisation
+        fields={
+                'organisation_name',
+                'organisation_website',
+            }
 
 
 class opportunity_user_permission_form(forms.Form):

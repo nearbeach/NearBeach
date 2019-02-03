@@ -1188,6 +1188,64 @@ def campus_information(request, campus_information):
 
 
 @login_required(login_url='login')
+def campus_readonly(request, campus_information):
+    permission_results = return_user_permission_level(request, None, 'organisation_campus')
+
+    if permission_results['organisation_campus'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    # Obtain data (before POST if statement as it is used insude)
+    campus_results = campus.objects.get(pk=campus_information)
+
+    if campus_results.campus_longitude == None:
+        update_coordinates(campus_information)
+
+
+    # Get Data
+    customer_campus_results = customer_campus.objects.filter(
+        campus_id=campus_information,
+        is_deleted='FALSE',
+    )
+    add_customer_results = customer.objects.filter(organisation_id=campus_results.organisation_id)
+    countries_regions_results = list_of_country_region.objects.all()
+    countries_results = list_of_country.objects.all()
+
+    #Get one of the MAP keys
+    MAPBOX_API_TOKEN = ''
+    GOOGLE_MAP_API_TOKEN = ''
+
+    if hasattr(settings, 'MAPBOX_API_TOKEN'):
+        MAPBOX_API_TOKEN = settings.MAPBOX_API_TOKEN
+        print("Got mapbox API token: " + MAPBOX_API_TOKEN)
+    elif hasattr(settings, 'GOOGLE_MAP_API_TOKEN'):
+        GOOGLE_MAP_API_TOKEN = settings.GOOGLE_MAP_API_TOKEN
+        print("Got Google Maps API token: " + GOOGLE_MAP_API_TOKEN)
+
+
+        # Load the template
+    t = loader.get_template('NearBeach/campus_readonly.html')
+
+    # context
+    c = {
+        'campus_results': campus_results,
+        'campus_readonly_form': campus_readonly_form(
+            instance=campus_results,
+        ),
+        'customer_campus_results': customer_campus_results,
+        'add_customer_results': add_customer_results,
+        'countries_regions_results': countries_regions_results,
+        'countries_results': countries_results,
+        'permission': permission_results['organisation_campus'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'MAPBOX_API_TOKEN': MAPBOX_API_TOKEN,
+        'GOOGLE_MAP_API_TOKEN': GOOGLE_MAP_API_TOKEN,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
 def cost_information(request, location_id, destination):
     if destination == "project":
         groups_results = object_assignment.objects.filter(
@@ -2262,7 +2320,7 @@ def email(request,location_id,destination):
             if destination == "organisation":
                 email_contact_submit = email_contact(
                     email_content=email_content_submit,
-                    organisations=organisation.objects.get(organisation_id=location_id),
+                    organisation=organisation.objects.get(organisation_id=location_id),
                     change_user=request.user,
                     is_private=form.cleaned_data['is_private'],
                 )
@@ -5009,6 +5067,10 @@ def organisation_information(request, organisation_id):
     if permission_results['organisation'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
+    if permission_results['organisation'] == 1:
+        return HttpResponseRedirect(reverse('organisation_readonly',args={ organisation_id }))
+
+
     # Get the data from the form if the information has been submitted
     if request.method == "POST" and permission_results['organisation'] > 1:
         form = organisation_information_form(request.POST, request.FILES)
@@ -5106,6 +5168,119 @@ def organisation_information(request, organisation_id):
     }
 
     return HttpResponse(t.render(c, request))
+
+@login_required(login_url='login')
+def organisation_readonly(request, organisation_id):
+    permission_results = return_user_permission_level(request, None,
+                                                      ['organisation', 'organisation_campus', 'customer'])
+
+    if permission_results['organisation'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
+    # Query the database for organisation information
+    organisation_results = organisation.objects.get(pk=organisation_id)
+    campus_results = campus.objects.filter(
+        organisation_id=organisation_id,
+        is_deleted="FALSE",
+    )
+    customer_results = customer.objects.filter(
+        organisation_id=organisation_results,
+        is_deleted="FALSE",
+    )
+    quote_results = quote.objects.filter(
+        is_deleted="FALSE",
+        organisation_id=organisation_id,
+    )
+
+    project_results = project.objects.filter(
+        organisation_id=organisation_id,
+        is_deleted="FALSE",
+    )
+    task_results = task.objects.filter(
+        organisation_id=organisation_id,
+        is_deleted="FALSE",
+    )
+    """
+    We need to limit the amount of opportunities to those that the user has access to.
+    """
+    opportunity_results = opportunity.objects.filter(
+        is_deleted="FALSE",
+        organisation_id=organisation_id,
+    )
+
+    contact_history_results = contact_history.objects.filter(
+        is_deleted="FALSE",
+        organisation_id=organisation_id,
+    )
+
+    """
+    We want to bring through the project history's tinyMCE widget as a read only. However there are 
+    most likely multiple results so we will create a collective.
+    """
+    contact_history_collective = []
+    for row in contact_history_results:
+        # First deal with the datetime
+        contact_history_collective.append(
+            contact_history_readonly_form(
+                initial={
+                    'contact_history': row.contact_history,
+                    'submit_history': row.user_id.username + " - " + row.date_created.strftime("%d %B %Y %H:%M.%S"),
+                },
+                contact_history_id=row.contact_history_id,
+            ),
+        )
+
+    email_results = email_content.objects.filter(
+        is_deleted="FALSE",
+        email_content_id__in=email_contact.objects.filter(
+            Q(is_deleted="FALSE") &
+            Q(organisation_id=organisation_id) &
+            Q(
+                Q(is_private=False) |
+                Q(change_user=request.user)
+            )
+        ).values('email_content_id')
+    )
+
+    # Date required to initiate date
+    today = datetime.datetime.now()
+
+    # Loaed the template
+    t = loader.get_template('NearBeach/organisation_information/organisation_readonly.html')
+
+    # profile picture
+
+    try:
+        profile_picture = organisation_results.organisation_profile_picture.url
+    except:
+        profile_picture = ''
+
+    c = {
+        'organisation_results': organisation_results,
+        'campus_results': campus_results,
+        'customer_results': customer_results,
+        'organisation_readonly_form': organisation_readonly_form(
+            instance=organisation_results,
+            ),
+        'profile_picture': profile_picture,
+        'project_results': project_results,
+        'task_results': task_results,
+        'opportunity_results': opportunity_results,
+        'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
+        'organisation_id': organisation_id,
+        'organisation_permissions': permission_results['organisation'],
+        'organisation_campus_permissions': permission_results['organisation_campus'],
+        'customer_permissions': permission_results['customer'],
+        'quote_results': quote_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'contact_history_collective': contact_history_collective,
+        'email_results': email_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
 
 @login_required(login_url='login')
 def permission_denied(request):
