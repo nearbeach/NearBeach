@@ -1523,8 +1523,20 @@ def customer_readonly(request,customer_id):
             ),
         )
 
-    print(contact_history_collective)
-
+    email_results = email_content.objects.filter(
+        is_deleted="FALSE",
+        email_content_id__in=email_contact.objects.filter(
+            (
+                    Q(to_customer=customer_id) |
+                    Q(cc_customer=customer_id)
+            ) &
+            Q(is_deleted="FALSE") &
+            Q(
+                Q(is_private=False) |
+                Q(change_user=request.user)
+            )
+        ).values('email_content_id')
+    )
     # The campus the customer is associated to
     """
     We need to limit the amount of opportunities to those that the user has access to.
@@ -1582,6 +1594,7 @@ def customer_readonly(request,customer_id):
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
         'contact_history_collective': contact_history_collective,
+        'email_results': email_results,
     }
 
     return HttpResponse(t.render(c, request))
