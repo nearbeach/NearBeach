@@ -2960,6 +2960,77 @@ class stage(models.Model):
         db_table = "stage"
 
 
+class tag(models.Model):
+    tag_id = models.AutoField(primary_key=True)
+    tag_name = models.CharField(max_length=50)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    def __str__(self):
+        return str(self.tag_name)
+
+    class Meta:
+        db_table = "tag"
+
+
+class tag_assignment(models.Model):
+    tag_assignment_id = models.AutoField(primary_key=True)
+    tag_id = models.ForeignKey(
+        tag,
+        on_delete=models.CASCADE,
+    )
+    project_id=models.ForeignKey(
+        project,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    task_id = models.ForeignKey(
+        'task',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    opportunity_id = models.ForeignKey(
+        opportunity,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    requirement_id = models.ForeignKey(
+        requirement,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    class Meta:
+        db_table="tag_assignment"
+
+
+
 class task(models.Model):
     task_id = models.AutoField(primary_key=True)
     task_short_description = models.CharField(max_length=255)

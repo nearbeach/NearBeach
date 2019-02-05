@@ -175,6 +175,7 @@ re_path(r'^search_projects_task', views.search_projects_task, name='search_proje
 re_path(r'^search_templates/',views.search_templates,name='search_templates'),
 re_path(r'^search_users', views_administration.search_users, name='search_users'),
 re_path(r'^search/', views.search, name='search'),
+re_path(r'^tag_information/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity","organisation","customer"]+)/$',views.tag_information,name='tag_information'),
 re_path(r'^task_information/(?P<task_id>[0-9]+)', views.task_information, name='task_information'),
 re_path(r'^task_readonly/(?P<task_id>[0-9]+)', views.task_readonly, name='task_readonly'),
 re_path(r'^task_remove_customer/(?P<task_customer_id>[0-9]+)/',views.task_remove_customer,name='task_remove_customer'),

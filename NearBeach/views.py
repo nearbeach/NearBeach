@@ -6463,6 +6463,73 @@ def search_templates(request):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login')
+def tag_information(request, location_id, destination):
+    """
+
+    :param request:
+    :param location_id: the object id
+    :param destination: the type of object, i.e. project, task, requirement, or opportunity
+    :return: HTML for tag information
+
+    Method
+    ~~~~~~
+    1. Check user permissions
+    2. If POST, check comments in section - because it will save the tag
+    3. Check which object type we are requesting for
+    4. Gather the required data
+    5. Send data to template and render
+    6. Give the HTML to user. YAY :D
+    """
+    #Add in permissions
+
+    # Check object and get require data
+    if destination == 'project':
+        tag_results = tag.objects.filter(
+            is_deleted="FALSE",
+            tag_id__in=tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                project_id=location_id,
+            ).values('tag_id')
+        )
+    elif destination == "task":
+        tag_results = tag.objects.filter(
+            is_deleted="FALSE",
+            tag_id__in=tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                task_id=location_id,
+            ).values('tag_id')
+        )
+    elif destination == "opportunity":
+        tag_results = tag.objects.filter(
+            is_deleted="FALSE",
+            tag_id__in=tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                opportunity_id=location_id,
+            ).values('tag_id')
+        )
+    elif destination == "requirement":
+        tag_results = tag.objects.filter(
+            is_deleted="FALSE",
+            tag_id__in=tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                requirement_id=location_id,
+            ).values('tag_id')
+        )
+    else:
+        tag_results = None
+
+    # Get template
+    t = loader.get_template('NearBeach/tag_information.html')
+
+    # Context
+    c = {
+        'tag_results': tag_results,
+        'new_tag_form': new_tag_form(),
+    }
+
+    return HttpResponse(t.render(c,request))
+
 
 @login_required(login_url='login')
 def task_information(request, task_id):
