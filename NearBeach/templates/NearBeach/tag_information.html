@@ -5,6 +5,11 @@
     <div class="card-body">
         <div class="form-row">
             {{ new_tag_form.tag_name }}
+            <datalist id="tag_list">
+                {% for row in tag_list_results %}
+                    <option>{{ row.tag_name }}</option>
+                {% endfor %}
+            </datalist>
             <input type="submit" class="btn btn-primary col-md-2" value="Submit Tag">
         </div>
         <h4>

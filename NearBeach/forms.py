@@ -2390,6 +2390,7 @@ class new_tag_form(forms.Form):
         widget=forms.TextInput(attrs={
             'class': 'form-control col-md-10',
             'placeholder': 'Submit Tag',
+            'list': 'tag_list',
         }),
     )
 

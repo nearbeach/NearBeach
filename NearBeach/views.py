@@ -1988,7 +1988,6 @@ def delete_tag(request, tag_id, location_id, destination):
                 requirement_id=location_id,
             ).update(is_deleted="TRUE")
 
-
         #Return blank page
         t = loader.get_template('NearBeach/blank.html')
 
@@ -6637,6 +6636,14 @@ def tag_information(request, location_id, destination):
         )
     else:
         tag_results = None
+
+
+    # Get all potential tags - for helping write tags
+    tag_list_results = tag.objects.filter(
+        is_deleted="FALSE",
+    ).exclude(
+        tag_id__in=tag_results.values('tag_id')
+    )
 
     # Get template
     t = loader.get_template('NearBeach/tag_information.html')
