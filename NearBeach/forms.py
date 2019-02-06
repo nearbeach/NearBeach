@@ -2384,7 +2384,7 @@ class new_requirement_form(ModelForm):
         }
 
 
-class new_tag_form(ModelForm):
+class new_tag_form(forms.Form):
     tag_name=forms.CharField(
         max_length=50,
         widget=forms.TextInput(attrs={
@@ -2392,12 +2392,6 @@ class new_tag_form(ModelForm):
             'placeholder': 'Submit Tag',
         }),
     )
-
-    class Meta:
-        model=tag
-        fields = {
-            'tag_name',
-        }
 
 
 

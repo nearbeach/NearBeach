@@ -2962,7 +2962,10 @@ class stage(models.Model):
 
 class tag(models.Model):
     tag_id = models.AutoField(primary_key=True)
-    tag_name = models.CharField(max_length=50)
+    tag_name = models.CharField(
+        max_length=50,
+        unique=True,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(

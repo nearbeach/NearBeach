@@ -67,6 +67,7 @@ re_path(r'^delete_campus_contact/(?P<customer_campus_id>[0-9]+)/(?P<cust_or_camp
 re_path(r'^delete_cost/(?P<cost_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<project_or_task>[P,T])', views.delete_cost,name='delete_cost'),
 re_path(r'^delete_document/(?P<document_key>[0-9A-Za-z_\-]+)/$', views_document_tree.delete_document, name='delete_document'),
 re_path(r'^delete_folder/(?P<folder_id>[0-9]+)/$', views_document_tree.delete_folder, name='delete_folder'),
+re_path(r'^delete_tag/(?P<tag_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/$', views.delete_tag,name='delete_tag'),
 re_path(r'^diagnostic_information/$', views.diagnostic_information, name='diagnostic_information'),
 re_path(r'^diagnostic_test_database/',views.diagnostic_test_database,name='diagnostic_test_database'),
 re_path(r'^diagnostic_test_document_upload/',views.diagnostic_test_document_upload,name='diagnostic_test_document_upload'),

@@ -509,7 +509,26 @@
     $("#tag_results").on('submit', function(e) {
        e.preventDefault();
 
-       //ADD CODE LATER
+       $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+       $.ajax({
+           url: '/tag_information/{{ project_id }}/project/',
+           data: $(this).serialize(),
+           dataType: 'HTML',
+           type: 'POST',
+           success: function(data) {
+               $("#tag_results").html(data);
+           },
+           error: function() {
+               alert("Sorry, could not save tag.");
+           },
+       })
     });
 
 
@@ -838,6 +857,29 @@
             },
             error: function() {
                 alert("Sorry - tag results did not load");
+            }
+        });
+    }
+
+    function delete_tag(tag_id) {
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            url: '/delete_tag/' + tag_id + '/{{ project_id }}/project/',
+            data: {},
+            dataType: 'HTML',
+            type: 'POST',
+            success: function(data) {
+                load_tag_results();
+            },
+            error: function() {
+                alert("Sorry - did not delete tag correctly");
             }
         });
     }

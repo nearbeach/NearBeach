@@ -13,7 +13,7 @@
                     <span class="badge badge-primary mr-2 mt-2">
                         {{ tag.tag_name }}
                         <button type="button" class="close ml-3" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true" class="">&times;</span>
+                            <span aria-hidden="true" class="" onclick="delete_tag({{ tag.tag_id }})">&times;</span>
                         </button>
                     </span>
                 {% endfor %}
