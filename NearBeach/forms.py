@@ -2384,6 +2384,18 @@ class new_requirement_form(ModelForm):
         }
 
 
+class new_tag_form(forms.Form):
+    tag_name=forms.CharField(
+        max_length=50,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control col-md-10',
+            'placeholder': 'Submit Tag',
+            'list': 'tag_list',
+        }),
+    )
+
+
+
 class new_task_form(forms.Form):
     # Get data for choice boxes
     organisations_results=organisation.objects.filter(is_deleted='FALSE')

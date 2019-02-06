@@ -1937,6 +1937,66 @@ def delete_cost(request, cost_id, location_id, project_or_task):
         return HttpResponseRedirect(reverse('task_information', args={location_id}))
 
 
+@login_required(login_url='login')
+def delete_tag(request, tag_id, location_id, destination):
+    """
+    If the user has permission, we will delete the tag from the current object location.
+
+    Please note - a user might accidently type in the same tag multiple times. Hence we are just getting tag
+    id, location_id and destination and removing ALL tags with the same id from this object location
+    :param request:
+    :param tag_id: the tag_id that we are removing
+    :param location_id: location id for the object
+    :param destination: the destination of the object
+    :return:
+
+    Method
+    ~~~~~~
+    1. Make sure is post
+    2. Make sure user has permission to delete
+    3. Filter for all tags in current destination and location
+    4. Delete :)
+    5. Send back blank page
+    """
+
+    if request.method == "POST":
+        #CHECK USER PERMISSION
+
+        # Filter for all tags in current destination and location
+        if destination == "project":
+            tag_assignment_update=tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                tag_id=tag_id,
+                project_id=location_id,
+            ).update(is_deleted="TRUE")
+        elif destination == "task":
+            tag_assignment_update = tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                tag_id=tag_id,
+                task_id=location_id,
+            ).update(is_deleted="TRUE")
+        elif destination == "opportunity":
+            tag_assignment_update = tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                tag_id=tag_id,
+                opportunity_id=location_id,
+            ).update(is_deleted="TRUE")
+        elif destination == "requirement":
+            tag_assignment_update = tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                tag_id=tag_id,
+                requirement_id=location_id,
+            ).update(is_deleted="TRUE")
+
+        #Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+
+        c = {}
+
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("Sorry, this has to be done in POST")
+
 
 @login_required(login_url='login')
 def diagnostic_information(request):
@@ -6462,6 +6522,139 @@ def search_templates(request):
 
     return HttpResponse(t.render(c, request))
 
+
+@login_required(login_url='login')
+def tag_information(request, location_id, destination):
+    """
+    Tag information is where the user requests tags for certain objects.
+
+    :param request:
+    :param location_id: the object id
+    :param destination: the type of object, i.e. project, task, requirement, or opportunity
+    :return: HTML for tag information
+
+    Method
+    ~~~~~~
+    1. Check user permissions
+    2. If POST, check comments in section - because it will save the tag
+    3. Check which object type we are requesting for
+    4. Gather the required data
+    5. Send data to template and render
+    6. Give the HTML to user. YAY :D
+    """
+    #Add in permissions
+
+    # Check to see if post
+    if request.method == "POST":
+        form = new_tag_form(request.POST)
+        if form.is_valid():
+            """
+            Method
+            ~~~~~~
+            1. Extract the tag_name from the form
+            2. Find out if the tag_name already exists
+            3. If tag_name does not exist - create the new tag
+            4. If tag_name does exist and is deleted, undelete it.
+            4. Connect the current object to the tag :)
+            5. Complete other method :) WOO
+            """
+            tag_name = form.cleaned_data['tag_name']
+
+            #Find out if the tag already exists
+            tag_instance = tag.objects.filter(tag_name=tag_name)
+
+
+            #If tag_name does not exist - create it
+            if not tag_instance:
+                tag_submit = tag(
+                    tag_name=tag_name,
+                    change_user=request.user,
+                )
+                tag_submit.save()
+                tag_instance = tag_submit
+            else:
+                tag_instance = tag_instance[0]  # Removes the filter :D
+
+                if tag_instance.is_deleted == "TRUE":
+                    #If tag_name does exist and is deleted, undelete it.
+                    tag_instance.is_deleted = "FALSE"
+                    tag_instance.save()
+
+            #Connect the current object to the tag
+            tag_assignment_submit = tag_assignment(
+                tag_id=tag_instance,
+                change_user=request.user,
+            )
+
+            # Which object?
+            if destination == "project":
+                tag_assignment_submit.project_id=project.objects.get(project_id=location_id)
+            elif destination == "task":
+                tag_assignment_submit.task_id = task.objects.get(task_id=location_id)
+            elif destination == "opportunity":
+                tag_assignment_submit.opportunity_id = opportunity.objects.get(opportunity_id=location_id)
+            elif destination == "requirement":
+                tag_assignment_submit.requirment_id = requirement.objects.get(requirement_id=location_id)
+
+            tag_assignment_submit.save()
+
+        else:
+            print(form.errors)
+
+    # Check object and get require data
+    if destination == 'project':
+        tag_results = tag.objects.filter(
+            is_deleted="FALSE",
+            tag_id__in=tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                project_id=location_id,
+            ).values('tag_id')
+        )
+    elif destination == "task":
+        tag_results = tag.objects.filter(
+            is_deleted="FALSE",
+            tag_id__in=tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                task_id=location_id,
+            ).values('tag_id')
+        )
+    elif destination == "opportunity":
+        tag_results = tag.objects.filter(
+            is_deleted="FALSE",
+            tag_id__in=tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                opportunity_id=location_id,
+            ).values('tag_id')
+        )
+    elif destination == "requirement":
+        tag_results = tag.objects.filter(
+            is_deleted="FALSE",
+            tag_id__in=tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                requirement_id=location_id,
+            ).values('tag_id')
+        )
+    else:
+        tag_results = None
+
+
+    # Get all potential tags - for helping write tags
+    tag_list_results = tag.objects.filter(
+        is_deleted="FALSE",
+    ).exclude(
+        tag_id__in=tag_results.values('tag_id')
+    )
+
+    # Get template
+    t = loader.get_template('NearBeach/tag_information.html')
+
+    # Context
+    c = {
+        'tag_results': tag_results,
+        'new_tag_form': new_tag_form(),
+    }
+
+    return HttpResponse(t.render(c,request))
 
 
 @login_required(login_url='login')
