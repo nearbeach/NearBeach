@@ -1961,7 +1961,7 @@ def delete_group(request, group_id):
             return HttpResponseBadRequest("You do not have permission to delete")
 
         #If group_id is 1, it means it is the admin. Fake delete by setting group_id = 0
-        if group_id == 1:
+        if group_id == 1 or group_id == '1':
             group_id = 0 #Shh, it will then do nothing :)group
 
         #Filter for the group - and then update is_deleted to TRUE
