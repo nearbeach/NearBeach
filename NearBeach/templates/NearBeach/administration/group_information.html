@@ -57,9 +57,97 @@
         </div>
     </form>
 
+    {% if not group_id == 1 and administration_permission == 4 %}
+        <div class="card mt-4">
+            <div class="card-header bg-danger">
+                <h2>DANGER ZONE!</h2>
+            </div>
+            <div class="card-body">
+                <a href="javascript:void(0)" onclick="confirm_delete_group({{ group_id }})" class="btn btn-warning col-md-12">Delete Group</a>
+            </div>
+        </div>
+    {% endif %}
 
+
+    <!-- CONFIRM DELETION OF GROUP -->
+    <div class="modal" tabindex="-1" role="dialog" id="confirm_group_delete">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <!-- HEADER -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Group?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <!-- BODY -->
+                <div class="modal-body">
+                    <p>
+                        Are you sure you want to delete the group? Deleting a group set will ALSO delete any users connected with this group.
+                        <strong> This can not be reversed.</strong>
+                    </p>
+                </div>
+
+
+                <!-- FOOTER -->
+                <div class="modal-footer">
+                    <button id="remove_group_confirmed" disabled type="button" class="btn btn-danger btn-ok">Delete Group</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
+        function confirm_delete_group(group_id) {
+            /*
+            First we have to confirm that the user wants to delete the group. This will bring up a modal
+            and force them to wait 2 seconds before deleting. It also warns them about the dangers of doing this.
+
+            Method
+            ~~~~~~
+            1. Bring up modal
+            2. Change the remove permission button attribute to the correct function
+            2. Wait 2 seconds
+            3. Enable button
+             */
+            $("#confirm_group_delete").modal("show");
+
+            //Change the attribute for the confirmation button
+            $("#remove_group_confirmed").attr('onclick','delete_group("' + group_id + '");')
+
+            //Set the timeout of the button
+            setTimeout(function() {
+                document.getElementById("remove_group_confirmed").disabled = false;
+            }, 2000);
+        }
+
+
+        function delete_group(group_id) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/delete_group/' + group_id + '/',
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    window.location.href = "{% url 'search_group' %}";
+                },
+                error: function() {
+                    alert("Sorry, the group was not deleted");
+                }
+            })
+        };
+
+
         //On the document load function
         $(document).ready(function(){
             //Load the required modules through AJAX
@@ -223,6 +311,34 @@
                 'disabled',
                 $("#id_add_permission_set").val() == "" //Returns a TRUE/FALSE statement
             )
+        }
+
+        function remove_user_permission(user_id, permission_set_id, group_id) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/delete_user_permission/' + user_id + '/' + permission_set_id + '/' + group_id + '/',
+                data: {},
+                dataType: "HTML",
+                type: "POST",
+                success: function(data) {
+                    load_add_user();
+                },
+                error: function() {
+                    //Utilising the page_alerts, it will add the error message.
+                    //Add in text first
+                    $("#page_alert_text").append("<hr>Error loading <strong>Remove User Permission</strong>. Can not delete user permission - please read logs.");
+
+                    //Show the alert
+                    $("#page_alert").show();
+                }
+            });
         }
     </script>
 {% endblock %}

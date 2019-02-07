@@ -1938,6 +1938,103 @@ def delete_cost(request, cost_id, location_id, project_or_task):
 
 
 @login_required(login_url='login')
+def delete_group(request, group_id):
+    """
+    This will remove the group, and anyone connected to the group. Becareful - this is a sad function.
+    :param request:
+    :param group_id: The group we wish to delete
+    :return: blank page
+
+    Method
+    ~~~~~~
+    1. Check to see if the request is in POST - if not send user an error
+    2. Check to see if the user has permission - if not, send them to the naughty corner
+    3. Get the group using the group_id - set is_deleted to TRUE
+    4. Filter user_group by the group_id
+    5. Set the filtered user_group data field is_deleted to TRUE
+    6. Return blank page
+    """
+    if request.method == "POST":
+        #Check those user permissions
+        permission_results = return_user_permission_level(request, None, 'administration_create_group')
+        if permission_results['administration_create_group'] < 4:
+            return HttpResponseBadRequest("You do not have permission to delete")
+
+        #If group_id is 1, it means it is the admin. Fake delete by setting group_id = 0
+        if group_id == 1:
+            group_id = 0 #Shh, it will then do nothing :)group
+
+        #Filter for the group - and then update is_deleted to TRUE
+        group.objects.filter(
+            group_id=group_id,
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        #Filter for any user_group rows - then update is_deleted to TRUE
+        user_group.objects.filter(
+            is_deleted="FALSE",
+            group_id=group_id,
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        #Return a blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry - can only be done in POST")
+
+
+
+@login_required(login_url='login')
+def delete_permission_set(request, permission_set_id):
+    """
+    This will remove a permission set along with any user_group's connected to this permission_set. Becareful
+    :param request:
+    :param permission_set_id: the permission set we are removing
+    :return: blank page
+
+    Method
+    ~~~~~~
+    1. Check to make sure it is in POST - otherwise throw error
+    2. Check to make sure user has permission - otherwise throw error
+    3. Get the permission_set using permission_set id - update is_deleted to TRUE
+    4. Find all user_group rows connected with this permission_set - update is_deleted to True
+    5. Return blank page
+    """
+    if request.method == "POST":
+        #Check those user permissions
+        permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
+        if permission_results['administration_create_permission_set'] < 4:
+            return HttpResponseBadRequest("You do not have permission to delete")
+
+        #Get permission set and update
+        permission_set.objects.filter(
+            permission_set_id=permission_set_id
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        #Update all user_groups connected to this permission set
+        user_group.objects.filter(
+            is_deleted="FALSE",
+            permission_set_id=permission_set_id,
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        #Send back blank page :)
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+
+    else:
+        return HttpResponseBadRequest("Sorry - can only do this in POST")
+
+
+@login_required(login_url='login')
 def delete_tag(request, tag_id, location_id, destination):
     """
     If the user has permission, we will delete the tag from the current object location.
@@ -1998,6 +2095,50 @@ def delete_tag(request, tag_id, location_id, destination):
         return HttpResponse(t.render(c, request))
     else:
         return HttpResponseBadRequest("Sorry, this has to be done in POST")
+
+
+@login_required(login_url='login')
+def delete_user_permission(request, user_id, permission_set_id, group_id):
+    """
+    This function will remove all permission sets for a particular group and user.
+
+    Users can be added to the same collections of { group, permission_set } multiple times. We will need to delete all of
+    these.
+    :param request:
+    :param user_id: Which user we are focusing on
+    :param permission_set_id: Which permission set
+    :param group_id:  Which group
+    :return:
+
+    Method
+    ~~~~~~
+    1. Check to make sure command is in POST - if not error out
+    2. Check to make sure user has permission to do this - if not error out
+    3. Filter the user_group for the; user_id, permission_set_id, and group_id
+    4. Apply "is_deleted='TRUE'" to the filtered object
+    5. Return blank page :)
+    """
+    if request.method == "POST":
+        #Check user permission
+        permission_results = return_user_permission_level(request, [None], ['administration_create_group'])
+        if not permission_results['administration_create_group'] == 4:
+            return HttpResponseForbidden
+
+        #Apply the filter and update is_deleted to TRUE
+        user_group_update=user_group.objects.filter(
+            is_deleted="FALSE",
+            group_id=group_id,
+            permission_set_id=permission_set_id,
+            username_id=user_id,
+        ).update(is_deleted="TRUE")
+
+        # Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+
+    else:
+        return HttpResponseBadRequest("Sorry - can only do this in POST")
 
 
 @login_required(login_url='login')

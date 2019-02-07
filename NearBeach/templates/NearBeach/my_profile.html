@@ -5,14 +5,15 @@
 <body onload="on_page_load()">
     <div class="card mt-4">
         <div class="card-header">
-            <h2>My Profile</h2>
+            <h1>My Profile</h1>
         </div>
         <div class="card-body">
             <div class="alert alert-success" id="save_state" role="alert"></div>
             <form id="user_information_form" name="user_information_form" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                <!--FIRST NAME-->
+
                 <div class="form-row">
+                    <!--FIRST NAME-->
                     <div class="form-group col-md-6">
                         <label for="id_first_name">First Name</label>
                         {{ my_profile_form.first_name }}
