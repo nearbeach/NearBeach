@@ -616,7 +616,8 @@ def user_information(request, user_id):
 
     #Get data
     user_group_results = user_group.objects.filter(
-        username_id=user_id
+        is_deleted="FALSE",
+        username_id=user_id,
     )
 
     #forms

@@ -1,0 +1,32 @@
+<div class="card mt-4">
+    <div class="card-header">
+        <h2>Tags</h2>
+    </div>
+    <div class="card-body">
+        <div class="form-row">
+            {% if tag_permission >= 2 %}
+                {{ new_tag_form.tag_name }}
+                <datalist id="tag_list">
+                    {% for row in tag_list_results %}
+                        <option>{{ row.tag_name }}</option>
+                    {% endfor %}
+                </datalist>
+            {% endif %}
+            <input type="submit" class="btn btn-primary col-md-2" value="Submit Tag">
+        </div>
+        <h4>
+            <div class="form-row">
+                {% for tag in tag_results %}
+                    <span class="badge badge-primary mr-2 mt-2">
+                        {{ tag.tag_name }}
+                        {% if tag_permission == 4 %}
+                            <button type="button" class="close ml-3" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true" class="" onclick="delete_tag({{ tag.tag_id }})">&times;</span>
+                            </button>
+                        {% endif %}
+                    </span>
+                {% endfor %}
+            </div>
+        </h4>
+    </div>
+</div>

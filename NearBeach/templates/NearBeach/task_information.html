@@ -183,6 +183,17 @@
         Loading Task History Results...
     </div>
 
+    <form action="POST" id="tag_results" class="tag_results">
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Tags</h2>
+            </div>
+            <div class="card-body">
+                Loading...
+            </div>
+        </div>
+    </form>
+
     <div class="card mt-4">
         <div class="card-header">
             <h2>Email History</h2>
@@ -507,6 +518,32 @@
         })
     });
 
+    $("#tag_results").on('submit', function(e) {
+       e.preventDefault();
+
+       $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+       $.ajax({
+           url: '/tag_information/{{ task_id }}/task/',
+           data: $(this).serialize(),
+           dataType: 'HTML',
+           type: 'POST',
+           success: function(data) {
+               $("#tag_results").html(data);
+           },
+           error: function() {
+               alert("Sorry, could not save tag.");
+           },
+       })
+    });
+
+
     function load_bug_list() {
         $.ajax({
             url: '/bug_list/{{ task_id }}/task',
@@ -784,6 +821,45 @@
             },
             error: function() {
                 alert("Sorry - there is something wrong with removing this customer");
+            }
+        });
+    }
+
+
+    function load_tag_results() {
+        $.ajax({
+            url: '/tag_information/{{ task_id }}/task/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                $("#tag_results").html(data);
+            },
+            error: function() {
+                alert("Sorry - tag results did not load");
+            }
+        });
+    }
+
+    function delete_tag(tag_id) {
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            url: '/delete_tag/' + tag_id + '/{{ task_id }}/task/',
+            data: {},
+            dataType: 'HTML',
+            type: 'POST',
+            success: function(data) {
+                load_tag_results();
+            },
+            error: function() {
+                alert("Sorry - did not delete tag correctly");
             }
         });
     }

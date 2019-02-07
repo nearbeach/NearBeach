@@ -1937,6 +1937,209 @@ def delete_cost(request, cost_id, location_id, project_or_task):
         return HttpResponseRedirect(reverse('task_information', args={location_id}))
 
 
+@login_required(login_url='login')
+def delete_group(request, group_id):
+    """
+    This will remove the group, and anyone connected to the group. Becareful - this is a sad function.
+    :param request:
+    :param group_id: The group we wish to delete
+    :return: blank page
+
+    Method
+    ~~~~~~
+    1. Check to see if the request is in POST - if not send user an error
+    2. Check to see if the user has permission - if not, send them to the naughty corner
+    3. Get the group using the group_id - set is_deleted to TRUE
+    4. Filter user_group by the group_id
+    5. Set the filtered user_group data field is_deleted to TRUE
+    6. Return blank page
+    """
+    if request.method == "POST":
+        #Check those user permissions
+        permission_results = return_user_permission_level(request, None, 'administration_create_group')
+        if permission_results['administration_create_group'] < 4:
+            return HttpResponseBadRequest("You do not have permission to delete")
+
+        #If group_id is 1, it means it is the admin. Fake delete by setting group_id = 0
+        if group_id == 1 or group_id == '1':
+            group_id = 0 #Shh, it will then do nothing :)group
+
+        #Filter for the group - and then update is_deleted to TRUE
+        group.objects.filter(
+            group_id=group_id,
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        #Filter for any user_group rows - then update is_deleted to TRUE
+        user_group.objects.filter(
+            is_deleted="FALSE",
+            group_id=group_id,
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        #Return a blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry - can only be done in POST")
+
+
+
+@login_required(login_url='login')
+def delete_permission_set(request, permission_set_id):
+    """
+    This will remove a permission set along with any user_group's connected to this permission_set. Becareful
+    :param request:
+    :param permission_set_id: the permission set we are removing
+    :return: blank page
+
+    Method
+    ~~~~~~
+    1. Check to make sure it is in POST - otherwise throw error
+    2. Check to make sure user has permission - otherwise throw error
+    3. Get the permission_set using permission_set id - update is_deleted to TRUE
+    4. Find all user_group rows connected with this permission_set - update is_deleted to True
+    5. Return blank page
+    """
+    if request.method == "POST":
+        #Check those user permissions
+        permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
+        if permission_results['administration_create_permission_set'] < 4:
+            return HttpResponseBadRequest("You do not have permission to delete")
+
+        #Get permission set and update
+        permission_set.objects.filter(
+            permission_set_id=permission_set_id
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        #Update all user_groups connected to this permission set
+        user_group.objects.filter(
+            is_deleted="FALSE",
+            permission_set_id=permission_set_id,
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        #Send back blank page :)
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+
+    else:
+        return HttpResponseBadRequest("Sorry - can only do this in POST")
+
+
+@login_required(login_url='login')
+def delete_tag(request, tag_id, location_id, destination):
+    """
+    If the user has permission, we will delete the tag from the current object location.
+
+    Please note - a user might accidently type in the same tag multiple times. Hence we are just getting tag
+    id, location_id and destination and removing ALL tags with the same id from this object location
+    :param request:
+    :param tag_id: the tag_id that we are removing
+    :param location_id: location id for the object
+    :param destination: the destination of the object
+    :return:
+
+    Method
+    ~~~~~~
+    1. Make sure is post
+    2. Make sure user has permission to delete
+    3. Filter for all tags in current destination and location
+    4. Delete :)
+    5. Send back blank page
+    """
+
+    if request.method == "POST":
+        permission_results = return_user_permission_level(request, None, 'tag')
+        if permission_results['tag'] < 4:
+            return HttpResponseBadRequest("You do not have permission to delete")
+
+        # Filter for all tags in current destination and location
+        if destination == "project":
+            tag_assignment_update=tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                tag_id=tag_id,
+                project_id=location_id,
+            ).update(is_deleted="TRUE")
+        elif destination == "task":
+            tag_assignment_update = tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                tag_id=tag_id,
+                task_id=location_id,
+            ).update(is_deleted="TRUE")
+        elif destination == "opportunity":
+            tag_assignment_update = tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                tag_id=tag_id,
+                opportunity_id=location_id,
+            ).update(is_deleted="TRUE")
+        elif destination == "requirement":
+            tag_assignment_update = tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                tag_id=tag_id,
+                requirement_id=location_id,
+            ).update(is_deleted="TRUE")
+
+        #Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+
+        c = {}
+
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("Sorry, this has to be done in POST")
+
+
+@login_required(login_url='login')
+def delete_user_permission(request, user_id, permission_set_id, group_id):
+    """
+    This function will remove all permission sets for a particular group and user.
+
+    Users can be added to the same collections of { group, permission_set } multiple times. We will need to delete all of
+    these.
+    :param request:
+    :param user_id: Which user we are focusing on
+    :param permission_set_id: Which permission set
+    :param group_id:  Which group
+    :return:
+
+    Method
+    ~~~~~~
+    1. Check to make sure command is in POST - if not error out
+    2. Check to make sure user has permission to do this - if not error out
+    3. Filter the user_group for the; user_id, permission_set_id, and group_id
+    4. Apply "is_deleted='TRUE'" to the filtered object
+    5. Return blank page :)
+    """
+    if request.method == "POST":
+        #Check user permission
+        permission_results = return_user_permission_level(request, [None], ['administration_create_group'])
+        if not permission_results['administration_create_group'] == 4:
+            return HttpResponseForbidden
+
+        #Apply the filter and update is_deleted to TRUE
+        user_group_update=user_group.objects.filter(
+            is_deleted="FALSE",
+            group_id=group_id,
+            permission_set_id=permission_set_id,
+            username_id=user_id,
+        ).update(is_deleted="TRUE")
+
+        # Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+
+    else:
+        return HttpResponseBadRequest("Sorry - can only do this in POST")
+
 
 @login_required(login_url='login')
 def diagnostic_information(request):
@@ -6462,6 +6665,141 @@ def search_templates(request):
 
     return HttpResponse(t.render(c, request))
 
+
+@login_required(login_url='login')
+def tag_information(request, location_id, destination):
+    """
+    Tag information is where the user requests tags for certain objects.
+
+    :param request:
+    :param location_id: the object id
+    :param destination: the type of object, i.e. project, task, requirement, or opportunity
+    :return: HTML for tag information
+
+    Method
+    ~~~~~~
+    1. Check user permissions
+    2. If POST, check comments in section - because it will save the tag
+    3. Check which object type we are requesting for
+    4. Gather the required data
+    5. Send data to template and render
+    6. Give the HTML to user. YAY :D
+    """
+    permission_results = return_user_permission_level(request, None, 'tag')
+    #It does not matter if they have 0 for permission level. As we always want to show tags associated with the object.
+
+    # Check to see if post
+    if request.method == "POST":
+        form = new_tag_form(request.POST)
+        if form.is_valid():
+            """
+            Method
+            ~~~~~~
+            1. Extract the tag_name from the form
+            2. Find out if the tag_name already exists
+            3. If tag_name does not exist - create the new tag
+            4. If tag_name does exist and is deleted, undelete it.
+            4. Connect the current object to the tag :)
+            5. Complete other method :) WOO
+            """
+            tag_name = form.cleaned_data['tag_name']
+
+            #Find out if the tag already exists
+            tag_instance = tag.objects.filter(tag_name=tag_name)
+
+
+            #If tag_name does not exist - create it
+            if not tag_instance:
+                tag_submit = tag(
+                    tag_name=tag_name,
+                    change_user=request.user,
+                )
+                tag_submit.save()
+                tag_instance = tag_submit
+            else:
+                tag_instance = tag_instance[0]  # Removes the filter :D
+
+                if tag_instance.is_deleted == "TRUE":
+                    #If tag_name does exist and is deleted, undelete it.
+                    tag_instance.is_deleted = "FALSE"
+                    tag_instance.save()
+
+            #Connect the current object to the tag
+            tag_assignment_submit = tag_assignment(
+                tag_id=tag_instance,
+                change_user=request.user,
+            )
+
+            # Which object?
+            if destination == "project":
+                tag_assignment_submit.project_id=project.objects.get(project_id=location_id)
+            elif destination == "task":
+                tag_assignment_submit.task_id = task.objects.get(task_id=location_id)
+            elif destination == "opportunity":
+                tag_assignment_submit.opportunity_id = opportunity.objects.get(opportunity_id=location_id)
+            elif destination == "requirement":
+                tag_assignment_submit.requirment_id = requirement.objects.get(requirement_id=location_id)
+
+            tag_assignment_submit.save()
+
+        else:
+            print(form.errors)
+
+    # Check object and get require data
+    if destination == 'project':
+        tag_results = tag.objects.filter(
+            is_deleted="FALSE",
+            tag_id__in=tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                project_id=location_id,
+            ).values('tag_id')
+        )
+    elif destination == "task":
+        tag_results = tag.objects.filter(
+            is_deleted="FALSE",
+            tag_id__in=tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                task_id=location_id,
+            ).values('tag_id')
+        )
+    elif destination == "opportunity":
+        tag_results = tag.objects.filter(
+            is_deleted="FALSE",
+            tag_id__in=tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                opportunity_id=location_id,
+            ).values('tag_id')
+        )
+    elif destination == "requirement":
+        tag_results = tag.objects.filter(
+            is_deleted="FALSE",
+            tag_id__in=tag_assignment.objects.filter(
+                is_deleted="FALSE",
+                requirement_id=location_id,
+            ).values('tag_id')
+        )
+    else:
+        tag_results = None
+
+
+    # Get all potential tags - for helping write tags
+    tag_list_results = tag.objects.filter(
+        is_deleted="FALSE",
+    ).exclude(
+        tag_id__in=tag_results.values('tag_id')
+    )
+
+    # Get template
+    t = loader.get_template('NearBeach/tag_information.html')
+
+    # Context
+    c = {
+        'tag_results': tag_results,
+        'new_tag_form': new_tag_form(),
+        'tag_permission': permission_results['tag'],
+    }
+
+    return HttpResponse(t.render(c,request))
 
 
 @login_required(login_url='login')

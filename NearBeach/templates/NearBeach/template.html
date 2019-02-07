@@ -71,7 +71,7 @@
                     {% if administration_permission >= 1 %}
                         <!--CONFIGURATION-->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light" href="javascript:void(0)" id="administration_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle text-light" href="javascript:void(0)" id="configuration_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Configuration
                             </a>
                             <div class="dropdown-menu bg-dark" aria-labelledby="administration_dropdown">
@@ -104,7 +104,7 @@
                 </form>
 
                 <!--LOGOUT-->
-                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                <a class="btn btn-dark" href="{% url 'logout' %}">Logout</a>
             </div>
         </nav>
     </header>

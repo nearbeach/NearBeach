@@ -48,7 +48,7 @@
                     <td>{{ user.username.last_name }}</td>
                     <td>{{ user.permission_set }}</td>
                     {% if administration_permission == 4 %}
-                        <td><a href="javascript:void(0)">Delete</a></td>
+                        <td><a href="javascript:void(0)" onclick="remove_user_permission({{ user.username.id }},{{ user.permission_set.permission_set_id }},{{ user.group.group_id }})">Delete</a></td>
                     {% endif %}
                 </tr>
             {% endfor %}
