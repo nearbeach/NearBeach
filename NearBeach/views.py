@@ -1960,7 +1960,9 @@ def delete_tag(request, tag_id, location_id, destination):
     """
 
     if request.method == "POST":
-        #CHECK USER PERMISSION
+        permission_results = return_user_permission_level(request, None, 'tag')
+        if permission_results['tag'] < 4:
+            return HttpResponseBadRequest("You do not have permission to delete")
 
         # Filter for all tags in current destination and location
         if destination == "project":
@@ -6542,7 +6544,8 @@ def tag_information(request, location_id, destination):
     5. Send data to template and render
     6. Give the HTML to user. YAY :D
     """
-    #Add in permissions
+    permission_results = return_user_permission_level(request, None, 'tag')
+    #It does not matter if they have 0 for permission level. As we always want to show tags associated with the object.
 
     # Check to see if post
     if request.method == "POST":
@@ -6652,6 +6655,7 @@ def tag_information(request, location_id, destination):
     c = {
         'tag_results': tag_results,
         'new_tag_form': new_tag_form(),
+        'tag_permission': permission_results['tag'],
     }
 
     return HttpResponse(t.render(c,request))
