@@ -3588,6 +3588,37 @@ def kudos_read_only(request,kudos_key):
     return HttpResponse(t.render(c,request))
 
 
+@login_required(login_url='login')
+def list_of_tags(request):
+    """
+    List of tags will allow a user to configure all the tags currently in NearBeach. The user will be able to
+    - Merge tags together
+    - Delete tags
+    - Rename tags
+    - Create new tags
+    :param request:
+    :return: Page of tags
+
+    Method
+    ~~~~~~
+    1. Check user permissions - if they are not allowed here send them to the naughty corner
+    """
+
+    # Get data
+    tag_results = tag.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    # Template
+    t = loader.get_template('NearBeach/tags/list_of_tags.html')
+
+    # Context
+    c = {
+        'tag_results': tag_results,
+    }
+
+    return HttpResponse(t.render(c,request))
+
 
 def login(request):
     """
@@ -6637,6 +6668,138 @@ def search_projects_task(request):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def search_tags(request):
+    """
+    This search functionality allows the user to search NearBeach for tags. Tags are connected to the objects;
+    - Projects
+    - Tasks
+    - Requirements
+    - Opportunities
+
+    This will bring back a result of ALL objects that contain that tag
+    :param request:
+    :return:
+
+    Method
+    ~~~~~~
+    1. Check permissions - if you do not have permissions then you will be carted away
+    2. Declare all variables
+    3. Check to see if this is in POST
+    """
+    permission_results = return_user_permission_level(request, None, 'tag')
+    if permission_results['tag'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #Declaring variables
+    search_for = ""
+    search_form_form = search_form(request.POST or None)
+
+    if request.method == "POST":
+        if search_form_form.is_valid():
+            #Lets get the form data
+            search_for=search_form_form.cleaned_data['search_for']
+
+    # Get data
+    """
+    These are the potential tags that match the search results. When blank - it will pull out all tags (as this can be
+    used as a general search).
+    """
+    tag_assignment_results = tag_assignment.objects.filter(
+        is_deleted="FALSE",
+        tag_id__in=tag.objects.filter(
+            is_deleted="FALSE",
+            tag_name__contains=search_for,
+        ).values('tag_id'),
+    )
+
+    """
+    We want to limit the objects down to only those that the user has access to. We do not want to accidently show 
+    projects/tasks/requirements/opportunities that are currently in other groups.
+    
+    The following object will check
+    - Is the object still not deleted
+    - Is the object in a list of objects that the user has access to (either via group or being assigned)
+    - Is the object in the list of tag assignment results.
+    """
+    project_results = project.objects.filter(
+        Q(is_deleted="FALSE") and
+        Q(project_id__in=object_assignment.objects.filter(
+            Q(is_deleted="FALSE",) and
+            Q(
+                Q(assigned_user_id=request.user.id) or
+                Q(group_id__in=user_group.objects.filter(
+                    is_deleted="FALSE",
+                    username=request.user,
+                ).values('group_id'))
+            )
+        ).values('project_id')) and
+        Q(project_id__in=tag_assignment_results.filter(project_id__isnull=False).values('project_id'))
+    )
+
+    task_results = task.objects.filter(
+        Q(is_deleted="FALSE") and
+        Q(task_id__in=object_assignment.objects.filter(
+            Q(is_deleted="FALSE", ) and
+            Q(
+                Q(assigned_user_id=request.user.id) or
+                Q(group_id__in=user_group.objects.filter(
+                    is_deleted="FALSE",
+                    username=request.user,
+                ).values('group_id'))
+            )
+        ).values('task_id')) and
+        Q(task_id__in=tag_assignment_results.filter(task_id__isnull=False).values('task_id'))
+    )
+
+    requirement_results = requirement.objects.filter(
+        Q(is_deleted="FALSE") and
+        Q(requirement_id__in=object_assignment.objects.filter(
+            Q(is_deleted="FALSE", ) and
+            Q(
+                Q(assigned_user_id=request.user.id) or
+                Q(group_id__in=user_group.objects.filter(
+                    is_deleted="FALSE",
+                    username=request.user,
+                ).values('group_id'))
+            )
+        ).values('requirement_id')) and
+        Q(requirement_id__in=tag_assignment_results.filter(requirement_id__isnull=False).values('requirement_id'))
+    )
+
+    opportunity_results = opportunity.objects.filter(
+        Q(is_deleted="FALSE") and
+        Q(opportunity_id__in=object_assignment.objects.filter(
+            Q(is_deleted="FALSE", ) and
+            Q(
+                Q(assigned_user_id=request.user.id) or
+                Q(group_id__in=user_group.objects.filter(
+                    is_deleted="FALSE",
+                    username=request.user,
+                ).values('group_id'))
+            )
+        ).values('opportunity_id')) and
+        Q(opportunity_id__in=tag_assignment_results.filter(opportunity_id__isnull=False).values('opportunity_id'))
+    )
+
+
+    # Get template
+    t = loader.get_template('NearBeach/search_tags.html')
+
+    # Context
+    c = {
+        'search_form': search_form_form,
+        'project_results': project_results,
+        'task_results': task_results,
+        'requirement_results': requirement_results,
+        'opportunity_results': opportunity_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c,request))
 
 
 @login_required(login_url='login')

@@ -3191,7 +3191,7 @@ class search_form(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Search',
-            'class': 'form-control w-75',
+            'class': 'form-control',
         }),
     )
 

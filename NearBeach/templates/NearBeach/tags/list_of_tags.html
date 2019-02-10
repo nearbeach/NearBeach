@@ -1,0 +1,27 @@
+{% extends "../template.html" %}
+{% block content %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>List of Tags</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <td class="w-50">Tag Name</td>
+                        <td class="w-25">Merge Tag</td>
+                        <td class="w-25">Delete Tag</td>
+                    </tr>
+                </thead>
+                {% for row in tag_results %}
+                    <tr>
+                        <td>{{ row.tag_name }}</td>
+                        <td>Merge</td>
+                        <td>Delete</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
