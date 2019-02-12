@@ -4,22 +4,65 @@
 <body onload="on_page_load()">
     <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
     <script type="text/javascript" src="{% static 'NearBeach/javascript/bug.js' %}"></script>
-        <script src="{% static 'NearBeach/widgets/jQuery-File-Upload-9.19.2/js/vendor/jquery.ui.widget.js' %}"></script>
-        <script src="{% static 'NearBeach/widgets/jQuery-File-Upload-9.19.2/js/jquery.iframe-transport.js' %}"></script>
-        <script type="text/javascript" src="{% static 'NearBeach/widgets/jQuery-File-Upload-9.19.2/js/jquery.fileupload.js' %}"></script>
 
-    <h2>Requirement Information - {{ requirement_id }}</h2>
-    <form id="requirement_information" name="requirement_information" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ requirement_information_form.media }}
-        <table>
-            <tr><td>{{ requirement_information_form.requirement_title }}</td></tr>
-            <tr><td>{{ requirement_information_form.requirement_scope }}</td></tr>
-            <tr><td>Requirement Type: {{ requirement_information_form.requirement_type }}</td></tr>
-            <tr><td>Requirement Status: {{ requirement_information_form.requirement_status }}</td></tr>
-            <tr><td><input type="submit" value="Update"></td></tr>
-        </table>
-    </form>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h1>Requirement Information - {{ requirement_id }}</h2>
+        </div>
+        <div class="card-body">
+            <form id="requirement_information" name="requirement_information" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ requirement_information_form.media }}
+                <div class="form-group">
+                    <label for="id_requirement_title">Requirement Title</label>
+                    {{ requirement_information_form.requirement_title }}
+                </div>
+                <div class="form-group">
+                    <label for="id_requirement_scope">Requirement Scope</label>
+                    {{ requirement_information_form.requirement_scope }}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_requirement_type">Requirement Type</label>
+                        {{ requirement_information_form.requirement_type }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="id_requirement_status">Requirement Status</label>
+                        {{ requirement_information_form.requirement_status }}
+                    </div>
+                </div>
+                <input type="submit" value="Update" class="btn btn-primary col-md-12">
+            </form>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Requirement Items</h2>
+        </div>
+        <div class="card-body">
+            <a href="{% url 'new_requirement_item' requirement_id %}">Create Requirement Item</a>
+            {% if requirement_item_results %}
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Requirement Item</td>
+                            <td>Requirement Description</td>
+                        </tr>
+                    </thead>
+                    {% for item in requirement_item_results %}
+                        <tr>
+                            <td><a href="javascript:void(0)">ITM{{ item.requirement_item_id }}</a></td>
+                            <td>{{ item.requirement_item_title }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+        </div>
+    </div>
+
+
     <h2>Requirement Items</h2>
 
     <form method="POST" class="requirement_items_list" id="requirement_items_list">
@@ -145,7 +188,7 @@
                 success: function() {
                     //Reload the project history :)
                     $("#new_requirement_item").html("");
-                    load_requirement_items_list();
+                    //load_requirement_items_list();
 
                 },
                 error: function() {
@@ -163,7 +206,7 @@
                 success: function() {
                     //Reload the project history :)
                     $("#edit_requirement_item").html("");
-                    load_requirement_items_list();
+                    //load_requirement_items_list();
 
                 },
                 error: function() {
@@ -359,29 +402,6 @@
         }
 
 
-        function load_requirement_items_list() {
-            //New Requirement Item
-            $.ajax({
-                url: '/requirement_items_list/{{ requirement_id }}',
-                data: {},
-                dataType: 'HTML',
-                type: 'GET',
-                success: function(data) {
-                    $("#requirement_items_list").html(data);
-                },
-                error: function() {
-                    $("#requirement_items_list").html("<h2>New Requirement Item</h2>Sorry, new requirement item encounted an error and did not load");
-                }
-            })
-
-        }
-
-
-
-
-
-
-
         function link_requirement(requirement_id) {
             $.ajax({
                 url: '/requirement_new_link/' + requirement_id + '/',
@@ -571,7 +591,7 @@
             load_assigned_group_add();
             load_assigned_user_list();
             load_assigned_user_add();
-            load_requirement_items_list();
+            //load_requirement_items_list();
             requirement_links_list();
             load_requirement_documents();
             load_bug_search();

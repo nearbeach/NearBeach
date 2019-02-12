@@ -3197,13 +3197,32 @@ class search_form(forms.Form):
 
 
 class requirement_information_form(ModelForm):
+    requirement_title = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    requirement_type = forms.ModelChoiceField(
+        queryset=list_of_requirement_type.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    requirement_status = forms.ModelChoiceField(
+        queryset=list_of_requirement_status.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
     requirement_scope = forms.CharField(
         widget=TinyMCE(
             mce_attrs={
                 'width': '100%',
             },
             attrs={
-                'placeholder': 'Requirement Scope'
+                'placeholder': 'Requirement Scope',
+                'class': 'form-control',
             }
         ),
     )

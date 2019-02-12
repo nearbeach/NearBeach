@@ -68,6 +68,51 @@ def new_requirement(request):
 
 
 @login_required(login_url='login')
+def new_requirement_item(request, requirement_id):
+    permission_results = return_user_permission_level(request, None, 'requirement')
+
+    if permission_results['requirement'] < 2:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        form = requirement_item_form(request.POST)
+        if form.is_valid():
+            requirement_item_title = form.cleaned_data['requirement_item_title']
+            requirement_item_scope = form.cleaned_data['requirement_item_scope']
+            requirement_item_status = int(request.POST.get('requirement_item_status'))
+            requirement_item_type = int(request.POST.get('requirement_item_type'))
+
+            #instances
+            item_status_instance = list_of_requirement_item_status.objects.get(pk=requirement_item_status)
+            item_type_instance = list_of_requirement_item_type.objects.get(pk=requirement_item_type)
+            requirement_instance = requirement.objects.get(requirement_id=requirement_id)
+
+            #Save the data
+            requirement_item_save = requirement_item(
+                requirement_item_title=requirement_item_title,
+                requirement_item_scope=requirement_item_scope,
+                requirement_item_status=item_status_instance,
+                requirement_item_type=item_type_instance,
+                change_user=request.user,
+                requirement_id=requirement_instance,
+            )
+
+            requirement_item_save.save()
+
+        else:
+            print(form.errors)
+    #Load template
+    t = loader.get_template('NearBeach/requirement_information/requirement_items_new.html')
+
+    # context
+    c = {
+        'requirement_item_form': requirement_item_form(),
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
 def requirement_documents_uploads(request, location_id, destination):
     permission_results = return_user_permission_level(request, None, ['requirement','document'])
 
@@ -178,7 +223,6 @@ def requirement_information(request, requirement_id):
                 requirement=requirement_id,
             )
             for row in kanban_card_results:
-                print('hello world')
                 row.kanban_card_text = "REQ" + str(requirement_id) + " - " + form.cleaned_data['requirement_title']
                 row.save()
         else:
@@ -206,14 +250,15 @@ def requirement_information(request, requirement_id):
         )
 
         if (not requirement_permission_results):
-            return HttpResponseRedirect(
-                reverse(
-                    permission_denied,
-                )
-            )
+            return HttpResponseRedirect(reverse(permission_denied))
+
 
     #Setup the initial data for the form
     requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    )
 
     kanban_board_results = kanban_board.objects.filter(
         is_deleted="FALSE",
@@ -242,6 +287,7 @@ def requirement_information(request, requirement_id):
     # context
     c = {
         'requirement_results': requirement_results,
+        'requirement_item_results': requirement_item_results,
         'requirement_id': requirement_id,
         'requirement_information_form': requirement_information_form(
             initial=initial,
@@ -304,73 +350,6 @@ def requirement_item_edit(request, requirement_item_id):
 
     return HttpResponse(t.render(c, request))
 
-
-
-@login_required(login_url='login')
-def requirement_items_list(request, requirement_id):
-    permission_results = return_user_permission_level(request, None, 'requirement')
-
-    if permission_results['requirement'] == 0:
-        return HttpResponseRedirect(reverse('permission_denied'))
-
-    requirement_items_results = requirement_item.objects.filter(requirement_id=requirement_id)
-
-    #Load template
-    t = loader.get_template('NearBeach/requirement_information/requirement_items_list.html')
-
-    # context
-    c = {
-        'requirement_id': requirement_id,
-        'requirement_items_results': requirement_items_results,
-    }
-
-    return HttpResponse(t.render(c, request))
-
-
-
-@login_required(login_url='login')
-def requirement_items_new(request, requirement_id):
-    permission_results = return_user_permission_level(request, None, 'requirement')
-
-    if permission_results['requirement'] < 2:
-        return HttpResponseRedirect(reverse('permission_denied'))
-
-    if request.method == "POST":
-        form = requirement_item_form(request.POST)
-        if form.is_valid():
-            requirement_item_title = form.cleaned_data['requirement_item_title']
-            requirement_item_scope = form.cleaned_data['requirement_item_scope']
-            requirement_item_status = int(request.POST.get('requirement_item_status'))
-            requirement_item_type = int(request.POST.get('requirement_item_type'))
-
-            #instances
-            item_status_instance = list_of_requirement_item_status.objects.get(pk=requirement_item_status)
-            item_type_instance = list_of_requirement_item_type.objects.get(pk=requirement_item_type)
-            requirement_instance = requirement.objects.get(requirement_id=requirement_id)
-
-            #Save the data
-            requirement_item_save = requirement_item(
-                requirement_item_title=requirement_item_title,
-                requirement_item_scope=requirement_item_scope,
-                requirement_item_status=item_status_instance,
-                requirement_item_type=item_type_instance,
-                change_user=request.user,
-                requirement_id=requirement_instance,
-            )
-
-            requirement_item_save.save()
-
-        else:
-            print(form.errors)
-    #Load template
-    t = loader.get_template('NearBeach/requirement_information/requirement_items_new.html')
-
-    # context
-    c = {
-        'requirement_item_form': requirement_item_form(),
-    }
-
-    return HttpResponse(t.render(c, request))
 
 
 
