@@ -2035,7 +2035,7 @@ def delete_permission_set(request, permission_set_id):
 
 
 @login_required(login_url='login')
-def delete_tag(request, tag_id, location_id, destination):
+def delete_tag_from_object(request, tag_id, location_id, destination):
     """
     If the user has permission, we will delete the tag from the current object location.
 
@@ -3784,6 +3784,72 @@ def logout(request):
     auth.logout(request)
     return HttpResponseRedirect(reverse('login'))
 
+
+@login_required(login_url='login')
+def merge_tags(request, old_tag_id, new_tag_id=""):
+    """
+    Merge tags will get the old tag_id, and update all the tag assoications with the new tag_id before deleting the old
+    tag id.
+    :param request:
+    :param old_tag_id: The old tag that we want to merge
+    :param new_tag_id: The new tag that we want to merge into
+    :return: back to the tag list
+
+    Method
+    ~~~~~~
+    1. Check permissions - only a user with a permission of 4 is permitted. Anyone else is sent to the naughty space
+    2. Check to see if method is POST - if it check instructions there
+    3. Get a list of ALL tags excluding the current old_tag_id
+    4. Render out the page and wait for the user
+    """
+
+    permission_results = return_user_permission_level(request, None, 'tag')
+
+    if permission_results['tag'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        """
+        The user has submitted both an old_tag_id and a new_tag_id. The old tag id will be merged into the new tag id.
+        1. In tag association, we update all the tag associations to the new tag from the old tag
+        2. We state that the old tag is deleted.
+        3. Return blank page back as a success
+        """
+        new_tag_instance = tag.objects.get(tag_id=new_tag_id)
+
+        #Update all tags associated with the old tag id with the new tag id
+        update_tag_association = tag_assignment.objects.filter(
+            is_deleted="FALSE",
+            tag_id=old_tag_id,
+        ).update(
+            tag_id=new_tag_instance,
+        )
+
+        #Delete the old tag
+        old_tag_instance = tag.objects.get(tag_id=old_tag_id)
+        old_tag_instance.is_deleted = "TRUE"
+        old_tag_instance.save()
+
+        #Return a blank page :)
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+
+    tag_results = tag.objects.filter(
+        is_deleted="FALSE",
+    ).exclude(
+        tag_id=old_tag_id,
+    )
+
+    # Get template
+    t = loader.get_template('NearBeach/tags/merge_tags.html')
+
+    c = {
+        'tag_results': tag_results,
+        'old_tag_id': old_tag_id,
+    }
+
+    return HttpResponse(t.render(c, request))
 
 @login_required(login_url='login')
 def my_profile(request):

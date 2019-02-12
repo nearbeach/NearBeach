@@ -1,0 +1,89 @@
+{% extends "../template.html" %}
+{% block content %}
+{% load static %}
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Merge Tags</h2>
+        </div>
+        <div class="card-body">
+            <div class="alert-primary">
+                Merging the tags will implement the following in order
+                <ol>
+                    <li>Update all tag associations with the new merged tag</li>
+                    <li>Delete the old tag</li>
+                </ol>
+                Use the filter below to filter the tags. Then click on the tag that you want to merge with.
+            </div>
+            <div class="form-group mt-3">
+                <label for="id_filter_tags">Filter Tags</label>
+                <input type="text" id="id_filter_tags" placeholder="Filter Tags" class="form-control" onkeydown="apply_filters()">
+            </div>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <td class="w-50">Tag Name</td>
+                    </tr>
+                </thead>
+                {% for row in tag_results %}
+                    <tr>
+                        <td><a href="javascript:void(0)" onclick="merge_tag({{ row.tag_id }})">{{ row.tag_name }}</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <a href="{% url 'list_of_tags' %}" class="btn btn-warning col-md-12">Cancel</a>
+        </div>
+    </div>
+
+    <script>
+        function merge_tag(tag_id) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+                }
+            });
+
+            $.ajax({
+                url: '/merge_tags/{{ old_tag_id }}/' + tag_id + '/',
+                data: {},
+                dataType: "HTML",
+                type: "POST",
+                success: function(data) {
+                    //We want to send the user to the tag list page
+                    window.location.href = "{% url 'list_of_tags' %}"
+                },
+                error: function() {
+                    alert("Sorry - the tags could not be merged.")
+                }
+            })
+        }
+
+        function apply_filters() {
+            //Varibales used in the function
+            var input,
+                filter,
+                tr,
+                i;
+
+            //Get the value from the search box
+            input = document.getElementById("id_filter_tags");
+
+            //We want to compare apples with apples, make all uppercase
+            filter = input.value.toUpperCase();
+
+            //Get all table rows
+            tr = document.getElementsByTagName("tr");
+
+            for (i = 0; i < tr.length; i++) {
+                //If the <tr> contains any values of the filter OR has class header, we want to show
+                if (tr[i].innerHTML.toUpperCase().indexOf(filter) > -1 || tr[i].className=="header") {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+{% endblock %}

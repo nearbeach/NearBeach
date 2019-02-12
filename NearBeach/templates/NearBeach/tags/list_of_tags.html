@@ -16,7 +16,7 @@
                 {% for row in tag_results %}
                     <tr>
                         <td>{{ row.tag_name }}</td>
-                        <td>Merge</td>
+                        <td><a href="{% url 'merge_tags' row.tag_id %}">Merge</a></td>
                         <td>Delete</td>
                     </tr>
                 {% endfor %}
