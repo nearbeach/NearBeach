@@ -2035,6 +2035,51 @@ def delete_permission_set(request, permission_set_id):
 
 
 @login_required(login_url='login')
+def delete_tag(request,tag_id):
+    """
+    Delete tag will actually remove the tag and all it's assignments from the system.
+
+    Only a user with a tag permission of 4 can do this task.
+
+    :param request:
+    :param tag_id: the tag to delete
+    :return: blank page if successful
+
+    Method
+    ~~~~~~
+    1. Check permissions - if use does not pass send them to the naughty corner
+    2. Check to make sure is in POST - if not, return an error
+    3. Delete the tag
+    4. Delete the tag assignments
+    5. Return a blank page
+    """
+    permission_results = return_user_permission_level(request,None,'tag')
+    if permission_results['tag'] < 4:
+        return HttpResponseForbidden
+
+    if request.method == "POST":
+        #Delete the tag
+        update_tag = tag.objects.get(tag_id=tag_id)
+        update_tag.is_deleted = "TRUE"
+        update_tag.save()
+
+        #Delete the tag assignments
+        update_tag_assignment = tag_assignment.objects.filter(
+            is_deleted="FALSE",
+            tag_id=tag_id,
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        #Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry, this can only be done through POST")
+
+
+@login_required(login_url='login')
 def delete_tag_from_object(request, tag_id, location_id, destination):
     """
     If the user has permission, we will delete the tag from the current object location.

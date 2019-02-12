@@ -69,6 +69,7 @@ re_path(r'^delete_group/(?P<group_id>[0-9]+)/',views.delete_group,name='delete_g
 re_path(r'^delete_document/(?P<document_key>[0-9A-Za-z_\-]+)/$', views_document_tree.delete_document, name='delete_document'),
 re_path(r'^delete_folder/(?P<folder_id>[0-9]+)/$', views_document_tree.delete_folder, name='delete_folder'),
 re_path(r'^delete_permission_set/(?P<permission_set_id>[0-9]+)/',views.delete_permission_set,name='delete_permission_set'),
+re_path(r'^delete_tag/(?P<tag_id>[0-9]+)/',views.delete_tag,name="delete_tag"),
 re_path(r'^delete_tag_from_object/(?P<tag_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","quote","kanban_board","opportunity"]+)/$', views.delete_tag_from_object, name='delete_tag_from_object'),
 re_path(r'^delete_user_permission/(?P<user_id>[0-9]+)/(?P<permission_set_id>[0-9]+)/(?P<group_id>[0-9]+)/$', views.delete_user_permission, name='delete_user_permission'),
 re_path(r'^diagnostic_information/$', views.diagnostic_information, name='diagnostic_information'),
