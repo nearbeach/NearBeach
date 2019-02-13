@@ -1,0 +1,40 @@
+{% extends './template.html' %}
+{% block content %}
+{% load static %}
+<form action="{% url 'new_requirement_item' requirement_id %}" enctype="multipart/form-data" class="new_requirement_item" method="POST">
+    {% csrf_token %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h1>New Requirement Item</h1>
+        </div>
+        <div class="card-body">
+            <div class="alert-primary mb-4">
+                This requirement item will be connected with REQ{{ requirement_id }} - {{ requirement_results.requirement_title }}
+            </div>
+                {{ new_requirement_item_form.media }}
+                <div class="form-group">
+                    <label for="id_requirement_item_title">Requirement Item Title</label>
+                    {{ new_requirement_item_form.requirement_item_title }}
+                </div>
+                <div class="form-group">
+                    <label for="id_requirement_item_scope">Requirement Item Scope</label>
+                    {{ new_requirement_item_form.requirement_item_scope }}
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_requirement_item_type">Requirement Item Type</label>
+                        {{ new_requirement_item_form.requirement_item_type }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="id_requirement_item_status">Requirement Item Status</label>
+                        {{ new_requirement_item_form.requirement_item_status }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <button type="submit" class="btn btn-primary form-control col-md-6">Submit Requirement Item</button>
+                    <a href="{% url 'requirement_information' requirement_id %}" class="btn btn-secondary form-control col-md-6">Cancel</a>
+                </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

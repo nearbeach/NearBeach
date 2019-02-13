@@ -1,0 +1,56 @@
+{% extends './template.html' %}
+{% block content %}
+{% load static %}
+    <form action="{% url 'requirement_item_information' requirement_item_id %}" enctype="multipart/form-data" class="requirement_item_information" method="POST">
+        {% csrf_token %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h1>Requirement Item Information</h1>
+            </div>
+            <div class="card-body">
+                <div class="alert-primary mb-4">
+                    This requirement item will be connected with REQ{{ requirement_item_results.requirement_id_id }} - {{ requirement_item_results.requirement_id }}
+                </div>
+                    {{ requirement_item_form.media }}
+                    <div class="form-group">
+                        <label for="id_requirement_item_title">Requirement Item Title</label>
+                        {{ requirement_item_form.requirement_item_title }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_requirement_item_scope">Requirement Item Scope</label>
+                        {{ requirement_item_form.requirement_item_scope }}
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="id_requirement_item_type">Requirement Item Type</label>
+                            {{ requirement_item_form.requirement_item_type }}
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="id_requirement_item_status">Requirement Item Status</label>
+                            {{ requirement_item_form.requirement_item_status }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <button type="submit" class="btn btn-primary form-control col-md-6">Update and Return</button>
+                        <a href="{% url 'requirement_information' requirement_item_results.requirement_id.requirement_id %}" class="btn btn-secondary form-control col-md-6">Cancel and return</a>
+                    </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Requirement Item Links</h2>
+        </div>
+        <div class="card-body">
+            <div class="alert-primary mb-4">
+                Requirement Item Links - are links to either projects or tasks which have been setup to complete this particular requirement item. A requirement item can contain multiple project/task links.
+            </div>
+            <a href="javascript:void(0)">Create new link</a>
+            {% if requirement_item_links %}
+                SETUP CODE HERE
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

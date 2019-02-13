@@ -69,44 +69,71 @@ def new_requirement(request):
 
 @login_required(login_url='login')
 def new_requirement_item(request, requirement_id):
+    """
+    If a user wants to create a new requirement item against a requirement, they will need this function. It will deal
+    with both creation of the form and the creation of the requirement item.
+    :param request:
+    :param requirement_id: The requirement that this requirement item will be connected to
+    :return: Either the form page, or return to the requirement
+
+    Method
+    ~~~~~~
+    1. Check the user's permission
+    2. Check to see if the method is in POST - read instructions in here
+    3. Obtain any required SQL
+    4. Get template and context
+    5. Render the page
+    """
     permission_results = return_user_permission_level(request, None, 'requirement')
 
     if permission_results['requirement'] < 2:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST":
+        #Check the form
         form = requirement_item_form(request.POST)
         if form.is_valid():
-            requirement_item_title = form.cleaned_data['requirement_item_title']
-            requirement_item_scope = form.cleaned_data['requirement_item_scope']
-            requirement_item_status = int(request.POST.get('requirement_item_status'))
-            requirement_item_type = int(request.POST.get('requirement_item_type'))
+            """
+            Method
+            ~~~~~~
+            1. Get any instances required
+            2. Setup the requirement_item
+            3. Save the requirement item
+            4. Send user back to the requirement connected to the requirement item
+            """
 
-            #instances
-            item_status_instance = list_of_requirement_item_status.objects.get(pk=requirement_item_status)
-            item_type_instance = list_of_requirement_item_type.objects.get(pk=requirement_item_type)
+            # Get instances
             requirement_instance = requirement.objects.get(requirement_id=requirement_id)
 
-            #Save the data
-            requirement_item_save = requirement_item(
-                requirement_item_title=requirement_item_title,
-                requirement_item_scope=requirement_item_scope,
-                requirement_item_status=item_status_instance,
-                requirement_item_type=item_type_instance,
+
+            # Setup the requirement_item
+            requirement_item_submit = requirement_item(
+                requirement_item_title=form.cleaned_data['requirement_item_title'],
+                requirement_item_scope=form.cleaned_data['requirement_item_scope'],
+                requirement_item_status=form.cleaned_data['requirement_item_status'],
+                requirement_item_type=form.cleaned_data['requirement_item_type'],
                 change_user=request.user,
                 requirement_id=requirement_instance,
             )
+            requirement_item_submit.save()
 
-            requirement_item_save.save()
+            # Return user to the requirement information page they came from
+            return HttpResponseRedirect(reverse('requirement_information', args={ requirement_id }))
 
         else:
             print(form.errors)
+
+    # Get any required data
+    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+
     #Load template
-    t = loader.get_template('NearBeach/requirement_information/requirement_items_new.html')
+    t = loader.get_template('NearBeach/new_requirement_item.html')
 
     # context
     c = {
-        'requirement_item_form': requirement_item_form(),
+        'new_requirement_item_form': new_requirement_item_form,
+        'requirement_id': requirement_id,
+        'requirement_results': requirement_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -253,12 +280,23 @@ def requirement_information(request, requirement_id):
             return HttpResponseRedirect(reverse(permission_denied))
 
 
-    #Setup the initial data for the form
+    #Get Data
     requirement_results = requirement.objects.get(requirement_id=requirement_id)
     requirement_item_results = requirement_item.objects.filter(
         is_deleted="FALSE",
         requirement_id=requirement_id,
     )
+    requirement_link_results = requirement_link.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    ).values(
+        'project_id',
+        'project_id__project_name',
+        'task_id',
+        'task_id__task_short_description',
+        'organisation_id',
+        'organisation_id__organisation_name',
+    ).distinct()
 
     kanban_board_results = kanban_board.objects.filter(
         is_deleted="FALSE",
@@ -272,7 +310,7 @@ def requirement_information(request, requirement_id):
     if requirement_results.requirement_status.requirement_status == "Completed":
         return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_id}))
 
-
+    # Initialise form
     initial = {
         'requirement_title': requirement_results.requirement_title,
         'requirement_scope': requirement_results.requirement_scope,
@@ -287,6 +325,7 @@ def requirement_information(request, requirement_id):
     # context
     c = {
         'requirement_results': requirement_results,
+        'requirement_link_results': requirement_link_results,
         'requirement_item_results': requirement_item_results,
         'requirement_id': requirement_id,
         'requirement_information_form': requirement_information_form(
@@ -304,7 +343,20 @@ def requirement_information(request, requirement_id):
 
 
 @login_required(login_url='login')
-def requirement_item_edit(request, requirement_item_id):
+def requirement_item_information(request, requirement_item_id):
+    """
+    If a user requires to edit or view the requirement item information, this is the page.
+    :param request:
+    :param requirement_item_id: The ID for the requirement item
+    :return: The requirement item page
+
+    Method
+    ~~~~~~
+    1. Check permission
+    2. Check to see if POST (aka update item) - read method in here
+    3. Collect data required
+    4. Return page
+    """
     permission_results = return_user_permission_level(request, None, 'requirement')
 
     if permission_results['requirement'] == 0:
@@ -322,6 +374,9 @@ def requirement_item_edit(request, requirement_item_id):
             requirement_item_save.change_user=request.user
 
             requirement_item_save.save()
+
+            # Return the user to the requirement page
+            return HttpResponseRedirect(reverse('requirement_information', args={ requirement_item_save.requirement_id_id }))
         else:
             print(form.errors)
 
@@ -336,12 +391,13 @@ def requirement_item_edit(request, requirement_item_id):
     }
 
     #Load template
-    t = loader.get_template('NearBeach/requirement_information/requirement_item_edit.html')
+    t = loader.get_template('NearBeach/requirement_item_information.html')
 
     # context
     c = {
         'requirement_item_id': requirement_item_id,
         'requirement_item_form': requirement_item_form(initial=initial),
+        'requirement_item_results': requirement_item_results,
         'permission': permission_results['requirement'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
@@ -349,8 +405,6 @@ def requirement_item_edit(request, requirement_item_id):
     }
 
     return HttpResponse(t.render(c, request))
-
-
 
 
 @login_required(login_url='login')
