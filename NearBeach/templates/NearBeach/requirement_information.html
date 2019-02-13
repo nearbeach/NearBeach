@@ -5,6 +5,7 @@
     <script type="text/javascript" src="{% static 'NearBeach/javascript/bug.js' %}"></script>
     <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
     <script type="text/javascript" src="{% static 'NearBeach/javascript/assigned_user_list.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/document_upload.js' %}"></script>
 
     <div class="card mt-4">
         <div class="card-header">
@@ -48,14 +49,16 @@
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
-                            <td>Requirement Item</td>
-                            <td>Requirement Description</td>
+                            <td class="col-md-2">Requirement Item</td>
+                            <td class="col-md-8">Requirement Item Description</td>
+                            <td class="col-md-2">Requirement Item Status</td>
                         </tr>
                     </thead>
                     {% for item in requirement_item_results %}
                         <tr>
                             <td><a href="{% url 'requirement_item_information' item.requirement_item_id %}">ITM{{ item.requirement_item_id }}</a></td>
                             <td>{{ item.requirement_item_title }}</td>
+                            <td>{{ item.requirement_item_status }}</td>
                         </tr>
                     {% endfor %}
                 </table>
@@ -69,8 +72,8 @@
         </div>
         <div class="card-body">
             <div class="alert-primary mb-4">Please note - requirement item links can be applied by going to the appliciable requirement item information page.</div>
-            <a href="javascript:void(0)">Link Current Requirement</a>
-            <table class="table table-striped table-hover">
+            <a href="javascript:void(0)" onclick="load_requirement_links()">Link Current Requirement</a>
+            <table class="table table-striped table-hover" id="requirement_link_table">
                 <thead>
                     <tr>
                         <td>Object Link</td>
@@ -242,6 +245,37 @@
             </div>
         </div>
     {% endif %}
+
+
+    <!-- THIS IS WHERE THE MODALS ARE STORED :)-->
+    <!-- Link Requirements to objects -->
+    <div class="modal" tabindex="-1" role="dialog" id="link_requirements_modal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <!-- HEADER -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Link Requirements</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <!-- BODY -->
+                <div class="modal-body" id="link_requirements_modal_body">
+                    Loading Objects...
+                </div>
+
+
+                <!-- FOOTER -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 
     <script>
         $("#bug_search").on('submit', function(e) {
@@ -454,6 +488,88 @@
             load_bug_list();
             load_tag_results();
         }
+
+
+        function load_requirement_links() {
+            /*
+            Method
+            ~~~~~~
+            1. Show modal - it will have a loading screen
+            2. GET information from /requirement_link/requirement_id/
+            3. Paste information from AJAX into modal
+            4. User will select their result... there is another function for dealing with this.
+             */
+
+            // Show the modal
+            $("#link_requirements_modal").modal('show');
+
+            // Get the data
+            $.ajax({
+                url: '/new_requirement_link/{{ requirement_id }}/',
+                data: {},
+                dataType: "HTML",
+                type: "GET",
+                success: function(data) {
+                    //Success - place the link information into the modal
+                    $("#link_requirements_modal_body").html(data);
+                },
+                error: function() {
+                    alert("Sorry - the requirement links did not load correctly");
+                }
+            })
+        }
+
+
+        function post_requirement_links(location_id,destination) {
+            /*
+            Method
+            ~~~~~~
+            1. Prepare the ajax query
+            2. Send the request to /new_requirement_link/{{ requirement_id }}/location_id/destination
+            3. Once completed - add the two parts to the end of the table :) SHHH - don't tell anyone we didn't reload
+                that section.
+             */
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/new_requirement_link/{{ requirement_id }}/' + location_id + '/' + destination + '/',
+                data: {},
+                dataType: "HTML",
+                type: "POST",
+                success: function(data) {
+                    /*
+                    Method
+                    ~~~~~~
+                    1. Party - it was successful
+                    2. Append the data onto the table at the end
+                    3. Shh - don't tell the user. :)
+                     */
+
+                    json_results = JSON.parse(data); //To play around with
+                    html_to_append = "<tr><td><a href=\"/" + json_results['destination'] + "_information/" + json_results['location_id'] + "/\">"
+                        + json_results['object_link']
+                        + "</a></td><td>"
+                        + json_results['object_description']
+                        + "</td></tr>";
+
+                    //Append on the end
+                    $("#requirement_link_table").append(html_to_append);
+
+                    //Shh - close the modal
+                    $("#link_requirements_modal").modal("hide");
+                },
+                error: function() {
+                    alert("Sorry - there was an issue connecting the link.");
+                }
+            })
+        }
+
 
 
         function load_tag_results() {
