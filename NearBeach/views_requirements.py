@@ -142,6 +142,135 @@ def new_requirement_item(request, requirement_id):
 
 
 @login_required(login_url='login')
+def new_requirement_item_link(request,requirement_item_id,location_id="",destination=""):
+    """
+    This function is designed so users can link requirement items to either tasks/projects. When the function is a simple
+    "GET" function it will produce an HTML page with all the possible object links.
+    When the method is a "POST", it will create the link and return a blank page. Note that for a post it requires location
+    and destination.
+    :param request:
+    :param requirement_item_id: The requirement item we are looking to link
+    :param location_id: The location id of the object we are linking to
+    :param destination: The destination object we are linking to
+    :return: List of potential links
+
+    Method
+    ~~~~~~
+    1. Check permissions
+    2. Check method - if POST read instructions there
+    3. Object a list of all objects that meet the current conditions
+        -- Is not deleted
+        -- Users can access those objects
+        -- Are not currently linked
+        -- Object is currently open
+    4. Present the data to the user
+    """
+    permission_results = return_user_permission_level(request, None, 'requirement')
+
+    if permission_results['requirement'] < 2:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        """
+        Method
+        ~~~~~~
+        1. Make sure the location_id and destination are not "" - send error
+        2. Create the requirement_link row
+        3. Return the JSON result
+        4. Profit
+        """
+        if location_id == "" or destination == "":
+            return HttpResponseBadRequest("Sorry - those fields were blank")
+
+        requirement_item_link_submit = requirement_item_link(
+            change_user=request.user,
+            requirement_item_id=requirement_item_id,
+        )
+        if destination == "project":
+            """
+            1. Get the project instance
+            2. Save the project instance against the requirement_link
+            3. Prepare the object_link and object_description
+            """
+            project_instance = project.objects.get(project_id=location_id)
+            requirement_item_link_submit.project_id = project_instance
+            object_link = "Project - " + str(location_id)
+            object_description = project_instance.project_name
+        elif destination == "task":
+            """
+            1. Get the task instance
+            2. Save the task instance against the requirement_link
+            3. Prepare the object_link and object_description
+            """
+            task_instance = task.objects.get(task_id=location_id)
+            requirement_item_link_submit.task_id = task_instance
+            object_link = "Task - " + str(location_id)
+            object_description = task_instance.task_short_description
+
+
+        # Save
+        requirement_item_link_submit.save()
+
+        # Send back the JSON
+        return JsonResponse({
+            'location_id': location_id,
+            'destination': destination,
+            'object_link': object_link,
+            'object_description': object_description,
+        })
+
+
+    # Get required data
+    project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_status__in={'New','Open'},
+        project_id__in=object_assignment.objects.filter(
+            is_deleted="FALSE",
+            group_id__in=user_group.objects.filter(
+                is_deleted="FALSE",
+                username_id=request.user.id,
+            ).values('group_id')
+        ).values('project_id')
+    ).exclude(
+        project_id__in=requirement_item_link.objects.filter(
+            is_deleted="FALSE",
+            project_id__isnull=False,
+            requirement_item_id=requirement_item_id,
+        ).values('project_id')
+    )
+
+    task_results = task.objects.filter(
+        is_deleted="FALSE",
+        task_status__in={'New','Open'},
+        task_id__in=object_assignment.objects.filter(
+            is_deleted="FALSE",
+            group_id__in=user_group.objects.filter(
+                is_deleted="FALSE",
+                username_id=request.user.id,
+            ).values('group_id')
+        ).values('task_id')
+    ).exclude(
+        task_id__in=requirement_item_link.objects.filter(
+            is_deleted="FALSE",
+            task_id__isnull=False,
+            requirement_item_id=requirement_item_id,
+        ).values('task_id')
+    )
+
+    # Get Template
+    t = loader.get_template('NearBeach/requirement_information/new_requirement_link.html') #Cheeting here - as we do not need a clone of the same template :)
+
+    # Context
+    c = {
+        'project_results': project_results,
+        'task_results': task_results,
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+
+@login_required(login_url='login')
 def new_requirement_link(request,requirement_id,location_id="",destination=""):
     """
     This function is designed so users can link requirement to either tasks/projects. When the function is a simple "GET"
@@ -206,6 +335,7 @@ def new_requirement_link(request,requirement_id,location_id="",destination=""):
             requirement_link_submit.task_id = task_instance
             object_link = "Task - " + str(location_id)
             object_description = task_instance.task_short_description
+
 
         # Save
         requirement_link_submit.save()
