@@ -3648,6 +3648,9 @@ def list_of_tags(request):
     ~~~~~~
     1. Check user permissions - if they are not allowed here send them to the naughty corner
     """
+    permission_results = return_user_permission_level(request,None,'tag')
+    if permission_results['tag'] < 1:
+        return HttpResponseRedirect(reverse(permission_denied))
 
     # Get data
     tag_results = tag.objects.filter(
@@ -3660,6 +3663,8 @@ def list_of_tags(request):
     # Context
     c = {
         'tag_results': tag_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c,request))
