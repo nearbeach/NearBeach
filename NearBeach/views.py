@@ -7012,7 +7012,7 @@ def tag_information(request, location_id, destination):
             elif destination == "opportunity":
                 tag_assignment_submit.opportunity_id = opportunity.objects.get(opportunity_id=location_id)
             elif destination == "requirement":
-                tag_assignment_submit.requirment_id = requirement.objects.get(requirement_id=location_id)
+                tag_assignment_submit.requirement_id = requirement.objects.get(requirement_id=location_id)
 
             tag_assignment_submit.save()
 

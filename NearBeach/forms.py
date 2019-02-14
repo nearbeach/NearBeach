@@ -2321,6 +2321,52 @@ class new_quote_form(ModelForm):
         }
 
 
+class new_requirement_item_form(ModelForm):
+    # Get data used in query sets
+    requirement_item_status_results = list_of_requirement_item_status.objects.filter(
+        is_deleted='FALSE',
+    )
+
+    requirement_item_title = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Requirement Item Title',
+            'class': 'form-control',
+        })
+    )
+    requirement_item_scope = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Requirement Scope',
+                'class': 'form-control',
+            }
+        ),
+    )
+    requirement_item_status = forms.ModelChoiceField(
+        label="Quote Stage",
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        queryset=requirement_item_status_results,
+    )
+    requirement_item_type = forms.ModelChoiceField(
+        queryset=list_of_requirement_item_type.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    class Meta:
+        model = requirement_item
+        exclude = [
+            'requirement_id'
+            'change_user',
+            'is_deleted',
+        ]
+
+
 class new_requirement_form(ModelForm):
     #Get Objects for Model Selects
     requirement_status_results = list_of_requirement_status.objects.filter(
@@ -3197,13 +3243,32 @@ class search_form(forms.Form):
 
 
 class requirement_information_form(ModelForm):
+    requirement_title = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    requirement_type = forms.ModelChoiceField(
+        queryset=list_of_requirement_type.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    requirement_status = forms.ModelChoiceField(
+        queryset=list_of_requirement_status.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
     requirement_scope = forms.CharField(
         widget=TinyMCE(
             mce_attrs={
                 'width': '100%',
             },
             attrs={
-                'placeholder': 'Requirement Scope'
+                'placeholder': 'Requirement Scope',
+                'class': 'form-control',
             }
         ),
     )
@@ -3218,20 +3283,39 @@ class requirement_information_form(ModelForm):
 
 
 class requirement_item_form(forms.ModelForm):
-    """
-    This is used for both
-    -- New requirement items
-    -- Editing existing requirement items
-    """
-    requirement_item_title=forms.CharField(
+    requirement_item_status_results = list_of_requirement_item_status.objects.filter(
+        is_deleted='FALSE',
+    )
+
+    requirement_item_title = forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Requirement Item Title',
+            'class': 'form-control',
         })
     )
-    requirement_item_scope=forms.CharField(
-        widget=forms.Textarea(attrs={
-            'placeholder': 'Requirement Item Scope',
+    requirement_item_scope = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'placeholder': 'Requirement Scope',
+                'class': 'form-control',
+            }
+        ),
+    )
+    requirement_item_status = forms.ModelChoiceField(
+        label="Quote Stage",
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        queryset=requirement_item_status_results,
+    )
+    requirement_item_type = forms.ModelChoiceField(
+        queryset=list_of_requirement_item_type.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
         })
     )
 
