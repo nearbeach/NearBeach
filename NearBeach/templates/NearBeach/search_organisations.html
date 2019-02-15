@@ -7,11 +7,12 @@
         <div class="card-body">
             <form action={% url 'search_organisation' %} method="post" class="search_organisations">
                 {% csrf_token %}
-                <div class="form-row">
+                <div class="form-row mb-4">
                     {{ search_organisation_form.search_organisation }}
                     <input type="submit" class="btn btn-primary w-25 form-control">
                 </div>
 
+                <a href="{% url 'new_organisation' %}">New Organisation</a>
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr class="header">
