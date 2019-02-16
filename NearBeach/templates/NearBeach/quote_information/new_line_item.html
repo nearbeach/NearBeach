@@ -25,11 +25,9 @@
             </div>
 
             <div style="display:none;" id="tax_table">
-                <div class="form-row">
-                    <div class="form-group col-md-12">
-                        <label for="id_product_description">Product Description</label>
-                        {{ new_line_item_form.product_description }}
-                    </div>
+                <div class="form-group col-md-12" id="product_description_div">
+                    <label for="id_product_description">Product Description</label>
+                    {{ new_line_item_form.product_description }}
                 </div>
 
                 <!-- Fine tune it's price/Discount price -->
@@ -131,9 +129,9 @@
 
                 //Hide the product description IF THERE IS NONE
                 if (f.fields.product_description == "") {
-                    $("#id_product_description").css("display","none");
+                    $("#product_description_div").css("display","none");
                 } else {
-                    $("#id_product_description").css("display","");
+                    $("#product_description_div").css("display","");
                 }
             });
             //Update the total :)

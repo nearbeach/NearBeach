@@ -1915,6 +1915,7 @@ class new_line_item_form(ModelForm):
     #Get the data
     product_description=forms.CharField(
         max_length=255,
+        required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
         })
