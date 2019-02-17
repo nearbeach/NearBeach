@@ -14,197 +14,278 @@
 
 </head>
 <header>
-    {{ header|safe }}
+    <div class="text-center">
+        <h1>{{ header|safe }}</h1>
+    </div>
 </header>
 <body>
-    <div id="company_letter_head">{{ company_letter_head|safe }}</div>
-    <table>
-        <tr class="table_header">
-            <td style="width: 50%;">Prepared For</td> <!--Organisation details-->
-            <td style="width: 50%;">Prepared By</td>  <!--Current User -->
-        </tr>
-        <tr>
-            <td>{{ organisation_details|safe }}</td>
-            <td>{{ current_user }}</td>
-        </tr>
-        <tr class="table_header">
-            <td>Quotation Date</td>
-            <td>Valid Until</td>
-        </tr>
-        <tr>
-            <td>{{ current_date }}</td>
-            <td>{{ quote_results.quote_valid_till }}</td>
-        </tr>
-        <tr class="table_header">
-            <td>Quote Number</td>
-            <td>Payment Terms</td>
-        </tr>
-        <tr>
-            <td>{{ quote_id }}</td>
-            <td>{{ payment_terms|safe }}</td>
-        </tr>
-    </table>
-
-    <div id="notes">Quote Notes: {{ notes|safe }}</div>
-
-    {% if product_results %}
-        <div id="product_line">
-            <h4>Product Lines</h4>
-            <table id="product_line_table">
-                <tr class="table_header">
-                    <td>Product</td>
-                    <td>Price</td>
-                    <td>Quantity</td>
-                    <td>Discount Amount</td>
-                    <td>Sales Price</td>
-                    <td>Tax %</td>
-                    <td>Tax Amount</td>
-                    <td>Total</td>
-                </tr>
-                    {% for row in product_results %}
-                    <tr>
-                        <td>{{ row.products_and_services }}</td>
-                        <td name="product_price">{{ row.product_price }}</td>
-                        <td name="product_quantity">{{ row.quantity }}</td>
-                        {% if row.discount_choice == "Percentage" %}
-                            <td>{{ row.discount_percent }}% = {{ row.discount_amount }}</td>
-                            <td style="display: none;" name="product_discount">{{ row.discount_amount }}</td> <!--this is hidden here so I can calculate the discount amount! SHH DO NOT TELL MUM -->
-                        {% else %}
-                            <td name="product_discount">{{ row.discount_amount }}</td>
-                        {% endif %}
-                        <td name="product_sales_price">{{ row.sales_price }}</td>
-                        <td>{{ row.tax }}</td>
-                        <td name="product_tax">{{ row.tax_amount }}</td>
-                        <td>{{ row.total }}</td>
-                    </tr>
-                    {% if not row.product_note == "" %}
-                        <tr>
-                            <td>Product Note:</td>
-                            <td colspan="7">{{ row.product_note }}</td>
-                        </tr>
-                    {% endif %}
-                {% endfor %}
-            <tr class="table_header">
-                    <td colspan="2">Product Totals</td>
-                </tr>
-                <tr>
-                    <td>Unadjusted Price</td>
-                    <td>{{ product_unadjusted_price.product_price__sum }}</td>
-                </tr>
-                <tr>
-                    <td>Product Discount</td>
-                    <td>{{ product_discount.discount_amount__sum }}</td>
-                </tr>
-                <tr>
-                    <td>Sales Price</td>
-                    <td>{{ product_sales_price.sales_price__sum }}</td>
-                </tr>
-                <tr>
-                    <td>Product Tax</td>
-                    <td>{{ product_tax.tax__sum }}</td>
-                </tr>
-                <tr>
-                    <td>Total</td>
-                    <td>{{ product_total.total__sum }}</td>
-                </tr>
-            </table>
+    <div class="container" id="container">
+        <!-- YOUR COMPANY LOGO AND DETAILS-->
+        <div class="row">
+            <div class="card col-md-4 border-0 ml-0">
+                <div class="card-body text-left">
+                    <!-- INSERT ABILITY TO ADD IN LOGO-->
+                </div>
+            </div>
+            <div class="card col-md-4 border-0 ml-auto">
+                <div class="card-body" id="company_letter_head">
+                    {{ company_letter_head|safe }}
+                </div>
+            </div>
         </div>
-    {% endif %}
-    {% if service_results %}
-        <div id="service_line">
-            <h4>Service Lines</h4>
-            <table id="service_line_table">
-                <tr class="table_header">
-                <td>Service</td>
-                <td>Price</td>
-                <td>Quantity</td>
-                <td>Discount Amount</td>
-                <td>Sales Price</td>
-                <td>Tax %</td>
-                <td>Tax Amount</td>
-                <td>Total</td>
-                </tr>
-                {% for row in service_results %}
-                    <tr>
-                        <td>{{ row.products_and_services }}</td>
-                        <td name="service_price">{{ row.product_price }}</td>
-                        <td name="service_quantity">{{ row.quantity }}</td>
-                        {% if row.discount_choice == "Percentage" %}
-                            <td>{{ row.discount_percent }}% = {{ row.discount_amount }}</td>
-                            <td style="display: none;" name="service_discount">{{ row.discount_amount }}</td> <!--this is hidden here so I can calculate the discount amount! SHH DO NOT TELL MUM -->
-                        {% else %}
-                            <td name="service_discount">{{ row.discount_amount }}</td>
-                        {% endif %}
-                        <td name="service_sales_price">{{ row.sales_price }}</td>
-                        <td>{{ row.tax }}</td>
-                        <td name="service_tax">{{ row.tax_amount }}</td>
-                        <td>{{ row.total }}</td>
-                    </tr>
-                    {% if not row.product_note == "" %}
-                        <tr>
-                            <td>Product Note:</td>
-                            <td colspan="7">{{ row.product_note }}</td>
-                        </tr>
-                    {% endif %}
-                {% endfor %}
-                <tr class="table_header">
-                    <td colspan="2">Service Totals</td>
-                </tr>
-                <tr>
-                    <td>Unadjusted Price</td>
-                    <td>{{ service_unadjusted_price.product_price__sum }}</td>
-                </tr>
-                <tr>
-                    <td>service Discount</td>
-                    <td>{{ service_discount.discount_amount__sum }}</td>
-                </tr>
-                <tr>
-                    <td>Sales Price</td>
-                    <td>{{ service_sales_price.sales_price__sum }}</td>
-                </tr>
-                <tr>
-                    <td>service Tax</td>
-                    <td>{{ service_tax.tax__sum }}</td>
-                </tr>
-                <tr>
-                    <td>Total</td>
-                    <td>{{ service_total.total__sum }}</td>
-                </tr>
-            </table>
+        <hr>
+
+        <!-- QUOTE PREPARED FOR AND BY-->
+        <div class="card-group">
+
+            <!-- PREPARED FOR -->
+            <div class="col-xs-12 col-md-3 col-lg-3 float-xs-left">
+                <div class="card">
+                    <div class="card-header">
+                        <strong>Prepared For</strong>
+                    </div>
+                    <div class="card-body">
+                        {{ organisation_details|safe }}
+                    </div>
+                </div>
+            </div>
+            <!-- PREPARED BY -->
+            <div class="col-xs-12 col-md-3 col-lg-3 float-xs-left">
+                <div class="card">
+                    <div class="card-header">
+                        <strong>Prepared By</strong>
+                    </div>
+                    <div class="card-body">
+                        {{ current_user }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quote Details -->
+            <div class="col-xs-12 col-md-3 col-lg-3 float-xs-left">
+                <div class="card">
+                    <div class="card-header">
+                        <strong>Quotation Information</strong>
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <strong>Quote Number: </strong>{{ quote_id }}
+                        </div>
+                        <div>
+                            <strong>Quote Date: </strong>{{ current_date }}
+                        </div>
+                        <div>
+                            <strong>Valid Until: </strong>{{ quote_results.quote_valid_till }}
+                        </div>
+                        <div>
+                            <strong>Payment Terms: </strong>{{ payment_terms|safe }}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-    {% endif %}
-    <div id="totals">
-        <table>
-            <tr class="table_header">
-                <td colspan="2">Grand Total</td>
-            </tr>
-            <tr>
-                <td>Unadjusted Price</td>
-                <td>{{ service_unadjusted_price.product_price__sum|add:product_unadjusted_price.product_price__sum }}</td>
-            </tr>
-            <tr>
-                <td>Discount</td>
-                <td>{{ service_discount.discount_amount__sum|add:product_discount.discount_amount__sum }}</td>
-            </tr>
-            <tr>
-                <td>Sales Price</td>
-                <td>{{ service_sales_price.sales_price__sum|add:product_sales_price.sales_price__sum }}</td>
-            </tr>
-            <tr>
-                <td>Tax</td>
-                <td>{{ service_tax.tax__sum|add:product_tax.tax__sum }}</td>
-            </tr>
-            <tr>
-                <td>Grand Total</td>
-                <td>{{ service_total.total__sum|add:product_total.total__sum }}</td>
-            </tr>
-        </table>
+        {% if notes %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <strong>Quote Notes</strong>
+                </div>
+                <div class="card-body">{{ notes|safe }}</div>
+            </div>
+        {% endif %}
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <strong>Order Summary</strong>
+            </div>
+            <div class="card-body">
+                {% if product_results %}
+                    <div id="product_line">
+                        <h4>Product Lines</h4>
+                        <table id="product_line_table" class="table table-striped table-hover">
+                            <thead>
+                                <tr class="table_header">
+                                    <td>Product</td>
+                                    <td>Price</td>
+                                    <td>Quantity</td>
+                                    <td>Discount Amount</td>
+                                    <td>Sales Price</td>
+                                    <td>Tax %</td>
+                                    <td>Tax Amount</td>
+                                    <td>Total</td>
+                                </tr>
+                            </thead>
+                            {% for row in product_results %}
+                                <tr>
+                                    <td>{{ row.products_and_services }}</td>
+                                    <td name="product_price">{{ row.product_price }}</td>
+                                    <td name="product_quantity">{{ row.quantity }}</td>
+                                    {% if row.discount_choice == "Percentage" %}
+                                        <td>{{ row.discount_percent }}% = {{ row.discount_amount }}</td>
+                                        <td style="display: none;" name="product_discount">{{ row.discount_amount }}</td> <!--this is hidden here so I can calculate the discount amount! SHH DO NOT TELL MUM -->
+                                    {% else %}
+                                        <td name="product_discount">{{ row.discount_amount }}</td>
+                                    {% endif %}
+                                    <td name="product_sales_price">{{ row.sales_price }}</td>
+                                    <td>{{ row.tax }}</td>
+                                    <td name="product_tax">{{ row.tax_amount }}</td>
+                                    <td>{{ row.total }}</td>
+                                </tr>
+                                {% if not row.product_note == "" %}
+                                    <tr>
+                                        <td>Product Note:</td>
+                                        <td colspan="7">{{ row.product_note }}</td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                            <tr class="table_header">
+                                <td colspan="2">Product Totals</td>
+                            </tr>
+                            <tr>
+                                <td>Unadjusted Price</td>
+                                <td>{{ product_unadjusted_price.product_price__sum }}</td>
+                            </tr>
+                            <tr>
+                                <td>Product Discount</td>
+                                <td>{{ product_discount.discount_amount__sum }}</td>
+                            </tr>
+                            <tr>
+                                <td>Sales Price</td>
+                                <td>{{ product_sales_price.sales_price__sum }}</td>
+                            </tr>
+                            <tr>
+                                <td>Product Tax</td>
+                                <td>{{ product_tax.tax__sum }}</td>
+                            </tr>
+                            <tr>
+                                <td>Total</td>
+                                <td>{{ product_total.total__sum }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                {% endif %}
+                {% if service_results %}
+                    <div id="service_line">
+                        <h4>Service Lines</h4>
+                        <table id="service_line_table" class="table table-striped table-hover">
+                            <thead>
+                                <tr class="table_header">
+                                <td>Service</td>
+                                <td>Price</td>
+                                <td>Quantity</td>
+                                <td>Discount Amount</td>
+                                <td>Sales Price</td>
+                                <td>Tax %</td>
+                                <td>Tax Amount</td>
+                                <td>Total</td>
+                                </tr>
+                            </thead>
+                            {% for row in service_results %}
+                                <tr>
+                                    <td>{{ row.products_and_services }}</td>
+                                    <td name="service_price">{{ row.product_price }}</td>
+                                    <td name="service_quantity">{{ row.quantity }}</td>
+                                    {% if row.discount_choice == "Percentage" %}
+                                        <td>{{ row.discount_percent }}% = {{ row.discount_amount }}</td>
+                                        <td style="display: none;" name="service_discount">{{ row.discount_amount }}</td> <!--this is hidden here so I can calculate the discount amount! SHH DO NOT TELL MUM -->
+                                    {% else %}
+                                        <td name="service_discount">{{ row.discount_amount }}</td>
+                                    {% endif %}
+                                    <td name="service_sales_price">{{ row.sales_price }}</td>
+                                    <td>{{ row.tax }}</td>
+                                    <td name="service_tax">{{ row.tax_amount }}</td>
+                                    <td>{{ row.total }}</td>
+                                </tr>
+                                {% if not row.product_note == "" %}
+                                    <tr>
+                                        <td>Product Note:</td>
+                                        <td colspan="7">{{ row.product_note }}</td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                            <tr class="table_header">
+                                <td colspan="2">Service Totals</td>
+                            </tr>
+                            <tr>
+                                <td>Unadjusted Price</td>
+                                <td>{{ service_unadjusted_price.product_price__sum }}</td>
+                            </tr>
+                            <tr>
+                                <td>service Discount</td>
+                                <td>{{ service_discount.discount_amount__sum }}</td>
+                            </tr>
+                            <tr>
+                                <td>Sales Price</td>
+                                <td>{{ service_sales_price.sales_price__sum }}</td>
+                            </tr>
+                            <tr>
+                                <td>service Tax</td>
+                                <td>{{ service_tax.tax__sum }}</td>
+                            </tr>
+                            <tr>
+                                <td>Total</td>
+                                <td>{{ service_total.total__sum }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-group">
+            <!-- GRAND TOTAL -->
+            <div class="card-group mt-4 col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <strong>Grand Total</strong>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped table-hover">
+                            <tr>
+                                <td>Unadjusted Price</td>
+                                <td>{{ service_unadjusted_price.product_price__sum|add:product_unadjusted_price.product_price__sum }}</td>
+                            </tr>
+                            <tr>
+                                <td>Discount</td>
+                                <td>{{ service_discount.discount_amount__sum|add:product_discount.discount_amount__sum }}</td>
+                            </tr>
+                            <tr>
+                                <td>Sales Price</td>
+                                <td>{{ service_sales_price.sales_price__sum|add:product_sales_price.sales_price__sum }}</td>
+                            </tr>
+                            <tr>
+                                <td>Tax</td>
+                                <td>{{ service_tax.tax__sum|add:product_tax.tax__sum }}</td>
+                            </tr>
+                            <tr>
+                                <td>Grand Total</td>
+                                <td>{{ service_total.total__sum|add:product_total.total__sum }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAYMENT DETAILS -->
+            <div class="card-group float-right mt-4 col-md-4 ml-auto">
+                <div class="card">
+                    <div class="card-header">
+                        <strong>Payment Details</strong>
+                    </div>
+                    <div class="card-body">
+                        {{ payment_method|safe }}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
     </div>
-    <div id="payment_method">
-        <h4>Payment Details</h4>
-        {{ payment_method|safe }}
-    </div>
+
+
+
+
+
+
 </body>
 <footer>
     {{ footer|safe }}
