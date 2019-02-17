@@ -2035,7 +2035,52 @@ def delete_permission_set(request, permission_set_id):
 
 
 @login_required(login_url='login')
-def delete_tag(request, tag_id, location_id, destination):
+def delete_tag(request,tag_id):
+    """
+    Delete tag will actually remove the tag and all it's assignments from the system.
+
+    Only a user with a tag permission of 4 can do this task.
+
+    :param request:
+    :param tag_id: the tag to delete
+    :return: blank page if successful
+
+    Method
+    ~~~~~~
+    1. Check permissions - if use does not pass send them to the naughty corner
+    2. Check to make sure is in POST - if not, return an error
+    3. Delete the tag
+    4. Delete the tag assignments
+    5. Return a blank page
+    """
+    permission_results = return_user_permission_level(request,None,'tag')
+    if permission_results['tag'] < 4:
+        return HttpResponseForbidden
+
+    if request.method == "POST":
+        #Delete the tag
+        update_tag = tag.objects.get(tag_id=tag_id)
+        update_tag.is_deleted = "TRUE"
+        update_tag.save()
+
+        #Delete the tag assignments
+        update_tag_assignment = tag_assignment.objects.filter(
+            is_deleted="FALSE",
+            tag_id=tag_id,
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        #Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry, this can only be done through POST")
+
+
+@login_required(login_url='login')
+def delete_tag_from_object(request, tag_id, location_id, destination):
     """
     If the user has permission, we will delete the tag from the current object location.
 
@@ -3588,6 +3633,42 @@ def kudos_read_only(request,kudos_key):
     return HttpResponse(t.render(c,request))
 
 
+@login_required(login_url='login')
+def list_of_tags(request):
+    """
+    List of tags will allow a user to configure all the tags currently in NearBeach. The user will be able to
+    - Merge tags together
+    - Delete tags
+    - Rename tags
+    - Create new tags
+    :param request:
+    :return: Page of tags
+
+    Method
+    ~~~~~~
+    1. Check user permissions - if they are not allowed here send them to the naughty corner
+    """
+    permission_results = return_user_permission_level(request,None,'tag')
+    if permission_results['tag'] < 1:
+        return HttpResponseRedirect(reverse(permission_denied))
+
+    # Get data
+    tag_results = tag.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    # Template
+    t = loader.get_template('NearBeach/tags/list_of_tags.html')
+
+    # Context
+    c = {
+        'tag_results': tag_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c,request))
+
 
 def login(request):
     """
@@ -3753,6 +3834,72 @@ def logout(request):
     auth.logout(request)
     return HttpResponseRedirect(reverse('login'))
 
+
+@login_required(login_url='login')
+def merge_tags(request, old_tag_id, new_tag_id=""):
+    """
+    Merge tags will get the old tag_id, and update all the tag assoications with the new tag_id before deleting the old
+    tag id.
+    :param request:
+    :param old_tag_id: The old tag that we want to merge
+    :param new_tag_id: The new tag that we want to merge into
+    :return: back to the tag list
+
+    Method
+    ~~~~~~
+    1. Check permissions - only a user with a permission of 4 is permitted. Anyone else is sent to the naughty space
+    2. Check to see if method is POST - if it check instructions there
+    3. Get a list of ALL tags excluding the current old_tag_id
+    4. Render out the page and wait for the user
+    """
+
+    permission_results = return_user_permission_level(request, None, 'tag')
+
+    if permission_results['tag'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        """
+        The user has submitted both an old_tag_id and a new_tag_id. The old tag id will be merged into the new tag id.
+        1. In tag association, we update all the tag associations to the new tag from the old tag
+        2. We state that the old tag is deleted.
+        3. Return blank page back as a success
+        """
+        new_tag_instance = tag.objects.get(tag_id=new_tag_id)
+
+        #Update all tags associated with the old tag id with the new tag id
+        update_tag_association = tag_assignment.objects.filter(
+            is_deleted="FALSE",
+            tag_id=old_tag_id,
+        ).update(
+            tag_id=new_tag_instance,
+        )
+
+        #Delete the old tag
+        old_tag_instance = tag.objects.get(tag_id=old_tag_id)
+        old_tag_instance.is_deleted = "TRUE"
+        old_tag_instance.save()
+
+        #Return a blank page :)
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+
+    tag_results = tag.objects.filter(
+        is_deleted="FALSE",
+    ).exclude(
+        tag_id=old_tag_id,
+    )
+
+    # Get template
+    t = loader.get_template('NearBeach/tags/merge_tags.html')
+
+    c = {
+        'tag_results': tag_results,
+        'old_tag_id': old_tag_id,
+    }
+
+    return HttpResponse(t.render(c, request))
 
 @login_required(login_url='login')
 def my_profile(request):
@@ -6640,6 +6787,138 @@ def search_projects_task(request):
 
 
 @login_required(login_url='login')
+def search_tags(request):
+    """
+    This search functionality allows the user to search NearBeach for tags. Tags are connected to the objects;
+    - Projects
+    - Tasks
+    - Requirements
+    - Opportunities
+
+    This will bring back a result of ALL objects that contain that tag
+    :param request:
+    :return:
+
+    Method
+    ~~~~~~
+    1. Check permissions - if you do not have permissions then you will be carted away
+    2. Declare all variables
+    3. Check to see if this is in POST
+    """
+    permission_results = return_user_permission_level(request, None, 'tag')
+    if permission_results['tag'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #Declaring variables
+    search_for = ""
+    search_form_form = search_form(request.POST or None)
+
+    if request.method == "POST":
+        if search_form_form.is_valid():
+            #Lets get the form data
+            search_for=search_form_form.cleaned_data['search_for']
+
+    # Get data
+    """
+    These are the potential tags that match the search results. When blank - it will pull out all tags (as this can be
+    used as a general search).
+    """
+    tag_assignment_results = tag_assignment.objects.filter(
+        is_deleted="FALSE",
+        tag_id__in=tag.objects.filter(
+            is_deleted="FALSE",
+            tag_name__contains=search_for,
+        ).values('tag_id'),
+    )
+
+    """
+    We want to limit the objects down to only those that the user has access to. We do not want to accidently show 
+    projects/tasks/requirements/opportunities that are currently in other groups.
+    
+    The following object will check
+    - Is the object still not deleted
+    - Is the object in a list of objects that the user has access to (either via group or being assigned)
+    - Is the object in the list of tag assignment results.
+    """
+    project_results = project.objects.filter(
+        Q(is_deleted="FALSE") and
+        Q(project_id__in=object_assignment.objects.filter(
+            Q(is_deleted="FALSE",) and
+            Q(
+                Q(assigned_user_id=request.user.id) or
+                Q(group_id__in=user_group.objects.filter(
+                    is_deleted="FALSE",
+                    username=request.user,
+                ).values('group_id'))
+            )
+        ).values('project_id')) and
+        Q(project_id__in=tag_assignment_results.filter(project_id__isnull=False).values('project_id'))
+    )
+
+    task_results = task.objects.filter(
+        Q(is_deleted="FALSE") and
+        Q(task_id__in=object_assignment.objects.filter(
+            Q(is_deleted="FALSE", ) and
+            Q(
+                Q(assigned_user_id=request.user.id) or
+                Q(group_id__in=user_group.objects.filter(
+                    is_deleted="FALSE",
+                    username=request.user,
+                ).values('group_id'))
+            )
+        ).values('task_id')) and
+        Q(task_id__in=tag_assignment_results.filter(task_id__isnull=False).values('task_id'))
+    )
+
+    requirement_results = requirement.objects.filter(
+        Q(is_deleted="FALSE") and
+        Q(requirement_id__in=object_assignment.objects.filter(
+            Q(is_deleted="FALSE", ) and
+            Q(
+                Q(assigned_user_id=request.user.id) or
+                Q(group_id__in=user_group.objects.filter(
+                    is_deleted="FALSE",
+                    username=request.user,
+                ).values('group_id'))
+            )
+        ).values('requirement_id')) and
+        Q(requirement_id__in=tag_assignment_results.filter(requirement_id__isnull=False).values('requirement_id'))
+    )
+
+    opportunity_results = opportunity.objects.filter(
+        Q(is_deleted="FALSE") and
+        Q(opportunity_id__in=object_assignment.objects.filter(
+            Q(is_deleted="FALSE", ) and
+            Q(
+                Q(assigned_user_id=request.user.id) or
+                Q(group_id__in=user_group.objects.filter(
+                    is_deleted="FALSE",
+                    username=request.user,
+                ).values('group_id'))
+            )
+        ).values('opportunity_id')) and
+        Q(opportunity_id__in=tag_assignment_results.filter(opportunity_id__isnull=False).values('opportunity_id'))
+    )
+
+
+    # Get template
+    t = loader.get_template('NearBeach/search_tags.html')
+
+    # Context
+    c = {
+        'search_form': search_form_form,
+        'project_results': project_results,
+        'task_results': task_results,
+        'requirement_results': requirement_results,
+        'opportunity_results': opportunity_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login')
 def search_templates(request):
     permission_results = return_user_permission_level(request, None, 'templates')
     if permission_results['templates'] == 0:
@@ -6738,7 +7017,7 @@ def tag_information(request, location_id, destination):
             elif destination == "opportunity":
                 tag_assignment_submit.opportunity_id = opportunity.objects.get(opportunity_id=location_id)
             elif destination == "requirement":
-                tag_assignment_submit.requirment_id = requirement.objects.get(requirement_id=location_id)
+                tag_assignment_submit.requirement_id = requirement.objects.get(requirement_id=location_id)
 
             tag_assignment_submit.save()
 

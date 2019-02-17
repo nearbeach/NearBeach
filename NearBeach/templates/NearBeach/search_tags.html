@@ -1,0 +1,138 @@
+{% extends "./template.html" %}
+{% block content %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h1>Search Tags</h1>
+        </div>
+        <div class="card-body">
+            <form action={% url 'search_tags' %} method="post" class="search_tags">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group w-75">
+                        <label for="id_search_for">Search</label>
+                        {{ search_form.search_for }}
+                    </div>
+                    <div class="form-group w-25">
+                        <label for="search_button">.</label>
+                        <button type="submit" id="search_button" class="btn btn-primary form-control">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    {% if project_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Project Results</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <td>Project ID</td>
+                            <td>Project Name</td>
+                            <td>Organisation</td>
+                            <td>Project Status</td>
+                            <td>Project End Date</td>
+                        </tr>
+                    </thead>
+                    {% for row in project_results %}
+                        <tr>
+                            <td><a href="{% url 'project_information' row.project_id %}">PRO{{ row.project_id }}</a></td>
+                            <td>{{ row.project_name }}</td>
+                            <td>{{ row.organisation_id.organisation_name }}</td>
+                            <td>{{ row.project_status }}</td>
+                            <td>{{ row.project_end_date }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if task_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Task Results</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Task ID</td>
+                            <td>Task Description</td>
+                            <td>Organisation</td>
+                            <td>Task Status</td>
+                            <td>Task End Date</td>
+                        </tr>
+                    </thead>
+                    {% for row in task_results %}
+                        <tr>
+                            <td><a href="{% url 'task_information' row.task_id %}">TASK{{ row.task_id }}</a></td>
+                            <td>{{ row.task_short_description }}</td>
+                            <td>{{ row.organisation_id.organisation_name }}</td>
+                            <td>{{ row.task_status }}</td>
+                            <td>{{ row.task_end_date }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if requirement_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Requirement Results</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Requirement ID</td>
+                            <td>Requirement Name</td>
+                            <td>Requirement Type</td>
+                        </tr>
+                    </thead>
+                    {% for row in requirement_results %}
+                        <tr>
+                            <td><a href="{% url 'requirement_information' row.requirement_id %}">REQ{{ row.requirement_id }}</a></td>
+                            <td>{{ row.requirement_title }}</td>
+                            <td>{{ row.requirement_type }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if opportunity_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Opportunity Results</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Opportunity ID</td>
+                            <td>Opportunity Name</td>
+                            <td>Opportunity Stage</td>
+                            <td>Expected Close Date</td>
+                        </tr>
+                    </thead>
+                    {% for row in opportunity_results %}
+                        <tr>
+                            <td><a href="{% url 'opportunity_information' row.opportunity_id %}">OPP{{ row.opportunity_id }}</a></td>
+                            <td>{{ row.opportunity_name }}</td>
+                            <td>{{ row.opportunity_stage }}</td>
+                            <td>{{ row.opportunity_expected_close_date }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

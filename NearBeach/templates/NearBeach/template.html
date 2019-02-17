@@ -62,6 +62,7 @@
                         </a>
                         <div class="dropdown-menu bg-dark" aria-labelledby="list_dropdown">
                             <a class="dropdown-item text-light" href="{% url 'search' %}">List All</a>
+                            <a class="dropdown-item text-light" href="{% url 'search_tags' %}">List by Tag</a>
                             <a class="dropdown-item text-light" href="{% url 'search_customer' %}">List Customers</a>
                             <a class="dropdown-item text-light" href="{% url 'kanban_list' %}">List Kanban Boards</a>
                             <a class="dropdown-item text-light" href="{% url 'search_organisation' %}">List Organisations</a>
@@ -77,6 +78,7 @@
                             <div class="dropdown-menu bg-dark" aria-labelledby="administration_dropdown">
                                 <a class="dropdown-item text-light" href="{% url 'bug_client_list' %}">Bug Client List</a>
                                 <a class="dropdown-item text-light" href="{% url 'search_templates' %}">Edit Templates</a>
+                                <a class="dropdown-item text-light" href="{% url 'list_of_tags' %}">List of Tags</a>
                                 <a class="dropdown-item text-light" href="{% url 'list_of_taxes_information' %}">List of Taxes</a>
                                 <a class="dropdown-item text-light" href="{% url 'product_and_service_search' %}">Products and Services</a>
                             </div>

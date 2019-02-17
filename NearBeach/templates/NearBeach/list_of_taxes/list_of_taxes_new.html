@@ -1,16 +1,17 @@
 {%  csrf_token %}
-<div class="form-row">
-    <div class="form-group">
-        <div class="input-group">
-            <span class="input-group-append">Amount:</span>
-            {{ list_of_tax_form.tax_amount }}
-            <span class="input-group-append">%</span>
+<div class="form-group w-100">
+    <label for="id_tax_amount">Tax Amount %</label>
+    <div class="input-group">
+        {{ list_of_tax_form.tax_amount }}
+        <div class="input-group-append">
+            <div class="input-group-text">%</div>
         </div>
     </div>
-    <div class="form-group">
-        {{ list_of_tax_form.tax_description }}
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Save/Update Tax">
-    </div>
 </div>
+
+<div class="form-group w-100">
+    <label for="id_tax_description">Tax Description</label>
+    {{ list_of_tax_form.tax_description }}
+</div>
+
+

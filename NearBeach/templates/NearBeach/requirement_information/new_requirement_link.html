@@ -1,0 +1,40 @@
+<div class="alert-primary">Click on the object you wish to link to the current requirement. Please note if there are no results then it is not possible to link anything.</div>
+<h5 class="mt-4">Project Links</h5>
+{% if project_results %}
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <td class="w-25"><b>Project ID</b></td>
+                <td class="w-75">Project Name</td>
+            </tr>
+        </thead>
+        {% for row in project_results %}
+            <tr>
+                <td><a href="javascript:void(0)" onclick="post_requirement_links({{ row.project_id }},'project')">Project - {{ row.project_id }}</a></td>
+                <td><a href="javascript:void(0)" onclick="post_requirement_links({{ row.project_id }},'project')">{{ row.project_name }}</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    Sorry - no projects can be linked
+{% endif %}
+
+<h5 class="mt-4">Task Links</h5>
+{% if task_results %}
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <td class="w-25"><b>Task ID</b></td>
+                <td class="w-75">Task Name</td>
+            </tr>
+        </thead>
+        {% for row in task_results %}
+            <tr>
+                <td><a href="javascript:void(0)" onclick="post_requirement_links({{ row.task_id }},'task')">Task - {{ row.task_id }}</a></td>
+                <td><a href="javascript:void(0)" onclick="post_requirement_links({{ row.task_id }},'task')">{{ row.task_short_description }}</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    Sorry - no tasks can be linked
+{% endif %}

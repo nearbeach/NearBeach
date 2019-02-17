@@ -1,0 +1,53 @@
+{% extends "../template.html" %}
+{% block content %}
+{% load static %}
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>List of Tags</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <td class="w-50">Tag Name</td>
+                        <td class="w-25">Merge Tag</td>
+                        <td class="w-25">Delete Tag</td>
+                    </tr>
+                </thead>
+                {% for row in tag_results %}
+                    <tr>
+                        <td>{{ row.tag_name }}</td>
+                        <td><a href="{% url 'merge_tags' row.tag_id %}">Merge</a></td>
+                        <td><a href="javascript:void(0)" onclick="delete_tag({{ row.tag_id }})">Delete</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <script>
+        function delete_tag(tag_id) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+                }
+            });
+
+            $.ajax({
+                url: '/delete_tag/' + tag_id + '/',
+                data: {},
+                dataType: "HTML",
+                type: "POST",
+                success: function(data) {
+                    //Just reload the page
+                    window.location.reload()
+                },
+                error: function() {
+                    alert("There was an issue deleting the tag");
+                }
+            });
+        }
+    </script>
+{% endblock %}

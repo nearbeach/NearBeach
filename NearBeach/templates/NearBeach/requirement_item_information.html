@@ -1,0 +1,197 @@
+{% extends './template.html' %}
+{% block content %}
+{% load static %}
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+    <form action="{% url 'requirement_item_information' requirement_item_id %}" enctype="multipart/form-data" class="requirement_item_information" method="POST">
+        {% csrf_token %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h1>Requirement Item Information</h1>
+            </div>
+            <div class="card-body">
+                <div class="alert-primary mb-4">
+                    This requirement item will be connected with REQ{{ requirement_item_results.requirement_id_id }} - {{ requirement_item_results.requirement_id }}
+                </div>
+                    {{ requirement_item_form.media }}
+                    <div class="form-group">
+                        <label for="id_requirement_item_title">Requirement Item Title</label>
+                        {{ requirement_item_form.requirement_item_title }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_requirement_item_scope">Requirement Item Scope</label>
+                        {{ requirement_item_form.requirement_item_scope }}
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="id_requirement_item_type">Requirement Item Type</label>
+                            {{ requirement_item_form.requirement_item_type }}
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="id_requirement_item_status">Requirement Item Status</label>
+                            {{ requirement_item_form.requirement_item_status }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <button type="submit" class="btn btn-primary form-control col-md-6">Update and Return</button>
+                        <a href="{% url 'requirement_information' requirement_item_results.requirement_id.requirement_id %}" class="btn btn-secondary form-control col-md-6">Cancel and return</a>
+                    </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Requirement Item Links</h2>
+        </div>
+        <div class="card-body">
+            <div class="alert-primary mb-4">
+                Requirement Item Links - are links to either projects or tasks which have been setup to complete this particular requirement item. A requirement item can contain multiple project/task links.
+            </div>
+            <a href="javascript:void(0)" onclick="load_requirement_links()">Create new link</a>
+            <table class="table table-striped table-hover" id="requirement_item_link_table">
+                <thead>
+                    <tr>
+                        <td>Object Link</td>
+                        <td>Description</td>
+                        {% if requirement_permission == 4 %}
+                            <td>Delete</td>
+                        {% endif %}
+                    </tr>
+                </thead>
+                {% for link in requirement_item_results.requirement_item_link_set.all %}
+                    <tr>
+                        {% if not link.project_id == None %}
+                            <td><a href="{% url 'project_information' link.project_id.project_id %}">Project - {{ link.project_id.project_id }}</a></td>
+                            <td>{{ link.project_id.project_name }}</td>
+                        {% elif not link.task_id == None %}
+                            <td><a href="{% url 'task_information' link.task_id.task_id %}">Task - {{ link.task_id.task_id }}</a></td>
+                            <td>{{ link.task_id.task_short_description }}</td>
+                        {% elif not link.organisation_id == None %}
+                            <td><a href="{% url 'organisation_information' link.organisation_id.organisation_id %}">Organisations - {{ link.organisation_id.organisation_id }}</a></td>
+                            <td>{{ link.organisation_id.organisation_name }}</td>
+                        {% else %}
+                            <td>ERROR</td>
+                            <td>Error with link {{ link.requirement_links_id }}</td>
+                        {% endif %}
+                        {% if requirement_permission == 4 %}
+                            <td><a href="javascript:void(0)">Delete</a></td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <!-- THIS IS WHERE THE MODALS ARE STORED :)-->
+    <!-- Link Requirements to objects -->
+    <div class="modal" tabindex="-1" role="dialog" id="link_requirement_item_modal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <!-- HEADER -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Link Requirements</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <!-- BODY -->
+                <div class="modal-body" id="link_requirement_item_modal_body">
+                    Loading Objects...
+                </div>
+
+
+                <!-- FOOTER -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.onload = function on_page_load() {
+            load_requirement_links();
+        };
+
+        function load_requirement_links() {
+            /*
+            Method
+            ~~~~~~
+            1. Show modal - it will have a loading screen
+            2. GET information from /requirement_link/requirement_id/
+            3. Paste information from AJAX into modal
+            4. User will select their result... there is another function for dealing with this.
+             */
+
+            // Show the modal
+            $("#link_requirement_item_modal").modal('show');
+
+            // Get the data
+            $.ajax({
+                url: '/new_requirement_item_link/{{ requirement_item_id }}/',
+                data: {},
+                dataType: "HTML",
+                type: "GET",
+                success: function(data) {
+                    //Success - place the link information into the modal
+                    $("#link_requirement_item_modal_body").html(data);
+                },
+                error: function() {
+                    alert("Sorry - the requirement links did not load correctly");
+                }
+            })
+        }
+
+
+        function post_requirement_links(location_id,destination) {
+            /*
+            Method
+            ~~~~~~
+            1. Prepare the ajax query
+            2. Send the request to /new_requirement_link/{{ requirement_id }}/location_id/destination
+            3. Once completed - add the two parts to the end of the table :) SHHH - don't tell anyone we didn't reload
+                that section.
+             */
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/new_requirement_item_link/{{ requirement_item_id }}/' + location_id + '/' + destination + '/',
+                data: {},
+                dataType: "HTML",
+                type: "POST",
+                success: function(data) {
+                    /*
+                    Method
+                    ~~~~~~
+                    1. Party - it was successful
+                    2. Append the data onto the table at the end
+                    3. Shh - don't tell the user. :)
+                     */
+
+                    json_results = JSON.parse(data); //To play around with
+                    html_to_append = "<tr><td><a href=\"/" + json_results['destination'] + "_information/" + json_results['location_id'] + "/\">"
+                        + json_results['object_link']
+                        + "</a></td><td>"
+                        + json_results['object_description']
+                        + "</td></tr>";
+
+                    //Append on the end
+                    $("#requirement_item_link_table").append(html_to_append);
+
+                    //Shh - close the modal
+                    $("#link_requirement_item_modal").modal("hide");
+                },
+                error: function() {
+                    alert("Sorry - there was an issue connecting the link.");
+                }
+            })
+        }
+    </script>
+{% endblock %}

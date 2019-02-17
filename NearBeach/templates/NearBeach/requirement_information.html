@@ -2,64 +2,178 @@
 {% block content %}
 {% load static %}
 <body onload="on_page_load()">
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
     <script type="text/javascript" src="{% static 'NearBeach/javascript/bug.js' %}"></script>
-        <script src="{% static 'NearBeach/widgets/jQuery-File-Upload-9.19.2/js/vendor/jquery.ui.widget.js' %}"></script>
-        <script src="{% static 'NearBeach/widgets/jQuery-File-Upload-9.19.2/js/jquery.iframe-transport.js' %}"></script>
-        <script type="text/javascript" src="{% static 'NearBeach/widgets/jQuery-File-Upload-9.19.2/js/jquery.fileupload.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/assigned_user_list.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/document_upload.js' %}"></script>
 
-    <h2>Requirement Information - {{ requirement_id }}</h2>
-    <form id="requirement_information" name="requirement_information" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ requirement_information_form.media }}
-        <table>
-            <tr><td>{{ requirement_information_form.requirement_title }}</td></tr>
-            <tr><td>{{ requirement_information_form.requirement_scope }}</td></tr>
-            <tr><td>Requirement Type: {{ requirement_information_form.requirement_type }}</td></tr>
-            <tr><td>Requirement Status: {{ requirement_information_form.requirement_status }}</td></tr>
-            <tr><td><input type="submit" value="Update"></td></tr>
-        </table>
-    </form>
-    <h2>Requirement Items</h2>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h1>Requirement Information - {{ requirement_id }}</h2>
+        </div>
+        <div class="card-body">
+            <form id="requirement_information" name="requirement_information" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ requirement_information_form.media }}
+                <div class="form-group">
+                    <label for="id_requirement_title">Requirement Title</label>
+                    {{ requirement_information_form.requirement_title }}
+                </div>
+                <div class="form-group">
+                    <label for="id_requirement_scope">Requirement Scope</label>
+                    {{ requirement_information_form.requirement_scope }}
+                </div>
 
-    <form method="POST" class="requirement_items_list" id="requirement_items_list">
-        Loading Table...
-    </form>
-
-    {% if permission > 2 %}
-        <a href="javascript:void(0)" onclick="new_requirement_item()">New Requirement Item</a>
-    {% endif %}
-
-    <form method="POST" class="new_requirement_item" id="new_requirement_item" style="background-color: #b0cfe0;">
-    <!-- BLANK - will populate when needed using AJAX -->
-    </form>
-
-    <div method="POST" class="edit_requirement_item" id="edit_requirement_item_div" style="background-color: azure;">
-        <form method="POST" class="edit_requirement_item" id="edit_requirement_item">
-            <!-- BLANK - will populate when needed using AJAX -->
-        </form>
-        <div id="requirement_item_documents">
-            <!-- BLANK - will populate when needed using AJAX -->
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_requirement_type">Requirement Type</label>
+                        {{ requirement_information_form.requirement_type }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="id_requirement_status">Requirement Status</label>
+                        {{ requirement_information_form.requirement_status }}
+                    </div>
+                </div>
+                <input type="submit" value="Update" class="btn btn-primary col-md-12">
+            </form>
         </div>
     </div>
 
-
-    <form method="POST" class="requirement_links_list" id="requirement_links_list">
-        <h2>Requirement Links</h2>
-        Loading...
-    </form>
-
-    <form method="POST" class="requirement_new_link" id="requirement_new_link" style="background-color: palevioletred">
-        {% if requirement_link_permissions > 2 %}
-            <a href="javascript:void(0)" onclick="link_requirement({{ requirement_id }})">Link Current Requirement</a>
-        {% endif %}
-    </form>
-
-
-    <div id="requirement_documents">
-        <h2>Requirement Documents</h2>
-        Loading...
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Requirement Items</h2>
+        </div>
+        <div class="card-body">
+            <a href="{% url 'new_requirement_item' requirement_id %}">Create Requirement Item</a>
+            {% if requirement_item_results %}
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td class="col-md-2">Requirement Item</td>
+                            <td class="col-md-8">Requirement Item Description</td>
+                            <td class="col-md-2">Requirement Item Status</td>
+                        </tr>
+                    </thead>
+                    {% for item in requirement_item_results %}
+                        <tr>
+                            <td><a href="{% url 'requirement_item_information' item.requirement_item_id %}">ITM{{ item.requirement_item_id }}</a></td>
+                            <td>{{ item.requirement_item_title }}</td>
+                            <td>{{ item.requirement_item_status }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+        </div>
     </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Requirement Links</h2>
+        </div>
+        <div class="card-body">
+            <div class="alert-primary mb-4">Please note - requirement item links can be applied by going to the appliciable requirement item information page.</div>
+            <a href="javascript:void(0)" onclick="load_requirement_links()">Link Current Requirement</a>
+            <table class="table table-striped table-hover" id="requirement_link_table">
+                <thead>
+                    <tr>
+                        <td>Object Link</td>
+                        <td>Description</td>
+                        {% if requirement_permission == 4 %}
+                            <td>Delete</td>
+                        {% endif %}
+                    </tr>
+                </thead>
+                {% for link in requirement_link_results %}
+                    <tr>
+                        {% if not link.project_id == None %}
+                            <td>
+                                <a href="{% url 'project_information' link.project_id %}">Project - {{ link.project_id }}</a>
+                            </td>
+                            <td>
+                                {{ link.project_id__project_name }}
+                            </td>
+                            {% if requirement_permission == 4 %}
+                                <td>
+                                    <a href="javascript:void(0)">Delete</a>
+                                </td>
+                            {% endif %}
+                        {% elif not link.task_id == None %}
+                            <td>
+                                <a href="{% url 'task_information' link.task_id %}">Task - {{ link.task_id }}</a>
+                            </td>
+                            <td>
+                                {{ link.task_id__task_short_description }}
+                            </td>
+                            {% if requirement_permission == 4 %}
+                                <td>
+                                    <a href="javascript:void(0)">Delete</a>
+                                </td>
+                            {% endif %}
+
+                        {% elif not link.organisations_id == None %}
+                            <td>
+                                <a href="{% url 'organisation_information' link.organisation_id %}">Organisations - {{ link.organisation_id }}</a>
+                            </td>
+                            <td>
+                                {{ link.organisation_id__organisation_name }}
+                            </td>
+                            {% if requirement_permission == 4 %}
+                                <td>
+                                    <a href="javascript:void(0)">Delete</a>
+                                </td>
+                            {% endif %}
+                        {% else %}
+                            <td>ERROR</td>
+                            <td>Error with link {{ link.requirement_links_id }}<br/></td>
+                            {% if requirement_permission == 4 %}
+                                <td>
+                                    <a href="javascript:void(0)">Delete</a>
+                                </td>
+                            {% endif %}
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </table>
+
+            <h5 class="mt-5">Requirement Item Links</h5>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <td>Requirement Item</td>
+                        <td>Object Link</td>
+                        <td>Description</td>
+                        {% if requirement_permission == 4 %}
+                            <td>Delete</td>
+                        {% endif %}
+                    </tr>
+                </thead>
+                {% for item in requirement_item_results %}
+                    {% for link in item.requirement_item_link_set.all %}
+                        <tr>
+                            <td><a href="{% url 'requirement_item_information' item.requirement_item_id %}">ITM{{ item.requirement_item_id }}</a></td>
+                            {% if not link.project_id == None %}
+                                <td><a href="{% url 'project_information' link.project_id.project_id %}">Project - {{ link.project_id.project_id }}</a></td>
+                                <td>{{ link.project_id.project_name }}</td>
+                            {% elif not link.task_id == None %}
+                                <td><a href="{% url 'task_information' link.task_id.task_id %}">Task - {{ link.task_id.task_id }}</a></td>
+                                <td>{{ link.task_id.task_short_description }}</td>
+                            {% elif not link.organisation_id == None %}
+                                <td><a href="{% url 'organisation_information' link.organisation_id.organisation_id %}">Organisations - {{ link.organisation_id.organisation_id }}</a></td>
+                                <td>{{ link.organisation_id.organisation_name }}</td>
+                            {% else %}
+                                <td>ERROR</td>
+                                <td>Error with link {{ link.requirement_links_id }}</td>
+                            {% endif %}
+                            {% if requirement_permission == 4 %}
+                                <td><a href="javascript:void(0)">Delete</a></td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
 
     <form method="post" class="bug_list" id="bug_list">
         <h2>Requirement Bug List</h2>
@@ -82,37 +196,86 @@
         </div>
     </form>
 
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Requirement Linked to Kanban Board</h2>
+        </div>
+        <div class="card-body">
+            {% if kanban_board_results %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <td>Kanban Board Name</td>
+                        </tr>
+                    </thead>
+                    {% for row in kanban_board_results %}
+                        <tr><td>
+                            <a href="{% url 'kanban_requirement_information' row.kanban_board_id %}">{{ row.kanban_board_name }}</a>
+                        </td></tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <a href="{% url 'new_kanban_requirement_board' requirement_results.requirement_id %}">Click here to create kanban link</a>
+            {% endif %}
+        </div>
+    </div>
+
     {% if permission >= 3 %}
-        <form method="post" class="requirement_assigned_users" id="requirement_assigned_users">
-            <h2>Assigned Users</h2>
-            Loading...
-        </form>
-        <div id="assigned_user_list">Loading list...</div>
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Assigned Users</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" class="assigned_users" id="assigned_users">
+                    Loading...
+                </form>
+                <div id="assigned_user_list">Loading list...</div>
+            </div>
+        </div>
 
-        <h2>Assigned Groups</h2>
-        <form method="post" class="requirement_assigned_groups" id="requirement_assigned_groups">
-            Loading add...
-        </form>
-        <div id="assigned_group_list">Loading list...</div>
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Assigned Groups</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" class="assigned_groups" id="assigned_groups">
+                    Loading add...
+                </form>
+                <div id="assigned_group_list">Loading list...</div>
+            </div>
+        </div>
     {% endif %}
 
-    <h2>Requirement Linked to Kanban Board</h2>
-    {% if kanban_board_results %}
-        <table>
-            <tr><td>Kanban Board Name</td></tr>
-            {% for row in kanban_board_results %}
-                <tr><td>
-                    <a href="{% url 'kanban_requirement_information' row.kanban_board_id %}">{{ row.kanban_board_name }}</a>
-                </td></tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <table>
-            <tr>
-                <td><a href="{% url 'new_kanban_requirement_board' requirement_results.requirement_id %}">Click here to create kanban link</a> </td>
-            </tr>
-        </table>
-    {% endif %}
+
+    <!-- THIS IS WHERE THE MODALS ARE STORED :)-->
+    <!-- Link Requirements to objects -->
+    <div class="modal" tabindex="-1" role="dialog" id="link_requirements_modal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <!-- HEADER -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Link Requirements</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <!-- BODY -->
+                <div class="modal-body" id="link_requirements_modal_body">
+                    Loading Objects...
+                </div>
+
+
+                <!-- FOOTER -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 
     <script>
         $("#bug_search").on('submit', function(e) {
@@ -136,166 +299,98 @@
            })
         });
 
-        $("#new_requirement_item").on('submit', function(e) {
+
+        $("#assigned_users").on('submit', function(e) {
             e.preventDefault();
             $.ajax({
                 type: 'POST',
-                url: '/requirement_items_new/{{ requirement_id }}/',
+                url: '/assigned_user_add/{{ requirement_id }}/requirement/',
                 data: $(this).serialize(),
                 success: function() {
-                    //Reload the project history :)
-                    $("#new_requirement_item").html("");
-                    load_requirement_items_list();
-
+                    load_assigned_user_list();
+                    load_assigned_user_add();
                 },
                 error: function() {
-                    alert("Sorry, new requirement item did not save. Please try again.");
+                    alert("Sorry, project assigned users did not save. Please try again.");
                 }
             })
         });
 
-        $("#edit_requirement_item").on('submit', function(e) {
+
+        $("#assigned_groups").on('submit', function(e) {
             e.preventDefault();
             $.ajax({
                 type: 'POST',
-                url: '/requirement_item_edit/' + $("#requirement_item_id").val() + '/',
+                url: '/assigned_group_add/{{ requirement_id }}/requirement/',
                 data: $(this).serialize(),
                 success: function() {
-                    //Reload the project history :)
-                    $("#edit_requirement_item").html("");
-                    load_requirement_items_list();
-
+                    load_assigned_group_add();
+                    load_assigned_group_list();
                 },
                 error: function() {
-                    alert("Sorry, new requirement item did not save. Please try again.");
+                    alert("Sorry, project assigned users did not save. Please try again.");
                 }
             })
         });
 
-    $("#requirement_assigned_users").on('submit', function(e) {
-        e.preventDefault();
-        $.ajax({
-            type: 'POST',
-            url: '/assigned_user_add/{{ requirement_id }}/requirement/',
-            data: $(this).serialize(),
-            success: function() {
-                load_assigned_user_list();
-                load_assigned_user_add();
-            },
-            error: function() {
-                alert("Sorry, project assigned users did not save. Please try again.");
-            }
-        })
-    });
+        $("#tag_results").on('submit', function(e) {
+           e.preventDefault();
 
-
-    $("#requirement_assigned_groups").on('submit', function(e) {
-        e.preventDefault();
-        $.ajax({
-            type: 'POST',
-            url: '/assigned_group_add/{{ requirement_id }}/requirement/',
-            data: $(this).serialize(),
-            success: function() {
-                load_assigned_group_list();
-                load_assigned_group_add();
-            },
-            error: function() {
-                alert("Sorry, project assigned users did not save. Please try again.");
-            }
-        })
-    });
-
-    $("#tag_results").on('submit', function(e) {
-       e.preventDefault();
-
-       $.ajaxSetup({
-            beforeSend: function (xhr, settings) {
-                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+           $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
                 }
-            }
-        });
+            });
 
-       $.ajax({
-           url: '/tag_information/{{ requirement_id }}/requirement/',
-           data: $(this).serialize(),
-           dataType: 'HTML',
-           type: 'POST',
-           success: function(data) {
-               $("#tag_results").html(data);
-           },
-           error: function() {
-               alert("Sorry, could not save tag.");
-           },
-       })
-    });
+           $.ajax({
+               url: '/tag_information/{{ requirement_id }}/requirement/',
+               data: $(this).serialize(),
+               dataType: 'HTML',
+               type: 'POST',
+               success: function(data) {
+                   $("#tag_results").html(data);
+               },
+               error: function() {
+                   alert("Sorry, could not save tag.");
+               },
+           })
+        });
 
 
         function load_bug_list() {
-        $.ajax({
-            url: '/bug_list/{{ requirement_id }}/requirement',
-            data: {},
-            dataType: 'HTML',
-            type: 'GET',
-            success: function(data) {
-                $("#bug_list").html(data);
-            },
-            error: function() {
-                alert("There was an issue loading the bug list");
-            }
-        })
-    }
-
-
-    function load_bug_search() {
-        $.ajax({
-            url: '/bug_search/{{ requirement_id }}/requirement',
-            data: {},
-            dataType: 'HTML',
-            type: 'GET',
-            success: function(data) {
-                $("#bug_search").html(data);
-            },
-            error: function() {
-                alert("There was an issues loading the bug search");
-            }
-        })
-
-    }
-
-
-
-        function load_requirement_documents() {
-            //Get the requirement documents
             $.ajax({
-                url: '/requirement_documents_uploads/{{ requirement_id }}/requirement/',
+                url: '/bug_list/{{ requirement_id }}/requirement',
                 data: {},
                 dataType: 'HTML',
                 type: 'GET',
                 success: function(data) {
-                    $("#requirement_documents").html(data);
+                    $("#bug_list").html(data);
                 },
                 error: function() {
-                    alert("Sorry, the requirement documents could not load for some strange reason.")
+                    alert("There was an issue loading the bug list");
                 }
-            })
+            });
         }
 
-        function load_requirement_item_documents(requirement_item_id) {
-            //Get the requirement documents
+
+        function load_bug_search() {
             $.ajax({
-                url: '/requirement_documents_uploads/' + requirement_item_id + '/requirement_item/',
+                url: '/bug_search/{{ requirement_id }}/requirement',
                 data: {},
                 dataType: 'HTML',
                 type: 'GET',
                 success: function(data) {
-                    $("#requirement_item_documents").html(data);
+                    $("#bug_search").html(data);
                 },
                 error: function() {
-                    alert("Sorry, the requirement documents could not load for some strange reason.")
+                    alert("There was an issues loading the bug search");
                 }
             })
+
         }
+
 
         function load_assigned_group_add() {
             $.ajax({
@@ -304,10 +399,10 @@
                 dataType: 'HTML',
                 type: 'GET',
                 success: function(data) {
-                    $('#requirement_assigned_groups').html(data);
+                    $('#assigned_groups').html(data);
                 },
                 error: function() {
-                    $('#requirement_assigned_groups').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
+                    $('#assigned_groups').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
                 }
             });
         };
@@ -335,10 +430,10 @@
                 dataType: 'HTML',
                 type: 'GET',
                 success: function(data) {
-                    $("#requirement_assigned_users").html(data);
+                    $("#assigned_users").html(data);
                 },
                 error: function() {
-                    $("#requirement_assigned_users").html("<h2>Assigned Users</h2>Sorry, users encounted an error and did not load");
+                    $("#assigned_users").html("<h2>Assigned Users</h2>Sorry, users encounted an error and did not load");
                 }
             })
         };
@@ -356,118 +451,6 @@
                     $("#assigned_user_list").html("<p>User list failed to load</p>")
                 }
             })
-        }
-
-
-        function load_requirement_items_list() {
-            //New Requirement Item
-            $.ajax({
-                url: '/requirement_items_list/{{ requirement_id }}',
-                data: {},
-                dataType: 'HTML',
-                type: 'GET',
-                success: function(data) {
-                    $("#requirement_items_list").html(data);
-                },
-                error: function() {
-                    $("#requirement_items_list").html("<h2>New Requirement Item</h2>Sorry, new requirement item encounted an error and did not load");
-                }
-            })
-
-        }
-
-
-
-
-
-
-
-        function link_requirement(requirement_id) {
-            $.ajax({
-                url: '/requirement_new_link/' + requirement_id + '/',
-                data: {},
-                dataType: 'HTML',
-                type: 'GET',
-                success: function(data) {
-                    $("#requirement_new_link").html(data);
-
-                    //Scroll into view
-                    var offset = $("#requirement_new_link").offset;
-                    $('html, body').animate({scrollTop: offset.top});
-                },
-                error: function() {
-                    $("#requirement_new_link").html("<h2>New Requirement</h2>Sorry, new requirement encounted an error and did not load");
-                }
-            })
-        }
-
-
-        function link_requirement_item(requirement_item_id) {
-            $.ajax({
-                url: '/requirement_items_new_link/' + requirement_item_id + '/',
-                data: {},
-                dataType: 'HTML',
-                type: 'GET',
-                success: function(data) {
-                    $("#requirement_item_new_link").html(data);
-
-                    //Scroll into view
-                    var offset = $("#requirement_item_new_link").offset;
-                    $('html, body').animate({scrollTop: offset.top});
-                },
-                error: function() {
-                    $("#requirement_item_new_link").html("<h2>New Requirement Item</h2>Sorry, new requirement item encounted an error and did not load");
-                }
-            })
-        }
-
-
-        function new_requirement_item() {
-            //New Requirement Item
-            $.ajax({
-                url: '/requirement_items_new/{{ requirement_id }}',
-                data: {},
-                dataType: 'HTML',
-                type: 'GET',
-                success: function(data) {
-                    $("#new_requirement_item").html(data);
-
-                    //Scroll into view
-                    var offset = $("#new_requirement_item").offset;
-                    $('html, body').animate({scrollTop: offset.top});
-                },
-                error: function() {
-                    $("#new_requirement_item").html("<h2>New Requirement Item</h2>Sorry, new requirement item encounted an error and did not load");
-                }
-            })
-
-        }
-
-        function edit_requirement_item(requirement_item_id) {
-            //New Requirement Item
-            $.ajax({
-                url: '/requirement_item_edit/' + requirement_item_id + '/',
-                data: {},
-                dataType: 'HTML',
-                type: 'GET',
-                success: function(data) {
-                    $("#edit_requirement_item").html(data);
-
-                    //Scroll to the item
-                    var offset = $("#edit_requirement_item").offset();
-                    $('html, body').animate({
-                        scrollTop: offset.top - 150,
-
-                    });
-                    set_permissions({{ permission }});
-                    load_requirement_item_documents(requirement_item_id);
-
-                },
-                error: function() {
-                    $("#edit_requirement_item").html("<h2>Edit Requirement Item</h2>Sorry, edit requirement item encounted an error and did not load");
-                }
-            })
-
         }
 
         function delete_group_item(group_item) {
@@ -495,119 +478,98 @@
         };
 
 
-        function send_requirement_link(requirement_id, location_id, task_or_project) {
-            $.ajaxSetup({
-                beforeSend: function (xhr, settings) {
-                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                    }
-                }
-            });
-            alert("Requirement ID: " + requirement_id + "\nLocation ID: " + location_id + "\nTask or Project: " + task_or_project);
-
-            $.ajax({
-                url: '/requirement_new_link/' + requirement_id + '/' + location_id + '/' + task_or_project + '/',
-                data: {},
-                dataType: 'HTML',
-                type: 'POST',
-                success: function (data) {
-                    //RELOAD STUFF
-                    $("#requirement_new_link").html('<a href="javascript:void(0)" onclick="link_requirement(' + requirement_id + ')">Link Current Requirement</a>');
-                    requirement_links_list();
-                },
-                error: function(request, error) {
-                    alert("Sorry, could not link requirement. Please try again soon. This is because of: \n" + error + "\n\nREQUEST\n" + request)
-                }
-            })
-        }
-
-
-        function send_requirement_item_link(requirement_item_id, location_id, task_or_project) {
-            $.ajaxSetup({
-                beforeSend: function (xhr, settings) {
-                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                    }
-                }
-            });
-
-            $.ajax({
-                url: '/requirement_items_new_link/' + requirement_item_id + '/' + location_id + '/' + task_or_project + '/',
-                data: {},
-                dataType: 'HTML',
-                type: 'POST',
-                success: function (data) {
-                    //RELOAD STUFF
-                    $("#requirement_item_new_link").html('<a href="javascript:void(0)" onclick="link_requirement_item(' + requirement_item_id + ')">Link Requirement Item</a>');
-                    requirement_links_list();
-                },
-                error: function() {
-                    alert("Sorry, could not link requirement item. Please try again soon.")
-                }
-            })
-        }
-
-        function requirement_links_list() {
-            //New Requirement Item
-            $.ajax({
-                url: '/requirement_links_list/{{ requirement_id }}',
-                data: {},
-                dataType: 'HTML',
-                type: 'GET',
-                success: function(data) {
-                    $("#requirement_links_list").html(data);
-
-                },
-                error: function() {
-                    $("#requirement_links_list").html("<h2>Edit Requirement Links</h2>Sorry, edit requirement links encounted an error and did not load");
-                }
-            })
-
-        }
-
         function on_page_load() {
             //Load all ajax modules
             load_assigned_group_list();
             load_assigned_group_add();
             load_assigned_user_list();
             load_assigned_user_add();
-            load_requirement_items_list();
-            requirement_links_list();
-            load_requirement_documents();
             load_bug_search();
             load_bug_list();
-
-
-            set_permissions({{ permission }})
-        }
-
-        function close_new_requirement_item() {
-            $("#new_requirement_item").html("");
+            load_tag_results();
         }
 
 
-        function csrfSafeMethod(method) {
-            // these HTTP methods do not require CSRF protection
-            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        function load_requirement_links() {
+            /*
+            Method
+            ~~~~~~
+            1. Show modal - it will have a loading screen
+            2. GET information from /requirement_link/requirement_id/
+            3. Paste information from AJAX into modal
+            4. User will select their result... there is another function for dealing with this.
+             */
+
+            // Show the modal
+            $("#link_requirements_modal").modal('show');
+
+            // Get the data
+            $.ajax({
+                url: '/new_requirement_link/{{ requirement_id }}/',
+                data: {},
+                dataType: "HTML",
+                type: "GET",
+                success: function(data) {
+                    //Success - place the link information into the modal
+                    $("#link_requirements_modal_body").html(data);
+                },
+                error: function() {
+                    alert("Sorry - the requirement links did not load correctly");
+                }
+            })
         }
 
-        // using jQuery to extract the CSRFToken
-        function getCookie(name) {
-            var cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = jQuery.trim(cookies[i]);
-                    // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
+
+        function post_requirement_links(location_id,destination) {
+            /*
+            Method
+            ~~~~~~
+            1. Prepare the ajax query
+            2. Send the request to /new_requirement_link/{{ requirement_id }}/location_id/destination
+            3. Once completed - add the two parts to the end of the table :) SHHH - don't tell anyone we didn't reload
+                that section.
+             */
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
                     }
                 }
-            }
-            return cookieValue;
+            });
+
+            $.ajax({
+                url: '/new_requirement_link/{{ requirement_id }}/' + location_id + '/' + destination + '/',
+                data: {},
+                dataType: "HTML",
+                type: "POST",
+                success: function(data) {
+                    /*
+                    Method
+                    ~~~~~~
+                    1. Party - it was successful
+                    2. Append the data onto the table at the end
+                    3. Shh - don't tell the user. :)
+                     */
+
+                    json_results = JSON.parse(data); //To play around with
+                    html_to_append = "<tr><td><a href=\"/" + json_results['destination'] + "_information/" + json_results['location_id'] + "/\">"
+                        + json_results['object_link']
+                        + "</a></td><td>"
+                        + json_results['object_description']
+                        + "</td></tr>";
+
+                    //Append on the end
+                    $("#requirement_link_table").append(html_to_append);
+
+                    //Shh - close the modal
+                    $("#link_requirements_modal").modal("hide");
+                },
+                error: function() {
+                    alert("Sorry - there was an issue connecting the link.");
+                }
+            })
         }
-        var csrftoken = getCookie('csrftoken');
+
 
 
         function load_tag_results() {
@@ -635,7 +597,7 @@
             });
 
             $.ajax({
-                url: '/delete_tag/' + tag_id + '/{{ requirement_id }}/requirement/',
+                url: '/delete_tag_from_object/' + tag_id + '/{{ requirement_id }}/requirement/',
                 data: {},
                 dataType: 'HTML',
                 type: 'POST',

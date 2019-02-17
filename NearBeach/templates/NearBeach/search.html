@@ -8,8 +8,14 @@
             <form action={% url 'search' %} method="post" class="search_for">
                 {% csrf_token %}
                 <div class="form-row">
-                    {{ search_form.search_for }}
-                    <input type="submit" class="btn btn-primary form-control w-25">
+                    <div class="form-group w-75">
+                        <label for="id_search_for">Search</label>
+                        {{ search_form.search_for }}
+                    </div>
+                    <div class="form-group w-25">
+                        <label for="search_button">.</label>
+                        <button type="submit" id="search_button" class="btn btn-primary form-control">Search</button>
+                    </div>
                 </div>
             </form>
         </div>
