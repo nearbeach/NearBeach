@@ -29,12 +29,12 @@ jobs: # A basic unit of work in a run
           command: |
             sudo pip install pipenv
             pipenv install
-      - save_cache: # cache Python dependencies using checksum of Pipfile as the cache-key
-          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
-          paths:
-            - ".venv"
-            - "/usr/local/bin"
-            - "/usr/local/lib/python3.6/site-packages"
+#      - save_cache: # cache Python dependencies using checksum of Pipfile as the cache-key
+#          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+#          paths:
+#            - ".venv"
+#            - "/usr/local/bin"
+#            - "/usr/local/lib/python3.6/site-packages"
       - run:
           command: |
             pipenv run python manage.py test
