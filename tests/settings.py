@@ -32,7 +32,6 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'NearBeach.apps.NearBeachConfig',
-    'NearBeachAPI.apps.NearbeachapiConfig',
     'django.contrib.humanize',
     'tinymce',
     'django.contrib.admin',
