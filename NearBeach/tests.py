@@ -124,8 +124,6 @@ class ModelsTestCase(TestCase):
             {
                 'username': 'test',
                 'password': 'test',
-                'id_username': 'test',
-                'id_password': 'test',
             }
         )
         self.assertRedirects(
