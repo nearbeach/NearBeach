@@ -684,23 +684,28 @@ class campus_readonly_form(ModelForm):
         ]
 
 
-class connect_customer_form(forms.Form):
-    customer_results = customer.objects.filter(
-        is_deleted="FALSE",
-    ).order_by('customer_first_name','customer_last_name')
-
+class connect_form(forms.Form):
     customers=forms.ModelMultipleChoiceField(
-        queryset=customer_results,
+        queryset = customer.objects.filter(
+            is_deleted="FALSE",
+        ).order_by(
+            'customer_first_name',
+            'customer_last_name',
+        ),
         widget=ConnectCustomerSelect(),
         required=False,  # If they select nothing it will do nothing :)
 
     )
-"""
-    test = forms.ModelMultipleChoiceField(
-        queryset=customer_results,
-        widget=forms.CheckboxSelectMultiple,
-    ) 
-"""
+
+    organisations = forms.ModelMultipleChoiceField(
+        queryset=organisation.objects.filter(
+            is_deleted="FALSE",
+        ).order_by(
+            'organisation_name',
+        ),
+        widget=ConnectOrganisationSelect(),
+        required=False,  # If they select nothing it will do nothing :)
+    )
 
 
 class contact_history_readonly_form(ModelForm):

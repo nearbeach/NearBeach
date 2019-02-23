@@ -580,7 +580,15 @@ def assigned_opportunity_connection_add(request,opportunity_id,destination):
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST":
-        form = connect_customer_form(request.POST)
+        """
+        Method
+        ~~~~~~
+        1. Obtain the correct form.
+        2. If form is NOT valid - show errors and reload screen
+        3. If form is valid, read next method.
+        """
+        form = connect_form(request.POST)
+
         if form.is_valid():
             """
             The user has submitted some customers. We will now assign them to the opportunity.
@@ -592,13 +600,22 @@ def assigned_opportunity_connection_add(request,opportunity_id,destination):
             3. Return the user to the opportunity.
             """
             customer_extract = form.cleaned_data['customers']
+            organisation_extract = form.cleaned_data['organisations']
 
             for row in customer_extract:
-                print(row.customer_id)
                 #Lets save the customer against the opportunity. :)
                 submit_opportunity_connection = opportunity_connection(
                     opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
                     customer=row,
+                    change_user=request.user,
+                )
+                submit_opportunity_connection.save()
+
+            for row in organisation_extract:
+                #Lets save the organisation against the opportunity :)
+                submit_opportunity_connection = opportunity_connection(
+                    opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                    organisation=row,
                     change_user=request.user,
                 )
                 submit_opportunity_connection.save()
@@ -612,40 +629,18 @@ def assigned_opportunity_connection_add(request,opportunity_id,destination):
 
     """
     The following if statements will get
-    - Search information required
     - Get the correct required template... this... this is different
     """
     if destination == "organisation":
-        search_results = organisation.objects.filter(
-            is_deleted="FALSE",
-        ).exclude(
-            organisation_id__in=opportunity_connection.objects.filter(
-                is_deleted="FALSE",
-                organisation__isnull=False,
-                opportunity_id=opportunity_id,
-            ).values('organisation_id')
-        )
-
         #Template
         t = loader.get_template('NearBeach/opportunity_information/opportunity_connect_organisation.html')
     else:
-        search_results = customer.objects.filter(
-            is_deleted="FALSE",
-        ).exclude(
-            customer_id__in=opportunity_connection.objects.filter(
-                is_deleted="FALSE",
-                customer__isnull=False,
-                opportunity_id=opportunity_id,
-            ).values('customer_id')
-        )
-
         # Template
         t = loader.get_template('NearBeach/opportunity_information/opportunity_connect_customer.html')
 
 
     c = {
-        'search_results': search_results,
-        'connect_customer_form': connect_customer_form(),
+        'connect_form': connect_form(),
         'opportunity_id': opportunity_id,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],

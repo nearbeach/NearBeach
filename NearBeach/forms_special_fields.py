@@ -85,6 +85,64 @@ class ConnectCustomerSelect(forms.SelectMultiple):
         return value
 
 
+class ConnectOrganisationSelect(forms.SelectMultiple):
+    """
+    We want the ability to render a multiple select in a table format. This will give the use a friendly layout.
+    The fields we want are;
+    -- Tickbox
+    -- Organisation Name
+    -- Organisation Website
+    -- Organisation Email
+    """
+    def _render(self, name, value, attrs=None, choices=()):
+        if value is None: value = ''
+
+        #Get SQL Objects
+        organisation_results = organisation.objects.filter(
+            is_deleted="FALSE",
+        ).order_by('organisation_name')
+
+        #Start the rendering
+        output = u'<table class="table table-hover table-striped mt-4">' \
+                '<thead><tr>' \
+                    '<td> - </td>' \
+                    '<td>Organisation Name</td>' \
+                    '<td>Organisation Website</td>' \
+                    '<td>Organisation Email</td>'\
+                '<tr></thead>'
+
+        #Render a new row for each customer
+        #for idx,item in enumerate(list):
+        for idx, row in enumerate(organisation_results):
+            output = output + \
+                u'<tr>'\
+                    '<td><input type="checkbox" id="id_organisations_' + str(row.organisation_id) + '" name="organisations" value="' + str(row.organisation_id) + '"></td>' \
+                    '<td>' + row.organisation_name + '</td>' \
+                    '<td>' + row.organisation_website + '</td>' \
+                    '<td>' + str(row.organisation_email) + '</td>' \
+                '</tr>'
+
+        #Finish the rendering
+        output = output + \
+            u'</table>'
+
+        return output
+
+    def clean(self, value):
+        value = super(forms.ChoiceField, self).clean(value)
+        if value in (None, ''):
+            value = u''
+        value = forms.util.smart_str(value)
+        if value == u'':
+            return value
+        valid_values = []
+        for group_label, group in self.choices:
+            valid_values += [str(k) for k, v in group]
+        if value not in valid_values:
+            raise ValidationError(gettext(u'Select a valid choice. That choice is not one of the available choices.'))
+        return value
+
+
 
 class ProductOrServiceSelect(forms.Select):
     def _render(self, name, value, attrs=None, choices=()):
