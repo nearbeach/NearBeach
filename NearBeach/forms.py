@@ -1017,17 +1017,22 @@ class email_form(ModelForm):
                     ).values('customer_id')
                 )
         elif destination == "opportunity":
+            """
+            The following code needs to be fixed up as opportunities can be assigned to customers are organisations.
+            
+            The rule we want are;
+            - Either email all customers of a CONNECTED organisation
+            - OR email CONNECTED customers
+            """
             opportunity_results=opportunity.objects.get(opportunity_id=location_id)
-            if opportunity_results.organisation_id:
-                customer_results = customer.objects.filter(
+            customer_results = customer.objects.filter(
+                is_deleted="FALSE",
+                organisation_id__in=opportunity_connection.objects.filter(
                     is_deleted="FALSE",
-                    organisation_id=opportunity_results.organisation_id.organisation_id
-                )
-            else:
-                customer_results = customer.objects.filter(
-                    is_deleted="FALSE",
-                    customer_id=opportunity_results.customer_id.customer_id
-                )
+                    organisation_id__isnull=False,
+                    opportunity_id=location_id,
+                ).values('organisation_id')
+            )
         elif destination == "quote":
             """
             We need to determine who the quote is for to determine the customer list. For example a quote can be for;

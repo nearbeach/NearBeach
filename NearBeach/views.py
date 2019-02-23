@@ -642,12 +642,59 @@ def assigned_opportunity_connection_add(request,opportunity_id,destination):
     c = {
         'connect_form': connect_form(),
         'opportunity_id': opportunity_id,
+        'opportunity_permission': permission_results['opportunity'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
     }
 
 
     return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login')
+def assigned_opportunity_connection_delete(request, opportunity_id, location_id, destination):
+    """
+    This will remove any organisation/customer connection to an opportunity.
+    :param request:
+    :param location_id: The ID of the customer/organisation
+    :param destination: This tells the program if we are looking for an organisation or location.
+    :return: Success results
+
+    Method
+    ~~~~~~
+    1. Check permissions - send user away if they do not have permissions
+    2. Check to make sure this is a POST
+    3. Filter for the relivant organisation/customer connection
+    4. Change the is_deleted value to TRUE
+    5. Send back blank page
+    """
+    permission_results = return_user_permission_level(request,None,'opportunity')
+    if permission_results['opportunity'] != 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        if destination == "organisation":
+            opportunity_connection.objects.filter(
+                is_deleted="FALSE",
+                organisation_id=location_id,
+                opportunity_id=opportunity_id,
+            ).update(is_deleted="TRUE")
+        else:
+            opportunity_connection.objects.filter(
+                is_deleted="FALSE",
+                customer_id=location_id,
+                opportunity_id=opportunity_id,
+            ).update(is_deleted="TRUE")
+
+        # Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry - can only do this request via post")
+
+
+
 
 @login_required(login_url='login')
 def assigned_user_add(request, location_id, destination):
@@ -1562,14 +1609,15 @@ def customer_information(request, customer_id):
             | Q(group_id__in=user_groups_results.values('group_id'))  # User's group have permission
         )
     )
-    """
-    THIS NEEDS TO BE REWRITTEN!
-    
     opportunity_results = opportunity.objects.filter(
-        customer_id=customer_id,
-        opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
+        is_deleted="FALSE",
+        opportunity_id__in=opportunity_connection.objects.filter(
+            is_deleted="FALSE",
+            customer_id=customer_id,
+            opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
+        ).values('opportunity_id'),
     )
-    """
+
     #For when customer have an organisation
     campus_results = customer_campus.objects.filter(
         customer_id=customer_id,
@@ -1604,7 +1652,7 @@ def customer_information(request, customer_id):
         'profile_picture': profile_picture,
         'project_results': project_results,
         'task_results': task_results,
-        #'opportunity_results': opportunity_results,
+        'opportunity_results': opportunity_results,
         'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
         'customer_id': customer_id,
         'customer_permissions': permission_results['customer'],
@@ -2786,17 +2834,19 @@ def email(request,location_id,destination):
         customer_results = customer.objects.filter(
             Q(is_deleted="FALSE") &
             Q(
-                Q(customer_id__in=opportunity.objects.filter(
-                    is_deleted="FALSE",
-                    opportunity_id=location_id,
-                ).values('customer_id')) |
                 Q(customer_id__in=customer.objects.filter(
                     is_deleted="FALSE",
-                    organisation_id__in=opportunity.objects.filter(
-                        opportunity_id=location_id
+                    organisation_id__in=opportunity_connection.objects.filter(
+                        is_deleted="FALSE",
+                        opportunity_id=location_id,
+                        organisation_id__isnull=False,
                     ).values('organisation_id')
-                ).values('customer_id')
-                )
+                )) |
+                Q(customer_id__in=opportunity_connection.objects.filter(
+                    is_deleted="FALSE",
+                    customer_id__isnull=False,
+                    opportunity_id=location_id,
+                ))
             )
         )
         initial = {
@@ -5265,6 +5315,51 @@ def opportunity_delete_permission(request, opportunity_permissions_id):
         return HttpResponseBadRequest("Sorry, this has to be through post")
 
 
+@login_required(login_url='login')
+def opportunity_connection_list(request, opportunity_id):
+    permission_results = return_user_permission_level(request, None,'opportunity')
+
+    if permission_results['opportunity']  == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
+    # Get data
+    customer_connection_results = customer.objects.filter(
+        is_deleted="FALSE",
+        customer_id__in=opportunity_connection.objects.filter(
+            is_deleted="FALSE",
+            opportunity_id=opportunity_id,
+            customer_id__isnull=False,
+        ).values('customer_id')
+    ).order_by('customer_first_name', 'customer_last_name')
+    organisation_connection_results = organisation.objects.filter(
+        is_deleted="FALSE",
+        organisation_id__in=opportunity_connection.objects.filter(
+            is_deleted="FALSE",
+            opportunity_id=opportunity_id,
+            organisation_id__isnull=False,
+        ).values('organisation_id')
+    )
+    opportunity_results=opportunity.objects.get(opportunity_id=opportunity_id)
+
+    # Template
+    t = loader.get_template('NearBeach/opportunity_information/opportunity_connection_list.html')
+
+
+    # Context
+    c = {
+        'customer_connection_results': customer_connection_results,
+        'organisation_connection_results': organisation_connection_results,
+        'opportunity_results': opportunity_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'opportunity_permission': permission_results['opportunity'],
+
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
 
 
 @login_required(login_url='login')
@@ -5429,22 +5524,7 @@ def opportunity_information(request, opportunity_id):
         is_deleted='FALSE',
         opportunity_id=opportunity_id,
     )
-    customer_connection_results = customer.objects.filter(
-        is_deleted="FALSE",
-        customer_id__in=opportunity_connection.objects.filter(
-            is_deleted="FALSE",
-            opportunity_id=opportunity_id,
-            customer_id__isnull=False,
-        ).values('customer_id')
-    ).order_by('customer_first_name','customer_last_name')
-    organisation_connection_results = organisation.objects.filter(
-        is_deleted="FALSE",
-        organisation_id__in=opportunity_connection.objects.filter(
-            is_deleted="FALSE",
-            opportunity_id=opportunity_id,
-            organisation_id__isnull=False,
-        ).values('organisation_id')
-    )
+
 
     # Loaed the template
     t = loader.get_template('NearBeach/opportunity_information.html')
@@ -5455,8 +5535,6 @@ def opportunity_information(request, opportunity_id):
             instance=opportunity_results,
         ),
         'opportunity_results': opportunity_results,
-        'customer_connection_results': customer_connection_results,
-        'organisation_connection_results': organisation_connection_results,
         'group_permission': group_permissions,
         'user_permissions': user_permissions,
         'project_results': project_results,
@@ -5466,11 +5544,10 @@ def opportunity_information(request, opportunity_id):
         'timezone': settings.TIME_ZONE,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
-        'permission': permission_results['opportunity'],
+        'opportunity_permission': permission_results['opportunity'],
     }
 
     return HttpResponse(t.render(c, request))
-
 
 
 
@@ -5532,14 +5609,25 @@ def organisation_information(request, organisation_id):
     """
     We need to limit the amount of opportunities to those that the user has access to.
     """
-    #user_groups_results = user_group.objects.filter(username=request.user)
-
-
-    opportunity_results = opportunity.objects.filter(
+    user_groups_results = user_group.objects.filter(
         is_deleted="FALSE",
-        organisation_id=organisation_id,
+        username=request.user
     )
 
+    opportunity_permissions_results = object_assignment.objects.filter(
+        Q(
+            Q(assigned_user=request.user)  # User has permission
+            | Q(group_id__in=user_groups_results.values('group_id'))  # User's group have permission
+        )
+    )
+    opportunity_results = opportunity.objects.filter(
+        is_deleted="FALSE",
+        opportunity_id__in=opportunity_connection.objects.filter(
+            is_deleted="FALSE",
+            organisation_id=organisation_id,
+            opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
+        ).values('opportunity_id'),
+    )
 
     # Date required to initiate date
     today = datetime.datetime.now()
