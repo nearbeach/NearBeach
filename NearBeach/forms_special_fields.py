@@ -3,11 +3,87 @@ from django.core.validators import ValidationError
 from django.utils.encoding import smart_str
 from django.forms.renderers import get_default_renderer
 
-from NearBeach.models import product_and_service, list_of_country_region, list_of_country, customer
+from NearBeach.models import \
+    product_and_service, \
+    list_of_country_region, \
+    list_of_country, \
+    customer, \
+    organisation
 from django.utils.html import escape, mark_safe
 
 
 import gettext
+
+
+class ConnectCustomerSelect(forms.SelectMultiple):
+    """
+    We want the ability to render a multiple select in a table format. This will give the use a friendly layout.
+    The fields we want are;
+    -- Tickbox
+    -- Customer First Name
+    -- Customer Last Name
+    -- Customer organisation (if any)
+    """
+    def _render(self, name, value, attrs=None, choices=()):
+        if value is None: value = ''
+
+        #Get SQL Objects
+        customer_results = customer.objects.filter(
+            is_deleted="FALSE",
+        ).order_by('customer_first_name','customer_last_name')
+
+        #Start the rendering
+        output = u'<table class="table table-hover table-striped mt-4">' \
+                '<thead><tr>' \
+                    '<td> - </td>' \
+                    '<td>Customer First Name</td>' \
+                    '<td>Customer Last Name</td>' \
+                    '<td>Customer Organisation</td>'\
+                '<tr></thead>'
+
+        #Render a new row for each customer
+        #for idx,item in enumerate(list):
+        for idx, row in enumerate(customer_results):
+            if row.organisation_id:
+                #output = output + u'<option value="%s">%s' % (escape(option_value), escape(option_label))
+                #NEED TO DO ESCAPE VALUES
+                output = output + \
+                    u'<tr>'\
+                        '<td><input type="checkbox" id="id_customers_' + str(idx) + '" name="customers" value="' + str(row.customer_id) + '"></td>' \
+                        '<td>' + row.customer_first_name + '</td>' \
+                        '<td>' + row.customer_last_name + '</td>' \
+                        '<td>' + str(row.organisation_id) + '</td>' \
+                    '</tr>'
+            else:
+                output = output + \
+                    u'<tr>'\
+                        '<td><input type="checkbox" id="id_customers_' + str(row.customer_id) + '" name="customers" value="' + str(row.customer_id) + '"></td>' \
+                        '<td>' + row.customer_first_name + '</td>' \
+                        '<td>' + row.customer_last_name + '</td>' \
+                        '<td>' + str(row.organisation_id) + '</td>' \
+                    '</tr>'
+
+        #Finish the rendering
+        output = output + \
+            u'</table>'
+
+        return output
+        # return mark_safe('\n'.join(output))
+
+    def clean(self, value):
+        value = super(forms.ChoiceField, self).clean(value)
+        if value in (None, ''):
+            value = u''
+        value = forms.util.smart_str(value)
+        if value == u'':
+            return value
+        valid_values = []
+        for group_label, group in self.choices:
+            valid_values += [str(k) for k, v in group]
+        if value not in valid_values:
+            raise ValidationError(gettext(u'Select a valid choice. That choice is not one of the available choices.'))
+        return value
+
 
 
 class ProductOrServiceSelect(forms.Select):

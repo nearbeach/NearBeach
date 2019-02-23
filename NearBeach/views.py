@@ -558,6 +558,103 @@ def assigned_group_list(request, location_id, destination):
 
 
 @login_required(login_url='login')
+def assigned_opportunity_connection_add(request,opportunity_id,destination):
+    """
+    We want the ability to add either an organisation or customer to an opportunity. This function will apply that.
+    :param request:
+    :param opportunity_id: The opportunity that we are assigning the connection to
+    :param destination: If we are assigning a customer or organisation
+    :return: Search Page
+
+    Method
+    ~~~~~~
+    1. Check user's permissions - send them to the naughty corner if they do not have permission
+    2. Check to see if the method is post - follow instructions here if it is post
+    3. Check to see if the destination is customer or organisation. Pull out the relevant search results.
+    4. Collect the template
+    5. Render the results
+    """
+    permission_results = return_user_permission_level(request,None,'opportunity')
+
+    if permission_results['opportunity'] < 2:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        form = connect_customer_form(request.POST)
+        if form.is_valid():
+            """
+            The user has submitted some customers. We will now assign them to the opportunity.
+            
+            Method
+            ~~~~~~
+            1. Extract the required data
+            2. Iterate through each result and add them to the database
+            3. Return the user to the opportunity.
+            """
+            customer_extract = form.cleaned_data['customers']
+
+            for row in customer_extract:
+                print(row.customer_id)
+                #Lets save the customer against the opportunity. :)
+                submit_opportunity_connection = opportunity_connection(
+                    opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                    customer=row,
+                    change_user=request.user,
+                )
+                submit_opportunity_connection.save()
+
+            #Send the user back to the opportunity
+            return HttpResponseRedirect(reverse('opportunity_information', args={ opportunity_id }))
+        else:
+            print("There was an issue getting data from the form. Sending user back.")
+            print(form)
+
+
+    """
+    The following if statements will get
+    - Search information required
+    - Get the correct required template... this... this is different
+    """
+    if destination == "organisation":
+        search_results = organisation.objects.filter(
+            is_deleted="FALSE",
+        ).exclude(
+            organisation_id__in=opportunity_connection.objects.filter(
+                is_deleted="FALSE",
+                organisation__isnull=False,
+                opportunity_id=opportunity_id,
+            ).values('organisation_id')
+        )
+
+        #Template
+        t = loader.get_template('NearBeach/opportunity_information/opportunity_connect_organisation.html')
+    else:
+        search_results = customer.objects.filter(
+            is_deleted="FALSE",
+        ).exclude(
+            customer_id__in=opportunity_connection.objects.filter(
+                is_deleted="FALSE",
+                customer__isnull=False,
+                opportunity_id=opportunity_id,
+            ).values('customer_id')
+        )
+
+        # Template
+        t = loader.get_template('NearBeach/opportunity_information/opportunity_connect_customer.html')
+
+
+    c = {
+        'search_results': search_results,
+        'connect_customer_form': connect_customer_form(),
+        'opportunity_id': opportunity_id,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+
+    return HttpResponse(t.render(c,request))
+
+@login_required(login_url='login')
 def assigned_user_add(request, location_id, destination):
     """
     We want the ability for the User to grant permission to anyone. For example, if a group owns this requirement,
@@ -1470,10 +1567,14 @@ def customer_information(request, customer_id):
             | Q(group_id__in=user_groups_results.values('group_id'))  # User's group have permission
         )
     )
+    """
+    THIS NEEDS TO BE REWRITTEN!
+    
     opportunity_results = opportunity.objects.filter(
         customer_id=customer_id,
         opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
     )
+    """
     #For when customer have an organisation
     campus_results = customer_campus.objects.filter(
         customer_id=customer_id,
@@ -1508,7 +1609,7 @@ def customer_information(request, customer_id):
         'profile_picture': profile_picture,
         'project_results': project_results,
         'task_results': task_results,
-        'opportunity_results': opportunity_results,
+        #'opportunity_results': opportunity_results,
         'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
         'customer_id': customer_id,
         'customer_permissions': permission_results['customer'],
@@ -4439,7 +4540,13 @@ def new_kudos(request,project_id):
         return HttpResponseBadRequest("Sorry, can only do this request through post")
 
 @login_required(login_url='login')
-def new_opportunity(request, location_id,destination):
+def new_opportunity(request):
+    """
+    New opportunity will give the user the ability to create a new opportunity. The new opportunity will not be connected
+    with any other customers or organisations. This can be done in the opportunity information page.
+    :param request:
+    :return:
+    """
     permission_results = return_user_permission_level(request, None, 'opportunity')
 
     if permission_results['opportunity'] < 3:
@@ -4451,17 +4558,7 @@ def new_opportunity(request, location_id,destination):
         if form.is_valid():
             current_user = request.user
             # Start saving the data in the form
-            opportunity_name = form.cleaned_data['opportunity_name']
-            opportunity_description = form.cleaned_data['opportunity_description']
-            currency_id = form.cleaned_data['currency_id']
-            opportunity_amount = form.cleaned_data['opportunity_amount']
-            amount_type_id = form.cleaned_data['amount_type_id']
-            opportunity_success_probability = form.cleaned_data['opportunity_success_probability']
-            lead_source_id = form.cleaned_data['lead_source_id']
             select_groups = form.cleaned_data['select_groups']
-            opportunity_expected_close_date = form.cleaned_data['opportunity_expected_close_date']
-
-
 
             """
 			Some dropdown boxes will need to have instances made from the values.
@@ -4474,35 +4571,20 @@ def new_opportunity(request, location_id,destination):
 			SAVE THE DATA
 			"""
             submit_opportunity = opportunity(
-                opportunity_name=opportunity_name,
-                opportunity_description=opportunity_description,
-                currency_id=currency_id,
-                opportunity_amount=opportunity_amount,
-                amount_type_id=amount_type_id,
-                opportunity_success_probability=opportunity_success_probability,
-                lead_source_id=lead_source_id,
-                opportunity_expected_close_date=opportunity_expected_close_date,
+                opportunity_name=form.cleaned_data['opportunity_name'],
+                opportunity_description=form.cleaned_data['opportunity_description'],
+                currency_id=form.cleaned_data['currency_id'],
+                opportunity_amount=form.cleaned_data['opportunity_amount'],
+                amount_type_id=form.cleaned_data['amount_type_id'],
+                opportunity_success_probability=form.cleaned_data['opportunity_success_probability'],
+                lead_source_id=form.cleaned_data['lead_source_id'],
+                opportunity_expected_close_date=form.cleaned_data['opportunity_expected_close_date'],
                 opportunity_stage_id=stage_of_opportunity_instance,
-                user_id=current_user,
+                user_id=request.user,
                 change_user=request.user,
             )
-            """
-            We ignore the destination at this part. A user might have tried to create the opportunity from the organisation
-            however have the change of mind when filling out the form. This short method checks to see if there is a
-            customer id. If there is one, then it will assign the opportunity to the customer.
-            """
-            customer_id = request.POST.get('customer_id')
-            if customer_id.isdigit():
-                customer_instance = customer.objects.get(customer_id=request.POST.get('customer_id'))
-                submit_opportunity.customer_id = customer_instance
-                #If a customer has a null for an organisation it will pass through as null
-                submit_opportunity.organisation_id = customer_instance.organisation_id
-            else:
-                organisations_instance = form.cleaned_data['organisation_id']
-                if organisations_instance:
-                    submit_opportunity.organisation_id = organisations_instance
             submit_opportunity.save()
-            opportunity_instance = opportunity.objects.get(opportunity_id=submit_opportunity.opportunity_id)
+
 
             """
             Permissions granting
@@ -4510,7 +4592,7 @@ def new_opportunity(request, location_id,destination):
             for row in select_groups:
                 group_instance = group.objects.get(group_name=row)
                 permission_save = object_assignment(
-                    opportunity_id=opportunity_instance,
+                    opportunity_id=submit_opportunity,
                     group_id=group_instance,
                     change_user=request.user,
                 )
@@ -4520,22 +4602,16 @@ def new_opportunity(request, location_id,destination):
         else:
             print(form.errors)
 
-
+    # Get data
+    opportunity_stage_results = list_of_opportunity_stage.objects.all()
     # load template
     t = loader.get_template('NearBeach/new_opportunity.html')
-
-    # DATA
-    customer_results = customer.objects.all()
-    opportunity_stage_results = list_of_opportunity_stage.objects.filter(is_deleted="FALSE")
 
     # context
     c = {
         'new_opportunity_form': new_opportunity_form(),
-        'customer_results': customer_results,
-        'location_id': location_id,
-        'destination': destination,
-        'opportunity_stage_results': opportunity_stage_results,
         'timezone': settings.TIME_ZONE,
+        'opportunity_stage_results': opportunity_stage_results,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
     }
@@ -5341,7 +5417,6 @@ def opportunity_information(request, opportunity_id):
         is_deleted='FALSE',
     )
     opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
-    customer_results = customer.objects.filter(organisation_id=opportunity_results.organisation_id)
     group_permissions = object_assignment.objects.filter(
         group_id__isnull=False,
         opportunity_id=opportunity_id,
@@ -5359,28 +5434,22 @@ def opportunity_information(request, opportunity_id):
         is_deleted='FALSE',
         opportunity_id=opportunity_id,
     )
-    print(user_permissions)
-
-    end_hour = opportunity_results.opportunity_expected_close_date.hour
-    end_meridiem = u'AM'
-
-    print(str(end_hour))
-
-    if end_hour > 12:
-        end_hour = end_hour - 12
-        end_meridiem = 'PM'
-    elif end_hour == 0:
-        end_hour = 12
-
-    # initial data
-    initial = {
-        'finish_date_year': opportunity_results.opportunity_expected_close_date.year,
-        'finish_date_month': opportunity_results.opportunity_expected_close_date.month,
-        'finish_date_day': opportunity_results.opportunity_expected_close_date.day,
-        'finish_date_hour': end_hour,
-        'finish_date_minute': opportunity_results.opportunity_expected_close_date.minute,
-        'finish_date_meridiems': end_meridiem,
-    }
+    customer_connection_results = customer.objects.filter(
+        is_deleted="FALSE",
+        customer_id__in=opportunity_connection.objects.filter(
+            is_deleted="FALSE",
+            opportunity_id=opportunity_id,
+            customer_id__isnull=False,
+        ).values('customer_id')
+    ).order_by('customer_first_name','customer_last_name')
+    organisation_connection_results = organisation.objects.filter(
+        is_deleted="FALSE",
+        organisation_id__in=opportunity_connection.objects.filter(
+            is_deleted="FALSE",
+            opportunity_id=opportunity_id,
+            organisation_id__isnull=False,
+        ).values('organisation_id')
+    )
 
     # Loaed the template
     t = loader.get_template('NearBeach/opportunity_information.html')
@@ -5389,10 +5458,10 @@ def opportunity_information(request, opportunity_id):
         'opportunity_id': str(opportunity_id),
         'opportunity_information_form': opportunity_information_form(
             instance=opportunity_results,
-            initial=initial,
         ),
         'opportunity_results': opportunity_results,
-        'customer_results': customer_results,
+        'customer_connection_results': customer_connection_results,
+        'organisation_connection_results': organisation_connection_results,
         'group_permission': group_permissions,
         'user_permissions': user_permissions,
         'project_results': project_results,

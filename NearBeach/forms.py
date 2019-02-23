@@ -684,6 +684,25 @@ class campus_readonly_form(ModelForm):
         ]
 
 
+class connect_customer_form(forms.Form):
+    customer_results = customer.objects.filter(
+        is_deleted="FALSE",
+    ).order_by('customer_first_name','customer_last_name')
+
+    customers=forms.ModelMultipleChoiceField(
+        queryset=customer_results,
+        widget=ConnectCustomerSelect(),
+        required=False,  # If they select nothing it will do nothing :)
+
+    )
+"""
+    test = forms.ModelMultipleChoiceField(
+        queryset=customer_results,
+        widget=forms.CheckboxSelectMultiple,
+    ) 
+"""
+
+
 class contact_history_readonly_form(ModelForm):
     def __init__(self, *args, **kwargs):
         """
@@ -2039,7 +2058,6 @@ class new_opportunity_form(ModelForm):
     #Get data for choice boxes
     opportunity_stage_results=list_of_opportunity_stage.objects.filter(is_deleted='FALSE')
     amount_type_results=list_of_amount_type.objects.filter(is_deleted='FALSE')
-    organisaion_results=organisation.objects.filter(is_deleted='FALSE')
     groups_results=group.objects.filter(is_deleted="FALSE")
     user_results=auth.models.User.objects.all()
 
@@ -2096,15 +2114,6 @@ class new_opportunity_form(ModelForm):
             'class': 'form-control',
         })
     )
-    organisation_id=forms.ModelChoiceField(
-        label="Organisations",
-        queryset=organisaion_results,
-        required=False,
-        widget=forms.Select(attrs={
-            "onChange":'update_customers()',
-            'class': 'form-control',
-        }),
-    )
     amount_type_id=forms.ModelChoiceField(
         label="Amount Type",
         widget=forms.Select(attrs={
@@ -2140,7 +2149,6 @@ class new_opportunity_form(ModelForm):
 
         exclude={
             'opportunity_stage_id',
-            'customer_id',
             'date_created',
             'date_modified',
             'user_id',
@@ -2519,6 +2527,13 @@ class opportunity_information_form(ModelForm):
     groups_results=group.objects.filter(is_deleted="FALSE")
     user_results=auth.models.User.objects.all()
 
+    opportunity_name = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
+
     opportunity_description = forms.CharField(
         widget=TinyMCE(
             mce_attrs={
@@ -2526,6 +2541,7 @@ class opportunity_information_form(ModelForm):
             },
             attrs={
                 'placeholder': 'Opportunity Description',
+                'class': 'form-control',
             }
         )
     )
@@ -2533,13 +2549,16 @@ class opportunity_information_form(ModelForm):
     opportunity_expected_close_date = forms.DateTimeField(
         initial=datetime.datetime.now(),
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px',
+            'class': 'form-control',
         })
     )
 
     next_step=forms.CharField(
         max_length=255,
         required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
     )
 
 
@@ -2548,9 +2567,8 @@ class opportunity_information_form(ModelForm):
         required=False,
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
-            'style': 'width: 100%',
         }),
     )
 
@@ -2559,10 +2577,42 @@ class opportunity_information_form(ModelForm):
         required=False,
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
             'style': 'width: 100%',
         }),
+    )
+
+    currency_id = forms.ModelChoiceField(
+        queryset=list_of_currency.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    opportunity_amount=forms.DecimalField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    amount_type_id=forms.ModelChoiceField(
+        queryset=list_of_amount_type.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+    )
+
+    opportunity_stage_id=forms.ModelChoiceField(
+        queryset=list_of_quote_stage.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+    )
+
+    opportunity_success_probability = forms.DecimalField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+        })
     )
 
 
@@ -2570,8 +2620,6 @@ class opportunity_information_form(ModelForm):
         model=opportunity
         fields='__all__'
         exclude={
-            'customer_id',
-            'organisation_id',
             'lead_source_id',
             'date_created',
             'date_modified',

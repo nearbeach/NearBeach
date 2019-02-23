@@ -1,0 +1,28 @@
+{% extends '../template.html' %}
+{% block content %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h1>Connect Customers</h1>
+            {{ opportunity_results.opportunity_name }}
+        </div>
+        <div class="card-body">
+            <form method="POST" class="assigned_opportunity_connection_add" id="assigned_opportunity_connection_add" enctype="multipart/form-data"">
+                {% csrf_token %}
+                <div class="alert-primary">
+                    Select one or multiple customers from the below list. Use the filter to filter the current list.
+                </div>
+
+                <div class="form-group">
+                    {{ connect_customer_form.customers }}
+                </div>
+
+                <div class="form-row">
+                    <input class="btn btn-primary col-md-6" type="submit" value="Connect Customer(s)">
+                    <a href="{% url 'opportunity_information' opportunity_id %}" class="btn btn-secondary col-md-6">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{ connect_customer_form.test }}
+{% endblock %}
