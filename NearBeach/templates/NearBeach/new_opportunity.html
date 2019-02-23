@@ -11,13 +11,6 @@
 
     <script type="text/javascript">
     function on_page_load() {
-        //Apply the customers and then apply the organisation and customers.
-        //apply_organisation_customer("{{ organisation_id }}","{{ customer_id }}");
-        //update_customers();
-
-        //apply_organisation_customer("{{ organisation_id }}","{{ customer_id }}");
-
-
         $("#id_opportunity_expected_close_date").datetimepicker({
         format:'Y-m-d H:i:00',
         allowTimes: [
@@ -55,7 +48,7 @@
             <h1>New Opportunity</h1>
         </div>
         <div class="card-body">
-            <form action="{% url 'new_opportunity' location_id destination %}" method="post" class="new_opportunity">
+            <form action="{% url 'new_opportunity' %}" method="post" class="new_opportunity">
                 {% csrf_token %}
                 {{ new_opportunity_form.media }}
                 <div class="form-group">
@@ -65,19 +58,6 @@
                 <div class="form-group">
                     <label for="id_opportunity_description">Opportunity Description</label>
                     {{ new_opportunity_form.opportunity_description }}
-                </div>
-                <div class="form-group">
-                    <label for="id_organisation_id">Organisation</label>
-                    {{ new_opportunity_form.organisation_id }}
-                </div>
-                <div class="form-group">
-                    <label for="customer_id">Customer</label>
-                    <select id="customer_id" name="customer_id" class="form-control">
-                        <option value="" selected>---------</option>
-                        {% for row in customer_results %}
-                            <option value="{{ row.customer_id }}" organisation_id="{{ row.organisations_id.organisations_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
-                        {% endfor %}
-                    </select>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">

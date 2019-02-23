@@ -1674,18 +1674,6 @@ class opportunity(models.Model):
     opportunity_id = models.AutoField(primary_key=True)
     opportunity_name = models.CharField(max_length=255)
     opportunity_description = HTMLField('oppertunity_description')
-    organisation_id = models.ForeignKey(
-        'organisation',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    customer_id = models.ForeignKey(
-        'customer',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
     currency_id = models.ForeignKey(
         'list_of_currency',
         on_delete=models.CASCADE,
@@ -1727,33 +1715,28 @@ class opportunity(models.Model):
     class Meta:
         db_table = "opportunities"
 
-"""
-class opportunity_permission(models.Model):
-    opportunity_permission_id = models.AutoField(primary_key=True)
-    opportunity_id = models.ForeignKey(
+
+class opportunity_connection(models.Model):
+    """
+    This model deals with which organisation or customers are connected to the opportunity. These are called connections
+    """
+    opportunity_connection_id = models.AutoField(primary_key=True)
+    opportunity=models.ForeignKey(
         'opportunity',
-        on_delete=models.CASCADE
-    )
-    assigned_user = models.ForeignKey(
-        User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_assigned_user',
-        null=True,
-        blank=True,
     )
-    group_id = models.ForeignKey(
-        'group',
+    customer=models.ForeignKey(
+        'customer',
         on_delete=models.CASCADE,
-        null=True,
         blank=True,
+        null=True,
     )
-    all_user = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE',
+    organisation=models.ForeignKey(
+        'organisation',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
     )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
@@ -1768,8 +1751,7 @@ class opportunity_permission(models.Model):
     )
 
     class Meta:
-        db_table = "opportunity_permission"
-"""
+        db_table = "organisation_connection"
 
 class organisation(models.Model):
     organisation_id = models.AutoField(primary_key=True)

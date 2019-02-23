@@ -149,3 +149,6 @@ class ModelsTestCase(TestCase):
         #Now test dashboard directly
         response = self.client.get("/dashboard")
         self.assertEqual(response.status_code, 301)
+
+
+
