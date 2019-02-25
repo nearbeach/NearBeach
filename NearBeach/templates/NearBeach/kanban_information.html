@@ -2,46 +2,73 @@
 {% block content %}
 {% load nearbeach_extras %}
 {% load static %}
-<script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
-<link rel='stylesheet' href='{% static "NearBeach/css/kanban_board.css" %}' />
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+    <link rel='stylesheet' href='{% static "NearBeach/css/kanban_board.css" %}' />
 
     <h2>{{ kanban_board_results.kanban_board_name }}</h2>
-    <table>
-        {% for level in kanban_level_results %}
-            {% if forloop.first %}
-                <tr>
-                    <td></td>
+    <a href="javascript:void(0)" onclick="load_kanban_new_card()">New Card</a><br/>
+    {% for level in kanban_level_results %}
+        <!-- SETUP THE CONTAINER FOR LEVEL -->
+        <!-- The level heading -->
+        <strong>{{ level.kanban_level_name }}</strong>
+        <div class="container-fluid">
+            <div class="row flex-row flex-nowrap">
+                <!-- EACH COLUMN -->
+                {% with level_cards=kanban_card_results|filter_level_cards:level.kanban_level_id %}
                     {% for column in kanban_column_results %}
-                        <td class="kanban_column_header">{{ column.kanban_column_name }}</td>
+                    <div class="col-3">
+                        <div class="card card-block">
+                            <div class="card-header">
+                                <strong>{{ column.kanban_column_name }}</strong>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group kanban_column" data-column="{{ column.kanban_column_id }}" data-level="{{ level.kanban_level_id }}">
+                                    {% with column_cards=level_cards|filter_column_cards:column.kanban_column_id %}
+                                        {% for row in column_cards %}
+                                            <li class="list-group-item list-group-item-info kanban_card" id="{{ row.kanban_card_id }}" draggable="true">
+                                                {{ row.kanban_card_text }}
+                                            </li>
+                                        {% endfor %}
+                                    {% endwith %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                     {% endfor %}
-                </tr>
-            {% endif %}
+                {% endwith %}
+            </div>
+            <hr>
+        </div>
+    {% endfor %}
 
-            {% with level_cards=kanban_card_results|filter_level_cards:level.kanban_level_id %}
-                <tr class="kanban_level">
-                    <td>{{ level.kanban_level_name }}</td>
-                    {% for column in kanban_column_results %}
-                        <td class="kanban_column" data-column="{{ column.kanban_column_id }}" data-level="{{ level.kanban_level_id }}">
-                            {% with column_cards=level_cards|filter_column_cards:column.kanban_column_id %}
-                                {% for row in column_cards %}
-                                    <div id="{{ row.kanban_card_id }}" class="kanban_card" draggable="true">
-                                        <div class="cardTitle" id="{{ row.kanban_card_id }}">
-                                            {{ row.kanban_card_text }}
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            {% endwith %}
-                        </td>
-                    {% endfor %}
 
-                </tr>
-            {% endwith %}
-        {% endfor %}
-    </table>
+    <!-- THESE WILL CHANGE TO MODALS!! -->
+
+
+
+
+    <!-- MODAL -->
     <form id="new_card_form">
-        <a href="javascript:void(0)" onclick="load_kanban_new_card()">New Card</a>
+        <div class="modal fade" id="new_card_modal" tabindex="-1" role="dialog" aria-labelledby="new_card_modal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="new_card_modal_title">New Card</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="new_card_content">
+                        Loading Data...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="new_card_submit()" disabled="true" id="new_card_submit_button">Create Card</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </form>
-
 
     <form id="kanban_new_link">
         <a href="javascript:void(0)" onclick="load_kanban_new_link()">Link Project, Task, or Requirement</a>
@@ -52,7 +79,6 @@
         <!-- Placeholder for the form -->
     </form>
 
-
     <script type="text/javascript">
 		$('document').ready(on_page_load());
 
@@ -60,29 +86,10 @@
 		$("#new_card_form").on("submit", function(event) {
 		    event.preventDefault();
 
-		    var kanban_column = $("#id_kanban_column").val();
-            var kanban_level = $("#id_kanban_level").val();
-
-		    $.ajax({
-                url: '/kanban_new_card/{{ kanban_board_id }}/',
-                type: "POST",
-                data: $(this).serialize(),
-                dataType: "HTML",
-                success: function(data) {
-                    $(".kanban_column[data-column=" + kanban_column + "][data-level=" + kanban_level + "]").html(
-                        $(".kanban_column[data-column=" + kanban_column + "][data-level=" + kanban_level + "]").html() + data
-                    );
-
-                    $("#new_card_form").html('<a href="javascript:void(0)" onclick="load_kanban_new_card()">New Card</a>');
-
-                    //We will need the page to re-bind everything
-                    on_page_load()
-                },
-                error: function() {
-                    alert("Sorry, submitting the new card did not work for some reason.")
-                }
-            })
+            new_card_submit();
         });
+
+
 
 		$("#edit_card_form").on('submit', function(event) {
 		    event.preventDefault();
@@ -116,13 +123,16 @@
 
 
 		function load_kanban_new_card() {
+		    //We want to bring the modal into focus first
+            $("#new_card_modal").modal('show');
+
 		    $.ajax({
                 url: '/kanban_new_card/{{ kanban_board_id }}/',
                 type: "GET",
                 dataType: "HTML",
                 success: function(data) {
-                    $("#new_card_form").html(data);
-                    $("#id_kanban_card_text").focus();
+                    //We want to place the loaded data into the modal
+                    $("#new_card_content").html(data);
                 },
                 error: function() {
                     alert("We are sorry, something went wrong with getting the new card ready.");
@@ -141,6 +151,51 @@
                 }
             })
         }
+
+        function new_card_submit() {
+		    var kanban_column = $("#id_kanban_column").val();
+            var kanban_level = $("#id_kanban_level").val();
+
+            //Send data to the database
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+		    $.ajax({
+                url: '/kanban_new_card/{{ kanban_board_id }}/',
+                type: "POST",
+                data: $("#new_card_form").serialize(),
+                dataType: "HTML",
+                success: function(data) {
+                    //Place the new card onto the kanban board
+                    /*$(".kanban_column[data-column=" + kanban_column + "][data-level=" + kanban_level + "]").html(
+                        $(".kanban_column[data-column=" + kanban_column + "][data-level=" + kanban_level + "]").html() + data
+                    );*/
+
+                    $(".kanban_column[data-column=" + kanban_column + "][data-level=" + kanban_level + "]").append(data);
+
+                    //Reset the modal - but hide it first
+                    $("#new_card_modal").modal('hide');
+                    $("#new_card_content").html('Loading Data...');
+
+                    //We will need the page to re-bind everything
+                    on_page_load()
+                },
+                error: function() {
+                    alert("Sorry, submitting the new card did not work for some reason.")
+                }
+            })
+        }
+
+        function new_card_text_changed() {
+            //Disable the submit button if there is no value.
+		    $("#new_card_submit_button").prop('disabled', $("#id_kanban_card_text").val() == "")
+        }
+
 
         function on_page_load(){
             $('.kanban_card').bind('dragstart', function(event) {
