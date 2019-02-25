@@ -8,3 +8,6 @@ weasyprint
 pyperclip
 python-docx
 BeautifulSoup4
+pandoc
+pypandoc
+
