@@ -7,3 +7,5 @@ django-tinymce4-lite
 weasyprint
 pyperclip
 python-docx
+pandoc
+pypandoc
