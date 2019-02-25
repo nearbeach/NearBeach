@@ -28,9 +28,12 @@ from urllib.request import urlopen
 from weasyprint import HTML
 from django.core.mail import send_mail
 from urllib.parse import urlparse, urlencode, quote_plus
+from docx import Document
+from docx.shared import Cm, Inches
+from bs4 import BeautifulSoup
 
 #import python modules
-import datetime, json, simplejson, urllib.parse
+import datetime, json, simplejson, urllib.parse, pypandoc
 
 
 @login_required(login_url='login')
@@ -3059,6 +3062,75 @@ def extract_quote(request, quote_uuid,quote_template_id):
 
 
 @login_required(login_url='login')
+def extract_requirement(request,requirement_id):
+    """
+    extract requirement will create a simple DOCX document which the use can use to present to customers/stakeholders.
+    :param request:
+    :param requirement_id: The requirement ID we will be extracting
+    :return: A simple DOCX file.
+
+    Method
+    ~~~~~~
+    1. Check user permissions
+    2. Gather the required data for the requirement, requirement_items
+    3. Construct the template and feed into a variable
+    4. Construct the document location - usually under /private/
+    5. Render the results to DOCX using pypandoc
+    6. Return the results to the user as an attachment
+    """
+    # Get data
+    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    requirement_link_results = requirement_link.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    )
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    )
+    requirement_item_link_results=requirement_item_link.objects.filter(
+        is_deleted="FALSE",
+        requirement_item_id__in=requirement_item_results.values('requirement_item_id'),
+    )
+
+
+    # Get template
+    t = loader.get_template('NearBeach/requirement_information/preview_requirement.html')
+
+    # Context
+    c = {
+        'requirement_results': requirement_results,
+        'requirement_link_results': requirement_link_results,
+        'requirement_item_results': requirement_item_results,
+        'requirement_item_link_results': requirement_item_link_results,
+    }
+
+    # Render the template
+    data = HttpResponse(t.render(c,request))
+
+    # Obtain the location of the file - filename will be called Requirement_{{ id }}_{{ current_datetime }}.docx
+    file_name = 'requirement_' + str(requirement_id) + '_' + str(datetime.datetime.now()) + '.docx'
+    outfile = settings.PRIVATE_MEDIA_ROOT + file_name
+
+    # Render the output
+    output = pypandoc.convert_text(
+        data.content,
+        format='html',
+        to='docx',
+        outputfile=outfile,
+        extra_args=[
+            "-M2GB",
+            "+RTS",
+            "-K64m",
+            "-RTS"
+        ]
+    )
+
+    # Return attachment (which is the outfile)
+    return server.serve(request,path=outfile)
+
+
+@login_required(login_url='login')
 def group_information(request,group_id):
     """
     This def will bring up the group information page. If the user makes a change then it will apply those changes.
@@ -5942,6 +6014,57 @@ def preview_quote(request,quote_uuid,quote_template_id):
 
     return HttpResponse(t.render(c,request))
 
+
+@login_required(login_url='login')
+def preview_requirement(request,requirement_id):
+    """
+    This is a read only document output of the requirements. It will contain the following information;
+    - Title page + requirement information
+    - Requirement Scope
+    - Requirement item table
+    - Requirement item information
+    - Apendix A: Requirement and Requirement Item Links
+
+    :param request:
+    :param requirement_id:
+    :return: Read only form
+
+    Method
+    ~~~~~~
+    1. Collect data
+    2. Obtain templates
+    3. Render templates
+    4. Return HTML to user.
+    """
+
+    # Get data
+    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    requirement_link_results = requirement_link.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    )
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    )
+    requirement_item_link_results=requirement_item_link.objects.filter(
+        is_deleted="FALSE",
+        requirement_item_id__in=requirement_item_results.values('requirement_item_id'),
+    )
+
+
+    # Get template
+    t = loader.get_template('NearBeach/requirement_information/preview_requirement.html')
+
+    # Context
+    c = {
+        'requirement_results': requirement_results,
+        'requirement_link_results': requirement_item_results,
+        'requirement_item_results': requirement_item_results,
+        'requirement_item_link_results': requirement_item_link_results,
+    }
+
+    return HttpResponse(t.render(c,request))
 
 
 """
