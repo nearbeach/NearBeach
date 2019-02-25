@@ -20,6 +20,9 @@ setuptools.setup(
 	'geolocation-python',
 	'django-tinymce4-lite',
 	'weasyprint',
+	'pyperclip',
+	'python-docx',
+	'BeautifulSoup4'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
