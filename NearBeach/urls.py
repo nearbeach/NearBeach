@@ -106,6 +106,7 @@ re_path(r'^kanban_new_card/(?P<kanban_board_id>[0-9]+)/$', views.kanban_new_card
 re_path(r'^kanban_new_link/(?P<kanban_board_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement"]+)/$', views.kanban_new_link,name='kanban_new_link'),
 re_path(r'^kanban_new_link/(?P<kanban_board_id>[0-9]+)/$', views.kanban_new_link,name='kanban_new_link'),
 re_path(r'^kanban_properties/(?P<kanban_board_id>[0-9]+)/$', views.kanban_properties,name='kanban_properties'),
+re_path(r'^kanban_read_only/(?P<kanban_board_id>[0-9]+)/', views.kanban_read_only, name='kanban_read_only'),
 re_path(r'^kanban_requirement_information/(?P<kanban_board_id>[0-9]+)/$',views.kanban_requirement_information,name='kanban_requirement_information'),
 re_path(r'^kanban_requirement_item_update/(?P<requirement_item_id>[0-9]+)/(?P<status_id>[0-9]+)/$',views.kanban_requirement_item_update,name="kanban_requirement_item_update"),
 re_path(r'^kudos_rating/(?P<kudos_key>[0-9A-Za-z_\-]+)/$', views.kudos_rating, name='kudos_rating'),
