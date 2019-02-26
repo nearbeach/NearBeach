@@ -2,55 +2,121 @@
 {% block content %}
 {% load nearbeach_extras %}
 {% load static %}
-<script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
-<link rel='stylesheet' href='{% static "NearBeach/css/kanban_board.css" %}' />
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+    <link rel='stylesheet' href='{% static "NearBeach/css/kanban_board.css" %}' />
 
-    <h2>{{ kanban_board_results.kanban_board_name }}</h2>
-    <table>
-        {% for level in kanban_level_results %}
-            {% if forloop.first %}
-                <tr>
-                    <td></td>
+    <h1>{{ kanban_board_results.kanban_board_name }}</h1>
+    <a href="javascript:void(0)" onclick="load_kanban_new_card()">New Card</a><br/>
+    <a href="javascript:void(0)" onclick="load_kanban_new_link()">Link Project, Task, or Requirement</a><br/>
+    {% for level in kanban_level_results %}
+        <!-- SETUP THE CONTAINER FOR LEVEL -->
+        <!-- The level heading -->
+        <strong>{{ level.kanban_level_name }}</strong>
+        <div class="container-fluid">
+            <div class="row flex-row flex-nowrap">
+                <!-- EACH COLUMN -->
+                {% with level_cards=kanban_card_results|filter_level_cards:level.kanban_level_id %}
                     {% for column in kanban_column_results %}
-                        <td class="kanban_column_header">{{ column.kanban_column_name }}</td>
+                    <div class="col-3">
+                        <div class="card card-block">
+                            <div class="card-header">
+                                <strong>{{ column.kanban_column_name }}</strong>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group kanban_column" data-column="{{ column.kanban_column_id }}" data-level="{{ level.kanban_level_id }}">
+                                    {% with column_cards=level_cards|filter_column_cards:column.kanban_column_id %}
+                                        {% for row in column_cards %}
+                                            <li class="list-group-item list-group-item-info kanban_card" id="{{ row.kanban_card_id }}" draggable="true">
+                                                {{ row.kanban_card_text }}
+                                            </li>
+                                        {% endfor %}
+                                    {% endwith %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                     {% endfor %}
-                </tr>
-            {% endif %}
+                {% endwith %}
+            </div>
+            <hr>
+        </div>
+    {% endfor %}
 
-            {% with level_cards=kanban_card_results|filter_level_cards:level.kanban_level_id %}
-                <tr class="kanban_level">
-                    <td>{{ level.kanban_level_name }}</td>
-                    {% for column in kanban_column_results %}
-                        <td class="kanban_column" data-column="{{ column.kanban_column_id }}" data-level="{{ level.kanban_level_id }}">
-                            {% with column_cards=level_cards|filter_column_cards:column.kanban_column_id %}
-                                {% for row in column_cards %}
-                                    <div id="{{ row.kanban_card_id }}" class="kanban_card" draggable="true">
-                                        <div class="cardTitle" id="{{ row.kanban_card_id }}">
-                                            {{ row.kanban_card_text }}
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            {% endwith %}
-                        </td>
-                    {% endfor %}
 
-                </tr>
-            {% endwith %}
-        {% endfor %}
-    </table>
+    <!-- THESE WILL CHANGE TO MODALS!! -->
+
+
+
+
+    <!-- MODAL -->
+    <!-- NEW CARD FORM -->
     <form id="new_card_form">
-        <a href="javascript:void(0)" onclick="load_kanban_new_card()">New Card</a>
+        <div class="modal fade" id="new_card_modal" tabindex="-1" role="dialog" aria-labelledby="new_card_modal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="new_card_modal_title">New Card</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="new_card_content">
+                        Loading Data...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="new_card_submit()" disabled="true" id="new_card_submit_button">Create Card</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </form>
 
-
-    <form id="kanban_new_link">
-        <a href="javascript:void(0)" onclick="load_kanban_new_link()">Link Project, Task, or Requirement</a>
-    </form>
-
-
+    <!-- EDIT CARD FORM -->
     <form id="edit_card_form">
-        <!-- Placeholder for the form -->
+        <div class="modal fade" id="edit_card_modal" tabindex="-1" role="dialog" aria-labelledby="edit_card_modal" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="edit_card_modal_title">Edit Card</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="edit_card_content">
+                        Loading Data...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="edit_card_submit()" id="edit_card_submit_button">Submit Card Change</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </form>
+
+    <!-- NEW LINKS -->
+    <form id="kanban_new_link">
+        <div class="modal fade" id="new_link_modal" tabindex="-1" role="dialog" aria-labelledby="new_link_modal" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="new_link_modal_title">Link Project/Task/Requirements</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="new_link_content">
+                        Loading Data...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
 
 
     <script type="text/javascript">
@@ -60,69 +126,60 @@
 		$("#new_card_form").on("submit", function(event) {
 		    event.preventDefault();
 
-		    var kanban_column = $("#id_kanban_column").val();
-            var kanban_level = $("#id_kanban_level").val();
-
-		    $.ajax({
-                url: '/kanban_new_card/{{ kanban_board_id }}/',
-                type: "POST",
-                data: $(this).serialize(),
-                dataType: "HTML",
-                success: function(data) {
-                    $(".kanban_column[data-column=" + kanban_column + "][data-level=" + kanban_level + "]").html(
-                        $(".kanban_column[data-column=" + kanban_column + "][data-level=" + kanban_level + "]").html() + data
-                    );
-
-                    $("#new_card_form").html('<a href="javascript:void(0)" onclick="load_kanban_new_card()">New Card</a>');
-
-                    //We will need the page to re-bind everything
-                    on_page_load()
-                },
-                error: function() {
-                    alert("Sorry, submitting the new card did not work for some reason.")
-                }
-            })
+            new_card_submit();
         });
+
+
 
 		$("#edit_card_form").on('submit', function(event) {
 		    event.preventDefault();
 
-            $.ajax({
+		    edit_card_submit();
+        });
+
+
+        function edit_card_submit() {
+            var updated_text = $("#id_kanban_card_text").val();
+
+		    //Send data to the database
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+		    $.ajax({
                 url: '/kanban_edit_card/' + $("#edit_kanban_card_id").val() + '/',
                 type: 'POST',
-                data: $(this).serialize(),
+                data: $("#edit_card_form").serialize(),
                 dataType: "HTML",
                 success: function(data) {
-                    $("#edit_card_form").html("");
-                    $("#" + $("#edit_kanban_card_id").val()).html(data)
+                    //Close modal
+                    $("#edit_card_modal").modal('hide');
+
+                    //Update values
+                    $("#" + $("#edit_kanban_card_id").val()).html(updated_text)
                 },
                 error: function () {
                     alert("Sorry, saving the card has occurred an error!");
                 }
-            })
-        });
-
-		function close_kanban_edit_card() {
-		    $('#edit_card_form').html("");
-        }
-
-        function close_kanban_new_card() {
-		    $("#new_card_form").html('<a href="javascript:void(0)" onclick="load_kanban_new_card()">New Card</a>');
-        }
-
-        function close_kanban_new_link() {
-		    $("#kanban_new_link").html('<a href="javascript:void(0)" onclick="load_kanban_new_link()">Link Project, Task, or Requirement</a>');
+            });
         }
 
 
 		function load_kanban_new_card() {
+		    //We want to bring the modal into focus first
+            $("#new_card_modal").modal('show');
+
 		    $.ajax({
                 url: '/kanban_new_card/{{ kanban_board_id }}/',
                 type: "GET",
                 dataType: "HTML",
                 success: function(data) {
-                    $("#new_card_form").html(data);
-                    $("#id_kanban_card_text").focus();
+                    //We want to place the loaded data into the modal
+                    $("#new_card_content").html(data);
                 },
                 error: function() {
                     alert("We are sorry, something went wrong with getting the new card ready.");
@@ -132,15 +189,67 @@
 
 
         function load_kanban_new_link() {
+            //Clear the modal
+            $("#new_link_content").html("Loading...");
+
+            //Show the modal
+            $("#new_link_modal").modal('show');
+
+            //Get the data for the modal
 		    $.ajax({
                 url: '/kanban_new_link/{{ kanban_board_id }}/',
                 type: 'GET',
                 dataType: 'HTML',
                 success: function(data) {
-                    $("#kanban_new_link").html(data).scrollIntoView();
+                    $("#new_link_content").html(data);
+                }
+            });
+        }
+
+        function new_card_submit() {
+		    var kanban_column = $("#id_kanban_column").val();
+            var kanban_level = $("#id_kanban_level").val();
+
+            //Send data to the database
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+		    $.ajax({
+                url: '/kanban_new_card/{{ kanban_board_id }}/',
+                type: "POST",
+                data: $("#new_card_form").serialize(),
+                dataType: "HTML",
+                success: function(data) {
+                    //Place the new card onto the kanban board
+                    /*$(".kanban_column[data-column=" + kanban_column + "][data-level=" + kanban_level + "]").html(
+                        $(".kanban_column[data-column=" + kanban_column + "][data-level=" + kanban_level + "]").html() + data
+                    );*/
+
+                    $(".kanban_column[data-column=" + kanban_column + "][data-level=" + kanban_level + "]").append(data);
+
+                    //Reset the modal - but hide it first
+                    $("#new_card_modal").modal('hide');
+                    $("#new_card_content").html('Loading Data...');
+
+                    //We will need the page to re-bind everything
+                    on_page_load()
+                },
+                error: function() {
+                    alert("Sorry, submitting the new card did not work for some reason.")
                 }
             })
         }
+
+        function new_card_text_changed() {
+            //Disable the submit button if there is no value.
+		    $("#new_card_submit_button").prop('disabled', $("#id_kanban_card_text").val() == "")
+        }
+
 
         function on_page_load(){
             $('.kanban_card').bind('dragstart', function(event) {
@@ -154,19 +263,22 @@
 
             //Double click
             $('.kanban_card').bind('dblclick', function(event) {
-                //alert("Need to get card data. How?");
-                //alert($(event.target).attr('id'));
                 var kanban_card_id = $(event.target).attr('id');
 
+                //Blank modal
+                $("#edit_card_content").html("");
+
+                //Show modal
+                $("#edit_card_modal").modal('show');
+
+                //Get data for modal
                 $.ajax({
                     url: '/kanban_edit_card/' + kanban_card_id + '/',
                     type: 'GET',
                     dataType: 'HTML',
                     success: function(data) {
-                        $("#edit_card_form").html(data);
-                            //Navigate down to it
-                            var element = document.getElementById("edit_card_form");
-                            element.scrollIntoView();
+                        //Place data into modal
+                        $("#edit_card_content").html(data);
                     },
                     error: function() {
                         alert("Sorry, we can not edit the card at the moment");
@@ -228,12 +340,17 @@
                 type: 'POST',
                 success: function (data) {
 
-                    $(".kanban_column[data-column=" + kanban_column + "][data-level=" + kanban_level + "]").html(
+                    /*$(".kanban_column[data-column=" + kanban_column + "][data-level=" + kanban_level + "]").html(
                         $(".kanban_column[data-column=" + kanban_column + "][data-level=" + kanban_level + "]").html() + data
-                    );
+                    );*/
+                    //Append the data onto the UL
+                    $(".kanban_column[data-column=" + kanban_column + "][data-level=" + kanban_level + "]").append(data);
 
-                    close_kanban_new_link();
+                    //Make sure the objects can now be moved around
+                    on_page_load();
 
+                    //Close the modal
+                    $("#new_link_modal").modal('hide');
                 },
                 error: function(data) {
                     alert("Sorry, the linking of the object didn't work. Please try again.");

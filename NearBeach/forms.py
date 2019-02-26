@@ -1442,6 +1442,7 @@ class kanban_card_form(ModelForm):
         required=False,
         widget=TextInput(attrs={
             'placeholder': 'Card Comments',
+            'class': 'form-control',
         }),
     )
 
@@ -1450,7 +1451,24 @@ class kanban_card_form(ModelForm):
         max_length=255,
         widget=TextInput(attrs={
             'placeholder': 'Card Text',
+            'class': 'form-control',
+            'onkeydown': 'new_card_text_changed()',
+            'onchange': 'new_card_text_changed()',
         }),
+    )
+    kanban_column=forms.ModelChoiceField(
+        queryset=None,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        initial=0,
+    )
+    kanban_level = forms.ModelChoiceField(
+        queryset=None,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        initial=0,
     )
 
     class Meta:
@@ -1537,6 +1555,20 @@ class kanban_new_link_form(ModelForm):
 
         self.fields['kanban_column'].empty_label = None
         self.fields['kanban_level'].empty_label = None
+
+    kanban_column=forms.ModelChoiceField(
+        queryset=None,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    kanban_level=forms.ModelChoiceField(
+        queryset=None,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
 
     class Meta:
         model = kanban_card

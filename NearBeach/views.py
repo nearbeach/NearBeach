@@ -3322,6 +3322,9 @@ def kanban_information(request,kanban_board_id):
 
     if permission_results['kanban'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
+    elif permission_results['kanban'] == 1:
+        #The user can only get read only access
+        return HttpResponseRedirect(reverse('kanban_read_only', args= { kanban_board_id }))
 
     """
     Test User Access
@@ -3381,22 +3384,6 @@ def kanban_information(request,kanban_board_id):
     return HttpResponse(t.render(c, request))
 
 
-def kanban_move_card(request,kanban_card_id,kanban_column_id,kanban_level_id):
-    if request.method == "POST":
-        kanban_card_result = kanban_card.objects.get(kanban_card_id=kanban_card_id)
-        kanban_card_result.kanban_column_id = kanban_column.objects.get(kanban_column_id=kanban_column_id)
-        kanban_card_result.kanban_level_id = kanban_level.objects.get(kanban_level_id=kanban_level_id)
-        kanban_card_result.save()
-
-        #Send back blank like a crazy person.
-        t = loader.get_template('NearBeach/blank.html')
-
-        # context
-        c = {}
-
-        return HttpResponse(t.render(c, request))
-    else:
-        return HttpResponseBadRequest("This request can only be through POST")
 
 
 @login_required(login_url='login')
@@ -3422,6 +3409,22 @@ def kanban_list(request):
 
     return HttpResponse(t.render(c, request))
 
+def kanban_move_card(request,kanban_card_id,kanban_column_id,kanban_level_id):
+    if request.method == "POST":
+        kanban_card_result = kanban_card.objects.get(kanban_card_id=kanban_card_id)
+        kanban_card_result.kanban_column_id = kanban_column.objects.get(kanban_column_id=kanban_column_id)
+        kanban_card_result.kanban_level_id = kanban_level.objects.get(kanban_level_id=kanban_level_id)
+        kanban_card_result.save()
+
+        #Send back blank like a crazy person.
+        t = loader.get_template('NearBeach/blank.html')
+
+        # context
+        c = {}
+
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("This request can only be through POST")
 
 
 @login_required(login_url='login')
@@ -3686,6 +3689,69 @@ def kanban_properties(request,kanban_board_id):
 
     return HttpResponse(t.render(c, request))
 
+
+def kanban_read_only(request,kanban_board_id):
+    permission_results = return_user_permission_level(request, None,['kanban'])
+
+    if permission_results['kanban'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    """
+    Test User Access
+    ~~~~~~~~~~~~~~~~
+    A user who wants to access this Kanban Board will need to meet one of these two conditions
+    1. They have an access to  a group whom has been granted access to this kanban board
+    2. They are a super user (they should be getting access to all objects)
+    """
+    object_access = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        kanban_board_id=kanban_board_id,
+        group_id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            username=request.user,
+        ).values('group_id')
+    )
+    if object_access.count() == 0 and not permission_results['administration'] == 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
+    #Get the required information
+    kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+
+    """
+    If this kanban is connected to a requirement then we need to send it to the 'kanban_requirement_information". This
+    is due to the large difference between this kanban and the requirement's kanban board.
+    """
+    if kanban_board_results.requirement_id:
+        return HttpResponseRedirect(reverse('kanban_requirement_information',args={kanban_board_id}))
+
+    kanban_level_results = kanban_level.objects.filter(
+        is_deleted="FALSE",
+        kanban_board=kanban_board_id,
+    ).order_by('kanban_level_sort_number')
+    kanban_column_results = kanban_column.objects.filter(
+        is_deleted="FALSE",
+        kanban_board=kanban_board_id,
+    ).order_by('kanban_column_sort_number')
+    kanban_card_results = kanban_card.objects.filter(
+        is_deleted="FALSE",
+        kanban_board=kanban_board_id,
+    ).order_by('kanban_card_sort_number')
+
+    t = loader.get_template('NearBeach/kanban/kanban_read_only.html')
+
+    # context
+    c = {
+        'kanban_board_id': kanban_board_id,
+        'kanban_board_results': kanban_board_results,
+        'kanban_level_results': kanban_level_results,
+        'kanban_column_results': kanban_column_results,
+        'kanban_card_results': kanban_card_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
 
 
 @login_required(login_url='login')

@@ -1,0 +1,44 @@
+{% extends "./template_wider.html" %}
+{% block content %}
+{% load nearbeach_extras %}
+{% load static %}
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+    <link rel='stylesheet' href='{% static "NearBeach/css/kanban_board.css" %}' />
+
+    <h1>{{ kanban_board_results.kanban_board_name }}</h1>
+    <a href="javascript:void(0)" onclick="load_kanban_new_card()">New Card</a><br/>
+    <a href="javascript:void(0)" onclick="load_kanban_new_link()">Link Project, Task, or Requirement</a><br/>
+    {% for level in kanban_level_results %}
+        <!-- SETUP THE CONTAINER FOR LEVEL -->
+        <!-- The level heading -->
+        <strong>{{ level.kanban_level_name }}</strong>
+        <div class="container-fluid">
+            <div class="row flex-row flex-nowrap">
+                <!-- EACH COLUMN -->
+                {% with level_cards=kanban_card_results|filter_level_cards:level.kanban_level_id %}
+                    {% for column in kanban_column_results %}
+                    <div class="col-3">
+                        <div class="card card-block">
+                            <div class="card-header">
+                                <strong>{{ column.kanban_column_name }}</strong>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group kanban_column" data-column="{{ column.kanban_column_id }}" data-level="{{ level.kanban_level_id }}">
+                                    {% with column_cards=level_cards|filter_column_cards:column.kanban_column_id %}
+                                        {% for row in column_cards %}
+                                            <li class="list-group-item list-group-item-info kanban_card" id="{{ row.kanban_card_id }}" draggable="true">
+                                                {{ row.kanban_card_text }}
+                                            </li>
+                                        {% endfor %}
+                                    {% endwith %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endwith %}
+            </div>
+            <hr>
+        </div>
+    {% endfor %}
+{% endblock %}
