@@ -5276,6 +5276,40 @@ def new_quote_template(request):
 
 
 @login_required(login_url='login')
+def new_request_for_change(request):
+    """
+    A user would like to implement a new request for change. This new function will ask the user for the following set of
+    information;
+    - Basic Request for information
+    - Basic risk, plan and implementation
+    - Assigned groups
+    :param request:
+    :return: The new request for change page
+
+    Method
+    ~~~~~~
+    1. Check user permission - if they can't do this then send them to the naughty corner
+    2. Check to see if it is post - read notes in that section
+    3. Gather the required fields
+    4. Render the page
+    """
+
+    # CHECK PERMISSIONS TO ADD LATER
+
+    # CHECK POST TO ADD LATER
+
+    # Get tempalte
+    t = loader.get_template('NearBeach/new_request_for_change.html')
+
+    # Context
+    c = {
+        'request_for_change_form': request_for_change_form(),
+        # ADD IN PERMISSIONS
+    }
+
+    return HttpResponse(t.render(c,request))
+
+@login_required(login_url='login')
 def new_task(request, location_id='', destination=''):
     permission_results = return_user_permission_level(request, None, 'task')
 

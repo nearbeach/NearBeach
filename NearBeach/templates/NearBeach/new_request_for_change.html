@@ -1,0 +1,114 @@
+{% extends "./template.html" %}
+{% block content %}
+    {% load static %}
+    <form action={% url 'new_request_for_change' %} method="post" class="new_request_for_change" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ request_for_change_form.media }}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h1>New Request For Change</h1>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="id_request_for_change_title">Title</label>
+                    {{ request_for_change_form.request_for_change_title }}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_request_for_change_type">Request For Change Type</label>
+                        {{ request_for_change_form.request_for_change_type }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="id_request_for_change_version_number">Version/Release Number</label>
+                        {{ request_for_change_form.request_for_change_version_number }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="id_request_for_change_implementation_state_date">Implementation Start</label>
+                        {{ request_for_change_form.request_for_change_implementation_start_date }}
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="id_request_for_change_implementation_release_date">Implementation End</label>
+                        {{ request_for_change_form.request_for_change_implementation_end_date }}
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="id_request_for_change_implementation_release_date">Release Datetime</label>
+                        {{ request_for_change_form.request_for_change_implementation_release_date }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_request_for_change_summary">Request for Change Summary</label>
+                    {{ request_for_change_form.request_for_change_summary }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_request_for_change_lead">Request for Change Lead User</label>
+                    {{ request_for_change_form.request_for_change_lead }}
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Risk, Plan, and Implement</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_request_for_change_priority">Priority of Change</label>
+                        {{ request_for_change.request_for_change_priority }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_request_for_change_risk">Risk of Change</label>
+                        {{ request_for_change.request_for_change_risk }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_request_for_change_impact">Impact of Change</label>
+                        {{ request_for_change.request_for_change_impact }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_request_for_change_risk_and_impact_analysis">Risk and Impace Analysis</label>
+                    {{ request_for_change.request_for_change_risk_and_impact_analysis }}
+                </div>
+                <div class="form-group">
+                    <label for="id_request_for_change_implementation_plan">Implementation Plan</label>
+                    {{ request_for_change.request_for_change_implementation_plan }}
+                </div>
+                <div class="form-group">
+                    <label for="id_request_for_change_backout_plan">Backout Plan</label>
+                    {{ request_for_change.request_for_change_backout_plan }}
+                </div>
+                <div class="form-group">
+                    <label for="id_request_for_change_test_plan">Test Plan</label>
+                    {{ request_for_change.request_for_change_test_plan }}
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Request for Change Permissions</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="id_project_permission">Please give permissions to one or more groups. Please note: you will not be able to submit this request for change without selecting at least one group</label>
+                    {{ request_for_change_form.request_for_change_permission }}
+
+                </div>
+                <div class="form-row">
+                    <input type="submit" value="Submit New RFC" class="btn btn-primary form-control w-50">
+                    <a href={% url 'dashboard' %} class="btn btn-warning form-control w-50">Cancel</a>
+                </div>
+                <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
+                <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
+                <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
+            </div>
+        </div>
+    </form>
+{% endblock %}

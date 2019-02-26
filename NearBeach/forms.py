@@ -56,123 +56,40 @@ RATING_SCORE = (
 )
 
 
-
-YEAR_CHOICES=(
-    ('2010','2010'),
-    ('2011','2011'),
-    ('2012','2012'),
-    ('2013','2013'),
-    ('2014','2014'),
-    ('2015','2015'),
-    ('2016','2016'),
-    ('2017','2017'),
-    ('2018','2018'),
-    ('2019','2019'),
-    ('2020','2020'),
-    ('2021','2021'),
-    ('2022','2022'),
-    ('2023','2023'),
-    ('2024','2024'),
-    ('2025','2025'),
-    ('2026','2026'),
-    ('2027','2027'),
-    ('2028','2028'),
-    ('2029','2029'),
-    ('2030','2030'),
-    ('2031','2031'),
-    ('2032','2032'),
-    ('2033','2033'),
-    ('2034','2034'),
-    ('2035','2035'),
-    ('2036','2036'),
-    ('2037','2037'),
-    ('2038','2038'),
-    ('2039','2039'),
-    ('2040','2040'),
+RFC_IMPACT = (
+    (3,'High'),
+    (2,'Medium'),
+    (1,'Low'),
 )
 
-MONTH_CHOICES=(
-    ('1','January'),
-    ('2','February'),
-    ('3','March'),
-    ('4','April'),
-    ('5','May'),
-    ('6','June'),
-    ('7','July'),
-    ('8','August'),
-    ('9','September'),
-    ('10','October'),
-    ('11','November'),
-    ('12','December'),
+RFC_PRIORITY = (
+    (4,'Critical'),
+    (3,'High'),
+    (2,'Medium'),
+    (1,'Low'),
 )
 
-DAY_CHOICES=(
-    ('1','1'),
-    ('2','2'),
-    ('3','3'),
-    ('4','4'),
-    ('5','5'),
-    ('6','6'),
-    ('7','7'),
-    ('8','8'),
-    ('9','9'),
-    ('10','10'),
-    ('11','11'),
-    ('12','12'),
-    ('13','13'),
-    ('14','14'),
-    ('15','15'),
-    ('16','16'),
-    ('17','17'),
-    ('18','18'),
-    ('19','19'),
-    ('20','20'),
-    ('21','21'),
-    ('22','22'),
-    ('23','23'),
-    ('24','24'),
-    ('25','25'),
-    ('26','26'),
-    ('27','27'),
-    ('28','28'),
-    ('29','29'),
-    ('30','30'),
-    ('31','31'),
+RFC_RISK = (
+    (5,'Very High'),
+    (4,'High'),
+    (3,'Moderate'),
+    (2,'Low'),
+    (1,'None'),
 )
 
-HOUR_CHOICES=(
-    ('1','1'),
-    ('2','2'),
-    ('3','3'),
-    ('4','4'),
-    ('5','5'),
-    ('6','6'),
-    ('7','7'),
-    ('8','8'),
-    ('9','9'),
-    ('10','10'),
-    ('11','11'),
-    ('12','12'),
+RFC_STATUS = (
+    (1,'Draft'),
+    (2,'Waiting for approval'),
+    (3,'Approved'),
+    (4,'Started'),
+    (5,'Finished'),
 )
 
-MINUTE_CHOICES=(
-    ('00','00'),
-    ('05','05'),
-    ('10','10'),
-    ('15','15'),
-    ('20','20'),
-    ('25','25'),
-    ('30','30'),
-    ('35','35'),
-    ('40','40'),
-    ('45','45'),
-    ('50','50'),
-    ('55','55'),
-)
-
-MERIDIEMS_CHOICES=(
-    ('AM','AM'),
-    ('PM','PM'),
+RFC_TYPE = (
+    (4,'Emergency'),
+    (3,'High'),
+    (2,'Medium'),
+    (1,'Low'),
 )
 
 
@@ -3332,6 +3249,162 @@ class search_form(forms.Form):
         }),
     )
 
+
+class request_for_change_form(ModelForm):
+    """
+    This form will be used for both NEW and INFORMATION sections as the fields do not change.
+    """
+    request_for_change_title = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        }),
+        required=True,
+    )
+    request_for_change_summary = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    request_for_change_type = forms.ChoiceField(
+        choices=RFC_TYPE,
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        initial=1,
+    )
+    request_for_change_implementation_start_date = forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'class': 'form-control',
+        }),
+        required=True,
+    )
+    request_for_change_implementation_end_date = forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'class': 'form-control',
+        }),
+        required=True,
+    )
+    request_for_change_implementation_release_date = forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'class': 'form-control',
+        }),
+        required=True,
+    )
+    request_for_change_version_number = forms.CharField(
+        max_length=25,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Version/Release Number',
+        }),
+        required=False,
+    )
+    request_for_change_lead = forms.ModelChoiceField(
+        queryset=User.objects.filter( #This should be changed to those users currently connected to the group
+            is_active=True,
+        ),
+        widget=forms.SelectMultiple(attrs={
+            'class': 'chosen-select form-control',
+            'multiple tabindex': '4',
+            'style': 'width: 100%',
+        }),
+        required=True,
+    )
+    request_for_change_priority = forms.ChoiceField(
+        choices=RFC_PRIORITY,
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        initial=1,
+    )
+    request_for_change_risk = forms.ChoiceField(
+        choices=RFC_RISK,
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        initial=1,
+    )
+    request_for_change_impact = forms.ChoiceField(
+        choices=RFC_IMPACT,
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        initial=1,
+    )
+    request_for_change_risk_and_impact_analysis = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    request_for_change_implementation_plan = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    request_for_change_backout_plan = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    request_for_change_test_plan = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+
+    request_for_change_permission=forms.ModelMultipleChoiceField(
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': 'Select Groups to Assign to Request for Change',
+            'class': 'chosen-select form-control',
+            'multiple tabindex': '4',
+
+        }),
+        required=True,
+        queryset=group.objects.filter(is_deleted="FALSE"),
+    )
+    class Meta:
+        model=request_for_change
+        exclude=[
+            'change_user',
+            'is_deleted',
+        ]
 
 class requirement_information_form(ModelForm):
     requirement_title = forms.CharField(

@@ -61,6 +61,43 @@ RATING_SCORE = (
     (5, '5 Star'),
 )
 
+RFC_IMPACT = (
+    (3,'High'),
+    (2,'Medium'),
+    (1,'Low'),
+)
+
+RFC_PRIORITY = (
+    (4,'Critical'),
+    (3,'High'),
+    (2,'Medium'),
+    (1,'Low'),
+)
+
+RFC_RISK = (
+    (5,'Very High'),
+    (4,'High'),
+    (3,'Moderate'),
+    (2,'Low'),
+    (1,'None'),
+)
+
+RFC_STATUS = (
+    (1,'Draft'),
+    (2,'Waiting for approval'),
+    (3,'Approved'),
+    (4,'Started'),
+    (5,'Finished'),
+)
+
+RFC_TYPE = (
+    (4,'Emergency'),
+    (3,'High'),
+    (2,'Medium'),
+    (1,'Low'),
+)
+
+
 WANT_CHOICE=(
     ('0','Do not want to do'),
     ('1','Want to do'),
@@ -1807,6 +1844,7 @@ class permission_set_manager(models.Manager):
             organisation_campus,
             project,
             quote,
+            request_for_change,
             requirement,
             requirement_link,
             task,
@@ -1839,6 +1877,7 @@ class permission_set_manager(models.Manager):
             organisation_campus=organisation_campus,
             project=project,
             quote=quote,
+            request_for_change=request_for_change,
             requirement=requirement,
             requirement_link=requirement_link,
             task=task,
@@ -1934,6 +1973,10 @@ class permission_set(models.Model):
         default=0,
     )
     quote = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
+    request_for_change = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
     )
@@ -2685,6 +2728,79 @@ class quote_template(models.Model):
         db_table = "quote_template"
 
 
+class request_for_change(models.Model):
+    request_for_change_id=models.AutoField(primary_key=True)
+    request_for_change_title=models.CharField(
+        max_length=255,
+    )
+    request_for_change_summary=HTMLField(
+        'request_for_change_summary'
+    )
+    request_for_change_type=models.IntegerField(
+        choices=RFC_TYPE,
+    )
+    request_for_change_implementation_start_date=models.DateTimeField()
+    request_for_change_implementation_end_date=models.DateTimeField()
+    request_for_change_implementation_release_date=models.DateTimeField()
+    request_for_change_version_number=models.CharField(
+        max_length=25,
+        blank=True,
+        null=True,
+    )
+    request_for_change_status=models.IntegerField(
+        choices=RFC_STATUS,
+    )
+    request_for_change_lead=models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='request_for_change_lead',
+
+    )
+    request_for_change_priority=models.IntegerField(
+        choices=RFC_PRIORITY,
+        default=1,
+    )
+    request_for_change_risk = models.IntegerField(
+        choices=RFC_RISK,
+        default=1,
+    )
+    request_for_change_impact = models.IntegerField(
+        choices=RFC_IMPACT,
+        default=1,
+    )
+    request_for_change_risk_and_impact_analysis=HTMLField(
+        'request_for_change_risk_and_impact_analysis',
+    )
+    request_for_change_implementation_plan=HTMLField(
+        'request_for_change_implementation_plan',
+    )
+    request_for_change_backout_plan=HTMLField(
+        'request_for_change_backout_plan',
+    )
+    request_for_change_test_plan=HTMLField(
+        'request_for_change_test_plan',
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    def __str__(self):
+        return str(self.request_for_change_title)
+
+    class Meta:
+        db_table = "request_for_change"
+
+
+
 
 class requirement(models.Model):
     requirement_id = models.AutoField(primary_key=True)
@@ -2722,32 +2838,6 @@ class requirement(models.Model):
     class Meta:
         db_table = "requirement"
 
-"""
-class requirement_group(models.Model):
-    requirement_id = models.ForeignKey(
-        'requirement',
-        on_delete=models.CASCADE,
-    )
-    group_id = models.ForeignKey(
-        'group',
-        on_delete=models.CASCADE,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
-    )
-
-    class Meta:
-        db_table = "requirement_group"
-"""
 
 
 class requirement_item(models.Model):
