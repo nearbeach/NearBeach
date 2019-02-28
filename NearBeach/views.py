@@ -718,7 +718,138 @@ def assigned_opportunity_connection_delete(request, opportunity_id, location_id,
         return HttpResponseBadRequest("Sorry - can only do this request via post")
 
 
+@login_required(login_url='login')
+def assigned_rfc_connection_add(request, rfc_id, destination):
+    """
+    We want the ability to add either an organisation or customer to an request for change. This function will apply that.
+    :param request:
+    :param rfc_id: The rfc that we are assigning the connection to
+    :param destination: If we are assigning a customer or organisation
+    :return: Search Page
 
+    Method
+    ~~~~~~
+    1. Check user's permissions - send them to the naughty corner if they do not have permission
+    2. Check to see if the method is post - follow instructions here if it is post
+    3. Check to see if the destination is customer or organisation. Pull out the relevant search results.
+    4. Collect the template
+    5. Render the results
+    """
+    permission_results = return_user_permission_level(request, None, 'request_for_change')
+
+    if permission_results['request_for_change'] < 2:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        """
+        Method
+        ~~~~~~
+        1. Obtain the correct form.
+        2. If form is NOT valid - show errors and reload screen
+        3. If form is valid, read next method.
+        """
+        form = connect_form(request.POST)
+
+        if form.is_valid():
+            """
+            The user has submitted some customers. We will now assign them to the opportunity.
+
+            Method
+            ~~~~~~
+            1. Extract the required data
+            2. Iterate through each result and add them to the database
+            3. Return the user to the opportunity.
+            """
+            customer_extract = form.cleaned_data['customers']
+            organisation_extract = form.cleaned_data['organisations']
+
+            for row in customer_extract:
+                # Lets save the customer against the opportunity. :)
+                submit_stakeholder = request_for_change_stakeholder(
+                    opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                    customer=row,
+                    change_user=request.user,
+                )
+                submit_stakeholder.save()
+
+            for row in organisation_extract:
+                # Lets save the organisation against the opportunity :)
+                submit_stakeholder = request_for_change_stakeholder(
+                    opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                    organisation=row,
+                    change_user=request.user,
+                )
+                submit_stakeholder.save()
+
+            # Send the user back to the opportunity
+            return HttpResponseRedirect(reverse('request_for_change_information', args={rfc_id}))
+        else:
+            print("There was an issue getting data from the form. Sending user back.")
+            print(form)
+
+    """
+    The following if statements will get
+    - Get the correct required template... this... this is different
+    """
+    if destination == "organisation":
+        # Template
+        t = loader.get_template('NearBeach/request_for_change/rfc_connect_organisation.html')
+    else:
+        # Template
+        t = loader.get_template('NearBeach/request_for_change/rfc_connect_customer.html')
+
+    c = {
+        'connect_form': connect_form(),
+        'rfc_id': rfc_id,
+        'rfc_permission': permission_results['request_for_change'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def assigned_rfc_connection_delete(request, rfc_id, location_id, destination):
+    """
+    This will remove any organisation/customer connection to an opportunity.
+    :param request:
+    :param location_id: The ID of the customer/organisation
+    :param destination: This tells the program if we are looking for an organisation or location.
+    :return: Success results
+
+    Method
+    ~~~~~~
+    1. Check permissions - send user away if they do not have permissions
+    2. Check to make sure this is a POST
+    3. Filter for the relivant organisation/customer connection
+    4. Change the is_deleted value to TRUE
+    5. Send back blank page
+    """
+    permission_results = return_user_permission_level(request, None, 'opportunity')
+    if permission_results['opportunity'] != 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        if destination == "organisation":
+            opportunity_connection.objects.filter(
+                is_deleted="FALSE",
+                organisation_id=location_id,
+                opportunity_id=opportunity_id,
+            ).update(is_deleted="TRUE")
+        else:
+            opportunity_connection.objects.filter(
+                is_deleted="FALSE",
+                customer_id=location_id,
+                opportunity_id=opportunity_id,
+            ).update(is_deleted="TRUE")
+
+        # Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("Sorry - can only do this request via post")
 
 @login_required(login_url='login')
 def assigned_user_add(request, location_id, destination):

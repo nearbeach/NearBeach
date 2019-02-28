@@ -1,54 +1,58 @@
-<div class="card mt-4">
-    <div class="card-header">
-        <h2>Assigned Users</h2>
+{% if assigned_user_results %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Assigned Users</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <td>Username</td>
+                        <td>First Name</td>
+                        <td>Last Name</td>
+                        <td>Email</td>
+                    </tr>
+                </thead>
+                {% for row in assigned_user_results %}
+                    <tr>
+                        <td>{{ row.username }}</td>
+                        <td>{{ row.first_name }}</td>
+                        <td>{{ row.last_name }}</td>
+                        <td>{{ row.email }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
-    <div class="card-body">
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <td>Username</td>
-                    <td>First Name</td>
-                    <td>Last Name</td>
-                    <td>Email</td>
-                </tr>
-            </thead>
-            {% for row in assigned_user_results %}
-                <tr>
-                    <td>{{ row.username }}</td>
-                    <td>{{ row.first_name }}</td>
-                    <td>{{ row.last_name }}</td>
-                    <td>{{ row.email }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    </div>
-</div>
+{% endif %}
 
-<div class="card mt-4">
-    <div class="card-header">
-        <h2>QA Users</h2>
+{% if qa_user_results %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>QA Users</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <td>Username</td>
+                        <td>First Name</td>
+                        <td>Last Name</td>
+                        <td>Email</td>
+                    </tr>
+                </thead>
+                {% for row in qa_user_results %}
+                    <tr>
+                        <td>{{ row.username }}</td>
+                        <td>{{ row.first_name }}</td>
+                        <td>{{ row.last_name }}</td>
+                        <td>{{ row.email }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
-    <div class="card-body">
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <td>Username</td>
-                    <td>First Name</td>
-                    <td>Last Name</td>
-                    <td>Email</td>
-                </tr>
-            </thead>
-            {% for row in qa_user_results %}
-                <tr>
-                    <td>{{ row.username }}</td>
-                    <td>{{ row.first_name }}</td>
-                    <td>{{ row.last_name }}</td>
-                    <td>{{ row.email }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    </div>
-</div>
+{% endif %}
 
 <div class="card mt-4">
     <div class="card-header">

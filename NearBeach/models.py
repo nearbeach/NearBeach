@@ -2851,7 +2851,7 @@ class request_for_change(models.Model):
         db_table = "request_for_change"
 
 
-class reqeust_for_change_stakeholders(models.Model):
+class request_for_change_stakeholder(models.Model):
     """
     This model will store all the stakeholders for those request for changes. The stakeholders could be an organisation
     OR a customer.
@@ -2889,7 +2889,7 @@ class reqeust_for_change_stakeholders(models.Model):
     )
 
     class Meta:
-        db_table = "reqeust_for_change_stakeholders"
+        db_table = "request_for_change_stakeholder"
 
 
 class requirement(models.Model):
