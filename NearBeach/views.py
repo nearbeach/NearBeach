@@ -458,6 +458,12 @@ def assigned_group_add(request, location_id, destination):
                     group_id=form.cleaned_data['add_group'],
                     change_user=request.user,
                 )
+            elif destination == "request_for_change":
+                object_assignment_submit = object_assignment(
+                    request_for_change=request_for_change.objects.get(rfc_id=location_id),
+                    group_id=form.cleaned_data['add_group'],
+                    change_user=request.user,
+                )
             object_assignment_submit.save()
 
 
@@ -545,7 +551,22 @@ def assigned_group_list(request, location_id, destination):
         ).exclude(
             group_id=None,
         )
+    elif destination == "requirement":
+        group_list_results = object_assignment.objects.filter(
+            is_deleted="FALSE",
+            requirement_id=location_id,
+        ).exclude(
+            group_id=None,
+        )
+    elif destination == "request_for_change":
+        group_list_results = object_assignment.objects.filter(
+            is_deleted="FALSE",
+            request_for_change=location_id,
+        ).exclude(
+            group_id=None,
+        )
     else:
+
         group_list_results = ''
 
     # Load the template
@@ -1385,6 +1406,83 @@ def campus_readonly(request, campus_information):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+
+@login_required(login_url='login')
+def change_task_stakeholder_list(request,rfc_id):
+    """
+
+    :param request:
+    :param rfc_id:
+    :return:
+    """
+
+    # Template
+    t = loader.get_template('NearBeach/blank.html')
+
+    # Context
+    c = {}
+
+    return HttpResponse(t.render(c,request))
+
+
+
+
+@login_required(login_url='login')
+def change_task_list(request,rfc_id):
+    """
+    When a user is looking at a request for change, they will need to see ALL change tasks associated with this rfc.
+    This will call this function through AJAX. This function will then deliver a simple and effecting RUN LIST/CHANGE TASKS
+    :param request:
+    :param rfc_id: The request for change we are looking at.
+    :return: The RUN LIST/CHANGE TASKS
+
+    Method
+    ~~~~~~
+    1. Check user permissions
+    2. Obtain the SQL required
+    3. Get template and context
+    4. Render and send to the user.
+    """
+
+    permission_results = return_user_permission_level(request,None,'request_for_change')
+    if permission_results['request_for_change'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    # Get data
+    change_task_results = change_task.objects.filter(
+        is_deleted="FALSE",
+        request_for_change=rfc_id,
+    ).order_by(
+        'change_task_start_date',
+        'change_task_end_date',
+        'change_task_assigned_user',
+        'change_task_qa_user',
+    )
+
+    assigned_user_results = User.objects.filter(
+        is_active=True,
+        id__in=change_task_results.values('change_task_assigned_user')
+    )
+    qa_user_results = User.objects.filter(
+        is_active=True,
+        id__in=change_task_results.values('change_task_qa_user')
+    )
+
+    # Template
+    t = loader.get_template('NearBeach/request_for_change/change_task_list.html')
+
+    # Context
+    c = {
+        'change_task_results': change_task_results,
+        'permission': permission_results['request_for_change'],
+        'rfc_id': rfc_id,
+        'assigned_user_results': assigned_user_results,
+        'qa_user_results': qa_user_results,
+    }
+
+    return HttpResponse(t.render(c,request))
 
 
 @login_required(login_url='login')
@@ -5294,16 +5392,66 @@ def new_request_for_change(request):
     4. Render the page
     """
 
-    # CHECK PERMISSIONS TO ADD LATER
+    permission_results = return_user_permission_level(request,None,'request_for_change')
+    if permission_results['request_for_change'] <= 2:
+        return HttpResponseRedirect(reverse('permission_denied'))
 
-    # CHECK POST TO ADD LATER
+    form_errors = ""
+
+    if request.method == "POST":
+        form  = new_request_for_change_form(request.POST)
+        if form.is_valid():
+            #Save the data from the form.
+            rfc_submit = request_for_change(
+                rfc_title=form.cleaned_data['rfc_title'],
+                rfc_type=form.cleaned_data['rfc_type'],
+                rfc_implementation_start_date=form.cleaned_data['rfc_implementation_start_date'],
+                rfc_implementation_end_date=form.cleaned_data['rfc_implementation_end_date'],
+                rfc_implementation_release_date=form.cleaned_data['rfc_implementation_release_date'],
+                rfc_version_number=form.cleaned_data['rfc_version_number'],
+                rfc_summary=form.cleaned_data['rfc_summary'],
+                rfc_lead=form.cleaned_data['rfc_lead'],
+                rfc_priority=form.cleaned_data['rfc_priority'],
+                rfc_risk=form.cleaned_data['rfc_risk'],
+                rfc_impact=form.cleaned_data['rfc_impact'],
+                rfc_risk_and_impact_analysis=form.cleaned_data['rfc_risk_and_impact_analysis'],
+                rfc_implementation_plan=form.cleaned_data['rfc_implementation_plan'],
+                rfc_backout_plan=form.cleaned_data['rfc_backout_plan'],
+                rfc_test_plan=form.cleaned_data['rfc_test_plan'],
+                change_user=request.user,
+                rfc_status=1, #Draft
+            )
+            rfc_submit.save()
+
+            """
+            Once the new project has been created, we will obtain a 
+            primary key. Using this new primary key we will allocate
+            permissions to the new project.
+            """
+            rfc_permission = form.cleaned_data['rfc_permission']
+
+            for row in rfc_permission:
+                submit_group = object_assignment(
+                    request_for_change=rfc_submit,
+                    group_id=group.objects.get(group_id=row.group_id),
+                    change_user=request.user,
+                )
+                submit_group.save()
+
+            #Send the user to the new RFC
+            return HttpResponseRedirect(reverse('request_for_change_information', args={ rfc_submit.rfc_id }))
+        else:
+            print(form.errors)
+            form_errors = form.errors
+
 
     # Get tempalte
     t = loader.get_template('NearBeach/new_request_for_change.html')
 
     # Context
     c = {
-        'request_for_change_form': request_for_change_form(),
+        'new_request_for_change_form': new_request_for_change_form(),
+        'form_errors': form_errors,
         # ADD IN PERMISSIONS
     }
 
@@ -6850,6 +6998,53 @@ def rename_document(request, document_key):
     else:
         return HttpResponseBadRequest("This is a POST function. POST OFF!")
 
+
+@login_required(login_url='login')
+def request_for_change_information(request,rfc_id):
+    """
+
+    :param request:
+    :param rfc_id:
+    :return:
+    """
+
+    permission_results = return_user_permission_level(request,None,'request_for_change')
+    if permission_results['request_for_change'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+    ## ADD IN READ ONLY HERE!!!
+
+    # Get data
+    rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
+
+    # Get template
+    t = loader.get_template('NearBeach/request_for_change_information.html')
+
+    # Context
+    c = {
+        'request_for_change_form': request_for_change_form(
+            initial={
+                'rfc_title': rfc_results.rfc_title,
+                'rfc_type': rfc_results.rfc_type,
+                'rfc_implementation_start_date': rfc_results.rfc_implementation_start_date,
+                'rfc_implementation_end_date': rfc_results.rfc_implementation_end_date,
+                'rfc_implementation_release_date': rfc_results.rfc_implementation_release_date,
+                'rfc_version_number': rfc_results.rfc_version_number,
+                'rfc_summary': rfc_results.rfc_summary,
+                'rfc_lead': rfc_results.rfc_lead,
+                'rfc_priority': rfc_results.rfc_priority,
+                'rfc_risk': rfc_results.rfc_risk,
+                'rfc_impact': rfc_results.rfc_impact,
+                'rfc_risk_and_impact_analysis': rfc_results.rfc_risk_and_impact_analysis,
+                'rfc_implementation_plan': rfc_results.rfc_implementation_plan,
+                'rfc_backout_plan': rfc_results.rfc_backout_plan,
+                'rfc_test_plan': rfc_results.rfc_test_plan,
+            },
+        ),
+        'rfc_results': rfc_results,
+        'permission': permission_results['request_for_change']
+    }
+
+    return HttpResponse(t.render(c,request))
 
 @login_required(login_url='login')
 def resolve_project(request, project_id):

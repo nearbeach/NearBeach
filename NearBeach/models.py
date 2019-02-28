@@ -421,6 +421,56 @@ class campus(models.Model):
 
 
 
+class change_task(models.Model):
+    change_task_id=models.AutoField(primary_key=True)
+    request_for_change=models.ForeignKey(
+        'request_for_change',
+        on_delete=models.CASCADE,
+    )
+    change_task_title=models.CharField(
+        max_length=255,
+    )
+    change_task_description=HTMLField(
+        'change_task_description',
+    )
+    change_task_start_date=models.DateTimeField()
+    change_task_end_date=models.DateTimeField()
+    change_task_assigned_user=models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='change_assigned_user',
+    )
+    change_task_qa_user=models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='change_qa_user',
+    )
+    change_task_required_by=models.CharField(
+        max_length=255,
+        default='Stakeholder(s)',
+    )
+    change_task_status=models.IntegerField(
+        choices=RFC_STATUS, #Similar FLOW to RFC
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user',
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    def __str__(self):
+        return str('$' + str(self.change_task_title))
+
+    class Meta:
+        db_table = "change_task"
+
 class cost(models.Model):
     cost_id = models.AutoField(primary_key=True)
     project_id = models.ForeignKey(
@@ -442,11 +492,11 @@ class cost(models.Model):
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey \
-        (User,
-         on_delete=models.CASCADE,
-         related_name='%(class)s_change_user',
-         )
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user',
+    )
     is_deleted = models.CharField(
         max_length=5,
         choices=IS_DELETED_CHOICE,
@@ -571,33 +621,6 @@ class document(models.Model):
     def __str__(self):
         return str(self.document_description)
 
-"""
-class document_folder(models.Model):
-    document_folder_id = models.AutoField(primary_key=True)
-    document_key = models.ForeignKey(
-        'document',
-        on_delete=models.CASCADE,
-    )
-    folder_id = models.ForeignKey(
-        'folder',
-        on_delete=models.CASCADE,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
-    )
-
-    class Meta:
-        db_table = "document_folder"
-"""
 
 class document_permission(models.Model):
     document_permisssion_id = models.AutoField(primary_key=True)
@@ -643,6 +666,12 @@ class document_permission(models.Model):
     )
     requirement_item = models.ForeignKey(
         'requirement_item',
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
+    request_for_change = models.ForeignKey(
+        'request_for_change',
         blank=True,
         null=True,
         on_delete=models.CASCADE,
@@ -795,6 +824,18 @@ class folder(models.Model):
     )
     organisation_id=models.ForeignKey(
         'organisation',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    requirement=models.ForeignKey(
+        'requirement',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    request_for_change = models.ForeignKey(
+        'request_for_change',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1633,6 +1674,7 @@ class object_assignment(models.Model):
     - Project
     - Task
     - Kanban board
+    - Request for change
 
     These permission are only "ACCESS" permissions. The user/group's over riding permissions determine if the user
     can add, edit etc.
@@ -1683,6 +1725,12 @@ class object_assignment(models.Model):
     )
     kanban_board_id = models.ForeignKey(
         'kanban_board',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    request_for_change = models.ForeignKey(
+        'request_for_change',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -2729,56 +2777,59 @@ class quote_template(models.Model):
 
 
 class request_for_change(models.Model):
-    request_for_change_id=models.AutoField(primary_key=True)
-    request_for_change_title=models.CharField(
+    """
+    Due to the long and complicated name, request for change will be shortened to rfc for ALL fields.
+    """
+    rfc_id=models.AutoField(primary_key=True)
+    rfc_title=models.CharField(
         max_length=255,
     )
-    request_for_change_summary=HTMLField(
-        'request_for_change_summary'
+    rfc_summary=HTMLField(
+        'rfc_summary'
     )
-    request_for_change_type=models.IntegerField(
+    rfc_type=models.IntegerField(
         choices=RFC_TYPE,
     )
-    request_for_change_implementation_start_date=models.DateTimeField()
-    request_for_change_implementation_end_date=models.DateTimeField()
-    request_for_change_implementation_release_date=models.DateTimeField()
-    request_for_change_version_number=models.CharField(
+    rfc_implementation_start_date=models.DateTimeField()
+    rfc_implementation_end_date=models.DateTimeField()
+    rfc_implementation_release_date=models.DateTimeField()
+    rfc_version_number=models.CharField(
         max_length=25,
         blank=True,
         null=True,
     )
-    request_for_change_status=models.IntegerField(
+    rfc_status=models.IntegerField(
         choices=RFC_STATUS,
     )
-    request_for_change_lead=models.ForeignKey(
+    rfc_lead=models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='request_for_change_lead',
+        related_name='rfc_lead',
 
     )
-    request_for_change_priority=models.IntegerField(
+    rfc_priority=models.IntegerField(
         choices=RFC_PRIORITY,
         default=1,
     )
-    request_for_change_risk = models.IntegerField(
+    rfc_risk = models.IntegerField(
         choices=RFC_RISK,
         default=1,
     )
-    request_for_change_impact = models.IntegerField(
+    rfc_impact = models.IntegerField(
         choices=RFC_IMPACT,
         default=1,
     )
-    request_for_change_risk_and_impact_analysis=HTMLField(
-        'request_for_change_risk_and_impact_analysis',
+    rfc_risk_and_impact_analysis=HTMLField(
+        'rfc_risk_and_impact_analysis',
     )
-    request_for_change_implementation_plan=HTMLField(
-        'request_for_change_implementation_plan',
+    rfc_implementation_plan=HTMLField(
+        'rfc_implementation_plan',
     )
-    request_for_change_backout_plan=HTMLField(
-        'request_for_change_backout_plan',
+    rfc_backout_plan=HTMLField(
+        'rfc_backout_plan',
     )
-    request_for_change_test_plan=HTMLField(
-        'request_for_change_test_plan',
+    rfc_test_plan=HTMLField(
+        'rfc_test_plan',
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -2794,12 +2845,51 @@ class request_for_change(models.Model):
     )
 
     def __str__(self):
-        return str(self.request_for_change_title)
+        return str(self.rfc_title)
 
     class Meta:
         db_table = "request_for_change"
 
 
+class reqeust_for_change_stakeholders(models.Model):
+    """
+    This model will store all the stakeholders for those request for changes. The stakeholders could be an organisation
+    OR a customer.
+
+    rfc = request for change. It is shortened to make it easier for the programmer.
+    """
+    rfc_stakeholder_id=models.AutoField(primary_key=True)
+    request_for_change = models.ForeignKey(
+        'request_for_change',
+        on_delete=models.CASCADE,
+    )
+    customer = models.ForeignKey(
+        'customer',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    organisation = models.ForeignKey(
+        'organisation',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    class Meta:
+        db_table = "reqeust_for_change_stakeholders"
 
 
 class requirement(models.Model):
