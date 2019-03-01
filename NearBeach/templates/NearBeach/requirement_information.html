@@ -220,6 +220,16 @@
         </div>
     </div>
 
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Extract Requirement</h2>
+        </div>
+        <div class="card-body">
+            <a href="{% url 'preview_requirement' requirement_id %}" target="_blank">Requirement Preview</a><br/>
+            <a href="{% url 'extract_requirement' requirement_id %}">Download Requirement</a>
+        </div>
+    </div>
+
     {% if permission >= 3 %}
         <div class="card mt-4">
             <div class="card-header">

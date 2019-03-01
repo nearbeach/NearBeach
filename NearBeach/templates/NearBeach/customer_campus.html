@@ -23,7 +23,6 @@
     <script type="text/javascript" src="{% static 'NearBeach/javascript/google_maps.js' %}"></script>
 {% endif %}
 
-<script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <body onload="on_page_load()">
     <h2>Customer Campus</h2>
     <form action="{% url 'customer_campus_information' customer_campus_id customer_or_org %}" method="POST">

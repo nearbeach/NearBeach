@@ -4,7 +4,6 @@
 <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/customer_information.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/permissions.js' %}"></script>
 <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
 <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
 <script type="text/javascript" src="{% static 'NearBeach/javascript/document_upload.js' %}"></script>
@@ -284,7 +283,6 @@
             <h2>Customer Opportunities</h2>
         </div>
         <div class="card-body">
-            <a href="{% url 'new_opportunity' customer_results.customer_id 'customer' %}">Add a new opportuninity</a>
             {% if opportunity_results %}
                 <table class="table table-striped table-hover">
                     <thead>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <meta charset="UTF-8">
+	<title>{{ requirement_results.requirement_title }}</title>
+    <!--
+    Bootstrap and jquery are utilised throughout ALL of NearBeach
+    -->
+    {% load staticfiles %}
+    <script src="{% static 'NearBeach/widgets/jquery/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'NearBeach/widgets/bootstrap/js/bootstrap.bundle.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/bootstrap/css/bootstrap.css' %}" />
+    <link rel="stylesheet" href="{% static 'NearBeach/css/NearBeach_CSS.css' %}" /></head>
+<body>
+    <!-- TITLE PAGE -->
+    <div class="jumbotron d-block">
+        <div class="container">
+            <h1>{{ requirement_results.requirement_title }}</h1>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Requirement Type: {{ requirement_results.requirement_type }}</li>
+                <li class="list-group-item">Requirement Status: {{ requirement_results.requirement_status }}</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- REQUIREMENT SCOPE -->
+    <div class="container">
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Requirement Scope</h2>
+            </div>
+            <div class="card-body">
+                {{ requirement_results.requirement_scope|safe }}
+            </div>
+        </div>
+    </div>
+
+    <!-- REQUIREMENT ITEMS -->
+    <div class="jumbotron mt-4">
+        <div class="container">
+            <h2 class="mt-4">Requirement Items</h2>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Requirement Item List</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>------</td>
+                            <td>Requirement Item Description</td>
+                        </tr>
+                    </thead>
+                    {% for row in requirement_item_results %}
+                        <tr>
+                            <td><a href="#ReqItem{{ row.requirement_item_id }}">REQ{{ row.requirement_item_id }}</a></td>
+                            <td>{{ row.requirement_item_title }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+
+
+
+            </div>
+        </div>
+
+        {% for row in requirement_item_results %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h3 class="mt-4" id="ReqItem{{ row.requirement_item_id }}">{{ row.requirement_item_title }}</h3>
+                </div>
+                <div class="card-body">
+                    {{ row.requirement_item_scope|safe }}
+                </div>
+                <div class="card-footer">
+                    <ul class="list-group">
+                        <li class="list-group-item">Requirement Item Type: {{ row.requirement_item_type }}</li>
+                        <li class="list-group-item">Requirement Item Status: {{ row.requirement_item_status }}</li>
+                    </ul>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+</body>
+</html>

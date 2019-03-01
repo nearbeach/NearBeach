@@ -54,12 +54,12 @@ The table that will display the current directory.
             <tr>
                 <td>
                     <a href="javascript:void(0)" onclick="load_document_tree_list({{ location_id }},'{{ destination }}',{{ row.folder_id }})">
-                        <img src="{% static 'NearBeach/widgets/feather-master/icons/folder.svg' %}">{{ row.folder_description }}
+                        <img src="{% static 'NearBeach/widgets/feather/folder.svg' %}">{{ row.folder_description }}
                     </a>
                 </td>
                 <td></td>
                 {% if permission_results >= 3 %}
-                    <td><img src="{% static 'NearBeach/widgets/feather-master/icons/trash-2.svg' %}" onclick="confirm_delete_folder('{{ row.folder_id }}',{{ location_id }},'{{ destination }}', {{ folder_id }})"></td>
+                    <td><img src="{% static 'NearBeach/widgets/feather/trash-2.svg' %}" onclick="confirm_delete_folder('{{ row.folder_id }}',{{ location_id }},'{{ destination }}', {{ folder_id }})"></td>
                 {% endif %}
             </tr>
         {% endfor %}
@@ -69,7 +69,7 @@ The table that will display the current directory.
                 <td><a href="{% url 'private' row.document_key.document_key %}" target="_blank">{{ row.document_key.document_description }}</a></td>
                 <td>2018-10-03</td>
                 {% if permission_results %}
-                    <td><img src="{% static 'NearBeach/widgets/feather-master/icons/trash-2.svg' %}" onclick="confirm_delete_document('{{ row.document_key.document_key }}',{{ location_id }},'{{ destination }}', {{ folder_id }})"></td>
+                    <td><img src="{% static 'NearBeach/widgets/feather/trash-2.svg' %}" onclick="confirm_delete_document('{{ row.document_key.document_key }}',{{ location_id }},'{{ destination }}', {{ folder_id }})"></td>
                 {% endif %}
             </tr>
         {% endfor %}

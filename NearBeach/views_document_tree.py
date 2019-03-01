@@ -78,6 +78,8 @@ def document_tree_folder(request, location_id, destination, folder_id=''):
                 folder_submit.customer_id=customer.objects.get(customer_id=location_id)
             elif destination == "organisation":
                 folder_submit.organisation_id=organisation.objects.get(organisation_id=location_id)
+            elif destination == "request_for_change":
+                folder_submit.request_for_change=request_for_change.objects.get(rfc_id=location_id)
 
             folder_submit.save()
 
@@ -134,10 +136,24 @@ def document_tree_list(request, location_id, destination, folder_id=''):
             is_deleted="FALSE",
             organisation_id=location_id,
         )
-    else:
-        #TEMP CODE - will need to expand to utilise other objects
-        document_permission_results = document_permission.all() #haha - ALL
-        folder_results = folder.objects.all()
+    elif destination == "requirement":
+        folder_results = folder.objects.filter(
+            is_deleted="FALSE",
+            requirement_id=location_id,
+        )
+        document_permission_results = document_permission.objects.filter(
+            is_deleted="FALSE",
+            requirement_id=location_id,
+        )
+    elif destination == "request_for_change":
+        folder_results = folder.objects.filter(
+            is_deleted="FALSE",
+            request_for_change=location_id,
+        )
+        document_permission_results = document_permission.objects.filter(
+            is_deleted="FALSE",
+            request_for_change=location_id,
+        )
 
     if folder_id:
         folder_results = folder_results.filter(parent_folder_id=folder_id)
@@ -151,8 +167,6 @@ def document_tree_list(request, location_id, destination, folder_id=''):
 
     # Load the template
     t = loader.get_template('NearBeach/document_tree/document_tree_list.html')
-
-    print("PRIVATE MEDIA: " + settings.PRIVATE_MEDIA_URL)
 
     # context
     c = {
@@ -210,7 +224,10 @@ def document_tree_upload(request, location_id, destination, folder_id):
                 document_permissions_submit.customer_id = customer.objects.get(customer_id=location_id)
             elif destination == "organisation":
                 document_permissions_submit.organisation_id = organisation.objects.get(organisation_id=location_id)
-            # Must apply other objects
+            elif destination == "requirement":
+                document_permissions_submit.requirement_id = requirement.objects.get(requirement_id=location_id)
+            elif destination == "request_for_change":
+                document_permissions_submit.request_for_change = request_for_change.objects.get(rfc_id=location_id)
 
             # NEST UPLOAD TO CURRENT FOLDER
             if folder_id == 0 or folder_id == '0' or not folder_id:
@@ -263,6 +280,10 @@ def document_tree_url(request,location_id,destination,folder_id=''):
                 document_permissions_submit.customer_id = customer.objects.get(customer_id=location_id)
             elif destination == "organisation":
                 document_permissions_submit.organisation_id = organisation.objects.get(organisation_id=location_id)
+            elif destination == "requirement":
+                document_permissions_submit.requirement_id = requirement.objects.get(requirement_id=location_id)
+            elif destination == "request_for_change":
+                document_permissions_submit.request_for_change = request_for_change.objects.get(rfc_id=location_id)
             # Must apply other objects
 
             # NEST UPLOAD TO CURRENT FOLDER

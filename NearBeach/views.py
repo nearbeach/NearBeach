@@ -28,9 +28,12 @@ from urllib.request import urlopen
 from weasyprint import HTML
 from django.core.mail import send_mail
 from urllib.parse import urlparse, urlencode, quote_plus
+from docx import Document
+from docx.shared import Cm, Inches
+from bs4 import BeautifulSoup
 
 #import python modules
-import datetime, json, simplejson, urllib.parse
+import datetime, json, simplejson, urllib.parse, pypandoc
 
 
 @login_required(login_url='login')
@@ -455,6 +458,12 @@ def assigned_group_add(request, location_id, destination):
                     group_id=form.cleaned_data['add_group'],
                     change_user=request.user,
                 )
+            elif destination == "request_for_change":
+                object_assignment_submit = object_assignment(
+                    request_for_change=request_for_change.objects.get(rfc_id=location_id),
+                    group_id=form.cleaned_data['add_group'],
+                    change_user=request.user,
+                )
             object_assignment_submit.save()
 
 
@@ -542,7 +551,22 @@ def assigned_group_list(request, location_id, destination):
         ).exclude(
             group_id=None,
         )
+    elif destination == "requirement":
+        group_list_results = object_assignment.objects.filter(
+            is_deleted="FALSE",
+            requirement_id=location_id,
+        ).exclude(
+            group_id=None,
+        )
+    elif destination == "request_for_change":
+        group_list_results = object_assignment.objects.filter(
+            is_deleted="FALSE",
+            request_for_change=location_id,
+        ).exclude(
+            group_id=None,
+        )
     else:
+
         group_list_results = ''
 
     # Load the template
@@ -556,6 +580,280 @@ def assigned_group_list(request, location_id, destination):
 
     return HttpResponse(t.render(c, request))
 
+
+@login_required(login_url='login')
+def assigned_opportunity_connection_add(request,opportunity_id,destination):
+    """
+    We want the ability to add either an organisation or customer to an opportunity. This function will apply that.
+    :param request:
+    :param opportunity_id: The opportunity that we are assigning the connection to
+    :param destination: If we are assigning a customer or organisation
+    :return: Search Page
+
+    Method
+    ~~~~~~
+    1. Check user's permissions - send them to the naughty corner if they do not have permission
+    2. Check to see if the method is post - follow instructions here if it is post
+    3. Check to see if the destination is customer or organisation. Pull out the relevant search results.
+    4. Collect the template
+    5. Render the results
+    """
+    permission_results = return_user_permission_level(request,None,'opportunity')
+
+    if permission_results['opportunity'] < 2:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        """
+        Method
+        ~~~~~~
+        1. Obtain the correct form.
+        2. If form is NOT valid - show errors and reload screen
+        3. If form is valid, read next method.
+        """
+        form = connect_form(request.POST)
+
+        if form.is_valid():
+            """
+            The user has submitted some customers. We will now assign them to the opportunity.
+            
+            Method
+            ~~~~~~
+            1. Extract the required data
+            2. Iterate through each result and add them to the database
+            3. Return the user to the opportunity.
+            """
+            customer_extract = form.cleaned_data['customers']
+            organisation_extract = form.cleaned_data['organisations']
+
+            for row in customer_extract:
+                #Lets save the customer against the opportunity. :)
+                submit_opportunity_connection = opportunity_connection(
+                    opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                    customer=row,
+                    change_user=request.user,
+                )
+                submit_opportunity_connection.save()
+
+            for row in organisation_extract:
+                #Lets save the organisation against the opportunity :)
+                submit_opportunity_connection = opportunity_connection(
+                    opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                    organisation=row,
+                    change_user=request.user,
+                )
+                submit_opportunity_connection.save()
+
+            #Send the user back to the opportunity
+            return HttpResponseRedirect(reverse('opportunity_information', args={ opportunity_id }))
+        else:
+            print("There was an issue getting data from the form. Sending user back.")
+            print(form)
+
+
+    """
+    The following if statements will get
+    - Get the correct required template... this... this is different
+    """
+    if destination == "organisation":
+        #Template
+        t = loader.get_template('NearBeach/opportunity_information/opportunity_connect_organisation.html')
+    else:
+        # Template
+        t = loader.get_template('NearBeach/opportunity_information/opportunity_connect_customer.html')
+
+
+    c = {
+        'connect_form': connect_form(),
+        'opportunity_id': opportunity_id,
+        'opportunity_permission': permission_results['opportunity'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+
+    return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login')
+def assigned_opportunity_connection_delete(request, opportunity_id, location_id, destination):
+    """
+    This will remove any organisation/customer connection to an opportunity.
+    :param request:
+    :param location_id: The ID of the customer/organisation
+    :param destination: This tells the program if we are looking for an organisation or location.
+    :return: Success results
+
+    Method
+    ~~~~~~
+    1. Check permissions - send user away if they do not have permissions
+    2. Check to make sure this is a POST
+    3. Filter for the relivant organisation/customer connection
+    4. Change the is_deleted value to TRUE
+    5. Send back blank page
+    """
+    permission_results = return_user_permission_level(request,None,'opportunity')
+    if permission_results['opportunity'] != 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        if destination == "organisation":
+            opportunity_connection.objects.filter(
+                is_deleted="FALSE",
+                organisation_id=location_id,
+                opportunity_id=opportunity_id,
+            ).update(is_deleted="TRUE")
+        else:
+            opportunity_connection.objects.filter(
+                is_deleted="FALSE",
+                customer_id=location_id,
+                opportunity_id=opportunity_id,
+            ).update(is_deleted="TRUE")
+
+        # Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry - can only do this request via post")
+
+
+@login_required(login_url='login')
+def assigned_rfc_connection_add(request, rfc_id, destination):
+    """
+    We want the ability to add either an organisation or customer to an request for change. This function will apply that.
+    :param request:
+    :param rfc_id: The rfc that we are assigning the connection to
+    :param destination: If we are assigning a customer or organisation
+    :return: Search Page
+
+    Method
+    ~~~~~~
+    1. Check user's permissions - send them to the naughty corner if they do not have permission
+    2. Check to see if the method is post - follow instructions here if it is post
+    3. Check to see if the destination is customer or organisation. Pull out the relevant search results.
+    4. Collect the template
+    5. Render the results
+    """
+    permission_results = return_user_permission_level(request, None, 'request_for_change')
+
+    if permission_results['request_for_change'] < 2:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        """
+        Method
+        ~~~~~~
+        1. Obtain the correct form.
+        2. If form is NOT valid - show errors and reload screen
+        3. If form is valid, read next method.
+        """
+        form = connect_form(request.POST)
+
+        if form.is_valid():
+            """
+            The user has submitted some customers. We will now assign them to the opportunity.
+
+            Method
+            ~~~~~~
+            1. Extract the required data
+            2. Iterate through each result and add them to the database
+            3. Return the user to the opportunity.
+            """
+            customer_extract = form.cleaned_data['customers']
+            organisation_extract = form.cleaned_data['organisations']
+
+            for row in customer_extract:
+                # Lets save the customer against the opportunity. :)
+                submit_stakeholder = request_for_change_stakeholder(
+                    #opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                    request_for_change=request_for_change.objects.get(rfc_id=rfc_id),
+                    customer=row,
+                    change_user=request.user,
+                )
+                submit_stakeholder.save()
+
+            for row in organisation_extract:
+                # Lets save the organisation against the opportunity :)
+                submit_stakeholder = request_for_change_stakeholder(
+                    #opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                    request_for_change=request_for_change.objects.get(rfc_id=rfc_id),
+                    organisation=row,
+                    change_user=request.user,
+                )
+                submit_stakeholder.save()
+
+            # Send the user back to the opportunity
+            return HttpResponseRedirect(reverse('request_for_change_information', args={rfc_id}))
+        else:
+            print("There was an issue getting data from the form. Sending user back.")
+            print(form)
+
+    """
+    The following if statements will get
+    - Get the correct required template... this... this is different
+    """
+    rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
+    if destination == "organisation":
+        # Template
+        t = loader.get_template('NearBeach/request_for_change/rfc_connect_organisation.html')
+    else:
+        # Template
+        t = loader.get_template('NearBeach/request_for_change/rfc_connect_customer.html')
+
+    c = {
+        'connect_form': connect_form(),
+        'rfc_id': rfc_id,
+        'rfc_results': rfc_results,
+        'rfc_permission': permission_results['request_for_change'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def assigned_rfc_connection_delete(request, rfc_id, location_id, destination):
+    """
+    This will remove any organisation/customer connection to an rfc.
+    :param request:
+    :param location_id: The ID of the customer/organisation
+    :param destination: This tells the program if we are looking for an organisation or location.
+    :return: Success results
+
+    Method
+    ~~~~~~
+    1. Check permissions - send user away if they do not have permissions
+    2. Check to make sure this is a POST
+    3. Filter for the relevant organisation/customer connection
+    4. Change the is_deleted value to TRUE
+    5. Send back blank page
+    """
+    permission_results = return_user_permission_level(request, None, 'opportunity')
+    if permission_results['opportunity'] != 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        if destination == "organisation":
+            request_for_change_stakeholder.objects.filter(
+                is_deleted="FALSE",
+                organisation_id=location_id,
+                request_for_change=rfc_id,
+            ).update(is_deleted="TRUE")
+        else:
+            request_for_change_stakeholder.objects.filter(
+                is_deleted="FALSE",
+                customer_id=location_id,
+                request_for_change=rfc_id,
+            ).update(is_deleted="TRUE")
+
+        # Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("Sorry - can only do this request via post")
 
 @login_required(login_url='login')
 def assigned_user_add(request, location_id, destination):
@@ -1245,6 +1543,133 @@ def campus_readonly(request, campus_information):
     return HttpResponse(t.render(c, request))
 
 
+
+
+@login_required(login_url='login')
+def change_task_new(request,rfc_id):
+    """
+    This form is called when;
+    - A user wants to create a new change task
+    - A user submites a new change task
+    :param request:
+    :param rfc_id: This will link this change task to the current rfc
+    :return: Web page
+
+    Method
+    ~~~~~~
+    1. Check permissions
+    2. Check to see if method is POST - if POST then follow instructions there
+    3. Get form data
+    4. Get template
+    5. Render all that and send to the user
+    """
+
+    permission_results = return_user_permission_level(request, None, 'request_for_change')
+    if permission_results['request_for_change'] <= 1:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        """
+        Method
+        ~~~~~~
+        1. Get the form data
+        2. Fill out the change user
+        3. Fill out the status
+        4. Validate the form
+        5. Save
+        """
+        form = new_change_task_form(request.POST,rfc_id=rfc_id)
+        if form.is_valid():
+            #Save the data
+            change_task_submit = change_task(
+                change_task_title=form.cleaned_data['change_task_title'],
+                change_task_start_date=form.cleaned_data['change_task_start_date'],
+                change_task_end_date=form.cleaned_data['change_task_end_date'],
+                change_task_assigned_user=form.cleaned_data['change_task_assigned_user'],
+                change_task_qa_user=form.cleaned_data['change_task_qa_user'],
+                change_task_description=form.cleaned_data['change_task_description'],
+                change_task_required_by=form.cleaned_data['change_task_required_by'],
+                change_user=request.user,
+                change_task_status=1,
+                request_for_change=request_for_change.objects.get(rfc_id=rfc_id)
+            )
+            change_task_submit.save()
+
+            #Send back blank page
+            t = loader.get_template('NearBeach/blank.html')
+            c = {}
+            return HttpResponse(t.render(c,request))
+        else:
+            print(form.errors)
+
+    # Get template
+    t = loader.get_template('NearBeach/request_for_change/change_task_new.html')
+
+    # Context
+    c = {
+        'new_change_task_form': new_change_task_form(
+            rfc_id=rfc_id,
+        ),
+    }
+
+    return HttpResponse(t.render(c,request))
+
+@login_required(login_url='login')
+def change_task_list(request,rfc_id):
+    """
+    When a user is looking at a request for change, they will need to see ALL change tasks associated with this rfc.
+    This will call this function through AJAX. This function will then deliver a simple and effecting RUN LIST/CHANGE TASKS
+    :param request:
+    :param rfc_id: The request for change we are looking at.
+    :return: The RUN LIST/CHANGE TASKS
+
+    Method
+    ~~~~~~
+    1. Check user permissions
+    2. Obtain the SQL required
+    3. Get template and context
+    4. Render and send to the user.
+    """
+
+    permission_results = return_user_permission_level(request,None,'request_for_change')
+    if permission_results['request_for_change'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    # Get data
+    change_task_results = change_task.objects.filter(
+        is_deleted="FALSE",
+        request_for_change=rfc_id,
+    ).order_by(
+        'change_task_start_date',
+        'change_task_end_date',
+        'change_task_assigned_user',
+        'change_task_qa_user',
+    )
+
+    assigned_user_results = User.objects.filter(
+        is_active=True,
+        id__in=change_task_results.values('change_task_assigned_user')
+    )
+    qa_user_results = User.objects.filter(
+        is_active=True,
+        id__in=change_task_results.values('change_task_qa_user')
+    )
+
+    # Template
+    t = loader.get_template('NearBeach/request_for_change/change_task_list.html')
+
+    # Context
+    c = {
+        'change_task_results': change_task_results,
+        'permission': permission_results['request_for_change'],
+        'rfc_id': rfc_id,
+        'assigned_user_results': assigned_user_results,
+        'qa_user_results': qa_user_results,
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
 @login_required(login_url='login')
 def cost_information(request, location_id, destination):
     if destination == "project":
@@ -1471,9 +1896,14 @@ def customer_information(request, customer_id):
         )
     )
     opportunity_results = opportunity.objects.filter(
-        customer_id=customer_id,
-        opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
+        is_deleted="FALSE",
+        opportunity_id__in=opportunity_connection.objects.filter(
+            is_deleted="FALSE",
+            customer_id=customer_id,
+            opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
+        ).values('opportunity_id'),
     )
+
     #For when customer have an organisation
     campus_results = customer_campus.objects.filter(
         customer_id=customer_id,
@@ -2690,17 +3120,19 @@ def email(request,location_id,destination):
         customer_results = customer.objects.filter(
             Q(is_deleted="FALSE") &
             Q(
-                Q(customer_id__in=opportunity.objects.filter(
-                    is_deleted="FALSE",
-                    opportunity_id=location_id,
-                ).values('customer_id')) |
                 Q(customer_id__in=customer.objects.filter(
                     is_deleted="FALSE",
-                    organisation_id__in=opportunity.objects.filter(
-                        opportunity_id=location_id
+                    organisation_id__in=opportunity_connection.objects.filter(
+                        is_deleted="FALSE",
+                        opportunity_id=location_id,
+                        organisation_id__isnull=False,
                     ).values('organisation_id')
-                ).values('customer_id')
-                )
+                )) |
+                Q(customer_id__in=opportunity_connection.objects.filter(
+                    is_deleted="FALSE",
+                    customer_id__isnull=False,
+                    opportunity_id=location_id,
+                ))
             )
         )
         initial = {
@@ -2913,6 +3345,75 @@ def extract_quote(request, quote_uuid,quote_template_id):
 
 
 @login_required(login_url='login')
+def extract_requirement(request,requirement_id):
+    """
+    extract requirement will create a simple DOCX document which the use can use to present to customers/stakeholders.
+    :param request:
+    :param requirement_id: The requirement ID we will be extracting
+    :return: A simple DOCX file.
+
+    Method
+    ~~~~~~
+    1. Check user permissions
+    2. Gather the required data for the requirement, requirement_items
+    3. Construct the template and feed into a variable
+    4. Construct the document location - usually under /private/
+    5. Render the results to DOCX using pypandoc
+    6. Return the results to the user as an attachment
+    """
+    # Get data
+    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    requirement_link_results = requirement_link.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    )
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    )
+    requirement_item_link_results=requirement_item_link.objects.filter(
+        is_deleted="FALSE",
+        requirement_item_id__in=requirement_item_results.values('requirement_item_id'),
+    )
+
+
+    # Get template
+    t = loader.get_template('NearBeach/requirement_information/preview_requirement.html')
+
+    # Context
+    c = {
+        'requirement_results': requirement_results,
+        'requirement_link_results': requirement_link_results,
+        'requirement_item_results': requirement_item_results,
+        'requirement_item_link_results': requirement_item_link_results,
+    }
+
+    # Render the template
+    data = HttpResponse(t.render(c,request))
+
+    # Obtain the location of the file - filename will be called Requirement_{{ id }}_{{ current_datetime }}.docx
+    file_name = 'requirement_' + str(requirement_id) + '_' + str(datetime.datetime.now()) + '.docx'
+    outfile = settings.PRIVATE_MEDIA_ROOT + file_name
+
+    # Render the output
+    output = pypandoc.convert_text(
+        data.content,
+        format='html',
+        to='docx',
+        outputfile=outfile,
+        extra_args=[
+            "-M2GB",
+            "+RTS",
+            "-K64m",
+            "-RTS"
+        ]
+    )
+
+    # Return attachment (which is the outfile)
+    return server.serve(request,path=outfile)
+
+
+@login_required(login_url='login')
 def group_information(request,group_id):
     """
     This def will bring up the group information page. If the user makes a change then it will apply those changes.
@@ -3104,6 +3605,9 @@ def kanban_information(request,kanban_board_id):
 
     if permission_results['kanban'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
+    elif permission_results['kanban'] == 1:
+        #The user can only get read only access
+        return HttpResponseRedirect(reverse('kanban_read_only', args= { kanban_board_id }))
 
     """
     Test User Access
@@ -3163,22 +3667,6 @@ def kanban_information(request,kanban_board_id):
     return HttpResponse(t.render(c, request))
 
 
-def kanban_move_card(request,kanban_card_id,kanban_column_id,kanban_level_id):
-    if request.method == "POST":
-        kanban_card_result = kanban_card.objects.get(kanban_card_id=kanban_card_id)
-        kanban_card_result.kanban_column_id = kanban_column.objects.get(kanban_column_id=kanban_column_id)
-        kanban_card_result.kanban_level_id = kanban_level.objects.get(kanban_level_id=kanban_level_id)
-        kanban_card_result.save()
-
-        #Send back blank like a crazy person.
-        t = loader.get_template('NearBeach/blank.html')
-
-        # context
-        c = {}
-
-        return HttpResponse(t.render(c, request))
-    else:
-        return HttpResponseBadRequest("This request can only be through POST")
 
 
 @login_required(login_url='login')
@@ -3204,6 +3692,22 @@ def kanban_list(request):
 
     return HttpResponse(t.render(c, request))
 
+def kanban_move_card(request,kanban_card_id,kanban_column_id,kanban_level_id):
+    if request.method == "POST":
+        kanban_card_result = kanban_card.objects.get(kanban_card_id=kanban_card_id)
+        kanban_card_result.kanban_column_id = kanban_column.objects.get(kanban_column_id=kanban_column_id)
+        kanban_card_result.kanban_level_id = kanban_level.objects.get(kanban_level_id=kanban_level_id)
+        kanban_card_result.save()
+
+        #Send back blank like a crazy person.
+        t = loader.get_template('NearBeach/blank.html')
+
+        # context
+        c = {}
+
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("This request can only be through POST")
 
 
 @login_required(login_url='login')
@@ -3468,6 +3972,69 @@ def kanban_properties(request,kanban_board_id):
 
     return HttpResponse(t.render(c, request))
 
+
+def kanban_read_only(request,kanban_board_id):
+    permission_results = return_user_permission_level(request, None,['kanban'])
+
+    if permission_results['kanban'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    """
+    Test User Access
+    ~~~~~~~~~~~~~~~~
+    A user who wants to access this Kanban Board will need to meet one of these two conditions
+    1. They have an access to  a group whom has been granted access to this kanban board
+    2. They are a super user (they should be getting access to all objects)
+    """
+    object_access = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        kanban_board_id=kanban_board_id,
+        group_id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            username=request.user,
+        ).values('group_id')
+    )
+    if object_access.count() == 0 and not permission_results['administration'] == 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
+    #Get the required information
+    kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+
+    """
+    If this kanban is connected to a requirement then we need to send it to the 'kanban_requirement_information". This
+    is due to the large difference between this kanban and the requirement's kanban board.
+    """
+    if kanban_board_results.requirement_id:
+        return HttpResponseRedirect(reverse('kanban_requirement_information',args={kanban_board_id}))
+
+    kanban_level_results = kanban_level.objects.filter(
+        is_deleted="FALSE",
+        kanban_board=kanban_board_id,
+    ).order_by('kanban_level_sort_number')
+    kanban_column_results = kanban_column.objects.filter(
+        is_deleted="FALSE",
+        kanban_board=kanban_board_id,
+    ).order_by('kanban_column_sort_number')
+    kanban_card_results = kanban_card.objects.filter(
+        is_deleted="FALSE",
+        kanban_board=kanban_board_id,
+    ).order_by('kanban_card_sort_number')
+
+    t = loader.get_template('NearBeach/kanban/kanban_read_only.html')
+
+    # context
+    c = {
+        'kanban_board_id': kanban_board_id,
+        'kanban_board_results': kanban_board_results,
+        'kanban_level_results': kanban_level_results,
+        'kanban_column_results': kanban_column_results,
+        'kanban_card_results': kanban_card_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
 
 
 @login_required(login_url='login')
@@ -4439,7 +5006,13 @@ def new_kudos(request,project_id):
         return HttpResponseBadRequest("Sorry, can only do this request through post")
 
 @login_required(login_url='login')
-def new_opportunity(request, location_id,destination):
+def new_opportunity(request):
+    """
+    New opportunity will give the user the ability to create a new opportunity. The new opportunity will not be connected
+    with any other customers or organisations. This can be done in the opportunity information page.
+    :param request:
+    :return:
+    """
     permission_results = return_user_permission_level(request, None, 'opportunity')
 
     if permission_results['opportunity'] < 3:
@@ -4451,17 +5024,7 @@ def new_opportunity(request, location_id,destination):
         if form.is_valid():
             current_user = request.user
             # Start saving the data in the form
-            opportunity_name = form.cleaned_data['opportunity_name']
-            opportunity_description = form.cleaned_data['opportunity_description']
-            currency_id = form.cleaned_data['currency_id']
-            opportunity_amount = form.cleaned_data['opportunity_amount']
-            amount_type_id = form.cleaned_data['amount_type_id']
-            opportunity_success_probability = form.cleaned_data['opportunity_success_probability']
-            lead_source_id = form.cleaned_data['lead_source_id']
             select_groups = form.cleaned_data['select_groups']
-            opportunity_expected_close_date = form.cleaned_data['opportunity_expected_close_date']
-
-
 
             """
 			Some dropdown boxes will need to have instances made from the values.
@@ -4474,35 +5037,20 @@ def new_opportunity(request, location_id,destination):
 			SAVE THE DATA
 			"""
             submit_opportunity = opportunity(
-                opportunity_name=opportunity_name,
-                opportunity_description=opportunity_description,
-                currency_id=currency_id,
-                opportunity_amount=opportunity_amount,
-                amount_type_id=amount_type_id,
-                opportunity_success_probability=opportunity_success_probability,
-                lead_source_id=lead_source_id,
-                opportunity_expected_close_date=opportunity_expected_close_date,
+                opportunity_name=form.cleaned_data['opportunity_name'],
+                opportunity_description=form.cleaned_data['opportunity_description'],
+                currency_id=form.cleaned_data['currency_id'],
+                opportunity_amount=form.cleaned_data['opportunity_amount'],
+                amount_type_id=form.cleaned_data['amount_type_id'],
+                opportunity_success_probability=form.cleaned_data['opportunity_success_probability'],
+                lead_source_id=form.cleaned_data['lead_source_id'],
+                opportunity_expected_close_date=form.cleaned_data['opportunity_expected_close_date'],
                 opportunity_stage_id=stage_of_opportunity_instance,
-                user_id=current_user,
+                user_id=request.user,
                 change_user=request.user,
             )
-            """
-            We ignore the destination at this part. A user might have tried to create the opportunity from the organisation
-            however have the change of mind when filling out the form. This short method checks to see if there is a
-            customer id. If there is one, then it will assign the opportunity to the customer.
-            """
-            customer_id = request.POST.get('customer_id')
-            if customer_id.isdigit():
-                customer_instance = customer.objects.get(customer_id=request.POST.get('customer_id'))
-                submit_opportunity.customer_id = customer_instance
-                #If a customer has a null for an organisation it will pass through as null
-                submit_opportunity.organisation_id = customer_instance.organisation_id
-            else:
-                organisations_instance = form.cleaned_data['organisation_id']
-                if organisations_instance:
-                    submit_opportunity.organisation_id = organisations_instance
             submit_opportunity.save()
-            opportunity_instance = opportunity.objects.get(opportunity_id=submit_opportunity.opportunity_id)
+
 
             """
             Permissions granting
@@ -4510,7 +5058,7 @@ def new_opportunity(request, location_id,destination):
             for row in select_groups:
                 group_instance = group.objects.get(group_name=row)
                 permission_save = object_assignment(
-                    opportunity_id=opportunity_instance,
+                    opportunity_id=submit_opportunity,
                     group_id=group_instance,
                     change_user=request.user,
                 )
@@ -4520,22 +5068,16 @@ def new_opportunity(request, location_id,destination):
         else:
             print(form.errors)
 
-
+    # Get data
+    opportunity_stage_results = list_of_opportunity_stage.objects.all()
     # load template
     t = loader.get_template('NearBeach/new_opportunity.html')
-
-    # DATA
-    customer_results = customer.objects.all()
-    opportunity_stage_results = list_of_opportunity_stage.objects.filter(is_deleted="FALSE")
 
     # context
     c = {
         'new_opportunity_form': new_opportunity_form(),
-        'customer_results': customer_results,
-        'location_id': location_id,
-        'destination': destination,
-        'opportunity_stage_results': opportunity_stage_results,
         'timezone': settings.TIME_ZONE,
+        'opportunity_stage_results': opportunity_stage_results,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
     }
@@ -5017,6 +5559,90 @@ def new_quote_template(request):
 
 
 @login_required(login_url='login')
+def new_request_for_change(request):
+    """
+    A user would like to implement a new request for change. This new function will ask the user for the following set of
+    information;
+    - Basic Request for information
+    - Basic risk, plan and implementation
+    - Assigned groups
+    :param request:
+    :return: The new request for change page
+
+    Method
+    ~~~~~~
+    1. Check user permission - if they can't do this then send them to the naughty corner
+    2. Check to see if it is post - read notes in that section
+    3. Gather the required fields
+    4. Render the page
+    """
+
+    permission_results = return_user_permission_level(request,None,'request_for_change')
+    if permission_results['request_for_change'] <= 2:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    form_errors = ""
+
+    if request.method == "POST":
+        form  = new_request_for_change_form(request.POST)
+        if form.is_valid():
+            #Save the data from the form.
+            rfc_submit = request_for_change(
+                rfc_title=form.cleaned_data['rfc_title'],
+                rfc_type=form.cleaned_data['rfc_type'],
+                rfc_implementation_start_date=form.cleaned_data['rfc_implementation_start_date'],
+                rfc_implementation_end_date=form.cleaned_data['rfc_implementation_end_date'],
+                rfc_implementation_release_date=form.cleaned_data['rfc_implementation_release_date'],
+                rfc_version_number=form.cleaned_data['rfc_version_number'],
+                rfc_summary=form.cleaned_data['rfc_summary'],
+                rfc_lead=form.cleaned_data['rfc_lead'],
+                rfc_priority=form.cleaned_data['rfc_priority'],
+                rfc_risk=form.cleaned_data['rfc_risk'],
+                rfc_impact=form.cleaned_data['rfc_impact'],
+                rfc_risk_and_impact_analysis=form.cleaned_data['rfc_risk_and_impact_analysis'],
+                rfc_implementation_plan=form.cleaned_data['rfc_implementation_plan'],
+                rfc_backout_plan=form.cleaned_data['rfc_backout_plan'],
+                rfc_test_plan=form.cleaned_data['rfc_test_plan'],
+                change_user=request.user,
+                rfc_status=1, #Draft
+            )
+            rfc_submit.save()
+
+            """
+            Once the new project has been created, we will obtain a 
+            primary key. Using this new primary key we will allocate
+            permissions to the new project.
+            """
+            rfc_permission = form.cleaned_data['rfc_permission']
+
+            for row in rfc_permission:
+                submit_group = object_assignment(
+                    request_for_change=rfc_submit,
+                    group_id=group.objects.get(group_id=row.group_id),
+                    change_user=request.user,
+                )
+                submit_group.save()
+
+            #Send the user to the new RFC
+            return HttpResponseRedirect(reverse('request_for_change_information', args={ rfc_submit.rfc_id }))
+        else:
+            print(form.errors)
+            form_errors = form.errors
+
+
+    # Get tempalte
+    t = loader.get_template('NearBeach/new_request_for_change.html')
+
+    # Context
+    c = {
+        'new_request_for_change_form': new_request_for_change_form(),
+        'form_errors': form_errors,
+        # ADD IN PERMISSIONS
+    }
+
+    return HttpResponse(t.render(c,request))
+
+@login_required(login_url='login')
 def new_task(request, location_id='', destination=''):
     permission_results = return_user_permission_level(request, None, 'task')
 
@@ -5194,6 +5820,51 @@ def opportunity_delete_permission(request, opportunity_permissions_id):
         return HttpResponseBadRequest("Sorry, this has to be through post")
 
 
+@login_required(login_url='login')
+def opportunity_connection_list(request, opportunity_id):
+    permission_results = return_user_permission_level(request, None,'opportunity')
+
+    if permission_results['opportunity']  == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+
+    # Get data
+    customer_connection_results = customer.objects.filter(
+        is_deleted="FALSE",
+        customer_id__in=opportunity_connection.objects.filter(
+            is_deleted="FALSE",
+            opportunity_id=opportunity_id,
+            customer_id__isnull=False,
+        ).values('customer_id')
+    ).order_by('customer_first_name', 'customer_last_name')
+    organisation_connection_results = organisation.objects.filter(
+        is_deleted="FALSE",
+        organisation_id__in=opportunity_connection.objects.filter(
+            is_deleted="FALSE",
+            opportunity_id=opportunity_id,
+            organisation_id__isnull=False,
+        ).values('organisation_id')
+    )
+    opportunity_results=opportunity.objects.get(opportunity_id=opportunity_id)
+
+    # Template
+    t = loader.get_template('NearBeach/opportunity_information/opportunity_connection_list.html')
+
+
+    # Context
+    c = {
+        'customer_connection_results': customer_connection_results,
+        'organisation_connection_results': organisation_connection_results,
+        'opportunity_results': opportunity_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'opportunity_permission': permission_results['opportunity'],
+
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
 
 
 @login_required(login_url='login')
@@ -5341,7 +6012,6 @@ def opportunity_information(request, opportunity_id):
         is_deleted='FALSE',
     )
     opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
-    customer_results = customer.objects.filter(organisation_id=opportunity_results.organisation_id)
     group_permissions = object_assignment.objects.filter(
         group_id__isnull=False,
         opportunity_id=opportunity_id,
@@ -5359,28 +6029,7 @@ def opportunity_information(request, opportunity_id):
         is_deleted='FALSE',
         opportunity_id=opportunity_id,
     )
-    print(user_permissions)
 
-    end_hour = opportunity_results.opportunity_expected_close_date.hour
-    end_meridiem = u'AM'
-
-    print(str(end_hour))
-
-    if end_hour > 12:
-        end_hour = end_hour - 12
-        end_meridiem = 'PM'
-    elif end_hour == 0:
-        end_hour = 12
-
-    # initial data
-    initial = {
-        'finish_date_year': opportunity_results.opportunity_expected_close_date.year,
-        'finish_date_month': opportunity_results.opportunity_expected_close_date.month,
-        'finish_date_day': opportunity_results.opportunity_expected_close_date.day,
-        'finish_date_hour': end_hour,
-        'finish_date_minute': opportunity_results.opportunity_expected_close_date.minute,
-        'finish_date_meridiems': end_meridiem,
-    }
 
     # Loaed the template
     t = loader.get_template('NearBeach/opportunity_information.html')
@@ -5389,10 +6038,8 @@ def opportunity_information(request, opportunity_id):
         'opportunity_id': str(opportunity_id),
         'opportunity_information_form': opportunity_information_form(
             instance=opportunity_results,
-            initial=initial,
         ),
         'opportunity_results': opportunity_results,
-        'customer_results': customer_results,
         'group_permission': group_permissions,
         'user_permissions': user_permissions,
         'project_results': project_results,
@@ -5402,11 +6049,10 @@ def opportunity_information(request, opportunity_id):
         'timezone': settings.TIME_ZONE,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
-        'permission': permission_results['opportunity'],
+        'opportunity_permission': permission_results['opportunity'],
     }
 
     return HttpResponse(t.render(c, request))
-
 
 
 
@@ -5468,14 +6114,25 @@ def organisation_information(request, organisation_id):
     """
     We need to limit the amount of opportunities to those that the user has access to.
     """
-    #user_groups_results = user_group.objects.filter(username=request.user)
-
-
-    opportunity_results = opportunity.objects.filter(
+    user_groups_results = user_group.objects.filter(
         is_deleted="FALSE",
-        organisation_id=organisation_id,
+        username=request.user
     )
 
+    opportunity_permissions_results = object_assignment.objects.filter(
+        Q(
+            Q(assigned_user=request.user)  # User has permission
+            | Q(group_id__in=user_groups_results.values('group_id'))  # User's group have permission
+        )
+    )
+    opportunity_results = opportunity.objects.filter(
+        is_deleted="FALSE",
+        opportunity_id__in=opportunity_connection.objects.filter(
+            is_deleted="FALSE",
+            organisation_id=organisation_id,
+            opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
+        ).values('opportunity_id'),
+    )
 
     # Date required to initiate date
     today = datetime.datetime.now()
@@ -5790,6 +6447,57 @@ def preview_quote(request,quote_uuid,quote_template_id):
 
     return HttpResponse(t.render(c,request))
 
+
+@login_required(login_url='login')
+def preview_requirement(request,requirement_id):
+    """
+    This is a read only document output of the requirements. It will contain the following information;
+    - Title page + requirement information
+    - Requirement Scope
+    - Requirement item table
+    - Requirement item information
+    - Apendix A: Requirement and Requirement Item Links
+
+    :param request:
+    :param requirement_id:
+    :return: Read only form
+
+    Method
+    ~~~~~~
+    1. Collect data
+    2. Obtain templates
+    3. Render templates
+    4. Return HTML to user.
+    """
+
+    # Get data
+    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    requirement_link_results = requirement_link.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    )
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    )
+    requirement_item_link_results=requirement_item_link.objects.filter(
+        is_deleted="FALSE",
+        requirement_item_id__in=requirement_item_results.values('requirement_item_id'),
+    )
+
+
+    # Get template
+    t = loader.get_template('NearBeach/requirement_information/preview_requirement.html')
+
+    # Context
+    c = {
+        'requirement_results': requirement_results,
+        'requirement_link_results': requirement_item_results,
+        'requirement_item_results': requirement_item_results,
+        'requirement_item_link_results': requirement_item_link_results,
+    }
+
+    return HttpResponse(t.render(c,request))
 
 
 """
@@ -6475,6 +7183,74 @@ def rename_document(request, document_key):
     else:
         return HttpResponseBadRequest("This is a POST function. POST OFF!")
 
+
+@login_required(login_url='login')
+def request_for_change_information(request,rfc_id):
+    """
+
+    :param request:
+    :param rfc_id:
+    :return:
+    """
+
+    permission_results = return_user_permission_level(request,None,'request_for_change')
+    if permission_results['request_for_change'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+    ## ADD IN READ ONLY HERE!!!
+
+    # Get data
+    rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
+
+    organisation_stakeholders = organisation.objects.filter(
+        is_deleted="FALSE",
+        organisation_id__in=request_for_change_stakeholder.objects.filter(
+            is_deleted="FALSE",
+            request_for_change=rfc_id,
+            organisation_id__isnull=False,
+        ).values('organisation_id')
+    )
+
+    customer_stakeholders = customer.objects.filter(
+        is_deleted="FALSE",
+        customer_id__in=request_for_change_stakeholder.objects.filter(
+            is_deleted="FALSE",
+            request_for_change=rfc_id,
+            customer_id__isnull=False,
+        ).values('customer_id')
+    )
+
+
+    # Get template
+    t = loader.get_template('NearBeach/request_for_change_information.html')
+
+    # Context
+    c = {
+        'request_for_change_form': request_for_change_form(
+            initial={
+                'rfc_title': rfc_results.rfc_title,
+                'rfc_type': rfc_results.rfc_type,
+                'rfc_implementation_start_date': rfc_results.rfc_implementation_start_date,
+                'rfc_implementation_end_date': rfc_results.rfc_implementation_end_date,
+                'rfc_implementation_release_date': rfc_results.rfc_implementation_release_date,
+                'rfc_version_number': rfc_results.rfc_version_number,
+                'rfc_summary': rfc_results.rfc_summary,
+                'rfc_lead': rfc_results.rfc_lead,
+                'rfc_priority': rfc_results.rfc_priority,
+                'rfc_risk': rfc_results.rfc_risk,
+                'rfc_impact': rfc_results.rfc_impact,
+                'rfc_risk_and_impact_analysis': rfc_results.rfc_risk_and_impact_analysis,
+                'rfc_implementation_plan': rfc_results.rfc_implementation_plan,
+                'rfc_backout_plan': rfc_results.rfc_backout_plan,
+                'rfc_test_plan': rfc_results.rfc_test_plan,
+            },
+        ),
+        'organisation_stakeholders': organisation_stakeholders,
+        'customer_stakeholders': customer_stakeholders,
+        'rfc_results': rfc_results,
+        'permission': permission_results['request_for_change']
+    }
+
+    return HttpResponse(t.render(c,request))
 
 @login_required(login_url='login')
 def resolve_project(request, project_id):

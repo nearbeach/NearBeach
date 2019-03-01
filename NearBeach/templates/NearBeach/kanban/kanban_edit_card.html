@@ -1,31 +1,39 @@
 {% csrf_token %}
 <data value="{{ kanban_card_id }}" id="edit_kanban_card_id"></data>
 
-<h2>Edit Kanban Card</h2>
-<ul>
-    {% if linked_card == True %}
-        <li>This card is linked - the card text can not be updated</li>
-    {% endif %}
-    <li>{{ kanban_card_form.kanban_card_text }}</li>
-    {% if kanban_permission > 1 or kanban_card_permission > 1 %}
-        <li>Kanban Column: {{ kanban_card_form.kanban_column }}</li>
-        <li>Kanban Level: {{ kanban_card_form.kanban_level }}</li>
-    {% endif %}
-</ul>
-
-<h4>Card Comments</h4>
-<ul>
-{% if kanban_permission > 1 or kanban_card_permission > 1 or kanban_comment_permission == 1 %}
-    <li>{{ kanban_card_form.kanban_card_comment }}</li>
-    <li><input type="submit" value="Submit new "></li>
+{% if linked_card == True %}
+    <div class="alert-primary">This card is linked - the card text can not be updated</div>
+{% endif %}
+<div class="form-group">
+    <label for="id_kanban_card_text">Card Text</label>
+    {{ kanban_card_form.kanban_card_text }}
+</div>
+{% if kanban_permission > 1 or kanban_card_permission > 1 %}
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="id_kanban_column">Kanban Column</label>
+            {{ kanban_card_form.kanban_column }}
+        </div>
+        <div class="form-group col-md-6">
+            <label for="id_kanban_level">Kanban Level</label>
+            {{ kanban_card_form.kanban_level }}
+        </div>
+    </div>
 {% endif %}
 
-{% for row in kanban_comment_results %}
-    {% for row in kanban_comment_results %}
-        <li>{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}</li>
-        <li><textarea readonly>{{ row.kanban_comment }}</textarea></li>
-    {% endfor %}
-{% endfor %}
 
-<a href="javascript:void(0)" onclick="close_kanban_edit_card()">Close</a>
-</ul>
+<h2>Card Comments</h2>
+<div class="form-group">
+    <label for="id_kanban_card_comment">Card Comment</label>
+    {{ kanban_card_form.kanban_card_comment }}
+</div>
+<button onclick="edit_card_submit()" class="btn btn-primary">Submit new comment</button>
+
+
+{% for row in kanban_comment_results %}
+    <hr>
+    <div class="form-group mb-2">
+        <label for="id_kanban_comment_{{ row.kanban_comment_id }}">{{ row.user_infomation }} - {{ row.user_id }} - {{ row.date_created }}</label>
+        <textarea id="id_kanban_comment_{{ row.kanban_kanban_comment_id }}" readonly class="form-control">{{ row.kanban_comment }}</textarea>
+    </div>
+{% endfor %}

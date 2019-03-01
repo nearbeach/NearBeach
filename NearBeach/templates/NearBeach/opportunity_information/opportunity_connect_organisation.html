@@ -1,0 +1,58 @@
+{% extends '../template.html' %}
+{% block content %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h1>Connect Organisations</h1>
+            {{ opportunity_results.opportunity_name }}
+        </div>
+        <div class="card-body">
+            <form method="POST" class="assigned_opportunity_connection_add" id="assigned_opportunity_connection_add" enctype="multipart/form-data"">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="filter_tables">Filter Organisations</label>
+                    <input id="filter_tables" type="text" placeholder="Filter..." onkeyup="apply_filters()" style="width: 100%;">
+                </div>
+                <div class="alert-primary">
+                    Select one or multiple organisations from the below list. Use the filter to filter the current list.
+                </div>
+
+                <div class="form-group">
+                    {{ connect_form.organisations }}
+                </div>
+
+                <div class="form-row">
+                    <input class="btn btn-primary col-md-6" type="submit" value="Connect Organisations(s)">
+                    <a href="{% url 'opportunity_information' opportunity_id %}" class="btn btn-secondary col-md-6">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function apply_filters() {
+            //Varibales used in the function
+            var input,
+                filter,
+                tr,
+                i;
+
+            //Get the value from the search box
+            input = document.getElementById("filter_tables");
+
+            //We want to compare apples with apples, make all uppercase
+            filter = input.value.toUpperCase();
+
+            //Get all table rows
+            tr = document.getElementsByTagName("tr");
+
+            for (i = 0; i < tr.length; i++) {
+                //If the <tr> contains any values of the filter OR has class header, we want to show
+                if (tr[i].innerHTML.toUpperCase().indexOf(filter) > -1 || tr[i].className=="header") {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+{% endblock %}

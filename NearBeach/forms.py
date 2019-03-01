@@ -56,123 +56,40 @@ RATING_SCORE = (
 )
 
 
-
-YEAR_CHOICES=(
-    ('2010','2010'),
-    ('2011','2011'),
-    ('2012','2012'),
-    ('2013','2013'),
-    ('2014','2014'),
-    ('2015','2015'),
-    ('2016','2016'),
-    ('2017','2017'),
-    ('2018','2018'),
-    ('2019','2019'),
-    ('2020','2020'),
-    ('2021','2021'),
-    ('2022','2022'),
-    ('2023','2023'),
-    ('2024','2024'),
-    ('2025','2025'),
-    ('2026','2026'),
-    ('2027','2027'),
-    ('2028','2028'),
-    ('2029','2029'),
-    ('2030','2030'),
-    ('2031','2031'),
-    ('2032','2032'),
-    ('2033','2033'),
-    ('2034','2034'),
-    ('2035','2035'),
-    ('2036','2036'),
-    ('2037','2037'),
-    ('2038','2038'),
-    ('2039','2039'),
-    ('2040','2040'),
+RFC_IMPACT = (
+    (3,'High'),
+    (2,'Medium'),
+    (1,'Low'),
 )
 
-MONTH_CHOICES=(
-    ('1','January'),
-    ('2','February'),
-    ('3','March'),
-    ('4','April'),
-    ('5','May'),
-    ('6','June'),
-    ('7','July'),
-    ('8','August'),
-    ('9','September'),
-    ('10','October'),
-    ('11','November'),
-    ('12','December'),
+RFC_PRIORITY = (
+    (4,'Critical'),
+    (3,'High'),
+    (2,'Medium'),
+    (1,'Low'),
 )
 
-DAY_CHOICES=(
-    ('1','1'),
-    ('2','2'),
-    ('3','3'),
-    ('4','4'),
-    ('5','5'),
-    ('6','6'),
-    ('7','7'),
-    ('8','8'),
-    ('9','9'),
-    ('10','10'),
-    ('11','11'),
-    ('12','12'),
-    ('13','13'),
-    ('14','14'),
-    ('15','15'),
-    ('16','16'),
-    ('17','17'),
-    ('18','18'),
-    ('19','19'),
-    ('20','20'),
-    ('21','21'),
-    ('22','22'),
-    ('23','23'),
-    ('24','24'),
-    ('25','25'),
-    ('26','26'),
-    ('27','27'),
-    ('28','28'),
-    ('29','29'),
-    ('30','30'),
-    ('31','31'),
+RFC_RISK = (
+    (5,'Very High'),
+    (4,'High'),
+    (3,'Moderate'),
+    (2,'Low'),
+    (1,'None'),
 )
 
-HOUR_CHOICES=(
-    ('1','1'),
-    ('2','2'),
-    ('3','3'),
-    ('4','4'),
-    ('5','5'),
-    ('6','6'),
-    ('7','7'),
-    ('8','8'),
-    ('9','9'),
-    ('10','10'),
-    ('11','11'),
-    ('12','12'),
+RFC_STATUS = (
+    (1,'Draft'),
+    (2,'Waiting for approval'),
+    (3,'Approved'),
+    (4,'Started'),
+    (5,'Finished'),
 )
 
-MINUTE_CHOICES=(
-    ('00','00'),
-    ('05','05'),
-    ('10','10'),
-    ('15','15'),
-    ('20','20'),
-    ('25','25'),
-    ('30','30'),
-    ('35','35'),
-    ('40','40'),
-    ('45','45'),
-    ('50','50'),
-    ('55','55'),
-)
-
-MERIDIEMS_CHOICES=(
-    ('AM','AM'),
-    ('PM','PM'),
+RFC_TYPE = (
+    (4,'Emergency'),
+    (3,'High'),
+    (2,'Medium'),
+    (1,'Low'),
 )
 
 
@@ -291,42 +208,63 @@ class assign_group_add_form(forms.Form):
                 group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     project_id=location_id,
-                ).exclude(group_id=None).values('group_id')
+                ).exclude(
+                    group_id=None
+                ).values('group_id')
             )
         elif destination == "task":
             group_results = group_results.exclude(
                 group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     task_id=location_id,
-                ).exclude(group_id=None).values('group_id')
+                ).exclude(
+                    group_id=None
+                ).values('group_id')
             )
         elif destination == "requirement":
             group_results = group_results.exclude(
                 group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     requirement_id=location_id,
-                ).exclude(group_id=None).values('group_id')
+                ).exclude(
+                    group_id=None
+                ).values('group_id')
             )
         elif destination == "quote":
             group_results = group_results.exclude(
                 group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     quote_id=location_id,
-                ).exclude(group_id=None).values('group_id')
+                ).exclude(
+                    group_id=None
+                ).values('group_id')
             )
         elif destination == "kanban_board":
             group_results = group_results.exclude(
                 group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     kanban_board_id=location_id,
-                ).exclude(group_id=None).values('group_id')
+                ).exclude(
+                    group_id=None
+                ).values('group_id')
             )
         elif destination == "opportunity":
             group_results = group_results.exclude(
                 group_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     opportunity_id=location_id,
-                ).exclude(group_id=None).values('group_id')
+                ).exclude(
+                    group_id=None
+                ).values('group_id')
+            )
+        elif destination == "request_for_change":
+            group_results = group_results.exclude(
+                group_id__in=object_assignment.objects.filter(
+                    is_deleted="FALSE",
+                    request_for_change_id=location_id,
+                ).exclude(
+                    group_id=None
+                ).values('group_id')
             )
 
         self.fields['add_group'].queryset = group_results
@@ -684,6 +622,30 @@ class campus_readonly_form(ModelForm):
         ]
 
 
+class connect_form(forms.Form):
+    customers=forms.ModelMultipleChoiceField(
+        queryset = customer.objects.filter(
+            is_deleted="FALSE",
+        ).order_by(
+            'customer_first_name',
+            'customer_last_name',
+        ),
+        widget=ConnectCustomerSelect(),
+        required=False,  # If they select nothing it will do nothing :)
+
+    )
+
+    organisations = forms.ModelMultipleChoiceField(
+        queryset=organisation.objects.filter(
+            is_deleted="FALSE",
+        ).order_by(
+            'organisation_name',
+        ),
+        widget=ConnectOrganisationSelect(),
+        required=False,  # If they select nothing it will do nothing :)
+    )
+
+
 class contact_history_readonly_form(ModelForm):
     def __init__(self, *args, **kwargs):
         """
@@ -993,17 +955,22 @@ class email_form(ModelForm):
                     ).values('customer_id')
                 )
         elif destination == "opportunity":
+            """
+            The following code needs to be fixed up as opportunities can be assigned to customers are organisations.
+            
+            The rule we want are;
+            - Either email all customers of a CONNECTED organisation
+            - OR email CONNECTED customers
+            """
             opportunity_results=opportunity.objects.get(opportunity_id=location_id)
-            if opportunity_results.organisation_id:
-                customer_results = customer.objects.filter(
+            customer_results = customer.objects.filter(
+                is_deleted="FALSE",
+                organisation_id__in=opportunity_connection.objects.filter(
                     is_deleted="FALSE",
-                    organisation_id=opportunity_results.organisation_id.organisation_id
-                )
-            else:
-                customer_results = customer.objects.filter(
-                    is_deleted="FALSE",
-                    customer_id=opportunity_results.customer_id.customer_id
-                )
+                    organisation_id__isnull=False,
+                    opportunity_id=location_id,
+                ).values('organisation_id')
+            )
         elif destination == "quote":
             """
             We need to determine who the quote is for to determine the customer list. For example a quote can be for;
@@ -1413,6 +1380,7 @@ class kanban_card_form(ModelForm):
         required=False,
         widget=TextInput(attrs={
             'placeholder': 'Card Comments',
+            'class': 'form-control',
         }),
     )
 
@@ -1421,7 +1389,24 @@ class kanban_card_form(ModelForm):
         max_length=255,
         widget=TextInput(attrs={
             'placeholder': 'Card Text',
+            'class': 'form-control',
+            'onkeydown': 'new_card_text_changed()',
+            'onchange': 'new_card_text_changed()',
         }),
+    )
+    kanban_column=forms.ModelChoiceField(
+        queryset=None,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        initial=0,
+    )
+    kanban_level = forms.ModelChoiceField(
+        queryset=None,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        initial=0,
     )
 
     class Meta:
@@ -1508,6 +1493,20 @@ class kanban_new_link_form(ModelForm):
 
         self.fields['kanban_column'].empty_label = None
         self.fields['kanban_level'].empty_label = None
+
+    kanban_column=forms.ModelChoiceField(
+        queryset=None,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    kanban_level=forms.ModelChoiceField(
+        queryset=None,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
 
     class Meta:
         model = kanban_card
@@ -1831,6 +1830,88 @@ class new_campus_form(forms.Form):
     )
 
 
+class new_change_task_form(ModelForm):
+    def __init__(self,*args,**kwargs):
+        #Extract the variables
+        rfc_id = kwargs.pop('rfc_id')
+
+        super(new_change_task_form,self).__init__(*args,**kwargs)
+
+        #Filter for users who are currently in the group.
+        user_results = User.objects.filter(
+            is_active=True,
+            id__in=user_group.objects.filter(
+                is_deleted="FALSE",
+                group_id__in=object_assignment.objects.filter(
+                    is_deleted="FALSE",
+                    request_for_change=rfc_id,
+                ).values('group_id')
+            ).values('username')
+        )
+
+        self.fields['change_task_assigned_user'].queryset=user_results
+        self.fields['change_task_qa_user'].queryset=user_results
+
+    change_task_title = forms.CharField(
+        max_length=255,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        }),
+    )
+    change_task_description=forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'class': 'form-control',
+            },
+        ),
+    )
+    change_task_start_date=forms.DateTimeField(
+        widget=forms.DateTimeInput(attrs={
+            'class': 'form-control',
+        }),
+    )
+    change_task_end_date=forms.DateTimeField(
+        widget=forms.DateTimeInput(attrs={
+            'class': 'form-control',
+        }),
+    )
+    change_task_assigned_user=forms.ModelChoiceField(
+        queryset=None, #Need to limit this
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+    )
+    change_task_qa_user=forms.ModelChoiceField(
+        queryset=None, #Need to limit this
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+    )
+    change_task_required_by=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        }),
+        initial='Stakeholder(s)',
+    )
+    class Meta:
+        model = change_task
+        fields = {
+            'change_task_title',
+            'change_task_description',
+            'change_task_start_date',
+            'change_task_end_date',
+            'change_task_assigned_user',
+            'change_task_qa_user',
+            'change_task_required_by',
+        }
+
+
+
 class new_customer_form(forms.Form):
     #Get data for choice boxes
     titles_results=list_of_title.objects.all()
@@ -2039,7 +2120,6 @@ class new_opportunity_form(ModelForm):
     #Get data for choice boxes
     opportunity_stage_results=list_of_opportunity_stage.objects.filter(is_deleted='FALSE')
     amount_type_results=list_of_amount_type.objects.filter(is_deleted='FALSE')
-    organisaion_results=organisation.objects.filter(is_deleted='FALSE')
     groups_results=group.objects.filter(is_deleted="FALSE")
     user_results=auth.models.User.objects.all()
 
@@ -2096,15 +2176,6 @@ class new_opportunity_form(ModelForm):
             'class': 'form-control',
         })
     )
-    organisation_id=forms.ModelChoiceField(
-        label="Organisations",
-        queryset=organisaion_results,
-        required=False,
-        widget=forms.Select(attrs={
-            "onChange":'update_customers()',
-            'class': 'form-control',
-        }),
-    )
     amount_type_id=forms.ModelChoiceField(
         label="Amount Type",
         widget=forms.Select(attrs={
@@ -2140,7 +2211,6 @@ class new_opportunity_form(ModelForm):
 
         exclude={
             'opportunity_stage_id',
-            'customer_id',
             'date_created',
             'date_modified',
             'user_id',
@@ -2320,6 +2390,162 @@ class new_quote_form(ModelForm):
             'customer_notes',
             'quote_valid_till',
         }
+
+
+class new_request_for_change_form(ModelForm):
+    """
+    The request for change text has been truncated to rfc_ as the field names were too long.
+    """
+    rfc_title = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        }),
+        required=True,
+    )
+    rfc_summary = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    rfc_type = forms.ChoiceField(
+        choices=RFC_TYPE,
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        initial=1,
+    )
+    rfc_implementation_start_date = forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'class': 'form-control',
+        }),
+        required=True,
+    )
+    rfc_implementation_end_date = forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'class': 'form-control',
+        }),
+        required=True,
+    )
+    rfc_implementation_release_date = forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'class': 'form-control',
+        }),
+        required=True,
+    )
+    rfc_version_number = forms.CharField(
+        max_length=25,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Version/Release Number',
+        }),
+        required=False,
+    )
+    rfc_lead = forms.ModelChoiceField(
+        queryset=User.objects.filter( #This should only be group leaders
+            is_active=True,
+        ),
+        widget=forms.Select(attrs={
+            'class': 'chosen-select form-control',
+        }),
+        required=True,
+    )
+    rfc_priority = forms.ChoiceField(
+        choices=RFC_PRIORITY,
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        initial=1,
+    )
+    rfc_risk = forms.ChoiceField(
+        choices=RFC_RISK,
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        initial=1,
+    )
+    rfc_impact = forms.ChoiceField(
+        choices=RFC_IMPACT,
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        initial=1,
+    )
+    rfc_risk_and_impact_analysis = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    rfc_implementation_plan = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    rfc_backout_plan = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    rfc_test_plan = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+
+    rfc_permission=forms.ModelMultipleChoiceField(
+        widget=forms.SelectMultiple(attrs={
+            'placeholder': 'Select Groups to Assign to Request for Change',
+            'class': 'chosen-select form-control',
+            'multiple tabindex': '4',
+
+        }),
+        required=True,
+        queryset=group.objects.filter(is_deleted="FALSE"),
+    )
+    class Meta:
+        model=request_for_change
+        exclude=[
+            'change_user',
+            'is_deleted',
+            'rfc_status',
+        ]
 
 
 class new_requirement_item_form(ModelForm):
@@ -2519,6 +2745,13 @@ class opportunity_information_form(ModelForm):
     groups_results=group.objects.filter(is_deleted="FALSE")
     user_results=auth.models.User.objects.all()
 
+    opportunity_name = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
+
     opportunity_description = forms.CharField(
         widget=TinyMCE(
             mce_attrs={
@@ -2526,6 +2759,7 @@ class opportunity_information_form(ModelForm):
             },
             attrs={
                 'placeholder': 'Opportunity Description',
+                'class': 'form-control',
             }
         )
     )
@@ -2533,13 +2767,16 @@ class opportunity_information_form(ModelForm):
     opportunity_expected_close_date = forms.DateTimeField(
         initial=datetime.datetime.now(),
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px',
+            'class': 'form-control',
         })
     )
 
     next_step=forms.CharField(
         max_length=255,
         required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
     )
 
 
@@ -2548,9 +2785,8 @@ class opportunity_information_form(ModelForm):
         required=False,
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
-            'style': 'width: 100%',
         }),
     )
 
@@ -2559,10 +2795,42 @@ class opportunity_information_form(ModelForm):
         required=False,
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
+            'class': 'chosen-select form-control',
             'multiple tabindex': '4',
             'style': 'width: 100%',
         }),
+    )
+
+    currency_id = forms.ModelChoiceField(
+        queryset=list_of_currency.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    opportunity_amount=forms.DecimalField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    amount_type_id=forms.ModelChoiceField(
+        queryset=list_of_amount_type.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+    )
+
+    opportunity_stage_id=forms.ModelChoiceField(
+        queryset=list_of_quote_stage.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+    )
+
+    opportunity_success_probability = forms.DecimalField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+        })
     )
 
 
@@ -2570,8 +2838,6 @@ class opportunity_information_form(ModelForm):
         model=opportunity
         fields='__all__'
         exclude={
-            'customer_id',
-            'organisation_id',
             'lead_source_id',
             'date_created',
             'date_modified',
@@ -3242,6 +3508,150 @@ class search_form(forms.Form):
         }),
     )
 
+
+class request_for_change_form(ModelForm):
+    """
+    The request for change text has been truncated to rfc_ as the field names were too long.
+    """
+    rfc_title = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        }),
+        required=True,
+    )
+    rfc_summary = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    rfc_type = forms.ChoiceField(
+        choices=RFC_TYPE,
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        initial=1,
+    )
+    rfc_implementation_start_date = forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'class': 'form-control',
+        }),
+        required=True,
+    )
+    rfc_implementation_end_date = forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'class': 'form-control',
+        }),
+        required=True,
+    )
+    rfc_implementation_release_date = forms.DateTimeField(
+        initial=datetime.datetime.now(),
+        widget=forms.DateTimeInput(attrs={
+            'class': 'form-control',
+        }),
+        required=True,
+    )
+    rfc_version_number = forms.CharField(
+        max_length=25,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Version/Release Number',
+        }),
+        required=False,
+    )
+    rfc_lead = forms.ModelChoiceField(
+        queryset=User.objects.filter( #This should only be group leaders
+            is_active=True,
+        ),
+        widget=forms.Select(attrs={
+            'class': 'chosen-select form-control',
+        }),
+        required=True,
+    )
+    rfc_priority = forms.ChoiceField(
+        choices=RFC_PRIORITY,
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        initial=1,
+    )
+    rfc_risk = forms.ChoiceField(
+        choices=RFC_RISK,
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        initial=1,
+    )
+    rfc_impact = forms.ChoiceField(
+        choices=RFC_IMPACT,
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        initial=1,
+    )
+    rfc_risk_and_impact_analysis = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    rfc_implementation_plan = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    rfc_backout_plan = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    rfc_test_plan = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    class Meta:
+        model=request_for_change
+        exclude=[
+            'change_user',
+            'is_deleted',
+            'rfc_status',
+        ]
 
 class requirement_information_form(ModelForm):
     requirement_title = forms.CharField(
