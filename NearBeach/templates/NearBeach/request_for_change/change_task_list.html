@@ -1,0 +1,87 @@
+{% if assigned_user_results %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Assigned Users</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <td>Username</td>
+                        <td>First Name</td>
+                        <td>Last Name</td>
+                        <td>Email</td>
+                    </tr>
+                </thead>
+                {% for row in assigned_user_results %}
+                    <tr>
+                        <td>{{ row.username }}</td>
+                        <td>{{ row.first_name }}</td>
+                        <td>{{ row.last_name }}</td>
+                        <td>{{ row.email }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endif %}
+
+{% if qa_user_results %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>QA Users</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <td>Username</td>
+                        <td>First Name</td>
+                        <td>Last Name</td>
+                        <td>Email</td>
+                    </tr>
+                </thead>
+                {% for row in qa_user_results %}
+                    <tr>
+                        <td>{{ row.username }}</td>
+                        <td>{{ row.first_name }}</td>
+                        <td>{{ row.last_name }}</td>
+                        <td>{{ row.email }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endif %}
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h2>Run Sheet</h2>
+    </div>
+    <div class="card-body">
+        <a href="javascript:void(0)" onclick="load_change_task()">Create new Change Task</a>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <td class="col-md-1">Start</td>
+                    <td class="col-md-1">End</td>
+                    <td class="col-md-5">Title</td>
+                    <td class="col-md-2">Assigned User</td>
+                    <td class="col-md-2">QA User</td>
+                    <td class="col-md-1">Status</td>
+                </tr>
+            </thead>
+            {% for row in change_task_results %}
+                <tr>
+                    <td>{{ row.change_task_start_date }}</td>
+                    <td>{{ row.change_task_end_date }}</td>
+                    <td>{{ row.change_task_title }}</td>
+                    <td>{{ row.change_task_assigned_user }}</td>
+                    <td>{{ row.change_task_qa_user }}</td>
+                    <td>{{ row.change_task_status }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+</div>

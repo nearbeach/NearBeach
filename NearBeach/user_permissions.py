@@ -37,6 +37,7 @@ def return_user_permission_level(request, group_list,permission_field):
         organisation_campus
         project
         quote
+        request_for_change
         requirement
         requirement_link
         task
@@ -118,6 +119,7 @@ def return_user_permission_level(request, group_list,permission_field):
         Max('permission_set__project'),
         Max('permission_set__task'),
         Max('permission_set__requirement'),
+        Max('permission_set__request_for_change'),
         Max('permission_set__organisation'),
         Max('permission_set__customer'),
         Max('permission_set__administration_assign_user_to_group'),

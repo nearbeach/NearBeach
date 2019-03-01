@@ -458,6 +458,12 @@ def assigned_group_add(request, location_id, destination):
                     group_id=form.cleaned_data['add_group'],
                     change_user=request.user,
                 )
+            elif destination == "request_for_change":
+                object_assignment_submit = object_assignment(
+                    request_for_change=request_for_change.objects.get(rfc_id=location_id),
+                    group_id=form.cleaned_data['add_group'],
+                    change_user=request.user,
+                )
             object_assignment_submit.save()
 
 
@@ -545,7 +551,22 @@ def assigned_group_list(request, location_id, destination):
         ).exclude(
             group_id=None,
         )
+    elif destination == "requirement":
+        group_list_results = object_assignment.objects.filter(
+            is_deleted="FALSE",
+            requirement_id=location_id,
+        ).exclude(
+            group_id=None,
+        )
+    elif destination == "request_for_change":
+        group_list_results = object_assignment.objects.filter(
+            is_deleted="FALSE",
+            request_for_change=location_id,
+        ).exclude(
+            group_id=None,
+        )
     else:
+
         group_list_results = ''
 
     # Load the template
@@ -697,7 +718,142 @@ def assigned_opportunity_connection_delete(request, opportunity_id, location_id,
         return HttpResponseBadRequest("Sorry - can only do this request via post")
 
 
+@login_required(login_url='login')
+def assigned_rfc_connection_add(request, rfc_id, destination):
+    """
+    We want the ability to add either an organisation or customer to an request for change. This function will apply that.
+    :param request:
+    :param rfc_id: The rfc that we are assigning the connection to
+    :param destination: If we are assigning a customer or organisation
+    :return: Search Page
 
+    Method
+    ~~~~~~
+    1. Check user's permissions - send them to the naughty corner if they do not have permission
+    2. Check to see if the method is post - follow instructions here if it is post
+    3. Check to see if the destination is customer or organisation. Pull out the relevant search results.
+    4. Collect the template
+    5. Render the results
+    """
+    permission_results = return_user_permission_level(request, None, 'request_for_change')
+
+    if permission_results['request_for_change'] < 2:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        """
+        Method
+        ~~~~~~
+        1. Obtain the correct form.
+        2. If form is NOT valid - show errors and reload screen
+        3. If form is valid, read next method.
+        """
+        form = connect_form(request.POST)
+
+        if form.is_valid():
+            """
+            The user has submitted some customers. We will now assign them to the opportunity.
+
+            Method
+            ~~~~~~
+            1. Extract the required data
+            2. Iterate through each result and add them to the database
+            3. Return the user to the opportunity.
+            """
+            customer_extract = form.cleaned_data['customers']
+            organisation_extract = form.cleaned_data['organisations']
+
+            for row in customer_extract:
+                # Lets save the customer against the opportunity. :)
+                submit_stakeholder = request_for_change_stakeholder(
+                    #opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                    request_for_change=request_for_change.objects.get(rfc_id=rfc_id),
+                    customer=row,
+                    change_user=request.user,
+                )
+                submit_stakeholder.save()
+
+            for row in organisation_extract:
+                # Lets save the organisation against the opportunity :)
+                submit_stakeholder = request_for_change_stakeholder(
+                    #opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                    request_for_change=request_for_change.objects.get(rfc_id=rfc_id),
+                    organisation=row,
+                    change_user=request.user,
+                )
+                submit_stakeholder.save()
+
+            # Send the user back to the opportunity
+            return HttpResponseRedirect(reverse('request_for_change_information', args={rfc_id}))
+        else:
+            print("There was an issue getting data from the form. Sending user back.")
+            print(form)
+
+    """
+    The following if statements will get
+    - Get the correct required template... this... this is different
+    """
+    rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
+    if destination == "organisation":
+        # Template
+        t = loader.get_template('NearBeach/request_for_change/rfc_connect_organisation.html')
+    else:
+        # Template
+        t = loader.get_template('NearBeach/request_for_change/rfc_connect_customer.html')
+
+    c = {
+        'connect_form': connect_form(),
+        'rfc_id': rfc_id,
+        'rfc_results': rfc_results,
+        'rfc_permission': permission_results['request_for_change'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def assigned_rfc_connection_delete(request, rfc_id, location_id, destination):
+    """
+    This will remove any organisation/customer connection to an rfc.
+    :param request:
+    :param location_id: The ID of the customer/organisation
+    :param destination: This tells the program if we are looking for an organisation or location.
+    :return: Success results
+
+    Method
+    ~~~~~~
+    1. Check permissions - send user away if they do not have permissions
+    2. Check to make sure this is a POST
+    3. Filter for the relevant organisation/customer connection
+    4. Change the is_deleted value to TRUE
+    5. Send back blank page
+    """
+    permission_results = return_user_permission_level(request, None, 'opportunity')
+    if permission_results['opportunity'] != 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        if destination == "organisation":
+            request_for_change_stakeholder.objects.filter(
+                is_deleted="FALSE",
+                organisation_id=location_id,
+                request_for_change=rfc_id,
+            ).update(is_deleted="TRUE")
+        else:
+            request_for_change_stakeholder.objects.filter(
+                is_deleted="FALSE",
+                customer_id=location_id,
+                request_for_change=rfc_id,
+            ).update(is_deleted="TRUE")
+
+        # Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c, request))
+    else:
+        return HttpResponseBadRequest("Sorry - can only do this request via post")
 
 @login_required(login_url='login')
 def assigned_user_add(request, location_id, destination):
@@ -1385,6 +1541,133 @@ def campus_readonly(request, campus_information):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+
+
+@login_required(login_url='login')
+def change_task_new(request,rfc_id):
+    """
+    This form is called when;
+    - A user wants to create a new change task
+    - A user submites a new change task
+    :param request:
+    :param rfc_id: This will link this change task to the current rfc
+    :return: Web page
+
+    Method
+    ~~~~~~
+    1. Check permissions
+    2. Check to see if method is POST - if POST then follow instructions there
+    3. Get form data
+    4. Get template
+    5. Render all that and send to the user
+    """
+
+    permission_results = return_user_permission_level(request, None, 'request_for_change')
+    if permission_results['request_for_change'] <= 1:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        """
+        Method
+        ~~~~~~
+        1. Get the form data
+        2. Fill out the change user
+        3. Fill out the status
+        4. Validate the form
+        5. Save
+        """
+        form = new_change_task_form(request.POST,rfc_id=rfc_id)
+        if form.is_valid():
+            #Save the data
+            change_task_submit = change_task(
+                change_task_title=form.cleaned_data['change_task_title'],
+                change_task_start_date=form.cleaned_data['change_task_start_date'],
+                change_task_end_date=form.cleaned_data['change_task_end_date'],
+                change_task_assigned_user=form.cleaned_data['change_task_assigned_user'],
+                change_task_qa_user=form.cleaned_data['change_task_qa_user'],
+                change_task_description=form.cleaned_data['change_task_description'],
+                change_task_required_by=form.cleaned_data['change_task_required_by'],
+                change_user=request.user,
+                change_task_status=1,
+                request_for_change=request_for_change.objects.get(rfc_id=rfc_id)
+            )
+            change_task_submit.save()
+
+            #Send back blank page
+            t = loader.get_template('NearBeach/blank.html')
+            c = {}
+            return HttpResponse(t.render(c,request))
+        else:
+            print(form.errors)
+
+    # Get template
+    t = loader.get_template('NearBeach/request_for_change/change_task_new.html')
+
+    # Context
+    c = {
+        'new_change_task_form': new_change_task_form(
+            rfc_id=rfc_id,
+        ),
+    }
+
+    return HttpResponse(t.render(c,request))
+
+@login_required(login_url='login')
+def change_task_list(request,rfc_id):
+    """
+    When a user is looking at a request for change, they will need to see ALL change tasks associated with this rfc.
+    This will call this function through AJAX. This function will then deliver a simple and effecting RUN LIST/CHANGE TASKS
+    :param request:
+    :param rfc_id: The request for change we are looking at.
+    :return: The RUN LIST/CHANGE TASKS
+
+    Method
+    ~~~~~~
+    1. Check user permissions
+    2. Obtain the SQL required
+    3. Get template and context
+    4. Render and send to the user.
+    """
+
+    permission_results = return_user_permission_level(request,None,'request_for_change')
+    if permission_results['request_for_change'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    # Get data
+    change_task_results = change_task.objects.filter(
+        is_deleted="FALSE",
+        request_for_change=rfc_id,
+    ).order_by(
+        'change_task_start_date',
+        'change_task_end_date',
+        'change_task_assigned_user',
+        'change_task_qa_user',
+    )
+
+    assigned_user_results = User.objects.filter(
+        is_active=True,
+        id__in=change_task_results.values('change_task_assigned_user')
+    )
+    qa_user_results = User.objects.filter(
+        is_active=True,
+        id__in=change_task_results.values('change_task_qa_user')
+    )
+
+    # Template
+    t = loader.get_template('NearBeach/request_for_change/change_task_list.html')
+
+    # Context
+    c = {
+        'change_task_results': change_task_results,
+        'permission': permission_results['request_for_change'],
+        'rfc_id': rfc_id,
+        'assigned_user_results': assigned_user_results,
+        'qa_user_results': qa_user_results,
+    }
+
+    return HttpResponse(t.render(c,request))
 
 
 @login_required(login_url='login')
@@ -5276,6 +5559,90 @@ def new_quote_template(request):
 
 
 @login_required(login_url='login')
+def new_request_for_change(request):
+    """
+    A user would like to implement a new request for change. This new function will ask the user for the following set of
+    information;
+    - Basic Request for information
+    - Basic risk, plan and implementation
+    - Assigned groups
+    :param request:
+    :return: The new request for change page
+
+    Method
+    ~~~~~~
+    1. Check user permission - if they can't do this then send them to the naughty corner
+    2. Check to see if it is post - read notes in that section
+    3. Gather the required fields
+    4. Render the page
+    """
+
+    permission_results = return_user_permission_level(request,None,'request_for_change')
+    if permission_results['request_for_change'] <= 2:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    form_errors = ""
+
+    if request.method == "POST":
+        form  = new_request_for_change_form(request.POST)
+        if form.is_valid():
+            #Save the data from the form.
+            rfc_submit = request_for_change(
+                rfc_title=form.cleaned_data['rfc_title'],
+                rfc_type=form.cleaned_data['rfc_type'],
+                rfc_implementation_start_date=form.cleaned_data['rfc_implementation_start_date'],
+                rfc_implementation_end_date=form.cleaned_data['rfc_implementation_end_date'],
+                rfc_implementation_release_date=form.cleaned_data['rfc_implementation_release_date'],
+                rfc_version_number=form.cleaned_data['rfc_version_number'],
+                rfc_summary=form.cleaned_data['rfc_summary'],
+                rfc_lead=form.cleaned_data['rfc_lead'],
+                rfc_priority=form.cleaned_data['rfc_priority'],
+                rfc_risk=form.cleaned_data['rfc_risk'],
+                rfc_impact=form.cleaned_data['rfc_impact'],
+                rfc_risk_and_impact_analysis=form.cleaned_data['rfc_risk_and_impact_analysis'],
+                rfc_implementation_plan=form.cleaned_data['rfc_implementation_plan'],
+                rfc_backout_plan=form.cleaned_data['rfc_backout_plan'],
+                rfc_test_plan=form.cleaned_data['rfc_test_plan'],
+                change_user=request.user,
+                rfc_status=1, #Draft
+            )
+            rfc_submit.save()
+
+            """
+            Once the new project has been created, we will obtain a 
+            primary key. Using this new primary key we will allocate
+            permissions to the new project.
+            """
+            rfc_permission = form.cleaned_data['rfc_permission']
+
+            for row in rfc_permission:
+                submit_group = object_assignment(
+                    request_for_change=rfc_submit,
+                    group_id=group.objects.get(group_id=row.group_id),
+                    change_user=request.user,
+                )
+                submit_group.save()
+
+            #Send the user to the new RFC
+            return HttpResponseRedirect(reverse('request_for_change_information', args={ rfc_submit.rfc_id }))
+        else:
+            print(form.errors)
+            form_errors = form.errors
+
+
+    # Get tempalte
+    t = loader.get_template('NearBeach/new_request_for_change.html')
+
+    # Context
+    c = {
+        'new_request_for_change_form': new_request_for_change_form(),
+        'form_errors': form_errors,
+        # ADD IN PERMISSIONS
+    }
+
+    return HttpResponse(t.render(c,request))
+
+@login_required(login_url='login')
 def new_task(request, location_id='', destination=''):
     permission_results = return_user_permission_level(request, None, 'task')
 
@@ -6816,6 +7183,74 @@ def rename_document(request, document_key):
     else:
         return HttpResponseBadRequest("This is a POST function. POST OFF!")
 
+
+@login_required(login_url='login')
+def request_for_change_information(request,rfc_id):
+    """
+
+    :param request:
+    :param rfc_id:
+    :return:
+    """
+
+    permission_results = return_user_permission_level(request,None,'request_for_change')
+    if permission_results['request_for_change'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+    ## ADD IN READ ONLY HERE!!!
+
+    # Get data
+    rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
+
+    organisation_stakeholders = organisation.objects.filter(
+        is_deleted="FALSE",
+        organisation_id__in=request_for_change_stakeholder.objects.filter(
+            is_deleted="FALSE",
+            request_for_change=rfc_id,
+            organisation_id__isnull=False,
+        ).values('organisation_id')
+    )
+
+    customer_stakeholders = customer.objects.filter(
+        is_deleted="FALSE",
+        customer_id__in=request_for_change_stakeholder.objects.filter(
+            is_deleted="FALSE",
+            request_for_change=rfc_id,
+            customer_id__isnull=False,
+        ).values('customer_id')
+    )
+
+
+    # Get template
+    t = loader.get_template('NearBeach/request_for_change_information.html')
+
+    # Context
+    c = {
+        'request_for_change_form': request_for_change_form(
+            initial={
+                'rfc_title': rfc_results.rfc_title,
+                'rfc_type': rfc_results.rfc_type,
+                'rfc_implementation_start_date': rfc_results.rfc_implementation_start_date,
+                'rfc_implementation_end_date': rfc_results.rfc_implementation_end_date,
+                'rfc_implementation_release_date': rfc_results.rfc_implementation_release_date,
+                'rfc_version_number': rfc_results.rfc_version_number,
+                'rfc_summary': rfc_results.rfc_summary,
+                'rfc_lead': rfc_results.rfc_lead,
+                'rfc_priority': rfc_results.rfc_priority,
+                'rfc_risk': rfc_results.rfc_risk,
+                'rfc_impact': rfc_results.rfc_impact,
+                'rfc_risk_and_impact_analysis': rfc_results.rfc_risk_and_impact_analysis,
+                'rfc_implementation_plan': rfc_results.rfc_implementation_plan,
+                'rfc_backout_plan': rfc_results.rfc_backout_plan,
+                'rfc_test_plan': rfc_results.rfc_test_plan,
+            },
+        ),
+        'organisation_stakeholders': organisation_stakeholders,
+        'customer_stakeholders': customer_stakeholders,
+        'rfc_results': rfc_results,
+        'permission': permission_results['request_for_change']
+    }
+
+    return HttpResponse(t.render(c,request))
 
 @login_required(login_url='login')
 def resolve_project(request, project_id):
