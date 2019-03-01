@@ -217,26 +217,27 @@
 
 
 <!-- CHANGE TASK MODAL -->
-    <!-- ADD FORM HERE -->
-    <div class="modal fade" id="change_task_modal" tabindex="-1" role="dialog" aria-labelledby="change_task_modal" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="change_task_title">New Change Task</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div id="change_task_content">Loading...</div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+    <form id="new_change_task" name="new_change_task">
+        <div class="modal fade" id="change_task_modal" tabindex="-1" role="dialog" aria-labelledby="change_task_modal" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="change_task_title">New Change Task</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="change_task_content">Loading...</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="submit_change_task()">Save changes</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 
     <script>
         window.onload = function on_page_load() {
@@ -304,6 +305,12 @@
                     alert("Sorry, project assigned users did not save. Please try again.");
                 }
             })
+        });
+
+        $("#new_change_task").on('submit', function(e) {
+           e.preventDefault();
+
+           submit_change_task();
         });
 
 
@@ -374,6 +381,55 @@
                     $("#runsheet").html(data);
                 }
             })
+        }
+
+        function load_change_task() {
+            //Show the modal
+            $("#change_task_modal").modal('show');
+
+            //Load the modal's data
+            $.ajax({
+                url: '/change_task_new/{{ rfc_results.rfc_id }}/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $("#change_task_content").html(data);
+                },
+                error: function() {
+                    alert("Sorry - could not load the change task modal");
+                }
+            })
+        }
+
+        function submit_change_task() {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/change_task_new/{{ rfc_results.rfc_id }}/',
+                data: $("#new_change_task").serialize(),
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    //Hide the modal
+                    $("#change_task_modal").modal('hide');
+
+                    //Reset the modal's content
+                    $("#change_task_content").html("Loading...");
+
+                    //Reload the required runsheet
+                    load_runsheet();
+                },
+                error: function() {
+                    alert("Sorry - there was something wrong when submitting the change task");
+                }
+            });
         }
     </script>
 {% endblock %}

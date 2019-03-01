@@ -1544,25 +1544,75 @@ def campus_readonly(request, campus_information):
 
 
 
+
 @login_required(login_url='login')
-def change_task_stakeholder_list(request,rfc_id):
+def change_task_new(request,rfc_id):
     """
-
+    This form is called when;
+    - A user wants to create a new change task
+    - A user submites a new change task
     :param request:
-    :param rfc_id:
-    :return:
+    :param rfc_id: This will link this change task to the current rfc
+    :return: Web page
+
+    Method
+    ~~~~~~
+    1. Check permissions
+    2. Check to see if method is POST - if POST then follow instructions there
+    3. Get form data
+    4. Get template
+    5. Render all that and send to the user
     """
 
-    # Template
-    t = loader.get_template('NearBeach/blank.html')
+    permission_results = return_user_permission_level(request, None, 'request_for_change')
+    if permission_results['request_for_change'] <= 1:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        """
+        Method
+        ~~~~~~
+        1. Get the form data
+        2. Fill out the change user
+        3. Fill out the status
+        4. Validate the form
+        5. Save
+        """
+        form = new_change_task_form(request.POST,rfc_id=rfc_id)
+        if form.is_valid():
+            #Save the data
+            change_task_submit = change_task(
+                change_task_title=form.cleaned_data['change_task_title'],
+                change_task_start_date=form.cleaned_data['change_task_start_date'],
+                change_task_end_date=form.cleaned_data['change_task_end_date'],
+                change_task_assigned_user=form.cleaned_data['change_task_assigned_user'],
+                change_task_qa_user=form.cleaned_data['change_task_qa_user'],
+                change_task_description=form.cleaned_data['change_task_description'],
+                change_task_required_by=form.cleaned_data['change_task_required_by'],
+                change_user=request.user,
+                change_task_status=1,
+                request_for_change=request_for_change.objects.get(rfc_id=rfc_id)
+            )
+            change_task_submit.save()
+
+            #Send back blank page
+            t = loader.get_template('NearBeach/blank.html')
+            c = {}
+            return HttpResponse(t.render(c,request))
+        else:
+            print(form.errors)
+
+    # Get template
+    t = loader.get_template('NearBeach/request_for_change/change_task_new.html')
 
     # Context
-    c = {}
+    c = {
+        'new_change_task_form': new_change_task_form(
+            rfc_id=rfc_id,
+        ),
+    }
 
     return HttpResponse(t.render(c,request))
-
-
-
 
 @login_required(login_url='login')
 def change_task_list(request,rfc_id):
