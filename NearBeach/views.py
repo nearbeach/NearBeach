@@ -766,7 +766,8 @@ def assigned_rfc_connection_add(request, rfc_id, destination):
             for row in customer_extract:
                 # Lets save the customer against the opportunity. :)
                 submit_stakeholder = request_for_change_stakeholder(
-                    opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                    #opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                    request_for_change=request_for_change.objects.get(rfc_id=rfc_id),
                     customer=row,
                     change_user=request.user,
                 )
@@ -775,7 +776,8 @@ def assigned_rfc_connection_add(request, rfc_id, destination):
             for row in organisation_extract:
                 # Lets save the organisation against the opportunity :)
                 submit_stakeholder = request_for_change_stakeholder(
-                    opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                    #opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                    request_for_change=request_for_change.objects.get(rfc_id=rfc_id),
                     organisation=row,
                     change_user=request.user,
                 )
@@ -791,6 +793,7 @@ def assigned_rfc_connection_add(request, rfc_id, destination):
     The following if statements will get
     - Get the correct required template... this... this is different
     """
+    rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
     if destination == "organisation":
         # Template
         t = loader.get_template('NearBeach/request_for_change/rfc_connect_organisation.html')
@@ -801,6 +804,7 @@ def assigned_rfc_connection_add(request, rfc_id, destination):
     c = {
         'connect_form': connect_form(),
         'rfc_id': rfc_id,
+        'rfc_results': rfc_results,
         'rfc_permission': permission_results['request_for_change'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
@@ -812,7 +816,7 @@ def assigned_rfc_connection_add(request, rfc_id, destination):
 @login_required(login_url='login')
 def assigned_rfc_connection_delete(request, rfc_id, location_id, destination):
     """
-    This will remove any organisation/customer connection to an opportunity.
+    This will remove any organisation/customer connection to an rfc.
     :param request:
     :param location_id: The ID of the customer/organisation
     :param destination: This tells the program if we are looking for an organisation or location.
@@ -822,7 +826,7 @@ def assigned_rfc_connection_delete(request, rfc_id, location_id, destination):
     ~~~~~~
     1. Check permissions - send user away if they do not have permissions
     2. Check to make sure this is a POST
-    3. Filter for the relivant organisation/customer connection
+    3. Filter for the relevant organisation/customer connection
     4. Change the is_deleted value to TRUE
     5. Send back blank page
     """
@@ -832,16 +836,16 @@ def assigned_rfc_connection_delete(request, rfc_id, location_id, destination):
 
     if request.method == "POST":
         if destination == "organisation":
-            opportunity_connection.objects.filter(
+            request_for_change_stakeholder.objects.filter(
                 is_deleted="FALSE",
                 organisation_id=location_id,
-                opportunity_id=opportunity_id,
+                request_for_change=rfc_id,
             ).update(is_deleted="TRUE")
         else:
-            opportunity_connection.objects.filter(
+            request_for_change_stakeholder.objects.filter(
                 is_deleted="FALSE",
                 customer_id=location_id,
-                opportunity_id=opportunity_id,
+                request_for_change=rfc_id,
             ).update(is_deleted="TRUE")
 
         # Return blank page
@@ -7147,6 +7151,25 @@ def request_for_change_information(request,rfc_id):
     # Get data
     rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
 
+    organisation_stakeholders = organisation.objects.filter(
+        is_deleted="FALSE",
+        organisation_id__in=request_for_change_stakeholder.objects.filter(
+            is_deleted="FALSE",
+            request_for_change=rfc_id,
+            organisation_id__isnull=False,
+        ).values('organisation_id')
+    )
+
+    customer_stakeholders = customer.objects.filter(
+        is_deleted="FALSE",
+        customer_id__in=request_for_change_stakeholder.objects.filter(
+            is_deleted="FALSE",
+            request_for_change=rfc_id,
+            customer_id__isnull=False,
+        ).values('customer_id')
+    )
+
+
     # Get template
     t = loader.get_template('NearBeach/request_for_change_information.html')
 
@@ -7171,6 +7194,8 @@ def request_for_change_information(request,rfc_id):
                 'rfc_test_plan': rfc_results.rfc_test_plan,
             },
         ),
+        'organisation_stakeholders': organisation_stakeholders,
+        'customer_stakeholders': customer_stakeholders,
         'rfc_results': rfc_results,
         'permission': permission_results['request_for_change']
     }

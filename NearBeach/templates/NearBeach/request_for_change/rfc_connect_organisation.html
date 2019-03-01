@@ -2,7 +2,7 @@
 {% block content %}
     <div class="card mt-4">
         <div class="card-header">
-            <h1>Connect Organisations</h1>
+            <h1>Connect Request for Change Organisations</h1>
             {{ rfc_results.rfc_title }}
         </div>
         <div class="card-body">
@@ -22,7 +22,7 @@
 
                 <div class="form-row">
                     <input class="btn btn-primary col-md-6" type="submit" value="Connect Organisations(s)">
-                    <a href="{% url 'opportunity_information' opportunity_id %}" class="btn btn-secondary col-md-6">Cancel</a>
+                    <a href="{% url 'request_for_change_information' rfc_id %}" class="btn btn-secondary col-md-6">Cancel</a>
                 </div>
             </form>
         </div>
