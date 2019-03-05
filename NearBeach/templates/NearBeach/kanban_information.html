@@ -24,6 +24,7 @@
                             </div>
                             <div class="card-body">
                                 <ul class="list-group kanban_column" data-column="{{ column.kanban_column_id }}" data-level="{{ level.kanban_level_id }}">
+                                    <li class="list-group-item"><!--potential bug fix--></li>
                                     {% with column_cards=level_cards|filter_column_cards:column.kanban_column_id %}
                                         {% for row in column_cards %}
                                             <li class="list-group-item list-group-item-info kanban_card" id="{{ row.kanban_card_id }}" draggable="true">

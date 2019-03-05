@@ -4,14 +4,14 @@ from django.core import serializers
 from .misc_functions import *
 import simplejson
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def lookup_product(request, product_id):
     product_results = product_and_service.objects.filter(product_id=product_id)
     data = serializers.serialize("json", product_results)
     return HttpResponse(data, content_type='application/json')
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def lookup_user_permissions(request):
     """
     This lookup is designed so that the user can do either:

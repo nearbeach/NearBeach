@@ -83,6 +83,7 @@ RFC_STATUS = (
     (3,'Approved'),
     (4,'Started'),
     (5,'Finished'),
+    (6,'Rejected'),
 )
 
 RFC_TYPE = (

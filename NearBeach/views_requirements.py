@@ -15,7 +15,7 @@ from .views import permission_denied
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_requirement(request):
     permission_results = return_user_permission_level(request, None, 'requirement')
 
@@ -68,7 +68,7 @@ def new_requirement(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_requirement_item(request, requirement_id):
     """
     If a user wants to create a new requirement item against a requirement, they will need this function. It will deal
@@ -141,7 +141,7 @@ def new_requirement_item(request, requirement_id):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_requirement_item_link(request,requirement_item_id,location_id="",destination=""):
     """
     This function is designed so users can link requirement items to either tasks/projects. When the function is a simple
@@ -270,7 +270,7 @@ def new_requirement_item_link(request,requirement_item_id,location_id="",destina
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_requirement_link(request,requirement_id,location_id="",destination=""):
     """
     This function is designed so users can link requirement to either tasks/projects. When the function is a simple "GET"
@@ -398,7 +398,7 @@ def new_requirement_link(request,requirement_id,location_id="",destination=""):
     return HttpResponse(t.render(c,request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def requirement_documents_uploads(request, location_id, destination):
     permission_results = return_user_permission_level(request, None, ['requirement','document'])
 
@@ -464,7 +464,7 @@ def requirement_documents_uploads(request, location_id, destination):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def requirement_information(request, requirement_id):
     permission_results = return_user_permission_level(request, None, ['requirement','requirement_link'])
 
@@ -601,7 +601,7 @@ def requirement_information(request, requirement_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def requirement_item_information(request, requirement_item_id):
     """
     If a user requires to edit or view the requirement item information, this is the page.
@@ -666,7 +666,7 @@ def requirement_item_information(request, requirement_item_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def requirement_readonly(request,requirement_id):
     """
     Requirement readonly is a read only module. This will print out all the requirement information that the user will

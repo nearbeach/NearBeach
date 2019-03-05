@@ -36,7 +36,7 @@ from bs4 import BeautifulSoup
 import datetime, json, simplejson, urllib.parse, pypandoc
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def add_campus_to_customer(request, customer_id, campus_id):
     """
     This function can only exist in POST. It will add a customer to a campus
@@ -71,7 +71,7 @@ def add_campus_to_customer(request, customer_id, campus_id):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def admin_group(request,location_id,destination):
     # Load template
     t = loader.get_template('NearBeach/administration/admin_group.html')
@@ -81,7 +81,7 @@ def admin_group(request,location_id,destination):
     return HttpResponse(t.render(c,request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def admin_permission_set(request, group_id):
     """
     Admin permission set will render a list of all permission set's connected to the current group. This admin def
@@ -141,7 +141,7 @@ def admin_permission_set(request, group_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def admin_add_user(request, group_id):
     """
     Pulls up a list of users for the group information. This def shows a list and grants you the ability to add new users
@@ -200,7 +200,7 @@ def admin_add_user(request, group_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def alerts(request):
     """
     Alerts are shown after the user logs in with any outstanding objects, i.e. Projects that have end dates in the past.
@@ -280,7 +280,7 @@ def alerts(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def assign_customer_project_task(request, customer_id):
     """
     This allows the user to allocate multiple projects/tasks to a customer in a single search.
@@ -406,7 +406,7 @@ def assign_customer_project_task(request, customer_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def assigned_group_add(request, location_id, destination):
     """
 
@@ -484,7 +484,7 @@ def assigned_group_add(request, location_id, destination):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def assigned_group_delete(request, object_assignment_id):
     """
     assigned group delete will delete an assigned group against an object. Please note this has to be through
@@ -507,7 +507,7 @@ def assigned_group_delete(request, object_assignment_id):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def assigned_group_list(request, location_id, destination):
     if destination == "project":
         group_list_results = object_assignment.objects.filter(
@@ -581,7 +581,7 @@ def assigned_group_list(request, location_id, destination):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def assigned_opportunity_connection_add(request,opportunity_id,destination):
     """
     We want the ability to add either an organisation or customer to an opportunity. This function will apply that.
@@ -675,7 +675,7 @@ def assigned_opportunity_connection_add(request,opportunity_id,destination):
     return HttpResponse(t.render(c,request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def assigned_opportunity_connection_delete(request, opportunity_id, location_id, destination):
     """
     This will remove any organisation/customer connection to an opportunity.
@@ -718,7 +718,7 @@ def assigned_opportunity_connection_delete(request, opportunity_id, location_id,
         return HttpResponseBadRequest("Sorry - can only do this request via post")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def assigned_rfc_connection_add(request, rfc_id, destination):
     """
     We want the ability to add either an organisation or customer to an request for change. This function will apply that.
@@ -813,7 +813,7 @@ def assigned_rfc_connection_add(request, rfc_id, destination):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def assigned_rfc_connection_delete(request, rfc_id, location_id, destination):
     """
     This will remove any organisation/customer connection to an rfc.
@@ -855,7 +855,7 @@ def assigned_rfc_connection_delete(request, rfc_id, location_id, destination):
     else:
         return HttpResponseBadRequest("Sorry - can only do this request via post")
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def assigned_user_add(request, location_id, destination):
     """
     We want the ability for the User to grant permission to anyone. For example, if a group owns this requirement,
@@ -928,7 +928,7 @@ def assigned_user_add(request, location_id, destination):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def assigned_user_delete(request, object_assignment_id):
     if request.method == "POST":
         object_assignment_update = object_assignment.objects.get(object_assignment_id=object_assignment_id)
@@ -946,7 +946,7 @@ def assigned_user_delete(request, object_assignment_id):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def assigned_user_list(request, location_id, destination):
     permission_results = return_user_permission_level(request, None, destination)
 
@@ -1002,7 +1002,7 @@ def assigned_user_list(request, location_id, destination):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def associate(request, project_id, task_id, project_or_task):
     # Submit the data
     submit_result = project_task(
@@ -1020,7 +1020,7 @@ def associate(request, project_id, task_id, project_or_task):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def associated_projects(request, task_id):
     """
 	We want the ability for the user to assign any project to the current
@@ -1059,7 +1059,7 @@ def associated_projects(request, task_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def associated_task(request, project_id):
     """
 	We want the ability for the user to assign any task to the current
@@ -1098,7 +1098,7 @@ def associated_task(request, project_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def bug_add(request,location_id, destination,bug_id, bug_client_id):
     #add permissions
 
@@ -1158,7 +1158,7 @@ def bug_add(request,location_id, destination,bug_id, bug_client_id):
         return HttpResponseBadRequest("Only POST requests allowed")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def bug_client_delete(request, bug_client_id):
     permission_results = return_user_permission_level(request, None, 'bug_client')
 
@@ -1180,7 +1180,7 @@ def bug_client_delete(request, bug_client_id):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def bug_client_information(request, bug_client_id):
     permission_results = return_user_permission_level(request, None, 'bug_client')
 
@@ -1245,7 +1245,7 @@ def bug_client_information(request, bug_client_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def bug_client_list(request):
     permission_results = return_user_permission_level(request, None, 'bug_client')
     if permission_results['bug_client'] == 0:
@@ -1271,7 +1271,7 @@ def bug_client_list(request):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def bug_list(request, location_id=None, destination=None):
     #Add permissions later
     if destination == "project":
@@ -1308,7 +1308,7 @@ def bug_list(request, location_id=None, destination=None):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def bug_search(request, location_id=None, destination=None):
     #Do permissions later
     bug_results = None
@@ -1384,7 +1384,7 @@ def bug_search(request, location_id=None, destination=None):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def campus_information(request, campus_information):
     permission_results = return_user_permission_level(request, None, 'organisation_campus')
 
@@ -1485,7 +1485,7 @@ def campus_information(request, campus_information):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def campus_readonly(request, campus_information):
     permission_results = return_user_permission_level(request, None, 'organisation_campus')
 
@@ -1545,7 +1545,7 @@ def campus_readonly(request, campus_information):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def change_task_new(request,rfc_id):
     """
     This form is called when;
@@ -1614,7 +1614,7 @@ def change_task_new(request,rfc_id):
 
     return HttpResponse(t.render(c,request))
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def change_task_list(request,rfc_id):
     """
     When a user is looking at a request for change, they will need to see ALL change tasks associated with this rfc.
@@ -1670,7 +1670,7 @@ def change_task_list(request,rfc_id):
     return HttpResponse(t.render(c,request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def cost_information(request, location_id, destination):
     if destination == "project":
         groups_results = object_assignment.objects.filter(
@@ -1740,7 +1740,7 @@ def cost_information(request, location_id, destination):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def customer_campus_information(request, customer_campus_id, customer_or_org):
     permission_results = return_user_permission_level(request, None, 'organisation_campus')
 
@@ -1818,7 +1818,7 @@ def customer_campus_information(request, customer_campus_id, customer_or_org):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def customer_information(request, customer_id):
     permission_results = return_user_permission_level(request, None,['assign_campus_to_customer','customer'])
 
@@ -1951,7 +1951,7 @@ def customer_information(request, customer_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def customer_readonly(request,customer_id):
     permission_results = return_user_permission_level(request, None,['assign_campus_to_customer','customer'])
 
@@ -2088,7 +2088,7 @@ def customer_readonly(request,customer_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def dashboard(request):
     permission_results = return_user_permission_level(request, None, 'project')
 
@@ -2103,7 +2103,7 @@ def dashboard(request):
 
     return HttpResponse(t.render(c, request))
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def dashboard_active_projects(request):
     #Get Data
     assigned_users_results = object_assignment.objects.filter(
@@ -2133,7 +2133,7 @@ def dashboard_active_projects(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def dashboard_active_quotes(request):
     quote_results = quote.objects.filter(
         is_deleted="FALSE",
@@ -2154,7 +2154,7 @@ def dashboard_active_quotes(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def dashboard_active_requirement(request):
     requirement_results = requirement.objects.filter(
         is_deleted="FALSE",
@@ -2177,7 +2177,7 @@ def dashboard_active_requirement(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def dashboard_active_task(request):
     # Get Data
     assigned_users_results = object_assignment.objects.filter(
@@ -2206,7 +2206,7 @@ def dashboard_active_task(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def dashboard_group_active_projects(request):
     active_projects_results = project.objects.filter(
         is_deleted="FALSE",
@@ -2230,7 +2230,7 @@ def dashboard_group_active_projects(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def dashboard_group_active_task(request):
     active_task_results = task.objects.filter(
         is_deleted="FALSE",
@@ -2254,7 +2254,7 @@ def dashboard_group_active_task(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def dashboard_group_opportunities(request):
     active_group_opportunities = opportunity.objects.filter(
         is_deleted="FALSE",
@@ -2278,7 +2278,7 @@ def dashboard_group_opportunities(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def dashboard_opportunities(request):
     # Get username_id from User
     #current_user = request.user
@@ -2313,7 +2313,7 @@ def dashboard_opportunities(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def deactivate_campus(request, campus_id):
     if request.method == "POST":
         #Setting the campus as deleted
@@ -2336,7 +2336,7 @@ def deactivate_campus(request, campus_id):
         return HttpResponseBadRequest("Sorry, this request is only for POST")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def delete_campus_contact(request, customer_campus_id, cust_or_camp):
     """
     So... I will need to add in security to define IF a user can do this action
@@ -2352,7 +2352,7 @@ def delete_campus_contact(request, customer_campus_id, cust_or_camp):
         return HttpResponseRedirect(reverse('customer_information', args={save_customer_campus.customer_id.customer_id}))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def delete_cost(request, cost_id, location_id, project_or_task):
     # Delete the cost
     cost_save = cost.objects.get(pk=cost_id)
@@ -2367,7 +2367,7 @@ def delete_cost(request, cost_id, location_id, project_or_task):
         return HttpResponseRedirect(reverse('task_information', args={location_id}))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def delete_group(request, group_id):
     """
     This will remove the group, and anyone connected to the group. Becareful - this is a sad function.
@@ -2418,7 +2418,7 @@ def delete_group(request, group_id):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def delete_permission_set(request, permission_set_id):
     """
     This will remove a permission set along with any user_group's connected to this permission_set. Becareful
@@ -2464,7 +2464,7 @@ def delete_permission_set(request, permission_set_id):
         return HttpResponseBadRequest("Sorry - can only do this in POST")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def delete_tag(request,tag_id):
     """
     Delete tag will actually remove the tag and all it's assignments from the system.
@@ -2509,7 +2509,7 @@ def delete_tag(request,tag_id):
         return HttpResponseBadRequest("Sorry, this can only be done through POST")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def delete_tag_from_object(request, tag_id, location_id, destination):
     """
     If the user has permission, we will delete the tag from the current object location.
@@ -2572,7 +2572,7 @@ def delete_tag_from_object(request, tag_id, location_id, destination):
         return HttpResponseBadRequest("Sorry, this has to be done in POST")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def delete_user_permission(request, user_id, permission_set_id, group_id):
     """
     This function will remove all permission sets for a particular group and user.
@@ -2616,7 +2616,7 @@ def delete_user_permission(request, user_id, permission_set_id, group_id):
         return HttpResponseBadRequest("Sorry - can only do this in POST")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def diagnostic_information(request):
     permission_results = return_user_permission_level(request, None, "")
 
@@ -2639,7 +2639,7 @@ def diagnostic_information(request):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def diagnostic_test_database(request):
     """
     Ping the user's database. If there is an issue then report it
@@ -2655,7 +2655,7 @@ def diagnostic_test_database(request):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def diagnostic_test_document_upload(request):
     """
     Upload user's document and send back a link to the document. Please note the document will be fetched using
@@ -2706,7 +2706,7 @@ def diagnostic_test_document_upload(request):
     return HttpResponseBadRequest("Something went wrong")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def diagnostic_test_email(request):
     """
     Method
@@ -2751,7 +2751,7 @@ def diagnostic_test_email(request):
     return HttpResponse(t.render(c,request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def diagnostic_test_location_services(request):
     """
     Method
@@ -2803,7 +2803,7 @@ def diagnostic_test_location_services(request):
     return HttpResponse(t.render(c,request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def diagnostic_test_recaptcha(request):
     if request.method == "POST":
         """
@@ -2861,7 +2861,7 @@ def diagnostic_test_recaptcha(request):
     return HttpResponse(t.render(c,request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def email(request,location_id,destination):
     permission_results = return_user_permission_level(request, None, 'email')
 
@@ -3175,7 +3175,7 @@ def email(request,location_id,destination):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def email_history(request,location_id,destination):
     permission_results = return_user_permission_level(request, None, 'email')
 
@@ -3274,7 +3274,7 @@ def email_history(request,location_id,destination):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def email_information(request,email_content_id):
     permission_results = return_user_permission_level(request, None, 'email')
 
@@ -3330,7 +3330,7 @@ def email_information(request,email_content_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def extract_quote(request, quote_uuid,quote_template_id):
     #Create the PDF
     url_path = "http://" + request.get_host() + "/preview_quote/" + quote_uuid + "/" + quote_template_id + "/"
@@ -3344,7 +3344,7 @@ def extract_quote(request, quote_uuid,quote_template_id):
     return response
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def extract_requirement(request,requirement_id):
     """
     extract requirement will create a simple DOCX document which the use can use to present to customers/stakeholders.
@@ -3413,7 +3413,7 @@ def extract_requirement(request,requirement_id):
     return server.serve(request,path=outfile)
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def group_information(request,group_id):
     """
     This def will bring up the group information page. If the user makes a change then it will apply those changes.
@@ -3456,7 +3456,7 @@ def group_information(request,group_id):
     return HttpResponse(t.render(c,request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def index(request):
     """
 	The index page determines if a particular user has logged in. It will
@@ -3479,7 +3479,7 @@ def index(request):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def kanban_edit_card(request,kanban_card_id):
     kanban_card_results = kanban_card.objects.get(kanban_card_id=kanban_card_id)
     if (
@@ -3572,7 +3572,7 @@ def kanban_edit_card(request,kanban_card_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def kanban_edit_xy_name(request,location_id, destination):
     """
     This function is for editing both kanban column and level names.
@@ -3600,6 +3600,7 @@ def kanban_edit_xy_name(request,location_id, destination):
 
 
 
+@login_required(login_url='login',redirect_field_name="")
 def kanban_information(request,kanban_board_id):
     permission_results = return_user_permission_level(request, None,['kanban'])
 
@@ -3669,7 +3670,7 @@ def kanban_information(request,kanban_board_id):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def kanban_list(request):
     permission_results = return_user_permission_level(request, None,['kanban'])
 
@@ -3710,7 +3711,7 @@ def kanban_move_card(request,kanban_card_id,kanban_column_id,kanban_level_id):
         return HttpResponseBadRequest("This request can only be through POST")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def kanban_new_card(request,kanban_board_id):
     permission_results = return_user_permission_level(request, None,['kanban'])
 
@@ -3779,7 +3780,7 @@ def kanban_new_card(request,kanban_board_id):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def kanban_new_link(request,kanban_board_id,location_id='',destination=''):
     permission_results = return_user_permission_level(request, None,['kanban'])
 
@@ -3901,7 +3902,7 @@ def kanban_new_link(request,kanban_board_id,location_id='',destination=''):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def kanban_properties(request,kanban_board_id):
     print("Kanban Properties")
     permission_results = return_user_permission_level(request, None,['kanban'])
@@ -3973,6 +3974,7 @@ def kanban_properties(request,kanban_board_id):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url='login',redirect_field_name="")
 def kanban_read_only(request,kanban_board_id):
     permission_results = return_user_permission_level(request, None,['kanban'])
 
@@ -4037,7 +4039,7 @@ def kanban_read_only(request,kanban_board_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def kanban_requirement_information(request, kanban_board_id):
     permission_results = return_user_permission_level(request, None, ['kanban'])
 
@@ -4099,7 +4101,7 @@ def kanban_requirement_information(request, kanban_board_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def kanban_requirement_item_update(request,requirement_item_id,status_id):
     if request.method == "POST":
         #Get instance of requirement item
@@ -4200,7 +4202,7 @@ def kudos_read_only(request,kudos_key):
     return HttpResponse(t.render(c,request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def list_of_tags(request):
     """
     List of tags will allow a user to configure all the tags currently in NearBeach. The user will be able to
@@ -4402,7 +4404,7 @@ def logout(request):
     return HttpResponseRedirect(reverse('login'))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def merge_tags(request, old_tag_id, new_tag_id=""):
     """
     Merge tags will get the old tag_id, and update all the tag assoications with the new tag_id before deleting the old
@@ -4468,7 +4470,7 @@ def merge_tags(request, old_tag_id, new_tag_id=""):
 
     return HttpResponse(t.render(c, request))
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def my_profile(request):
     permission_results = return_user_permission_level(request, None, "")
 
@@ -4565,7 +4567,7 @@ def my_profile(request):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_bug_client(request):
     permission_results = return_user_permission_level(request, None, 'bug_client')
 
@@ -4617,7 +4619,7 @@ def new_bug_client(request):
 
     return HttpResponse(t.render(c, request))
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_campus(request, location_id, destination):
     permission_results = return_user_permission_level(request, None, 'organisation_campus')
 
@@ -4705,7 +4707,7 @@ def new_campus(request, location_id, destination):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_customer(request, organisation_id):
     permission_results = return_user_permission_level(request, None, 'customer')
 
@@ -4765,7 +4767,7 @@ def new_customer(request, organisation_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_group(request):
     """
     You need to create a new group. You must be over 3 on your administration create group :)
@@ -4819,7 +4821,7 @@ def new_group(request):
 
     return HttpResponse(t.render(c,request))
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_kanban_board(request):
     permission_results = return_user_permission_level(request, None, 'kanban')
 
@@ -4896,7 +4898,7 @@ def new_kanban_board(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_kanban_requirement_board(request,requirement_id):
     permission_results = return_user_permission_level(request,None,'kanban_board')
 
@@ -4922,7 +4924,7 @@ def new_kanban_requirement_board(request,requirement_id):
     )
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_kudos(request,project_id):
     """
     Method
@@ -5005,7 +5007,7 @@ def new_kudos(request,project_id):
     else:
         return HttpResponseBadRequest("Sorry, can only do this request through post")
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_opportunity(request):
     """
     New opportunity will give the user the ability to create a new opportunity. The new opportunity will not be connected
@@ -5085,7 +5087,7 @@ def new_opportunity(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_organisation(request):
     permission_results = return_user_permission_level(request, None, 'organisation')
 
@@ -5160,7 +5162,7 @@ def new_organisation(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_permission_set(request):
     permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
 
@@ -5232,7 +5234,7 @@ def new_permission_set(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_project(request, location_id='', destination=''):
     permission_results = return_user_permission_level(request, None, 'project')
 
@@ -5375,7 +5377,7 @@ def new_project(request, location_id='', destination=''):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_quote(request,destination,primary_key):
     permission_results = return_user_permission_level(request, None,'quote')
 
@@ -5473,7 +5475,7 @@ def new_quote(request,destination,primary_key):
 
     return HttpResponse(t.render(c, request))
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_quote_template(request):
     permission_results = return_user_permission_level(request, None, 'templates')
 
@@ -5558,7 +5560,7 @@ def new_quote_template(request):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_request_for_change(request):
     """
     A user would like to implement a new request for change. This new function will ask the user for the following set of
@@ -5642,7 +5644,7 @@ def new_request_for_change(request):
 
     return HttpResponse(t.render(c,request))
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_task(request, location_id='', destination=''):
     permission_results = return_user_permission_level(request, None, 'task')
 
@@ -5801,7 +5803,7 @@ def new_task(request, location_id='', destination=''):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def opportunity_delete_permission(request, opportunity_permissions_id):
     if request.method == "POST":
         opportunity_permission_update = opportunity_permission.objects.get(opportunity_permissions_id=opportunity_permissions_id)
@@ -5820,7 +5822,7 @@ def opportunity_delete_permission(request, opportunity_permissions_id):
         return HttpResponseBadRequest("Sorry, this has to be through post")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def opportunity_connection_list(request, opportunity_id):
     permission_results = return_user_permission_level(request, None,'opportunity')
 
@@ -5867,7 +5869,7 @@ def opportunity_connection_list(request, opportunity_id):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def opportunity_information(request, opportunity_id):
     permission_results = return_user_permission_level(request, None,'opportunity')
 
@@ -6056,7 +6058,7 @@ def opportunity_information(request, opportunity_id):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def organisation_information(request, organisation_id):
     permission_results = return_user_permission_level(request, None,['organisation','organisation_campus','customer'])
 
@@ -6176,7 +6178,7 @@ def organisation_information(request, organisation_id):
 
     return HttpResponse(t.render(c, request))
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def organisation_readonly(request, organisation_id):
     permission_results = return_user_permission_level(request, None,
                                                       ['organisation', 'organisation_campus', 'customer'])
@@ -6289,7 +6291,7 @@ def organisation_readonly(request, organisation_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def permission_denied(request):
     #The user has no access to this page
     # Load the template
@@ -6302,7 +6304,7 @@ def permission_denied(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def permission_set_information(request,permission_set_id):
     permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
 
@@ -6448,7 +6450,7 @@ def preview_quote(request,quote_uuid,quote_template_id):
     return HttpResponse(t.render(c,request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def preview_requirement(request,requirement_id):
     """
     This is a read only document output of the requirements. It will contain the following information;
@@ -6503,7 +6505,7 @@ def preview_requirement(request,requirement_id):
 """
 TEMP CODE
 """
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def private_document(request, document_key):
     """
     This is temp code. Hopefully I will make this function
@@ -6536,7 +6538,7 @@ END TEMP DOCUMENT
 """
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def project_information(request, project_id):
     #First look at the user's permissions for the project's group.
     project_groups_results = object_assignment.objects.filter(
@@ -6679,7 +6681,7 @@ def project_information(request, project_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def project_readonly(request, project_id):
     project_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
@@ -6810,7 +6812,7 @@ def project_readonly(request, project_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def project_remove_customer(request,project_customer_id):
     if request.method == "POST":
         project_customer_update = project_customer.objects.get(
@@ -6829,7 +6831,7 @@ def project_remove_customer(request,project_customer_id):
         return HttpResponseBadRequest("Can only do this through POST")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def quote_information(request, quote_id):
     permission_results = return_user_permission_level(request, None, 'quote')
 
@@ -7002,7 +7004,7 @@ def quote_information(request, quote_id):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def quote_template_information(request,quote_template_id):
     permission_results = return_user_permission_level(request, None, 'template')
 
@@ -7083,7 +7085,7 @@ def quote_template_information(request,quote_template_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def quote_readonly(request, quote_id):
     permission_results = return_user_permission_level(request, None, 'quote')
 
@@ -7176,7 +7178,7 @@ def quote_readonly(request, quote_id):
     return HttpResponse(t.render(c,request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def rename_document(request, document_key):
     if request.method == "POST":
         print(request)
@@ -7184,7 +7186,7 @@ def rename_document(request, document_key):
         return HttpResponseBadRequest("This is a POST function. POST OFF!")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def request_for_change_information(request,rfc_id):
     """
 
@@ -7252,7 +7254,7 @@ def request_for_change_information(request,rfc_id):
 
     return HttpResponse(t.render(c,request))
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def resolve_project(request, project_id):
     project_update = project.objects.get(project_id=project_id)
     project_update.project_status = 'Resolved'
@@ -7261,7 +7263,7 @@ def resolve_project(request, project_id):
     return HttpResponseRedirect(reverse('dashboard'))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def resolve_task(request, task_id):
     task_update = task.objects.get(task_id=task_id)
     task_update.task_status = 'Resolved'
@@ -7270,7 +7272,7 @@ def resolve_task(request, task_id):
     return HttpResponseRedirect(reverse('dashboard'))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def search(request):
     permission_results = return_user_permission_level(request, None, 'project')
 
@@ -7369,7 +7371,7 @@ def search(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def search_customer(request):
     permission_results = return_user_permission_level(request, None, 'project')
 
@@ -7435,7 +7437,7 @@ def search_customer(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def search_group(request):
     """
     Brings up a list of all groups.
@@ -7465,7 +7467,7 @@ def search_group(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def search_organisation(request):
     permission_results = return_user_permission_level(request, None, 'project')
 
@@ -7524,7 +7526,7 @@ def search_organisation(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def search_permission_set(request):
     permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
 
@@ -7546,7 +7548,7 @@ def search_permission_set(request):
     return HttpResponse(t.render(c,request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def search_projects_task(request):
     # Load the template
     t = loader.get_template('NearBeach/search_projects_and_task.html')
@@ -7562,7 +7564,7 @@ def search_projects_task(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def search_tags(request):
     """
     This search functionality allows the user to search NearBeach for tags. Tags are connected to the objects;
@@ -7694,7 +7696,7 @@ def search_tags(request):
     return HttpResponse(t.render(c,request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def search_templates(request):
     permission_results = return_user_permission_level(request, None, 'templates')
     if permission_results['templates'] == 0:
@@ -7721,7 +7723,7 @@ def search_templates(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def tag_information(request, location_id, destination):
     """
     Tag information is where the user requests tags for certain objects.
@@ -7857,7 +7859,7 @@ def tag_information(request, location_id, destination):
     return HttpResponse(t.render(c,request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def task_information(request, task_id):
     #First look at the user's permissions for the project's group.
     task_groups_results = object_assignment.objects.filter(
@@ -7989,7 +7991,7 @@ def task_information(request, task_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def task_readonly(request,task_id):
     task_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
@@ -8113,7 +8115,7 @@ def task_readonly(request,task_id):
 
     return HttpResponse(t.render(c,request))
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def task_remove_customer(request,task_customer_id):
     if request.method == "POST":
         task_customer_update =task_customer.objects.get(
@@ -8131,7 +8133,7 @@ def task_remove_customer(request,task_customer_id):
         return HttpResponseBadRequest("Sorry, can only do this in POST")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def timeline(request):
     permission_results = return_user_permission_level(request, [],[])
 
@@ -8150,7 +8152,7 @@ def timeline(request):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def timeline_data(request):
     if request.method == "POST":
         form = timeline_form(request.POST)
@@ -8305,7 +8307,7 @@ def timeline_data(request):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def to_do_list(request, location_id, destination):
     if request.method == "POST":
         form = to_do_form(request.POST)
@@ -8354,7 +8356,7 @@ def to_do_list(request, location_id, destination):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def to_do_complete(request, to_do_id):
     to_do_update = to_do.objects.get(to_do_id=to_do_id)
     to_do_update.to_do_completed = True
@@ -8369,7 +8371,7 @@ def to_do_complete(request, to_do_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def user_want_remove(request,user_want_id):
     if request.method=="POST":
         user_want_save = user_want.objects.get(pk=user_want_id)
@@ -8387,7 +8389,7 @@ def user_want_remove(request,user_want_id):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def user_want_view(request):
     if request.method=="POST":
         form = user_want_form(request.POST)
@@ -8424,7 +8426,7 @@ def user_want_view(request):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def user_weblink_remove(request,user_weblink_id):
     if request.method == "POST":
         weblink_save = user_weblink.objects.get(pk=user_weblink_id)
@@ -8442,7 +8444,7 @@ def user_weblink_remove(request,user_weblink_id):
         return HttpResponseBadRequest("Can only do this through post")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def user_weblink_view(request):
     if request.method == "POST":
         form = user_weblink_form(request.POST)

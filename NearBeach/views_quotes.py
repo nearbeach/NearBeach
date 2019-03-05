@@ -8,7 +8,7 @@ from django.db.models import Sum, F
 from NearBeach.user_permissions import *
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def delete_line_item(request, line_item_id):
     # Delete the line item
     line_item = quote_product_and_service.objects.get(quotes_product_and_service_id = line_item_id)
@@ -26,7 +26,7 @@ def delete_line_item(request, line_item_id):
     #SoMuchFun
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def delete_responsible_customer(request,quote_id,customer_id):
     if request.method == "POST":
         quote_responsible_customer.objects.filter(
@@ -46,7 +46,7 @@ def delete_responsible_customer(request,quote_id,customer_id):
         return HttpResponseBadRequest("Delete Responsible Customer has to be done in POST")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def list_of_line_items(request, quote_id):
     #Get data
     line_item_results = quote_product_and_service.objects.filter(
@@ -82,7 +82,7 @@ def list_of_line_items(request, quote_id):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_line_item(request,quote_id):
     quotes_results = quote.objects.get(quote_id=quote_id)
 
@@ -151,7 +151,7 @@ def new_line_item(request,quote_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def responsible_customer(request,quote_id, customer_id=''):
     permission_results = return_user_permission_level(request, None,'quote')
 
