@@ -1896,6 +1896,7 @@ class permission_set_manager(models.Manager):
             request_for_change,
             requirement,
             requirement_link,
+            tag,
             task,
             tax,
             document,
@@ -1929,6 +1930,7 @@ class permission_set_manager(models.Manager):
             request_for_change=request_for_change,
             requirement=requirement,
             requirement_link=requirement_link,
+            tag=tag,
             task=task,
             tax=tax,
             template=template,
@@ -2036,6 +2038,10 @@ class permission_set(models.Model):
     requirement_link = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0
+    )
+    tag = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
     )
     task = models.IntegerField(
         choices=PERMISSION_LEVEL,

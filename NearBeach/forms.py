@@ -3072,6 +3072,12 @@ class permission_set_form(ModelForm):
             'class': 'form-control',
         })
     )
+    request_for_change=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
     requirement=forms.ChoiceField(
         choices=PERMISSION_LEVEL,
         widget=forms.Select(attrs={
@@ -3079,6 +3085,12 @@ class permission_set_form(ModelForm):
         })
     )
     requirement_link=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    tag=forms.ChoiceField(
         choices=PERMISSION_LEVEL,
         widget=forms.Select(attrs={
             'class': 'form-control',
@@ -3389,7 +3401,6 @@ class quote_information_form(ModelForm):
     quote_valid_till = forms.DateTimeField(
         initial=datetime.datetime.now() + datetime.timedelta(days=31),
         widget=forms.DateTimeInput(attrs={
-            'style': 'width: 200px',
             'class': 'form-control',
         })
     )

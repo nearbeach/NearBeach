@@ -99,6 +99,7 @@ def information_organisation_contact_history(request, organisation_id):
         'contact_history_results': contact_history_results,
         'organisation_permissions': permission_results['organisation'],
         'contact_history_permission': permission_results['contact_history'],
+        'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
         'contact_year': contact_date.year,
         'contact_month': contact_date.month,
         'contact_day': contact_date.day,
