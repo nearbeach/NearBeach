@@ -82,13 +82,13 @@
             {% if add_campus_results and assign_campus_to_customer_permission > 1 and customer_results.organisation_id %}
                 <form id="customer_campus_form">
                     <div class="form-row">
-                        <select name="add_campus_select" id="id_add_cammpus_select" onchange="enable_disable_add_campus()" class="form-control">
+                        <select name="add_campus_select" id="id_add_cammpus_select" onchange="enable_disable_add_campus()" class="form-control col-md-6">
                             <option value="---------"> ---------</option>
                             {% for row in add_campus_results %}
                                 <option value="{{ row.campus_id }}">{{ row.campus_nickname }}</option>
                             {% endfor %}
                         </select>
-                        <input type="submit" name="add_campus_submit" value="Add Campus" disabled id="id_add_cammpus_submit" class="btn btn-primary form-control">
+                        <input type="submit" name="add_campus_submit" value="Add Campus" disabled id="id_add_cammpus_submit" class="btn btn-primary form-control col-md-6">
                     </div>
                 </form>
             {% elif assign_campus_to_customer_permission > 1 and not customer_results.organisation_id %}
