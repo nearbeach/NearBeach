@@ -10,8 +10,8 @@
     {% load staticfiles %}
     {% load static %}
     <script src="{% static 'NearBeach/widgets/jquery/jquery-3.3.1.min.js' %}"></script>
-    <script src="{% static 'NearBeach/widgets/bootstrap-4.1.3-dist/js/bootstrap.bundle.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'NearBeach/widgets/bootstrap-4.1.3-dist/css/bootstrap.css' %}" />
+    <script src="{% static 'NearBeach/widgets/bootstrap/js/bootstrap.bundle.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/bootstrap/css/bootstrap.css' %}" />
 
     <style>
         .star{
@@ -50,43 +50,59 @@
         </div>
     </nav>
 
-
+    {{ kudos_read_only_form.media }}
     <div class="container">
-        <div class="col-lg-12">
-            {{ kudos_read_only_form.media }}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h1>Project - {{ project_results.project_id }}</h1>
+            </div>
+            <div class="card-body">
+                <h5>{{ project_results.project_name }}</h5>
+                {{ kudos_read_only_form.project_description }}
+                <table>
+                    <tr><td>Organisation: {{ project_results.organisations_id }}</td></tr>
+                    <tr><td>Project Status: Completed</td></tr>
+                    <tr><td>Start Date: {{ project_results.project_start_date }}</td></tr>
+                    <tr><td>End Date: {{ project_results.project_end_date }}</td></tr>
+                </table>
 
-            <!-- PROJECT INFORMATION -->
-            <h2>Project - {{ project_results.project_id }}</h2>
-            <h5>{{ project_results.project_name }}</h5>
-            {{ kudos_read_only_form.project_description }}
-            <table>
-                <tr><td>Organisation: {{ project_results.organisations_id }}</td></tr>
-                <tr><td>Project Status: Completed</td></tr>
-                <tr><td>Start Date: {{ project_results.project_start_date }}</td></tr>
-                <tr><td>End Date: {{ project_results.project_end_date }}</td></tr>
-            </table>
-
-            <!-- RATING -->
-            <h2>Kudos Rating - how well did we do?</h2>
-            {% for i in star_range %}
-                <span class="star rated"></span>
-            {% endfor %}<br/>
-
-            <h2>Is there anything we can improve?</h2>
-            <div class="row">
-                {{ kudos_read_only_form.improvement_note }}
-            </div><br/>
-
-            <h2>Is there anything you liked about our service?</h2>
-            <div class="row">
-                {{ kudos_read_only_form.liked_note }}
-            </div><br/>
-
-            {% if kudos_results.extra_kudos %}
-                <h2>Extra Kudos</h2>
-                Extra Kudos was given to staff member - {{ kudos_results.extra_kudos }}
-            {% endif %}
+                <!-- RATING -->
+                <strong>Kudos Rating - how well did we do?</strong>
+                {% for i in star_range %}
+                    <span class="star rated"></span>
+                {% endfor %}<br/>
+            </div>
         </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <strong>Is there anything we can improve?</strong>
+            </div>
+            <div class="card-body">
+                {{ kudos_read_only_form.improvement_note }}
+            </div>
+        </div>
+
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <strong>Is there anything you liked about our service?</strong>
+            </div>
+            <div class="card-body">
+                {{ kudos_read_only_form.liked_note }}
+            </div>
+        </div>
+
+        {% if kudos_results.extra_kudos %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <strong>Extra Kudos</strong>
+                </div>
+                <div class="card-body">
+                    Extra Kudos was given to staff member - {{ kudos_results.extra_kudos }}
+                </div>
+            </div>
+        {% endif %}
     </div>
 </body>
 </html>

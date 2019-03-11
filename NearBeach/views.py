@@ -4168,6 +4168,7 @@ def kudos_rating(request,kudos_key):
         'kudos_form': kudos_form(
             initial={
                 'project_description': project_results.project_description,
+                'kudos_rating': 2,
             }
         ),
         'kudos_key': kudos_key,
@@ -4961,6 +4962,7 @@ def new_kudos(request,project_id):
 
         for customer_line in project_customer_results:
             kudos_submit = kudos(
+                kudos_rating=2,
                 customer=customer_line.customer_id,
                 project_id=project_id,
                 change_user=request.user,
@@ -5187,25 +5189,36 @@ def new_permission_set(request):
 
             # Try and save the form.
             submit_permission_set = permission_set(
-                permission_set_name=permission_set_name,
+                permission_set_name=form.cleaned_data['permission_set_name'],
                 administration_assign_user_to_group=form.cleaned_data['administration_assign_user_to_group'],
                 administration_create_group=form.cleaned_data['administration_create_group'],
                 administration_create_permission_set=form.cleaned_data['administration_create_permission_set'],
                 administration_create_user=form.cleaned_data['administration_create_user'],
                 assign_campus_to_customer=form.cleaned_data['assign_campus_to_customer'],
                 associate_project_and_task=form.cleaned_data['associate_project_and_task'],
+                bug=form.cleaned_data['bug'],
+                bug_client=form.cleaned_data['bug_client'],
                 customer=form.cleaned_data['customer'],
+                email=form.cleaned_data['email'],
                 invoice=form.cleaned_data['invoice'],
                 invoice_product=form.cleaned_data['invoice_product'],
+                kanban=form.cleaned_data['kanban'],
+                kanban_card=form.cleaned_data['kanban_card'],
                 opportunity=form.cleaned_data['opportunity'],
                 organisation=form.cleaned_data['organisation'],
                 organisation_campus=form.cleaned_data['organisation_campus'],
                 project=form.cleaned_data['project'],
+                quote=form.cleaned_data['quote'],
+                request_for_change=form.cleaned_data['request_for_change'],
                 requirement=form.cleaned_data['requirement'],
                 requirement_link=form.cleaned_data['requirement_link'],
+                tag=form.cleaned_data['tag'],
                 task=form.cleaned_data['task'],
+                tax=form.cleaned_data['tax'],
+                template=form.cleaned_data['template'],
                 document=form.cleaned_data['document'],
                 contact_history=form.cleaned_data['contact_history'],
+                kanban_comment=form.cleaned_data['kanban_comment'],
                 project_history=form.cleaned_data['project_history'],
                 task_history=form.cleaned_data['task_history'],
                 change_user=request.user,
@@ -5639,7 +5652,8 @@ def new_request_for_change(request):
     c = {
         'new_request_for_change_form': new_request_for_change_form(),
         'form_errors': form_errors,
-        # ADD IN PERMISSIONS
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c,request))
@@ -6311,7 +6325,53 @@ def permission_set_information(request,permission_set_id):
     if permission_results['administration_create_permission_set'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
-    #DO POST STUFF HERE
+    if request.method == "POST":
+        if permission_results['administration_create_permission_set'] == 1:
+            return HttpResponseRedirect(reverse('permission_denied'))
+
+        form = permission_set_form(request.POST)
+        if form.is_valid():
+            permission_set_update = permission_set.objects.get(permission_set_id=permission_set_id)
+            permission_set_update.permission_set_name = form.cleaned_data['permission_set_name']
+            permission_set_update.administration_assign_user_to_group = form.cleaned_data[
+                'administration_assign_user_to_group']
+            permission_set_update.administration_create_group = form.cleaned_data['administration_create_group']
+            permission_set_update.administration_create_permission_set = form.cleaned_data[
+                'administration_create_permission_set']
+            permission_set_update.administration_create_user = form.cleaned_data['administration_create_user']
+            permission_set_update.assign_campus_to_customer = form.cleaned_data['assign_campus_to_customer']
+            permission_set_update.associate_project_and_task = form.cleaned_data['associate_project_and_task']
+            permission_set_update.bug = form.cleaned_data['bug']
+            permission_set_update.bug_client = form.cleaned_data['bug_client']
+            permission_set_update.customer = form.cleaned_data['customer']
+            permission_set_update.email = form.cleaned_data['email']
+            permission_set_update.invoice = form.cleaned_data['invoice']
+            permission_set_update.invoice_product = form.cleaned_data['invoice_product']
+            permission_set_update.kanban = form.cleaned_data['kanban']
+            permission_set_update.kanban_card = form.cleaned_data['kanban_card']
+            permission_set_update.opportunity = form.cleaned_data['opportunity']
+            permission_set_update.organisation = form.cleaned_data['organisation']
+            permission_set_update.organisation_campus = form.cleaned_data['organisation_campus']
+            permission_set_update.project = form.cleaned_data['project']
+            permission_set_update.quote = form.cleaned_data['quote']
+            permission_set_update.request_for_change = form.cleaned_data['request_for_change']
+            permission_set_update.requirement = form.cleaned_data['requirement']
+            permission_set_update.requirement_link = form.cleaned_data['requirement_link']
+            permission_set_update.tag = form.cleaned_data['tag']
+            permission_set_update.task = form.cleaned_data['task']
+            permission_set_update.tax = form.cleaned_data['tax']
+            permission_set_update.template = form.cleaned_data['template']
+            permission_set_update.document = form.cleaned_data['document']
+            permission_set_update.contact_history = form.cleaned_data['contact_history']
+            permission_set_update.kanban_comment = form.cleaned_data['kanban_comment']
+            permission_set_update.project_history = form.cleaned_data['project_history']
+            permission_set_update.task_history = form.cleaned_data['task_history']
+            permission_set_update.change_user = request.user
+            permission_set_update.save()
+
+            # Return user to permission set search
+            return HttpResponseRedirect(reverse('search_permission_set'))
+
 
     # Get data
     permission_set_results = permission_set.objects.get(permission_set_id=permission_set_id)
@@ -6728,7 +6788,7 @@ def project_readonly(request, project_id):
         project_id=project_id,
     )
 
-    project_customers_results = project_customer.objects.filter(
+    project_customer_results = project_customer.objects.filter(
         is_deleted="FALSE",
         project_id=project_id,
 
@@ -6807,7 +6867,7 @@ def project_readonly(request, project_id):
         'project_history_collective': project_history_collective,
         'email_results': email_results,
         'associated_tasks_results': associated_tasks_results,
-        'project_customers_results': project_customers_results,
+        'project_customer_results': project_customer_results,
         'costs_results': costs_results,
         'quote_results': quote_results,
         'bug_results': bug_results,

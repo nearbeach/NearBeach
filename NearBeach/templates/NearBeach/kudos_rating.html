@@ -10,8 +10,8 @@
     {% load staticfiles %}
     {% load static %}
     <script src="{% static 'NearBeach/widgets/jquery/jquery-3.3.1.min.js' %}"></script>
-    <script src="{% static 'NearBeach/widgets/bootstrap-4.1.3-dist/js/bootstrap.bundle.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'NearBeach/widgets/bootstrap-4.1.3-dist/css/bootstrap.css' %}" />
+    <script src="{% static 'NearBeach/widgets/bootstrap/js/bootstrap.bundle.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/bootstrap/css/bootstrap.css' %}" />
 
     <style>
         .star{
@@ -90,7 +90,7 @@
                     </label>
 
                     <!-- Rating 3-->
-                    <input type="radio" id="id_kudos_rating_2" value="3" name="kudos_rating">
+                    <input type="radio" id="id_kudos_rating_2" value="3" name="kudos_rating" checked="checked">
                     <label for="id_kudos_rating_2">
                         <span class="star"></span>
                     </label>

@@ -46,8 +46,10 @@
                             <div class="dropdown-menu bg-dark" aria-labelledby="new_items_dropdown">
                                 <a class="dropdown-item text-light" href="{% url 'new_customer' 0 %}">New Customer</a>
                                 <a class="dropdown-item text-light" href="{% url 'new_kanban_board' %}">New Kanban Board</a>
+                                <a class="dropdown-item text-light" href="{% url 'new_opportunity' %}">New Opportunity</a>
                                 <a class="dropdown-item text-light" href="{% url 'new_organisation' %}">New Organisation</a>
                                 <a class="dropdown-item text-light" href="{% url 'new_project' %}">New Project</a>
+                                <a class="dropdown-item text-light" href="{% url 'new_request_for_change' %}">New Request For Change</a>
                                 <a class="dropdown-item text-light" href="{% url 'new_requirement' %}">New Requirement</a>
                                 <a class="dropdown-item text-light" href="{% url 'new_task' %}">New Task</a>
                             </div>
@@ -62,6 +64,7 @@
                         </a>
                         <div class="dropdown-menu bg-dark" aria-labelledby="list_dropdown">
                             <a class="dropdown-item text-light" href="{% url 'search' %}">List All</a>
+                            <a class="dropdown-item text-light" href="{% url 'search_tags' %}">List by Tag</a>
                             <a class="dropdown-item text-light" href="{% url 'search_customer' %}">List Customers</a>
                             <a class="dropdown-item text-light" href="{% url 'kanban_list' %}">List Kanban Boards</a>
                             <a class="dropdown-item text-light" href="{% url 'search_organisation' %}">List Organisations</a>
@@ -77,6 +80,7 @@
                             <div class="dropdown-menu bg-dark" aria-labelledby="administration_dropdown">
                                 <a class="dropdown-item text-light" href="{% url 'bug_client_list' %}">Bug Client List</a>
                                 <a class="dropdown-item text-light" href="{% url 'search_templates' %}">Edit Templates</a>
+                                <a class="dropdown-item text-light" href="{% url 'list_of_tags' %}">List of Tags</a>
                                 <a class="dropdown-item text-light" href="{% url 'list_of_taxes_information' %}">List of Taxes</a>
                                 <a class="dropdown-item text-light" href="{% url 'product_and_service_search' %}">Products and Services</a>
                             </div>
@@ -98,8 +102,9 @@
                 </ul>
 
                 <!--SEARCH FIELD-->
-                <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <form action={% url 'search' %} method="post" class="search_for form-inline my-2 my-lg-0">
+                    {% csrf_token %}
+                    <input id="id_search_for" name="search_for" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
                     <button class="btn btn-secondary" type="submit">Search</button>
                 </form>
 
