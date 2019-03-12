@@ -2368,6 +2368,67 @@ def delete_cost(request, cost_id, location_id, project_or_task):
 
 
 @login_required(login_url='login',redirect_field_name="")
+def delete_customer(request, customer_id):
+    """
+    This will remove the customer and ANY connections it has with any object. This can not be undone.
+    :param request:
+    :param organisation_id: the organisation we will delete
+    :return: Blank page
+
+    Method
+    ~~~~~~
+    1. Check to make sure it is in POST - send error otherwise
+    2. Check to make sure user has permission - if not send them to the naughty place
+    3. Delete the organisation
+    4. Delete the customers connected to the organisation
+    5. Delete any object connected to the organisation
+    6. Return blank page
+    """
+    if request.method == "POST":
+        permission_results = return_user_permission_level(request, None, 'customer')
+        if permission_results['customer'] < 4:
+            return HttpResponseRedirect(reverse('permission_denied'))
+
+        #Delete the organisation
+        customer_update = customer.objects.filter(
+            customer_id=customer_id
+        ).update(
+            is_deleted="TRUE",
+        )
+
+
+        #Delete any project
+        project_update = project_customer.objects.filter(
+            is_deleted="FALSE",
+            customer_id=customer_id,
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        #Delete any tasks
+        task_update = task_customer.objects.filter(
+            is_deleted="FALSE",
+            customer_id=customer_id,
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        #Delete any opportunity connections
+        opportunity_connection_update = opportunity_connection.objects.filter(
+            is_deleted="FALSE",
+            customer_id=customer_id,
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        # Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Can only do this in POST")
+
+@login_required(login_url='login',redirect_field_name="")
 def delete_group(request, group_id):
     """
     This will remove the group, and anyone connected to the group. Becareful - this is a sad function.
@@ -2416,6 +2477,75 @@ def delete_group(request, group_id):
     else:
         return HttpResponseBadRequest("Sorry - can only be done in POST")
 
+
+
+@login_required(login_url='login',redirect_field_name="")
+def delete_organisation(request, organisation_id):
+    """
+    This will remove the organisation and ANY connections it has with any object. This can not be undone.
+    :param request:
+    :param organisation_id: the organisation we will delete
+    :return: Blank page
+
+    Method
+    ~~~~~~
+    1. Check to make sure it is in POST - send error otherwise
+    2. Check to make sure user has permission - if not send them to the naughty place
+    3. Delete the organisation
+    4. Delete the customers connected to the organisation
+    5. Delete any object connected to the organisation
+    6. Return blank page
+    """
+    if request.method == "POST":
+        permission_results = return_user_permission_level(request, None, 'organisation')
+        if permission_results['organisation'] < 4:
+            return HttpResponseRedirect(reverse('permission_denied'))
+
+        #Delete the organisation
+        organisation_update = organisation.objects.filter(
+            organisation_id=organisation_id
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        #Delete any customers connected to organisation
+        customer_update = customer.objects.filter(
+            is_deleted="FALSE",
+            organisation_id=organisation_id,
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        #Delete any project
+        project_update = project.objects.filter(
+            is_deleted="FALSE",
+            organisation_id=organisation_id,
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        #Delete any tasks
+        task_update = task.objects.filter(
+            is_deleted="FALSE",
+            organisation_id=organisation_id,
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        #Delete any opportunity connections
+        opportunity_connection_update = opportunity_connection.objects.filter(
+            is_deleted="FALSE",
+            organisation_id=organisation_id,
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        # Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Can only do this in POST")
 
 
 @login_required(login_url='login',redirect_field_name="")
