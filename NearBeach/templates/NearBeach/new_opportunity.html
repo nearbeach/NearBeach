@@ -96,14 +96,16 @@
                 <div class="form-group">
                     <label>Time zone: {{ timezone }}</label>
                 </div>
-                <div class="form-group">
-                    <label for="id_opportunity_expected_close_date">Opportunity Expected Close Date</label>
-                    {{ new_opportunity_form.opportunity_expected_close_date }}
-                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_opportunity_expected_close_date">Opportunity Expected Close Date</label>
+                        {{ new_opportunity_form.opportunity_expected_close_date }}
+                    </div>
 
-                <div class="form-group">
-                    <label for="id_lead_source_id">Lead Source</label>
-                    {{ new_opportunity_form.lead_source_id }}
+                    <div class="form-group col-md-6">
+                        <label for="id_lead_source_id">Lead Source</label>
+                        {{ new_opportunity_form.lead_source_id }}
+                    </div>
                 </div>
 
                 <h3 class="mt-4">Assign Groups to Opportunity</h3>

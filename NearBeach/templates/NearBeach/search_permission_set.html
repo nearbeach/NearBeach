@@ -24,7 +24,7 @@
                             <td>{{ row.date_created }}</td>
                             <td> --- </td>
                         {% else %}
-                            <td><a href="javascript:void(0)" onclick="load_permission_edit({{ row.permission_set_id }})">{{ row.permission_set_name }}</a></td>
+                            <td><a href="{% url 'permission_set_information' row.permission_set_id %}">{{ row.permission_set_name }}</a></td>
                             <td>{{ row.date_created }}</td>
                             <td>
                                 {% if row.is_deleted == 'FALSE' %}

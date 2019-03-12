@@ -12,7 +12,7 @@ from .user_permissions import return_user_permission_level
 
 import simplejson
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def delete_document(request,document_key):
     if request.method == "POST":
         # Delete the document
@@ -39,7 +39,7 @@ def delete_document(request,document_key):
         return HttpResponseBadRequest("Can only do this action in post.")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def delete_folder(request, folder_id):
     if request.method == "POST":
         folder_results = folder.objects.get(folder_id=folder_id)
@@ -54,7 +54,7 @@ def delete_folder(request, folder_id):
         return HttpResponseBadRequest("Sorry, this request has to be post")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def document_tree_folder(request, location_id, destination, folder_id=''):
     if request.method == "POST":
         form = new_folder_form(request.POST)
@@ -96,7 +96,7 @@ def document_tree_folder(request, location_id, destination, folder_id=''):
         return HttpResponseBadRequest("Requst must be a POST")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def document_tree_list(request, location_id, destination, folder_id=''):
     permission_results = return_user_permission_level(request, None, destination)
 
@@ -185,7 +185,7 @@ def document_tree_list(request, location_id, destination, folder_id=''):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def document_tree_upload(request, location_id, destination, folder_id):
     if request.method == "POST":
         if request.FILES == None:
@@ -256,7 +256,7 @@ def document_tree_upload(request, location_id, destination, folder_id):
         return HttpResponseBadRequest("Sorry, this function is only a POST function")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def document_tree_url(request,location_id,destination,folder_id=''):
     if request.method == "POST":
         form = document_url_form(request.POST)

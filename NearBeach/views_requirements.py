@@ -15,7 +15,7 @@ from .views import permission_denied
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_requirement(request):
     permission_results = return_user_permission_level(request, None, 'requirement')
 
@@ -68,7 +68,7 @@ def new_requirement(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_requirement_item(request, requirement_id):
     """
     If a user wants to create a new requirement item against a requirement, they will need this function. It will deal
@@ -141,7 +141,7 @@ def new_requirement_item(request, requirement_id):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_requirement_item_link(request,requirement_item_id,location_id="",destination=""):
     """
     This function is designed so users can link requirement items to either tasks/projects. When the function is a simple
@@ -270,7 +270,7 @@ def new_requirement_item_link(request,requirement_item_id,location_id="",destina
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_requirement_link(request,requirement_id,location_id="",destination=""):
     """
     This function is designed so users can link requirement to either tasks/projects. When the function is a simple "GET"
@@ -335,6 +335,16 @@ def new_requirement_link(request,requirement_id,location_id="",destination=""):
             requirement_link_submit.task_id = task_instance
             object_link = "Task - " + str(location_id)
             object_description = task_instance.task_short_description
+        elif destination == "opportunity":
+            """
+            1. Get the opportunity instance
+            2. Save the opportunity instance against the requirement_link
+            3. Prepare the object_link and object_description
+            """
+            opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
+            requirement_link_submit.opportunity_id = opportunity_instance
+            object_link = "Opp - " + str(location_id)
+            object_description = opportunity_instance.opportunity_name
 
 
         # Save
@@ -386,6 +396,33 @@ def new_requirement_link(request,requirement_id,location_id="",destination=""):
         ).values('task_id')
     )
 
+    opportunity_results = opportunity.objects.filter(
+        is_deleted="FALSE",
+        opportunity_id__in=object_assignment.objects.filter(
+            is_deleted="FALSE",
+            group_id__in=user_group.objects.filter(
+                is_deleted="FALSE",
+                username_id=request.user.id,
+            ).values('group_id')
+        ).values('opportunity_id'),
+        opportunity_stage_id__in={
+            '1', # prospecting
+            '2', # qualification
+            '3', # needs analysis
+            '4', # valued proposition
+            '5', # identify desision makers
+            '6', # perception analysis
+            '7', # proposal/price quote
+            '8', # negotation/review
+        }
+    ).exclude(
+        opportunity_id__in=requirement_link.objects.filter(
+            is_deleted="FALSE",
+            opportunity_id__isnull=False,
+            requirement_id=requirement_id,
+        ).values('opportunity_id'),
+    )
+
     # Get Template
     t = loader.get_template('NearBeach/requirement_information/new_requirement_link.html')
 
@@ -393,12 +430,13 @@ def new_requirement_link(request,requirement_id,location_id="",destination=""):
     c = {
         'project_results': project_results,
         'task_results': task_results,
+        'opportunity_results': opportunity_results,
     }
 
     return HttpResponse(t.render(c,request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def requirement_documents_uploads(request, location_id, destination):
     permission_results = return_user_permission_level(request, None, ['requirement','document'])
 
@@ -464,7 +502,7 @@ def requirement_documents_uploads(request, location_id, destination):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def requirement_information(request, requirement_id):
     permission_results = return_user_permission_level(request, None, ['requirement','requirement_link'])
 
@@ -601,7 +639,7 @@ def requirement_information(request, requirement_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def requirement_item_information(request, requirement_item_id):
     """
     If a user requires to edit or view the requirement item information, this is the page.
@@ -666,7 +704,7 @@ def requirement_item_information(request, requirement_item_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def requirement_readonly(request,requirement_id):
     """
     Requirement readonly is a read only module. This will print out all the requirement information that the user will

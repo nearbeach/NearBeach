@@ -260,6 +260,95 @@
         </div>
     </div>
 
+
+    {% if organisation_permissions == 4 %}
+        <div class="card mt-4">
+            <div class="card-header bg-danger">
+                <h2>DANGER ZONE!</h2>
+            </div>
+            <div class="card-body">
+                <a href="javascript:void(0)" onclick="confirm_delete_organisation({{ organisation_id }})" class="btn btn-warning col-md-12">Delete Organisation</a>
+            </div>
+        </div>
+
+        <!-- CONFIRM DELETION OF ORGANISATION -->
+        <div class="modal" tabindex="-1" role="dialog" id="confirm_organisation_delete">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <!-- HEADER -->
+                    <div class="modal-header">
+                        <h5 class="modal-title">Delete Organisation?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <!-- BODY -->
+                    <div class="modal-body">
+                        <p>
+                            Are you sure you want to delete this organisation? Deleting this organisation will also delete;
+                            <ul>
+                                <li>Any <strong>customers</strong> connected to this organisation</li>
+                                <li>Any <strong>projects</strong> connected to this organisation</li>
+                                <li>Any <strong>tasks</strong> connected to this organisation</li>
+                                <li>Any <strong>opportunity connections</strong> connected to this organisation</li>
+                            </ul>
+                            <strong>This can not be reversed</strong>
+                        </p>
+                    </div>
+
+
+                    <!-- FOOTER -->
+                    <div class="modal-footer">
+                        <button id="remove_organisation_confirmed" disabled type="button" class="btn btn-danger btn-ok">Delete Organisation</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function confirm_delete_organisation(organisation_id) {
+                /*
+                First we have to confirm that the user wants to delete the group. This will bring up a modal
+                and force them to wait 2 seconds before deleting. It also warns them about the dangers of doing this.
+
+                Method
+                ~~~~~~
+                1. Bring up modal
+                2. Change the remove permission button attribute to the correct function
+                2. Wait 2 seconds
+                3. Enable button
+                 */
+                $("#confirm_organisation_delete").modal("show");
+
+                //Change the attribute for the confirmation button
+                $("#remove_organisation_confirmed").attr('onclick',`delete_organisation("${organisation_id}");`);
+
+                //Set the timeout of the button
+                setTimeout(function() {
+                    document.getElementById("remove_organisation_confirmed").disabled = false;
+                }, 2000);
+            }
+
+            function delete_organisation(organisation_id) {
+                $.ajax({
+                    url: `/delete_organisation/${organisation_id}/`,
+                    data: {},
+                    dataType: "HTML",
+                    type: "POST",
+                    success: function(data) {
+                        //Successfully deleted the organisation. Send user to the dashboard
+                        window.location("/");
+                    },
+                    error: function() {
+                        alert("Sorry - but the organisation could not be deleted");
+                    }
+                });
+            }
+        </script>
+    {% endif %}
+
 <script>
 
     $("#organisation_contact_history").on('submit', function(e) {

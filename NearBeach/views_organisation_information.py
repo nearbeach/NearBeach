@@ -20,7 +20,7 @@ from django.urls import reverse
 
 import simplejson
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def information_organisation_contact_history(request, organisation_id):
     permission_results = return_user_permission_level(request, None,['organisation','contact_history'])
 
@@ -99,6 +99,7 @@ def information_organisation_contact_history(request, organisation_id):
         'contact_history_results': contact_history_results,
         'organisation_permissions': permission_results['organisation'],
         'contact_history_permission': permission_results['contact_history'],
+        'PRIVATE_MEDIA_URL': settings.PRIVATE_MEDIA_URL,
         'contact_year': contact_date.year,
         'contact_month': contact_date.month,
         'contact_day': contact_date.day,
@@ -110,7 +111,7 @@ def information_organisation_contact_history(request, organisation_id):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def information_organisation_documents_upload(request, organisation_id):
     if request.method == "POST":
         if request.FILES == None:

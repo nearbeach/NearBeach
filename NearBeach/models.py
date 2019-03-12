@@ -88,6 +88,7 @@ RFC_STATUS = (
     (3,'Approved'),
     (4,'Started'),
     (5,'Finished'),
+    (6,'Rejected'),
 )
 
 RFC_TYPE = (
@@ -1895,6 +1896,7 @@ class permission_set_manager(models.Manager):
             request_for_change,
             requirement,
             requirement_link,
+            tag,
             task,
             tax,
             document,
@@ -1928,6 +1930,7 @@ class permission_set_manager(models.Manager):
             request_for_change=request_for_change,
             requirement=requirement,
             requirement_link=requirement_link,
+            tag=tag,
             task=task,
             tax=tax,
             template=template,
@@ -2035,6 +2038,10 @@ class permission_set(models.Model):
     requirement_link = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0
+    )
+    tag = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
     )
     task = models.IntegerField(
         choices=PERMISSION_LEVEL,
@@ -3030,6 +3037,12 @@ class requirement_link(models.Model):
     )
     organisation_id = models.ForeignKey(
         'organisation',
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
+    opportunity_id = models.ForeignKey(
+        'opportunity',
         blank=True,
         null=True,
         on_delete=models.CASCADE,

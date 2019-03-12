@@ -23,7 +23,7 @@ import datetime, json, simplejson
 
 #permission_set_form
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def list_of_taxes_deactivate(request,tax_id):
     if request.method == "POST":
         tax_instance = list_of_tax.objects.get(tax_id=tax_id)
@@ -43,7 +43,7 @@ def list_of_taxes_deactivate(request,tax_id):
         return HttpResponseBadRequest("Sorry, can only be done through POST")
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def list_of_taxes_edit(request,tax_id):
     tax_result = list_of_tax.objects.get(pk=tax_id)
     if request.method == "POST":
@@ -66,7 +66,7 @@ def list_of_taxes_edit(request,tax_id):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def list_of_taxes_information(request):
     permission_results = return_user_permission_level(request, None, 'tax')
 
@@ -87,7 +87,7 @@ def list_of_taxes_information(request):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def list_of_taxes_list(request):
     permission_results = return_user_permission_level(request, None, 'tax')
 
@@ -107,7 +107,7 @@ def list_of_taxes_list(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def list_of_taxes_new(request):
     if request.method == "POST":
         form = list_of_tax_form(request.POST)
@@ -133,7 +133,7 @@ def list_of_taxes_new(request):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def new_user(request):
     permission_results = return_user_permission_level(request, None, 'administration_create_users')
 
@@ -190,7 +190,7 @@ def new_user(request):
     return HttpResponse(t.render(c, request))
 
 """
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def permission_set_information(request):
     permission_results = return_user_permission_level(request, None,'administration_create_permission_set')
 
@@ -209,7 +209,7 @@ def permission_set_information(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def permission_set_information_create(request):
     permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
 
@@ -297,7 +297,7 @@ def permission_set_information_create(request):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def permission_set_information_edit(request, permission_set_id):
     permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
 
@@ -364,7 +364,7 @@ def permission_set_information_edit(request, permission_set_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def permission_set_information_list(request):
     permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
 
@@ -385,7 +385,7 @@ def permission_set_information_list(request):
     return HttpResponse(t.render(c, request))
 """
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def product_and_service_discontinued(request, product_id):
     product_instance = product_and_service.objects.get(product_id=product_id)
 
@@ -398,7 +398,7 @@ def product_and_service_discontinued(request, product_id):
 
     return HttpResponseRedirect(reverse(product_and_service_search))
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def product_and_service_edit(request, product_id):
     permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
 
@@ -431,7 +431,7 @@ def product_and_service_edit(request, product_id):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def product_and_service_new(request):
     permission_results = return_user_permission_level(request, None, 'administration_create_permission_set')
 
@@ -472,7 +472,7 @@ def product_and_service_new(request):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def product_and_service_search(request):
     permission_results = return_user_permission_level(request, None, 'invoice_product')
 
@@ -507,7 +507,7 @@ def product_and_service_search(request):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def search_users(request):
     permission_results = return_user_permission_level(request, None, 'administration_create_users')
 
@@ -548,7 +548,7 @@ def search_users(request):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def user_information(request, user_id):
     permission_results = return_user_permission_level(request, None, 'administration_create_users')
 

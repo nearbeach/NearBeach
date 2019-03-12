@@ -103,8 +103,9 @@
                 </ul>
 
                 <!--SEARCH FIELD-->
-                <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <form action={% url 'search' %} method="post" class="search_for form-inline my-2 my-lg-0">
+                    {% csrf_token %}
+                    <input id="id_search_for" name="search_for" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
                     <button class="btn btn-secondary" type="submit">Search</button>
                 </form>
 

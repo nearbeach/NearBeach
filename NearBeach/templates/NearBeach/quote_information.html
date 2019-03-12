@@ -162,21 +162,26 @@
                     <label for="id_quote_terms">Quote Terms: </label>
                     {{ quote_information_form.quote_terms }}
                 </div>
-                <div class="form-group">
-                    <label for="id_quote_stage_id">{{ quote_or_invoice }} Stage:</label>
-                    {{ quote_information_form.quote_stage_id }}
-                </div>
+
                 <div class="form-group">
                     <label>Time zone: {{ timezone }}</label>
                 </div>
-                <div class="form-group">
-                    <label for="id_quote_valid_till">{{ quote_or_invoice }} Valid To:</label>
-                    {{ quote_information_form.quote_valid_till }}
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_quote_stage_id">{{ quote_or_invoice }} Stage:</label>
+                        {{ quote_information_form.quote_stage_id }}
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="id_quote_valid_till">{{ quote_or_invoice }} Valid To:</label>
+                        {{ quote_information_form.quote_valid_till }}
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="id_customer_notes">Customer Notes: </label>
                     {{ quote_information_form.customer_notes }}
                 </div>
+
                 <div class="form-group">
                     <label for="id_quote_billing_address">Quote Billing Address: </label>
                     {{ quote_information_form.quote_billing_address }}

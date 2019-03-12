@@ -19,7 +19,7 @@ from .user_permissions import return_user_permission_level
 from django.db.models import Sum, Q, Min
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def information_project_customer(request, project_id):
     project_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
@@ -74,7 +74,7 @@ def information_project_customer(request, project_id):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def information_project_history(request, project_id):
     project_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",

@@ -18,7 +18,7 @@ from .misc_functions import *
 from .user_permissions import return_user_permission_level
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def information_task_delete_assigned_users(request, task_id, user_id):
     assigned_users_save = assigned_user.objects.filter(
         task_id=task_id,
@@ -35,7 +35,7 @@ def information_task_delete_assigned_users(request, task_id, user_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def information_task_customer(request, task_id):
     task_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
@@ -88,7 +88,7 @@ def information_task_customer(request, task_id):
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def information_task_history(request, task_id):
     task_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",

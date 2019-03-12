@@ -21,7 +21,7 @@ from .user_permissions import return_user_permission_level
 from django.urls import reverse
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def information_customer_contact_history(request, customer_id):
     permission_results = return_user_permission_level(request, None,['customer','contact_history'])
 
@@ -111,7 +111,7 @@ def information_customer_contact_history(request, customer_id):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='login',redirect_field_name="")
 def information_customer_documents_upload(request, customer_id):
     if request.method == "POST":
         if request.FILES == None:
