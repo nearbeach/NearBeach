@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="NearBeach",
-    version="0.21.0",
+    version="0.22.0",
     author="Luke Christopher Clarke",
     author_email="luke@nearbeach.org",
     description="NearBeach - an open source project management tool",
@@ -22,7 +22,9 @@ setuptools.setup(
 	'weasyprint',
 	'pyperclip',
 	'python-docx',
-	'BeautifulSoup4'
+	'BeautifulSoup4',
+	'pandoc',
+	'pypandoc'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -31,4 +33,3 @@ setuptools.setup(
     ],
     include_package_data=True,
 )
-
