@@ -14,66 +14,113 @@
     }
 </style>
 
+<!-- Load all map api keys-->
 {% if not MAPBOX_API_TOKEN == '' %}
-<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
-<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
-<script type="text/javascript" src="{% static 'NearBeach/javascript/mapbox.js' %}"></script>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/mapbox.js' %}"></script>
 {% elif not GOOGLE_MAP_API_TOKEN == '' %}
     <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAP_API_TOKEN }}&callback=initMap" async defer></script>
     <script type="text/javascript" src="{% static 'NearBeach/javascript/google_maps.js' %}"></script>
 {% endif %}
 
-<body onload="on_page_load()">
-    <h2>Customer Campus</h2>
-    <form action="{% url 'customer_campus_information' customer_campus_id customer_or_org %}" method="POST">
-        {% csrf_token %}
-        <table>
-            <tr class="header"><td width="150px">Field</td><td>Input</td></tr>
-            <tr><td>First Name:</td><td>{{ customer_campus_results.customer_id.customer_first_name }}</td></tr>
-            <tr><td>Last Name:</td><td>{{ customer_campus_results.customer_id.customer_last_name }}</td></tr>
-            <tr><td>Email:</td><td>{{ customer_campus_results.customer_id.customer_email }}</td></tr>
-            <tr><td>Customer phone:</td><td>{{ customer_campus_form.customer_phone }}</td></tr>
-            <tr><td>Customer fax:</td><td>{{ customer_campus_form.customer_fax }}</td></tr>
-            <tr><td>Organisation:</td><td><a href="{% url 'organisation_information' customer_campus_results.campus_id.organisation_id.organisation_id  %}">{{ customer_campus_results.campus_id.organisations_id }}</a></td></tr>
-            <tr><td>Campus:</td><td><a href="{% url 'campus_information' customer_campus_results.campus_id.campus_id %}">{{ customer_campus_results.campus_id }}</a></td></tr>
-            <tr><td>Suburb:</td><td>{{ customer_campus_results.campus_id.campus_suburb }}</td></tr>
-            <tr><td>State</td><td>{{ customer_campus_results.campus_id.campus_region_id }}</td></tr>
-            <tr><td>Country:</td><td>{{ customer_campus_results.campus_id.campus_country_id }}</td></tr>
-        </table>
-        {% if permission > 1 %}
-            <input type="submit" name="Save" value="Save and Return"/>
+<div class="card mt-4">
+    <div class="card-header">
+        <h2>Customer Campus</h2>
+    </div>
+    <div class="card-body">
+        <form action="{% url 'customer_campus_information' customer_campus_id customer_or_org %}" method="POST">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group col-3">
+                    <label for="id_first_name"><strong>First Name</strong></label>
+                    <div id="id_first_name">{{ customer_campus_results.customer_id.customer_first_name }}</div>
+                </div>
+                <div class="form-group col-3">
+                    <label for="id_last_name"><strong>Last Name</strong></label>
+                    <div id="id_last_name">{{ customer_campus_results.customer_id.customer_last_name }}</div>
+                </div>
+                <div class="form-group col-6">
+                    <label for="id_email"><strong>Email</strong></label>
+                    <div id="id_email">{{ customer_campus_results.customer_id.customer_email }}</div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-6">
+                    <label for="id_customer_phone"><strong>Customer Phone</strong></label>
+                    {{ customer_campus_form.customer_phone }}
+                </div>
+                <div class="form-group col-6">
+                    <label for="id_customer_fax"><strong>Customer Fax</strong></label>
+                    {{ customer_campus_form.customer_fax }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="id_organisation"><strong>Organisation</strong></label>
+                <div id="id_organisation"><a href="{% url 'organisation_information' customer_campus_results.campus_id.organisation_id.organisation_id  %}">{{ customer_campus_results.campus_id.organisation_id }}</a></div>
+            </div>
+            <div class="form-group">
+                <label for="id_campus"><strong>Campus</strong></label>
+                <div id="id_campus"><a href="{% url 'campus_information' customer_campus_results.campus_id.campus_id %}">{{ customer_campus_results.campus_id }}</a></div>
+            </div>
+            <div class="form-group">
+                <label for="id_suburb"><strong>Suburb</strong></label>
+                <div id="id_suburb">{{ customer_campus_results.campus_id.campus_suburb }}</div>
+            </div>
+            <div class="form-group">
+                <label for="id_state"><strong>State</strong></label>
+                <div id="id_state">{{ customer_campus_results.campus_id.campus_region_id }}</div>
+            </div>
+            <div class="form-group">
+                <label for="id_country"><strong>Country</strong></label>
+                <div id="id_country">{{ customer_campus_results.campus_id.campus_country_id }}</div>
+            </div>
+            <div class="form-row">
+                {% if permission > 1 %}
+                    <input class="btn btn-primary" type="submit" name="Save" value="Save and Return"/>
+                {% endif %}
+                <a href="{% url 'customer_information' customer_campus_results.customer_id.customer_id %}" class="btn btn-secondary">Return</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h2>Map</h2>
+    </div>
+    <div class="card-body">
+        <div id='map' style='width: 100%; height: 680px; align-content: center'></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    document.onload = on_page_load();
+
+    function on_page_load() {
+        {% if not MAPBOX_API_TOKEN == "" %}
+            initMap(
+                {{ campus_results.campus_latitude }},
+                {{ campus_results.campus_longitude }},
+                "{{ campus_results.campus_nickname }}",
+                "{{ MAPBOX_API_TOKEN }}"
+            );
+        {% elif not GOOGLE_MAP_API_TOKEN == "" %} %}
+            initMap(
+                {{ campus_results.campus_latitude }},
+                {{ campus_results.campus_longitude }},
+                "{{ campus_results.campus_nickname }}",
+                "{{ GOOGLE_MAP_API_TOKEN }}"
+            );
         {% endif %}
-        <a href="{% url 'customer_information' customer_campus_results.customer_id.customer_id %}">Return</a>
-    </form>
-    <h2>Map</h2>
-    <div id='map' style='width: 100%; height: 680px; align-content: center'></div>
-    <script type="text/javascript">
-        function on_page_load() {
-            set_permissions({{ permission }});
 
-            {% if not MAPBOX_API_TOKEN == "" %}
-                initMap(
-                    {{ campus_results.campus_latitude }},
-                    {{ campus_results.campus_longitude }},
-                    "{{ campus_results.campus_nickname }}",
-                    "{{ MAPBOX_API_TOKEN }}"
-                );
-            {% elif not GOOGLE_MAP_API_TOKEN == "" %} %}
-                initMap(
-                    {{ campus_results.campus_latitude }},
-                    {{ campus_results.campus_longitude }},
-                    "{{ campus_results.campus_nickname }}",
-                    "{{ GOOGLE_MAP_API_TOKEN }}"
-                );
-            {% endif %}
+        //Initiate the intl-tel-input
+        var campus_phone = document.querySelector("#id_customer_phone"),
+            campus_fax = document.querySelector("#id_customer_fax");
 
-            //Initiate the intl-tel-input
-            var campus_phone = document.querySelector("#id_customer_phone"),
-                campus_fax = document.querySelector("#id_customer_fax");
+        window.intlTelInput(campus_phone);
+        window.intlTelInput(campus_fax);
 
-            window.intlTelInput(campus_phone);
-            window.intlTelInput(campus_fax);
-
-        }
-    </script>
+    }
+</script>
 {% endblock %}

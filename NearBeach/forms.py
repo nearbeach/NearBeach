@@ -721,11 +721,17 @@ class cost_information_form(forms.Form):
 class customer_campus_form(ModelForm):
     customer_phone=forms.CharField(
         max_length=11,
-        required=False
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        }),
     )
     customer_fax=forms.CharField(
         max_length=11,
-        required=False
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        }),
     )
 
     class Meta:
