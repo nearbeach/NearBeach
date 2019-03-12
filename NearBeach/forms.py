@@ -1063,7 +1063,7 @@ class email_form(ModelForm):
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select form-control',
-            'multiple tabindex': '4',
+            'multiple tabindex': '0',
             'style': 'width: 90%',
         }),
     )
@@ -1073,7 +1073,7 @@ class email_form(ModelForm):
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select form-control',
-            'multiple tabindex': '4',
+            'multiple tabindex': '0',
             'style': 'width: 90%',
         }),
     )
@@ -1083,7 +1083,7 @@ class email_form(ModelForm):
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select form-control',
-            'multiple tabindex': '4',
+            'multiple tabindex': '0',
             'style': 'width: 90%',
         }),
     )
@@ -1457,7 +1457,7 @@ class kanban_board_form(forms.Form):
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select form-control',
-            'multiple tabindex': '4',
+            'multiple tabindex': '0',
             'style': 'width: 100%',
         }),
     )
@@ -2196,7 +2196,7 @@ class new_opportunity_form(ModelForm):
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select form-control',
-            'multiple tabindex': '4',
+            'multiple tabindex': '0',
         }),
     )
 
@@ -2205,9 +2205,8 @@ class new_opportunity_form(ModelForm):
         required=False,
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select',
-            'multiple tabindex': '4',
-            'class': 'form-control',
+            'class': 'chosen-select form-control',
+            'multiple tabindex': '0',
         }),
     )
 
@@ -2260,7 +2259,7 @@ class new_project_form(forms.Form):
         widget=forms.SelectMultiple(attrs={
             'placeholder': 'Select Groups to Assign to Project',
             'class': 'chosen-select form-control',
-            'multiple tabindex': '4',
+            'multiple tabindex': '0',
 
         }),
         required=True,
@@ -2382,7 +2381,7 @@ class new_quote_form(ModelForm):
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select form-control',
-            'multiple tabindex': '4',
+            'multiple tabindex': '0',
             'style': 'width: 100%',
         }),
     )
@@ -2540,7 +2539,7 @@ class new_request_for_change_form(ModelForm):
         widget=forms.SelectMultiple(attrs={
             'placeholder': 'Select Groups to Assign to Request for Change',
             'class': 'chosen-select form-control',
-            'multiple tabindex': '4',
+            'multiple tabindex': '0',
 
         }),
         required=True,
@@ -2642,7 +2641,7 @@ class new_requirement_form(ModelForm):
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select form-control',
-            'multiple tabindex': '4',
+            'multiple tabindex': '0',
             'style': 'width: 100%',
         }),
     )
@@ -2686,7 +2685,7 @@ class new_task_form(forms.Form):
         widget=forms.SelectMultiple(attrs={
             'placeholder': 'Select Groups to Assign to Project',
             'class': 'chosen-select form-control',
-            'multiple tabindex': '4',
+            'multiple tabindex': '0',
         }),
         required=True,
         queryset=group_results,
@@ -2793,7 +2792,7 @@ class opportunity_information_form(ModelForm):
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select form-control',
-            'multiple tabindex': '4',
+            'multiple tabindex': '0',
         }),
     )
 
@@ -2803,7 +2802,7 @@ class opportunity_information_form(ModelForm):
         widget=forms.SelectMultiple(attrs={
             'placeholder': "Choose the users(s)",
             'class': 'chosen-select form-control',
-            'multiple tabindex': '4',
+            'multiple tabindex': '0',
             'style': 'width: 100%',
         }),
     )
