@@ -22,17 +22,14 @@
                             <div class="card-header">
                                 <strong>{{ column.kanban_column_name }}</strong>
                             </div>
-                            <div class="card-body">
-                                <ul class="list-group kanban_column" data-column="{{ column.kanban_column_id }}" data-level="{{ level.kanban_level_id }}">
-                                    <li class="list-group-item"><!--potential bug fix--></li>
-                                    {% with column_cards=level_cards|filter_column_cards:column.kanban_column_id %}
-                                        {% for row in column_cards %}
-                                            <li class="list-group-item list-group-item-info kanban_card" id="{{ row.kanban_card_id }}" draggable="true">
-                                                {{ row.kanban_card_text }}
-                                            </li>
-                                        {% endfor %}
-                                    {% endwith %}
-                                </ul>
+                            <div class="card-body kanban_column" data-column="{{ column.kanban_column_id }}" data-level="{{ level.kanban_level_id }}">
+                                {% with column_cards=level_cards|filter_column_cards:column.kanban_column_id %}
+                                    {% for row in column_cards %}
+                                        <div class="list-group-item list-group-item-info kanban_card" id="{{ row.kanban_card_id }}" draggable="true">
+                                            {{ row.kanban_card_text }}
+                                        </div>
+                                    {% endfor %}
+                                {% endwith %}
                             </div>
                         </div>
                     </div>
@@ -140,7 +137,16 @@
 
 
         function edit_card_submit() {
-            var updated_text = $("#id_kanban_card_text").val();
+            var updated_text = $("#id_kanban_card_text").val(),
+                kanban_card_id = $("#edit_kanban_card_id").val(),
+                kanban_card = document.getElementById(kanban_card_id),
+                new_kanban_card_column = $("#id_kanban_column").val(),
+                new_kanban_card_level = $("#id_kanban_level").val(),
+                current_kanban_card_column = kanban_card.parentElement.dataset['column'],
+                current_kanban_card_level = kanban_card.parentElement.dataset['level'];
+
+            //Update the text :)
+            kanban_card.textContent = updated_text;
 
 		    //Send data to the database
             $.ajaxSetup({
@@ -160,8 +166,23 @@
                     //Close modal
                     $("#edit_card_modal").modal('hide');
 
-                    //Update values
-                    $("#" + $("#edit_kanban_card_id").val()).html(updated_text)
+                    /*
+                    We need to check to see if we require to move the card. We do this by collecting the varibales;
+                    - new_kanban_column_id
+                    - new_kanban_row_id
+
+                    Then we compare with the current card.
+
+                    If we require them to move, we will then;
+                    - move the card to the new location
+
+                    If not - we do nothing.
+                    */
+                    if (!(new_kanban_card_column == current_kanban_card_column) ||
+                        !(new_kanban_card_level == current_kanban_card_level)) {
+                        var new_destination = document.querySelector(`[data-column='${new_kanban_card_column}'][data-level='${new_kanban_card_level}']`);
+                        new_destination.appendChild(kanban_card);
+                    }
                 },
                 error: function () {
                     alert("Sorry, saving the card has occurred an error!");
@@ -291,8 +312,22 @@
 
 			// bind the drop event on the board sections
   			$('.kanban_column').bind('drop', function(event) {
+  			    //Get the current kanban card id
                 var kanban_card_id = event.originalEvent.dataTransfer.getData("text/plain");
-                event.target.appendChild(document.getElementById(kanban_card_id));
+
+                /*
+                The following target will either be a column (which is what we want), or another kanban card (which is
+                what we do not want). This will quickly check to see if the target is a column or a card.
+                If it is a kanban card - we will then apply the appendChild function at it's parent
+                If it is the column - we will just apply the appendChild function at the target
+                 */
+                if (event.target.className.includes('kanban_card')) {
+                    //The target is at the kanban_card - lets aim for the parent
+                    event.target.parentElement.appendChild(document.getElementById(kanban_card_id));
+                } else {
+                    //The target is at the column... Just append the child here
+                    event.target.appendChild(document.getElementById(kanban_card_id));
+                }
                 event.preventDefault();
 
                 //Send data to the database
