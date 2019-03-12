@@ -3041,6 +3041,12 @@ class requirement_link(models.Model):
         null=True,
         on_delete=models.CASCADE,
     )
+    opportunity_id = models.ForeignKey(
+        'opportunity',
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(

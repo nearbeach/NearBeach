@@ -147,7 +147,7 @@ re_path(r'^new_requirement_item/(?P<requirement_id>[0-9]+)/', views_requirements
 re_path(r'^new_requirement_item_link/(?P<requirement_item_id>[0-9]+)/$',views_requirements.new_requirement_item_link,name='new_requirement_item_link'),
 re_path(r'^new_requirement_item_link/(?P<requirement_item_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<destination>["project","task"]+)/$',views_requirements.new_requirement_item_link,name='new_requirement_item_link'),
 re_path(r'^new_requirement_link/(?P<requirement_id>[0-9]+)/$',views_requirements.new_requirement_link,name='new_requirement_link'),
-re_path(r'^new_requirement_link/(?P<requirement_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<destination>["project","task"]+)/$',views_requirements.new_requirement_link,name='new_requirement_link'),
+re_path(r'^new_requirement_link/(?P<requirement_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<destination>["project","task","opportunity"]+)/$',views_requirements.new_requirement_link,name='new_requirement_link'),
 re_path(r'^new_task/(?P<location_id>[0-9]+)/(?P<destination>["organisation","customer","opportunity"]+)/$', views.new_task, name='new_task'),
 re_path(r'^new_task/$', views.new_task, name='new_task'),
 re_path(r'^new_user/$', views_administration.new_user, name='new_user'),
