@@ -1119,14 +1119,29 @@ def bug_add(request,location_id, destination,bug_id, bug_client_id):
             bug_client_id=bug_client_id,
         )
 
-        #https://bugzilla.nearbeach.org/rest/bug?id=12 example of bugzilla rest platform
         #Most of this will be stored in the database, so we can implement more bug clients simply. :) YAY
-        url = bug_client_instance.bug_client_url + bug_client_instance.list_of_bug_client.bug_client_api_url + \
-                'bug?id=' + bug_id # This will be implemented into the database as a field
-        print(url)
+        url = """%s%sbug?id=%s""" % (
+            escape(bug_client_instance.bug_client_url),
+            escape(bug_client_instance.list_of_bug_client.bug_client_api_url),
+            escape(bug_id)
+        )
 
-        response = urlopen(url)
-        json_data = json.load(response)
+        """
+        SECURITY ISSUE
+        ~~~~~~~~~~~~~~
+        The URL could contain a file. Which we do not want executed by mistake. So we just make sure that the URL starts
+        with a http instead of ftp or file.
+        
+        We place the  at the end of the json_data because we have checked the field. This should be just a json 
+        response. If it is not at this point then it will produce a server issue.
+        """
+        if url.lower().startswith('http'):
+            req = urllib.request.Request(url)
+        else:
+            raise ValueError from None
+
+        with urllib.request.urlopen(req) as response: #nosec
+            json_data = json.load(response)
 
         #Save the bug
         bug_submit = bug(
@@ -1198,11 +1213,23 @@ def bug_client_information(request, bug_client_id):
             #Test the link first before doing ANYTHING!
             try:
                 url = bug_client_url + list_of_bug_client.bug_client_api_url + 'version'
-                print(url)
-                response = urlopen(url)
-                print("Response gotten")
-                data = json.load(response)
-                print("Got the JSON")
+
+                """
+                SECURITY ISSUE
+                ~~~~~~~~~~~~~~
+                The URL could contain a file. Which we do not want executed by mistake. So we just make sure that the URL starts
+                with a http instead of ftp or file.
+
+                We place the  at the end of the json_data because we have checked the field. This should be just a json 
+                response. If it is not at this point then it will produce a server issue.
+                """
+                if url.lower().startswith('http'):
+                    req = urllib.request.Request(url)
+                else:
+                    raise ValueError from None
+
+                with urllib.request.urlopen(req) as response: #nosec
+                    data = json.load(response)  
 
                 bug_client_save = bug_client.objects.get(bug_client_id=bug_client_id)
                 bug_client_save.bug_client_name = bug_client_name
@@ -1319,8 +1346,6 @@ def bug_search(request, location_id=None, destination=None):
             #Get the bug client instance
             bug_client_instance = bug_client.objects.get(bug_client_id=form.data['list_of_bug_client'])
             bug_client_id = bug_client_instance.bug_client_id
-            print(bug_client_instance)
-            print(bug_client_id)
 
             #Get bugs ids that we want to remove
             if destination == "project":
@@ -1361,9 +1386,23 @@ def bug_search(request, location_id=None, destination=None):
                   + bug_client_instance.list_of_bug_client.api_search_bugs + form.cleaned_data['search'] \
                   + exclude_url
 
-            print(url)
-            response = urlopen(url)
-            json_data = json.load(response)
+            """
+            SECURITY ISSUE
+            ~~~~~~~~~~~~~~
+            The URL could contain a file. Which we do not want executed by mistake. So we just make sure that the URL starts
+            with a http instead of ftp or file.
+
+            We place the  at the end of the json_data because we have checked the field. This should be just a json 
+            response. If it is not at this point then it will produce a server issue.
+            """
+            if url.lower().startswith('http'):
+                req = urllib.request.Request(url)
+            else:
+                raise ValueError from None
+
+            with urllib.request.urlopen(req) as response: #nosec
+                json_data = json.load(response)  
+
             bug_results = json_data['bugs'] #This could change depending on the API
 
         else:
@@ -2905,9 +2944,23 @@ def diagnostic_test_location_services(request):
             print(address_coded)
 
             url = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + address_coded + ".json?access_token=" + settings.MAPBOX_API_TOKEN
-            # response = urllib.urlopen(url)
-            response = urllib.request.urlopen(url)
-            data = json.loads(response.read())
+            """
+            SECURITY ISSUE
+            ~~~~~~~~~~~~~~
+            The URL could contain a file. Which we do not want executed by mistake. So we just make sure that the URL starts
+            with a http instead of ftp or file.
+
+            We place the  at the end of the json_data because we have checked the field. This should be just a json 
+            response. If it is not at this point then it will produce a server issue.
+            """
+            if url.lower().startswith('http'):
+                req = urllib.request.Request(url)
+            else:
+                raise ValueError from None
+
+            with urllib.request.urlopen(req) as response: #nosec
+                data = json.load(response)  
+
 
             longatude = data["features"][0]["center"][0]
             latitude = data["features"][0]["center"][1]
@@ -2975,10 +3028,23 @@ def diagnostic_test_recaptcha(request):
             'secret': RECAPTCHA_PRIVATE_KEY,
             'response': recaptcha_response
         }
-        response = urlopen(url, urllib.parse.urlencode(values).encode('utf8'))
-        result = json.load(response)
+        """
+        SECURITY ISSUE
+        ~~~~~~~~~~~~~~
+        The URL could contain a file. Which we do not want executed by mistake. So we just make sure that the URL starts
+        with a http instead of ftp or file.
 
-        print(result)
+        We place the  at the end of the json_data because we have checked the field. This should be just a json 
+        response. If it is not at this point then it will produce a server issue.
+        """
+        if url.lower().startswith('http'):
+            req = urllib.request.Request(url)
+        else:
+            raise ValueError from None
+
+        with urllib.request.urlopen(req, urllib.parse.urlencode(values).encode('utf8')) as response: #nosec
+            result = json.load(response)  
+
 
         # Check to see if the user is a robot. Success = human
         if not result['success']:
@@ -4429,10 +4495,23 @@ def login(request):
                     'secret': RECAPTCHA_PRIVATE_KEY,
                     'response': recaptcha_response
                 }
-                response = urlopen(url, urllib.parse.urlencode(values).encode('utf8'))
-                result = json.load(response)
 
-                print(result)
+                """
+                SECURITY ISSUE
+                ~~~~~~~~~~~~~~
+                The URL could contain a file. Which we do not want executed by mistake. So we just make sure that the URL starts
+                with a http instead of ftp or file.
+
+                We place the  at the end of the json_data because we have checked the field. This should be just a json 
+                response. If it is not at this point then it will produce a server issue.
+                """
+                if url.lower().startswith('http'):
+                    req = urllib.request.Request(url)
+                else:
+                    raise ValueError from None
+
+                with urllib.request.urlopen(req, urllib.parse.urlencode(values).encode('utf8')) as response: #nosec
+                    result = json.load(response)  
 
                 # Check to see if the user is a robot. Success = human
                 if result['success']:
@@ -4716,10 +4795,23 @@ def new_bug_client(request):
             #Test the link first before doing ANYTHING!
             try:
                 url = bug_client_url + list_of_bug_client.bug_client_api_url + 'version'
-                print(url)
-                response = urlopen(url)
-                data = json.load(response)
-                print("Got the JSON")
+
+                """
+                SECURITY ISSUE
+                ~~~~~~~~~~~~~~
+                The URL could contain a file. Which we do not want executed by mistake. So we just make sure that the URL starts
+                with a http instead of ftp or file.
+
+                We place the  at the end of the json_data because we have checked the field. This should be just a json 
+                response. If it is not at this point then it will produce a server issue.
+                """
+                if url.lower().startswith('http'):
+                    req = urllib.request.Request(url)
+                else:
+                    raise ValueError from None
+
+                with urllib.request.urlopen(req) as response: #nosec
+                    data = json.load(response)  
 
                 bug_client_submit = bug_client(
                     bug_client_name = bug_client_name,
@@ -8741,9 +8833,22 @@ def update_coordinates(campus_id):
 
         url = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + address_coded + ".json?access_token=" + settings.MAPBOX_API_TOKEN
 
-        response = urllib.request.urlopen(url)
-        data = json.loads(response.read())
-        print(data)
+        """
+        SECURITY ISSUE
+        ~~~~~~~~~~~~~~
+        The URL could contain a file. Which we do not want executed by mistake. So we just make sure that the URL starts
+        with a http instead of ftp or file.
+
+        We place the  at the end of the json_data because we have checked the field. This should be just a json 
+        response. If it is not at this point then it will produce a server issue.
+        """
+        if url.lower().startswith('http'):
+            req = urllib.request.Request(url)
+        else:
+            raise ValueError from None
+
+        with urllib.request.urlopen(req) as response: #nosec
+            data = json.load(response)  
         try:
             campus_results.campus_longitude = data["features"][0]["center"][0]
             campus_results.campus_latitude = data["features"][0]["center"][1]
