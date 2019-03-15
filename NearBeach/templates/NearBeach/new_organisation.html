@@ -18,6 +18,7 @@
                 </div>
                 <div class="form-group">
                     <label for="id_organisation_website">Organisation Website</label>
+                    <div class="alert alert-danger" id="id_organisation_website_error">Sorry - but this is not a website. Please make sure it starts with https://</div>
                     {{ new_organisation_form.organisation_website }}
                 </div>
                 <div class="form-group">
@@ -30,6 +31,7 @@
                     <a href={% url 'dashboard' %} class="btn btn-warning form-control col-md-6">Cancel</a>
                 </div>
                 {% endif %}
+            </form>
         </div>
     </div>
 
@@ -62,6 +64,32 @@
             </div>
         </div>
     {% endif %}
-</form>
+    <script>
+        function check_url() {
+            /*
+            The following function will check the URL input to make sure it starts with https://
+
+            Method
+            ~~~~~~
+            1. Create a regexp
+            2. Compare the string with that of the regexp
+            3. If there is an error - show the error
+            4. If there is no error - hide the error
+             */
+            var html_pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+                '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+                '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+                '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+            var url_string = document.getElementById("id_organisation_website").value;
+
+            if (!html_pattern.test(url_string)) {
+                $("#id_organisation_website_error").show();
+            } else {
+                $("#id_organisation_website_error").hide();
+            }
+        }
+    </script>
 {% endblock %}
 

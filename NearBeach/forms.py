@@ -2233,10 +2233,12 @@ class new_organisation_form(forms.Form):
         })
     )
     organisation_website=forms.URLField(
+        initial="https://",
         max_length=255,
         widget=forms.URLInput(attrs={
             'class': 'form-control',
             'placeholder': 'https://organisation_website.com',
+            'onblur': 'check_url()',
         })
     )
     organisation_email=forms.EmailField(
