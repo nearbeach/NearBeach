@@ -1892,10 +1892,15 @@ def customer_information(request, customer_id):
             print(form.errors)
 
     # Get the instance
-    customer_results = customer.objects.get(
+    """
+    With customer results, if the user has been deleted then we will need to send them to the 404 page.
+    """
+    customer_results = get_object_or_404(
+        customer,
         customer_id=customer_id,
         is_deleted="FALSE",
     )
+
     add_campus_results = campus.objects.filter(
         organisation_id=customer_results.organisation_id,
         is_deleted="FALSE",
@@ -2429,15 +2434,16 @@ def delete_customer(request, customer_id):
             return HttpResponseRedirect(reverse('permission_denied'))
 
         #Delete the organisation
-        customer_update = customer.objects.filter(
+        customer.objects.filter(
             customer_id=customer_id
         ).update(
             is_deleted="TRUE",
         )
+        print("DELETED CUSTOMER")
 
 
         #Delete any project
-        project_update = project_customer.objects.filter(
+        project_customer.objects.filter(
             is_deleted="FALSE",
             customer_id=customer_id,
         ).update(
@@ -2445,7 +2451,7 @@ def delete_customer(request, customer_id):
         )
 
         #Delete any tasks
-        task_update = task_customer.objects.filter(
+        task_customer.objects.filter(
             is_deleted="FALSE",
             customer_id=customer_id,
         ).update(
@@ -2453,7 +2459,7 @@ def delete_customer(request, customer_id):
         )
 
         #Delete any opportunity connections
-        opportunity_connection_update = opportunity_connection.objects.filter(
+        opportunity_connection.objects.filter(
             is_deleted="FALSE",
             customer_id=customer_id,
         ).update(
@@ -6326,7 +6332,14 @@ def organisation_information(request, organisation_id):
             save_data.save()
 
     # Query the database for organisation information
-    organisation_results = organisation.objects.get(pk=organisation_id)
+    """
+    If the organisation is deleted or does not exist, we want to send them to the 404 page
+    """
+    organisation_results = get_object_or_404(
+        organisation,
+        organisation_id=organisation_id,
+        is_deleted="FALSE",
+    )
     campus_results = campus.objects.filter(
         organisation_id=organisation_id,
         is_deleted="FALSE",
@@ -7542,7 +7555,9 @@ def request_for_change_information(request,rfc_id):
         'organisation_stakeholders': organisation_stakeholders,
         'customer_stakeholders': customer_stakeholders,
         'rfc_results': rfc_results,
-        'permission': permission_results['request_for_change']
+        'permission': permission_results['request_for_change'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c,request))

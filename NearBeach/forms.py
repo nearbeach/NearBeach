@@ -3489,6 +3489,60 @@ class quote_template_form(ModelForm):
         max_length=255,
         widget=forms.TextInput(attrs={
             'placeholder': 'Quote Template Description',
+            'class': 'form-control',
+        })
+    )
+    template_css=forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+        })
+    )
+    payment_terms=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    notes=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    page_layout=forms.ChoiceField(
+        choices=PAGE_LAYOUT,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+    margin_left=forms.IntegerField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    margin_right=forms.IntegerField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    margin_top=forms.IntegerField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    margin_bottom=forms.IntegerField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    margin_header=forms.IntegerField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    margin_footer=forms.IntegerField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
         })
     )
     header=forms.CharField(
@@ -3498,6 +3552,7 @@ class quote_template_form(ModelForm):
             },
             attrs={
                 'placeholder': 'Please Enter Template Header',
+                'class': 'form-control',
             }
         )
     )

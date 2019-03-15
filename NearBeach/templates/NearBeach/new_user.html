@@ -64,8 +64,9 @@
                         {{ user_information_form.is_superuser }}
                     </div>
                 {% endif %}
-                <div class="form-group">
-                    <input id="submit_user" type="submit" value="Save User" class="btn btn-primary form-control">
+                <div class="form-row">
+                    <input id="submit_user" type="submit" value="Save User" class="btn btn-primary form-control col-md-6">
+                    <a href="{% url 'search_users' %}" class="btn btn-secondary form-control col-md-6">Cancel</a>
                 </div>
             </form>
         </div>

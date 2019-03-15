@@ -16,10 +16,7 @@
         load_email_history();
 
         load_document_tree_list({{ customer_id }},'customer');
-
-        //Move these to a proper set
-        set_permissions({{ customer_permissions }});
-	}
+    }
 </script>
 <body onload="on_page_load()">
     <div class="card mt-4">
@@ -374,14 +371,22 @@
             }
 
             function delete_customer(customer_id) {
+                $.ajaxSetup({
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+
                 $.ajax({
-                    url: `/delete_organisation/${customer_id}/`,
+                    url: `/delete_customer/${customer_id}/`,
                     data: {},
                     dataType: "HTML",
                     type: "POST",
                     success: function(data) {
                         //Successfully deleted the customer. Send user to the dashboard
-                        window.location("/");
+                        window.location.href = "/";
                     },
                     error: function() {
                         alert("Sorry - but the organisation could not be deleted");

@@ -332,6 +332,14 @@
             }
 
             function delete_organisation(organisation_id) {
+                $.ajaxSetup({
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+
                 $.ajax({
                     url: `/delete_organisation/${organisation_id}/`,
                     data: {},
@@ -339,7 +347,7 @@
                     type: "POST",
                     success: function(data) {
                         //Successfully deleted the organisation. Send user to the dashboard
-                        window.location("/");
+                        window.location.href = "/";
                     },
                     error: function() {
                         alert("Sorry - but the organisation could not be deleted");
@@ -478,7 +486,6 @@
         load_email_history();
 
         //Setup the user permissions
-        set_permissions({{ organisation_permissions }})
 	}
 
 
