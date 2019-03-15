@@ -1,5 +1,7 @@
 {% extends "./template.html" %}
 {% block content %}
+<form action={% url 'new_organisation' %} method="post" class="new_organisation">
+    {% csrf_token %}
     <div class="card mt-4">
         <div class="card-header">
             <h2>New Organisation</h2>
@@ -10,28 +12,26 @@
                     {{ form_errors }}
                 </div>
             {% endif %}
-            <form action={% url 'new_organisation' %} method="post" class="new_organisation">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="id_organisation_name">Organisation Name</label>
-                    {{ new_organisation_form.organisation_name }}
-                </div>
-                <div class="form-group">
-                    <label for="id_organisation_website">Organisation Website</label>
-                    <div class="alert alert-danger" id="id_organisation_website_error">Sorry - but this is not a website. Please make sure it starts with https://</div>
-                    {{ new_organisation_form.organisation_website }}
-                </div>
-                <div class="form-group">
-                    <label for="id_organisation_email">Organisation Email</label>
-                    {{ new_organisation_form.organisation_email }}
-                </div>
-                {% if duplication_count == 0 %}
+
+            <div class="form-group">
+                <label for="id_organisation_name">Organisation Name</label>
+                {{ new_organisation_form.organisation_name }}
+            </div>
+            <div class="form-group">
+                <label for="id_organisation_website">Organisation Website</label>
+                <div class="alert alert-danger" id="id_organisation_website_error">Sorry - but this is not a website. Please make sure it starts with https://</div>
+                {{ new_organisation_form.organisation_website }}
+            </div>
+            <div class="form-group">
+                <label for="id_organisation_email">Organisation Email</label>
+                {{ new_organisation_form.organisation_email }}
+            </div>
+            {% if duplication_count == 0 %}
                 <div class="form-row">
                     <input id="submit_organisation" type="submit" name="save" value="Submit New Organisation" class="btn btn-primary form-control col-md-6">
                     <a href={% url 'dashboard' %} class="btn btn-warning form-control col-md-6">Cancel</a>
                 </div>
-                {% endif %}
-            </form>
+            {% endif %}
         </div>
     </div>
 
@@ -64,7 +64,10 @@
             </div>
         </div>
     {% endif %}
+</form>
     <script>
+        window.document.onload = check_url();
+
         function check_url() {
             /*
             The following function will check the URL input to make sure it starts with https://
