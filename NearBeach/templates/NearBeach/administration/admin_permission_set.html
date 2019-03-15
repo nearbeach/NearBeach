@@ -29,7 +29,11 @@
                 <tr>
                     <td>{{ permission.permission_set }}</td>
                     {% if administration_permission == 4 %}
-                        <td><a href="javascript:void(0)">Delete</td>
+                        {% if group_id == '1' and permission.permission_set_id == 1 %}
+                            <td> ------ </td>
+                        {% else %}
+                            <td><a href="javascript:void(0)">Delete</a></td>
+                        {% endif %}
                     {% endif %}
                 </tr>
             {% endfor %}

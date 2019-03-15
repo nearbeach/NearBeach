@@ -159,6 +159,7 @@ re_path(r'^organisation_information/(?P<organisation_id>[0-9]+)/', views.organis
 re_path(r'^organisation_readonly/(?P<organisation_id>[0-9]+)/', views.organisation_readonly,name='organisation_readonly'),
 re_path(r'^permission_denied', views.permission_denied, name='permission_denied'),
 re_path(r'^permission_set_information/(?P<permission_set_id>[0-9]+)/$',views.permission_set_information,name='permission_set_information'),
+re_path(r'^permission_set_remove/(?P<permission_set_id>[0-9]+)/(?P<group_id>[0-9]+)',views.permission_set_remove,name='permission_set_remove'),
 re_path(r'^preview_quote/(?P<quote_uuid>[0-9A-Za-z_\-]+)/(?P<quote_template_id>[0-9]+)/',views.preview_quote,name='preview_quote'),
 re_path(r'^preview_requirement/(?P<requirement_id>[0-9]+)/',views.preview_requirement,name='preview_requirement'),
 re_path(r'^private/(?P<document_key>[0-9A-Za-z_\-]+)/$', views.private_document, name='private'),

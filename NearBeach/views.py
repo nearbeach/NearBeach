@@ -134,6 +134,7 @@ def admin_permission_set(request, group_id):
 
     c = {
         'permission_set_results': permission_set_results,
+        'group_id': group_id,
         'add_permission_set_to_group_form': add_permission_set_to_group_form(group_id=group_id),
         'administration_permission': permission_results['administration'],
     }
@@ -6658,6 +6659,55 @@ def permission_set_information(request,permission_set_id):
 
     return HttpResponse(t.render(c,request))
 
+
+@login_required(login_url='login')
+def permission_set_remove(request,permission_set_id, group_id):
+    """
+    This will remove the permission set from the groups.
+    :param request:
+    :param permission_set_id: The permission set id we are removing
+    :param group_id: The group we will be removing the permission set from
+    :return: blank page
+
+    Method
+    ~~~~~~
+    1. If permission_set_id == 1 AND group_id == 1, then fail... we do not want to delete the admin group
+    2. Check to see if request method is POST
+    3. Check to see if user has permission
+    4. Apply changes
+    5. Remove users who have this set permission too ;)
+    6. Send back blank page
+    """
+    if permission_set_id == 1 and group_id == 1:
+        return HttpResponseBadRequest("Can not delete the admin permission from the admin group!!!")
+
+    if request.method == "POST":
+        permission_results = return_user_permission_level(request,None,'administration_create_group')
+        if permission_results['administration_create_group'] < 4:
+            return HttpResponseRedirect(reverse('permission_denied'))
+
+        group_permission.objects.filter(
+            is_deleted="FALSE",
+            group_id=group_id,
+            permission_set_id=permission_set_id,
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        user_group.objects.filter(
+            is_deleted="FALSE",
+            group_id=group_id,
+            permission_set_id=permission_set_id,
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        #Send back blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry - this can only be done in post")
 
 """
 Issue - preview_quote will ask extract_quote to login. To remove this issue we have added the ability for UUID,

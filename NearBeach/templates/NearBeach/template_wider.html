@@ -11,8 +11,27 @@
     <script src="{% static 'NearBeach/widgets/bootstrap/js/bootstrap.bundle.js' %}"></script>
     <link rel="stylesheet" href="{% static 'NearBeach/widgets/bootstrap/css/bootstrap.css' %}" />
     <link rel="stylesheet" href="{% static 'NearBeach/css/NearBeach_CSS.css' %}" />
+
+    <style>
+        .col-3 {
+            flex: 0 0 24%;
+        }
+
+        .container-fluid {
+            overflow: scroll;
+            height: calc(100vh - 139px);
+        }
+
+        .card-block {
+            min-height: 200px;
+        }
+
+        #timeline {
+            height: calc(100vh - 139px);
+        }
+    </style>
 </head>
-<body style="padding-bottom: 150px;">
+<body style="overflow-x: hidden;">
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <a class="navbar-brand" href="javascript:void(0)">NearBeach</a>
