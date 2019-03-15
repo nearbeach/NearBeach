@@ -1,4 +1,4 @@
-{% extends "./template.html" %}
+{% extends "./template_wider.html" %}
 {% block content %}
 {% load nearbeach_extras %}
 {% load static %}
@@ -7,34 +7,32 @@
     <h2>Kanban Requirement</h2>
     <h4><a href="{% url 'requirement_information' requirement_results.requirement_id %}">{{ requirement_results.requirement_title }}</a></h4>
 
-
-    <table>
-        <!--render the header-->
-        <tr>
+    <div class="container-fluid">
+        <div class="row flex-row flex-nowrap">
+            <!-- EACH COLUMN -->
             {% for item_status in item_status_results %}
-                <td class="kanban_column_header">{{ item_status.requirement_item_status }}</td>
+                <div class="col-3">
+                    <div class="card card-block">
+                        <div class="card-header">
+                            <strong>{{ item_status.requirement_item_status }}</strong>
+                        </div>
+                        <div class="card-body kanban_column" data-column="{{ item_status.requirement_item_status_id }}">
+                            {% with requirement_items=requirement_item_results|filter_requirement_item_cards:item_status.requirement_item_status_id %}
+                                {% for row in requirement_items %}
+                                    <div class="list-group-item list-group-item-info requirement_item_card" id="{{ row.requirement_item_id }}" draggable="true">
+                                        {{ row.requirement_item_title }}
+                                    </div>
+                                {% endfor %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                </div>
             {% endfor %}
-        </tr>
-        <!--render the body-->
-        <tr>
-            {% for item_status in item_status_results %}
-                <td class="kanban_column" data-column="{{ item_status.requirement_item_status_id }}">
-                    {% with requirement_items=requirement_item_results|filter_requirement_item_cards:item_status.requirement_item_status_id %}
-                        {% for row in requirement_items %}
-                            <div id="{{ row.requirement_item_id }}" class="requirement_item_card" draggable="true">
-                                <div class="cardTitle" id="{{ row.requirement_item_id }}">
-                                    {{ row.requirement_item_title }}
-                                </div>
-                            </div>
-                        {% endfor %}
-                    {% endwith %}
-                </td>
-            {% endfor %}
-        </tr>
-    </table>
+        </div>
+    </div>
 
     <script>
-        $('document').ready(on_page_load());d
+        $('document').ready(on_page_load());
 
         function on_page_load(){
             $('.requirement_item_card').bind('dragstart', function(event) {

@@ -1,16 +1,20 @@
 {% csrf_token %}
 {% if new_customers_results and project_permissions > 1 %}
     {% if project_results.project_status == 'New' or project_results.project_status == 'Open' %}
-        <div class="form-group">
-            <select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" class="form-group">
-                <option value="---------" selected>---------</option>
-                {% for row in new_customers_results %}
-                    {% if not row.customer_id == None %}
-                        <option value="{{ row.customer_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
-                    {% endif %}
-                {% endfor %}
-            </select>
-            <input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Project" disabled="disabled" class="form-group">
+        <div class="form-row">
+            <div class="form-group col-md-8">
+                <select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" class="form-control">
+                    <option value="---------" selected>---------</option>
+                    {% for row in new_customers_results %}
+                        {% if not row.customer_id == None %}
+                            <option value="{{ row.customer_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Project" disabled="disabled" class="form-group btn btn-primary">
+            </div>
         </div>
     {% endif %}
 {% endif %}

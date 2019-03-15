@@ -45,22 +45,20 @@ class ConnectCustomerSelect(forms.SelectMultiple):
         #for idx,item in enumerate(list):
         for idx, row in enumerate(customer_results):
             if row.organisation_id:
-                #output = output + u'<option value="%s">%s' % (escape(option_value), escape(option_label))
-                #NEED TO DO ESCAPE VALUES
                 output = output + \
                     u'<tr>'\
-                        '<td><input type="checkbox" id="id_customers_' + str(idx) + '" name="customers" value="' + str(row.customer_id) + '"></td>' \
-                        '<td>' + row.customer_first_name + '</td>' \
-                        '<td>' + row.customer_last_name + '</td>' \
-                        '<td>' + str(row.organisation_id) + '</td>' \
+                        '<td><input type="checkbox" id="id_customers_%s" name="customers" value="%s"></td>'  % (str(idx),str(row.customer_id)) + \
+                        '<td>%s</td>' % (row.customer_first_name) +\
+                        '<td>%s</td>' % (row.customer_last_name) + \
+                        '<td>%s</td>' % (str(row.organisation_id)) + \
                     '</tr>'
             else:
                 output = output + \
                     u'<tr>'\
-                        '<td><input type="checkbox" id="id_customers_' + str(row.customer_id) + '" name="customers" value="' + str(row.customer_id) + '"></td>' \
-                        '<td>' + row.customer_first_name + '</td>' \
-                        '<td>' + row.customer_last_name + '</td>' \
-                        '<td>' + str(row.organisation_id) + '</td>' \
+                        '<td><input type="checkbox" id="id_customers_%s" name="customers" value="%s"></td>' % (str(row.customer_id),str(row.customer_id)) +\
+                        '<td>%s</td>' % (row.customer_first_name) + \
+                        '<td>%s</td>' % (row.customer_last_name) + \
+                        '<td>%s</td>' % (str(row.organisation_id)) + \
                     '</tr>'
 
         #Finish the rendering
@@ -116,10 +114,10 @@ class ConnectOrganisationSelect(forms.SelectMultiple):
         for idx, row in enumerate(organisation_results):
             output = output + \
                 u'<tr>'\
-                    '<td><input type="checkbox" id="id_organisations_' + str(row.organisation_id) + '" name="organisations" value="' + str(row.organisation_id) + '"></td>' \
-                    '<td>' + row.organisation_name + '</td>' \
-                    '<td>' + row.organisation_website + '</td>' \
-                    '<td>' + str(row.organisation_email) + '</td>' \
+                    '<td><input type="checkbox" id="id_organisations_%s" name="organisations" value="%s"></td>' %(str(row.organisation_id),str(row.organisation_id)) +\
+                    '<td>%s</td>' % (row.organisation_name) + \
+                    '<td>%s</td>' % (row.organisation_website) + \
+                    '<td>%s</td>' % (str(row.organisation_email)) + \
                 '</tr>'
 
         #Finish the rendering

@@ -1,96 +1,94 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
-    <h2>Quote Template</h2>
-    <form action="{% url 'quote_template_information' quote_template_id %}" method="POST" class="quote_template_information">
-        {% csrf_token %}
-        {{ quote_template_form.media }}
-        <table>
-            <tr><td colspan="2">{{ quote_template_form.quote_template_description }}</td></tr>
-            <tr>
-                <td colspan="2">
-                    <h3>CSS Data for quote</h3>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h1>Quote Template</h1>
+        </div>
+        <div class="card-body">
+            <form action="{% url 'quote_template_information' quote_template_id %}" method="POST" class="quote_template_information">
+                {% csrf_token %}
+                {{ quote_template_form.media }}
+                <div class="form-group">
+                    <label for="id_quote_template_description">Quote Template Description</label>
+                    {{ quote_template_form.quote_template_description }}
+                </div>
+                <div class="form-group">
+                    <label for="id_template_css">CSS Data for quote</label>
                     {{ quote_template_form.template_css }}
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <h3>Header</h3>
+                </div>
+                <div class="form-group">
+                    <label for="id_header">Header</label>
                     {{ quote_template_form.header }}
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <h3>Company Header</h3>
-                    Your company letter head.
+                </div>
+                <div class="form-group">
+                    <label for="id_company_letter_head">Your company header</label>
                     {{ quote_template_form.company_letter_head }}
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <h3>Payment Terms</h3>
+                </div>
+                <div class="form-group">
+                    <label for="id_payment_terms">Payment Terms</label>
                     {{ quote_template_form.payment_terms }}
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <h3>Notes</h3>
+                </div>
+                <div class="form-group">
+                    <label for="id_notes">Notes</label>
                     {{ quote_template_form.notes }}
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <h3>Organisation Details</h3>
-                    Usually place in the organisation's details here whom you are sending the quote to.
+                </div>
+                <div class="form-group">
+                    <label for="id_organisation_details">Organisation Details: Usually place in the organisation's details here whom you are sending the quote to.</label>
                     {{ quote_template_form.organisation_details }}
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <h3>Payment Method</h3>
+                </div>
+                <div class="form-group">
+                    <label for="id_payment_method">Payment Method</label>
                     {{ quote_template_form.payment_method }}
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <h3>Footer</h3>
+                </div>
+                <div class="form-group">
+                    <label for="id_footer">Footer</label>
                     {{ quote_template_form.footer }}
-                </td>
-            </tr>
-            <tr>
-                <td>Page Layout</td>
-                <td>{{ quote_template_form.page_layout }}</td>
-            </tr>
-            <tr>
-                <td>Margin Left</td>
-                <td>{{ quote_template_form.margin_left }}</td>
-            </tr>
-            <tr>
-                <td>Margin Right</td>
-                <td>{{ quote_template_form.margin_right }}</td>
-            </tr>
-            <tr>
-                <td>Margin Top</td>
-                <td>{{ quote_template_form.margin_top }}</td>
-            </tr>
-            <tr>
-                <td>Margin Bottom</td>
-                <td>{{ quote_template_form.margin_bottom }}</td>
-            </tr>
-            <tr>
-                <td>Margin Header</td>
-                <td>{{ quote_template_form.margin_header }}</td>
-            </tr>
-            <tr>
-                <td>Margin Footer</td>
-                <td>{{ quote_template_form.margin_footer }}</td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input type="submit" value="Save Quote Template" name="save_quote_template">
-                    <input type="submit" value="Delete Quote Template" name="delete_quote_template">
-                </td>
-            </tr>
-        </table>
-    </form>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_page_layout">Page Layout</label>
+                    {{ quote_template_form.page_layout }}
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group col-md-4">
+                        <label for="id_margin_left">Margin Left</label>
+                        {{ quote_template_form.margin_left }}
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="id_margin_right">Margin Right</label>
+                        {{ quote_template_form.margin_right }}
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="id_margin_top">Margin Top</label>
+                        {{ quote_template_form.margin_top }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="id_margin_bottom">Margin Bottom</label>
+                        {{ quote_template_form.margin_bottom }}
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="id_margin_header">Margin Header</label>
+                        {{ quote_template_form.margin_header }}
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="id_margin_footer">Margin Footer</label>
+                        {{ quote_template_form.margin_footer }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <input type="submit" value="Save Quote Template" name="save_quote_template" class="btn btn-primary">
+                    <input type="submit" value="Delete Quote Template" name="delete_quote_template" class="btn btn-warning">
+                </div>
+
+
+            </form>
+        </div>
+    </div>
 {% endblock %}
