@@ -593,6 +593,7 @@ def requirement_information(request, requirement_id):
         'task_id__task_short_description',
         'organisation_id',
         'organisation_id__organisation_name',
+        'requirement_link_id',
     ).distinct()
 
     kanban_board_results = kanban_board.objects.filter(
@@ -633,7 +634,8 @@ def requirement_information(request, requirement_id):
         'requirement_link_permissions': permission_results['requirement_link'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
-
+        'requirement_link_permission': permission_results['requirement_link'],
+        'requirement_permission': permission_results['requirement'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -678,8 +680,13 @@ def requirement_item_information(request, requirement_item_id):
             print(form.errors)
 
     #Get data
-    requirement_item_results = requirement_item.objects.get(requirement_item_id=requirement_item_id)
-
+    requirement_item_results = requirement_item.objects.get(
+        requirement_item_id=requirement_item_id
+    )
+    link_results = requirement_item_link.objects.filter(
+        is_deleted="FALSE",
+        requirement_item_id=requirement_item_id,
+    )
     initial = {
         'requirement_item_title': requirement_item_results.requirement_item_title,
         'requirement_item_scope': requirement_item_results.requirement_item_scope,
@@ -695,6 +702,7 @@ def requirement_item_information(request, requirement_item_id):
         'requirement_item_id': requirement_item_id,
         'requirement_item_form': requirement_item_form(initial=initial),
         'requirement_item_results': requirement_item_results,
+        'link_results': link_results,
         'permission': permission_results['requirement'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
@@ -702,6 +710,39 @@ def requirement_item_information(request, requirement_item_id):
     }
 
     return HttpResponse(t.render(c, request))
+
+@login_required(login_url='login')
+def requirement_item_link_remove(request,requirement_item_link_id):
+    """
+    The user wants to remove the requirement link from the requirement. We will do this in this fuction
+    :param request:
+    :param requirement_link_id: The requirement link to delete
+    :return:
+
+    Method
+    ~~~~~~
+    1. Check method is POST
+    2. Check user has permission
+    3. Delete the requirement link
+    4. Send back blank page
+    """
+    if request.method == "POST":
+        permission_results = return_user_permission_level(request,None,'requirement_link')
+        if permission_results['requirement_link'] < 4:
+            return HttpResponseRedirect(reverse('permission_denied'))
+
+        requirement_item_link.objects.filter(
+            requirement_item_link_id=requirement_item_link_id,
+        ).update(
+            is_deleted="TRUE"
+        )
+
+        #Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry, can only do this in post")
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -746,3 +787,36 @@ def requirement_readonly(request,requirement_id):
     }
 
     return HttpResponse(t.render(c, request)) 
+
+@login_required(login_url='login')
+def requirement_link_remove(request,requirement_link_id):
+    """
+    The user wants to remove the requirement link from the requirement. We will do this in this fuction
+    :param request:
+    :param requirement_link_id: The requirement link to delete
+    :return:
+
+    Method
+    ~~~~~~
+    1. Check method is POST
+    2. Check user has permission
+    3. Delete the requirement link
+    4. Send back blank page
+    """
+    if request.method == "POST":
+        permission_results = return_user_permission_level(request,None,'requirement_link')
+        if permission_results['requirement_link'] < 4:
+            return HttpResponseRedirect(reverse('permission_denied'))
+
+        requirement_link.objects.filter(
+            requirement_link_id=requirement_link_id,
+        ).update(
+            is_deleted="TRUE"
+        )
+
+        #Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry, can only do this in post")

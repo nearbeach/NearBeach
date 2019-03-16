@@ -6322,6 +6322,7 @@ def organisation_information(request, organisation_id):
             # Extract it from website
             save_data.organisation_name = form.cleaned_data['organisation_name']
             save_data.organisation_website = form.cleaned_data['organisation_website']
+            save_data.organisation_email = form.cleaned_data['organisation_email']
             save_data.change_user=request.user
 
             # Check to see if the picture has been updated
@@ -8712,6 +8713,7 @@ def to_do_list(request, location_id, destination):
     }
 
     return HttpResponse(t.render(c, request))
+
 
 
 @login_required(login_url='login',redirect_field_name="")

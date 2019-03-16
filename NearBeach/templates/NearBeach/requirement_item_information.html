@@ -1,4 +1,5 @@
 {% extends './template.html' %}
+{% load nearbeach_extras %}
 {% block content %}
 {% load static %}
     <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
@@ -58,26 +59,26 @@
                         {% endif %}
                     </tr>
                 </thead>
-                {% for link in requirement_item_results.requirement_item_link_set.all %}
-                    <tr>
-                        {% if not link.project_id == None %}
-                            <td><a href="{% url 'project_information' link.project_id.project_id %}">Project - {{ link.project_id.project_id }}</a></td>
-                            <td>{{ link.project_id.project_name }}</td>
-                        {% elif not link.task_id == None %}
-                            <td><a href="{% url 'task_information' link.task_id.task_id %}">Task - {{ link.task_id.task_id }}</a></td>
-                            <td>{{ link.task_id.task_short_description }}</td>
-                        {% elif not link.organisation_id == None %}
-                            <td><a href="{% url 'organisation_information' link.organisation_id.organisation_id %}">Organisations - {{ link.organisation_id.organisation_id }}</a></td>
-                            <td>{{ link.organisation_id.organisation_name }}</td>
-                        {% else %}
-                            <td>ERROR</td>
-                            <td>Error with link {{ link.requirement_links_id }}</td>
-                        {% endif %}
-                        {% if requirement_permission == 4 %}
-                            <td><a href="javascript:void(0)">Delete</a></td>
-                        {% endif %}
-                    </tr>
-                {% endfor %}
+                    {% for link in link_results %}
+                        <tr>
+                            {% if not link.project_id == None %}
+                                <td><a href="{% url 'project_information' link.project_id.project_id %}">Project - {{ link.project_id.project_id }}</a></td>
+                                <td>{{ link.project_id.project_name }}</td>
+                            {% elif not link.task_id == None %}
+                                <td><a href="{% url 'task_information' link.task_id.task_id %}">Task - {{ link.task_id.task_id }}</a></td>
+                                <td>{{ link.task_id.task_short_description }}</td>
+                            {% elif not link.organisation_id == None %}
+                                <td><a href="{% url 'organisation_information' link.organisation_id.organisation_id %}">Organisations - {{ link.organisation_id.organisation_id }}</a></td>
+                                <td>{{ link.organisation_id.organisation_name }}</td>
+                            {% else %}
+                                <td>ERROR</td>
+                                <td>Error with link {{ link.requirement_links_id }}</td>
+                            {% endif %}
+                            {% if requirement_permission == 4 %}
+                                <td><a href="javascript:void(0)">Delete</a></td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
             </table>
         </div>
     </div>
