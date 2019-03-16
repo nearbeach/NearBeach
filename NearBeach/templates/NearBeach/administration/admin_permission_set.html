@@ -32,7 +32,7 @@
                         {% if group_id == '1' and permission.permission_set_id == 1 %}
                             <td> ------ </td>
                         {% else %}
-                            <td><a href="javascript:void(0)">Delete</a></td>
+                            <td><a href="javascript:void(0)" onclick="permission_set_remove({{ permission.permission_set_id }},{{ group_id }})">Delete</a></td>
                         {% endif %}
                     {% endif %}
                 </tr>
