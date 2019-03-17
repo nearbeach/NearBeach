@@ -181,11 +181,11 @@
                     <label for="id_customer_notes">Customer Notes: </label>
                     {{ quote_information_form.customer_notes }}
                 </div>
-
                 <div class="form-group">
                     <label for="id_quote_billing_address">Quote Billing Address: </label>
                     {{ quote_information_form.quote_billing_address }}
                 </div>
+
                 <div class="form-row col-md-12">
                     <input type="submit" value="Update {{ quote_or_invoice }}" class="btn btn-primary col-md-6">
                     {% if quote_or_invoice == 'Quote' %}
@@ -215,35 +215,56 @@
                         <td><a href="{% url 'project_information' quotes_results.project_id.project_id %}">PRO{{ quotes_results.project_id.project_id }}</a></td>
                         <td>{{ quotes_results.project_id }}</td>
                     </tr>
-                {% elif quotes_results.task_id %}
+                {% endif %}
+                {% if quotes_results.task_id %}
                     <tr>
                         <td><a href="{% url 'task_information' quotes_results.task_id.task_id %}">TASK{{ quotes_results.task_id.task_id }}</a></td>
                         <td>{{ quotes_results.task_id }}</td>
                     </tr>
-                {% elif quotes_results.organisation_id %}
+                {% endif %}
+                {% if quotes_results.organisation_id %}
                     <tr>
                         <td><a href="{% url 'organisation_information' quotes_results.organisation_id.organisation_id %}">ORG{{ quotes_results.organisation_id.organisation_id }}</a></td>
                         <td>{{ quotes_results.organisation_id }}</td>
                     </tr>
-                {% elif quotes_results.customer_id %}
+                {% endif %}
+                {% if quotes_results.customer_id %}
                     <tr>
                         <td><a href="{% url 'customer_information' quotes_results.customer_id.customer_id %}">CUST{{ quotes_results.customer_id.customer_id }}</a></td>
                         <td>{{ quotes_results.customer_id }}</td>
                     </tr>
-                {% elif quotes_results.opportunity_id %}
+                {% endif %}
+                {% if quotes_results.opportunity_id %}
                     <tr>
                         <td><a href="{% url 'opportunity_information' quotes_results.opportunity_id.opportunity_id %}">OPP{{ quotes_results.opportunity_id.opportunity_id }}</a></td>
                         <td>{{ quotes_results.opportunity_id.opportunity_name }}</td>
                     </tr>
-                {% else %}
-                    <tr>
-                        <td>NA</td>
-                        <td>Sorry, this quote is not linked.</td>
-                    </tr>
                 {% endif %}
             </table>
+
+            {% if quotes_results.opportunity_id and cust_or_org_connected == False %}
+                <hr>
+                <h3>Quote Issue</h3>
+                Please note - this current quote is not connected to either a customer or organisation. Please consider
+                linking to either;
+                <ul>
+                    <li><a href="{% url 'new_quote_link' quotes_results.quote_id 'organisation' %}">Organisation</a></li>
+                    <li><a href="{% url 'new_quote_link' quotes_results.quote_id 'customer' %}">Customer</a></li>
+                </ul>
+            {% endif %}
         </div>
     </div>
+
+    {% if permission > 1 %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Responsible Customers</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" class="list_of_responsible_customers" id="list_of_responsible_customers"></form>
+            </div>
+        </div>
+    {% endif %}
 
     <form method="POST" class="new_line_item" id="new_line_item"></form>
 
@@ -257,19 +278,6 @@
     </div>
 
 
-
-
-
-    {% if permission > 1 %}
-        <div class="card mt-4">
-            <div class="card-header">
-                <h2>Responsible Customers</h2>
-            </div>
-            <div class="card-body">
-                <form method="post" class="list_of_responsible_customers" id="list_of_responsible_customers"></form>
-            </div>
-        </div>
-    {% endif %}
 
     <div class="card mt-4">
         <div class="card-header">
