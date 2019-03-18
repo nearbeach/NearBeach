@@ -6343,6 +6343,13 @@ def opportunity_information(request, opportunity_id):
 
 
     # Data
+    requirement_results = requirement.objects.filter(
+        is_deleted="FALSE",
+        requirement_id__in=object_assignment.objects.filter(
+            opportunity_id=opportunity_id,
+            requirement_id__isnull=False,
+        ).values('requirement_id')
+    )
     project_results = project_opportunity.objects.filter(
         opportunity_id=opportunity_id,
         is_deleted='FALSE',
@@ -6385,6 +6392,7 @@ def opportunity_information(request, opportunity_id):
         'project_results': project_results,
         'task_results': task_results,
         'quote_results': quote_results,
+        'requirement_results': requirement_results,
         'opportunity_perm': permission_results['opportunity'],
         'timezone': settings.TIME_ZONE,
         'new_item_permission': permission_results['new_item'],

@@ -16,7 +16,7 @@ from .views import permission_denied
 
 
 @login_required(login_url='login',redirect_field_name="")
-def new_requirement(request):
+def new_requirement(request,location_id='',destination=''):
     permission_results = return_user_permission_level(request, None, 'requirement')
 
     if permission_results['requirement'] < 2:
@@ -51,6 +51,21 @@ def new_requirement(request):
                 )
                 submit_permission.save()
 
+            """
+            If the user is creating a requirement for an opportunity we want to;
+            1. Create the connection to the opportunity
+            2. Go back to the opportunity
+            """
+            if destination == "opportunity":
+                object_assignment_submit = object_assignment(
+                    requirement_id=requirement_save,
+                    opportunity_id=opportunity.objects.get(opportunity_id=location_id),
+                    change_user=request.user,
+                )
+                object_assignment_submit.save()
+
+                return HttpResponseRedirect(reverse('opportunity_information', args={location_id}))
+
             return HttpResponseRedirect(reverse(requirement_information, args={requirement_save.requirement_id}))
         else:
             print(form.errors)
@@ -61,6 +76,8 @@ def new_requirement(request):
     # context
     c = {
         'new_requirement_form': new_requirement_form(),
+        'location_id': location_id,
+        'destination': destination,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
     }

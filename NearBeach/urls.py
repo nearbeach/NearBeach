@@ -146,6 +146,7 @@ re_path(r'^new_quote/(?P<primary_key>[0-9]+)/(?P<destination>["project","task","
 re_path(r'^new_quote_link/(?P<quote_id>[0-9]+)/(?P<destination>["customer","organisation"]+)/(?P<location_id>[0-9]+)',views.new_quote_link, name='new_quote_link'),
 re_path(r'^new_quote_link/(?P<quote_id>[0-9]+)/(?P<destination>["customer","organisation"]+)/',views.new_quote_link, name='new_quote_link'),
 re_path(r'^new_request_for_change/', views.new_request_for_change,name="new_request_for_change"),
+re_path(r'^new_requirement/(?P<location_id>[0-9]+)/(?P<destination>["opportunity"]+)/', views_requirements.new_requirement,name="new_requirement"),
 re_path(r'^new_requirement/', views_requirements.new_requirement,name="new_requirement"),
 re_path(r'^new_requirement_item/(?P<requirement_id>[0-9]+)/', views_requirements.new_requirement_item, name="new_requirement_item"),
 re_path(r'^new_requirement_item_link/(?P<requirement_item_id>[0-9]+)/$',views_requirements.new_requirement_item_link,name='new_requirement_item_link'),
