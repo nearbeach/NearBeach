@@ -1,0 +1,91 @@
+{% load nearbeach_extras %}
+<div class="alert-primary mb-4">Please note - requirement item links can be applied by going to the appliciable requirement item information page.</div>
+<a href="javascript:void(0)" onclick="load_requirement_links()">Link Current Requirement</a>
+<table class="table table-striped table-hover" id="requirement_link_table">
+    <thead>
+        <tr>
+            <td>Object Link</td>
+            <td>Description</td>
+            {% if requirement_permission == 4 or requirement_link_permission == 4 %}
+                <td>Delete</td>
+            {% endif %}
+        </tr>
+    </thead>
+    {% for link in requirement_link_results %}
+        <tr>
+            {% if not link.project_id == None %}
+                <td>
+                    <a href="{% url 'project_information' link.project_id %}">Project - {{ link.project_id }}</a>
+                </td>
+                <td>
+                    {{ link.project_id__project_name }}
+                </td>
+
+            {% elif not link.task_id == None %}
+                <td>
+                    <a href="{% url 'task_information' link.task_id %}">Task - {{ link.task_id }}</a>
+                </td>
+                <td>
+                    {{ link.task_id__task_short_description }}
+                </td>
+
+
+            {% elif not link.organisations_id == None %}
+                <td>
+                    <a href="{% url 'organisation_information' link.organisation_id %}">Organisations - {{ link.organisation_id }}</a>
+                </td>
+                <td>
+                    {{ link.organisation_id__organisation_name }}
+                </td>
+
+            {% else %}
+                <td>ERROR</td>
+                <td>Error with link {{ link.requirement_link_id }}<br/></td>
+            {% endif %}
+            {% if requirement_permission == 4 or requirement_link_permission == 4 %}
+                <td>
+                    <a href="javascript:void(0)" onclick="requirement_link_remove({{ link.requirement_link_id }})">Delete</a>
+                </td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+</table>
+
+<h5 class="mt-5">Requirement Item Links</h5>
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <td>Requirement Item</td>
+            <td>Object Link</td>
+            <td>Description</td>
+            {% if requirement_permission == 4 %}
+                <td>Delete</td>
+            {% endif %}
+        </tr>
+    </thead>
+    {% for item in requirement_item_results %}
+        {% with links=item.requirement_item_link_set.all|filter_requirement_items:0 %}
+            {% for link in links %}
+                <tr>
+                    <td><a href="{% url 'requirement_item_information' item.requirement_item_id %}">ITM{{ item.requirement_item_id }}</a></td>
+                    {% if not link.project_id == None %}
+                        <td><a href="{% url 'project_information' link.project_id.project_id %}">Project - {{ link.project_id.project_id }}</a></td>
+                        <td>{{ link.project_id.project_name }}</td>
+                    {% elif not link.task_id == None %}
+                        <td><a href="{% url 'task_information' link.task_id.task_id %}">Task - {{ link.task_id.task_id }}</a></td>
+                        <td>{{ link.task_id.task_short_description }}</td>
+                    {% elif not link.organisation_id == None %}
+                        <td><a href="{% url 'organisation_information' link.organisation_id.organisation_id %}">Organisations - {{ link.organisation_id.organisation_id }}</a></td>
+                        <td>{{ link.organisation_id.organisation_name }}</td>
+                    {% else %}
+                        <td>ERROR</td>
+                        <td>Error with link {{ link.requirement_links_id }}</td>
+                    {% endif %}
+                    {% if requirement_permission == 4 or requirement_link_permission %}
+                        <td><a href="javascript:void(0)" onclick="requirement_item_link_remove({{ link.requirement_item_link_id }})">Delete</a></td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endwith %}
+    {% endfor %}
+</table>

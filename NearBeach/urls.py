@@ -189,6 +189,7 @@ re_path(r'^requirement_information/(?P<requirement_id>[0-9]+)/', views_requireme
 re_path(r'^requirement_item_information/(?P<requirement_item_id>[0-9]+)/', views_requirements.requirement_item_information, name="requirement_item_information"),
 re_path(r'^requirement_item_link_remove/(?P<requirement_item_link_id>[0-9]+)/', views_requirements.requirement_item_link_remove, name="requirement_item_link_remove"),
 re_path(r'^requirement_readonly/(?P<requirement_id>[0-9]+)/$', views_requirements.requirement_readonly,name="requirement_readonly"),
+re_path(r'^requirement_link_list/(?P<requirement_id>[0-9]+)/$', views_requirements.requirement_link_list,name="requirement_link_list"),
 re_path(r'^requirement_link_remove/(?P<requirement_link_id>[0-9]+)/$', views_requirements.requirement_link_remove,name="requirement_link_remove"),
 re_path(r'^resolve_project/(?P<project_id>[0-9]+)/', views.resolve_project,    name='resolve_project'),
 re_path(r'^resolve_task/(?P<task_id>[0-9]+)/', views.resolve_task, name='resolve_task'),

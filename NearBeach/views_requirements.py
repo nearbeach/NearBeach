@@ -600,18 +600,7 @@ def requirement_information(request, requirement_id):
         is_deleted="FALSE",
         requirement_id=requirement_id,
     )
-    requirement_link_results = requirement_link.objects.filter(
-        is_deleted="FALSE",
-        requirement_id=requirement_id,
-    ).values(
-        'project_id',
-        'project_id__project_name',
-        'task_id',
-        'task_id__task_short_description',
-        'organisation_id',
-        'organisation_id__organisation_name',
-        'requirement_link_id',
-    ).distinct()
+
 
     kanban_board_results = kanban_board.objects.filter(
         is_deleted="FALSE",
@@ -640,7 +629,7 @@ def requirement_information(request, requirement_id):
     # context
     c = {
         'requirement_results': requirement_results,
-        'requirement_link_results': requirement_link_results,
+        #'requirement_link_results': requirement_link_results,
         'requirement_item_results': requirement_item_results,
         'requirement_id': requirement_id,
         'requirement_information_form': requirement_information_form(
@@ -754,6 +743,91 @@ def requirement_item_link_remove(request,requirement_item_link_id):
             is_deleted="TRUE"
         )
 
+        #Send back the new list.
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry, can only do this in post")
+
+
+@login_required(login_url='login',redirect_field_name='')
+def requirement_link_list(request,requirement_id):
+    """
+    List all the requirement and requirement item links. This is an AJAX model and will be called when there is a change
+    applied on the front end
+    :param request:
+    :param requirement_id: The requirement id we are looking at
+    :return: A list of all requirement and requirement item links
+
+    Method
+    ~~~~~~
+    1. Get the requirement link results
+    2. Get the requirement item link results
+    3. Get templtate and context
+    4. Render and send to user :)
+    """
+    permission_results = return_user_permission_level(request, None, 'requirement_link')
+
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    )
+    requirement_link_results = requirement_link.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    ).values(
+        'project_id',
+        'project_id__project_name',
+        'task_id',
+        'task_id__task_short_description',
+        'organisation_id',
+        'organisation_id__organisation_name',
+        'requirement_link_id',
+    ).distinct()
+
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    )
+
+    t = loader.get_template('NearBeach/requirement_information/requirement_link_list.html')
+
+    c = {
+        'requirement_item_results': requirement_item_results,
+        'requirement_link_results': requirement_link_results,
+        'requirement_permission': permission_results['requirement_link']
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login')
+def requirement_link_remove(request,requirement_link_id):
+    """
+    The user wants to remove the requirement link from the requirement. We will do this in this fuction
+    :param request:
+    :param requirement_link_id: The requirement link to delete
+    :return:
+
+    Method
+    ~~~~~~
+    1. Check method is POST
+    2. Check user has permission
+    3. Delete the requirement link
+    4. Send back blank page
+    """
+    if request.method == "POST":
+        permission_results = return_user_permission_level(request,None,'requirement_link')
+        if permission_results['requirement_link'] < 4:
+            return HttpResponseRedirect(reverse('permission_denied'))
+
+        requirement_link.objects.filter(
+            requirement_link_id=requirement_link_id,
+        ).update(
+            is_deleted="TRUE"
+        )
+
         #Return blank page
         t = loader.get_template('NearBeach/blank.html')
         c = {}
@@ -805,35 +879,4 @@ def requirement_readonly(request,requirement_id):
 
     return HttpResponse(t.render(c, request)) 
 
-@login_required(login_url='login')
-def requirement_link_remove(request,requirement_link_id):
-    """
-    The user wants to remove the requirement link from the requirement. We will do this in this fuction
-    :param request:
-    :param requirement_link_id: The requirement link to delete
-    :return:
 
-    Method
-    ~~~~~~
-    1. Check method is POST
-    2. Check user has permission
-    3. Delete the requirement link
-    4. Send back blank page
-    """
-    if request.method == "POST":
-        permission_results = return_user_permission_level(request,None,'requirement_link')
-        if permission_results['requirement_link'] < 4:
-            return HttpResponseRedirect(reverse('permission_denied'))
-
-        requirement_link.objects.filter(
-            requirement_link_id=requirement_link_id,
-        ).update(
-            is_deleted="TRUE"
-        )
-
-        #Return blank page
-        t = loader.get_template('NearBeach/blank.html')
-        c = {}
-        return HttpResponse(t.render(c,request))
-    else:
-        return HttpResponseBadRequest("Sorry, can only do this in post")

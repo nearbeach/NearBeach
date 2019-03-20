@@ -172,7 +172,7 @@
             {% endif %}
             <br/>
             <h2 class="mt-2">Assigned Tasks</h2>
-            {% if tasks_results %}
+            {% if task_results %}
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
@@ -182,12 +182,12 @@
                             <td>Project Status</td>
                         </tr>
                     </thead>
-                    {% for row in tasks_results %}
+                    {% for row in task_results %}
                         <tr>
-                            <td><a href="#">TASK{{ row.tasks_id.tasks_id }}</a></td>
-                            <td>{{ row.tasks_id.task_short_description }}</td>
-                            <td>{{ row.tasks_id.task_end_date }}</td>
-                            <td>{{ row.tasks_id.task_status }}</td>
+                            <td><a href="#">TASK{{ row.task_id.task_id }}</a></td>
+                            <td>{{ row.task_id.task_short_description }}</td>
+                            <td>{{ row.task_id.task_end_date }}</td>
+                            <td>{{ row.task_id.task_status }}</td>
                         </tr>
                     {% endfor %}
                 </table>
