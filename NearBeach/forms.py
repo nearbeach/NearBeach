@@ -2868,6 +2868,12 @@ class organisation_information_form(ModelForm):
             'class': 'form-control',
         })
     )
+    organisation_email=forms.EmailField(
+        max_length=255,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+        })
+    )
     update_profile_picture=forms.ImageField(required=False)
 
     document=forms.FileField(required=False)
@@ -2875,8 +2881,9 @@ class organisation_information_form(ModelForm):
     class Meta:
         model=organisation
         fields={
-                'organisation_name',
-                'organisation_website',
+            'organisation_name',
+            'organisation_website',
+            'organisation_email',
             }
 
     def clean_update_profile_picture(self):

@@ -4,7 +4,11 @@
     <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
     <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
 
-<form action={% url 'new_requirement' %} method="post" class="new_requirement">
+{% if location_id == '' %}
+    <form action={% url 'new_requirement' %} method="post" class="new_requirement">
+{% else %}
+    <form action={% url 'new_requirement' location_id destination %} method="post" class="new_requirement">
+{% endif %}
     {% csrf_token %}
     <div class="card mt-4">
         <div class="card-header">

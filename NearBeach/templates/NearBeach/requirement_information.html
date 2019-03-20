@@ -1,4 +1,5 @@
 {% extends "./template.html" %}
+{% load nearbeach_extras %}
 {% block content %}
 {% load static %}
 <body onload="on_page_load()">
@@ -70,107 +71,8 @@
         <div class="card-header">
             <h2>Requirement Links</h2>
         </div>
-        <div class="card-body">
-            <div class="alert-primary mb-4">Please note - requirement item links can be applied by going to the appliciable requirement item information page.</div>
-            <a href="javascript:void(0)" onclick="load_requirement_links()">Link Current Requirement</a>
-            <table class="table table-striped table-hover" id="requirement_link_table">
-                <thead>
-                    <tr>
-                        <td>Object Link</td>
-                        <td>Description</td>
-                        {% if requirement_permission == 4 %}
-                            <td>Delete</td>
-                        {% endif %}
-                    </tr>
-                </thead>
-                {% for link in requirement_link_results %}
-                    <tr>
-                        {% if not link.project_id == None %}
-                            <td>
-                                <a href="{% url 'project_information' link.project_id %}">Project - {{ link.project_id }}</a>
-                            </td>
-                            <td>
-                                {{ link.project_id__project_name }}
-                            </td>
-                            {% if requirement_permission == 4 %}
-                                <td>
-                                    <a href="javascript:void(0)">Delete</a>
-                                </td>
-                            {% endif %}
-                        {% elif not link.task_id == None %}
-                            <td>
-                                <a href="{% url 'task_information' link.task_id %}">Task - {{ link.task_id }}</a>
-                            </td>
-                            <td>
-                                {{ link.task_id__task_short_description }}
-                            </td>
-                            {% if requirement_permission == 4 %}
-                                <td>
-                                    <a href="javascript:void(0)">Delete</a>
-                                </td>
-                            {% endif %}
-
-                        {% elif not link.organisations_id == None %}
-                            <td>
-                                <a href="{% url 'organisation_information' link.organisation_id %}">Organisations - {{ link.organisation_id }}</a>
-                            </td>
-                            <td>
-                                {{ link.organisation_id__organisation_name }}
-                            </td>
-                            {% if requirement_permission == 4 %}
-                                <td>
-                                    <a href="javascript:void(0)">Delete</a>
-                                </td>
-                            {% endif %}
-                        {% else %}
-                            <td>ERROR</td>
-                            <td>Error with link {{ link.requirement_links_id }}<br/></td>
-                            {% if requirement_permission == 4 %}
-                                <td>
-                                    <a href="javascript:void(0)">Delete</a>
-                                </td>
-                            {% endif %}
-                        {% endif %}
-                    </tr>
-                {% endfor %}
-            </table>
-
-            <h5 class="mt-5">Requirement Item Links</h5>
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <td>Requirement Item</td>
-                        <td>Object Link</td>
-                        <td>Description</td>
-                        {% if requirement_permission == 4 %}
-                            <td>Delete</td>
-                        {% endif %}
-                    </tr>
-                </thead>
-                {% for item in requirement_item_results %}
-                    {% for link in item.requirement_item_link_set.all %}
-                        <tr>
-                            <td><a href="{% url 'requirement_item_information' item.requirement_item_id %}">ITM{{ item.requirement_item_id }}</a></td>
-                            {% if not link.project_id == None %}
-                                <td><a href="{% url 'project_information' link.project_id.project_id %}">Project - {{ link.project_id.project_id }}</a></td>
-                                <td>{{ link.project_id.project_name }}</td>
-                            {% elif not link.task_id == None %}
-                                <td><a href="{% url 'task_information' link.task_id.task_id %}">Task - {{ link.task_id.task_id }}</a></td>
-                                <td>{{ link.task_id.task_short_description }}</td>
-                            {% elif not link.organisation_id == None %}
-                                <td><a href="{% url 'organisation_information' link.organisation_id.organisation_id %}">Organisations - {{ link.organisation_id.organisation_id }}</a></td>
-                                <td>{{ link.organisation_id.organisation_name }}</td>
-                            {% else %}
-                                <td>ERROR</td>
-                                <td>Error with link {{ link.requirement_links_id }}</td>
-                            {% endif %}
-                            {% if requirement_permission == 4 %}
-                                <td><a href="javascript:void(0)">Delete</a></td>
-                            {% endif %}
-                        </tr>
-                    {% endfor %}
-                {% endfor %}
-            </table>
+        <div class="card-body" id="requirement_link_body">
+            Loading...
         </div>
     </div>
 
@@ -497,6 +399,7 @@
             load_bug_search();
             load_bug_list();
             load_tag_results();
+            load_requirement_link_list();
         }
 
 
@@ -618,6 +521,71 @@
                     alert("Sorry - did not delete tag correctly");
                 }
             });
+        }
+
+        function requirement_link_remove(requirement_link_id) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $("#requirement_link_body").html("Loading...");
+
+            $.ajax({
+                url: `/requirement_link_remove/${requirement_link_id}/`,
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    load_requirement_link_list();
+                },
+                error: function() {
+                    alert("Sorry - did not delete tag correctly");
+                }
+            });
+        }
+
+        function requirement_item_link_remove(requirement_item_link_id) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $("#requirement_link_body").html("Loading...");
+
+            $.ajax({
+                url: `/requirement_item_link_remove/${requirement_item_link_id}/`,
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    load_requirement_link_list();
+                },
+                error: function() {
+                    alert("Sorry - did not delete tag correctly");
+                }
+            });
+        }
+
+        function load_requirement_link_list() {
+            $.ajax({
+                url: '/requirement_link_list/{{ requirement_id }}/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $("#requirement_link_body").html(data);
+                },
+                error: function() {
+                    alert("Sorry - there was an error");
+                }
+            })
         }
     </script>
 

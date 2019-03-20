@@ -340,6 +340,36 @@
                 }
             });
         }
+
+        function permission_set_remove(permission_set_id, group_id) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: `/permission_set_remove/${permission_set_id}/${group_id}`,
+                data: {},
+                dataType: "HTML",
+                type: "POST",
+                success: function(data) {
+                    //Reload all page widgets
+                    load_add_permission_set();
+                    load_add_user();
+                },
+                error: function() {
+                    //Utilising the page_alerts, it will add the error message.
+                    //Add in text first
+                    $("#page_alert_text").append("<hr>Error <strong>removing permission set</strong>. Can not remove group permission set - please read logs.");
+
+                    //Show the alert
+                    $("#page_alert").show();
+                }
+            });
+        }
     </script>
 {% endblock %}
 

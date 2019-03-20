@@ -38,11 +38,16 @@
                     {{ organisation_information_form.organisation_name }}
                 </div>
 
-                <div class="form-group">
-                    <label for="id_organisation_website">Organisation Website</label>
-                    {{ organisation_information_form.organisation_website }}
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_organisation_website">Organisation Website</label>
+                        {{ organisation_information_form.organisation_website }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="id_organisation_email">Organisation Email</label>
+                        {{ organisation_information_form.organisation_email }}
+                    </div>
                 </div>
-
                 {% if organisation_permissions > 1 %}
                     <div class="form-group">
                         <input type="submit" name="submit_contact" value="Update" class="btn btn-primary form-control"/>

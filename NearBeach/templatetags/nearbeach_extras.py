@@ -25,6 +25,17 @@ def filter_column_cards(value, arg):
     return value.filter(kanban_column=arg)
 
 
+@register.filter(name='filter_requirement_items')
+def filter_requirement_items(value,arg):
+    """
+    :param value: this is the python object being passed through
+    :param arg: this is the requirement_id we will filter by
+    :return: the filtered python object
+    """
+    return value.filter(
+        is_deleted="FALSE",
+    )
+
 @register.filter(name='filter_requirement_item_cards')
 def filter_requirement_item_cards(value, arg):
     """

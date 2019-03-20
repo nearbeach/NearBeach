@@ -134,6 +134,7 @@ def admin_permission_set(request, group_id):
 
     c = {
         'permission_set_results': permission_set_results,
+        'group_id': group_id,
         'add_permission_set_to_group_form': add_permission_set_to_group_form(group_id=group_id),
         'administration_permission': permission_results['administration'],
     }
@@ -5586,9 +5587,8 @@ def new_project(request, location_id='', destination=''):
         opportunity_id = None
     elif destination == "opportunity":
         opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
-
-        organisation_id = opportunity_instance.organisation_id
-        customer_id = opportunity_instance.customer_id
+        organisation_id = None
+        customer_id = None
         opportunity_id = opportunity_instance.opportunity_id
 
 
@@ -5688,7 +5688,15 @@ def new_quote(request,destination,primary_key):
                     )
                     permission_save.save()
 
-
+            # Need to add in a responsible customer as this too ;)
+            if destination == "customer":
+                responsible_customer_submit = quote_responsible_customer(
+                    customer_id=customer.objects.get(customer_id=primary_key),
+                    change_user=request.user,
+                    quote_id=submit_quotes,
+                )
+                responsible_customer_submit.save()
+                
             #Now to go to the quote information page
             return HttpResponseRedirect(reverse(quote_information, args={submit_quotes.quote_id}))
 
@@ -5715,6 +5723,94 @@ def new_quote(request,destination,primary_key):
     }
 
     return HttpResponse(t.render(c, request))
+
+@login_required(login_url='login',redirect_field_name="")
+def new_quote_link(request,quote_id,destination,location_id=''):
+    """
+
+    :param request:
+    :param quote_id: This is the quote we are going to link to
+    :param destination: This is either a customer or organisation. That is the destination of what we want to link to
+    :param location_id: only used in POST. This is the id of either the customer or organisation we are linking the quote to
+    :return: A search list
+
+    Method
+    ~~~~~~
+    1. Check if user has permission - send them to the naughty corner if they do not... those naughty people
+    2. Check to see if the method is POST - obey the method in POST section from now on
+    3. Check to see if the destination is either a customer or organisation. Get the appropriate data
+        Note - limit the results to only those customers/organisations linked with the opportunity
+    4. Get templates and context
+    5. Render
+    """
+    permission_results = return_user_permission_level(request,None,'quote')
+    if permission_results['quote'] < 2:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        """
+        We now connect the customer or organisation up with the quote :) 
+        """
+        quote_update = quote.objects.get(quote_id=quote_id)
+        if destination == 'organisation':
+            quote_update.organisation_id=organisation.objects.get(organisation_id=location_id)
+        else:
+            quote_update.customer_id=customer.objects.get(customer_id=location_id)
+        quote_update.save()
+
+        #Return a blank page :)
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+
+    #Get required data
+    quote_results = quote.objects.get(quote_id=quote_id)
+    opportunity_results = get_object_or_404(opportunity,opportunity_id=quote_results.opportunity_id.opportunity_id)
+    organisation_results = organisation.objects.filter(
+        is_deleted="FALSE",
+        organisation_id__in=opportunity_connection.objects.filter(
+            is_deleted="FALSE",
+            organisation_id__isnull=False,
+            opportunity_id=opportunity_results.opportunity_id,
+        ).values('organisation_id')
+    )
+
+    if destination == "organisation":
+        link_results = organisation_results
+    else:
+        """
+        We want to get a list of customers who meet either condition;
+        1. They are connected directly with the opportunity
+        2. They are connected with an organisation connected with the opportunity
+        """
+        link_results = customer.objects.filter(
+            Q(is_deleted="FALSE") and
+            Q(
+                Q(
+                    customer_id__in=opportunity_connection.objects.filter(
+                        is_deleted="FALSE",
+                        customer_id__isnull=False,
+                        opportunity_id=opportunity_results.opportunity_id,
+                    ).values('customer_id')
+                ) or
+                Q(
+                    organisation_id__in=organisation_results.values('organisation_id')
+                )
+            )
+        )
+
+    # Get the template
+    t = loader.get_template('NearBeach/quote_information/new_quote_link.html')
+
+    c = {
+        'link_results': link_results,
+        'quote_results': quote_results,
+        'destination': destination,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c,request))
 
 @login_required(login_url='login',redirect_field_name="")
 def new_quote_template(request):
@@ -5946,13 +6042,14 @@ def new_task(request, location_id='', destination=''):
                 )
                 save_project_customer.save()
             elif destination == "opportunity":
+                print("OPPORTUNITY")
                 opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
-                save_project_opportunity = task_opportunity(
+                save_task_opportunity = task_opportunity(
                     task_id=submit_task,
                     opportunity_id=opportunity_instance,
                     change_user=request.user,
                 )
-                save_project_opportunity.save()
+                save_task_opportunity.save()
 
             """
             We want to return the user to the original location. This is dependent on the destination
@@ -5982,22 +6079,6 @@ def new_task(request, location_id='', destination=''):
         today = datetime.datetime.now()
         next_week = today + datetime.timedelta(days=31)
 
-        """
-		We need to do some basic formulations with the hour and and minutes.
-		For the hour we need to find all those who are in the PM and
-		change both the hour and meridiem accordingly.
-		For the minute, we have to create it in 5 minute blocks.
-		"""
-        hour = today.hour
-        minute = int(5 * round(today.minute / 5.0))
-        meridiems = 'AM'
-
-        if hour > 12:
-            hour = hour - 12
-            meridiems = 'PM'
-        elif hour == 0:
-            hour = 12
-
         #FIGURE OUT HOW TO GET ORGANISATION HERE!
         if destination == "" or destination == None:
             organisation_id = None
@@ -6016,8 +6097,8 @@ def new_task(request, location_id='', destination=''):
         elif destination == "opportunity":
             opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
 
-            organisation_id = opportunity_instance.organisation_id
-            customer_id = opportunity_instance.customer_id
+            organisation_id = None
+            customer_id = None
             opportunity_id = opportunity_instance.opportunity_id
 
 
@@ -6247,6 +6328,13 @@ def opportunity_information(request, opportunity_id):
 
 
     # Data
+    requirement_results = requirement.objects.filter(
+        is_deleted="FALSE",
+        requirement_id__in=object_assignment.objects.filter(
+            opportunity_id=opportunity_id,
+            requirement_id__isnull=False,
+        ).values('requirement_id')
+    )
     project_results = project_opportunity.objects.filter(
         opportunity_id=opportunity_id,
         is_deleted='FALSE',
@@ -6289,6 +6377,7 @@ def opportunity_information(request, opportunity_id):
         'project_results': project_results,
         'task_results': task_results,
         'quote_results': quote_results,
+        'requirement_results': requirement_results,
         'opportunity_perm': permission_results['opportunity'],
         'timezone': settings.TIME_ZONE,
         'new_item_permission': permission_results['new_item'],
@@ -6321,6 +6410,7 @@ def organisation_information(request, organisation_id):
             # Extract it from website
             save_data.organisation_name = form.cleaned_data['organisation_name']
             save_data.organisation_website = form.cleaned_data['organisation_website']
+            save_data.organisation_email = form.cleaned_data['organisation_email']
             save_data.change_user=request.user
 
             # Check to see if the picture has been updated
@@ -6658,6 +6748,55 @@ def permission_set_information(request,permission_set_id):
 
     return HttpResponse(t.render(c,request))
 
+
+@login_required(login_url='login')
+def permission_set_remove(request,permission_set_id, group_id):
+    """
+    This will remove the permission set from the groups.
+    :param request:
+    :param permission_set_id: The permission set id we are removing
+    :param group_id: The group we will be removing the permission set from
+    :return: blank page
+
+    Method
+    ~~~~~~
+    1. If permission_set_id == 1 AND group_id == 1, then fail... we do not want to delete the admin group
+    2. Check to see if request method is POST
+    3. Check to see if user has permission
+    4. Apply changes
+    5. Remove users who have this set permission too ;)
+    6. Send back blank page
+    """
+    if permission_set_id == 1 and group_id == 1:
+        return HttpResponseBadRequest("Can not delete the admin permission from the admin group!!!")
+
+    if request.method == "POST":
+        permission_results = return_user_permission_level(request,None,'administration_create_group')
+        if permission_results['administration_create_group'] < 4:
+            return HttpResponseRedirect(reverse('permission_denied'))
+
+        group_permission.objects.filter(
+            is_deleted="FALSE",
+            group_id=group_id,
+            permission_set_id=permission_set_id,
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        user_group.objects.filter(
+            is_deleted="FALSE",
+            group_id=group_id,
+            permission_set_id=permission_set_id,
+        ).update(
+            is_deleted="TRUE",
+        )
+
+        #Send back blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry - this can only be done in post")
 
 """
 Issue - preview_quote will ask extract_quote to login. To remove this issue we have added the ability for UUID,
@@ -7188,6 +7327,13 @@ def quote_information(request, quote_id):
         is_deleted="FALSE",
     )
 
+    #Used if there is an opportunity connected to quotes
+    if quotes_results.customer_id or quotes_results.organisation_id:
+        cust_or_org_connected = True
+    else:
+        cust_or_org_connected = False
+
+
     if request.method == "POST":
         form = quote_information_form(request.POST,quote_instance=quotes_results)
         if form.is_valid():
@@ -7297,6 +7443,7 @@ def quote_information(request, quote_id):
             quote_instance=quotes_results,
         ),
         'quote_id': quote_id,
+        'cust_or_org_connected': cust_or_org_connected,
         'quote_or_invoice': quote_or_invoice,
         'timezone': settings.TIME_ZONE,
         'quote_template_results': quote_template_results,
@@ -8662,6 +8809,7 @@ def to_do_list(request, location_id, destination):
     }
 
     return HttpResponse(t.render(c, request))
+
 
 
 @login_required(login_url='login',redirect_field_name="")

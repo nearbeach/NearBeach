@@ -1,0 +1,66 @@
+{% extends '../template.html' %}
+{% block content %}
+{% load static %}
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h1>Link {{ destination }} to Quote {{ quote_results.quote_id }}</h1>
+        </div>
+        <div class="card-body">
+            {% if destination == 'organisation' %}
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Organisation Name</td>
+                        </tr>
+                    </thead>
+                    {% for row in link_results %}
+                        <tr>
+                            <td><a href="javascript:void(0)" onclick="new_quote_link({{ row.organisation_id }})">{{ row.organisation_name }}</a></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Customer Name</td>
+                            <td>Customer Organisation</td>
+                        </tr>
+                    </thead>
+                    {% for row in link_results %}
+                        <tr>
+                            <td><a href="javascript:void(0)" onclick="new_quote_link({{ row.customer_id }})">{{ row.customer_first_name }} {{ row.customer_last_name }}</a></td>
+                            <td>{{ row.organisation_id }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+            <a href="{% url 'quote_information' quote_results.quote_id %}" class="btn btn-warning col-md-12">Cancel</a>
+        </div>
+    </div>
+    <script>
+        function new_quote_link(location_id) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: `/new_quote_link/{{ quote_results.quote_id }}/{{ destination }}/${location_id}`,
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    window.location.href = '/quote_information/{{ quote_results.quote_id }}/';
+                },
+                error: function() {
+                    alert("Sorry - something went wrong");
+                }
+            })
+        }
+    </script>
+{% endblock %}

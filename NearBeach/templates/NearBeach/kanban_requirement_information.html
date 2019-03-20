@@ -7,7 +7,7 @@
     <h2>Kanban Requirement</h2>
     <h4><a href="{% url 'requirement_information' requirement_results.requirement_id %}">{{ requirement_results.requirement_title }}</a></h4>
 
-    <div class="container-fluid">
+    <div class="container-fluid requirement-kanban">
         <div class="row flex-row flex-nowrap">
             <!-- EACH COLUMN -->
             {% for item_status in item_status_results %}
