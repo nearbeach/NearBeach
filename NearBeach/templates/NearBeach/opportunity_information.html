@@ -137,12 +137,14 @@
                     </thead>
                     {% for row in requirement_results %}
                         <tr>
-                            <td class="col-md-2"><a href="{% url 'requirement_information' row.requirement_id %}">{{ row.requirement_id }}</a></td>
+                            <td class="col-md-2"><a href="{% url 'requirement_information' row.requirement_id %}">REQ{{ row.requirement_id }}</a></td>
                             <td>{{ row.requirement_title }}</td>
                             <td class="col-md-4">{{ row.requirement_status }}</td>
                         </tr>
                     {% endfor %}
                 </table>
+            {% else %}
+                There are no requirements connected.
             {% endif %}
 
             <h2 class="mt-2">Assigned Projects</h2>

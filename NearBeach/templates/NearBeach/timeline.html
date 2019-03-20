@@ -167,7 +167,7 @@
                         } else if (object_type == "Opportunity") {
                             var object_start_date = new Date(json_data[i]['fields']['date_created']),
                                 object_end_date = new Date(json_data[i]['fields']['opportunity_expected_close_date']),
-                                object_name = "QUOTE" + json_data[i]['pk'],
+                                object_name = "OPPORTUNITY" + json_data[i]['pk'],
                                 object_status = json_data[i]['fields']['opportunity_id'];
                         }
 

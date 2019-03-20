@@ -6042,13 +6042,14 @@ def new_task(request, location_id='', destination=''):
                 )
                 save_project_customer.save()
             elif destination == "opportunity":
+                print("OPPORTUNITY")
                 opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
-                save_project_opportunity = task_opportunity(
+                save_task_opportunity = task_opportunity(
                     task_id=submit_task,
                     opportunity_id=opportunity_instance,
                     change_user=request.user,
                 )
-                save_project_opportunity.save()
+                save_task_opportunity.save()
 
             """
             We want to return the user to the original location. This is dependent on the destination
@@ -6077,22 +6078,6 @@ def new_task(request, location_id='', destination=''):
         # Setup dates for initalising
         today = datetime.datetime.now()
         next_week = today + datetime.timedelta(days=31)
-
-        """
-		We need to do some basic formulations with the hour and and minutes.
-		For the hour we need to find all those who are in the PM and
-		change both the hour and meridiem accordingly.
-		For the minute, we have to create it in 5 minute blocks.
-		"""
-        hour = today.hour
-        minute = int(5 * round(today.minute / 5.0))
-        meridiems = 'AM'
-
-        if hour > 12:
-            hour = hour - 12
-            meridiems = 'PM'
-        elif hour == 0:
-            hour = 12
 
         #FIGURE OUT HOW TO GET ORGANISATION HERE!
         if destination == "" or destination == None:
