@@ -29,6 +29,8 @@
                 <div class="alert alert-info">Status: Started</div>
             {% elif rfc_results.rfc_status == 5 %}
                 <div class="alert alert-primary">Status: Finished</div>
+            {% elif rfc_results.rfc_status == 6 %}
+                <div class="alert alert-dark">Status: <strong>REJECTED</strong></div>
             {% endif %}
 
             <div class="form-group">

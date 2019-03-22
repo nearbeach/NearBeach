@@ -9,7 +9,7 @@
     <script type="text/javascript" src="{% static 'NearBeach/javascript/document_upload.js' %}"></script>
 
 
-    <form action={% url 'request_for_change_draft' rfc_results.rfc_id %} method="post" class="request_for_change_information" enctype="multipart/form-data">
+    <form action={% url 'request_for_change_draft' rfc_results.rfc_id %} method="post" id="request_for_change_information" class="request_for_change_information" enctype="multipart/form-data">
         {% csrf_token %}
         {{ request_for_change_form.media }}
         <div class="card mt-4">
@@ -218,7 +218,25 @@
         </div>
     {% endif %}
 
-
+    <div class="card mt-4">
+        <div class="card-header bg-danger">
+            <h2>Danger Zone</h2>
+        </div>
+        <div class="card-body">
+            <div class="alert-primary">
+                Please note:
+                <ul>
+                    <li>Rejecting the Request for Change is permanment.</li>
+                    <li>Requesting Approval will go through an approval process</li>
+                    <li>Requesting for Approval will send an email to all group leaders</li>
+                </ul>
+            </div>
+            <div class="form-row">
+                <button class="btn btn-primary" onclick="submit_rfc()">Submit Request for Change</button>
+                <button class="btn btn-warning" onclick="reject_rfc()">Reject Request for Change</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         window.onload = function on_page_load() {
@@ -417,5 +435,53 @@
             });
         }
         */
+
+        function submit_rfc() {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/request_for_change_submit/{{ rfc_results.rfc_id }}/',
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    //Successfully submitted for approval. We will now submit the form.
+                    $("#request_for_change_information").submit();
+                },
+                error: function() {
+                    alert("Sorry - submitting RFC for approval failed");
+                }
+            })
+        }
+
+        function reject_rfc() {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/request_for_change_reject/{{ rfc_results.rfc_id }}/',
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    //Successfully submitted for approval. We will now submit the form.
+                    $("#request_for_change_information").submit();
+                },
+                error: function() {
+                    alert("Sorry - submitting RFC for approval failed");
+                }
+            })
+        }
     </script>
 {% endblock %}

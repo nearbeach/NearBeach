@@ -7864,6 +7864,72 @@ def request_for_change_information(request,rfc_id):
 
     return HttpResponse(t.render(c,request))
 
+
+@login_required(login_url='login',redirect_field_name="")
+def request_for_change_reject(request,rfc_id):
+    """
+    The user has requested to reject their request for change. This will process that request
+    :param request:
+    :param rfc_id: The request for change we are submitting
+    :return: Blank page
+
+    Method
+    ~~~~~~
+    1. Check that the method is in POST
+    2. Check to make sure the user has permission to submit the rfc
+    3. Change the request to rejected
+    4. Return blank page
+    """
+    if request.method == "POST":
+        permission_results = return_user_permission_level(request, None, 'request_for_change')
+        if permission_results['request_for_change'] <= 2:
+            return HttpResponseRedirect(reverse('permission_denied'))
+
+        rfc_results=request_for_change.objects.get(rfc_id=rfc_id)
+        rfc_results.rfc_status=6 #Rejected
+        rfc_results.save()
+
+        #Send back blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry - has to be done in POST")
+
+
+@login_required(login_url='login',redirect_field_name="")
+def request_for_change_submit(request,rfc_id):
+    """
+    The user has requested to submit their request for change for approval. This will process that request
+    :param request:
+    :param rfc_id: The request for change we are submitting
+    :return: Blank page
+
+    Method
+    ~~~~~~
+    1. Check that the method is in POST
+    2. Check to make sure the user has permission to submit the rfc
+    3. Change the request to waiting for approval
+    4. Return blank page
+    """
+    if request.method == "POST":
+        permission_results = return_user_permission_level(request, None, 'request_for_change')
+        if permission_results['request_for_change'] <= 2:
+            return HttpResponseRedirect(reverse('permission_denied'))
+
+        rfc_results=request_for_change.objects.get(rfc_id=rfc_id)
+        rfc_results.rfc_status=2 #Waiting for approval
+        rfc_results.save()
+
+        #Send back blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry - has to be done in POST")
+
+
+
 @login_required(login_url='login',redirect_field_name="")
 def resolve_project(request, project_id):
     project_update = project.objects.get(project_id=project_id)
