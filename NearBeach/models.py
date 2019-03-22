@@ -3462,8 +3462,6 @@ class user_group(models.Model):
         choices=IS_DELETED_CHOICE,
         default="FALSE",
     )
-    #report to
-    # group leader - true/false
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(

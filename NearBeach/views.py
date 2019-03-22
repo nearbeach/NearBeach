@@ -1586,6 +1586,55 @@ def campus_readonly(request, campus_information):
 
 
 @login_required(login_url='login',redirect_field_name="")
+def change_group_leader(request, user_group_id):
+    """
+    This is an administration task. On the groups information page, an administrator might want to make sure that a user
+    is a group leader (or remove them), they will click on the hyperlink to do so. This function is then called.
+
+    It will change the group leader status to the opposite boolean
+    TRUE -> FALSE
+    FALSE -> TRUE
+    :param request:
+    :param user_group_id: The user_group_id we are focusing on flipping
+    :return: blank page
+
+    Method
+    ~~~~~~
+    1. Make sure this method is done in POST
+    2. Make sure the user has correct permissions
+    3. Find ALL user_group permissions with the group/user filters
+    4. Apply the BOOLEAN SWITCH
+    5. Return blank page
+    """
+    if request.method == "POST":
+        permission_results = return_user_permission_level(request, None, ['administration'])
+
+        if permission_results['administration'] <= 1:
+            return HttpResponseRedirect(reverse('permission_denied'))
+
+        #Get data
+        user_group_results = user_group.objects.get(
+            user_group_id=user_group_id,
+        )
+
+        #Check the data and flip the boolean
+        if user_group_results.group_leader == "TRUE":
+            user_group_results.group_leader = "FALSE"
+        else:
+            user_group_results.group_leader = "TRUE"
+
+        #Save
+        user_group_results.save()
+
+        # Send back blank page
+        t =loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Can only be done through Post")
+
+
+@login_required(login_url='login',redirect_field_name="")
 def change_task_new(request,rfc_id):
     """
     This form is called when;
