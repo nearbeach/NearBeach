@@ -1872,10 +1872,11 @@ class new_change_task_form(ModelForm):
                 'width': '100%',
             },
             attrs={
-                'class': 'form-control',
+                'class': 'form-control change_task_description',
             },
         ),
     )
+
     change_task_start_date=forms.DateTimeField(
         widget=forms.DateTimeInput(attrs={
             'class': 'form-control',
@@ -3732,6 +3733,87 @@ class request_for_change_form(ModelForm):
             'change_user',
             'is_deleted',
             'rfc_status',
+        ]
+
+
+class request_for_change_readonly_form(ModelForm):
+    """
+    The request for change text has been truncated to rfc_ as the field names were too long.
+    """
+    rfc_summary = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+
+    rfc_risk_and_impact_analysis = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    rfc_implementation_plan = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    rfc_backout_plan = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    rfc_test_plan = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    class Meta:
+        model=request_for_change
+        fields=[
+            'rfc_summary',
+            'rfc_risk_and_impact_analysis',
+            'rfc_implementation_plan',
+            'rfc_backout_plan',
+            'rfc_test_plan',
         ]
 
 class requirement_information_form(ModelForm):
