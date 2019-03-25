@@ -12,7 +12,9 @@
                     <input type="submit" class="btn btn-primary w-25 form-control">
                 </div>
 
-                <a href="{% url 'new_organisation' %}">New Organisation</a>
+                {% if organisation_permission >= 3 %}
+                    <a href="{% url 'new_organisation' %}">New Organisation</a>
+                {% endif %}
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr class="header">

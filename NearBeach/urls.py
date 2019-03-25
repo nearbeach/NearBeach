@@ -69,6 +69,7 @@ re_path(r'^dashboard/active_task', views.dashboard_active_task, name='dashboard_
 re_path(r'^dashboard/group_active_projects', views.dashboard_group_active_projects,name='dashboard_group_active_projects'),
 re_path(r'^dashboard/group_active_task', views.dashboard_group_active_task,name='dashboard_group_active_task'),
 re_path(r'^dashboard/group_opportunities', views.dashboard_group_opportunities, name='dashboard_group_opportunities'),
+re_path(r'^dashboard/group_request_for_change', views.dashboard_group_request_for_change, name='dashboard_group_request_for_change'),
 re_path(r'^dashboard/opportunities', views.dashboard_opportunities, name='dashboard_opportunities'),
 re_path(r'^dashboard/ready_for_approval', views.dashboard_ready_for_approval, name='ready_for_approval'),
 re_path(r'^deactivate_campus/(?P<campus_id>[0-9]+)/$',views.deactivate_campus,name='deactivate_campus'),

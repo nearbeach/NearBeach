@@ -41,6 +41,19 @@
                     alert("Sorry, the 'Group Active Tasks' had issues loading");
                 }
             });
+            //EXTRACT Group Request for change
+            $.ajax({
+                url: '/dashboard/group_request_for_change/',
+                data: {},
+                dataType: 'HTML',
+                type:'GET',
+                success: function(data) {
+                    $('#group_request_for_change').html(data);
+                },
+                error: function(){
+                    alert("Sorry, the 'Group Request for Change' had issues loading");
+                }
+            });
             $.ajax({
                 url: '/dashboard/active_quotes/',
                 data: {},
@@ -201,6 +214,16 @@
                 Loading...
             </div>
         </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Group Request for Change</h2>
+            </div>
+            <div class="card-body" id="group_request_for_change">
+                Loading...
+            </div>
+        </div>
+
         <script>
             function apply_filters() {
                 //Varibales used in the function

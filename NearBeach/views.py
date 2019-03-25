@@ -2227,7 +2227,15 @@ def dashboard_active_quotes(request):
         quote_stage_id__in=list_of_quote_stage.objects.filter(
             #We do not want to remove any quote with deleted stage
             quote_closed="FALSE"
-        ).values('quote_stage_id')
+        ).values('quote_stage_id'),
+        #Limit to quotes we have access to
+        quote_id__in=object_assignment.objects.filter(
+            is_deleted="FALSE",
+            group_id__in=user_group.objects.filter(
+                is_deleted="FALSE",
+                username=request.user,
+            ).values('group_id')
+        ).values('quote_id')
     )
 
     # Load the template
@@ -2366,6 +2374,36 @@ def dashboard_group_opportunities(request):
 
 
 @login_required(login_url='login',redirect_field_name="")
+def dashboard_group_request_for_change(request):
+    """
+    A simple dashboard widget that shows currently all RFC's that the user has access to through their group.
+    :param request:
+    :return:
+    """
+    rfc_results = request_for_change.objects.filter(
+        is_deleted="FALSE",
+        rfc_status__in=[1,2,3,4],
+        rfc_id__in=object_assignment.objects.filter(
+            is_deleted="FALSE",
+            request_for_change__isnull=False,
+            group_id__in=user_group.objects.filter(
+                is_deleted="FALSE",
+                username=request.user,
+            ).values('group_id'),
+        ).values('request_for_change'),
+    )
+
+    #Get template
+    t = loader.get_template('NearBeach/dashboard_widgets/group_request_for_change.html')
+
+    c = {
+        'rfc_results': rfc_results,
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login',redirect_field_name="")
 def dashboard_opportunities(request):
     # Get username_id from User
     #current_user = request.user
@@ -2430,7 +2468,8 @@ def dashboard_ready_for_approval(request):
             is_deleted="FALSE",
             request_for_change__isnull=False,
             group_id__in=user_group_results.values('group_id'),
-        ).values('request_for_change')
+        ).values('request_for_change'),
+        rfc_status=2, #Waiting for approval
     )
 
     #Get template
@@ -2441,8 +2480,6 @@ def dashboard_ready_for_approval(request):
     }
 
     return HttpResponse(t.render(c,request))
-
-
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -6690,9 +6727,24 @@ def organisation_readonly(request, organisation_id):
     """
     We need to limit the amount of opportunities to those that the user has access to.
     """
+    user_group_results=user_group.objects.filter(
+        is_deleted="FALSE",
+        group_id__isnull=False,
+        username=request.user,
+    )
+    opportunity_permissions_results = object_assignment.objects.filter(
+        Q(
+            Q(assigned_user=request.user)  # User has permission
+            | Q(group_id__in=user_group_results.values('group_id'))  # User's group have permission
+        )
+    )
+
     opportunity_results = opportunity.objects.filter(
         is_deleted="FALSE",
-        organisation_id=organisation_id,
+        opportunity_id__in=opportunity_connection.objects.filter(
+            organisation_id=organisation_id,
+            opportunity_id__in=opportunity_permissions_results.values('opportunity_id'),
+        ).values('opportunity_id'),
     )
 
     contact_history_results = contact_history.objects.filter(
@@ -7420,24 +7472,6 @@ def quote_information(request, quote_id):
 
     if permission_results['quote'] == 0:
         return HttpResponseRedirect(reverse(permission_denied))
-
-    """
-    Test User Access
-    ~~~~~~~~~~~~~~~~
-    A user who wants to access this quote will need to meet one of these two conditions
-    1. They have an access to  a group whom has been granted access to this quote
-    2. They are a super user (they should be getting access to all objects)
-    """
-    object_access = object_assignment.objects.filter(
-        is_deleted="FALSE",
-        quote_id=quote_id,
-        group_id__in=user_group.objects.filter(
-            is_deleted="FALSE",
-            username=request.user,
-        ).values('group_id')
-    )
-    if object_access.count() == 0 and not permission_results['administration'] == 4:
-        return HttpResponseRedirect(reverse('permission_denied'))
 
     #Get the quote information
     quotes_results = quote.objects.get(quote_id=quote_id)
@@ -8380,7 +8414,7 @@ def search(request):
 
 @login_required(login_url='login',redirect_field_name="")
 def search_customer(request):
-    permission_results = return_user_permission_level(request, None, 'project')
+    permission_results = return_user_permission_level(request, None, 'customer')
 
     # Load the template
     t = loader.get_template('NearBeach/search_customer.html')
@@ -8437,6 +8471,7 @@ def search_customer(request):
     c = {
         'search_customer_form': search_customer_form(initial={'search_customer': search_customer_results}),
         'customer_results': customer_results,
+        'customer_permission': permission_results['customer'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
     }
@@ -8476,7 +8511,7 @@ def search_group(request):
 
 @login_required(login_url='login',redirect_field_name="")
 def search_organisation(request):
-    permission_results = return_user_permission_level(request, None, 'project')
+    permission_results = return_user_permission_level(request, None, 'organisation')
 
     # Load the template
     t = loader.get_template('NearBeach/search_organisations.html')
@@ -8526,6 +8561,7 @@ def search_organisation(request):
         'search_organisation_form': search_organisation_form(
             initial={'search_organisation': search_organisation_results}),
         'organisations_results': organisations_results,
+        'organisation_permission': permission_results['organisation'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
     }

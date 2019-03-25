@@ -12,7 +12,9 @@
                     <input type="submit" class="btn btn-primary form-control w-25">
                 </div>
 
-                <a href="{% url 'new_customer' 0 %}">New Customer</a>
+                {% if customer_permission >= 3 %}
+                    <a href="{% url 'new_customer' 0 %}">New Customer</a>
+                {% endif %}
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr class="header">
