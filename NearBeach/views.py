@@ -1634,6 +1634,31 @@ def change_group_leader(request, user_group_id):
         return HttpResponseBadRequest("Can only be done through Post")
 
 
+@login_required(login_url='login',redirect_field_name="")
+def change_task_finish(request,change_task_id):
+    """
+    This will finish the change task.
+    :param request:
+    :param change_task_id:
+    :return:
+    """
+    if request.method == "POST":
+        permission_results = return_user_permission_level(request, None, 'request_for_change')
+        if permission_results['request_for_change'] <= 1:
+            return HttpResponseRedirect(reverse('permission_denied'))
+
+        change_task.objects.filter(
+            change_task_id=change_task_id,
+        ).update(
+            change_task_status=5, #Finish
+        )
+
+        #Send back blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry - this can only be done through post")
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -1693,6 +1718,34 @@ def change_task_list(request,rfc_id):
     }
 
     return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login',redirect_field_name="")
+def change_task_start(request,change_task_id):
+    """
+    This will start the change task.
+    :param request:
+    :param change_task_id:
+    :return:
+    """
+    if request.method == "POST":
+        permission_results = return_user_permission_level(request, None, 'request_for_change')
+        if permission_results['request_for_change'] <= 1:
+            return HttpResponseRedirect(reverse('permission_denied'))
+
+        change_task.objects.filter(
+            change_task_id=change_task_id,
+        ).update(
+            change_task_status=4, #Started
+        )
+
+        #Send back blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry - this can only be done through post")
+
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -7863,6 +7916,56 @@ def request_for_change_draft(request,rfc_id):
     return HttpResponse(t.render(c,request))
 
 @login_required(login_url='login',redirect_field_name="")
+def request_for_change_finish(request,rfc_id):
+    """
+    This function will only be called during the request_for_change_start. This function is designed to show NOTHING
+    until the user has completed all of their change tasks. Once all change tasks have been completed a simple form
+    will appear allowing the user to close the RFC.
+
+    The GET method renders the form
+    The POST method finishes the RFC and sends the user to the request_for_change_information page
+    :param request:
+    :param rfc_id:
+    :return:
+
+    Method
+    ~~~~~~
+    1. Check to see which method the user is using. The POST method instructions will be displayed in the IF statement
+    2. Count how many change tasks are left for this rfc
+    3. Get template, context, and render
+    """
+    if request.method == "POST":
+        """
+        The user has submitted the final stage of the RFC. We will now give the RFC a finished statement. Then it will 
+        forward the user to the information page
+        """
+        request_for_change.objects.filter(
+            rfc_id=rfc_id,
+        ).update(
+            rfc_status=5, #Finished
+        )
+
+        #Send user to request for change information page
+        return HttpResponseRedirect(reverse('request_for_change_information', args={rfc_id}))
+
+    change_task_count = change_task.objects.filter(
+        is_deleted="FALSE",
+        request_for_change_id=rfc_id,
+        change_task_status__in=[1,2,3,4],
+    ).count()
+
+    # Get template
+    t = loader.get_template('NearBeach/request_for_change/request_for_change_finish.html')
+
+    c = {
+        'rfc_id': rfc_id,
+        'change_task_count': change_task_count,
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login',redirect_field_name="")
 def request_for_change_information(request,rfc_id):
     """
     The request for change information is a READ ONLY section. If the RFC is in draft then it will send the user to the
@@ -7958,7 +8061,13 @@ def request_for_change_information(request,rfc_id):
 
 
     # Get template
-    t = loader.get_template('NearBeach/request_for_change_information.html')
+    """
+    We use a slightly different template for the rfc when it has started.
+    """
+    if rfc_results.rfc_status == 4:
+        t = loader.get_template('NearBeach/request_for_change_start.html')
+    else:
+        t = loader.get_template('NearBeach/request_for_change_information.html')
 
     # Context
     c = {

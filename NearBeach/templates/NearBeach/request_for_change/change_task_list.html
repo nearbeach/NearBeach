@@ -77,10 +77,22 @@
                 <tr>
                     <td>{{ row.change_task_start_date }}</td>
                     <td>{{ row.change_task_end_date }}</td>
-                    <td>{{ row.change_task_title }}</td>
+                    <td><a href="">{{ row.change_task_title }}</a></td>
                     <td>{{ row.change_task_assigned_user }}</td>
                     <td>{{ row.change_task_qa_user }}</td>
-                    <td>{{ row.change_task_status }}</td>
+                    {% if rfc_status == 4 %}
+                        <td>
+                            {% if row.change_task_status == 1 %}
+                                <a href="javascript:void(0)" onclick="change_task_start({{ row.change_task_id }})">{{ row.get_change_task_status_display }}</a>
+                            {% elif row.change_task_status == 4 %}
+                                <a href="javascript:void(0)" onclick="change_task_finish({{ row.change_task_id }})">{{ row.get_change_task_status_display }}</a>
+                            {% else %}
+                                {{ row.get_change_task_status_display }}
+                            {% endif %}
+                        </td>
+                    {% else %}
+                        <td>{{ row.get_change_task_status_display }}</td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         </table>

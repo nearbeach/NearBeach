@@ -290,7 +290,7 @@
                             <td>{{ row.change_task_title }}</td>
                             <td>{{ row.change_task_assigned_user }}</td>
                             <td>{{ row.change_task_qa_user }}</td>
-                            <td>{{ row.change_task_status }}</td>
+                            <td>{{ row.get_change_task_status_display }}</td>
                         </tr>
                     {% endfor %}
                 </table>
@@ -452,30 +452,6 @@
         </script>
 
     {% endif %}
-
-
-<!-- CHANGE TASK MODAL -->
-    <form id="new_change_task" name="new_change_task">
-        <div class="modal fade" id="change_task_modal" tabindex="-1" role="dialog" aria-labelledby="change_task_modal" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="change_task_title">New Change Task</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="change_task_content">Loading...</div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="submit_change_task()">Save changes</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
 
     <script>
         window.onload = function on_page_load() {
