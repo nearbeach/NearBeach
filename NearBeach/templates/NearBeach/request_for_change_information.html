@@ -299,12 +299,66 @@
 
     </div>
 
+
+    {% if rfc_results.rfc_status == 3 %}
+        <div class="card mt-4">
+            <div class="card-header bg-success">
+                <h2>RFC - Approved</h2>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-success w-100" onclick="rfc_start()">Start Request for Change</button>
+            </div>
+        </div>
+
+        <script>
+            function rfc_start() {
+                $.ajaxSetup({
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+
+                $.ajax({
+                    url: '/request_for_change_start/{{ rfc_results.rfc_id }}/',
+                    data:  {},
+                    dataType: "HTML",
+                    type: "POST",
+                    success: function(data) {
+                        //Just reload the page
+                        window.location.reload();
+                    },
+                    error: function() {
+                        alert("Sorry - something went wrong");
+                    }
+                })
+            }
+        </script>
+    {% endif %}
+
     {% if team_leader and rfc_results.rfc_status == 2 %}
         <div class="card mt-4">
             <div class="card-header bg-warning">
                 <h2>Ready for Approval</h2>
             </div>
             <div class="card-body">
+                <strong>Group Approval Status</strong>
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <td class="w-75">Group</td>
+                            <td class="w-25">Status</td>
+                        </tr>
+                    </thead>
+                    {% for row in group_approval_results %}
+                        <tr>
+                            <td>{{ row.group_id }}</td>
+                            <td>{{ row.approval }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+
                 <div class="alert alert-primary">Please provide notes if you are rejecting or sending back to draft.</div>
                 <form class="request_for_change_note_form">
                     {% csrf_token %}
@@ -320,6 +374,83 @@
                 </div>
             </div>
         </div>
+        <script>
+            /*
+            Hidden here - so no users know of it's existance
+             */
+            function rfc_approve() {
+                $.ajaxSetup({
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+
+                $.ajax({
+                    url: '/request_for_change_approve/{{ rfc_results.rfc_id }}/',
+                    data:  {},
+                    dataType: "HTML",
+                    type: "POST",
+                    success: function(data) {
+                        //Just reload the page
+                        window.location.reload();
+                    },
+                    error: function() {
+                        alert("Sorry - something went wrong");
+                    }
+                })
+            }
+
+            function rfc_draft() {
+                $.ajaxSetup({
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+
+                $.ajax({
+                    url: '/request_for_change_set_to_draft/{{ rfc_results.rfc_id }}/',
+                    data:  {},
+                    dataType: "HTML",
+                    type: "POST",
+                    success: function(data) {
+                        //Just reload the page
+                        window.location.reload();
+                    },
+                    error: function() {
+                        alert("Sorry - something went wrong");
+                    }
+                })
+            }
+
+            function rfc_reject() {
+                $.ajaxSetup({
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+
+                $.ajax({
+                    url: '/request_for_change_reject/{{ rfc_results.rfc_id }}/',
+                    data:  {},
+                    dataType: "HTML",
+                    type: "POST",
+                    success: function(data) {
+                        //Just reload the page
+                        window.location.reload();
+                    },
+                    error: function() {
+                        alert("Sorry - something went wrong");
+                    }
+                })
+            }
+        </script>
+
     {% endif %}
 
 

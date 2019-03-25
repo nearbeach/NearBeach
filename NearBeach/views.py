@@ -7738,6 +7738,49 @@ def rename_document(request, document_key):
 
 
 @login_required(login_url='login',redirect_field_name="")
+def request_for_change_approve(request,rfc_id):
+    """
+    The user has requested to approve their request for change. This will process that request
+    :param request:
+    :param rfc_id: The request for change we are submitting
+    :return: Blank page
+
+    Method
+    ~~~~~~
+    1. Check that the method is in POST
+    2. Check to make sure the user has permission to submit the rfc
+    3. Change the request for change group approval to approved
+    4. Check the approval status of the request for change
+    5. Return blank page
+    """
+    if request.method == "POST":
+        permission_results = return_user_permission_level(request, None, 'request_for_change')
+        if permission_results['request_for_change'] <= 2:
+            return HttpResponseRedirect(reverse('permission_denied'))
+
+
+        request_for_change_group_approval.objects.filter(
+            is_deleted="FALSE",
+            rfc_id=rfc_id,
+            group_id__in=user_group.objects.filter(
+                is_deleted="FALSE",
+                group_leader=True,
+                username=request.user,
+            ).values('group_id'),
+            approval=1, #Waiting for approval
+        ).update(approval=2,) #Approved
+
+        check_approval_status(rfc_id)
+
+        #Send back blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry - has to be done in POST")
+
+
+@login_required(login_url='login',redirect_field_name="")
 def request_for_change_draft(request,rfc_id):
     """
     This is the section where the user can edit the draft of their RFC.
@@ -7901,8 +7944,17 @@ def request_for_change_information(request,rfc_id):
             team_leader = True
         else:
             team_leader = False
+
+        #Get group approval data
+        group_approval_results = request_for_change_group_approval.objects.filter(
+            is_deleted="FALSE",
+            rfc_id=rfc_id,
+        )
+
+
     else:
         team_leader = False
+        group_approval_results = ""
 
 
     # Get template
@@ -7921,6 +7973,7 @@ def request_for_change_information(request,rfc_id):
         ),
         'team_leader': team_leader,
         'request_for_change_note_form': request_for_change_note_form,
+        'group_approval_results': group_approval_results,
         'change_task_results': change_task_results,
         'assigned_user_results': assigned_user_results,
         'qa_user_results': qa_user_results,
@@ -7960,6 +8013,14 @@ def request_for_change_reject(request,rfc_id):
         rfc_results.rfc_status=6 #Rejected
         rfc_results.save()
 
+        request_for_change_group_approval.objects.filter(
+            is_deleted="FALSE",
+            approval=1, #Waiting
+            rfc_id=rfc_id,
+        ).update(
+            approval=3, #Rejected
+        )
+
         #Send back blank page
         t = loader.get_template('NearBeach/blank.html')
         c = {}
@@ -7967,6 +8028,78 @@ def request_for_change_reject(request,rfc_id):
     else:
         return HttpResponseBadRequest("Sorry - has to be done in POST")
 
+
+@login_required(login_url='login',redirect_field_name="")
+def request_for_change_set_to_draft(request,rfc_id):
+    """
+    The user has requested to set back to draft. This will process that request
+    :param request:
+    :param rfc_id: The request for change we are submitting
+    :return: Blank page
+
+    Method
+    ~~~~~~
+    1. Check that the method is in POST
+    2. Check to make sure the user has permission to submit the rfc
+    3. Change the request to draft
+    4. Return blank page
+    """
+    if request.method == "POST":
+        permission_results = return_user_permission_level(request, None, 'request_for_change')
+        if permission_results['request_for_change'] <= 2:
+            return HttpResponseRedirect(reverse('permission_denied'))
+
+        rfc_results=request_for_change.objects.get(rfc_id=rfc_id)
+        rfc_results.rfc_status=1 #DRAFT
+        rfc_results.save()
+
+        request_for_change_group_approval.objects.filter(
+            is_deleted="FALSE",
+            approval=1, #Waiting
+            rfc_id=rfc_id,
+        ).update(
+            rfc_id=4, #Cancel
+        )
+
+        #Send back blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry - has to be done in POST")
+
+
+@login_required(login_url='login',redirect_field_name="")
+def request_for_change_start(request,rfc_id):
+    """
+    The user has requested the rfc to start. This will process that request
+    :param request:
+    :param rfc_id: The request for change we are submitting
+    :return: Blank page
+
+    Method
+    ~~~~~~
+    1. Check that the method is in POST
+    2. Check to make sure the user has permission to submit the rfc
+    3. Change the start
+    4. Return blank page
+    """
+    if request.method == "POST":
+        permission_results = return_user_permission_level(request, None, 'request_for_change')
+        if permission_results['request_for_change'] <= 2:
+            return HttpResponseRedirect(reverse('permission_denied'))
+
+        rfc_results=request_for_change.objects.get(rfc_id=rfc_id)
+        rfc_results.rfc_status=4 #Start
+        rfc_results.save()
+
+
+        #Send back blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry - has to be done in POST")
 
 @login_required(login_url='login',redirect_field_name="")
 def request_for_change_submit(request,rfc_id):
@@ -7991,6 +8124,35 @@ def request_for_change_submit(request,rfc_id):
         rfc_results=request_for_change.objects.get(rfc_id=rfc_id)
         rfc_results.rfc_status=2 #Waiting for approval
         rfc_results.save()
+
+        """
+        For each group connected to the RFC, we will need to create a single approval line for them.
+        """
+        rfc_group_results = object_assignment.objects.filter(
+            is_deleted="FALSE",
+            request_for_change=rfc_results.rfc_id,
+            group_id__isnull=False,
+        )
+        for row in rfc_group_results:
+            submit_rfc_group_approval = request_for_change_group_approval(
+                rfc_id=rfc_results,
+                group_id=row.group_id,
+                change_user=request.user,
+            )
+
+            """
+            Count how many group leaders there are in this current group. If there are none, then the default approval
+            becomes APPROVED
+            """
+            group_leader = user_group.objects.filter(
+                is_deleted="FALSE",
+                group_id=row.group_id,
+                group_leader=True,
+            ).count()
+            if group_leader == 0:
+                submit_rfc_group_approval.approval = 2 #Approved
+
+            submit_rfc_group_approval.save()
 
         #Send back blank page
         t = loader.get_template('NearBeach/blank.html')
@@ -9233,6 +9395,54 @@ def user_weblink_view(request):
 """
 The following def are designed to help display a customer 404 and 500 pages
 """
+def check_approval_status(rfc_id):
+    """
+    The following function will check the approval status of the RFC.
+
+    Rules for Approval:
+    - Any group with no group leaders are automatically approved. This is checked here
+    - ALL groups must have approved the RFC
+    :param rfc_id:
+    :return:
+
+    Method
+    ~~~~~~
+    1. Check for any auto approval groups
+    2. Check to see if there are any waiting, cancelled, or rejected results
+    3. If there are none then we approve the rfc
+    """
+    group_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        request_for_change=rfc_id,
+        group_id__isnull=False,
+    )
+    for row in group_results:
+        group_leader_count = user_group.objects.filter(
+            is_deleted="FALSE",
+            group_id=row.group_id,
+            group_leader=True,
+        ).count()
+        if group_leader_count == 0:
+            #We auto approve
+            request_for_change_group_approval.objects.filter(
+                is_deleted="FALSE",
+                rfc_id=rfc_id,
+                group_id=row.group_id,
+                approval=1, #Waiting
+            ).update(approval=2,) #Approved
+
+    non_approve_count = request_for_change_group_approval.objects.filter(
+        is_deleted="FALSE",
+        rfc_id=rfc_id,
+        approval__in=[1,3,4]
+    ).count()
+
+    #If there are 0 - then everyone has had to approved
+    if non_approve_count == 0:
+        rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
+        rfc_results.rfc_status = 3 #Approved
+        rfc_results.save()
+
 def handler404(request):
     response = render_to_response(
         '404.html',

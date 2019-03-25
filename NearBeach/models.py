@@ -61,6 +61,13 @@ RATING_SCORE = (
     (5, '5 Star'),
 )
 
+RFC_APPROVAL = (
+    (1,'Waiting'),
+    (2,'Approved'),
+    (3,'Rejected'),
+    (4,'Cancel'),
+)
+
 RFC_IMPACT = (
     (3,'High'),
     (2,'Medium'),
@@ -2797,6 +2804,39 @@ class request_for_change(models.Model):
     class Meta:
         db_table = "request_for_change"
 
+
+class request_for_change_group_approval(models.Model):
+    rfc_group_approval_id=models.AutoField(primary_key=True)
+    rfc_id=models.ForeignKey(
+        'request_for_change',
+        on_delete=models.CASCADE,
+    )
+    group_id=models.ForeignKey(
+        'group',
+        on_delete=models.CASCADE,
+    )
+    approval=models.IntegerField(
+        choices=RFC_APPROVAL,
+        default=1,  # Waiting
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    def __str__(self):
+        return str(self.approval)
+
+    class Meta:
+        db_table = "request_for_change_group_approval"
 
 class request_for_change_note(models.Model):
     rfc_note_id=models.AutoField(primary_key=True)
