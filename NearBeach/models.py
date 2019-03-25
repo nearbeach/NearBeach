@@ -147,66 +147,6 @@ class about_user(models.Model):
         db_table = "about_user"
 
 
-"""
-class assigned_user(models.Model):
-    assigned_user_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-    )
-    project_id = models.ForeignKey(
-        'project',
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True
-    )
-    task_id = models.ForeignKey(
-        'task',
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    opportunity_id = models.ForeignKey(
-        'opportunity',
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    requirement_id = models.ForeignKey(
-        'requirement',
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    quote_id = models.ForeignKey(
-        'quote',
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    kanban_board_id = models.ForeignKey(
-        'kanban_board',
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
-    )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE',
-    )
-
-    class Meta:
-        db_table = "assigned_user"
-"""
-
 
 """
 Contact History is a simple form that user will fill out every time they
@@ -2856,6 +2796,32 @@ class request_for_change(models.Model):
 
     class Meta:
         db_table = "request_for_change"
+
+
+class request_for_change_note(models.Model):
+    rfc_note_id=models.AutoField(primary_key=True)
+    rfc_note=models.TextField(
+        blank=True,
+        null=True,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    def __str__(self):
+        return str(self.rfc_note)
+
+    class Meta:
+        db_table = "request_for_change_note"
 
 
 class request_for_change_stakeholder(models.Model):

@@ -3736,6 +3736,21 @@ class request_for_change_form(ModelForm):
         ]
 
 
+class request_for_change_note_form(ModelForm):
+    rfc_note=forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'style': 'height: 80px;'
+        }),
+        required=False,
+    )
+    class Meta:
+        model=request_for_change_note
+        fields=[
+            'rfc_note',
+        ]
+
+
 class request_for_change_readonly_form(ModelForm):
     """
     The request for change text has been truncated to rfc_ as the field names were too long.

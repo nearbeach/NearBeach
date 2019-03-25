@@ -2344,6 +2344,51 @@ def dashboard_opportunities(request):
 
 
 @login_required(login_url='login',redirect_field_name="")
+def dashboard_ready_for_approval(request):
+    """
+    This dashboard widget will show the user if there are any objects that require their attention for approval.
+    This dashboard widget is currently just focused on Request for Change, however can be utilised for any objects
+    in the future
+    :param request:
+    :return: Widget
+
+    Method
+    ~~~~~~
+    1. Obtain SQL
+    2. Get template and context
+    3. Render
+    """
+
+    #Obtain all group id's that the user is a group leader for
+    user_group_results = user_group.objects.filter(
+        is_deleted="FALSE",
+        group_leader="TRUE",
+        username=request.user,
+    )
+
+    #Obtain all the Request for Changes that require being approved.
+    rfc_results = request_for_change.objects.filter(
+        is_deleted="FALSE",
+        rfc_id__in=object_assignment.objects.filter(
+            is_deleted="FALSE",
+            request_for_change__isnull=False,
+            group_id__in=user_group_results.values('group_id'),
+        ).values('request_for_change')
+    )
+
+    #Get template
+    t = loader.get_template('NearBeach/dashboard_widgets/ready_for_approval.html')
+
+    c = {
+        'rfc_results': rfc_results,
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+
+
+@login_required(login_url='login',redirect_field_name="")
 def deactivate_campus(request, campus_id):
     if request.method == "POST":
         #Setting the campus as deleted
@@ -7835,6 +7880,30 @@ def request_for_change_information(request,rfc_id):
         id__in=change_task_results.values('change_task_qa_user')
     )
 
+    """
+    If the RFC Status is waiting for approval, we want to check to see if the user is at all a team leader for the 
+    groups attached to this RFC.
+    
+    If the RFC status is not waiting for approval, the output will be false
+    """
+    if rfc_results.rfc_status == 2: #Waiting for approval
+        #Find out if the user is a team leader for the groups attached to the current rfc
+        object_assignment_results = object_assignment.objects.filter(
+            is_deleted="FALSE",
+            request_for_change=rfc_id,
+            group_id__in=user_group.objects.filter(
+                is_deleted="FALSE",
+                group_leader="TRUE",
+                username=request.user,
+            ).values('group_id'),
+        ).values('request_for_change')
+        if object_assignment_results:
+            team_leader = True
+        else:
+            team_leader = False
+    else:
+        team_leader = False
+
 
     # Get template
     t = loader.get_template('NearBeach/request_for_change_information.html')
@@ -7850,6 +7919,8 @@ def request_for_change_information(request,rfc_id):
                 'rfc_test_plan': rfc_results.rfc_test_plan,
             },
         ),
+        'team_leader': team_leader,
+        'request_for_change_note_form': request_for_change_note_form,
         'change_task_results': change_task_results,
         'assigned_user_results': assigned_user_results,
         'qa_user_results': qa_user_results,

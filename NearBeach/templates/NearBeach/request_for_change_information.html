@@ -299,6 +299,29 @@
 
     </div>
 
+    {% if team_leader and rfc_results.rfc_status == 2 %}
+        <div class="card mt-4">
+            <div class="card-header bg-warning">
+                <h2>Ready for Approval</h2>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-primary">Please provide notes if you are rejecting or sending back to draft.</div>
+                <form class="request_for_change_note_form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_rfc_note">Notes</label>
+                        {{ request_for_change_note_form.rfc_note }}
+                    </div>
+                </form>
+                <div class="form-row">
+                    <button onclick="rfc_approve()" class="btn btn-primary col-md-4">Approve</button>
+                    <button onclick="rfc_draft()" class="btn btn-secondary col-md-4">Send back to draft</button>
+                    <button onclick="rfc_reject()" class="btn btn-danger col-md-4">Reject</button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
 
 <!-- CHANGE TASK MODAL -->
     <form id="new_change_task" name="new_change_task">
