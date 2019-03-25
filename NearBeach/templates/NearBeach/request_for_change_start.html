@@ -1,0 +1,292 @@
+{% extends "./template.html" %}
+{% block content %}
+    {% load static %}
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+    <!--
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
+    <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
+    -->
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/document_upload.js' %}"></script>
+
+
+    {{ rfc_form.media }}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h1>New Request For Change</h1>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">Status: Started</div>
+
+            <div class="form-group">
+                <label for="id_rfc_title">{{ rfc_results.rfc_title }}</label>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="id_rfc_type">Request For Change Type: {{ rfc_results.rfc_type }}</label for="id_rfc_type">
+                </div>
+                {% if rfc_results.rfc_version_number %}
+                    <div class="form-group col-md-6">
+                        <label for="id_rfc_version_number">Version/Release Number: {{ rfc_results.rfc_version_number }}</label>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="id_rfc_implementation_state_date">Implementation Start:</label>
+                    {{ rfc_results.rfc_implementation_start_date }}
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="id_rfc_implementation_release_date">Implementation End:</label>
+                    {{ rfc_results.rfc_implementation_end_date }}
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="id_rfc_implementation_release_date">Release Datetime:</label>
+                    {{ rfc_results.rfc_implementation_release_date }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="id_rfc_summary">Request for Change Summary:</label>
+                {{ rfc_form.rfc_summary }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_rfc_lead">Request for Change Lead User</label>
+                {{ rfc_results.rfc_lead }}
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Risk, Plan, and Implement</h2>
+        </div>
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="id_rfc_priority">Priority of Change:</label>
+                    {{ rfc_results.rfc_priority }}
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="id_rfc_risk">Risk of Change:</label>
+                    {{ rfc_results.rfc_risk }}
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="id_rfc_impact">Impact of Change:</label>
+                    {{ rfc_results.rfc_impact }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="id_rfc_risk_and_impact_analysis">Risk and Impace Analysis</label>
+                {{ rfc_form.rfc_risk_and_impact_analysis }}
+            </div>
+            <div class="form-group">
+                <label for="id_rfc_implementation_plan">Implementation Plan</label>
+                {{ rfc_form.rfc_implementation_plan }}
+            </div>
+            <div class="form-group">
+                <label for="id_rfc_backout_plan">Backout Plan</label>
+                {{ rfc_form.rfc_backout_plan }}
+            </div>
+            <div class="form-group">
+                <label for="id_rfc_test_plan">Test Plan</label>
+                {{ rfc_form.rfc_test_plan }}
+            </div>
+        </div>
+    </div>
+
+    <!-- DOCUMENT TREE -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Document Uploads</h2>
+        </div>
+        <div class="card-body">
+            <div class="document_tree_list" id="document_tree_list">
+                <h2>Document Tree List</h2>
+                Loading...
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <!-- STAKE HOLDERS -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Stakeholders</h2>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-primary">
+                <strong>Please note:</strong> The request for change will email stakeholders automatically when;
+                <ul>
+                    <li>The Request for Change is approved</li>
+                    <li>The Request for Change has started</li>
+                    <li>The Request for Change has finished</li>
+                </ul>
+            </div>
+
+            {% if organisation_stakeholders %}
+                <h3 class="mt-2">Organisation Stakeholders</h3>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Organisation Name</td>
+                            <td>Organisation Website</td>
+                            <td>Organisation Email</td>
+                        </tr>
+                    </thead>
+                    {% for row in organisation_stakeholders %}
+                        <tr>
+                            <td>{{ row.organisation_name }}</td>
+                            <td>{{ row.organisation_email }}</td>
+                            <td>{{ row.organisation_website }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+
+            {% if customer_stakeholders %}
+                <h3 class="mt-2">Customer Stakeholders</h3>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Customer First Name</td>
+                            <td>Customer Last Name</td>
+                            <td>Customer Email</td>
+                        </tr>
+                    </thead>
+                    {% for row in customer_stakeholders %}
+                        <tr>
+                            <td>{{ row.customer_first_name }}</td>
+                            <td>{{ row.customer_last_name }}</td>
+                            <td>{{ row.customer_email }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+        </div>
+    </div>
+
+
+    <!-- ASSIGNED GROUPS -->
+    {% if permission >= 3 %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Assigned Groups</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <td>Assigned Group Name</td>
+                        </tr>
+                    </thead>
+                    {% for row in group_list_results %}
+                        <tr>
+                            <td>{{ row.group_id }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- RUN SHEET -->
+    <div id="runsheet"></div>
+
+    <div id="finish_rfc"></div>
+
+
+    <script>
+        window.onload = function on_page_load() {
+            //Load each module
+            load_document_tree_list({{ rfc_results.rfc_id }},'request_for_change');
+            load_runsheet();
+        };
+
+        function change_task_start(change_task_id) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: `/change_task_start/${change_task_id}/`,
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    //Update the runsheet
+                    load_runsheet();
+                },
+                error: function() {
+                    alert("Sorry - can not start change task");
+                }
+            })
+        }
+
+        function change_task_finish(change_task_id) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: `/change_task_finish/${change_task_id}/`,
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    //Update the runsheet
+                    load_runsheet();
+                },
+                error: function() {
+                    alert("Sorry - can not start change task");
+                }
+            })
+        }
+
+        function load_runsheet() {
+            $.ajax({
+                url: '/change_task_list/{{ rfc_results.rfc_id }}/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $("#runsheet").html(data);
+
+                    //Always check to make sure if we need to finish the RFC
+                    load_finish_rfc();
+                }
+            })
+        }
+
+        function load_finish_rfc() {
+            $.ajax({
+                url: '/request_for_change_finish/{{ rfc_results.rfc_id }}/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $("#finish_rfc").html(data);
+                },
+
+            })
+        }
+
+
+    </script>
+{% endblock %}

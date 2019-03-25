@@ -1,0 +1,488 @@
+{% extends "./template.html" %}
+{% block content %}
+    {% load static %}
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
+    <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/document_upload.js' %}"></script>
+
+
+    <form action={% url 'request_for_change_draft' rfc_results.rfc_id %} method="post" id="request_for_change_information" class="request_for_change_information" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ request_for_change_form.media }}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h1>New Request For Change</h1>
+            </div>
+            <div class="card-body">
+                {% if not form_errors == "" %}
+                    <div class="alert-danger">{{ form_errors }}</div>
+                {% endif %}
+
+                {% if rfc_results.rfc_status == 1 %}
+                    <div class="alert alert-dark">
+                        Status: DRAFT - <a href="{% url 'request_for_change_information' rfc_results.rfc_id %}">Click here to view read only mode</a>
+                    </div>
+                {% elif rfc_results.rfc_status == 2 %}
+                    <div class="alert alert-warning">Status: Submitted</div>
+                {% elif rfc_results.rfc_status == 3 %}
+                    <div class="alert alert-success">Status: Approved</div>
+                {% elif rfc_results.rfc_status == 4 %}
+                    <div class="alert alert-info">Status: Started</div>
+                {% elif rfc_results.rfc_status == 5 %}
+                    <div class="alert alert-primary">Status: Finished</div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="id_rfc_title">Title</label>
+                    {{ request_for_change_form.rfc_title }}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_rfc_type">Request For Change Type</label>
+                        {{ request_for_change_form.rfc_type }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="id_rfc_version_number">Version/Release Number (optional)</label>
+                        {{ request_for_change_form.rfc_version_number }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="id_rfc_implementation_state_date">Implementation Start</label>
+                        {{ request_for_change_form.rfc_implementation_start_date }}
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="id_rfc_implementation_release_date">Implementation End</label>
+                        {{ request_for_change_form.rfc_implementation_end_date }}
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="id_rfc_implementation_release_date">Release Datetime</label>
+                        {{ request_for_change_form.rfc_implementation_release_date }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_rfc_summary">Request for Change Summary</label>
+                    {{ request_for_change_form.rfc_summary }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_rfc_lead">Request for Change Lead User</label>
+                    {{ request_for_change_form.rfc_lead }}
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Risk, Plan, and Implement</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="id_rfc_priority">Priority of Change</label>
+                        {{ request_for_change_form.rfc_priority }}
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="id_rfc_risk">Risk of Change</label>
+                        {{ request_for_change_form.rfc_risk }}
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="id_rfc_impact">Impact of Change</label>
+                        {{ request_for_change_form.rfc_impact }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_rfc_risk_and_impact_analysis">Risk and Impace Analysis</label>
+                    {{ request_for_change_form.rfc_risk_and_impact_analysis }}
+                </div>
+                <div class="form-group">
+                    <label for="id_rfc_implementation_plan">Implementation Plan</label>
+                    {{ request_for_change_form.rfc_implementation_plan }}
+                </div>
+                <div class="form-group">
+                    <label for="id_rfc_backout_plan">Backout Plan</label>
+                    {{ request_for_change_form.rfc_backout_plan }}
+                </div>
+                <div class="form-group">
+                    <label for="id_rfc_test_plan">Test Plan</label>
+                    {{ request_for_change_form.rfc_test_plan }}
+                </div>
+                <div class="form-row">
+                    <input type="submit" value="Save Changes" class="btn btn-primary col-md-6">
+                    <a href="javascript:void(0)" class="btn btn-warning col-md-6" onclick="">Cancel Request for Change</a>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- DOCUMENT TREE -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Document Uploads</h2>
+        </div>
+        <div class="card-body">
+            <div class="document_tree_list" id="document_tree_list">
+                <h2>Document Tree List</h2>
+                Loading...
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <!-- STAKE HOLDERS -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Stakeholders</h2>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-primary">
+                <strong>Please note:</strong> The request for change will email stakeholders automatically when;
+                <ul>
+                    <li>The Request for Change is approved</li>
+                    <li>The Request for Change has started</li>
+                    <li>The Request for Change has finished</li>
+                </ul>
+            </div>
+            <a href="{% url 'assigned_rfc_connection_add' rfc_results.rfc_id 'customer' %}">Connect Customer</a><br/>
+            <a href="{% url 'assigned_rfc_connection_add' rfc_results.rfc_id 'organisation' %}">Connect Organisation</a>
+
+            {% if organisation_stakeholders %}
+                <h3 class="mt-2">Organisation Stakeholders</h3>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Organisation Name</td>
+                            <td>Organisation Website</td>
+                            <td>Organisation Email</td>
+                        </tr>
+                    </thead>
+                    {% for row in organisation_stakeholders %}
+                        <tr>
+                            <td>{{ row.organisation_name }}</td>
+                            <td>{{ row.organisation_email }}</td>
+                            <td>{{ row.organisation_website }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+
+            {% if customer_stakeholders %}
+                <h3 class="mt-2">Customer Stakeholders</h3>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Customer First Name</td>
+                            <td>Customer Last Name</td>
+                            <td>Customer Email</td>
+                        </tr>
+                    </thead>
+                    {% for row in customer_stakeholders %}
+                        <tr>
+                            <td>{{ row.customer_first_name }}</td>
+                            <td>{{ row.customer_last_name }}</td>
+                            <td>{{ row.customer_email }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+        </div>
+    </div>
+
+
+    <!-- RUN SHEET -->
+    <div id="runsheet"></div>
+
+
+    <!-- ASSIGNED GROUPS -->
+    {% if permission >= 3 %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Assigned Groups</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" class="assigned_groups" id="assigned_groups">
+                    Loading add...
+                </form>
+                <div id="assigned_group_list">Loading list...</div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="card mt-4">
+        <div class="card-header bg-danger">
+            <h2>Danger Zone</h2>
+        </div>
+        <div class="card-body">
+            <div class="alert-primary">
+                Please note:
+                <ul>
+                    <li>Rejecting the Request for Change is permanment.</li>
+                    <li>Requesting Approval will go through an approval process</li>
+                    <li>Requesting for Approval will send an email to all group leaders</li>
+                </ul>
+            </div>
+            <div class="form-row">
+                <button class="btn btn-primary" onclick="submit_rfc()">Submit Request for Change</button>
+                <button class="btn btn-warning" onclick="reject_rfc()">Reject Request for Change</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function on_page_load() {
+            var allowed_times = [
+                '00.00','00:05','00:10','00:15','00:20','00:25','00:30','00:35','00:40','00:45','00:50','00:55',
+                '01:00','01:05','01:10','01:15','01:20','01:25','01:30','01:35','01:40','01:45','01:50','01:55',
+                '02:00','02:05','02:10','02:15','02:20','02:25','02:30','02:35','02:40','02:45','02:50','02:55',
+                '03:00','03:05','03:10','03:15','03:20','03:25','03:30','03:35','03:40','03:45','03:50','03:55',
+                '04:00','04:05','04:10','04:15','04:20','04:25','04:30','04:35','04:40','04:45','04:50','04:55',
+                '05:00','05:05','05:10','05:15','05:20','05:25','05:30','05:35','05:40','05:45','05:50','05:55',
+                '06:00','06:05','06:10','06:15','06:20','06:25','06:30','06:35','06:40','06:45','06:50','06:55',
+                '07:00','07:05','07:10','07:15','07:20','07:25','07:30','07:35','07:40','07:45','07:50','07:55',
+                '08:00','08:05','08:10','08:15','08:20','08:25','08:30','08:35','08:40','08:45','08:50','08:55',
+                '09:00','09:05','09:10','09:15','09:20','09:25','09:30','09:35','09:40','09:45','09:50','09:55',
+                '10:00','10:05','10:10','10:15','10:20','10:25','10:30','10:35','10:40','10:45','10:50','10:55',
+                '11:00','11:05','11:10','11:15','11:20','11:25','11:30','11:35','11:40','11:45','11:50','11:55',
+                '12:00','12:05','12:10','12:15','12:20','12:25','12:30','12:35','12:40','12:45','12:50','12:55',
+                '13:00','13:05','13:10','13:15','13:20','13:25','13:30','13:35','13:40','13:45','13:50','13:55',
+                '14:00','14:05','14:10','14:15','14:20','14:25','14:30','14:35','14:40','14:45','14:50','14:55',
+                '15:00','15:05','15:10','15:15','15:20','15:25','15:30','15:35','15:40','15:45','15:50','15:55',
+                '16:00','16:05','16:10','16:15','16:20','16:25','16:30','16:35','16:40','16:45','16:50','16:55',
+                '17:00','17:05','17:10','17:15','17:20','17:25','17:30','17:35','17:40','17:45','17:50','17:55',
+                '18:00','18:05','18:10','18:15','18:20','18:25','18:30','18:35','18:40','18:45','18:50','18:55',
+                '19:00','19:05','19:10','19:15','19:20','19:25','19:30','19:35','19:40','19:45','19:50','19:55',
+                '20:00','20:05','20:10','20:15','20:20','20:25','20:30','20:35','20:40','20:45','20:50','20:55',
+                '21:00','21:05','21:10','21:15','21:20','21:25','21:30','21:35','21:40','21:45','21:50','21:55',
+                '22:00','22:05','22:10','22:15','22:20','22:25','22:30','22:35','22:40','22:45','22:50','22:55',
+                '23:00','23:05','23:10','23:15','23:20','23:25','23:30','23:35','23:40','23:45','23:50','23:55'
+            ];
+
+            $("#id_rfc_implementation_start_date").datetimepicker({
+                format:'Y-m-d H:i:00',
+                allowTimes: allowed_times
+            });
+
+            $("#id_rfc_implementation_end_date").datetimepicker({
+                format:'Y-m-d H:i:00',
+                allowTimes: allowed_times
+            });
+
+            $("#id_rfc_implementation_release_date").datetimepicker({
+                format:'Y-m-d H:i:00',
+                allowTimes: allowed_times
+            });
+
+            //Load each module
+            load_document_tree_list({{ rfc_results.rfc_id }},'request_for_change');
+            load_assigned_group_add();
+            load_assigned_group_list();
+            load_runsheet();
+        };
+
+        //ON SUBMIT FUNCTIONS
+        $("#assigned_groups").on('submit', function(e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '/assigned_group_add/{{ rfc_results.rfc_id }}/request_for_change/',
+                data: $(this).serialize(),
+                success: function() {
+                    load_assigned_group_add();
+                    load_assigned_group_list();
+                },
+                error: function() {
+                    alert("Sorry, project assigned users did not save. Please try again.");
+                }
+            })
+        });
+
+
+
+        //NORMAL FUNCTIONS
+        function delete_group_item(group_item) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/assigned_group_delete/' + group_item + '/',
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    load_assigned_group_add();
+                    load_assigned_group_list();
+                },
+                error: function() {
+                    alert("Sorry, there was an issue deleting the Assigned Group")
+                }
+            });
+        }
+
+        function load_assigned_group_add() {
+            $.ajax({
+                url: '/assigned_group_add/{{ rfc_results.rfc_id }}/request_for_change/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $('#assigned_groups').html(data);
+                },
+                error: function() {
+                    $('#assigned_groups').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
+                }
+            });
+        }
+
+
+        function load_assigned_group_list() {
+            $.ajax({
+                url: '/assigned_group_list/{{ rfc_results.rfc_id }}/request_for_change/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $('#assigned_group_list').html(data);
+                },
+                error: function() {
+                    $('#assigned_group_list').html('<h2>Assigned Group</h2>Sorry, task history encounted an error and did not load.');
+                }
+            });
+        }
+
+
+        function load_runsheet() {
+            $.ajax({
+                url: '/change_task_list/{{ rfc_results.rfc_id }}/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $("#runsheet").html(data);
+
+                }
+            })
+        }
+
+        /*
+        function load_change_task() {
+            //Show the modal
+            $("#change_task_modal").modal('show');
+
+            //Load the modal's data
+            $.ajax({
+                url: '/change_task_new/{{ rfc_results.rfc_id }}/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $("#change_task_content").html(data);
+
+                    //initialise project history
+                    //Work around for a bug :)
+                    tinyMCE.init({
+                        selector: '#id_change_task_description',
+                        'height': '300px',
+                    });
+                },
+                error: function() {
+                    alert("Sorry - could not load the change task modal");
+                }
+            })
+        }
+
+
+        function submit_change_task() {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/change_task_new/{{ rfc_results.rfc_id }}/',
+                data: $("#new_change_task").serialize(),
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    //Hide the modal
+                    $("#change_task_modal").modal('hide');
+
+                    //Reset the modal's content
+                    $("#change_task_content").html("Loading...");
+
+                    //Reload the required runsheet
+                    load_runsheet();
+                },
+                error: function() {
+                    alert("Sorry - there was something wrong when submitting the change task");
+                }
+            });
+        }
+        */
+
+        function submit_rfc() {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/request_for_change_submit/{{ rfc_results.rfc_id }}/',
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    //Successfully submitted for approval. We will now submit the form.
+                    $("#request_for_change_information").submit();
+                },
+                error: function() {
+                    alert("Sorry - submitting RFC for approval failed");
+                }
+            })
+        }
+
+        function reject_rfc() {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/request_for_change_reject/{{ rfc_results.rfc_id }}/',
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    //Successfully submitted for approval. We will now submit the form.
+                    $("#request_for_change_information").submit();
+                },
+                error: function() {
+                    alert("Sorry - submitting RFC for approval failed");
+                }
+            })
+        }
+    </script>
+{% endblock %}

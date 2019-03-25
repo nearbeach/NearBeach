@@ -18,7 +18,10 @@
                         {{ new_group_form.parent_group }}
                     </div>
                 </div>
-                <input type="submit" value="Submit New Form" class="btn btn-primary">
+                <div class="form-row">
+                    <input type="submit" value="Submit New Group" class="btn btn-primary col-md-6">
+                    <a href="{% url 'search_group' %}" class="btn btn-secondary col-md-6">Cancel</a>
+               </div>
             </div>
         </div>
     </form>

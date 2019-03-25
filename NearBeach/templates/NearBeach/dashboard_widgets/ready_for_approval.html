@@ -1,0 +1,33 @@
+{% if rfc_results %}
+    <div class="card mt-4">
+        <div class="card-header bg-warning">
+            <h2>Ready For Approval</h2>
+        </div>
+        <div class="card-body">
+            <strong>Request for Change</strong>
+            <div class="alert alert-primary">
+                Please note the following;
+                <ul>
+                    <li>A rejection of the RFC will permamently reject the RFC</li>
+                    <li>The RFC must get approval from at least one group leader in each group</li>
+                    <li>If there are no group leaders in a group - the RFC gets an automatic approval from that group</li>
+                    <li>The RFC can be set back to draft mode by one of the group leaders</li>
+                </ul>
+            </div>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <td class="w-25">RFC ID</td>
+                        <td class="w-75">Request for Change Title</td>
+                    </tr>
+                </thead>
+                {% for row in rfc_results %}
+                    <tr>
+                        <td><a href="{% url 'request_for_change_information' row.rfc_id %}">RFC{{ row.rfc_id }}</a></td>
+                        <td>{{ row.rfc_title }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endif %}

@@ -1,0 +1,18 @@
+{% if rfc_results %}
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <td>RFC ID</td>
+                <td>Request for Change Title</td>
+            </tr>
+        </thead>
+        {% for row in rfc_results %}
+            <tr>
+                <td><a href="{% url 'request_for_change_information' row.rfc_id %}">RFC{{ row.rfc_id }}</a></td>
+                <td>RFC{{ row.rfc_title }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <div class="alert alert-warning">There are no Request for Changes</div>
+{% endif %}

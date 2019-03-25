@@ -1,0 +1,13 @@
+{% if change_task_count == 0 %}
+    <div class="card mt-4">
+        <div class="card-header bg-success">
+            <h2>Finish Request for Change</h2>
+        </div>
+        <div class="card-body">
+            <form action={% url 'request_for_change_finish' rfc_id %} method="post" class="request_for_change_finish">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-success w-100" value="Finish Request for Change">
+            </form>
+        </div>
+    </div>
+{% endif %}

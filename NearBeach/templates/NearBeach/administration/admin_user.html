@@ -10,6 +10,7 @@
                 <li>Permission sets need to be added to group</li>
                 <li>Each user will be added to a permission set</li>
                 <li>Permission sets can be stacked</li>
+                <li>A user has to only be group leader in one row</li>
             </ul>
         </div>
         <!-- LIMIT THE ADD USERS TO A PERSON WHO HAS A PERMISSION OF 3 or GREATER -->
@@ -36,6 +37,7 @@
                     <td>First Name</td>
                     <td>Last Name</td>
                     <td>Permission Set</td>
+                    <td>Group Leader</td>
                     {% if administration_permission == 4 %}
                         <td>DELETE</td>
                     {% endif %}
@@ -47,6 +49,13 @@
                     <td>{{ user.username.first_name }}</td>
                     <td>{{ user.username.last_name }}</td>
                     <td>{{ user.permission_set }}</td>
+                    <td>
+                        {% if user.group_leader == "TRUE" %}
+                            <a href="javascript:void(0)" onclick="change_group_leader({{ user.user_group_id }})">Remove Group Leader</a>
+                        {% else %}
+                            <a href="javascript:void(0)" onclick="change_group_leader({{ user.user_group_id }})">Add Group Leader</a>
+                        {% endif %}
+                    </td>
                     {% if administration_permission == 4 %}
                         <td><a href="javascript:void(0)" onclick="remove_user_permission({{ user.username.id }},{{ user.permission_set.permission_set_id }},{{ user.group.group_id }})">Delete</a></td>
                     {% endif %}

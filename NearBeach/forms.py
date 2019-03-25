@@ -623,6 +623,87 @@ class campus_readonly_form(ModelForm):
         ]
 
 
+class change_task_form(ModelForm):
+    def __init__(self,*args,**kwargs):
+        #Extract the variables
+        rfc_id = kwargs.pop('rfc_id')
+
+        super(change_task_form,self).__init__(*args,**kwargs)
+
+        #Filter for users who are currently in the group.
+        user_results = User.objects.filter(
+            is_active=True,
+            id__in=user_group.objects.filter(
+                is_deleted="FALSE",
+                group_id__in=object_assignment.objects.filter(
+                    is_deleted="FALSE",
+                    request_for_change=rfc_id,
+                ).values('group_id')
+            ).values('username')
+        )
+
+        self.fields['change_task_assigned_user'].queryset=user_results
+        self.fields['change_task_qa_user'].queryset=user_results
+
+    change_task_title = forms.CharField(
+        max_length=255,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        }),
+    )
+    change_task_description=forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+            },
+            attrs={
+                'class': 'form-control change_task_description',
+            },
+        ),
+    )
+
+    change_task_start_date=forms.DateTimeField(
+        widget=forms.DateTimeInput(attrs={
+            'class': 'form-control',
+        }),
+    )
+    change_task_end_date=forms.DateTimeField(
+        widget=forms.DateTimeInput(attrs={
+            'class': 'form-control',
+        }),
+    )
+    change_task_assigned_user=forms.ModelChoiceField(
+        queryset=None, #Need to limit this
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+    )
+    change_task_qa_user=forms.ModelChoiceField(
+        queryset=None, #Need to limit this
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+    )
+    change_task_required_by=forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        }),
+        initial='Stakeholder(s)',
+    )
+    class Meta:
+        model = change_task
+        fields = {
+            'change_task_title',
+            'change_task_description',
+            'change_task_start_date',
+            'change_task_end_date',
+            'change_task_assigned_user',
+            'change_task_qa_user',
+            'change_task_required_by',
+        }
+
 class connect_form(forms.Form):
     customers=forms.ModelMultipleChoiceField(
         queryset = customer.objects.filter(
@@ -1872,10 +1953,11 @@ class new_change_task_form(ModelForm):
                 'width': '100%',
             },
             attrs={
-                'class': 'form-control',
+                'class': 'form-control change_task_description',
             },
         ),
     )
+
     change_task_start_date=forms.DateTimeField(
         widget=forms.DateTimeInput(attrs={
             'class': 'form-control',
@@ -3732,6 +3814,102 @@ class request_for_change_form(ModelForm):
             'change_user',
             'is_deleted',
             'rfc_status',
+        ]
+
+
+class request_for_change_note_form(ModelForm):
+    rfc_note=forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'style': 'height: 80px;'
+        }),
+        required=False,
+    )
+    class Meta:
+        model=request_for_change_note
+        fields=[
+            'rfc_note',
+        ]
+
+
+class request_for_change_readonly_form(ModelForm):
+    """
+    The request for change text has been truncated to rfc_ as the field names were too long.
+    """
+    rfc_summary = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+
+    rfc_risk_and_impact_analysis = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    rfc_implementation_plan = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    rfc_backout_plan = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    rfc_test_plan = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=True,
+    )
+    class Meta:
+        model=request_for_change
+        fields=[
+            'rfc_summary',
+            'rfc_risk_and_impact_analysis',
+            'rfc_implementation_plan',
+            'rfc_backout_plan',
+            'rfc_test_plan',
         ]
 
 class requirement_information_form(ModelForm):

@@ -428,7 +428,7 @@ class ModelsTestCase(TestCase):
         )
 
         c = Client()
-        response = c.get("/change_task_new/0/")
+        response = c.get("/new_change_task/0/")
         self.assertRedirects(
             response,
             "/login",
@@ -1893,25 +1893,8 @@ class ModelsTestCase(TestCase):
                 'password': 'test',
             }
         )
-        self.assertRedirects(
-            response,
-            "/alerts/",
-            status_code=302,
-            target_status_code=302, #Lands on alerts page, but gets redirected again.
-            msg_prefix='',
-            fetch_redirect_response=True
-        )
 
-        #Now test to see if you stay on the dashboard page
-        response = self.client.get('/') #Will be redirected to alerts then dashboard
-        self.assertRedirects(
-            response,
-            "/dashboard/",
-            status_code=302,
-            target_status_code=200,  # Lands on alerts page, but gets redirected again.
-            msg_prefix='',
-            fetch_redirect_response=True
-        )
+
 
         #Now test dashboard directly
         response = self.client.get("/dashboard")

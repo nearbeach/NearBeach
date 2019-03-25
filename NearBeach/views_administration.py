@@ -135,9 +135,9 @@ def list_of_taxes_new(request):
 
 @login_required(login_url='login',redirect_field_name="")
 def new_user(request):
-    permission_results = return_user_permission_level(request, None, 'administration_create_users')
+    permission_results = return_user_permission_level(request, None, 'administration_create_user')
 
-    if permission_results['administration_create_users'] < 2:
+    if permission_results['administration_create_user'] < 2:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     errors = ''
