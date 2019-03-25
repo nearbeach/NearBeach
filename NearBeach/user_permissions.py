@@ -60,24 +60,36 @@ def return_user_permission_level(request, group_list,permission_field):
     #Default NO PERMISSION
     user_permission_level = {}
 
-    #Look into the SQL for that particular field and return it.
+    """
+    If the user is a superuser, we will return 4 no matter what. This part of the script will see if the user is actually
+    a super user. If they are then it will return 4 for everything.
+    """
     if request.user.is_superuser == True:
         #Add 4 to all permissions
         for row in permission_field:
             user_permission_level[row] = 4
-        #Add new_item and administration as 4
+        #User can add new items and do administration
         user_permission_level['new_item'] = 4
         user_permission_level['administration'] = 4
         return user_permission_level
 
     """
-    TEMP CODE
-    ~~~~~~~~~
-    field='project_id'
-    results = project.objects.filter(is_deleted="FALSE").values(field).aggregate(Max(field))
-    results[field + "__max"]
+    We are now left with the normal users. We will need to first check to see if there are any groups that have been
+    passed through. If no groups, then we check the max permission for those attributes.
+    
+    If the groups have been passed through, we will check to make sure that the end user has permissions for those 
+    particular groups against those particular permission sets.
     """
     for row in permission_field:
+        """
+        We want to break out of this for loop if the entry is "". This should only occur when the user is looking at their
+        profile. The user does not need permission to look at their profile.
+        """
+        if row == "":
+            break
+
+
+        #Users have no groups
         if group_list == None:
             #There is no group. Select the max value :)
             user_groups_results = user_group.objects.filter(
@@ -88,21 +100,22 @@ def return_user_permission_level(request, group_list,permission_field):
             user_permission_level[row] = user_groups_results['permission_set__' + row + '__max']
         else:
             #There is a group, lets find all permissions connected with this group :) and return the max :)
+            #Default is 0
             group_permission = 0
             for group_id in group_list:
-                group_instance = group.objects.get(group_id=group_id['groups_id_id'])
-
                 #Grab user's permission for that group
                 user_groups_results = user_group.objects.filter(
                     is_deleted="FALSE",
                     username=request.user,
                     permission_set__is_deleted="FALSE",
-                    groups_id=group_instance,
+                    group_id=group_id['group_id'],
                 ).aggregate(Max('permission_set__' + row))
 
                 #Get the max value for the permission
-                if group_permission < user_groups_results['permission_set__' + row + '__max']:
-                    group_permission = user_groups_results['permission_set__' + row + '__max']
+                if not user_groups_results['permission_set__' + row + '__max'] == None:
+                    if group_permission < user_groups_results['permission_set__' + row + '__max']:
+                        group_permission = user_groups_results['permission_set__' + row + '__max']
+
 
             user_permission_level[row] = group_permission
 

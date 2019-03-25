@@ -2122,8 +2122,11 @@ def customer_readonly(request,customer_id):
         )
     )
     opportunity_results = opportunity.objects.filter(
-        customer_id=customer_id,
-        opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
+        is_deleted="FALSE",
+        opportunity_id__in=opportunity_connection.objects.filter(
+            customer_id=customer_id,
+            opportunity_id__in=opportunity_permissions_results.values('opportunity_id'),
+        ).values('opportunity_id'),
     )
     # For when customer have an organisation
     campus_results = customer_campus.objects.filter(
@@ -4265,27 +4268,10 @@ def kanban_properties(request,kanban_board_id):
 def kanban_read_only(request,kanban_board_id):
     permission_results = return_user_permission_level(request, None,['kanban'])
 
+    print(permission_results)
+
     if permission_results['kanban'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
-
-    """
-    Test User Access
-    ~~~~~~~~~~~~~~~~
-    A user who wants to access this Kanban Board will need to meet one of these two conditions
-    1. They have an access to  a group whom has been granted access to this kanban board
-    2. They are a super user (they should be getting access to all objects)
-    """
-    object_access = object_assignment.objects.filter(
-        is_deleted="FALSE",
-        kanban_board_id=kanban_board_id,
-        group_id__in=user_group.objects.filter(
-            is_deleted="FALSE",
-            username=request.user,
-        ).values('group_id')
-    )
-    if object_access.count() == 0 and not permission_results['administration'] == 4:
-        return HttpResponseRedirect(reverse('permission_denied'))
-
 
     #Get the required information
     kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
@@ -7141,7 +7127,7 @@ def project_information(request, project_id):
     project_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         project_id=project_id,
-    ).values('group_id_id')
+    ).values('group_id')
 
     permission_results = return_user_permission_level(request, project_groups_results,['project','project_history'])
 
@@ -8883,12 +8869,13 @@ def tag_information(request, location_id, destination):
 @login_required(login_url='login',redirect_field_name="")
 def task_information(request, task_id):
     #First look at the user's permissions for the project's group.
-    task_groups_results = object_assignment.objects.filter(
+    group_results = object_assignment.objects.filter(
         is_deleted="FALSE",
-        task_id=task.objects.get(task_id=task_id),
-    ).values('group_id_id')
+        task_id=task_id,
+        group_id__isnull=False,
+    ).values('group_id')
 
-    permission_results = return_user_permission_level(request, task_groups_results,['task','task_history'])
+    permission_results = return_user_permission_level(request, group_results,['task','task_history'])
 
     if permission_results['task'] == 0:
         # Send them to permission denied!!

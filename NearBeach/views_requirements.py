@@ -524,26 +524,9 @@ def requirement_information(request, requirement_id):
     permission_results = return_user_permission_level(request, None, ['requirement','requirement_link'])
 
     if permission_results['requirement'] == 0:
+        print(permission_results)
+        print("Permission denied")
         return HttpResponseRedirect(reverse('permission_denied'))
-
-    """
-    Test User Access
-    ~~~~~~~~~~~~~~~~
-    A user who wants to access this requirements will need to meet one of these two conditions
-    1. They have an access to  a group whom has been granted access to this requirements
-    2. They are a super user (they should be getting access to all objects)
-    """
-    object_access = object_assignment.objects.filter(
-        is_deleted="FALSE",
-        requirement_id=requirement_id,
-        group_id__in=user_group.objects.filter(
-            is_deleted="FALSE",
-            username=request.user,
-        ).values('group_id')
-    )
-    if object_access.count() and not permission_results['administration'] == 4:
-        return HttpResponseRedirect(reverse('permission_denied'))
-
 
     if request.method == "POST" and permission_results['requirement'] > 1:
         form = requirement_information_form(request.POST)
@@ -568,30 +551,6 @@ def requirement_information(request, requirement_id):
                 row.save()
         else:
             print(form.errors)
-    else:
-        """
-        We want to limit who can see what requirement. The exception to this is for the user
-        who just created the opportunity. (I should program in a warning stating that they
-        might not be able to see the opportunity again unless they add themselfs to the 
-        permissions list.
-
-        The user has to meet at least one of these conditions;
-        1.) User has permission
-        2.) User's group has permission
-        3.) All users have permission
-        """
-        user_groups_results = user_group.objects.filter(username=request.user)
-
-        requirement_permission_results = object_assignment.objects.filter(
-            Q(
-                Q(assigned_user=request.user) # User has permission
-                | Q(group_id__in=user_groups_results.values('group_id')) # User's group have permission
-            )
-            & Q(requirement_id=requirement_id)
-        )
-
-        if (not requirement_permission_results):
-            return HttpResponseRedirect(reverse(permission_denied))
 
 
     #Get Data

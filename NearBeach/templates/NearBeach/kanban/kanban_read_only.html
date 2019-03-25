@@ -1,4 +1,4 @@
-{% extends "./template_wider.html" %}
+{% extends "../template_wider.html" %}
 {% block content %}
 {% load nearbeach_extras %}
 {% load static %}
@@ -6,8 +6,6 @@
     <link rel='stylesheet' href='{% static "NearBeach/css/kanban_board.css" %}' />
 
     <h1>{{ kanban_board_results.kanban_board_name }}</h1>
-    <a href="javascript:void(0)" onclick="load_kanban_new_card()">New Card</a><br/>
-    <a href="javascript:void(0)" onclick="load_kanban_new_link()">Link Project, Task, or Requirement</a><br/>
     {% for level in kanban_level_results %}
         <!-- SETUP THE CONTAINER FOR LEVEL -->
         <!-- The level heading -->
