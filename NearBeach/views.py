@@ -1661,6 +1661,7 @@ def change_task_finish(request,change_task_id):
         return HttpResponseBadRequest("Sorry - this can only be done through post")
 
 
+
 @login_required(login_url='login',redirect_field_name="")
 def change_task_list(request,rfc_id):
     """
