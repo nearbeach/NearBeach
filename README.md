@@ -1,5 +1,14 @@
 # NearBeach
+![GitHub](https://img.shields.io/github/license/robotichead/NearBeach.svg)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/robotichead/NearBeach.svg)
 [![CircleCI](https://circleci.com/gh/robotichead/NearBeach.svg?style=shield)](https://circleci.com/gh/robotichead/NearBeach)
+[![PyPI version](https://badge.fury.io/py/NearBeach.svg)](https://badge.fury.io/py/NearBeach)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/NearBeach.svg?style=flat-square)
+![GitHub stars](https://img.shields.io/github/stars/robotichead/NearBeach.svg?style=social)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/robotichead/NearBeach.svg)
+![Liberapay receiving](https://img.shields.io/liberapay/receives/robotichead.svg)
+![Website](https://img.shields.io/website/https/nearbeach.org.svg)
+![Twitter Follow](https://img.shields.io/twitter/follow/robotichead.svg?style=social)
 
 
 NearBeach is in currently alpha development. If you find any issues, please do not hesitate to submit an issue. Alternatively you can submit through https://nearbeach.atlassian.net/servicedesk/customer/portal/1 (login not required)

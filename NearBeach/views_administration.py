@@ -141,7 +141,7 @@ def new_user(request):
         return HttpResponseRedirect(reverse('permission_denied'))
 
     errors = ''
-    if request.method == "POST" and permission_results['administration_create_users'] == 4:
+    if request.method == "POST" and permission_results['administration_create_user'] == 4:
         form = user_information_form(request.POST)
 
         if form.is_valid():
