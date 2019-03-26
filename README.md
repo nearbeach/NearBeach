@@ -1,6 +1,6 @@
 # NearBeach
 [![CircleCI](https://circleci.com/gh/robotichead/NearBeach.svg?style=shield)](https://circleci.com/gh/robotichead/NearBeach)
-
+[![PyPI version](https://badge.fury.io/py/NearBeach.svg)](https://badge.fury.io/py/NearBeach)
 
 NearBeach is in currently alpha development. If you find any issues, please do not hesitate to submit an issue. Alternatively you can submit through https://nearbeach.atlassian.net/servicedesk/customer/portal/1 (login not required)
 
