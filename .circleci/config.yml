@@ -1,6 +1,8 @@
 version: 2
 jobs:
   build: 
+    environment:
+      CC_TEST_REPORTER_ID: 9e72cfe308efd0df21d4681a683d1b2065cd54b2571d7ca1046278ab73f8b6cf
     working_directory: ~/NearBeach
     docker: # run the steps with Docker
       # CircleCI Python images available at: https://hub.docker.com/r/circleci/python/
@@ -9,6 +11,26 @@ jobs:
           PIPENV_VENV_IN_PROJECT: true
     steps: # steps that comprise the `build` job
       - checkout # check out source code to working directory
+      - run:
+        name: Setup dependencies
+        command: |
+          sudo composer self-update
+          composer install -n --prefer-dist
+      - run:
+        name: Setup Code Climate test-reporter
+        command: |
+          # Download test reporter as a static binary
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+      - run:
+          name: Run tests
+          command: |
+            sudo docker-php-ext-enable xdebug
+          # notify Code Climate of a pending test report using `before-build`
+            ./cc-test-reporter before-build
+            sudo vendor/bin/phpunit --coverage-clover clover.xml
+          # upload test report to Code Climate using `after-build`
+            ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
       - run: sudo chown -R circleci:circleci /usr/local/bin
       - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
       - run: sudo apt-get install build-essential python3-dev python3-pip python3-setuptools python3-wheel python3-cffi libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info
