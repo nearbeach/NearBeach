@@ -15,12 +15,12 @@ jobs:
       - run:
           name: Install pipenv and coverage
           command: |
-            sudo pip install pipenv coverage
+            sudo pip install pipenv coverage django
             pipenv install
       - run:
           command: |
             pipenv run coverage run manage.py test
-            #pipenv run python manage.py test
+            pipenv run python manage.py test
             pipenv run coverage report
       - store_test_results: # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
           path: test-results
