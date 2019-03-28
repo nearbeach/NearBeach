@@ -15,7 +15,8 @@ jobs:
       - run:
           name: Install pipenv and coverage
           command: |
-            sudo pip install pipenv coverage django
+            sudo pip install pipenv coverage
+            sudo pip install -r ./requirements.txt
             pipenv install
       - run:
           command: |
