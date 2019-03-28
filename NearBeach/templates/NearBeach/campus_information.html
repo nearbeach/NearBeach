@@ -237,7 +237,7 @@
                     {% if campus_results.organisation_id %}
                         window.location.href = "/organisation_information/{{ campus_results.organisation_id.organisation_id }}/";
                     {% elif campus_results.customer_id %}
-                        window.location.href = "/organisation_information/{{ campus_results.customer.customer_id }}/";
+                        window.location.href = "/customer_information/{{ campus_results.customer.customer_id }}/";
                     {% else %}
                         window.location.href = "/";
                     {% endif %}                },
