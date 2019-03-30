@@ -1511,6 +1511,7 @@ def campus_information(request, campus_information):
         'campus_information_form': campus_information_form(
             instance=campus_results,
         ),
+        'campus_permission': permission_results['organisation_campus'],
         'customer_campus_results': customer_campus_results,
         'add_customer_results': add_customer_results,
         'countries_regions_results': countries_regions_results,
