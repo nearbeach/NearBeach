@@ -55,6 +55,7 @@ re_path(r'^campus_information/(?P<campus_information>[0-9]+)/', views.campus_inf
 re_path(r'^campus_readonly/(?P<campus_information>[0-9]+)/', views.campus_readonly, name='campus_readonly'),
 re_path(r'^change_group_leader/(?P<user_group_id>[0-9]+)/', views.change_group_leader, name='change_group_leader'),
 re_path(r'^change_task_finish/(?P<change_task_id>[0-9]+)/', views.change_task_finish, name='change_task_finish'),
+re_path(r'^change_task_information/(?P<change_task_id>[0-9]+)/', views.change_task_information, name='change_task_information'),
 re_path(r'^change_task_list/(?P<rfc_id>[0-9]+)/', views.change_task_list, name='change_task_list'),
 re_path(r'^change_task_start/(?P<change_task_id>[0-9]+)/', views.change_task_start, name='change_task_start'),
 re_path(r'^cost_information/(?P<location_id>[0-9]+)/(?P<destination>["project","task"]+)/$',views.cost_information,name='cost_information'),

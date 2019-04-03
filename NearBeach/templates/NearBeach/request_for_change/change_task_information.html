@@ -10,49 +10,49 @@
 
         </div>
         <div class="card-body">
-            <form action={% url 'new_change_task' rfc_id %} method="post" class="new_change_task" enctype="multipart/form-data">
+            <form action={% url 'change_task_information' change_task_results.change_task_id %} method="post" class="change_task_information" enctype="multipart/form-data">
                 {% csrf_token %}
-                {{ new_change_task_form.media }}
+                {{ change_task_form.media }}
                 <div class="form-group">
                     <label for="id_change_task_title">Change Title</label>
-                    {{ new_change_task_form.change_task_title }}
+                    {{ change_task_form.change_task_title }}
                 </div>
 
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="id_change_task_start_date">Start Date</label>
-                        {{ new_change_task_form.change_task_start_date }}
+                        {{ change_task_form.change_task_start_date }}
                     </div>
                     <div class="form-group col-md-6">
                         <label for="id_change_task_end_date">End Date</label>
-                        {{ new_change_task_form.change_task_end_date }}
+                        {{ change_task_form.change_task_end_date }}
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="id_change_task_assigned_user">Assigned User</label>
-                        {{ new_change_task_form.change_task_assigned_user }}
+                        {{ change_task_form.change_task_assigned_user }}
                     </div>
                     <div class="form-group col-md-6">
                         <label for="id_change_task_qa_user">QA User</label>
-                        {{ new_change_task_form.change_task_qa_user }}
+                        {{ change_task_form.change_task_qa_user }}
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="id_change_task_description">Change Task Description</label>
-                    {{ new_change_task_form.change_task_description }}
+                    {{ change_task_form.change_task_description }}
                 </div>
 
                 <div class="form-group">
                     <label for="id_change_task_required_by">Required By</label>
-                    {{ new_change_task_form.change_task_required_by }}
+                    {{ change_task_form.change_task_required_by }}
                 </div>
 
                 <div class="form-row">
                     <input type="submit" class="btn btn-primary" value="Submit Change Task">
-                    <a href="{% url 'request_for_change_draft' rfc_id %}" class="btn btn-secondary">Cancel</a>
+                    <a href="{% url 'request_for_change_draft' change_task_results.request_for_change_id %}" class="btn btn-warning">Back to Request for Change</a>
                 </div>
             </form>
         </div>

@@ -1635,6 +1635,7 @@ def change_group_leader(request, user_group_id):
         return HttpResponseBadRequest("Can only be done through Post")
 
 
+
 @login_required(login_url='login',redirect_field_name="")
 def change_task_finish(request,change_task_id):
     """
@@ -1662,6 +1663,87 @@ def change_task_finish(request,change_task_id):
         return HttpResponseBadRequest("Sorry - this can only be done through post")
 
 
+@login_required(login_url='login',redirect_field_name="")
+def change_task_information(request,change_task_id):
+    """
+    This will display the user's change request. If it is read only then it will utilise the read only template
+    :param request:
+    :param change_task_id: The change task we are going to use
+    :return: Rendered page
+
+    Method
+    ~~~~~~
+    1. Check user permissions
+    2. Check to see if method is POST - take not of change there
+    3. Gather data from database
+    4. Get template
+    5. Render
+    """
+    change_task_results = change_task.objects.get(change_task_id=change_task_id)
+
+    group_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        request_for_change_id=change_task_results.request_for_change_id,
+    ).values('group_id')
+
+    permission_results = return_user_permission_level(request, group_results, ['request_for_change'])
+
+    if permission_results['request_for_change'] == 0:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse(permission_denied))
+
+    if request.method == "POST":
+        form = change_task_form(
+            request.POST,
+            rfc_id=change_task_results.request_for_change_id,
+        )
+        if form.is_valid():
+            change_task_results.change_task_title = form.cleaned_data['change_task_title']
+            change_task_results.change_task_start_date = form.cleaned_data['change_task_start_date']
+            change_task_results.change_task_end_date = form.cleaned_data['change_task_end_date']
+            change_task_results.change_task_assigned_user = form.cleaned_data['change_task_assigned_user']
+            change_task_results.change_task_qa_user = form.cleaned_data['change_task_qa_user']
+            change_task_results.change_task_description = form.cleaned_data['change_task_description']
+            change_task_results.change_task_required_by  = form.cleaned_data['change_task_required_by']
+            change_task_results.change_user  = request.user
+
+            change_task_results.save()
+
+            #Go to the RFC connected
+            return HttpResponseRedirect(
+                reverse(
+                    'request_for_change_draft',
+                    args={ change_task_results.request_for_change_id }
+                )
+            )
+        else:
+            print(form.errors)
+
+    #Get SQL Data
+
+
+    # Get template
+    t = loader.get_template('NearBeach/request_for_change/change_task_information.html')
+
+    c = {
+        'change_task_results': change_task_results,
+        'change_task_form': change_task_form(
+            rfc_id=change_task_results.request_for_change_id,
+            initial={
+                'change_task_title': change_task_results.change_task_title,
+                'change_task_start_date': change_task_results.change_task_start_date,
+                'change_task_end_date': change_task_results.change_task_end_date,
+                'change_task_assigned_user': change_task_results.change_task_assigned_user,
+                'change_task_qa_user': change_task_results.change_task_qa_user,
+                'change_task_description': change_task_results.change_task_description,
+                'change_task_required_by': change_task_results.change_task_required_by,
+            },
+        ),
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c,request))
 
 @login_required(login_url='login',redirect_field_name="")
 def change_task_list(request,rfc_id):
