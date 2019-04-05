@@ -120,9 +120,9 @@
                     <a href="{% url 'new_project' opportunity_id 'opportunity'%}" class="dropdown-item">Create New Project</a>
                     <a href="{% url 'new_requirement' opportunity_id 'opportunity' %}" class="dropdown-item">Create New Requirement</a>
                     <a href="{% url 'new_task' opportunity_id 'opportunity' %}" class="dropdown-item">Create New Task</a>
-                    <a href="#" class="dropdown-item">Link Existing Project</a>
-                    <a href="#" class="dropdown-item">Link Existing Requirement</a>
-                    <a href="#" class="dropdown-item">Link Existing Task</a>
+                    <a href="{% url 'new_opportunity_link' opportunity_id 'project' %}" class="dropdown-item">Link Existing Project</a>
+                    <a href="{% url 'new_opportunity_link' opportunity_id 'requirement' %}" class="dropdown-item">Link Existing Requirement</a>
+                    <a href="{% url 'new_opportunity_link' opportunity_id 'task' %}" class="dropdown-item">Link Existing Task</a>
                 </div>
             </div>
             <h2 class="mt-2">Assigned Requirements</h2>
@@ -160,10 +160,10 @@
                     </thead>
                     {% for row in project_results %}
                         <tr>
-                            <td><a href="{% url 'project_information' row.project_id.project_id %}">PRO{{ row.project_id.project_id }}</a></td>
-                            <td>{{ row.project_id.project_name }}</td>
-                            <td>{{ row.project_id.project_end_date }}</td>
-                            <td>{{ row.project_id.project_status }}</td>
+                            <td><a href="{% url 'project_information' row.project_id %}">PRO{{ row.project_id }}</a></td>
+                            <td>{{ row.project_name }}</td>
+                            <td>{{ row.project_end_date }}</td>
+                            <td>{{ row.project_status }}</td>
                         </tr>
                     {% endfor %}
                 </table>
@@ -177,17 +177,17 @@
                     <thead>
                         <tr>
                             <td>Task ID</td>
-                            <td>Project Name</td>
-                            <td>Project End Date</td>
-                            <td>Project Status</td>
+                            <td>Task Name</td>
+                            <td>Task End Date</td>
+                            <td>Task Status</td>
                         </tr>
                     </thead>
                     {% for row in task_results %}
                         <tr>
-                            <td><a href="#">TASK{{ row.task_id.task_id }}</a></td>
-                            <td>{{ row.task_id.task_short_description }}</td>
-                            <td>{{ row.task_id.task_end_date }}</td>
-                            <td>{{ row.task_id.task_status }}</td>
+                            <td><a href="{% url 'task_information' row.task_id %}">TASK{{ row.task_id }}</a></td>
+                            <td>{{ row.task_short_description }}</td>
+                            <td>{{ row.task_end_date }}</td>
+                            <td>{{ row.task_status }}</td>
                         </tr>
                     {% endfor %}
                 </table>

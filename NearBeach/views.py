@@ -5624,6 +5624,120 @@ def new_opportunity(request):
 
 
 @login_required(login_url='login',redirect_field_name="")
+def new_opportunity_link(request,opportunity_id,destination,location_id=''):
+    """
+    This def will link an object [requirement, project, task] to the opportunity. The GET command will render the search
+    function where the POST will apply the link (JavaScript will navigate the user back to the opportunity
+    :param request:
+    :param opportunity_id: The opportunity we want to apply the link to
+    :param destination: The destination [requirement, project, task]
+    :param location: The id of the object we are linking
+    :return:
+
+    Method
+    ~~~~~~
+    1. Check user permission - send them to the naughty place if they do not have permissions
+    2. Check method to see if it is POST - use method in here if post
+    3. Check the destination - obtain those
+        - Open objects
+        - That the user has access to
+    4. Get template
+    5. Render
+    """
+    opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
+
+    group_results = group.objects.filter(
+        is_deleted="FALSE",
+        group_id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            group_id__isnull=False,
+            username_id=request.user,
+        ).values('group_id')
+    ).values('group_id')
+
+    permission_results = return_user_permission_level(request, group_results, 'opportunity')
+    if permission_results['opportunity'] <= 1:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        #Create the connection
+        object_assignment_submit = object_assignment(
+            opportunity_id=opportunity_results,
+            change_user=request.user,
+        )
+        if destination == "requirement":
+            object_assignment_submit.requirement_id = requirement.objects.get(requirement_id=location_id)
+        elif destination == "project":
+            object_assignment_submit.project_id = project.objects.get(project_id=location_id)
+        elif destination == "task":
+            object_assignment_submit.task_id = task.objects.get(task_id=location_id)
+
+        object_assignment_submit.save()
+
+        #Send back blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+
+    if destination == "requirement":
+        search_results = requirement.objects.filter(
+            is_deleted="FALSE",
+            requirement_id__in=object_assignment.objects.filter(
+                is_deleted="FALSE",
+                requirement_id__isnull=False,
+                group_id__in=group_results,
+            ).values('requirement_id'),
+            requirement_status_id__in=list_of_requirement_status.objects.filter(
+                is_deleted="FALSE",
+                requirement_status_is_closed="FALSE",
+            ).values('requirement_status_id')
+        )
+    elif destination == "project":
+        search_results = project.objects.filter(
+            project_status__in = [
+                'New',
+                'Open',
+            ],
+            is_deleted="FALSE",
+            project_id__in=object_assignment.objects.filter(
+                is_deleted="FALSE",
+                project_id__isnull=False,
+                group_id__in=group_results,
+            ).values('project_id')
+        )
+    elif destination == "task":
+        search_results = task.objects.filter(
+            task_status__in = [
+                'New',
+                'Open',
+            ],
+            is_deleted="FALSE",
+            task_id__in=object_assignment.objects.filter(
+                is_deleted="FALSE",
+                task_id__isnull=False,
+                group_id__in=group_results,
+            ).values('task_id')
+        )
+    else:
+        search_results = None
+
+
+    # Get template
+    t = loader.get_template('NearBeach/opportunity_information/new_opportunity_link.html')
+
+    c = {
+        'destination': destination,
+        'opportunity_id': opportunity_id,
+        'opportunity_results': opportunity_results,
+        'search_results': search_results,
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+
+
+@login_required(login_url='login',redirect_field_name="")
 def new_organisation(request):
     permission_results = return_user_permission_level(request, None, 'organisation')
 
@@ -5838,12 +5952,12 @@ def new_project(request, location_id='', destination=''):
                 save_project_customer.save()
             elif destination == "opportunity":
                 opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
-                save_project_opportunity = project_opportunity(
+                object_assignment_save = object_assignment(
                     project_id=submit_project,
                     opportunity_id=opportunity_instance,
-                    change_user=request.user,
+                    change_user=request.user
                 )
-                save_project_opportunity.save()
+                object_assignment_save.save()
 
             """
             We want to return the user to the original location. This is dependent on the destination
@@ -6349,12 +6463,12 @@ def new_task(request, location_id='', destination=''):
             elif destination == "opportunity":
                 print("OPPORTUNITY")
                 opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
-                save_task_opportunity = task_opportunity(
+                object_assignment_submit = object_assignment(
                     task_id=submit_task,
                     opportunity_id=opportunity_instance,
                     change_user=request.user,
                 )
-                save_task_opportunity.save()
+                object_assignment_submit.save()
 
             """
             We want to return the user to the original location. This is dependent on the destination
@@ -6640,13 +6754,22 @@ def opportunity_information(request, opportunity_id):
             requirement_id__isnull=False,
         ).values('requirement_id')
     )
-    project_results = project_opportunity.objects.filter(
-        opportunity_id=opportunity_id,
-        is_deleted='FALSE',
+    project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_id__in=object_assignment.objects.filter(
+            opportunity_id=opportunity_id,
+            project_id__isnull=False,
+            is_deleted='FALSE',
+        ).values('project_id')
     )
-    task_results = task_opportunity.objects.filter(
-        opportunity_id=opportunity_id,
-        is_deleted='FALSE',
+
+    task_results = task.objects.filter(
+        is_deleted="FALSE",
+        task_id__in=object_assignment.objects.filter(
+            opportunity_id=opportunity_id,
+            task_id__isnull=False,
+            is_deleted='FALSE',
+        ).values('task_id')
     )
     opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
     group_permissions = object_assignment.objects.filter(
@@ -7376,9 +7499,12 @@ def project_information(request, project_id):
             print(form.errors)
 
     project_results = get_object_or_404(project, project_id=project_id)
-    opportunity_results = project_opportunity.objects.filter(
+    opportunity_results = opportunity.objects.filter(
         is_deleted="FALSE",
-        project_id=project_id,
+        opportunity_id__in = object_assignment.objects.filter(
+            is_deleted="FALSE",
+            project_id=project_id,
+        ).values('project_id')
     )
 
     #If project is completed - send user to read only module

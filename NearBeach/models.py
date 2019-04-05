@@ -2265,7 +2265,7 @@ class project_history(models.Model):
     class Meta:
         db_table = "project_history"
 
-
+"""
 class project_opportunity(models.Model):
     project_opprtunity_id = models.AutoField(primary_key=True)
     project_id = models.ForeignKey(
@@ -2296,7 +2296,7 @@ class project_opportunity(models.Model):
 
     class Meta:
         db_table = "project_opportunity"
-
+"""
 
 class project_stage(models.Model):
     project_stage_id = models.AutoField(primary_key=True)
@@ -3374,6 +3374,7 @@ class task_history(models.Model):
         db_table = "task_history"
 
 
+"""
 class task_opportunity(models.Model):
     task_opportunity_id = models.AutoField(primary_key=True)
     task_id = models.ForeignKey(
@@ -3399,7 +3400,7 @@ class task_opportunity(models.Model):
 
     class Meta:
         db_table = "task_opportunity"
-
+"""
 
 class to_do(models.Model):
     to_do_id = models.AutoField(primary_key=True)
