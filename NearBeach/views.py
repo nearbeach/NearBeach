@@ -6818,6 +6818,50 @@ def opportunity_information(request, opportunity_id):
 
 
 @login_required(login_url='login',redirect_field_name="")
+def opportunity_readonly(request,opportunity_id):
+    """
+    The read only module for the user
+    :param request:
+    :param opportunity_id:
+    :return:
+    Method
+    ~~~~~~
+    1. Get group information of the user
+    2. Check user permissions - send them to the naughty place if they do not have any
+    3. Get all relivant data for the read only template
+    4. Get the read only template
+    5. Render results
+    """
+    group_results = group.objects.filter(
+        is_deleted="FALSE",
+        group_id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            username_id=request.user,
+            group_id__isnull=False,
+        ).values('group_id')
+    )
+
+    permission_results = return_user_permission_level(request, group_results.values('group_id'),'opportunity')
+    if permission_results['opportunity'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #Get the relivant data
+    opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
+
+
+    #Get template
+    t = loader.get_template('NearBeach/opportunity_information/opportunity_readonly.html')
+
+    #Get context
+    c = {
+        'opportunity_results': opportunity_results,
+    }
+
+    #Render it all
+    return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login',redirect_field_name="")
 def organisation_information(request, organisation_id):
     permission_results = return_user_permission_level(request, None,['organisation','organisation_campus','customer'])
 
@@ -8809,6 +8853,7 @@ def search_organisation(request):
 		FROM organisation
 		WHERE 1=1
 		AND organisation.organisation_name LIKE %s
+		AND NOT organisation.is_deleted="FALSE"
 		""", [search_organisation_like])
     organisations_results = namedtuplefetchall(cursor)
 
