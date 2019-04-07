@@ -2957,6 +2957,22 @@ class opportunity_information_form(ModelForm):
             'change_user',
         }
 
+class opportunity_readonly_form(forms.Form):
+    opportunity_description = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Opportunity Description',
+                'class': 'form-control',
+            }
+        )
+    )
+
 class organisation_information_form(ModelForm):
     #Profile picture
     organisation_name=forms.CharField(

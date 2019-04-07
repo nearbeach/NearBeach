@@ -6617,6 +6617,14 @@ def opportunity_information(request, opportunity_id):
 
     if permission_results['opportunity']  == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
+    elif permission_results['opportunity'] == 1:
+        #Send user to read only module
+        return HttpResponseRedirect(reverse('opportunity_readonly', args={ opportunity_id }))
+
+    #Check to see if opportunity is closed
+    opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
+    if opportunity_results.opportunity_stage_id.opportunity_closed == "True":
+        return HttpResponseRedirect(reverse('opportunity_readonly', args={opportunity_id}))
 
     """
     Test User Access
@@ -6771,7 +6779,7 @@ def opportunity_information(request, opportunity_id):
             is_deleted='FALSE',
         ).values('task_id')
     )
-    opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
+
     group_permissions = object_assignment.objects.filter(
         group_id__isnull=False,
         opportunity_id=opportunity_id,
@@ -6847,7 +6855,85 @@ def opportunity_readonly(request,opportunity_id):
 
     #Get the relivant data
     opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
+    customer_connection_results = customer.objects.filter(
+        is_deleted="FALSE",
+        customer_id__in=opportunity_connection.objects.filter(
+            is_deleted="FALSE",
+            opportunity_id=opportunity_id,
+            customer_id__isnull=False,
+        ).values('customer_id')
+    ).order_by('customer_first_name', 'customer_last_name')
+    organisation_connection_results = organisation.objects.filter(
+        is_deleted="FALSE",
+        organisation_id__in=opportunity_connection.objects.filter(
+            is_deleted="FALSE",
+            opportunity_id=opportunity_id,
+            organisation_id__isnull=False,
+        ).values('organisation_id')
+    )
+    to_do_results = to_do.objects.filter(
+        is_deleted='FALSE',
+        opportunity_id=opportunity_id,
+    )
+    email_results = email_content.objects.filter(
+        is_deleted="FALSE",
+        email_content_id__in=email_contact.objects.filter(
+            Q(opportunity_id=opportunity_id) &
+            Q(is_deleted="FALSE") &
+            Q(
+                Q(is_private=False) |
+                Q(change_user=request.user)
+            )
+        ).values('email_content_id')
+    )
+    requirement_results = requirement.objects.filter(
+        is_deleted="FALSE",
+        requirement_id__in=object_assignment.objects.filter(
+            opportunity_id=opportunity_id,
+            requirement_id__isnull=False,
+        ).values('requirement_id')
+    )
+    project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_id__in=object_assignment.objects.filter(
+            opportunity_id=opportunity_id,
+            project_id__isnull=False,
+            is_deleted='FALSE',
+        ).values('project_id')
+    )
 
+    task_results = task.objects.filter(
+        is_deleted="FALSE",
+        task_id__in=object_assignment.objects.filter(
+            opportunity_id=opportunity_id,
+            task_id__isnull=False,
+            is_deleted='FALSE',
+        ).values('task_id')
+    )
+
+    tag_results = tag.objects.filter(
+        is_deleted="FALSE",
+        tag_id__in=tag_assignment.objects.filter(
+            is_deleted="FALSE",
+            opportunity_id=opportunity_id,
+        ).values('tag_id')
+    )
+    quote_results = quote.objects.filter(
+        is_deleted='FALSE',
+        opportunity_id=opportunity_id,
+    )
+    group_list_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        opportunity_id=opportunity_id,
+    ).exclude(
+        group_id=None,
+    )
+    assigned_user_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        opportunity_id=opportunity_id,
+    ).exclude(
+        assigned_user=None,
+    )
 
     #Get template
     t = loader.get_template('NearBeach/opportunity_information/opportunity_readonly.html')
@@ -6855,6 +6941,24 @@ def opportunity_readonly(request,opportunity_id):
     #Get context
     c = {
         'opportunity_results': opportunity_results,
+        'opportunity_readonly_form': opportunity_readonly_form(initial={
+            'opportunity_description': opportunity_results.opportunity_description,
+        }),
+        'timezone': datetime.timezone,
+        'customer_connection_results': customer_connection_results,
+        'organisation_connection_results': organisation_connection_results,
+        'to_do_results': to_do_results,
+        'email_results': email_results,
+        'requirement_results': requirement_results,
+        'project_results': project_results,
+        'task_results': task_results,
+        'tag_results': tag_results,
+        'quote_results': quote_results,
+        'group_list_results': group_list_results,
+        'assigned_user_results': assigned_user_results,
+        'opportunity_permission': permission_results['opportunity'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     #Render it all

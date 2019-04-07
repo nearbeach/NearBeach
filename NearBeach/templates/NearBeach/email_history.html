@@ -12,6 +12,8 @@
             <tr>
                 {% if email_permission > 1 %}
                     <td><a href="{% url 'email_information' row.email_content_id %}">{{ row.email_subject }}</a></td>
+                {% else %}
+                    <td>{{ row.email_subject }}</td>
                 {% endif %}
                 <td>{{ row.date_created }}</td>
                 <td>{{ row.change_user }}</td>
