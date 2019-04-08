@@ -454,6 +454,49 @@ class ModelsTestCase(TestCase):
             change_user=admin_user,
         )
 
+        quote_1 = quote.objects.create(
+            quote_title="Administration Quote",
+            quote_terms="Quote can only be accessed by administration team",
+            quote_stage_id_id=1,
+            quote_valid_till=datetime.datetime.now(),
+            change_user=admin_user,
+        )
+
+        object_assignment.objects.create(
+            quote_id=quote_1,
+            group_id=administration_group,
+            change_user=admin_user,
+        )
+
+        quote_2 = quote.objects.create(
+            quote_title="UAT Quote",
+            quote_terms="Quote can only be accessed by everyone",
+            quote_stage_id_id=1,
+            quote_valid_till=datetime.datetime.now(),
+            change_user=admin_user,
+        )
+
+        object_assignment.objects.create(
+            quote_id=quote_2,
+            group_id=user_acceptance_testing_group,
+            change_user=admin_user,
+        )
+
+        quote_3 = quote.objects.create(
+            quote_title="No Group Quote",
+            quote_terms="Quote can only be accessed by administration team",
+            quote_stage_id_id=1,
+            quote_valid_till=datetime.datetime.now(),
+            change_user=admin_user,
+        )
+
+        object_assignment.objects.create(
+            quote_id=quote_3,
+            group_id=no_group,
+            change_user=admin_user,
+        )
+
+
     def test_organisation(self):
         org1 = organisation.objects.get(organisation_id=1)
         self.assertEqual(org1.organisation_name,"NearBeach")
