@@ -446,7 +446,7 @@
         $("#save_state").html("Currently Saving Project");
 
         //Grab which button was pressed
-        var which_button = $("input[type=submit][clicked=true]").val()
+        var which_button = $("input[type=submit][clicked=true]").val();
 
         e.preventDefault();
         $.ajax({
@@ -459,7 +459,7 @@
                 $("#save_state").html("Saved last on " + current_time);
 
                 //If we have the resolve button, we will need to navigate to the resolved task url.
-                if (which_button == "Resolve Project") {
+                if (which_button == "Resolve Task") {
                     //Navigate to the resolve task URL
                     document.location = "{% url 'resolve_task' task_id %}"
                 }

@@ -3554,21 +3554,13 @@ def email(request,location_id,destination):
     elif destination == "task":
         print("Selected TASK")
         task_results = task.objects.get(task_id=location_id)
-        if task_results.organisation_id:
-            customer_results = customer.objects.filter(
+        customer_results = customer.objects.filter(
+            is_deleted="FALSE",
+            customer_id__in = task_customer.objects.filter(
                 is_deleted="FALSE",
-                customer_id__in = task_customer.objects.filter(
-                    is_deleted="FALSE",
-                    task_id=location_id,
-                ).values('customer_id')
-            )
-        else:
-            customer_results = customer.objects.filter(
-                customer_id__in=task_customer.objects.filter(
-                    is_deleted="FALSE",
-                    task_id=location_id,
-                ).values('customer_id')
-            )
+                task_id=location_id,
+            ).values('customer_id')
+        )
         initial = {
             'to_email': customer_results,
         }
@@ -3589,7 +3581,7 @@ def email(request,location_id,destination):
                     is_deleted="FALSE",
                     customer_id__isnull=False,
                     opportunity_id=location_id,
-                ))
+                ).values('customer_id'))
             )
         )
         initial = {
@@ -9372,6 +9364,7 @@ def task_information(request, task_id):
             
             We check here to see if the resolve button has been pressed.
             """
+            print(request.POST)
             if 'Resolve' in request.POST:
                 # Well, we have to now resolve the data
                 task_results.task_status = 'Resolved'
