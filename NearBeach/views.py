@@ -1511,6 +1511,7 @@ def campus_information(request, campus_information):
         'campus_information_form': campus_information_form(
             instance=campus_results,
         ),
+        'campus_permission': permission_results['organisation_campus'],
         'customer_campus_results': customer_campus_results,
         'add_customer_results': add_customer_results,
         'countries_regions_results': countries_regions_results,
@@ -1635,6 +1636,92 @@ def change_group_leader(request, user_group_id):
 
 
 @login_required(login_url='login',redirect_field_name="")
+def change_task_edit(request,change_task_id):
+    """
+    This will display the user's change request. If it is read only then it will utilise the read only template
+    :param request:
+    :param change_task_id: The change task we are going to use
+    :return: Rendered page
+
+    Method
+    ~~~~~~
+    1. Check user permissions
+    2. Check to see if method is POST - take not of change there
+    3. Gather data from database
+    4. Get template
+    5. Render
+    """
+    change_task_results = change_task.objects.get(change_task_id=change_task_id)
+    rfc_results = request_for_change.objects.get(rfc_id=change_task_results.request_for_change_id)
+
+    group_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        request_for_change_id=change_task_results.request_for_change_id,
+    ).values('group_id')
+
+    permission_results = return_user_permission_level(request, group_results, ['request_for_change'])
+
+    if permission_results['request_for_change'] == 0:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse(permission_denied))
+    elif permission_results['request_for_change'] == 1 or not rfc_results.rfc_status == 1: #Draft
+        return HttpResponseRedirect(reverse('change_task_information', args={ change_task_id }))
+
+    if request.method == "POST":
+        form = change_task_form(
+            request.POST,
+            rfc_id=change_task_results.request_for_change_id,
+        )
+        if form.is_valid():
+            change_task_results.change_task_title = form.cleaned_data['change_task_title']
+            change_task_results.change_task_start_date = form.cleaned_data['change_task_start_date']
+            change_task_results.change_task_end_date = form.cleaned_data['change_task_end_date']
+            change_task_results.change_task_assigned_user = form.cleaned_data['change_task_assigned_user']
+            change_task_results.change_task_qa_user = form.cleaned_data['change_task_qa_user']
+            change_task_results.change_task_description = form.cleaned_data['change_task_description']
+            change_task_results.change_task_required_by  = form.cleaned_data['change_task_required_by']
+            change_task_results.change_user  = request.user
+
+            change_task_results.save()
+
+            #Go to the RFC connected
+            return HttpResponseRedirect(
+                reverse(
+                    'request_for_change_draft',
+                    args={ change_task_results.request_for_change_id }
+                )
+            )
+        else:
+            print(form.errors)
+
+    #Get SQL Data
+
+
+    # Get template
+    t = loader.get_template('NearBeach/request_for_change/change_task_edit.html')
+
+    c = {
+        'change_task_results': change_task_results,
+        'change_task_form': change_task_form(
+            rfc_id=change_task_results.request_for_change_id,
+            initial={
+                'change_task_title': change_task_results.change_task_title,
+                'change_task_start_date': change_task_results.change_task_start_date,
+                'change_task_end_date': change_task_results.change_task_end_date,
+                'change_task_assigned_user': change_task_results.change_task_assigned_user,
+                'change_task_qa_user': change_task_results.change_task_qa_user,
+                'change_task_description': change_task_results.change_task_description,
+                'change_task_required_by': change_task_results.change_task_required_by,
+            },
+        ),
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login',redirect_field_name="")
 def change_task_finish(request,change_task_id):
     """
     This will finish the change task.
@@ -1661,6 +1748,49 @@ def change_task_finish(request,change_task_id):
         return HttpResponseBadRequest("Sorry - this can only be done through post")
 
 
+@login_required(login_url='login',redirect_field_name="")
+def change_task_information(request,change_task_id):
+    """
+    This will display the user's change request in READ ONLY format.
+    :param request:
+    :param change_task_id: The change task we are going to use
+    :return: Rendered page
+
+    Method
+    ~~~~~~
+    1. Check user permissions
+    2. Gather data from database
+    3. Get template
+    4. Render
+    """
+    change_task_results = change_task.objects.get(change_task_id=change_task_id)
+
+    group_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        request_for_change_id=change_task_results.request_for_change_id,
+    ).values('group_id')
+
+    permission_results = return_user_permission_level(request, group_results, ['request_for_change'])
+
+    if permission_results['request_for_change'] == 0:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse(permission_denied))
+
+    # Get template
+    t = loader.get_template('NearBeach/request_for_change/change_task_information.html')
+
+    c = {
+        'change_task_results': change_task_results,
+        'change_task_form': change_task_read_only_form(
+            initial={
+                'change_task_description': change_task_results.change_task_description,
+            },
+        ),
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    return HttpResponse(t.render(c,request))
 
 @login_required(login_url='login',redirect_field_name="")
 def change_task_list(request,rfc_id):
@@ -5494,6 +5624,120 @@ def new_opportunity(request):
 
 
 @login_required(login_url='login',redirect_field_name="")
+def new_opportunity_link(request,opportunity_id,destination,location_id=''):
+    """
+    This def will link an object [requirement, project, task] to the opportunity. The GET command will render the search
+    function where the POST will apply the link (JavaScript will navigate the user back to the opportunity
+    :param request:
+    :param opportunity_id: The opportunity we want to apply the link to
+    :param destination: The destination [requirement, project, task]
+    :param location: The id of the object we are linking
+    :return:
+
+    Method
+    ~~~~~~
+    1. Check user permission - send them to the naughty place if they do not have permissions
+    2. Check method to see if it is POST - use method in here if post
+    3. Check the destination - obtain those
+        - Open objects
+        - That the user has access to
+    4. Get template
+    5. Render
+    """
+    opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
+
+    group_results = group.objects.filter(
+        is_deleted="FALSE",
+        group_id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            group_id__isnull=False,
+            username_id=request.user,
+        ).values('group_id')
+    ).values('group_id')
+
+    permission_results = return_user_permission_level(request, group_results, 'opportunity')
+    if permission_results['opportunity'] <= 1:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        #Create the connection
+        object_assignment_submit = object_assignment(
+            opportunity_id=opportunity_results,
+            change_user=request.user,
+        )
+        if destination == "requirement":
+            object_assignment_submit.requirement_id = requirement.objects.get(requirement_id=location_id)
+        elif destination == "project":
+            object_assignment_submit.project_id = project.objects.get(project_id=location_id)
+        elif destination == "task":
+            object_assignment_submit.task_id = task.objects.get(task_id=location_id)
+
+        object_assignment_submit.save()
+
+        #Send back blank page
+        t = loader.get_template('NearBeach/blank.html')
+        c = {}
+        return HttpResponse(t.render(c,request))
+
+    if destination == "requirement":
+        search_results = requirement.objects.filter(
+            is_deleted="FALSE",
+            requirement_id__in=object_assignment.objects.filter(
+                is_deleted="FALSE",
+                requirement_id__isnull=False,
+                group_id__in=group_results,
+            ).values('requirement_id'),
+            requirement_status_id__in=list_of_requirement_status.objects.filter(
+                is_deleted="FALSE",
+                requirement_status_is_closed="FALSE",
+            ).values('requirement_status_id')
+        )
+    elif destination == "project":
+        search_results = project.objects.filter(
+            project_status__in = [
+                'New',
+                'Open',
+            ],
+            is_deleted="FALSE",
+            project_id__in=object_assignment.objects.filter(
+                is_deleted="FALSE",
+                project_id__isnull=False,
+                group_id__in=group_results,
+            ).values('project_id')
+        )
+    elif destination == "task":
+        search_results = task.objects.filter(
+            task_status__in = [
+                'New',
+                'Open',
+            ],
+            is_deleted="FALSE",
+            task_id__in=object_assignment.objects.filter(
+                is_deleted="FALSE",
+                task_id__isnull=False,
+                group_id__in=group_results,
+            ).values('task_id')
+        )
+    else:
+        search_results = None
+
+
+    # Get template
+    t = loader.get_template('NearBeach/opportunity_information/new_opportunity_link.html')
+
+    c = {
+        'destination': destination,
+        'opportunity_id': opportunity_id,
+        'opportunity_results': opportunity_results,
+        'search_results': search_results,
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
+
+
+@login_required(login_url='login',redirect_field_name="")
 def new_organisation(request):
     permission_results = return_user_permission_level(request, None, 'organisation')
 
@@ -5708,12 +5952,12 @@ def new_project(request, location_id='', destination=''):
                 save_project_customer.save()
             elif destination == "opportunity":
                 opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
-                save_project_opportunity = project_opportunity(
+                object_assignment_save = object_assignment(
                     project_id=submit_project,
                     opportunity_id=opportunity_instance,
-                    change_user=request.user,
+                    change_user=request.user
                 )
-                save_project_opportunity.save()
+                object_assignment_save.save()
 
             """
             We want to return the user to the original location. This is dependent on the destination
@@ -6219,12 +6463,12 @@ def new_task(request, location_id='', destination=''):
             elif destination == "opportunity":
                 print("OPPORTUNITY")
                 opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
-                save_task_opportunity = task_opportunity(
+                object_assignment_submit = object_assignment(
                     task_id=submit_task,
                     opportunity_id=opportunity_instance,
                     change_user=request.user,
                 )
-                save_task_opportunity.save()
+                object_assignment_submit.save()
 
             """
             We want to return the user to the original location. This is dependent on the destination
@@ -6373,6 +6617,14 @@ def opportunity_information(request, opportunity_id):
 
     if permission_results['opportunity']  == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
+    elif permission_results['opportunity'] == 1:
+        #Send user to read only module
+        return HttpResponseRedirect(reverse('opportunity_readonly', args={ opportunity_id }))
+
+    #Check to see if opportunity is closed
+    opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
+    if opportunity_results.opportunity_stage_id.opportunity_closed == "True":
+        return HttpResponseRedirect(reverse('opportunity_readonly', args={opportunity_id}))
 
     """
     Test User Access
@@ -6510,15 +6762,24 @@ def opportunity_information(request, opportunity_id):
             requirement_id__isnull=False,
         ).values('requirement_id')
     )
-    project_results = project_opportunity.objects.filter(
-        opportunity_id=opportunity_id,
-        is_deleted='FALSE',
+    project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_id__in=object_assignment.objects.filter(
+            opportunity_id=opportunity_id,
+            project_id__isnull=False,
+            is_deleted='FALSE',
+        ).values('project_id')
     )
-    task_results = task_opportunity.objects.filter(
-        opportunity_id=opportunity_id,
-        is_deleted='FALSE',
+
+    task_results = task.objects.filter(
+        is_deleted="FALSE",
+        task_id__in=object_assignment.objects.filter(
+            opportunity_id=opportunity_id,
+            task_id__isnull=False,
+            is_deleted='FALSE',
+        ).values('task_id')
     )
-    opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
+
     group_permissions = object_assignment.objects.filter(
         group_id__isnull=False,
         opportunity_id=opportunity_id,
@@ -6562,6 +6823,146 @@ def opportunity_information(request, opportunity_id):
 
     return HttpResponse(t.render(c, request))
 
+
+
+@login_required(login_url='login',redirect_field_name="")
+def opportunity_readonly(request,opportunity_id):
+    """
+    The read only module for the user
+    :param request:
+    :param opportunity_id:
+    :return:
+    Method
+    ~~~~~~
+    1. Get group information of the user
+    2. Check user permissions - send them to the naughty place if they do not have any
+    3. Get all relivant data for the read only template
+    4. Get the read only template
+    5. Render results
+    """
+    group_results = group.objects.filter(
+        is_deleted="FALSE",
+        group_id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            username_id=request.user,
+            group_id__isnull=False,
+        ).values('group_id')
+    )
+
+    permission_results = return_user_permission_level(request, group_results.values('group_id'),'opportunity')
+    if permission_results['opportunity'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    #Get the relivant data
+    opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
+    customer_connection_results = customer.objects.filter(
+        is_deleted="FALSE",
+        customer_id__in=opportunity_connection.objects.filter(
+            is_deleted="FALSE",
+            opportunity_id=opportunity_id,
+            customer_id__isnull=False,
+        ).values('customer_id')
+    ).order_by('customer_first_name', 'customer_last_name')
+    organisation_connection_results = organisation.objects.filter(
+        is_deleted="FALSE",
+        organisation_id__in=opportunity_connection.objects.filter(
+            is_deleted="FALSE",
+            opportunity_id=opportunity_id,
+            organisation_id__isnull=False,
+        ).values('organisation_id')
+    )
+    to_do_results = to_do.objects.filter(
+        is_deleted='FALSE',
+        opportunity_id=opportunity_id,
+    )
+    email_results = email_content.objects.filter(
+        is_deleted="FALSE",
+        email_content_id__in=email_contact.objects.filter(
+            Q(opportunity_id=opportunity_id) &
+            Q(is_deleted="FALSE") &
+            Q(
+                Q(is_private=False) |
+                Q(change_user=request.user)
+            )
+        ).values('email_content_id')
+    )
+    requirement_results = requirement.objects.filter(
+        is_deleted="FALSE",
+        requirement_id__in=object_assignment.objects.filter(
+            opportunity_id=opportunity_id,
+            requirement_id__isnull=False,
+        ).values('requirement_id')
+    )
+    project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_id__in=object_assignment.objects.filter(
+            opportunity_id=opportunity_id,
+            project_id__isnull=False,
+            is_deleted='FALSE',
+        ).values('project_id')
+    )
+
+    task_results = task.objects.filter(
+        is_deleted="FALSE",
+        task_id__in=object_assignment.objects.filter(
+            opportunity_id=opportunity_id,
+            task_id__isnull=False,
+            is_deleted='FALSE',
+        ).values('task_id')
+    )
+
+    tag_results = tag.objects.filter(
+        is_deleted="FALSE",
+        tag_id__in=tag_assignment.objects.filter(
+            is_deleted="FALSE",
+            opportunity_id=opportunity_id,
+        ).values('tag_id')
+    )
+    quote_results = quote.objects.filter(
+        is_deleted='FALSE',
+        opportunity_id=opportunity_id,
+    )
+    group_list_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        opportunity_id=opportunity_id,
+    ).exclude(
+        group_id=None,
+    )
+    assigned_user_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        opportunity_id=opportunity_id,
+    ).exclude(
+        assigned_user=None,
+    )
+
+    #Get template
+    t = loader.get_template('NearBeach/opportunity_information/opportunity_readonly.html')
+
+    #Get context
+    c = {
+        'opportunity_results': opportunity_results,
+        'opportunity_readonly_form': opportunity_readonly_form(initial={
+            'opportunity_description': opportunity_results.opportunity_description,
+        }),
+        'timezone': datetime.timezone,
+        'customer_connection_results': customer_connection_results,
+        'organisation_connection_results': organisation_connection_results,
+        'to_do_results': to_do_results,
+        'email_results': email_results,
+        'requirement_results': requirement_results,
+        'project_results': project_results,
+        'task_results': task_results,
+        'tag_results': tag_results,
+        'quote_results': quote_results,
+        'group_list_results': group_list_results,
+        'assigned_user_results': assigned_user_results,
+        'opportunity_permission': permission_results['opportunity'],
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+    }
+
+    #Render it all
+    return HttpResponse(t.render(c,request))
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -7246,9 +7647,12 @@ def project_information(request, project_id):
             print(form.errors)
 
     project_results = get_object_or_404(project, project_id=project_id)
-    opportunity_results = project_opportunity.objects.filter(
+    opportunity_results = opportunity.objects.filter(
         is_deleted="FALSE",
-        project_id=project_id,
+        opportunity_id__in = object_assignment.objects.filter(
+            is_deleted="FALSE",
+            project_id=project_id,
+        ).values('project_id')
     )
 
     #If project is completed - send user to read only module
@@ -8553,6 +8957,7 @@ def search_organisation(request):
 		FROM organisation
 		WHERE 1=1
 		AND organisation.organisation_name LIKE %s
+		AND NOT organisation.is_deleted="FALSE"
 		""", [search_organisation_like])
     organisations_results = namedtuplefetchall(cursor)
 

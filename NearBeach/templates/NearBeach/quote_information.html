@@ -148,7 +148,7 @@
 <body onload="on_page_load()">
     <div class="card mt-4">
         <div class="card-header">
-            <h2>{{ quote_or_invoice }}{{ quotes_results.quote_id }}</h2>
+            <h2><span class="quote_or_invoice">{{ quote_or_invoice }}</span>{{ quotes_results.quote_id }}</h2>
         </div>
         <div class="card-body">
             <form action={% url 'quote_information' quote_id %} method="post" class="new_quote">
@@ -168,12 +168,12 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <label for="id_quote_stage_id">{{ quote_or_invoice }} Stage:</label>
+                        <label for="id_quote_stage_id"><span class="quote_or_invoice">{{ quote_or_invoice }}</span> Stage:</label>
                         {{ quote_information_form.quote_stage_id }}
                     </div>
 
                     <div class="form-group col-md-6">
-                        <label for="id_quote_valid_till">{{ quote_or_invoice }} Valid To:</label>
+                        <label for="id_quote_valid_till"><span class="quote_or_invoice">{{ quote_or_invoice }}</span> Valid To:</label>
                         {{ quote_information_form.quote_valid_till }}
                     </div>
                 </div>

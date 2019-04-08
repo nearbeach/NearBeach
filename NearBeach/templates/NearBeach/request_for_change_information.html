@@ -287,7 +287,7 @@
                         <tr>
                             <td>{{ row.change_task_start_date }}</td>
                             <td>{{ row.change_task_end_date }}</td>
-                            <td>{{ row.change_task_title }}</td>
+                            <td><a href="{% url 'change_task_information' row.change_task_id %}">{{ row.change_task_title }}</a></td>
                             <td>{{ row.change_task_assigned_user }}</td>
                             <td>{{ row.change_task_qa_user }}</td>
                             <td>{{ row.get_change_task_status_display }}</td>

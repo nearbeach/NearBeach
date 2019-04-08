@@ -79,7 +79,7 @@
                 </div>
                 <div class="form-row">
 
-                    {% if permission >= 3 %}
+                    {% if permission >= 4 %}
                         <input type="submit" value="Save" class="form-control col-md-6 btn btn-primary">
                         <a href="javascript:void(0)" onclick="confirm_deactivate_campus()" class="form-control col-md-6 btn btn-danger">Deactivate Campus</a>
                         <!-- Deactivate Campus
@@ -101,7 +101,9 @@
                                         will be deactivated also.
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" id="deactivate_campus_confirmed" class="btn btn-danger btn-ok" disabled onclick="deactivate_campus()">Deactivate Campus</button>
+                                        {% if campus_permission == 4 %}
+                                            <button type="button" id="deactivate_campus_confirmed" class="btn btn-danger btn-ok" disabled onclick="deactivate_campus()">Deactivate Campus</button>
+                                        {% endif %}
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                     </div>
                                 </div>
@@ -237,7 +239,7 @@
                     {% if campus_results.organisation_id %}
                         window.location.href = "/organisation_information/{{ campus_results.organisation_id.organisation_id }}/";
                     {% elif campus_results.customer_id %}
-                        window.location.href = "/organisation_information/{{ campus_results.customer.customer_id }}/";
+                        window.location.href = "/customer_information/{{ campus_results.customer.customer_id }}/";
                     {% else %}
                         window.location.href = "/";
                     {% endif %}                },

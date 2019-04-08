@@ -1,0 +1,84 @@
+{% extends '../template.html' %}
+{% block content %}
+    {% load static %}
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h1>Link Object to Opportunity</h1>
+            <strong>Opportunity: </strong>{{ opportunity_results.opportunity_title }}
+        </div>
+        <div class="card-body">
+            {% if destination == "requirement" %}
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <td>Requirement ID</td>
+                            <td>Requirement Title</td>
+                        </tr>
+                    </thead>
+                    {% for row in search_results %}
+                        <tr>
+                            <td><a href="javascript:void(0)" onclick="link_object({{ row.requirement_id }})">REQ{{ row.requirement_id }}</a></td>
+                            <td>{{ row.requirement_title }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% elif destination == "project" %}
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <td>Project ID</td>
+                            <td>Project Title</td>
+                        </tr>
+                    </thead>
+                    {% for row in search_results %}
+                        <tr>
+                            <td><a href="javascript:void(0)" onclick="link_object({{ row.project_id }})">PRO{{ row.project_id }}</a></td>
+                            <td>{{ row.project_name }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% elif destination == "task" %}
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <td>Task ID</td>
+                            <td>Task Title</td>
+                        </tr>
+                    </thead>
+                    {% for row in search_results %}
+                        <tr>
+                            <td><a href="javascript:void(0)" onclick="link_object({{ row.task_id }})">TASK{{ row.task_id }}</a></td>
+                            <td>{{ row.task_short_description }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                Something went wrong. Please go back
+            {% endif %}
+            <div class="row">
+                <a href="{% url 'opportunity_information' opportunity_results.opportunity_id %}" class="btn btn-warning">Go back</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function link_object(location_id) {
+            ajax_prepare();
+
+            $.ajax({
+                url: `/new_opportunity_link/{{ opportunity_id }}/{{ destination }}/${location_id}/`,
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    //Successful - go back to the opportunity
+                    window.location.href = '/opportunity_information/{{ opportunity_id }}/';
+                },
+                error: function() {
+                    alert("Sorry - could not link varibale");
+                }
+            })
+        }
+    </script>
+{% endblock %}

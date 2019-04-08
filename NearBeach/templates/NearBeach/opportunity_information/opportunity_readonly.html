@@ -1,0 +1,347 @@
+{% extends "../template.html" %}
+{% block content %}
+{% load static %}
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h1>Opportunity Information</h1>
+        </div>
+        <div class="card-body">
+            {{ opportunity_readonly_form.media }}
+            <div id="save_state"></div>
+            <div class="form-group">
+                <label for="id_opportunity_name">Opportunity Name:</label>
+                <h4>{{ opportunity_results.opportunity_name }}</h4>
+            </div>
+            <div class="form-group">
+                <label for="id_opportunity_description">Opportunity Description:</label>
+                {{ opportunity_readonly_form.opportunity_description }}
+            </div>
+            <div class="form-group">
+                <label for="id_lead_source_id">Lead Source: {{ opportunity_results.lead_source_id }}</label>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="id_currency_id">Opportunity Budget - currency: {{ opportunity_results.currency_id }}</label>
+
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="id_opportunity_amount">Amount: {{ opportunity_results.opportunity_amount }}</label>
+
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="id_amount_type_id">Rate of Charge: {{ opportunity_results.amount_type_id }}</label>
+
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="id_opportunity_stage_id">Stage of Opportunity: {{ opportunity_results.opportunity_stage_id }}</label>
+
+                </div>
+                <div class="form-group col-md-2">
+                    <div class="form-group">
+                        <label for="id_opportunity_success_probability">Success Probability: {{ opportunity_results.opportunity_success_probability }}%</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Time zone: {{ timezone }}</label>
+            </div>
+            <div class="form-group">
+                <label for="id_opportunity_expected_close_date">Opportunity Expected Close Date: {{ opportunity_results.opportunity_expected_close_date }}</label>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Opportunity Connections</h2>
+        </div>
+        <div class="card-body" id="id_opportunity_connections">
+            {% if customer_connection_results %}
+                <div>
+                    <strong>Customer Connections</strong>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <td>Customer First Name</td>
+                                <td>Customer Last Name</td>
+                                <td>Organisation</td>
+                                {% if opportunity_permission == 4 %}
+                                    <td></td>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        {% for row in customer_connection_results %}
+                            <tr>
+                                <td><a href="{% url 'customer_information' row.customer_id %}">{{ row.customer_first_name }}</a></td>
+                                <td>{{ row.customer_last_name }}</td>
+                                <td>{{ row.organisation_id }}</td>
+                                {% if opportunity_permission == 4 %}
+                                    <td>
+                                        <a href="javascript:void(0)" onclick="delete_connection({{ row.customer_id }}, 'customer')">Delete</a>
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            {% endif %}
+            {% if organisation_connection_results %}
+                <div class="mt-4">
+                    <strong>Organisation Connections</strong>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <td>Organisation Name</td>
+                                <td>Organisation Website</td>
+                                <td>Organisation Email</td>
+                                {% if opportunity_permission == 4 %}
+                                    <td></td>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        {% for row in organisation_connection_results %}
+                            <tr>
+                                <td><a href="{% url 'organisation_information' row.organisation_id %}">{{ row.organisation_name }}</a></td>
+                                <td>{{ row.organisation_website }}</td>
+                                <td>{{ row.organisation_email }}</td>
+                                {% if opportunity_permission == 4 %}
+                                    <td>
+                                        <a href="javascript:void(0)" onclick="delete_connection({{ row.organisation_id }}, 'organisation')">Delete</a>
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if to_do_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>To do</h2>
+            </div>
+            <div class="card-body">
+            <table class="table table-striped table-hover">
+                {% for row in to_do_results %}
+                    <tr>
+                        <td>{{ row.to_do }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if email_results and not email_permission == 0 %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Email History</h2>
+            </div>
+            <div class="card-body">
+                <div id="email_history">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <td width="70%">Subject</td>
+                                <td width="15%">Date</td>
+                                <td width="15%">Sent By</td>
+                            </tr>
+                        </thead>
+                        {% for row in email_results %}
+                            <tr>
+                                {% if email_permission > 1 %}
+                                    <td><a href="{% url 'email_information' row.email_content_id %}">{{ row.email_subject }}</a></td>
+                                {% else %}
+                                    <td>{{ row.email_subject }}</td>
+                                {% endif %}
+                                <td>{{ row.date_created }}</td>
+                                <td>{{ row.change_user }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Opportunity Links</h2>
+        </div>
+        <div class="card-body">
+            <h2 class="mt-2">Assigned Requirements</h2>
+            {% if requirement_results %}
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Requirement ID</td>
+                            <td>Requirement Title</td>
+                            <td>Requirement Status</td>
+                        </tr>
+                    </thead>
+                    {% for row in requirement_results %}
+                        <tr>
+                            <td class="col-md-2"><a href="{% url 'requirement_information' row.requirement_id %}">REQ{{ row.requirement_id }}</a></td>
+                            <td>{{ row.requirement_title }}</td>
+                            <td class="col-md-4">{{ row.requirement_status }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                There are no requirements connected.
+            {% endif %}
+
+            <h2 class="mt-2">Assigned Projects</h2>
+            {% if project_results %}
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Project ID</td>
+                            <td>Project Name</td>
+                            <td>Project End Date</td>
+                            <td>Project Status</td>
+                        </tr>
+                    </thead>
+                    {% for row in project_results %}
+                        <tr>
+                            <td><a href="{% url 'project_information' row.project_id %}">PRO{{ row.project_id }}</a></td>
+                            <td>{{ row.project_name }}</td>
+                            <td>{{ row.project_end_date }}</td>
+                            <td>{{ row.project_status }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <p>There are no associated projects. Please create a new project</p>
+            {% endif %}
+            <br/>
+            <h2 class="mt-2">Assigned Tasks</h2>
+            {% if task_results %}
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td>Task ID</td>
+                            <td>Task Name</td>
+                            <td>Task End Date</td>
+                            <td>Task Status</td>
+                        </tr>
+                    </thead>
+                    {% for row in task_results %}
+                        <tr>
+                            <td><a href="{% url 'task_information' row.task_id %}">TASK{{ row.task_id }}</a></td>
+                            <td>{{ row.task_short_description }}</td>
+                            <td>{{ row.task_end_date }}</td>
+                            <td>{{ row.task_status }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <p>There are no associated tasks. Please create a new task</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <form action="POST" id="tag_results" class="tag_results">
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Tags</h2>
+            </div>
+            <div class="card-body">
+                <h4>
+                    <div class="form-row">
+                        {% for tag in tag_results %}
+                            <span class="badge badge-primary mr-2 mt-2">
+                                {{ tag.tag_name }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                </h4>
+            </div>
+        </div>
+    </form>
+
+
+    {% if quote_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Opportunity Quotes</h2>
+            </div>
+            <div class="card-body">
+
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <td width="50%">Quote Title</td>
+                            <td width="25%">Valid Till</td>
+                            <td width="25%">Quote Stage</td>
+                        </tr>
+                    </thead>
+                    {% for row in quote_results %}
+                        <tr>
+                            <td><a href="{% url 'quote_information' row.quote_id %}">{{ row.quote_title }}</a></td>
+                            <td>{{ row.quote_valid_till }}</td>
+                            <td>{{ row.quote_stage_id }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+
+            </div>
+        </div>
+    {% endif %}
+
+    {% if opportunity_permission >= 3 %}
+        {% if assigned_user_results %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h2>Assigned Users</h2>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                            <tr class="header">
+                                <td>Username</td>
+                                <td>First Name</td>
+                                <td>Last name</td>
+                            </tr>
+                        </thead>
+                        {% for row in assigned_user_results %}
+                            <tr>
+                                <td>{{ row.assigned_user.username }}</td>
+                                <td>{{ row.assigned_user.first_name }}</td>
+                                <td>{{ row.assigned_user.last_name }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+        {% if group_list_results %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h2>Assigned Groups</h2>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <td>Assigned Group Name</td>
+                            </tr>
+                        </thead>
+                        {% for row in group_list_results %}
+                            <tr>
+                                <td>{{ row.group_id }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}

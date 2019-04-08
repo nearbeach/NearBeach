@@ -704,6 +704,27 @@ class change_task_form(ModelForm):
             'change_task_required_by',
         }
 
+class change_task_read_only_form(ModelForm):
+    change_task_description=forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'class': 'form-control change_task_description',
+            },
+        ),
+    )
+
+    class Meta:
+        model = change_task
+        fields = {
+            'change_task_description',
+        }
+
 class connect_form(forms.Form):
     customers=forms.ModelMultipleChoiceField(
         queryset = customer.objects.filter(
@@ -2935,6 +2956,22 @@ class opportunity_information_form(ModelForm):
             'is_deleted',
             'change_user',
         }
+
+class opportunity_readonly_form(forms.Form):
+    opportunity_description = forms.CharField(
+        widget=TinyMCE(
+            mce_attrs={
+                'width': '100%',
+                'toolbar': False,
+                'menubar': False,
+                'readonly': 1,
+            },
+            attrs={
+                'placeholder': 'Opportunity Description',
+                'class': 'form-control',
+            }
+        )
+    )
 
 class organisation_information_form(ModelForm):
     #Profile picture
