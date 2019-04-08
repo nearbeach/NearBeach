@@ -210,9 +210,6 @@ class ModelsTestCase(TestCase):
         Setup Content
         ~~~~~~~~~~~~~
         """
-
-
-
         #Setup the organisation
         organisation_1 = organisation.objects.create(
             organisation_name="NearBeach",
@@ -298,6 +295,163 @@ class ModelsTestCase(TestCase):
             opportunity_id=opportunity_3,
             group_id=user_acceptance_testing_group,
             change_user_id=admin_user.id,
+        )
+
+        requirement_1 = requirement.objects.create(
+            requirement_title="Admin Access Requirement",
+            requirement_scope="Only Admins have access to this requirement",
+            requirement_type_id=1,
+            requirement_status_id=1,
+            change_user=admin_user,
+        )
+
+        requirement_item_1 = requirement_item.objects.create(
+            requirement_item_title="Admin Access Requirement Item",
+            requirement_item_scope="Only admins have access to this requirement item",
+            requirement_id=requirement_1,
+            requirement_item_status_id=1,
+            change_user=admin_user,
+            requirement_item_type_id=1,
+        )
+
+        object_assignment.objects.create(
+            requirement_id=requirement_1,
+            group_id=administration_group,
+            change_user_id=admin_user.id,
+        )
+
+        requirement_2 = requirement.objects.create(
+            requirement_title="UAT Requirement",
+            requirement_scope="Everyone has access",
+            requirement_type_id=1,
+            requirement_status_id=1,
+            change_user=admin_user,
+        )
+
+        requirement_item_2 = requirement_item.objects.create(
+            requirement_item_title="Admin Access Requirement Item",
+            requirement_item_scope="Only admins have access to this requirement item",
+            requirement_id=requirement_2,
+            requirement_item_status_id=1,
+            change_user=admin_user,
+            requirement_item_type_id=1,
+        )
+
+        object_assignment.objects.create(
+            requirement_id=requirement_1,
+            group_id=user_acceptance_testing_group,
+            change_user_id=admin_user.id,
+        )
+
+        requirement_3 = requirement.objects.create(
+            requirement_title="No Group Requirements",
+            requirement_scope="No one should have access",
+            requirement_type_id=1,
+            requirement_status_id=1,
+            change_user=admin_user,
+
+        )
+
+        requirement_item_3 = requirement_item.objects.create(
+            requirement_item_title="Admin Access Requirement Item",
+            requirement_item_scope="Only admins have access to this requirement item",
+            requirement_id=requirement_3,
+            requirement_item_status_id=1,
+            change_user=admin_user,
+            requirement_item_type_id=1,
+        )
+
+        object_assignment.objects.create(
+            requirement_id=requirement_3,
+            group_id=no_group,
+            change_user_id=admin_user.id,
+        )
+
+
+        project_1 = project.objects.create(
+            project_name="Admin Project",
+            project_description="Only admins can access this",
+            project_start_date=datetime.datetime.now(),
+            project_end_date=datetime.datetime.now(),
+            organisation_id=organisation_1,
+            change_user=admin_user,
+        )
+
+        object_assignment.objects.create(
+            project_id=project_1,
+            group_id=administration_group,
+            change_user_id=admin_user.id,
+        )
+
+        project_2 = project.objects.create(
+            project_name="UAT Project",
+            project_description="Everyone can access this",
+            project_start_date=datetime.datetime.now(),
+            project_end_date=datetime.datetime.now(),
+            change_user=admin_user,
+        )
+
+        object_assignment.objects.create(
+            project_id=project_2,
+            group_id=user_acceptance_testing_group,
+            change_user_id=admin_user.id,
+        )
+
+        project_3 = project.objects.create(
+            project_name="No Group Project",
+            project_description="Only admins can access this",
+            project_start_date=datetime.datetime.now(),
+            project_end_date=datetime.datetime.now(),
+            organisation_id=organisation_1,
+            change_user=admin_user,
+        )
+
+        object_assignment.objects.create(
+            project_id=project_3,
+            group_id=no_group,
+            change_user_id=admin_user.id,
+        )
+
+        task_1 = task.objects.create(
+            task_short_description="Admin Task",
+            task_long_description="Administrators can only access this",
+            task_start_date=datetime.datetime.now(),
+            task_end_date=datetime.datetime.now(),
+            change_user=admin_user,
+        )
+
+        object_assignment.objects.create(
+            task_id=task_1,
+            group_id=no_group,
+            change_user=admin_user,
+        )
+
+        task_2 = task.objects.create(
+            task_short_description="UAT Task",
+            task_long_description="All users can access this",
+            task_start_date=datetime.datetime.now(),
+            task_end_date=datetime.datetime.now(),
+            change_user=admin_user,
+        )
+
+        object_assignment.objects.create(
+            task_id=task_2,
+            group_id=user_acceptance_testing_group,
+            change_user=admin_user,
+        )
+
+        task_3 = task.objects.create(
+            task_short_description="No Group Task",
+            task_long_description="No one can access this",
+            task_start_date=datetime.datetime.now(),
+            task_end_date=datetime.datetime.now(),
+            change_user=admin_user,
+        )
+
+        object_assignment.objects.create(
+            task_id=task_3,
+            group_id=no_group,
+            change_user=admin_user,
         )
 
     def test_organisation(self):
