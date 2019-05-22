@@ -287,6 +287,7 @@
                             <td>Opportunity Name</td>
                             <td>Opportunity Stage</td>
                             <td>Opportunity End Date</td>
+                            <td>Opportunity Stage</td>
                         </tr>
                     </thead>
                     {% for row in opportunity_results %}
@@ -294,6 +295,7 @@
                             <td><a href="{% url 'opportunity_information' row.opportunity_id %}">{{ row.opportunity_name }}</a></td>
                             <td>{{ row.opportunity_stage_id }}</td>
                             <td>{{ row.opportunity_expected_close_date }}</td>
+                            <td>{{ row.opportunity_stage_id }}</td>
                         </tr>
                     {% endfor %}
                 </table>

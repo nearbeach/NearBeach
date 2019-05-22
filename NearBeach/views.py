@@ -7655,6 +7655,22 @@ def project_information(request, project_id):
     project_history_results = project_history.objects.filter(project_id=project_id, is_deleted='FALSE')
     cursor = connection.cursor()
 
+    requirement_results = requirement.objects.filter(
+        is_deleted="FALSE",
+        requirement_id__in=requirement_link.objects.filter(
+            is_deleted="FALSE",
+            project_id=project_id,
+        ).values('requirement_id')
+    )
+
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_item_id__in=requirement_item_link.objects.filter(
+            is_deleted="FALSE",
+            project_id=project_id,
+        ).values('requirement_item_id')
+    )
+
 
     folders_results = folder.objects.filter(
         project_id=project_id,
@@ -7707,6 +7723,8 @@ def project_information(request, project_id):
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
         'opportunity_results': opportunity_results,
+        'requirement_results': requirement_results,
+        'requirement_item_results': requirement_item_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -7730,6 +7748,21 @@ def project_readonly(request, project_id):
     project_history_results = project_history.objects.filter(
         is_deleted="FALSE",
         project_id=project_id,
+    )
+    requirement_results = requirement.objects.filter(
+        is_deleted="FALSE",
+        requirement_id__in=requirement_link.objects.filter(
+            is_deleted="FALSE",
+            project_id=project_id,
+        ).values('requirement_id')
+    )
+
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_item_id__in=requirement_item_link.objects.filter(
+            is_deleted="FALSE",
+            project_id=project_id,
+        ).values('requirement_item_id')
     )
     email_results = email_content.objects.filter(
         is_deleted="FALSE",
@@ -7837,6 +7870,8 @@ def project_readonly(request, project_id):
         'project_history_permissions': permission_results['project_history'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'requirement_results': requirement_results,
+        'requirement_item_results': requirement_item_results,
 
     }
 
@@ -9410,6 +9445,22 @@ def task_information(request, task_id):
         task_id=task_results,
     )
 
+    requirement_results = requirement.objects.filter(
+        is_deleted="FALSE",
+        requirement_id__in=requirement_link.objects.filter(
+            is_deleted="FALSE",
+            task_id=task_id,
+        ).values('requirement_id')
+    )
+
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_item_id__in=requirement_item_link.objects.filter(
+            is_deleted="FALSE",
+            task_id=task_id,
+        ).values('requirement_item_id')
+    )
+
     running_total = 0
     # Load the template
     t = loader.get_template('NearBeach/task_information.html')
@@ -9428,6 +9479,8 @@ def task_information(request, task_id):
         'timezone': settings.TIME_ZONE,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'requirement_results': requirement_results,
+        'requirement_item_results': requirement_item_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -9462,6 +9515,22 @@ def task_readonly(request,task_id):
                 Q(change_user=request.user)
             )
         ).values('email_content_id')
+    )
+
+    requirement_results = requirement.objects.filter(
+        is_deleted="FALSE",
+        requirement_id__in=requirement_link.objects.filter(
+            is_deleted="FALSE",
+            task_id=task_id,
+        ).values('requirement_id')
+    )
+
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_item_id__in=requirement_item_link.objects.filter(
+            is_deleted="FALSE",
+            task_id=task_id,
+        ).values('requirement_item_id')
     )
 
     associated_project_results = project_task.objects.filter(
@@ -9553,6 +9622,9 @@ def task_readonly(request,task_id):
         'project_history_permissions': permission_results['task_history'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'requirement_results': requirement_results,
+        'requirement_item_results': requirement_item_results,
+
     }
 
     return HttpResponse(t.render(c,request))

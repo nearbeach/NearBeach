@@ -192,6 +192,54 @@
         </div>
     </form>
 
+    {% if requirement_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Requirement Links</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td width="20%">Requirement ID</td>
+                            <td width="80%">Requirement Description</td>
+                        </tr>
+                    </thead>
+                    {% for requirement in requirement_results %}
+                        <tr>
+                            <td><a href="{% url 'requirement_information' requirement.requirement_id %}">REQ{{ requirement.requirement_id }}</a></td>
+                            <td>{{ requirement.requirement_title }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if requirement_item_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Requirement Item Links</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td width="20%">Requirement Item ID</td>
+                            <td width="80%">Requirement Item Description</td>
+                        </tr>
+                    </thead>
+                    {% for requirement_item in requirement_item_results %}
+                        <tr>
+                            <td><a href="{% url 'requirement_item_information' requirement_item.requirement_item_id %}">ITM{{ requirement_item.requirement_item_id }}</a></td>
+                            <td>{{ requirement_item.requirement_item_title }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
     <div class="card mt-4">
         <div class="card-header">
             <h2>Email History</h2>
