@@ -2850,6 +2850,17 @@ class opportunity_group_permission_form(forms.Form):
     )
 
 
+class opportunity_close_form(forms.Form):
+    opportunity_close=forms.ModelChoiceField(
+        queryset=list_of_opportunity_stage.objects.filter(
+            is_deleted="FALSE",
+            opportunity_closed="TRUE",
+        ),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+
 
 class opportunity_information_form(ModelForm):
     #Get data for form
@@ -2932,7 +2943,7 @@ class opportunity_information_form(ModelForm):
     )
 
     opportunity_stage_id=forms.ModelChoiceField(
-        queryset=list_of_quote_stage.objects.all(),
+        queryset=list_of_opportunity_stage.objects.all(),
         widget=forms.Select(attrs={
             'class': 'form-control',
         }),

@@ -6556,6 +6556,7 @@ def opportunity_delete_permission(request, opportunity_permissions_id):
         return HttpResponseBadRequest("Sorry, this has to be through post")
 
 
+
 @login_required(login_url='login',redirect_field_name="")
 def opportunity_connection_list(request, opportunity_id):
     permission_results = return_user_permission_level(request, None,'opportunity')
@@ -6615,7 +6616,7 @@ def opportunity_information(request, opportunity_id):
 
     #Check to see if opportunity is closed
     opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
-    if opportunity_results.opportunity_stage_id.opportunity_closed == "True":
+    if opportunity_results.opportunity_stage_id.opportunity_closed == "TRUE":
         return HttpResponseRedirect(reverse('opportunity_readonly', args={opportunity_id}))
 
     """
@@ -6811,6 +6812,7 @@ def opportunity_information(request, opportunity_id):
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
         'opportunity_permission': permission_results['opportunity'],
+        'opportunity_close_form': opportunity_close_form(),
     }
 
     return HttpResponse(t.render(c, request))
