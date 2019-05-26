@@ -612,7 +612,7 @@ class document_permission(models.Model):
         null=True,
         on_delete=models.CASCADE,
     )
-    requirement_item = models.ForeignKey(
+    requirement_item=models.ForeignKey(
         'requirement_item',
         blank=True,
         null=True,
@@ -778,6 +778,12 @@ class folder(models.Model):
     )
     requirement=models.ForeignKey(
         'requirement',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    requirement_item = models.ForeignKey(
+        'requirement_item',
         on_delete=models.CASCADE,
         blank=True,
         null=True,

@@ -100,6 +100,15 @@
 
     <div class="card mt-4">
         <div class="card-header">
+            <h2>Document Uploads</h2>
+        </div>
+        <div class="card-body" id="document_tree_list">
+            Loading...
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
             <h2>Requirement Linked to Kanban Board</h2>
         </div>
         <div class="card-body">
@@ -400,6 +409,7 @@
             load_bug_list();
             load_tag_results();
             load_requirement_link_list();
+            load_document_tree_list({{ requirement_id }},'requirement');
         }
 
 

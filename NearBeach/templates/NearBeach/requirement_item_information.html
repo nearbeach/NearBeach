@@ -3,6 +3,7 @@
 {% block content %}
 {% load static %}
     <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/document_upload.js' %}"></script>
     <form action="{% url 'requirement_item_information' requirement_item_id %}" enctype="multipart/form-data" class="requirement_item_information" method="POST">
         {% csrf_token %}
         <div class="card mt-4">
@@ -39,6 +40,15 @@
             </div>
         </div>
     </form>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Document Uploads</h2>
+        </div>
+        <div class="card-body" id="document_tree_list">
+            Loading...
+        </div>
+    </div>
 
     <div class="card mt-4">
         <div class="card-header">
@@ -112,7 +122,9 @@
 
     <script>
         document.onload = function on_page_load() {
+            load_document_tree_list({{ requirement_item_id }},'requirement_item');
             load_requirement_links();
+
         };
 
         function load_requirement_links() {
