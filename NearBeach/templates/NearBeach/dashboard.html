@@ -1,5 +1,8 @@
 {% extends "./template.html" %}
 {% block content %}
+    {% load staticfiles %}
+    <script src="{% static 'NearBeach/javascript/render_dashboard_graphs.js' %}"></script>
+    <script src="{% static 'NearBeach/widgets/d3/d3.min.js' %}"></script>
     <script>
         function on_page_load() {
             //EXTRACT ready for approval
@@ -126,6 +129,21 @@
                     alert("Sorry, the 'Opportunities' had issues loading");
                 }
             });
+
+            console.log("Active bugs");
+            $.ajax({
+                url: '/dashboard/active_bugs/',
+                data: {},
+                dataType: 'JSON',
+                type:'GET',
+                success: function(data) {
+                    render_bug_client_bugs(data, "active_bugs");
+                },
+                error: function(){
+                    //Note that widget could not connect to bugzilla
+                    $("active_bugs").html(`<p>We are sorry, we could not connect to one or more of your bug clients`);
+                }
+            });
         }
     </script>
     <body onload="on_page_load()">
@@ -221,6 +239,15 @@
             </div>
             <div class="card-body" id="group_request_for_change">
                 Loading...
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Active Bug Clients</h2>
+            </div>
+            <div class="card-body" id="active_bugs">
+                Loading... please note this widget could take a while to load
             </div>
         </div>
 

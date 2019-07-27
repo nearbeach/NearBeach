@@ -23,7 +23,6 @@ from django.db.models import Max
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from geolocation.main import GoogleMaps
 from django.http import JsonResponse
-#from weasyprint import HTML
 from urllib.request import urlopen
 from weasyprint import HTML
 from django.core.mail import send_mail
@@ -33,7 +32,7 @@ from docx.shared import Cm, Inches
 from bs4 import BeautifulSoup
 
 #import python modules
-import datetime, json, simplejson, urllib.parse, pypandoc
+import datetime, json, simplejson, urllib.parse, pypandoc, requests
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -2320,6 +2319,106 @@ def dashboard(request):
 
     return HttpResponse(t.render(c, request))
 
+
+@login_required(login_url='login',redirect_field_name="")
+def dashboard_active_bugs(request):
+    """
+    This will render a simple widget that will display the state of each bug client.
+    :param request:
+    :return:
+
+    Method
+    ~~~~~~
+    1. Get a list of all bug clients still active
+    2. Declare variables
+    3. Loop through list of bug clients
+    -- START LOOP --
+        4. Get the url for the API
+        5. Fetch the JSON data
+        6. Create basic pivot table
+        7. Return results
+    -- END LOOP --
+    8. Send the JSON results to the template
+
+                if url.lower().startswith('http'):
+                    req = urllib.request.Request(url)
+                else:
+                    raise ValueError from None
+
+                with urllib.request.urlopen(req) as response: #nosec
+                    data = json.load(response)
+
+                bug_client_submit = bug_client(
+                    bug_client_name = bug_client_name,
+                    list_of_bug_client = list_of_bug_client,
+                    bug_client_url = bug_client_url,
+                    change_user=request.user,
+                )
+                bug_client_submit.save()
+                return HttpResponseRedirect(reverse('bug_client_list'))
+
+    """
+    #Get data
+    bug_client_results = bug_client.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    bug_client_table = {}
+
+    for counter, client in enumerate(bug_client_results):
+        """
+        Method
+        ~~~~~~
+        1. Get URL
+        2. Check to make sure the URL will work - basic
+        3. Obtain the data as a json variable
+        4. Loop through the data - check to see if the status already exists,
+            If status exists - increase it by one
+            If status does not exist - create it with initial value of 1
+        5. Write results to 
+        """
+        url = client.bug_client_url + "/rest/bug?resolution=---"
+        status_results = {}
+
+        if url.lower().startswith('http'):
+            #Use requests to get the data from the url :)
+            raw_data = requests.get(url).json()
+        else:
+            continue
+
+        for bug_info in raw_data["bugs"]:
+            try:
+                status_results[bug_info["status"]] = status_results[bug_info["status"]] + 1
+            except:
+                status_results[bug_info["status"]] = 1
+
+        #Final setup
+        status_results = {
+            "bug_client_id": client.bug_client_id,
+            "name": client.bug_client_name,
+            "url": client.bug_client_url,
+            "bug_status": status_results,
+        }
+
+        #Paste into larger narative
+        #bug_client_table[client.bug_client_id] = status_results
+        bug_client_table[counter] = status_results
+
+
+    """
+    #Get template
+    t = loader.get_template('NearBeach/dashboard_widgets/active_bugs.html')
+
+    #Context
+    c = {
+        'bug_client_results': bug_client_results,
+        'bug_client_table': json.dumps(bug_client_table),
+    }
+
+    return HttpResponse(t.render(c,request))
+    """
+    return JsonResponse(bug_client_table,safe=False)
+
 @login_required(login_url='login',redirect_field_name="")
 def dashboard_active_projects(request):
     #Get Data
@@ -3066,6 +3165,31 @@ def diagnostic_information(request):
     }
 
     return HttpResponse(t.render(c,request))
+
+
+
+@login_required(login_url='login',redirect_field_name="")
+def diagnostic_render_pdf(request):
+    """
+
+    :param request:
+    :return:
+
+
+    """
+    if request.get_host() == "localhost:8000":
+        url_path = "http://" + request.get_host() + "/diagnostic_render_pdf/pdf_example/"
+    else:
+        url_path = "https://" + request.get_host() + "/diagnostic_render_pdf/pdf_example/"
+
+    html = HTML(url_path)
+    pdf_results = html.write_pdf()
+
+    #Setup the response
+    response = HttpResponse(pdf_results,content_type='application')
+    response['Content-Disposition']='attachment; filename="Example PDF"'
+
+    return response
 
 
 
@@ -6681,7 +6805,7 @@ def opportunity_information(request, opportunity_id):
             if select_groups:
                 for row in select_groups:
                     group_instance = group.objects.get(group_id=row.group_id)
-                    permission_save = opportunity_permission(
+                    permission_save = object_access(
                         opportunity_id=opportunity_instance,
                         group_id=group_instance,
                         user_id=current_user,
@@ -6689,7 +6813,7 @@ def opportunity_information(request, opportunity_id):
                     )
                     permission_save.save()
                 #Will remove the ALL USERS permissions now that we have limited the permissions
-                opportunity_permission.objects.filter(
+                object_access.objects.filter(
                     opportunity_id=opportunity_id,
                     all_user='TRUE',
                     is_deleted='FALSE'
@@ -6700,7 +6824,7 @@ def opportunity_information(request, opportunity_id):
             if select_users:
                 for row in select_users:
                     assigned_user_instance = auth.models.User.objects.get(username=row)
-                    permission_save = opportunity_permission(
+                    permission_save = object_access(
                         opportunity_id=opportunity_instance,
                         assigned_user=assigned_user_instance,
                         user_id=current_user,
@@ -6708,7 +6832,7 @@ def opportunity_information(request, opportunity_id):
                     )
                     permission_save.save()
                 #Will remove the ALL USERS permissions now that we have limited the permissions
-                opportunity_permission.objects.filter(
+                object_access.objects.filter(
                     opportunity_id=opportunity_id,
                     all_user='TRUE',
                     is_deleted='FALSE'
@@ -7213,6 +7337,13 @@ def organisation_readonly(request, organisation_id):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+def pdf_example(request):
+    #Return template of PDF example
+    t = loader.get_template('NearBeach/diagnostic/pdf_example.html')
+    c = {}
+    return HttpResponse(t.render(c,request))
 
 
 @login_required(login_url='login',redirect_field_name="")
