@@ -73,7 +73,7 @@ function render_bug_client_bugs(data, target_id) {
     var y = d3.scaleBand()
         .range([height, 0]);
         */
-     */
+
     //Tool tip
     //var tooltip = d3.select("body").append("div").attr("class", "toolTip");
 

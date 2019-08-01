@@ -1619,6 +1619,35 @@ class list_of_title(models.Model):
         db_table = "list_of_title"
 
 
+class nearbeach_option(models.Model):
+    """
+    This table will store the options for NearBeach. These options will have a new row each time a new option is created
+    There does not need to be a is_deleted function
+    """
+    nearbeach_option_id=models.AutoField(primary_key=True)
+    story_point_hour_min=models.IntegerField(
+        default=1,
+    )
+    story_point_hour_max=models.IntegerField(
+        default=4,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user',
+        blank=True,
+        null=True
+    )
+
+    def __str__(self):
+        return str(self.nearbeach_option_id)
+
+    class Meta:
+        db_table = "nearbeach_option"
+
+
 class object_assignment(models.Model):
     """
     Object permissions is the centralised permissions for all objects
@@ -2159,6 +2188,8 @@ class project(models.Model):
         choices=PROJECT_STATUS_CHOICE,
         default='New'
     )
+    project_story_point_min = models.IntegerField(default=1)
+    project_story_point_max = models.IntegerField(default=4)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
@@ -2928,6 +2959,8 @@ class requirement(models.Model):
         'list_of_requirement_status',
         on_delete=models.CASCADE,
     )
+    requirement_story_point_min = models.IntegerField(default=1)
+    requirement_story_point_max = models.IntegerField(default=4)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
@@ -3244,6 +3277,8 @@ class task(models.Model):
         choices=PROJECT_STATUS_CHOICE,
         default='New'
     )
+    task_story_point_min = models.IntegerField(default=1)
+    task_story_point_max = models.IntegerField(default=4)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
