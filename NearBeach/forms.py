@@ -2409,6 +2409,15 @@ class new_project_form(forms.Form):
             'class': 'form-control',
         })
     )
+    project_story_point=forms.IntegerField(
+        initial=1,
+        min_value=1,
+        max_value=100,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'onChange': 'update_story_point()',
+        })
+    )
 
     class Meta:
         model = project
@@ -2696,12 +2705,23 @@ class new_requirement_item_form(ModelForm):
             'class': 'form-control',
         })
     )
+    requirement_item_story_point = forms.IntegerField(
+        initial=1,
+        min_value=1,
+        max_value=100,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'onChange': 'update_story_point()',
+        })
+    )
     class Meta:
         model = requirement_item
         exclude = [
             'requirement_id'
             'change_user',
             'is_deleted',
+            'ri_story_point_min',
+            'ri_story_point_max',
         ]
 
 
@@ -2833,6 +2853,16 @@ class new_task_form(forms.Form):
             'class': 'form-control',
         })
     )
+    task_item_story_point = forms.IntegerField(
+        initial=1,
+        min_value=1,
+        max_value=100,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'onChange': 'update_story_point()',
+        })
+    )
+
 
 class opportunity_group_permission_form(forms.Form):
     def __init__(self,*args,**kwargs):
@@ -4036,6 +4066,15 @@ class requirement_item_form(forms.ModelForm):
             'class': 'form-control',
         })
     )
+    requirement_item_story_point = forms.IntegerField(
+        initial=1,
+        min_value=1,
+        max_value=100,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'onChange': 'update_story_point()',
+        })
+    )
 
     #Fixing a bug
     requirement_id=forms.IntegerField(required=False)
@@ -4047,6 +4086,8 @@ class requirement_item_form(forms.ModelForm):
             'requirement_id'
             'change_user',
             'is_deleted',
+            'ri_story_point_min',
+            'ri_story_point_max',
         ]
 
 

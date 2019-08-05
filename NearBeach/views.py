@@ -6021,9 +6021,13 @@ def new_project(request, location_id='', destination=''):
     if request.method == "POST":
         form = new_project_form(request.POST)
         if form.is_valid():
+            #Get extra data for references
+            nearbeach_option_results = nearbeach_option.objects.latest('date_created')
+
             project_name = form.cleaned_data['project_name']
             project_description = form.cleaned_data['project_description']
             organisation_id_form = form.cleaned_data['organisation_id']
+            project_story_point = form.cleaned_data['project_story_point']
 
             submit_project = project(
                 project_name=project_name,
@@ -6031,6 +6035,8 @@ def new_project(request, location_id='', destination=''):
                 project_start_date=form.cleaned_data['project_start_date'],
                 project_end_date=form.cleaned_data['project_end_date'],
                 project_status='New',
+                project_story_point_min=project_story_point * nearbeach_option_results.story_point_hour_min,
+                project_story_point_max=project_story_point * nearbeach_option_results.story_point_hour_max,
                 change_user=request.user,
             )
             if organisation_id_form:
@@ -6148,6 +6154,7 @@ def new_project(request, location_id='', destination=''):
         'administration_permission': permission_results['administration'],
         'destination': destination,
         'location_id': location_id,
+        'nearbeach_option': nearbeach_option,
     }
 
     return HttpResponse(t.render(c, request))
@@ -6649,6 +6656,7 @@ def new_task(request, location_id='', destination=''):
             'groups_count': groups_results.__len__(),
             'organisation_id': organisation_id,
             'organisations_count': organisation.objects.filter(is_deleted='FALSE').count(),
+            'nearbeach_option': nearbeach_option.objects.latest('date_created'),
             'customer_id': customer_id,
             'opportunity_id': opportunity_id,
             'timezone': settings.TIME_ZONE,

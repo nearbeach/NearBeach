@@ -162,7 +162,8 @@
             Method
             ~~~~~~
             1. Prepare the ajax query
-            2. Send the request to /new_requirement_link/{{ requirement_id }}/location_id/destination
+            2. Send the request to /new_requirement_link/
+            {{ requirement_id }}/location_id/destination
             3. Once completed - add the two parts to the end of the table :) SHHH - don't tell anyone we didn't reload
                 that section.
              */
@@ -179,7 +180,7 @@
                 data: {},
                 dataType: "HTML",
                 type: "POST",
-                success: function(data) {
+                success: function (data) {
                     /*
                     Method
                     ~~~~~~
@@ -201,7 +202,7 @@
                     //Shh - close the modal
                     $("#link_requirement_item_modal").modal("hide");
                 },
-                error: function() {
+                error: function () {
                     alert("Sorry - there was an issue connecting the link.");
                 }
             })

@@ -134,6 +134,13 @@
                         <label for="id_project_end_date">Project Finish</label>
                         {{ project_information_form.project_end_date }}
                     </div>
+                    <div class="form-group col-md-4">
+                        <label for="id_story_point">Story Points</label>
+                        <div id="id_story_point">
+                            <strong>Min hours: </strong>{{ project_results.project_story_point_min }}
+                            <strong>| Max hours: </strong>{{ project_results.project_story_point_max }}
+                        </div>
+                    </div>
                 </div>
                 <div class="form-row">
                     <input type="submit" name="update" id="update" value="Update" class="btn btn-primary form-control col-md-6"/>

@@ -1626,10 +1626,10 @@ class nearbeach_option(models.Model):
     """
     nearbeach_option_id=models.AutoField(primary_key=True)
     story_point_hour_min=models.IntegerField(
-        default=1,
+        default=4,
     )
     story_point_hour_max=models.IntegerField(
-        default=4,
+        default=10,
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -3001,6 +3001,8 @@ class requirement_item(models.Model):
         'list_of_requirement_item_type',
         on_delete=models.CASCADE,
     )
+    ri_story_point_min = models.IntegerField(default=4)
+    ri_story_point_max = models.IntegerField(default=10)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
@@ -3277,8 +3279,8 @@ class task(models.Model):
         choices=PROJECT_STATUS_CHOICE,
         default='New'
     )
-    task_story_point_min = models.IntegerField(default=1)
-    task_story_point_max = models.IntegerField(default=4)
+    task_story_point_min = models.IntegerField(default=4)
+    task_story_point_max = models.IntegerField(default=10)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
