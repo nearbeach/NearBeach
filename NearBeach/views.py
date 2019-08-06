@@ -6535,6 +6535,11 @@ def new_task(request, location_id='', destination=''):
     if request.method == "POST":
         form = new_task_form(request.POST)
         if form.is_valid():
+            #Get nearbeach options
+            nb_results = nearbeach_option.objects.latest('date_created')
+            task_story_point_min = form.cleaned_data['task_story_point'] * nb_results.story_point_hour_min
+            task_story_point_max = form.cleaned_data['task_story_point'] * nb_results.story_point_hour_max
+
             task_short_description = form.cleaned_data['task_short_description']
             task_long_description = form.cleaned_data['task_long_description']
             organisation_id_form = form.cleaned_data['organisation_id']

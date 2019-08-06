@@ -49,8 +49,8 @@
             </div>
             <div class="row">
                 <div class="form-group col-md-6">
-                    <label for="id_task_item_story_point">Story Point</label>
-                    {{ new_task_form.task_item_story_point }}
+                    <label for="id_task_story_point">Story Point</label>
+                    {{ new_task_form.task_story_point }}
                 </div>
                 <div class="form-group col-md-6">
                     <label for="story_point_text"> </label>
@@ -143,7 +143,7 @@
     }
 
     function update_story_point() {
-        var story_point = document.getElementById("id_requirement_item_story_point").valueAsNumber,
+        var story_point = document.getElementById("id_task_story_point").valueAsNumber,
             min = story_point * {{ nearbeach_option.story_point_hour_min }},
             max = story_point * {{ nearbeach_option.story_point_hour_max }},
             text = `You are approximating the task will take between ${min} to ${max} hours.`;

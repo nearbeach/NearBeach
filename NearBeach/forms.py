@@ -2853,7 +2853,7 @@ class new_task_form(forms.Form):
             'class': 'form-control',
         })
     )
-    task_item_story_point = forms.IntegerField(
+    task_story_point = forms.IntegerField(
         initial=1,
         min_value=1,
         max_value=100,
