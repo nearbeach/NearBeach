@@ -3445,6 +3445,33 @@ class task_opportunity(models.Model):
         db_table = "task_opportunity"
 """
 
+class timesheet(models.Model):
+    timesheet_id = models.AutoField(primary_key=True)
+    timesheet_description = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+    )
+    timesheet_date = models.DateField()
+    timesheet_start_time = models.TimeField()
+    timesheet_end_time = models.TimeField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    #Doubles up as the user inputting the time
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    class Meta:
+        db_table = "timesheet"
+
 class to_do(models.Model):
     to_do_id = models.AutoField(primary_key=True)
     to_do = models.CharField(

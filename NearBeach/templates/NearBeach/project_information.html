@@ -17,6 +17,7 @@
 <script>
     function on_page_load() {
 	    //Initiate AJAX modules
+        load_timesheet();
         load_to_do();
         //load_project_assigned_users();
         load_assigned_user_add();
@@ -152,6 +153,17 @@
             </form>
         </div>
     </div>
+
+    <form method="post" class="timesheet mt-4" id="timesheet">
+        <div class="card">
+            <div class="card-header">
+                <h2>Timesheet</h2>
+            </div>
+            <div class="card-body">
+                Loading...
+            </div>
+        </div>
+    </form>
 
     <form method="post" class="to_do" id="to_do">
         <div class="card">
@@ -470,6 +482,33 @@
                 alert("Sorry, project assigned users did not save. Please try again.");
             }
         })
+    });
+
+    $("#timesheet").on('submit', function(e) {
+        e.preventDefault();
+
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            type: 'POST',
+            url: '/timesheet/{{ project_id }}/project/',
+            data: $(this).serialize(),
+            success: function(data) {
+                $("#timesheet").html(data);
+
+                //Reinitialise the timesheet
+                timesheet_setup();
+            },
+            error: function() {
+                alert("Sorry - updating the timesheet went wrong");
+            }
+        });
     });
 
     $("#costs_form").on('submit', function(e) {
@@ -840,6 +879,25 @@
             },
             error: function() {
                 alert("Sorry, could not load the to do list");
+            }
+        })
+    }
+
+    function load_timesheet() {
+        $.ajax({
+            url: '/timesheet/{{ project_id }}/project/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                //Insert the data
+                $("#timesheet").html(data);
+
+                //Initiate the data
+                timesheet_setup();
+            },
+            error: function() {
+                alert("Sorry, timesheet could not load");
             }
         })
     }

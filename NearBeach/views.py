@@ -1891,7 +1891,7 @@ def cost_information(request, location_id, destination):
             task_id=task.objects.get(task_id=location_id),
         ).values('group_id_id')
 
-    permission_results = return_user_permission_level(request, groups_results,destination)
+    permission_results = return_user_permission_level(request, groups_results, destination)
 
 
     if request.method == "POST":
@@ -9967,10 +9967,29 @@ def timeline_data(request):
 
 @login_required(login_url='login',redirect_field_name="")
 def timesheet_information(request,location_id,destination):
+    if request.method == "POST":
+        form = new_timesheet_row(request.POST)
+        if form.is_valid():
+            timesheet_save = timesheet(
+                timesheet_date=form.cleaned_data['timesheet_date'],
+                timesheet_start_time=form.cleaned_data['timesheet_start_time'],
+                timesheet_end_time=form.cleaned_data['timesheet_end_time'],
+                timesheet_description=form.cleaned_data['timesheet_description'],
+                change_user=request.user
+            )
+            timesheet_save.save()
+        else:
+            print(form.errors)
+
+    timesheet_results = timesheet.objects.filter(
+        project_id=location_id,
+    )
+
     t = loader.get_template('NearBeach/timesheet/timesheet_information.html')
 
     c = {
         'new_timesheet_row': new_timesheet_row(),
+        'timesheet_results': timesheet_results,
     }
 
     return HttpResponse(t.render(c,request))

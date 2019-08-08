@@ -104,12 +104,20 @@ def return_user_permission_level(request, group_list,permission_field):
             group_permission = 0
             for group_id in group_list:
                 #Grab user's permission for that group
-                user_groups_results = user_group.objects.filter(
-                    is_deleted="FALSE",
-                    username=request.user,
-                    permission_set__is_deleted="FALSE",
-                    group_id=group_id['group_id'],
-                ).aggregate(Max('permission_set__' + row))
+                try:
+                    user_groups_results = user_group.objects.filter(
+                        is_deleted="FALSE",
+                        username=request.user,
+                        permission_set__is_deleted="FALSE",
+                        group_id=group_id['group_id'],
+                    ).aggregate(Max('permission_set__' + row))
+                except:
+                    user_groups_results = user_group.objects.filter(
+                        is_deleted="FALSE",
+                        username=request.user,
+                        permission_set__is_deleted="FALSE",
+                        group_id=group_id['group_id_id'],
+                    ).aggregate(Max('permission_set__' + row))
 
                 #Get the max value for the permission
                 if not user_groups_results['permission_set__' + row + '__max'] == None:
