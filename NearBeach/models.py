@@ -3455,6 +3455,24 @@ class timesheet(models.Model):
     timesheet_date = models.DateField()
     timesheet_start_time = models.TimeField()
     timesheet_end_time = models.TimeField()
+    project=models.ForeignKey(
+        'project',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    task = models.ForeignKey(
+        'task',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    requirement_item = models.ForeignKey(
+        'requirement_item',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     #Doubles up as the user inputting the time

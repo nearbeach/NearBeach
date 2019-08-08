@@ -1,3 +1,22 @@
+function load_timesheet(location, destination) {
+    $.ajax({
+        url: `/timesheet/${ location }/${ destination }/`,
+        data: {},
+        dataType: 'HTML',
+        type: 'GET',
+        success: function(data) {
+            //Insert the data
+            $("#timesheet").html(data);
+
+            //Initiate the data
+            timesheet_setup();
+        },
+        error: function() {
+            alert("Sorry, timesheet could not load");
+        }
+    })
+}
+
 function timesheet_setup() {
     /* This function will finish setting up the timesheet - i.e. setup the datetime functions*/
     $( "#id_timesheet_date" ).datetimepicker({

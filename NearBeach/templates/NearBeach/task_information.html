@@ -13,6 +13,8 @@
 <script>
     function on_page_load() {
         //Initiate AJAX modules
+        load_timesheet('{{ task_id }}','task');
+
         load_costs();
         load_task_customers();
         load_task_history();
@@ -144,10 +146,17 @@
                 {% endif %}
             </div>
         </div>
+    </form>
 
-
-
-
+    <form method="post" class="timesheet mt-4" id="timesheet">
+        <div class="card">
+            <div class="card-header">
+                <h2>Timesheet</h2>
+            </div>
+            <div class="card-body">
+                Loading...
+            </div>
+        </div>
     </form>
 
     <br/>
@@ -554,6 +563,33 @@
                 alert("Sorry, task history did not save. Please try again.");
             }
         })
+    });
+
+    $("#timesheet").on('submit', function(e) {
+        e.preventDefault();
+
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            type: 'POST',
+            url: '/timesheet/{{ task_id }}/task/',
+            data: $(this).serialize(),
+            success: function(data) {
+                $("#timesheet").html(data);
+
+                //Reinitialise the timesheet
+                timesheet_setup();
+            },
+            error: function() {
+                alert("Sorry - updating the timesheet went wrong");
+            }
+        });
     });
 
     $("#to_do").on('submit', function(e) {

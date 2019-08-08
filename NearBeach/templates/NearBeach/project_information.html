@@ -17,7 +17,7 @@
 <script>
     function on_page_load() {
 	    //Initiate AJAX modules
-        load_timesheet();
+        load_timesheet('{{ project_id }}','project');
         load_to_do();
         //load_project_assigned_users();
         load_assigned_user_add();
@@ -883,24 +883,6 @@
         })
     }
 
-    function load_timesheet() {
-        $.ajax({
-            url: '/timesheet/{{ project_id }}/project/',
-            data: {},
-            dataType: 'HTML',
-            type: 'GET',
-            success: function(data) {
-                //Insert the data
-                $("#timesheet").html(data);
-
-                //Initiate the data
-                timesheet_setup();
-            },
-            error: function() {
-                alert("Sorry, timesheet could not load");
-            }
-        })
-    }
 
     function delete_group_item(group_item) {
         $.ajaxSetup({

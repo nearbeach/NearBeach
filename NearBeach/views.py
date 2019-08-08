@@ -9977,13 +9977,30 @@ def timesheet_information(request,location_id,destination):
                 timesheet_description=form.cleaned_data['timesheet_description'],
                 change_user=request.user
             )
+            if destination == "project":
+                timesheet_save.project_id = location_id
+            elif destination == "requirement_item":
+                timesheet_save.requirement_item_id = location_id
+            elif destination == "task":
+                timesheet_save.task_id = location_id
+
             timesheet_save.save()
         else:
             print(form.errors)
 
-    timesheet_results = timesheet.objects.filter(
-        project_id=location_id,
-    )
+    if destination == "project":
+        timesheet_results = timesheet.objects.filter(
+            project_id=location_id,
+        )
+    elif destination == "requirement_item":
+        timesheet_results = timesheet.objects.filter(
+            requirement_item=location_id,
+        )
+    else:
+        timesheet_results = timesheet.objects.filter(
+            task_id=location_id,
+        )
+
 
     t = loader.get_template('NearBeach/timesheet/timesheet_information.html')
 
