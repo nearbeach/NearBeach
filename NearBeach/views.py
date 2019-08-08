@@ -9965,6 +9965,16 @@ def timeline_data(request):
         return HttpResponseBadRequest("timeline date has to be done in post!")
 
 
+@login_required(login_url='login',redirect_field_name="")
+def timesheet_information(request,location_id,destination):
+    t = loader.get_template('NearBeach/timesheet/timesheet_information.html')
+
+    c = {
+        'new_timesheet_row': new_timesheet_row(),
+    }
+
+    return HttpResponse(t.render(c,request))
+
 
 
 @login_required(login_url='login',redirect_field_name="")

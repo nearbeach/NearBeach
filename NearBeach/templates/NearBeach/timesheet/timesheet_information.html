@@ -1,0 +1,31 @@
+<div class="card" onload="timesheet_setup()">
+    <div class="card-header">
+        <h2>Timesheet</h2>
+    </div>
+    <div class="card-body">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="id_timesheet_date">Date</label>
+                {{ new_timesheet_row.timesheet_date }}
+            </div>
+            <div class="form-group">
+                <label for="id_timesheet_start_time">Start Time</label>
+                {{ new_timesheet_row.timesheet_start_time }}
+            </div>
+            <div class="form-group">
+                <label for="id_stimesheet_end_time">End Time</label>
+                {{ new_timesheet_row.timesheet_end_time }}
+            </div>
+        </div>
+        <hr>
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <td>Date</td>
+                    <td>Start Time</td>
+                    <td>End Time</td>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>

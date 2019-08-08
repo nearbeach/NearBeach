@@ -2864,6 +2864,30 @@ class new_task_form(forms.Form):
     )
 
 
+class new_timesheet_row(forms.Form):
+    timesheet_date=forms.DateField(
+        required=True,
+        #auto_now_add=True,
+        initial=datetime.datetime.now(),
+        widget=forms.DateInput(attrs={
+            'class': 'form-control',
+        }),
+    )
+    timesheet_start_time=forms.TimeField(
+        required=True,
+
+        widget=forms.TimeInput(attrs={
+            'class': 'form-control',
+        }),
+    )
+    timesheet_end_time = forms.TimeField(
+        required=True,
+        widget=forms.TimeInput(attrs={
+            'class': 'form-control',
+        }),
+    )
+
+
 class opportunity_group_permission_form(forms.Form):
     def __init__(self,*args,**kwargs):
         #Extract the variables

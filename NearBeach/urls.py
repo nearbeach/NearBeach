@@ -229,6 +229,7 @@ re_path(r'^task_readonly/(?P<task_id>[0-9]+)', views.task_readonly, name='task_r
 re_path(r'^task_remove_customer/(?P<task_customer_id>[0-9]+)/',views.task_remove_customer,name='task_remove_customer'),
 re_path(r'^timeline_data/$', views.timeline_data, name='timeline_data'),
 re_path(r'^timeline/$', views.timeline, name='timeline'),
+re_path(r'^timesheet/(?P<location_id>[0-9]+)/(?P<destination>["requirement_item","project","task"]+)', views.timesheet_information,name="timesheet_information"),
 re_path(r'^to_do_complete/(?P<to_do_id>[0-9]+)/$', views.to_do_complete, name='to_do_complete'),
 re_path(r'^to_do/(?P<location_id>[0-9]+)/(?P<destination>["project","task","opportunity"]+)/$', views.to_do_list, name='to_do'),
 re_path(r'^user_information/(?P<user_id>[0-9]+)/$', views_administration.user_information, name='user_information'),
