@@ -4,6 +4,11 @@
 {% load static %}
     <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
     <script type="text/javascript" src="{% static 'NearBeach/javascript/document_upload.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/timesheet.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
+
+<body onload="on_page_load()">
     <form action="{% url 'requirement_item_information' requirement_item_id %}" enctype="multipart/form-data" class="requirement_item_information" method="POST">
         {% csrf_token %}
         <div class="card mt-4">
@@ -37,6 +42,17 @@
                         <button type="submit" class="btn btn-primary form-control col-md-6">Update and Return</button>
                         <a href="{% url 'requirement_information' requirement_item_results.requirement_id.requirement_id %}" class="btn btn-secondary form-control col-md-6">Cancel and return</a>
                     </div>
+            </div>
+        </div>
+    </form>
+
+    <form method="post" class="timesheet mt-4" id="timesheet">
+        <div class="card">
+            <div class="card-header">
+                <h2>Timesheet</h2>
+            </div>
+            <div class="card-body">
+                Loading...
             </div>
         </div>
     </form>
@@ -121,11 +137,38 @@
     </div>
 
     <script>
-        document.onload = function on_page_load() {
+        function on_page_load() {
+            load_timesheet('{{ requirement_item_id }}','requirement_item');
             load_document_tree_list({{ requirement_item_id }},'requirement_item');
-            load_requirement_links();
+        }
 
-        };
+
+        $("#timesheet").on('submit', function(e) {
+            e.preventDefault();
+
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                type: 'POST',
+                url: '/timesheet/{{ requirement_item_id }}/requirement_item/',
+                data: $(this).serialize(),
+                success: function(data) {
+                    $("#timesheet").html(data);
+
+                    //Reinitialise the timesheet
+                    timesheet_setup();
+                },
+                error: function() {
+                    alert("Sorry - updating the timesheet went wrong");
+                }
+            });
+        });
 
         function load_requirement_links() {
             /*
@@ -208,4 +251,5 @@
             })
         }
     </script>
+</body>
 {% endblock %}

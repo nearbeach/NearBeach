@@ -4315,6 +4315,27 @@ class task_readonly_form(ModelForm):
         }
 
 
+class timeline_form(forms.Form):
+    start_date = forms.DateField(
+        widget=forms.DateInput(attrs={
+            'onchange': 'render_gantt_chart()',
+            'class': 'form-control',
+        })
+    )
+    end_date = forms.DateField(
+        widget=forms.DateInput(attrs={
+            'onchange': 'render_gantt_chart()',
+            'class': 'form-control',
+        })
+    )
+    object_type = forms.ChoiceField(
+        choices=OBJECT_CHOICES,
+        widget=forms.Select(attrs={
+            'onchange': 'render_gantt_chart()',
+            'class': 'form-control',
+        })
+    )
+
 
 class to_do_form(ModelForm):
     to_do = forms.CharField(
