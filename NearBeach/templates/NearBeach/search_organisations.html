@@ -23,7 +23,7 @@
                             <td>Organisation Email</td>
                         </tr>
                     </thead>
-                    {% for organisation in organisations_results %}
+                    {% for organisation in organisation_results %}
                         <tr>
                             <td><a href="{% url 'organisation_information' organisation.organisation_id %}">{{ organisation.organisation_name }}</td>
                             <td>{{ organisation.organisation_website }}</td>

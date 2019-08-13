@@ -9106,39 +9106,19 @@ def search_organisation(request):
             search_organisation_results = form.cleaned_data['search_organisation']
 
     """
-	This is where the magic happens. I will remove all spaces and replace
-	them with a wild card. This will be used to search the concatenated
-	first and last name fields
+    Get all organisations. Then loop through the split row and filter by it each time
 	"""
-    search_organisation_like = '%'
+    organisation_results = organisation.objects.all()
 
     for split_row in search_organisation_results.split(' '):
-        search_organisation_like += split_row
-        search_organisation_like += '%'
+        organisation_results = organisation_results.filter(organisation_name__contains=split_row)
 
-    # Now search the organisation
-    # organisations_results = organisation.objects.filter(organisation_name__contains = search_organisation_like)
-
-    # Query the database for organisation
-    cursor = connection.cursor()
-    cursor.execute("""
-		SELECT DISTINCT
-		  organisation.organisation_id
-		, organisation.organisation_name
-		, organisation.organisation_website
-		, organisation.organisation_email
-		FROM organisation
-		WHERE 1=1
-		AND organisation.organisation_name LIKE %s
-		AND NOT organisation.is_deleted="FALSE"
-		""", [search_organisation_like])
-    organisations_results = namedtuplefetchall(cursor)
 
     # context
     c = {
         'search_organisation_form': search_organisation_form(
             initial={'search_organisation': search_organisation_results}),
-        'organisations_results': organisations_results,
+        'organisation_results': organisation_results,
         'organisation_permission': permission_results['organisation'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
