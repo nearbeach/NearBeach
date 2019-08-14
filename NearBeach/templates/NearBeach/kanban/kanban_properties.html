@@ -72,7 +72,7 @@
                     load_assigned_group_list();
                 },
                 error: function() {
-                    alert("Sorry, project assigned users did not save. Please try again.");
+                    new_error("Sorry, project assigned users did not save. Please try again.");
                 }
             })
         });
@@ -129,7 +129,7 @@
                     window.location = '/kanban_list/'
                 },
                 error: function () {
-                    alert("SORRY");
+                    new_error("SORRY");
                 }
             });
         });
@@ -237,7 +237,7 @@
                     load_assigned_group_add();
                     load_assigned_group_list();                },
                 error: function() {
-                    alert("Sorry, there was an issue deleting the Assigned Group")
+                    new_error("Sorry, there was an issue deleting the Assigned Group")
                 }
             });
         };

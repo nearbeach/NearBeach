@@ -63,7 +63,7 @@
                 $('#new_line_item').html(data);
             },
             error: function(){
-                alert("Sorry - line item failed for some reason.");
+                new_error("Sorry - line item failed for some reason.");
             }
         });
     }
@@ -78,7 +78,7 @@
                 $('#list_of_line_items').html(data);
             },
             error: function(){
-                alert("Sorry - list of line item failed for some reason.");
+                new_error("Sorry - list of line item failed for some reason.");
             }
         });
     }
@@ -109,7 +109,7 @@
                 reload_list_of_line_items();
             },
             error: function(){
-                alert("Sorry - list of line item failed for some reason.");
+                new_error("Sorry - list of line item failed for some reason.");
             }
         });
     }
@@ -135,7 +135,7 @@
                     $('#list_of_responsible_customers').html(data);
                 },
                 error: function() {
-                    alert("Sorry, could not add a new responsible customer. Please try again soon.")
+                    new_error("Sorry, could not add a new responsible customer. Please try again soon.")
                 }
             })
     }
@@ -349,7 +349,7 @@
                 load_assigned_user_add();
             },
             error: function() {
-                alert("Sorry, project assigned users did not save. Please try again.");
+                new_error("Sorry, project assigned users did not save. Please try again.");
             }
         })
     });
@@ -366,7 +366,7 @@
                 load_assigned_group_list();
             },
             error: function() {
-                alert("Sorry, project assigned users did not save. Please try again.");
+                new_error("Sorry, project assigned users did not save. Please try again.");
             }
         })
     });
@@ -382,7 +382,7 @@
                 reload_list_of_line_items();
             },
             error: function () {
-                alert("There has been an error submitting the new line item");
+                new_error("There has been an error submitting the new line item");
             }
         })
     });
@@ -401,7 +401,7 @@
                 $("#email_history").html(data);
             },
             error: function() {
-                alert("Sorry, the email history could not load");
+                new_error("Sorry, the email history could not load");
             }
         })
     };
@@ -441,7 +441,7 @@
                 reload_responsible_customer();
             },
             error: function() {
-                alert("Sorry, but could not remove resonsible customer");
+                new_error("Sorry, but could not remove resonsible customer");
             }
         })
     }
@@ -524,7 +524,7 @@
                 load_assigned_group_list();
             },
             error: function() {
-                alert("Sorry, there was an issue deleting the Assigned Group")
+                new_error("Sorry, there was an issue deleting the Assigned Group")
             }
         });
     };

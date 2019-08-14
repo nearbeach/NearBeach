@@ -215,7 +215,7 @@
                    $("#bug_search").html(data);
                },
                error: function() {
-                   alert("Sorry, submitting the bug search caused an error");
+                   new_error("Sorry, submitting the bug search caused an error");
                }
            })
         });
@@ -232,7 +232,7 @@
                     load_assigned_user_add();
                 },
                 error: function() {
-                    alert("Sorry, project assigned users did not save. Please try again.");
+                    new_error("Sorry, project assigned users did not save. Please try again.");
                 }
             })
         });
@@ -249,7 +249,7 @@
                     load_assigned_group_list();
                 },
                 error: function() {
-                    alert("Sorry, project assigned users did not save. Please try again.");
+                    new_error("Sorry, project assigned users did not save. Please try again.");
                 }
             })
         });
@@ -274,7 +274,7 @@
                    $("#tag_results").html(data);
                },
                error: function() {
-                   alert("Sorry, could not save tag.");
+                   new_error("Sorry, could not save tag.");
                },
            })
         });
@@ -290,7 +290,7 @@
                     $("#bug_list").html(data);
                 },
                 error: function() {
-                    alert("There was an issue loading the bug list");
+                    new_error("There was an issue loading the bug list");
                 }
             });
         }
@@ -306,7 +306,7 @@
                     $("#bug_search").html(data);
                 },
                 error: function() {
-                    alert("There was an issues loading the bug search");
+                    new_error("There was an issues loading the bug search");
                 }
             })
 
@@ -393,7 +393,7 @@
                     load_assigned_group_add();
                 },
                 error: function() {
-                    alert("Sorry, there was an issue deleting the Assigned Group")
+                    new_error("Sorry, there was an issue deleting the Assigned Group")
                 }
             });
         };
@@ -437,7 +437,7 @@
                     $("#link_requirements_modal_body").html(data);
                 },
                 error: function() {
-                    alert("Sorry - the requirement links did not load correctly");
+                    new_error("Sorry - the requirement links did not load correctly");
                 }
             })
         }
@@ -488,7 +488,7 @@
                     $("#link_requirements_modal").modal("hide");
                 },
                 error: function() {
-                    alert("Sorry - there was an issue connecting the link.");
+                    new_error("Sorry - there was an issue connecting the link.");
                 }
             })
         }
@@ -505,7 +505,7 @@
                     $("#tag_results").html(data);
                 },
                 error: function() {
-                    alert("Sorry - tag results did not load");
+                    new_error("Sorry - tag results did not load");
                 }
             });
         }
@@ -528,7 +528,7 @@
                     load_tag_results();
                 },
                 error: function() {
-                    alert("Sorry - did not delete tag correctly");
+                    new_error("Sorry - did not delete tag correctly");
                 }
             });
         }
@@ -553,7 +553,7 @@
                     load_requirement_link_list();
                 },
                 error: function() {
-                    alert("Sorry - did not delete tag correctly");
+                    new_error("Sorry - did not delete tag correctly");
                 }
             });
         }
@@ -578,7 +578,7 @@
                     load_requirement_link_list();
                 },
                 error: function() {
-                    alert("Sorry - did not delete tag correctly");
+                    new_error("Sorry - did not delete tag correctly");
                 }
             });
         }
@@ -593,7 +593,7 @@
                     $("#requirement_link_body").html(data);
                 },
                 error: function() {
-                    alert("Sorry - there was an error");
+                    new_error("Sorry - there was an error");
                 }
             })
         }

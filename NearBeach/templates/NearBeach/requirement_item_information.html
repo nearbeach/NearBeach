@@ -165,7 +165,7 @@
                     timesheet_setup();
                 },
                 error: function() {
-                    alert("Sorry - updating the timesheet went wrong");
+                    new_error("Sorry - updating the timesheet went wrong");
                 }
             });
         });
@@ -194,7 +194,7 @@
                     $("#link_requirement_item_modal_body").html(data);
                 },
                 error: function() {
-                    alert("Sorry - the requirement links did not load correctly");
+                    new_error("Sorry - the requirement links did not load correctly");
                 }
             })
         }
@@ -246,7 +246,7 @@
                     $("#link_requirement_item_modal").modal("hide");
                 },
                 error: function () {
-                    alert("Sorry - there was an issue connecting the link.");
+                    new_error("Sorry - there was an issue connecting the link.");
                 }
             })
         }

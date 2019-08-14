@@ -445,7 +445,7 @@
                $("#bug_search").html(data);
            },
            error: function() {
-               alert("Sorry, submitting the bug search caused an error");
+               new_error("Sorry, submitting the bug search caused an error");
            }
        })
     });
@@ -462,7 +462,7 @@
                 load_assigned_user_add();
             },
             error: function() {
-                alert("Sorry, project assigned users did not save. Please try again.");
+                new_error("Sorry, project assigned users did not save. Please try again.");
             }
         })
     });
@@ -479,7 +479,7 @@
                 load_project_group_list();
             },
             error: function() {
-                alert("Sorry, project assigned users did not save. Please try again.");
+                new_error("Sorry, project assigned users did not save. Please try again.");
             }
         })
     });
@@ -506,7 +506,7 @@
                 timesheet_setup();
             },
             error: function() {
-                alert("Sorry - updating the timesheet went wrong");
+                new_error("Sorry - updating the timesheet went wrong");
             }
         });
     });
@@ -522,7 +522,7 @@
                 load_costs();
             },
             error: function() {
-                alert("Sorry, project costs did not save. Please try again.");
+                new_error("Sorry, project costs did not save. Please try again.");
             }
         })
     });
@@ -538,7 +538,7 @@
                 load_project_customers();
             },
             error: function() {
-                alert("Sorry, project customers did not save. Please try again.");
+                new_error("Sorry, project customers did not save. Please try again.");
             }
         })
     });
@@ -573,7 +573,7 @@
                     document.location = "{% url 'resolve_project' project_id %}"
                 }            },
             error: function() {
-                alert("Sorry, project information did not save. Please try again.");
+                new_error("Sorry, project information did not save. Please try again.");
             }
         })
     });
@@ -593,7 +593,7 @@
 
             },
             error: function() {
-                alert("Sorry, project history did not save. Please try again.");
+                new_error("Sorry, project history did not save. Please try again.");
             }
         })
     });
@@ -619,7 +619,7 @@
                $("#tag_results").html(data);
            },
            error: function() {
-               alert("Sorry, could not save tag.");
+               new_error("Sorry, could not save tag.");
            },
        })
     });
@@ -635,7 +635,7 @@
                 $("#to_do").html(data);
             },
             error: function() {
-                alert("Submitting the TO DO had an issue!");
+                new_error("Submitting the TO DO had an issue!");
             }
         })
     });
@@ -667,7 +667,7 @@
                 load_costs();
             },
             error: function() {
-                alert("Sorry, could not delete costs");
+                new_error("Sorry, could not delete costs");
             }
         });
     }
@@ -696,7 +696,7 @@
                 load_to_do();
             },
             error: function() {
-                alert("Can not complete To do :(");
+                new_error("Can not complete To do :(");
                 $("#to_do_"+to_do_id).html('<a href="javascript:void(0)" onclick="complete_to_do(' + to_do_id + '">Complete</a>')
             }
         });
@@ -721,7 +721,7 @@
                 load_project_customers();
             },
             error: function() {
-                alert("Sorry - there is something wrong with removing this customer");
+                new_error("Sorry - there is something wrong with removing this customer");
             }
         });
     }
@@ -736,7 +736,7 @@
                 $("#bug_list").html(data);
             },
             error: function() {
-                alert("There was an issue loading the bug list");
+                new_error("There was an issue loading the bug list");
             }
         })
     }
@@ -752,7 +752,7 @@
                 $("#bug_search").html(data);
             },
             error: function() {
-                alert("There was an issues loading the bug search");
+                new_error("There was an issues loading the bug search");
             }
         })
 
@@ -768,7 +768,7 @@
                 $("#email_history").html(data);
             },
             error: function() {
-                alert("Sorry, the email history could not load");
+                new_error("Sorry, the email history could not load");
             }
         })
     };
@@ -878,7 +878,7 @@
                 $('#to_do').html(data)
             },
             error: function() {
-                alert("Sorry, could not load the to do list");
+                new_error("Sorry, could not load the to do list");
             }
         })
     }
@@ -903,7 +903,7 @@
                 load_project_group_add();
             },
             error: function() {
-                alert("Sorry, there was an issue deleting the Assigned Group")
+                new_error("Sorry, there was an issue deleting the Assigned Group")
             }
         });
     };
@@ -950,7 +950,7 @@
                 $("#tag_results").html(data);
             },
             error: function() {
-                alert("Sorry - tag results did not load");
+                new_error("Sorry - tag results did not load");
             }
         });
     }
@@ -973,7 +973,7 @@
                 load_tag_results();
             },
             error: function() {
-                alert("Sorry - did not delete tag correctly");
+                new_error("Sorry - did not delete tag correctly");
             }
         });
     }

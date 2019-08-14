@@ -391,7 +391,7 @@
                         window.location.href = "/";
                     },
                     error: function() {
-                        alert("Sorry - but the organisation could not be deleted");
+                        new_error("Sorry - but the organisation could not be deleted");
                     }
                 });
             }
@@ -423,7 +423,7 @@
                 });
             },
             error: function () {
-                alert("Sorry, but adding that campus failed.")
+                new_error("Sorry, but adding that campus failed.")
             }
         })
     });
@@ -461,7 +461,7 @@
                 load_contact_history();
             },
             error: function() {
-                alert("Sorry, project history did not save. Please try again.");
+                new_error("Sorry, project history did not save. Please try again.");
             }
         })
     });
@@ -551,7 +551,7 @@
                 $("#email_history").html(data);
             },
             error: function() {
-                alert("Sorry, the email history could not load");
+                new_error("Sorry, the email history could not load");
             }
         })
     };

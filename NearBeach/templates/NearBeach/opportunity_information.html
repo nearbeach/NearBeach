@@ -311,7 +311,7 @@
                     load_assigned_user_add();
                 },
                 error: function() {
-                    alert("Sorry, project assigned users did not save. Please try again.");
+                    new_error("Sorry, project assigned users did not save. Please try again.");
                 }
             })
         });
@@ -328,7 +328,7 @@
                     load_requirement_group_add();
                 },
                 error: function() {
-                    alert("Sorry, project assigned users did not save. Please try again.");
+                    new_error("Sorry, project assigned users did not save. Please try again.");
                 }
             })
         });
@@ -343,7 +343,7 @@
                    $("#to_do").html(data);
                },
                error: function() {
-                   alert("Sorry, something went wrong with the TO DO");
+                   new_error("Sorry, something went wrong with the TO DO");
                }
            })
         });
@@ -374,7 +374,7 @@
                     $("#save_state").html("Saved last on " + current_time);
                 },
                 error: function() {
-                    alert("Sorry, project information did not save. Please try again.");
+                    new_error("Sorry, project information did not save. Please try again.");
                 }
             })
         });
@@ -400,7 +400,7 @@
                    $("#tag_results").html(data);
                },
                error: function() {
-                   alert("Sorry, could not save tag.");
+                   new_error("Sorry, could not save tag.");
                },
            })
         });
@@ -424,7 +424,7 @@
                     load_to_do();
                 },
                 error: function() {
-                    alert("Can not complete To do :(");
+                    new_error("Can not complete To do :(");
                 }
             });
         }
@@ -493,7 +493,7 @@
                     $("#email_history").html(data);
                 },
                 error: function() {
-                    alert("Sorry, the email history could not load");
+                    new_error("Sorry, the email history could not load");
                 }
             })
         }
@@ -508,7 +508,7 @@
                     $("#to_do").html(data);
                 },
                 error: function() {
-                    alert("Sorry, could not load the TO DO list");
+                    new_error("Sorry, could not load the TO DO list");
                 },
             });
         }
@@ -546,7 +546,7 @@
                     load_assigned_group_add();
                     load_assigned_group_list();                },
                 error: function() {
-                    alert("Sorry, there was an issue deleting the Assigned Group")
+                    new_error("Sorry, there was an issue deleting the Assigned Group")
                 }
             });
         };
@@ -608,7 +608,7 @@
                     $("#tag_results").html(data);
                 },
                 error: function() {
-                    alert("Sorry - tag results did not load");
+                    new_error("Sorry - tag results did not load");
                 }
             });
         }
@@ -633,7 +633,7 @@
                     load_tag_results();
                 },
                 error: function() {
-                    alert("Sorry - did not delete tag correctly");
+                    new_error("Sorry - did not delete tag correctly");
                 }
             });
         }
@@ -657,7 +657,7 @@
                     load_opportunity_connections();
                 },
                 error: function() {
-                    alert("Sorry - did not delete connection correctly");
+                    new_error("Sorry - did not delete connection correctly");
                 }
             });
         }
@@ -672,7 +672,7 @@
                     $("#id_opportunity_connections").html(data);
                 },
                 error: function() {
-                    alert("Sorry the page opportunity connection could not load correctly");
+                    new_error("Sorry the page opportunity connection could not load correctly");
                 }
             });
         }
@@ -708,7 +708,7 @@
                         $("#save_state").html("Saved last on " + current_time);
                     },
                     error: function() {
-                        alert("Sorry, project information did not save. Please try again.");
+                        new_error("Sorry, project information did not save. Please try again.");
                     },
                     async: false,
                 });
