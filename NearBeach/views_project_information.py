@@ -79,9 +79,11 @@ def information_project_history(request, project_id):
     project_groups_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         project_id=project.objects.get(project_id=project_id),
-    ).values('group_id_id')
+    ).values('group_id')
 
-    permission_results = return_user_permission_level(request, project_groups_results,['project','project_history'])
+    print(project_groups_results)
+
+    permission_results = return_user_permission_level(request, project_groups_results, ['project', 'project_history'])
 
     if request.method == "POST":
         form = information_project_history_form(request.POST, request.FILES)

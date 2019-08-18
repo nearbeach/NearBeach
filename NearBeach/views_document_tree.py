@@ -78,6 +78,10 @@ def document_tree_folder(request, location_id, destination, folder_id=''):
                 folder_submit.customer_id=customer.objects.get(customer_id=location_id)
             elif destination == "organisation":
                 folder_submit.organisation_id=organisation.objects.get(organisation_id=location_id)
+            elif destination == "requirement":
+                folder_submit.requirement = requirement.objects.get(requirement_id=location_id)
+            elif destination == "requirement_item":
+                folder_submit.requirement_item = requirement_item.objects.get(requirement_item_id=location_id)
             elif destination == "request_for_change":
                 folder_submit.request_for_change=request_for_change.objects.get(rfc_id=location_id)
 
@@ -144,6 +148,15 @@ def document_tree_list(request, location_id, destination, folder_id=''):
         document_permission_results = document_permission.objects.filter(
             is_deleted="FALSE",
             requirement_id=location_id,
+        )
+    elif destination == "requirement_item":
+        folder_results = folder.objects.filter(
+            is_deleted="FALSE",
+            requirement_item = location_id,
+        )
+        document_permission_results = document_permission.objects.filter(
+            is_deleted="FALSE",
+            requirement_item = location_id,
         )
     elif destination == "request_for_change":
         folder_results = folder.objects.filter(
@@ -225,7 +238,9 @@ def document_tree_upload(request, location_id, destination, folder_id):
             elif destination == "organisation":
                 document_permissions_submit.organisation_id = organisation.objects.get(organisation_id=location_id)
             elif destination == "requirement":
-                document_permissions_submit.requirement_id = requirement.objects.get(requirement_id=location_id)
+                document_permissions_submit.requirement = requirement.objects.get(requirement_id=location_id)
+            elif destination == "requirement_item":
+                document_permissions_submit.requirement_item = requirement_item.objects.get(requirement_item_id=location_id)
             elif destination == "request_for_change":
                 document_permissions_submit.request_for_change = request_for_change.objects.get(rfc_id=location_id)
 
@@ -281,7 +296,11 @@ def document_tree_url(request,location_id,destination,folder_id=''):
             elif destination == "organisation":
                 document_permissions_submit.organisation_id = organisation.objects.get(organisation_id=location_id)
             elif destination == "requirement":
-                document_permissions_submit.requirement_id = requirement.objects.get(requirement_id=location_id)
+                document_permissions_submit.requirement = requirement.objects.get(requirement_id=location_id)
+            elif destination == "requirement_item":
+                document_permissions_submit.requirement_item = requirement_item.objects.get(
+                    requirement_item_id=location_id
+                )
             elif destination == "request_for_change":
                 document_permissions_submit.request_for_change = request_for_change.objects.get(rfc_id=location_id)
             # Must apply other objects

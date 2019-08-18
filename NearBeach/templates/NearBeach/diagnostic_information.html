@@ -82,6 +82,14 @@
                         </td>
                     </tr>
                 {% endif %}
+                <tr id="weasy_print">
+                    <td>Weasy Print<br/>Render PDF</td>
+                    <td>
+                        <div id="render_pdf">
+                            <button class="btn btn-primary" onclick="download_pdf()">Click to download PDF</button>
+                        </div>
+                    </td>
+                </tr>
                 <tr id="test_document_upload">
                     <td>Document Uploading/Downloading</td>
                     <td>
@@ -122,6 +130,81 @@
         test_email();
         test_database();
         test_location_services();
+    }
+
+    function download_pdf() {
+        //Download the PDF
+        $.ajax({
+            url: '/diagnostic_render_pdf/',
+            data: {},
+            dataType: 'HTML',
+            type: 'GET',
+            success: function(data) {
+                /*
+                Issue
+                ~~~~~
+                AJAX can not download a file - this is due to security issues. We have the AJAX here to pick up ANY
+                issues with the rendering of the document. From here we just update the values and go to the PDF location.
+                */
+                var render_pdf = document.getElementById("render_pdf");
+                render_pdf.innerHTML = `
+                    <label>Did the PDF Download correctly?</label>
+                    <div class="form-row">
+                        <button class="btn btn-primary" onclick="download_pdf_yes()">Yes</button>
+                        <button class="btn btn-warning" onclick="download_pdf_no()">No</button>
+                    </div>
+                `;
+
+                //Now send the user the pdf
+                location.href = '/diagnostic_render_pdf/';
+            },
+            error: function (jqXHR, exception) {
+                /*
+                Email failed. The reason will be written here.
+                */
+                var error_message = '';
+
+                if (jqXHR.status === 0) {
+                    error_message = 'No connection, please verify that you have a network connection.';
+                } else if (jqXHR.status == 404) {
+                    error_message = '404 returned - please check to make sure that the connection to the email server is existing';
+                } else if (jqXHR.status == 500) {
+                    error_message = 'Internal Server Error [500].';
+                } else if (exception === 'parsererror') {
+                    error_message = 'Requested JSON parse failed.';
+                } else if (exception === 'timeout') {
+                    error_message = 'Time out error.';
+                } else if (exception === 'abort') {
+                    error_message = 'Ajax request aborted.';
+                } else {
+                    error_message = 'There was a database error\n~~~~~~~~~~~' + jqXHR.responseText;
+                }
+
+                var render_pdf = document.getElementById("render_pdf");
+
+                render_pdf.innerHTML = `
+                    <div class="alert alert-warning">
+                        Rendering PDF did not work. Please get your system administration to follow the instructions -
+                        <a href="https://nearbeach.atlassian.net/wiki/spaces/HTIN/pages/239534081/Trouble+Shooting+-+Weasy+Print" target="_blank">Fix Weasy Print</a>
+                    </div>
+                    <div class="alert alert-warning">
+                        ${error_message}
+                    </div>
+                `
+            },
+        });
+    }
+
+    function download_pdf_no() {
+        $('#weasy_print td')[1].innerHTML = `<p>Test Failed. Please see instructions - <a href="" target="_blank"></a>`;
+        $("#weasy_print").css("background-color", "red");
+
+    }
+
+    function download_pdf_yes() {
+        $('#weasy_print td')[1].innerHTML = `<p>Test done successfully</p>`;
+        $("#weasy_print").css("background-color", "lightgreen");
+
     }
 
 
@@ -220,7 +303,7 @@
                 }
                 $('#test_database td')[1].innerHTML = error_message;
                 $("#test_database").css("background-color", "red");
-                },
+            },
         });
     }
 

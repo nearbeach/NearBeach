@@ -301,7 +301,7 @@
                     load_assigned_group_list();
                 },
                 error: function() {
-                    alert("Sorry, project assigned users did not save. Please try again.");
+                    new_error("Sorry, project assigned users did not save. Please try again.");
                 }
             })
         });
@@ -328,7 +328,7 @@
                     load_assigned_group_list();
                 },
                 error: function() {
-                    alert("Sorry, there was an issue deleting the Assigned Group")
+                    new_error("Sorry, there was an issue deleting the Assigned Group")
                 }
             });
         }
@@ -456,7 +456,7 @@
                     $("#request_for_change_information").submit();
                 },
                 error: function() {
-                    alert("Sorry - submitting RFC for approval failed");
+                    new_error("Sorry - submitting RFC for approval failed");
                 }
             })
         }
@@ -480,7 +480,7 @@
                     $("#request_for_change_information").submit();
                 },
                 error: function() {
-                    alert("Sorry - submitting RFC for approval failed");
+                    new_error("Sorry - submitting RFC for approval failed");
                 }
             })
         }

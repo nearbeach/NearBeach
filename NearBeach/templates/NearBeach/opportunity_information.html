@@ -67,8 +67,11 @@
                 </div>
 
 
-                <div class="form-group">
-                    <input type="submit" name="submit_contact" value="Update" class="btn btn-primary col-md-12"/>
+                <div class="form-row">
+                    <input type="submit" name="submit_contact" value="Update" class="btn btn-primary col-md-6"/>
+                    <button type="button" class="btn btn-warning col-md-6" data-toggle="modal" data-target="#close_opportunity_modal">
+                        Close Opportunity
+                    </button>
                 </div>
             </form>
 
@@ -265,6 +268,31 @@
         </div>
     {% endif %}
 
+    <!--Modal -->
+    <div class="modal fade" id="close_opportunity_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Close Opportunity</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Please choose a close type:</p>
+                    <div class="form-group">
+                        <label for="id_opportunity_close">Close Type</label>
+                        {{ opportunity_close_form.opportunity_close }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="close_opportunity()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
     <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
     <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
@@ -283,7 +311,7 @@
                     load_assigned_user_add();
                 },
                 error: function() {
-                    alert("Sorry, project assigned users did not save. Please try again.");
+                    new_error("Sorry, project assigned users did not save. Please try again.");
                 }
             })
         });
@@ -300,7 +328,7 @@
                     load_requirement_group_add();
                 },
                 error: function() {
-                    alert("Sorry, project assigned users did not save. Please try again.");
+                    new_error("Sorry, project assigned users did not save. Please try again.");
                 }
             })
         });
@@ -315,9 +343,16 @@
                    $("#to_do").html(data);
                },
                error: function() {
-                   alert("Sorry, something went wrong with the TO DO");
+                   new_error("Sorry, something went wrong with the TO DO");
                }
            })
+        });
+
+        $("opportunity_close_form").on('submit', function(e) {
+            //Prevent the default :)
+            e.preventDefault();
+
+            close_opportunity();
         });
 
 
@@ -339,7 +374,7 @@
                     $("#save_state").html("Saved last on " + current_time);
                 },
                 error: function() {
-                    alert("Sorry, project information did not save. Please try again.");
+                    new_error("Sorry, project information did not save. Please try again.");
                 }
             })
         });
@@ -365,7 +400,7 @@
                    $("#tag_results").html(data);
                },
                error: function() {
-                   alert("Sorry, could not save tag.");
+                   new_error("Sorry, could not save tag.");
                },
            })
         });
@@ -389,7 +424,7 @@
                     load_to_do();
                 },
                 error: function() {
-                    alert("Can not complete To do :(");
+                    new_error("Can not complete To do :(");
                 }
             });
         }
@@ -458,10 +493,10 @@
                     $("#email_history").html(data);
                 },
                 error: function() {
-                    alert("Sorry, the email history could not load");
+                    new_error("Sorry, the email history could not load");
                 }
             })
-        };
+        }
 
         function load_to_do() {
             $.ajax({
@@ -473,94 +508,94 @@
                     $("#to_do").html(data);
                 },
                 error: function() {
-                    alert("Sorry, could not load the TO DO list");
+                    new_error("Sorry, could not load the TO DO list");
                 },
             });
         }
 
-            function load_assigned_group_add() {
-                $.ajax({
-                    url: '/assigned_group_add/{{ opportunity_id }}/opportunity/',
-                    data: {},
-                    dataType: 'HTML',
-                    type: 'GET',
-                    success: function(data) {
-                        $('#assigned_groups').html(data);
-                    },
-                    error: function() {
-                        $('#assigned_groups').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
-                    }
-                });
-            };
+        function load_assigned_group_add() {
+            $.ajax({
+                url: '/assigned_group_add/{{ opportunity_id }}/opportunity/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $('#assigned_groups').html(data);
+                },
+                error: function() {
+                    $('#assigned_groups').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
+                }
+            });
+        };
 
-            function delete_group_item(group_item) {
-                $.ajaxSetup({
-                    beforeSend: function (xhr, settings) {
-                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                        }
+        function delete_group_item(group_item) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
                     }
-                });
+                }
+            });
 
-                $.ajax({
-                    url: '/assigned_group_delete/' + group_item + '/',
-                    data: {},
-                    dataType: 'HTML',
-                    type: 'POST',
-                    success: function(data) {
-                        load_assigned_group_add();
-                        load_assigned_group_list();                },
-                    error: function() {
-                        alert("Sorry, there was an issue deleting the Assigned Group")
-                    }
-                });
-            };
+            $.ajax({
+                url: '/assigned_group_delete/' + group_item + '/',
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    load_assigned_group_add();
+                    load_assigned_group_list();                },
+                error: function() {
+                    new_error("Sorry, there was an issue deleting the Assigned Group")
+                }
+            });
+        };
 
 
-            function load_assigned_group_list() {
-                $.ajax({
-                    url: '/assigned_group_list/{{ opportunity_id }}/opportunity/',
-                    data: {},
-                    dataType: 'HTML',
-                    type: 'GET',
-                    success: function(data) {
-                        $('#assigned_group_list').html(data);
-                    },
-                    error: function() {
-                        $('#assigned_group_list').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
-                    }
-                });
-            };
+        function load_assigned_group_list() {
+            $.ajax({
+                url: '/assigned_group_list/{{ opportunity_id }}/opportunity/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $('#assigned_group_list').html(data);
+                },
+                error: function() {
+                    $('#assigned_group_list').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
+                }
+            });
+        };
 
-            function load_assigned_user_add() {
-                $.ajax({
-                    url: '/assigned_user_add/{{ opportunity_id }}/opportunity/',
-                    data:  {},
-                    dataType: 'HTML',
-                    type: 'GET',
-                    success: function(data) {
-                        $("#assigned_users").html(data);
-                    },
-                    error: function() {
-                        $("#assigned_users").html("<h2>Assigned Users</h2>Sorry, users encounted an error and did not load");
-                    }
-                })
-            };
+        function load_assigned_user_add() {
+            $.ajax({
+                url: '/assigned_user_add/{{ opportunity_id }}/opportunity/',
+                data:  {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $("#assigned_users").html(data);
+                },
+                error: function() {
+                    $("#assigned_users").html("<h2>Assigned Users</h2>Sorry, users encounted an error and did not load");
+                }
+            })
+        };
 
-            function load_assigned_user_list() {
-                $.ajax({
-                    url: '/assigned_user_list/{{ opportunity_id }}/opportunity/',
-                    data: {},
-                    dataType: 'HTML',
-                    type: 'GET',
-                    success: function(data) {
-                        $("#assigned_user_list").html(data);
-                    },
-                    error: function(data) {
-                        $("#assigned_user_list").html("<p>User list failed to load</p>")
-                    }
-                })
-            }
+        function load_assigned_user_list() {
+            $.ajax({
+                url: '/assigned_user_list/{{ opportunity_id }}/opportunity/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $("#assigned_user_list").html(data);
+                },
+                error: function(data) {
+                    $("#assigned_user_list").html("<p>User list failed to load</p>")
+                }
+            })
+        }
 
 
         function load_tag_results() {
@@ -573,7 +608,7 @@
                     $("#tag_results").html(data);
                 },
                 error: function() {
-                    alert("Sorry - tag results did not load");
+                    new_error("Sorry - tag results did not load");
                 }
             });
         }
@@ -598,7 +633,7 @@
                     load_tag_results();
                 },
                 error: function() {
-                    alert("Sorry - did not delete tag correctly");
+                    new_error("Sorry - did not delete tag correctly");
                 }
             });
         }
@@ -622,7 +657,7 @@
                     load_opportunity_connections();
                 },
                 error: function() {
-                    alert("Sorry - did not delete connection correctly");
+                    new_error("Sorry - did not delete connection correctly");
                 }
             });
         }
@@ -637,9 +672,50 @@
                     $("#id_opportunity_connections").html(data);
                 },
                 error: function() {
-                    alert("Sorry the page opportunity connection could not load correctly");
+                    new_error("Sorry the page opportunity connection could not load correctly");
                 }
             });
+        }
+
+        function close_opportunity() {
+            var opportunity_close = document.getElementById("id_opportunity_close");
+
+            if (opportunity_close.value == "") {
+                //The user has not picked anything.
+                return
+            } else {
+                //The user has picked something. Chage the id_opportunity_status_id == opportunity_close
+                //Then save
+                var opportunity_stage = document.getElementById("id_opportunity_stage_id");
+                opportunity_stage.value = opportunity_close.value;
+
+                //Save all data
+                $.ajaxSetup({
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/opportunity_information/{{ opportunity_id }}/',
+                    data: $(this).serialize(),
+                    success: function() {
+                        //State that the function has saved
+                        var current_time = Date();
+                        $("#save_state").html("Saved last on " + current_time);
+                    },
+                    error: function() {
+                        new_error("Sorry, project information did not save. Please try again.");
+                    },
+                    async: false,
+                });
+
+                //Open up read only version of opportunity
+                location.href = "/opportunity_readonly/{{ opportunity_id }}";
+            }
         }
 
     </script>

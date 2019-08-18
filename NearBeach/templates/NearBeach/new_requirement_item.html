@@ -30,6 +30,19 @@
                         {{ new_requirement_item_form.requirement_item_status }}
                     </div>
                 </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="id_requirement_item_story_point">Story Point</label>
+                        {{ new_requirement_item_form.requirement_item_story_point }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="story_point_text"> </label>
+                        <div id="story_point_text" class="alert alert-success">
+                            You are approximating the task will take between {{ nearbeach_option.story_point_hour_min }}
+                            to {{ nearbeach_option.story_point_hour_max }} hours.
+                        </div>
+                    </div>
+                </div>
                 <div class="form-row">
                     <button type="submit" class="btn btn-primary form-control col-md-6">Submit Requirement Item</button>
                     <a href="{% url 'requirement_information' requirement_id %}" class="btn btn-secondary form-control col-md-6">Cancel</a>
@@ -37,4 +50,15 @@
         </div>
     </div>
 </form>
+    <script>
+        function update_story_point() {
+            var story_point = document.getElementById("id_requirement_item_story_point").valueAsNumber,
+                min = story_point * {{ nearbeach_option.story_point_hour_min }},
+                max = story_point * {{ nearbeach_option.story_point_hour_max }},
+                text = `You are approximating the task will take between ${min} to ${max} hours.`;
+
+            //Update story point
+            document.getElementById("story_point_text").innerHTML = text;
+        }
+    </script>
 {% endblock %}

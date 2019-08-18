@@ -1,0 +1,49 @@
+<div class="card" onload="timesheet_setup()">
+    <div class="card-header">
+        <h2>Timesheet</h2>
+    </div>
+    <div class="card-body">
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="id_timesheet_date">Date</label>
+                {{ new_timesheet_row.timesheet_date }}
+            </div>
+            <div class="form-group col-md-4">
+                <label for="id_timesheet_start_time">Start Time</label>
+                {{ new_timesheet_row.timesheet_start_time }}
+            </div>
+            <div class="form-group col-md-4">
+                <label for="id_stimesheet_end_time">End Time</label>
+                {{ new_timesheet_row.timesheet_end_time }}
+            </div>
+        </div>
+        <div class="form-row">
+            <label for="id_timesheet_description">Description (optional)</label>
+            {{ new_timesheet_row.timesheet_description }}
+        </div>
+        <div class="form-row mt-2">
+            <input type="submit" value="Add Time" class="form-control btn btn-primary">
+        </div>
+        <hr>
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <td class="col-1">Date</td>
+                    <td class="col-1">User</td>
+                    <td class="col-1">Start Time</td>
+                    <td class="col-1">End Time</td>
+                    <td class="col-8">Description</td>
+                </tr>
+            </thead>
+            {% for row in timesheet_results %}
+                <tr>
+                    <td>{{ row.timesheet_date }}</td>
+                    <td>{{ row.change_user }}</td>
+                    <td>{{ row.timesheet_start_time }}</td>
+                    <td>{{ row.timesheet_end_time }}</td>
+                    <td>{{ row.timesheet_description }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>

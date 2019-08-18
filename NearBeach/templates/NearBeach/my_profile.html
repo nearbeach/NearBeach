@@ -130,7 +130,7 @@
                     $("#user_weblink").html(data);
                 },
                 error: function () {
-                    alert("Sorry, something went wrong submitting user weblink");
+                    new_error("Sorry, something went wrong submitting user weblink");
                 }
             })
         })
@@ -146,7 +146,7 @@
                     $("#user_want").html(data);
                 },
                 error: function() {
-                    alert("Sorry, submitting the user want caused an error");
+                    new_error("Sorry, submitting the user want caused an error");
                 }
             })
         });
@@ -182,7 +182,7 @@
                     $("#user_weblink").html(data);
                 },
                 error: function () {
-                    alert("Sorry, the user weblinks did not load correctly");
+                    new_error("Sorry, the user weblinks did not load correctly");
                 }
             })
         }
@@ -197,7 +197,7 @@
                     $("#user_want").html(data);
                 },
                 error: function() {
-                    alert("Sorry, the User Wants did not load correctly");
+                    new_error("Sorry, the User Wants did not load correctly");
                 }
             })
         }
@@ -216,7 +216,7 @@
                     $("#save_state").show();
                 },
                 error: function () {
-                    alert("Sorry, but saving this has not worked");
+                    new_error("Sorry, but saving this has not worked");
                 }
             });
         }
@@ -239,7 +239,7 @@
                     load_user_want();
                 },
                 error: function () {
-                    alert("Sorry, removing the user want failed")
+                    new_error("Sorry, removing the user want failed")
                 }
             })
         }
@@ -262,7 +262,7 @@
                     load_user_weblink();
                 },
                 error: function () {
-                    alert("Sorry, removing the user weblink failed")
+                    new_error("Sorry, removing the user weblink failed")
                 }
             })
         }

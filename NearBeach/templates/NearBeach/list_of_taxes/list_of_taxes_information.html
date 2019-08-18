@@ -91,7 +91,7 @@
                         load_list_of_taxes_list();
                     },
                     error: function() {
-                        alert("Sorry, document tree create folder did not save. Please try again.");
+                        new_error("Sorry, document tree create folder did not save. Please try again.");
                     }
                 })
             }
@@ -132,7 +132,7 @@
                         load_list_of_taxes_list();
                     },
                     error: function() {
-                        alert("Sorry, document tree create folder did not save. Please try again.");
+                        new_error("Sorry, document tree create folder did not save. Please try again.");
                     }
                 });
             }
@@ -154,7 +154,7 @@
                         load_list_of_taxes_list()
                     },
                     error: function() {
-                        alert("Sorry, but we were not able to deactivate the tax for you.")
+                        new_error("Sorry, but we were not able to deactivate the tax for you.")
                     }
                 });
             }
@@ -173,7 +173,7 @@
                         $("#new_tax").html("");
                     },
                     error: function() {
-                        alert("Sorry, but we could not get this function's data")
+                        new_error("Sorry, but we could not get this function's data")
                     }
                 });
             }
@@ -187,7 +187,7 @@
                         $("#list_of_taxes_list").html(e);
                     },
                     error: function() {
-                        alert("Sorry, but we could not get list of taxes")
+                        new_error("Sorry, but we could not get list of taxes")
                     }
                 });
             }
@@ -207,7 +207,7 @@
                         $("#edit_tax").html("");
                     },
                     error: function() {
-                        alert("Sorry, but we could not get the new tax")
+                        new_error("Sorry, but we could not get the new tax")
                     }
                 });
             }

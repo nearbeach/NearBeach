@@ -184,7 +184,7 @@
                     }
                 },
                 error: function () {
-                    alert("Sorry, saving the card has occurred an error!");
+                    new_error("Sorry, saving the card has occurred an error!");
                 }
             });
         }
@@ -203,7 +203,7 @@
                     $("#new_card_content").html(data);
                 },
                 error: function() {
-                    alert("We are sorry, something went wrong with getting the new card ready.");
+                    new_error("We are sorry, something went wrong with getting the new card ready.");
                 }
             })
         }
@@ -261,7 +261,7 @@
                     on_page_load()
                 },
                 error: function() {
-                    alert("Sorry, submitting the new card did not work for some reason.")
+                    new_error("Sorry, submitting the new card did not work for some reason.")
                 }
             })
         }
@@ -302,7 +302,7 @@
                         $("#edit_card_content").html(data);
                     },
                     error: function() {
-                        alert("Sorry, we can not edit the card at the moment");
+                        new_error("Sorry, we can not edit the card at the moment");
                     }
                 })
             });
@@ -348,7 +348,7 @@
                     success: function (data) {
                     },
                     error: function(request, error) {
-                        alert("We are sorry. Something went wrong when we moved that card. Reloading page");
+                        new_error("We are sorry. Something went wrong when we moved that card. Reloading page");
                         location.reload()
                     }
                 })
@@ -388,8 +388,7 @@
                     $("#new_link_modal").modal('hide');
                 },
                 error: function(data) {
-                    alert("Sorry, the linking of the object didn't work. Please try again.");
-                    alert(data);
+                    new_error("Sorry, the linking of the object didn't work. Please try again.");
                 }
             })
         }

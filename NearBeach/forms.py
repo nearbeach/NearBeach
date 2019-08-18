@@ -2409,6 +2409,15 @@ class new_project_form(forms.Form):
             'class': 'form-control',
         })
     )
+    project_story_point=forms.IntegerField(
+        initial=1,
+        min_value=1,
+        max_value=100,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'onChange': 'update_story_point()',
+        })
+    )
 
     class Meta:
         model = project
@@ -2696,12 +2705,23 @@ class new_requirement_item_form(ModelForm):
             'class': 'form-control',
         })
     )
+    requirement_item_story_point = forms.IntegerField(
+        initial=1,
+        min_value=1,
+        max_value=100,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'onChange': 'update_story_point()',
+        })
+    )
     class Meta:
         model = requirement_item
         exclude = [
             'requirement_id'
             'change_user',
             'is_deleted',
+            'ri_story_point_min',
+            'ri_story_point_max',
         ]
 
 
@@ -2833,6 +2853,46 @@ class new_task_form(forms.Form):
             'class': 'form-control',
         })
     )
+    task_story_point = forms.IntegerField(
+        initial=1,
+        min_value=1,
+        max_value=100,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'onChange': 'update_story_point()',
+        })
+    )
+
+
+class new_timesheet_row(forms.Form):
+    timesheet_description=forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    timesheet_date=forms.DateField(
+        required=True,
+        #auto_now_add=True,
+        initial=datetime.datetime.now(),
+        widget=forms.DateInput(attrs={
+            'class': 'form-control',
+        }),
+    )
+    timesheet_start_time=forms.TimeField(
+        required=True,
+
+        widget=forms.TimeInput(attrs={
+            'class': 'form-control',
+        }),
+    )
+    timesheet_end_time = forms.TimeField(
+        required=True,
+        widget=forms.TimeInput(attrs={
+            'class': 'form-control',
+        }),
+    )
+
 
 class opportunity_group_permission_form(forms.Form):
     def __init__(self,*args,**kwargs):
@@ -2849,6 +2909,17 @@ class opportunity_group_permission_form(forms.Form):
         queryset=group.objects.filter(is_deleted="BLANK") #This will make the queryset a blank set
     )
 
+
+class opportunity_close_form(forms.Form):
+    opportunity_close=forms.ModelChoiceField(
+        queryset=list_of_opportunity_stage.objects.filter(
+            is_deleted="FALSE",
+            opportunity_closed="TRUE",
+        ),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
 
 
 class opportunity_information_form(ModelForm):
@@ -2932,7 +3003,7 @@ class opportunity_information_form(ModelForm):
     )
 
     opportunity_stage_id=forms.ModelChoiceField(
-        queryset=list_of_quote_stage.objects.all(),
+        queryset=list_of_opportunity_stage.objects.all(),
         widget=forms.Select(attrs={
             'class': 'form-control',
         }),
@@ -4025,6 +4096,15 @@ class requirement_item_form(forms.ModelForm):
             'class': 'form-control',
         })
     )
+    requirement_item_story_point = forms.IntegerField(
+        initial=1,
+        min_value=1,
+        max_value=100,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'onChange': 'update_story_point()',
+        })
+    )
 
     #Fixing a bug
     requirement_id=forms.IntegerField(required=False)
@@ -4036,6 +4116,8 @@ class requirement_item_form(forms.ModelForm):
             'requirement_id'
             'change_user',
             'is_deleted',
+            'ri_story_point_min',
+            'ri_story_point_max',
         ]
 
 

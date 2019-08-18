@@ -9,10 +9,14 @@
 <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
 <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
 <script type="text/javascript" src="{% static 'NearBeach/javascript/assigned_user_list.js' %}"></script>
+<script type="text/javascript" src="{% static 'NearBeach/javascript/timesheet.js' %}"></script>
+
 
 <script>
     function on_page_load() {
         //Initiate AJAX modules
+        load_timesheet('{{ task_id }}','task');
+
         load_costs();
         load_task_customers();
         load_task_history();
@@ -126,6 +130,13 @@
                         <label for="id_task_end_date">Task Finish Date</label>
                         {{ task_information_form.task_end_date }}
                     </div>
+                    <div class="form-group col-md-4">
+                        <label for="id_story_point">Story Points</label>
+                        <div id="id_story_point">
+                            <strong>Min hours: </strong>{{ task_results.task_story_point_min }}
+                            <strong>| Max hours: </strong>{{ task_results.task_story_point_max }}
+                        </div>
+                    </div>
                 </div>
                 {% if permission > 1 %}
                     <div class="form-row">
@@ -137,10 +148,17 @@
                 {% endif %}
             </div>
         </div>
+    </form>
 
-
-
-
+    <form method="post" class="timesheet mt-4" id="timesheet">
+        <div class="card">
+            <div class="card-header">
+                <h2>Timesheet</h2>
+            </div>
+            <div class="card-body">
+                Loading...
+            </div>
+        </div>
     </form>
 
     <br/>
@@ -191,6 +209,54 @@
             </div>
         </div>
     </form>
+
+    {% if requirement_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Requirement Links</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td width="20%">Requirement ID</td>
+                            <td width="80%">Requirement Description</td>
+                        </tr>
+                    </thead>
+                    {% for requirement in requirement_results %}
+                        <tr>
+                            <td><a href="{% url 'requirement_information' requirement.requirement_id %}">REQ{{ requirement.requirement_id }}</a></td>
+                            <td>{{ requirement.requirement_title }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if requirement_item_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Requirement Item Links</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <td width="20%">Requirement Item ID</td>
+                            <td width="80%">Requirement Item Description</td>
+                        </tr>
+                    </thead>
+                    {% for requirement_item in requirement_item_results %}
+                        <tr>
+                            <td><a href="{% url 'requirement_item_information' requirement_item.requirement_item_id %}">ITM{{ requirement_item.requirement_item_id }}</a></td>
+                            <td>{{ requirement_item.requirement_item_title }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
 
     <div class="card mt-4">
         <div class="card-header">
@@ -343,7 +409,7 @@
                 load_assigned_user_add();
             },
             error: function() {
-                alert("Sorry, project assigned users did not save. Please try again.");
+                new_error("Sorry, project assigned users did not save. Please try again.");
             }
         })
     });
@@ -360,7 +426,7 @@
                 load_assigned_group_list();
             },
             error: function() {
-                alert("Sorry, project assigned users did not save. Please try again.");
+                new_error("Sorry, project assigned users did not save. Please try again.");
             }
         })
     });
@@ -382,7 +448,7 @@
                $("#bug_search").html(data);
            },
            error: function() {
-               alert("Sorry, submitting the bug search caused an error");
+               new_error("Sorry, submitting the bug search caused an error");
            }
        })
     });
@@ -399,7 +465,7 @@
                 load_document_tree_list();
             },
             error: function() {
-                alert("Sorry, document tree create folder did not save. Please try again.");
+                new_error("Sorry, document tree create folder did not save. Please try again.");
             }
         })
     });
@@ -415,7 +481,7 @@
                 load_task_assigned_users();
             },
             error: function() {
-                alert("Sorry, task assigned users did not save. Please try again.");
+                new_error("Sorry, task assigned users did not save. Please try again.");
             }
         })
     });
@@ -431,7 +497,7 @@
                 load_costs();
             },
             error: function() {
-                alert("Sorry, task costs did not save. Please try again.");
+                new_error("Sorry, task costs did not save. Please try again.");
             }
         })
     });
@@ -465,7 +531,7 @@
                 }
             },
             error: function() {
-                alert("Sorry, task information did not save. Please try again.");
+                new_error("Sorry, task information did not save. Please try again.");
             }
         })
     });
@@ -480,7 +546,7 @@
                 $("#task_customers").html(data)
             },
             error: function() {
-                alert("Sorry, we can not seem to add this customer to this task")
+                new_error("Sorry, we can not seem to add this customer to this task")
             },
         })
     });
@@ -496,9 +562,36 @@
                 load_task_history();
             },
             error: function() {
-                alert("Sorry, task history did not save. Please try again.");
+                new_error("Sorry, task history did not save. Please try again.");
             }
         })
+    });
+
+    $("#timesheet").on('submit', function(e) {
+        e.preventDefault();
+
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            type: 'POST',
+            url: '/timesheet/{{ task_id }}/task/',
+            data: $(this).serialize(),
+            success: function(data) {
+                $("#timesheet").html(data);
+
+                //Reinitialise the timesheet
+                timesheet_setup();
+            },
+            error: function() {
+                new_error("Sorry - updating the timesheet went wrong");
+            }
+        });
     });
 
     $("#to_do").on('submit', function(e) {
@@ -511,7 +604,7 @@
                 $("#to_do").html(data);
             },
             error: function() {
-                alert("Submitting the TO DO had an issue!");
+                new_error("Submitting the TO DO had an issue!");
             }
         })
     });
@@ -536,7 +629,7 @@
                $("#tag_results").html(data);
            },
            error: function() {
-               alert("Sorry, could not save tag.");
+               new_error("Sorry, could not save tag.");
            },
        })
     });
@@ -552,7 +645,7 @@
                 $("#bug_list").html(data);
             },
             error: function() {
-                alert("There was an issue loading the bug list");
+                new_error("There was an issue loading the bug list");
             }
         })
     }
@@ -568,7 +661,7 @@
                 $("#bug_search").html(data);
             },
             error: function() {
-                alert("There was an issues loading the bug search");
+                new_error("There was an issues loading the bug search");
             }
         })
 
@@ -595,7 +688,7 @@
                 load_to_do();
             },
             error: function() {
-                alert("Can not complete To do :(");
+                new_error("Can not complete To do :(");
                 $("#to_do_"+to_do_id).html('<a href="javascript:void(0)" onclick="complete_to_do(' + to_do_id + '">Complete</a>')
             }
         });
@@ -612,7 +705,7 @@
                 $("#email_history").html(data);
             },
             error: function() {
-                alert("Sorry, the email history could not load");
+                new_error("Sorry, the email history could not load");
             }
         })
     };
@@ -686,7 +779,7 @@
                 $('#to_do').html(data)
             },
             error: function() {
-                alert("Sorry, could not load the to do list");
+                new_error("Sorry, could not load the to do list");
             }
         })
     }
@@ -740,7 +833,7 @@
                 load_assigned_group_list();
             },
             error: function() {
-                alert("Sorry, there was an issue deleting the Assigned Group")
+                new_error("Sorry, there was an issue deleting the Assigned Group")
             }
         });
     };
@@ -795,7 +888,7 @@
                 load_costs();
             },
             error: function() {
-                alert("Sorry, could not delete costs");
+                new_error("Sorry, could not delete costs");
             }
         });
     }
@@ -818,7 +911,7 @@
                 load_task_customers();
             },
             error: function() {
-                alert("Sorry - there is something wrong with removing this customer");
+                new_error("Sorry - there is something wrong with removing this customer");
             }
         });
     }
@@ -834,7 +927,7 @@
                 $("#tag_results").html(data);
             },
             error: function() {
-                alert("Sorry - tag results did not load");
+                new_error("Sorry - tag results did not load");
             }
         });
     }
@@ -857,7 +950,7 @@
                 load_tag_results();
             },
             error: function() {
-                alert("Sorry - did not delete tag correctly");
+                new_error("Sorry - did not delete tag correctly");
             }
         });
     }

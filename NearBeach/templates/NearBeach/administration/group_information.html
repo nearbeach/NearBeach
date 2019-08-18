@@ -142,7 +142,7 @@
                     window.location.href = "{% url 'search_group' %}";
                 },
                 error: function() {
-                    alert("Sorry, the group was not deleted");
+                    new_error("Sorry, the group was not deleted");
                 }
             })
         };
@@ -282,7 +282,7 @@
                     load_add_user();
                 },
                 error: function() {
-                    alert("Sorry - something went wrong when trying to implement change.");
+                    new_error("Sorry - something went wrong when trying to implement change.");
                 }
             });
         }

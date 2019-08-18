@@ -123,6 +123,10 @@ def new_requirement_item(request, requirement_id):
             # Get instances
             requirement_instance = requirement.objects.get(requirement_id=requirement_id)
 
+            # Get options
+            nearbeach_option_results = nearbeach_option.objects.latest('date_created')
+            story_point_min = form.cleaned_data['requirement_item_story_point'] * nearbeach_option_results.story_point_hour_min
+            story_point_max = form.cleaned_data['requirement_item_story_point'] * nearbeach_option_results.story_point_hour_max
 
             # Setup the requirement_item
             requirement_item_submit = requirement_item(
@@ -130,6 +134,8 @@ def new_requirement_item(request, requirement_id):
                 requirement_item_scope=form.cleaned_data['requirement_item_scope'],
                 requirement_item_status=form.cleaned_data['requirement_item_status'],
                 requirement_item_type=form.cleaned_data['requirement_item_type'],
+                ri_story_point_min=story_point_min,
+                ri_story_point_max=story_point_max,
                 change_user=request.user,
                 requirement_id=requirement_instance,
             )
@@ -151,7 +157,10 @@ def new_requirement_item(request, requirement_id):
     c = {
         'new_requirement_item_form': new_requirement_item_form,
         'requirement_id': requirement_id,
+        'nearbeach_option': nearbeach_option.objects.latest('date_created'),
         'requirement_results': requirement_results,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
     }
 
     return HttpResponse(t.render(c, request))

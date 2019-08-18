@@ -23,7 +23,6 @@ from django.db.models import Max
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from geolocation.main import GoogleMaps
 from django.http import JsonResponse
-#from weasyprint import HTML
 from urllib.request import urlopen
 from weasyprint import HTML
 from django.core.mail import send_mail
@@ -33,7 +32,7 @@ from docx.shared import Cm, Inches
 from bs4 import BeautifulSoup
 
 #import python modules
-import datetime, json, simplejson, urllib.parse, pypandoc
+import datetime, json, simplejson, urllib.parse, pypandoc, requests
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -1892,7 +1891,7 @@ def cost_information(request, location_id, destination):
             task_id=task.objects.get(task_id=location_id),
         ).values('group_id_id')
 
-    permission_results = return_user_permission_level(request, groups_results,destination)
+    permission_results = return_user_permission_level(request, groups_results, destination)
 
 
     if request.method == "POST":
@@ -2319,6 +2318,106 @@ def dashboard(request):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login',redirect_field_name="")
+def dashboard_active_bugs(request):
+    """
+    This will render a simple widget that will display the state of each bug client.
+    :param request:
+    :return:
+
+    Method
+    ~~~~~~
+    1. Get a list of all bug clients still active
+    2. Declare variables
+    3. Loop through list of bug clients
+    -- START LOOP --
+        4. Get the url for the API
+        5. Fetch the JSON data
+        6. Create basic pivot table
+        7. Return results
+    -- END LOOP --
+    8. Send the JSON results to the template
+
+                if url.lower().startswith('http'):
+                    req = urllib.request.Request(url)
+                else:
+                    raise ValueError from None
+
+                with urllib.request.urlopen(req) as response: #nosec
+                    data = json.load(response)
+
+                bug_client_submit = bug_client(
+                    bug_client_name = bug_client_name,
+                    list_of_bug_client = list_of_bug_client,
+                    bug_client_url = bug_client_url,
+                    change_user=request.user,
+                )
+                bug_client_submit.save()
+                return HttpResponseRedirect(reverse('bug_client_list'))
+
+    """
+    #Get data
+    bug_client_results = bug_client.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    bug_client_table = {}
+
+    for counter, client in enumerate(bug_client_results):
+        """
+        Method
+        ~~~~~~
+        1. Get URL
+        2. Check to make sure the URL will work - basic
+        3. Obtain the data as a json variable
+        4. Loop through the data - check to see if the status already exists,
+            If status exists - increase it by one
+            If status does not exist - create it with initial value of 1
+        5. Write results to 
+        """
+        url = client.bug_client_url + "/rest/bug?resolution=---"
+        status_results = {}
+
+        if url.lower().startswith('http'):
+            #Use requests to get the data from the url :)
+            raw_data = requests.get(url).json()
+        else:
+            continue
+
+        for bug_info in raw_data["bugs"]:
+            try:
+                status_results[bug_info["status"]] = status_results[bug_info["status"]] + 1
+            except:
+                status_results[bug_info["status"]] = 1
+
+        #Final setup
+        status_results = {
+            "bug_client_id": client.bug_client_id,
+            "name": client.bug_client_name,
+            "url": client.bug_client_url,
+            "bug_status": status_results,
+        }
+
+        #Paste into larger narative
+        #bug_client_table[client.bug_client_id] = status_results
+        bug_client_table[counter] = status_results
+
+
+    """
+    #Get template
+    t = loader.get_template('NearBeach/dashboard_widgets/active_bugs.html')
+
+    #Context
+    c = {
+        'bug_client_results': bug_client_results,
+        'bug_client_table': json.dumps(bug_client_table),
+    }
+
+    return HttpResponse(t.render(c,request))
+    """
+    return JsonResponse(bug_client_table,safe=False)
 
 @login_required(login_url='login',redirect_field_name="")
 def dashboard_active_projects(request):
@@ -3066,6 +3165,31 @@ def diagnostic_information(request):
     }
 
     return HttpResponse(t.render(c,request))
+
+
+
+@login_required(login_url='login',redirect_field_name="")
+def diagnostic_render_pdf(request):
+    """
+
+    :param request:
+    :return:
+
+
+    """
+    if request.get_host() == "localhost:8000":
+        url_path = "http://" + request.get_host() + "/diagnostic_render_pdf/pdf_example/"
+    else:
+        url_path = "https://" + request.get_host() + "/diagnostic_render_pdf/pdf_example/"
+
+    html = HTML(url_path)
+    pdf_results = html.write_pdf()
+
+    #Setup the response
+    response = HttpResponse(pdf_results,content_type='application')
+    response['Content-Disposition']='attachment; filename="Example PDF"'
+
+    return response
 
 
 
@@ -5897,9 +6021,13 @@ def new_project(request, location_id='', destination=''):
     if request.method == "POST":
         form = new_project_form(request.POST)
         if form.is_valid():
+            #Get extra data for references
+            nearbeach_option_results = nearbeach_option.objects.latest('date_created')
+
             project_name = form.cleaned_data['project_name']
             project_description = form.cleaned_data['project_description']
             organisation_id_form = form.cleaned_data['organisation_id']
+            project_story_point = form.cleaned_data['project_story_point']
 
             submit_project = project(
                 project_name=project_name,
@@ -5907,6 +6035,8 @@ def new_project(request, location_id='', destination=''):
                 project_start_date=form.cleaned_data['project_start_date'],
                 project_end_date=form.cleaned_data['project_end_date'],
                 project_status='New',
+                project_story_point_min=project_story_point * nearbeach_option_results.story_point_hour_min,
+                project_story_point_max=project_story_point * nearbeach_option_results.story_point_hour_max,
                 change_user=request.user,
             )
             if organisation_id_form:
@@ -6024,6 +6154,7 @@ def new_project(request, location_id='', destination=''):
         'administration_permission': permission_results['administration'],
         'destination': destination,
         'location_id': location_id,
+        'nearbeach_option': nearbeach_option,
     }
 
     return HttpResponse(t.render(c, request))
@@ -6404,6 +6535,11 @@ def new_task(request, location_id='', destination=''):
     if request.method == "POST":
         form = new_task_form(request.POST)
         if form.is_valid():
+            #Get nearbeach options
+            nb_results = nearbeach_option.objects.latest('date_created')
+            task_story_point_min = form.cleaned_data['task_story_point'] * nb_results.story_point_hour_min
+            task_story_point_max = form.cleaned_data['task_story_point'] * nb_results.story_point_hour_max
+
             task_short_description = form.cleaned_data['task_short_description']
             task_long_description = form.cleaned_data['task_long_description']
             organisation_id_form = form.cleaned_data['organisation_id']
@@ -6525,6 +6661,7 @@ def new_task(request, location_id='', destination=''):
             'groups_count': groups_results.__len__(),
             'organisation_id': organisation_id,
             'organisations_count': organisation.objects.filter(is_deleted='FALSE').count(),
+            'nearbeach_option': nearbeach_option.objects.latest('date_created'),
             'customer_id': customer_id,
             'opportunity_id': opportunity_id,
             'timezone': settings.TIME_ZONE,
@@ -6554,6 +6691,7 @@ def opportunity_delete_permission(request, opportunity_permissions_id):
 
     else:
         return HttpResponseBadRequest("Sorry, this has to be through post")
+
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -6615,7 +6753,7 @@ def opportunity_information(request, opportunity_id):
 
     #Check to see if opportunity is closed
     opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
-    if opportunity_results.opportunity_stage_id.opportunity_closed == "True":
+    if opportunity_results.opportunity_stage_id.opportunity_closed == "TRUE":
         return HttpResponseRedirect(reverse('opportunity_readonly', args={opportunity_id}))
 
     """
@@ -6680,7 +6818,7 @@ def opportunity_information(request, opportunity_id):
             if select_groups:
                 for row in select_groups:
                     group_instance = group.objects.get(group_id=row.group_id)
-                    permission_save = opportunity_permission(
+                    permission_save = object_access(
                         opportunity_id=opportunity_instance,
                         group_id=group_instance,
                         user_id=current_user,
@@ -6688,7 +6826,7 @@ def opportunity_information(request, opportunity_id):
                     )
                     permission_save.save()
                 #Will remove the ALL USERS permissions now that we have limited the permissions
-                opportunity_permission.objects.filter(
+                object_access.objects.filter(
                     opportunity_id=opportunity_id,
                     all_user='TRUE',
                     is_deleted='FALSE'
@@ -6699,7 +6837,7 @@ def opportunity_information(request, opportunity_id):
             if select_users:
                 for row in select_users:
                     assigned_user_instance = auth.models.User.objects.get(username=row)
-                    permission_save = opportunity_permission(
+                    permission_save = object_access(
                         opportunity_id=opportunity_instance,
                         assigned_user=assigned_user_instance,
                         user_id=current_user,
@@ -6707,7 +6845,7 @@ def opportunity_information(request, opportunity_id):
                     )
                     permission_save.save()
                 #Will remove the ALL USERS permissions now that we have limited the permissions
-                opportunity_permission.objects.filter(
+                object_access.objects.filter(
                     opportunity_id=opportunity_id,
                     all_user='TRUE',
                     is_deleted='FALSE'
@@ -6811,6 +6949,7 @@ def opportunity_information(request, opportunity_id):
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
         'opportunity_permission': permission_results['opportunity'],
+        'opportunity_close_form': opportunity_close_form(),
     }
 
     return HttpResponse(t.render(c, request))
@@ -7211,6 +7350,13 @@ def organisation_readonly(request, organisation_id):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+def pdf_example(request):
+    #Return template of PDF example
+    t = loader.get_template('NearBeach/diagnostic/pdf_example.html')
+    c = {}
+    return HttpResponse(t.render(c,request))
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -7655,6 +7801,22 @@ def project_information(request, project_id):
     project_history_results = project_history.objects.filter(project_id=project_id, is_deleted='FALSE')
     cursor = connection.cursor()
 
+    requirement_results = requirement.objects.filter(
+        is_deleted="FALSE",
+        requirement_id__in=requirement_link.objects.filter(
+            is_deleted="FALSE",
+            project_id=project_id,
+        ).values('requirement_id')
+    )
+
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_item_id__in=requirement_item_link.objects.filter(
+            is_deleted="FALSE",
+            project_id=project_id,
+        ).values('requirement_item_id')
+    )
+
 
     folders_results = folder.objects.filter(
         project_id=project_id,
@@ -7707,6 +7869,8 @@ def project_information(request, project_id):
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
         'opportunity_results': opportunity_results,
+        'requirement_results': requirement_results,
+        'requirement_item_results': requirement_item_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -7730,6 +7894,21 @@ def project_readonly(request, project_id):
     project_history_results = project_history.objects.filter(
         is_deleted="FALSE",
         project_id=project_id,
+    )
+    requirement_results = requirement.objects.filter(
+        is_deleted="FALSE",
+        requirement_id__in=requirement_link.objects.filter(
+            is_deleted="FALSE",
+            project_id=project_id,
+        ).values('requirement_id')
+    )
+
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_item_id__in=requirement_item_link.objects.filter(
+            is_deleted="FALSE",
+            project_id=project_id,
+        ).values('requirement_item_id')
     )
     email_results = email_content.objects.filter(
         is_deleted="FALSE",
@@ -7837,6 +8016,8 @@ def project_readonly(request, project_id):
         'project_history_permissions': permission_results['project_history'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'requirement_results': requirement_results,
+        'requirement_item_results': requirement_item_results,
 
     }
 
@@ -8827,41 +9008,14 @@ def search_customer(request):
         if form.is_valid():
             search_customer_results = form.cleaned_data['search_customer']
 
-    """
-	This is where the magic happens. I will remove all spaces and replace
-	them with a wild card. This will be used to search the concatenated
-	first and last name fields
-	"""
-    search_customer_like = '%'
+    #Get all the customers
+    customer_results = customer.objects.filter(is_deleted='FALSE')
 
     for split_row in search_customer_results.split(' '):
-        search_customer_like += split_row
-        search_customer_like += '%'
-
-    """
-    The annotate function gives the ability to concat the first and last name.
-    This gives us the ability to;
-    1.) Filter on the joined field
-    2.) Display it as is to the customer
-    """
-    customer_results = customer.objects.filter(
-        is_deleted="FALSE"
-    ).annotate(
-        customer_full_name=Concat(
-            'customer_first_name',
-            Value(' '),
-            'customer_last_name',
+        customer_results = customer_results.filter(
+            Q(customer_first_name__contains=split_row) or
+            Q(customer_last_name__contains=split_row)
         )
-    ).extra(
-        where=[
-            """
-            customer_first_name || customer_last_name LIKE %s
-            """
-        ],
-        params=[
-            search_customer_like,
-        ]
-    )
 
     # context
     c = {
@@ -8925,39 +9079,19 @@ def search_organisation(request):
             search_organisation_results = form.cleaned_data['search_organisation']
 
     """
-	This is where the magic happens. I will remove all spaces and replace
-	them with a wild card. This will be used to search the concatenated
-	first and last name fields
+    Get all organisations. Then loop through the split row and filter by it each time
 	"""
-    search_organisation_like = '%'
+    organisation_results = organisation.objects.filter(is_deleted="FALSE")
 
     for split_row in search_organisation_results.split(' '):
-        search_organisation_like += split_row
-        search_organisation_like += '%'
+        organisation_results = organisation_results.filter(organisation_name__contains=split_row)
 
-    # Now search the organisation
-    # organisations_results = organisation.objects.filter(organisation_name__contains = search_organisation_like)
-
-    # Query the database for organisation
-    cursor = connection.cursor()
-    cursor.execute("""
-		SELECT DISTINCT
-		  organisation.organisation_id
-		, organisation.organisation_name
-		, organisation.organisation_website
-		, organisation.organisation_email
-		FROM organisation
-		WHERE 1=1
-		AND organisation.organisation_name LIKE %s
-		AND NOT organisation.is_deleted="FALSE"
-		""", [search_organisation_like])
-    organisations_results = namedtuplefetchall(cursor)
 
     # context
     c = {
         'search_organisation_form': search_organisation_form(
             initial={'search_organisation': search_organisation_results}),
-        'organisations_results': organisations_results,
+        'organisation_results': organisation_results,
         'organisation_permission': permission_results['organisation'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
@@ -9410,6 +9544,22 @@ def task_information(request, task_id):
         task_id=task_results,
     )
 
+    requirement_results = requirement.objects.filter(
+        is_deleted="FALSE",
+        requirement_id__in=requirement_link.objects.filter(
+            is_deleted="FALSE",
+            task_id=task_id,
+        ).values('requirement_id')
+    )
+
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_item_id__in=requirement_item_link.objects.filter(
+            is_deleted="FALSE",
+            task_id=task_id,
+        ).values('requirement_item_id')
+    )
+
     running_total = 0
     # Load the template
     t = loader.get_template('NearBeach/task_information.html')
@@ -9428,6 +9578,8 @@ def task_information(request, task_id):
         'timezone': settings.TIME_ZONE,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'requirement_results': requirement_results,
+        'requirement_item_results': requirement_item_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -9462,6 +9614,22 @@ def task_readonly(request,task_id):
                 Q(change_user=request.user)
             )
         ).values('email_content_id')
+    )
+
+    requirement_results = requirement.objects.filter(
+        is_deleted="FALSE",
+        requirement_id__in=requirement_link.objects.filter(
+            is_deleted="FALSE",
+            task_id=task_id,
+        ).values('requirement_id')
+    )
+
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_item_id__in=requirement_item_link.objects.filter(
+            is_deleted="FALSE",
+            task_id=task_id,
+        ).values('requirement_item_id')
     )
 
     associated_project_results = project_task.objects.filter(
@@ -9553,6 +9721,9 @@ def task_readonly(request,task_id):
         'project_history_permissions': permission_results['task_history'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'requirement_results': requirement_results,
+        'requirement_item_results': requirement_item_results,
+
     }
 
     return HttpResponse(t.render(c,request))
@@ -9746,6 +9917,52 @@ def timeline_data(request):
     else:
         return HttpResponseBadRequest("timeline date has to be done in post!")
 
+
+@login_required(login_url='login',redirect_field_name="")
+def timesheet_information(request,location_id,destination):
+    if request.method == "POST":
+        form = new_timesheet_row(request.POST)
+        if form.is_valid():
+            timesheet_save = timesheet(
+                timesheet_date=form.cleaned_data['timesheet_date'],
+                timesheet_start_time=form.cleaned_data['timesheet_start_time'],
+                timesheet_end_time=form.cleaned_data['timesheet_end_time'],
+                timesheet_description=form.cleaned_data['timesheet_description'],
+                change_user=request.user
+            )
+            if destination == "project":
+                timesheet_save.project_id = location_id
+            elif destination == "requirement_item":
+                timesheet_save.requirement_item_id = location_id
+            elif destination == "task":
+                timesheet_save.task_id = location_id
+
+            timesheet_save.save()
+        else:
+            print(form.errors)
+
+    if destination == "project":
+        timesheet_results = timesheet.objects.filter(
+            project_id=location_id,
+        )
+    elif destination == "requirement_item":
+        timesheet_results = timesheet.objects.filter(
+            requirement_item=location_id,
+        )
+    else:
+        timesheet_results = timesheet.objects.filter(
+            task_id=location_id,
+        )
+
+
+    t = loader.get_template('NearBeach/timesheet/timesheet_information.html')
+
+    c = {
+        'new_timesheet_row': new_timesheet_row(),
+        'timesheet_results': timesheet_results,
+    }
+
+    return HttpResponse(t.render(c,request))
 
 
 

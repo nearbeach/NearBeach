@@ -3,6 +3,12 @@
 {% block content %}
 {% load static %}
     <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/document_upload.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/timesheet.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
+
+<body onload="on_page_load()">
     <form action="{% url 'requirement_item_information' requirement_item_id %}" enctype="multipart/form-data" class="requirement_item_information" method="POST">
         {% csrf_token %}
         <div class="card mt-4">
@@ -39,6 +45,26 @@
             </div>
         </div>
     </form>
+
+    <form method="post" class="timesheet mt-4" id="timesheet">
+        <div class="card">
+            <div class="card-header">
+                <h2>Timesheet</h2>
+            </div>
+            <div class="card-body">
+                Loading...
+            </div>
+        </div>
+    </form>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Document Uploads</h2>
+        </div>
+        <div class="card-body" id="document_tree_list">
+            Loading...
+        </div>
+    </div>
 
     <div class="card mt-4">
         <div class="card-header">
@@ -111,9 +137,38 @@
     </div>
 
     <script>
-        document.onload = function on_page_load() {
-            load_requirement_links();
-        };
+        function on_page_load() {
+            load_timesheet('{{ requirement_item_id }}','requirement_item');
+            load_document_tree_list({{ requirement_item_id }},'requirement_item');
+        }
+
+
+        $("#timesheet").on('submit', function(e) {
+            e.preventDefault();
+
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                type: 'POST',
+                url: '/timesheet/{{ requirement_item_id }}/requirement_item/',
+                data: $(this).serialize(),
+                success: function(data) {
+                    $("#timesheet").html(data);
+
+                    //Reinitialise the timesheet
+                    timesheet_setup();
+                },
+                error: function() {
+                    new_error("Sorry - updating the timesheet went wrong");
+                }
+            });
+        });
 
         function load_requirement_links() {
             /*
@@ -139,7 +194,7 @@
                     $("#link_requirement_item_modal_body").html(data);
                 },
                 error: function() {
-                    alert("Sorry - the requirement links did not load correctly");
+                    new_error("Sorry - the requirement links did not load correctly");
                 }
             })
         }
@@ -150,7 +205,8 @@
             Method
             ~~~~~~
             1. Prepare the ajax query
-            2. Send the request to /new_requirement_link/{{ requirement_id }}/location_id/destination
+            2. Send the request to /new_requirement_link/
+            {{ requirement_id }}/location_id/destination
             3. Once completed - add the two parts to the end of the table :) SHHH - don't tell anyone we didn't reload
                 that section.
              */
@@ -167,7 +223,7 @@
                 data: {},
                 dataType: "HTML",
                 type: "POST",
-                success: function(data) {
+                success: function (data) {
                     /*
                     Method
                     ~~~~~~
@@ -189,10 +245,11 @@
                     //Shh - close the modal
                     $("#link_requirement_item_modal").modal("hide");
                 },
-                error: function() {
-                    alert("Sorry - there was an issue connecting the link.");
+                error: function () {
+                    new_error("Sorry - there was an issue connecting the link.");
                 }
             })
         }
     </script>
+</body>
 {% endblock %}
