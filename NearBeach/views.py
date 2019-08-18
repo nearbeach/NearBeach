@@ -9008,41 +9008,14 @@ def search_customer(request):
         if form.is_valid():
             search_customer_results = form.cleaned_data['search_customer']
 
-    """
-	This is where the magic happens. I will remove all spaces and replace
-	them with a wild card. This will be used to search the concatenated
-	first and last name fields
-	"""
-    search_customer_like = '%'
+    #Get all the customers
+    customer_results = customer.objects.filter(is_deleted='FALSE')
 
     for split_row in search_customer_results.split(' '):
-        search_customer_like += split_row
-        search_customer_like += '%'
-
-    """
-    The annotate function gives the ability to concat the first and last name.
-    This gives us the ability to;
-    1.) Filter on the joined field
-    2.) Display it as is to the customer
-    """
-    customer_results = customer.objects.filter(
-        is_deleted="FALSE"
-    ).annotate(
-        customer_full_name=Concat(
-            'customer_first_name',
-            Value(' '),
-            'customer_last_name',
+        customer_results = customer_results.filter(
+            Q(customer_first_name__contains=split_row) or
+            Q(customer_last_name__contains=split_row)
         )
-    ).extra(
-        where=[
-            """
-            customer_first_name || customer_last_name LIKE %s
-            """
-        ],
-        params=[
-            search_customer_like,
-        ]
-    )
 
     # context
     c = {
@@ -9108,7 +9081,7 @@ def search_organisation(request):
     """
     Get all organisations. Then loop through the split row and filter by it each time
 	"""
-    organisation_results = organisation.objects.all()
+    organisation_results = organisation.objects.filter(is_deleted="FALSE")
 
     for split_row in search_organisation_results.split(' '):
         organisation_results = organisation_results.filter(organisation_name__contains=split_row)

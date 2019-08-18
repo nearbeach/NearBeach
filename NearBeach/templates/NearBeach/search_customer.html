@@ -24,7 +24,7 @@
                     </thead>
                     {% for customer in customer_results %}
                         <tr>
-                            <td><a href="{% url 'customer_information' customer.customer_id %}">{{ customer.customer_full_name }}</td>
+                            <td><a href="{% url 'customer_information' customer.customer_id %}">{{ customer.customer_first_name }} {{ customer.customer_last_name }}</td>
                             <td>{{ customer.organisation_id }}</td>
                         </tr>
                     {% endfor %}
