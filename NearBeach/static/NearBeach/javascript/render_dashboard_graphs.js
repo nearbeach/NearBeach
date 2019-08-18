@@ -60,100 +60,155 @@ function render_bug_client_bugs(data, target_id) {
     }
 
     //TEMP VARIABLES//
-    var width = 500, height = 500;
+    var margin = {top: 40, right: 100, bottom: 60, left: 50},
+        width = 960 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
     //END TEMP VARIABLES//
 
     console.log("Converted Data: ", converted_data); //The data is now ready :)
 
-    //Render the graphs
     //Setup the x and y range
-    /*
-    var x = d3.scaleLinear()
-        .range([0, width]);
-    var y = d3.scaleBand()
+    var x = d3.scaleBand()
+        .rangeRound([0, width], 0.15)
+        .paddingInner(0.2)
+        .paddingOuter(0.2);
+
+    //Please note y is scale LINEAR!
+    var y = d3.scaleLinear()
         .range([height, 0]);
-        */
 
-    //Tool tip
-    //var tooltip = d3.select("body").append("div").attr("class", "toolTip");
+    //Get colour ready
+    var color = d3.scaleOrdinal(d3.schemePastel2);
 
-    //Setup the SVG
-    /*
-    var svg = d3.select(target_id).append("svg")
+    //Get axis ready
+    var xAxis = d3.axisBottom()
+        .scale(x);
+    var yAxis = d3.axisLeft()
+        .scale(y)
+        .ticks(10);
+
+
+    //Prepare the output location
+    var output_location = document.getElementById(target_id);
+    output_location.innerHTML = "";
+
+    //Create the svg
+    var svg = d3.select(output_location).append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
+        .attr("data-graph",output_location.id)
         .attr("class", "graph_body")
         .append("g")
         .attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
-     */
+    //Assign the colour
+    color.domain(
+        d3.keys(converted_data[0])
+            .filter(function(key) {
+                return key !== "bug_client_name";
+            })
+    );
 
-    console.log("Finished GRAPH");
+    //Apply changes to the convert_data - will get it ready for the stacked graph
+    converted_data.forEach(function(d) {
+        var y0 = 0;
+        d.operation = color.domain().map(
+            function(name) {
+                return {name: name, y0: y0, y1: y0 += +d[name]};
+            });
+        d.count = d.operation[d.operation.length - 1].y1;
+        if (d.count == NaN) { d.count = 0; }
+    });
+
+    console.log("Converted data after colours: ", converted_data);
+
+    //Set the x domain
+    x.domain(
+        converted_data.map(function(d) {
+            return d["bug_client_name"];
+        })
+    );
+
+    //Set the y domain
+    y.domain([
+        0,
+        d3.max(converted_data, function(d) {
+            return d.count; })
+    ]);
+
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Count");
+
+    var stack = svg.selectAll(".location")
+        .data(converted_data)
+        .enter().append("g")
+        .attr("class", "g")
+        .attr("transform", function(d) { return "translate(" + x(d["bug_client_name"]) + ",0)"; });
+
+    stack.selectAll("rect")
+        .data(function(d) { return d.operation; })
+        .enter().append("rect")
+        .attr("width", x.bandwidth())
+        .attr("y", function(d) { return y(d.y1); })
+        .attr("height", function(d) { return y(d.y0) - y(d.y1); })
+        .attr("data-value", function(d) { return d.y1-d.y0; }) //The difference between the the values
+        .style("fill", function(d) { return color(d.name); });
+
+    var legend = svg.selectAll(".legend")
+        .data(color.domain().slice().reverse())
+        .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+    legend.append("rect")
+        .attr("x", width + 48)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", color);
+
+    legend.append("text")
+        .attr("x", width + 48)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "end")
+        .text(function(d) { return d; });
+
+    svg.append("text")
+        .attr("x", (width / 2))
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .style("text-decoration", "underline")
+        .text("Bug Client Breakdown");
 
 
+    //X-axis label
+    svg.append("text")
+        .attr(
+            "transform",
+            "translate(" + (width/2) + " ," + (height + margin.top + 20) + ")"
+        )
+        .style("text-anchor", "middle")
+        .text("Bug Client Name");
 
-    /*
-    var initStackedBarChart = {
-	draw: function(config) {
-		me = this,
-		domEle = config.element,
-		stackKey = config.key,
-		data = config.data,
-		margin = {top: 20, right: 20, bottom: 30, left: 50},
-		parseDate = d3.timeParse("%m/%Y"),
-		width = 960 - margin.left - margin.right,
-		height = 500 - margin.top - margin.bottom,
-		xScale = d3.scaleLinear().rangeRound([0, width]),
-		yScale = d3.scaleBand().rangeRound([height, 0]).padding(0.1),
-		color = d3.scaleOrdinal(d3.schemeCategory20),
-		xAxis = d3.axisBottom(xScale),
-		yAxis =  d3.axisLeft(yScale).tickFormat(d3.timeFormat("%b")),
-		svg = d3.select("#"+domEle).append("svg")
-				.attr("width", width + margin.left + margin.right)
-				.attr("height", height + margin.top + margin.bottom)
-				.append("g")
-				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-		var stack = d3.stack()
-			.keys(stackKey)
-			.offset(d3.stackOffsetNone);
-
-		var layers= stack(data);
-			data.sort(function(a, b) { return b.total - a.total; });
-			yScale.domain(data.map(function(d) { return parseDate(d.date); }));
-			xScale.domain([0, d3.max(layers[layers.length - 1], function(d) { return d[0] + d[1]; }) ]).nice();
-
-		var layer = svg.selectAll(".layer")
-			.data(layers)
-			.enter().append("g")
-			.attr("class", "layer")
-			.style("fill", function(d, i) { return color(i); });
-
-		  layer.selectAll("rect")
-			  .data(function(d) { return d; })
-			.enter().append("rect")
-			  .attr("y", function(d) { return yScale(parseDate(d.data.date)); })
-			  .attr("x", function(d) { return xScale(d[0]); })
-			  .attr("height", yScale.bandwidth())
-			  .attr("width", function(d) { return xScale(d[1]) - xScale(d[0]) });
-
-			svg.append("g")
-			.attr("class", "axis axis--x")
-			.attr("transform", "translate(0," + (height+5) + ")")
-			.call(xAxis);
-
-			svg.append("g")
-			.attr("class", "axis axis--y")
-			.attr("transform", "translate(0,0)")
-			.call(yAxis);
-	}
-}
-var data = [{"date":"4/1854","total":8571,"disease":1,"wounds":0,"other":5},{"date":"5/1854","total":23333,"disease":12,"wounds":0,"other":9},{"date":"6/1854","total":28333,"disease":11,"wounds":0,"other":6},{"date":"7/1854","total":28772,"disease":359,"wounds":0,"other":23},{"date":"8/1854","total":30246,"disease":828,"wounds":1,"other":30},{"date":"9/1854","total":30290,"disease":788,"wounds":81,"other":70},{"date":"10/1854","total":30643,"disease":503,"wounds":132,"other":128},{"date":"11/1854","total":29736,"disease":844,"wounds":287,"other":106},{"date":"12/1854","total":32779,"disease":1725,"wounds":114,"other":131},{"date":"1/1855","total":32393,"disease":2761,"wounds":83,"other":324},{"date":"2/1855","total":30919,"disease":2120,"wounds":42,"other":361},{"date":"3/1855","total":30107,"disease":1205,"wounds":32,"other":172},{"date":"4/1855","total":32252,"disease":477,"wounds":48,"other":57},{"date":"5/1855","total":35473,"disease":508,"wounds":49,"other":37},{"date":"6/1855","total":38863,"disease":802,"wounds":209,"other":31},{"date":"7/1855","total":42647,"disease":382,"wounds":134,"other":33},{"date":"8/1855","total":44614,"disease":483,"wounds":164,"other":25},{"date":"9/1855","total":47751,"disease":189,"wounds":276,"other":20},{"date":"10/1855","total":46852,"disease":128,"wounds":53,"other":18},{"date":"11/1855","total":37853,"disease":178,"wounds":33,"other":32},{"date":"12/1855","total":43217,"disease":91,"wounds":18,"other":28},{"date":"1/1856","total":44212,"disease":42,"wounds":2,"other":48},{"date":"2/1856","total":43485,"disease":24,"wounds":0,"other":19},{"date":"3/1856","total":46140,"disease":15,"wounds":0,"other":35}];
-var key = ["wounds", "other", "disease"];
-initStackedBarChart.draw({
-	data: data,
-	key: key,
-	element: 'stacked-bar'
-});
-     */
+    //Y-axis label
+    svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - margin.left)
+        .attr("x",0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Count of Cataract Surgeries");
 }
