@@ -136,9 +136,11 @@ def initialise_data(apps, schema_editor):
     #List of requirement  status
     list_of_requirement_status = apps.get_model("NearBeach","list_of_requirement_status")
     list_of_requirement_status.objects.using(db_alias).bulk_create([
-        list_of_requirement_status(requirement_status="New Requirement"),
+        list_of_requirement_status(requirement_status="Backlog"),
+        list_of_requirement_status(requirement_status="Blocked"),
         list_of_requirement_status(requirement_status="In Progress"),
-        list_of_requirement_status(requirement_status="Completed",requirement_status_is_closed='TRUE'),
+        list_of_requirement_status(requirement_status="Testing/Review"),
+        list_of_requirement_status(requirement_status="Closed",requirement_status_is_closed='TRUE'),
     ])
 
     #List of requirement type

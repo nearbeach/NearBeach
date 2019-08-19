@@ -41,9 +41,10 @@ PRODUCT_OR_SERVICE = (
 )
 
 PROJECT_STATUS_CHOICE = (
-    ('New', 'New'),
-    ('Open', 'Open'),
-    ('Resolved', 'Resolved'),
+    ('Backlog', 'Backlog'),
+    ('Blocked', 'Blocked'),
+    ('In Progress', 'In Progress'),
+    ('Test/Review', 'Test/Review'),
     ('Closed', 'Closed'),
 )
 
