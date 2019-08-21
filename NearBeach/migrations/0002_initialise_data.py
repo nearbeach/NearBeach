@@ -5562,6 +5562,12 @@ def initialise_data(apps, schema_editor):
         list_of_quote_stages(quote_stage="Invoice Close Dead",is_invoice='TRUE',sort_order=18,quote_closed="TRUE"),
     ])
 
+    nearbeach_option = apps.get_model("NearBeach","nearbeach_option")
+    db_alias = schema_editor.connection.alias
+    nearbeach_option.objects.using(db_alias).bulk_create([
+        nearbeach_option(story_point_hour_min=4,story_point_hour_max=10),
+    ])
+
 
 class Migration(migrations.Migration):
 
