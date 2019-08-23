@@ -36,6 +36,7 @@ def new_requirement(request,location_id='',destination=''):
                 requirement_scope=requirement_scope,
                 requirement_type=requirement_type,
                 requirement_status=form.cleaned_data['requirement_status'],
+                organisation=form.cleaned_data['organisation'],
                 change_user=request.user,
             )
             requirement_save.save()

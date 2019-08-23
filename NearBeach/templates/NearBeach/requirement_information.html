@@ -25,6 +25,10 @@
                     {{ requirement_information_form.requirement_scope }}
                 </div>
 
+                {% if requirement_results.organisation %}
+                    <div class="form-group">Organisation - {{ requirement_results.organisation }}</div>
+                {% endif %}
+
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="id_requirement_type">Requirement Type</label>

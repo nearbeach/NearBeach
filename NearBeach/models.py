@@ -2962,6 +2962,12 @@ class requirement(models.Model):
     )
     requirement_story_point_min = models.IntegerField(default=1)
     requirement_story_point_max = models.IntegerField(default=4)
+    organisation = models.ForeignKey(
+        organisation,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
