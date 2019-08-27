@@ -13,6 +13,61 @@ from .user_permissions import return_user_permission_level
 from .views import permission_denied
 
 
+@login_required(login_url='login',redirect_field_name="")
+def requirement_customer_information(request, requirement_id):
+    permission_results = return_user_permission_level(request, None, 'requirement')
+
+    if permission_results['requirement'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    # Get required data
+    requirement_customer_results = customer.objects.filter(
+        is_deleted="FALSE",
+        customer_id__in=requirement_customer.objects.filter(
+            is_deleted="FALSE",
+            requirement_id=requirement_id,
+        )
+    )
+
+    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+
+    if requirement_results.organisation:
+        #There is an organisation. Get customers from here
+        new_customers_results = customer.objects.filter(
+            is_deleted="FALSE",
+            organisation_id_id=requirement_results.organisation_id,
+        ).exclude(
+            customer_id__in=requirement_customer.objects.filter(
+                is_deleted="FALSE",
+                requirement_id=requirement_id,
+            ).values('customer_id')
+        )
+    else:
+        new_customers_results = customer.objects.filter(
+            is_deleted="FALSE",
+            organisation_id__isnull=True,
+        ).exclude(
+            customer_id__in=requirement_customer.objects.filter(
+                is_deleted="FALSE",
+                requirement_id=requirement_id,
+            ).values('customer_id')
+        )
+
+    # Get template
+    t = loader.get_template('NearBeach/requirement_information/requirement_customer_information.html')
+
+    # Get context
+    c = {
+        'requirement_customer_results': requirement_customer_results,
+        'requirement_results': requirement_results,
+        'new_customers_results': new_customers_results,
+        'new_item_permission': permission_results['new_item'],
+        'requirement_permissions': permission_results['requirement'],
+        'administration_permission': permission_results['administration'],
+
+    }
+
+    return HttpResponse(t.render(c,request))
 
 
 @login_required(login_url='login',redirect_field_name="")

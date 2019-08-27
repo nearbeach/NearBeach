@@ -2988,6 +2988,35 @@ class requirement(models.Model):
         db_table = "requirement"
 
 
+class requirement_customer(models.Model):
+    requirement_customer_id = models.AutoField(primary_key=True)
+    requirement = models.ForeignKey(
+        requirement,
+        on_delete=models.CASCADE,
+    )
+    customer = models.ForeignKey(
+        customer,
+        on_delete=models.CASCADE,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    def __str__(self):
+        return str(self.requirement_customer_id)
+
+    class Meta:
+        db_table = "requirement_customer"
+
 
 class requirement_item(models.Model):
     requirement_item_id = models.AutoField(primary_key=True)

@@ -205,6 +205,7 @@ re_path(r'^request_for_change_set_to_draft/(?P<rfc_id>[0-9]+)/', views.request_f
 re_path(r'^request_for_change_start/(?P<rfc_id>[0-9]+)/', views.request_for_change_start, name='request_for_change_start'),
 re_path(r'^request_for_change_submit/(?P<rfc_id>[0-9]+)/', views.request_for_change_submit, name='request_for_change_submit'),
 re_path(r'^request_for_change_information/(?P<rfc_id>[0-9]+)/', views.request_for_change_information, name='request_for_change_information'),
+re_path(r'^requirement_customer_information/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_customer_information, name='requirement_customer_information'),
 re_path(r'^requirement_documents_uploads/(?P<location_id>[0-9]+)/(?P<destination>["requirement","requirement_item"]+)', views_requirements.requirement_documents_uploads, name='requirement_documents_uploads'),
 re_path(r'^requirement_information/(?P<requirement_id>[0-9]+)/', views_requirements.requirement_information,name="requirement_information"),
 re_path(r'^requirement_item_information/(?P<requirement_item_id>[0-9]+)/', views_requirements.requirement_item_information, name="requirement_item_information"),
