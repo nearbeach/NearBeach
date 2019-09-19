@@ -180,7 +180,7 @@ def new_user(request):
 
     # context
     c = {
-        'user_information_form': user_information_form(),
+        'user_information_form': user_information_form(request.POST or None),
         'is_superuser': request.session['is_superuser'],
         'errors': errors,
         'new_item_permission': permission_results['new_item'],
