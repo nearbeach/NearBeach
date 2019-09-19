@@ -5534,7 +5534,7 @@ def new_kanban_board(request):
 
     c = {
         'kanban_board_form': kanban_board_form(initial={
-            'kanban_board_column': 'Backlog\nIn Progress\nCompleted',
+            'kanban_board_column': 'Backlog\nBlocked\nIn Progress\nCompleted',
             'kanban_board_level': 'Sprint 1\nSprint 2',
         }),
         'new_item_permission': permission_results['new_item'],
