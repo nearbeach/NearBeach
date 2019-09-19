@@ -7,6 +7,7 @@
     <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
     <script type="text/javascript" src="{% static 'NearBeach/javascript/assigned_user_list.js' %}"></script>
     <script type="text/javascript" src="{% static 'NearBeach/javascript/document_upload.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/requirement_information.js' %}"></script>
 
     <div class="card mt-4">
         <div class="card-header">
@@ -650,6 +651,29 @@
                 },
                 error: function() {
                     new_error("Sorry - there was an error");
+                }
+            })
+        }
+
+        function remove_customer(customer_id) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: `/requirement_remove_customer/{{ requirement_id }}/${customer_id}/`,
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    $("#requirement_customers").html(data);
+                },
+                error: function() {
+                    new_error("Sorry - there was an error removing the customer");
                 }
             })
         }
