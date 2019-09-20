@@ -41,9 +41,10 @@ PRODUCT_OR_SERVICE = (
 )
 
 PROJECT_STATUS_CHOICE = (
-    ('New', 'New'),
-    ('Open', 'Open'),
-    ('Resolved', 'Resolved'),
+    ('Backlog', 'Backlog'),
+    ('Blocked', 'Blocked'),
+    ('In Progress', 'In Progress'),
+    ('Test/Review', 'Test/Review'),
     ('Closed', 'Closed'),
 )
 
@@ -2961,6 +2962,12 @@ class requirement(models.Model):
     )
     requirement_story_point_min = models.IntegerField(default=1)
     requirement_story_point_max = models.IntegerField(default=4)
+    organisation = models.ForeignKey(
+        organisation,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
@@ -2980,6 +2987,35 @@ class requirement(models.Model):
     class Meta:
         db_table = "requirement"
 
+
+class requirement_customer(models.Model):
+    requirement_customer_id = models.AutoField(primary_key=True)
+    requirement = models.ForeignKey(
+        requirement,
+        on_delete=models.CASCADE,
+    )
+    customer = models.ForeignKey(
+        customer,
+        on_delete=models.CASCADE,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    def __str__(self):
+        return str(self.requirement_customer_id)
+
+    class Meta:
+        db_table = "requirement_customer"
 
 
 class requirement_item(models.Model):

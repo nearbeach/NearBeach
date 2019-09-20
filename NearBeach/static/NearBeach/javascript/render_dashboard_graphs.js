@@ -60,7 +60,7 @@ function render_bug_client_bugs(data, target_id) {
     }
 
     //TEMP VARIABLES//
-    var margin = {top: 40, right: 100, bottom: 60, left: 50},
+    var margin = {top: 40, right: 100, bottom: 80, left: 50},
         width = 960 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
     //END TEMP VARIABLES//
@@ -210,5 +210,5 @@ function render_bug_client_bugs(data, target_id) {
         .attr("x",0 - (height / 2))
         .attr("dy", "1em")
         .style("text-anchor", "middle")
-        .text("Count of Cataract Surgeries");
+        .text("Count of Bugs");
 }

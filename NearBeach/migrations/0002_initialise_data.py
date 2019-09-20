@@ -136,9 +136,11 @@ def initialise_data(apps, schema_editor):
     #List of requirement  status
     list_of_requirement_status = apps.get_model("NearBeach","list_of_requirement_status")
     list_of_requirement_status.objects.using(db_alias).bulk_create([
-        list_of_requirement_status(requirement_status="New Requirement"),
+        list_of_requirement_status(requirement_status="Backlog"),
+        list_of_requirement_status(requirement_status="Blocked"),
         list_of_requirement_status(requirement_status="In Progress"),
-        list_of_requirement_status(requirement_status="Completed",requirement_status_is_closed='TRUE'),
+        list_of_requirement_status(requirement_status="Testing/Review"),
+        list_of_requirement_status(requirement_status="Closed",requirement_status_is_closed='TRUE'),
     ])
 
     #List of requirement type
@@ -5558,6 +5560,12 @@ def initialise_data(apps, schema_editor):
         list_of_quote_stages(quote_stage="Invoice Close Rejected",is_invoice='TRUE',sort_order=16,quote_closed="TRUE"),
         list_of_quote_stages(quote_stage="Invoice Close Lost",is_invoice='TRUE',sort_order=17,quote_closed="TRUE"),
         list_of_quote_stages(quote_stage="Invoice Close Dead",is_invoice='TRUE',sort_order=18,quote_closed="TRUE"),
+    ])
+
+    nearbeach_option = apps.get_model("NearBeach","nearbeach_option")
+    db_alias = schema_editor.connection.alias
+    nearbeach_option.objects.using(db_alias).bulk_create([
+        nearbeach_option(story_point_hour_min=4,story_point_hour_max=10),
     ])
 
 

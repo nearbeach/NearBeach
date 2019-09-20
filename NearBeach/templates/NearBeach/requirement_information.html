@@ -7,6 +7,7 @@
     <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
     <script type="text/javascript" src="{% static 'NearBeach/javascript/assigned_user_list.js' %}"></script>
     <script type="text/javascript" src="{% static 'NearBeach/javascript/document_upload.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/javascript/requirement_information.js' %}"></script>
 
     <div class="card mt-4">
         <div class="card-header">
@@ -24,6 +25,10 @@
                     <label for="id_requirement_scope">Requirement Scope</label>
                     {{ requirement_information_form.requirement_scope }}
                 </div>
+
+                {% if requirement_results.organisation %}
+                    <div class="form-group">Organisation - {{ requirement_results.organisation }}</div>
+                {% endif %}
 
                 <div class="form-row">
                     <div class="form-group col-md-6">
@@ -141,6 +146,17 @@
         </div>
     </div>
 
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Customers</h2>
+        </div>
+        <div class="card-body">
+            <form id="requirement_customers">
+                Loading...
+            </form>
+        </div>
+    </div>
+
     {% if permission >= 3 %}
         <div class="card mt-4">
             <div class="card-header">
@@ -250,6 +266,31 @@
                 },
                 error: function() {
                     new_error("Sorry, project assigned users did not save. Please try again.");
+                }
+            })
+        });
+
+        $("#requirement_customers").on('submit', function(e){
+            e.preventDefault();
+
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/requirement_customer_information/{{ requirement_id }}/',
+                data: $(this).serialize(),
+                dataType: "HTML",
+                type: "POST",
+                success: function(data) {
+                    $("#requirement_customers").html(data);
+                },
+                error: function() {
+                    new_error("Sorry, could not connect the customer.");
                 }
             })
         });
@@ -405,11 +446,27 @@
             load_assigned_group_add();
             load_assigned_user_list();
             load_assigned_user_add();
+            load_requirement_customers();
             load_bug_search();
             load_bug_list();
             load_tag_results();
             load_requirement_link_list();
             load_document_tree_list({{ requirement_id }},'requirement');
+        }
+
+        function load_requirement_customers() {
+            $.ajax({
+                url: '/requirement_customer_information/{{ requirement_id }}',
+                data: {},
+                dataType: "HTML",
+                type: "GET",
+                success: function(data) {
+                    $("#requirement_customers").html(data);
+                },
+                error: function() {
+                    new_error("Sorry - the requirement customers did not load correctly");
+                }
+            });
         }
 
 
@@ -594,6 +651,29 @@
                 },
                 error: function() {
                     new_error("Sorry - there was an error");
+                }
+            })
+        }
+
+        function remove_customer(customer_id) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: `/requirement_remove_customer/{{ requirement_id }}/${customer_id}/`,
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    $("#requirement_customers").html(data);
+                },
+                error: function() {
+                    new_error("Sorry - there was an error removing the customer");
                 }
             })
         }

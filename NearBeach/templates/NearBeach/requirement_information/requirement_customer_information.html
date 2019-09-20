@@ -1,0 +1,46 @@
+{% csrf_token %}
+{% if new_customers_results and requirement_permissions > 1 %}
+    {% if requirement_results.requirement_status.requirement_status_is_closed == 'FALSE' %}
+        <div class="form-row">
+            <div class="form-group col-md-8">
+                <select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" class="form-control">
+                    <option value="---------" selected>---------</option>
+                    {% for row in new_customers_results %}
+                        {% if not row.customer_id == None %}
+                            <option value="{{ row.customer_id }}">{{ row.customer_first_name }} {{ row.customer_last_name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <input type="submit" name="add_customer_submit" id="add_customer_submit" value="Add Customers to Project" disabled="disabled" class="form-group btn btn-primary">
+            </div>
+        </div>
+    {% endif %}
+{% endif %}
+{% if requirement_customer_results %}
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr class="header">
+                <td>Customer Name</td>
+                <td>Customer Description</td>
+                <td>Customer Email</td>
+                {% if requirement_permissions >= 3 %}
+                    <td>Remove Customer</td>
+                {% endif %}
+            </tr>
+        </thead>
+        {% for row in requirement_customer_results %}
+            <tr>
+                <td><a href="{% url 'customer_information' row.customer_id %}">{{ row.customer_first_name }} {{ row.customer_last_name }}</a></td>
+                <td>{{ row.customer_description }}</td>
+                <td>{{ row.customer_email }}</td>
+                {% if requirement_permissions >= 3 %}
+                    <td><a href="javascript:void(0)" onclick="remove_customer({{ row.customer_id }})">Remove</a></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    Sorry, there seems to be no customers associated with this project.
+{% endif %}

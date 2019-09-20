@@ -201,6 +201,13 @@
                 success: function(data) {
                     //We want to place the loaded data into the modal
                     $("#new_card_content").html(data);
+
+                    //Focus on the element we want AFTER animation is completed
+                    setTimeout(function() {
+                        var el = document.getElementById("id_kanban_card_text");
+                        el.focus();
+                    }, 1000);
+
                 },
                 error: function() {
                     new_error("We are sorry, something went wrong with getting the new card ready.");

@@ -2732,6 +2732,7 @@ class new_requirement_form(ModelForm):
         requirement_status_is_closed='FALSE',
     )
     groups_results=group.objects.filter(is_deleted="FALSE")
+    organisation_results = organisation.objects.filter(is_deleted="FALSE")
 
     #Fields
     requirement_title = forms.CharField(
@@ -2775,6 +2776,13 @@ class new_requirement_form(ModelForm):
         widget=forms.Select(attrs={
             'class': 'form-control',
         })
+    )
+    organisation = forms.ModelChoiceField(
+        queryset=organisation_results,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        required=False,
     )
 
 

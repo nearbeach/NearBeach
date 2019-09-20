@@ -226,7 +226,7 @@ def alerts(request):
             assigned_user=request.user,
         ).values('project_id'),
         project_end_date__lte=compare_time,
-        project_status__in={'New','Open'},
+        project_status__in={'Backlog','Blocked','In Progress','Test/Review'},
     )
 
     task_results = task.objects.filter(
@@ -237,7 +237,7 @@ def alerts(request):
             assigned_user=request.user,
         ).values('task_id'),
         task_end_date__lte=compare_time,
-        task_status__in={'New','Open'},
+        task_status__in={'Backlog','Blocked','In Progress','Test/Review'},
     )
 
     opportunity_results = opportunity.objects.filter(
@@ -363,7 +363,7 @@ def assign_customer_project_task(request, customer_id):
     """
     project_results = project.objects.filter(
         is_deleted="FALSE",
-        project_status__in=('New','Open'),
+        project_status__in=('Backlog','Blocked','In Progress','Test/Review'),
         project_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             group_id__in=user_group.objects.filter(
@@ -381,7 +381,7 @@ def assign_customer_project_task(request, customer_id):
     """
     task_results = task.objects.filter(
         is_deleted="FALSE",
-        task_status__in=('New', 'Open'),
+        task_status__in=('Backlog','Blocked','In Progress','Test/Review'),
         task_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             group_id__in=user_group.objects.filter(
@@ -1042,7 +1042,7 @@ def associated_projects(request, task_id):
     #Get required data
     projects_results = project.objects.filter(
         is_deleted="FALSE",
-        project_status__in={'New', 'Open'}
+        project_status__in={'Backlog','Blocked','In Progress','Test/Review'}
     )
 
     # Load the template
@@ -1081,7 +1081,7 @@ def associated_task(request, project_id):
 
     task_results = task.objects.filter(
         is_deleted="FALSE",
-        task_status__in={'New','Open'}
+        task_status__in=('Backlog','Blocked','In Progress','Test/Review')
     )
 
     # Load the template
@@ -2427,8 +2427,6 @@ def dashboard_active_projects(request):
         assigned_user=request.user,
         project_id__isnull=False,
     ).exclude(
-        project_id__project_status='Resolved'
-    ).exclude(
         project_id__project_status='Closed'
     ).values(
         'project_id__project_id',
@@ -2509,9 +2507,7 @@ def dashboard_active_task(request):
         assigned_user=request.user,
         task_id__isnull=False,
     ).exclude(
-        task_id__task_status='Resolved'
-    ).exclude(
-        task_id__task_status='Completed'
+        task_id__task_status='Closed'
     ).values(
         'task_id__task_id',
         'task_id__task_short_description',
@@ -4437,14 +4433,14 @@ def kanban_new_link(request,kanban_board_id,location_id='',destination=''):
 
     project_results = project.objects.filter(
         is_deleted="FALSE",
-        project_status__in=('New','Open'),
+        project_status__in=('Backlog','Blocked','In Progress','Test/Review'),
     ).exclude(
         is_deleted="FALSE",
         project_id__in=kanban_card_results.filter(project_id__isnull=False).values('project_id')
     )
     task_results = task.objects.filter(
         is_deleted="FALSE",
-        task_status__in=('New','Open'),
+        task_status__in=('Backlog','Blocked','In Progress','Test/Review'),
         task_id__in=kanban_card_results.filter(task_id__isnull=False).values('task_id')
     )
     requirement_results = requirement.objects.filter(
@@ -5538,7 +5534,7 @@ def new_kanban_board(request):
 
     c = {
         'kanban_board_form': kanban_board_form(initial={
-            'kanban_board_column': 'Backlog\nIn Progress\nCompleted',
+            'kanban_board_column': 'Backlog\nBlocked\nIn Progress\nCompleted',
             'kanban_board_level': 'Sprint 1\nSprint 2',
         }),
         'new_item_permission': permission_results['new_item'],
@@ -5811,8 +5807,10 @@ def new_opportunity_link(request,opportunity_id,destination,location_id=''):
     elif destination == "project":
         search_results = project.objects.filter(
             project_status__in = [
-                'New',
-                'Open',
+                'Backlog',
+                'Blocked',
+                'In Progress',
+                'Test/Review'
             ],
             is_deleted="FALSE",
             project_id__in=object_assignment.objects.filter(
@@ -5824,8 +5822,10 @@ def new_opportunity_link(request,opportunity_id,destination,location_id=''):
     elif destination == "task":
         search_results = task.objects.filter(
             task_status__in = [
-                'New',
-                'Open',
+                'Backlog',
+                'Blocked',
+                'In Progress',
+                'Test/Review'
             ],
             is_deleted="FALSE",
             task_id__in=object_assignment.objects.filter(
@@ -6034,7 +6034,7 @@ def new_project(request, location_id='', destination=''):
                 project_description=project_description,
                 project_start_date=form.cleaned_data['project_start_date'],
                 project_end_date=form.cleaned_data['project_end_date'],
-                project_status='New',
+                project_status='Backlog',
                 project_story_point_min=project_story_point * nearbeach_option_results.story_point_hour_min,
                 project_story_point_max=project_story_point * nearbeach_option_results.story_point_hour_max,
                 change_user=request.user,
@@ -6551,7 +6551,7 @@ def new_task(request, location_id='', destination=''):
                 #organisation_id=organisation_id_form,
                 task_start_date=form.cleaned_data['task_start_date'],
                 task_end_date=form.cleaned_data['task_end_date'],
-                task_status='New',
+                task_status='Backlog',
                 change_user = request.user,
             )
 
@@ -7766,7 +7766,7 @@ def project_information(request, project_id):
             # Check to make sure the resolve button was hit
             if 'Resolve' in request.POST:
                 # Well, we have to now resolve the data
-                project_results.project_status = 'Resolved'
+                project_results.project_status = 'Closed'
 
             project_results.change_user=request.user
             project_results.save()
@@ -7794,7 +7794,7 @@ def project_information(request, project_id):
     )
 
     #If project is completed - send user to read only module
-    if project_results.project_status == "Closed" or project_results.project_status == "Resolved":
+    if project_results.project_status == "Closed":
         return HttpResponseRedirect(reverse('project_readonly', args={project_id}))
 
     # Obtain the required data
@@ -8873,7 +8873,7 @@ def request_for_change_submit(request,rfc_id):
 @login_required(login_url='login',redirect_field_name="")
 def resolve_project(request, project_id):
     project_update = project.objects.get(project_id=project_id)
-    project_update.project_status = 'Resolved'
+    project_update.project_status = 'Closed'
     project_update.change_user=request.user
     project_update.save()
     return HttpResponseRedirect(reverse('dashboard'))
@@ -8882,7 +8882,7 @@ def resolve_project(request, project_id):
 @login_required(login_url='login',redirect_field_name="")
 def resolve_task(request, task_id):
     task_update = task.objects.get(task_id=task_id)
-    task_update.task_status = 'Resolved'
+    task_update.task_status = 'Closed'
     task_update.change_user=request.user
     task_update.save()
     return HttpResponseRedirect(reverse('dashboard'))
@@ -9477,7 +9477,7 @@ def task_information(request, task_id):
     - Task status has been set to 'Completed'
     - User only have read only status
     """
-    if task_results.task_status in ('Resolved','Closed') or permission_results['task'] == 1:
+    if task_results.task_status in ('Closed') or permission_results['task'] == 1:
         #Take them to the read only
         return HttpResponseRedirect(reverse('task_readonly',args={ task_id }))
 
@@ -9501,7 +9501,7 @@ def task_information(request, task_id):
             print(request.POST)
             if 'Resolve' in request.POST:
                 # Well, we have to now resolve the data
-                task_results.task_status = 'Resolved'
+                task_results.task_status = 'Closed'
             task_results.save()
 
             """

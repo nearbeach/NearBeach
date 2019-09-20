@@ -13,6 +13,73 @@ from .user_permissions import return_user_permission_level
 from .views import permission_denied
 
 
+@login_required(login_url='login',redirect_field_name="")
+def requirement_customer_information(request, requirement_id):
+    permission_results = return_user_permission_level(request, None, 'requirement')
+
+    if permission_results['requirement'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST" and permission_results['requirement'] > 1:
+        # The user has tried adding a customer
+        customer_id = request.POST.get("add_customer_select")
+
+        submit_customer = requirement_customer(
+            requirement_id=requirement_id,
+            customer_id=customer_id,
+            change_user=request.user,
+        )
+        submit_customer.save()
+
+    # Get required data
+    requirement_customer_results = customer.objects.filter(
+        is_deleted="FALSE",
+        customer_id__in=requirement_customer.objects.filter(
+            is_deleted="FALSE",
+            requirement_id=requirement_id,
+            customer_id__isnull=False,
+        ).values('customer_id')
+    )
+
+    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+
+    if requirement_results.organisation:
+        #There is an organisation. Get customers from here
+        new_customers_results = customer.objects.filter(
+            is_deleted="FALSE",
+            organisation_id_id=requirement_results.organisation_id,
+        ).exclude(
+            customer_id__in=requirement_customer.objects.filter(
+                is_deleted="FALSE",
+                requirement_id=requirement_id,
+            ).values('customer_id')
+        )
+    else:
+        new_customers_results = customer.objects.filter(
+            is_deleted="FALSE",
+            organisation_id__isnull=True,
+        ).exclude(
+            customer_id__in=requirement_customer.objects.filter(
+                is_deleted="FALSE",
+                requirement_id=requirement_id,
+            ).values('customer_id')
+        )
+
+    # Get template
+    t = loader.get_template('NearBeach/requirement_information/requirement_customer_information.html')
+
+    # Get context
+    c = {
+        'requirement_customer_results': requirement_customer_results,
+        'requirement_results': requirement_results,
+        'new_customers_results': new_customers_results,
+        'new_item_permission': permission_results['new_item'],
+        'requirement_permissions': permission_results['requirement'],
+        'administration_permission': permission_results['administration'],
+
+    }
+
+    return HttpResponse(t.render(c,request))
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -36,6 +103,7 @@ def new_requirement(request,location_id='',destination=''):
                 requirement_scope=requirement_scope,
                 requirement_type=requirement_type,
                 requirement_status=form.cleaned_data['requirement_status'],
+                organisation=form.cleaned_data['organisation'],
                 change_user=request.user,
             )
             requirement_save.save()
@@ -813,7 +881,7 @@ def requirement_readonly(request,requirement_id):
     :param requirement_id: The requirement that the end user wants to look at.
     :return: A read only page for the user
     """
-    permission_results = return_user_permission_level(request, None, 'requirement')
+    permission_results = return_user_permission_level(request, None, 'requirement_link')
 
     if permission_results['requirement_link'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
@@ -848,3 +916,32 @@ def requirement_readonly(request,requirement_id):
     return HttpResponse(t.render(c, request)) 
 
 
+@login_required(login_url='login',redirect_field_name="")
+def requirement_remove_customer(request, requirement_id, customer_id):
+    permission_results = return_user_permission_level(request, None, 'requirement')
+
+    if permission_results['requirement'] < 4:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    if request.method == "POST":
+        #Delete the object
+        update_customer = requirement_customer.objects.filter(
+            is_deleted="FALSE",
+            requirement_id=requirement_id,
+            customer_id=customer_id,
+        )
+
+        #Save
+        for row in update_customer:
+            #Update fields
+            row.change_user = request.user
+            row.is_deleted = "TRUE"
+
+            #SAve
+            row.save()
+
+
+        #Redirect user
+        return HttpResponseRedirect(reverse('requirement_customer_information', args={requirement_id}))
+    else:
+        return HttpResponseBadRequest("Sorry, can only do this through POST")

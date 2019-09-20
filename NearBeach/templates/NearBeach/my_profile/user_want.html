@@ -1,6 +1,6 @@
 {% csrf_token %}
 <div class="form-row">
-    <div class="form-group col-md-2">
+    <div class="form-group col-md-3">
         <label for="id_want_choice">Do or Do not</label>
         {{ user_want_form.want_choice }}
     </div>
@@ -8,14 +8,13 @@
         <label for="id_want_choice_text">Description</label>
         {{ user_want_form.want_choice_text }}
     </div>
-    <div class="form-group col-md-2">
+    <div class="form-group col-md-3">
         <label for="id_want_skill">Skill Level</label>
         {{ user_want_form.want_skill }}
     </div>
-    <div class="form-group col-md-1">
-        <label for="submit_want">.</label>
-        <input id="submit_want" value="Submit" type="submit" class="btn btn-primary form-control">
-    </div>
+</div>
+<div class="form-group">
+    <input id="submit_want" value="Submit" type="submit" class="btn btn-primary">
 </div>
 
 
