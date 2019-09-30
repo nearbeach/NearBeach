@@ -2,8 +2,6 @@
 {% block content %}
 {% load static %}
 <body onload="on_page_load()">
-    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
-    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
     <link rel="stylesheet" href="{% static 'NearBeach/widgets/intl-tel-input/css/intlTelInput.css' %}">
     <script src="{% static 'NearBeach/widgets/intl-tel-input/js/intlTelInput.js' %}"></script>
     <style>
@@ -20,6 +18,8 @@
         <div class="card-body">
             <form id="input-form" action="{% url 'new_campus' location_id destination %}" method="post" class="new_campus">
                 {% csrf_token %}
+                {{ new_campus_form.media.css }}
+                {{ new_campus_form.media.js }}
                 <div class="form-group">
                     <label for="id_campus_nickname">Campus Nickname</label>
                     {{ new_campus_form.campus_nickname }}
@@ -68,9 +68,6 @@
         </div>
     </div>
 
-    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
     <script>
         $("#input-form").on('change', function() {
             enable_disable_submit();

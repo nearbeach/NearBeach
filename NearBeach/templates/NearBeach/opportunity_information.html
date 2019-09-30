@@ -2,8 +2,6 @@
 {% block content %}
 {% load static %}
 
-    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
-    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
     <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
     <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
@@ -16,7 +14,8 @@
         <div class="card-body">
             <form id="opportunity_information" action="{% url 'opportunity_information' opportunity_id %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                {{ opportunity_information_form.media }}
+                {{ opportunity_information_form.media.css }}
+                {{ opportunity_information_form.media.js }}
                 <div id="save_state"></div>
                 <div class="form-group">
                     <label for="id_opportunity_name">Opportunity Name</label>
@@ -292,10 +291,6 @@
             </div>
         </div>
     </div>
-
-    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
 
     <script>
         document.onload = on_page_load();

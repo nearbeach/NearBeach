@@ -147,8 +147,8 @@ class add_permission_set_to_group_form(forms.Form):
 
     add_permission_set = forms.ModelChoiceField(
         label = "Permission Set Name",
-        widget=forms.Select(attrs={
-            'class': 'chosen-select form-control',
+        widget=Select2Widget(attrs={
+            'class': 'form-control',
             'onchange': 'permission_set_changed()',
         }),
         queryset=permission_set.objects.filter(is_deleted='FALSE')
@@ -175,8 +175,8 @@ class add_user_to_group_form(forms.Form):
 
     permission_set=forms.ModelChoiceField(
         queryset=permission_set.objects.all(),
-        widget=forms.Select(attrs={
-            'class': 'chosen-select form-control',
+        widget=Select2Widget(attrs={
+            'class': 'form-control',
             'onchange': 'add_user_changed()',
         })
     )
@@ -184,8 +184,8 @@ class add_user_to_group_form(forms.Form):
         queryset=User.objects.filter(
             is_active=True,
         ),
-        widget=forms.Select(attrs={
-            'class': 'chosen-select form-control',
+        widget=Select2Widget(attrs={
+            'class': 'form-control',
             'onchange': 'add_user_changed()',
         })
     )
@@ -1163,9 +1163,9 @@ class email_form(ModelForm):
     )
     to_email = forms.ModelMultipleChoiceField(
         queryset=customer.objects.all(),
-        widget=forms.SelectMultiple(attrs={
+        widget=Select2MultipleWidget(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select form-control',
+            'class': 'form-control',
             'multiple tabindex': '0',
             'style': 'width: 90%',
         }),
@@ -1173,9 +1173,9 @@ class email_form(ModelForm):
     cc_email = forms.ModelMultipleChoiceField(
         required=False,
         queryset=customer.objects.all(),
-        widget=forms.SelectMultiple(attrs={
+        widget=Select2MultipleWidget(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select form-control',
+            'class': 'form-control',
             'multiple tabindex': '0',
             'style': 'width: 90%',
         }),
@@ -1183,9 +1183,9 @@ class email_form(ModelForm):
     bcc_email = forms.ModelMultipleChoiceField(
         required=False,
         queryset=customer.objects.all(),
-        widget=forms.SelectMultiple(attrs={
+        widget=Select2MultipleWidget(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select form-control',
+            'class': 'form-control',
             'multiple tabindex': '0',
             'style': 'width: 90%',
         }),
@@ -1933,7 +1933,7 @@ class new_campus_form(forms.Form):
         queryset=list_of_country.objects.filter(is_deleted='FALSE'),
         empty_label="Please pick a Country/Region",
         widget=RegionSelect(attrs={
-            'class': 'chosen-select form-control',
+            'class': 'form-control',
             'tag': forms.HiddenInput(),
             'style': 'width: 100%',
         }),
@@ -2974,9 +2974,9 @@ class opportunity_information_form(ModelForm):
     select_groups=forms.ModelMultipleChoiceField(
         queryset=groups_results,
         required=False,
-        widget=forms.SelectMultiple(attrs={
+        widget=Select2MultipleWidget(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select form-control',
+            'class': 'form-control',
             'multiple tabindex': '0',
         }),
     )
@@ -2984,9 +2984,9 @@ class opportunity_information_form(ModelForm):
     select_users=forms.ModelMultipleChoiceField(
         queryset=user_results,
         required=False,
-        widget=forms.SelectMultiple(attrs={
+        widget=Select2MultipleWidget(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select form-control',
+            'class': 'form-control',
             'multiple tabindex': '0',
             'style': 'width: 100%',
         }),
@@ -3852,8 +3852,8 @@ class request_for_change_form(ModelForm):
         queryset=User.objects.filter( #This should only be group leaders
             is_active=True,
         ),
-        widget=forms.Select(attrs={
-            'class': 'chosen-select form-control',
+        widget=Select2Widget(attrs={
+            'class': 'form-control',
         }),
         required=True,
     )

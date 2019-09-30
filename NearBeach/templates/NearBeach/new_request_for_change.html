@@ -1,8 +1,6 @@
 {% extends "./template.html" %}
 {% block content %}
     {% load static %}
-    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
-    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
     <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
 
@@ -114,9 +112,6 @@
                     <input type="submit" value="Submit New RFC" class="btn btn-primary form-control w-50">
                     <a href={% url 'dashboard' %} class="btn btn-warning form-control w-50">Cancel</a>
                 </div>
-                <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
-                <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
-                <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
             </div>
         </div>
     </form>
