@@ -8,7 +8,8 @@
 
     <form action={% url 'new_request_for_change' %} method="post" class="new_request_for_change" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ new_request_for_change_form.media }}
+        {{ new_request_for_change_form.media.css }}
+        {{ new_request_for_change_form.media.js }}
         <div class="card mt-4">
             <div class="card-header">
                 <h1>New Request For Change</h1>

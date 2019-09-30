@@ -13,6 +13,7 @@ from django.forms.widgets import TextInput
 from NearBeach.forms_special_fields import *
 
 from tinymce import TinyMCE
+from django_select2.forms import Select2MultipleWidget, ModelSelect2MultipleWidget, Select2Widget, ModelSelect2Widget
 
 #Used for login
 from django.contrib.auth import authenticate, get_user_model, login, logout
@@ -1556,9 +1557,9 @@ class kanban_board_form(forms.Form):
     select_groups = forms.ModelMultipleChoiceField(
         queryset=group_results,
         required=True,
-        widget=forms.SelectMultiple(attrs={
+        widget=Select2MultipleWidget(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select form-control',
+            'class': 'form-control',
             'multiple tabindex': '0',
             'style': 'width: 100%',
         }),
@@ -2059,7 +2060,7 @@ class new_customer_form(forms.Form):
     )
     organisation_id=forms.ModelChoiceField(
         label="Organisation",
-        widget=forms.Select(attrs={
+        widget=Select2Widget(attrs={
             'class': 'form-control',
         }),
         queryset=organisations_results,
@@ -2296,9 +2297,9 @@ class new_opportunity_form(ModelForm):
     select_groups=forms.ModelMultipleChoiceField(
         queryset=groups_results,
         required=False,
-        widget=forms.SelectMultiple(attrs={
+        widget=Select2MultipleWidget(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select form-control',
+            'class': 'form-control',
             'multiple tabindex': '0',
         }),
     )
@@ -2306,9 +2307,9 @@ class new_opportunity_form(ModelForm):
     select_users=forms.ModelMultipleChoiceField(
         queryset=user_results,
         required=False,
-        widget=forms.SelectMultiple(attrs={
+        widget=Select2MultipleWidget(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select form-control',
+            'class': 'form-control',
             'multiple tabindex': '0',
         }),
     )
@@ -2361,9 +2362,9 @@ class new_project_form(forms.Form):
 
     # Fields
     project_permission=forms.ModelMultipleChoiceField(
-        widget=forms.SelectMultiple(attrs={
+        widget=Select2MultipleWidget(attrs={
             'placeholder': 'Select Groups to Assign to Project',
-            'class': 'chosen-select form-control',
+            'class': 'form-control',
             'multiple tabindex': '0',
 
         }),
@@ -2492,9 +2493,9 @@ class new_quote_form(ModelForm):
     select_groups = forms.ModelMultipleChoiceField(
         queryset=groups_results,
         required=True,
-        widget=forms.SelectMultiple(attrs={
+        widget=Select2MultipleWidget(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select form-control',
+            'class': 'form-control',
             'multiple tabindex': '0',
             'style': 'width: 100%',
         }),
@@ -2575,8 +2576,8 @@ class new_request_for_change_form(ModelForm):
         queryset=User.objects.filter( #This should only be group leaders
             is_active=True,
         ),
-        widget=forms.Select(attrs={
-            'class': 'chosen-select form-control',
+        widget=Select2Widget(attrs={
+            'class': 'form-control',
         }),
         required=True,
     )
@@ -2650,9 +2651,9 @@ class new_request_for_change_form(ModelForm):
     )
 
     rfc_permission=forms.ModelMultipleChoiceField(
-        widget=forms.SelectMultiple(attrs={
+        widget=Select2MultipleWidget(attrs={
             'placeholder': 'Select Groups to Assign to Request for Change',
-            'class': 'chosen-select form-control',
+            'class': 'form-control',
             'multiple tabindex': '0',
 
         }),
@@ -2764,9 +2765,9 @@ class new_requirement_form(ModelForm):
     requirement_permission = forms.ModelMultipleChoiceField(
         queryset=groups_results,
         required=True,
-        widget=forms.SelectMultiple(attrs={
+        widget=Select2MultipleWidget(attrs={
             'placeholder': "Choose the users(s)",
-            'class': 'chosen-select form-control',
+            'class': 'form-control',
             'multiple tabindex': '0',
             'style': 'width: 100%',
         }),
@@ -2815,9 +2816,9 @@ class new_task_form(forms.Form):
 
     # Fields
     task_permission=forms.ModelMultipleChoiceField(
-        widget=forms.SelectMultiple(attrs={
+        widget=Select2MultipleWidget(attrs={
             'placeholder': 'Select Groups to Assign to Project',
-            'class': 'chosen-select form-control',
+            'class': 'form-control',
             'multiple tabindex': '0',
         }),
         required=True,

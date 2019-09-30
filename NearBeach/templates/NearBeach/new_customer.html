@@ -7,6 +7,8 @@
         <div class="card-body">
             <form action={% url 'new_customer' organisation_id %} method="post" class="new_customer" id="input-form">
                 {% csrf_token %}
+                {{ new_customer_form.media.css }}
+                {{ new_customer_form.media.js }}
                 {% if form_errors %}
                     <div class="alert-danger">{{ form_errors }}</div>
                 {% endif %}

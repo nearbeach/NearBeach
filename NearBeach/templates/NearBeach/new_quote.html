@@ -1,8 +1,6 @@
 {% extends "./template.html" %}
 {% block content %}
     {% load static %}
-    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
-    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
     <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
     <script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
@@ -14,7 +12,8 @@
             <div class="card-body">
                 <form action={% url 'new_quote' primary_key destination %} method="post" class="new_quote">
                     {% csrf_token %}
-                    {{ new_quote_form.media }}
+                    {{ new_quote_form.media.css }}
+                    {{ new_quote_form.media.js }}
                     <div class="form-group">
                         <label for="id_quote_title">Quote Title</label>
                         {{ new_quote_form.quote_title }}
@@ -52,9 +51,6 @@
                     <div class="form-group">
                         <input type="submit" value="Submit new quote" class="btn btn-primary form-control">
                     </div>
-                    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
-                    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
-                    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
                 </form>
             </div>
         </div>
