@@ -9013,7 +9013,7 @@ def search_customer(request):
 
     for split_row in search_customer_results.split(' '):
         customer_results = customer_results.filter(
-            Q(customer_first_name__contains=split_row) or
+            Q(customer_first_name__contains=split_row) |
             Q(customer_last_name__contains=split_row)
         )
 
