@@ -5140,8 +5140,8 @@ def new_bug_client(request):
     if permission_results['bug_client'] < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
     form_errors = ''
+    form = bug_client_form(None or request.POST)
     if request.method == "POST":
-        form = bug_client_form(request.POST)
         if form.is_valid():
             #Get required data
             bug_client_name = form.cleaned_data['bug_client_name']
@@ -5183,14 +5183,14 @@ def new_bug_client(request):
 
         else:
             print(form.errors)
-            form_errors(form.errors)
+            form_errors =form.errors
 
     # load template
     t = loader.get_template('NearBeach/new_bug_client.html')
 
     # context
     c = {
-        'bug_client_form': bug_client_form(),
+        'bug_client_form': form,
         'form_errors': form_errors,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
