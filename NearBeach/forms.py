@@ -4161,6 +4161,17 @@ class search_customer_form(forms.Form):
         }),
     )
 
+class search_kanban_form(forms.Form):
+    # Just have a simple search field
+    search_kanban = forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Search Kanban Boards',
+            'class': 'form-control w-75',
+        }),
+    )
+
 class search_organisation_form(forms.Form):
     #Just have a simple search field
     search_organisation=forms.CharField(

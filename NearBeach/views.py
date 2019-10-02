@@ -4237,31 +4237,6 @@ def kanban_information(request,kanban_board_id):
     return HttpResponse(t.render(c, request))
 
 
-
-
-@login_required(login_url='login',redirect_field_name="")
-def kanban_list(request):
-    permission_results = return_user_permission_level(request, None,['kanban'])
-
-    if permission_results['kanban'] == 0:
-        return HttpResponseRedirect(reverse('permission_denied'))
-
-    kanban_board_results = kanban_board.objects.filter(
-        is_deleted="FALSE",
-    )
-
-    t = loader.get_template('NearBeach/kanban_list.html')
-
-    # context
-    c = {
-        'new_item_permission': permission_results['new_item'],
-        'administration_permission': permission_results['administration'],
-        'kanban_permission': permission_results['kanban'],
-        'kanban_board_results': kanban_board_results,
-    }
-
-    return HttpResponse(t.render(c, request))
-
 def kanban_move_card(request,kanban_card_id,kanban_column_id,kanban_level_id):
     if request.method == "POST":
         kanban_card_result = kanban_card.objects.get(kanban_card_id=kanban_card_id)
@@ -9054,6 +9029,41 @@ def search_group(request):
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
         'group_results': group_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login',redirect_field_name="")
+def search_kanban(request):
+    permission_results = return_user_permission_level(request, None,['kanban'])
+
+    if permission_results['kanban'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    kanban_form = search_kanban_form(None or request.POST)
+
+    kanban_search_results = ''
+    if request.method == "POST":
+        if kanban_form.is_valid():
+            kanban_search_results = kanban_form.cleaned_data['search_kanban']
+
+    kanban_board_results = kanban_board.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    for split_row in kanban_search_results.split(' '):
+        kanban_board_results = kanban_board_results.filter(kanban_board_name__contains=split_row)
+
+    t = loader.get_template('NearBeach/search_kanban.html')
+
+    # context
+    c = {
+        'search_kanban_form': kanban_form,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'kanban_permission': permission_results['kanban'],
+        'kanban_board_results': kanban_board_results,
     }
 
     return HttpResponse(t.render(c, request))
