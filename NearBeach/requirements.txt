@@ -11,4 +11,5 @@ BeautifulSoup4
 pandoc
 pypandoc
 django_select2
+django-phone-field
 
