@@ -10,5 +10,4 @@ python-docx
 BeautifulSoup4
 pandoc
 pypandoc
-django_select2y
-
+django_select2
