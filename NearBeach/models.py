@@ -4,6 +4,7 @@ from .private_media import *
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from tinymce import HTMLField
+from phonenumber_field.modelfields import PhoneNumberField
 import uuid
 
 # ENUM choices
@@ -303,11 +304,11 @@ class campus(models.Model):
         null=True,
     )
     campus_nickname = models.CharField(max_length=100)
-    campus_phone = models.CharField(
+    campus_phone = PhoneNumberField(
         max_length=20,
         null=True
     )
-    campus_fax = models.CharField(
+    campus_fax = PhoneNumberField(
         max_length=20,
         null=True
     )
@@ -515,8 +516,8 @@ class customer_campus(models.Model):
         'campus',
         on_delete=models.CASCADE,
     )
-    customer_phone = models.CharField(max_length=20)
-    customer_fax = models.CharField(max_length=20)
+    customer_phone = PhoneNumberField(max_length=20)
+    customer_fax = PhoneNumberField(max_length=20)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
