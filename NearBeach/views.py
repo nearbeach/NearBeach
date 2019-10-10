@@ -1439,13 +1439,18 @@ def campus_information(request, campus_information):
 
     # If instance is in POST
     if request.method == "POST":
+        print("\n\nREQUEST POST\n")
+        print(request.POST)
+        print("END REQUEST POST\n\n")
         # Other save button must have been pressed
         form = campus_information_form(request.POST)
         if form.is_valid():
             # Save all the data
             campus_results.campus_nickname = form.cleaned_data['campus_nickname']
-            campus_results.campus_phone = form.cleaned_data['campus_phone']
-            campus_results.campus_fax = form.cleaned_data['campus_fax']
+            #campus_results.campus_phone = form.cleaned_data['campus_phone']
+            campus_results.campus_phone = request.POST.get('hidden_campus_phone')
+            #campus_results.campus_fax = form.cleaned_data['campus_fax']
+            campus_results.campus_fax = request.POST.get('hidden_campus_fax')
             campus_results.campus_address1 = form.cleaned_data['campus_address1']
             campus_results.campus_address2 = form.cleaned_data['campus_address2']
             campus_results.campus_address3 = form.cleaned_data['campus_address3']

@@ -42,11 +42,12 @@
                 </div>
                 <div class="form-row mt-2">
                     <div class="form-row col-md-4">
-                        <label for="id_campus_phone">Campus Phone</label>
-                        {{ campus_information_form.campus_phone }}
+                        <label for="int_campus_phone">Campus Phone</label>
+                        <input type="text" id="int_campus_phone">
                     </div>
                     <div class="form-row col-md-4">
-                        <label for="id_campus_fax">Campus Fax</label>
+                        <label for="int_campus_fax">Campus Fax</label>
+                        <input type="text" id="int_campus_fax">
                         {{ campus_information_form.campus_fax }}
                     </div>
                 </div>
@@ -201,11 +202,17 @@
             {% endif %}
 
             //Initialise the international phone number widget
-            var campus_phone = document.querySelector("#id_campus_phone"),
-            campus_fax = document.querySelector("#id_campus_fax");
+            var campus_phone = document.querySelector("#int_campus_phone"),
+                campus_fax = document.querySelector("#int_campus_fax");
 
-            window.intlTelInput(campus_phone);
-            window.intlTelInput(campus_fax);
+            window.intlTelInput(campus_phone,{
+                hiddenInput: "hidden_campus_phone",
+                utilsScript: "{% static 'NearBeach/widgets/intl-tel-input/js/utils.js' %}",
+            });
+            window.intlTelInput(campus_fax, {
+                hiddenInput: "hidden_campus_fax",
+                utilsScript: "{% static 'NearBeach/widgets/intl-tel-input/js/utils.js' %}",
+            });
 
         }
 

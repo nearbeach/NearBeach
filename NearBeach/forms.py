@@ -487,6 +487,7 @@ class campus_information_form(ModelForm):
             'placeholder': 'Campus Phone',
             'type': 'tel',
             'class': 'form-control',
+            'style': 'display: none',
         })
     )
     campus_fax=forms.CharField(
@@ -496,6 +497,7 @@ class campus_information_form(ModelForm):
             'placeholder': 'Campus Fax',
             'type': 'tel',
             'class': 'form-control',
+            'style': 'display: none',
         })
     )
     campus_address1=forms.CharField(

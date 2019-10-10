@@ -11,40 +11,47 @@
         }
     </style>
     <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/../../../static/NearBeach/widgets/jquery/jquery-3.2.1.min.js' %}"></script>
-    <h2>Kanban Properties</h2>
-    <form method="post" class="kanban_board_form" id="kanban_properties_form">
-        {% csrf_token %}
-        {{ kanban_properties_form.kanban_board_name }}
-        <h3>Columns</h3>
-        <p>Please sort the columns in the order you would like them to appear on the board. Click on them to either change their name or delete them. Please note - only empty columns can be deleted.</p>
-        <table>
-            <tr>
-                <td>
-                    <ul id="columns">
-                        {% for row in kanban_column_results %}
-                            <li class="column_title" draggable="true" data-id="{{ row.kanban_column_id }}" value="{{ row.kanban_column_id }}">{{ row.kanban_column_name }}</li>
-                        {% endfor %}
-                    </ul>
-                </td>
-            </tr>
-        </table>
 
-        <h3>Levels</h3>
-        <p>Please sort the levels in the order you would like them to appear on the board. Click on them to either change their name or delete them. Please note - only empty columns can be deleted.</p>
-        <table>
-            <tr>
-                <td>
-                    <ul id="levels">
-                        {% for row in kanban_level_results %}
-                            <li class="level_title" draggable="true" data-id="{{ row.kanban_level_id }}" value="{{ row.kanban_level_id }}">{{ row.kanban_level_name }}</li>
-                        {% endfor %}
-                    </ul>
-                </td>
-            </tr>
-        </table>
+    <div class="card">
+        <div class="card-header">
+            <h2>Kanban Properties</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" class="kanban_board_form" id="kanban_properties_form">
+                {% csrf_token %}
+                {{ kanban_properties_form.kanban_board_name }}
+                <h3>Columns</h3>
+                <p>Please sort the columns in the order you would like them to appear on the board. Click on them to either change their name or delete them. Please note - only empty columns can be deleted.</p>
+                <table>
+                    <tr>
+                        <td>
+                            <ul id="columns">
+                                {% for row in kanban_column_results %}
+                                    <li class="column_title" draggable="true" data-id="{{ row.kanban_column_id }}" value="{{ row.kanban_column_id }}">{{ row.kanban_column_name }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
 
-    </form>
+                <h3>Levels</h3>
+                <p>Please sort the levels in the order you would like them to appear on the board. Click on them to either change their name or delete them. Please note - only empty columns can be deleted.</p>
+                <table>
+                    <tr>
+                        <td>
+                            <ul id="levels">
+                                {% for row in kanban_level_results %}
+                                    <li class="level_title" draggable="true" data-id="{{ row.kanban_level_id }}" value="{{ row.kanban_level_id }}">{{ row.kanban_level_name }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+
+            </form>
+        </div>
+    </div>
+
 
     {% if permission >= 3 %}
         <h2>Assigned Groups</h2>
@@ -55,7 +62,7 @@
     {% endif %}
 
     <br/>
-     <input id="save_changes" type="submit" value="Save Changes"><a href="{% url 'kanban_list' %}">Cancel and Return</a>
+     <input id="save_changes" type="submit" value="Save Changes"><a href="{% url 'search_kanban' %}">Cancel and Return</a>
 
     <script>
         //Page variables
