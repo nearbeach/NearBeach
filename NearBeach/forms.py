@@ -1582,6 +1582,7 @@ class kanban_properties_form(ModelForm):
         max_length=255,
         widget=TextInput(attrs={
             'placeholder': 'Board Name',
+            'class': 'form-control',
         }),
         required=True,
     )
@@ -1880,6 +1881,7 @@ class new_campus_form(forms.Form):
             'class': 'form-control',
         })
     )
+    """
     campus_phone=forms.CharField(
         max_length=255,
         required=False,
@@ -1898,6 +1900,7 @@ class new_campus_form(forms.Form):
             'class': 'form-control',
         })
     )
+    """
     campus_address1=forms.CharField(
         max_length=255,
         required=False,

@@ -2311,6 +2311,13 @@ def customer_readonly(request,customer_id):
 
 @login_required(login_url='login',redirect_field_name="")
 def dashboard(request):
+    """
+    Due to a bug - if the user goes to /admin/ and logs in there, they will by pass this one session request. It is
+    placed here to make sure. :)
+    """
+    request.session['is_superuser'] = request.user.is_superuser
+
+    #Get user's default permissions
     permission_results = return_user_permission_level(request, None, 'project')
 
     # Load the template
@@ -5194,6 +5201,9 @@ def new_campus(request, location_id, destination):
         return HttpResponseRedirect(reverse('login'))
 
     if request.method == 'POST':
+        print("\n\nPOST REQUEST")
+        print(request.POST)
+        print("\n\nEND POST REQUEST")
         form = new_campus_form(request.POST)
         if form.is_valid():
             # Get instances
@@ -5202,8 +5212,8 @@ def new_campus(request, location_id, destination):
             )
 
             campus_nickname = form.cleaned_data['campus_nickname']
-            campus_phone = form.cleaned_data['campus_phone']
-            campus_fax = form.cleaned_data['campus_fax']
+            campus_phone = request.POST.get('hidden_campus_phone')
+            campus_fax = request.POST.get('hidden_campus_fax')
             campus_address1 = form.cleaned_data['campus_address1']
             campus_address2 = form.cleaned_data['campus_address2']
             campus_address3 = form.cleaned_data['campus_address3']

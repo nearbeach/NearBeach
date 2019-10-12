@@ -27,15 +27,13 @@
                     {{ new_campus_form.campus_nickname }}
                 </div>
                 <div class="form-row">
-                    <div class="form-group">
-                        <label for="id_campus_phone col-md-6">Campus Phone</label>
-                        {{ new_campus_form.campus_phone }}
-                        <span id="phone_number_status"></span>
+                    <div class="form-row col-md-4">
+                        <label for="int_campus_phone">Campus Phone</label>
+                        <input type="text" id="int_campus_phone" name="int_campus_phone" value="{{ campus_results.campus_phone }}">
                     </div>
-                    <div class="form-group col-md-6">
-                        <label for="id_campus_fax">Campus Fax</label>
-                        {{ new_campus_form.campus_fax }}
-                        <span id="fax_number_status" class="hide"></span>
+                    <div class="form-row col-md-4">
+                        <label for="int_campus_fax">Campus Fax</label>
+                        <input type="text" id="int_campus_fax" name="int_campus_fax" value="{{ campus_results.campus_fax }}">
                     </div>
                 </div>
                 <div class="form-group">
@@ -85,14 +83,20 @@
             } else {
                 $("#submit").prop("disabled",true)
             }
-        };
+        }
 
         function on_page_load() {
-            var campus_phone = document.querySelector("#id_campus_phone"),
-                campus_fax = document.querySelector("#id_campus_fax");
+            var campus_phone = document.querySelector("#int_campus_phone"),
+                campus_fax = document.querySelector("#int_campus_fax");
 
-            window.intlTelInput(campus_phone);
-            window.intlTelInput(campus_fax);
+            window.intlTelInput(campus_phone,{
+                hiddenInput: "hidden_campus_phone",
+                utilsScript: "{% static 'NearBeach/widgets/intl-tel-input/js/utils.js' %}",
+            });
+            window.intlTelInput(campus_fax, {
+                hiddenInput: "hidden_campus_fax",
+                utilsScript: "{% static 'NearBeach/widgets/intl-tel-input/js/utils.js' %}",
+            });
         }
     </script>
 </body>
