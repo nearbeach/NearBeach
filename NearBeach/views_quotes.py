@@ -138,6 +138,11 @@ def new_line_item(request,quote_id):
         else:
             print(form.errors)
 
+    # Get data
+    product_and_service_results = product_and_service.objects.filter(
+        is_deleted="FALSE",
+    )
+
     # Load the template
     t = loader.get_template('NearBeach/quote_information/new_line_item.html')
 
@@ -146,6 +151,7 @@ def new_line_item(request,quote_id):
         'quote_id': quote_id,
         'new_line_item_form': new_line_item_form(),
         'quote_permission': permission_results['quote'],
+        'product_and_service_results': product_and_service_results,
     }
 
     return HttpResponse(t.render(c, request))
