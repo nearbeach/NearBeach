@@ -11,58 +11,78 @@
         }
     </style>
     <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
-
-    <div class="card">
-        <div class="card-header">
-            <h2>Kanban Properties</h2>
-        </div>
-        <div class="card-body">
-            <form method="post" class="kanban_board_form" id="kanban_properties_form">
+    <form method="post" class="kanban_board_form" id="kanban_properties_form">
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Kanban Properties</h2>
+            </div>
+            <div class="card-body">
                 {% csrf_token %}
                 {{ kanban_properties_form.kanban_board_name }}
-                <h3>Columns</h3>
-                <p>Please sort the columns in the order you would like them to appear on the board. Click on them to either change their name or delete them. Please note - only empty columns can be deleted.</p>
-                <table>
-                    <tr>
-                        <td>
-                            <ul id="columns">
-                                {% for row in kanban_column_results %}
-                                    <li class="column_title" draggable="true" data-id="{{ row.kanban_column_id }}" value="{{ row.kanban_column_id }}">{{ row.kanban_column_name }}</li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                    </tr>
-                </table>
-
-                <h3>Levels</h3>
-                <p>Please sort the levels in the order you would like them to appear on the board. Click on them to either change their name or delete them. Please note - only empty columns can be deleted.</p>
-                <table>
-                    <tr>
-                        <td>
-                            <ul id="levels">
-                                {% for row in kanban_level_results %}
-                                    <li class="level_title" draggable="true" data-id="{{ row.kanban_level_id }}" value="{{ row.kanban_level_id }}">{{ row.kanban_level_name }}</li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                    </tr>
-                </table>
-
-            </form>
+                <div class="row">
+                    <div class="card col-6 mt-4">
+                        <div class="card-header">
+                            <h3>Columns</h3>
+                            <p>Please sort the columns in the order you would like them to appear on the board. Click on them to either change their name or delete them. Please note - only empty columns can be deleted.</p>
+                        </div>
+                        <div class="card-body">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <ul id="columns">
+                                            {% for row in kanban_column_results %}
+                                                <li class="column_title" draggable="true" data-id="{{ row.kanban_column_id }}" value="{{ row.kanban_column_id }}">{{ row.kanban_column_name }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card col-6 mt-4">
+                        <div class="card-header">
+                            <h3>Levels</h3>
+                            <p>Please sort the levels in the order you would like them to appear on the board. Click on them to either change their name or delete them. Please note - only empty levels can be deleted.</p>
+                        </div>
+                        <div class="card-body">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <ul id="levels">
+                                            {% for row in kanban_level_results %}
+                                                <li class="level_title" draggable="true" data-id="{{ row.kanban_level_id }}" value="{{ row.kanban_level_id }}">{{ row.kanban_level_name }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <input id="save_changes" type="submit" value="Save Changes" class="btn btn-primary col-6">
+                    <a href="{% url 'search_kanban' %}" class="btn btn-warning col-6">Cancel and Return</a>
+                </div>
+            </div>
         </div>
-    </div>
-
+    </form>
 
     {% if permission >= 3 %}
-        <h2>Assigned Groups</h2>
-        <form method="post" class="assigned_groups" id="assigned_groups">
-            Loading add...
-        </form>
-        <div id="assigned_group_list">Loading list...</div>
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2>Assigned Groups</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" class="assigned_groups" id="assigned_groups">
+                    Loading add...
+                </form>
+                <div id="assigned_group_list">Loading list...</div>
+            </div>
+        </div>
     {% endif %}
 
     <br/>
-     <input id="save_changes" type="submit" value="Save Changes"><a href="{% url 'search_kanban' %}">Cancel and Return</a>
+
 
     <script>
         //Page variables
@@ -133,7 +153,7 @@
                 data: JSON.stringify(data_to_send),
                 success: function(data) {
                     //On Success, take the user to the kanban board list
-                    window.location = '/kanban_list/'
+                    window.location = '/search_kanban/'
                 },
                 error: function () {
                     new_error("SORRY");

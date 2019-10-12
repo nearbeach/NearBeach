@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <meta charset="UTF-8">
+    <title>NearBeach Login Screen</title>
+
+    <!--
+    Bootstrap and jquery are utilised throughout ALL of NearBeach
+    -->
+    {% load staticfiles %}
+    <script src="{% static 'NearBeach/widgets/jquery/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'NearBeach/widgets/bootstrap/js/bootstrap.bundle.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'NearBeach/widgets/bootstrap/css/bootstrap.css' %}" />
+    <link rel="stylesheet" href="{% static 'NearBeach/css/NearBeach_CSS.css' %}" />
+    <style>
+        :root {
+            --input-padding-x: 1.5rem;
+            --input-padding-y: 0.75rem;
+        }
+
+        .login,
+        .image {
+            min-height: 100vh;
+        }
+
+        .login-heading {
+            font-weight: 300;
+        }
+
+        .btn-login {
+            font-size: 0.9rem;
+            letter-spacing: 0.05rem;
+            padding: 0.75rem 1rem;
+            border-radius: 2rem;
+        }
+
+        .form-label-group {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .form-label-group>input,
+        .form-label-group>label {
+            padding: var(--input-padding-y) var(--input-padding-x);
+            height: auto;
+            border-radius: 2rem;
+        }
+
+        .form-label-group>label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: block;
+            width: 100%;
+            margin-bottom: 0;
+            /* Override default `<label>` margin */
+            line-height: 1.5;
+            color: #495057;
+            cursor: text;
+            /* Match the input under the label */
+            border: 1px solid transparent;
+            border-radius: .25rem;
+            transition: all .1s ease-in-out;
+        }
+
+        .form-label-group input::-webkit-input-placeholder {
+            color: transparent;
+        }
+
+        .form-label-group input:-ms-input-placeholder {
+            color: transparent;
+        }
+
+        .form-label-group input::-ms-input-placeholder {
+            color: transparent;
+        }
+
+        .form-label-group input::-moz-placeholder {
+            color: transparent;
+        }
+
+        .form-label-group input::placeholder {
+            color: transparent;
+        }
+
+        .form-label-group input:not(:placeholder-shown) {
+            padding-top: calc(var(--input-padding-y) + var(--input-padding-y) * (2 / 3));
+            padding-bottom: calc(var(--input-padding-y) / 3);
+        }
+
+        .form-label-group input:not(:placeholder-shown)~label {
+            padding-top: calc(var(--input-padding-y) / 3);
+            padding-bottom: calc(var(--input-padding-y) / 3);
+            font-size: 12px;
+            color: #777;
+        }
+        .bg-image {
+            background-image: url('{% static "NearBeach/images/flower_by_luke.webp" %}');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row no-gutter">
+        <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image"></div>
+        <div class="col-md-8 col-lg-6">
+            <div class="login d-flex align-items-center py-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-9 col-lg-8 mx-auto">
+                            <h3 class="login-heading">NearBeach</h3>
+                            <form action="{%  url 'login' %}" method="post" id="login-form">
+                                {% csrf_token %}
+
+                                <!--If there are any login errors. Show them here-->
+                                {% if login_form.non_field_errors %}
+                                    {% for error in login_form.non_field_errors %}
+                                        <div class="alert alert-danger" role="alert">
+                                            {{ error }}
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+
+                                <!-- LOGIN form -->
+                                <div class="form-label-group">
+                                    {{ login_form.username }}
+                                    <label for="id_username">Username</label>
+                                </div>
+
+                                <div class="form-label-group">
+                                    {{ login_form.password }}
+                                    <label for="id_password">Password</label>
+                                </div>
+
+                                {% if not RECAPTCHA_SITE_KEY == '' %}
+                                    <div class="form-label-group">
+                                        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+                                        <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_PUBLIC_KEY }}"></div>
+                                    </div>
+                                {% endif %}
+
+                                <button class="btn btn-lg btn-primary btn-block btn-login" type="submit">Login</button>
+
+                                <div class="text-center">
+                                    <a class="small" href="{% url 'password_reset' %}">Forgot password?</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -43,12 +43,11 @@
                 <div class="form-row mt-2">
                     <div class="form-row col-md-4">
                         <label for="int_campus_phone">Campus Phone</label>
-                        <input type="text" id="int_campus_phone">
+                        <input type="text" id="int_campus_phone" name="int_campus_phone" value="{{ campus_results.campus_phone }}">
                     </div>
                     <div class="form-row col-md-4">
                         <label for="int_campus_fax">Campus Fax</label>
-                        <input type="text" id="int_campus_fax">
-                        {{ campus_information_form.campus_fax }}
+                        <input type="text" id="int_campus_fax" name="int_campus_fax" value="{{ campus_results.campus_fax }}">
                     </div>
                 </div>
                 <div class="form-group">
