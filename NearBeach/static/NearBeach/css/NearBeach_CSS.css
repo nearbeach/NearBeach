@@ -12,3 +12,7 @@ bootstrap.
 a {
     color: #0000B8; !important;
 }
+
+.card {
+    overflow-inline: auto;
+}
