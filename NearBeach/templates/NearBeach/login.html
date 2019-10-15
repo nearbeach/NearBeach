@@ -28,21 +28,42 @@
         .login-heading {
             font-weight: 300;
             color: white;
+            text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
         }
 
         label {
             color: white;
+            text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
         }
 
         a {
             color: white;
+            text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
         }
     </style>
+
+    <script>
+        function on_page_load() {
+            console.log("TESTING BROWSER");
+            if (!!window.MSInputMethodContext && !!document.documentMode) {
+                console.log("BROWSER DID NOT PASS");
+                var elem = document.getElementById("unsupported_browser");
+                elem.innerHTML = '<div class="alert alert-danger"><h1>BROWSER NOT SUPPORTED!!</h1>' +
+                    '<p>We are sorry, but we can not support the Internet Explorer browser. We recommend using the following browsers' +
+                    '<ul><li>Mozilla Firefox</li>' +
+                    '<li>Google Chrome</li>' +
+                    '<li>Safari</li></ul>' +
+                    'Some of the effects are will not work - for example the missing background image for this page</p>' +
+                    '</div>';
+
+            }
+        }
+    </script>
 </head>
-<body>
+<body onload="on_page_load()">
 <div class="container-fluid">
     <div class="row no-gutter bg-image">
-        <div class="col-md-8  col-lg-6 align-center"></div>
+        <div class="col-md-8  col-lg-6 align-center" id="unsupported_browser"></div>
         <div class="col-md-8 col-lg-6 align-center">
             <h3 class="login-heading">NearBeach</h3>
             <form action="{%  url 'login' %}" method="post" id="login-form">
@@ -70,7 +91,7 @@
 
                 {% if not RECAPTCHA_SITE_KEY == '' %}
                     <div class="form-label-group">
-                        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+                        <script src="https://www.google.com/recaptcha/api.js" &render=explicit async defer></script>
                         <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_PUBLIC_KEY }}"></div>
                     </div>
                 {% endif %}
@@ -84,6 +105,7 @@
         </div>
     </div>
 </div>
+
 
 </body>
 </html>
