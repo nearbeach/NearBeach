@@ -249,7 +249,7 @@
                 } else if (exception === 'abort') {
                     error_message = 'Ajax request aborted.';
                 } else {
-                    error_message = 'Email Error\n~~~~~~~~~~~' + jqXHR.responseText;
+                    error_message = `Email Error<br/>~~~~~~~~~~~<br/>${jqXHR.responseText}`;
                 }
                 $('#test_email td')[1].innerHTML = error_message;
                 $("#test_email").css("background-color", "red");
@@ -299,7 +299,7 @@
                 } else if (exception === 'abort') {
                     error_message = 'Ajax request aborted.';
                 } else {
-                    error_message = 'There was a database error\n~~~~~~~~~~~' + jqXHR.responseText;
+                    error_message = `There was a database error<br/>~~~~~~~~~~~<br/>${jqXHR.responseText}`;
                 }
                 $('#test_database td')[1].innerHTML = error_message;
                 $("#test_database").css("background-color", "red");
@@ -348,7 +348,7 @@
                 } else if (exception === 'abort') {
                     error_message = 'Ajax request aborted.';
                 } else {
-                    error_message = 'There was a database error\n~~~~~~~~~~~' + jqXHR.responseText;
+                    error_message = `There was a database error<br/>~~~~~~~~~~~<br/>${jqXHR.responseText}`;
                 }
                 $('#test_location_services td')[1].innerHTML = error_message;
                 $("#test_location_services").css("background-color", "red");
