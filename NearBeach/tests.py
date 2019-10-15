@@ -1323,7 +1323,7 @@ class ModelsTestCase(TestCase):
         )
 
         c = Client()
-        response = c.get("/kanban_list/")
+        response = c.get("/search_kanban/")
         self.assertRedirects(
             response,
             "/login",

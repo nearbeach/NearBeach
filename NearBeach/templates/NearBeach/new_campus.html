@@ -2,10 +2,10 @@
 {% block content %}
 {% load static %}
 <body onload="on_page_load()">
-    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
-    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
     <link rel="stylesheet" href="{% static 'NearBeach/widgets/intl-tel-input/css/intlTelInput.css' %}">
     <script src="{% static 'NearBeach/widgets/intl-tel-input/js/intlTelInput.js' %}"></script>
+    <script src="{% static 'NearBeach/widgets/intl-tel-input/js/utils.js' %}"></script>
+
     <style>
         .iti-flag {background-image: url("{% static 'NearBeach/widgets/intl-tel-input/img/flags.png' %}");}
 
@@ -20,20 +20,20 @@
         <div class="card-body">
             <form id="input-form" action="{% url 'new_campus' location_id destination %}" method="post" class="new_campus">
                 {% csrf_token %}
+                {{ new_campus_form.media.css }}
+                {{ new_campus_form.media.js }}
                 <div class="form-group">
                     <label for="id_campus_nickname">Campus Nickname</label>
                     {{ new_campus_form.campus_nickname }}
                 </div>
                 <div class="form-row">
-                    <div class="form-group">
-                        <label for="id_campus_phone col-md-6">Campus Phone</label>
-                        {{ new_campus_form.campus_phone }}
-                        <span id="phone_number_status"></span>
+                    <div class="form-row col-md-4">
+                        <label for="int_campus_phone">Campus Phone</label>
+                        <input type="text" id="int_campus_phone" name="int_campus_phone" value="{{ campus_results.campus_phone }}">
                     </div>
-                    <div class="form-group col-md-6">
-                        <label for="id_campus_fax">Campus Fax</label>
-                        {{ new_campus_form.campus_fax }}
-                        <span id="fax_number_status" class="hide"></span>
+                    <div class="form-row col-md-4">
+                        <label for="int_campus_fax">Campus Fax</label>
+                        <input type="text" id="int_campus_fax" name="int_campus_fax" value="{{ campus_results.campus_fax }}">
                     </div>
                 </div>
                 <div class="form-group">
@@ -68,9 +68,6 @@
         </div>
     </div>
 
-    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
     <script>
         $("#input-form").on('change', function() {
             enable_disable_submit();
@@ -86,14 +83,20 @@
             } else {
                 $("#submit").prop("disabled",true)
             }
-        };
+        }
 
         function on_page_load() {
-            var campus_phone = document.querySelector("#id_campus_phone"),
-                campus_fax = document.querySelector("#id_campus_fax");
+            var campus_phone = document.querySelector("#int_campus_phone"),
+                campus_fax = document.querySelector("#int_campus_fax");
 
-            window.intlTelInput(campus_phone);
-            window.intlTelInput(campus_fax);
+            window.intlTelInput(campus_phone,{
+                hiddenInput: "hidden_campus_phone",
+                utilsScript: "{% static 'NearBeach/widgets/intl-tel-input/js/utils.js' %}",
+            });
+            window.intlTelInput(campus_fax, {
+                hiddenInput: "hidden_campus_fax",
+                utilsScript: "{% static 'NearBeach/widgets/intl-tel-input/js/utils.js' %}",
+            });
         }
     </script>
 </body>

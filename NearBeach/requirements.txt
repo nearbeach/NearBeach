@@ -10,4 +10,7 @@ python-docx
 BeautifulSoup4
 pandoc
 pypandoc
+django_select2
+django-phonenumber-field
+phonenumbers
 

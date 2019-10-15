@@ -2,8 +2,6 @@
 {% block content %}
 {% load static %}
 <script type="text/javascript" src="{% static 'NearBeach/javsascript/check_dates.js' %}"></script>
-<link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
-<link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
 <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
 <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
 
@@ -19,7 +17,8 @@
             <h2>New Task</h2>
         </div>
         <div class="card-body">
-            {{ new_task_form.media }}
+            {{ new_task_form.media.css }}
+            {{ new_task_form.media.js }}
             <div class="form-group">
                 <label for="id_task_short_description">Task Short Description</label>
                 {{ new_task_form.task_short_description }}
@@ -72,11 +71,6 @@
             </div>
         </div>
     </div>
-
-    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
-
 	</form>
 </body>
 <script>

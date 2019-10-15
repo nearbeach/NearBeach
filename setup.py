@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="NearBeach",
-    version="0.22.4",
+    version="0.24.0",
     author="Luke Christopher Clarke",
     author_email="luke@nearbeach.org",
     description="NearBeach - an open source project management tool",
@@ -24,7 +24,10 @@ setuptools.setup(
 	'python-docx',
 	'BeautifulSoup4',
 	'pandoc',
-	'pypandoc'
+	'pypandoc',
+        'django_select2',
+        'django-phonenumber-field',
+        'phonenumbers'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

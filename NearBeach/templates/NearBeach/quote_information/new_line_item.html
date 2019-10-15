@@ -1,13 +1,16 @@
 {% csrf_token %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
-<link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
 {% if quote_permission > 1 %}
     <div class="card mt-4">
         <div class="card-header">
             <h2>New Line Item</h2>
         </div>
         <div class="card-body">
+            {% if not product_and_service_results %}
+                <div class="alert alert-danger">
+                    Please note - there are no products or services. Please set these options up, or if you do not have access, request your administrator to do so.
+                </div>
+            {% endif %}
             <!--Select the product or service-->
             <div class="form-row">
                 <div class="form-group col-md2">
@@ -81,9 +84,6 @@
 {% endif %}
 
 
-<script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
 <script>
     /*
     Method

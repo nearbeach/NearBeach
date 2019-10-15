@@ -275,20 +275,24 @@
     {% endif %}
 
     {% if opportunity_results %}
-    <div>
-        <h2>Opportunity Links</h2>
-        <table>
-            <tr>
-                <td width="20%">Opportunity ID</td>
-                <td width="80%">Opportunity Description</td>
-            </tr>
-            {% for row in opportunity_results %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Opportunity Links</h2>
+        </div>
+        <div class="card-body">
+            <table>
                 <tr>
-                    <td><a href="{% url 'opportunity_information' row.opportunity_id %}">OPP{{ row.opportunity_id }}</a></td>
-                    <td>{{ row.opportunity_id.opportunity_name }}</td>
+                    <td width="20%">Opportunity ID</td>
+                    <td width="80%">Opportunity Description</td>
                 </tr>
-            {% endfor %}
-        </table>
+                {% for row in opportunity_results %}
+                    <tr>
+                        <td><a href="{% url 'opportunity_information' row.opportunity_id %}">OPP{{ row.opportunity_id }}</a></td>
+                        <td>{{ row.opportunity_id.opportunity_name }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
     {% endif %}
 

@@ -32,7 +32,7 @@ from docx.shared import Cm, Inches
 from bs4 import BeautifulSoup
 
 #import python modules
-import datetime, json, simplejson, urllib.parse, pypandoc, requests
+import datetime, json, simplejson, urllib.parse, pypandoc, requests, random
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -1439,13 +1439,18 @@ def campus_information(request, campus_information):
 
     # If instance is in POST
     if request.method == "POST":
+        print("\n\nREQUEST POST\n")
+        print(request.POST)
+        print("END REQUEST POST\n\n")
         # Other save button must have been pressed
         form = campus_information_form(request.POST)
         if form.is_valid():
             # Save all the data
             campus_results.campus_nickname = form.cleaned_data['campus_nickname']
-            campus_results.campus_phone = form.cleaned_data['campus_phone']
-            campus_results.campus_fax = form.cleaned_data['campus_fax']
+            #campus_results.campus_phone = form.cleaned_data['campus_phone']
+            campus_results.campus_phone = request.POST.get('hidden_campus_phone')
+            #campus_results.campus_fax = form.cleaned_data['campus_fax']
+            campus_results.campus_fax = request.POST.get('hidden_campus_fax')
             campus_results.campus_address1 = form.cleaned_data['campus_address1']
             campus_results.campus_address2 = form.cleaned_data['campus_address2']
             campus_results.campus_address3 = form.cleaned_data['campus_address3']
@@ -2306,6 +2311,13 @@ def customer_readonly(request,customer_id):
 
 @login_required(login_url='login',redirect_field_name="")
 def dashboard(request):
+    """
+    Due to a bug - if the user goes to /admin/ and logs in there, they will by pass this one session request. It is
+    placed here to make sure. :)
+    """
+    request.session['is_superuser'] = request.user.is_superuser
+
+    #Get user's default permissions
     permission_results = return_user_permission_level(request, None, 'project')
 
     # Load the template
@@ -4237,31 +4249,6 @@ def kanban_information(request,kanban_board_id):
     return HttpResponse(t.render(c, request))
 
 
-
-
-@login_required(login_url='login',redirect_field_name="")
-def kanban_list(request):
-    permission_results = return_user_permission_level(request, None,['kanban'])
-
-    if permission_results['kanban'] == 0:
-        return HttpResponseRedirect(reverse('permission_denied'))
-
-    kanban_board_results = kanban_board.objects.filter(
-        is_deleted="FALSE",
-    )
-
-    t = loader.get_template('NearBeach/kanban_list.html')
-
-    # context
-    c = {
-        'new_item_permission': permission_results['new_item'],
-        'administration_permission': permission_results['administration'],
-        'kanban_permission': permission_results['kanban'],
-        'kanban_board_results': kanban_board_results,
-    }
-
-    return HttpResponse(t.render(c, request))
-
 def kanban_move_card(request,kanban_card_id,kanban_column_id,kanban_level_id):
     if request.method == "POST":
         kanban_card_result = kanban_card.objects.get(kanban_card_id=kanban_card_id)
@@ -4952,6 +4939,9 @@ def login(request):
         else:
             print(form.errors)
 
+    # Setup background image
+    background_image = 'NearBeach/images/NearBeach_Background_%(number)03d.webp' % {'number': random.randint(1,19)}
+
     # load template
     t = loader.get_template('NearBeach/login.html')
 
@@ -4959,6 +4949,7 @@ def login(request):
     c = {
         'login_form': form,
         'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
+        'background_image': background_image,
     }
 
     return HttpResponse(t.render(c, request))
@@ -5140,8 +5131,8 @@ def new_bug_client(request):
     if permission_results['bug_client'] < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
     form_errors = ''
+    form = bug_client_form(None or request.POST)
     if request.method == "POST":
-        form = bug_client_form(request.POST)
         if form.is_valid():
             #Get required data
             bug_client_name = form.cleaned_data['bug_client_name']
@@ -5183,14 +5174,14 @@ def new_bug_client(request):
 
         else:
             print(form.errors)
-            form_errors(form.errors)
+            form_errors =form.errors
 
     # load template
     t = loader.get_template('NearBeach/new_bug_client.html')
 
     # context
     c = {
-        'bug_client_form': bug_client_form(),
+        'bug_client_form': form,
         'form_errors': form_errors,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
@@ -5214,6 +5205,9 @@ def new_campus(request, location_id, destination):
         return HttpResponseRedirect(reverse('login'))
 
     if request.method == 'POST':
+        print("\n\nPOST REQUEST")
+        print(request.POST)
+        print("\n\nEND POST REQUEST")
         form = new_campus_form(request.POST)
         if form.is_valid():
             # Get instances
@@ -5222,8 +5216,8 @@ def new_campus(request, location_id, destination):
             )
 
             campus_nickname = form.cleaned_data['campus_nickname']
-            campus_phone = form.cleaned_data['campus_phone']
-            campus_fax = form.cleaned_data['campus_fax']
+            campus_phone = request.POST.get('hidden_campus_phone')
+            campus_fax = request.POST.get('hidden_campus_fax')
             campus_address1 = form.cleaned_data['campus_address1']
             campus_address2 = form.cleaned_data['campus_address2']
             campus_address3 = form.cleaned_data['campus_address3']
@@ -9013,7 +9007,7 @@ def search_customer(request):
 
     for split_row in search_customer_results.split(' '):
         customer_results = customer_results.filter(
-            Q(customer_first_name__contains=split_row) or
+            Q(customer_first_name__contains=split_row) |
             Q(customer_last_name__contains=split_row)
         )
 
@@ -9054,6 +9048,41 @@ def search_group(request):
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
         'group_results': group_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login',redirect_field_name="")
+def search_kanban(request):
+    permission_results = return_user_permission_level(request, None,['kanban'])
+
+    if permission_results['kanban'] == 0:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    kanban_form = search_kanban_form(None or request.POST)
+
+    kanban_search_results = ''
+    if request.method == "POST":
+        if kanban_form.is_valid():
+            kanban_search_results = kanban_form.cleaned_data['search_kanban']
+
+    kanban_board_results = kanban_board.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    for split_row in kanban_search_results.split(' '):
+        kanban_board_results = kanban_board_results.filter(kanban_board_name__contains=split_row)
+
+    t = loader.get_template('NearBeach/search_kanban.html')
+
+    # context
+    c = {
+        'search_kanban_form': kanban_form,
+        'new_item_permission': permission_results['new_item'],
+        'administration_permission': permission_results['administration'],
+        'kanban_permission': permission_results['kanban'],
+        'kanban_board_results': kanban_board_results,
     }
 
     return HttpResponse(t.render(c, request))

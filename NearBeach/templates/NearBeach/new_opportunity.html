@@ -2,8 +2,6 @@
 {% block content %}
 {% load static %}
     <script type="text/javascript" src="{% static 'NearBeach/javascript/new_opportunity.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/chosen.css' %}">
-    <link rel="stylesheet" href="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.css' %}">
 
     <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
@@ -50,7 +48,8 @@
         <div class="card-body">
             <form action="{% url 'new_opportunity' %}" method="post" class="new_opportunity">
                 {% csrf_token %}
-                {{ new_opportunity_form.media }}
+                {{ new_opportunity_form.media.css }}
+                {{ new_opportunity_form.media.js }}
                 <div class="form-group">
                     <label for="id_opportunity_name">Opportunity Name</label>
                     {{ new_opportunity_form.opportunity_name }}
@@ -117,9 +116,6 @@
                     <input type="submit" value="Submit new Opportunity" class="btn btn-primary form-control col-md-6">
                     <a href="{% url 'dashboard' %}" class="btn btn-warning form-control col-md-6">Cancel</a>
                 </div>
-                <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/chosen.jquery.js' %}"></script>
-                <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/prism.js' %}"></script>
-                <script type="text/javascript" src="{% static 'NearBeach/widgets/chosen-js/docsupport/init.js' %}"></script>
             </form>
         </div>
     </div>
