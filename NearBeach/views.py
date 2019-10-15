@@ -4940,7 +4940,7 @@ def login(request):
             print(form.errors)
 
     # Setup background image
-    background_image = 'NearBeach/images/NearBeach_Background_%(number)03d.webp' % {'number': random.randint(1,18)}
+    background_image = 'NearBeach/images/NearBeach_Background_%(number)03d.webp' % {'number': random.randint(1,19)}
 
     # load template
     t = loader.get_template('NearBeach/login.html')
