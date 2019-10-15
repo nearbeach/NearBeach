@@ -44,9 +44,7 @@
 
     <script>
         function on_page_load() {
-            console.log("TESTING BROWSER");
             if (!!window.MSInputMethodContext && !!document.documentMode) {
-                console.log("BROWSER DID NOT PASS");
                 var elem = document.getElementById("unsupported_browser");
                 elem.innerHTML = '<div class="alert alert-danger"><h1>BROWSER NOT SUPPORTED!!</h1>' +
                     '<p>We are sorry, but we can not support the Internet Explorer browser. We recommend using the following browsers' +
