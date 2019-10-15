@@ -32,7 +32,7 @@ from docx.shared import Cm, Inches
 from bs4 import BeautifulSoup
 
 #import python modules
-import datetime, json, simplejson, urllib.parse, pypandoc, requests
+import datetime, json, simplejson, urllib.parse, pypandoc, requests, random
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -4939,6 +4939,9 @@ def login(request):
         else:
             print(form.errors)
 
+    # Setup background image
+    background_image = 'NearBeach/images/NearBeach_Background_%(number)03d.webp' % {'number': random.randint(1,18)}
+
     # load template
     t = loader.get_template('NearBeach/login.html')
 
@@ -4946,6 +4949,7 @@ def login(request):
     c = {
         'login_form': form,
         'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
+        'background_image': background_image,
     }
 
     return HttpResponse(t.render(c, request))
