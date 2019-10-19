@@ -280,11 +280,13 @@
             <h2>Opportunity Links</h2>
         </div>
         <div class="card-body">
-            <table>
-                <tr>
-                    <td width="20%">Opportunity ID</td>
-                    <td width="80%">Opportunity Description</td>
-                </tr>
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <td width="20%">Opportunity ID</td>
+                        <td width="80%">Opportunity Description</td>
+                    </tr>
+                </thead>
                 {% for row in opportunity_results %}
                     <tr>
                         <td><a href="{% url 'opportunity_information' row.opportunity_id %}">OPP{{ row.opportunity_id }}</a></td>
