@@ -141,7 +141,7 @@ class ConnectOrganisationSelect(forms.SelectMultiple):
         return value
 
 
-
+"""
 class ProductOrServiceSelect(forms.Select):
     def _render(self, name, value, attrs=None, choices=()):
         if value is None: value = ''
@@ -196,7 +196,7 @@ class ProductOrServiceSelect(forms.Select):
         if value not in valid_values:
             raise ValidationError(gettext(u'Select a valid choice. That choice is not one of the available choices.'))
         return value
-
+"""
 
 class RegionSelect(forms.Select):
     """

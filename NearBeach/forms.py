@@ -2109,6 +2109,54 @@ class new_group_form(ModelForm):
 
 
 class new_line_item_form(ModelForm):
+    def __init__(self,*args,**kwargs):
+        #Extract the variables
+
+        super(new_line_item_form,self).__init__(*args,**kwargs)
+
+        """
+        The following will extract both products and services. Combine them in a turple, and then set the choices for
+        the product_and_service to this value
+        
+        1. Get the required variables
+        2. Create the product and services turples
+        3. Combine them
+        """
+        product_and_service_results = product_and_service.objects.filter(
+            is_deleted="FALSE",
+        )
+        product_results = product_and_service_results.filter(product_or_service="Product")
+        service_results = product_and_service_results.filter(product_or_service="Service")
+        product_turple = ''
+        service_turple = ''
+        product_or_service_choices = ()
+
+        # Loop for product
+        for product in product_results:
+            if product_turple == '':
+                product_turple = (product.product_id, product.product_name),
+            else:
+                product_turple = product_turple, (product.product_id, product.product_name),
+
+        for service in service_results:
+            if service_turple == '':
+                service_turple = (service.product_id, service.product_name),
+            else:
+                service_turple = service_turple, (service.product_id, service.product_name),
+
+        """
+        If either one of the product or services' turples are empty, we do not want them to go through to the final 
+        choices.
+        """
+        if not product_turple == '' and not service_turple == '':
+            product_or_service_choices = (("Products", ((product_turple))), ("Services", ((service_turple))),)
+        elif not product_turple == '':
+            product_or_service_choices = (("Products", ((product_turple))),)
+        elif not service_turple == '':
+            product_or_service_choices = (("Services", ((service_turple))),)
+
+        self.fields['product_and_service'].choices=product_or_service_choices
+
     #Get the data
     product_description=forms.CharField(
         max_length=255,
@@ -2117,6 +2165,7 @@ class new_line_item_form(ModelForm):
             'class': 'form-control',
         })
     )
+
     quantity = forms.IntegerField(
 		widget=forms.NumberInput(attrs={
 			'value': '1',
@@ -2131,11 +2180,14 @@ class new_line_item_form(ModelForm):
             'class': 'form-control',
         })
     )
-    product_and_service = forms.ModelChoiceField(
+    product_and_service = forms.ChoiceField(
         required=True,
-        queryset=product_and_service.objects.filter(is_deleted='FALSE'),
-        empty_label="Please pick a product/service",
-        widget=ProductOrServiceSelect(),
+        #queryset=product_and_service.objects.filter(is_deleted='FALSE'),
+        choices=(),
+        #empty_label="Please pick a product/service",
+        #widget=ProductOrServiceSelect(),
+        #widget=forms.SelectMultiple(),
+        widget=Select2MultipleWidget(),
     )
     discount_amount = forms.CharField(
         required=False,
