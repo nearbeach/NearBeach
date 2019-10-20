@@ -31,7 +31,12 @@
                                     <td>
                                         <ul id="columns">
                                             {% for row in kanban_column_results %}
-                                                <li class="column_title" draggable="true" data-id="{{ row.kanban_column_id }}" value="{{ row.kanban_column_id }}">{{ row.kanban_column_name }}</li>
+                                                <li class="column_title"
+                                                    draggable="true"
+                                                    data-id="{{ row.kanban_column_id }}"
+                                                    value="{{ row.kanban_column_id }}"
+                                                    ondblclick="open_modal('column','{{ row.kanban_column_id }}')"
+                                                >{{ row.kanban_column_name }}</li>
                                             {% endfor %}
                                         </ul>
                                     </td>
@@ -50,7 +55,12 @@
                                     <td>
                                         <ul id="levels">
                                             {% for row in kanban_level_results %}
-                                                <li class="level_title" draggable="true" data-id="{{ row.kanban_level_id }}" value="{{ row.kanban_level_id }}">{{ row.kanban_level_name }}</li>
+                                                <li class="level_title"
+                                                    draggable="true"
+                                                    data-id="{{ row.kanban_level_id }}"
+                                                    value="{{ row.kanban_level_id }}"
+                                                    ondblclick="open_modal('level','{{ row.kanban_level_id }}')"
+                                                >{{ row.kanban_level_name }}</li>
                                             {% endfor %}
                                         </ul>
                                     </td>
@@ -81,7 +91,36 @@
         </div>
     {% endif %}
 
-    <br/>
+    <div class="modal" tabindex="-1" role="dialog" id="name_change_modal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <!-- HEADER -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Change Column Name</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <!-- BODY -->
+                <div class="modal-body">
+                    <input id="column_or_level" hidden />
+                    <input id="object_id" hidden />
+                    <div class="form-group">
+                        <label for="new_name">New Name</label>
+                        <input id="new_name" class="form-control" type="text" onkeyup="disable_modal_save_button()" />
+                    </div>
+                </div>
+
+
+                <!-- FOOTER -->
+                <div class="modal-footer">
+                    <button type="button" id="modal_save" class="btn btn-primary" onclick="update_name()" disabled>Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <script>
@@ -283,7 +322,85 @@
                     $('#assigned_group_list').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
                 }
             });
-        };
+        }
+
+        function open_modal(column_or_level,id) {
+            //Open up the model for changing the name.
+            //alert("CLICK WORKED");
+            var col = document.getElementById("column_or_level"),
+                object_id = document.getElementById("object_id"),
+                new_name = document.getElementById("new_name");
+
+            col.value = column_or_level;
+            object_id.value = id;
+            new_name.value = "";
+
+            $("#name_change_modal").show();
+        }
+
+        function update_name() {
+            //$("#name_change_modal").hide();
+
+            //Get the variable data
+            var column_or_level = document.getElementById("column_or_level").value,
+                id = document.getElementById("object_id").value,
+                new_name = document.getElementById("new_name").value;
+
+            console.log("Column or level: ",column_or_level);
+
+            if (column_or_level == "column") {
+                //Get the column element
+                /*
+                On a flight at the moment - forgot how to do proper xpath to find the exact element with the data attribute
+                id of id. This is a work around :'(
+                 */
+                var columns = document.getElementById("columns").getElementsByTagName("li"),
+                    elem = "";
+
+                for (var i=0; i < columns.length; i++) {
+                    if (columns[i]["dataset"]["id"] == id) {
+                        //There is a match. Set elems to this element
+                        elem = columns[i];
+                    }
+                }
+            } else if (column_or_level == "level") {
+                //Get the level
+                var levels = document.getElementById("levels").getElementsByTagName("li"),
+                    elem = "";
+
+                for (var i=0; i < levels.length; i++) {
+                    if (levels[i]["dataset"]["id"] == id) {
+                        //There is a match. Set elems to this element
+                        elem = levels[i];
+                    }
+                }
+
+            } else {
+                //Something went wrong
+                return;
+            }
+
+            //If there is no element return error
+            if (elem == "") {
+                alert("There was an error trying to save the name");
+                return;
+            }
+
+            //Update the field name
+            elem.innerText = new_name;
+
+            $("#name_change_modal").hide();
+        }
+
+        function disable_modal_save_button() {
+            if ($("#new_name").value == "") {
+                //Nothing in new name - disable the button
+                $("#modal_save").prop("disabled",true);
+            } else {
+                //Something is in the new name - enable the button
+                $("#modal_save").prop("disabled",false);
+            }
+        }
 
 
         load_assigned_group_list();

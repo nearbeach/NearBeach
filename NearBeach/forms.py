@@ -2149,11 +2149,11 @@ class new_line_item_form(ModelForm):
         choices.
         """
         if not product_turple == '' and not service_turple == '':
-            product_or_service_choices = (("Products", ((product_turple))), ("Services", ((service_turple))),)
+            product_or_service_choices = (("------","Please select a product or service"),("Products", ((product_turple))), ("Services", ((service_turple))),)
         elif not product_turple == '':
-            product_or_service_choices = (("Products", ((product_turple))),)
+            product_or_service_choices = (("------","Please select a product"),("Products", ((product_turple))),)
         elif not service_turple == '':
-            product_or_service_choices = (("Services", ((service_turple))),)
+            product_or_service_choices = (("------","Please select a service"),("Services", ((service_turple))),)
 
         self.fields['product_and_service'].choices=product_or_service_choices
 
@@ -2187,8 +2187,24 @@ class new_line_item_form(ModelForm):
         #empty_label="Please pick a product/service",
         #widget=ProductOrServiceSelect(),
         #widget=forms.SelectMultiple(),
-        widget=Select2MultipleWidget(),
+        #widget=Select2Widget(attrs={
+        widget=Select2Widget(attrs={
+            'placeholder': 'Select a product or service',
+            'class': 'form-control',
+        }),
     )
+    """
+    project_permission=forms.ModelMultipleChoiceField(
+        widget=Select2MultipleWidget(attrs={
+            'placeholder': 'Select Groups to Assign to Project',
+            'class': 'form-control',
+            'multiple tabindex': '0',
+
+        }),
+        required=True,
+        queryset=group_results,
+    )
+    """
     discount_amount = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={

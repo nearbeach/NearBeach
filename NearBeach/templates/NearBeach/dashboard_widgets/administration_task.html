@@ -1,0 +1,58 @@
+{% if not permission_setup %}
+    <div class="alert alert-info mt-4">
+        <h3>Please setup Permission Sets</h3>
+        <p>Permission sets are given to users at the group level to determine the permissions the users will have for
+        that particular group. Please click on the "Administration" menu item and select the "Permission Set" submenu
+        option. From there you will be able to create your required permission sets.</p>
+    </div>
+{% endif %}
+
+{% if not group_setup %}
+    <div class="alert alert-info mt-4">
+        <h3>Please setup Groups</h3>
+        <p>Groups are required to differentiate users from different departments/teams/groups. Please click on the
+        "Administration" menu item and select the "Groups" submenu option. From there you will be able to create
+        your required groups.</p>
+    </div>
+{% endif %}
+
+{% if not user_setup %}
+    <div class="alert alert-info mt-4">
+        <h3>Add new users</h3>
+        <p>You can add more users by clicking on "Administration" in the menu, followed by the "Users" submenu option.
+        Users can be in multiple different groups with different permission sets per groups.</p>
+    </div>
+{% endif %}
+
+{% if not product_setup %}
+    <div class="alert alert-info mt-4">
+        <h3>Add products and services</h3>
+        <p>You can add multiple products and services to NearBeach. These products and services are used in quotes and
+        invoices. To create a new product or service, please click the "Configuration" menu and then select the "Products
+        and Services" submenu item.</p>
+    </div>
+{% endif %}
+
+
+{% if not tax_setup %}
+    <div class="alert alert-info mt-4">
+        <h3>Add taxes</h3>
+        <p>You can add multiple taxes. These taxes are used in quotes and invoices. To create a new tax, please click
+        the "Configuration" menu and then select the "Taxes" submenu item.</p>
+    </div>
+{% endif %}
+
+
+{% if not quote_template_setup %}
+    <div class="alert alert-info mt-4">
+        <h3>Quote Templates</h3>
+        <p>Quote templates are used to
+        <ul>
+            <li>Download Quotes/Invoices in PDF format</li>
+            <li>Send users Quotes/Invoices via email or HTML Link</li>
+        </ul>
+        You can setup templates by clicking on "Configuration" menu and selecting the "Edit Templates" submenu option. When
+        creating a template, it will automatically fill out the required fields with the default templates.
+        </p>
+    </div>
+{% endif %}

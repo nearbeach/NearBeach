@@ -290,7 +290,7 @@
                 {% for row in opportunity_results %}
                     <tr>
                         <td><a href="{% url 'opportunity_information' row.opportunity_id %}">OPP{{ row.opportunity_id }}</a></td>
-                        <td>{{ row.opportunity_id.opportunity_name }}</td>
+                        <td>{{ row.opportunity_name }}</td>
                     </tr>
                 {% endfor %}
             </table>
