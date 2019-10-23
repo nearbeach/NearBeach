@@ -1676,6 +1676,7 @@ def change_task_edit(request,change_task_id):
             request.POST,
             rfc_id=change_task_results.request_for_change_id,
         )
+        print("GOT HERE!")
         if form.is_valid():
             change_task_results.change_task_title = form.cleaned_data['change_task_title']
             change_task_results.change_task_start_date = form.cleaned_data['change_task_start_date']
