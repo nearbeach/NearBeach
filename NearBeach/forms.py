@@ -13,7 +13,7 @@ from django.forms.widgets import TextInput
 from NearBeach.forms_special_fields import *
 
 from tinymce import TinyMCE
-from django_select2.forms import Select2MultipleWidget, ModelSelect2MultipleWidget, Select2Widget, ModelSelect2Widget
+from django_select2.forms import Select2MultipleWidget, ModelSelect2MultipleWidget, Select2Widget, ModelSelect2Widget, Select2TagWidget
 
 #Used for login
 from django.contrib.auth import authenticate, get_user_model, login, logout
@@ -2182,29 +2182,12 @@ class new_line_item_form(ModelForm):
     )
     product_and_service = forms.ChoiceField(
         required=True,
-        #queryset=product_and_service.objects.filter(is_deleted='FALSE'),
         choices=(),
-        #empty_label="Please pick a product/service",
-        #widget=ProductOrServiceSelect(),
-        #widget=forms.SelectMultiple(),
-        #widget=Select2Widget(attrs={
         widget=Select2Widget(attrs={
-            'placeholder': 'Select a product or service',
             'class': 'form-control',
         }),
     )
-    """
-    project_permission=forms.ModelMultipleChoiceField(
-        widget=Select2MultipleWidget(attrs={
-            'placeholder': 'Select Groups to Assign to Project',
-            'class': 'form-control',
-            'multiple tabindex': '0',
 
-        }),
-        required=True,
-        queryset=group_results,
-    )
-    """
     discount_amount = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={
@@ -2295,7 +2278,8 @@ class new_line_item_form(ModelForm):
             'is_deleted',
             'change_user',
             'product_cost',
-            'discount_percent'
+            'discount_percent',
+            'product_and_service'
         }
 
 

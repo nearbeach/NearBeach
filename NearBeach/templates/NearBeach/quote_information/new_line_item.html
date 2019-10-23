@@ -1,6 +1,9 @@
 {% csrf_token %}
+{{ new_line_item_form.media.css }}
+{{ new_line_item_form.media.js }}
 {% load static %}
 {% if quote_permission > 1 %}
+
     <div class="card mt-4">
         <div class="card-header">
             <h2>New Line Item</h2>
@@ -11,8 +14,6 @@
                     Please note - there are no products or services. Please set these options up, or if you do not have access, request your administrator to do so.
                 </div>
             {% endif %}
-            {{ new_line_item_form.media.css }}
-            {{ new_line_item_form.media.js }}
             <!--Select the product or service-->
             <div class="form-row">
                 <div class="form-group col-md2">
