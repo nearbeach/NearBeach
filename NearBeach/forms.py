@@ -2131,16 +2131,21 @@ class new_line_item_form(ModelForm):
         service_turple = ''
         product_or_service_choices = ()
 
+        print("TURPLE START")
         # Loop for product
         for product in product_results:
+            print(product_turple)
             if product_turple == '':
-                product_turple = (product.product_id, product.product_name),
+                product_turple = product.product_id, product.product_name
             else:
                 product_turple = product_turple, (product.product_id, product.product_name),
 
+        print("PRODUCT TURPLE")
+        print(product_turple)
+
         for service in service_results:
             if service_turple == '':
-                service_turple = (service.product_id, service.product_name),
+                service_turple = service.product_id, service.product_name,
             else:
                 service_turple = service_turple, (service.product_id, service.product_name),
 
