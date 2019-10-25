@@ -1676,6 +1676,7 @@ def change_task_edit(request,change_task_id):
             request.POST,
             rfc_id=change_task_results.request_for_change_id,
         )
+        print("GOT HERE!")
         if form.is_valid():
             change_task_results.change_task_title = form.cleaned_data['change_task_title']
             change_task_results.change_task_start_date = form.cleaned_data['change_task_start_date']
@@ -2533,6 +2534,32 @@ def dashboard_active_task(request):
     # context
     c = {
         'assigned_users_results': assigned_users_results,
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login',redirect_field_name="")
+def dashboard_administration_task(request):
+    """
+    This dashbaord widget just shows a simple list of objects to complete for any NEW instances.
+
+    Essentially - we will look at each object and see if there has been anything created (i.e. has a count greater than
+    the initial setup number).
+    :param request:
+    :return:
+    """
+    # Load the template
+    t = loader.get_template('NearBeach/dashboard_widgets/administration_task.html')
+
+    # context
+    c = {
+        "permission_setup": permission_set.objects.filter(is_deleted="FALSE").count() > 1,
+        "group_setup": group.objects.filter(is_deleted="FALSE").count() > 1,
+        "user_setup": User.objects.filter(is_active=True).count() > 1,
+        "product_setup": product_and_service.objects.filter(is_deleted="FALSE").count() > 0,
+        "tax_setup": list_of_tax.objects.filter(is_deleted="FALSE").count() > 0,
+        "quote_template_setup": quote_template.objects.filter(is_deleted="FALSE").count() > 0,
     }
 
     return HttpResponse(t.render(c, request))
@@ -4483,15 +4510,19 @@ def kanban_properties(request,kanban_board_id):
         kanban_board_results.save()
 
         #Update the sort order for the columns
+        print('["columns"]["length"]')
+        print(received_json_data["columns"]["length"])
         for row in range(0, received_json_data["columns"]["length"]):
             kanban_column_update = kanban_column.objects.get(kanban_column_id=received_json_data["columns"][str(row)]["id"])
             kanban_column_update.kanban_column_sort_number = row
+            kanban_column_update.kanban_column_name = received_json_data["columns"][str(row)]["title"]
             kanban_column_update.save()
 
         # Update the sort order for the columns
         for row in range(0, received_json_data["levels"]["length"]):
             kanban_level_update = kanban_level.objects.get(kanban_level_id=received_json_data["levels"][str(row)]["id"])
             kanban_level_update.kanban_level_sort_number = row
+            kanban_level_update.kanban_level_name = received_json_data["levels"][str(row)]["title"]
             kanban_level_update.save()
 
         #Return blank page

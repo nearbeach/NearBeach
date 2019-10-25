@@ -92,7 +92,6 @@ def new_line_item(request,quote_id):
         form = new_line_item_form(request.POST, request.FILES)
         if form.is_valid():
             #All data
-            extracted_product_and_services = form.cleaned_data['product_and_service']
             quantity = form.cleaned_data['quantity']
             product_description = form.cleaned_data['product_description']
             discount_choice = form.cleaned_data['discount_choice']
@@ -107,7 +106,7 @@ def new_line_item(request,quote_id):
 
             #Instances needed
             quote_instance = quote.objects.get(quote_id=quote_id)
-            product_instance = product_and_service.objects.get(product_name = extracted_product_and_services)
+            product_instance = product_and_service.objects.get(product_id = form.cleaned_data['product_and_service'])
 
             #Check to make sure they are not blank - default = 0
             if ((discount_percent == '') or (not discount_percent)): discount_percent = 0

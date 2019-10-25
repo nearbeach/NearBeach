@@ -353,10 +353,10 @@
 
         $("#opportunity_information").on('submit', function(e) {
             //State the save_state is currently saving
-            $("#save_state").html("Currently Saving Project");
+            $("#save_state").html(`<div class="alert alert-warning">Currently Saving Project</div>`);
 
             //Grab which button was pressed
-            var which_button = $("input[type=submit][clicked=true]").val()
+            var which_button = $("input[type=submit][clicked=true]").val();
 
             e.preventDefault();
             $.ajax({
@@ -366,10 +366,10 @@
                 success: function() {
                     //State that the function has saved
                     var current_time = Date();
-                    $("#save_state").html("Saved last on " + current_time);
+                    $("#save_state").html(`<div class="alert alert-success">Saved last on ${current_time}</div>`);
                 },
                 error: function() {
-                    new_error("Sorry, project information did not save. Please try again.");
+                    new_error(`<div class="alert alert-danger">Sorry, project information did not save. Please try again.</div>`);
                 }
             })
         });

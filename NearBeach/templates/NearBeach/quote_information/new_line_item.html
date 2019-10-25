@@ -1,6 +1,9 @@
 {% csrf_token %}
+{{ new_line_item_form.media.css }}
+{{ new_line_item_form.media.js }}
 {% load static %}
 {% if quote_permission > 1 %}
+
     <div class="card mt-4">
         <div class="card-header">
             <h2>New Line Item</h2>
@@ -92,7 +95,7 @@
     2.) It will apply the default values and hide unwanted fields
     3.) If it is a product, it will extract the base values from the database
      */
-    $("#id_products_and_services").on('change', function (evt, params) {
+    $("#id_product_and_service").on('change', function (evt, params) {
         var label = $(this.options[this.selectedIndex]).closest('optgroup').prop('label');
         var product_id = $(this.options[this.selectedIndex]).val();
 

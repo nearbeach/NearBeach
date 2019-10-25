@@ -69,6 +69,7 @@ re_path(r'^dashboard/active_projects', views.dashboard_active_projects,name='das
 re_path(r'^dashboard/active_quotes', views.dashboard_active_quotes,name='dashboard_active_quotes'),
 re_path(r'^dashboard/active_requirement', views.dashboard_active_requirement, name='dashboard_active_requirement'),
 re_path(r'^dashboard/active_task', views.dashboard_active_task, name='dashboard_active_task'),
+re_path(r'^dashboard/administration_task', views.dashboard_administration_task, name='dashboard_administration_task'),
 re_path(r'^dashboard/group_active_projects', views.dashboard_group_active_projects,name='dashboard_group_active_projects'),
 re_path(r'^dashboard/group_active_task', views.dashboard_group_active_task,name='dashboard_group_active_task'),
 re_path(r'^dashboard/group_opportunities', views.dashboard_group_opportunities, name='dashboard_group_opportunities'),

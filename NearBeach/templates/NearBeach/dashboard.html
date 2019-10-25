@@ -1,10 +1,29 @@
 {% extends "./template.html" %}
 {% block content %}
     {% load staticfiles %}
+    <style>
+        .card-body {
+            overflow: scroll;
+        }
+    </style>
     <script src="{% static 'NearBeach/javascript/render_dashboard_graphs.js' %}"></script>
     <script src="{% static 'NearBeach/widgets/d3/d3.min.js' %}"></script>
     <script>
         function on_page_load() {
+            //EXTRACT administration tasks
+            $.ajax({
+                url: '/dashboard/administration_task/',
+                data: {},
+                dataType: 'HTML',
+                type: 'GET',
+                success: function(data) {
+                    $("#administration_task").html(data);
+                },
+                error: function() {
+                    new_error("Sorry, but the administration tasks has not loaded correctly");
+                }
+            });
+
             //EXTRACT ready for approval
             $.ajax({
                 url: '/dashboard/ready_for_approval/',
@@ -147,6 +166,10 @@
         }
     </script>
     <body onload="on_page_load()">
+        <!-- Showing the administration tasks -->
+        <div id="administration_task"></div>
+
+        <!-- Being able to filter objects -->
         <div class="card mt-4">
             <div class="card-header">
                 <h1>NearBeach Dashboard</h1>
@@ -162,6 +185,8 @@
             </div>
 
         </div>
+
+
 
         <div id="ready_for_approval"></div>
 
