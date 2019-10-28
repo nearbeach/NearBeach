@@ -1,3 +1,10 @@
+{% if not user.first_name %}
+    <div class="alert alert-info mt-4">
+        <h3>Please fix your name</h3>
+        <p>Currently your name is blank. Click on the profile option to setup your name.</p>
+    </div>
+{% endif %}
+
 {% if not permission_setup %}
     <div class="alert alert-info mt-4">
         <h3>Please setup Permission Sets</h3>
