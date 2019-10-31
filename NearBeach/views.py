@@ -8848,12 +8848,31 @@ def request_for_change_submit(request,rfc_id):
             group_leader = user_group.objects.filter(
                 is_deleted="FALSE",
                 group_id=row.group_id,
-                group_leader=True,
+                group_leader="TRUE",
             ).count()
             if group_leader == 0:
                 submit_rfc_group_approval.approval = 2 #Approved
 
             submit_rfc_group_approval.save()
+
+        """
+        If there are no group leaders in any of the group, all approvals would be approved already.
+        If there are no group leaders - there is no one to manually accept the RFC
+        We will look for any status' that are not approved for this RFC - if there are none, we will automatially
+        approve the RFC 
+        """
+
+        check_approval = request_for_change_group_approval.objects.filter(
+            Q(
+                is_deleted="FALSE",
+                rfc_id=rfc_results.rfc_id
+            ) &
+            ~Q(approval=2)
+        ).count()
+        if check_approval == 0:
+            #There were no group leaders to approve left
+            rfc_results.rfc_status = 3 #Approved
+            rfc_results.save()
 
         #Send back blank page
         t = loader.get_template('NearBeach/blank.html')
