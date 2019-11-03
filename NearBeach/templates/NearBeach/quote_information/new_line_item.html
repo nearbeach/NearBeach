@@ -99,6 +99,18 @@
         var label = $(this.options[this.selectedIndex]).closest('optgroup').prop('label');
         var product_id = $(this.options[this.selectedIndex]).val();
 
+        //If user selects the first option
+        if (product_id == "------") {
+            //Reset values
+            $("#discount_table").css("display","none");
+            $("#tax_table").css("display","none");
+            $("#id_product_price").val("");
+            $("#id_quantity").val("1");
+
+            //Exit
+            return;
+        }
+
         //Unhide tables
         $("#discount_table").css("display","");
         $("#tax_table").css("display","");
