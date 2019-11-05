@@ -3714,6 +3714,18 @@ class quote_information_form(ModelForm):
         required=False,
     )
 
+    """
+    The following select is hidden - it is mainly used to pass through the SELECT2 libraries for any sub module on the
+    quote_information page
+    """
+    hidden_select = forms.ChoiceField(
+        required=False,
+        choices=(),
+        widget=Select2Widget(attrs={
+            'class': 'form-control',
+        }),
+    )
+
     class Meta:
         model=quote
         fields={

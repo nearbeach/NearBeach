@@ -63,3 +63,18 @@
         </p>
     </div>
 {% endif %}
+
+{% if group_results %}
+    <div class="alert alert-info mt-4">
+        <h3>Groups missing leaders</h3>
+        <p>
+            The following groups are missing leaders. Leaders are used as the point of contact. Please go to each group's
+            setting to add the leader.
+            <ul>
+                {% for row in group_results %}
+                    <li><a href="{% url 'group_information' row.group_id %}">{{ row.group_name }}</a></li>
+                {% endfor %}
+            </ul>
+        </p>
+    </div>
+{% endif %}

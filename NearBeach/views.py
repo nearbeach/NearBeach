@@ -2549,6 +2549,17 @@ def dashboard_administration_task(request):
     :param request:
     :return:
     """
+    # Find groups with no leaders
+    group_results = group.objects.filter(
+        Q(is_deleted="FALSE",) &
+        ~Q(
+            group_id__in=user_group.objects.filter(
+                is_deleted="FALSE",
+                group_leader="TRUE",
+            ).values('group'),
+        )
+    )
+
     # Load the template
     t = loader.get_template('NearBeach/dashboard_widgets/administration_task.html')
 
@@ -2560,6 +2571,7 @@ def dashboard_administration_task(request):
         "product_setup": product_and_service.objects.filter(is_deleted="FALSE").count() > 0,
         "tax_setup": list_of_tax.objects.filter(is_deleted="FALSE").count() > 0,
         "quote_template_setup": quote_template.objects.filter(is_deleted="FALSE").count() > 0,
+        "group_results": group_results,
     }
 
     return HttpResponse(t.render(c, request))
