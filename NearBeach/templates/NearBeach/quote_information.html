@@ -6,13 +6,6 @@
     <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'NearBeach/javascript/assigned_user_list.js' %}"></script>
     <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
-
-    <!-- TEMP FIX!
-    The following libraries are not loaded correctly when applied from AJAX -->
-    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css" type="text/css" media="screen" rel="stylesheet">
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
-    <script type="text/javascript" src="/static/django_select2/django_select2.js"></script>
-
 <script>
     function on_page_load() {
         //Load AJAX components
@@ -156,6 +149,8 @@
             <form action={% url 'quote_information' quote_id %} method="post" class="new_quote">
                 {% csrf_token %}
                 {{ quote_information_form.media }}
+                {{ quote_information_form.media.css }}
+                {{ quote_information_form.media.js }}
                 <div class="form-group">
                     <label for="id_quote_title">Quote Title: </label>
                     {{ quote_information_form.quote_title }}
