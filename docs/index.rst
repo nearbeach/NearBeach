@@ -1,10 +1,10 @@
 Welcome to NearBeach
 ====================
 
-.. image:: https://img.shields.io/github/license/robotichead/NearBeach   :alt: GitHub
-.. image:: https://img.shields.io/pypi/v/NearBeach   :alt: PyPI
-.. image:: https://img.shields.io/circleci/build/github/robotichead/NearBeach/master   :alt: CircleCI
-.. image:: https://img.shields.io/codeclimate/maintainability/robotichead/NearBeach   :alt: Code Climate maintainability
+.. image:: https://img.shields.io/github/license/robotichead/NearBeach
+.. image:: https://img.shields.io/pypi/v/NearBeach
+.. image:: https://img.shields.io/circleci/build/github/robotichead/NearBeach/master
+.. image:: https://img.shields.io/codeclimate/maintainability/robotichead/NearBeach
 
 
 NearBeach is an Open Source Project Management system built on the Django
@@ -32,19 +32,19 @@ NearBeach Table of Contents
 
   a) `Server Installation <installation/server-installation>`_
   b) `Django Installation <installation/django-installation>`_
-  c) NearBeach Installation
+  c) `NearBeach Installation <installation/nearbeach-installation>`_
 
 2) Administration tasks
 
-  a) First time setup
-  b) Configuration
+  a) `First time setup <administration-tasks/first-time-setup>`_
+  b) `Configuration <administration-tasks/configuration>`_
 
 3) Basic usage
 
-  a) NearBeach flow
-  b) Opportunities
-  c) Quotes and Invoices
-  d) Requirements and Requirement Items
-  e) Projects
-  f) Tasks
-  g) Requests for Change
+  a) `NearBeach flow <basic-usage/nearbeach-flow>`_
+  b) `Opportunities <basic-usage/opportunities>`_
+  c) `Quotes and Invoices <basic-usage/quotes-and-invoices>`_
+  d) `Requirements and Requirement Items <basic-usage/requirements-and-requirement-items>`_
+  e) `Projects <basic-usage/projects>`_
+  f) `Tasks <basic-usage/tasks>`_
+  g) `Requests for Change <basic-usage/requests-for-change>`_
