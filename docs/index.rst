@@ -1,12 +1,14 @@
 Welcome to NearBeach
 ====================
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+.. image:: https://img.shields.io/github/license/robotichead/NearBeach   :alt: GitHub
+.. image:: https://img.shields.io/pypi/v/NearBeach   :alt: PyPI
+.. image:: https://img.shields.io/circleci/build/github/robotichead/NearBeach/master   :alt: CircleCI
+.. image:: https://img.shields.io/codeclimate/maintainability/robotichead/NearBeach   :alt: Code Climate maintainability
+
 
 NearBeach is an Open Source Project Management system built on the Django
-framework. .. _NearBeach: https://nearbeach.org/
+framework. `NearBeach.org <https://nearbeach.org/>`_
 
 .. note:: NearBeach is licensed under the MIT license
 
@@ -25,16 +27,20 @@ NearBeach's documentation is broken down into the following sections;
 
 NearBeach Table of Contents
 ---------------------------
-.. _reStructuredText: http://docutils.sf.net/rst.html
-UPDATE LINKS HERE!
+
 1) Installation
-  a) Server Installation
-  b) Django Installation
+
+  a) `Server Installation <installation/server-installation>`_
+  b) `Django Installation <installation/django-installation>`_
   c) NearBeach Installation
+
 2) Administration tasks
+
   a) First time setup
   b) Configuration
+
 3) Basic usage
+
   a) NearBeach flow
   b) Opportunities
   c) Quotes and Invoices
