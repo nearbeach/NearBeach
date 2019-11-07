@@ -25,13 +25,7 @@ NearBeach's documentation is broken down into the following sections;
 
 NearBeach Table of Contents
 ---------------------------
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Installation
-   :name: sec-learn
-
-   installation/index
+.. _reStructuredText: http://docutils.sf.net/rst.html
 
 1) Installation
   a) Server Installation
