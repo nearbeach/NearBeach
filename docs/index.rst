@@ -26,7 +26,7 @@ NearBeach's documentation is broken down into the following sections;
 NearBeach Table of Contents
 ---------------------------
 .. _reStructuredText: http://docutils.sf.net/rst.html
-
+UPDATE LINKS HERE!
 1) Installation
   a) Server Installation
   b) Django Installation
