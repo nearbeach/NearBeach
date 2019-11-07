@@ -25,6 +25,14 @@ NearBeach's documentation is broken down into the following sections;
 
 NearBeach Table of Contents
 ---------------------------
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Installation
+   :name: sec-learn
+
+   installation/index
+
 1) Installation
   a) Server Installation
   b) Django Installation
