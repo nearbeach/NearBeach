@@ -8,25 +8,32 @@
     "test": "tests"
   },
   "dependencies": {
-    "gulp": "^4.0.2",
-    "bootstrap": "^4.3.1",
-    "popper.js": "^1.16.0",
-    "svg.js": "^2.7.1",
     "blueimp-file-upload": "^10.3.0",
-    "jquery": "^3.4.1",
-    "intl-tel-input": "^16.0.7",
-    "datetimepicker": "^0.1.39",
+    "bootstrap": "^4.3.1",
+    "bower": "^1.8.8",
+    "d3": "^5.12.0",
     "d3-gantt-chart": "^0.2.8",
-    "d3": "^5.12.0"
+    "datetimepicker": "^0.1.39",
+    "intl-tel-input": "^16.0.7",
+    "jquery": "^3.4.1",
+    "popper.js": "^1.16.0",
+    "svg.js": "^2.7.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-clean": "^0.4.0",
+    "gulp-clean-css": "^4.2.0",
+    "gulp-cli": "^2.2.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-minify": "^3.1.0",
+    "gulp-notify": "^3.2.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-stylus": "^2.7.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/robotichead/NearBeach.git"
-  },
+  "repository": "git+https://github.com/robotichead/NearBeach.git",
   "keywords": [
     "open",
     "source",

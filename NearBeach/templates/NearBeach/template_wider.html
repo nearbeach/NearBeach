@@ -3,15 +3,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <head>
 	<title>NearBeach Alpha</title>
-    <!--
-    Bootstrap and jquery are utilised throughout ALL of NearBeach
-    -->
+
     {% load staticfiles %}
-    <script src="{% static 'NearBeach/widgets/jquery/jquery-3.3.1.min.js' %}"></script>
-    <script src="{% static 'NearBeach/widgets/popper.js/popper.js' %}"></script>
-    <script src="{% static 'NearBeach/widgets/bootstrap/js/bootstrap.bundle.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'NearBeach/widgets/bootstrap/css/bootstrap.css' %}" />
-    <link rel="stylesheet" href="{% static 'NearBeach/css/NearBeach_CSS.css' %}" />
+    <script src="{% static 'NearBeach/js/NearBeach-min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'NearBeach/css/NearBeach.min.css' %}" />
 
     <style>
         .col-3 {
@@ -34,9 +29,13 @@
         #timeline {
             height: calc(100vh - 139px);
         }
+
+        body {
+            overflow-x: hidden;
+        }
     </style>
 </head>
-<body style="overflow-x: hidden;">
+<body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <a class="navbar-brand" href="javascript:void(0)">NearBeach</a>
