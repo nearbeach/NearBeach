@@ -10,6 +10,7 @@
   "dependencies": {
     "blueimp-file-upload": "^10.3.0",
     "bootstrap": "^4.3.1",
+    "gulp-bootstrap": "^2.0.3",
     "bower": "^1.8.8",
     "d3": "^5.12.0",
     "d3-gantt-chart": "^0.2.8",

@@ -6,9 +6,13 @@ var gulp = require('gulp'),
     clean = require('gulp-clean'),
     notify = require('gulp-notify'),
     minify = require('gulp-minify'),
-    cleanCSS = require('gulp-clean-css');
+    cleanCSS = require('gulp-clean-css'),
+    jquery = require('jquery'),
+    popper = require('popper.js'),
+    bootstrap = require('gulp-bootstrap');
+    //bootstrap = require('bootstrap');
 
-require('bootstrap');
+global.jQuery = global.$ = require("jquery");
 
 // Styles
 gulp.task('styles', function() {
@@ -22,7 +26,11 @@ gulp.task('styles', function() {
 
 // Scripts
 gulp.task('scripts', function() {
-  return gulp.src('./NearBeach/build/javascript/*.js')
+  return gulp.src([
+      './NearBeach/build/javascript/*.js',
+      './node_modules/jquery/dist/jquery.min.js',
+
+  ])
     .pipe(concat('NearBeach.js'))
     .pipe(minify())
     .pipe(gulp.dest('./NearBeach/static/NearBeach/js'))
