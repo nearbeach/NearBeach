@@ -1,0 +1,46 @@
+image: hosttoday/ht-docker-node:npmts
+
+stages:
+- test
+- release
+- trigger
+
+testLEGACY:
+  stage: test
+  script:
+    - npmci test legacy
+  tags:
+    - docker
+  allow_failure: true
+
+testLTS:
+  stage: test
+  script:
+    - npmci test lts
+  tags:
+    - docker
+    
+testSTABLE:
+  stage: test
+  script:
+    - npmci test stable
+  tags:
+    - docker
+
+release:
+  stage: release
+  script:
+    - npmci publish
+  only:
+    - tags
+  tags:
+    - docker
+
+trigger:
+  stage: trigger
+  script:
+    - npmci trigger
+  only:
+    - tags
+  tags:
+    - docker

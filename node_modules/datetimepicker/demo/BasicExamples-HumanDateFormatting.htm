@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+	
+		<title>Human Date Formatting</title>
+	
+		<link rel="stylesheet" type="text/css" href="../src/DateTimePicker.css" />
+	
+		<script type="text/javascript" src="jquery-1.11.0.min.js"></script>
+		<script type="text/javascript" src="../src/DateTimePicker.js"></script>
+	
+		<!--[if lt IE 9]>
+			<link rel="stylesheet" type="text/css" href="../src/DateTimePicker-ltie9.css" />
+			<script type="text/javascript" src="../src/DateTimePicker-ltie9.js"></script>
+		<![endif]-->
+	
+		<style type="text/css">
+		
+			p
+			{
+				margin-left: 20px;
+			}
+		
+			input
+			{
+				width: 200px;
+				padding: 10px;
+				margin-left: 20px;
+				margin-bottom: 20px;
+			}
+		
+		</style>
+	
+	</head>
+
+	<body>
+	
+		<p>Date : </p>
+		<input type="text" data-field="date" readonly>
+	
+		<p>DateTime : </p>
+		<input type="text" data-field="datetime" readonly>
+	
+		<div id="dtBox"></div>
+	
+		<script type="text/javascript">
+		
+			$(document).ready(function()
+			{
+				$("#dtBox").DateTimePicker(
+				{
+				
+					formatHumanDate: function(oDate, sMode, sFormat)
+					{
+						if(sMode === "date")
+							return oDate.dayShort + ", " + oDate.dd + " " + oDate.month+ ", " + oDate.yyyy;
+						else if(sMode === "time")
+							return oDate.HH + ":" + oDate.mm + ":" + oDate.ss;
+						else if(sMode === "datetime")
+							return oDate.dayShort + ", " + oDate.dd + " " + oDate.month+ ", " + oDate.yyyy + " " + oDate.HH + ":" + oDate.mm + ":" + oDate.ss;
+					}
+				
+				});
+			});
+		
+		</script>
+		
+		<!-- formatHumanDate - format Date displayed in the Header of the DateTimerPicker
+			
+				parameter : date
+			
+				attributes of parameter date 
+					dd   :   day of the month(two-digit)
+					MM   :   month(two-digit)
+					yyyy   :   year(four-digit),
+				  	day   :   day of the week (as specified in fullDayNames settings),
+					dayShort   :   day of the week (as specified in shortDayNames settings),
+					month   :   month name(as specified in fullMonthNames settings),
+					monthShort   :    short month name(as specified in shortMonthNames settings)
+				
+		-->
+	
+	</body>
+
+</html>

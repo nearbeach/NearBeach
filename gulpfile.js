@@ -9,11 +9,9 @@ var gulp = require('gulp'),
     cleanCSS = require('gulp-clean-css'),
     jquery = require('jquery'),
     popper = require('popper.js'),
-    bootstrap = require('gulp-bootstrap');
-    //bootstrap = require('bootstrap');
+    bootstrap = require('bootstrap');
 
-global.jQuery = global.$ = require("jquery");
-
+import 'jquery';
 // Styles
 gulp.task('styles', function() {
   return gulp.src('./NearBeach/build/css/*.css')
