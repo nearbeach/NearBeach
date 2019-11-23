@@ -1,39 +1,13 @@
-// Load plugins
 var gulp = require('gulp'),
-    sass = require('gulp-stylus'),
+    browserSync = require('browser-sync').create(),
     rename = require('gulp-rename'),
     concat = require('gulp-concat'),
     clean = require('gulp-clean'),
     notify = require('gulp-notify'),
     minify = require('gulp-minify'),
     cleanCSS = require('gulp-clean-css'),
-    jquery = require('jquery'),
-    popper = require('popper.js'),
-    bootstrap = require('bootstrap');
+    sass = require('gulp-sass');
 
-import 'jquery';
-// Styles
-gulp.task('styles', function() {
-  return gulp.src('./NearBeach/build/css/*.css')
-    .pipe(concat('NearBeach.css'))
-    .pipe(cleanCSS({compatibility: 'ie8'}))
-    .pipe(rename({extname: ".min.css"}))
-    .pipe(gulp.dest('./NearBeach/static/NearBeach/css'))
-    .pipe(notify({ message: 'Styles task complete' }));
-});
-
-// Scripts
-gulp.task('scripts', function() {
-  return gulp.src([
-      './NearBeach/build/javascript/*.js',
-      './node_modules/jquery/dist/jquery.min.js',
-
-  ])
-    .pipe(concat('NearBeach.js'))
-    .pipe(minify())
-    .pipe(gulp.dest('./NearBeach/static/NearBeach/js'))
-    .pipe(notify({ message: 'JavaScript Task Complete' }));
-});
 
 // Clean
 gulp.task('clean', function() {
@@ -41,10 +15,68 @@ gulp.task('clean', function() {
     .pipe(clean());
 });
 
-// Default task
-gulp.task('default', gulp.series('clean','styles','scripts', function(done) {
+// Scripts
+gulp.task('scripts', function() {
+  return gulp.src([
+      './NearBeach/build/javascript/*.js',
+      'node_modules/popper.js/dist/popper.min.js',
+      'node_modules/bootstrap/dist/js/bootstrap.min.js'
+  ])
+    .pipe(concat('NearBeach.js'))
+    .pipe(minify())
+    .pipe(gulp.dest('./NearBeach/static/NearBeach/js'))
+    .pipe(notify({ message: 'JavaScript Task Complete' }));
+});
+
+gulp.task('js', function() {
+    return gulp.src([
+        'node_modules/jquery/dist/jquery.min.js',
+        'node_modules/d3/dist/d3.min.js'
+    ])
+    .pipe(gulp.dest('./NearBeach/static/NearBeach/js'))
+    .pipe(notify({ message: 'Moved JQuery Task Complete' }));
+});
+
+// Styles
+gulp.task('styles', function() {
+    return gulp.src('./NearBeach/build/css/*.css')
+        .pipe(concat('NearBeach.css'))
+        .pipe(minify())
+        .pipe(cleanCSS({compatibility: 'ie8'}))
+        .pipe(rename({extname: ".min.css"}))
+        .pipe(gulp.dest('./NearBeach/static/NearBeach/css'))
+        .pipe(notify({ message: 'Styles task complete' }));
+});
+
+// SASS (bootstrap)
+gulp.task('sass', function() {
+    return gulp.src([
+            'node_modules/bootstrap/scss/bootstrap.scss',
+        ])
+        .pipe(sass())
+        .pipe(sass({outputStyle: 'compressed'}))
+        .pipe(concat('bootstrap.css'))
+        .pipe(rename({extname: ".min.css"}))
+        .pipe(gulp.dest('./NearBeach/static/NearBeach/css'))
+        .pipe(notify({ message: 'Bootstrap styles task complete' }));
+});
+
+// Default Task
+gulp.task('default', gulp.series('clean','styles','scripts','sass','js', function(done) {
     console.log("Completed GULP");
     done();
 }));
 
+/*
 
+// Static Server + watching scss/html files
+gulp.task('serve', gulp.series( 'sass', function() {
+
+browserSync.init({
+server: "./src"
+});
+
+gulp.watch(['node_modules/bootstrap/scss/bootstrap.scss', 'src/scss/*.scss'], gulp.series('sass'));
+gulp.watch("src/*.html").on('change', browserSync.reload);
+}));
+ */
