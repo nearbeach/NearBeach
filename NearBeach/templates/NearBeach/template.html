@@ -3,18 +3,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <head>
 	<title>NearBeach Alpha</title>
-    <!--
-    Bootstrap and jquery are utilised throughout ALL of NearBeach
-    -->
+
     {% load staticfiles %}
-    <script src="{% static 'NearBeach/widgets/jquery/jquery-3.3.1.min.js' %}"></script>
-    <script src="{% static 'NearBeach/widgets/popper.js/popper.js' %}"></script>
-    <script src="{% static 'NearBeach/widgets/bootstrap/js/bootstrap.bundle.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'NearBeach/widgets/bootstrap/css/bootstrap.css' %}" />
-    <link rel="stylesheet" href="{% static 'NearBeach/css/NearBeach_CSS.css' %}" />
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/loading_errors.js' %}"></script>
-
-
+    <script type="text/javascript" src="{% static 'NearBeach/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/js/popper.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/js/d3.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'NearBeach/js/NearBeach-min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'NearBeach/css/NearBeach.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'NearBeach/css/bootstrap.min.css' %}" />
 </head>
 <body style="padding-bottom: 150px;">
     <header>
