@@ -18,7 +18,7 @@ gulp.task('clean', function() {
 // Scripts
 gulp.task('scripts', function() {
   return gulp.src([
-      './NearBeach/build/javascript/render_dashboard_graphs.js',
+      './NearBeach/build/javascript/*.js',
   ])
     .pipe(concat('NearBeach.js'))
     .pipe(minify())
