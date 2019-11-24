@@ -18,9 +18,7 @@ gulp.task('clean', function() {
 // Scripts
 gulp.task('scripts', function() {
   return gulp.src([
-      './NearBeach/build/javascript/*.js',
-      'node_modules/popper.js/dist/popper.min.js',
-      'node_modules/bootstrap/dist/js/bootstrap.min.js'
+      './NearBeach/build/javascript/render_dashboard_graphs.js',
   ])
     .pipe(concat('NearBeach.js'))
     .pipe(minify())
@@ -31,7 +29,10 @@ gulp.task('scripts', function() {
 gulp.task('js', function() {
     return gulp.src([
         'node_modules/jquery/dist/jquery.min.js',
-        'node_modules/d3/dist/d3.min.js'
+        'node_modules/d3/dist/d3.min.js',
+        'node_modules/popper.js/dist/popper.min.js',
+        'node_modules/bootstrap/dist/js/bootstrap.min.js'
+
     ])
     .pipe(gulp.dest('./NearBeach/static/NearBeach/js'))
     .pipe(notify({ message: 'Moved JQuery Task Complete' }));
@@ -40,7 +41,7 @@ gulp.task('js', function() {
 // Styles
 gulp.task('styles', function() {
     return gulp.src('./NearBeach/build/css/*.css')
-        .pipe(concat('NearBeach.css'))
+        .pipe(concat('style_sheet.css'))
         .pipe(minify())
         .pipe(cleanCSS({compatibility: 'ie8'}))
         .pipe(rename({extname: ".min.css"}))

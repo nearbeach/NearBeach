@@ -1,0 +1,49 @@
+{
+  "name": "gulp-stylus",
+  "description": "Stylus plugin for gulp",
+  "version": "2.7.0",
+  "homepage": "http://github.com/stevelacy/gulp-stylus",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/stevelacy/gulp-stylus.git"
+  },
+  "author": "Steve Lacy <me@slacy.me> (http://slacy.me)",
+  "main": "./index.js",
+  "dependencies": {
+    "accord": "^0.26.3",
+    "lodash.assign": "^3.2.0",
+    "plugin-error": "^0.1.2",
+    "replace-ext": "0.0.1",
+    "stylus": "^0.54.0",
+    "through2": "^2.0.0",
+    "vinyl-sourcemaps-apply": "^0.2.0"
+  },
+  "devDependencies": {
+    "gulp-sourcemaps": "^1.5.2",
+    "mocha": "^2.3.2",
+    "should": "^8.0.2",
+    "vinyl": "^2.1.0"
+  },
+  "engines": {
+    "node": ">= 4.2.0"
+  },
+  "scripts": {
+    "test": "mocha --reporter spec"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stevelacy/gulp-stylus/issues"
+  },
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "keywords": [
+    "gulp",
+    "stylus",
+    "css",
+    "preprocessor",
+    "gulpplugin",
+    "gulp-plugin"
+  ]
+}
