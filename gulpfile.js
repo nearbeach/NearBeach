@@ -18,7 +18,7 @@ gulp.task('clean', function() {
 // Scripts
 gulp.task('scripts', function() {
   return gulp.src([
-      './NearBeach/build/javascript/*.js',
+      './NearBeach/build/javascript/*.js'
   ])
     .pipe(concat('NearBeach.js'))
     .pipe(minify())
@@ -31,7 +31,8 @@ gulp.task('js', function() {
         'node_modules/jquery/dist/jquery.min.js',
         'node_modules/d3/dist/d3.min.js',
         'node_modules/popper.js/dist/popper.min.js',
-        'node_modules/bootstrap/dist/js/bootstrap.min.js'
+        'node_modules/bootstrap/dist/js/bootstrap.min.js',
+        'node_modules/datetimepicker/dist/DateTimePicker.min.js'
 
     ])
     .pipe(gulp.dest('./NearBeach/static/NearBeach/js'))
@@ -40,8 +41,11 @@ gulp.task('js', function() {
 
 // Styles
 gulp.task('styles', function() {
-    return gulp.src('./NearBeach/build/css/*.css')
-        .pipe(concat('style_sheet.css'))
+    return gulp.src([
+            './NearBeach/build/css/*.css',
+            './node_modules/datetimepicker/dist/DateTimePicker.min.css'
+        ])
+        .pipe(concat('NearBeach.css'))
         .pipe(minify())
         .pipe(cleanCSS({compatibility: 'ie8'}))
         .pipe(rename({extname: ".min.css"}))
