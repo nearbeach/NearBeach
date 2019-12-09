@@ -11,7 +11,10 @@ var gulp = require('gulp'),
 
 // Clean
 gulp.task('clean', function() {
-  return gulp.src(['./NearBeach/static/NearBeach/js', './NearBeach/static/NearBeach/css'], {read: false, allowEmpty: true})
+  return gulp.src([
+      './NearBeach/static/NearBeach/js',
+      './NearBeach/static/NearBeach/css'
+    ], {read: false, allowEmpty: true})
     .pipe(clean());
 });
 
@@ -32,8 +35,7 @@ gulp.task('js', function() {
         'node_modules/d3/dist/d3.min.js',
         'node_modules/popper.js/dist/popper.min.js',
         'node_modules/bootstrap/dist/js/bootstrap.min.js',
-        'node_modules/datetimepicker/dist/DateTimePicker.min.js'
-
+        'node_modules/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js',
     ])
     .pipe(gulp.dest('./NearBeach/static/NearBeach/js'))
     .pipe(notify({ message: 'Moved JQuery Task Complete' }));
@@ -43,7 +45,7 @@ gulp.task('js', function() {
 gulp.task('styles', function() {
     return gulp.src([
             './NearBeach/build/css/*.css',
-            './node_modules/datetimepicker/dist/DateTimePicker.min.css'
+            './node_modules/jquery-datetimepicker/jquery.datetimepicker.css'
         ])
         .pipe(concat('NearBeach.css'))
         .pipe(minify())
