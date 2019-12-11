@@ -93,13 +93,17 @@
         Setup both the start_date and end_date fields with the
         datetime picker widget
          */
-        $( "#id_start_date" ).datepicker({
-            dateFormat: "yy-mm-dd"
+        $( "#id_start_date" ).datetimepicker({
+            format: "Y-m-d",
+            timepicker: false,
+            scrollInput: false,
         });
         $( "#id_start_date" ).val("{{ start_date|date:'Y-m-d' }}");
 
-        $("#id_end_date").datepicker({
-            dateFormat: "yy-mm-dd"
+        $("#id_end_date").datetimepicker({
+            format: "Y-m-d",
+            timepicker: false,
+            scrollInput: false,
         });
         $("#id_end_date").val("{{ end_date|date:'Y-m-d' }}");
 
