@@ -13,7 +13,7 @@ from django.core.files.storage import FileSystemStorage
 from django.db.models import Sum, Q, Min, Value
 from django.db.models.functions import Concat
 from django.http import HttpResponse,HttpResponseForbidden, HttpResponseRedirect, Http404, HttpResponseBadRequest
-from django.shortcuts import render, get_object_or_404, render_to_response
+from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext, loader
 from django.urls import reverse
 from .misc_functions import *
@@ -10283,7 +10283,7 @@ def check_approval_status(rfc_id):
         rfc_results.save()
 
 def handler404(request):
-    response = render_to_response(
+    response = render(
         '404.html',
         {},
         context_instance=RequestContext(request)
@@ -10293,7 +10293,7 @@ def handler404(request):
 
 
 def handler500(request):
-    response = render_to_response(
+    response = render(
         '500.html',
         {},
         context_instance=RequestContext(request)
