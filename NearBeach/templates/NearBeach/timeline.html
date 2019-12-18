@@ -149,17 +149,17 @@ d3.gantt = function() {
 	     })
 	 .attr("y", 0)
 	 .attr("transform", rectTransform)
-	 .attr("height", function(d) { return y.rangeBand(); })
+	 .attr("height", function(d) { return y.bandwidth(); })
 	 .attr("width", function(d) {
 	     return Math.max(1,(x(d.endDate) - x(d.startDate)));
 	     });
 
 
 	 svg.append("g")
-	 .attr("class", "x axis")
-	 .attr("transform", "translate(0, " + (height - margin.top - margin.bottom) + ")")
-	 .transition()
-	 .call(xAxis);
+         .attr("class", "x axis")
+         .attr("transform", "translate(0, " + (height - margin.top - margin.bottom) + ")")
+         .transition()
+         .call(xAxis);
 
 	 svg.append("g").attr("class", "y axis").transition().call(yAxis);
 
@@ -188,14 +188,14 @@ d3.gantt = function() {
 	 .transition()
 	 .attr("y", 0)
 	 .attr("transform", rectTransform)
-	 .attr("height", function(d) { return y.rangeBand(); })
+	 .attr("height", function(d) { return y.bandwidth(); })
 	 .attr("width", function(d) {
 	     return Math.max(1,(x(d.endDate) - x(d.startDate)));
 	     });
 
         rect.transition()
           .attr("transform", rectTransform)
-	 .attr("height", function(d) { return y.rangeBand(); })
+	 .attr("height", function(d) { return y.bandwidth(); })
 	 .attr("width", function(d) {
 	     return Math.max(1,(x(d.endDate) - x(d.startDate)));
 	     });
