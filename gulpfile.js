@@ -36,6 +36,7 @@ gulp.task('js', function() {
         'node_modules/popper.js/dist/popper.min.js',
         'node_modules/bootstrap/dist/js/bootstrap.min.js',
         'node_modules/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js',
+        'node_modules/mxgraph/javascript/mxClient.min.js',
     ])
     .pipe(gulp.dest('./NearBeach/static/NearBeach/js'))
     .pipe(notify({ message: 'Moved JQuery Task Complete' }));
