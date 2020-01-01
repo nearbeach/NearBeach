@@ -29,7 +29,7 @@ def whiteboard_editor_xml(request):
     # context
     c = {}
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request), content_type='application/xhtml+xml')
 
 
 @login_required(login_url='login')
@@ -52,5 +52,5 @@ def whiteboard_toolbar_xml(request):
     # context
     c = {}
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c,request), content_type='application/xhtml+xml')
 
