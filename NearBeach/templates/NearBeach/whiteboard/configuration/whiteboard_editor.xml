@@ -1,9 +1,13 @@
 {% load static %}
 <mxEditor>
+    <include name="{% url 'whiteboard_toolbar_xml' %}"/>
 	<ui>
-		<add as="graph" element="graph"/>
-		<add as="toolbar" element="toolbox"/>
-	</ui>
+		<add as="graph" element="graph"
+			style="left:70px;right:20px;top:80px;bottom:40px"/>
+		<add as="status" element="status"
+			style="height:20px;bottom:20px;left:20px;right:20px"/>
+		<add as="toolbar" x="16" y="20" width="50" style="padding:5px;padding-top:8px;padding-right:0px;"/>
+    </ui>
 	<Array as="templates">
 		<add as="myFirstTemplate">
 			<Rect label="Rectangle" href="">
@@ -35,4 +39,3 @@
 		<add as="Delete (Built-in)" action="delete" icon="images/icons48/keys.png" if="cell"/>
 	</mxDefaultPopupMenu>
 </mxEditor>
-

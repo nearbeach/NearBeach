@@ -2,88 +2,140 @@
 {% block content %}
 {% load nearbeach_extras %}
 {% load static %}
-    <style>
-        body {
-            min-height: 100vh;
-        }
-    </style>
+    <!-- Basic Styling -->
+    <style type="text/css" media="screen">
+		div.base {
+			position: absolute;
+			overflow: hidden;
+			font-family: Arial;
+			font-size: 8pt;
+		}
+		div.base#graph {
+			border-style: solid;
+			border-color: #F2F2F2;
+			border-width: 1px;
+			background: url('{% static "NearBeach/images/grid.gif" %}');
+		}
+	</style>
 
     <!-- Sets the basepath for the library if not in same directory -->
 	<script type="text/javascript">
-		mxBasePath = "{% static 'NearBeach/whiteboard' %}";
+		mxBasePath = "{% static 'NearBeach' %}";
+	</script>
+
+
+    <!-- Loading splash -->
+    <table id="splash" width="100%" height="100%"
+		style="background:white;position:absolute;top:0px;left:0px;z-index:4;">
+		<tr>
+			<td align="center" valign="middle">
+				<img src="{% static 'NearBeach/images/icons/loader.svg' %}">
+                <div>Loading Whiteboard</div>
+			</td>
+		</tr>
+	</table>
+
+    <!-- MX Graph Source Code -->
+    <script type="text/javascript" src="{% static 'NearBeach/js/mxClient.min.js' %}"></script>
+
+    <script type="text/javascript">
+		mxGraph.prototype.htmlLabels = true;
+		mxGraph.prototype.isWrapping = function(cell)
+		{
+			return true;
+		};
+		mxConstants.DEFAULT_HOTSPOT = 1;
+		// Enables guides
+		mxGraphHandler.prototype.guidesEnabled = true;
+	    // Alt disables guides
+	    mxGuide.prototype.isEnabledForEvent = function(evt)
+	    {
+	    	return !mxEvent.isAltDown(evt);
+	    };
+		// Enables snapping waypoints to terminals
+		mxEdgeHandler.prototype.snapToTerminals = true;
+		window.onbeforeunload = function() { return mxResources.get('changesLost'); };
 	</script>
 
 	<!-- Loads and initializes the library -->
-	<script type="text/javascript" src="{% static 'NearBeach/js/mxClient.min.js' %}"></script>
+    <div id="graph" class="base">
+        <!-- Graph Here -->
+	</div>
 
-	<!-- Example code -->
-	<script type="text/javascript">
+	<div id="status" class="base" align="right" style="white-space:nowrap;">
+		<!-- Status Here -->
+	</div>
 
-		// Program starts here. Creates a sample graph in the
-		// DOM node with the specified ID. This function is invoked
-		// from the onLoad event handler of the document (see below).
-		function main()
-		{
-			// Checks if the browser is supported
-			if (!mxClient.isBrowserSupported())
-			{
-				// Displays an error message if the browser is not supported.
-				mxUtils.error('Browser is not supported!', 200, false);
-			}
-			else
-			{
-				mxLog.show();
-
-				// Creates the graph inside the given container. The
-				// editor is used to create certain functionality for the
-				// graph, such as the rubberband selection, but most parts
-				// of the UI are custom in this example.
-				var editor = new mxEditor();
-
-				// Configures the editor's UI, the toolbar and the popupmenu.
-				// Note that the element with the id toolbox is used in the
-				// config file, the toolbar element (top element) is used below
-				// to create a second toolbar programmatically.
-				// The cells to be created via drag and drop are added
-				// in the templates array in mxEditor, and a custom action is
-				// added to the built-in actions in the editor, as well.
-				// The ui section maps the existing DOM elements to the graph
-				// and toolbar objects, respectively.
-				// Keep in mind that the as-attributes of the add-items in the
-				// toolbar and popupmenu sections refer to keys in mxResources.
-				var config = mxUtils.load({% url 'whiteboard_editor_xml' %}).getDocumentElement();
-				mxObjectCodec.allowEval = true;
-				editor.configure(config);
-				mxObjectCodec.allowEval = false;
-
-				// Enables new connections in the graph
-				editor.graph.setConnectable(true);
-
-				// Creates the second toolbar programmatically
-				var container = document.getElementById('toolbar');
-				var toolbar = new mxDefaultToolbar(container, editor);
-
-				// Use eg. mxResources.get("delete") to translate tooltip
-				toolbar.addItem('Show XML', 'images/icons48/gear.png', 'myFirstAction');
-				toolbar.addItem('Delete', 'images/icons48/keys.png', 'delete');
-
-				console.log('editor', editor);
-			}
-		}
-	</script>
-    <table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0">
-        <tr>
-            <td id="toolbar" colspan="2" height="80px" style="background:#7F7F7F;padding:10px;">
-            </td>
-        </tr>
-        <tr>
-		<td id="toolbox" valign="top" width="70px" style="min-width:70px;background:#7F7F7F;padding:12px;">
-		</td>
-		<td width="100%" style="background:url('{% static 'NearBeach/images/grid.gif' %}');border: solid gray 1px;height:100%;">
-			<div id="graph" style="overflow:auto;width:100%;height:100%;">
-			</div>
-		</td>
-	</tr>
-	</table>
-
+    <script>
+        function createEditor(config)
+        {
+            var editor = null;
+            var hideSplash = function()
+            {
+                // Fades-out the splash screen
+                var splash = document.getElementById('splash');
+                if (splash != null)
+                {
+                    try
+                    {
+                        mxEvent.release(splash);
+                        mxEffects.fadeOut(splash, 100, true);
+                    }
+                    catch (e)
+                    {
+                        splash.parentNode.removeChild(splash);
+                    }
+                }
+            };
+            try
+            {
+                if (!mxClient.isBrowserSupported())
+                {
+                    mxUtils.error('Browser is not supported!', 200, false);
+                }
+                else
+                {
+                    mxObjectCodec.allowEval = true;
+                    var node = mxUtils.load(config).getDocumentElement();
+                    editor = new mxEditor(node);
+                    mxObjectCodec.allowEval = false;
+                    // Adds active border for panning inside the container
+                    editor.graph.createPanningManager = function()
+                    {
+                        var pm = new mxPanningManager(this);
+                        pm.border = 30;
+                        return pm;
+                    };
+                    editor.graph.allowAutoPanning = true;
+                    editor.graph.timerAutoScroll = true;
+                    // Updates the window title after opening new files
+                    var title = document.title;
+                    var funct = function(sender)
+                    {
+                        document.title = title + ' - ' + sender.getTitle();
+                    };
+                    editor.addListener(mxEvent.OPEN, funct);
+                    // Prints the current root in the window title if the
+                    // current root of the graph changes (drilling).
+                    editor.addListener(mxEvent.ROOT, funct);
+                    funct(editor);
+                    // Displays version in statusbar
+                    editor.setStatus('Built using mxGraph '+mxClient.VERSION);
+                    // Shows the application
+                    hideSplash();
+                }
+            }
+            catch (e)
+            {
+                hideSplash();
+                // Shows an error message if the editor cannot start
+                mxUtils.alert('Cannot start application: ' + e.message);
+                throw e; // for debugging
+            }
+            return editor;
+        }
+        window.onload = function() {
+            createEditor("{% url 'whiteboard_editor_xml' %}");
+        }
+    </script>
 {% endblock %}
