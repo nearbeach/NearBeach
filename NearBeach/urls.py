@@ -24,6 +24,7 @@ from . import views, \
 	views_whiteboard
 
 
+
 urlpatterns = [
 re_path(r'^$', views.index, name='index'),
 re_path(r'^add_campus_to_customer/(?P<customer_id>[0-9]+)/(?P<campus_id>[0-9]+)/', views.add_campus_to_customer,name='add_campus_to_customer'),
@@ -242,7 +243,10 @@ re_path(r'^user_want_remove/(?P<user_want_id>[0-9]+)', views.user_want_remove,na
 re_path(r'^user_want_view', views.user_want_view,name='user_want_view'),
 re_path(r'^user_weblink_remove/(?P<user_weblink_id>[0-9]+)',views.user_weblink_remove,name='user_weblink_remove'),
 re_path(r'^user_weblink_view',views.user_weblink_view,name='user_weblink_view'),
-re_path(r'^whiteboard_information',views_whiteboard.whiteboard_information,name='whiteboard_information'),
+re_path(r'^whiteboard_information/editor_xml',views_whiteboard.whiteboard_editor_xml,name='whiteboard_editor_xml'),
+re_path(r'^whiteboard_information/toolbar_xml',views_whiteboard.whiteboard_toolbar_xml,name='whiteboard_toolbar_xml'),
+re_path(r'^whiteboard_information/$',views_whiteboard.whiteboard_information,name='whiteboard_information'),
+
 
 	path('change-password/', auth_views.PasswordChangeView.as_view()),
 	path(
@@ -277,7 +281,6 @@ re_path(r'^whiteboard_information',views_whiteboard.whiteboard_information,name=
 
 
 ]
-
 
 if settings.DEBUG:
 	urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

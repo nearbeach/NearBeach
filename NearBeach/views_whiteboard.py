@@ -18,6 +18,20 @@ from .misc_functions import *
 from .user_permissions import return_user_permission_level
 
 
+
+
+
+@login_required(login_url='login')
+def whiteboard_editor_xml(request):
+    #Load xml template
+    t = loader.get_template('NearBeach/whiteboard/configuration/whiteboard_editor.xml')
+
+    # context
+    c = {}
+
+    return HttpResponse(t.render(c,request))
+
+
 @login_required(login_url='login')
 def whiteboard_information(request):
 
@@ -28,3 +42,15 @@ def whiteboard_information(request):
     c = {}
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login')
+def whiteboard_toolbar_xml(request):
+    #Load xml template
+    t = loader.get_template('NearBeach/whiteboard/configuration/whiteboard_toolbar.xml')
+
+    # context
+    c = {}
+
+    return HttpResponse(t.render(c,request))
+
