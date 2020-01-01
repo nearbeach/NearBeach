@@ -1,6 +1,6 @@
 <form action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {% load staticfiles %}
+    {% load static %}
     <h2>Requirement {% if destination == 'requirement_item' %}Item{% endif %} Documents</h2>
     {% if requirement_permissions > 1 or document_perm > 0 %}
         <table>
