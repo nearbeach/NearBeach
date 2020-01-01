@@ -13,7 +13,8 @@ var gulp = require('gulp'),
 gulp.task('clean', function() {
   return gulp.src([
       './NearBeach/static/NearBeach/js',
-      './NearBeach/static/NearBeach/css'
+      './NearBeach/static/NearBeach/css',
+      './NearBeach/static/NearBeach/whiteboard',
     ], {read: false, allowEmpty: true})
     .pipe(clean());
 });
@@ -42,11 +43,21 @@ gulp.task('js', function() {
     .pipe(notify({ message: 'Moved JQuery Task Complete' }));
 });
 
+//mxGraph
+//gulp.src(['input/folder/**/*']).pipe(gulp.dest('output/folder'));
+gulp.task('mxgraph', function() {
+    return gulp.src([
+        './node_modules/mxgraph/javascript/src/**/*'
+    ])
+    .pipe(gulp.dest('./NearBeach/static/NearBeach/whiteboard'))
+    .pipe(notify({ message: 'Implemented Whiteboard module from mxgraph' }));
+});
+
 // Styles
 gulp.task('styles', function() {
     return gulp.src([
             './NearBeach/build/css/*.css',
-            './node_modules/jquery-datetimepicker/jquery.datetimepicker.css'
+            './node_modules/jquery-datetimepicker/jquery.datetimepicker.css',
         ])
         .pipe(concat('NearBeach.css'))
         .pipe(minify())
@@ -70,7 +81,7 @@ gulp.task('sass', function() {
 });
 
 // Default Task
-gulp.task('default', gulp.series('clean','styles','scripts','sass','js', function(done) {
+gulp.task('default', gulp.series('clean','styles','scripts','sass','js','mxgraph', function(done) {
     console.log("Completed GULP");
     done();
 }));
