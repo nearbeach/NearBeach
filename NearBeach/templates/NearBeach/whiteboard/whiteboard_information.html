@@ -2,7 +2,7 @@
 {% block content %}
 {% load nearbeach_extras %}
 {% load static %}
-    <!-- Basic Styling -->
+    <!-- STYLES -->
     <style type="text/css" media="screen">
 		div.base {
 			position: absolute;
@@ -14,132 +14,108 @@
 			border-style: solid;
 			border-color: #F2F2F2;
 			border-width: 1px;
-			background: url('{% static "NearBeach/whiteboard/images/grid.gif" %}');
+			background: url({% static 'NearBeach/whiteboard/images/grid.gif' %});
 		}
 	</style>
 
     <!-- Sets the basepath for the library if not in same directory -->
 	<script type="text/javascript">
-		mxBasePath = "{% static 'NearBeach' %}";
+		//mxBasePath = "{% static 'NearBeach/whiteboard' %}";
+        const mx = require('imports?mxBasePath=>"{% static 'NearBeach/whiteboard' %}"!mxgraph-js');
+
+        window['mxEditor'] = mx.mxEditor;
+        window['mxGeometry'] = mx.mxGeometry;
+        window['mxDefaultKeyHandler'] = mx.mxDefaultKeyHandler;
+        window['mxDefaultPopupMenu'] = mx.mxDefaultPopupMenu;
+        window['mxGraph'] = mx.mxGraph;
+        window['mxStylesheet'] = mx.mxStylesheet;
+        window['mxDefaultToolbar'] = mx.mxDefaultToolbar;
+        window['mxGraphModel'] = mx.mxGraphModel;
+
 	</script>
-
-
-    <!-- Loading splash -->
-    <!--
-    <table id="splash" width="100%" height="100%"
-		style="background:white;position:absolute;top:0px;left:0px;z-index:4;">
-		<tr>
-			<td align="center" valign="middle">
-				<img src="{% static 'NearBeach/images/icons/loader.svg' %}">
-                <div>Loading Whiteboard</div>
-			</td>
-		</tr>
-	</table>
-	-->
 
     <!-- MX Graph Source Code -->
     <script type="text/javascript" src="{% static 'NearBeach/js/mxClient.min.js' %}"></script>
 
+    <!-- MX Graph Settings -->
     <script type="text/javascript">
 		mxGraph.prototype.htmlLabels = true;
+
 		mxGraph.prototype.isWrapping = function(cell)
 		{
 			return true;
 		};
+
 		mxConstants.DEFAULT_HOTSPOT = 1;
+
 		// Enables guides
 		mxGraphHandler.prototype.guidesEnabled = true;
+
 	    // Alt disables guides
 	    mxGuide.prototype.isEnabledForEvent = function(evt)
 	    {
 	    	return !mxEvent.isAltDown(evt);
 	    };
+
 		// Enables snapping waypoints to terminals
 		mxEdgeHandler.prototype.snapToTerminals = true;
+
 		window.onbeforeunload = function() { return mxResources.get('changesLost'); };
 	</script>
 
 	<!-- Loads and initializes the library -->
-    <div id="graph" class="base">
-        <!-- Graph Here -->
-	</div>
+	<div id="graph" class="base"></div>
+	<div id="status" class="base" align="right" style="white-space:nowrap;"></div>
 
-	<div id="status" class="base" align="right" style="white-space:nowrap;">
-		<!-- Status Here -->
-	</div>
+	<!-- Example code -->
+	<script type="text/javascript">
+		function createEditor(config) {
+            //Try
+            try {
 
-    <script>
-        function createEditor(config)
-        {
-            var editor = null;
-            var hideSplash = function()
-            {
-                // Fades-out the splash screen
-                var splash = document.getElementById('splash');
-                if (splash != null)
-                {
-                    try
-                    {
-                        mxEvent.release(splash);
-                        mxEffects.fadeOut(splash, 100, true);
-                    }
-                    catch (e)
-                    {
-                        splash.parentNode.removeChild(splash);
-                    }
+                if (!mxClient.isBrowserSupported()) {
+                    //mxUtils.error('Browser is not supported!', 200, false);
+                    new_error("The Browser is not supported");
+
+                    //Just return
+                    return false;
                 }
-            };
-            try
-            {
-                if (!mxClient.isBrowserSupported())
-                {
-                    mxUtils.error('Browser is not supported!', 200, false);
-                }
-                else
-                {
-                    mxObjectCodec.allowEval = true;
-                    var node = mxUtils.load(config).getDocumentElement();
-                    editor = new mxEditor(node);
-                    mxObjectCodec.allowEval = false;
-                    // Adds active border for panning inside the container
-                    editor.graph.createPanningManager = function()
-                    {
-                        var pm = new mxPanningManager(this);
-                        pm.border = 30;
-                        return pm;
-                    };
-                    editor.graph.allowAutoPanning = true;
-                    editor.graph.timerAutoScroll = true;
-                    // Updates the window title after opening new files
-                    var title = document.title;
-                    var funct = function(sender)
-                    {
-                        document.title = title + ' - ' + sender.getTitle();
-                    };
-                    editor.addListener(mxEvent.OPEN, funct);
-                    // Prints the current root in the window title if the
-                    // current root of the graph changes (drilling).
-                    editor.addListener(mxEvent.ROOT, funct);
-                    funct(editor);
-                    // Displays version in statusbar
-                    editor.setStatus('mxGraph '+mxClient.VERSION);
-                    // Shows the application
-                    hideSplash();
-                }
+
+                mxObjectCodec.allowEval = true;
+				var node = mxUtils.load(config).getDocumentElement();
+                var editor = new mxEditor(node);
+				mxObjectCodec.allowEval = false;
+
+				console.log("GOT HERE");
+				// Adds active border for panning inside the container
+				editor.graph.createPanningManager = function()
+				{
+					var pm = new mxPanningManager(this);
+					pm.border = 30;
+
+					return pm;
+				};
+
+				editor.graph.allowAutoPanning = true;
+				editor.graph.timerAutoScroll = true;
+
+				editor.addListener(mxEvent.OPEN, funct);
+
+				// Prints the current root in the window title if the
+				// current root of the graph changes (drilling).
+				editor.addListener(mxEvent.ROOT, funct);
+				funct(editor);
+
+				// Displays version in statusbar
+				editor.setStatus('mxGraph '+mxClient.VERSION);
+				console.log("GOT TO THE END");
+            } catch (e) {
+                new_error(`There was an issue loading the whiteboard: ${e}`);
             }
-            catch (e)
-            {
-                hideSplash();
-                // Shows an error message if the editor cannot start
-                mxUtils.alert('Cannot start application: ' + e.message);
-                throw e; // for debugging
-            }
-            return editor;
         }
-        window.onload = function() {
-            console.log("PAGE HAS LOADED");
-            createEditor("{% url 'whiteboard_editor_xml' %}");
-            console.log("Scripts have finished running");
-        }
-    </script>
+
+        $('document').ready(function(){
+            createEditor("{% static 'whiteboard_editor.xml' %}");
+        });
+	</script>
 {% endblock %}
