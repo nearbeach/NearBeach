@@ -14,25 +14,10 @@
 			border-style: solid;
 			border-color: #F2F2F2;
 			border-width: 1px;
-			background: url({% static 'NearBeach/whiteboard/images/grid.gif' %});
+			background: url('{% static "NearBeach/whiteboard/images/grid.gif" %}');
+            width: 100%;
 		}
 	</style>
-
-    <!-- Sets the basepath for the library if not in same directory -->
-	<script type="text/javascript">
-		//mxBasePath = "{% static 'NearBeach/whiteboard' %}";
-        const mx = require('imports?mxBasePath=>"{% static 'NearBeach/whiteboard' %}"!mxgraph-js');
-
-        window['mxEditor'] = mx.mxEditor;
-        window['mxGeometry'] = mx.mxGeometry;
-        window['mxDefaultKeyHandler'] = mx.mxDefaultKeyHandler;
-        window['mxDefaultPopupMenu'] = mx.mxDefaultPopupMenu;
-        window['mxGraph'] = mx.mxGraph;
-        window['mxStylesheet'] = mx.mxStylesheet;
-        window['mxDefaultToolbar'] = mx.mxDefaultToolbar;
-        window['mxGraphModel'] = mx.mxGraphModel;
-
-	</script>
 
     <!-- MX Graph Source Code -->
     <script type="text/javascript" src="{% static 'NearBeach/js/mxClient.min.js' %}"></script>
@@ -114,8 +99,10 @@
             }
         }
 
+        mxBasePath = "{% static 'NearBeach/whiteboard' %}";
+
         $('document').ready(function(){
-            createEditor("{% static 'whiteboard_editor.xml' %}");
+            createEditor("{% url 'whiteboard_editor_xml' %}");
         });
 	</script>
 {% endblock %}

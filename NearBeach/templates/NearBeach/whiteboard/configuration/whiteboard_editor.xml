@@ -25,14 +25,6 @@
 		]]></add>
 	</Array>
 	<mxDefaultToolbar as="toolbar">
-		<add as="MyFirstAction" action="myFirstAction" icon="images/icons48/gear.png"/>
-		<hr/><br/>
-		<add as="Gear" template="myFirstTemplate" style="rounded=1" icon="images/icons48/server.png"/>
-		<add as="Earth" template="myFirstTemplate" style="shape=ellipse" icon="images/icons48/earth.png"/>
+        <include name="{% url 'whiteboard_toolbar_xml' %}"/>
 	</mxDefaultToolbar>
-	<mxDefaultPopupMenu as="popupHandler">
-		<add as="Show XML (Custom)" action="myFirstAction" icon="images/icons48/gear.png"/>
-		<separator/>
-		<add as="Delete (Built-in)" action="delete" icon="images/icons48/keys.png" if="cell"/>
-	</mxDefaultPopupMenu>
 </mxEditor>

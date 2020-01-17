@@ -1,483 +1,75 @@
 {% load static %}
-<mxEditor defaultGroup="group" defaultEdge="edge"
-	helpWindowImage="images/help.gif"
-	tasksWindowImage="images/tasks.gif"
-	forcedInserting="0"
-	swimlaneRequired="0">
-    <mxEditor>
-        <ui>
-            <resource basename="resources/app"/>
-        </ui>
-        <mxDefaultPopupMenu as="popupHandler">
-            <add as="cut" action="cut" icon="images/cut.gif"/>
-            <add as="copy" action="copy" icon="images/copy.gif"/>
-            <add as="paste" action="paste" icon="images/paste.gif"/>
-            <separator/>
-            <add as="delete" action="delete" icon="images/delete.gif" if="cell"/>
-            <separator/>
-            <add as="exitGroup" action="exitGroup" icon="images/up.gif" if="notRoot"/>
-            <add as="enterGroup" action="enterGroup" icon="images/down.gif" if="validRoot"/>
-            <separator/>
-            <add as="shape" if="cell">
-                <add as="group" action="group" icon="images/group.gif" if="ncells"/>
-                <add as="ungroup" action="ungroup" icon="images/ungroup.gif" if="cell"/>
-                <separator/>
-                <add as="removeFromParent" action="removeFromParent" if="cell"/>
-                <separator/>
-                <add as="collapse" action="collapse" icon="images/collapse.gif" if="expandable"/>
-                <add as="expand" action="expand" icon="images/expand.gif" if="collapsable"/>
-                <separator/>
-                <add as="toFront" action="toFront" icon="images/tofront.gif" if="cell"/>
-                <add as="toBack" action="toBack" icon="images/toback.gif" if="cell"/>
-                <separator/>
-                <add as="editStyle" action="editStyle" if="cell"/>
-            </add>
-            <add as="format" if="cell">
-                <add as="fillColor" action="fillColor" icon="images/fillcolor.gif" if="cell"/>
-                <add as="gradientColor" action="gradientColor" if="cell"/>
-                <add as="strokeColor" action="strokeColor" icon="images/linecolor.gif" if="cell"/>
-                <separator/>
-                <add as="toggleRounded" action="toggleRounded" if="cell"/>
-                <add as="toggleShadow" action="toggleShadow" if="cell"/>
-            </add>
-            <add as="font" if="cell">
-                <add as="fontColor" action="fontColor" icon="images/fontcolor.gif" if="cell"/>
-                <add as="fontFamily" action="fontFamily" if="cell"/>
-                <add as="fontSize" action="fontSize" if="cell"/>
-                <separator/>
-                <add as="bold" action="bold" icon="images/bold.gif" if="cell"/>
-                <add as="italic" action="italic" icon="images/italic.gif" if="cell"/>
-            </add>
-            <separator/>
-            <add as="properties" action="showProperties" icon="images/properties.gif"/>
-            <separator/>
-            <add as="openHref" action="openHref" icon="images/link.gif"/>
-        </mxDefaultPopupMenu>
-        <!--
-        <include name="config/keyhandler-commons.xml"/>
-        -->
-        <mxEditor>
-            <mxDefaultKeyHandler as="keyHandler">
-                <add as="8" action="collapse"/>
-                <add as="13" action="expand"/>
-                <add as="33" action="exitGroup"/>
-                <add as="34" action="enterGroup"/>
-                <add as="35" action="refresh"/>
-                <add as="36" action="home"/>
-                <add as="37" action="selectPrevious"/>
-                <add as="38" action="selectParent"/>
-                <add as="40" action="selectChild"/>
-                <add as="39" action="selectNext"/>
-                <add as="46" action="delete"/>
-                <add as="65" control="1" action="selectAll"/>
-                <add as="90" control="1" action="undo"/>
-                <add as="89" control="1" action="redo"/>
-                <add as="88" control="1" action="cut"/>
-                <add as="67" control="1" action="copy"/>
-                <add as="86" control="1" action="paste"/>
-                <add as="71" control="1" action="group"/>
-                <add as="85" control="1" action="ungroup"/>
-                <add as="113" action="edit"/>
-                <add as="123" action="showProperties"/>
-                <add as="107" action="zoomIn"/>
-                <add as="109" action="zoomOut"/>
-            </mxDefaultKeyHandler>
-        </mxEditor>
-        <Array as="actions">
-            <add as="open"><![CDATA[
-                function (editor)
-                {
-                    editor.open(mxUtils.prompt('Enter filename', 'workflow.xml'));
-                }
-            ]]></add>
-            <add as="openHref"><![CDATA[
-                function (editor, cell)
-                {
-                    cell = cell || editor.graph.getSelectionCell();
-
-                    if (cell == null)
-                    {
-                        cell = editor.graph.getCurrentRoot();
-
-                        if (cell == null)
-                        {
-                            cell = editor.graph.getModel().getRoot();
-                        }
-                    }
-
-                    if (cell != null)
-                    {
-                        var href = cell.getAttribute('href');
-
-                        if (href != null && href.length > 0)
-                        {
-                            window.open(href);
-                        }
-                        else
-                        {
-                            mxUtils.alert('No URL defined. Showing properties...');
-                            editor.execute('showProperties', cell);
-                        }
-                    }
-                }
-            ]]></add>
-            <add as="editStyle"><![CDATA[
-                function (editor)
-                {
-                    var cell = editor.graph.getSelectionCell();
-
-                    if (cell != null)
-                    {
-                        var model = editor.graph.getModel();
-                        var style = mxUtils.prompt(mxResources.get('enterStyle'), model.getStyle(cell) || '');
-
-                        if (style != null)
-                        {
-                            model.setStyle(cell, style);
-                        }
-                    }
-                }
-            ]]></add>
-            <add as="fillColor"><![CDATA[
-                function (editor)
-                {
-                    var color = mxUtils.prompt(mxResources.get('enterColorname'), 'red');
-
-                    if (color != null)
-                    {
-                        editor.graph.model.beginUpdate();
-                        try
-                        {
-                            editor.graph.setCellStyles("strokeColor", color);
-                            editor.graph.setCellStyles("fillColor", color);
-                        }
-                        finally
-                        {
-                            editor.graph.model.endUpdate();
-                        }
-                    }
-                }
-            ]]></add>
-            <add as="gradientColor"><![CDATA[
-                function (editor)
-                {
-                    var color = mxUtils.prompt(mxResources.get('enterColorname'), 'white');
-
-                    if (color != null)
-                    {
-                        editor.graph.setCellStyles("gradientColor", color);
-                    }
-                }
-            ]]></add>
-            <add as="strokeColor"><![CDATA[
-                function (editor)
-                {
-                    var color = mxUtils.prompt(mxResources.get('enterColorname'), 'red');
-
-                    if (color != null)
-                    {
-                        editor.graph.setCellStyles("strokeColor", color);
-                    }
-                }
-            ]]></add>
-            <add as="fontColor"><![CDATA[
-                function (editor)
-                {
-                    var color = mxUtils.prompt(mxResources.get('enterColorname'), 'red');
-
-                    if (color != null)
-                    {
-                        editor.graph.setCellStyles("fontColor", color);
-                    }
-                }
-            ]]></add>
-            <add as="fontFamily"><![CDATA[
-                function (editor)
-                {
-                    var family = mxUtils.prompt(mxResources.get('enterFontfamily'), 'Arial');
-
-                    if (family != null && family.length > 0)
-                    {
-                        editor.graph.setCellStyles("fontFamily", family);
-                    }
-                }
-            ]]></add>
-            <add as="fontSize"><![CDATA[
-                function (editor)
-                {
-                    var size = mxUtils.prompt(mxResources.get('enterFontsize'), '10');
-
-                    if (size != null && size > 0 && size < 999)
-                    {
-                        editor.graph.setCellStyles("fontSize", size);
-                    }
-                }
-            ]]></add>
-            <add as="image"><![CDATA[
-                function (editor)
-                {
-                    var image = mxUtils.prompt(mxResources.get('enterImageUrl'),
-                        'examples/images/image.gif');
-
-                    if (image != null)
-                    {
-                        editor.graph.setCellStyles("image", image);
-                    }
-                }
-            ]]></add>
-            <add as="opacity"><![CDATA[
-                function (editor)
-                {
-                    var opacity = mxUtils.prompt(mxResources.get('enterOpacity'), '100');
-
-                    if (opacity != null && opacity >= 0 && opacity <= 100)
-                    {
-                        editor.graph.setCellStyles("opacity", opacity);
-                    }
-                }
-            ]]></add>
-            <add as="straightConnector"><![CDATA[
-                function (editor)
-                {
-                    editor.graph.setCellStyle("straightEdge");
-                }
-            ]]></add>
-            <add as="elbowConnector"><![CDATA[
-                function (editor)
-                {
-                    editor.graph.setCellStyle("");
-                }
-            ]]></add>
-            <add as="arrowConnector"><![CDATA[
-                function (editor)
-                {
-                    editor.graph.setCellStyle("arrowEdge");
-                }
-            ]]></add>
-            <add as="toggleOrientation"><![CDATA[
-                function (editor, cell)
-                {
-                    editor.graph.toggleCellStyles(mxConstants.STYLE_HORIZONTAL, true);
-                }
-            ]]></add>
-            <add as="toggleRounded"><![CDATA[
-                function (editor)
-                {
-                    editor.graph.toggleCellStyles(mxConstants.STYLE_ROUNDED);
-                }
-            ]]></add>
-            <add as="toggleShadow"><![CDATA[
-                function (editor)
-                {
-                    editor.graph.toggleCellStyles(mxConstants.STYLE_SHADOW);
-                }
-            ]]></add>
-            <add as="horizontalTree"><![CDATA[
-                function (editor, cell)
-                {
-                    cell = cell || editor.graph.getSelectionCell();
-
-                    if (cell == null)
-                    {
-                        cell = editor.graph.getDefaultParent();
-                    }
-
-                    editor.treeLayout(cell, true);
-                }
-            ]]></add>
-            <add as="verticalTree"><![CDATA[
-                function (editor, cell)
-                {
-                    cell = cell || editor.graph.getSelectionCell();
-
-                    if (cell == null)
-                    {
-                        cell = editor.graph.getDefaultParent();
-                    }
-
-                    editor.treeLayout(cell, false);
-                }
-            ]]></add>
-        </Array>
-    </mxEditor>
-
-	<!--<include name="config/editor-commons.xml"/>
-	<add as="onInit">
-		function ()
+<mxDefaultToolbar>
+	<add as="save" action="save" icon="{% static 'NearBeach/whiteboard/images/save.gif' %}"/>
+	<add as="show" action="show" icon="{% static 'NearBeach/whiteboard/images/preview.gif' %}"/>
+	<add as="print" action="print" icon="{% static 'NearBeach/whiteboard/images/print.gif' %}"/>
+	<add as="exportImage" action="exportImage" icon="{% static 'NearBeach/whiteboard/images/image.gif' %}"/>
+	<br/><hr/>
+	<add as="select" mode="select" icon="images/select.gif"/>
+	<add as="pan" mode="pan" icon="images/pan.gif"/>
+	<add as="connect" mode="connect" icon="images/connect.gif"><![CDATA[
+		function (editor)
 		{
-			this.showTasks();
-		}
-	</add>
-	-->
-	<Array as="cycleAttributeValues">
-		<add value="#83027F"/>
-		<add value="#66B922"/>
-		<add value="#808913"/>
-		<add value="#CF0056"/>
-		<add value="#4679B6"/>
-	</Array>
-	<Array as="templates">
-		<add as="group">
-			<Group label="" description="" href="">
-				<mxCell vertex="1" style="group" connectable="0"/>
-			</Group>
-		</add>
-		<add as="edge">
-			<Edge label="" description="">
-				<mxCell edge="1">
-					<mxGeometry as="geometry" relative="1"/>
-				</mxCell>
-			</Edge>
-		</add>
-		<add as="swimlane">
-			<Swimlane label="Swimlane" description="" href="">
-				<mxCell vertex="1" style="swimlane" connectable="0">
-					<mxGeometry as="geometry" width="300" height="160"/>
-				</mxCell>
-			</Swimlane>
-		</add>
-		<add as="task">
-			<Task label="Task" description="" href="">
-				<mxCell vertex="1">
-					<mxGeometry as="geometry" width="72" height="32"/>
-				</mxCell>
-			</Task>
-		</add>
-		<add as="subprocess">
-			<Subprocess label="Subprocess" description="" href="">
-				<mxCell vertex="1" style="rounded">
-					<mxGeometry as="geometry" width="72" height="32"/>
-				</mxCell>
-			</Subprocess>
-		</add>
-		<add as="shape">
-			<Shape label="" description="" href="">
-				<mxCell vertex="1" style="ellipse">
-					<mxGeometry as="geometry" width="32" height="32"/>
-				</mxCell>
-			</Shape>
-		</add>
-		<add as="symbol">
-			<Symbol label="Symbol" description="" href="">
-				<mxCell vertex="1" style="symbol;image=images/symbols/event.png">
-					<mxGeometry as="geometry" width="32" height="32"/>
-				</mxCell>
-			</Symbol>
-		</add>
-	</Array>
-	<add as="createTasks"><![CDATA[
-		function (div)
-		{
-			var off = 30;
-
-			if (this.graph != null)
+			if (editor.defaultEdge != null)
 			{
-				var layer = this.graph.model.root.getChildAt(0);
-				mxUtils.para(div,  mxResources.get('examples'));
-				mxUtils.linkInvoke(div, mxResources.get('newDiagram'), this,
-					'open', 'diagrams/empty.xml', off);
-				mxUtils.br(div);
-				mxUtils.linkInvoke(div, mxResources.get('swimlanes'), this,
-					'open', 'diagrams/swimlanes.xml', off);
-				mxUtils.br(div);
-				mxUtils.linkInvoke(div, mxResources.get('travelBooking'), this,
-					'open', 'diagrams/travel-booking.xml', off);
-				mxUtils.br(div);
-
-				if (!this.graph.isSelectionEmpty())
-				{
-					var cell = this.graph.getSelectionCell();
-					if (this.graph.getSelectionCount() == 1 &&
-						(this.graph.model.isVertex(cell) &&
-						cell.getEdgeCount() > 0) || this.graph.isSwimlane(cell))
-					{
-						mxUtils.para(div, 'Layout');
-						mxUtils.linkAction(div, mxResources.get('verticalTree'),
-							this, 'verticalTree', off);
-						mxUtils.br(div);
-						mxUtils.linkAction(div, mxResources.get('horizontalTree'),
-							this, 'horizontalTree', off);
-						mxUtils.br(div);
-					}
-
-					mxUtils.para(div, 'Format');
-
-					if (mxUtils.isNode(cell.value, 'Symbol'))
-					{
-						mxUtils.linkAction(div, mxResources.get('image'),
-							this, 'image', off);
-						mxUtils.br(div);
-					}
-					else
-					{
-						mxUtils.linkAction(div, mxResources.get('opacity'),
-							this, 'opacity', off);
-						mxUtils.br(div);
-						if (this.graph.model.isVertex(cell) ||
-							(cell.style != null &&
-							cell.style.indexOf("arrowEdge") >= 0))
-						{
-							mxUtils.linkAction(div, mxResources.get('gradientColor'),
-								this, 'gradientColor', off);
-							mxUtils.br(div);
-						}
-						if (this.graph.model.isEdge(cell))
-						{
-							mxUtils.linkAction(div, 'Straight Connector', this, 'straightConnector', off);
-							mxUtils.br(div);
-							mxUtils.linkAction(div, 'Elbow Connector', this, 'elbowConnector', off);
-							mxUtils.br(div);
-							mxUtils.linkAction(div, 'Arrow Connector', this, 'arrowConnector', off);
-							mxUtils.br(div);
-						}
-					}
-
-					mxUtils.linkAction(div, 'Rounded', this, 'toggleRounded', off);
-					mxUtils.br(div);
-					if (this.graph.isSwimlane(cell) || this.graph.model.isEdge(cell))
-					{
-						mxUtils.linkAction(div, 'Orientation', this, 'toggleOrientation', off);
-						mxUtils.br(div);
-					}
-
-					if (this.graph.getSelectionCount() > 1)
-					{
-						mxUtils.para(div, mxResources.get('align'));
-						mxUtils.linkAction(div, mxResources.get('left'),
-							this, 'alignCellsLeft', off);
-						mxUtils.br(div);
-						mxUtils.linkAction(div, mxResources.get('center'),
-							this, 'alignCellsCenter', off);
-						mxUtils.br(div);
-						mxUtils.linkAction(div, mxResources.get('right'),
-							this, 'alignCellsRight', off);
-						mxUtils.br(div);
-						mxUtils.linkAction(div, mxResources.get('top'),
-							this, 'alignCellsTop', off);
-						mxUtils.br(div);
-						mxUtils.linkAction(div, mxResources.get('middle'),
-							this, 'alignCellsMiddle', off);
-						mxUtils.br(div);
-						mxUtils.linkAction(div, mxResources.get('bottom'),
-							this, 'alignCellsBottom', off);
-						mxUtils.br(div);
-					}
-
-					mxUtils.para(div, mxResources.get('selection'));
-					mxUtils.linkAction(div, mxResources.get('clearSelection'),
-						this, 'selectNone', off);
-					mxUtils.br(div);
-				}
-				else if (layer.getChildCount() > 0)
-				{
-					mxUtils.para(div, mxResources.get('selection'));
-					mxUtils.linkAction(div, mxResources.get('selectAll'),
-						this, 'selectAll', off);
-					mxUtils.br(div);
-				}
-
-				mxUtils.br(div);
+				editor.defaultEdge.style = null;
 			}
 		}
 	]]></add>
-</mxEditor>
+	<add as="connect" mode="connect" icon="images/straight.gif"><![CDATA[
+		function (editor)
+		{
+			if (editor.defaultEdge != null)
+			{
+				editor.defaultEdge.style = 'straightEdge';
+			}
+		}
+	]]></add>
+	<br/><hr/>
+	<add as="undo" action="undo" icon="images/undo.gif"/>
+	<add as="redo" action="redo" icon="images/redo.gif"/>
+	<br/><hr/>
+	<add as="cut" action="cut" icon="images/cut.gif"/>
+	<add as="copy" action="copy" icon="images/copy.gif"/>
+	<add as="paste" action="paste" icon="images/paste.gif"/>
+	<add as="delete" action="delete" icon="images/delete.gif"/>
+	<br/><hr/>
+	<add as="group" action="group" icon="images/group.gif"/>
+	<add as="ungroup" action="ungroup" icon="images/ungroup.gif"/>
+	<br/><hr/>
+	<add as="Swimlane" template="swimlane" icon="images/swimlane.gif"/>
+	<add as="Task" template="task" icon="images/rectangle.gif"/>
+	<add as="Subprocess" template="subprocess" icon="images/rounded.gif"/>
+	<add as="Ellipse" template="shape" style="ellipse" icon="images/ellipse.gif"/>
+	<add as="Rhombus" template="shape" style="rhombus" icon="images/rhombus.gif"/>
+	<add as="Actor" template="shape" style="actor" icon="images/actor.gif"/>
+	<br/><hr/>
+	<add as="Event" template="symbol" style="symbol;image=images/symbols/event.png" icon="images/symbols/small_event.gif"/>
+	<add as="Event (Intermediate)" template="symbol" style="symbol;image=images/symbols/event_intermediate.png" icon="images/symbols/small_event_intermediate.gif"/>
+	<add as="Event (End)" template="symbol" style="symbol;image=images/symbols/event_end.png" icon="images/symbols/small_event_end.gif"/>
+	<add as="Timer" template="symbol" style="symbol;image=images/symbols/timer.png" icon="images/symbols/small_timer.gif"/>
+	<add as="Message" template="symbol" style="symbol;image=images/symbols/message.png" icon="images/symbols/small_message.gif"/>
+	<add as="Message (Intermediate)" template="symbol" style="symbol;image=images/symbols/message_intermediate.png" icon="images/symbols/small_message_intermediate.gif"/>
+	<add as="Message (End)" template="symbol" style="symbol;image=images/symbols/message_end.png" icon="images/symbols/small_message_end.gif"/>
+	<add as="Terminate" template="symbol" style="symbol;image=images/symbols/terminate.png" icon="images/symbols/small_terminate.gif"/>
+	<add as="Link" template="symbol" style="symbol;image=images/symbols/link.png" icon="images/symbols/small_link.gif"/>
+	<add as="Rule" template="symbol" style="symbol;image=images/symbols/rule.png" icon="images/symbols/small_rule.gif"/>
+	<add as="Multiple" template="symbol" style="symbol;image=images/symbols/multiple.png" icon="images/symbols/small_multiple.gif"/>
+	<add as="Error" template="symbol" style="symbol;image=images/symbols/error.png" icon="images/symbols/small_error.gif"/>
+	<add as="Cancel (End)" template="symbol" style="symbol;image=images/symbols/cancel_end.png" icon="images/symbols/small_cancel_end.gif"/>
+	<add as="Cancel (Intermediate)" template="symbol" style="symbol;image=images/symbols/cancel_intermediate.png" icon="images/symbols/small_cancel_intermediate.gif"/>
+	<add as="Fork" template="symbol" style="symbol;image=images/symbols/fork.png" icon="images/symbols/small_fork.gif"/>
+	<add as="Merge" template="symbol" style="symbol;image=images/symbols/merge.png" icon="images/symbols/small_merge.gif"/>
+	<add as="Inclusive" template="symbol" style="symbol;image=images/symbols/inclusive.png" icon="images/symbols/small_inclusive.gif"/>
+	<br/><hr/>
+	<add as="fit" action="fit" icon="images/zoom.gif"/>
+	<add as="zoomIn" action="zoomIn" icon="images/zoomin.gif"/>
+	<add as="zoomOut" action="zoomOut" icon="images/zoomout.gif"/>
+	<add as="actualSize" action="actualSize" icon="images/zoomactual.gif"/>
+	<add as="zoom" action="zoom" icon="images/zoom.gif"/>
+	<br/><hr/>
+	<add as="outline" action="toggleOutline" icon="images/outline.gif"/>
+	<add as="tasks" action="toggleTasks" icon="images/tasks.gif"/>
+	<add as="help" action="toggleHelp" icon="images/help.gif"/>
+	<add as="console" action="toggleConsole" icon="images/console.gif"/>
+</mxDefaultToolbar>
