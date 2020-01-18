@@ -5,9 +5,9 @@
 	<add as="print" action="print" icon="{% static 'NearBeach/whiteboard/images/print.gif' %}"/>
 	<add as="exportImage" action="exportImage" icon="{% static 'NearBeach/whiteboard/images/image.gif' %}"/>
 	<br/><hr/>
-	<add as="select" mode="select" icon="images/select.gif"/>
-	<add as="pan" mode="pan" icon="images/pan.gif"/>
-	<add as="connect" mode="connect" icon="images/connect.gif"><![CDATA[
+	<add as="select" mode="select" icon="{% static 'NearBeach/whiteboard/images/select.gif' %}"/>
+	<add as="pan" mode="pan" icon="{% static 'NearBeach/whiteboard/images/pan.gif' %}"/>
+	<add as="connect" mode="connect" icon="{% static 'NearBeach/whiteboard/images/connect.gif' %}"><![CDATA[
 		function (editor)
 		{
 			if (editor.defaultEdge != null)
@@ -16,7 +16,7 @@
 			}
 		}
 	]]></add>
-	<add as="connect" mode="connect" icon="images/straight.gif"><![CDATA[
+	<add as="connect" mode="connect" icon="{% static 'NearBeach/whiteboard/images/straight.gif' %}"><![CDATA[
 		function (editor)
 		{
 			if (editor.defaultEdge != null)
@@ -26,26 +26,26 @@
 		}
 	]]></add>
 	<br/><hr/>
-	<add as="undo" action="undo" icon="images/undo.gif"/>
-	<add as="redo" action="redo" icon="images/redo.gif"/>
+	<add as="undo" action="undo" icon="{% static 'NearBeach/whiteboard/images/undo.gif' %}"/>
+	<add as="redo" action="redo" icon="{% static 'NearBeach/whiteboard/images/redo.gif' %}"/>
 	<br/><hr/>
-	<add as="cut" action="cut" icon="images/cut.gif"/>
-	<add as="copy" action="copy" icon="images/copy.gif"/>
-	<add as="paste" action="paste" icon="images/paste.gif"/>
-	<add as="delete" action="delete" icon="images/delete.gif"/>
+	<add as="cut" action="cut" icon="{% static 'NearBeach/whiteboard/images/cut.gif' %}"/>
+	<add as="copy" action="copy" icon="{% static 'NearBeach/whiteboard/images/copy.gif' %}"/>
+	<add as="paste" action="paste" icon="{% static 'NearBeach/whiteboard/images/paste.gif' %}"/>
+	<add as="delete" action="delete" icon="{% static 'NearBeach/whiteboard/images/delete.gif' %}"/>
 	<br/><hr/>
-	<add as="group" action="group" icon="images/group.gif"/>
-	<add as="ungroup" action="ungroup" icon="images/ungroup.gif"/>
+	<add as="group" action="group" icon="{% static 'NearBeach/whiteboard/images/group.gif' %}"/>
+	<add as="ungroup" action="ungroup" icon="{% static 'NearBeach/whiteboard/images/ungroup.gif' %}"/>
 	<br/><hr/>
-	<add as="Swimlane" template="swimlane" icon="images/swimlane.gif"/>
-	<add as="Task" template="task" icon="images/rectangle.gif"/>
-	<add as="Subprocess" template="subprocess" icon="images/rounded.gif"/>
-	<add as="Ellipse" template="shape" style="ellipse" icon="images/ellipse.gif"/>
-	<add as="Rhombus" template="shape" style="rhombus" icon="images/rhombus.gif"/>
-	<add as="Actor" template="shape" style="actor" icon="images/actor.gif"/>
+	<add as="Swimlane" template="swimlane" icon="{% static 'NearBeach/whiteboard/images/swimlane.gif' %}"/>
+	<add as="Task" template="task" icon="{% static 'NearBeach/whiteboard/images/rectangle.gif' %}"/>
+	<add as="Subprocess" template="subprocess" icon="{% static 'NearBeach/whiteboard/images/rounded.gif' %}"/>
+	<add as="Ellipse" template="shape" style="ellipse" icon="{% static 'NearBeach/whiteboard/images/ellipse.gif' %}"/>
+	<add as="Rhombus" template="shape" style="rhombus" icon="{% static 'NearBeach/whiteboard/images/rhombus.gif' %}"/>
+	<add as="Actor" template="shape" style="actor" icon="{% static 'NearBeach/whiteboard/images/actor.gif' %}"/>
 	<br/><hr/>
-	<add as="Event" template="symbol" style="symbol;image=images/symbols/event.png" icon="images/symbols/small_event.gif"/>
-	<add as="Event (Intermediate)" template="symbol" style="symbol;image=images/symbols/event_intermediate.png" icon="images/symbols/small_event_intermediate.gif"/>
+	<add as="Event" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/small_event.gif' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_event.gif' %}"/>
+	<add as="Event (Intermediate)" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/event_intermediate.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/event_intermediate.png' %}"/>
 	<add as="Event (End)" template="symbol" style="symbol;image=images/symbols/event_end.png" icon="images/symbols/small_event_end.gif"/>
 	<add as="Timer" template="symbol" style="symbol;image=images/symbols/timer.png" icon="images/symbols/small_timer.gif"/>
 	<add as="Message" template="symbol" style="symbol;image=images/symbols/message.png" icon="images/symbols/small_message.gif"/>
@@ -62,7 +62,7 @@
 	<add as="Merge" template="symbol" style="symbol;image=images/symbols/merge.png" icon="images/symbols/small_merge.gif"/>
 	<add as="Inclusive" template="symbol" style="symbol;image=images/symbols/inclusive.png" icon="images/symbols/small_inclusive.gif"/>
 	<br/><hr/>
-	<add as="fit" action="fit" icon="images/zoom.gif"/>
+	<add as="fit" action="fit" icon="{% static 'NearBeach/whiteboard/images/zoom.gif' %}"/>
 	<add as="zoomIn" action="zoomIn" icon="images/zoomin.gif"/>
 	<add as="zoomOut" action="zoomOut" icon="images/zoomout.gif"/>
 	<add as="actualSize" action="actualSize" icon="images/zoomactual.gif"/>
