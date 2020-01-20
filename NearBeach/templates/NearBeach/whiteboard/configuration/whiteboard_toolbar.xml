@@ -46,30 +46,30 @@
 	<br/><hr/>
 	<add as="Event" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/small_event.gif' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_event.gif' %}"/>
 	<add as="Event (Intermediate)" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/event_intermediate.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/event_intermediate.png' %}"/>
-	<add as="Event (End)" template="symbol" style="symbol;image=images/symbols/event_end.png" icon="images/symbols/small_event_end.gif"/>
-	<add as="Timer" template="symbol" style="symbol;image=images/symbols/timer.png" icon="images/symbols/small_timer.gif"/>
-	<add as="Message" template="symbol" style="symbol;image=images/symbols/message.png" icon="images/symbols/small_message.gif"/>
-	<add as="Message (Intermediate)" template="symbol" style="symbol;image=images/symbols/message_intermediate.png" icon="images/symbols/small_message_intermediate.gif"/>
-	<add as="Message (End)" template="symbol" style="symbol;image=images/symbols/message_end.png" icon="images/symbols/small_message_end.gif"/>
-	<add as="Terminate" template="symbol" style="symbol;image=images/symbols/terminate.png" icon="images/symbols/small_terminate.gif"/>
-	<add as="Link" template="symbol" style="symbol;image=images/symbols/link.png" icon="images/symbols/small_link.gif"/>
-	<add as="Rule" template="symbol" style="symbol;image=images/symbols/rule.png" icon="images/symbols/small_rule.gif"/>
-	<add as="Multiple" template="symbol" style="symbol;image=images/symbols/multiple.png" icon="images/symbols/small_multiple.gif"/>
-	<add as="Error" template="symbol" style="symbol;image=images/symbols/error.png" icon="images/symbols/small_error.gif"/>
-	<add as="Cancel (End)" template="symbol" style="symbol;image=images/symbols/cancel_end.png" icon="images/symbols/small_cancel_end.gif"/>
-	<add as="Cancel (Intermediate)" template="symbol" style="symbol;image=images/symbols/cancel_intermediate.png" icon="images/symbols/small_cancel_intermediate.gif"/>
-	<add as="Fork" template="symbol" style="symbol;image=images/symbols/fork.png" icon="images/symbols/small_fork.gif"/>
-	<add as="Merge" template="symbol" style="symbol;image=images/symbols/merge.png" icon="images/symbols/small_merge.gif"/>
-	<add as="Inclusive" template="symbol" style="symbol;image=images/symbols/inclusive.png" icon="images/symbols/small_inclusive.gif"/>
+	<add as="Event (End)" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/event_end.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_event_end.gif' %}"/>
+	<add as="Timer" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/timer.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_timer.gif' %}"/>
+	<add as="Message" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/message.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_message.gif' %}"/>
+	<add as="Message (Intermediate)" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/message_intermediate.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_message_intermediate.gif' %}"/>
+	<add as="Message (End)" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/message_end.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_message_end.gif' %}"/>
+	<add as="Terminate" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/terminate.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_terminate.gif' %}"/>
+	<add as="Link" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/link.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_link.gif' %}"/>
+	<add as="Rule" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/rule.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_rule.gif' %}"/>
+	<add as="Multiple" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/multiple.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_multiple.gif' %}"/>
+	<add as="Error" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/error.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_error.gif' %}"/>
+	<add as="Cancel (End)" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/cancel_end.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_cancel_end.gif' %}"/>
+	<add as="Cancel (Intermediate)" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/cancel_intermediate.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_cancel_intermediate.gif' %}"/>
+	<add as="Fork" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/fork.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_fork.gif' %}"/>
+	<add as="Merge" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/merge.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_merge.gif' %}"/>
+	<add as="Inclusive" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/inclusive.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_inclusive.gif' %}"/>
 	<br/><hr/>
 	<add as="fit" action="fit" icon="{% static 'NearBeach/whiteboard/images/zoom.gif' %}"/>
-	<add as="zoomIn" action="zoomIn" icon="images/zoomin.gif"/>
-	<add as="zoomOut" action="zoomOut" icon="images/zoomout.gif"/>
-	<add as="actualSize" action="actualSize" icon="images/zoomactual.gif"/>
-	<add as="zoom" action="zoom" icon="images/zoom.gif"/>
+	<add as="zoomIn" action="zoomIn" icon="{% static 'NearBeach/whiteboard/images/zoomin.gif' %}"/>
+	<add as="zoomOut" action="zoomOut" icon="{% static 'NearBeach/whiteboard/images/zoomout.gif' %}"/>
+	<add as="actualSize" action="actualSize" icon="{% static 'NearBeach/whiteboard/images/zoomactual.gif' %}"/>
+	<add as="zoom" action="zoom" icon="{% static 'NearBeach/whiteboard/images/zoom.gif' %}"/>
 	<br/><hr/>
-	<add as="outline" action="toggleOutline" icon="images/outline.gif"/>
-	<add as="tasks" action="toggleTasks" icon="images/tasks.gif"/>
-	<add as="help" action="toggleHelp" icon="images/help.gif"/>
-	<add as="console" action="toggleConsole" icon="images/console.gif"/>
+	<add as="outline" action="toggleOutline" icon="{% static 'NearBeach/whiteboard/images/outline.gif' %}"/>
+	<add as="tasks" action="toggleTasks" icon="{% static 'NearBeach/whiteboard/images/tasks.gif' %}"/>
+	<add as="help" action="toggleHelp" icon="{% static 'NearBeach/whiteboard/images/help.gif' %}"/>
+	<add as="console" action="toggleConsole" icon="{% static 'NearBeach/whiteboard/images/console.gif' %}"/>
 </mxDefaultToolbar>
