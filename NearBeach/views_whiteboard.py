@@ -18,7 +18,26 @@ from .misc_functions import *
 from .user_permissions import return_user_permission_level
 
 
+@login_required(login_url='login')
+def whiteboard_common_xml(request):
+    #Load xml template
+    t = loader.get_template('NearBeach/whiteboard/configuration/whiteboard_common.xml')
 
+    # context
+    c = {}
+
+    return HttpResponse(t.render(c, request), content_type='application/xhtml+xml')
+
+
+@login_required(login_url='login')
+def whiteboard_graph_xml(request):
+    #Load xml template
+    t = loader.get_template('NearBeach/whiteboard/configuration/whiteboard_graph.xml')
+
+    # context
+    c = {}
+
+    return HttpResponse(t.render(c, request), content_type='application/xhtml+xml')
 
 
 @login_required(login_url='login')
