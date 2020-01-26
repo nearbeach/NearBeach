@@ -45,7 +45,7 @@
 	<add as="Actor" template="shape" style="actor" icon="{% static 'NearBeach/whiteboard/images/actor.gif' %}"/>
 	<br/><hr/>
 	<add as="Event" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/small_event.gif' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_event.gif' %}"/>
-	<add as="Event (Intermediate)" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/small_event_intermediate.gif' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_event_intermediate.png' %}"/>
+	<add as="Event (Intermediate)" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/small_event_intermediate.gif' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_event_intermediate.gif' %}"/>
 	<add as="Event (End)" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/event_end.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_event_end.gif' %}"/>
 	<add as="Timer" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/timer.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_timer.gif' %}"/>
 	<add as="Message" template="symbol" style="symbol;image={% static 'NearBeach/whiteboard/images/symbols/message.png' %}" icon="{% static 'NearBeach/whiteboard/images/symbols/small_message.gif' %}"/>
