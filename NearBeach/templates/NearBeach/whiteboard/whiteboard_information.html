@@ -2,207 +2,108 @@
 {% block content %}
 {% load nearbeach_extras %}
 {% load static %}
-    <!-- Sets the basepath for the library if not in same directory -->
-	<script type="text/javascript">
-		mxBasePath = "{% static 'NearBeach/js/mxClient.min.js' %}";
-	</script>
+    <!-- STYLES -->
+    <style type="text/css" media="screen">
+		div.base {
+			position: absolute;
+			overflow: hidden;
+			font-family: Arial;
+			font-size: 8pt;
+		}
+		div.base#graph {
+			border-style: solid;
+			border-color: #F2F2F2;
+			border-width: 1px;
+			background: url('{% static "NearBeach/whiteboard/images/grid.gif" %}');
+            width: 100%;
+		}
+	</style>
 
     <!-- MX Graph Source Code -->
     <script type="text/javascript" src="{% static 'NearBeach/js/mxClient.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'NearBeach/whiteboard/css/common.css' %}">
+
+    <!-- MX Graph Settings -->
+    <script type="text/javascript">
+		mxGraph.prototype.htmlLabels = true;
+
+		mxGraph.prototype.isWrapping = function(cell)
+		{
+			return true;
+		};
+
+		mxConstants.DEFAULT_HOTSPOT = 1;
+
+		// Enables guides
+		mxGraphHandler.prototype.guidesEnabled = true;
+
+	    // Alt disables guides
+	    mxGuide.prototype.isEnabledForEvent = function(evt)
+	    {
+	    	return !mxEvent.isAltDown(evt);
+	    };
+
+		// Enables snapping waypoints to terminals
+		mxEdgeHandler.prototype.snapToTerminals = true;
+
+		window.onbeforeunload = function() { return mxResources.get('changesLost'); };
+	</script>
 
 	<!-- Loads and initializes the library -->
-    <div id="mxgraph_container"></div>
-
+	<div id="graph" class="base"></div>
+	<div id="status" class="base" align="right" style="white-space:nowrap;"></div>
 
 	<!-- Example code -->
 	<script type="text/javascript">
-		// Program starts here. Creates a sample graph in the
-		// DOM node with the specified ID. This function is invoked
-		// from the onLoad event handler of the document (see below).
-		function main(container)
-		{
-			// Checks if the browser is supported
-			if (!mxClient.isBrowserSupported())
-			{
-				// Displays an error message if the browser is not supported.
-				mxUtils.error('Browser is not supported!', 200, false);
-			}
-			else
-			{
-				mxEvent.disableContextMenu(document.body);
+		function createEditor(config) {
+            //Try
+            try {
 
-				// Creates the graph inside the given container
-				var graph = new mxGraph(container);
-				graph.graphHandler.scaleGrid = true;
-				graph.setPanning(true);
+                if (!mxClient.isBrowserSupported()) {
+                    //mxUtils.error('Browser is not supported!', 200, false);
+                    new_error("The Browser is not supported");
 
-				// Enables rubberband selection
-				new mxRubberband(graph);
+                    //Just return
+                    return false;
+                }
 
-				// Create grid dynamically (requires canvas)
-				(function()
+
+                mxObjectCodec.allowEval = true;
+				var node = mxUtils.load(config).getDocumentElement();
+                var editor = new mxEditor(node);
+				mxObjectCodec.allowEval = false;
+
+				// Adds active border for panning inside the container
+				editor.graph.createPanningManager = function()
 				{
-					try
-					{
-						var canvas = document.createElement('canvas');
-						canvas.style.position = 'absolute';
-						canvas.style.top = '0px';
-						canvas.style.left = '0px';
-						canvas.style.zIndex = -1;
-						graph.container.appendChild(canvas);
+					var pm = new mxPanningManager(this);
+					pm.border = 30;
 
-						var ctx = canvas.getContext('2d');
+					return pm;
+				};
 
-						// Modify event filtering to accept canvas as container
-						var mxGraphViewIsContainerEvent = mxGraphView.prototype.isContainerEvent;
-						mxGraphView.prototype.isContainerEvent = function(evt)
-						{
-							return mxGraphViewIsContainerEvent.apply(this, arguments) ||
-								mxEvent.getSource(evt) == canvas;
-						};
+				editor.graph.allowAutoPanning = true;
+				editor.graph.timerAutoScroll = true;
 
-						var s = 0;
-						var gs = 0;
-						var tr = new mxPoint();
-						var w = 0;
-						var h = 0;
+				editor.addListener(mxEvent.OPEN, funct);
 
-						function repaintGrid()
-						{
-							if (ctx != null)
-							{
-								var bounds = graph.getGraphBounds();
-								var width = Math.max(bounds.x + bounds.width, graph.container.clientWidth);
-								var height = Math.max(bounds.y + bounds.height, graph.container.clientHeight);
-								var sizeChanged = width != w || height != h;
+				// Prints the current root in the window title if the
+				// current root of the graph changes (drilling).
+				editor.addListener(mxEvent.ROOT, funct);
+				funct(editor);
 
-								if (graph.view.scale != s || graph.view.translate.x != tr.x || graph.view.translate.y != tr.y ||
-									gs != graph.gridSize || sizeChanged)
-								{
-									tr = graph.view.translate.clone();
-									s = graph.view.scale;
-									gs = graph.gridSize;
-									w = width;
-									h = height;
+				// Displays version in statusbar
+				editor.setStatus('mxGraph '+mxClient.VERSION);
+				console.log("GOT TO THE END");
+            } catch (e) {
+                new_error(`There was an issue loading the whiteboard: ${e}`);
+            }
+        }
 
-									// Clears the background if required
-									if (!sizeChanged)
-									{
-										ctx.clearRect(0, 0, w, h);
-									}
-									else
-									{
-										canvas.setAttribute('width', w);
-										canvas.setAttribute('height', h);
-									}
+        mxBasePath = "{% static 'NearBeach/whiteboard' %}";
 
-									var tx = tr.x * s;
-									var ty = tr.y * s;
-
-									// Sets the distance of the grid lines in pixels
-									var minStepping = graph.gridSize;
-									var stepping = minStepping * s;
-
-									if (stepping < minStepping)
-									{
-										var count = Math.round(Math.ceil(minStepping / stepping) / 2) * 2;
-										stepping = count * stepping;
-									}
-
-									var xs = Math.floor((0 - tx) / stepping) * stepping + tx;
-									var xe = Math.ceil(w / stepping) * stepping;
-									var ys = Math.floor((0 - ty) / stepping) * stepping + ty;
-									var ye = Math.ceil(h / stepping) * stepping;
-
-									xe += Math.ceil(stepping);
-									ye += Math.ceil(stepping);
-
-									var ixs = Math.round(xs);
-									var ixe = Math.round(xe);
-									var iys = Math.round(ys);
-									var iye = Math.round(ye);
-
-									// Draws the actual grid
-									ctx.strokeStyle = '#f6f6f6';
-									ctx.beginPath();
-
-									for (var x = xs; x <= xe; x += stepping)
-									{
-										x = Math.round((x - tx) / stepping) * stepping + tx;
-										var ix = Math.round(x);
-
-										ctx.moveTo(ix + 0.5, iys + 0.5);
-										ctx.lineTo(ix + 0.5, iye + 0.5);
-									}
-
-									for (var y = ys; y <= ye; y += stepping)
-									{
-										y = Math.round((y - ty) / stepping) * stepping + ty;
-										var iy = Math.round(y);
-
-										ctx.moveTo(ixs + 0.5, iy + 0.5);
-										ctx.lineTo(ixe + 0.5, iy + 0.5);
-									}
-
-									ctx.closePath();
-									ctx.stroke();
-								}
-							}
-						};
-					}
-					catch (e)
-					{
-						mxLog.show();
-						mxLog.debug('Using background image');
-
-						container.style.backgroundImage = 'url(\'editors/images/grid.gif\')';
-					}
-
-					var mxGraphViewValidateBackground = mxGraphView.prototype.validateBackground;
-					mxGraphView.prototype.validateBackground = function()
-					{
-						mxGraphViewValidateBackground.apply(this, arguments);
-						repaintGrid();
-					};
-				})();
-
-
-				// Gets the default parent for inserting new cells. This
-				// is normally the first child of the root (ie. layer 0).
-				var parent = graph.getDefaultParent();
-
-				// Adds cells to the model in a single step
-				graph.getModel().beginUpdate();
-				try
-				{
-					var v1 = graph.insertVertex(parent, null, 'Hello,', 20, 20, 80, 30);
-					var v2 = graph.insertVertex(parent, null, 'World!', 200, 150, 80, 30);
-					var e1 = graph.insertEdge(parent, null, '', v1, v2);
-				}
-				finally
-				{
-					// Updates the display
-					graph.getModel().endUpdate();
-				}
-
-				graph.centerZoom = false;
-
-				document.body.appendChild(mxUtils.button('+', function()
-				{
-					graph.zoomIn();
-				}));
-
-				document.body.appendChild(mxUtils.button('-', function()
-				{
-					graph.zoomOut();
-				}));
-			}
-		};
-
-		//Get the element
-        var mxgraph_container = document.getElementById("mxgraph_container")
-
-		//Start the main script
-        main(mxgraph_container);
+        $('document').ready(function(){
+            createEditor("{% url 'whiteboard_editor_xml' %}");
+        });
 	</script>
 {% endblock %}
