@@ -1,0 +1,109 @@
+{% extends "../template_wider.html" %}
+{% block content %}
+{% load nearbeach_extras %}
+{% load static %}
+    <!-- STYLES -->
+    <style type="text/css" media="screen">
+		div.base {
+			position: absolute;
+			overflow: hidden;
+			font-family: Arial;
+			font-size: 8pt;
+		}
+		div.base#graph {
+			border-style: solid;
+			border-color: #F2F2F2;
+			border-width: 1px;
+			background: url('{% static "NearBeach/whiteboard/images/grid.gif" %}');
+            width: 100%;
+		}
+	</style>
+
+    <!-- MX Graph Source Code -->
+    <script type="text/javascript" src="{% static 'NearBeach/js/mxClient.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'NearBeach/whiteboard/css/common.css' %}">
+
+    <!-- MX Graph Settings -->
+    <script type="text/javascript">
+		mxGraph.prototype.htmlLabels = true;
+
+		mxGraph.prototype.isWrapping = function(cell)
+		{
+			return true;
+		};
+
+		mxConstants.DEFAULT_HOTSPOT = 1;
+
+		// Enables guides
+		mxGraphHandler.prototype.guidesEnabled = true;
+
+	    // Alt disables guides
+	    mxGuide.prototype.isEnabledForEvent = function(evt)
+	    {
+	    	return !mxEvent.isAltDown(evt);
+	    };
+
+		// Enables snapping waypoints to terminals
+		mxEdgeHandler.prototype.snapToTerminals = true;
+
+		window.onbeforeunload = function() { return mxResources.get('changesLost'); };
+	</script>
+
+	<!-- Loads and initializes the library -->
+	<div id="graph" class="base"></div>
+	<div id="status" class="base" align="right" style="white-space:nowrap;"></div>
+
+	<!-- Example code -->
+	<script type="text/javascript">
+		function createEditor(config) {
+            //Try
+            try {
+
+                if (!mxClient.isBrowserSupported()) {
+                    //mxUtils.error('Browser is not supported!', 200, false);
+                    new_error("The Browser is not supported");
+
+                    //Just return
+                    return false;
+                }
+
+
+                mxObjectCodec.allowEval = true;
+				var node = mxUtils.load(config).getDocumentElement();
+                var editor = new mxEditor(node);
+				mxObjectCodec.allowEval = false;
+
+				// Adds active border for panning inside the container
+				editor.graph.createPanningManager = function()
+				{
+					var pm = new mxPanningManager(this);
+					pm.border = 30;
+
+					return pm;
+				};
+
+				editor.graph.allowAutoPanning = true;
+				editor.graph.timerAutoScroll = true;
+
+				editor.addListener(mxEvent.OPEN, funct);
+
+				// Prints the current root in the window title if the
+				// current root of the graph changes (drilling).
+				editor.addListener(mxEvent.ROOT, funct);
+				funct(editor);
+
+				// Displays version in statusbar
+				editor.setStatus('mxGraph '+mxClient.VERSION);
+				console.log("GOT TO THE END");
+            } catch (e) {
+                new_error(`There was an issue loading the whiteboard: ${e}`);
+            }
+        }
+
+        mxBasePath = "{% static 'NearBeach/whiteboard' %}";
+
+        $('document').ready(function(){
+            createEditor("{% url 'whiteboard_editor_xml' %}");
+        });
+	</script>
+{% endblock %}

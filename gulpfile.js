@@ -11,14 +11,18 @@ var gulp = require('gulp'),
 
 // Clean
 gulp.task('clean', function() {
-  return gulp.src(['./NearBeach/static/NearBeach/js', './NearBeach/static/NearBeach/css'], {read: false, allowEmpty: true})
+  return gulp.src([
+      './NearBeach/static/NearBeach/js',
+      './NearBeach/static/NearBeach/css',
+      './NearBeach/static/NearBeach/whiteboard',
+    ], {read: false, allowEmpty: true})
     .pipe(clean());
 });
 
 // Scripts
 gulp.task('scripts', function() {
   return gulp.src([
-      './NearBeach/build/javascript/*.js',
+      './NearBeach/build/javascript/*.js'
   ])
     .pipe(concat('NearBeach.js'))
     .pipe(minify())
@@ -31,17 +35,31 @@ gulp.task('js', function() {
         'node_modules/jquery/dist/jquery.min.js',
         'node_modules/d3/dist/d3.min.js',
         'node_modules/popper.js/dist/popper.min.js',
-        'node_modules/bootstrap/dist/js/bootstrap.min.js'
-
+        'node_modules/bootstrap/dist/js/bootstrap.min.js',
+        'node_modules/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js',
+        'node_modules/mxgraph/javascript/mxClient.min.js',
     ])
     .pipe(gulp.dest('./NearBeach/static/NearBeach/js'))
     .pipe(notify({ message: 'Moved JQuery Task Complete' }));
 });
 
+//mxGraph
+//gulp.src(['input/folder/**/*']).pipe(gulp.dest('output/folder'));
+gulp.task('mxgraph', function() {
+    return gulp.src([
+        './node_modules/mxgraph/javascript/src/**/*'
+    ])
+    .pipe(gulp.dest('./NearBeach/static/NearBeach/whiteboard'))
+    .pipe(notify({ message: 'Implemented Whiteboard module from mxgraph' }));
+});
+
 // Styles
 gulp.task('styles', function() {
-    return gulp.src('./NearBeach/build/css/*.css')
-        .pipe(concat('style_sheet.css'))
+    return gulp.src([
+            './NearBeach/build/css/*.css',
+            './node_modules/jquery-datetimepicker/jquery.datetimepicker.css',
+        ])
+        .pipe(concat('NearBeach.css'))
         .pipe(minify())
         .pipe(cleanCSS({compatibility: 'ie8'}))
         .pipe(rename({extname: ".min.css"}))
@@ -63,7 +81,7 @@ gulp.task('sass', function() {
 });
 
 // Default Task
-gulp.task('default', gulp.series('clean','styles','scripts','sass','js', function(done) {
+gulp.task('default', gulp.series('clean','styles','scripts','sass','js','mxgraph', function(done) {
     console.log("Completed GULP");
     done();
 }));

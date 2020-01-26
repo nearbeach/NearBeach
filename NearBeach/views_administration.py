@@ -12,7 +12,7 @@ from django.core import serializers
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Sum, Q, Min
 from django.http import HttpResponse,HttpResponseForbidden, HttpResponseRedirect, Http404, HttpResponseBadRequest
-from django.shortcuts import render, get_object_or_404, render_to_response
+from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext, loader
 from django.urls import reverse
 from .misc_functions import *
