@@ -17,7 +17,6 @@ from .models import *
 from .misc_functions import *
 from .user_permissions import return_user_permission_level
 
-
 @login_required(login_url='login')
 def whiteboard_common_xml(request):
     #Load xml template

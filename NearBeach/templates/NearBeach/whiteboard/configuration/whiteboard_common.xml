@@ -7,12 +7,6 @@
 	swimlaneRequired="0">
     <!--FIX THIS
 	<include name="config/editor-commons.xml"/>-->
-	<add as="onInit">
-		function ()
-		{
-			this.showTasks();
-		}
-	</add>
 	<Array as="cycleAttributeValues">
 		<add value="#83027F"/>
 		<add value="#66B922"/>

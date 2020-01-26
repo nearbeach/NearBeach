@@ -21,6 +21,7 @@
 
     <!-- MX Graph Source Code -->
     <script type="text/javascript" src="{% static 'NearBeach/js/mxClient.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'NearBeach/whiteboard/css/common.css' %}">
 
     <!-- MX Graph Settings -->
     <script type="text/javascript">
@@ -66,12 +67,12 @@
                     return false;
                 }
 
+
                 mxObjectCodec.allowEval = true;
 				var node = mxUtils.load(config).getDocumentElement();
                 var editor = new mxEditor(node);
 				mxObjectCodec.allowEval = false;
 
-				console.log("GOT HERE");
 				// Adds active border for panning inside the container
 				editor.graph.createPanningManager = function()
 				{
