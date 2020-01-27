@@ -1,19 +1,6 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
-<script type="text/javascript" src="{% static 'NearBeach/javascript/check_dates.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/expand_sections.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/project_information.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/autoscale_textarea.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/bug.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/document_upload.js' %}"></script>
-<script type="text/javascript" src="{% static 'NearBeach/javascript/timesheet.js' %}"></script>
-<link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
-<script type="text/javascript" src="{% static 'NearBeach/javascript/assigned_user_list.js' %}"></script>
-
-
 <script>
     function on_page_load() {
 	    //Initiate AJAX modules
@@ -314,22 +301,28 @@
             <h2>Associated Tasks</h2>
         </div>
         <div class="card-body">
-            {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
+
+            {% if project_results.project_status in open_status %}
                 {% if permission > 1 %}
-                    <a href="{% url 'associated_task' project_results.project_id %}">Associate Task</a>
+                    <a href="{% url 'associated_task' project_results.project_id %}">Associate Task</a><br/>
                 {% endif %}
             {% endif %}
             {% if associated_task_results %}
-                    <table>
-                    <tr class="header"><td>Task Id</td><td>Short Description</td><td>End Date</td></tr>
-                    {% for associated_task_row in associated_task_results %}
-                        <tr>
-                        <td><a href="{% url 'task_information' associated_task_row.task_id %}">Task - {{ associated_task_row.task_id }}</a></td>
-                        <td>{{ associated_task_row.task_short_description }}</td>
-                        <td>{{ associated_task_row.task_end_date }}</td>
-                        </tr>
-                    {% endfor %}
-
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr class="header">
+                                <td>Task Id</td>
+                                <td>Short Description</td>
+                                <td>End Date</td>
+                            </tr>
+                        </thead>
+                        {% for associated_task_row in associated_task_results %}
+                            <tr>
+                                <td><a href="{% url 'task_information' associated_task_row.task_id %}">Task - {{ associated_task_row.task_id }}</a></td>
+                                <td>{{ associated_task_row.task_short_description }}</td>
+                                <td>{{ associated_task_row.task_end_date }}</td>
+                            </tr>
+                        {% endfor %}
                     </table>
             {% else %}
                 <label>Currently no associated history.</label>

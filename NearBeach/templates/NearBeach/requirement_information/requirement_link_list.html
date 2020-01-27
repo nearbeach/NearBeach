@@ -37,7 +37,13 @@
                 <td>
                     {{ link.organisation_id__organisation_name }}
                 </td>
-
+            {% elif not link.opportunity_id == None %}
+                <td>
+                    <a href="{% url 'opportunity_information' link.opportunity_id %}">Opportunity - {{ link.opportunity_id }}</a>
+                </td>
+                <td>
+                    {{ link.opportunity_id__opportunity_name }}
+                </td>
             {% else %}
                 <td>ERROR</td>
                 <td>Error with link {{ link.requirement_link_id }}<br/></td>
