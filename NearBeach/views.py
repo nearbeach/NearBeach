@@ -4461,12 +4461,12 @@ def kanban_new_link(request,kanban_board_id,location_id='',destination=''):
         is_deleted="FALSE",
         project_status__in=('Backlog','Blocked','In Progress','Test/Review'),
     ).exclude(
-        is_deleted="FALSE",
         project_id__in=kanban_card_results.filter(project_id__isnull=False).values('project_id')
     )
     task_results = task.objects.filter(
         is_deleted="FALSE",
         task_status__in=('Backlog','Blocked','In Progress','Test/Review'),
+    ).exclude(
         task_id__in=kanban_card_results.filter(task_id__isnull=False).values('task_id')
     )
     requirement_results = requirement.objects.filter(
