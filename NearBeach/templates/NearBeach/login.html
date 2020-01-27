@@ -39,6 +39,18 @@
             color: white;
             text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
         }
+
+
+
+        @media (min-width: 992px) {
+            .login_dialog {
+                position: fixed;
+                top: 50%;
+                left: 100%;
+                margin-top: -90px;
+                margin-left: -35%;
+            }
+        }
     </style>
 
     <script>
@@ -60,8 +72,7 @@
 <body onload="on_page_load()">
 <div class="container-fluid">
     <div class="row no-gutter bg-image">
-        <div class="col-md-8  col-lg-6 align-center" id="unsupported_browser"></div>
-        <div class="col-md-8 col-lg-6 align-center">
+        <div class="login_dialog col-md-12 col-lg-4 align-center">
             <h3 class="login-heading">NearBeach</h3>
             <form action="{%  url 'login' %}" method="post" id="login-form">
                 {% csrf_token %}
