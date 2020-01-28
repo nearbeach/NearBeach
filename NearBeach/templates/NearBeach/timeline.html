@@ -336,6 +336,7 @@ d3.gantt = function() {
         datetime picker widget
          */
         $( "#id_start_date" ).datetimepicker({
+            scrollInput: false,
             format: "Y-m-d",
             timepicker: false,
             scrollInput: false,
@@ -343,6 +344,7 @@ d3.gantt = function() {
         $( "#id_start_date" ).val("{{ start_date|date:'Y-m-d' }}");
 
         $("#id_end_date").datetimepicker({
+            scrollInput: false,
             format: "Y-m-d",
             timepicker: false,
             scrollInput: false,
