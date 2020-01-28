@@ -316,6 +316,7 @@
                                 <td>Task Id</td>
                                 <td>Short Description</td>
                                 <td>End Date</td>
+                                <td>Status</td>
                             </tr>
                         </thead>
                         {% for associated_task_row in associated_task_results %}
@@ -323,6 +324,7 @@
                                 <td><a href="{% url 'task_information' associated_task_row.task_id %}">Task - {{ associated_task_row.task_id }}</a></td>
                                 <td>{{ associated_task_row.task_short_description }}</td>
                                 <td>{{ associated_task_row.task_end_date }}</td>
+                                <td>{{ associated_task_row.task_status }}</td>
                             </tr>
                         {% endfor %}
                     </table>
