@@ -9651,6 +9651,7 @@ def task_information(request, task_id):
 		  project.project_id
 		, project.project_name
 		, project.project_end_date
+		, project.project_status
 		FROM project
 			JOIN project_task
 			ON project.project_id = project_task.project_id

@@ -279,6 +279,7 @@
                                 <td>Project Id</td>
                                 <td>project Name</td>
                                 <td>End Date</td>
+                                <td>Status</td>
                             </tr>
                         </thead>
                         {% for associated_project_row in associated_project_results %}
@@ -286,6 +287,7 @@
                                 <td><a href="{% url 'project_information' associated_project_row.project_id %}">Project - {{ associated_project_row.project_id }}</a></td>
                                 <td>{{ associated_project_row.project_name }}</td>
                                 <td>{{ associated_project_row.project_end_date }}</td>
+                                <td>{{ associated_project_row.project_status }}</td>
                             </tr>
                         {% endfor %}
                     </table>
