@@ -153,7 +153,7 @@ re_path(r'^new_opportunity_link/(?P<opportunity_id>[0-9]+)/(?P<destination>["pro
 re_path(r'^new_opportunity_link/(?P<opportunity_id>[0-9]+)/(?P<destination>["project","task","requirement"]+)/$', views.new_opportunity_link, name='new_opportunity_link'),
 re_path(r'^new_organisation', views.new_organisation, name='new_organisation'),
 re_path(r'^new_permission_set/', views.new_permission_set, name='new_permission_set'),
-re_path(r'^new_project/(?P<location_id>[0-9]+)/(?P<destination>["customer","organisation","opportunity"]+)/$',views.new_project,name='new_project'),
+re_path(r'^new_project/(?P<location_id>[0-9]+)/(?P<destination>["customer","organisation","opportunity","requirement","requirement_item"]+)/$',views.new_project,name='new_project'),
 re_path(r'^new_project/$', views.new_project, name='new_project'),
 re_path(r'^new_quote_template/',views.new_quote_template,name='new_quote_template'),
 re_path(r'^new_quote/(?P<primary_key>[0-9]+)/(?P<destination>["project","task","opportunity","customer","organisation"]+)/',views.new_quote, name='new_quote'),

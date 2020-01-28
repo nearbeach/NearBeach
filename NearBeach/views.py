@@ -4461,12 +4461,12 @@ def kanban_new_link(request,kanban_board_id,location_id='',destination=''):
         is_deleted="FALSE",
         project_status__in=('Backlog','Blocked','In Progress','Test/Review'),
     ).exclude(
-        is_deleted="FALSE",
         project_id__in=kanban_card_results.filter(project_id__isnull=False).values('project_id')
     )
     task_results = task.objects.filter(
         is_deleted="FALSE",
         task_status__in=('Backlog','Blocked','In Progress','Test/Review'),
+    ).exclude(
         task_id__in=kanban_card_results.filter(task_id__isnull=False).values('task_id')
     )
     requirement_results = requirement.objects.filter(
@@ -6100,7 +6100,6 @@ def new_project(request, location_id='', destination=''):
             If the destination is CUSTOMER, then we assign the project_customer to that customer.
             If the destination is connected to OPPORTUNITY, then we assign it to the opportunity.
             """
-            print("CURRENT DESTINATION IS: " + str(destination))
             if destination == "customer":
                 customer_instance = customer.objects.get(customer_id=location_id)
                 save_project_customer = project_customer(
@@ -6117,17 +6116,37 @@ def new_project(request, location_id='', destination=''):
                     change_user=request.user
                 )
                 object_assignment_save.save()
+            elif destination == "requirement":
+                requirement_instance = requirement.objects.get(requirement_id=location_id)
+                project_requirement_save = requirement_link(
+                    project_id=submit_project,
+                    requirement_id=requirement_instance.requirement_id,
+                    change_user=request.user
+                )
+                project_requirement_save.save()
+            elif destination == "requirement_item":
+                requirement_item_instance = requirement_link.objects.get(requirement_item_id=location_id)
+                project_requirement_item_save = object_assignment(
+                    project_id=submit_project,
+                    requirement_item_id=requirement_item_instance.requirement_item_id,
+                    change_user=request.user
+                )
+                project_requirement_item_save.save()
+
 
             """
             We want to return the user to the original location. This is dependent on the destination
             """
-            print("New project now compeleted - going to location.")
             if destination == "organisation":
                 return HttpResponseRedirect(reverse(organisation_information, args={location_id}))
             elif destination == "customer":
                 return HttpResponseRedirect(reverse(customer_information, args={location_id}))
             elif destination == "opportunity":
                 return HttpResponseRedirect(reverse(opportunity_information, args={location_id}))
+            elif destination == "requirement":
+                return HttpResponseRedirect(reverse('requirement_information', args={location_id}))
+            elif destination == "requirement_item":
+                return HttpResponseRedirect(reverse('requirement_item_information', args={location_id}))
             else:
                 return HttpResponseRedirect(reverse(project_information, args={submit_project.pk}))
         else:
@@ -6158,8 +6177,7 @@ def new_project(request, location_id='', destination=''):
         customer_id = None
         opportunity_id = None
     elif destination == "customer":
-        customer_instance = customer.objects.get(customer_id=location_id)
-
+        #customer_instance = customer.objects.get(customer_id=location_id)
         organisation_id = customer.organisation_id
         customer_id = customer.customer_id
         opportunity_id = None
@@ -6168,6 +6186,17 @@ def new_project(request, location_id='', destination=''):
         organisation_id = None
         customer_id = None
         opportunity_id = opportunity_instance.opportunity_id
+    elif destination == "requirement":
+        requirement_instance = requirement.objects.get(requirement_id=location_id)
+        customer_id = None
+        organisation_id = requirement_instance.organisation_id
+        opportunity_id = None
+    elif destination == "requirement_item":
+        requirement_item_instance = requirement_item.objects.get(requirement_item_id=location_id)
+        requirement_instance = requirement.objects.get(requirement_id=requirement_item_instance.requirement_id.requirement_id)
+        customer_id = None
+        organisation_id = requirement_instance.organisation_id
+        opportunity_id = None
 
 
     # Load the template
@@ -7908,6 +7937,7 @@ def project_information(request, project_id):
         'opportunity_results': opportunity_results,
         'requirement_results': requirement_results,
         'requirement_item_results': requirement_item_results,
+        'open_status': ['New','Open','Backlog'],
     }
 
     return HttpResponse(t.render(c, request))
@@ -9671,6 +9701,7 @@ def task_information(request, task_id):
         'administration_permission': permission_results['administration'],
         'requirement_results': requirement_results,
         'requirement_item_results': requirement_item_results,
+        'open_status': ['New', 'Open', 'Backlog'],
     }
 
     return HttpResponse(t.render(c, request))

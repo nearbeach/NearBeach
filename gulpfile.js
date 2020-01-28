@@ -34,7 +34,7 @@ gulp.task('js', function() {
     return gulp.src([
         'node_modules/jquery/dist/jquery.min.js',
         'node_modules/d3/dist/d3.min.js',
-        'node_modules/popper.js/dist/popper.min.js',
+        'node_modules/popper.js/dist/umd/popper.min.js',
         'node_modules/bootstrap/dist/js/bootstrap.min.js',
         'node_modules/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js',
         'node_modules/mxgraph/javascript/mxClient.min.js',

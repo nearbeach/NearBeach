@@ -1696,6 +1696,12 @@ class object_assignment(models.Model):
         blank=True,
         null=True,
     )
+    requirement_item_id = models.ForeignKey(
+        'requirement_item',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
     project_id = models.ForeignKey(
         'project',
         on_delete=models.CASCADE,
@@ -3146,6 +3152,7 @@ class requirement_link(models.Model):
 
     class Meta:
         db_table = "requirement_link"
+
 
 """
 class requirement_permission(models.Model):
