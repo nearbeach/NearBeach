@@ -10025,9 +10025,9 @@ def timeline_data(request):
                         'date_created',
                         'opportunity_expected_close_date',
                         'opportunity_stage_id',
+                        'opportunity_stage',
                     }
                 )
-                print(json_results)
             else:
                 #Something went wrong
                 return HttpResponseBadRequest("Sorry, there is no object that fits that situation")
