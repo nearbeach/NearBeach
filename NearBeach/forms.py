@@ -4179,6 +4179,7 @@ class requirement_item_form(forms.ModelForm):
             'class': 'form-control',
         })
     )
+    """
     requirement_item_story_point = forms.IntegerField(
         initial=1,
         min_value=1,
@@ -4188,6 +4189,7 @@ class requirement_item_form(forms.ModelForm):
             'onChange': 'update_story_point()',
         })
     )
+    """
 
     #Fixing a bug
     requirement_id=forms.IntegerField(required=False)

@@ -707,6 +707,7 @@ def requirement_item_information(request, requirement_item_id):
     if request.method == "POST" and permission_results['requirement'] > 1:
         form = requirement_item_form(request.POST)
         if form.is_valid():
+            print("Form is valid")
             # Save the data
             requirement_item_save = requirement_item.objects.get(requirement_item_id=requirement_item_id)
             requirement_item_save.requirement_item_title=form.cleaned_data['requirement_item_title']
@@ -714,6 +715,14 @@ def requirement_item_information(request, requirement_item_id):
             requirement_item_save.requirement_item_status=form.cleaned_data['requirement_item_status']
             requirement_item_save.requirement_item_type=form.cleaned_data['requirement_item_type']
             requirement_item_save.change_user=request.user
+
+            # Get story points
+            nearbeach_option_results = nearbeach_option.objects.latest('date_created')
+            story_point_min = form.cleaned_data['requirement_item_story_point'] * nearbeach_option_results.story_point_hour_min
+            story_point_max = form.cleaned_data['requirement_item_story_point'] * nearbeach_option_results.story_point_hour_max
+
+            requirement_item_save.ri_story_point_min = story_point_min
+            requirement_item_save.ri_story_point_max = story_point_max
 
             requirement_item_save.save()
 
