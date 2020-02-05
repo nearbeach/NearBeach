@@ -6619,6 +6619,8 @@ def new_task(request, location_id='', destination=''):
                 task_end_date=form.cleaned_data['task_end_date'],
                 task_status='Backlog',
                 change_user = request.user,
+                task_story_point_min=task_story_point_min,
+                task_story_point_max=task_story_point_max,
             )
 
             if organisation_id_form:
@@ -6655,7 +6657,7 @@ def new_task(request, location_id='', destination=''):
                 )
                 save_project_customer.save()
             elif destination == "opportunity":
-                print("OPPORTUNITY")
+                #Opportunity
                 opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
                 object_assignment_submit = object_assignment(
                     task_id=submit_task,
@@ -6663,6 +6665,16 @@ def new_task(request, location_id='', destination=''):
                     change_user=request.user,
                 )
                 object_assignment_submit.save()
+            elif destination == "requirement":
+                #Requirement links
+                requirement_instance = requirement.objects.get(requirement_id=location_id)
+                object_assignment_submit = object_assignment(
+                    task_id=submit_task,
+                    requirement_id=requirement_instance,
+                    change_user=request.user,
+                )
+                object_assignment_submit.save()
+
 
             """
             We want to return the user to the original location. This is dependent on the destination
@@ -6673,6 +6685,8 @@ def new_task(request, location_id='', destination=''):
                 return HttpResponseRedirect(reverse(customer_information, args={location_id}))
             elif destination == "opportunity":
                 return HttpResponseRedirect(reverse(opportunity_information, args={location_id}))
+            elif destination == "requirement":
+                return HttpResponseRedirect(reverse('requirement_information', args={location_id}))
             else:
                 return HttpResponseRedirect(reverse(task_information, args={submit_task.pk}))
                 # Lets go back to the customer
@@ -6713,6 +6727,13 @@ def new_task(request, location_id='', destination=''):
             organisation_id = None
             customer_id = None
             opportunity_id = opportunity_instance.opportunity_id
+        elif destination == "requirement":
+            requirement_instance = requirement.objects.get(requirement_id=location_id)
+
+            organisation_id = requirement_instance.organisation_id
+            customer_id = None
+            opportunity_id = None
+
 
 
         # Loaed the template
