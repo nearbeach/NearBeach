@@ -8853,7 +8853,7 @@ def request_for_change_set_to_draft(request,rfc_id):
             approval=1, #Waiting
             rfc_id=rfc_id,
         ).update(
-            rfc_id=4, #Cancel
+            approval=4, #Cancel
         )
 
         #Send back blank page
