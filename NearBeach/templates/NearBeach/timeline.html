@@ -1,38 +1,7 @@
 {% extends "./template_wider.html" %}
 {% block content %}
 {% load static %}
-    <style>
-        svg {
-           overflow-x: scroll;
-        }
 
-        .chart {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-        }
-
-        .axis path,.axis line {
-            fill: none;
-            stroke: #000;
-            shape-rendering: crispEdges;
-        }
-
-        .bar-new {
-            fill: #5077bd;
-        }
-
-        .bar-open {
-            fill: #339900;
-        }
-
-        .bar-resolved {
-            fill: #ec4424;
-        }
-
-        .bar-closed {
-            fill: #41042c;
-        }
-    </style>
     <script>
 /**
  * @author Dimitry Kudrayvtsev
@@ -68,10 +37,15 @@ d3.gantt = function() {
 	return "translate(" + x(d.startDate) + "," + y(d.taskName) + ")";
     };
 
-    var x = d3.scaleTime().domain([ timeDomainStart, timeDomainEnd ]).range([ 0, width ]).clamp(true);
+    var x = d3.scaleTime()
+        .domain([ timeDomainStart, timeDomainEnd ])
+        .range([ 0, width ])
+        .clamp(true);
 
     //var y = d3.scaleOrdinal().domain(taskTypes).rangeRoundBands([ 0, height - margin.top - margin.bottom ], .1);
-    var y = d3.scaleOrdinal().domain(taskTypes).range([ 0, height - margin.top - margin.bottom ], .1);
+    var y = d3.scaleOrdinal()
+        .domain(taskTypes)
+        .range([ 0, height - margin.top - margin.bottom ], .1);
 
     /*
         var xAxis = d3.axisBottom()
@@ -144,9 +118,8 @@ d3.gantt = function() {
 	 .attr("rx", 5)
          .attr("ry", 5)
 	 .attr("class", function(d){
-	     if(taskStatus[d.status] == null){ return "bar";}
-	     return taskStatus[d.status];
-	     })
+         return `bar bar-${d.status}`;
+     })
 	 .attr("y", 0)
 	 .attr("transform", rectTransform)
 	 .attr("height", function(d) { return y.bandwidth(); })
@@ -245,29 +218,29 @@ d3.gantt = function() {
     gantt.taskStatus = function(value) {
 	if (!arguments.length)
 	    return taskStatus;
-	taskStatus = value;
+	    taskStatus = value;
 	return gantt;
     };
 
     gantt.width = function(value) {
-	if (!arguments.length)
-	    return width;
-	width = +value;
-	return gantt;
+	    if (!arguments.length)
+	        return width;
+        width = +value;
+        return gantt;
     };
 
     gantt.height = function(value) {
-	if (!arguments.length)
-	    return height;
-	height = +value;
-	return gantt;
+        if (!arguments.length)
+            return height;
+        height = +value;
+        return gantt;
     };
 
     gantt.tickFormat = function(value) {
-	if (!arguments.length)
-	    return tickFormat;
-	tickFormat = value;
-	return gantt;
+        if (!arguments.length)
+            return tickFormat;
+        tickFormat = value;
+        return gantt;
     };
 
     gantt.selector = function(value) {
@@ -336,6 +309,7 @@ d3.gantt = function() {
         datetime picker widget
          */
         $( "#id_start_date" ).datetimepicker({
+            scrollInput: false,
             format: "Y-m-d",
             timepicker: false,
             scrollInput: false,
@@ -343,6 +317,7 @@ d3.gantt = function() {
         $( "#id_start_date" ).val("{{ start_date|date:'Y-m-d' }}");
 
         $("#id_end_date").datetimepicker({
+            scrollInput: false,
             format: "Y-m-d",
             timepicker: false,
             scrollInput: false,
@@ -414,7 +389,7 @@ d3.gantt = function() {
                             var object_start_date = new Date(json_data[i]['fields']['date_created']),
                                 object_end_date = new Date(json_data[i]['fields']['opportunity_expected_close_date']),
                                 object_name = "OPPORTUNITY" + json_data[i]['pk'],
-                                object_status = json_data[i]['fields']['opportunity_id'];
+                                object_status = json_data[i]['fields']['opportunity_stage_id'];
                         }
 
 

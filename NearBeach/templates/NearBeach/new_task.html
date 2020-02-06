@@ -29,7 +29,7 @@
             </div>
             {% if not destination == "customer" %}
                 <div class="form-group">
-                    <label for="id_organisation_id">Associated Organisation</label>
+                    <label for="id_organisation_id">Stakeholder Organisation</label>
                     {{ new_task_form.organisation_id }}
                 </div>
             {% endif %}
@@ -77,6 +77,7 @@
     function on_page_load() {
         //Setup the datetime widgets
         $("#id_task_start_date").datetimepicker({
+            scrollInput: false,
             format:'Y-m-d H:i:00',
             allowTimes: [
                 '00:00','00:05','00:10','00:15','00:20','00:25','00:30','00:35','00:40','00:45','00:50','00:55',
@@ -106,6 +107,7 @@
             ]
         });
         $("#id_task_end_date").datetimepicker({
+            scrollInput: false,
             format:'Y-m-d H:i:00',
             allowTimes: [
                 '00.00','00:05','00:10','00:15','00:20','00:25','00:30','00:35','00:40','00:45','00:50','00:55',

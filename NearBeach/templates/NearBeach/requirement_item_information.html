@@ -1,13 +1,6 @@
 {% extends './template.html' %}
 {% load nearbeach_extras %}
 {% block content %}
-{% load static %}
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/document_upload.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/timesheet.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
-
 <body onload="on_page_load()">
     <form action="{% url 'requirement_item_information' requirement_item_id %}" enctype="multipart/form-data" class="requirement_item_information" method="POST">
         {% csrf_token %}
@@ -19,29 +12,36 @@
                 <div class="alert-primary mb-4">
                     This requirement item will be connected with REQ{{ requirement_item_results.requirement_id_id }} - {{ requirement_item_results.requirement_id }}
                 </div>
-                    {{ requirement_item_form.media }}
-                    <div class="form-group">
-                        <label for="id_requirement_item_title">Requirement Item Title</label>
-                        {{ requirement_item_form.requirement_item_title }}
+                {{ requirement_item_form.media }}
+                <div class="form-group">
+                    <label for="id_requirement_item_title">Requirement Item Title</label>
+                    {{ requirement_item_form.requirement_item_title }}
+                </div>
+                <div class="form-group">
+                    <label for="id_requirement_item_scope">Requirement Item Scope</label>
+                    {{ requirement_item_form.requirement_item_scope }}
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="id_requirement_item_type">Requirement Item Type</label>
+                        {{ requirement_item_form.requirement_item_type }}
                     </div>
-                    <div class="form-group">
-                        <label for="id_requirement_item_scope">Requirement Item Scope</label>
-                        {{ requirement_item_form.requirement_item_scope }}
+                    <div class="form-group col-md-4">
+                        <label for="id_requirement_item_status">Requirement Item Status</label>
+                        {{ requirement_item_form.requirement_item_status }}
                     </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="id_requirement_item_type">Requirement Item Type</label>
-                            {{ requirement_item_form.requirement_item_type }}
+                    <div class="form-group col-md-4">
+                        <label for="id_story_point">Story Points</label>
+                        <div id="id_story_point">
+                            <strong>Min hours: </strong>{{ requirement_item_results.ri_story_point_min }}
+                            <strong>| Max hours: </strong>{{ requirement_item_results.ri_story_point_max }}
                         </div>
-                        <div class="form-group col-md-6">
-                            <label for="id_requirement_item_status">Requirement Item Status</label>
-                            {{ requirement_item_form.requirement_item_status }}
-                        </div>
                     </div>
-                    <div class="form-row">
-                        <button type="submit" class="btn btn-primary form-control col-md-6">Update and Return</button>
-                        <a href="{% url 'requirement_information' requirement_item_results.requirement_id.requirement_id %}" class="btn btn-secondary form-control col-md-6">Cancel and return</a>
-                    </div>
+                </div>
+                <div class="form-row">
+                    <button type="submit" class="btn btn-primary form-control col-md-6">Update and Return</button>
+                    <a href="{% url 'requirement_information' requirement_item_results.requirement_id.requirement_id %}" class="btn btn-secondary form-control col-md-6">Cancel and return</a>
+                </div>
             </div>
         </div>
     </form>
@@ -206,7 +206,7 @@
             ~~~~~~
             1. Prepare the ajax query
             2. Send the request to /new_requirement_link/
-            {{ requirement_id }}/location_id/destination
+             requirement_id /location_id/destination
             3. Once completed - add the two parts to the end of the table :) SHHH - don't tell anyone we didn't reload
                 that section.
              */

@@ -522,6 +522,7 @@ def new_requirement_link(request,requirement_id,location_id="",destination=""):
 
     # Context
     c = {
+        'requirement_id': requirement_id,
         'project_results': project_results,
         'task_results': task_results,
         'opportunity_results': opportunity_results,
@@ -706,6 +707,7 @@ def requirement_item_information(request, requirement_item_id):
     if request.method == "POST" and permission_results['requirement'] > 1:
         form = requirement_item_form(request.POST)
         if form.is_valid():
+            print("Form is valid")
             # Save the data
             requirement_item_save = requirement_item.objects.get(requirement_item_id=requirement_item_id)
             requirement_item_save.requirement_item_title=form.cleaned_data['requirement_item_title']
@@ -820,6 +822,8 @@ def requirement_link_list(request,requirement_id):
         'organisation_id',
         'organisation_id__organisation_name',
         'requirement_link_id',
+        'opportunity_id',
+        'opportunity_id__opportunity_name',
     ).distinct()
 
     requirement_item_results = requirement_item.objects.filter(

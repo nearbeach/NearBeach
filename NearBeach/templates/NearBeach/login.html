@@ -10,7 +10,7 @@
     -->
     {% load static %}
     <script src="{% static 'NearBeach/js/jquery.min.js' %}"></script>
-    <script src="{% static 'NearBeach/widgets/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'NearBeach/js/bootstrap.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'NearBeach/css/bootstrap.min.css' %}" />
     <style>
         .bg-image {
@@ -39,6 +39,18 @@
             color: white;
             text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
         }
+
+
+
+        @media (min-width: 992px) {
+            .login_dialog {
+                position: fixed;
+                top: 50%;
+                left: 100%;
+                margin-top: -90px;
+                margin-left: -35%;
+            }
+        }
     </style>
 
     <script>
@@ -47,11 +59,14 @@
                 var elem = document.getElementById("unsupported_browser");
                 elem.innerHTML = '<div class="alert alert-danger"><h1>BROWSER NOT SUPPORTED!!</h1>' +
                     '<p>We are sorry, but we can not support the Internet Explorer browser. We recommend using the following browsers' +
-                    '<ul><li>Mozilla Firefox</li>' +
-                    '<li>Google Chrome</li>' +
-                    '<li>Safari</li></ul>' +
-                    'Some of the effects are will not work - for example the missing background image for this page</p>' +
+                    '<ul><li><a href="https://www.mozilla.org/en-US/firefox/new/">Mozilla Firefox</a></li>' +
+                    '<li><a href="https://www.google.com/chrome/">Google Chrome</a></li>' +
+                    '<li>Safari (MAC)</li></ul>' +
+                    'There are features that will not work in Internet Explorer.</p>' +
                     '</div>';
+
+                //Clear the login screen
+                document.getElementById("login_dialog").innerHTML = "";
 
             }
         }
@@ -59,9 +74,12 @@
 </head>
 <body onload="on_page_load()">
 <div class="container-fluid">
+    <!-- Renders a warning if browser is not supported -->
+    <div id="unsupported_browser"></div>
+
+    <!-- Login dialog with background image -->
     <div class="row no-gutter bg-image">
-        <div class="col-md-8  col-lg-6 align-center" id="unsupported_browser"></div>
-        <div class="col-md-8 col-lg-6 align-center">
+        <div class="login_dialog col-md-12 col-lg-4 align-center" id="login_dialog">
             <h3 class="login-heading">NearBeach</h3>
             <form action="{%  url 'login' %}" method="post" id="login-form">
                 {% csrf_token %}

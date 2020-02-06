@@ -1,5 +1,5 @@
 <div class="alert-primary">Click on the object you wish to link to the current requirement. Please note if there are no results then it is not possible to link anything.</div>
-<h5 class="mt-4">Project Links</h5>
+<h5 class="mt-4">Project Links - or <a href="{% url 'new_project' requirement_id 'requirement' %}">create a new project</a></h5>
 {% if project_results %}
     <table class="table table-striped table-hover">
         <thead>
@@ -19,7 +19,7 @@
     Sorry - no projects can be linked
 {% endif %}
 
-<h5 class="mt-4">Task Links</h5>
+<h5 class="mt-4">Task Links - or <a href="{% url 'new_task' requirement_id 'requirement' %}">create a new task</a></h5>
 {% if task_results %}
     <table class="table table-striped table-hover">
         <thead>
