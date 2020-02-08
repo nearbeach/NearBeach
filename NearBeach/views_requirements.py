@@ -177,7 +177,7 @@ def new_requirement_item(request, requirement_id):
 
     if request.method == "POST":
         #Check the form
-        form = requirement_item_form(request.POST)
+        form = new_requirement_item_form(request.POST)
         if form.is_valid():
             """
             Method
