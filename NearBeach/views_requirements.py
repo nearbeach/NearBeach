@@ -214,6 +214,7 @@ def new_requirement_item(request, requirement_id):
 
         else:
             print(form.errors)
+            print("There errors were here :(")
 
     # Get any required data
     requirement_results = requirement.objects.get(requirement_id=requirement_id)
@@ -223,7 +224,7 @@ def new_requirement_item(request, requirement_id):
 
     # context
     c = {
-        'new_requirement_item_form': new_requirement_item_form,
+        'new_requirement_item_form': new_requirement_item_form(),
         'requirement_id': requirement_id,
         'nearbeach_option': nearbeach_option.objects.latest('date_created'),
         'requirement_results': requirement_results,

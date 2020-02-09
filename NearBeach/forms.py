@@ -2736,7 +2736,6 @@ class new_requirement_item_form(ModelForm):
     requirement_item_status_results = list_of_requirement_item_status.objects.filter(
         is_deleted='FALSE',
     )
-
     requirement_item_title = forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
@@ -2777,15 +2776,16 @@ class new_requirement_item_form(ModelForm):
             'onChange': 'update_story_point()',
         })
     )
+
     class Meta:
         model = requirement_item
-        exclude = [
-            'requirement_id'
-            'change_user',
-            'is_deleted',
-            'ri_story_point_min',
-            'ri_story_point_max',
-        ]
+        fields = {
+            'requirement_item_title',
+            'requirement_item_scope',
+            'requirement_item_type',
+        }
+
+
 
 
 class new_requirement_form(ModelForm):
@@ -2847,7 +2847,6 @@ class new_requirement_form(ModelForm):
         }),
         required=False,
     )
-
 
     class Meta:
         model=requirement
