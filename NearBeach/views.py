@@ -32,7 +32,7 @@ from docx.shared import Cm, Inches
 from bs4 import BeautifulSoup
 
 #import python modules
-import datetime, json, simplejson, urllib.parse, pypandoc, requests, random
+import datetime, json, simplejson, urllib.parse, pypandoc, requests, random, time
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -1687,6 +1687,12 @@ def change_task_edit(request,change_task_id):
             change_task_results.change_task_required_by  = form.cleaned_data['change_task_required_by']
             change_task_results.change_user  = request.user
 
+            # Get the delta between the two times and save as seconds
+            start_date = form.cleaned_data['change_task_start_date']
+            end_date = form.cleaned_data['change_task_end_date']
+            change_task_results.change_task_seconds = (end_date - start_date).total_seconds()
+
+
             change_task_results.save()
 
             #Go to the RFC connected
@@ -1829,6 +1835,16 @@ def change_task_list(request,rfc_id):
         'change_task_qa_user',
     )
 
+    # Get the amount of seconds each task will take
+    change_task_seconds = change_task_results.aggregate(Sum('change_task_seconds'))
+
+    #Turn into friendly time
+    change_task_seconds = datetime\
+        .datetime\
+        .fromtimestamp(change_task_seconds['change_task_seconds__sum'])\
+        .strftime("Days - %d, Hours - %H, Minutes - %m")
+
+
     assigned_user_results = User.objects.filter(
         is_active=True,
         id__in=change_task_results.values('change_task_assigned_user')
@@ -1851,6 +1867,7 @@ def change_task_list(request,rfc_id):
         'rfc_status': rfc_status,
         'assigned_user_results': assigned_user_results,
         'qa_user_results': qa_user_results,
+        'change_task_seconds': change_task_seconds,
     }
 
     return HttpResponse(t.render(c,request))
@@ -5357,6 +5374,11 @@ def new_change_task(request,rfc_id):
         """
         form = new_change_task_form(request.POST,rfc_id=rfc_id)
         if form.is_valid():
+            # Get the delta between the two times and save as seconds
+            start_date = form.cleaned_data['change_task_start_date']
+            end_date = form.cleaned_data['change_task_end_date']
+            deltaSeconds = (end_date - start_date).total_seconds()
+
             #Save the data
             change_task_submit = change_task(
                 change_task_title=form.cleaned_data['change_task_title'],
@@ -5368,7 +5390,8 @@ def new_change_task(request,rfc_id):
                 change_task_required_by=form.cleaned_data['change_task_required_by'],
                 change_user=request.user,
                 change_task_status=1,
-                request_for_change=request_for_change.objects.get(rfc_id=rfc_id)
+                request_for_change=request_for_change.objects.get(rfc_id=rfc_id),
+                change_task_seconds = deltaSeconds,
             )
             change_task_submit.save()
 

@@ -385,6 +385,9 @@ class change_task(models.Model):
     )
     change_task_start_date=models.DateTimeField()
     change_task_end_date=models.DateTimeField()
+    change_task_seconds=models.BigIntegerField(
+        default=0,
+    )
     change_task_assigned_user=models.ForeignKey(
         User,
         on_delete=models.CASCADE,
