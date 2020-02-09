@@ -5,7 +5,7 @@
     function on_page_load() {
         //Setup the future date variable
         var future_date = new Date(Date.now() + 2592000000); // Where 2592000000 is 30 days in seconds
-        future_date.setSeconds(0);
+        future_date.setSeconds(0); //Adjust it back to 5:00 PM
         future_date.setMinutes(0);
         future_date.setHours(17);
 
