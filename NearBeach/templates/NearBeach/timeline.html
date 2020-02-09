@@ -312,7 +312,7 @@ d3.gantt = function() {
             scrollInput: false,
             format: "Y-m-d",
             timepicker: false,
-            scrollInput: false,
+            maxDate: "{{ end_date|date:'Y-m-d' }}",
         });
         $( "#id_start_date" ).val("{{ start_date|date:'Y-m-d' }}");
 
@@ -320,7 +320,7 @@ d3.gantt = function() {
             scrollInput: false,
             format: "Y-m-d",
             timepicker: false,
-            scrollInput: false,
+            minDate: "{{ start_date|date:'Y-m-d' }}",
         });
         $("#id_end_date").val("{{ end_date|date:'Y-m-d' }}");
 
@@ -354,6 +354,21 @@ d3.gantt = function() {
                 objects = [],       //Could be project or task
                 object_names = [],  //Project/tasks ID
                 object_type = document.getElementById("id_object_type").value;
+
+
+            $( "#id_start_date" ).datetimepicker({
+                scrollInput: false,
+                format: "Y-m-d",
+                timepicker: false,
+                maxDate: end_date,
+            });
+
+            $("#id_end_date").datetimepicker({
+                scrollInput: false,
+                format: "Y-m-d",
+                timepicker: false,
+                minDate: start_date,
+            });
 
 
             // 2.) Send a POST to get JSON data
