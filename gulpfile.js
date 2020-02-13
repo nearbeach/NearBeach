@@ -47,7 +47,9 @@ gulp.task('js', function() {
 //gulp.src(['input/folder/**/*']).pipe(gulp.dest('output/folder'));
 gulp.task('mxgraph', function() {
     return gulp.src([
-        './node_modules/mxgraph/javascript/src/**/*'
+        './node_modules/mxgraph/javascript/src/**/*',
+        './NearBeach/build/whiteboard/**/*',
+        './NearBeach/build/whiteboard/*'
     ])
     .pipe(gulp.dest('./NearBeach/static/NearBeach/whiteboard'))
     .pipe(notify({ message: 'Implemented Whiteboard module from mxgraph' }));
