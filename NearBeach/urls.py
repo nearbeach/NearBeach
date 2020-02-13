@@ -247,6 +247,7 @@ re_path(r'^whiteboard_information/common_xml',views_whiteboard.whiteboard_common
 re_path(r'^whiteboard_information/graph_xml',views_whiteboard.whiteboard_graph_xml,name='whiteboard_graph_xml'),
 re_path(r'^whiteboard_information/editor_xml',views_whiteboard.whiteboard_editor_xml,name='whiteboard_editor_xml'),
 re_path(r'^whiteboard_information/toolbar_xml',views_whiteboard.whiteboard_toolbar_xml,name='whiteboard_toolbar_xml'),
+re_path(r'^whiteboard_information/(?P<whiteboard_id>[0-9]+)',views_whiteboard.whiteboard_information,name='whiteboard_information'),
 re_path(r'^whiteboard_information/$',views_whiteboard.whiteboard_information,name='whiteboard_information'),
 
 

@@ -45,6 +45,7 @@ def return_user_permission_level(request, group_list,permission_field):
         contact_history
         project_history
         task_history
+        whiteboard
 
         Please note - if you want to look up more than ONE permission, please include them in [] brackets. For example if
         you would like to look up; project, project_history, and document, then you would use ['project','project_history','document']

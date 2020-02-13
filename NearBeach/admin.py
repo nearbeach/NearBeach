@@ -75,6 +75,7 @@ admin.site.register(to_do)
 admin.site.register(user_group)
 admin.site.register(user_want)
 admin.site.register(user_weblink)
+admin.site.register(whiteboard)
 
 
 

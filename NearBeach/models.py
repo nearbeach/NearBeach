@@ -1729,6 +1729,12 @@ class object_assignment(models.Model):
         blank=True,
         null=True,
     )
+    whiteboard = models.ForeignKey(
+        'whiteboard',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -1897,6 +1903,7 @@ class permission_set_manager(models.Manager):
             kanban_comment,
             project_history,
             task_history,
+            whiteboard,
     ):
         return self.get(
             permission_set_id=permission_set_id,
@@ -1932,6 +1939,7 @@ class permission_set_manager(models.Manager):
             kanban_comment=kanban_comment,
             project_history=project_history,
             task_history=task_history,
+            whiteboard=whiteboard,
         )
 
 
@@ -2048,6 +2056,10 @@ class permission_set(models.Model):
         choices=PERMISSION_LEVEL,
         default=0,
     )
+    whiteboard = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
     """
     ADDITIVE permission
     ~~~~~~~~~~~~~~~~~~~~
@@ -2111,7 +2123,8 @@ class permission_set(models.Model):
             self.document,  # 18
             self.contact_history,  # 19
             self.project_history,  # 20
-            self.task_history  # 21
+            self.task_history,  # 21
+            self.whiteboard #22
         )
 
     # class Meta:
@@ -3682,3 +3695,30 @@ class user_weblink(models.Model):
 
     class Meta:
         db_table = "user_weblink"
+
+
+class whiteboard(models.Model):
+    whiteboard_id=models.AutoField(primary_key=True)
+    whiteboard_title=models.CharField(max_length=255)
+    whiteboard_xml=models.TextField(
+        null=True,
+        blank=True,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    def __str__(self):
+        return self.whiteboard_title
+
+    class Meta:
+        db_table = "whiteboard"
