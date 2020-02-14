@@ -131,6 +131,7 @@ def whiteboard_information(request,whiteboard_id):
     # context
     c = {
         'whiteboard_results': whiteboard_results,
+        'whiteboard_id': whiteboard_id,
         'permission_results': permission_results,
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
@@ -140,7 +141,18 @@ def whiteboard_information(request,whiteboard_id):
 
 
 @login_required(login_url='login')
+def whiteboard_save(request):
+    t = loader.get_template('NearBeach/blank.html')
+
+    c = {}
+
+    return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login')
 def whiteboard_toolbar_xml(request):
+    print("Made contact with Whiteboard POST :)")
+
     #Load xml template
     t = loader.get_template('NearBeach/whiteboard/configuration/whiteboard_toolbar.xml')
 

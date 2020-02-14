@@ -249,6 +249,7 @@ re_path(r'^whiteboard_information/editor_xml',views_whiteboard.whiteboard_editor
 re_path(r'^whiteboard_information/toolbar_xml',views_whiteboard.whiteboard_toolbar_xml,name='whiteboard_toolbar_xml'),
 re_path(r'^whiteboard_information/(?P<whiteboard_id>[0-9]+)',views_whiteboard.whiteboard_information,name='whiteboard_information'),
 re_path(r'^whiteboard_information/$',views_whiteboard.whiteboard_information,name='whiteboard_information'),
+re_path(r'^whiteboard_save/(?P<whiteboard_id>[0-9]+)',views_whiteboard.whiteboard_save,name='whiteboard_save'),
 
 
 	path('change-password/', auth_views.PasswordChangeView.as_view()),
