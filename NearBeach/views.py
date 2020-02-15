@@ -1839,10 +1839,13 @@ def change_task_list(request,rfc_id):
     change_task_seconds = change_task_results.aggregate(Sum('change_task_seconds'))
 
     #Turn into friendly time
-    change_task_seconds = datetime\
-        .datetime\
-        .fromtimestamp(change_task_seconds['change_task_seconds__sum'])\
-        .strftime("Days - %d, Hours - %H, Minutes - %m")
+    if not change_task_seconds['change_task_seconds__sum'] == None:
+        change_task_seconds = datetime\
+            .datetime\
+            .fromtimestamp(change_task_seconds['change_task_seconds__sum'])\
+            .strftime("Days - %d, Hours - %H, Minutes - %m")
+    else:
+        change_task_seconds = "Please enter a change task"
 
 
     assigned_user_results = User.objects.filter(
