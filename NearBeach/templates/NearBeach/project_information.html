@@ -1,6 +1,7 @@
 {% extends "./template.html" %}
 {% block content %}
 {% load static %}
+{% load nearbeach_extras %}
 <script>
     function on_page_load() {
 	    //Initiate AJAX modules
@@ -317,6 +318,7 @@
                                 <td>Short Description</td>
                                 <td>End Date</td>
                                 <td>Status</td>
+                                <td>Groups</td>
                             </tr>
                         </thead>
                         {% for associated_task_row in associated_task_results %}
@@ -325,6 +327,17 @@
                                 <td>{{ associated_task_row.task_short_description }}</td>
                                 <td>{{ associated_task_row.task_end_date }}</td>
                                 <td>{{ associated_task_row.task_status }}</td>
+                                <td>
+                                    {% with list_groups=associated_task_row.task_id|task_related_groups %}
+                                        {% for single_group in list_groups %}
+                                            {% if forloop.counter == 1 %}
+                                                {{ single_group.group_name }}
+                                            {% else %}
+                                                , {{ single_group.group_name }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endwith %}
+                                </td>
                             </tr>
                         {% endfor %}
                     </table>

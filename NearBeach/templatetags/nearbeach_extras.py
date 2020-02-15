@@ -4,6 +4,9 @@ from django.conf import settings
 from django.template import Library
 register = Library()
 
+#Import data
+from NearBeach.models import *
+
 
 @register.filter(name='filter_level_cards')
 def filter_level_cards(value, arg):
@@ -75,3 +78,21 @@ def in_future(time, hours):
         return local_time + datetime.timedelta(hours=hours) < time
     except:
         return False
+
+
+@register.filter
+def task_related_groups(task_id):
+    """
+
+    :param task_id:
+    :return:
+    """
+    group_results = group.objects.filter(
+        is_deleted="FALSE",
+        group_id__in=object_assignment.objects.filter(
+            is_deleted="FALSE",
+            task_id=task_id,
+            group_id__isnull=False,
+        ).values('group_id')
+    )
+    return group_results

@@ -1,9 +1,6 @@
 {% extends "./template.html" %}
 {% block content %}
     {% load static %}
-    <script type="text/javascript" src="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.full.min.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'NearBeach/widgets/datetimepicker/jquery.datetimepicker.min.css' %}">
-
     <form action={% url 'new_request_for_change' %} method="post" class="new_request_for_change" enctype="multipart/form-data">
         {% csrf_token %}
         {{ new_request_for_change_form.media.css }}
@@ -110,7 +107,7 @@
                 </div>
                 <div class="form-row">
                     <input type="submit" value="Submit New RFC" class="btn btn-primary form-control w-50">
-                    <a href={% url 'dashboard' %} class="btn btn-warning form-control w-50">Cancel</a>
+                    <a href="{% url 'dashboard' %}" class="btn btn-warning form-control w-50">Cancel</a>
                 </div>
             </div>
         </div>
@@ -147,7 +144,7 @@
         $("#id_rfc_implementation_start_date").datetimepicker({
             scrollInput: false,
             format:'Y-m-d H:i:00',
-            allowTimes: allowed_times
+            allowTimes: allowed_times,
         });
 
         $("#id_rfc_implementation_end_date").datetimepicker({
