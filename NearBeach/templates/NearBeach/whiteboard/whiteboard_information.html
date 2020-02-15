@@ -32,7 +32,30 @@
 			return true;
 		};
 
-		mxEditor.prototype.urlPost = "{% url 'whiteboard_save' whiteboard_id %}";
+		//When the user saves :)
+        mxEditor.prototype.urlPost = "{% url 'whiteboard_save' whiteboard_id %}";
+        mxEditor.prototype.save = function(url, linefeed) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '{% url "whiteboard_save" whiteboard_id %}',
+                data: '',
+                datatype: 'XML',
+                type: 'POST',
+                success: function(data) {
+                    console.log("YAY");
+                },
+                error: function() {
+                    console.log("FUCK");
+                }
+            })
+        };
 
 
 		mxConstants.DEFAULT_HOTSPOT = 1;

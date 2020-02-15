@@ -141,7 +141,7 @@ def whiteboard_information(request,whiteboard_id):
 
 
 @login_required(login_url='login')
-def whiteboard_save(request):
+def whiteboard_save(request,whiteboard_id):
     t = loader.get_template('NearBeach/blank.html')
 
     c = {}
