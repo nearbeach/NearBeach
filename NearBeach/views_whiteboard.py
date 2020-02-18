@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from .models import *
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.urls import reverse
 from django.template import loader
 from NearBeach.forms import *
@@ -142,11 +142,22 @@ def whiteboard_information(request,whiteboard_id):
 
 @login_required(login_url='login')
 def whiteboard_save(request,whiteboard_id):
-    t = loader.get_template('NearBeach/blank.html')
+    if request.method == "POST":
+        #ADD IN PERMISSIONS
 
-    c = {}
+        # Get whiteboard object
+        whiteboard_update = whiteboard.objects.get(whiteboard_id=whiteboard_id)
+        whiteboard_update.whiteboard_xml = request.POST['whiteboard_xml']
+        whiteboard_update.save()
 
-    return HttpResponse(t.render(c,request))
+        #Return blank page
+        t = loader.get_template('NearBeach/blank.html')
+
+        c = {}
+
+        return HttpResponse(t.render(c,request))
+    else:
+        return HttpResponseBadRequest("Sorry, this function only requests POST")
 
 
 @login_required(login_url='login')

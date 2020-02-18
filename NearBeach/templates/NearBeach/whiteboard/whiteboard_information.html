@@ -43,9 +43,16 @@
                 }
             });
 
+            var graph = document.getElementById("graph"),
+                enc = new mxCodec(),
+                node = enc.encode(graph.getModel()),
+                xml = mxUtils.getXml(node, this.linefeed);
+
             $.ajax({
                 url: '{% url "whiteboard_save" whiteboard_id %}',
-                data: '',
+                data: {
+                    'whiteboard_xml': xml,
+                },
                 datatype: 'XML',
                 type: 'POST',
                 success: function(data) {
@@ -56,6 +63,21 @@
                 }
             })
         };
+
+        //Load the data
+        var xml = `{{ whiteboard_results.whiteboard_xml }}`;
+        if (xml != '') {
+            var container = document.getElementById("graph"),
+                graph = new mxGraph(container),
+                diagram = mxUtils.parseXml(xml),
+                codec = new mxCodec(diagram);
+
+
+            console.log("GOT HERE");
+            codec.decode(diagram.documentElement, graph.getModel());
+            graph.fit();
+        }
+
 
 
 		mxConstants.DEFAULT_HOTSPOT = 1;
