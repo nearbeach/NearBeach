@@ -6043,6 +6043,7 @@ def new_permission_set(request):
                 task=form.cleaned_data['task'],
                 tax=form.cleaned_data['tax'],
                 template=form.cleaned_data['template'],
+                whiteboard=form.cleaned_data['whiteboard'],
                 document=form.cleaned_data['document'],
                 contact_history=form.cleaned_data['contact_history'],
                 kanban_comment=form.cleaned_data['kanban_comment'],
@@ -7528,6 +7529,7 @@ def permission_set_information(request,permission_set_id):
             permission_set_update.task = form.cleaned_data['task']
             permission_set_update.tax = form.cleaned_data['tax']
             permission_set_update.template = form.cleaned_data['template']
+            permission_set_update.whiteboard = form.cleaned_data['whiteboard']
             permission_set_update.document = form.cleaned_data['document']
             permission_set_update.contact_history = form.cleaned_data['contact_history']
             permission_set_update.kanban_comment = form.cleaned_data['kanban_comment']
@@ -7576,6 +7578,7 @@ def permission_set_information(request,permission_set_id):
                 'task': permission_set_results.task,
                 'tax': permission_set_results.tax,
                 'template': permission_set_results.template,
+                'whiteboard': permission_set_results.whiteboard,
                 'document': permission_set_results.document,
                 'contact_history': permission_set_results.contact_history,
                 'kanban_comment': permission_set_results.kanban_comment,

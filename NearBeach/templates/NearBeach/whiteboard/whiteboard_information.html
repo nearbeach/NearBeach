@@ -147,7 +147,9 @@
                     codec = new mxCodec(doc);
 
                 //Set XML into the graph
-                codec.decode(doc.documentElement, editor.graph.getModel());
+                if (xml != "") {
+                    codec.decode(doc.documentElement, editor.graph.getModel());
+                }
 
 				// Displays version in statusbar
 				editor.setStatus('mxGraph '+mxClient.VERSION);

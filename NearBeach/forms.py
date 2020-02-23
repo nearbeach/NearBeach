@@ -3388,7 +3388,12 @@ class permission_set_form(ModelForm):
             'class': 'form-control',
         })
     )
-
+    whiteboard=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
     contact_history=forms.ChoiceField(
         choices=PERMISSION_BOOLEAN,
         widget=forms.Select(attrs={
