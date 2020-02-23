@@ -43,9 +43,16 @@
                 }
             });
 
+            //Get the xml data
+            var enc = new mxCodec(mxUtils.createXmlDocument()),
+                node = enc.encode(document.getElementById("graph")),
+                xml = mxUtils.getXml(node);
+
             $.ajax({
                 url: '{% url "whiteboard_save" whiteboard_id %}',
-                data: '',
+                data: {
+                    'whiteboard_xml': xml,
+                },
                 datatype: 'XML',
                 type: 'POST',
                 success: function(data) {
@@ -54,7 +61,7 @@
                 error: function() {
                     console.log("FUCK");
                 }
-            })
+            });
         };
 
 
