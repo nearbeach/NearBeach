@@ -48,6 +48,9 @@
             var result = encoder.encode(editor.graph.getModel());
             var xml = mxUtils.getXml(result);
 
+
+            console.log("XML EXTRACT: ",xml);
+
             $.ajax({
                 url: '{% url "whiteboard_save" whiteboard_id %}',
                 data: {
@@ -121,31 +124,16 @@
 				editor.graph.allowAutoPanning = true;
 				editor.graph.timerAutoScroll = true;
 
-                var xml = `<root><mxCell id="2" value="Hello," vertex="1"><mxGeometry x="20" y="20" width="80" height="30" as="geometry"/></mxCell><mxCell id="3" value="World!" vertex="1"><mxGeometry x="200" y="150" width="80" height="30" as="geometry"/></mxCell><mxCell id="4" value="" edge="1" source="2" target="3"><mxGeometry relative="1" as="geometry"/></mxCell></root>`;
-                //var xml = `{{ whiteboard_results.whiteboard_xml|safe }}`;
+				//Load saved data
+                var xml = `{{ whiteboard_results.whiteboard_xml|safe }}`,
+                    doc = mxUtils.parseXml(xml),
+                    codec = new mxCodec(doc);
 
-                var doc = mxUtils.parseXml(xml);
-                var codec = new mxCodec(doc);
-                var elt = doc.documentElement.firstChild.firstChild;
-                var cells = [];
-
-                while (elt != null)
-                {
-                  cells.push(codec.decode(elt));
-                  elt = elt.nextSibling;
-                }
-
-                console.log("TRYING TO ADD CELLS: ",cells);
-                //Add the cells to the graph
-                editor.graph.addCells(cells);
-                console.log("ADDED CELLS");
-
-                //graph.addCells(cells);
-                //codec.decode(doc.documentElement, graph.getModel());
+                //Set XML into the graph
+                codec.decode(doc.documentElement, editor.graph.getModel());
 
 				// Displays version in statusbar
 				editor.setStatus('mxGraph '+mxClient.VERSION);
-				console.log("GOT TO THE END");
             } catch (e) {
                 new_error(`There was an issue loading the whiteboard: ${e}`);
             }
