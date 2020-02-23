@@ -44,9 +44,9 @@
             });
 
             //Get the xml data
-            var enc = new mxCodec(mxUtils.createXmlDocument()),
-                node = enc.encode(document.getElementById("graph")),
-                xml = mxUtils.getXml(node);
+            var encoder = new mxCodec();
+            var result = encoder.encode(editor.graph.getModel());
+            var xml = mxUtils.getXml(result);
 
             $.ajax({
                 url: '{% url "whiteboard_save" whiteboard_id %}',
@@ -88,6 +88,9 @@
 
 	<!-- Example code -->
 	<script type="text/javascript">
+        //Global functions
+        var editor;
+
 		function createEditor(config) {
             //Try
             try {
@@ -103,7 +106,7 @@
 
                 mxObjectCodec.allowEval = true;
 				var node = mxUtils.load(config).getDocumentElement();
-                var editor = new mxEditor(node);
+                editor = new mxEditor(node);
 				mxObjectCodec.allowEval = false;
 
 				// Adds active border for panning inside the container
@@ -118,12 +121,27 @@
 				editor.graph.allowAutoPanning = true;
 				editor.graph.timerAutoScroll = true;
 
-				editor.addListener(mxEvent.OPEN, funct);
+                var xml = `<root><mxCell id="2" value="Hello," vertex="1"><mxGeometry x="20" y="20" width="80" height="30" as="geometry"/></mxCell><mxCell id="3" value="World!" vertex="1"><mxGeometry x="200" y="150" width="80" height="30" as="geometry"/></mxCell><mxCell id="4" value="" edge="1" source="2" target="3"><mxGeometry relative="1" as="geometry"/></mxCell></root>`;
+                //var xml = `{{ whiteboard_results.whiteboard_xml|safe }}`;
 
-				// Prints the current root in the window title if the
-				// current root of the graph changes (drilling).
-				editor.addListener(mxEvent.ROOT, funct);
-				funct(editor);
+                var doc = mxUtils.parseXml(xml);
+                var codec = new mxCodec(doc);
+                var elt = doc.documentElement.firstChild.firstChild;
+                var cells = [];
+
+                while (elt != null)
+                {
+                  cells.push(codec.decode(elt));
+                  elt = elt.nextSibling;
+                }
+
+                console.log("TRYING TO ADD CELLS: ",cells);
+                //Add the cells to the graph
+                editor.graph.addCells(cells);
+                console.log("ADDED CELLS");
+
+                //graph.addCells(cells);
+                //codec.decode(doc.documentElement, graph.getModel());
 
 				// Displays version in statusbar
 				editor.setStatus('mxGraph '+mxClient.VERSION);
