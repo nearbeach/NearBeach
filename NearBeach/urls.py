@@ -170,7 +170,7 @@ re_path(r'^new_requirement_link/(?P<requirement_id>[0-9]+)/(?P<location_id>[0-9]
 re_path(r'^new_task/(?P<location_id>[0-9]+)/(?P<destination>["organisation","customer","opportunity","project","requirement"]+)/$', views.new_task, name='new_task'),
 re_path(r'^new_task/$', views.new_task, name='new_task'),
 re_path(r'^new_user/$', views_administration.new_user, name='new_user'),
-re_path(r'^new_whiteboard/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement"]+)/(?P<folder_id>[0-9]+)/', views.new_whiteboard, name='new_whiteboard'),
+re_path(r'^new_whiteboard/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","requirement_item","opportunity"]+)/(?P<folder_id>[0-9]+)/', views.new_whiteboard, name='new_whiteboard'),
 re_path(r'^opportunity_connection_list/(?P<opportunity_id>[0-9]+)/', views.opportunity_connection_list,name='opportunity_connection_list'),
 re_path(r'^opportunity_information/(?P<opportunity_id>[0-9]+)/', views.opportunity_information,name='opportunity_information'),
 re_path(r'^opportunity_readonly/(?P<opportunity_id>[0-9]+)/', views.opportunity_readonly,name='opportunity_readonly'),
