@@ -443,7 +443,8 @@ function load_document_tree_list(location_id, destination, folder_id) {
 
 function new_folder(location_id,destination,folder_id) {
     console.debug("Sending in new folder information");
-//Send data to the database
+    //Send data to the database
+
     $.ajaxSetup({
         beforeSend: function (xhr, settings) {
             if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
@@ -470,8 +471,42 @@ function new_folder(location_id,destination,folder_id) {
             }
         },
         error: function() {
-            $("#document_upload_modal").modal("hide"); //Remove the modal
+            $("#new_folder_modal").modal("hide"); //Remove the modal
             alert("Sorry, there was an error uploading the document");
+        }
+    });
+}
+
+function new_whiteboard(location_id,destination,folder_id) {
+    //Send data to the database
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    //Get form data
+    var form_data = new FormData($('#new_whiteboard_form')[0]);
+
+    $.ajax({
+        url: '/new_whiteboard/' + location_id + '/' + destination + '/' + folder_id + '/',
+        data: form_data,
+        processData: false,
+        contentType: false,
+        type: 'POST',
+        success: function(data) {
+            $("#new_whiteboard_modal").modal("hide"); //Remove the modal
+            if ((folder_id == null) || (folder_id == 0)) {
+                load_document_tree_list(location_id, destination);
+            } else {
+                load_document_tree_list(location_id, destination, folder_id);
+            }
+        },
+        error: function() {
+            $("#new_whiteboard_modal").modal("hide"); //Remove the modal
+            alert("Sorry, there was an error creating the new whiteboard");
         }
     });
 }
@@ -1310,14 +1345,12 @@ function load_timesheet(location, destination) {
 function timesheet_setup() {
     /* This function will finish setting up the timesheet - i.e. setup the datetime functions*/
     $( "#id_timesheet_date" ).datetimepicker({
-        scrollInput: false,
         format: "Y-m-d",
         timepicker:false,
     });
 
 
     $("#id_timesheet_start_time").datetimepicker({
-        scrollInput: false,
         'scrollDefault': 'now',
         datepicker:false,
         format:'H:i',
@@ -1360,7 +1393,6 @@ function timesheet_setup() {
     });
 
     $("#id_timesheet_end_time").datetimepicker({
-        scrollInput: false,
         'scrollDefault': 'now',
         datepicker:false,
         format:'H:i',

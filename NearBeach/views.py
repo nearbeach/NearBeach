@@ -6789,12 +6789,12 @@ def new_task(request, location_id='', destination=''):
 
 
 @login_required(login_url='login',redirect_field_name="")
-def new_whiteboard(request, location_id, destination): #,destination,folder_id):
+def new_whiteboard(request, location_id, destination, folder_id):
     if request.method == "POST":
         #Check to see if the user has the correct permissions
         permission_results = return_user_permission_level(request, None,'whiteboard')
 
-        if permission_results['opportunity'] <= 2:
+        if permission_results['whiteboard'] <= 2:
             return HttpResponseRedirect(reverse('permission_denied'))
 
         #Get form data
@@ -6824,6 +6824,7 @@ def new_whiteboard(request, location_id, destination): #,destination,folder_id):
             #Add document permissions
             document_permission_submit = document_permission(
                 document_key=document_submit,
+                change_user=request.user,
             )
 
             if destination == "project":

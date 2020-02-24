@@ -2967,6 +2967,10 @@ class new_whiteboard_form(forms.Form):
     whiteboard_name = forms.CharField(
         max_length=255,
         required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter Whiteboard Name',
+        })
     )
 
 

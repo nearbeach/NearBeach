@@ -67,7 +67,13 @@ The table that will display the current directory.
         <!-- LOOP FOR DOCUMENTS -->
         {% for row in document_permission_results %}
             <tr>
-                <td><a href="{% url 'private' row.document_key.document_key %}" target="_blank">{{ row.document_key.document_description }}</a></td>
+                <td>
+                    {% if not row.document_key.whiteboard %}
+                        <a href="{% url 'private' row.document_key.document_key %}" target="_blank">{{ row.document_key.document_description }}</a>
+                    {% else %}
+                        <a href="{% url 'whiteboard_information' row.document_key.whiteboard.whiteboard_id %}" target="_blank">{{ row.document_key.whiteboard }}</a>
+                    {% endif %}
+                </td>
                 <td>2018-10-03</td>
                 {% if permission_results %}
                     <td><img src="{% static 'NearBeach/widgets/feather/trash-2.svg' %}" onclick="confirm_delete_document('{{ row.document_key.document_key }}',{{ location_id }},'{{ destination }}', {{ folder_id }})"></td>
@@ -159,7 +165,10 @@ The table that will display the current directory.
             <!-- BODY -->
             <div class="modal-body">
                 <form id="new_whiteboard_form" enctype="multipart/form-data">
-                    {{ new_whiteboard_form.whiteboard_name }}
+                    <div class="form-group">
+                        <label for="id_whiteboard_name">Whiteboard Name</label>
+                        {{ new_whiteboard_form.whiteboard_name }}
+                    </div>
                 </form>
             </div>
 
