@@ -6789,6 +6789,61 @@ def new_task(request, location_id='', destination=''):
 
 
 @login_required(login_url='login',redirect_field_name="")
+def new_whiteboard(request, location_id, destination): #,destination,folder_id):
+    if request.method == "POST":
+        #Check to see if the user has the correct permissions
+        permission_results = return_user_permission_level(request, None,'whiteboard')
+
+        if permission_results['opportunity'] <= 2:
+            return HttpResponseRedirect(reverse('permission_denied'))
+
+        #Get form data
+        form = new_whiteboard_form(request.POST)
+        if form.is_valid():
+            #User has correct permissions. Lets start making a whiteboard module
+            whiteboard_submit = whiteboard(
+                whiteboard_title=form.cleaned_data['whiteboard_name'],
+                whiteboard_xml="""
+                    <mxGraphModel><root>
+                        <Workflow label="%s" description="" href="" id="0"><mxCell/></Workflow>
+                        <Layer label="Default Layer" id="1"><mxCell parent="0"/></Layer>
+                    </root></mxGraphModel>
+                """ % form.cleaned_data['whiteboard_name'],
+                change_user=request.user,
+            )
+            whiteboard_submit.save()
+
+            #Add whiteboard to document table
+            document_submit = document(
+                document_description=form.cleaned_data['whiteboard_name'],
+                whiteboard=whiteboard_submit,
+                change_user=request.user
+            )
+            document_submit.save()
+
+            #Add document permissions
+            document_permission_submit = document_permission(
+                document_key=document_submit,
+            )
+
+            if destination == "project":
+                document_permission_submit.project_id = project.objects.get(project_id=location_id)
+            ##ADD CODE FOR OTHER OBJECTS##
+
+            document_permission_submit.save()
+
+            #Return blank page
+            t = loader.get_template('NearBeach/blank.html')
+            c = {}
+            return HttpResponse(t.render(c,request))
+
+        else:
+            print(form.errors)
+    else:
+        return HttpResponseBadRequest("Sorry, this has to be through post")
+
+
+@login_required(login_url='login',redirect_field_name="")
 def opportunity_delete_permission(request, opportunity_permissions_id):
     if request.method == "POST":
         opportunity_permission_update = opportunity_permission.objects.get(opportunity_permissions_id=opportunity_permissions_id)

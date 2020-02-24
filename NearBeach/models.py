@@ -555,6 +555,12 @@ class document(models.Model):
         null=True,
         storage=File_Storage(),
     )
+    whiteboard = models.ForeignKey(
+        'whiteboard',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(

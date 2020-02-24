@@ -2963,6 +2963,12 @@ class new_timesheet_row(forms.Form):
         }),
     )
 
+class new_whiteboard_form(forms.Form):
+    whiteboard_name = forms.CharField(
+        max_length=255,
+        required=True,
+    )
+
 
 class opportunity_group_permission_form(forms.Form):
     def __init__(self,*args,**kwargs):

@@ -13,6 +13,7 @@ The drop down button that will allow a user to add a new
         <!-- Give the user the ability to upload the document -->
         <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#document_upload_modal">New File Upload</a>
         <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#new_url_modal">New File URL Link</a>
+        <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#new_whiteboard_modal">New Whiteboard</a>
         <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#new_folder_modal">New Folder</a>
     </div>
 </div>
@@ -143,6 +144,35 @@ The table that will display the current directory.
 </div>
 
 
+<!-- New Whiteboard -->
+<div class="modal" tabindex="-1" role="dialog" id="new_whiteboard_modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- HEADER -->
+            <div class="modal-header">
+                <h5 class="modal-title">New Whiteboard</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- BODY -->
+            <div class="modal-body">
+                <form id="new_whiteboard_form" enctype="multipart/form-data">
+                    {{ new_whiteboard_form.whiteboard_name }}
+                </form>
+            </div>
+
+
+            <!-- FOOTER -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="new_whiteboard({{ location_id }},'{{ destination }}', {{ folder_id }})">New Whiteboard</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- New Folder -->
 <div class="modal" tabindex="-1" role="dialog" id="new_folder_modal">
@@ -240,6 +270,9 @@ The table that will display the current directory.
         e.preventDefault();
     });
     $("#document_url_form").on("submit", function(e){
+        e.preventDefault();
+    });
+    $("#new_whiteboard_form").on('submit', function(e) {
         e.preventDefault();
     });
     $("#new_folder_form").on("submit", function(e){
