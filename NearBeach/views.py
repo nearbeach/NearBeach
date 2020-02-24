@@ -9788,22 +9788,13 @@ def task_information(request, task_id):
         'task_end_date': task_results.task_end_date,
     }
 
-    # Query the database for associated project information
-    cursor = connection.cursor()
-    cursor.execute("""
-		SELECT 
-		  project.project_id
-		, project.project_name
-		, project.project_end_date
-		, project.project_status
-		FROM project
-			JOIN project_task
-			ON project.project_id = project_task.project_id
-			AND project_task.is_deleted = 'FALSE'
-			AND project_task.task_id = %s
-		""", [task_id])
-    associated_project_results = namedtuplefetchall(cursor)
-
+    associated_project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_id__in=project_task.objects.filter(
+            is_deleted="FALSE",
+            task_id=task_id,
+        ).values('project_id')
+    )
 
     quote_results = quote.objects.filter(
         is_deleted="FALSE",

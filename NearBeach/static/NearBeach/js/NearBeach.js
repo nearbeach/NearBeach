@@ -1345,6 +1345,7 @@ function load_timesheet(location, destination) {
 function timesheet_setup() {
     /* This function will finish setting up the timesheet - i.e. setup the datetime functions*/
     $( "#id_timesheet_date" ).datetimepicker({
+        scrollInput: false,
         format: "Y-m-d",
         timepicker:false,
     });
@@ -1352,6 +1353,7 @@ function timesheet_setup() {
 
     $("#id_timesheet_start_time").datetimepicker({
         'scrollDefault': 'now',
+        scrollInput: false,
         datepicker:false,
         format:'H:i',
         allowTimes: [
