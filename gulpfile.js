@@ -22,7 +22,7 @@ gulp.task('clean', function() {
 // Scripts
 gulp.task('scripts', function() {
   return gulp.src([
-      './NearBeach/build/javascript/*.js'
+      './NearBeach/build_static/javascript/*.js'
   ])
     .pipe(concat('NearBeach.js'))
     .pipe(minify())
@@ -48,8 +48,8 @@ gulp.task('js', function() {
 gulp.task('mxgraph', function() {
     return gulp.src([
         './node_modules/mxgraph/javascript/src/**/*',
-        './NearBeach/build/whiteboard/**/*',
-        './NearBeach/build/whiteboard/*'
+        './NearBeach/build_static/whiteboard/**/*',
+        './NearBeach/build_static/whiteboard/*'
     ])
     .pipe(gulp.dest('./NearBeach/static/NearBeach/whiteboard'))
     .pipe(notify({ message: 'Implemented Whiteboard module from mxgraph' }));
@@ -58,7 +58,7 @@ gulp.task('mxgraph', function() {
 // Styles
 gulp.task('styles', function() {
     return gulp.src([
-            './NearBeach/build/css/*.css',
+            './NearBeach/build_static/css/*.css',
             './node_modules/jquery-datetimepicker/jquery.datetimepicker.css',
         ])
         .pipe(concat('NearBeach.css'))

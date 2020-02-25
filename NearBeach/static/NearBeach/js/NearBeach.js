@@ -442,9 +442,7 @@ function load_document_tree_list(location_id, destination, folder_id) {
 
 
 function new_folder(location_id,destination,folder_id) {
-    console.debug("Sending in new folder information");
     //Send data to the database
-
     $.ajaxSetup({
         beforeSend: function (xhr, settings) {
             if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
@@ -490,6 +488,7 @@ function new_whiteboard(location_id,destination,folder_id) {
     //Get form data
     var form_data = new FormData($('#new_whiteboard_form')[0]);
 
+    //Send data
     $.ajax({
         url: '/new_whiteboard/' + location_id + '/' + destination + '/' + folder_id + '/',
         data: form_data,
@@ -498,15 +497,13 @@ function new_whiteboard(location_id,destination,folder_id) {
         type: 'POST',
         success: function(data) {
             $("#new_whiteboard_modal").modal("hide"); //Remove the modal
-            if ((folder_id == null) || (folder_id == 0)) {
-                load_document_tree_list(location_id, destination);
-            } else {
-                load_document_tree_list(location_id, destination, folder_id);
-            }
+
+            //Have to reload this component
+            console.log("Data: ",data);
         },
         error: function() {
             $("#new_whiteboard_modal").modal("hide"); //Remove the modal
-            alert("Sorry, there was an error creating the new whiteboard");
+            alert("Sorry, there was an error uploading the document");
         }
     });
 }
@@ -1352,8 +1349,8 @@ function timesheet_setup() {
 
 
     $("#id_timesheet_start_time").datetimepicker({
-        'scrollDefault': 'now',
         scrollInput: false,
+        'scrollDefault': 'now',
         datepicker:false,
         format:'H:i',
         allowTimes: [
@@ -1395,6 +1392,7 @@ function timesheet_setup() {
     });
 
     $("#id_timesheet_end_time").datetimepicker({
+        scrollInput: false,
         'scrollDefault': 'now',
         datepicker:false,
         format:'H:i',
