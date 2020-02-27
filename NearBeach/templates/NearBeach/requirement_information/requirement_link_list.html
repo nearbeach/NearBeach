@@ -84,7 +84,7 @@
                 <td><a href="{% url 'organisation_information' item.organisation_id.organisation_id %}">Organisations - {{ item.organisation_id.organisation_id }}</a></td>
                 <td>{{ item.organisation_id.organisation_name }}</td>
             {% endif %}
-            {% if requirement_permission == 4 or requirement_link_permission %}
+            {% if requirement_permission == 4 %}
                 <td><a href="javascript:void(0)" onclick="requirement_item_link_remove({{ item.requirement_item_link_id }})">Delete</a></td>
             {% endif %}
         </tr>

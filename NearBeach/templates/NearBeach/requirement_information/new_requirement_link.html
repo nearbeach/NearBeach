@@ -23,7 +23,7 @@
     Sorry - no projects can be linked
 {% endif %}
 
-{% if requairement_id %}
+{% if requirement_id %}
     <h5 class="mt-4">Task Links - or <a href="{% url 'new_task' requirement_id 'requirement' %}">create a new task</a></h5>
 {% elif requirement_item_id %}
     <h5 class="mt-4">Task Links - or <a href="{% url 'new_task' requirement_item_id 'requirement_item' %}">create a new task</a></h5>

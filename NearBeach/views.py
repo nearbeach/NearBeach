@@ -6145,9 +6145,9 @@ def new_project(request, location_id='', destination=''):
                 object_assignment_save.save()
             elif destination == "requirement":
                 requirement_instance = requirement.objects.get(requirement_id=location_id)
-                project_requirement_save = requirement_link(
+                project_requirement_save = object_assignment(
                     project_id=submit_project,
-                    requirement_id=requirement_instance.requirement_id,
+                    requirement_id=requirement_instance,
                     change_user=request.user
                 )
                 project_requirement_save.save()
@@ -6701,6 +6701,15 @@ def new_task(request, location_id='', destination=''):
                     change_user=request.user,
                 )
                 object_assignment_submit.save()
+            elif destination == "requirement_item":
+                #Requirement Item Links
+                requirement_item_instance = requirement_item.objects.get(requirement_item_id=location_id)
+                object_assignment_submit = object_assignment(
+                    task_id=submit_task,
+                    requirement_item_id=requirement_item_instance,
+                    change_user=request.user,
+                )
+                object_assignment_submit.save()
 
 
             """
@@ -6714,6 +6723,8 @@ def new_task(request, location_id='', destination=''):
                 return HttpResponseRedirect(reverse(opportunity_information, args={location_id}))
             elif destination == "requirement":
                 return HttpResponseRedirect(reverse('requirement_information', args={location_id}))
+            elif destination == "requirement_item":
+                return HttpResponseRedirect(reverse('requirement_item_information', args={location_id}))
             else:
                 return HttpResponseRedirect(reverse(task_information, args={submit_task.pk}))
                 # Lets go back to the customer
@@ -6760,8 +6771,16 @@ def new_task(request, location_id='', destination=''):
             organisation_id = requirement_instance.organisation_id
             customer_id = None
             opportunity_id = None
+        elif destination == "requirement_item":
+            requirement_instance = requirement.objects.get(
+                requirement_id__in=requirement_item.objects.filter(
+                    requirement_item_id=location_id
+                ).values('requirement_id')
+            )
 
-
+            organisation_id = requirement_instance.organisation_id
+            customer_id = None
+            opportunity_id = None
 
         # Loaed the template
         t = loader.get_template('NearBeach/new_task.html')

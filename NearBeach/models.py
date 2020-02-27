@@ -3087,7 +3087,7 @@ class requirement_item(models.Model):
     class Meta:
         db_table = "requirement_item"
 
-
+"""
 class requirement_item_link(models.Model):
     requirement_item_link_id = models.AutoField(primary_key=True)
     requirement_item = models.ForeignKey(
@@ -3174,7 +3174,7 @@ class requirement_link(models.Model):
 
     class Meta:
         db_table = "requirement_link"
-
+"""
 
 """
 class requirement_permission(models.Model):
