@@ -6152,10 +6152,10 @@ def new_project(request, location_id='', destination=''):
                 )
                 project_requirement_save.save()
             elif destination == "requirement_item":
-                requirement_item_instance = requirement_link.objects.get(requirement_item_id=location_id)
+                requirement_item_instance = requirement_item.objects.get(requirement_item_id=location_id)
                 project_requirement_item_save = object_assignment(
                     project_id=submit_project,
-                    requirement_item_id=requirement_item_instance.requirement_item_id,
+                    requirement_item_id=requirement_item_instance,
                     change_user=request.user
                 )
                 project_requirement_item_save.save()

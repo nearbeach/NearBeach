@@ -357,6 +357,7 @@ def new_requirement_item_link(request,requirement_item_id,location_id="",destina
 
     # Context
     c = {
+        'requirement_item_id': requirement_item_id,
         'project_results': project_results,
         'task_results': task_results,
     }
@@ -406,9 +407,15 @@ def new_requirement_link(request,requirement_id,location_id="",destination=""):
         if location_id == "" or destination == "":
             return HttpResponseBadRequest("Sorry - those fields were blank")
 
+        """
         requirement_link_submit = requirement_link(
             change_user=request.user,
             requirement_id=requirement_id,
+        )
+        """
+        object_assignment_submit = object_assignment(
+            change_user=request.user,
+            requirement_id=requirement.objects.get(requirement_id=requirement_id),
         )
         if destination == "project":
             """
@@ -417,9 +424,7 @@ def new_requirement_link(request,requirement_id,location_id="",destination=""):
             3. Prepare the object_link and object_description
             """
             project_instance = project.objects.get(project_id=location_id)
-            requirement_link_submit.project_id = project_instance
-            object_link = "Project - " + str(location_id)
-            object_description = project_instance.project_name
+            object_assignment_submit.project_id = project_instance
         elif destination == "task":
             """
             1. Get the task instance
@@ -427,9 +432,7 @@ def new_requirement_link(request,requirement_id,location_id="",destination=""):
             3. Prepare the object_link and object_description
             """
             task_instance = task.objects.get(task_id=location_id)
-            requirement_link_submit.task_id = task_instance
-            object_link = "Task - " + str(location_id)
-            object_description = task_instance.task_short_description
+            object_assignment_submit.task_id = task_instance
         elif destination == "opportunity":
             """
             1. Get the opportunity instance
@@ -437,27 +440,21 @@ def new_requirement_link(request,requirement_id,location_id="",destination=""):
             3. Prepare the object_link and object_description
             """
             opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
-            requirement_link_submit.opportunity_id = opportunity_instance
-            object_link = "Opp - " + str(location_id)
-            object_description = opportunity_instance.opportunity_name
+            object_assignment_submit.opportunity_id = opportunity_instance
 
 
         # Save
-        requirement_link_submit.save()
+        object_assignment_submit.save()
 
         # Send back the JSON
-        return JsonResponse({
-            'location_id': location_id,
-            'destination': destination,
-            'object_link': object_link,
-            'object_description': object_description,
-        })
+        return JsonResponse({});
 
 
     # Get required data
+    #WHAT IS GOING ON HERE!!!
     project_results = project.objects.filter(
         is_deleted="FALSE",
-        project_status__in={'New','Open'},
+        #project_status__in={'New','Open'},
         project_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             group_id__in=user_group.objects.filter(
@@ -466,7 +463,7 @@ def new_requirement_link(request,requirement_id,location_id="",destination=""):
             ).values('group_id')
         ).values('project_id')
     ).exclude(
-        project_id__in=requirement_link.objects.filter(
+        project_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             project_id__isnull=False,
             requirement_id=requirement_id,
@@ -484,7 +481,7 @@ def new_requirement_link(request,requirement_id,location_id="",destination=""):
             ).values('group_id')
         ).values('task_id')
     ).exclude(
-        task_id__in=requirement_link.objects.filter(
+        task_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             task_id__isnull=False,
             requirement_id=requirement_id,
@@ -511,7 +508,7 @@ def new_requirement_link(request,requirement_id,location_id="",destination=""):
             '8', # negotation/review
         }
     ).exclude(
-        opportunity_id__in=requirement_link.objects.filter(
+        opportunity_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             opportunity_id__isnull=False,
             requirement_id=requirement_id,
@@ -808,28 +805,23 @@ def requirement_link_list(request,requirement_id):
     """
     permission_results = return_user_permission_level(request, None, 'requirement_link')
 
-    requirement_item_results = requirement_item.objects.filter(
+    requirement_link_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         requirement_id=requirement_id,
+        #We are not looking at the following linked items
+        requirement_item_id__isnull=True,
+        group_id__isnull=True,
+        kanban_board_id__isnull=True,
+        assigned_user__isnull=True,
     )
-    requirement_link_results = requirement_link.objects.filter(
-        is_deleted="FALSE",
-        requirement_id=requirement_id,
-    ).values(
-        'project_id',
-        'project_id__project_name',
-        'task_id',
-        'task_id__task_short_description',
-        'organisation_id',
-        'organisation_id__organisation_name',
-        'requirement_link_id',
-        'opportunity_id',
-        'opportunity_id__opportunity_name',
-    ).distinct()
 
-    requirement_item_results = requirement_item.objects.filter(
+    requirement_item_results = object_assignment.objects.filter(
         is_deleted="FALSE",
-        requirement_id=requirement_id,
+        requirement_item_id__in=requirement_item.objects.filter(
+            is_deleted="FALSE",
+            requirement_id=requirement_id,
+            requirement_item_id__isnull=False,
+        ).values('requirement_item_id')
     )
 
     t = loader.get_template('NearBeach/requirement_information/requirement_link_list.html')
