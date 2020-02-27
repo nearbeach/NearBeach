@@ -458,7 +458,7 @@ def new_requirement_link(request,requirement_id,location_id="",destination=""):
     # Get required data
     project_results = project.objects.filter(
         is_deleted="FALSE",
-        project_status__in={'New','Open'},
+        project_status__in={'Backlog','Blocked','In Progress','Test/Review'},
         project_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             group_id__in=user_group.objects.filter(
@@ -476,7 +476,7 @@ def new_requirement_link(request,requirement_id,location_id="",destination=""):
 
     task_results = task.objects.filter(
         is_deleted="FALSE",
-        task_status__in={'New','Open'},
+        task_status__in={'Backlog','Blocked','In Progress','Test/Review'},
         task_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             group_id__in=user_group.objects.filter(

@@ -125,7 +125,6 @@ def return_user_permission_level(request, group_list,permission_field):
                     if group_permission < user_groups_results['permission_set__' + row + '__max']:
                         group_permission = user_groups_results['permission_set__' + row + '__max']
 
-
             user_permission_level[row] = group_permission
 
 

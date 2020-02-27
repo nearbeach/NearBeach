@@ -8003,17 +8003,19 @@ def project_information(request, project_id):
 
     requirement_results = requirement.objects.filter(
         is_deleted="FALSE",
-        requirement_id__in=requirement_link.objects.filter(
+        requirement_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             project_id=project_id,
+            requirement_id__isnull=False,
         ).values('requirement_id')
     )
 
     requirement_item_results = requirement_item.objects.filter(
         is_deleted="FALSE",
-        requirement_item_id__in=requirement_item_link.objects.filter(
+        requirement_item_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             project_id=project_id,
+            requirement_item_id__isnull=False,
         ).values('requirement_item_id')
     )
 
@@ -9822,7 +9824,7 @@ def task_information(request, task_id):
 
     requirement_results = requirement.objects.filter(
         is_deleted="FALSE",
-        requirement_id__in=requirement_link.objects.filter(
+        requirement_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             task_id=task_id,
         ).values('requirement_id')
@@ -9830,7 +9832,7 @@ def task_information(request, task_id):
 
     requirement_item_results = requirement_item.objects.filter(
         is_deleted="FALSE",
-        requirement_item_id__in=requirement_item_link.objects.filter(
+        requirement_item_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             task_id=task_id,
         ).values('requirement_item_id')
