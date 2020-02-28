@@ -8054,7 +8054,7 @@ def project_information(request, project_id):
 
     associated_task_results = task.objects.filter(
         is_deleted="FALSE",
-        task_id__in=project_task.objects.filter(
+        task_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             project_id=project_id,
         ).values('task_id')
