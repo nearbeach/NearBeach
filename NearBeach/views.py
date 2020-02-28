@@ -8679,32 +8679,31 @@ def request_for_change_draft(request,rfc_id):
     if not rfc_results.rfc_status == 1: #DRAFT
         return HttpResponseRedirect(reverse('request_for_change_information', args={rfc_id}))
 
+    print("METHOD")
+    print(request.method)
     #If the user is saving the data
     if request.method == "POST":
         form = request_for_change_form(request.POST)
         if form.is_valid():
-            # Get the rfc to update
-            rfc_update = request_for_change.objects.get(rfc_id=rfc_id)
-
             # Update the fields displayed in the form
-            rfc_update.rfc_title = form.cleaned_data['rfc_title']
-            rfc_update.rfc_summary = form.cleaned_data['rfc_summary']
-            rfc_update.rfc_type = form.cleaned_data['rfc_type']
-            rfc_update.rfc_implementation_start_date = form.cleaned_data['rfc_implementation_start_date']
-            rfc_update.rfc_implementation_end_date = form.cleaned_data['rfc_implementation_end_date']
-            rfc_update.rfc_implementation_release_date = form.cleaned_data['rfc_implementation_release_date']
-            rfc_update.rfc_version_number = form.cleaned_data['rfc_version_number']
-            rfc_update.rfc_lead = form.cleaned_data['rfc_lead']
-            rfc_update.rfc_priority = form.cleaned_data['rfc_priority']
-            rfc_update.rfc_risk = form.cleaned_data['rfc_risk']
-            rfc_update.rfc_impact = form.cleaned_data['rfc_impact']
-            rfc_update.rfc_risk_and_impact_analysis = form.cleaned_data['rfc_risk_and_impact_analysis']
-            rfc_update.rfc_implementation_plan = form.cleaned_data['rfc_implementation_plan']
-            rfc_update.rfc_backout_plan = form.cleaned_data['rfc_backout_plan']
-            rfc_update.rfc_test_plan = form.cleaned_data['rfc_test_plan']
+            rfc_results.rfc_title = form.cleaned_data['rfc_title']
+            rfc_results.rfc_summary = form.cleaned_data['rfc_summary']
+            rfc_results.rfc_type = form.cleaned_data['rfc_type']
+            rfc_results.rfc_implementation_start_date = form.cleaned_data['rfc_implementation_start_date']
+            rfc_results.rfc_implementation_end_date = form.cleaned_data['rfc_implementation_end_date']
+            rfc_results.rfc_implementation_release_date = form.cleaned_data['rfc_implementation_release_date']
+            rfc_results.rfc_version_number = form.cleaned_data['rfc_version_number']
+            rfc_results.rfc_lead = form.cleaned_data['rfc_lead']
+            rfc_results.rfc_priority = form.cleaned_data['rfc_priority']
+            rfc_results.rfc_risk = form.cleaned_data['rfc_risk']
+            rfc_results.rfc_impact = form.cleaned_data['rfc_impact']
+            rfc_results.rfc_risk_and_impact_analysis = form.cleaned_data['rfc_risk_and_impact_analysis']
+            rfc_results.rfc_implementation_plan = form.cleaned_data['rfc_implementation_plan']
+            rfc_results.rfc_backout_plan = form.cleaned_data['rfc_backout_plan']
+            rfc_results.rfc_test_plan = form.cleaned_data['rfc_test_plan']
 
             # Save
-            rfc_update.save()
+            rfc_results.save()
         else:
             print(form.errors)
 
