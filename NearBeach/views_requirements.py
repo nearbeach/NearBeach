@@ -409,7 +409,7 @@ def new_requirement_link(request,requirement_id,location_id="",destination=""):
 
         object_assignment_submit = object_assignment(
             change_user=request.user,
-            requirement_id=requirement_id,
+            requirement_id=requirement.objects.get(requirement_id=requirement_id),
         )
         if destination == "project":
             """
