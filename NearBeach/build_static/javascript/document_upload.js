@@ -181,7 +181,7 @@ function new_whiteboard(location_id,destination,folder_id) {
             $("#new_whiteboard_modal").modal("hide"); //Remove the modal
 
             //Have to reload this component
-            console.log("Data: ",data);
+            load_document_tree_list(location_id, destination);
         },
         error: function() {
             $("#new_whiteboard_modal").modal("hide"); //Remove the modal
