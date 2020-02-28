@@ -8141,7 +8141,7 @@ def project_readonly(request, project_id):
         ).values('email_content_id')
     )
 
-    associated_tasks_results = project_task.objects.filter(
+    associated_tasks_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         project_id=project_id,
     )
@@ -9827,7 +9827,7 @@ def task_information(request, task_id):
 
     associated_project_results = project.objects.filter(
         is_deleted="FALSE",
-        project_id__in=project_task.objects.filter(
+        project_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             task_id=task_id,
         ).values('project_id')
@@ -9921,13 +9921,13 @@ def task_readonly(request,task_id):
 
     requirement_item_results = requirement_item.objects.filter(
         is_deleted="FALSE",
-        requirement_item_id__in=requirement_item_link.objects.filter(
+        requirement_item_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             task_id=task_id,
         ).values('requirement_item_id')
     )
 
-    associated_project_results = project_task.objects.filter(
+    associated_project_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         task_id=task_id,
     )
