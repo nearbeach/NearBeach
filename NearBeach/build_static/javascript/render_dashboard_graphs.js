@@ -32,15 +32,13 @@ function render_bug_client_bugs(data, target_id) {
         return list_of_bug_status[a] - list_of_bug_status[b];
     });
 
-    console.log("Unique bug status: ", list_of_bug_status);
-
     //Loop through the each bug client, and determine the value of each bug type
     var converted_data = [];
     for (row in data) {
         //Simplify the code
         var client = data[row],
             bug_status = client["bug_status"],
-            basic_object = { 'bug_client_name': row };
+            basic_object = { 'bug_client_name': data[row]['name'] };
 
         //Loop through the unique bug status'
         list_of_bug_status.forEach(function(status) {
@@ -64,8 +62,6 @@ function render_bug_client_bugs(data, target_id) {
         width = 960 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
     //END TEMP VARIABLES//
-
-    console.log("Converted Data: ", converted_data); //The data is now ready :)
 
     //Setup the x and y range
     var x = d3.scaleBand()
@@ -120,7 +116,6 @@ function render_bug_client_bugs(data, target_id) {
         if (d.count == NaN) { d.count = 0; }
     });
 
-    console.log("Converted data after colours: ", converted_data);
 
     //Set the x domain
     x.domain(

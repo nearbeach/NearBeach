@@ -2392,6 +2392,7 @@ class project_stage(models.Model):
         db_table = "project_stage"
 
 
+"""
 class project_task(models.Model):
     project_task_id = models.AutoField(primary_key=True)
     project_id = models.ForeignKey(
@@ -2419,7 +2420,7 @@ class project_task(models.Model):
 
     class Meta:
         db_table = "project_task"
-
+"""
 
 class quote(models.Model):
     quote_id = models.AutoField(primary_key=True)

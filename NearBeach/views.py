@@ -1005,7 +1005,7 @@ def assigned_user_list(request, location_id, destination):
 @login_required(login_url='login',redirect_field_name="")
 def associate(request, project_id, task_id, project_or_task):
     # Submit the data
-    submit_result = project_task(
+    submit_result = object_assignment(
         project_id_id=project_id,
         task_id_id=task_id,
         change_user=request.user,
@@ -6710,6 +6710,14 @@ def new_task(request, location_id='', destination=''):
                     change_user=request.user,
                 )
                 object_assignment_submit.save()
+            elif destination == "project":
+                project_instance = project.objects.get(project_id=location_id)
+                object_assignment_submit = object_assignment(
+                    task_id=submit_task,
+                    project_id=project_instance,
+                    change_user=request.user,
+                )
+                object_assignment_submit.save()
 
 
             """
@@ -6725,6 +6733,8 @@ def new_task(request, location_id='', destination=''):
                 return HttpResponseRedirect(reverse('requirement_information', args={location_id}))
             elif destination == "requirement_item":
                 return HttpResponseRedirect(reverse('requirement_item_information', args={location_id}))
+            elif destination == "project":
+                return HttpResponseRedirect(reverse('project_information', args={location_id}))
             else:
                 return HttpResponseRedirect(reverse(task_information, args={submit_task.pk}))
                 # Lets go back to the customer
@@ -6758,6 +6768,12 @@ def new_task(request, location_id='', destination=''):
 
             organisation_id = customer.organisation_id
             customer_id = customer.customer_id
+            opportunity_id = None
+        elif destination == "project":
+            project_instance = project.objects.get(project_id=location_id)
+
+            organisation_id = project_instance.organisation_id
+            customer_id = project_instance.customer_id
             opportunity_id = None
         elif destination == "opportunity":
             opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
