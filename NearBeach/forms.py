@@ -4161,6 +4161,8 @@ class requirement_information_form(ModelForm):
         exclude=[
             'change_user',
             'is_deleted',
+            'requirement_story_point_min',
+            'requirement_story_point_max',
         ]
 
 
