@@ -2138,7 +2138,7 @@ class new_line_item_form(ModelForm):
             if product_turple == '':
                 product_turple = product.product_id, product.product_name
             else:
-                product_turple = product_turple, {product.product_id, product.product_name},
+                product_turple = product_turple, (product.product_id, product.product_name),
 
         print("PRODUCT TURPLE")
         print(product_turple)
@@ -2147,7 +2147,7 @@ class new_line_item_form(ModelForm):
             if service_turple == '':
                 service_turple = service.product_id, service.product_name,
             else:
-                service_turple = service_turple, {service.product_id, service.product_name},
+                service_turple = service_turple, (service.product_id, service.product_name),
 
         print("SERVICE TURPLE")
         print(service_turple)
@@ -2158,11 +2158,11 @@ class new_line_item_form(ModelForm):
         """
         if not product_turple == '' and not service_turple == '':
             #product_or_service_choices = (("------","Please select a product or service"),("Products", ((product_turple))), ("Services", ((service_turple)),))
-            product_or_service_choices = (("------", "Please select a product or service"), ("Products", {product_turple}),("Services", {service_turple},))
+            product_or_service_choices = (("------", "Please select a product or service"), ("Products", (product_turple,)),("Services", ((service_turple,)),))
         elif not product_turple == '':
-            product_or_service_choices = (("------","Please select a product"),("Products", {product_turple}),)
+            product_or_service_choices = (("------","Please select a product"),("Products", (product_turple,)),)
         elif not service_turple == '':
-            product_or_service_choices = (("------","Please select a service"),("Services", {service_turple}),)
+            product_or_service_choices = (("------","Please select a service"),("Services", (service_turple,)),)
         else:
             product_or_service_choices = (("------", "Please select a product or service"))
 
