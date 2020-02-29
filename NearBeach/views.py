@@ -32,7 +32,7 @@ from docx.shared import Cm, Inches
 from bs4 import BeautifulSoup
 
 #import python modules
-import datetime, json, simplejson, urllib.parse, pypandoc, requests, random
+import datetime, json, simplejson, urllib.parse, pypandoc, requests, random, time
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -1005,7 +1005,7 @@ def assigned_user_list(request, location_id, destination):
 @login_required(login_url='login',redirect_field_name="")
 def associate(request, project_id, task_id, project_or_task):
     # Submit the data
-    submit_result = project_task(
+    submit_result = object_assignment(
         project_id_id=project_id,
         task_id_id=task_id,
         change_user=request.user,
@@ -1687,6 +1687,12 @@ def change_task_edit(request,change_task_id):
             change_task_results.change_task_required_by  = form.cleaned_data['change_task_required_by']
             change_task_results.change_user  = request.user
 
+            # Get the delta between the two times and save as seconds
+            start_date = form.cleaned_data['change_task_start_date']
+            end_date = form.cleaned_data['change_task_end_date']
+            change_task_results.change_task_seconds = (end_date - start_date).total_seconds()
+
+
             change_task_results.save()
 
             #Go to the RFC connected
@@ -1829,6 +1835,19 @@ def change_task_list(request,rfc_id):
         'change_task_qa_user',
     )
 
+    # Get the amount of seconds each task will take
+    change_task_seconds = change_task_results.aggregate(Sum('change_task_seconds'))
+
+    #Turn into friendly time
+    if not change_task_seconds['change_task_seconds__sum'] == None:
+        change_task_seconds = datetime\
+            .datetime\
+            .fromtimestamp(change_task_seconds['change_task_seconds__sum'])\
+            .strftime("Days - %d, Hours - %H, Minutes - %m")
+    else:
+        change_task_seconds = "Please enter a change task"
+
+
     assigned_user_results = User.objects.filter(
         is_active=True,
         id__in=change_task_results.values('change_task_assigned_user')
@@ -1851,6 +1870,7 @@ def change_task_list(request,rfc_id):
         'rfc_status': rfc_status,
         'assigned_user_results': assigned_user_results,
         'qa_user_results': qa_user_results,
+        'change_task_seconds': change_task_seconds,
     }
 
     return HttpResponse(t.render(c,request))
@@ -5357,6 +5377,11 @@ def new_change_task(request,rfc_id):
         """
         form = new_change_task_form(request.POST,rfc_id=rfc_id)
         if form.is_valid():
+            # Get the delta between the two times and save as seconds
+            start_date = form.cleaned_data['change_task_start_date']
+            end_date = form.cleaned_data['change_task_end_date']
+            deltaSeconds = (end_date - start_date).total_seconds()
+
             #Save the data
             change_task_submit = change_task(
                 change_task_title=form.cleaned_data['change_task_title'],
@@ -5368,7 +5393,8 @@ def new_change_task(request,rfc_id):
                 change_task_required_by=form.cleaned_data['change_task_required_by'],
                 change_user=request.user,
                 change_task_status=1,
-                request_for_change=request_for_change.objects.get(rfc_id=rfc_id)
+                request_for_change=request_for_change.objects.get(rfc_id=rfc_id),
+                change_task_seconds = deltaSeconds,
             )
             change_task_submit.save()
 
@@ -6017,6 +6043,7 @@ def new_permission_set(request):
                 task=form.cleaned_data['task'],
                 tax=form.cleaned_data['tax'],
                 template=form.cleaned_data['template'],
+                whiteboard=form.cleaned_data['whiteboard'],
                 document=form.cleaned_data['document'],
                 contact_history=form.cleaned_data['contact_history'],
                 kanban_comment=form.cleaned_data['kanban_comment'],
@@ -6118,17 +6145,17 @@ def new_project(request, location_id='', destination=''):
                 object_assignment_save.save()
             elif destination == "requirement":
                 requirement_instance = requirement.objects.get(requirement_id=location_id)
-                project_requirement_save = requirement_link(
+                project_requirement_save = object_assignment(
                     project_id=submit_project,
-                    requirement_id=requirement_instance.requirement_id,
+                    requirement_id=requirement_instance,
                     change_user=request.user
                 )
                 project_requirement_save.save()
             elif destination == "requirement_item":
-                requirement_item_instance = requirement_link.objects.get(requirement_item_id=location_id)
+                requirement_item_instance = requirement_item.objects.get(requirement_item_id=location_id)
                 project_requirement_item_save = object_assignment(
                     project_id=submit_project,
-                    requirement_item_id=requirement_item_instance.requirement_item_id,
+                    requirement_item_id=requirement_item_instance,
                     change_user=request.user
                 )
                 project_requirement_item_save.save()
@@ -6674,6 +6701,23 @@ def new_task(request, location_id='', destination=''):
                     change_user=request.user,
                 )
                 object_assignment_submit.save()
+            elif destination == "requirement_item":
+                #Requirement Item Links
+                requirement_item_instance = requirement_item.objects.get(requirement_item_id=location_id)
+                object_assignment_submit = object_assignment(
+                    task_id=submit_task,
+                    requirement_item_id=requirement_item_instance,
+                    change_user=request.user,
+                )
+                object_assignment_submit.save()
+            elif destination == "project":
+                project_instance = project.objects.get(project_id=location_id)
+                object_assignment_submit = object_assignment(
+                    task_id=submit_task,
+                    project_id=project_instance,
+                    change_user=request.user,
+                )
+                object_assignment_submit.save()
 
 
             """
@@ -6687,6 +6731,10 @@ def new_task(request, location_id='', destination=''):
                 return HttpResponseRedirect(reverse(opportunity_information, args={location_id}))
             elif destination == "requirement":
                 return HttpResponseRedirect(reverse('requirement_information', args={location_id}))
+            elif destination == "requirement_item":
+                return HttpResponseRedirect(reverse('requirement_item_information', args={location_id}))
+            elif destination == "project":
+                return HttpResponseRedirect(reverse('project_information', args={location_id}))
             else:
                 return HttpResponseRedirect(reverse(task_information, args={submit_task.pk}))
                 # Lets go back to the customer
@@ -6721,6 +6769,12 @@ def new_task(request, location_id='', destination=''):
             organisation_id = customer.organisation_id
             customer_id = customer.customer_id
             opportunity_id = None
+        elif destination == "project":
+            project_instance = project.objects.get(project_id=location_id)
+
+            organisation_id = project_instance.organisation_id
+            customer_id = project_instance.customer_id
+            opportunity_id = None
         elif destination == "opportunity":
             opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
 
@@ -6733,8 +6787,16 @@ def new_task(request, location_id='', destination=''):
             organisation_id = requirement_instance.organisation_id
             customer_id = None
             opportunity_id = None
+        elif destination == "requirement_item":
+            requirement_instance = requirement.objects.get(
+                requirement_id__in=requirement_item.objects.filter(
+                    requirement_item_id=location_id
+                ).values('requirement_id')
+            )
 
-
+            organisation_id = requirement_instance.organisation_id
+            customer_id = None
+            opportunity_id = None
 
         # Loaed the template
         t = loader.get_template('NearBeach/new_task.html')
@@ -6759,6 +6821,71 @@ def new_task(request, location_id='', destination=''):
         }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login',redirect_field_name="")
+def new_whiteboard(request, location_id, destination, folder_id):
+    if request.method == "POST":
+        #Check to see if the user has the correct permissions
+        permission_results = return_user_permission_level(request, None,'whiteboard')
+
+        if permission_results['whiteboard'] <= 2:
+            return HttpResponseRedirect(reverse('permission_denied'))
+
+        #Get form data
+        form = new_whiteboard_form(request.POST)
+        if form.is_valid():
+            #User has correct permissions. Lets start making a whiteboard module
+            whiteboard_submit = whiteboard(
+                whiteboard_title=form.cleaned_data['whiteboard_name'],
+                whiteboard_xml="""
+                    <mxGraphModel><root>
+                        <Workflow label="%s" description="" href="" id="0"><mxCell/></Workflow>
+                        <Layer label="Default Layer" id="1"><mxCell parent="0"/></Layer>
+                    </root></mxGraphModel>
+                """ % form.cleaned_data['whiteboard_name'],
+                change_user=request.user,
+            )
+            whiteboard_submit.save()
+
+            #Add whiteboard to document table
+            document_submit = document(
+                document_description=form.cleaned_data['whiteboard_name'],
+                whiteboard=whiteboard_submit,
+                change_user=request.user
+            )
+            document_submit.save()
+
+            #Add document permissions
+            document_permission_submit = document_permission(
+                document_key=document_submit,
+                change_user=request.user,
+            )
+
+            if destination == "project":
+                document_permission_submit.project_id = project.objects.get(project_id=location_id)
+            elif destination == "task":
+                document_permission_submit.task_id = task.objects.get(task_id=location_id)
+            elif destination == "requirement":
+                document_permission_submit.requirement_id = requirement.objects.get(requirement_id=location_id)
+            elif destination == "requirement_item":
+                document_permission_submit.requirement_item_id = requirement_item.objects.get(requirement_item_id=location_id)
+            elif destination == "opportunity":
+                document_permission_submit.opportunity_id = opportunity.objects.get(opportunity_id=location_id)
+
+            ##ADD CODE FOR OTHER OBJECTS##
+
+            document_permission_submit.save()
+
+            #Return blank page
+            t = loader.get_template('NearBeach/blank.html')
+            c = {}
+            return HttpResponse(t.render(c,request))
+
+        else:
+            print(form.errors)
+    else:
+        return HttpResponseBadRequest("Sorry, this has to be through post")
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -7502,6 +7629,7 @@ def permission_set_information(request,permission_set_id):
             permission_set_update.task = form.cleaned_data['task']
             permission_set_update.tax = form.cleaned_data['tax']
             permission_set_update.template = form.cleaned_data['template']
+            permission_set_update.whiteboard = form.cleaned_data['whiteboard']
             permission_set_update.document = form.cleaned_data['document']
             permission_set_update.contact_history = form.cleaned_data['contact_history']
             permission_set_update.kanban_comment = form.cleaned_data['kanban_comment']
@@ -7550,6 +7678,7 @@ def permission_set_information(request,permission_set_id):
                 'task': permission_set_results.task,
                 'tax': permission_set_results.tax,
                 'template': permission_set_results.template,
+                'whiteboard': permission_set_results.whiteboard,
                 'document': permission_set_results.document,
                 'contact_history': permission_set_results.contact_history,
                 'kanban_comment': permission_set_results.kanban_comment,
@@ -7890,17 +8019,19 @@ def project_information(request, project_id):
 
     requirement_results = requirement.objects.filter(
         is_deleted="FALSE",
-        requirement_id__in=requirement_link.objects.filter(
+        requirement_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             project_id=project_id,
+            requirement_id__isnull=False,
         ).values('requirement_id')
     )
 
     requirement_item_results = requirement_item.objects.filter(
         is_deleted="FALSE",
-        requirement_item_id__in=requirement_item_link.objects.filter(
+        requirement_item_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             project_id=project_id,
+            requirement_item_id__isnull=False,
         ).values('requirement_item_id')
     )
 
@@ -7923,7 +8054,7 @@ def project_information(request, project_id):
 
     associated_task_results = task.objects.filter(
         is_deleted="FALSE",
-        task_id__in=project_task.objects.filter(
+        task_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             project_id=project_id,
         ).values('task_id')
@@ -8010,7 +8141,7 @@ def project_readonly(request, project_id):
         ).values('email_content_id')
     )
 
-    associated_tasks_results = project_task.objects.filter(
+    associated_tasks_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         project_id=project_id,
     )
@@ -8547,6 +8678,34 @@ def request_for_change_draft(request,rfc_id):
     #Check to make sure RFC is in draft
     if not rfc_results.rfc_status == 1: #DRAFT
         return HttpResponseRedirect(reverse('request_for_change_information', args={rfc_id}))
+
+    print("METHOD")
+    print(request.method)
+    #If the user is saving the data
+    if request.method == "POST":
+        form = request_for_change_form(request.POST)
+        if form.is_valid():
+            # Update the fields displayed in the form
+            rfc_results.rfc_title = form.cleaned_data['rfc_title']
+            rfc_results.rfc_summary = form.cleaned_data['rfc_summary']
+            rfc_results.rfc_type = form.cleaned_data['rfc_type']
+            rfc_results.rfc_implementation_start_date = form.cleaned_data['rfc_implementation_start_date']
+            rfc_results.rfc_implementation_end_date = form.cleaned_data['rfc_implementation_end_date']
+            rfc_results.rfc_implementation_release_date = form.cleaned_data['rfc_implementation_release_date']
+            rfc_results.rfc_version_number = form.cleaned_data['rfc_version_number']
+            rfc_results.rfc_lead = form.cleaned_data['rfc_lead']
+            rfc_results.rfc_priority = form.cleaned_data['rfc_priority']
+            rfc_results.rfc_risk = form.cleaned_data['rfc_risk']
+            rfc_results.rfc_impact = form.cleaned_data['rfc_impact']
+            rfc_results.rfc_risk_and_impact_analysis = form.cleaned_data['rfc_risk_and_impact_analysis']
+            rfc_results.rfc_implementation_plan = form.cleaned_data['rfc_implementation_plan']
+            rfc_results.rfc_backout_plan = form.cleaned_data['rfc_backout_plan']
+            rfc_results.rfc_test_plan = form.cleaned_data['rfc_test_plan']
+
+            # Save
+            rfc_results.save()
+        else:
+            print(form.errors)
 
     organisation_stakeholders = organisation.objects.filter(
         is_deleted="FALSE",
@@ -9665,22 +9824,13 @@ def task_information(request, task_id):
         'task_end_date': task_results.task_end_date,
     }
 
-    # Query the database for associated project information
-    cursor = connection.cursor()
-    cursor.execute("""
-		SELECT 
-		  project.project_id
-		, project.project_name
-		, project.project_end_date
-		, project.project_status
-		FROM project
-			JOIN project_task
-			ON project.project_id = project_task.project_id
-			AND project_task.is_deleted = 'FALSE'
-			AND project_task.task_id = %s
-		""", [task_id])
-    associated_project_results = namedtuplefetchall(cursor)
-
+    associated_project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_id__in=object_assignment.objects.filter(
+            is_deleted="FALSE",
+            task_id=task_id,
+        ).values('project_id')
+    )
 
     quote_results = quote.objects.filter(
         is_deleted="FALSE",
@@ -9689,7 +9839,7 @@ def task_information(request, task_id):
 
     requirement_results = requirement.objects.filter(
         is_deleted="FALSE",
-        requirement_id__in=requirement_link.objects.filter(
+        requirement_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             task_id=task_id,
         ).values('requirement_id')
@@ -9697,7 +9847,7 @@ def task_information(request, task_id):
 
     requirement_item_results = requirement_item.objects.filter(
         is_deleted="FALSE",
-        requirement_item_id__in=requirement_item_link.objects.filter(
+        requirement_item_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             task_id=task_id,
         ).values('requirement_item_id')
@@ -9770,13 +9920,13 @@ def task_readonly(request,task_id):
 
     requirement_item_results = requirement_item.objects.filter(
         is_deleted="FALSE",
-        requirement_item_id__in=requirement_item_link.objects.filter(
+        requirement_item_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             task_id=task_id,
         ).values('requirement_item_id')
     )
 
-    associated_project_results = project_task.objects.filter(
+    associated_project_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         task_id=task_id,
     )

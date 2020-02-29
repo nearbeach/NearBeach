@@ -1,6 +1,6 @@
 {% load static %}
 <mxDefaultToolbar>
-	<add as="save" action="save" icon="{% static 'NearBeach/whiteboard/images/save.gif' %}"/>
+    <add as="save" action="save" icon="{% static 'NearBeach/whiteboard/images/save.gif' %}"/>
 	<add as="show" action="show" icon="{% static 'NearBeach/whiteboard/images/preview.gif' %}"/>
 	<add as="print" action="print" icon="{% static 'NearBeach/whiteboard/images/print.gif' %}"/>
 	<add as="exportImage" action="exportImage" icon="{% static 'NearBeach/whiteboard/images/image.gif' %}"/>

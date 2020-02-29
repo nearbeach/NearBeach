@@ -15,7 +15,7 @@
         <tr>
             {% if not link.project_id == None %}
                 <td>
-                    <a href="{% url 'project_information' link.project_id %}">Project - {{ link.project_id }}</a>
+                    <a href="{% url 'project_information' link.project_id.project_id %}">Project - {{ link.project_id }}</a>
                 </td>
                 <td>
                     {{ link.project_id__project_name }}
@@ -23,7 +23,7 @@
 
             {% elif not link.task_id == None %}
                 <td>
-                    <a href="{% url 'task_information' link.task_id %}">Task - {{ link.task_id }}</a>
+                    <a href="{% url 'task_information' link.task_id.task_id %}">Task - {{ link.task_id }}</a>
                 </td>
                 <td>
                     {{ link.task_id__task_short_description }}
@@ -32,20 +32,20 @@
 
             {% elif not link.organisations_id == None %}
                 <td>
-                    <a href="{% url 'organisation_information' link.organisation_id %}">Organisations - {{ link.organisation_id }}</a>
+                    <a href="{% url 'organisation_information' link.organisation_id.organisation_id %}">Organisations - {{ link.organisation_id }}</a>
                 </td>
                 <td>
                     {{ link.organisation_id__organisation_name }}
                 </td>
             {% elif not link.opportunity_id == None %}
                 <td>
-                    <a href="{% url 'opportunity_information' link.opportunity_id %}">Opportunity - {{ link.opportunity_id }}</a>
+                    <a href="{% url 'opportunity_information' link.opportunity_id.opportunity_id %}">Opportunity - {{ link.opportunity_id }}</a>
                 </td>
                 <td>
                     {{ link.opportunity_id__opportunity_name }}
                 </td>
             {% else %}
-                <td>ERROR</td>
+                <td>ERROR {{ link }}</td>
                 <td>Error with link {{ link.requirement_link_id }}<br/></td>
             {% endif %}
             {% if requirement_permission == 4 or requirement_link_permission == 4 %}
@@ -70,28 +70,23 @@
         </tr>
     </thead>
     {% for item in requirement_item_results %}
-        {% with links=item.requirement_item_link_set.all|filter_requirement_items:0 %}
-            {% for link in links %}
-                <tr>
-                    <td><a href="{% url 'requirement_item_information' item.requirement_item_id %}">ITM{{ item.requirement_item_id }}</a></td>
-                    {% if not link.project_id == None %}
-                        <td><a href="{% url 'project_information' link.project_id.project_id %}">Project - {{ link.project_id.project_id }}</a></td>
-                        <td>{{ link.project_id.project_name }}</td>
-                    {% elif not link.task_id == None %}
-                        <td><a href="{% url 'task_information' link.task_id.task_id %}">Task - {{ link.task_id.task_id }}</a></td>
-                        <td>{{ link.task_id.task_short_description }}</td>
-                    {% elif not link.organisation_id == None %}
-                        <td><a href="{% url 'organisation_information' link.organisation_id.organisation_id %}">Organisations - {{ link.organisation_id.organisation_id }}</a></td>
-                        <td>{{ link.organisation_id.organisation_name }}</td>
-                    {% else %}
-                        <td>ERROR</td>
-                        <td>Error with link {{ link.requirement_links_id }}</td>
-                    {% endif %}
-                    {% if requirement_permission == 4 or requirement_link_permission %}
-                        <td><a href="javascript:void(0)" onclick="requirement_item_link_remove({{ link.requirement_item_link_id }})">Delete</a></td>
-                    {% endif %}
-                </tr>
-            {% endfor %}
-        {% endwith %}
+        <tr>
+            <td>
+                <a href="{% url 'requirement_item_information' 1 %}">ITM{{ item.requirement_item_id }}</a></td>
+            </td>
+            {% if not item.project_id == None %}
+                <td><a href="{% url 'project_information' item.project_id.project_id %}">Project - {{ item.project_id.project_id }}</a></td>
+                <td>{{ item.project_id.project_name }}</td>
+            {% elif not item.task_id == None %}
+                <td><a href="{% url 'task_information' item.task_id.task_id %}">Task - {{ item.task_id.task_id }}</a></td>
+                <td>{{ item.task_id.task_short_description }}</td>
+            {% elif not item.organisation_id == None %}
+                <td><a href="{% url 'organisation_information' item.organisation_id.organisation_id %}">Organisations - {{ item.organisation_id.organisation_id }}</a></td>
+                <td>{{ item.organisation_id.organisation_name }}</td>
+            {% endif %}
+            {% if requirement_permission == 4 %}
+                <td><a href="javascript:void(0)" onclick="requirement_item_link_remove({{ item.requirement_item_link_id }})">Delete</a></td>
+            {% endif %}
+        </tr>
     {% endfor %}
 </table>

@@ -1,0 +1,18 @@
+/*
+The following CSS helps with accessibility within NearBeach. We do need to tweak some of the colours and shades for
+bootstrap.
+ */
+.btn-primary {
+    /* The following line was recommended by the following issue
+    https://github.com/jhipster/generator-jhipster/issues/7961
+     */
+    background-color: #317AB9; !important;
+}
+
+a {
+    color: #0000B8; !important;
+}
+
+.card {
+    overflow-inline: auto;
+}

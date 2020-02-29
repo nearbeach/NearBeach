@@ -442,8 +442,7 @@ function load_document_tree_list(location_id, destination, folder_id) {
 
 
 function new_folder(location_id,destination,folder_id) {
-    console.debug("Sending in new folder information");
-//Send data to the database
+    //Send data to the database
     $.ajaxSetup({
         beforeSend: function (xhr, settings) {
             if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
@@ -470,7 +469,40 @@ function new_folder(location_id,destination,folder_id) {
             }
         },
         error: function() {
-            $("#document_upload_modal").modal("hide"); //Remove the modal
+            $("#new_folder_modal").modal("hide"); //Remove the modal
+            alert("Sorry, there was an error uploading the document");
+        }
+    });
+}
+
+function new_whiteboard(location_id,destination,folder_id) {
+    //Send data to the database
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    //Get form data
+    var form_data = new FormData($('#new_whiteboard_form')[0]);
+
+    //Send data
+    $.ajax({
+        url: '/new_whiteboard/' + location_id + '/' + destination + '/' + folder_id + '/',
+        data: form_data,
+        processData: false,
+        contentType: false,
+        type: 'POST',
+        success: function(data) {
+            $("#new_whiteboard_modal").modal("hide"); //Remove the modal
+
+            //Have to reload this component
+            load_document_tree_list(location_id, destination);
+        },
+        error: function() {
+            $("#new_whiteboard_modal").modal("hide"); //Remove the modal
             alert("Sorry, there was an error uploading the document");
         }
     });
@@ -882,15 +914,13 @@ function render_bug_client_bugs(data, target_id) {
         return list_of_bug_status[a] - list_of_bug_status[b];
     });
 
-    console.log("Unique bug status: ", list_of_bug_status);
-
     //Loop through the each bug client, and determine the value of each bug type
     var converted_data = [];
     for (row in data) {
         //Simplify the code
         var client = data[row],
             bug_status = client["bug_status"],
-            basic_object = { 'bug_client_name': row };
+            basic_object = { 'bug_client_name': data[row]['name'] };
 
         //Loop through the unique bug status'
         list_of_bug_status.forEach(function(status) {
@@ -914,8 +944,6 @@ function render_bug_client_bugs(data, target_id) {
         width = 960 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
     //END TEMP VARIABLES//
-
-    console.log("Converted Data: ", converted_data); //The data is now ready :)
 
     //Setup the x and y range
     var x = d3.scaleBand()
@@ -970,7 +998,6 @@ function render_bug_client_bugs(data, target_id) {
         if (d.count == NaN) { d.count = 0; }
     });
 
-    console.log("Converted data after colours: ", converted_data);
 
     //Set the x domain
     x.domain(
@@ -1310,12 +1337,14 @@ function load_timesheet(location, destination) {
 function timesheet_setup() {
     /* This function will finish setting up the timesheet - i.e. setup the datetime functions*/
     $( "#id_timesheet_date" ).datetimepicker({
+        scrollInput: false,
         format: "Y-m-d",
         timepicker:false,
     });
 
 
     $("#id_timesheet_start_time").datetimepicker({
+        scrollInput: false,
         'scrollDefault': 'now',
         datepicker:false,
         format:'H:i',
@@ -1358,6 +1387,7 @@ function timesheet_setup() {
     });
 
     $("#id_timesheet_end_time").datetimepicker({
+        scrollInput: false,
         'scrollDefault': 'now',
         datepicker:false,
         format:'H:i',

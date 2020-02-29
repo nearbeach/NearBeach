@@ -13,6 +13,7 @@ The drop down button that will allow a user to add a new
         <!-- Give the user the ability to upload the document -->
         <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#document_upload_modal">New File Upload</a>
         <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#new_url_modal">New File URL Link</a>
+        <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#new_whiteboard_modal">New Whiteboard</a>
         <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#new_folder_modal">New Folder</a>
     </div>
 </div>
@@ -66,7 +67,13 @@ The table that will display the current directory.
         <!-- LOOP FOR DOCUMENTS -->
         {% for row in document_permission_results %}
             <tr>
-                <td><a href="{% url 'private' row.document_key.document_key %}" target="_blank">{{ row.document_key.document_description }}</a></td>
+                <td>
+                    {% if not row.document_key.whiteboard %}
+                        <a href="{% url 'private' row.document_key.document_key %}" target="_blank">{{ row.document_key.document_description }}</a>
+                    {% else %}
+                        <a href="{% url 'whiteboard_information' row.document_key.whiteboard.whiteboard_id %}" target="_blank">{{ row.document_key.whiteboard }}</a>
+                    {% endif %}
+                </td>
                 <td>2018-10-03</td>
                 {% if permission_results %}
                     <td><img src="{% static 'NearBeach/widgets/feather/trash-2.svg' %}" onclick="confirm_delete_document('{{ row.document_key.document_key }}',{{ location_id }},'{{ destination }}', {{ folder_id }})"></td>
@@ -142,6 +149,38 @@ The table that will display the current directory.
     </div>
 </div>
 
+
+<!-- New Whiteboard -->
+<div class="modal" tabindex="-1" role="dialog" id="new_whiteboard_modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- HEADER -->
+            <div class="modal-header">
+                <h5 class="modal-title">New Whiteboard</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- BODY -->
+            <div class="modal-body">
+                <form id="new_whiteboard_form" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="id_whiteboard_name">Whiteboard Name</label>
+                        {{ new_whiteboard_form.whiteboard_name }}
+                    </div>
+                </form>
+            </div>
+
+
+            <!-- FOOTER -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="new_whiteboard({{ location_id }},'{{ destination }}', {{ folder_id }})">New Whiteboard</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <!-- New Folder -->
@@ -240,6 +279,9 @@ The table that will display the current directory.
         e.preventDefault();
     });
     $("#document_url_form").on("submit", function(e){
+        e.preventDefault();
+    });
+    $("#new_whiteboard_form").on('submit', function(e) {
         e.preventDefault();
     });
     $("#new_folder_form").on("submit", function(e){

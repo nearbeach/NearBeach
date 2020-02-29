@@ -2149,17 +2149,25 @@ class new_line_item_form(ModelForm):
             else:
                 service_turple = service_turple, (service.product_id, service.product_name),
 
+        print("SERVICE TURPLE")
+        print(service_turple)
+
         """
         If either one of the product or services' turples are empty, we do not want them to go through to the final 
         choices.
         """
         if not product_turple == '' and not service_turple == '':
-            product_or_service_choices = (("------","Please select a product or service"),("Products", ((product_turple))), ("Services", ((service_turple))),)
+            #product_or_service_choices = (("------","Please select a product or service"),("Products", ((product_turple))), ("Services", ((service_turple)),))
+            product_or_service_choices = (("------", "Please select a product or service"), ("Products", (product_turple,)),("Services", ((service_turple,)),))
         elif not product_turple == '':
-            product_or_service_choices = (("------","Please select a product"),("Products", ((product_turple))),)
+            product_or_service_choices = (("------","Please select a product"),("Products", (product_turple,)),)
         elif not service_turple == '':
-            product_or_service_choices = (("------","Please select a service"),("Services", ((service_turple))),)
+            product_or_service_choices = (("------","Please select a service"),("Services", (service_turple,)),)
+        else:
+            product_or_service_choices = (("------", "Please select a product or service"))
 
+        print("PRODUCT_OR_SERVICE_CHOICES")
+        print(product_or_service_choices)
         self.fields['product_and_service'].choices=product_or_service_choices
 
     #Get the data
@@ -2736,7 +2744,6 @@ class new_requirement_item_form(ModelForm):
     requirement_item_status_results = list_of_requirement_item_status.objects.filter(
         is_deleted='FALSE',
     )
-
     requirement_item_title = forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
@@ -2777,15 +2784,16 @@ class new_requirement_item_form(ModelForm):
             'onChange': 'update_story_point()',
         })
     )
+
     class Meta:
         model = requirement_item
-        exclude = [
-            'requirement_id'
-            'change_user',
-            'is_deleted',
-            'ri_story_point_min',
-            'ri_story_point_max',
-        ]
+        fields = {
+            'requirement_item_title',
+            'requirement_item_scope',
+            'requirement_item_type',
+        }
+
+
 
 
 class new_requirement_form(ModelForm):
@@ -2847,7 +2855,6 @@ class new_requirement_form(ModelForm):
         }),
         required=False,
     )
-
 
     class Meta:
         model=requirement
@@ -2962,6 +2969,16 @@ class new_timesheet_row(forms.Form):
         widget=forms.TimeInput(attrs={
             'class': 'form-control',
         }),
+    )
+
+class new_whiteboard_form(forms.Form):
+    whiteboard_name = forms.CharField(
+        max_length=255,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter Whiteboard Name',
+        })
     )
 
 
@@ -3389,7 +3406,12 @@ class permission_set_form(ModelForm):
             'class': 'form-control',
         })
     )
-
+    whiteboard=forms.ChoiceField(
+        choices=PERMISSION_LEVEL,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
     contact_history=forms.ChoiceField(
         choices=PERMISSION_BOOLEAN,
         widget=forms.Select(attrs={
@@ -4139,6 +4161,8 @@ class requirement_information_form(ModelForm):
         exclude=[
             'change_user',
             'is_deleted',
+            'requirement_story_point_min',
+            'requirement_story_point_max',
         ]
 
 

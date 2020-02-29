@@ -32,6 +32,59 @@
 			return true;
 		};
 
+		//When the user saves :)
+        mxEditor.prototype.urlPost = "{% url 'whiteboard_save' whiteboard_id %}";
+        mxEditor.prototype.save = function(url, linefeed) {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+
+            //Get the xml data
+            var encoder = new mxCodec();
+            var result = encoder.encode(editor.graph.getModel());
+            var xml = mxUtils.getXml(result);
+
+
+            console.log("XML EXTRACT: ",xml);
+
+
+            $.ajax({
+                url: '{% url "whiteboard_save" whiteboard_id %}',
+                data: {
+                    'whiteboard_xml': xml,
+                },
+                datatype: 'XML',
+                type: 'POST',
+                success: function(data) {
+                    console.log("YAY");
+                },
+                error: function() {
+                    console.log("FUCK");
+                }
+            });
+        };
+
+        //Load the data
+        var xml = `{{ whiteboard_results.whiteboard_xml }}`;
+        if (xml != '') {
+            var container = document.getElementById("graph"),
+                graph = new mxGraph(container),
+                diagram = mxUtils.parseXml(xml),
+                codec = new mxCodec(diagram);
+
+
+            console.log("GOT HERE");
+            codec.decode(diagram.documentElement, graph.getModel());
+            graph.fit();
+        }
+
+
+
 		mxConstants.DEFAULT_HOTSPOT = 1;
 
 		// Enables guides
@@ -55,6 +108,9 @@
 
 	<!-- Example code -->
 	<script type="text/javascript">
+        //Global functions
+        var editor;
+
 		function createEditor(config) {
             //Try
             try {
@@ -70,7 +126,7 @@
 
                 mxObjectCodec.allowEval = true;
 				var node = mxUtils.load(config).getDocumentElement();
-                var editor = new mxEditor(node);
+                editor = new mxEditor(node);
 				mxObjectCodec.allowEval = false;
 
 				// Adds active border for panning inside the container
@@ -85,16 +141,18 @@
 				editor.graph.allowAutoPanning = true;
 				editor.graph.timerAutoScroll = true;
 
-				editor.addListener(mxEvent.OPEN, funct);
+				//Load saved data
+                var xml = `{{ whiteboard_results.whiteboard_xml|safe }}`,
+                    doc = mxUtils.parseXml(xml),
+                    codec = new mxCodec(doc);
 
-				// Prints the current root in the window title if the
-				// current root of the graph changes (drilling).
-				editor.addListener(mxEvent.ROOT, funct);
-				funct(editor);
+                //Set XML into the graph
+                if (xml != "") {
+                    codec.decode(doc.documentElement, editor.graph.getModel());
+                }
 
 				// Displays version in statusbar
 				editor.setStatus('mxGraph '+mxClient.VERSION);
-				console.log("GOT TO THE END");
             } catch (e) {
                 new_error(`There was an issue loading the whiteboard: ${e}`);
             }

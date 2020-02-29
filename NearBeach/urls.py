@@ -167,9 +167,10 @@ re_path(r'^new_requirement_item_link/(?P<requirement_item_id>[0-9]+)/$',views_re
 re_path(r'^new_requirement_item_link/(?P<requirement_item_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<destination>["project","task"]+)/$',views_requirements.new_requirement_item_link,name='new_requirement_item_link'),
 re_path(r'^new_requirement_link/(?P<requirement_id>[0-9]+)/$',views_requirements.new_requirement_link,name='new_requirement_link'),
 re_path(r'^new_requirement_link/(?P<requirement_id>[0-9]+)/(?P<location_id>[0-9]+)/(?P<destination>["project","task","opportunity"]+)/$',views_requirements.new_requirement_link,name='new_requirement_link'),
-re_path(r'^new_task/(?P<location_id>[0-9]+)/(?P<destination>["organisation","customer","opportunity","project","requirement"]+)/$', views.new_task, name='new_task'),
+re_path(r'^new_task/(?P<location_id>[0-9]+)/(?P<destination>["organisation","customer","opportunity","project","requirement","requirement_item"]+)/$', views.new_task, name='new_task'),
 re_path(r'^new_task/$', views.new_task, name='new_task'),
 re_path(r'^new_user/$', views_administration.new_user, name='new_user'),
+re_path(r'^new_whiteboard/(?P<location_id>[0-9]+)/(?P<destination>["project","task","requirement","requirement_item","opportunity"]+)/(?P<folder_id>[0-9]+)/', views.new_whiteboard, name='new_whiteboard'),
 re_path(r'^opportunity_connection_list/(?P<opportunity_id>[0-9]+)/', views.opportunity_connection_list,name='opportunity_connection_list'),
 re_path(r'^opportunity_information/(?P<opportunity_id>[0-9]+)/', views.opportunity_information,name='opportunity_information'),
 re_path(r'^opportunity_readonly/(?P<opportunity_id>[0-9]+)/', views.opportunity_readonly,name='opportunity_readonly'),
@@ -247,7 +248,9 @@ re_path(r'^whiteboard_information/common_xml',views_whiteboard.whiteboard_common
 re_path(r'^whiteboard_information/graph_xml',views_whiteboard.whiteboard_graph_xml,name='whiteboard_graph_xml'),
 re_path(r'^whiteboard_information/editor_xml',views_whiteboard.whiteboard_editor_xml,name='whiteboard_editor_xml'),
 re_path(r'^whiteboard_information/toolbar_xml',views_whiteboard.whiteboard_toolbar_xml,name='whiteboard_toolbar_xml'),
+re_path(r'^whiteboard_information/(?P<whiteboard_id>[0-9]+)',views_whiteboard.whiteboard_information,name='whiteboard_information'),
 re_path(r'^whiteboard_information/$',views_whiteboard.whiteboard_information,name='whiteboard_information'),
+re_path(r'^whiteboard_save/(?P<whiteboard_id>[0-9]+)',views_whiteboard.whiteboard_save,name='whiteboard_save'),
 
 
 	path('change-password/', auth_views.PasswordChangeView.as_view()),

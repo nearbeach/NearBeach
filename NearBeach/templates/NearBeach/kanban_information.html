@@ -2,10 +2,6 @@
 {% block content %}
 {% load nearbeach_extras %}
 {% load static %}
-
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
-    <link rel='stylesheet' href='{% static "NearBeach/css/kanban_board.css" %}' />
-
     <h1>{{ kanban_board_results.kanban_board_name }}</h1>
     <a href="javascript:void(0)" onclick="load_kanban_new_card()">New Card</a><br/>
     <a href="javascript:void(0)" onclick="load_kanban_new_link()">Link Project, Task, or Requirement</a><br/>

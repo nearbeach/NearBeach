@@ -191,6 +191,7 @@ def document_tree_list(request, location_id, destination, folder_id=''):
         'document_upload_form': document_upload_form(),
         'document_url_form': document_url_form(),
         'new_folder_form': new_folder_form(),
+        'new_whiteboard_form': new_whiteboard_form(),
         'current_folder_results': current_folder_results,
         'permission_results': permission_results[destination],
     }
