@@ -107,3 +107,6 @@ venv.bak/
 
 # node modules
 node_modules/
+
+# browser stack config
+/tests/browserstatck/config.py
