@@ -6,6 +6,7 @@
                 <td>Project ID</td>
                 <td>Project Name</td>
                 <td>End Date</td>
+                <td>Associated Tasks</td>
             </tr>
         </thead>
 
@@ -20,6 +21,11 @@
                 <td><a href="{% url 'project_information' row.project_id__project_id %}">PRO{{ row.project_id__project_id }}</a></td>
                 <td>{{ row.project_id__project_name }}</td>
                 <td>{{ row.project_id__project_end_date }}</td>
+                <td>
+                    {% for task in object_assignment_results|filter_assigned_task:row.project_id__project_id %}
+                        <a href="{% url 'task_information' task.task_id.task_id %}">TASK{{ task.task_id.task_id }}</a><br/>
+                    {% endfor %}
+                </td>
             </tr>
         {% endfor %}
     </table>

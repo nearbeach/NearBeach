@@ -18,6 +18,11 @@ IS_DELETED_CHOICE = (
     ('FALSE', 'FALSE'),
 )
 
+KANBAN_BOARD_STATUS = (
+    ('Open','Open'),
+    ('Closed','Closed'),
+)
+
 PAGE_LAYOUT = (
     ('Landscape','Landscape'),
     ('Portrait','Portrait'),
@@ -919,6 +924,11 @@ class kanban_board(models.Model):
         null=True,
         blank=True,
         on_delete=models.CASCADE,
+    )
+    kanban_board_status= models.CharField(
+        max_length=10,
+        choices=KANBAN_BOARD_STATUS,
+        default="Open",
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)

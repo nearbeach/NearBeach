@@ -1,10 +1,6 @@
 {% extends "./template.html" %}
 {% block content %}
     {% load static %}
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/document_upload.js' %}"></script>
-
-
     {{ rfc_form.media }}
     <div class="card mt-4">
         <div class="card-header">
@@ -33,7 +29,7 @@
 
             <div class="form-row">
                 <div class="form-group col-md-6">
-                    <label for="id_rfc_type">Request For Change Type: {{ rfc_results.rfc_type }}</label for="id_rfc_type">
+                    <label for="id_rfc_type">Request For Change Type: {{ RFC_TYPE }}</label for="id_rfc_type">
                 </div>
                 {% if rfc_results.rfc_version_number %}
                     <div class="form-group col-md-6">
@@ -77,15 +73,15 @@
             <div class="form-row">
                 <div class="form-group col-md-4">
                     <label for="id_rfc_priority">Priority of Change:</label>
-                    {{ rfc_results.rfc_priority }}
+                    {{ RFC_PRIORITY }}
                 </div>
                 <div class="form-group col-md-4">
                     <label for="id_rfc_risk">Risk of Change:</label>
-                    {{ rfc_results.rfc_risk }}
+                    {{ RFC_RISK }}
                 </div>
                 <div class="form-group col-md-4">
                     <label for="id_rfc_impact">Impact of Change:</label>
-                    {{ rfc_results.rfc_impact }}
+                    {{ RFC_IMPACT }}
                 </div>
             </div>
 
