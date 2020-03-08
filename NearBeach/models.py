@@ -18,7 +18,7 @@ IS_DELETED_CHOICE = (
     ('FALSE', 'FALSE'),
 )
 
-KANBAN_BOARD_STATUS = (
+KANBAN_BOARD_STATUS_CHOICE = (
     ('Open','Open'),
     ('Closed','Closed'),
 )
@@ -927,7 +927,7 @@ class kanban_board(models.Model):
     )
     kanban_board_status= models.CharField(
         max_length=10,
-        choices=KANBAN_BOARD_STATUS,
+        choices=KANBAN_BOARD_STATUS_CHOICE,
         default="Open",
     )
     date_created = models.DateTimeField(auto_now_add=True)
