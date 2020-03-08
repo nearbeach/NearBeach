@@ -1,6 +1,6 @@
 {% csrf_token %}
 {% if new_customers_results and task_permissions > 1 %}
-    {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
+    {% if task_results.task_status in 'Backlog,Blocked,In Progress,Test/Review' %}
         <div class="form-group">
             <select id="add_customer_select" name="add_customer_select" onchange="enable_disable_add_customer()" >
                 <option value="---------" selected>---------</option>

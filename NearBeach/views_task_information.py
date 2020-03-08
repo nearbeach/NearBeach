@@ -60,7 +60,7 @@ def information_task_customer(request, task_id):
 
     #Obtain a list of customer not already added to this task
     new_customers_results = customer.objects.filter(
-        organisation_id=task_results.organisation_id,
+        organisation_id=task_results.organisation_id.organisation_id,
         is_deleted="FALSE",
     ).exclude(
         customer_id__in=task_customer.objects.filter(
