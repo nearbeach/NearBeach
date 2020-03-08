@@ -31,6 +31,8 @@ from docx import Document
 from docx.shared import Cm, Inches
 from bs4 import BeautifulSoup
 
+from .models import RFC_APPROVAL, RFC_IMPACT, RFC_PRIORITY, RFC_RISK, RFC_STATUS, RFC_TYPE
+
 #import python modules
 import datetime, json, simplejson, urllib.parse, pypandoc, requests, random, time
 
@@ -2468,6 +2470,11 @@ def dashboard_active_projects(request):
         'project_id__project_start_date',
     ).distinct()
 
+    object_assignment_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        project_id__in=assigned_users_results.values('project_id')
+    )
+
 
     # Load the template
     t = loader.get_template('NearBeach/dashboard_widgets/active_projects.html')
@@ -2475,6 +2482,7 @@ def dashboard_active_projects(request):
     # context
     c = {
         'assigned_users_results': assigned_users_results,
+        'object_assignment_results': object_assignment_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -2548,12 +2556,18 @@ def dashboard_active_task(request):
         'task_id__task_start_date',
     ).distinct()
 
+    object_assignment_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        task_id__in=assigned_users_results.values('task_id'),
+    )
+
     # Load the template
     t = loader.get_template('NearBeach/dashboard_widgets/active_tasks.html')
 
     # context
     c = {
         'assigned_users_results': assigned_users_results,
+        'object_assignment_results': object_assignment_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -4118,6 +4132,17 @@ def index(request):
     return HttpResponseRedirect(reverse('login'))
 
 
+
+@login_required(login_url='login',redirect_field_name="")
+def kanban_board_close(request,kanban_board_id):
+    if request.method == "POST":
+        kanban_update = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+        kanban_update.kanban_board_status = "Closed"
+        kanban_update.save()
+
+        return HttpResponseRedirect(reverse('search_kanban'))
+    else:
+        return HttpResponseBadRequest("Sorry, this request can only be done in post");
 
 @login_required(login_url='login',redirect_field_name="")
 def kanban_edit_card(request,kanban_card_id):
@@ -8938,6 +8963,11 @@ def request_for_change_information(request,rfc_id):
         'permission': permission_results['request_for_change'],
         'new_item_permission': permission_results['new_item'],
         'administration_permission': permission_results['administration'],
+        'RFC_IMPACT': dict(RFC_IMPACT)[rfc_results.rfc_impact],
+        'RFC_PRIORITY': dict(RFC_PRIORITY)[rfc_results.rfc_priority],
+        'RFC_RISK': dict(RFC_RISK)[rfc_results.rfc_risk],
+        'RFC_STATUS': dict(RFC_STATUS)[rfc_results.rfc_status],
+        'RFC_TYPE': dict(RFC_TYPE)[rfc_results.rfc_type],
     }
 
     return HttpResponse(t.render(c,request))
@@ -9341,6 +9371,7 @@ def search_kanban(request):
 
     kanban_board_results = kanban_board.objects.filter(
         is_deleted="FALSE",
+        kanban_board_status="Open",
     )
 
     for split_row in kanban_search_results.split(' '):

@@ -10,7 +10,6 @@
             border-top: 2px solid blue;
         }
     </style>
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
     <form method="post" class="kanban_board_form" id="kanban_properties_form">
         <div class="card mt-4">
             <div class="card-header">
@@ -89,6 +88,17 @@
                 <div id="assigned_group_list">Loading list...</div>
             </div>
         </div>
+
+        <div class="card mt-4">
+            <div class="card-header bg-danger">
+                <h2>DANGER ZONE!</h2>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-warning form-control" onclick="open_close_kanban_module()">
+                    Close Kanban Board
+                </button>
+            </div>
+        </div>
     {% endif %}
 
     <div class="modal" tabindex="-1" role="dialog" id="name_change_modal">
@@ -116,6 +126,34 @@
                 <!-- FOOTER -->
                 <div class="modal-footer">
                     <button type="button" id="modal_save" class="btn btn-primary" onclick="update_name()" disabled>Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CLOSE KANBAN MODAL -->
+    <div class="modal" tabindex="-1" role="dialog" id="close_kanban_modal">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <!-- HEADER -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Close Kanban</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <!-- BODY -->
+                <div class="modal-body">
+                    <p>Are you sure you want to close this kanban board?</p>
+                </div>
+
+
+                <!-- FOOTER -->
+                <div class="modal-footer">
+                    <!-- ADD IN BUTTONS -->
+                    <button type="button" id="kanban_close_button" class="btn btn-danger" onclick="close_kanban()" disabled="">Close Kanban</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -322,6 +360,46 @@
                     $('#assigned_group_list').html('<h2>Assigned Groups</h2>Sorry, assigned groups encounted an error and did not load.');
                 }
             });
+        }
+
+        function open_close_kanban_module() {
+            //Open the module
+
+            $("#close_kanban_modal").show();
+
+            //Wait 2 seconds before allowing user to close the kanban board
+            setTimeout(function() {
+                //Find the close element.
+                var elem = document.getElementById("kanban_close_button");
+
+                if (elem) {
+                    elem.disabled = false;
+                }
+            },2000);
+
+        }
+
+        function close_kanban() {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '/kanban_board_close/{{ kanban_board_id }}/',
+                data: {},
+                dataType: 'HTML',
+                type: 'POST',
+                success: function(data) {
+                    window.location.href = '/search_kanban';
+                },
+                error: function() {
+                    console.log("ERROR");
+                }
+            })
         }
 
         function open_modal(column_or_level,id) {
