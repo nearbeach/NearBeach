@@ -8,6 +8,33 @@ register = Library()
 from NearBeach.models import *
 
 
+@register.filter(name='filter_assigned_project')
+def filter_assigned_project(value,arg):
+    """
+
+    :param value: Use "object_assignment" table
+    :param arg: What task ID are we focusing on
+    :return:
+    """
+    return value.filter(
+        project_id__isnull=False,
+        task_id=arg,
+    )
+
+
+@register.filter(name='filter_assigned_task')
+def filter_assigned_task(value,arg):
+    """
+
+    :param value:
+    :param arg:
+    :return:
+    """
+    return value.filter(
+        task_id__isnull=False,
+        project_id=arg,
+    )
+
 @register.filter(name='filter_level_cards')
 def filter_level_cards(value, arg):
     """
@@ -26,6 +53,7 @@ def filter_column_cards(value, arg):
     :return: the filtered python object
     """
     return value.filter(kanban_column=arg)
+
 
 
 @register.filter(name='filter_requirement_items')

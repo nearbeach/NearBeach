@@ -3,12 +3,6 @@
 {% block content %}
 {% load static %}
 <body onload="on_page_load()">
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/bug.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/csrf_finder.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/assigned_user_list.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/document_upload.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/javascript/requirement_information.js' %}"></script>
-
     <div class="card mt-4">
         <div class="card-header">
             <h1>Requirement Information - {{ requirement_id }}</h2>
@@ -263,6 +257,8 @@
                 success: function() {
                     load_assigned_group_add();
                     load_assigned_group_list();
+                    load_assigned_user_add();
+                    load_assigned_user_list();
                 },
                 error: function() {
                     new_error("Sorry, project assigned users did not save. Please try again.");

@@ -115,6 +115,7 @@ re_path(r'^information_project_customer/(?P<project_id>[0-9]+)/$', views_project
 re_path(r'^information_project_history/(?P<project_id>[0-9]+)/$', views_project_information.information_project_history, name='information_project_history'),
 re_path(r'^information_task_customer/(?P<task_id>[0-9]+)/$', views_task_information.information_task_customer,name='information_task_customer'),
 re_path(r'^information_task_history/(?P<task_id>[0-9]+)/$', views_task_information.information_task_history,name='information_task_history'),
+re_path(r'^kanban_board_close/(?P<kanban_board_id>[0-9]+)/$', views.kanban_board_close,name='kanban_board_close'),
 re_path(r'^kanban_edit_card/(?P<kanban_card_id>[0-9]+)/$', views.kanban_edit_card,name='kanban_edit_card'),
 re_path(r'^kanban_edit_xy_name/(?P<location_id>[0-9]+)/(?P<destination>["column","level"]+)/$', views.kanban_edit_xy_name,name='kanban_edit_xy_name'),
 re_path(r'^kanban_information/(?P<kanban_board_id>[0-9]+)/', views.kanban_information, name='kanban_information'),
