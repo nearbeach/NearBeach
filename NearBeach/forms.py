@@ -980,6 +980,7 @@ class document_upload_form(ModelForm):
         })
     )
     document_description = forms.CharField(
+        required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Document Description',
             'class': 'form-control',
