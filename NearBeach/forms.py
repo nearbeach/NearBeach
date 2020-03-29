@@ -1078,7 +1078,7 @@ class email_form(ModelForm):
             opportunity_results=opportunity.objects.get(opportunity_id=location_id)
             customer_results = customer.objects.filter(
                 is_deleted="FALSE",
-                organisation_id__in=opportunity_connection.objects.filter(
+                organisation_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     organisation_id__isnull=False,
                     opportunity_id=location_id,

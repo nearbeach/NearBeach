@@ -1751,6 +1751,18 @@ class object_assignment(models.Model):
         blank=True,
         null=True,
     )
+    customer = models.ForeignKey(
+        'customer',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    organisation = models.ForeignKey(
+        'organisation',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -1816,11 +1828,8 @@ class opportunity(models.Model):
     class Meta:
         db_table = "opportunities"
 
-
+"""
 class opportunity_connection(models.Model):
-    """
-    This model deals with which organisation or customers are connected to the opportunity. These are called connections
-    """
     opportunity_connection_id = models.AutoField(primary_key=True)
     opportunity=models.ForeignKey(
         'opportunity',
@@ -1853,6 +1862,7 @@ class opportunity_connection(models.Model):
 
     class Meta:
         db_table = "organisation_connection"
+        """
 
 class organisation(models.Model):
     organisation_id = models.AutoField(primary_key=True)
@@ -2375,6 +2385,7 @@ class project_opportunity(models.Model):
         db_table = "project_opportunity"
 """
 
+"""
 class project_stage(models.Model):
     project_stage_id = models.AutoField(primary_key=True)
     project_id = models.ForeignKey(
@@ -2400,7 +2411,7 @@ class project_stage(models.Model):
 
     class Meta:
         db_table = "project_stage"
-
+"""
 
 """
 class project_task(models.Model):
@@ -3231,7 +3242,7 @@ class requirement_permission(models.Model):
         db_table = "requirement_permission"
 """
 
-
+"""
 class stage(models.Model):
     stage_id = models.AutoField(primary_key=True)
     group_id = models.ForeignKey(
@@ -3257,6 +3268,7 @@ class stage(models.Model):
 
     class Meta:
         db_table = "stage"
+"""
 
 
 class tag(models.Model):
