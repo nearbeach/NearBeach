@@ -974,18 +974,13 @@ class diagnostic_test_document_upload_form(forms.Form):
 class document_upload_form(ModelForm):
     document_description=forms.CharField(
         max_length=255,
-        widget=forms.TextInput(attrs={
-            'placeholder': 'Document Description',
-            'class': 'form-control',
-        })
-    )
-    document_description = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Document Description',
             'class': 'form-control',
         })
     )
+
     class Meta:
         model = document
         fields = {
@@ -1002,6 +997,7 @@ class document_url_form(ModelForm):
         }),
     )
     document_description=forms.CharField(
+        required=False,
         widget=forms.TextInput(attrs={
             'placeholder': 'Document Description',
         })

@@ -631,7 +631,7 @@ def assigned_opportunity_connection_add(request,opportunity_id,destination):
             for row in customer_extract:
                 #Lets save the customer against the opportunity. :)
                 submit_object_assignment = object_assignment(
-                    opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                    opportunity_id=opportunity.objects.get(opportunity_id=opportunity_id),
                     customer=row,
                     change_user=request.user,
                 )
@@ -640,7 +640,7 @@ def assigned_opportunity_connection_add(request,opportunity_id,destination):
             for row in organisation_extract:
                 #Lets save the organisation against the opportunity :)
                 submit_object_assignment = object_assignment(
-                    opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                    opportunity_id=opportunity.objects.get(opportunity_id=opportunity_id),
                     organisation=row,
                     change_user=request.user,
                 )
