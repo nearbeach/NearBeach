@@ -2130,41 +2130,41 @@ class new_line_item_form(ModelForm):
 
         print("TURPLE START")
         # Loop for product
+        product_list = []
         for product in product_results:
-            print(product_turple)
-            if product_turple == '':
-                product_turple = product.product_id, product.product_name
-            else:
-                product_turple = product_turple, (product.product_id, product.product_name),
+            single_item = (product.product_id, product.product_name)
+            product_list.append(single_item)
 
-        print("PRODUCT TURPLE")
-        print(product_turple)
 
+        service_list = []
         for service in service_results:
-            if service_turple == '':
-                service_turple = service.product_id, service.product_name,
-            else:
-                service_turple = service_turple, (service.product_id, service.product_name),
-
-        print("SERVICE TURPLE")
-        print(service_turple)
+            single_item = (service.product_id, service.product_name)
+            service_list.append(single_item)
 
         """
         If either one of the product or services' turples are empty, we do not want them to go through to the final 
         choices.
         """
-        if not product_turple == '' and not service_turple == '':
+        if not len(product_list) > 0 and not service_list > 0:
             #product_or_service_choices = (("------","Please select a product or service"),("Products", ((product_turple))), ("Services", ((service_turple)),))
-            product_or_service_choices = (("------", "Please select a product or service"), ("Products", (product_turple,)),("Services", ((service_turple,)),))
-        elif not product_turple == '':
-            product_or_service_choices = (("------","Please select a product"),("Products", (product_turple,)),)
-        elif not service_turple == '':
-            product_or_service_choices = (("------","Please select a service"),("Services", (service_turple,)),)
+            product_or_service_choices = (
+                ("------", "Please select a product or service"),
+                ("Products", tuple(product_list)),
+                ("Services", tuple(service_list)),
+            )
+        elif len(product_list) > 0:
+            product_or_service_choices = (
+                ("------","Please select a product"),
+                ("Products", tuple(product_list)),
+            )
+        elif len(service_list) > 0:
+            product_or_service_choices = (
+                ("------","Please select a service"),
+                ("Services", tuple(service_list)),
+            )
         else:
             product_or_service_choices = (("------", "Please select a product or service"))
 
-        print("PRODUCT_OR_SERVICE_CHOICES")
-        print(product_or_service_choices)
         self.fields['product_and_service'].choices=product_or_service_choices
 
     #Get the data
