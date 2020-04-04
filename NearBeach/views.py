@@ -6899,6 +6899,10 @@ def new_whiteboard(request, location_id, destination, folder_id):
                 document_permission_submit.requirement_item_id = requirement_item.objects.get(requirement_item_id=location_id)
             elif destination == "opportunity":
                 document_permission_submit.opportunity_id = opportunity.objects.get(opportunity_id=location_id)
+            elif destination == "customer":
+                document_permission_submit.customer_id = customer.objects.get(customer_id=location_id)
+            elif destination == "organisation":
+                document_permission_submit.organisation_id = organisation.objects.get(organisation_id=location_id)
 
             ##ADD CODE FOR OTHER OBJECTS##
 
