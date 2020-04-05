@@ -5637,9 +5637,9 @@ def new_kanban_board(request):
 
 @login_required(login_url='login',redirect_field_name="")
 def new_kanban_requirement_board(request,requirement_id):
-    permission_results = return_user_permission_level(request,None,'kanban_board')
+    permission_results = return_user_permission_level(request,None,'kanban')
 
-    if permission_results['kanban_board'] < 3:
+    if permission_results['kanban'] < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     #Create the kanban board and link to requirement
