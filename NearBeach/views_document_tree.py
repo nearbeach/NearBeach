@@ -277,9 +277,15 @@ def document_tree_url(request,location_id,destination,folder_id=''):
     if request.method == "POST":
         form = document_url_form(request.POST)
         if form.is_valid():
+            #Get the document description information
+            document_description=form.cleaned_data['document_description']
+            if document_description == "":
+                #There was document description - so lets use the url location
+                document_description = form.cleaned_data['document_url_location']
+
             document_submit = document(
                 document_url_location=form.cleaned_data['document_url_location'],
-                document_description=form.cleaned_data['document_description'],
+                document_description=document_description,
                 change_user=request.user,
             )
             document_submit.save()

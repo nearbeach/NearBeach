@@ -135,7 +135,7 @@
                 {% if permission > 1 %}
                     <div class="form-row">
                         <input type="submit" name="update" value="Update" class="col-md-6 form-control btn btn-primary"/>
-                        {% if task_results.task_status == 'New' or task_results.task_status == 'Open' %}
+                        {% if not task_results.task_status == 'Closed' %}
                             <input type="submit" name="Resolve" value="Resolve Task" class="col-md-6 form-control btn btn-warning"/>
                         {% endif %}
                     </div>

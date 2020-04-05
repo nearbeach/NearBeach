@@ -714,21 +714,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='stage',
-            fields=[
-                ('stage_id', models.AutoField(primary_key=True, serialize=False)),
-                ('stage', models.CharField(max_length=45)),
-                ('date_created', models.DateTimeField(auto_now_add=True)),
-                ('date_modified', models.DateTimeField(auto_now=True)),
-                ('is_deleted', models.CharField(choices=[('TRUE', 'TRUE'), ('FALSE', 'FALSE')], default='FALSE', max_length=5)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='stage_change_user', to=settings.AUTH_USER_MODEL)),
-                ('group_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.group')),
-            ],
-            options={
-                'db_table': 'stage',
-            },
-        ),
-        migrations.CreateModel(
             name='requirement_customer',
             fields=[
                 ('requirement_customer_id', models.AutoField(primary_key=True, serialize=False)),
@@ -883,21 +868,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='project_stage',
-            fields=[
-                ('project_stage_id', models.AutoField(primary_key=True, serialize=False)),
-                ('date_created', models.DateTimeField(auto_now_add=True)),
-                ('date_modified', models.DateTimeField(auto_now=True)),
-                ('is_deleted', models.CharField(choices=[('TRUE', 'TRUE'), ('FALSE', 'FALSE')], default='FALSE', max_length=5)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_stage_change_user', to=settings.AUTH_USER_MODEL)),
-                ('project_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
-                ('stage_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.stage')),
-            ],
-            options={
-                'db_table': 'project_stage',
-            },
-        ),
-        migrations.CreateModel(
             name='project_history',
             fields=[
                 ('project_history_id', models.AutoField(primary_key=True, serialize=False)),
@@ -928,22 +898,6 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'project_customer',
-            },
-        ),
-        migrations.CreateModel(
-            name='opportunity_connection',
-            fields=[
-                ('opportunity_connection_id', models.AutoField(primary_key=True, serialize=False)),
-                ('date_created', models.DateTimeField(auto_now_add=True)),
-                ('date_modified', models.DateTimeField(auto_now=True)),
-                ('is_deleted', models.CharField(choices=[('TRUE', 'TRUE'), ('FALSE', 'FALSE')], default='FALSE', max_length=5)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='opportunity_connection_change_user', to=settings.AUTH_USER_MODEL)),
-                ('customer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
-                ('opportunity', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.opportunity')),
-                ('organisation', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.organisation')),
-            ],
-            options={
-                'db_table': 'organisation_connection',
             },
         ),
         migrations.CreateModel(

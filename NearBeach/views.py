@@ -630,21 +630,21 @@ def assigned_opportunity_connection_add(request,opportunity_id,destination):
 
             for row in customer_extract:
                 #Lets save the customer against the opportunity. :)
-                submit_opportunity_connection = opportunity_connection(
-                    opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                submit_object_assignment = object_assignment(
+                    opportunity_id=opportunity.objects.get(opportunity_id=opportunity_id),
                     customer=row,
                     change_user=request.user,
                 )
-                submit_opportunity_connection.save()
+                submit_object_assignment.save()
 
             for row in organisation_extract:
                 #Lets save the organisation against the opportunity :)
-                submit_opportunity_connection = opportunity_connection(
-                    opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                submit_object_assignment = object_assignment(
+                    opportunity_id=opportunity.objects.get(opportunity_id=opportunity_id),
                     organisation=row,
                     change_user=request.user,
                 )
-                submit_opportunity_connection.save()
+                submit_object_assignment.save()
 
             #Send the user back to the opportunity
             return HttpResponseRedirect(reverse('opportunity_information', args={ opportunity_id }))
@@ -700,13 +700,13 @@ def assigned_opportunity_connection_delete(request, opportunity_id, location_id,
 
     if request.method == "POST":
         if destination == "organisation":
-            opportunity_connection.objects.filter(
+            object_assignment.objects.filter(
                 is_deleted="FALSE",
                 organisation_id=location_id,
                 opportunity_id=opportunity_id,
             ).update(is_deleted="TRUE")
         else:
-            opportunity_connection.objects.filter(
+            object_assignment.objects.filter(
                 is_deleted="FALSE",
                 customer_id=location_id,
                 opportunity_id=opportunity_id,
@@ -2138,7 +2138,7 @@ def customer_information(request, customer_id):
     )
     opportunity_results = opportunity.objects.filter(
         is_deleted="FALSE",
-        opportunity_id__in=opportunity_connection.objects.filter(
+        opportunity_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             customer_id=customer_id,
             opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
@@ -2280,7 +2280,7 @@ def customer_readonly(request,customer_id):
     )
     opportunity_results = opportunity.objects.filter(
         is_deleted="FALSE",
-        opportunity_id__in=opportunity_connection.objects.filter(
+        opportunity_id__in=object_assignment.objects.filter(
             customer_id=customer_id,
             opportunity_id__in=opportunity_permissions_results.values('opportunity_id'),
         ).values('opportunity_id'),
@@ -2894,7 +2894,7 @@ def delete_customer(request, customer_id):
         )
 
         #Delete any opportunity connections
-        opportunity_connection.objects.filter(
+        object_assignment.objects.filter(
             is_deleted="FALSE",
             customer_id=customer_id,
         ).update(
@@ -3013,7 +3013,7 @@ def delete_organisation(request, organisation_id):
         )
 
         #Delete any opportunity connections
-        opportunity_connection_update = opportunity_connection.objects.filter(
+        object_assignment_update = object_assignment.objects.filter(
             is_deleted="FALSE",
             organisation_id=organisation_id,
         ).update(
@@ -3776,13 +3776,13 @@ def email(request,location_id,destination):
             Q(
                 Q(customer_id__in=customer.objects.filter(
                     is_deleted="FALSE",
-                    organisation_id__in=opportunity_connection.objects.filter(
+                    organisation_id__in=object_assignment.objects.filter(
                         is_deleted="FALSE",
                         opportunity_id=location_id,
                         organisation_id__isnull=False,
                     ).values('organisation_id')
                 )) |
-                Q(customer_id__in=opportunity_connection.objects.filter(
+                Q(customer_id__in=object_assignment.objects.filter(
                     is_deleted="FALSE",
                     customer_id__isnull=False,
                     opportunity_id=location_id,
@@ -4991,9 +4991,11 @@ def login(request):
                         quote=4,
                         requirement=4,
                         requirement_link=4,
+                        tag=4,
                         task=4,
                         tax=4,
                         template=4,
+                        whiteboard=4,
                         document=1,
                         contact_history=1,
                         kanban_comment=1,
@@ -5635,9 +5637,9 @@ def new_kanban_board(request):
 
 @login_required(login_url='login',redirect_field_name="")
 def new_kanban_requirement_board(request,requirement_id):
-    permission_results = return_user_permission_level(request,None,'kanban_board')
+    permission_results = return_user_permission_level(request,None,'kanban')
 
-    if permission_results['kanban_board'] < 3:
+    if permission_results['kanban'] < 3:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     #Create the kanban board and link to requirement
@@ -6428,7 +6430,7 @@ def new_quote_link(request,quote_id,destination,location_id=''):
     opportunity_results = get_object_or_404(opportunity,opportunity_id=quote_results.opportunity_id.opportunity_id)
     organisation_results = organisation.objects.filter(
         is_deleted="FALSE",
-        organisation_id__in=opportunity_connection.objects.filter(
+        organisation_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             organisation_id__isnull=False,
             opportunity_id=opportunity_results.opportunity_id,
@@ -6447,7 +6449,7 @@ def new_quote_link(request,quote_id,destination,location_id=''):
             Q(is_deleted="FALSE") and
             Q(
                 Q(
-                    customer_id__in=opportunity_connection.objects.filter(
+                    customer_id__in=object_assignment.objects.filter(
                         is_deleted="FALSE",
                         customer_id__isnull=False,
                         opportunity_id=opportunity_results.opportunity_id,
@@ -6897,6 +6899,10 @@ def new_whiteboard(request, location_id, destination, folder_id):
                 document_permission_submit.requirement_item_id = requirement_item.objects.get(requirement_item_id=location_id)
             elif destination == "opportunity":
                 document_permission_submit.opportunity_id = opportunity.objects.get(opportunity_id=location_id)
+            elif destination == "customer":
+                document_permission_submit.customer_id = customer.objects.get(customer_id=location_id)
+            elif destination == "organisation":
+                document_permission_submit.organisation_id = organisation.objects.get(organisation_id=location_id)
 
             ##ADD CODE FOR OTHER OBJECTS##
 
@@ -6944,7 +6950,7 @@ def opportunity_connection_list(request, opportunity_id):
     # Get data
     customer_connection_results = customer.objects.filter(
         is_deleted="FALSE",
-        customer_id__in=opportunity_connection.objects.filter(
+        customer_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             opportunity_id=opportunity_id,
             customer_id__isnull=False,
@@ -6952,7 +6958,7 @@ def opportunity_connection_list(request, opportunity_id):
     ).order_by('customer_first_name', 'customer_last_name')
     organisation_connection_results = organisation.objects.filter(
         is_deleted="FALSE",
-        organisation_id__in=opportunity_connection.objects.filter(
+        organisation_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             opportunity_id=opportunity_id,
             organisation_id__isnull=False,
@@ -7227,7 +7233,7 @@ def opportunity_readonly(request,opportunity_id):
     opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
     customer_connection_results = customer.objects.filter(
         is_deleted="FALSE",
-        customer_id__in=opportunity_connection.objects.filter(
+        customer_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             opportunity_id=opportunity_id,
             customer_id__isnull=False,
@@ -7235,7 +7241,7 @@ def opportunity_readonly(request,opportunity_id):
     ).order_by('customer_first_name', 'customer_last_name')
     organisation_connection_results = organisation.objects.filter(
         is_deleted="FALSE",
-        organisation_id__in=opportunity_connection.objects.filter(
+        organisation_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             opportunity_id=opportunity_id,
             organisation_id__isnull=False,
@@ -7414,7 +7420,7 @@ def organisation_information(request, organisation_id):
     )
     opportunity_results = opportunity.objects.filter(
         is_deleted="FALSE",
-        opportunity_id__in=opportunity_connection.objects.filter(
+        opportunity_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             organisation_id=organisation_id,
             opportunity_id__in=opportunity_permissions_results.values('opportunity_id')
@@ -7512,7 +7518,7 @@ def organisation_readonly(request, organisation_id):
 
     opportunity_results = opportunity.objects.filter(
         is_deleted="FALSE",
-        opportunity_id__in=opportunity_connection.objects.filter(
+        opportunity_id__in=object_assignment.objects.filter(
             organisation_id=organisation_id,
             opportunity_id__in=opportunity_permissions_results.values('opportunity_id'),
         ).values('opportunity_id'),
@@ -8141,7 +8147,7 @@ def project_readonly(request, project_id):
     )
     requirement_results = requirement.objects.filter(
         is_deleted="FALSE",
-        requirement_id__in=requirement_link.objects.filter(
+        requirement_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             project_id=project_id,
         ).values('requirement_id')
@@ -8149,7 +8155,7 @@ def project_readonly(request, project_id):
 
     requirement_item_results = requirement_item.objects.filter(
         is_deleted="FALSE",
-        requirement_item_id__in=requirement_item_link.objects.filter(
+        requirement_item_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             project_id=project_id,
         ).values('requirement_item_id')
@@ -8169,6 +8175,7 @@ def project_readonly(request, project_id):
     associated_tasks_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         project_id=project_id,
+        task_id__isnull=False,
     )
 
     project_customer_results = project_customer.objects.filter(
@@ -9943,7 +9950,7 @@ def task_readonly(request,task_id):
 
     requirement_results = requirement.objects.filter(
         is_deleted="FALSE",
-        requirement_id__in=requirement_link.objects.filter(
+        requirement_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             task_id=task_id,
         ).values('requirement_id')

@@ -136,7 +136,7 @@
                 </div>
                 <div class="form-row">
                     <input type="submit" name="update" id="update" value="Update" class="btn btn-primary form-control col-md-6"/>
-                    {% if project_results.project_status == 'New' or prooject_results.project_status == 'Open' %}
+                    {% if not project_results.project_status == 'Closed' %}
                         <input type="submit" name="Resolve" id="resolve" value="Resolve Project" class="btn btn-warning form-control col-md-6"/>
                     {% endif %}
                 </div>
