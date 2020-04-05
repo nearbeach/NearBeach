@@ -631,7 +631,7 @@ def assigned_opportunity_connection_add(request,opportunity_id,destination):
             for row in customer_extract:
                 #Lets save the customer against the opportunity. :)
                 submit_object_assignment = object_assignment(
-                    opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                    opportunity_id=opportunity.objects.get(opportunity_id=opportunity_id),
                     customer=row,
                     change_user=request.user,
                 )
@@ -640,7 +640,7 @@ def assigned_opportunity_connection_add(request,opportunity_id,destination):
             for row in organisation_extract:
                 #Lets save the organisation against the opportunity :)
                 submit_object_assignment = object_assignment(
-                    opportunity=opportunity.objects.get(opportunity_id=opportunity_id),
+                    opportunity_id=opportunity.objects.get(opportunity_id=opportunity_id),
                     organisation=row,
                     change_user=request.user,
                 )
@@ -6899,6 +6899,10 @@ def new_whiteboard(request, location_id, destination, folder_id):
                 document_permission_submit.requirement_item_id = requirement_item.objects.get(requirement_item_id=location_id)
             elif destination == "opportunity":
                 document_permission_submit.opportunity_id = opportunity.objects.get(opportunity_id=location_id)
+            elif destination == "customer":
+                document_permission_submit.customer_id = customer.objects.get(customer_id=location_id)
+            elif destination == "organisation":
+                document_permission_submit.organisation_id = organisation.objects.get(organisation_id=location_id)
 
             ##ADD CODE FOR OTHER OBJECTS##
 
