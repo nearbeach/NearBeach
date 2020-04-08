@@ -15,7 +15,7 @@ Ubuntu 18.04 Server Installation
 
   Software
   ########
-  
+
   * Ubuntu 18.04
   * Python 3.6+
   * Django 2.1+
@@ -26,7 +26,7 @@ Ubuntu 18.04 Server Installation
 The following instructions will allow you to install Ubuntu 18.04 on your server.
 These are just the quick steps and do not go into detail. If you wish to go into
 more detail please visit the Ubuntu help site -
-`https://help.ubuntu.com/lts/serverguide/<https://help.ubuntu.com/lts/serverguide/>`_.
+`https://help.ubuntu.com/lts/serverguide/ <https://help.ubuntu.com/lts/serverguide/>`_.
 
 Section 1 - Installation of Server
 ----------------------------------
