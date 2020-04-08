@@ -2,27 +2,25 @@
 Ubuntu 18.04 Server Installation
 ================================
 
-.. container:: Minimum requirements
+Minimum requirements
+--------------------
 
-  Minimum requirements
-  --------------------
+Hardware
+^^^^^^^^
 
-  Hardware
-  ########
+* 1GB RAM
+* 1+ Core CPU (for small user base)
+* 5+ GB Space (more for uploading documents)
 
-  * 1GB RAM
-  * 1+ Core CPU (for small user base)
-  * 5+ GB Space (more for uploading documents)
+Software
+########
 
-  Software
-  ########
-
-  * Ubuntu 18.04
-  * Python 3.6+
-  * Django 2.1+
-  * Nginx
-  * Gunicorn
-  * MySQL
+* Ubuntu 18.04
+* Python 3.6+
+* Django 2.1+
+* Nginx
+* Gunicorn
+* MySQL
 
 The following instructions will allow you to install Ubuntu 18.04 on your server.
 These are just the quick steps and do not go into detail. If you wish to go into
