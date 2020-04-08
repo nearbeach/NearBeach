@@ -2,7 +2,8 @@
 Ubuntu 18.04 Server Installation
 ================================
 
-.. note::
+.. container:: Minimum requirements
+
   Minimum requirements
   --------------------
 
