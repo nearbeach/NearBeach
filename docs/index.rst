@@ -28,23 +28,33 @@ NearBeach's documentation is broken down into the following sections;
 NearBeach Table of Contents
 ---------------------------
 
-1) Installation
+.. toctree::
+  :maxdepth: 1
+  :caption: Installation
+  :name: sec-installation
 
-  a) `Server Installation <installation/server-installation>`_
-  b) `Django Installation <installation/django-installation>`_
-  c) `NearBeach Installation <installation/nearbeach-installation>`_
+   installation/server-installation
+   installation/django-installation
+   installation/nearbeach-installation
 
-2) Administration tasks
 
-  a) `First time setup <administration-tasks/first-time-setup>`_
-  b) `Configuration <administration-tasks/configuration>`_
+.. toctree::
+  :maxdepth: 1
+  :caption: Administration tasks
+  :name: sec-administration-tasks
 
-3) Basic usage
+  administration-tasks/first-time-setup
+  administration-tasks/configuration
 
-  a) `NearBeach flow <basic-usage/nearbeach-flow>`_
-  b) `Opportunities <basic-usage/opportunities>`_
-  c) `Quotes and Invoices <basic-usage/quotes-and-invoices>`_
-  d) `Requirements and Requirement Items <basic-usage/requirements-and-requirement-items>`_
-  e) `Projects <basic-usage/projects>`_
-  f) `Tasks <basic-usage/tasks>`_
-  g) `Requests for Change <basic-usage/requests-for-change>`_
+.. toctree::
+  :maxdepth: 1
+  :caption: Basic usage
+  :name: sec-basic-usage
+
+  basic-usage/nearbeach-flow
+  basic-usage/opportunities
+  basic-usage/quotes-and-invoices
+  basic-usage/requirements-and-requirement-items
+  basic-usage/projects
+  basic-usage/tasks
+  basic-usage/requests-for-change
