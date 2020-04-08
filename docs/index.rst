@@ -33,10 +33,9 @@ NearBeach Table of Contents
   :caption: Installation
   :name: sec-installation
 
-   installation/server-installation
-   installation/django-installation
-   installation/nearbeach-installation
-
+  installation/server-installation
+  installation/django-installation
+  installation/nearbeach-installation
 
 .. toctree::
   :maxdepth: 1
