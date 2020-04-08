@@ -2,17 +2,21 @@
 Ubuntu 18.04 Server Installation
 ================================
 
--------------------------------
-Minimum requirements - Hardware
--------------------------------
+--------------------
+Minimum requirements
+--------------------
+
+^^^^^^^^
+Hardware
+^^^^^^^^
 
 * 1GB RAM
 * 1+ Core CPU (for small user base)
 * 5+ GB Space (more for uploading documents)
 
--------------------------------
-Minimum requirements - Software
--------------------------------
+^^^^^^^^
+Software
+^^^^^^^^
 
 * Ubuntu 18.04
 * Python 3.6+
@@ -26,28 +30,37 @@ These are just the quick steps and do not go into detail. If you wish to go into
 more detail please visit the Ubuntu help site -
 `https://help.ubuntu.com/lts/serverguide/ <https://help.ubuntu.com/lts/serverguide/>`_
 
+--------------------
+Installation Process
+--------------------
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Section 1 - Installation of Server
-----------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Ubuntu 18.10
+* :ref:`sub_instructions/installation_of_server`
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Section 2 - Installation of a Django and the setup of Gunicorn
---------------------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Installation of Django
+* :ref:`sub_instructions/installation_of_django`
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Section 3 - Setup of Database
------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-MySQL in Ubuntu
+* :ref:`sub_instructions/installation_of_mysql_server`
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Section 4 - Installation of NearBeach
--------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Installation of NearBeach
+* :ref:`sub_instructions/installation_of_nearbeach`
 
+^^^^^^^^^^^^^^
 Optional Steps
---------------
+^^^^^^^^^^^^^^
 
 Installation of Logs in NearBeach
 
@@ -57,8 +70,9 @@ Connect Mapbox
 
 Connect Google Maps
 
+^^^^^^^^^^^^^^^^^^^^^^^
 Trouble Shooting Issues
------------------------
+^^^^^^^^^^^^^^^^^^^^^^^
 
 PDF Rendering gives 500 error
 

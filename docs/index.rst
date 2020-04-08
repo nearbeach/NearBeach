@@ -1,3 +1,4 @@
+====================
 Welcome to NearBeach
 ====================
 
@@ -12,19 +13,17 @@ framework. `NearBeach.org <https://nearbeach.org/>`_
 
 .. note:: NearBeach is licensed under the MIT license
 
+-----------------------
 NearBeach documentation
 -----------------------
 NearBeach's documentation is broken down into the following sections;
 
-- Installation of a new Server
+* Installation of a new Server
+* Installation of a new NearBeach instance
+* Administration tasks and first time setup
+* Basic User instructions
 
-- Installation of a new NearBeach instance
-
-- Administration tasks and first time setup
-
-- Basic User instructions
-
-
+---------------------------
 NearBeach Table of Contents
 ---------------------------
 
