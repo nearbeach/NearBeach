@@ -7,13 +7,15 @@ Ubuntu 18.04 Server Installation
   --------------------
 
   Hardware
+  ########
 
   * 1GB RAM
   * 1+ Core CPU (for small user base)
   * 5+ GB Space (more for uploading documents)
 
   Software
-
+  ########
+  
   * Ubuntu 18.04
   * Python 3.6+
   * Django 2.1+
