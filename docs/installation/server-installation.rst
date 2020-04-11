@@ -40,7 +40,13 @@ Installation Process
 Section 1 - Installation of Server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* :ref:`Installation of Server <sub_instructions/installation_of_server>`
+.. toctree::
+  :maxdepth: 1
+  :caption: Installation of Server
+  :name: sec-installation-of-server
+
+  sub_instructions/installation_of_server
+
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Section 2 - Installation of a Django and the setup of Gunicorn
