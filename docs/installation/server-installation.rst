@@ -36,50 +36,46 @@ more detail please visit the Ubuntu help site -
 Installation Process
 --------------------
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Section 1 - Installation of Server
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. toctree::
   :maxdepth: 1
-  :caption: Installation of Server
+  :caption: Section 1 - Installation of Server
   :name: sec-installation-of-server
 
   sub_instructions/installation_of_server
 
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Section 2 - Installation of a Django and the setup of Gunicorn
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. toctree::
+  :maxdepth: 1
+  :caption: Section 2 - Installation of a Django and the setup of Gunicorn
+  :name: sec-installation-of-django
 
-* :ref:`sub_instructions/installation_of_django`
+  sub_instructions/installation_of_django
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Section 3 - Setup of Database
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. toctree::
+  :maxdepth: 1
+  :caption: Section 3 - Setup of Database
+  :name: sec-installation-of-database
 
-* :ref:`sub_instructions/installation_of_mysql_server`
+  sub_instructions/installation_of_mysql_server
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Section 4 - Installation of NearBeach
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. toctree::
+  :maxdepth: 1
+  :caption: Section 4 - Installation of NearBeach
+  :name: sec-installation-of-nearbeach
 
-* :ref:`sub_instructions/installation_of_nearbeach`
+  sub_instructions/installation_of_nearbeach
 
-^^^^^^^^^^^^^^
-Optional Steps
-^^^^^^^^^^^^^^
+.. toctree::
+  :maxdepth: 1
+  :caption: Optional steps
+  :name: sec-installation-of-optional-steps
 
-Installation of Logs in NearBeach
+  sub_instructions/installation_of_optional_steps
 
-Installation of NearBeach API
 
-Connect Mapbox
+.. toctree::
+  :maxdepth: 1
+  :caption: Optional steps
+  :name: sec-optional-steps
 
-Connect Google Maps
-
------------------------
-Trouble Shooting Issues
------------------------
-
-PDF Rendering gives 500 error
+  sub_instructions/trouble_shooting_issues
