@@ -51,6 +51,7 @@ Installation Process
 
   sub_instructions/installation_of_django
 
+
 .. toctree::
   :maxdepth: 1
   :caption: Section 3 - Setup of Database
@@ -58,12 +59,14 @@ Installation Process
 
   sub_instructions/installation_of_mysql_server
 
+
 .. toctree::
   :maxdepth: 1
   :caption: Section 4 - Installation of NearBeach
   :name: sec-installation-of-nearbeach
 
   sub_instructions/installation_of_nearbeach
+
 
 .. toctree::
   :maxdepth: 1
