@@ -1,4 +1,5 @@
-.. _installation_of_server
+.. _installation_of_server:
+
 Installation of Server - Ubuntu 18.04
 =====================================
 

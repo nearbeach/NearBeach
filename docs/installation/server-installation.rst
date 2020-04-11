@@ -1,3 +1,5 @@
+.. _server-installation:
+
 ================================
 Ubuntu 18.04 Server Installation
 ================================
@@ -38,7 +40,7 @@ Installation Process
 Section 1 - Installation of Server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* :ref:`installation_of_server`
+* :ref:`Installation of Server <sub_instructions/installation_of_server>`
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Section 2 - Installation of a Django and the setup of Gunicorn
