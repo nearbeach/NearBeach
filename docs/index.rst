@@ -61,50 +61,16 @@ Installation Process
 
 .. toctree::
   :maxdepth: 1
-  :caption: Section 1 - Installation of Server
-  :name: sec-installation-of-server
+  :caption: Installation of NearBeach
+  :name: sec-installation
 
   installation/installation_of_server
-
-
-.. toctree::
-  :maxdepth: 1
-  :caption: Section 2 - Installation of a Django and the setup of Gunicorn
-  :name: sec-installation-of-django
-
   installation/installation_of_django
-
-
-.. toctree::
-  :maxdepth: 1
-  :caption: Section 3 - Setup of Database
-  :name: sec-installation-of-database
-
   installation/installation_of_mysql_server
-
-
-.. toctree::
-  :maxdepth: 1
-  :caption: Section 4 - Installation of NearBeach
-  :name: sec-installation-of-nearbeach
-
   installation/installation_of_nearbeach
-
-
-.. toctree::
-  :maxdepth: 1
-  :caption: Optional steps
-  :name: sec-installation-of-optional-steps
-
   installation/installation_of_optional_steps
-
-
-.. toctree::
-  :maxdepth: 1
-  :caption: Optional steps
-  :name: sec-optional-steps
-
   installation/trouble_shooting_issues
+  
 
   ------------------
   After Installation
