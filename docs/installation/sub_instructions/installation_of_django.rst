@@ -7,7 +7,13 @@ Installation of Django and Gunicorn
 
 1. First update and upgrade the system so you are working with the latest packages;
 
+  .. code-block:: bash
     sudo apt-get update && sudo apt-get upgrade -y
+
+  .. role:: bash(code)
+     :language: bash
+
+     sudo apt-get update && sudo apt-get upgrade -y
 
 
 2. Next we will need to install all the packages we will use in NearBeach
