@@ -1,3 +1,4 @@
+====================
 Welcome to NearBeach
 ====================
 
@@ -12,39 +13,86 @@ framework. `NearBeach.org <https://nearbeach.org/>`_
 
 .. note:: NearBeach is licensed under the MIT license
 
+-----------------------
 NearBeach documentation
 -----------------------
 NearBeach's documentation is broken down into the following sections;
 
-- Installation of a new Server
+* Installation of a new Server
+* Installation of a new NearBeach instance
+* Administration tasks and first time setup
+* Basic User instructions
 
-- Installation of a new NearBeach instance
+================================
+Ubuntu 18.04 Server Installation
+================================
 
-- Administration tasks and first time setup
+--------------------
+Minimum requirements
+--------------------
 
-- Basic User instructions
+^^^^^^^^
+Hardware
+^^^^^^^^
 
+* 1GB RAM
+* 1+ Core CPU (for small user base)
+* 5+ GB Space (more for uploading documents)
 
-NearBeach Table of Contents
----------------------------
+^^^^^^^^
+Software
+^^^^^^^^
 
-1) Installation
+* Ubuntu 18.04
+* Python 3.6+
+* Django 2.1+
+* Nginx
+* Gunicorn
+* MySQL
 
-  a) `Server Installation <installation/server-installation>`_
-  b) `Django Installation <installation/django-installation>`_
-  c) `NearBeach Installation <installation/nearbeach-installation>`_
+The following instructions will allow you to install Ubuntu 18.04 on your server.
+These are just the quick steps and do not go into detail. If you wish to go into
+more detail please visit the Ubuntu help site -
+ `https://help.ubuntu.com/lts/serverguide/ <https://help.ubuntu.com/lts/serverguide/>`_
 
-2) Administration tasks
+--------------------
+Installation Process
+--------------------
 
-  a) `First time setup <administration-tasks/first-time-setup>`_
-  b) `Configuration <administration-tasks/configuration>`_
+.. toctree::
+  :maxdepth: 1
+  :caption: Installation of NearBeach
+  :name: sec-installation
 
-3) Basic usage
+  installation/installation_of_server
+  installation/installation_of_django
+  installation/installation_of_mysql_server
+  installation/installation_of_nearbeach
+  installation/installation_of_optional_steps
+  installation/trouble_shooting_issues
+  
 
-  a) `NearBeach flow <basic-usage/nearbeach-flow>`_
-  b) `Opportunities <basic-usage/opportunities>`_
-  c) `Quotes and Invoices <basic-usage/quotes-and-invoices>`_
-  d) `Requirements and Requirement Items <basic-usage/requirements-and-requirement-items>`_
-  e) `Projects <basic-usage/projects>`_
-  f) `Tasks <basic-usage/tasks>`_
-  g) `Requests for Change <basic-usage/requests-for-change>`_
+  ------------------
+  After Installation
+  ------------------
+
+.. toctree::
+  :maxdepth: 1
+  :caption: Administration tasks
+  :name: sec-administration-tasks
+
+  administration-tasks/first-time-setup
+  administration-tasks/configuration
+
+.. toctree::
+  :maxdepth: 1
+  :caption: Basic usage
+  :name: sec-basic-usage
+
+  basic-usage/nearbeach-flow
+  basic-usage/opportunities
+  basic-usage/quotes-and-invoices
+  basic-usage/requirements-and-requirement-items
+  basic-usage/projects
+  basic-usage/tasks
+  basic-usage/requests-for-change
