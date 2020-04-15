@@ -24,6 +24,7 @@ The following quick instructions will inform you on how to install MySQL in Ubun
 4. Once mysql has been completely, log into mysql to install the NearBeach user
 
   .. code-block:: bash
+
     sudo mysql -u root -p
 
   enter in the root password for MySQL
@@ -86,9 +87,9 @@ The following quick instructions will inform you on how to install MySQL in Ubun
 
     ./manage.py createsuperuser
 
-11. Follow the prompts to create the superuser
+  Follow the prompts to create the superuser
 
-12. Test your Django project by visiting your site
+11. Test your Django project by visiting your site
 
   .. code-block:: bash
 
