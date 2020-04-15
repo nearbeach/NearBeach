@@ -8,7 +8,7 @@ Trouble Shooting Issues
 PDF Rendering gives 500 error
 -----------------------------
 
-.. .. important:: Weasy print will sometimes express errors - this is due to library issues with Weasy print and can occur after an update. The best solution is to update Weasy print
+.. important:: Weasy print will sometimes express errors - this is due to library issues with Weasy print and can occur after an update. The best solution is to update Weasy print
 
 The best solution at the moment is to update weasy print when you update your OS
 
