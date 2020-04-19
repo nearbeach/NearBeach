@@ -622,6 +622,12 @@ class document_permission(models.Model):
         null=True,
         on_delete=models.CASCADE,
     )
+    whiteboard_id = models.ForeignKey(
+        'whiteboard',
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
     requirement = models.ForeignKey(
         'requirement',
         blank=True,

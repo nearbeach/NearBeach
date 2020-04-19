@@ -6889,24 +6889,44 @@ def new_whiteboard(request, location_id, destination, folder_id):
                 change_user=request.user,
             )
 
-            if destination == "project":
-                document_permission_submit.project_id = project.objects.get(project_id=location_id)
-            elif destination == "task":
-                document_permission_submit.task_id = task.objects.get(task_id=location_id)
-            elif destination == "requirement":
-                document_permission_submit.requirement_id = requirement.objects.get(requirement_id=location_id)
-            elif destination == "requirement_item":
-                document_permission_submit.requirement_item_id = requirement_item.objects.get(requirement_item_id=location_id)
-            elif destination == "opportunity":
-                document_permission_submit.opportunity_id = opportunity.objects.get(opportunity_id=location_id)
-            elif destination == "customer":
-                document_permission_submit.customer_id = customer.objects.get(customer_id=location_id)
-            elif destination == "organisation":
-                document_permission_submit.organisation_id = organisation.objects.get(organisation_id=location_id)
+            #Connect object assignment
+            object_assignment_submit = object_assignment(
+                whiteboard=whiteboard_submit,
+                change_user=request.user,
+            )
 
+            if destination == "project":
+                project_instance = project.objects.get(project_id=location_id)
+                document_permission_submit.project_id = project_instance
+                object_assignment_submit.project_id = project_instance
+            elif destination == "task":
+                task_instance = task.objects.get(task_id=location_id)
+                document_permission_submit.task_id = task_instance
+                object_assignment_submit.task_id = task_instance
+            elif destination == "requirement":
+                requirement_instance = requirement.objects.get(requirement_id=location_id)
+                document_permission_submit.requirement = requirement_instance
+                object_assignment_submit.requirement = requirement_instance
+            elif destination == "requirement_item":
+                requirement_item_instance =  requirement_item.objects.get(requirement_item_id=location_id)
+                document_permission_submit.requirement_item_id = requirement_item_instance
+                object_assignment_submit.requirement_item = requirement_item_instance
+            elif destination == "opportunity":
+                opportunity_instance = opportunity.objects.get(opportunity_id=location_id)
+                document_permission_submit.opportunity_id = opportunity_instance
+                object_assignment_submit.opportunity_id = opportunity_instance
+            elif destination == "customer":
+                customer_instance = customer.objects.get(customer_id=location_id)
+                document_permission_submit.customer_id = customer_instance
+                object_assignment_submit.customer_id = customer_instance
+            elif destination == "organisation":
+                organisation_instance = organisation.objects.get(organisation_id=location_id)
+                document_permission_submit.organisation_id = organisation_instance
+                object_assignment_submit.organisation_id = organisation_instance
             ##ADD CODE FOR OTHER OBJECTS##
 
             document_permission_submit.save()
+            object_assignment_submit.save()
 
             #Return blank page
             t = loader.get_template('NearBeach/blank.html')
