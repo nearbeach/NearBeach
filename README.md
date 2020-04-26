@@ -33,6 +33,7 @@ Finally, you might need to send a quote to your customer. As a new feature, the 
 
 These are not the only features in NearBeach, but some which you may start using strait away. Feel free to download and install and start using NearBeach right away.
 
+
 ## Software References (thank you)
 
 NearBeach will not be where it currently is without the help of other open sourced projects. Below are the references to all the different tools that are utilised within NearBeach. NearBeach would like to thank these projects as they have help construct a better and more stable product. Please consider visiting and donating.
@@ -40,6 +41,13 @@ NearBeach will not be where it currently is without the help of other open sourc
 ### Browser Stack
 Thank you to [Browser Stack](http://browserstack.com/) for giving us the ability to test NearBeach on all browsers and devices.
 [![Browser Stack](https://raw.githubusercontent.com/robotichead/Store_Github_Pictures/master/browserstack-logo-600x315.png)](http://browserstack.com/)
+
+
+### Snyk.io for security checks 
+
+Python Modules - [![Known Vulnerabilities](https://snyk.io/test/github/robotichead/NearBeach/badge.svg?targetFile=NearBeach/requirements.txt)](https://snyk.io/test/github/robotichead/NearBeach?targetFile=NearBeach/requirements.txt)
+
+JavaScript Modules - [![Known Vulnerabilities](https://snyk.io/test/github/robotichead/NearBeach/badge.svg?targetFile=package.json)](https://snyk.io/test/github/robotichead/NearBeach?targetFile=package.json)
 
 ### Chosen-js
 Concept and development by Patrick Filler for Harvest.
