@@ -102,4 +102,4 @@ Installation Process
   :caption: Update or Patch NearBeach
   :name: sec-update-or-patch-nearbeach
 
-  update/_update_or_patch_nearbeach
+  update/update_or_patch_nearbeach
