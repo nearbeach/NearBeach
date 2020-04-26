@@ -11,7 +11,7 @@
 ![Twitter Follow](https://img.shields.io/twitter/follow/robotichead.svg?style=social)
 
 
-NearBeach is in currently beta development. If you find any issues, please do not hesitate to submit an issue. Alternatively you can submit through https://nearbeach.atlassian.net/servicedesk/customer/portal/1 (login not required)
+NearBeach is currently in beta development. If you find any issues, or require any help, please do not hesitate to contact on our forums. https://help.nearbeach.org
 
 ## What is NearBeach?
 NearBeach is a project and task management tool (PATMT) with a basic customer relationship management tool to help you manage your projects and task. The phillosophy of NearBeach is to be easy to install and use, be open sourced, be flexible, and aimed at small/personal organisation to large enterprises. Each new module brought to NearBeach expands it's capability tenfold and brings it closer to a competing product.
