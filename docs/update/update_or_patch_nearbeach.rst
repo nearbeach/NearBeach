@@ -7,9 +7,9 @@ Updating or Patching NearBeach
 NearBeach and it's framework Django will need frequent updating/patching. (talk about security)
 
 
-===============================
+-------------------------------
 Updating Django (Web Framework)
-===============================
+-------------------------------
 
 It is recommended to install NearBeach on a Long Term Support (LTS) version of Django.
 Security fixes/patches are applied for a longer period of time, helping keep your server secure.
@@ -21,9 +21,9 @@ NearBeach currently supports the following Django versions;
 
 More information about upgrading Django can be found `found in the Django Documentation <https://docs.djangoproject.com/en/3.0/howto/upgrade-version/>`_
 
-==================
+------------------
 Updating NearBeach
-==================
+------------------
 
 NearBeach will be using the Semantic Versioning system. Version numbers will be
 laid out as follows; major.minor.patch
@@ -35,9 +35,9 @@ laid out as follows; major.minor.patch
 3. PATCH versions mean very small changes. Usually this is to fix a bug or include a static file that was missing.
 
 
-======
+------
 Method
-======
+------
 
 1. Use ssh to connect with your web server
 
