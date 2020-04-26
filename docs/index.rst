@@ -70,7 +70,7 @@ Installation Process
   installation/installation_of_nearbeach
   installation/installation_of_optional_steps
   installation/trouble_shooting_issues
-  
+
 
   ------------------
   After Installation
@@ -96,3 +96,10 @@ Installation Process
   basic-usage/projects
   basic-usage/tasks
   basic-usage/requests-for-change
+
+.. toctree::
+  :maxdepth: 1
+  :caption: Update or Patch NearBeach
+  :name: sec-update-or-patch-nearbeach
+
+  update/update_or_patch_nearbeach
