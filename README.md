@@ -16,6 +16,16 @@ NearBeach is currently in beta development. If you find any issues, or require a
 ## What is NearBeach?
 NearBeach is a project and task management tool (PATMT) with a basic customer relationship management tool to help you manage your projects and task. The phillosophy of NearBeach is to be easy to install and use, be open sourced, be flexible, and aimed at small/personal organisation to large enterprises. Each new module brought to NearBeach expands it's capability tenfold and brings it closer to a competing product.
 
+
+## Helpful links
+
+- [NearBeach forum](https://help.nearbeach.org)
+- [Documentation](https://nearbeach.readthedocs.io)
+- [Buzilla](https://bugzilla.nearbeach.org)
+- [NearBeach Homepage](https://nearbeach.org)
+- [NearBeach Demo](https://demo.nearbeach.org)
+
+
 ## Features
 NearBeach's main focus is to create both projects and task. Each task can then be assigned to as many projects required (sometimes multiple projects will need to have the same task completed). Each project and task can also be assigned to multiple users to complete.
 ![NearBeach - Project Information](https://github.com/robotichead/Store_Github_Pictures/blob/master/NearBeach%20-%20project%20information.png?raw=true)
