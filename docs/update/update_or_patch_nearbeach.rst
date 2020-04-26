@@ -28,13 +28,11 @@ Updating NearBeach
 NearBeach will be using the Semantic Versioning system. Version numbers will be
 laid out as follows; major.minor.patch
 
-1. MAJOR version changes means a new NearBeach. The changes are extensive that
-  a new number for NearBeach is required.
+1. MAJOR version changes means a new NearBeach. The changes are extensive that a new number for NearBeach is required.
 2. MINOR version changes means new functionality in NearBeach. This could require
     - Database migrations
     - Static file migrations
-3. PATCH versions mean very small changes. Usually this is to fix a bug or
-  include a static file that was missing.
+3. PATCH versions mean very small changes. Usually this is to fix a bug or include a static file that was missing.
 
 
 ======
@@ -43,7 +41,15 @@ Method
 
 1. Use ssh to connect with your web server
 
+  .. code-block:: bash
+
+    ssh <<webserver IP or address>>
+
 2. Use cd to navigate to your project directory
+
+  .. code-block:: bash
+
+    cd <<project location>>
 
 3. Activate your virtual environment for your web server
 
