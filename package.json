@@ -24,7 +24,7 @@
     "bower": "^1.8.8",
     "d3": "^5.15.1",
     "d3-gantt-chart": "^0.2.8",
-    "intl-tel-input": "^16.0.7",
+    "intl-tel-input": "^16.0.15",
     "jquery": "^3.5.0",
     "jquery-datetimepicker": "^2.5.21",
     "mxgraph": "^4.1.1",
