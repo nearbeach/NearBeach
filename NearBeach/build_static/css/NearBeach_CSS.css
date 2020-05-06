@@ -16,3 +16,7 @@ a {
 .card {
     overflow-inline: auto;
 }
+
+.card-body {
+    overflow: hidden;
+}
