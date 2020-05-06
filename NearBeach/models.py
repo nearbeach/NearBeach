@@ -4,7 +4,6 @@ from .private_media import *
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from tinymce import HTMLField
-#from phonenumber_field.modelfields import PhoneNumberField
 import uuid
 
 # ENUM choices
