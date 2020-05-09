@@ -107,6 +107,8 @@ def whiteboard_information(request,whiteboard_id):
         )
     ).values('group_id')
 
+
+
     permission_results = return_user_permission_level(
         request,
         whiteboard_group_results,
@@ -115,20 +117,41 @@ def whiteboard_information(request,whiteboard_id):
             'task',
             'requirement',
             'request_for_change',
-            'opportunity'
+            'opportunity',
+            'customer',
+            'organisation',
         ]
     )
 
-    print(permission_results)
+    # If whiteboard is connected to either customer or organisation - we do
+    # not need to check the user permissions. As everyone should have access
+    # to the whiteboard.
+    bypass_permissions = len(object_assignment.objects.filter(
+        Q(
+            is_deleted="FALSE",
+            whiteboard_id=whiteboard_id,
+        ) & Q(
+            Q(
+                # Has customer associated
+                customer_id__isnull=False,
+            ) | Q(
+                # Has organisation associated
+                organisation_id__isnull=False,
+            )
+        )
+    ))
 
-    #Check the permissions
-    if permission_results['project'] == 0 and \
-        permission_results['task'] == 0 and \
-        permission_results['requirement'] == 0 and \
-        permission_results['request_for_change'] == 0 and \
-        permission_results['opportunity'] == 0:
-        # Send them to permission denied!!
-        return HttpResponseRedirect(reverse('permission_denied'))
+    # If bypass_permissions > 0 - then we do not need to check
+    # permissions as whiteboard is on customer or organisation
+    if bypass_permissions == 0:
+        #Check the permissions
+        if permission_results['project'] == 0 and \
+            permission_results['task'] == 0 and \
+            permission_results['requirement'] == 0 and \
+            permission_results['request_for_change'] == 0 and \
+            permission_results['opportunity'] == 0:
+            # Send them to permission denied!!
+            return HttpResponseRedirect(reverse('permission_denied'))
 
     #Get whiteboard information
     whiteboard_results = get_object_or_404(whiteboard, whiteboard_id=whiteboard_id)

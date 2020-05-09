@@ -6918,11 +6918,11 @@ def new_whiteboard(request, location_id, destination, folder_id):
             elif destination == "customer":
                 customer_instance = customer.objects.get(customer_id=location_id)
                 document_permission_submit.customer_id = customer_instance
-                object_assignment_submit.customer_id = customer_instance
+                object_assignment_submit.customer = customer_instance
             elif destination == "organisation":
                 organisation_instance = organisation.objects.get(organisation_id=location_id)
                 document_permission_submit.organisation_id = organisation_instance
-                object_assignment_submit.organisation_id = organisation_instance
+                object_assignment_submit.organisation = organisation_instance
             ##ADD CODE FOR OTHER OBJECTS##
 
             document_permission_submit.save()
