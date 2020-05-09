@@ -124,8 +124,10 @@
                         </td></tr>
                     {% endfor %}
                 </table>
-            {% else %}
+            {% elif requirement_link_permission > 1 %}
                 <a href="{% url 'new_kanban_requirement_board' requirement_results.requirement_id %}">Click here to create kanban link</a>
+            {% else %}
+                <p>Sorry - there are no links.</p>
             {% endif %}
         </div>
     </div>

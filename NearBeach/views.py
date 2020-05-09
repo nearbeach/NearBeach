@@ -2622,6 +2622,7 @@ def dashboard_group_active_projects(request):
                 username_id=request.user.id
             ).values('group'),
         ).values('project_id'),
+        project_status__in=['Backlog','Blocked','In Progress','Test/Review'],
     )
 
     # Load the template
