@@ -72,7 +72,7 @@
     {% for item in requirement_item_results %}
         <tr>
             <td>
-                <a href="{% url 'requirement_item_information' 1 %}">ITM{{ item.requirement_item_id }}</a></td>
+                <a href="{% url 'requirement_item_information' 1 %}">ITM{{ item.requirement_item_id_id }}</a></td>
             </td>
             {% if not item.project_id == None %}
                 <td><a href="{% url 'project_information' item.project_id.project_id %}">Project - {{ item.project_id.project_id }}</a></td>

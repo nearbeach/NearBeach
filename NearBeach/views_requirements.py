@@ -277,7 +277,7 @@ def new_requirement_item_link(request,requirement_item_id,location_id="",destina
         if location_id == "" or destination == "":
             return HttpResponseBadRequest("Sorry - those fields were blank")
 
-        requirement_item_link_submit = requirement_item_link(
+        requirement_item_link_submit = object_assignment(
             change_user=request.user,
             requirement_item_id=requirement_item_id,
         )
@@ -327,7 +327,7 @@ def new_requirement_item_link(request,requirement_item_id,location_id="",destina
             ).values('group_id')
         ).values('project_id')
     ).exclude(
-        project_id__in=requirement_item_link.objects.filter(
+        project_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             project_id__isnull=False,
             requirement_item_id=requirement_item_id,
@@ -345,7 +345,7 @@ def new_requirement_item_link(request,requirement_item_id,location_id="",destina
             ).values('group_id')
         ).values('task_id')
     ).exclude(
-        task_id__in=requirement_item_link.objects.filter(
+        task_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             task_id__isnull=False,
             requirement_item_id=requirement_item_id,
@@ -812,10 +812,12 @@ def requirement_link_list(request,requirement_id):
     """
     permission_results = return_user_permission_level(request, None, 'requirement_link')
 
+
     requirement_item_results = requirement_item.objects.filter(
         is_deleted="FALSE",
         requirement_id=requirement_id,
     )
+
     requirement_link_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         requirement_id=requirement_id,
@@ -825,9 +827,15 @@ def requirement_link_list(request,requirement_id):
         requirement_item_id__isnull=True,
     )
 
+    """
     requirement_item_results = requirement_item.objects.filter(
         is_deleted="FALSE",
         requirement_id=requirement_id,
+    )
+    """
+    requirement_item_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        requirement_item_id__in=requirement_item_results.values('requirement_id_id')
     )
 
     t = loader.get_template('NearBeach/requirement_information/requirement_link_list.html')
