@@ -1402,6 +1402,8 @@ def bug_search(request, location_id=None, destination=None):
             else:
                 raise ValueError from None
 
+            #print("url: "+url)
+
             with urllib.request.urlopen(req) as response: #nosec
                 json_data = json.load(response)  
 

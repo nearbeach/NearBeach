@@ -18,5 +18,9 @@ a {
 }
 
 .card-body {
-    overflow: hidden;
+    overflow: scroll;
+}
+
+body {
+    padding-bottom: 150px;
 }
