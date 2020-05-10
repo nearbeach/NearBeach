@@ -4,7 +4,6 @@ from .private_media import *
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from tinymce import HTMLField
-#from phonenumber_field.modelfields import PhoneNumberField
 import uuid
 
 # ENUM choices
@@ -618,6 +617,12 @@ class document_permission(models.Model):
     )
     opportunity_id = models.ForeignKey(
         'opportunity',
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
+    whiteboard_id = models.ForeignKey(
+        'whiteboard',
         blank=True,
         null=True,
         on_delete=models.CASCADE,

@@ -10,7 +10,7 @@
  * For vertices, the geometry consists of the x- and y-location, and the width
  * and height. For edges, the geometry consists of the optional terminal- and
  * control points. The terminal points are only required if an edge is
- * unconnected, and are stored in the sourcePoint> and <targetPoint>
+ * unconnected, and are stored in the <sourcePoint> and <targetPoint>
  * variables, respectively.
  * 
  * Example:
