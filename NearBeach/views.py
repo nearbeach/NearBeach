@@ -9337,8 +9337,8 @@ def search_customer(request):
 
     for split_row in search_customer_results.split(' '):
         customer_results = customer_results.filter(
-            Q(customer_first_name__contains=split_row) |
-            Q(customer_last_name__contains=split_row)
+            Q(customer_first_name__icontains=split_row) |
+            Q(customer_last_name__icontains=split_row)
         )
 
     # context
@@ -9444,7 +9444,7 @@ def search_organisation(request):
     organisation_results = organisation.objects.filter(is_deleted="FALSE")
 
     for split_row in search_organisation_results.split(' '):
-        organisation_results = organisation_results.filter(organisation_name__contains=split_row)
+        organisation_results = organisation_results.filter(organisation_name__icontains=split_row)
 
 
     # context
