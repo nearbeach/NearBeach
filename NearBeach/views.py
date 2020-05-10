@@ -5031,7 +5031,12 @@ def login(request):
             print(form.errors)
 
     # Setup background image
-    background_image = 'NearBeach/images/NearBeach_Background_%(number)03d.webp' % {'number': random.randint(1,19)}
+    # If user-agent string contains iOS or Safari, show default image
+    print("User Agent String: ",request.META['HTTP_USER_AGENT'])
+    if 'iOS' in request.META['HTTP_USER_AGENT'] or 'Safari' in request.META['HTTP_USER_AGENT']:
+        background_image = 'NearBeach/images/NearBeach_Background_001.jpg'
+    else:
+        background_image = 'NearBeach/images/NearBeach_Background_%(number)03d.webp' % {'number': random.randint(1,19)}
 
     # load template
     t = loader.get_template('NearBeach/login.html')
