@@ -5032,7 +5032,6 @@ def login(request):
 
     # Setup background image
     # If user-agent string contains iOS or Safari, show default image
-    print("User Agent String: ",request.META['HTTP_USER_AGENT'])
     if 'iOS' in request.META['HTTP_USER_AGENT'] or 'Safari' in request.META['HTTP_USER_AGENT']:
         background_image = 'NearBeach/images/NearBeach_Background_001.jpg'
     else:
