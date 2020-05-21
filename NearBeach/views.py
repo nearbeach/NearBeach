@@ -5579,6 +5579,7 @@ def new_kanban_board(request):
             kanban_board_submit = kanban_board(
                 kanban_board_name=form.cleaned_data['kanban_board_name'],
                 change_user=request.user,
+                creation_user=request.user,
             )
             kanban_board_submit.save()
 
@@ -5795,6 +5796,7 @@ def new_opportunity(request):
                 opportunity_stage_id=stage_of_opportunity_instance,
                 user_id=request.user,
                 change_user=request.user,
+                creation_user=request.user,
             )
             submit_opportunity.save()
 
@@ -6136,6 +6138,7 @@ def new_project(request, location_id='', destination=''):
                 project_story_point_min=project_story_point * nearbeach_option_results.story_point_hour_min,
                 project_story_point_max=project_story_point * nearbeach_option_results.story_point_hour_max,
                 change_user=request.user,
+                creation_user=request.user,
             )
             if organisation_id_form:
                 submit_project.organisation_id=organisation_id_form
@@ -6315,7 +6318,8 @@ def new_quote(request,destination,primary_key):
                 quote_stage_id=quote_stage_instance,
                 customer_notes=customer_notes,
                 quote_valid_till=quote_valid_till,
-                change_user=request.user
+                change_user=request.user,
+                creation_user=request.user,
             )
             """
             ADD CODE HERE
@@ -6613,6 +6617,7 @@ def new_request_for_change(request):
                 rfc_test_plan=form.cleaned_data['rfc_test_plan'],
                 change_user=request.user,
                 rfc_status=1, #Draft
+                creation_user=request.user,
             )
             rfc_submit.save()
 
@@ -6682,6 +6687,7 @@ def new_task(request, location_id='', destination=''):
                 change_user = request.user,
                 task_story_point_min=task_story_point_min,
                 task_story_point_max=task_story_point_max,
+                creation_user=request.user,
             )
 
             if organisation_id_form:
@@ -7994,9 +8000,15 @@ def project_information(request, project_id):
         project_id=project_id,
     ).values('group_id')
 
+    # Get project results
+    project_results = get_object_or_404(project, project_id=project_id)
+
     permission_results = return_user_permission_level(request, project_groups_results,['project','project_history'])
 
     if permission_results['project'] == 0:
+        if project_results.creation_user == request.user:
+            #Send user to read only
+            return HttpResponseRedirect(reverse(project_readonly,args={project_id}))
         # Send them to permission denied!!
         return HttpResponseRedirect(reverse(permission_denied))
 
@@ -8058,7 +8070,7 @@ def project_information(request, project_id):
         else:
             print(form.errors)
 
-    project_results = get_object_or_404(project, project_id=project_id)
+
     opportunity_results = opportunity.objects.filter(
         is_deleted="FALSE",
         opportunity_id__in = object_assignment.objects.filter(

@@ -416,6 +416,11 @@ class change_task(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user',
     )
+    creation_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_creation_user'
+    )
     is_deleted = models.CharField(
         max_length=5,
         choices=IS_DELETED_CHOICE,
@@ -941,6 +946,11 @@ class kanban_board(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
+    )
+    creation_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_creation_user'
     )
     is_deleted = models.CharField(
         max_length=5,
@@ -2252,6 +2262,11 @@ class project(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
+    creation_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_creation_user'
+    )
     is_deleted = models.CharField(
         max_length=5,
         choices=IS_DELETED_CHOICE,
@@ -2529,6 +2544,11 @@ class quote(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
+    )
+    creation_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_creation_user'
     )
     is_deleted = models.CharField(
         max_length=5,
@@ -3031,6 +3051,11 @@ class requirement(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
+    creation_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_creation_user'
+    )
     is_deleted = models.CharField(
         max_length=5,
         choices=IS_DELETED_CHOICE,
@@ -3381,6 +3406,11 @@ class task(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
+    )
+    creation_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_creation_user'
     )
     is_deleted = models.CharField(
         max_length=5,
