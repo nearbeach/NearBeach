@@ -5037,6 +5037,8 @@ def login(request):
             background_image = 'NearBeach/images/NearBeach_Background_001.jpg'
         else:
             background_image = 'NearBeach/images/NearBeach_Background_%(number)03d.webp' % {'number': random.randint(1,19)}
+    else:
+        background_image = 'NearBeach/images/NearBeach_Background_%(number)03d.webp' % {'number': random.randint(1, 19)}
 
     # load template
     t = loader.get_template('NearBeach/login.html')
