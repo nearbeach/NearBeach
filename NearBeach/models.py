@@ -1834,6 +1834,11 @@ class opportunity(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
+    creation_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_creation_user'
+    )
     is_deleted = models.CharField(
         max_length=5,
         choices=IS_DELETED_CHOICE,
@@ -2905,6 +2910,11 @@ class request_for_change(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
+    )
+    creation_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_creation_user'
     )
     is_deleted = models.CharField(
         max_length=5,

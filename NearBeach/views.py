@@ -4269,8 +4269,11 @@ def kanban_edit_xy_name(request,location_id, destination):
 @login_required(login_url='login',redirect_field_name="")
 def kanban_information(request,kanban_board_id):
     permission_results = return_user_permission_level(request, None,['kanban'])
+    kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
 
     if permission_results['kanban'] == 0:
+        if kanban_board_results.creation_user == request.user:
+            return HttpResponseRedirect(reverse('kanban_read_only', args= { kanban_board_id }))
         return HttpResponseRedirect(reverse('permission_denied'))
     elif permission_results['kanban'] == 1:
         #The user can only get read only access
@@ -4292,11 +4295,11 @@ def kanban_information(request,kanban_board_id):
         ).values('group_id')
     )
     if object_access.count() == 0 and not permission_results['administration'] == 4:
+        #If user is creation user - send them to the read only module
+        if kanban_board_results.creation_user == request.user:
+            return HttpResponseRedirect(reverse('kanban_read_only', args={kanban_board_id}))
         return HttpResponseRedirect(reverse('permission_denied'))
 
-
-    #Get the required information
-    kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
 
     """
     If this kanban is connected to a requirement then we need to send it to the 'kanban_requirement_information". This
@@ -4622,14 +4625,10 @@ def kanban_properties(request,kanban_board_id):
 @login_required(login_url='login',redirect_field_name="")
 def kanban_read_only(request,kanban_board_id):
     permission_results = return_user_permission_level(request, None,['kanban'])
-
-    print(permission_results)
-
-    if permission_results['kanban'] == 0:
-        return HttpResponseRedirect(reverse('permission_denied'))
-
-    #Get the required information
     kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+
+    if permission_results['kanban'] == 0 and not kanban_board_results.creation_user == request.user:
+        return HttpResponseRedirect(reverse('permission_denied'))
 
     """
     If this kanban is connected to a requirement then we need to send it to the 'kanban_requirement_information". This
@@ -7022,15 +7021,18 @@ def opportunity_connection_list(request, opportunity_id):
 @login_required(login_url='login',redirect_field_name="")
 def opportunity_information(request, opportunity_id):
     permission_results = return_user_permission_level(request, None,'opportunity')
+    opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
 
-    if permission_results['opportunity']  == 0:
+    if permission_results['opportunity'] == 0:
+        if opportunity_results.creation_user == request.user:
+            return HttpResponseRedirect(reverse('opportunity_readonly', args={ opportunity_id }))
         return HttpResponseRedirect(reverse('permission_denied'))
     elif permission_results['opportunity'] == 1:
         #Send user to read only module
         return HttpResponseRedirect(reverse('opportunity_readonly', args={ opportunity_id }))
 
     #Check to see if opportunity is closed
-    opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
+
     if opportunity_results.opportunity_stage_id.opportunity_closed == "TRUE":
         return HttpResponseRedirect(reverse('opportunity_readonly', args={opportunity_id}))
 
@@ -7040,6 +7042,8 @@ def opportunity_information(request, opportunity_id):
     A user who wants to access this Opportunity will need to meet one of these two conditions
     1. They have an access to  a group whom has been granted access to this Opportunity
     2. They are a super user (they should be getting access to all objects)
+    
+    The exception is that the user is the creation user
     """
     object_access = object_assignment.objects.filter(
         is_deleted="FALSE",
@@ -7050,6 +7054,8 @@ def opportunity_information(request, opportunity_id):
         ).values('group_id')
     )
     if object_access.count() == 0 and not permission_results['administration'] == 4:
+        if opportunity_results.creation_user == request.user:
+            return HttpResponseRedirect(reverse('opportunity_readonly', args={opportunity_id}))
         return HttpResponseRedirect(reverse('permission_denied'))
 
 
@@ -7130,37 +7136,6 @@ def opportunity_information(request, opportunity_id):
                 ).update(is_deleted='TRUE')
         else:
             print(form.errors)
-
-    else:
-        """
-        We want to limit who can see what opportunity. The exception to this is for the user
-        who just created the opportunity. (I should program in a warning stating that they
-        might not be able to see the opportunity again unless they add themselfs to the 
-        permissions list.
-
-        The user has to meet at least one of these conditions;
-        1.) User has permission
-        2.) User's group has permission
-        3.) All users have permission
-        """
-        user_groups_results = user_group.objects.filter(username=request.user)
-
-        opportunity_permission_results = object_assignment.objects.filter(
-            Q(
-                Q(assigned_user=request.user)  # User has permission
-                | Q(group_id__in=user_groups_results.values('group_id'))  # User's group have permission
-            )
-            & Q(opportunity_id=opportunity_id)
-        )
-
-
-        if (not opportunity_permission_results):
-            return HttpResponseRedirect(
-                reverse(
-                    permission_denied,
-                )
-            )
-
 
     # Data
     requirement_results = requirement.objects.filter(
@@ -7259,11 +7234,12 @@ def opportunity_readonly(request,opportunity_id):
     )
 
     permission_results = return_user_permission_level(request, group_results.values('group_id'),'opportunity')
-    if permission_results['opportunity'] == 0:
+    opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
+
+    if permission_results['opportunity'] == 0 and not opportunity_results.creation_user == request.user:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     #Get the relivant data
-    opportunity_results = opportunity.objects.get(opportunity_id=opportunity_id)
     customer_connection_results = customer.objects.filter(
         is_deleted="FALSE",
         customer_id__in=object_assignment.objects.filter(
@@ -7272,6 +7248,7 @@ def opportunity_readonly(request,opportunity_id):
             customer_id__isnull=False,
         ).values('customer_id')
     ).order_by('customer_first_name', 'customer_last_name')
+
     organisation_connection_results = organisation.objects.filter(
         is_deleted="FALSE",
         organisation_id__in=object_assignment.objects.filter(
@@ -8173,9 +8150,14 @@ def project_readonly(request, project_id):
     ).values('group_id_id')
 
     permission_results = return_user_permission_level(request, project_groups_results, ['project', 'project_history'])
+    project_results = project.objects.get(project_id=project_id)
+
+    #Check to make sure the user can access this data
+    if permission_results['project'] == 0 and not project_results.creation_user == request.user:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse(permission_denied))
 
     #Get data
-    project_results = project.objects.get(project_id=project_id)
     to_do_results = to_do.objects.filter(
         is_deleted="FALSE",
         project_id=project_id,
@@ -8337,11 +8319,14 @@ def project_remove_customer(request,project_customer_id):
 def quote_information(request, quote_id):
     permission_results = return_user_permission_level(request, None, 'quote')
 
-    if permission_results['quote'] == 0:
-        return HttpResponseRedirect(reverse(permission_denied))
-
     #Get the quote information
     quotes_results = quote.objects.get(quote_id=quote_id)
+
+    if permission_results['quote'] == 0:
+        if quote_results.creation_user == request.user:
+            return HttpResponseRedirect(reverse('quote_readonly',args={quote_id}))
+        return HttpResponseRedirect(reverse(permission_denied))
+
 
     """
     If any of the following conditions are met, we want to send the user to the read only module.
@@ -8358,7 +8343,6 @@ def quote_information(request, quote_id):
     The above quote/invoice status have the "Closed" statement as true in the table 'list_of_quote_stages'. We just 
     need to check this status in that table.
     """
-    print("QUOTE STAGE: " + str(quotes_results.quote_stage_id))
     if quotes_results.quote_stage_id.quote_closed == "TRUE" or permission_results['quote'] == 1:
         return HttpResponseRedirect(reverse('quote_readonly', args = { quote_id }))
 
@@ -8412,6 +8396,7 @@ def quote_information(request, quote_id):
         2.) User's group has permission
         3.) All users have permission
         """
+
         user_groups_results = user_group.objects.filter(username=request.user)
 
         quote_permission_results = object_assignment.objects.filter(
@@ -8423,7 +8408,10 @@ def quote_information(request, quote_id):
             & Q(is_deleted="FALSE")
         )
 
-        if (not quote_permission_results):
+        if not quote_permission_results:
+            # If user is creation user - send them to the read only module
+            if quote_results.creation_user == request.user:
+                return HttpResponseRedirect(reverse('quote_readonly', args={quote_id}))
             return HttpResponseRedirect(
                 reverse(
                     permission_denied,
@@ -8580,14 +8568,12 @@ def quote_template_information(request,quote_template_id):
 @login_required(login_url='login',redirect_field_name="")
 def quote_readonly(request, quote_id):
     permission_results = return_user_permission_level(request, None, 'quote')
-
-    if permission_results['quote'] == 0:
-        return HttpResponseRedirect(reverse(permission_denied))
-
-
-    #Get required data
     quote_results = quote.objects.get(quote_id=quote_id)
 
+    if permission_results['quote'] == 0 and not quote_results.creation_user == request.user:
+        return HttpResponseRedirect(reverse(permission_denied))
+
+    # Get required data
     line_item_results = quote_product_and_service.objects.filter(
         is_deleted='FALSE',
         quote_id=quote_id,
@@ -8892,11 +8878,11 @@ def request_for_change_information(request,rfc_id):
     """
 
     permission_results = return_user_permission_level(request,None,'request_for_change')
-    if permission_results['request_for_change'] == 0:
+    rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
+
+    if permission_results['request_for_change'] == 0 and not rfc_results.creation_user == request.user:
         return HttpResponseRedirect(reverse('permission_denied'))
 
-    # Get data
-    rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
 
     organisation_stakeholders = organisation.objects.filter(
         is_deleted="FALSE",
@@ -9821,8 +9807,11 @@ def task_information(request, task_id):
     ).values('group_id')
 
     permission_results = return_user_permission_level(request, group_results,['task','task_history'])
+    task_results = get_object_or_404(task, task_id=task_id)
 
     if permission_results['task'] == 0:
+        if (task_results.creation_user == request.user):
+            return HttpResponseRedirect(reverse(task_readonly,args={task_id}))
         # Send them to permission denied!!
         return HttpResponseRedirect(reverse(permission_denied))
 
@@ -9845,9 +9834,6 @@ def task_information(request, task_id):
     if object_access.count() == 0 and not permission_results['administration'] == 4:
         return HttpResponseRedirect(reverse('permission_denied'))
 
-
-    # Define the data we will edit
-    task_results = get_object_or_404(task, task_id=task_id)
 
     """
     We want to take the user to the read only module if either of the conditions are met;
@@ -9964,9 +9950,14 @@ def task_readonly(request,task_id):
     ).values('group_id_id')
 
     permission_results = return_user_permission_level(request, task_groups_results, ['task', 'task_history'])
+    task_results = task.objects.get(task_id=task_id)
+
+    #Check to make sure the user can access this data
+    if permission_results['task'] == 0 and not task_results.creation_user == request.user:
+        # Send them to permission denied!!
+        return HttpResponseRedirect(reverse(permission_denied))
 
     # Get data
-    task_results = task.objects.get(task_id=task_id)
     to_do_results = to_do.objects.filter(
         is_deleted="FALSE",
         task_id=task_id,
