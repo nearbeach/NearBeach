@@ -8724,8 +8724,12 @@ def request_for_change_draft(request,rfc_id):
     4. Get template
     5. Render results
     """
+    rfc_groups_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        request_for_change=rfc_id,
+    ).values('group_id')
 
-    permission_results = return_user_permission_level(request,None,'request_for_change')
+    permission_results = return_user_permission_level(request,rfc_groups_results,'request_for_change')
     if permission_results['request_for_change'] == 0:
         return HttpResponseRedirect(reverse('permission_denied'))
 
@@ -8876,8 +8880,12 @@ def request_for_change_information(request,rfc_id):
     :param rfc_id:
     :return:
     """
+    rfc_groups_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        request_for_change=rfc_id,
+    ).values('group_id')
 
-    permission_results = return_user_permission_level(request,None,'request_for_change')
+    permission_results = return_user_permission_level(request,rfc_groups_results,'request_for_change')
     rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
 
     if permission_results['request_for_change'] == 0 and not rfc_results.creation_user == request.user:
