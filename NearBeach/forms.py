@@ -969,6 +969,9 @@ class customer_readonly_form(ModelForm):
 class diagnostic_test_document_upload_form(forms.Form):
     document = forms.FileField(
         required=True,
+        widget=forms.FileInput(attrs={
+            'class': 'custom-file-input',
+        }),
     )
 
 class document_upload_form(ModelForm):

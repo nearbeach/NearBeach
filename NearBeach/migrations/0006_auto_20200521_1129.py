@@ -50,4 +50,18 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='task_creation_user', to=settings.AUTH_USER_MODEL),
             preserve_default=False,
         ),
+        migrations.AddField(
+            model_name='opportunity',
+            name='creation_user',
+            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE,
+                                    related_name='opportunity_creation_user', to=settings.AUTH_USER_MODEL),
+            preserve_default=False,
+        ),
+        migrations.AddField(
+            model_name='request_for_change',
+            name='creation_user',
+            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE,
+                                    related_name='request_for_change_creation_user', to=settings.AUTH_USER_MODEL),
+            preserve_default=False,
+        ),
     ]

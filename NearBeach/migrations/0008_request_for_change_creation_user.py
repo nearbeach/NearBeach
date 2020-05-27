@@ -14,10 +14,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='request_for_change',
-            name='creation_user',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='request_for_change_creation_user', to=settings.AUTH_USER_MODEL),
-            preserve_default=False,
-        ),
+
     ]
