@@ -8410,7 +8410,7 @@ def quote_information(request, quote_id):
 
         if not quote_permission_results:
             # If user is creation user - send them to the read only module
-            if quote_results.creation_user == request.user:
+            if quotes_results.creation_user == request.user:
                 return HttpResponseRedirect(reverse('quote_readonly', args={quote_id}))
             return HttpResponseRedirect(
                 reverse(
