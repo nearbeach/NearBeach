@@ -4,7 +4,6 @@ from .private_media import *
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from tinymce import HTMLField
-#from phonenumber_field.modelfields import PhoneNumberField
 import uuid
 
 # ENUM choices
@@ -417,6 +416,11 @@ class change_task(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user',
     )
+    creation_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_creation_user'
+    )
     is_deleted = models.CharField(
         max_length=5,
         choices=IS_DELETED_CHOICE,
@@ -618,6 +622,12 @@ class document_permission(models.Model):
     )
     opportunity_id = models.ForeignKey(
         'opportunity',
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
+    whiteboard_id = models.ForeignKey(
+        'whiteboard',
         blank=True,
         null=True,
         on_delete=models.CASCADE,
@@ -936,6 +946,11 @@ class kanban_board(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
+    )
+    creation_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_creation_user'
     )
     is_deleted = models.CharField(
         max_length=5,
@@ -1819,6 +1834,11 @@ class opportunity(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
+    creation_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_creation_user'
+    )
     is_deleted = models.CharField(
         max_length=5,
         choices=IS_DELETED_CHOICE,
@@ -2247,6 +2267,11 @@ class project(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
+    creation_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_creation_user'
+    )
     is_deleted = models.CharField(
         max_length=5,
         choices=IS_DELETED_CHOICE,
@@ -2524,6 +2549,11 @@ class quote(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
+    )
+    creation_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_creation_user'
     )
     is_deleted = models.CharField(
         max_length=5,
@@ -2881,6 +2911,11 @@ class request_for_change(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
+    creation_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_creation_user'
+    )
     is_deleted = models.CharField(
         max_length=5,
         choices=IS_DELETED_CHOICE,
@@ -3025,6 +3060,11 @@ class requirement(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
+    )
+    creation_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_creation_user'
     )
     is_deleted = models.CharField(
         max_length=5,
@@ -3376,6 +3416,11 @@ class task(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
+    )
+    creation_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_creation_user'
     )
     is_deleted = models.CharField(
         max_length=5,

@@ -969,6 +969,9 @@ class customer_readonly_form(ModelForm):
 class diagnostic_test_document_upload_form(forms.Form):
     document = forms.FileField(
         required=True,
+        widget=forms.FileInput(attrs={
+            'class': 'custom-file-input',
+        }),
     )
 
 class document_upload_form(ModelForm):
@@ -2393,6 +2396,7 @@ class new_opportunity_form(ModelForm):
             'user_id',
             'is_deleted',
             'change_user',
+            'creation_user',
         }
 
 class new_organisation_form(forms.Form):
@@ -2733,6 +2737,7 @@ class new_request_for_change_form(ModelForm):
             'change_user',
             'is_deleted',
             'rfc_status',
+            'creation_user',
         ]
 
 

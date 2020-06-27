@@ -16,3 +16,19 @@ a {
 .card {
     overflow-inline: auto;
 }
+
+.card-body {
+    overflow: scroll;
+}
+
+body {
+    padding-bottom: 150px;
+}
+
+.input-group-append {
+	position: absolute;
+	right: 0;
+	margin-right: 35px;
+	top: 5%;
+	font-size: 25px;
+}

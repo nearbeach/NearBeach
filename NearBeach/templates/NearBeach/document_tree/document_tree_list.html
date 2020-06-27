@@ -99,7 +99,15 @@ The table that will display the current directory.
             <!-- BODY -->
             <div class="modal-body">
                 <form id="document_upload_form" enctype="multipart/form-data">
-                    {{ document_upload_form.document }}
+                    <div class="input-group mb-3">
+                        <div class="custom-file">
+                            <!--<input type="file" class="custom-file-input" id="inputGroupFile01">-->
+                            {{ document_upload_form.document }}
+                            <label class="custom-file-label" for="id_document">Choose file</label>
+                        </div>
+                    </div>
+
+
                     {{ document_upload_form.document_description }}
                 </form>
             </div>

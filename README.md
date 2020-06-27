@@ -11,10 +11,20 @@
 ![Twitter Follow](https://img.shields.io/twitter/follow/robotichead.svg?style=social)
 
 
-NearBeach is in currently beta development. If you find any issues, please do not hesitate to submit an issue. Alternatively you can submit through https://nearbeach.atlassian.net/servicedesk/customer/portal/1 (login not required)
+NearBeach is currently in beta development. If you find any issues, or require any help, please do not hesitate to contact on our forums. https://help.nearbeach.org
 
 ## What is NearBeach?
 NearBeach is a project and task management tool (PATMT) with a basic customer relationship management tool to help you manage your projects and task. The phillosophy of NearBeach is to be easy to install and use, be open sourced, be flexible, and aimed at small/personal organisation to large enterprises. Each new module brought to NearBeach expands it's capability tenfold and brings it closer to a competing product.
+
+
+## Helpful links
+
+- [NearBeach forum](https://help.nearbeach.org)
+- [Documentation](https://nearbeach.readthedocs.io)
+- [Buzilla](https://bugzilla.nearbeach.org)
+- [NearBeach Homepage](https://nearbeach.org)
+- [NearBeach Demo](https://demo.nearbeach.org)
+
 
 ## Features
 NearBeach's main focus is to create both projects and task. Each task can then be assigned to as many projects required (sometimes multiple projects will need to have the same task completed). Each project and task can also be assigned to multiple users to complete.
@@ -33,6 +43,7 @@ Finally, you might need to send a quote to your customer. As a new feature, the 
 
 These are not the only features in NearBeach, but some which you may start using strait away. Feel free to download and install and start using NearBeach right away.
 
+
 ## Software References (thank you)
 
 NearBeach will not be where it currently is without the help of other open sourced projects. Below are the references to all the different tools that are utilised within NearBeach. NearBeach would like to thank these projects as they have help construct a better and more stable product. Please consider visiting and donating.
@@ -40,6 +51,13 @@ NearBeach will not be where it currently is without the help of other open sourc
 ### Browser Stack
 Thank you to [Browser Stack](http://browserstack.com/) for giving us the ability to test NearBeach on all browsers and devices.
 [![Browser Stack](https://raw.githubusercontent.com/robotichead/Store_Github_Pictures/master/browserstack-logo-600x315.png)](http://browserstack.com/)
+
+
+### Snyk.io for security checks 
+
+Python Modules - [![Known Vulnerabilities](https://snyk.io/test/github/robotichead/NearBeach/badge.svg?targetFile=NearBeach/requirements.txt)](https://snyk.io/test/github/robotichead/NearBeach?targetFile=NearBeach/requirements.txt)
+
+JavaScript Modules - [![Known Vulnerabilities](https://snyk.io/test/github/robotichead/NearBeach/badge.svg?targetFile=package.json)](https://snyk.io/test/github/robotichead/NearBeach?targetFile=package.json)
 
 ### Chosen-js
 Concept and development by Patrick Filler for Harvest.

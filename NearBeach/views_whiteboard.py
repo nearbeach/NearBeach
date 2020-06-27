@@ -63,43 +63,51 @@ def whiteboard_information(request,whiteboard_id):
     :param request:
     :return:
     """
-    whiteboard_object_results = object_assignment.objects.filter(
+    document_results = document.objects.get(
         is_deleted="FALSE",
         whiteboard_id=whiteboard_id
+    )
+
+    document_permission_results = document_permission.objects.filter(
+        is_deleted="FALSE",
+        document_key=document_results,
     )
 
     whiteboard_group_results = object_assignment.objects.filter(
         Q(
             is_deleted="FALSE",
+            #group_id__isnull=False,
         ) & Q(
             Q(
                 #Get the groups from task id
-                task_id__in=whiteboard_object_results.filter(
+                task_id__in=document_permission_results.filter(
                     task_id__isnull=False,
                 ).values('task_id')
             ) | Q(
                 #Get the groups from project
-                project_id__in=whiteboard_object_results.filter(
+                project_id__in=document_permission_results.filter(
                     project_id__isnull=False,
                 ).values('project_id')
             ) | Q(
                 #Get the groups from requirements
-                requirement_id__in=whiteboard_object_results.filter(
+                requirement_id__in=document_permission_results.filter(
                     requirement_id__isnull=False,
                 ).values('requirement_id')
             ) | Q(
                 #Get the groups from RFC
-                request_for_change__in=whiteboard_object_results.filter(
+                request_for_change__in=document_permission_results.filter(
                     request_for_change__isnull=False,
                 ).values('request_for_change')
             ) | Q(
                 #Get the groups from opportunity
-                opportunity_id__in=whiteboard_object_results.filter(
+                opportunity_id__in=document_permission_results.filter(
                     opportunity_id__isnull=False,
                 ).values('opportunity_id')
             )
         )
-    ).values('group_id_id')
+    ).values('group_id')
+
+
 
     permission_results = return_user_permission_level(
         request,
@@ -109,18 +117,41 @@ def whiteboard_information(request,whiteboard_id):
             'task',
             'requirement',
             'request_for_change',
-            'opportunity'
+            'opportunity',
+            'customer',
+            'organisation',
         ]
     )
 
-    #Check the permissions
-    if permission_results['project'] == 0 or \
-        permission_results['task'] == 0 or \
-        permission_results['requirement'] == 0 or \
-        permission_results['request_for_change'] == 0 or \
-        permission_results['opportunity'] == 0:
-        # Send them to permission denied!!
-        return HttpResponseRedirect(reverse('permission_denied'))
+    # If whiteboard is connected to either customer or organisation - we do
+    # not need to check the user permissions. As everyone should have access
+    # to the whiteboard.
+    bypass_permissions = len(object_assignment.objects.filter(
+        Q(
+            is_deleted="FALSE",
+            whiteboard_id=whiteboard_id,
+        ) & Q(
+            Q(
+                # Has customer associated
+                customer_id__isnull=False,
+            ) | Q(
+                # Has organisation associated
+                organisation_id__isnull=False,
+            )
+        )
+    ))
+
+    # If bypass_permissions > 0 - then we do not need to check
+    # permissions as whiteboard is on customer or organisation
+    if bypass_permissions == 0:
+        #Check the permissions
+        if permission_results['project'] == 0 and \
+            permission_results['task'] == 0 and \
+            permission_results['requirement'] == 0 and \
+            permission_results['request_for_change'] == 0 and \
+            permission_results['opportunity'] == 0:
+            # Send them to permission denied!!
+            return HttpResponseRedirect(reverse('permission_denied'))
 
     #Get whiteboard information
     whiteboard_results = get_object_or_404(whiteboard, whiteboard_id=whiteboard_id)

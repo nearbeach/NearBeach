@@ -1,165 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<head>
-	<title>NearBeach Beta</title>
+{% include "NearBeach/partials/header.html" %}
 
-    {% load static %}
-
-    <!-- Load Bootstrap -->
-    <script type="text/javascript" src="{% static 'NearBeach/js/jquery.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/js/popper.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/js/bootstrap.min.js' %}"></script>
-
-    <!-- Load other misc libraries -->
-    <script type="text/javascript" src="{% static 'NearBeach/js/d3.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/js/jquery.datetimepicker.full.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/js/NearBeach-min.js' %}"></script>
-
-    <!-- Load CSS -->
-    <link rel="stylesheet" href="{% static 'NearBeach/css/NearBeach.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'NearBeach/css/bootstrap.min.css' %}" />
-
-    <!-- fav icon -->
-    <link rel="shortcut icon" type="image/png" href="{% static '/NearBeach/NearBeach_Logo_Small.png' %}"/>
-
-</head>
-<body style="padding-bottom: 150px;">
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand" href="{% url 'dashboard' %}">NearBeach</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                    <!--DASHBOARD-->
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
-                    </li>
-
-                    <!--MY PROFILE-->
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'my_profile' %}">My Profile</a>
-                    </li>
-
-                    <!--TIMELINE-->
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'timeline' %}">Timeline</a>
-                    </li>
-
-                    {% if new_item_permission >= 3 %}
-                    <!--NEW ITEMS-->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light" href="javascript:void(0)" id="new_items_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                New Items
-                            </a>
-                            <div class="dropdown-menu bg-dark" aria-labelledby="new_items_dropdown">
-                                <a class="dropdown-item text-light" href="{% url 'new_customer' 0 %}">New Customer</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_kanban_board' %}">New Kanban Board</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_opportunity' %}">New Opportunity</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_organisation' %}">New Organisation</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_project' %}">New Project</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_request_for_change' %}">New Request For Change</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_requirement' %}">New Requirement</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_task' %}">New Task</a>
-                            </div>
-                        </li>
-                    {% endif %}
-
-                    <!--SEARCH-->
-                    <!--Temp code - might be replaced by a proper search functionality-->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-light" href="javascript:void(0)" id="list_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            List Objects
-                        </a>
-                        <div class="dropdown-menu bg-dark" aria-labelledby="list_dropdown">
-                            <a class="dropdown-item text-light" href="{% url 'search' %}">List All</a>
-                            <a class="dropdown-item text-light" href="{% url 'search_tags' %}">List by Tag</a>
-                            <a class="dropdown-item text-light" href="{% url 'search_customer' %}">List Customers</a>
-                            <a class="dropdown-item text-light" href="{% url 'search_kanban' %}">List Kanban Boards</a>
-                            <a class="dropdown-item text-light" href="{% url 'search_organisation' %}">List Organisations</a>
-                        </div>
-                    </li>
-
-                    {% if administration_permission >= 1 %}
-                        <!--CONFIGURATION-->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light" href="javascript:void(0)" id="configuration_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Configuration
-                            </a>
-                            <div class="dropdown-menu bg-dark" aria-labelledby="administration_dropdown">
-                                <a class="dropdown-item text-light" href="{% url 'bug_client_list' %}">Bug Client List</a>
-                                <a class="dropdown-item text-light" href="{% url 'search_templates' %}">Edit Templates</a>
-                                <a class="dropdown-item text-light" href="{% url 'list_of_tags' %}">List of Tags</a>
-                                <a class="dropdown-item text-light" href="{% url 'list_of_taxes_information' %}">List of Taxes</a>
-                                <a class="dropdown-item text-light" href="{% url 'product_and_service_search' %}">Products and Services</a>
-                            </div>
-                        </li>
-
-                        <!--ADMINISTRATION-->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light" href="javascript:void(0)" id="administration_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Administration
-                            </a>
-                            <div class="dropdown-menu bg-dark" aria-labelledby="administration_dropdown">
-                                <a class="dropdown-item text-light" href="{% url 'diagnostic_information' %}">Diagnostics</a>
-                                <a class="dropdown-item text-light" href="{% url 'search_group' %}">Groups</a>
-                                <a class="dropdown-item text-light" href="{% url 'search_permission_set' %}">Permission Sets</a>
-                                <a class="dropdown-item text-light" href="{% url 'search_users' %}">Users</a>
-                            </div>
-                        </li>
-                    {% endif %}
-                </ul>
-
-                <!--SEARCH FIELD-->
-                <form action={% url 'search' %} method="post" class="search_for form-inline my-2 my-lg-0">
-                    {% csrf_token %}
-                    <input id="id_search_for" name="search_for" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-secondary" type="submit">Search</button>
-                </form>
-
-                <!--LOGOUT-->
-                <a class="btn btn-dark" href="{% url 'logout' %}">Logout</a>
-            </div>
-        </nav>
-    </header>
-
-	<main id="wrapper" class="container" role="main">
-        <div class="alert alert-danger alert-dismissible mt-4" role="alert" id="page_alert" style="display: none;">
-            <div id="page_alert_text"></div>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        {% if user.is_authenticated %}
-            {% block content %}
-            {% endblock %}
-        {% else %}
-                <h1>Permission denied</h1>
-                <p>You currently do not have permission to view this page!</p>
-        {% endif %}
-    </main>
-
-    <!-- ERROR MODAL -->
-    <div class="modal" tabindex="-1" role="dialog" id="error_modal">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Loading Errors</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="error_modal_body">
-                    <div class="alert alert-danger">We are sorry, but NearBeach experienced the following errors:</div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
+<main id="wrapper" class="container" role="main">
+    <div class="alert alert-danger alert-dismissible mt-4" role="alert" id="page_alert" style="display: none;">
+        <div id="page_alert_text"></div>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
-</body>
-</html>
+    {% if user.is_authenticated %}
+        {% block content %}
+        {% endblock %}
+    {% else %}
+            <h1>Permission denied</h1>
+            <p>You currently do not have permission to view this page!</p>
+    {% endif %}
+</main>
+{% include "NearBeach/partials/footer.html" %}

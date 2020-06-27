@@ -248,6 +248,7 @@ class ModelsTestCase(TestCase):
             opportunity_expected_close_date=datetime.datetime.now(),
             lead_source_id_id=1,
             change_user=admin_user,
+            creation_user=admin_user,
             user_id_id=admin_user.id,
         )
 
@@ -268,6 +269,7 @@ class ModelsTestCase(TestCase):
             opportunity_expected_close_date=datetime.datetime.now(),
             lead_source_id_id=1,
             change_user=admin_user,
+            creation_user=admin_user,
             user_id_id=admin_user.id,
         )
 
@@ -288,6 +290,7 @@ class ModelsTestCase(TestCase):
             opportunity_expected_close_date=datetime.datetime.now(),
             lead_source_id_id=1,
             change_user=admin_user,
+            creation_user=admin_user,
             user_id_id=admin_user.id,
         )
 
@@ -303,6 +306,7 @@ class ModelsTestCase(TestCase):
             requirement_type_id=1,
             requirement_status_id=1,
             change_user=admin_user,
+            creation_user=admin_user,
         )
 
         requirement_item_1 = requirement_item.objects.create(
@@ -326,6 +330,7 @@ class ModelsTestCase(TestCase):
             requirement_type_id=1,
             requirement_status_id=1,
             change_user=admin_user,
+            creation_user=admin_user,
         )
 
         requirement_item_2 = requirement_item.objects.create(
@@ -349,6 +354,7 @@ class ModelsTestCase(TestCase):
             requirement_type_id=1,
             requirement_status_id=1,
             change_user=admin_user,
+            creation_user=admin_user,
 
         )
 
@@ -375,6 +381,7 @@ class ModelsTestCase(TestCase):
             project_end_date=datetime.datetime.now(),
             organisation_id=organisation_1,
             change_user=admin_user,
+            creation_user=admin_user,
         )
 
         object_assignment.objects.create(
@@ -389,6 +396,7 @@ class ModelsTestCase(TestCase):
             project_start_date=datetime.datetime.now(),
             project_end_date=datetime.datetime.now(),
             change_user=admin_user,
+            creation_user=admin_user,
         )
 
         object_assignment.objects.create(
@@ -404,6 +412,7 @@ class ModelsTestCase(TestCase):
             project_end_date=datetime.datetime.now(),
             organisation_id=organisation_1,
             change_user=admin_user,
+            creation_user=admin_user,
         )
 
         object_assignment.objects.create(
@@ -418,6 +427,7 @@ class ModelsTestCase(TestCase):
             task_start_date=datetime.datetime.now(),
             task_end_date=datetime.datetime.now(),
             change_user=admin_user,
+            creation_user=admin_user,
         )
 
         object_assignment.objects.create(
@@ -432,6 +442,7 @@ class ModelsTestCase(TestCase):
             task_start_date=datetime.datetime.now(),
             task_end_date=datetime.datetime.now(),
             change_user=admin_user,
+            creation_user=admin_user,
         )
 
         object_assignment.objects.create(
@@ -446,6 +457,7 @@ class ModelsTestCase(TestCase):
             task_start_date=datetime.datetime.now(),
             task_end_date=datetime.datetime.now(),
             change_user=admin_user,
+            creation_user=admin_user,
         )
 
         object_assignment.objects.create(
@@ -460,6 +472,7 @@ class ModelsTestCase(TestCase):
             quote_stage_id_id=1,
             quote_valid_till=datetime.datetime.now(),
             change_user=admin_user,
+            creation_user=admin_user,
         )
 
         object_assignment.objects.create(
@@ -474,6 +487,7 @@ class ModelsTestCase(TestCase):
             quote_stage_id_id=1,
             quote_valid_till=datetime.datetime.now(),
             change_user=admin_user,
+            creation_user=admin_user,
         )
 
         object_assignment.objects.create(
@@ -488,6 +502,7 @@ class ModelsTestCase(TestCase):
             quote_stage_id_id=1,
             quote_valid_till=datetime.datetime.now(),
             change_user=admin_user,
+            creation_user=admin_user,
         )
 
         object_assignment.objects.create(

@@ -105,6 +105,7 @@ def new_requirement(request,location_id='',destination=''):
                 requirement_status=form.cleaned_data['requirement_status'],
                 organisation=form.cleaned_data['organisation'],
                 change_user=request.user,
+                creation_user=request.user,
             )
             requirement_save.save()
 
@@ -277,7 +278,7 @@ def new_requirement_item_link(request,requirement_item_id,location_id="",destina
         if location_id == "" or destination == "":
             return HttpResponseBadRequest("Sorry - those fields were blank")
 
-        requirement_item_link_submit = requirement_item_link(
+        requirement_item_link_submit = object_assignment(
             change_user=request.user,
             requirement_item_id=requirement_item_id,
         )
@@ -327,7 +328,7 @@ def new_requirement_item_link(request,requirement_item_id,location_id="",destina
             ).values('group_id')
         ).values('project_id')
     ).exclude(
-        project_id__in=requirement_item_link.objects.filter(
+        project_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             project_id__isnull=False,
             requirement_item_id=requirement_item_id,
@@ -345,7 +346,7 @@ def new_requirement_item_link(request,requirement_item_id,location_id="",destina
             ).values('group_id')
         ).values('task_id')
     ).exclude(
-        task_id__in=requirement_item_link.objects.filter(
+        task_id__in=object_assignment.objects.filter(
             is_deleted="FALSE",
             task_id__isnull=False,
             requirement_item_id=requirement_item_id,
@@ -601,11 +602,17 @@ def requirement_documents_uploads(request, location_id, destination):
 
 @login_required(login_url='login',redirect_field_name="")
 def requirement_information(request, requirement_id):
-    permission_results = return_user_permission_level(request, None, ['requirement','requirement_link'])
+    requirement_groups = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id
+    ).values('group_id')
+
+    permission_results = return_user_permission_level(request, requirement_groups, ['requirement','requirement_link'])
+    requirement_results = requirement.objects.get(requirement_id=requirement_id)
 
     if permission_results['requirement'] == 0:
-        print(permission_results)
-        print("Permission denied")
+        if requirement_results.creation_user == request.user:
+            return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_id}))
         return HttpResponseRedirect(reverse('permission_denied'))
 
     if request.method == "POST" and permission_results['requirement'] > 1:
@@ -634,7 +641,6 @@ def requirement_information(request, requirement_id):
 
 
     #Get Data
-    requirement_results = requirement.objects.get(requirement_id=requirement_id)
     requirement_item_results = requirement_item.objects.filter(
         is_deleted="FALSE",
         requirement_id=requirement_id,
@@ -812,10 +818,12 @@ def requirement_link_list(request,requirement_id):
     """
     permission_results = return_user_permission_level(request, None, 'requirement_link')
 
+
     requirement_item_results = requirement_item.objects.filter(
         is_deleted="FALSE",
         requirement_id=requirement_id,
     )
+
     requirement_link_results = object_assignment.objects.filter(
         is_deleted="FALSE",
         requirement_id=requirement_id,
@@ -825,9 +833,15 @@ def requirement_link_list(request,requirement_id):
         requirement_item_id__isnull=True,
     )
 
+    """
     requirement_item_results = requirement_item.objects.filter(
         is_deleted="FALSE",
         requirement_id=requirement_id,
+    )
+    """
+    requirement_item_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        requirement_item_id__in=requirement_item_results.values('requirement_id_id')
     )
 
     t = loader.get_template('NearBeach/requirement_information/requirement_link_list.html')
@@ -884,13 +898,18 @@ def requirement_readonly(request,requirement_id):
     :param requirement_id: The requirement that the end user wants to look at.
     :return: A read only page for the user
     """
-    permission_results = return_user_permission_level(request, None, 'requirement_link')
+    requirement_groups = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id
+    ).values('group_id')
 
-    if permission_results['requirement_link'] == 0:
+    permission_results = return_user_permission_level(request, requirement_groups, 'requirement_link')
+    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+
+    if permission_results['requirement_link'] == 0 and not requirement_results.creation_user == request.user:
         return HttpResponseRedirect(reverse('permission_denied'))
 
     #Get Data
-    requirement_results = requirement.objects.get(requirement_id=requirement_id)
     requirement_item_results = requirement_item.objects.filter(
         is_deleted="FALSE",
         requirement_id=requirement_id,
