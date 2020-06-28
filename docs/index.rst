@@ -103,3 +103,11 @@ Installation Process
   :name: sec-update-or-patch-nearbeach
 
   update/update_or_patch_nearbeach
+
+
+.. toctree::
+  :maxdepth: 1
+  :caption: Setting up Development Environment
+  :name: sec-setup-dev-environment
+
+  setup-dev-environment/setup_development_environment
