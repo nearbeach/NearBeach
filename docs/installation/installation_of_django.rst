@@ -60,16 +60,18 @@ Installation of Django and Gunicorn
 8. Activate the virtual environment using the following command
 
   .. code-block:: bash
+
     source ./<<project_environment>>/bin/activate
 
   You terminal prompt will change to indicate that it is working in the virtual environment now. It should look like the following
 
   .. code-block:: bash
+
     (<<project_environment>>)user@computer:
 
 9. Install Django along with several other required packages
 
-  .. code-block:: #!/usr/bin/env bash
+  .. code-block:: bash
 
     pip install django gunicorn
 
