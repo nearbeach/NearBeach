@@ -1,0 +1,18 @@
+//Import variables
+@import './common/variables';
+
+//Import foundation framework
+@import '~foundation-sites/assets/foundation.scss';
+
+//Import components
+@import './components/cards';
+
+//Import layouts
+@import './layouts/footer';
+@import './layouts/header';
+@import './layouts/tinymce';
+
+
+//Import any vue components
+@import "~vue-select/src/scss/vue-select.scss";
+

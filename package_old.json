@@ -1,0 +1,64 @@
+{
+  "name": "nearbeach",
+  "version": "0.25.0",
+  "description": "NearBeach is an Open Source project management tool",
+  "main": "./NearBeach/build/app.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "browser": {
+    "jquery": "./node_modules/jquery/dist/jquery.js"
+  },
+  "browserify-shim": {
+    "jquery": "$"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "dependencies": {
+    "blueimp-file-upload": "^10.25.0",
+    "bootstrap": "^4.5.0",
+    "bower": "^1.8.8",
+    "d3": "^5.15.1",
+    "d3-gantt-chart": "^0.2.8",
+    "intl-tel-input": "^16.1.0",
+    "jquery": "^3.5.0",
+    "jquery-datetimepicker": "^2.5.21",
+    "mxgraph": "^4.1.1",
+    "popper.js": "^1.16.0",
+    "svg.js": "^2.7.1"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.26.7",
+    "gulp": "^4.0.2",
+    "gulp-clean": "^0.4.0",
+    "gulp-clean-css": "^4.2.0",
+    "gulp-cli": "^2.2.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-minify": "^3.1.0",
+    "gulp-notify": "^3.2.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-stylus": "^2.7.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "git+https://github.com/robotichead/NearBeach.git",
+  "keywords": [
+    "open",
+    "source",
+    "project",
+    "management",
+    "software"
+  ],
+  "author": "Luke Clarke",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/robotichead/NearBeach/issues"
+  },
+  "homepage": "https://github.com/robotichead/NearBeach#readme"
+}
