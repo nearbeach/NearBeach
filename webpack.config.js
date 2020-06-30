@@ -48,6 +48,8 @@ module.exports = {
         new CopyPlugin({
             patterns: [
                 { from: './src/resources/whiteboard/', to: './whiteboard' },
+                { from: './src/resources/NearBeach.png', to: '' },
+                { from: './src/resources/NearBeach_Small.png', to: '' },
             ],
         }),
     ],
