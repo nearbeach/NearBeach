@@ -11,6 +11,7 @@ from django.urls import re_path
 from django.contrib.auth import views as auth_views
 
 
+"""
 from . import views, \
 	views_lookup, \
 	views_quotes, \
@@ -22,10 +23,16 @@ from . import views, \
 	views_requirements, \
 	views_administration, \
 	views_whiteboard
-
-
+"""
+from .views import authentication_views
 
 urlpatterns = [
+	re_path(r'^login', authentication_views.login, name='login'),
+	re_path(r'^logout', authentication_views.logout, name='logout'),
+]
+"""
+urlpatterns = [
+	
 re_path(r'^$', views.index, name='index'),
 re_path(r'^add_campus_to_customer/(?P<customer_id>[0-9]+)/(?P<campus_id>[0-9]+)/', views.add_campus_to_customer,name='add_campus_to_customer'),
 re_path(r'^admin_group/(?P<location_id>[0-9]+)/(?P<destination>["group","permission_set","user"])',views.admin_group,name="admin_group"),
@@ -288,8 +295,9 @@ re_path(r'^whiteboard_save/(?P<whiteboard_id>[0-9]+)',views_whiteboard.whiteboar
 
 ]
 
+
 if settings.DEBUG:
 	urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 	urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
+"""
 

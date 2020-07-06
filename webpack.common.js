@@ -4,9 +4,10 @@ const MiniCssExtractplugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 
 module.exports = {
-    mode: 'development',
     module: {
         rules: [{
                 test: /\.(scss)$/,
@@ -50,21 +51,27 @@ module.exports = {
                 { from: './src/resources/whiteboard/', to: './whiteboard' },
                 { from: './src/resources/NearBeach.png', to: '' },
                 { from: './src/resources/NearBeach_Small.png', to: '' },
+                { from: './src/resources/images/', to: './images' },
             ],
         }),
+        new HtmlWebpackPlugin({
+            title: 'Production',
+        }),
     ],
-    entry: './src/app.js',
+    entry: {
+        'NearBeach': './src/js/app.js',
+        'login': './src/js/login.js',
+        'whiteboard': './src/js/whiteboard.js',
+    },
     output: {
         path: path.resolve(__dirname, 'NearBeach/static/NearBeach'),
-        filename: 'NearBeach.min.js'
+        filename: '[name].min.js'
     },
     externals: {
         jQuery: 'jQuery',
         foundation: 'Foundation'
     },
-    watch: true,
     optimization: {
         //runtimeChunk: 'single',
     }
 };
-

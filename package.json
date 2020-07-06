@@ -2,13 +2,14 @@
   "name": "nearbeach",
   "version": "0.26.3",
   "description": "NearBeach - an Open Source project management system built apon Django webframework",
-  "main": "/NearBeach/build_static/app.js",
+  "main": "/src/js/app.js",
   "directories": {
     "doc": "docs",
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "webpack-dev-server --open --config webpack.dev.js",
+    "prod": "webpack --config webpack.prod.js"
   },
   "repository": {
     "type": "git",

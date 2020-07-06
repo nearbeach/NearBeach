@@ -17,7 +17,7 @@ global.jQuery = $;
 import Foundation from 'foundation-sites';
 
 //SCSS Library
-import './sass/main.scss';
+import '../sass/main.scss';
 
 //Font awesome
 import '@fortawesome/fontawesome-free/js/fontawesome';
@@ -26,7 +26,7 @@ import '@fortawesome/fontawesome-free/js/regular';
 import '@fortawesome/fontawesome-free/js/brands';
 
 //custom javascript
-import './js/global.js';
+import './global.js';
 
 //Construction of the VUE APp
 window.vm = new Vue({
