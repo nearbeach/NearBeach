@@ -1,0 +1,13 @@
+{% include 'NearBeach/partials/header.html' %}
+<div class="container">
+    <div id="app">
+        {% if user.is_authenticated %}
+            {% block content %}
+            {% endblock %}
+        {% else %}
+            <h1>Permission denied</h1>
+            <p>You currently do not have permission to view this page!</p>
+        {% endif %}
+    </div>
+</div>
+{% include 'NearBeach/partials/footer.html' %}

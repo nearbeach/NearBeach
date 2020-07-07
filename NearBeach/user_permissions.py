@@ -1,11 +1,8 @@
 """
 This python script will return the user's permission level for ANY given permission
 """
-import json
 from .models import *
 from django.db.models import Max
-from django.http import HttpResponseRedirect
-from django.urls import reverse
 
 """
 Permission table

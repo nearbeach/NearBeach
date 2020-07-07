@@ -170,7 +170,7 @@ def login(request):
                 #Check to make sure it isn't first time login -> need to setup functionalities
                 check_first_time_login(request)
 
-                return HttpResponseRedirect(reverse('alerts'))
+                return HttpResponseRedirect(reverse('dashboard'))
 
     # Setup background image
     # If user-agent string contains iOS or Safari, show default image
@@ -204,3 +204,15 @@ def logout(request):
     # log the user out and go to login page
     auth.logout(request)
     return HttpResponseRedirect(reverse('login'))
+
+
+@login_required(login_url='login',redirect_field_name="")
+def permission_denied(request):
+    # Load the template
+    t = loader.get_template('NearBeach/authentication/permission_denied.html')
+
+    # context
+    c = {
+    }
+
+    return HttpResponse(t.render(c, request))

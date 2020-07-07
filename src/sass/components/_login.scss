@@ -1,0 +1,42 @@
+// CSS For the login screen -> Move into it's own file soon
+body {
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+  font-size: 30px;
+}
+
+input {
+    width: 100%;
+}
+
+label {
+    color: #fff;
+    text-shadow: #000;
+}
+
+.background {
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+
+    //Fonts
+    color: #ffffff;
+    text-shadow: 1px 1px 2px black;
+    font-family: fa5-proxima-nova,"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.login-dialog {
+    position: absolute;
+    left: 75%;
+    top: 50%;
+
+    max-width: 300px;
+
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+}

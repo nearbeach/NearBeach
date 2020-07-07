@@ -28,8 +28,8 @@ import '@fortawesome/fontawesome-free/js/brands';
 //custom javascript
 import './global.js';
 
-//Construction of the VUE APp
-window.vm = new Vue({
+//Construction of the VUE App
+window.onload = new Vue({
     el: "#app",
     components: {},
     data() {

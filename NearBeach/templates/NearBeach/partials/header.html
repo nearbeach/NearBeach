@@ -5,136 +5,64 @@
 	<title>NearBeach Beta</title>
 
     {% load static %}
-    <!-- Load NearBeach Webpack File -->
-    <script type="text/javascript" src="{% static 'NearBeach/NearBeach.min.js' %}"></script>
-
     <!-- fav icon -->
     <link rel="shortcut icon" type="image/png" href="{% static '/NearBeach/NearBeach_Small.png' %}"/>
-    <style>
-        .col-3 {
-            flex: 0 0 24%;
-        }
-
-        .container-fluid {
-            overflow: scroll;
-
-        }
-
-        .requirement-kanban {
-            height: calc(100vh - 139px);
-        }
-
-        .card-block {
-            min-height: 200px;
-        }
-
-        #timeline {
-            height: calc(100vh - 139px);
-        }
-
-        body {
-            overflow-x: hidden;
-        }
-    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand" href="{% url 'dashboard' %}">NearBeach</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <nav class="scrollhide-nav">
+            <div class="top-bar">
+                <!-- Left side of navbar -->
+                <div class="top-bar-left">
+                    <ul class="dropdown menu" data-dropdown-menu>
+                        <a href="{% url 'dashboard' %}" class="menu-text"> NearBeach</a>
 
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                    <!--DASHBOARD-->
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
-                    </li>
-
-                    <!--MY PROFILE-->
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'my_profile' %}">My Profile</a>
-                    </li>
-
-                    <!--TIMELINE-->
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'timeline' %}">Timeline</a>
-                    </li>
-
-                    {% if new_item_permission >= 3 %}
-                    <!--NEW ITEMS-->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light" href="javascript:void(0)" id="new_items_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                New Items
-                            </a>
-                            <div class="dropdown-menu bg-dark" aria-labelledby="new_items_dropdown">
-                                <a class="dropdown-item text-light" href="{% url 'new_customer' 0 %}">New Customer</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_kanban_board' %}">New Kanban Board</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_opportunity' %}">New Opportunity</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_organisation' %}">New Organisation</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_project' %}">New Project</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_request_for_change' %}">New Request For Change</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_requirement' %}">New Requirement</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_task' %}">New Task</a>
-                            </div>
-                        </li>
-                    {% endif %}
-
-                    <!--SEARCH-->
-                    <!--Temp code - might be replaced by a proper search functionality-->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-light" href="javascript:void(0)" id="list_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            List Objects
-                        </a>
-                        <div class="dropdown-menu bg-dark" aria-labelledby="list_dropdown">
-                            <a class="dropdown-item text-light" href="{% url 'search' %}">List All</a>
-                            <a class="dropdown-item text-light" href="{% url 'search_tags' %}">List by Tag</a>
-                            <a class="dropdown-item text-light" href="{% url 'search_customer' %}">List Customers</a>
-                            <a class="dropdown-item text-light" href="{% url 'search_kanban' %}">List Kanban Boards</a>
-                            <a class="dropdown-item text-light" href="{% url 'search_organisation' %}">List Organisations</a>
-                        </div>
-                    </li>
-
-                    {% if administration_permission >= 1 %}
-                        <!--CONFIGURATION-->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light" href="javascript:void(0)" id="configuration_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Configuration
-                            </a>
-                            <div class="dropdown-menu bg-dark" aria-labelledby="administration_dropdown">
-                                <a class="dropdown-item text-light" href="{% url 'bug_client_list' %}">Bug Client List</a>
-                                <a class="dropdown-item text-light" href="{% url 'search_templates' %}">Edit Templates</a>
-                                <a class="dropdown-item text-light" href="{% url 'list_of_tags' %}">List of Tags</a>
-                                <a class="dropdown-item text-light" href="{% url 'list_of_taxes_information' %}">List of Taxes</a>
-                                <a class="dropdown-item text-light" href="{% url 'product_and_service_search' %}">Products and Services</a>
-                            </div>
+                        <!--TIMELINE-->
+                        <li>
+                            <a href="#"><i class="fas fa-stream"></i> Timeline</a>
                         </li>
 
-                        <!--ADMINISTRATION-->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light" href="javascript:void(0)" id="administration_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Administration
-                            </a>
-                            <div class="dropdown-menu bg-dark" aria-labelledby="administration_dropdown">
-                                <a class="dropdown-item text-light" href="{% url 'diagnostic_information' %}">Diagnostics</a>
-                                <a class="dropdown-item text-light" href="{% url 'search_group' %}">Groups</a>
-                                <a class="dropdown-item text-light" href="{% url 'search_permission_set' %}">Permission Sets</a>
-                                <a class="dropdown-item text-light" href="{% url 'search_users' %}">Users</a>
-                            </div>
+                        <!--NEW ITEMS-->
+                        <li>
+                            <a href="#"><i class="fas fa-plus"></i> New Object</a>
+                            <ul class="menu vertical">
+                                <li><a href="#">New Customer</a></li>
+                                <li><a href="#">New Kanban Board</a></li>
+                                <li><a href="#">New Opportunity</a></li>
+                                <li><a href="#">New Organisation</a></li>
+                                <li><a href="#">New Project</a></li>
+                                <li><a href="#">New Request For Change</a></li>
+                                <li><a href="#">New Requirement</a></li>
+                                <li><a href="#">New Task</a></li>
+                            </ul>
                         </li>
-                    {% endif %}
-                </ul>
 
-                <!--SEARCH FIELD-->
-                <form action={% url 'search' %} method="post" class="search_for form-inline my-2 my-lg-0">
-                    {% csrf_token %}
-                    <input id="id_search_for" name="search_for" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-secondary" type="submit">Search</button>
-                </form>
+                        <li>
+                            <a href="#"><i class="fas fa-search"></i> Find Objects</a>
+                            <ul class="menu vertical">
+                                <li><a href="#">List All</a></li>
+                                <li><a href="#">List by Tag</a></li>
+                                <li><a href="#">List Customers</a></li>
+                                <li><a href="#">List Kanban Boards</a></li>
+                                <li><a href="#">List Organisations</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
 
-                <!--LOGOUT-->
-                <a class="btn btn-dark" href="{% url 'logout' %}">Logout</a>
+                <!-- Right side of navbar -->
+                <div class="top-bar-right">
+                    <!--USER DROPDOWN -->
+                    <ul class="dropdown menu" data-dropdown-menu>
+                        <li>
+                            <a href="#"><i class="fas fa-user-tie"></i> User</a>
+                            <ul class="menu vertical">
+                                <li><a href="#"><i class="far fa-id-badge"></i> My Profile</a></li>
+                                <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </nav>
     </header>
