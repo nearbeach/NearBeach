@@ -52,6 +52,7 @@ module.exports = {
                 { from: './src/resources/NearBeach.png', to: '' },
                 { from: './src/resources/NearBeach_Small.png', to: '' },
                 { from: './src/resources/images/', to: './images' },
+                { from: './node_modules/tinymce/', to: './tinymce' },
             ],
         }),
         new HtmlWebpackPlugin({

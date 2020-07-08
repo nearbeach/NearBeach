@@ -33,7 +33,7 @@ def new_requirement(request, location_id="", destination=""):
     :return:
     """
     #Load template
-    t = loader.get_template('NearBeach/requirements/requirement_information.html')
+    t = loader.get_template('NearBeach/requirements/new_requirements.html')
 
     # context
     c = {}

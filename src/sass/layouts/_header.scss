@@ -1,0 +1,13 @@
+$scrollhide-nav-transition-speed: 1s;
+
+.scrollhide-nav {
+  position: fixed;
+  right: 0;
+  top: 0;
+  left: 0;
+  transition: transform $scrollhide-nav-transition-speed cubic-bezier(0.86, 0, 0.07, 1);
+
+  &.hidden {
+    transform: translateY(-100%);
+  }
+}

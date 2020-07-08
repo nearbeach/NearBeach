@@ -1,0 +1,52 @@
+{
+  "_from": "tinymce",
+  "_id": "tinymce@5.3.2",
+  "_inBundle": false,
+  "_integrity": "sha512-d8LaanlW+i/V5Ncb49gR2ncx0Tl2iWJBsepdsuT5qOlFaAPueIfc+btwwERXra7M6KDx0mOwKJaE2FBI+lHz3Q==",
+  "_location": "/tinymce",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "tinymce",
+    "name": "tinymce",
+    "escapedName": "tinymce",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/tinymce/-/tinymce-5.3.2.tgz",
+  "_shasum": "c53622edf9c4b214bb912658762d6ea831d7d469",
+  "_spec": "tinymce",
+  "_where": "/Users/luke/PycharmProjects/source_code/NearBeach",
+  "author": {
+    "name": "Ephox Corporation"
+  },
+  "bugs": {
+    "url": "https://github.com/tinymce/tinymce/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "Web based JavaScript HTML WYSIWYG editor control.",
+  "homepage": "https://github.com/tinymce/tinymce-dist#readme",
+  "keywords": [
+    "editor",
+    "wysiwyg",
+    "tinymce",
+    "richtext",
+    "javascript",
+    "html"
+  ],
+  "license": "LGPL-2.1",
+  "main": "tinymce.js",
+  "name": "tinymce",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tinymce/tinymce-dist.git"
+  },
+  "version": "5.3.2"
+}

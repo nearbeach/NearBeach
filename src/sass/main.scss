@@ -5,9 +5,10 @@
 @import '~foundation-sites/assets/foundation.scss';
 
 //Import components
+@import './components/body';
 @import './components/cards';
 
-//Import layouts
+//Import layouts'
 @import './layouts/footer';
 @import './layouts/header';
 @import './layouts/tinymce';

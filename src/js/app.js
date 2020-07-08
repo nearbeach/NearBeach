@@ -2,12 +2,7 @@
 import Vue from 'vue/dist/vue.js';
 
 //Vue Component Library
-// import ListBugs from './components/requirements/ListBugs.vue';
-// import ListRequirementItems from './components/requirements/ListRequirementItems.vue';
-// import ListRequirementLinks from './components/requirements/ListRequirementLinks.vue';
-// import RequirementInformation from './components/requirements/RequirementInformation.vue';
-// import TabComponents from './components/requirements/TabComponents.vue';
-
+import NewRequirements from './components/requirements/NewRequirement.vue';
 
 //Import jquery
 var $ = require('jquery');
@@ -25,15 +20,28 @@ import '@fortawesome/fontawesome-free/js/solid';
 import '@fortawesome/fontawesome-free/js/regular';
 import '@fortawesome/fontawesome-free/js/brands';
 
+//TinyMce
+import Editor from '@tinymce/tinymce-vue'
+
+//vSelect
+import vSelect from "vue-select";
+
 //custom javascript
 import './global.js';
 
 //Construction of the VUE App
-window.onload = new Vue({
+window.vm = new Vue({
     el: "#app",
-    components: {},
+    components: {
+        Editor,
+        NewRequirements,
+        vSelect,
+    },
     data() {
         return {};
     },
     methods: {},
+    mounted() {
+        console.log("VUE JS MOUNTED");
+    }
 });
