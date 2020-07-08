@@ -32,7 +32,9 @@
                                 <li><a href="#">New Organisation</a></li>
                                 <li><a href="#">New Project</a></li>
                                 <li><a href="#">New Request For Change</a></li>
-                                <li><a href="#">New Requirement</a></li>
+                                <li><a href="{% url 'new_requirement' %}">
+                                    New Requirement
+                                </a></li>
                                 <li><a href="#">New Task</a></li>
                             </ul>
                         </li>
@@ -58,7 +60,9 @@
                             <a href="#"><i class="fas fa-user-tie"></i> User</a>
                             <ul class="menu vertical">
                                 <li><a href="#"><i class="far fa-id-badge"></i> My Profile</a></li>
-                                <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                                <li><a href="{% url 'logout' %}">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </a></li>
                             </ul>
                         </li>
                     </ul>

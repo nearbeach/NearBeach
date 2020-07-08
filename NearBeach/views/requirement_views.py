@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from .models import *
+from NearBeach.models import *
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
@@ -22,6 +22,23 @@ def get_user_requirement_permissions(requirement_id):
 
     return return_user_permission_level(request, requirement_groups, ['requirement','requirement_link'])
 
+
+@login_required(login_url='login',redirect_field_name="")
+def new_requirement(request, location_id="", destination=""):
+    """
+    Loads the new requirement page
+    :param request:
+    :param location_id:
+    :param destination:
+    :return:
+    """
+    #Load template
+    t = loader.get_template('NearBeach/requirements/requirement_information.html')
+
+    # context
+    c = {}
+
+    return HttpResponse(t.render(c, request))
 
 @login_required(login_url='login',redirect_field_name="")
 def requirement_information(request, requirement_id):

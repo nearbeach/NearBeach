@@ -25,12 +25,16 @@ from . import views, \
 	views_whiteboard
 """
 from .views import authentication_views, \
-	dashboard_views
+	dashboard_views, \
+	requirement_views
 
 urlpatterns = [
-	re_path(r'^dashboard/$', dashboard_views.dashboard,name='dashboard'),
-	re_path(r'^login', authentication_views.login, name='login'),
-	re_path(r'^logout', authentication_views.logout, name='logout'),
+	path('', dashboard_views.dashboard, name='dashboard'),
+	path('login', authentication_views.login, name='login'),
+	path('logout', authentication_views.logout, name='logout'),
+	path('new_requirement',requirement_views.new_requirement, name='new_requirement'),
+	path('new_requirement/<location_id>/<destination>',requirement_views.new_requirement, name='new_requirement'),
+
 ]
 """
 urlpatterns = [

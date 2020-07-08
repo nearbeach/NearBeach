@@ -3,10 +3,10 @@ from ..forms import *
 
 # Import Django Libraries
 from django.contrib import auth
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
-
 
 # Import Python Libraries
 import json, urllib.parse, random
