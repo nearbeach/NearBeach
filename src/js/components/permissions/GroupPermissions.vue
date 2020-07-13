@@ -7,7 +7,7 @@
             </p>
             <p>If you do not add one of your own group(s), you will only get readonly access.</p>
         </div>
-        <div class="small-12 large-4">
+        <div class="small-12 large-8">
             <label>Group List
                 <v-select :options="groupFixResults"
                           label="group"
@@ -15,14 +15,6 @@
                           multiple
                     ></v-select>
             </label>
-        </div>
-        <div class="small-12 large-4">
-            <label>Selected Groups
-                <ul>
-                    <li v-for="group in groupModel">{{group['group']}}</li>
-                </ul>
-            </label>
-
         </div>
     </div>
 </template>

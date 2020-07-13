@@ -1,27 +1,32 @@
 {
-  "_from": "tinymce",
+  "_args": [
+    [
+      "tinymce@5.3.2",
+      "/Users/luke/PycharmProjects/source_code/NearBeach"
+    ]
+  ],
+  "_development": true,
+  "_from": "tinymce@5.3.2",
   "_id": "tinymce@5.3.2",
   "_inBundle": false,
   "_integrity": "sha512-d8LaanlW+i/V5Ncb49gR2ncx0Tl2iWJBsepdsuT5qOlFaAPueIfc+btwwERXra7M6KDx0mOwKJaE2FBI+lHz3Q==",
   "_location": "/tinymce",
   "_phantomChildren": {},
   "_requested": {
-    "type": "tag",
+    "type": "version",
     "registry": true,
-    "raw": "tinymce",
+    "raw": "tinymce@5.3.2",
     "name": "tinymce",
     "escapedName": "tinymce",
-    "rawSpec": "",
+    "rawSpec": "5.3.2",
     "saveSpec": null,
-    "fetchSpec": "latest"
+    "fetchSpec": "5.3.2"
   },
   "_requiredBy": [
-    "#USER",
-    "/"
+    "#DEV:/"
   ],
   "_resolved": "https://registry.npmjs.org/tinymce/-/tinymce-5.3.2.tgz",
-  "_shasum": "c53622edf9c4b214bb912658762d6ea831d7d469",
-  "_spec": "tinymce",
+  "_spec": "5.3.2",
   "_where": "/Users/luke/PycharmProjects/source_code/NearBeach",
   "author": {
     "name": "Ephox Corporation"
@@ -29,8 +34,6 @@
   "bugs": {
     "url": "https://github.com/tinymce/tinymce/issues"
   },
-  "bundleDependencies": false,
-  "deprecated": false,
   "description": "Web based JavaScript HTML WYSIWYG editor control.",
   "homepage": "https://github.com/tinymce/tinymce-dist#readme",
   "keywords": [
