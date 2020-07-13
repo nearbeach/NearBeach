@@ -9,6 +9,7 @@ from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from NearBeach.user_permissions import return_user_permission_level
 
+
 def get_user_requirement_permissions(requirement_id):
     """
     Use the requirement_id and find out if the user has access to this requirement
@@ -32,11 +33,29 @@ def new_requirement(request, location_id="", destination=""):
     :param destination:
     :return:
     """
+    #Extract Data
+    status_list = list_of_requirement_status.objects.filter(
+        is_deleted="FALSE",
+        requirement_status_is_closed="FALSE",
+    )
+
+    type_list = list_of_requirement_type.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    group_results = group.objects.filter(
+        is_deleted="FALSE",
+    )
+
     #Load template
     t = loader.get_template('NearBeach/requirements/new_requirements.html')
 
     # context
-    c = {}
+    c = {
+        'status_list': serializers.serialize("json",status_list),
+        'type_list': serializers.serialize("json",type_list),
+        'group_results': serializers.serialize("json",group_results),
+    }
 
     return HttpResponse(t.render(c, request))
 

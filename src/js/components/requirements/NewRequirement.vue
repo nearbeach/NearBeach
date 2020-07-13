@@ -5,38 +5,47 @@
         <div class="grid-x">
             <!-- Description -->
             <div class="small-12 large-4">
-                <strong>Description</strong><br/>
+                <h3>Description</h3>
                 <p>Place a basic helicopter view of the requirement description here. You will be able to break this
-                    description down into smaller items using the requirement items below.</p>
+                    description down into svaluemaller items using the requirement items below.</p>
             </div>
-            <div class="small-12 large-8">
+            <div class="small-12 large-8" style="min-height: 500px;">
+                <img src="static/NearBeach/images/placeholder/body_text.svg"
+                     class="loader-image"
+                />
                 <editor
                    :init="{
                      height: 500,
                    }"
-                 />
+                />
             </div>
 
             <!-- Status -->
             <hr>
             <div class="small-12 large-4">
-                <strong>Status</strong><br/>
-                <p>Set the Requirement Status here.</p>
+                <h3>Status</h3>
+                <p>Set the Requirement Status and Type here.</p>
             </div>
             <div class="small-12 large-4">
-                <label>Requirement Type
-                    <v-select :options="[{label: 'Canada', code: 'ca'}]"></v-select>
+                <label>Requirement Status
+                    <v-select :options="statusFixList"
+                              label="status"
+                              v-model="statusModel"
+                    ></v-select>
                 </label>
             </div>
             <div class="small-12 large-4">
                 <label>Requirement Type
-                    <v-select :options="[{label: 'Canada', code: 'ca'}]"></v-select>
+                    <v-select :options="typeFixList"
+                              label="type"
+                              v-model="typeModel"
+                    ></v-select>
                 </label>
             </div>
 
             <!-- Group Permissions -->
             <hr>
-            <group-permissions></group-permissions>
+            <group-permissions v-bind:group-results="groupResults"></group-permissions>
 
             <!-- Submit Button -->
             <hr>
@@ -61,7 +70,43 @@
             Editor,
             vSelect,
             GroupPermissions,
-        }
+        },
+        props: [
+            'statusList',
+            'typeList',
+            'groupResults',
+        ],
+        data() {
+            return {
+                statusFixList: [],
+                statusModel: '',
+                typeFixList: [],
+                typeModel: '',
+            }
+        },
+        mounted() {
+            //We need to extract "fields" array from the statusList/typeList json data
+            this.statusList.forEach((row) => {
+                //Construct the object
+                var construction_object = {
+                    'value': row['pk'],
+                    'status': row['fields']['requirement_status'],
+                };
+
+                //Push the object to status fix list
+                this.statusFixList.push(construction_object);
+            });
+            this.typeList.forEach((row) => {
+                //Construct the object
+                var construction_object = {
+                    'value': row['pk'],
+                    'type': row['fields']['requirement_type'],
+                }
+
+                //Push the object to type fix list
+                this.typeFixList.push(construction_object);
+            });
+        },
     }
 </script>
 
