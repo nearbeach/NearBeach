@@ -26,15 +26,15 @@ from . import views, \
 """
 from .views import authentication_views, \
 	dashboard_views, \
-	requirement_views
+	requirement_views, \
+	search_views
 
 urlpatterns = [
 	path('', dashboard_views.dashboard, name='dashboard'),
 	path('login', authentication_views.login, name='login'),
 	path('logout', authentication_views.logout, name='logout'),
 	path('new_requirement',requirement_views.new_requirement, name='new_requirement'),
-	path('new_requirement/<location_id>/<destination>',requirement_views.new_requirement, name='new_requirement'),
-
+	path('search/organisation/data',search_views.search_organisation_data,name='search_organisation_data'),
 ]
 """
 urlpatterns = [

@@ -33,6 +33,22 @@
                 />
             </div>
 
+            <!-- Stakeholder Organisation -->
+            <hr>
+            <div class="small-12 large-4">
+                <h3>Stakeholder</h3>
+                <p>Please search for your stakeholder organisation in the dropdown box. Once found, please select.</p>
+            </div>
+            <div class="small-12 large-8">
+                <label>Stakeholder Organisation
+                    <v-select :options="stakeholderFixList"
+                              @search="fetchStakeholders"
+                              v-model="stakeholderModel"
+                              label="stakeholder"
+                    />
+                </label>
+            </div>
+
             <!-- Status -->
             <hr>
             <div class="small-12 large-4">
@@ -74,6 +90,8 @@
     import Editor from '@tinymce/tinymce-vue';
     import vSelect from "vue-select";
 
+    const axios = require('axios');
+
     //Vue components
     import GroupPermissions from '../permissions/GroupPermissions.vue';
 
@@ -91,10 +109,22 @@
         ],
         data() {
             return {
+                stakeholderFixList: [],
+                stakeholderModel: '',
                 statusFixList: [],
                 statusModel: '',
                 typeFixList: [],
                 typeModel: '',
+            }
+        },
+        methods: {
+            fetchStakeholders: function() {
+                //The following function will use AJAX to obtain a list of 10 (or less) organisations that
+                //match the search input.
+                axios.post('search/organisation/data')
+                    .then(response => {
+                        console.log("RESPONSE: ",response);
+                    });
             }
         },
         mounted() {

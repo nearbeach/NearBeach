@@ -30,6 +30,9 @@ import vSelect from "vue-select";
 //custom javascript
 import './global.js';
 
+//Import axios for ajax
+const axios = require('axios');
+
 //Construction of the VUE App
 window.vm = new Vue({
     el: "#app",
@@ -37,6 +40,7 @@ window.vm = new Vue({
         Editor,
         NewRequirements,
         vSelect,
+        axios,
     },
     data() {
         return {};
