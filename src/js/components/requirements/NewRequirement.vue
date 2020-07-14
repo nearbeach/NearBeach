@@ -9,13 +9,26 @@
                 <p>Place a basic helicopter view of the requirement description here. You will be able to break this
                     description down into svaluemaller items using the requirement items below.</p>
             </div>
+
             <div class="small-12 large-8" style="min-height: 500px;">
+                <label>Requirement Title
+                    <input id="id_requirement_title"
+                           name="requirement_title"
+                           type="text"
+                           required="true"
+                           maxlength="255"
+                    />
+                </label>
                 <img src="static/NearBeach/images/placeholder/body_text.svg"
                      class="loader-image"
                 />
                 <editor
                    :init="{
                      height: 500,
+                     menubar: false,
+                     toolbar: 'undo redo | formatselect | ' +
+                      'bold italic backcolor | alignleft aligncenter ' +
+                      'alignright alignjustify | bullist numlist outdent indent | ',
                    }"
                 />
             </div>
@@ -50,7 +63,7 @@
             <!-- Submit Button -->
             <hr>
             <div class="cell medium-12 large-12">
-                <a href="#" class="button save-changes">Save Changes</a>
+                <a href="javascript:void(0)" class="button save-changes">Create new Requirement</a>
             </div>
         </div>
     </div>

@@ -1,6 +1,6 @@
 .card {
   h1, h2, h3, p {
-    padding-left: 10px;
+    padding: 0 10px;
   }
 
   h1 {
@@ -8,18 +8,19 @@
     font-size: 35px;
     font-weight: bold;
     margin-bottom: -10px;
+    margin-top: 3px;
   }
 
   h3 {
     font-size: 20px;
     font-weight: bold;
-    margin-bottom: 0px;
+    margin-bottom: 0;
   }
 
   hr {
     width: 100%;
     border-top: 2px solid #ABCEB4;
-    margin: 15px 0px;
+    margin: 15px 0 30px 0;
   }
 
   .loader-image {

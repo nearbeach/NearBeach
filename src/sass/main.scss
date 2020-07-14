@@ -5,13 +5,14 @@
 @import '~foundation-sites/assets/foundation.scss';
 
 //Import components
-@import './components/body';
-@import './components/cards';
+@import 'components/body';
+@import 'components/cards';
+@import 'components/tinymce';
+
 
 //Import layouts'
-@import './layouts/footer';
-@import './layouts/header';
-@import './layouts/tinymce';
+@import 'layouts/footer';
+@import 'layouts/header';
 
 
 //Import any vue components

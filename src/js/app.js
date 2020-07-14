@@ -15,13 +15,14 @@ import Foundation from 'foundation-sites';
 import '../sass/main.scss';
 
 //Font awesome
-import '@fortawesome/fontawesome-free/js/fontawesome';
-import '@fortawesome/fontawesome-free/js/solid';
-import '@fortawesome/fontawesome-free/js/regular';
-import '@fortawesome/fontawesome-free/js/brands';
+//import '@fortawesome/fontawesome-free/js/fontawesome';
+//import '@fortawesome/fontawesome-free/js/solid';
+// import '@fortawesome/fontawesome-free/js/regular';
+// import '@fortawesome/fontawesome-free/js/brands';
 
 //TinyMce
 import Editor from '@tinymce/tinymce-vue'
+
 
 //vSelect
 import vSelect from "vue-select";
