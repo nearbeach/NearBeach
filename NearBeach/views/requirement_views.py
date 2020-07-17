@@ -10,6 +10,7 @@ from NearBeach.forms import *
 from NearBeach.user_permissions import return_user_permission_level
 
 
+
 def get_user_requirement_permissions(requirement_id):
     """
     Use the requirement_id and find out if the user has access to this requirement

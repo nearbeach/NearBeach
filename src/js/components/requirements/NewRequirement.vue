@@ -17,6 +17,7 @@
                            type="text"
                            required="true"
                            maxlength="255"
+                           v-model="requirementTitleModel"
                     />
                 </label>
                 <img src="static/NearBeach/images/placeholder/body_text.svg"
@@ -30,21 +31,22 @@
                       'bold italic backcolor | alignleft aligncenter ' +
                       'alignright alignjustify | bullist numlist outdent indent | ',
                    }"
+                   v-model="descriptionModel"
                 />
             </div>
 
             <!-- Stakeholder Organisation -->
             <hr>
             <div class="small-12 large-4">
-                <h3>Stakeholder</h3>
+                <h3>Stakeholder Organisation</h3>
                 <p>Please search for your stakeholder organisation in the dropdown box. Once found, please select.</p>
             </div>
             <div class="small-12 large-8">
                 <label>Stakeholder Organisation
                     <v-select :options="stakeholderFixList"
-                              @search="fetchStakeholders"
+                              @search="fetchOptions"
                               v-model="stakeholderModel"
-                              label="stakeholder"
+                              label="organisation_name"
                     />
                 </label>
             </div>
@@ -79,7 +81,10 @@
             <!-- Submit Button -->
             <hr>
             <div class="cell medium-12 large-12">
-                <a href="javascript:void(0)" class="button save-changes">Create new Requirement</a>
+                <a href="javascript:void(0)"
+                   class="button save-changes"
+                   v-on:click="submitNewRequirement"
+                >Create new Requirement</a>
             </div>
         </div>
     </div>
@@ -109,6 +114,9 @@
         ],
         data() {
             return {
+                descriptionModel: '',
+                requirementTitleModel: '',
+                searchTimeout: '',
                 stakeholderFixList: [],
                 stakeholderModel: '',
                 statusFixList: [],
@@ -118,13 +126,73 @@
             }
         },
         methods: {
-            fetchStakeholders: function() {
-                //The following function will use AJAX to obtain a list of 10 (or less) organisations that
-                //match the search input.
-                axios.post('search/organisation/data')
-                    .then(response => {
-                        console.log("RESPONSE: ",response);
+            getOrganisationData: function(search,loading) {
+                // Now that the timer has run out, lets use AJAX to get the organisations.
+                axios({
+                    method: 'POST',
+                    url: 'search/organisation/data',
+                    data: {
+                        'id_search': search,
+                }}).then(response => {
+                        //Clear the stakeholderFixList
+                        this.stakeholderFixList = [];
+
+                        //Extract the required JSON data
+                        var extracted_data = response['data'];
+
+                        //Look through the extracted data - and map the required fields into stakeholder fix list
+                        extracted_data.forEach((row) => {
+                            //Create the creation object
+                            var creation_object = {
+                                'value': row['pk'],
+                                'organisation_name': row['fields']['organisation_name'],
+                                'organisation_website': row['fields']['organisation_website'],
+                                'organisation_email': row['fields']['organisation_email'],
+                                'organisation_profile_picture': row['fields']['organisation_profile_picture'],
+                            };
+
+                            //Push that object into the stakeholders
+                            this.stakeholderFixList.push(creation_object)
+                        });
+                    })
+                    .catch(function (error) {
+                        // handle error
+                        console.log("THE HTML ERROR: ",error);
                     });
+            },
+            fetchOptions: function(search, loading) {
+                // Make sure the timer isn't running
+                if (this.searchTimeout != '') {
+                    //Stop the clock!
+                    clearTimeout(this.searchTimeout);
+                }
+
+                // Reset the clock, to only search if there is an uninterupted 0.5s of no typing.
+                if (search.length >= 3) {
+                    this.searchTimeout = setTimeout(
+                        this.getOrganisationData,
+                        500,
+                        search,
+                        loading
+                    )
+                }
+            },
+            submitNewRequirement: function() {
+                //Get all the data stored in the modals and send it via ajax
+                axios({
+                    method: 'POST',
+                    url: 'new_requirement/save/'
+                    data: {
+                        'id_requirement_title': this.requirementTitleModel,
+                        'id_requirement_description': this.descriptionModel,
+                        'id_stakeholder': this.stakeholderModel,
+                        'id_requirement_status': this.statusModel,
+                        'id_requirement_type': this.typeModel,
+                        'id_group_list': "this.groupMo"
+                    }
+                }).then(
+
+                )
             }
         },
         mounted() {

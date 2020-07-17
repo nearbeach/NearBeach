@@ -32,6 +32,8 @@ import './global.js';
 
 //Import axios for ajax
 const axios = require('axios');
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+axios.defaults.xsrfCookieName = "csrftoken"
 
 //Construction of the VUE App
 window.vm = new Vue({

@@ -6,28 +6,6 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedire
 # Import Forms
 from NearBeach.forms import *
 
-def apply_search_term(database_object,search_against,search_term):
-    """
-    The following will get a database object and search term. It will split the search term into
-    an array which will be used to search the database object. The smaller database object is
-    sent back.
-
-    Method
-    ~~~~~~
-    1. Split the search term up
-    2. Loop through each search term
-    3. Apply it to the database object
-    :param database_object:
-    :param search_against:
-    :param search_term:
-    :return:
-    """
-    for split_row in search_term.split(' '):
-        database_object.filter(search_against=split_row)
-
-    return database_object
-
-
 
 @login_required(login_url='login',redirect_field_name="")
 def search_organisation_data(request):
@@ -35,26 +13,28 @@ def search_organisation_data(request):
     # Check to make sure it is post
     if not request.method=="POST":
         #Give the user a 404
-        return HttpResponseNotFound
+        return HttpResponseBadRequest("Sorry - Post only")
 
     # Get the data from request
     search_form = SearchForm(request.POST)
 
     # If there are errors - send 500
     if not search_form.is_valid():
-        return HttpResponseBadRequest("Search form did not work")
+        return HttpResponseBadRequest("There is an issue with the search functionality")
 
-    # Apply the search term to the organisation results
-    organisation_results = apply_search_term(
-        organisation.objects.filter(is_deleted="FALSE"),
-        'organisation_name__icontains',
-        search_form.cleaned_data['search']
-    )
+    # Get the base results
+    organisation_results = organisation.objects.filter(is_deleted="FALSE")
+
+    # Split the space results - then apply the filter of each split value
+    for split_row in search_form.cleaned_data['search'].split(' '):
+        organisation_results.filter(organisation_name__icontains=split_row)
+
+    # Only have 25 results and order by alphabetical order
+    organisation_results.order_by('organisation_name')[:25]
 
     # Send back json data
     json_results = serializers.serialize('json', organisation_results)
 
-    return JsonResponse(json_results)
-
+    return HttpResponse(json_results, content_type='application/json')
 
 
