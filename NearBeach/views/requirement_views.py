@@ -9,9 +9,9 @@ from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from NearBeach.user_permissions import return_user_permission_level
 
+import json
 
-
-def get_user_requirement_permissions(requirement_id):
+def get_user_requirement_permissions(request,requirement_id):
     """
     Use the requirement_id and find out if the user has access to this requirement
     :param requirement_id:
@@ -34,6 +34,14 @@ def new_requirement(request, location_id="", destination=""):
     :param destination:
     :return:
     """
+    # Get user permission
+    permission_results = get_user_requirement_permissions(request,0)
+
+    # If user has no permissions to create requirements, then send them to the appropriate location
+    if permission_results['requirement'] <= 2:
+        # Users can not create requirement.
+        return HttpResponseRedirect(reverse('permission_denied'))
+
     #Extract Data
     status_list = list_of_requirement_status.objects.filter(
         is_deleted="FALSE",
@@ -60,7 +68,62 @@ def new_requirement(request, location_id="", destination=""):
 
     return HttpResponse(t.render(c, request))
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login',redirect_field_name='')
+def new_requirement_save(request, location_id="", destination=""):
+    # Make sure this is a post
+    if not request.method == "POST":
+        #Give the user a 404
+        return HttpResponseBadRequest("Sorry - Post only")
+
+    # Get user permission
+    permission_results = get_user_requirement_permissions(request,0)
+
+    # If user has no permissions to create requirements, then send them to the appropriate location
+    if permission_results['requirement'] <= 2:
+        # Users can not create requirement.
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    # Get the data and place into the form
+
+    form = NewRequirementForm(request.POST)
+
+    if not form.is_valid():
+        # Something went wrong with the form.
+        return HttpResponseBadRequest("There was something wrong with the form")
+
+    # Save the form
+    submit_requirement = requirement(
+        requirement_title=form.cleaned_data['requirement_title'],
+        requirement_scope=form.cleaned_data['requirement_scope'],
+        organisation=form.cleaned_data['organisation'],
+        requirement_status=form.cleaned_data['requirement_status'],
+        requirement_type=form.cleaned_data['requirement_type'],
+        change_user=request.user,
+        creation_user=request.user,
+    )
+    submit_requirement.save()
+
+    # Now get the group data and apply the groups to it.
+    #group_list = request.POST.get("group_list",'')
+    #group_list = json.loads(request.POST.get("group_list"))
+    group_list = json.loads(request.body)
+
+    if group_list == '':
+        # Something went wrong getting the data for the group list
+        return HttpResponseBadRequest("There was something wrong with the group list")
+
+    # Loop through the group list and apply each permission to the groups
+    print("GROUP LIST")
+    print(group_list)
+    for group_row in group_list:
+        print("GROUP ROW")
+        print(group_row)
+
+    return HttpResponse("Hello")
+
+
+
+@login_required(login_url='login',redirect_field_name='')
 def requirement_information(request, requirement_id):
     """
     Loads the requirement information.
@@ -72,7 +135,7 @@ def requirement_information(request, requirement_id):
     requirement_results = requirement.objects.get(requirement_id=requirement_id)
 
     # Check the permissions
-    permission_results = get_user_requirement_permissions(requirement_id)
+    permission_results = get_user_requirement_permissions(request,requirement_id)
 
     # If user has no permissions to this requirement send them to the appropriate location
     if permission_results['requirement'] == 0:

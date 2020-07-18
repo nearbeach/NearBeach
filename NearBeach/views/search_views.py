@@ -9,7 +9,6 @@ from NearBeach.forms import *
 
 @login_required(login_url='login',redirect_field_name="")
 def search_organisation_data(request):
-    print("GETTING HERE!")
     # Check to make sure it is post
     if not request.method=="POST":
         #Give the user a 404

@@ -49,6 +49,9 @@ window.vm = new Vue({
     },
     methods: {},
     mounted() {
-        console.log("VUE JS MOUNTED");
+        //Remove the loader
+        var elem = document.getElementById("loader");
+        console.log("Element: ",elem);
+        elem.style.display = "none";
     }
 });

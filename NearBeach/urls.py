@@ -34,7 +34,8 @@ urlpatterns = [
 	path('login', authentication_views.login, name='login'),
 	path('logout', authentication_views.logout, name='logout'),
 	path('new_requirement',requirement_views.new_requirement, name='new_requirement'),
-	path('search/organisation/data',search_views.search_organisation_data,name='search_organisation_data'),
+	path('new_requirement/save/',requirement_views.new_requirement_save, name='new_requirement_save'),
+	path('search/organisation/data/',search_views.search_organisation_data,name='search_organisation_data'),
 ]
 """
 urlpatterns = [

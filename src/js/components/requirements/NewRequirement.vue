@@ -10,7 +10,7 @@
                     description down into svaluemaller items using the requirement items below.</p>
             </div>
 
-            <div class="small-12 large-8" style="min-height: 500px;">
+            <div class="small-12 large-8" style="min-height: 580px;">
                 <label>Requirement Title
                     <input id="id_requirement_title"
                            name="requirement_title"
@@ -76,7 +76,9 @@
 
             <!-- Group Permissions -->
             <hr>
-            <group-permissions v-bind:group-results="groupResults"></group-permissions>
+            <group-permissions v-bind:group-results="groupResults"
+                               v-on:update_group_model="updateGroupModel($event)"
+            ></group-permissions>
 
             <!-- Submit Button -->
             <hr>
@@ -115,6 +117,7 @@
         data() {
             return {
                 descriptionModel: '',
+                groupModel: '',
                 requirementTitleModel: '',
                 searchTimeout: '',
                 stakeholderFixList: [],
@@ -130,10 +133,11 @@
                 // Now that the timer has run out, lets use AJAX to get the organisations.
                 axios({
                     method: 'POST',
-                    url: 'search/organisation/data',
+                    url: 'search/organisation/data/',
                     data: {
                         'id_search': search,
-                }}).then(response => {
+                    },
+                }).then(response => {
                         //Clear the stakeholderFixList
                         this.stakeholderFixList = [];
 
@@ -178,22 +182,39 @@
                 }
             },
             submitNewRequirement: function() {
-                //Get all the data stored in the modals and send it via ajax
-                axios({
-                    method: 'POST',
-                    url: 'new_requirement/save/'
-                    data: {
-                        'id_requirement_title': this.requirementTitleModel,
-                        'id_requirement_description': this.descriptionModel,
-                        'id_stakeholder': this.stakeholderModel,
-                        'id_requirement_status': this.statusModel,
-                        'id_requirement_type': this.typeModel,
-                        'id_group_list': "this.groupMo"
-                    }
-                }).then(
+                // Apply the loading screen to hide everything
+                var elem = document.getElementById("loader");
+                elem.style.display = "";
 
-                )
-            }
+                // Set up the data object to send
+                const data_to_send = new FormData();
+                data_to_send.set('requirement_title', this.requirementTitleModel);
+                data_to_send.set('requirement_description',this.descriptionModel);
+                data_to_send.set('stakeholder',this.stakeholderModel['value']);
+                data_to_send.set('requirement_status',this.statusModel['value']);
+                data_to_send.set('requirement_type',this.typeModel['value']);
+                data_to_send.set('group_list',this.groupModel);
+
+                // Use Axion to send the data
+                axios({
+                    method: 'post',
+                    url: 'new_requirement/save/',
+                    data: data_to_send,
+                    headers: {'Content-Type': 'multipart/form-data' }
+                    })
+                    .then(function (response) {
+                        //handle success
+                        console.log(response);
+                    })
+                    .catch(function (response) {
+                        //handle error
+                        console.log(response);
+                    });
+            },
+            updateGroupModel: function(newGroupModel) {
+                //Update the group model
+                this.groupModel = newGroupModel;
+            },
         },
         mounted() {
             //We need to extract "fields" array from the statusList/typeList json data

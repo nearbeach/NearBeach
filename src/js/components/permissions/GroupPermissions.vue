@@ -30,6 +30,13 @@
         props: [
             'groupResults',
         ],
+        watch: {
+            'groupModel': function() {
+                //Send the data upstream
+                this.$emit('update_group_model',this.groupModel);
+
+            }
+        },
         data() {
             return {
                 'groupFixResults': [],

@@ -14,4 +14,3 @@ $window.on('scroll', function(){
     nav.toggleClass('hidden', scrollTop > prev);
     prev = scrollTop;
 });
-
