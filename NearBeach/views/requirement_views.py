@@ -103,21 +103,8 @@ def new_requirement_save(request, location_id="", destination=""):
     )
     submit_requirement.save()
 
-    # Now get the group data and apply the groups to it.
-    #group_list = request.POST.get("group_list",'')
-    #group_list = json.loads(request.POST.get("group_list"))
-    group_list = json.loads(request.body)
-
-    if group_list == '':
-        # Something went wrong getting the data for the group list
-        return HttpResponseBadRequest("There was something wrong with the group list")
-
-    # Loop through the group list and apply each permission to the groups
-    print("GROUP LIST")
+    group_list = request.POST.getlist("group_list")
     print(group_list)
-    for group_row in group_list:
-        print("GROUP ROW")
-        print(group_row)
 
     return HttpResponse("Hello")
 

@@ -186,6 +186,12 @@
                 var elem = document.getElementById("loader");
                 elem.style.display = "";
 
+                // Turn groupModel into a simple array
+                var group_list_array = [];
+                this.groupModel.forEach((row) => {
+                    group_list_array.push(row['value']);
+                });
+
                 // Set up the data object to send
                 const data_to_send = new FormData();
                 data_to_send.set('requirement_title', this.requirementTitleModel);
@@ -193,7 +199,8 @@
                 data_to_send.set('stakeholder',this.stakeholderModel['value']);
                 data_to_send.set('requirement_status',this.statusModel['value']);
                 data_to_send.set('requirement_type',this.typeModel['value']);
-                data_to_send.set('group_list',this.groupModel);
+                //data_to_send.set('group_list',[{group_id: 1,groupd_name: 'Administration'}]);
+                data_to_send.set('group_list',[1]);
 
                 // Use Axion to send the data
                 axios({

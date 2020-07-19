@@ -7,9 +7,9 @@ from .models import *
 class NewRequirementForm(forms.ModelForm):
     # One external field
     """
-    group_list=forms.ModelMultipleChoiceField(
+    group_list=forms.MultipleChoiceField(
         required=True,
-        queryset=group.objects.filter(
+        choices=group.objects.filter(
             is_deleted="FALSE",
         )
     )
