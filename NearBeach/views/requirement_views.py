@@ -103,10 +103,28 @@ def new_requirement_save(request, location_id="", destination=""):
     )
     submit_requirement.save()
 
+    # Get the group list and apply the permissions
     group_list = request.POST.getlist("group_list")
-    print(group_list)
 
-    return HttpResponse("Hello")
+    for single_group in group_list:
+        # Get the group instance
+        group_instance = group.objects.get(group_id=single_group)
+
+        # Save the group instance against object assignment
+        submit_object_assignment = object_assignment(
+            group_id=group_instance,
+            requirement_id=submit_requirement,
+            change_user=request.user,
+        )
+
+        # Save
+        submit_object_assignment.save()
+
+    # Send back just the requirement id
+    # FUTURE POINT - just redirect user directly to the new page?
+    # Just send the string for the new url?
+    print(reverse('new_requirement'))
+    return HttpResponse(submit_requirement.requirement_id)
 
 
 

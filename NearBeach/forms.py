@@ -6,14 +6,13 @@ from .models import *
 
 class NewRequirementForm(forms.ModelForm):
     # One external field
-    """
-    group_list=forms.MultipleChoiceField(
+    group_list=forms.ModelMultipleChoiceField(
         required=True,
-        choices=group.objects.filter(
+        queryset=group.objects.filter(
             is_deleted="FALSE",
         )
     )
-    """
+
 
     # Basic Meta data
     class Meta:

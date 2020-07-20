@@ -128,6 +128,21 @@
                 typeModel: '',
             }
         },
+        computed: {
+            group_list_results: function() {
+                // Declare the empty array
+                var group_list = [];
+
+                // Loop to extract the values we need
+                this.groupModel.forEach((row) => {
+                    group_list.push(row['value']);
+                });
+
+                console.log("RETURNING GROUP LIST: ",group_list);
+
+                return group_list;
+            }
+        },
         methods: {
             getOrganisationData: function(search,loading) {
                 // Now that the timer has run out, lets use AJAX to get the organisations.
@@ -186,12 +201,6 @@
                 var elem = document.getElementById("loader");
                 elem.style.display = "";
 
-                // Turn groupModel into a simple array
-                var group_list_array = [];
-                this.groupModel.forEach((row) => {
-                    group_list_array.push(row['value']);
-                });
-
                 // Set up the data object to send
                 const data_to_send = new FormData();
                 data_to_send.set('requirement_title', this.requirementTitleModel);
@@ -199,8 +208,14 @@
                 data_to_send.set('stakeholder',this.stakeholderModel['value']);
                 data_to_send.set('requirement_status',this.statusModel['value']);
                 data_to_send.set('requirement_type',this.typeModel['value']);
-                //data_to_send.set('group_list',[{group_id: 1,groupd_name: 'Administration'}]);
-                data_to_send.set('group_list',[1]);
+                //data_to_send.set('group_list',this.groupModel['value']);
+                //data_to_send.set('group_list',this.groupModel['value']);
+                //data_to_send.set('group_list',this.group_list_results);
+
+                // Insert a new row for each group list item
+                this.groupModel.forEach((row,index) => {
+                    data_to_send.append(`group_list`,row['value']);
+                });
 
                 // Use Axion to send the data
                 axios({
