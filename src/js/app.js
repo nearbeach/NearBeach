@@ -35,14 +35,16 @@ const axios = require('axios');
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
 axios.defaults.xsrfCookieName = "csrftoken"
 
+//Global Vue Components
+Vue.component('axios',axios);
+Vue.component('vSelect',vSelect);
+Vue.component('Editor',Editor);
+
 //Construction of the VUE App
 window.vm = new Vue({
     el: "#app",
     components: {
-        Editor,
         NewRequirements,
-        vSelect,
-        axios,
     },
     data() {
         return {};
@@ -51,7 +53,6 @@ window.vm = new Vue({
     mounted() {
         //Remove the loader
         var elem = document.getElementById("loader");
-        console.log("Element: ",elem);
         elem.style.display = "none";
     }
 });

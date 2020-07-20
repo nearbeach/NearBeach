@@ -35,6 +35,7 @@ urlpatterns = [
 	path('logout', authentication_views.logout, name='logout'),
 	path('new_requirement',requirement_views.new_requirement, name='new_requirement'),
 	path('new_requirement/save/',requirement_views.new_requirement_save, name='new_requirement_save'),
+	path('requirement_information/<int:requirement_id>/',requirement_views.requirement_information,name='requirement_information'),
 	path('search/organisation/data/',search_views.search_organisation_data,name='search_organisation_data'),
 ]
 """

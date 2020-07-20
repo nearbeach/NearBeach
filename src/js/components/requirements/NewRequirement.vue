@@ -74,39 +74,31 @@
                 </label>
             </div>
 
-            <!-- Group Permissions -->
-            <hr>
-            <group-permissions v-bind:group-results="groupResults"
-                               v-on:update_group_model="updateGroupModel($event)"
-            ></group-permissions>
+        </div>
+        <!-- Group Permissions -->
+        <hr>
+        <group-permissions v-bind:group-results="groupResults"
+                           v-on:update_group_model="updateGroupModel($event)"
+        ></group-permissions>
 
-            <!-- Submit Button -->
-            <hr>
-            <div class="cell medium-12 large-12">
-                <a href="javascript:void(0)"
-                   class="button save-changes"
-                   v-on:click="submitNewRequirement"
-                >Create new Requirement</a>
-            </div>
+        <!-- Submit Button -->
+        <hr>
+        <div class="cell medium-12 large-12">
+            <a href="javascript:void(0)"
+               class="button save-changes"
+               v-on:click="submitNewRequirement"
+            >Create new Requirement</a>
         </div>
     </div>
 </template>
 
 <script>
-    //JavaScript components
-    import Editor from '@tinymce/tinymce-vue';
-    import vSelect from "vue-select";
-
-    const axios = require('axios');
-
     //Vue components
     import GroupPermissions from '../permissions/GroupPermissions.vue';
 
     export default {
         name: "NewRequirement",
         components: {
-            Editor,
-            vSelect,
             GroupPermissions,
         },
         props: [
@@ -145,13 +137,15 @@
         },
         methods: {
             getOrganisationData: function(search,loading) {
+                // Save the seach data in FormData
+                const data_to_send = new FormData();
+                data_to_send.set('search',search);
+
                 // Now that the timer has run out, lets use AJAX to get the organisations.
                 axios({
                     method: 'POST',
                     url: 'search/organisation/data/',
-                    data: {
-                        'id_search': search,
-                    },
+                    data: data_to_send,
                 }).then(response => {
                         //Clear the stakeholderFixList
                         this.stakeholderFixList = [];
@@ -208,9 +202,6 @@
                 data_to_send.set('stakeholder',this.stakeholderModel['value']);
                 data_to_send.set('requirement_status',this.statusModel['value']);
                 data_to_send.set('requirement_type',this.typeModel['value']);
-                //data_to_send.set('group_list',this.groupModel['value']);
-                //data_to_send.set('group_list',this.groupModel['value']);
-                //data_to_send.set('group_list',this.group_list_results);
 
                 // Insert a new row for each group list item
                 this.groupModel.forEach((row,index) => {
@@ -225,8 +216,8 @@
                     headers: {'Content-Type': 'multipart/form-data' }
                     })
                     .then(function (response) {
-                        //handle success
-                        console.log(response);
+                        // Use the result to go to the url
+                        window.location.href = response['data']
                     })
                     .catch(function (response) {
                         //handle error

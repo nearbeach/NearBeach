@@ -120,11 +120,8 @@ def new_requirement_save(request, location_id="", destination=""):
         # Save
         submit_object_assignment.save()
 
-    # Send back just the requirement id
-    # FUTURE POINT - just redirect user directly to the new page?
-    # Just send the string for the new url?
-    print(reverse('new_requirement'))
-    return HttpResponse(submit_requirement.requirement_id)
+    # Send back requirement_information URL
+    return HttpResponse(reverse('requirement_information',args={submit_requirement.requirement_id}))
 
 
 

@@ -63,6 +63,7 @@ module.exports = {
         'NearBeach': './src/js/app.js',
         'login': './src/js/login.js',
         'whiteboard': './src/js/whiteboard.js',
+        'loader': './src/js/loader.js',
     },
     output: {
         path: path.resolve(__dirname, 'NearBeach/static/NearBeach'),

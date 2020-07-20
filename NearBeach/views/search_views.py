@@ -26,7 +26,10 @@ def search_organisation_data(request):
 
     # Split the space results - then apply the filter of each split value
     for split_row in search_form.cleaned_data['search'].split(' '):
-        organisation_results.filter(organisation_name__icontains=split_row)
+        # Update the organisation results SQL
+        organisation_results = organisation_results.filter(
+            organisation_name__icontains=split_row
+        )
 
     # Only have 25 results and order by alphabetical order
     organisation_results.order_by('organisation_name')[:25]

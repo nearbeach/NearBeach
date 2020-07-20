@@ -29,7 +29,8 @@
   "homepage": "https://github.com/robotichead/NearBeach#readme",
   "dependencies": {
     "@tinymce/tinymce-vue": "^3.2.2",
-    "axios": "^0.19.2"
+    "axios": "^0.19.2",
+    "vee-validate": "^3.3.7"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.13.1",

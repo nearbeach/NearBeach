@@ -4,6 +4,24 @@ from django import forms
 #Import from Models
 from .models import *
 
+
+class login_form(forms.Form):
+    username=forms.CharField(
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Username',
+            'class': 'form-control',
+            'required': True,
+            'autofocus': True,
+        })
+    )
+    password=forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'Password',
+            'class': 'form-control',
+            'required': True,
+        })
+    )
+
 class NewRequirementForm(forms.ModelForm):
     # One external field
     group_list=forms.ModelMultipleChoiceField(
@@ -12,7 +30,6 @@ class NewRequirementForm(forms.ModelForm):
             is_deleted="FALSE",
         )
     )
-
 
     # Basic Meta data
     class Meta:

@@ -12,19 +12,3 @@ $scrollhide-nav-transition-speed: 1s;
     transform: translateY(-100%);
   }
 }
-
-.loader {
-  background-color: #51CEFF;
-  position:fixed;
-  top: 0;
-  left: 0;
-  display:flex;
-  height: 100%;
-  width: 100%;
-  z-index: 100;
-
-  & .loader-text {
-    text-align:center;
-     margin: auto;
-  }
-}

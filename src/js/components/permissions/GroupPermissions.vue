@@ -20,13 +20,9 @@
 </template>
 
 <script>
-    import vSelect from "vue-select";
-
     export default {
         name: "GroupPermissions",
-        components: {
-            vSelect,
-        },
+        components: {},
         props: [
             'groupResults',
         ],
