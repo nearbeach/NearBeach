@@ -10,6 +10,10 @@
     <script async type="text/javascript" src="{% static 'NearBeach/loader.min.js' %}"></script>
 
     <!-- tinymce -->
+    <link preload type="text/css" src="{% static 'NearBeach/tinymce/skins/ui/oxide/skin.min.css' %}" />
+    <link preload type="text/css" src="{% static 'NearBeach/tinymce/skins/content/default/content.min.css' %}" />
+    <link preload type="text/css" src="{% static 'NearBeach/tinymce/skins/ui/oxide/content.min.css' %}" />
+    <script defer type="text/javascript" src="{% static 'NearBeach/tinymce/tinymce.min.js' %}"></script>
 
     <!-- fav icon -->
     <link async rel="shortcut icon" type="image/png" href="{% static '/NearBeach/NearBeach_Small.png' %}"/>
@@ -82,5 +86,8 @@
         <div class="loader-text">
             <strong>NearBeach</strong>
             <p>We care about your project</p>
+        </div>
+        <div class="loader-image">
+            <img src="{% static 'NearBeach/images/NearBeach_logo.svg' %}" />
         </div>
     </div>

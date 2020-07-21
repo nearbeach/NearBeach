@@ -10,8 +10,23 @@
 
   & .loader-text {
     text-align:center;
-     margin: auto;
+    margin: auto;
+    z-index: 101;
+
+    strong {
+      font-size: 35px;
+    }
   }
+
+  img {
+    width: 400px;
+    position: absolute;
+    left: calc(50vw - 300px);
+    top: calc(25vh + -40px);
+    opacity: .5;
+  }
+
+
 }
 
         

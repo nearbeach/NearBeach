@@ -93,6 +93,12 @@
 </template>
 
 <script>
+    //JavaScript Libraries
+    const axios = require('axios');
+
+    //jQuery
+    import $ from 'jquery';
+
     //Vue components
     import GroupPermissions from '../permissions/GroupPermissions.vue';
 
@@ -142,36 +148,45 @@
                 data_to_send.set('search',search);
 
                 // Now that the timer has run out, lets use AJAX to get the organisations.
-                axios({
-                    method: 'POST',
-                    url: 'search/organisation/data/',
-                    data: data_to_send,
-                }).then(response => {
-                        //Clear the stakeholderFixList
-                        this.stakeholderFixList = [];
+                axios.post(
+                    'search/organisation/data/',
+                    data_to_send
+                ).then(response => {
+                    //Clear the stakeholderFixList
+                    this.stakeholderFixList = [];
 
-                        //Extract the required JSON data
-                        var extracted_data = response['data'];
+                    //Extract the required JSON data
+                    var extracted_data = response['data'];
 
-                        //Look through the extracted data - and map the required fields into stakeholder fix list
-                        extracted_data.forEach((row) => {
-                            //Create the creation object
-                            var creation_object = {
-                                'value': row['pk'],
-                                'organisation_name': row['fields']['organisation_name'],
-                                'organisation_website': row['fields']['organisation_website'],
-                                'organisation_email': row['fields']['organisation_email'],
-                                'organisation_profile_picture': row['fields']['organisation_profile_picture'],
-                            };
+                    //Look through the extracted data - and map the required fields into stakeholder fix list
+                    extracted_data.forEach((row) => {
+                        //Create the creation object
+                        var creation_object = {
+                            'value': row['pk'],
+                            'organisation_name': row['fields']['organisation_name'],
+                            'organisation_website': row['fields']['organisation_website'],
+                            'organisation_email': row['fields']['organisation_email'],
+                            'organisation_profile_picture': row['fields']['organisation_profile_picture'],
+                        };
 
-                            //Push that object into the stakeholders
-                            this.stakeholderFixList.push(creation_object)
-                        });
-                    })
-                    .catch(function (error) {
-                        // handle error
-                        console.log("THE HTML ERROR: ",error);
+                        //Push that object into the stakeholders
+                        this.stakeholderFixList.push(creation_object)
                     });
+                }).catch(function (error) {
+                    // Get the error modal
+                    var elem_cont = document.getElementById("errorModalContent");
+
+                    // Update the content
+                    elem_cont.innerHTML = `<strong>Search Organisation Issue:</strong><br/>${error}`;
+
+                    // Show the modal
+                    var popup = new Foundation.Reveal($('#errorModal'));
+                    popup.open();
+
+                    // Hide the loader
+                    var loader_element = document.getElementById("loader");
+                    loader_element.style.display = "none";
+                });
             },
             fetchOptions: function(search, loading) {
                 // Make sure the timer isn't running
@@ -209,19 +224,26 @@
                 });
 
                 // Use Axion to send the data
-                axios({
-                    method: 'post',
-                    url: 'new_requirement/save/',
-                    data: data_to_send,
-                    headers: {'Content-Type': 'multipart/form-data' }
-                    })
-                    .then(function (response) {
+                axios.post(
+                        'new_requirement/save/',
+                        data_to_send
+                    ).then(function (response) {
                         // Use the result to go to the url
                         window.location.href = response['data']
-                    })
-                    .catch(function (response) {
-                        //handle error
-                        console.log(response);
+                    }).catch(function (error) {
+                        // Get the error modal
+                        var elem_cont = document.getElementById("errorModalContent");
+
+                        // Update the content
+                        elem_cont.innerHTML = `<strong>HTML ISSUE:</strong>We could not save the new requirement<br/>${error}`;
+
+                        // Show the modal
+                        var popup = new Foundation.Reveal($('#errorModal'));
+                        popup.open();
+
+                        // Hide the loader
+                        var loader_element = document.getElementById("loader");
+                        loader_element.style.display = "none";
                     });
             },
             updateGroupModel: function(newGroupModel) {
