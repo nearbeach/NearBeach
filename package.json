@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/robotichead/NearBeach#readme",
   "dependencies": {
+    "@popperjs/core": "^2.4.4",
     "@tinymce/tinymce-vue": "^3.2.2",
     "axios": "^0.19.2",
     "bootstrap": "^5.0.0-alpha1",
@@ -35,7 +36,6 @@
     "vee-validate": "^3.3.7"
   },
   "devDependencies": {
-    "@popperjs/core": "^2.4.4",
     "clean-webpack-plugin": "^3.0.0",
     "compression-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^6.0.2",

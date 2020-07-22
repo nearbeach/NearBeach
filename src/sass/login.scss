@@ -1,5 +1,12 @@
 // Import Bootstrap
-@import "~bootstrap/scss/bootstrap";
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+
+// Bootstrap extras
+@import "~bootstrap/scss/buttons";
+@import "~bootstrap/scss/forms";
+
 
 // Import login screen
 @import './components/_login.scss';

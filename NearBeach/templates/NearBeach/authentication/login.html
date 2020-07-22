@@ -18,19 +18,16 @@
 
                 <!-- LOGIN form -->
                 <div class="row columns">
-                    <label>Username
-                        {{ login_form.username }}
-                    </label>
+                    <label for="id_username">Username</label>
+                    {{ login_form.username }}
                 </div>
 
                 <div class="row columns">
-                    <label>Password
-                        {{ login_form.password }}
-                    </label>
+                    <label for="id_password">Password</label>
+                    {{ login_form.password }}
                 </div>
 
-                <button class="primary button expanded" type="submit">Login</button>
-
+                <button class="btn btn-primary" type="submit">Login</button>
             </form>
         </div>
     </div>

@@ -1,20 +1,19 @@
 <template>
-    <div class="grid-x">
-        <div class="small-12 large-4">
+    <div class="row">
+        <div class="col-md-4">
             <h3>Group Permissions</h3>
             <p>Add or remove groups from this requirement. Adding a group will allow users
                 from that group to access this requirement.
             </p>
             <p>If you do not add one of your own group(s), you will only get readonly access.</p>
         </div>
-        <div class="small-12 large-8">
-            <label>Group List
-                <v-select :options="groupFixResults"
-                          label="group"
-                          v-model="groupModel"
-                          multiple
-                    ></v-select>
-            </label>
+        <div class="col-md-8">
+            <label>Group List</label>
+            <v-select :options="groupFixResults"
+                      label="group"
+                      v-model="groupModel"
+                      multiple
+            ></v-select>
         </div>
     </div>
 </template>

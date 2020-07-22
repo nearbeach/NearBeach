@@ -1,0 +1,118 @@
+<template>
+    <div class="row">
+        <div class="col-md-4">
+            <h3>Stakeholder Organisation</h3>
+            <p>Please search for your stakeholder organisation in the dropdown box. Once found, please select.</p>
+        </div>
+        <div class="col-md-8">
+            <div class="form-group">
+                <label>Stakeholder Organisation</label>
+                <v-select :options="stakeholderFixList"
+                          @search="fetchOptions"
+                          v-model="stakeholderModel"
+                          label="organisation_name"
+                          class="get-stakeholders"
+                />
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    //JavaScript Libraries
+    const axios = require('axios');
+    import bootstrap from 'bootstrap'
+
+    export default {
+        name: "GetStakeholders",
+        components: {
+            axios,
+            bootstrap,
+        },
+        props: [],
+        data() {
+            return {
+                searchTimeout: '',
+                stakeholderFixList: [],
+                stakeholderModel: '',
+            }
+        },
+        methods: {
+            fetchOptions: function(search, loading) {
+                // Make sure the timer isn't running
+                if (this.searchTimeout != '') {
+                    //Stop the clock!
+                    clearTimeout(this.searchTimeout);
+                }
+
+                // Reset the clock, to only search if there is an uninterupted 0.5s of no typing.
+                if (search.length >= 3) {
+                    this.searchTimeout = setTimeout(
+                        this.getOrganisationData,
+                        500,
+                        search,
+                        loading
+                    )
+                }
+            },
+            getOrganisationData: function(search,loading) {
+                // Save the seach data in FormData
+                const data_to_send = new FormData();
+                data_to_send.set('search',search);
+
+                // Now that the timer has run out, lets use AJAX to get the organisations.
+                axios.post(
+                    'search/organisation/data/',
+                    data_to_send
+                ).then(response => {
+                    //Clear the stakeholderFixList
+                    this.stakeholderFixList = [];
+
+                    //Extract the required JSON data
+                    var extracted_data = response['data'];
+
+                    //Look through the extracted data - and map the required fields into stakeholder fix list
+                    extracted_data.forEach((row) => {
+                        //Create the creation object
+                        var creation_object = {
+                            'value': row['pk'],
+                            'organisation_name': row['fields']['organisation_name'],
+                            'organisation_website': row['fields']['organisation_website'],
+                            'organisation_email': row['fields']['organisation_email'],
+                            'organisation_profile_picture': row['fields']['organisation_profile_picture'],
+                        };
+
+                        //Push that object into the stakeholders
+                        this.stakeholderFixList.push(creation_object)
+                    });
+                }).catch(function (error) {
+                    // Get the error modal
+                    var elem_cont = document.getElementById("errorModalContent");
+
+                    // Update the content
+                    elem_cont.innerHTML = `<strong>Search Organisation Issue:</strong><br/>${error}`;
+
+                    // Show the modal
+                    var errorModal = new bootstrap.Modal(document.getElementById('errorModal'), {
+                      keyboard: false
+                    })
+                    errorModal.show();
+
+                    // Hide the loader
+                    var loader_element = document.getElementById("loader");
+                    loader_element.style.display = "none";
+                });
+            },
+        },
+        watch: {
+            stakeholderModel: function() {
+                //Send the changes upstream
+                this.$emit('update_stakeholder_model',this.stakeholderModel);
+            }
+        }
+    }
+</script>
+
+<style scoped>
+
+</style>

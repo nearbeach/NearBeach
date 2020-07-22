@@ -1,14 +1,6 @@
-//Import Foundation
-//import foundation from 'foundation-sites';
-
-// @include foundation-flex-grid;
-// @include foundation-flex-classes;
+//Import Bootstrap
+import { createPopper } from '@popperjs/core';
+import bootstrap from 'bootstrap'
 
 //SCSS Library
 import '../sass/login.scss';
-
-//Font awesome
-// import '@fortawesome/fontawesome-free/js/fontawesome';
-// import '@fortawesome/fontawesome-free/js/solid';
-// import '@fortawesome/fontawesome-free/js/regular';
-// import '@fortawesome/fontawesome-free/js/brands';

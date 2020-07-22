@@ -2,12 +2,12 @@
 import Vue from 'vue/dist/vue.js';
 
 //Vue Component Library
+import GetStakeholders from './components/organisations/GetStakeholders.vue';
 import NewRequirements from './components/requirements/NewRequirement.vue';
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
 import bootstrap from 'bootstrap'
-
 
 //SCSS Library
 import '../sass/main.scss';
@@ -28,6 +28,7 @@ axios.defaults.xsrfCookieName = "csrftoken"
 
 //Global Vue Components
 Vue.component('axios',axios);
+Vue.component('bootstrap',bootstrap);
 Vue.component('vSelect',vSelect);
 Vue.component('Editor',Editor);
 
@@ -35,6 +36,7 @@ Vue.component('Editor',Editor);
 window.vm = new Vue({
     el: "#app",
     components: {
+        GetStakeholders,
         NewRequirements,
     },
     data() {
