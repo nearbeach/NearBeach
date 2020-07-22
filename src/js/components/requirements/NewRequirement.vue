@@ -158,9 +158,7 @@
                         elem_cont.innerHTML = `<strong>HTML ISSUE:</strong>We could not save the new requirement<br/>${error}`;
 
                         // Show the modal
-                        var errorModal = new bootstrap.Modal(document.getElementById('errorModal'), {
-                          keyboard: false
-                        })
+                        var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
                         errorModal.show();
 
                         // Hide the loader
