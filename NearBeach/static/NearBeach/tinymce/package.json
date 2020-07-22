@@ -2,9 +2,10 @@
   "_args": [
     [
       "tinymce@5.3.2",
-      "/home/luke/Sites/NearBeach"
+      "/Users/luke/PycharmProjects/source_code/NearBeach"
     ]
   ],
+  "_development": true,
   "_from": "tinymce@5.3.2",
   "_id": "tinymce@5.3.2",
   "_inBundle": false,
@@ -22,11 +23,11 @@
     "fetchSpec": "5.3.2"
   },
   "_requiredBy": [
-    "/"
+    "#DEV:/"
   ],
   "_resolved": "https://registry.npmjs.org/tinymce/-/tinymce-5.3.2.tgz",
   "_spec": "5.3.2",
-  "_where": "/home/luke/Sites/NearBeach",
+  "_where": "/Users/luke/PycharmProjects/source_code/NearBeach",
   "author": {
     "name": "Ephox Corporation"
   },

@@ -1,8 +1,8 @@
 //Import variables
 @import './common/variables';
 
-//Import foundation framework
-@import '~foundation-sites/assets/foundation.scss';
+// Import Bootstrap
+@import "~bootstrap/scss/bootstrap";
 
 //Import components
 @import 'components/body';
