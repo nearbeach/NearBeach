@@ -4,7 +4,7 @@
  * For LGPL see License.txt in the project root for license information.
  * For commercial licenses see https://www.tiny.cloud/
  *
- * Version: 5.4.1 (2020-07-08)
+ * Version: 5.3.2 (2020-06-10)
  */
 (function (domGlobals) {
     'use strict';
@@ -655,9 +655,10 @@
 
     var ELEMENT = 1;
 
+    var ELEMENT$1 = ELEMENT;
     var is = function (element, selector) {
       var dom = element.dom();
-      if (dom.nodeType !== ELEMENT) {
+      if (dom.nodeType !== ELEMENT$1) {
         return false;
       } else {
         var elem = dom;
@@ -710,22 +711,6 @@
       return Element.fromDom(fragment);
     };
 
-    var Global = typeof domGlobals.window !== 'undefined' ? domGlobals.window : Function('return this;')();
-
-    var name = function (element) {
-      var r = element.dom().nodeName;
-      return r.toLowerCase();
-    };
-    var type = function (element) {
-      return element.dom().nodeType;
-    };
-    var isType$1 = function (t) {
-      return function (element) {
-        return type(element) === t;
-      };
-    };
-    var isElement = isType$1(ELEMENT);
-
     var parent = function (element) {
       return Option.from(element.dom().parentNode).map(Element.fromDom);
     };
@@ -777,6 +762,8 @@
         element: element
       });
     };
+
+    var Global = typeof domGlobals.window !== 'undefined' ? domGlobals.window : Function('return this;')();
 
     var global$4 = tinymce.util.Tools.resolve('tinymce.dom.DomQuery');
 
@@ -986,6 +973,20 @@
       return t;
     };
 
+    var name = function (element) {
+      var r = element.dom().nodeName;
+      return r.toLowerCase();
+    };
+    var type = function (element) {
+      return element.dom().nodeType;
+    };
+    var isType$1 = function (t) {
+      return function (element) {
+        return type(element) === t;
+      };
+    };
+    var isElement = isType$1(ELEMENT);
+
     var rawSet = function (dom, key, value) {
       if (isString(value) || isBoolean(value) || isNumber(value)) {
         dom.setAttribute(key, value + '');
@@ -1010,8 +1011,6 @@
     var isSupported = function (dom) {
       return dom.style !== undefined && isFunction(dom.style.getPropertyValue);
     };
-
-    var supported = isFunction(domGlobals.Element.prototype.attachShadow) && isFunction(domGlobals.Node.prototype.getRootNode);
 
     var internalSet = function (dom, property, value) {
       if (!isString(value)) {
@@ -1309,19 +1308,20 @@
 
     var DOM = global$6.DOM;
     var splitList = function (editor, ul, li) {
+      var tmpRng, fragment, bookmarks, node, newBlock;
       var removeAndKeepBookmarks = function (targetNode) {
         global$5.each(bookmarks, function (node) {
           targetNode.parentNode.insertBefore(node, li.parentNode);
         });
         DOM.remove(targetNode);
       };
-      var bookmarks = DOM.select('span[data-mce-type="bookmark"]', ul);
-      var newBlock = createTextBlock(editor, li);
-      var tmpRng = DOM.createRng();
+      bookmarks = DOM.select('span[data-mce-type="bookmark"]', ul);
+      newBlock = createTextBlock(editor, li);
+      tmpRng = DOM.createRng();
       tmpRng.setStartAfter(li);
       tmpRng.setEndAfter(ul);
-      var fragment = tmpRng.extractContents();
-      for (var node = fragment.firstChild; node; node = node.firstChild) {
+      fragment = tmpRng.extractContents();
+      for (node = fragment.firstChild; node; node = node.firstChild) {
         if (node.nodeName === 'LI' && editor.dom.isEmpty(node)) {
           DOM.remove(node);
           break;
@@ -1502,17 +1502,6 @@
       return normalizeRange(rng);
     };
 
-    var listToggleActionFromListName = function (listName) {
-      switch (listName) {
-      case 'UL':
-        return 'ToggleUlList';
-      case 'OL':
-        return 'ToggleOlList';
-      case 'DL':
-        return 'ToggleDLList';
-      }
-    };
-
     var isCustomList = function (list) {
       return /\btox\-/.test(list.className);
     };
@@ -1529,6 +1518,17 @@
           return editor.off('NodeChange', nodeChangeHandler);
         };
       };
+    };
+
+    var listToggleActionFromListName = function (listName) {
+      switch (listName) {
+      case 'UL':
+        return 'ToggleUlList';
+      case 'OL':
+        return 'ToggleOlList';
+      case 'DL':
+        return 'ToggleDLList';
+      }
     };
 
     var updateListStyle = function (dom, el, detail) {
@@ -1557,8 +1557,9 @@
       });
     };
     var getEndPointNode = function (editor, rng, start, root) {
-      var container = rng[start ? 'startContainer' : 'endContainer'];
-      var offset = rng[start ? 'startOffset' : 'endOffset'];
+      var container, offset;
+      container = rng[start ? 'startContainer' : 'endContainer'];
+      offset = rng[start ? 'startOffset' : 'endOffset'];
       if (container.nodeType === 1) {
         container = container.childNodes[Math.min(offset, container.childNodes.length - 1)] || container;
       }
@@ -1627,7 +1628,8 @@
       if (detail === void 0) {
         detail = {};
       }
-      var rng = editor.selection.getRng();
+      var rng = editor.selection.getRng(true);
+      var bookmark;
       var listItemName = 'LI';
       var root = getClosestListRootElm(editor, editor.selection.getStart(true));
       var dom = editor.dom;
@@ -1638,10 +1640,10 @@
       if (listName === 'DL') {
         listItemName = 'DT';
       }
-      var bookmark = createBookmark(rng);
+      bookmark = createBookmark(rng);
       global$5.each(getSelectedTextBlocks(editor, rng, root), function (block) {
-        var listBlock;
-        var sibling = block.previousSibling;
+        var listBlock, sibling;
+        sibling = block.previousSibling;
         if (sibling && isListNode(sibling) && sibling.nodeName === listName && hasCompatibleStyle(dom, sibling, detail)) {
           listBlock = sibling;
           block = dom.rename(block, listItemName);
@@ -1821,8 +1823,8 @@
       }
     };
     var moveChildren = function (dom, fromElm, toElm) {
-      var node;
-      var targetElm = hasOnlyOneBlockChild(dom, toElm) ? toElm.firstChild : toElm;
+      var node, targetElm;
+      targetElm = hasOnlyOneBlockChild(dom, toElm) ? toElm.firstChild : toElm;
       unwrapSingleBlockChild(dom, fromElm);
       if (!isEmpty(dom, fromElm, true)) {
         while (node = fromElm.firstChild) {
@@ -1831,7 +1833,7 @@
       }
     };
     var mergeLiElements = function (dom, fromElm, toElm) {
-      var listNode;
+      var node, listNode;
       var ul = fromElm.parentNode;
       if (!isChildOfBody(dom, fromElm) || !isChildOfBody(dom, toElm)) {
         return;
@@ -1844,7 +1846,7 @@
           dom.remove(ul.previousSibling);
         }
       }
-      var node = toElm.lastChild;
+      node = toElm.lastChild;
       if (node && isBr(node) && fromElm.hasChildNodes()) {
         dom.remove(node);
       }
@@ -2066,7 +2068,7 @@
     };
 
     var hasRtcPlugin = function (editor) {
-      if (/(^|[ ,])rtc([, ]|$)/.test(editor.getParam('plugins', '', 'string')) && global.get('rtc')) {
+      if (/(^|[ ,])rtc([, ]|$)/.test(editor.settings.plugins) && global.get('rtc')) {
         return true;
       } else {
         return false;
@@ -2094,7 +2096,7 @@
 
     var register$1 = function (editor) {
       var hasPlugin = function (editor, plugin) {
-        var plugins = editor.getParam('plugins', '', 'string');
+        var plugins = editor.settings.plugins ? editor.settings.plugins : '';
         return global$5.inArray(plugins.split(/[ ,]/), plugin) !== -1;
       };
       var exec = function (command) {

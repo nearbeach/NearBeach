@@ -4,7 +4,7 @@
  * For LGPL see License.txt in the project root for license information.
  * For commercial licenses see https://www.tiny.cloud/
  *
- * Version: 5.4.1 (2020-07-08)
+ * Version: 5.3.2 (2020-06-10)
  */
 (function () {
     'use strict';
@@ -60,7 +60,7 @@
 
     var register = function (editor) {
       editor.addCommand('mcePageBreak', function () {
-        if (shouldSplitBlock(editor)) {
+        if (editor.settings.pagebreak_split_block) {
           editor.insertContent('<p>' + getPlaceholderHtml() + '</p>');
         } else {
           editor.insertContent(getPlaceholderHtml());

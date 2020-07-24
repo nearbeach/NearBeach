@@ -3,6 +3,17 @@
     padding: 0 10px;
   }
 
+  .form-group {
+    padding: 0 2px;
+  }
+
+  //When screen goes into mobile mode
+  @media screen and (max-width: 767px) {
+    h1, h2, h3, p, label {
+      padding: 0 2px;
+    }
+  }
+
   h1 {
     width: 100%;
     font-size: 35px;
@@ -24,8 +35,19 @@
   }
 
   .loader-image {
-    height: 410px;
+    //height: 410px;
+    width: 500px;
     position: absolute;
+    transform: translate(75px,30px);
+
+    @media screen and (max-width: 1020px) {
+      width: 45vw;
+      transform: translate(10vw,30px);
+    }
+    @media screen and (max-width: 767px) {
+      width: 70vw;
+      transform: translate(15vw,30px);
+    }
   }
 
   .v-select {

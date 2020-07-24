@@ -4,7 +4,7 @@
  * For LGPL see License.txt in the project root for license information.
  * For commercial licenses see https://www.tiny.cloud/
  *
- * Version: 5.4.1 (2020-07-08)
+ * Version: 5.3.2 (2020-06-10)
  */
 (function (domGlobals) {
     'use strict';
@@ -187,7 +187,6 @@
     var isString = isType('string');
     var isArray = isType('array');
     var isBoolean = isSimpleType('boolean');
-    var isFunction = isSimpleType('function');
     var isNumber = isSimpleType('number');
 
     var nativeSlice = Array.prototype.slice;
@@ -269,7 +268,6 @@
     var Global = typeof domGlobals.window !== 'undefined' ? domGlobals.window : Function('return this;')();
 
     var DOCUMENT = 9;
-    var DOCUMENT_FRAGMENT = 11;
     var ELEMENT = 1;
     var TEXT = 3;
 
@@ -340,8 +338,10 @@
       return compareDocumentPosition(a, b, domGlobals.Node.DOCUMENT_POSITION_PRECEDING);
     };
 
+    var ELEMENT$1 = ELEMENT;
+    var DOCUMENT$1 = DOCUMENT;
     var bypassSelector = function (dom) {
-      return dom.nodeType !== ELEMENT && dom.nodeType !== DOCUMENT && dom.nodeType !== DOCUMENT_FRAGMENT || dom.childElementCount === 0;
+      return dom.nodeType !== ELEMENT$1 && dom.nodeType !== DOCUMENT$1 || dom.childElementCount === 0;
     };
     var all = function (selector, scope) {
       var base = scope === undefined ? domGlobals.document : scope.dom();
@@ -406,8 +406,6 @@
     var get = function (element) {
       return api.get(element);
     };
-
-    var supported = isFunction(domGlobals.Element.prototype.attachShadow) && isFunction(domGlobals.Node.prototype.getRootNode);
 
     var descendants = function (scope, selector) {
       return all(selector, scope);
@@ -673,9 +671,10 @@
       return value;
     };
     var markAllMatches = function (editor, currentSearchState, pattern, inSelection) {
-      var marker = editor.dom.create('span', { 'data-mce-bogus': 1 });
+      var node, marker;
+      marker = editor.dom.create('span', { 'data-mce-bogus': 1 });
       marker.className = 'mce-match-marker';
-      var node = editor.getBody();
+      node = editor.getBody();
       done(editor, currentSearchState, false);
       if (inSelection) {
         return findAndMarkInSelection(editor.dom, pattern, editor.selection, marker);
@@ -691,8 +690,9 @@
       node.parentNode.removeChild(node);
     };
     var findSpansByIndex = function (editor, index) {
+      var nodes;
       var spans = [];
-      var nodes = global$1.toArray(editor.getBody().getElementsByTagName('span'));
+      nodes = global$1.toArray(editor.getBody().getElementsByTagName('span'));
       if (nodes.length) {
         for (var i = 0; i < nodes.length; i++) {
           var nodeIndex = getElmIndex(nodes[i]);
@@ -741,7 +741,7 @@
       }
     };
     var escapeSearchText = function (text, wholeWord) {
-      var escapedText = text.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&').replace(/\s/g, '[^\\S\\r\\n\\uFEFF]');
+      var escapedText = text.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&').replace(/\s/g, '[^\\S\\r\\n]');
       var wordRegex = '(' + escapedText + ')';
       return wholeWord ? '(?:^|\\s|' + punctuation$1() + ')' + wordRegex + ('(?=$|\\s|' + punctuation$1() + ')') : wordRegex;
     };
@@ -780,13 +780,13 @@
     var replace = function (editor, currentSearchState, text, forward, all) {
       var searchState = currentSearchState.get();
       var currentIndex = searchState.index;
-      var currentMatchIndex, nextIndex = currentIndex;
+      var i, nodes, node, matchIndex, currentMatchIndex, nextIndex = currentIndex;
       forward = forward !== false;
-      var node = editor.getBody();
-      var nodes = global$1.grep(global$1.toArray(node.getElementsByTagName('span')), isMatchSpan);
-      for (var i = 0; i < nodes.length; i++) {
+      node = editor.getBody();
+      nodes = global$1.grep(global$1.toArray(node.getElementsByTagName('span')), isMatchSpan);
+      for (i = 0; i < nodes.length; i++) {
         var nodeIndex = getElmIndex(nodes[i]);
-        var matchIndex = currentMatchIndex = parseInt(nodeIndex, 10);
+        matchIndex = currentMatchIndex = parseInt(nodeIndex, 10);
         if (all || matchIndex === searchState.index) {
           if (text.length) {
             nodes[i].firstChild.nodeValue = text;
@@ -822,9 +822,9 @@
       return !all && currentSearchState.get().count > 0;
     };
     var done = function (editor, currentSearchState, keepEditorSelection) {
-      var i, startContainer, endContainer;
+      var i, nodes, startContainer, endContainer;
       var searchState = currentSearchState.get();
-      var nodes = global$1.toArray(editor.getBody().getElementsByTagName('span'));
+      nodes = global$1.toArray(editor.getBody().getElementsByTagName('span'));
       for (i = 0; i < nodes.length; i++) {
         var nodeIndex = getElmIndex(nodes[i]);
         if (nodeIndex !== null && nodeIndex.length) {

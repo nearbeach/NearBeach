@@ -4,7 +4,7 @@
  * For LGPL see License.txt in the project root for license information.
  * For commercial licenses see https://www.tiny.cloud/
  *
- * Version: 5.4.1 (2020-07-08)
+ * Version: 5.3.2 (2020-06-10)
  */
 (function (domGlobals) {
     'use strict';
@@ -41,10 +41,11 @@
     };
     var insertTableHtml = function (editor, cols, rows) {
       editor.undoManager.transact(function () {
+        var tableElm, cellElm;
         editor.insertContent(createTableHtml(cols, rows));
-        var tableElm = getInsertedElement(editor);
+        tableElm = getInsertedElement(editor);
         tableElm.removeAttribute('data-mce-id');
-        var cellElm = editor.dom.select('td,th', tableElm);
+        cellElm = editor.dom.select('td,th', tableElm);
         editor.selection.setCursorLocation(cellElm[0], 0);
       });
     };
@@ -52,8 +53,9 @@
       editor.plugins.table ? editor.plugins.table.insertTable(cols, rows) : insertTableHtml(editor, cols, rows);
     };
     var insertBlob = function (editor, base64, blob) {
-      var blobCache = editor.editorUpload.blobCache;
-      var blobInfo = blobCache.create(generate('mceu'), blob, base64);
+      var blobCache, blobInfo;
+      blobCache = editor.editorUpload.blobCache;
+      blobInfo = blobCache.create(generate('mceu'), blob, base64);
       blobCache.add(blobInfo);
       editor.insertContent(editor.dom.createHTML('img', { src: blobInfo.blobUri() }));
     };
@@ -330,9 +332,10 @@
       return is(scope, a) ? Option.some(scope) : isFunction(isRoot) && isRoot(scope) ? Option.none() : ancestor(scope, a, isRoot);
     }
 
+    var ELEMENT$1 = ELEMENT;
     var is = function (element, selector) {
       var dom = element.dom();
-      if (dom.nodeType !== ELEMENT) {
+      if (dom.nodeType !== ELEMENT$1) {
         return false;
       } else {
         var elem = dom;
@@ -349,8 +352,6 @@
         }
       }
     };
-
-    var supported = isFunction(domGlobals.Element.prototype.attachShadow) && isFunction(domGlobals.Node.prototype.getRootNode);
 
     var ancestor = function (scope, predicate, isRoot) {
       var element = scope.dom();

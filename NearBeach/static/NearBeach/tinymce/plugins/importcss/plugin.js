@@ -4,7 +4,7 @@
  * For LGPL see License.txt in the project root for license information.
  * For commercial licenses see https://www.tiny.cloud/
  *
- * Version: 5.4.1 (2020-07-08)
+ * Version: 5.3.2 (2020-06-10)
  */
 (function () {
     'use strict';
@@ -39,13 +39,6 @@
     };
     var getFileFilter = function (editor) {
       return editor.getParam('importcss_file_filter');
-    };
-    var getSkin = function (editor) {
-      var skin = editor.getParam('skin');
-      return skin !== false ? skin || 'oxide' : false;
-    };
-    var getSkinUrl = function (editor) {
-      return editor.getParam('skin_url');
     };
 
     var typeOf = function (x) {
@@ -131,10 +124,9 @@
       return url;
     };
     var isSkinContentCss = function (editor, href) {
-      var skin = getSkin(editor);
+      var settings = editor.settings, skin = settings.skin !== false ? settings.skin || 'oxide' : false;
       if (skin) {
-        var skinUrlBase = getSkinUrl(editor);
-        var skinUrl = skinUrlBase ? editor.documentBaseURI.toAbsolute(skinUrlBase) : global$2.baseURL + '/skins/ui/' + skin;
+        var skinUrl = settings.skin_url ? editor.documentBaseURI.toAbsolute(settings.skin_url) : global$2.baseURL + '/skins/ui/' + skin;
         var contentSkinUrlPart = global$2.baseURL + '/skins/content/';
         return href === skinUrl + '/content' + (editor.inline ? '.inline' : '') + '.min.css' || href.indexOf(contentSkinUrlPart) !== -1;
       }
