@@ -93,7 +93,7 @@
 <script>
     //JavaScript Libraries
     const axios = require('axios');
-    import bootstrap from 'bootstrap'
+    import { Modal } from 'bootstrap';
 
     //Vue components
     import GetStakeholders from '../organisations/GetStakeholders.vue';
@@ -103,7 +103,6 @@
         name: "NewRequirement",
         components: {
             axios,
-            bootstrap,
             GetStakeholders,
             GroupPermissions,
         },
@@ -127,8 +126,8 @@
         methods: {
             submitNewRequirement: function() {
                 // Apply the loading screen to hide everything
-                var elem = document.getElementById("loader");
-                elem.style.display = "";
+                var loader_elem = document.getElementById("loader");
+                loader_elem.style.transform = "translateY(0)";
 
                 // Set up the data object to send
                 const data_to_send = new FormData();
@@ -147,23 +146,23 @@
                 axios.post(
                         'new_requirement/save/',
                         data_to_send
-                    ).then(function (response) {
+                    ).then((response) => {
                         // Use the result to go to the url
                         window.location.href = response['data']
-                    }).catch(function (error) {
+                    }).catch((error) => {
                         // Get the error modal
                         var elem_cont = document.getElementById("errorModalContent");
 
                         // Update the content
-                        elem_cont.innerHTML = `<strong>HTML ISSUE:</strong>We could not save the new requirement<br/>${error}`;
+                        elem_cont.innerHTML = `<strong>HTML ISSUE:</strong> We could not save the new requirement<hr>${error}`;
 
                         // Show the modal
-                        var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                        //var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                        var errorModal = new Modal(document.getElementById('errorModal'));
                         errorModal.show();
 
                         // Hide the loader
-                        var loader_element = document.getElementById("loader");
-                        loader_element.style.display = "none";
+                        loader_elem.style.transform = "translateY(-100vh)";
                     });
             },
             updateGroupModel: function(newGroupModel) {

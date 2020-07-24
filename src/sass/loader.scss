@@ -1,3 +1,5 @@
+/* This is kept in it's own location to keep the file size small. Also to be the first thing that loads when user
+ first loads up NearBeach*/
 .loader {
   background-color: #51CEFF;
   position:fixed;
@@ -7,6 +9,8 @@
   height: 100%;
   width: 100%;
   z-index: 100;
+  transform-origin: top;
+  transition-duration: 0.5s;
 
   & .loader-text {
     text-align:center;
@@ -25,8 +29,8 @@
     top: calc(25vh + -40px);
     opacity: .5;
   }
-
-
 }
+
+
 
         

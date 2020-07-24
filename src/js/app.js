@@ -27,8 +27,6 @@ axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
 axios.defaults.xsrfCookieName = "csrftoken"
 
 //Global Vue Components
-Vue.component('axios',axios);
-Vue.component('bootstrap',bootstrap);
 Vue.component('vSelect',vSelect);
 Vue.component('Editor',Editor);
 
@@ -45,7 +43,7 @@ window.vm = new Vue({
     methods: {},
     mounted() {
         //Remove the loader
-        var elem = document.getElementById("loader");
-        elem.style.display = "none";
+        var loader_elem = document.getElementById("loader");
+        loader_elem.style.transform = "translateY(-100vh)";
     }
 });
