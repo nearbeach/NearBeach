@@ -5,7 +5,7 @@
         <div class="row">
             <!-- Description -->
             <div class="col-md-4">
-                <h3>Description</h3>
+                <h2>Description</h2>
                 <p>Place a basic helicopter view of the requirement description here. You will be able to break this
                     description down into smaller value items using the requirement items below.</p>
             </div>
@@ -32,6 +32,7 @@
                 </label><br>
                 <img src="static/NearBeach/images/placeholder/body_text.svg"
                      class="loader-image"
+                     alt="loading image for Tinymce"
                 />
                 <editor
                    :init="{
@@ -54,7 +55,7 @@
         <hr>
         <div class="row">
             <div class="col-md-4">
-                <h3>Status</h3>
+                <h2>Status</h2>
                 <p>Set the Requirement Status and Type here.</p>
             </div>
             <div class="col-md-4">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<head>
+<head role="head">
 	<title>NearBeach Beta</title>
 
     {% load static %}
@@ -20,7 +20,9 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark"
+             role="navigation"
+        >
             <!-- Navbar branding and burger menu -->
             <a class="navbar-brand" href="{% url 'dashboard' %}">
                 <img src="{% static 'NearBeach/images/NearBeach_logo.svg' %}" width="30" height="30" alt="">
@@ -49,7 +51,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle"
                            href="#"
-                           id="navbarDropdown"
+                           id="newObjectsDropdown"
                            role="button"
                            data-toggle="dropdown"
                            aria-haspopup="true"
@@ -57,7 +59,7 @@
                         >
                             New Object
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <div class="dropdown-menu" aria-labelledby="newObjectsDropdown">
                             <a class="dropdown-item" href="#">New Customer</a>
                             <a class="dropdown-item" href="#">New Kanban Board</a>
                             <a class="dropdown-item" href="#">New Opportunity</a>
@@ -73,7 +75,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle"
                            href="#"
-                           id="navbarDropdown"
+                           id="findObjectsDropdown"
                            role="button"
                            data-toggle="dropdown"
                            aria-haspopup="true"
@@ -81,7 +83,7 @@
                         >
                             Find Objects
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <div class="dropdown-menu" aria-labelledby="findObjectsDropdown">
                             <a class="dropdown-item" href="#">List All</a>
                             <a class="dropdown-item" href="#">List by Tag</a>
                             <a class="dropdown-item" href="#">List Customers</a>
@@ -96,7 +98,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle"
                            href="#"
-                           id="navbarDropdown"
+                           id="userDropdown"
                            role="button"
                            data-toggle="dropdown"
                            aria-haspopup="true"
@@ -104,7 +106,7 @@
                         >
                             User
                         </a>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                             <a class="dropdown-item" href="#">My Profile</a>
                             <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
                         </div>
@@ -115,12 +117,14 @@
     </header>
 
     <!-- Simple loader -->
-    <div class="loader" id="loader">
+    <div class="loader" id="loader" role="complementary">
         <div class="loader-text">
             <strong>NearBeach</strong>
             <p>We care about your project</p>
         </div>
         <div class="loader-image">
-            <img src="{% static 'NearBeach/images/NearBeach_logo.svg' %}" />
+            <img src="{% static 'NearBeach/images/NearBeach_logo.svg' %}"
+                 alt="NearBeach logo"
+            />
         </div>
     </div>
