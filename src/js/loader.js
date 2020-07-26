@@ -1,2 +1,2 @@
-d//SCSS Library
+//SCSS Library
 import '../sass/loader.scss';
