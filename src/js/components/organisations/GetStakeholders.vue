@@ -6,7 +6,9 @@
         </div>
         <div class="col-md-8">
             <div class="form-group">
-                <label>Stakeholder Organisation</label>
+                <label>Stakeholder Organisation
+                    <span class="error" v-if="!$v.stakeholderModel.required"> Please search for a Stakeholder.</span>
+                </label>
                 <v-select :options="stakeholderFixList"
                           @search="fetchOptions"
                           v-model="stakeholderModel"
@@ -23,6 +25,9 @@
     const axios = require('axios');
     import bootstrap from 'bootstrap'
 
+    //Validation
+    import { required } from 'vuelidate/lib/validators'
+
     export default {
         name: "GetStakeholders",
         components: {
@@ -36,6 +41,11 @@
                 stakeholderFixList: [],
                 stakeholderModel: '',
             }
+        },
+        validations: {
+            stakeholderModel: {
+                required
+            },
         },
         methods: {
             fetchOptions: function(search, loading) {

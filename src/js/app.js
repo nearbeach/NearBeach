@@ -30,12 +30,17 @@ axios.defaults.xsrfCookieName = "csrftoken"
 Vue.component('vSelect',vSelect);
 Vue.component('Editor',Editor);
 
+//Validation
+import Vuelidate from 'vuelidate'
+Vue.use(Vuelidate)
+
 //Construction of the VUE App
 window.vm = new Vue({
     el: "#app",
     components: {
         GetStakeholders,
         NewRequirements,
+        Vuelidate,
     },
     data() {
         return {};

@@ -8,7 +8,9 @@
             <p>If you do not add one of your own group(s), you will only get readonly access.</p>
         </div>
         <div class="col-md-8">
-            <label>Group List</label>
+            <label>Group List
+                <span class="error" v-if="!$v.groupModel.required"> Please select at least one group.</span>
+            </label>
             <v-select :options="groupFixResults"
                       label="group"
                       v-model="groupModel"
@@ -19,6 +21,9 @@
 </template>
 
 <script>
+    //Validation
+    import { required } from 'vuelidate/lib/validators'
+
     export default {
         name: "GroupPermissions",
         components: {},
@@ -36,6 +41,11 @@
             return {
                 'groupFixResults': [],
                 'groupModel': [],
+            }
+        },
+        validations: {
+            groupModel: {
+                required,
             }
         },
         mounted() {

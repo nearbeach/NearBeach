@@ -12,7 +12,9 @@
 
             <div class="col-md-8" style="min-height: 610px;">
                 <div class="form-group">
-                    <label for="id_requirement_title">Requirement Title</label>
+                    <label for="id_requirement_title">Requirement Title:
+                        <span class="error" v-if="!$v.requirementTitleModel.required"> Please suppy a title.</span>
+                    </label>
                     <input id="id_requirement_title"
                            class="form-control"
                            name="requirement_title"
@@ -24,7 +26,10 @@
                 </div>
 
                 <br/>
-                <label>Requirement Scope</label><br>
+                <label>Requirement Scope:
+                    <span class="error" v-if="!$v.requirementScopeModel.required"> Please supply a scope.</span>
+                    <span class="error" v-if="!$v.requirementScopeModel.maxLength"> Sorry - too many characters.</span>
+                </label><br>
                 <img src="static/NearBeach/images/placeholder/body_text.svg"
                      class="loader-image"
                 />
@@ -54,7 +59,9 @@
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <label>Requirement Status</label>
+                    <label>Requirement Status
+                        <span class="error" v-if="!$v.statusModel.required"> Please select a status.</span>
+                    </label>
                     <v-select :options="statusFixList"
                               label="status"
                               v-model="statusModel"
@@ -64,7 +71,9 @@
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <label>Requirement Type</label>
+                    <label>Requirement Type
+                        <span class="error" v-if="!$v.typeModel.required"> Please select a type.</span>
+                    </label>
                     <v-select :options="typeFixList"
                               label="type"
                               v-model="typeModel"
@@ -101,6 +110,9 @@
     import GetStakeholders from '../organisations/GetStakeholders.vue';
     import GroupPermissions from '../permissions/GroupPermissions.vue';
 
+    //Validation
+    import { required, maxLength } from 'vuelidate/lib/validators';
+
     export default {
         name: "NewRequirement",
         components: {
@@ -115,8 +127,8 @@
         ],
         data() {
             return {
-                requirementScopeModel: '',
                 groupModel: '',
+                requirementScopeModel: '',
                 requirementTitleModel: '',
                 stakeholderModel: '',
                 statusFixList: [],
@@ -125,8 +137,47 @@
                 typeModel: '',
             }
         },
+        validations: {
+            groupModel: {
+                required,
+            },
+            requirementScopeModel: {
+                required,
+                maxLength: maxLength(630000),
+            },
+            requirementTitleModel: {
+                required
+            },
+            stakeholderModel: {
+                required
+            },
+            statusModel: {
+                required
+            },
+            typeModel: {
+                required
+            },
+        },
         methods: {
             submitNewRequirement: function() {
+                // Check the validation first
+                this.$v.$touch();
+
+                if (this.$v.$invalid) {
+                    //Show the error dialog and notify to the user that there were field missing.
+                    var elem_cont = document.getElementById("errorModalContent");
+
+                    // Update the content
+                    elem_cont.innerHTML =
+                        `<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.`;
+
+                    // Show the modal
+                    var errorModal = new Modal(document.getElementById('errorModal'));
+                    errorModal.show();
+
+                    //Just return - as we do not need to do the rest of this function
+                    return;
+                }
                 // Apply the loading screen to hide everything
                 var loader_elem = document.getElementById("loader");
                 loader_elem.style.transform = "translateY(0)";
