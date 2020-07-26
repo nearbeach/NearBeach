@@ -19,8 +19,14 @@ def get_user_requirement_permissions(request,requirement_id):
     """
     requirement_groups = object_assignment.objects.filter(
         is_deleted="FALSE",
-        requirement_id=requirement_id
+        #requirement_id=requirement_id
     ).values('group_id')
+
+    if requirement_id > 0:
+        # Make sure to filter by requirement groups
+        requirement_groups = requirement_groups.filter(
+            requirement_id=requirement_id
+        )
 
     return return_user_permission_level(request, requirement_groups, ['requirement','requirement_link'])
 
