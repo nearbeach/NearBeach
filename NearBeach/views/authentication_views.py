@@ -163,7 +163,8 @@ def login(request):
                 password = form.cleaned_data.get("password")
 
                 user = auth.authenticate(username=username, password=password)
-                auth.login(request, user)
+                if user is not None:
+                    auth.login(request, user)
 
             # Just double checking. :)
             if request.user.is_authenticated:
