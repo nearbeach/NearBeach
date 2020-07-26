@@ -24,6 +24,7 @@
                 </div>
 
                 <br/>
+<<<<<<< HEAD
                 <label>Requirement Scope</label><br>
                 <img src="static/NearBeach/images/placeholder/body_text.svg"
                      class="loader-image"
@@ -38,6 +39,24 @@
                    }"
                    v-model="requirementScopeModel"
                 />
+=======
+                <div class="form-group">
+                    <label>Requirement Scope</label><br>
+                    <img src="static/NearBeach/images/placeholder/body_text.svg"
+                         class="loader-image"
+                    />
+                    <editor
+                       :init="{
+                         height: 500,
+                         menubar: false,
+                         toolbar: 'undo redo | formatselect | ' +
+                          'bold italic backcolor | alignleft aligncenter ' +
+                          'alignright alignjustify | bullist numlist outdent indent | ',
+                       }"
+                       v-model="descriptionModel"
+                    />
+                </div>
+>>>>>>> 105fd2814d5d8308769f2d840f21a42966789585
             </div>
         </div>
 
@@ -63,11 +82,13 @@
 
             </div>
             <div class="col-md-4">
-                <label>Requirement Type</label>
-                <v-select :options="typeFixList"
-                          label="type"
-                          v-model="typeModel"
-                ></v-select>
+                <div class="form-group">
+                    <label>Requirement Type</label>
+                    <v-select :options="typeFixList"
+                              label="type"
+                              v-model="typeModel"
+                    ></v-select>
+                </div>
             </div>
         </div>
 
