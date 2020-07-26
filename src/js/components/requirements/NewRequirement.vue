@@ -7,7 +7,7 @@
             <div class="col-md-4">
                 <h3>Description</h3>
                 <p>Place a basic helicopter view of the requirement description here. You will be able to break this
-                    description down into svaluemaller items using the requirement items below.</p>
+                    description down into smaller value items using the requirement items below.</p>
             </div>
 
             <div class="col-md-8" style="min-height: 610px;">
@@ -36,7 +36,7 @@
                       'bold italic backcolor | alignleft aligncenter ' +
                       'alignright alignjustify | bullist numlist outdent indent | ',
                    }"
-                   v-model="descriptionModel"
+                   v-model="requirementScopeModel"
                 />
             </div>
         </div>
@@ -113,7 +113,7 @@
         ],
         data() {
             return {
-                descriptionModel: '',
+                requirementScopeModel: '',
                 groupModel: '',
                 requirementTitleModel: '',
                 stakeholderModel: '',
@@ -132,7 +132,7 @@
                 // Set up the data object to send
                 const data_to_send = new FormData();
                 data_to_send.set('requirement_title', this.requirementTitleModel);
-                data_to_send.set('requirement_description',this.descriptionModel);
+                data_to_send.set('requirement_scope',this.requirementScopeModel);
                 data_to_send.set('stakeholder',this.stakeholderModel['value']);
                 data_to_send.set('requirement_status',this.statusModel['value']);
                 data_to_send.set('requirement_type',this.typeModel['value']);
