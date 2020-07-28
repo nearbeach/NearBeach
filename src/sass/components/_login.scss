@@ -29,23 +29,32 @@ label {
 }
 
 .login-dialog {
-    position: absolute;
-    left: 75%;
-    top: 50%;
-
-    max-width: 300px;
-
-    transform: translate(-50%, -50%);
-    -webkit-transform: translate(-50%, -50%);
-    -o-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
 
     .row.columns {
         margin-bottom: 15px;
     }
 
-    @media screen and (max-width: 1000px) {
-        left: 50%;
+    position: absolute;
+    left: 0%;
+    right: 0%;
+    top: 25%;
+
+    max-width: 300px;
+    margin: auto;
+
+    @media screen and (min-width: 1000px) {
+        position: absolute;
+        left: 75%;
+        top: 50%;
+
+        max-width: 300px;
+
+        transform: translate(-50%, -50%);
+        -webkit-transform: translate(-50%, -50%);
+        -o-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+    }
+    @media screen and (min-width: 1000px) {
         max-width: 400px;
     }
     @media screen and (max-width: 495px) {

@@ -17,12 +17,12 @@
                 {% csrf_token %}
 
                 <!-- LOGIN form -->
-                <div class="row columns">
+                <div class="form-group">
                     <label for="id_username">Username</label>
                     {{ login_form.username }}
                 </div>
 
-                <div class="row columns">
+                <div class="form-group">
                     <label for="id_password">Password</label>
                     {{ login_form.password }}
                 </div>
