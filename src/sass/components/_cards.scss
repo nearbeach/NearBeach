@@ -1,19 +1,4 @@
 .card {
-  h1, h2, h3, p {
-    padding: 0 10px;
-  }
-
-  .form-group {
-    padding: 0 2px;
-  }
-
-  //When screen goes into mobile mode
-  @media screen and (max-width: 767px) {
-    h1, h2, h3, p, label {
-      padding: 0 2px;
-    }
-  }
-
   h1 {
     width: 100%;
     font-size: 35px;
@@ -29,13 +14,12 @@
   }
 
   hr {
-    width: 100%;
+    //width: 100%;
     border-top: 2px solid #ABCEB4;
-    margin: 15px 0 30px 0;
+    margin: 15px -1rem 30px -1rem;
   }
 
   .loader-image {
-    //height: 410px;
     width: 500px;
     position: absolute;
     transform: translate(75px,30px);
@@ -52,5 +36,10 @@
 
   .v-select {
     margin-right: 10px;
+  }
+
+  .text-instructions {
+    color: #4F4F4F;
+    font-weight: lighter;
   }
 }

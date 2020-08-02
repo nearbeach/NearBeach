@@ -1,11 +1,14 @@
 <template>
     <div class="row">
         <div class="col-md-4">
-            <h3>Group Permissions</h3>
-            <p>Add or remove groups from this requirement. Adding a group will allow users
+            <h2>Group Permissions</h2>
+            <p class="text-instructions">
+                Add or remove groups from this requirement. Adding a group will allow users
                 from that group to access this requirement.
             </p>
-            <p>If you do not add one of your own group(s), you will only get readonly access.</p>
+            <p class="text-instructions">
+                If you do not add one of your own group(s), you will only get readonly access.
+            </p>
         </div>
         <div class="col-md-8">
             <label>Group List

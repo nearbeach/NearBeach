@@ -9,5 +9,10 @@
         <p>
             If you want to try the "New Requirements" slice again, please click <a href="{% url 'new_requirement' %}">here.</a>
         </p>
+        <p>
+            {% load tz %} {% timezone "Australia/Melbourne" %}
+            {{ requirement_results.date_created }}
+            {% endtimezone %}
+        </p>
     </div>
 {% endblock %}

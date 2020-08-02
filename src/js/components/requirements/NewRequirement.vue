@@ -1,102 +1,106 @@
 <template>
     <div class="card">
-        <h1>New Requirement</h1>
-        <hr>
-        <div class="row">
-            <!-- Description -->
-            <div class="col-md-4">
-                <h2>Description</h2>
-                <p>Place a basic helicopter view of the requirement description here. You will be able to break this
-                    description down into smaller value items using the requirement items below.</p>
-            </div>
+        <div class="card-body">
+            <h1>New Requirement</h1>
+            <hr>
+            <div class="row">
+                <!-- Description -->
+                <div class="col-md-4">
+                    <h2>Description</h2>
+                    <p class="text-instructions">
+                        Place a basic helicopter view of the requirement description here. You will be able to break
+                        this description down into smaller value items using the requirement items below.
+                    </p>
+                </div>
 
-            <div class="col-md-8" style="min-height: 610px;">
-                <div class="form-group">
-                    <label for="id_requirement_title">Requirement Title:
-                        <span class="error" v-if="!$v.requirementTitleModel.required"> Please suppy a title.</span>
-                    </label>
-                    <input id="id_requirement_title"
-                           class="form-control"
-                           name="requirement_title"
-                           type="text"
-                           required="true"
-                           maxlength="255"
-                           v-model="requirementTitleModel"
+                <div class="col-md-8" style="min-height: 610px;">
+                    <div class="form-group">
+                        <label for="id_requirement_title">Requirement Title:
+                            <span class="error" v-if="!$v.requirementTitleModel.required"> Please suppy a title.</span>
+                        </label>
+                        <input id="id_requirement_title"
+                               class="form-control"
+                               name="requirement_title"
+                               type="text"
+                               required="true"
+                               maxlength="255"
+                               v-model="requirementTitleModel"
+                        />
+                    </div>
+
+                    <br/>
+                    <label>Requirement Scope:
+                        <span class="error" v-if="!$v.requirementScopeModel.required"> Please supply a scope.</span>
+                        <span class="error" v-if="!$v.requirementScopeModel.maxLength"> Sorry - too many characters.</span>
+                    </label><br>
+                    <img src="static/NearBeach/images/placeholder/body_text.svg"
+                         class="loader-image"
+                         alt="loading image for Tinymce"
+                    />
+                    <editor
+                       :init="{
+                         height: 500,
+                         menubar: false,
+                         toolbar: 'undo redo | formatselect | ' +
+                          'bold italic backcolor | alignleft aligncenter ' +
+                          'alignright alignjustify | bullist numlist outdent indent | ',
+                       }"
+                       v-model="requirementScopeModel"
                     />
                 </div>
-
-                <br/>
-                <label>Requirement Scope:
-                    <span class="error" v-if="!$v.requirementScopeModel.required"> Please supply a scope.</span>
-                    <span class="error" v-if="!$v.requirementScopeModel.maxLength"> Sorry - too many characters.</span>
-                </label><br>
-                <img src="static/NearBeach/images/placeholder/body_text.svg"
-                     class="loader-image"
-                     alt="loading image for Tinymce"
-                />
-                <editor
-                   :init="{
-                     height: 500,
-                     menubar: false,
-                     toolbar: 'undo redo | formatselect | ' +
-                      'bold italic backcolor | alignleft aligncenter ' +
-                      'alignright alignjustify | bullist numlist outdent indent | ',
-                   }"
-                   v-model="requirementScopeModel"
-                />
             </div>
-        </div>
 
-        <!-- Stakeholder Organisation -->
-        <hr>
-        <get-stakeholders v-on:update_stakeholder_model="updateStakeholderModel($event)"></get-stakeholders>
+            <!-- Stakeholder Organisation -->
+            <hr>
+            <get-stakeholders v-on:update_stakeholder_model="updateStakeholderModel($event)"></get-stakeholders>
 
-        <!-- Status -->
-        <hr>
-        <div class="row">
-            <div class="col-md-4">
-                <h2>Status</h2>
-                <p>Set the Requirement Status and Type here.</p>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label>Requirement Status
-                        <span class="error" v-if="!$v.statusModel.required"> Please select a status.</span>
-                    </label>
-                    <v-select :options="statusFixList"
-                              label="status"
-                              v-model="statusModel"
-                    ></v-select>
+            <!-- Status -->
+            <hr>
+            <div class="row">
+                <div class="col-md-4">
+                    <h2>Status</h2>
+                    <p class="text-instructions">Set the Requirement Status and Type here.</p>
                 </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Requirement Status
+                            <span class="error" v-if="!$v.statusModel.required"> Please select a status.</span>
+                        </label>
+                        <v-select :options="statusFixList"
+                                  label="status"
+                                  v-model="statusModel"
+                        ></v-select>
+                    </div>
 
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label>Requirement Type
-                        <span class="error" v-if="!$v.typeModel.required"> Please select a type.</span>
-                    </label>
-                    <v-select :options="typeFixList"
-                              label="type"
-                              v-model="typeModel"
-                    ></v-select>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Requirement Type
+                            <span class="error" v-if="!$v.typeModel.required"> Please select a type.</span>
+                        </label>
+                        <v-select :options="typeFixList"
+                                  label="type"
+                                  v-model="typeModel"
+                        ></v-select>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Group Permissions -->
-        <hr>
-        <group-permissions v-bind:group-results="groupResults"
-                           v-on:update_group_model="updateGroupModel($event)"
-        ></group-permissions>
+            <!-- Group Permissions -->
+            <hr>
+            <group-permissions v-bind:group-results="groupResults"
+                               v-on:update_group_model="updateGroupModel($event)"
+            ></group-permissions>
 
-        <!-- Submit Button -->
-        <hr>
-        <div class="row submit-row">
-            <div class="col-md-12">
-                <a href="javascript:void(0)"
-                   class="btn btn-primary save-changes"
-                   v-on:click="submitNewRequirement"
-                >Create new Requirement</a>
+            <!-- Submit Button -->
+            <hr>
+            <div class="row submit-row">
+                <div class="col-md-12">
+                    <a href="javascript:void(0)"
+                       class="btn btn-primary save-changes"
+                       v-on:click="submitNewRequirement"
+                    >Create new Requirement</a>
+                </div>
             </div>
         </div>
     </div>

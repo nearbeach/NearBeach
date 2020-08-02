@@ -1,8 +1,10 @@
 <template>
     <div class="row">
         <div class="col-md-4">
-            <h3>Stakeholder Organisation</h3>
-            <p>Please search for your stakeholder organisation in the dropdown box. Once found, please select.</p>
+            <h2>Stakeholder Organisation</h2>
+            <p class="text-instructions">
+                Please search for your stakeholder organisation in the dropdown box. Once found, please select.
+            </p>
         </div>
         <div class="col-md-8">
             <div class="form-group">

@@ -9,6 +9,7 @@ from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from NearBeach.user_permissions import return_user_permission_level
 
+
 import json
 
 def get_user_requirement_permissions(request,requirement_id):
