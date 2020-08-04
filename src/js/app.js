@@ -4,6 +4,7 @@ import Vue from 'vue/dist/vue.js';
 //Vue Component Library
 import GetStakeholders from './components/organisations/GetStakeholders.vue';
 import NewRequirements from './components/requirements/NewRequirement.vue';
+import RequirementInformation from './components/requirements/RequirementInformation.vue';
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -40,6 +41,7 @@ window.vm = new Vue({
     components: {
         GetStakeholders,
         NewRequirements,
+        RequirementInformation,
         Vuelidate,
     },
     data() {

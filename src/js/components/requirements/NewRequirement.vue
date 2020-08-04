@@ -16,7 +16,7 @@
                 <div class="col-md-8" style="min-height: 610px;">
                     <div class="form-group">
                         <label for="id_requirement_title">Requirement Title:
-                            <span class="error" v-if="!$v.requirementTitleModel.required"> Please suppy a title.</span>
+                            <span class="error" v-if="!$v.requirementTitleModel.required && $v.requirementTitleModel.$dirty"> Please suppy a title.</span>
                         </label>
                         <input id="id_requirement_title"
                                class="form-control"
@@ -30,7 +30,7 @@
 
                     <br/>
                     <label>Requirement Scope:
-                        <span class="error" v-if="!$v.requirementScopeModel.required"> Please supply a scope.</span>
+                        <span class="error" v-if="!$v.requirementScopeModel.required && $v.requirementScopeModel.$dirty"> Please supply a scope.</span>
                         <span class="error" v-if="!$v.requirementScopeModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
                     <img src="static/NearBeach/images/placeholder/body_text.svg"
@@ -52,7 +52,9 @@
 
             <!-- Stakeholder Organisation -->
             <hr>
-            <get-stakeholders v-on:update_stakeholder_model="updateStakeholderModel($event)"></get-stakeholders>
+            <get-stakeholders v-on:update_stakeholder_model="updateStakeholderModel($event)"
+                              v-bind:is-dirty="$v.stakeholderModel.$dirty"
+            ></get-stakeholders>
 
             <!-- Status -->
             <hr>
@@ -64,7 +66,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Requirement Status
-                            <span class="error" v-if="!$v.statusModel.required"> Please select a status.</span>
+                            <span class="error" v-if="!$v.statusModel.required && $v.statusModel.$dirty"> Please select a status.</span>
                         </label>
                         <v-select :options="statusFixList"
                                   label="status"
@@ -76,7 +78,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Requirement Type
-                            <span class="error" v-if="!$v.typeModel.required"> Please select a type.</span>
+                            <span class="error" v-if="!$v.typeModel.required && $v.typeModel.$dirty"> Please select a type.</span>
                         </label>
                         <v-select :options="typeFixList"
                                   label="type"
@@ -90,6 +92,7 @@
             <hr>
             <group-permissions v-bind:group-results="groupResults"
                                v-on:update_group_model="updateGroupModel($event)"
+                               v-bind:is-dirty="$v.groupModel.$dirty"
             ></group-permissions>
 
             <!-- Submit Button -->

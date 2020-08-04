@@ -12,7 +12,7 @@
         </div>
         <div class="col-md-8">
             <label>Group List
-                <span class="error" v-if="!$v.groupModel.required"> Please select at least one group.</span>
+                <span class="error" v-if="!$v.groupModel.required && isDirty"> Please select at least one group.</span>
             </label>
             <v-select :options="groupFixResults"
                       label="group"
@@ -32,6 +32,7 @@
         components: {},
         props: [
             'groupResults',
+            'isDirty', //Passes the value from the template above where the checking is done
         ],
         watch: {
             'groupModel': function() {

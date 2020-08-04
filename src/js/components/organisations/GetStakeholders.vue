@@ -3,13 +3,13 @@
         <div class="col-md-4">
             <h2>Stakeholder Organisation</h2>
             <p class="text-instructions">
-                Please search for your stakeholder organisation in the dropdown box. Once found, please select.
+                Please search for your stakeholder's organisation in the dropdown box. Once found, please select.
             </p>
         </div>
         <div class="col-md-8">
             <div class="form-group">
                 <label>Stakeholder Organisation
-                    <span class="error" v-if="!$v.stakeholderModel.required"> Please search for a Stakeholder.</span>
+                    <span class="error" v-if="!$v.stakeholderModel.required && isDirty"> Please search for a Stakeholder.</span>
                 </label>
                 <v-select :options="stakeholderFixList"
                           @search="fetchOptions"
@@ -36,7 +36,9 @@
             axios,
             bootstrap,
         },
-        props: [],
+        props: [
+            'isDirty', //Passes the value from the template above where the checking is done
+        ],
         data() {
             return {
                 searchTimeout: '',

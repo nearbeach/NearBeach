@@ -1,18 +1,4 @@
 {% extends 'NearBeach/template.html' %}
 {% block content %}
-    <div class="card">
-        <h1>Thank you</h1>
-        <hr>
-        <p>Thank you for experiencing the New Requirements slice. We are currently only focusing on one page. It would
-        be great if you tell us your thoughts on NearBeach. Please click <a href="https://www.surveymonkey.com/r/7B8B6VY">
-                here to fill out a short survey.</a></p>
-        <p>
-            If you want to try the "New Requirements" slice again, please click <a href="{% url 'new_requirement' %}">here.</a>
-        </p>
-        <p>
-            {% load tz %} {% timezone "Australia/Melbourne" %}
-            {{ requirement_results.date_created }}
-            {% endtimezone %}
-        </p>
-    </div>
+    <requirement-information></requirement-information>
 {% endblock %}
