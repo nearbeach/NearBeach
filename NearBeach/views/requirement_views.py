@@ -167,8 +167,14 @@ def requirement_information(request, requirement_id):
     #Load template
     t = loader.get_template('NearBeach/requirements/requirement_information.html')
 
+    #Get any extra data required
+    organisation_results = organisation.objects.get(
+        organisation_id=requirement_results.organisation_id,
+    )
+
     # context
     c = {
+        'organisation_results': serializers.serialize("json", [organisation_results]),
         'requirement_results': serializers.serialize("json", [requirement_results]),
         'requirement_id': requirement_id,
         'permission_results': permission_results,

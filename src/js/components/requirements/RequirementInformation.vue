@@ -64,6 +64,7 @@
     export default {
         name: "RequirementInformation",
         props: [
+            'organisationResults',
             'requirementResults',
         ],
         data() {
@@ -99,6 +100,18 @@
                 required
             },
         },
+        mounted() {
+            //Get data from the requirementResults and delegate to the Models
+            var requirement_results = this.requirementResults[0]['fields'];
+
+            this.requirementScopeModel = requirement_results['requirement_scope'];
+            this.requirementTitleModel = requirement_results['requirement_title'];
+            this.statusModel = requirement_results['requirement_status'];
+            this.typeModel = requirement_results['requirement_type'];
+
+            //Extract the organisation results directly
+            this.stakeholderModel = this.organisationResults[0]['fields'];
+        }
     }
 </script>
 
