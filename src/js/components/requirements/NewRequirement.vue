@@ -194,7 +194,7 @@
                 const data_to_send = new FormData();
                 data_to_send.set('requirement_title', this.requirementTitleModel);
                 data_to_send.set('requirement_scope',this.requirementScopeModel);
-                data_to_send.set('stakeholder',this.stakeholderModel['value']);
+                data_to_send.set('organisation',this.stakeholderModel['value']);
                 data_to_send.set('requirement_status',this.statusModel['value']);
                 data_to_send.set('requirement_type',this.typeModel['value']);
 

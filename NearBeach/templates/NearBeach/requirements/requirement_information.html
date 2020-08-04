@@ -1,4 +1,5 @@
 {% extends 'NearBeach/template.html' %}
 {% block content %}
-    <requirement-information></requirement-information>
+    <requirement-information v-bind:requirement-results="{{requirement_results}}"
+    ></requirement-information>
 {% endblock %}

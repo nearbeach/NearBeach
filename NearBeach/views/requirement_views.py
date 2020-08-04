@@ -98,6 +98,9 @@ def new_requirement_save(request, location_id="", destination=""):
         # Something went wrong with the form.
         return HttpResponseBadRequest("There was something wrong with the form")
 
+    print("ORGANISATION")
+    print(form.cleaned_data['organisation'])
+
     # Save the form
     submit_requirement = requirement(
         requirement_title=form.cleaned_data['requirement_title'],
@@ -166,7 +169,7 @@ def requirement_information(request, requirement_id):
 
     # context
     c = {
-        'requirement_results': requirement_results,
+        'requirement_results': serializers.serialize("json", [requirement_results]),
         'requirement_id': requirement_id,
         'permission_results': permission_results,
     }

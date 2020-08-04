@@ -64,7 +64,7 @@
     export default {
         name: "RequirementInformation",
         props: [
-            'requirementInformation',
+            'requirementResults',
         ],
         data() {
             return {
