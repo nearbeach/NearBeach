@@ -35,6 +35,7 @@ Vue.component('Editor',Editor);
 import Vuelidate from 'vuelidate'
 Vue.use(Vuelidate)
 
+
 //Construction of the VUE App
 window.vm = new Vue({
     el: "#app",

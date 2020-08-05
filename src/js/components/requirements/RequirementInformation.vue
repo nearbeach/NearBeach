@@ -50,6 +50,30 @@
                     />
                 </div>
             </div>
+
+            <!-- Stakeholder Information -->
+            <hr>
+            <div class="row">
+                <!-- Description -->
+                <div class="col-md-4">
+                    <h2>Stakeholder</h2>
+                </div>
+                <div class="col-md-8">
+                    <h3>{{stakeholderModel['organisation_name']}}</h3>
+                    <div class="organisation-link">
+                        <external-link-icon></external-link-icon> Website:
+                        <a v-bind:href="stakeholderModel['organisation_website']" target="_blank">
+                            {{ stakeholderModel['organisation_website'] }}
+                        </a>
+                    </div>
+                    <div class="organisation-email">
+                        <mail-icon></mail-icon> Email:
+                        <a v-bind:href="`mailto:${stakeholderModel['organisation_email']}`">
+                            {{stakeholderModel['organisation_email']}}
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -61,8 +85,15 @@
     //Validation
     import { required, maxLength } from 'vuelidate/lib/validators';
 
+    //Import required Icons
+    import { ExternalLinkIcon, MailIcon } from 'vue-feather-icons'
+
     export default {
         name: "RequirementInformation",
+        components: {
+            ExternalLinkIcon,
+            MailIcon,
+        },
         props: [
             'organisationResults',
             'requirementResults',
