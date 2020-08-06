@@ -42,4 +42,36 @@
     color: #4F4F4F;
     font-weight: lighter;
   }
+
+  .organisation-details {
+    padding-left: 130px;
+    min-height: 120px;
+
+    .organisation-email, .organisation-link {
+      font-weight: lighter;
+      colour: #737373;
+      font-size: 15px;
+      margin-bottom: 2px;
+
+      & svg {
+        width: 14px;
+        color: #474f57;
+      }
+    }
+
+    .organisation-name {
+      margin-bottom: 6px;
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    .organisation-image {
+      position: absolute;
+      transform: translateX(-130px);
+      width: 120px;
+      border-radius: 50%;
+    }
+  }
+
+
 }

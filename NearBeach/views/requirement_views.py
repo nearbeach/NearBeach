@@ -172,12 +172,29 @@ def requirement_information(request, requirement_id):
         organisation_id=requirement_results.organisation_id,
     )
 
+    status_list = list_of_requirement_status.objects.filter(
+        is_deleted="FALSE",
+        requirement_status_is_closed="FALSE",
+    )
+
+    type_list = list_of_requirement_type.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    group_results = group.objects.filter(
+        is_deleted="FALSE",
+    )
+
     # context
     c = {
+        'group_results': serializers.serialize("json", group_results),
         'organisation_results': serializers.serialize("json", [organisation_results]),
+        'permission_results': permission_results,
         'requirement_results': serializers.serialize("json", [requirement_results]),
         'requirement_id': requirement_id,
-        'permission_results': permission_results,
+        'status_list': serializers.serialize("json", status_list),
+        'type_list': serializers.serialize("json", type_list),
+
     }
 
     return HttpResponse(t.render(c, request))

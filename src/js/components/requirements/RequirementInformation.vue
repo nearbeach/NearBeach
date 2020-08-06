@@ -58,8 +58,11 @@
                 <div class="col-md-4">
                     <h2>Stakeholder</h2>
                 </div>
-                <div class="col-md-8">
-                    <h3>{{stakeholderModel['organisation_name']}}</h3>
+                <div class="col-md-8 organisation-details">
+                    <img v-bind:src="getStakeholderImage" alt="Stakeholder Logo" class="organisation-image">
+                    <div class="organisation-name">
+                        {{stakeholderModel['organisation_name']}}
+                    </div>
                     <div class="organisation-link">
                         <external-link-icon></external-link-icon> Website:
                         <a v-bind:href="stakeholderModel['organisation_website']" target="_blank">
@@ -72,6 +75,49 @@
                             {{stakeholderModel['organisation_email']}}
                         </a>
                     </div>
+                </div>
+            </div>
+
+            <!-- Status -->
+            <hr>
+            <div class="row">
+                <div class="col-md-4">
+                    <h2>Status</h2>
+                    <p class="text-instructions">Set the Requirement Status and Type here.</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Requirement Status
+                            <span class="error" v-if="!$v.statusModel.required && $v.statusModel.$dirty"> Please select a status.</span>
+                        </label>
+                        <v-select :options="statusFixList"
+                                  label="status"
+                                  v-model="statusModel"
+                        ></v-select>
+                    </div>
+
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Requirement Type
+                            <span class="error" v-if="!$v.typeModel.required && $v.typeModel.$dirty"> Please select a type.</span>
+                        </label>
+                        <v-select :options="typeFixList"
+                                  label="type"
+                                  v-model="typeModel"
+                        ></v-select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <hr>
+            <div class="row submit-row">
+                <div class="col-md-12">
+                    <a href="javascript:void(0)"
+                       class="btn btn-primary save-changes"
+                       v-on:click="updateRequirement"
+                    >Update Requirement</a>
                 </div>
             </div>
         </div>
@@ -95,8 +141,11 @@
             MailIcon,
         },
         props: [
+            'defaultStakeholderImage',
             'organisationResults',
             'requirementResults',
+            'statusList',
+            'typeList',
         ],
         data() {
             return {
@@ -131,17 +180,62 @@
                 required
             },
         },
+        methods: {
+            updateRequirement: function() {
+                //ADD CODE TO UPDATE REQUIREMENT
+            }
+        },
+        computed: {
+            getStakeholderImage: function() {
+                if (this.stakeholderModel['organisation_profile_picture'] == '') {
+                    //There is no image - return the default image
+                    return this.defaultStakeholderImage;
+                }
+                return this.stakeholderModel['organisation_profile_picture']
+            }
+        },
         mounted() {
             //Get data from the requirementResults and delegate to the Models
             var requirement_results = this.requirementResults[0]['fields'];
 
             this.requirementScopeModel = requirement_results['requirement_scope'];
             this.requirementTitleModel = requirement_results['requirement_title'];
-            this.statusModel = requirement_results['requirement_status'];
-            this.typeModel = requirement_results['requirement_type'];
+            //this.statusModel = requirement_results['requirement_status'];
+            //this.typeModel = requirement_results['requirement_type'];
 
             //Extract the organisation results directly
             this.stakeholderModel = this.organisationResults[0]['fields'];
+
+            //We need to extract "fields" array from the statusList/typeList json data
+            this.statusList.forEach((row) => {
+                //Construct the object
+                var construction_object = {
+                    'value': row['pk'],
+                    'status': row['fields']['requirement_status'],
+                };
+
+                //Push the object to status fix list
+                this.statusFixList.push(construction_object);
+            });
+            this.typeList.forEach((row) => {
+                //Construct the object
+                var construction_object = {
+                    'value': row['pk'],
+                    'type': row['fields']['requirement_type'],
+                }
+
+                //Push the object to type fix list
+                this.typeFixList.push(construction_object);
+            });
+
+            //Filter the status fix list to get the current model version
+            this.statusModel = this.statusFixList.filter((row) => {
+                return row['value'] == requirement_results['requirement_status'];
+            });
+
+            this.typeModel = this.typeFixList.filter((row) => {
+                return row['value'] == requirement_results['requirement_type'];
+            })
         }
     }
 </script>

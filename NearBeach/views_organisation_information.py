@@ -6,19 +6,16 @@ components of the PROJECT INFORMATION MODULES. This is to help keep the VIEWS
 file clean from AJAX (spray and wipe).
 """
 
+import simplejson
 from django.contrib.auth.decorators import login_required
-from .models import *
-from django.core import serializers
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
-from django.template import  loader
-from NearBeach.forms import *
-from .models import *
-from .misc_functions import *
-from .user_permissions import return_user_permission_level
+from django.http import HttpResponseBadRequest, HttpResponseRedirect
+from django.template import loader
 from django.urls import reverse
 
-import simplejson
+from .misc_functions import *
+from .models import *
+from .user_permissions import return_user_permission_level
+
 
 @login_required(login_url='login',redirect_field_name="")
 def information_organisation_contact_history(request, organisation_id):
