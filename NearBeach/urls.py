@@ -26,6 +26,7 @@ from . import views, \
 """
 from .views import authentication_views, \
 	dashboard_views, \
+	requirement_item_views, \
 	requirement_views, \
 	search_views
 
@@ -39,6 +40,7 @@ urlpatterns = [
 	path('requirement_information/<int:requirement_id>/data/items/',requirement_views.get_requirement_items,name='get_requirement_items'),
 	path('requirement_information/<int:requirement_id>/data/item_status/',requirement_views.get_requirement_item_status_list,name='get_requirement_item_status_list'),
 	path('requirement_information/<int:requirement_id>/data/item_type/',requirement_views.get_requirement_item_type_list,name='get_requirement_item_type_list'),
+	path('requirement_item_information/<int:requirement_id>',requirement_item_views.requirement_item_information,name='requirement_item_information'),
 	path('search/organisation/data/',search_views.search_organisation_data,name='search_organisation_data'),
 ]
 """

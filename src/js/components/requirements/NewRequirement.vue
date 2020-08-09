@@ -8,8 +8,8 @@
                 <div class="col-md-4">
                     <h2>Description</h2>
                     <p class="text-instructions">
-                        Place a basic helicopter view of the requirement description here. You will be able to break
-                        this description down into smaller value items using the requirement items below.
+                        Place a basic bird's eye view of the requirement description here. You will be able to break
+                        the requirement down into smaller components called 'Items' on the next page.
                     </p>
                 </div>
 

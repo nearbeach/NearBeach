@@ -6,23 +6,49 @@
         </p>
 
         <!-- TABLE OF REQUIREMENT ITEMS -->
-        <table class="table table-hover table-stripped">
-            <thead>
-                <tr>
-                    <td>Requirement Item</td>
-                    <td>Status</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="item in itemResults">
-                    <td>
-                        {{item['fields']['requirement_item_title']}}
-                        <br/>
-                    </td>
-                    <td>{{item['fields']['requirement_item_status']}}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div v-if="itemResults.length == 0"
+             class="requirement-item-spacer"
+        >
+            <div class="alert alert-dark">Sorry - there are no Items for this requirement.</div>
+
+        </div>
+        <div v-else>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>Requirement Item</td>
+                        <td>Status</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in itemResults">
+                        <td>
+                            <a v-bind:href="`/requirement_item_information/${item['pk']}/`">
+                                <p>
+                                    {{item['fields']['requirement_item_title']}}
+                                </p>
+                                <div class="spacer"></div>
+                                <p class="requirement-item-type">
+                                    Item No. {{item['pk']}} - {{getType(item['fields']['requirement_item_type'])}}
+                                </p>
+                            </a>
+                        </td>
+                        <td>{{getStatus(item['fields']['requirement_item_status'])}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Submit Button -->
+        <!-- TO DO - limit it to certain users -->
+        <hr>
+        <div class="row submit-row">
+            <div class="col-md-12">
+                <a href="javascript:void(0)"
+                   class="btn btn-primary save-changes"
+                >Create new Requirement Item</a>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -47,7 +73,7 @@
             getStatus: function(status_id) {
                 //Filter the status status id
                 var filtered_data = this.itemStatusList.filter((row) => {
-                    row['pk'] == status_id;
+                    return row['pk'] == status_id;
                 });
 
                 //If there are no results, send back "Unknown Status"
@@ -61,7 +87,7 @@
             getType: function(type_id) {
                 //Filter the type id
                 var filtered_data = this.itemTypeList.filter((row) => {
-                    row['pk'] == type_id;
+                    return row['pk'] == type_id;
                 });
 
                 //If there are no results, send back "Unknown Type"
@@ -71,6 +97,19 @@
 
                 //Return the first result
                 return filtered_data[0]["fields"]["requirement_item_type"];
+            },
+            updateItemResults: function() {
+                axios.get(
+                        'data/items/',
+                    ).then((response) => {
+                        //Clear the current list
+                        this.itemResults = [];
+
+                        //Loop through the results, and push each rows into the array
+                        response['data'].forEach((row) => {
+                            this.itemResults.push(row);
+                        });
+                    });
             },
             updateStatusList: function() {
                 axios.get(
@@ -89,30 +128,18 @@
             },
             updateTypeList: function() {
                 axios.get(
-                        'data/type_status/',
+                        'data/item_type/',
                     ).then((response) => {
                         //Clear the current list
-                        this.itemStatusList = [];
+                        this.itemTypeList = [];
 
                         //Loop through the results, and push each rows into the array
                         response['data'].forEach((row) => {
-                            this.itemStatusList.push(row);
+                            this.itemTypeList.push(row);
                         });
                     });
             },
-            updateItemResults: function() {
-                axios.get(
-                        'data/item_status/',
-                    ).then((response) => {
-                        //Clear the current list
-                        this.itemStatusList = [];
 
-                        //Loop through the results, and push each rows into the array
-                        response['data'].forEach((row) => {
-                            this.itemStatusList.push(row);
-                        });
-                    });
-            },
         },
         mounted() {
             this.updateStatusList();

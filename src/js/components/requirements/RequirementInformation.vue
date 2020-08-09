@@ -9,8 +9,9 @@
                 <div class="col-md-4">
                     <h2>Description</h2>
                     <p class="text-instructions">
-                        Place a basic birds eye view of the requirement description here. You will be able to break
-                        the requirement down into smaller components called "Items" on the next page.
+                        Place a basic bird's eye view of the requirement description here. You will be able to break
+                        the requirement down into smaller components called 'Items' below in the 'Requirement Item'
+                        section.
                     </p>
                 </div>
 
