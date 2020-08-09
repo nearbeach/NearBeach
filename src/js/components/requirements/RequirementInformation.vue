@@ -64,13 +64,13 @@
                         {{stakeholderModel['organisation_name']}}
                     </div>
                     <div class="organisation-link">
-                        <external-link-icon></external-link-icon> Website:
+                        <i data-feather="external-link"></i> Website:
                         <a v-bind:href="stakeholderModel['organisation_website']" target="_blank">
                             {{ stakeholderModel['organisation_website'] }}
                         </a>
                     </div>
                     <div class="organisation-email">
-                        <mail-icon></mail-icon> Email:
+                        <i data-feather="mail"></i> Email:
                         <a v-bind:href="`mailto:${stakeholderModel['organisation_email']}`">
                             {{stakeholderModel['organisation_email']}}
                         </a>
@@ -131,15 +131,9 @@
     //Validation
     import { required, maxLength } from 'vuelidate/lib/validators';
 
-    //Import required Icons
-    import { ExternalLinkIcon, MailIcon } from 'vue-feather-icons'
-
     export default {
         name: "RequirementInformation",
-        components: {
-            ExternalLinkIcon,
-            MailIcon,
-        },
+        components: {},
         props: [
             'defaultStakeholderImage',
             'organisationResults',
@@ -227,6 +221,7 @@
                 //Push the object to type fix list
                 this.typeFixList.push(construction_object);
             });
+
 
             //Filter the status fix list to get the current model version
             this.statusModel = this.statusFixList.filter((row) => {

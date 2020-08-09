@@ -12,6 +12,39 @@ from NearBeach.user_permissions import return_user_permission_level
 
 import json
 
+def get_requirement_item_status_list(request,requirement_id):
+    # Get all status - even deleted ones.
+    status_list = list_of_requirement_item_status.objects.all()
+
+    # Send back json data
+    json_results = serializers.serialize('json', status_list)
+
+    return HttpResponse(json_results, content_type='application/json')
+
+
+def get_requirement_item_type_list(request,requirement_id):
+    # Get all status - even deleted ones.
+    type_list = list_of_requirement_item_type.objects.all()
+
+    # Send back json data
+    json_results = serializers.serialize('json', type_list)
+
+    return HttpResponse(json_results, content_type='application/json')
+
+def get_requirement_items(request,requirement_id):
+    # Get all the requirement items assigned to the requirement
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    )
+
+    # Send back json data
+    json_results = serializers.serialize('json', requirement_item_results)
+
+    return HttpResponse(json_results, content_type='application/json')
+
+
+
 def get_user_requirement_permissions(request,requirement_id):
     """
     Use the requirement_id and find out if the user has access to this requirement
@@ -185,6 +218,11 @@ def requirement_information(request, requirement_id):
         is_deleted="FALSE",
     )
 
+    requirement_item_results = requirement_item.objects.filter(
+        is_deleted="FALSE",
+        requirement_id=requirement_id,
+    )
+
     # context
     c = {
         'group_results': serializers.serialize("json", group_results),
@@ -192,6 +230,7 @@ def requirement_information(request, requirement_id):
         'permission_results': permission_results,
         'requirement_results': serializers.serialize("json", [requirement_results]),
         'requirement_id': requirement_id,
+        'requirement_item_results': serializers.serialize("json",requirement_item_results),
         'status_list': serializers.serialize("json", status_list),
         'type_list': serializers.serialize("json", type_list),
 

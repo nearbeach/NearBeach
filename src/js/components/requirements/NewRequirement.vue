@@ -114,10 +114,6 @@
     const axios = require('axios');
     import { Modal } from 'bootstrap';
 
-    //Vue components
-    import GetStakeholders from '../organisations/GetStakeholders.vue';
-    import GroupPermissions from '../permissions/GroupPermissions.vue';
-
     //Validation
     import { required, maxLength } from 'vuelidate/lib/validators';
 
@@ -125,8 +121,6 @@
         name: "NewRequirement",
         components: {
             axios,
-            GetStakeholders,
-            GroupPermissions,
         },
         props: [
             'statusList',

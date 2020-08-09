@@ -2,9 +2,18 @@
 import Vue from 'vue/dist/vue.js';
 
 //Vue Component Library
+import BugsModule from "./components/modules/sub_modules/BugsModule.vue";
+import CustomersModule from "./components/modules/sub_modules/CustomersModule.vue";
+import DocumentsModule from "./components/modules/sub_modules/DocumentsModule.vue";
 import GetStakeholders from './components/organisations/GetStakeholders.vue';
+import GroupPermissions from "./components/permissions/GroupPermissions.vue";
+import GroupsAndUsersModule from "./components/modules/sub_modules/GroupsAndUsersModule.vue";
+import ParentModules from "./components/modules/ParentModules.vue";
+import MiscModule from "./components/modules/sub_modules/MiscModule.vue";
 import NewRequirements from './components/requirements/NewRequirement.vue';
 import RequirementInformation from './components/requirements/RequirementInformation.vue';
+import RequirementItemsModule from "./components/modules/sub_modules/RequirementItemsModule.vue";
+import RequirementLinksModule from "./components/modules/sub_modules/RequirementLinksModule.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -31,19 +40,36 @@ axios.defaults.xsrfCookieName = "csrftoken"
 Vue.component('vSelect',vSelect);
 Vue.component('Editor',Editor);
 
+//Global NearBeach Vue Components
+Vue.component('BugsModule',BugsModule);
+Vue.component('CustomersModule',CustomersModule);
+Vue.component('DocumentsModule',DocumentsModule);
+Vue.component('GetStakeholders',GetStakeholders);
+Vue.component('GroupPermissions',GroupPermissions);
+Vue.component('GroupsAndUsersModule',GroupsAndUsersModule);
+Vue.component('ParentModules',ParentModules);
+Vue.component('MiscModules',MiscModule);
+Vue.component('NewRequirements',NewRequirements);
+Vue.component('RequirementInformation',RequirementInformation);
+Vue.component('RequirementItemsModule',RequirementItemsModule);
+Vue.component('RequirementLinksModule',RequirementLinksModule);
+
 //Validation
 import Vuelidate from 'vuelidate'
 Vue.use(Vuelidate)
 
+//Feater Icons
+const feather = require('feather-icons')
 
 //Construction of the VUE App
 window.vm = new Vue({
     el: "#app",
     components: {
-        GetStakeholders,
-        NewRequirements,
-        RequirementInformation,
+        //Validation
         Vuelidate,
+
+        //Icons
+        feather,
     },
     data() {
         return {};
@@ -53,5 +79,8 @@ window.vm = new Vue({
         //Remove the loader
         var loader_elem = document.getElementById("loader");
         loader_elem.style.transform = "translateY(-100vh)";
+
+        //Run the feather app
+        feather.replace();
     }
 });

@@ -7,4 +7,11 @@
                              v-bind:status-list="{{status_list}}"
                              v-bind:type-list="{{type_list}}"
     ></requirement-information>
+
+    <div class="spacer"></div>
+
+    <parent-modules class="misc-modules"
+                    v-bind:group-list="{{group_results}}"
+                    v-bind:destination="'requirement'"
+    ></parent-modules>
 {% endblock %}
