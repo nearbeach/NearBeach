@@ -237,3 +237,7 @@ def requirement_information(request, requirement_id):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+def update_requirement(request,requirement_id):
+    return False
