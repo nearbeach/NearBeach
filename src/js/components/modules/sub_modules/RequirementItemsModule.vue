@@ -116,6 +116,8 @@
         },
         mounted() {
             this.updateStatusList();
+            this.updateTypeList();
+            this.updateItemResults();
         }
     }
 </script>
