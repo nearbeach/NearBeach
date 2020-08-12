@@ -35,7 +35,7 @@
                         <span class="error" v-if="!$v.requirementScopeModel.required"> Please supply a scope.</span>
                         <span class="error" v-if="!$v.requirementScopeModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
-                    <img src="static/NearBeach/images/placeholder/body_text.svg"
+                    <img src="/static/NearBeach/images/placeholder/body_text.svg"
                          class="loader-image"
                          alt="loading image for Tinymce"
                     />
@@ -127,6 +127,8 @@
 
 <script>
     //JavaScript Libraries
+    import {Modal} from "bootstrap";
+
     const axios = require('axios');
 
     //Validation
@@ -144,7 +146,6 @@
         ],
         data() {
             return {
-                groupModel: '',
                 requirementScopeModel: '',
                 requirementTitleModel: '',
                 stakeholderModel: '',
@@ -155,17 +156,11 @@
             }
         },
         validations: {
-            groupModel: {
-                required,
-            },
             requirementScopeModel: {
                 required,
                 maxLength: maxLength(630000),
             },
             requirementTitleModel: {
-                required
-            },
-            stakeholderModel: {
                 required
             },
             statusModel: {
@@ -177,7 +172,67 @@
         },
         methods: {
             updateRequirement: function() {
-                //ADD CODE TO UPDATE REQUIREMENT
+                // Check the validation first
+                this.$v.$touch();
+
+                if (this.$v.$invalid) {
+                    //Show the error dialog and notify to the user that there were field missing.
+                    var elem_cont = document.getElementById("errorModalContent");
+
+                    // Update the content
+                    elem_cont.innerHTML =
+                        `<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.`;
+
+                    // Show the modal
+                    var errorModal = new Modal(document.getElementById('errorModal'));
+                    errorModal.show();
+
+                    //Just return - as we do not need to do the rest of this function
+                    return;
+                }
+
+                //Open up the loading modal
+                var loadingModal = new Modal(document.getElementById('loadingModal'));
+                loadingModal.show();
+
+                //Update message in loading modal
+                document.getElementById("loadingModalContent").innerHTML = `Updating your Requirement details`;
+
+                // Set up the data object to send
+                const data_to_send = new FormData();
+                data_to_send.set('requirement_title', this.requirementTitleModel);
+                data_to_send.set('requirement_scope',this.requirementScopeModel);
+                data_to_send.set('requirement_status',this.statusModel['value']);
+                data_to_send.set('requirement_type',this.typeModel['value']);
+
+                console.log("DATA TO SEND: ",data_to_send);
+
+                // Use Axion to send the data
+                axios.post(
+                    'save/',
+                    data_to_send
+                ).then(response => {
+                    //Update the message in the loading modal
+                    document.getElementById("loadingModalContent").innerHTML = `UPDATED SUCCESSFULLY`;
+
+                    //Close after 1 second
+                    setTimeout(() => {
+                        loadingModal.hide();
+                    },1000)
+                }).catch((error) => {
+                    //Hide the loading modal
+                    loadingModal.hide();
+
+                    // Get the error modal
+                    var elem_cont = document.getElementById("errorModalContent");
+
+                    // Update the content
+                    elem_cont.innerHTML = `<strong>HTML ISSUE:</strong> We could not save the new requirement<hr>${error}`;
+
+                    // Show the modal
+                    var errorModal = new Modal(document.getElementById('errorModal'));
+                    errorModal.show();
+                });
             }
         },
         computed: {
@@ -227,11 +282,11 @@
             //Filter the status fix list to get the current model version
             this.statusModel = this.statusFixList.filter((row) => {
                 return row['value'] == requirement_results['requirement_status'];
-            });
+            })[0];
 
             this.typeModel = this.typeFixList.filter((row) => {
                 return row['value'] == requirement_results['requirement_type'];
-            })
+            })[0];
         }
     }
 </script>

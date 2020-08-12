@@ -16,8 +16,8 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <td>Requirement Item</td>
-                        <td>Status</td>
+                        <td width="75%">Requirement Item</td>
+                        <td width="25%">Status</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -107,6 +107,7 @@
 
                         //Loop through the results, and push each rows into the array
                         response['data'].forEach((row) => {
+                            //Update the itemResults
                             this.itemResults.push(row);
                         });
                     });

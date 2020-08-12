@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from NearBeach.models import *
 from django.core import serializers
+from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
@@ -11,6 +12,68 @@ from NearBeach.user_permissions import return_user_permission_level
 
 
 import json
+
+def get_requirement_item_links(request,requirement_id):
+    # Return user if not through POST
+    if request.method != "POST":
+        return HttpResponseBadRequest("Sorry - have to use POST for this data")
+
+    # Get the requirement information
+    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+
+    # Check the permissions
+    permission_results = get_user_requirement_permissions(request, requirement_id)
+
+    # If user has no permissions to this requirement send them to the appropriate location
+    if permission_results['requirement'] == 0:
+        # Users who create the requirement get at least read only
+        if requirement_results.creation_user == request.user:
+            return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_id}))
+
+        # Users who did not create the requirement get sent to permission denied.
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    # Use object_assignment to get the requirme
+    link_results = object_assignment.objects.filter(
+        Q(
+            is_deleted="FALSE",
+            requirement_item_id__in=requirement_item.objects.filter(
+                is_deleted="FALSE",
+                requirement_id=requirement_id,
+            ).values('requirement_item_id')
+        ) and Q(
+            Q(opportunity_id__isnull=False) or
+            Q(quote_id__isnull=False) or
+            Q(project_id__isnull=False) or
+            Q(task_id__isnull=False)
+        )
+    ).values(
+        'opportunity_id',
+        'opportunity_id__opportunity_name',
+        'opportunity_id__opportunity_stage_id__opportunity_stage_description',
+        'quote_id',
+        'quote_id__quote_title',
+        'quote_id__quote_stage_id__quote_stage',
+        'project_id',
+        'project_id__project_name',
+        'project_id__project_status',
+        'task_id',
+        'task_id__task_short_description',
+        'task_id__task_status',
+        'requirement_item_id',
+        'requirement_item_id__requirement_item_title',
+    )
+
+    """
+    As explained on stack overflow here - https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
+    We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard 
+    json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
+    """
+
+    # Send back json data
+    json_results = json.dumps(list(link_results), cls=DjangoJSONEncoder)
+
+    return HttpResponse(json_results, content_type='application/json')
 
 def get_requirement_item_status_list(request,requirement_id):
     # Get all status - even deleted ones.
@@ -40,6 +103,66 @@ def get_requirement_items(request,requirement_id):
 
     # Send back json data
     json_results = serializers.serialize('json', requirement_item_results)
+
+    return HttpResponse(json_results, content_type='application/json')
+
+
+def get_requirement_links_list(request,requirement_id):
+    # Return user if not through POST
+    if request.method != "POST":
+        return HttpResponseBadRequest("Sorry - have to use POST for this data")
+
+    # Get the requirement information
+    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+
+    # Check the permissions
+    permission_results = get_user_requirement_permissions(request,requirement_id)
+
+    # If user has no permissions to this requirement send them to the appropriate location
+    if permission_results['requirement'] == 0:
+        # Users who create the requirement get at least read only
+        if requirement_results.creation_user == request.user:
+            return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_id}))
+
+        # Users who did not create the requirement get sent to permission denied.
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    # Use object_assignment to get the requirme
+    link_results = object_assignment.objects.filter(
+        Q(
+            is_deleted="FALSE",
+            requirement_id=requirement_id,
+        ) and Q(
+            Q(opportunity_id__isnull=False) or
+            Q(quote_id__isnull=False) or
+            Q(project_id__isnull=False) or
+            Q(task_id__isnull=False)
+        )
+    ).values(
+        'opportunity_id',
+        'opportunity_id__opportunity_name',
+        'opportunity_id__opportunity_stage_id__opportunity_stage_description',
+        'quote_id',
+        'quote_id__quote_title',
+        'quote_id__quote_stage_id__quote_stage',
+        'project_id',
+        'project_id__project_name',
+        'project_id__project_status',
+        'task_id',
+        'task_id__task_short_description',
+        'task_id__task_status',
+        'requirement_item_id',
+        'requirement_item_id__requirement_item_title',
+    )
+
+    """
+    As explained on stack overflow here - https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
+    We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard 
+    json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
+    """
+
+    # Send back json data
+    json_results = json.dumps(list(link_results),cls=DjangoJSONEncoder)
 
     return HttpResponse(json_results, content_type='application/json')
 
@@ -237,6 +360,48 @@ def requirement_information(request, requirement_id):
     }
 
     return HttpResponse(t.render(c, request))
+
+def requirement_information_save(request, requirement_id):
+    """
+
+    :param request:
+    :param requirement_id:
+    :return:
+    """
+    # This request needs to be in POST
+    if request.method != "POST":
+        return HttpResponseBadRequest("Request must be in POST")
+
+    # Check the permissions
+    permission_results = get_user_requirement_permissions(request, requirement_id)
+
+    # Users will need an edit permission
+    if permission_results['requirement'] <= 1:
+        # On your bike - you do not have enough permission
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    # Insert POST into form
+    form = UpdateRequirementForm(request.POST)
+
+    # If there is an error - notify the user
+    if not form.is_valid():
+        return HttpResponseBadRequest("Sorry, there is an error with the form: %s" % form.errors)
+
+
+    # Get the requirement
+    requirement_result = requirement.objects.get(requirement_id=requirement_id)
+
+    # Update all the fields
+    requirement_result.requirement_title = form.cleaned_data['requirement_title']
+    requirement_result.requirement_scope = form.cleaned_data['requirement_scope']
+    requirement_result.requirement_status = form.cleaned_data['requirement_status']
+    requirement_result.requirement_type = form.cleaned_data['requirement_type']
+
+    requirement_result.save()
+
+    # Return a success
+    return HttpResponse("Requirement Saved")
+
 
 
 def update_requirement(request,requirement_id):

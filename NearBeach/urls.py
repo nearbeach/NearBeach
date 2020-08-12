@@ -37,9 +37,12 @@ urlpatterns = [
 	path('new_requirement',requirement_views.new_requirement, name='new_requirement'),
 	path('new_requirement/save/',requirement_views.new_requirement_save, name='new_requirement_save'),
 	path('requirement_information/<int:requirement_id>/',requirement_views.requirement_information,name='requirement_information'),
+	path('requirement_information/<int:requirement_id>/data/item_links/',requirement_views.get_requirement_item_links,name='get_requirement_item_links'),
 	path('requirement_information/<int:requirement_id>/data/items/',requirement_views.get_requirement_items,name='get_requirement_items'),
 	path('requirement_information/<int:requirement_id>/data/item_status/',requirement_views.get_requirement_item_status_list,name='get_requirement_item_status_list'),
 	path('requirement_information/<int:requirement_id>/data/item_type/',requirement_views.get_requirement_item_type_list,name='get_requirement_item_type_list'),
+	path('requirement_information/<int:requirement_id>/data/links/',requirement_views.get_requirement_links_list,name='get_requirement_links_list'),
+	path('requirement_information/<int:requirement_id>/save/',requirement_views.requirement_information_save,name='requirement_information_save'),
 	path('requirement_item_information/<int:requirement_id>',requirement_item_views.requirement_item_information,name='requirement_item_information'),
 	path('search/organisation/data/',search_views.search_organisation_data,name='search_organisation_data'),
 ]

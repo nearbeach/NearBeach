@@ -199,26 +199,26 @@
 
                 // Use Axion to send the data
                 axios.post(
-                        'new_requirement/save/',
-                        data_to_send
-                    ).then((response) => {
-                        // Use the result to go to the url
-                        window.location.href = response['data']
-                    }).catch((error) => {
-                        // Get the error modal
-                        var elem_cont = document.getElementById("errorModalContent");
+                    'new_requirement/save/',
+                    data_to_send
+                ).then((response) => {
+                    // Use the result to go to the url
+                    window.location.href = response['data']
+                }).catch((error) => {
+                    // Get the error modal
+                    var elem_cont = document.getElementById("errorModalContent");
 
-                        // Update the content
-                        elem_cont.innerHTML = `<strong>HTML ISSUE:</strong> We could not save the new requirement<hr>${error}`;
+                    // Update the content
+                    elem_cont.innerHTML = `<strong>HTML ISSUE:</strong> We could not save the new requirement<hr>${error}`;
 
-                        // Show the modal
-                        //var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
-                        var errorModal = new Modal(document.getElementById('errorModal'));
-                        errorModal.show();
+                    // Show the modal
+                    //var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                    var errorModal = new Modal(document.getElementById('errorModal'));
+                    errorModal.show();
 
-                        // Hide the loader
-                        loader_elem.style.transform = "translateY(-100vh)";
-                    });
+                    // Hide the loader
+                    loader_elem.style.transform = "translateY(-100vh)";
+                });
             },
             updateGroupModel: function(newGroupModel) {
                 //Update the group model

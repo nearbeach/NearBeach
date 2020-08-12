@@ -48,3 +48,15 @@ class SearchForm(forms.Form):
     search=forms.CharField(
         required=False,
     )
+
+
+class UpdateRequirementForm(forms.ModelForm):
+    # Basic Meta data
+    class Meta:
+        model = requirement
+        fields = [
+            'requirement_title',
+            'requirement_scope',
+            'requirement_status',
+            'requirement_type',
+        ]
