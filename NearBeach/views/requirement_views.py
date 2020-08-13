@@ -41,10 +41,10 @@ def get_requirement_item_links(request,requirement_id):
                 is_deleted="FALSE",
                 requirement_id=requirement_id,
             ).values('requirement_item_id')
-        ) and Q(
-            Q(opportunity_id__isnull=False) or
-            Q(quote_id__isnull=False) or
-            Q(project_id__isnull=False) or
+        ) & Q(
+            Q(opportunity_id__isnull=False) |
+            Q(quote_id__isnull=False) |
+            Q(project_id__isnull=False) |
             Q(task_id__isnull=False)
         )
     ).values(
@@ -132,10 +132,10 @@ def get_requirement_links_list(request,requirement_id):
         Q(
             is_deleted="FALSE",
             requirement_id=requirement_id,
-        ) and Q(
-            Q(opportunity_id__isnull=False) or
-            Q(quote_id__isnull=False) or
-            Q(project_id__isnull=False) or
+        ) & Q(
+            Q(opportunity_id__isnull=False) |
+            Q(quote_id__isnull=False) |
+            Q(project_id__isnull=False) |
             Q(task_id__isnull=False)
         )
     ).values(
