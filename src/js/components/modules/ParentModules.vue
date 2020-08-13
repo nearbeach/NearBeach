@@ -106,8 +106,12 @@
                     <requirement-links-module></requirement-links-module>
                 </div>
                 <div class="tab-pane fade" id="documents" role="tabpanel" aria-labelledby="contact-tab">
+                    <documents-module></documents-module>
                 </div>
                 <div class="tab-pane fade" id="customers" role="tabpanel" aria-labelledby="contact-tab">
+                    <customers-module v-bind:location-id="locationId"
+                                      v-bind:destination="destination"
+                    ></customers-module>
                 </div>
                 <div class="tab-pane fade" id="bugs" role="tabpanel" aria-labelledby="contact-tab">
                 </div>

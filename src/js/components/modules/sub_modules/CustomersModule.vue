@@ -1,10 +1,76 @@
 <template>
-    
+    <div>
+        <h2><i data-feather="users"></i> Customers</h2>
+        <p class="text-instructions">
+            Below are a list of customers who are stakeholders to this {{destination}}.
+        </p>
+
+        <!-- CUSTOMER RESULTS CARDS -->
+        <div v-if="customerResults.length == 0">
+            <div class="customers-module-spacer">
+                <div class="alert alert-dark">
+                    Sorry - there are no customers. Please add them by clicking on the button below
+                </div>
+            </div>
+        </div>
+        <div v-else
+             class="customer-modules"
+        >
+            <div v-for="customer in customerResults"
+                 class="card card-customer"
+            >
+                <div class="card-body">
+                    <div class="single-customer-card">
+                        <img v-bind:src="getCustomerImage(customer)" alt="default profile picture" />
+                        <div class="customer-card-name">
+                            {{customer['customer_title']}} {{customer['customer_first_name']}} {{customer['customer_last_name']}}
+                        </div>
+                        <div class="customer-card-email"><i data-feather="email"></i>
+                            {{customer['customer_email']}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ADD CUSTOMER BUTTON -->
+        <hr>
+        <div class="row submit-row">
+            <div class="col-md-12">
+                <a href="javascript:void(0)"
+                   class="btn btn-primary save-changes"
+                >Add Customer</a>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
     export default {
-        name: "CustomersModule"
+        name: "CustomersModule",
+        props: [
+            'destination',
+            'locationId',
+        ],
+        data() {
+            return {
+                customerResults: [],
+                defaultCustomerImage: '/static/NearBeach/images/placeholder/people_tax.svg',
+            }
+        },
+        methods: {
+            getCustomerImage: function(customer) {
+                if (customer['customer_profile_picture'] == '') {
+                    //There is no image - return the default image
+                    return this.defaultCustomerImage;
+                }
+                return customer['customer_profile_picture'];
+            },
+            updateCustomerResults: function() {
+
+            },
+        }
     }
 </script>
 
