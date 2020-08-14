@@ -114,6 +114,9 @@
                     ></customers-module>
                 </div>
                 <div class="tab-pane fade" id="bugs" role="tabpanel" aria-labelledby="contact-tab">
+                    <bugs-module v-bind:location-id="locationId"
+                                 v-bind:destination="destination"
+                    ></bugs-module>
                 </div>
                 <div class="tab-pane fade" id="group-and-users" role="tabpanel" aria-labelledby="contact-tab">
                 </div>

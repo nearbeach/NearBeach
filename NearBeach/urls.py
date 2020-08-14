@@ -26,6 +26,7 @@ from . import views, \
 """
 from .views import authentication_views, \
 	dashboard_views, \
+	object_data, \
 	requirement_item_views, \
 	requirement_views, \
 	search_views
@@ -36,6 +37,7 @@ urlpatterns = [
 	path('logout', authentication_views.logout, name='logout'),
 	path('new_requirement',requirement_views.new_requirement, name='new_requirement'),
 	path('new_requirement/save/',requirement_views.new_requirement_save, name='new_requirement_save'),
+	path('object_data/<destination>/<location_id>/bug_list/',object_data.bug_list,name='bug_list'),
 	path('requirement_information/<int:requirement_id>/',requirement_views.requirement_information,name='requirement_information'),
 	path('requirement_information/<int:requirement_id>/data/item_links/',requirement_views.get_requirement_item_links,name='get_requirement_item_links'),
 	path('requirement_information/<int:requirement_id>/data/items/',requirement_views.get_requirement_items,name='get_requirement_items'),
