@@ -23,10 +23,10 @@
                     <div class="single-customer-card">
                         <img v-bind:src="getCustomerImage(customer)" alt="default profile picture" />
                         <div class="customer-card-name">
-                            {{customer['customer_title']}} {{customer['customer_first_name']}} {{customer['customer_last_name']}}
+                            {{customer['fields']['customer_first_name']}} {{customer['fields']['customer_last_name']}}
                         </div>
                         <div class="customer-card-email"><i data-feather="email"></i>
-                            {{customer['customer_email']}}
+                            {{customer['fields']['customer_email']}}
                         </div>
                     </div>
                 </div>
@@ -47,6 +47,9 @@
 </template>
 
 <script>
+    //JavaScript components
+    const axios = require('axios');
+
     export default {
         name: "CustomersModule",
         props: [
@@ -61,15 +64,24 @@
         },
         methods: {
             getCustomerImage: function(customer) {
-                if (customer['customer_profile_picture'] == '') {
+                if (customer['fields']['customer_profile_picture'] == '') {
                     //There is no image - return the default image
                     return this.defaultCustomerImage;
                 }
                 return customer['customer_profile_picture'];
             },
             updateCustomerResults: function() {
-
+                axios.post(
+                    `/object_data/${this.destination}/${this.locationId}/customer_list/`,
+                ).then((response) => {
+                    this.customerResults = response['data'];
+                }).catch((error) => {
+                    console.log("ERROR: ",error);
+                })
             },
+        },
+        mounted() {
+            this.updateCustomerResults();
         }
     }
 </script>

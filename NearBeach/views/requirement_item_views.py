@@ -12,6 +12,12 @@ from NearBeach.user_permissions import return_user_permission_level
 
 import json
 
+def new_requirement_item(request,requirement_id):
+    return HttpResponse("Hello World... need to create this page")
+
+def new_requirement_item_save(request,requirement_id):
+    return HttpResponse("Hello World... need to create this page")
+
 def requirement_item_information(request,requirement_item_id):
     # TO DO - THIS ACTUAL PROGRAM!
     # Get all status - even deleted ones.

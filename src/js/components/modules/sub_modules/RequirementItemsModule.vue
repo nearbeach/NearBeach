@@ -28,7 +28,7 @@
                                     {{item['fields']['requirement_item_title']}}
                                 </p>
                                 <div class="spacer"></div>
-                                <p class="requirement-item-type">
+                                <p class="small-text">
                                     Item No. {{item['pk']}} - {{getType(item['fields']['requirement_item_type'])}}
                                 </p>
                             </a>
@@ -44,7 +44,7 @@
         <hr>
         <div class="row submit-row">
             <div class="col-md-12">
-                <a href="javascript:void(0)"
+                <a v-bind:href="`/new_requirement_item/${locationId}`"
                    class="btn btn-primary save-changes"
                 >Create new Requirement Item</a>
             </div>
@@ -58,7 +58,9 @@
 
     export default {
         name: "RequirementItemsModule",
-        props: [],
+        props: [
+            'locationId',
+        ],
         components: {
             axios,
         },
@@ -118,8 +120,6 @@
                     ).then((response) => {
                         //Clear the current list
                         this.itemStatusList = [];
-
-                        console.log("STATUS: ",response)
 
                         //Loop through the results, and push each rows into the array
                         response['data'].forEach((row) => {

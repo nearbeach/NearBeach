@@ -103,10 +103,14 @@
                     ></requirement-items-module>
                 </div>
                 <div class="tab-pane fade" id="requirement-links" role="tabpanel" aria-labelledby="profile-tab">
-                    <requirement-links-module></requirement-links-module>
+                    <requirement-links-module v-bind:location-id="locationId"
+                                              v-bind:destination="destination"
+                    ></requirement-links-module>
                 </div>
                 <div class="tab-pane fade" id="documents" role="tabpanel" aria-labelledby="contact-tab">
-                    <documents-module></documents-module>
+                    <documents-module v-bind:location-id="locationId"
+                                      v-bind:destination="destination"
+                    ></documents-module>
                 </div>
                 <div class="tab-pane fade" id="customers" role="tabpanel" aria-labelledby="contact-tab">
                     <customers-module v-bind:location-id="locationId"
@@ -119,8 +123,14 @@
                     ></bugs-module>
                 </div>
                 <div class="tab-pane fade" id="group-and-users" role="tabpanel" aria-labelledby="contact-tab">
+                    <groups-and-users-module v-bind:location-id="locationId"
+                                             v-bind:destination="destination"
+                    ></groups-and-users-module>
                 </div>
                 <div class="tab-pane fade" id="misc" role="tabpanel" aria-labelledby="contact-tab">
+                    <misc-module v-bind:location-id="locationId"
+                                 v-bind:destination="destination"
+                    ></misc-module>
                 </div>
             </div>
         </div>
@@ -136,7 +146,6 @@
             'locationId', //The ID of the object we are looking at.
             'requirementItemResults',
         ],
-        components: {},
         data() {
             return {}
         },

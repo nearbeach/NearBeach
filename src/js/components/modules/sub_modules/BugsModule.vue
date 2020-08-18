@@ -2,17 +2,17 @@
     <div>
         <h2><i data-feather="x-octagon"></i> Bugs List</h2>
         <p class="text-instructions">
-            The following is a list of bugs associated with this {{description}}
+            The following is a list of bugs associated with this {{destination}}
         </p>
 
         <!-- TABLE OF BUGS -->
         <div v-if="bugList.length == 0"
              class="spacer"
         >
-            <div class="alert alert-dark">Sorry - there are no bugs associated with this {{description}}</div>
+            <div class="alert alert-dark">Sorry - there are no bugs associated with this {{destination}}</div>
         </div>
         <div v-else>
-            <table>
+            <table class="table">
                 <thead>
                     <tr>
                         <td>Bug Description</td>
@@ -28,7 +28,7 @@
                                 </p>
                                 <div class="spacer"></div>
                                 <p class="small-text">
-                                    Bug No. {{bug['bug_code']}}
+                                    Bug No. {{bug['bug_code']}} - {{bug['bug_client__bug_client_name']}}
                                 </p>
                             </a>
                         </td>
@@ -38,6 +38,17 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Add Bug Button -->
+        <!-- TO DO - limit it to certain users -->
+        <hr>
+        <div class="row submit-row">
+            <div class="col-md-12">
+                <a href="javascript:void(0)"
+                   class="btn btn-primary save-changes"
+                >Add New Bug</a>
+            </div>
         </div>
     </div>
 </template>
@@ -49,8 +60,8 @@
     export default {
         name: "BugsModule",
         props: [
-            'description',
-            'location_id',
+            'destination',
+            'locationId',
         ],
         data() {
             return {
@@ -65,8 +76,23 @@
                 return 'javascript:void(0)';
             },
             updateBugList: function() {
-                axios.post('')
+                axios.post(
+                    `/object_data/${this.destination}/${this.locationId}/bug_list/`
+                ).then((response) => {
+                    //Clear the current list
+                    this.bugList = [];
+
+                    //Loop through the results, and push each rows into the array
+                    response['data'].forEach((row) => {
+                        this.bugList.push(row);
+                    });
+                }).catch((error) => {
+                    console.log("ERROR: ",error);
+                })
             },
+        },
+        mounted() {
+            this.updateBugList();
         }
     }
 </script>

@@ -36,6 +36,7 @@
             <div class="col-md-12">
                 <a href="javascript:void(0)"
                    class="btn btn-primary save-changes"
+                   v-on:click="newRequirementLink"
                 >Create new Link</a>
             </div>
         </div>
@@ -69,17 +70,53 @@
             </table>
         </div>
 
+
+        <!-- LINKING MODAL -->
+        <div class="modal fade"
+             id="newLinkModal"
+             tabindex="-1"
+             aria-labelledby="requirementLinkModal"
+             aria-hidden="true"
+        >
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2><i data-feather="link"></i> New Requirement Link Wizard</h2>
+                        <button type="button"
+                                class="close"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <new-requirement-link-wizard location-id="locationId"></new-requirement-link-wizard>
+                    <div class="modal-footer">
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-dismiss="modal"
+                        >
+                            Close
+                        </button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </template>
 
 <script>
     //JavaScript components
+    import {Modal} from "bootstrap";
     const axios = require('axios');
 
     export default {
         name: "RequirementLinksModule",
         props: [
             'activateLazyLoading',
+            'locationId',
         ],
         data() {
             return {
@@ -155,6 +192,11 @@
 
                 return object_status;
 
+            },
+            newRequirementLink: function() {
+                //Open up the modal
+                var elem_modal = new Modal(document.getElementById('newLinkModal'));
+                elem_modal.show();
             },
             updateItemLinkResults: function() {
                 //Get the data from the database

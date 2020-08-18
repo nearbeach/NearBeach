@@ -13,6 +13,7 @@ from NearBeach.user_permissions import return_user_permission_level
 
 import json
 
+@login_required(login_url='login',redirect_field_name="")
 def get_requirement_item_links(request,requirement_id):
     # Return user if not through POST
     if request.method != "POST":
@@ -75,6 +76,7 @@ def get_requirement_item_links(request,requirement_id):
 
     return HttpResponse(json_results, content_type='application/json')
 
+@login_required(login_url='login',redirect_field_name="")
 def get_requirement_item_status_list(request,requirement_id):
     # Get all status - even deleted ones.
     status_list = list_of_requirement_item_status.objects.all()
@@ -84,7 +86,7 @@ def get_requirement_item_status_list(request,requirement_id):
 
     return HttpResponse(json_results, content_type='application/json')
 
-
+@login_required(login_url='login',redirect_field_name="")
 def get_requirement_item_type_list(request,requirement_id):
     # Get all status - even deleted ones.
     type_list = list_of_requirement_item_type.objects.all()
@@ -94,6 +96,7 @@ def get_requirement_item_type_list(request,requirement_id):
 
     return HttpResponse(json_results, content_type='application/json')
 
+@login_required(login_url='login',redirect_field_name="")
 def get_requirement_items(request,requirement_id):
     # Get all the requirement items assigned to the requirement
     requirement_item_results = requirement_item.objects.filter(
@@ -106,7 +109,7 @@ def get_requirement_items(request,requirement_id):
 
     return HttpResponse(json_results, content_type='application/json')
 
-
+@login_required(login_url='login',redirect_field_name="")
 def get_requirement_links_list(request,requirement_id):
     # Return user if not through POST
     if request.method != "POST":
@@ -167,7 +170,7 @@ def get_requirement_links_list(request,requirement_id):
     return HttpResponse(json_results, content_type='application/json')
 
 
-
+@login_required(login_url='login',redirect_field_name="")
 def get_user_requirement_permissions(request,requirement_id):
     """
     Use the requirement_id and find out if the user has access to this requirement
@@ -361,6 +364,7 @@ def requirement_information(request, requirement_id):
 
     return HttpResponse(t.render(c, request))
 
+@login_required(login_url='login',redirect_field_name="")
 def requirement_information_save(request, requirement_id):
     """
 
@@ -403,6 +407,6 @@ def requirement_information_save(request, requirement_id):
     return HttpResponse("Requirement Saved")
 
 
-
+@login_required(login_url='login',redirect_field_name="")
 def update_requirement(request,requirement_id):
     return False
