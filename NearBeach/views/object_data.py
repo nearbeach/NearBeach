@@ -117,7 +117,7 @@ def link_list(request,destination,location_id,object_lookup):
         data_results = task.objects.filter(
             is_deleted="FALSE",
         ).exclude(
-            project_status='Closed',
+            task_status='Closed',
         )
     elif object_lookup == "opportunity":
         data_results = opportunity.objects.filter(

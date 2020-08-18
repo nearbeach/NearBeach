@@ -32,9 +32,96 @@
                 </p>
             </div>
             <div class="col-md-8">
-                <div id="link_wizard_results">
+                <!-- LOADING PLACEHOLDER -->
+                <div id="link_wizard_results"
+                     v-if="isSearching || objectResults.length == 0 || objectModel == null"
+                >
                     <img src="/static/NearBeach/images/placeholder/search.svg" alt="Searching..." />
                 </div>
+
+                <!-- TABLE CONTAINING RESULTS -->
+                <table class="table"
+                       v-if="!isSearching && objectResults.length > 0 && objectModel != null"
+                >
+                    <thead>
+                        <tr>
+                            <td>{{objectModel}} Description</td>
+                            <td>Status</td>
+                        </tr>
+                    </thead>
+
+                    <!-- PROJECTS -->
+                    <tbody v-if="objectModel == 'Project'">
+                        <tr v-for="result in objectResults">
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           v-bind:value="result['pk']"
+                                           v-bind:id="`checkbox_project_${result['pk']}`"
+                                           v-model="linkModel"
+                                    >
+                                    <label class="form-check-label"
+                                           v-bind:for="`checkbox_project_${result['pk']}`"
+                                    >
+                                        {{result['fields']['project_name']}}
+                                    </label>
+                                </div>
+                                <div class="spacer"></div>
+                                <p class="small-text">Project {{result['pk']}}</p>
+                            </td>
+                            <td>{{result['fields']['project_status']}}</td>
+                        </tr>
+                    </tbody>
+
+                    <!-- TASKS -->
+                    <tbody v-if="objectModel == 'Task'">
+                        <tr v-for="result in objectResults">
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           v-bind:value="result['pk']"
+                                           v-bind:id="`checkbox_task_${result['pk']}`"
+                                           v-model="linkModel"
+                                    >
+                                    <label class="form-check-label"
+                                           v-bind:for="`checkbox_task_${result['pk']}`"
+                                    >
+                                        {{result['fields']['task_short_description']}}
+                                    </label>
+                                </div>
+                                <div class="spacer"></div>
+                                <p class="small-text">Task {{result['pk']}}</p>
+                            </td>
+                            <td>{{result['fields']['task_status']}}</td>
+                        </tr>
+                    </tbody>
+
+                    <!-- OPPORTUNITY -->
+                    <tbody v-if="objectModel == 'Opportunity'">
+                        <tr v-for="result in objectResults">
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           v-bind:value="result['pk']"
+                                           v-bind:id="`checkbox_opportunity_${result['pk']}`"
+                                           v-model="linkModel"
+                                    >
+                                    <label class="form-check-label"
+                                           v-bind:for="`checkbox_opportunity_${result['pk']}`"
+                                    >
+                                        {{result['fields']['opportunity_name']}}
+                                    </label>
+                                </div>
+                                <div class="spacer"></div>
+                                <p class="small-text">Opportunity {{result['pk']}}</p>
+                            </td>
+                            <td>{{result['fields']['opportunity_success_probability']}}%</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
         </div>
@@ -61,10 +148,14 @@
                     'Task',
                     'Opportunity',
                 ],
+                linkModel: [],
             }
         },
         watch: {
             objectModel: function() {
+                //Clear data
+                this.linkModel = [];
+
                 //User has chosen an object.
                 if (this.objectModel == null) {
                     //Ok - then removed the objects. We don't need to do anything
@@ -77,7 +168,7 @@
 
                 //Now to use axios to get the data we require
                 axios.post(
-                    `/object_data/${this.destination}/%{this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
+                    `/object_data/${this.destination}/${this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
                 ).then(response => {
                     //Load the data into the array
                     this.objectResults = response['data'];
