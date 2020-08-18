@@ -78,7 +78,7 @@
              aria-labelledby="requirementLinkModal"
              aria-hidden="true"
         >
-            <div class="modal-dialog modal-xl">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h2><i data-feather="link"></i> New Requirement Link Wizard</h2>
@@ -90,7 +90,9 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <new-requirement-link-wizard location-id="locationId"></new-requirement-link-wizard>
+                    <new-requirement-link-wizard v-bind:location-id="locationId"
+                                                 v-bind:destination="'requirement'"
+                    ></new-requirement-link-wizard>
                     <div class="modal-footer">
                         <button type="button"
                                 class="btn btn-secondary"

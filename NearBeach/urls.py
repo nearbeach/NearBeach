@@ -41,6 +41,7 @@ urlpatterns = [
 	path('new_requirement_item/<int:requirement_id>/save/',requirement_item_views.new_requirement_item_save,name='new_requirement_item_save'),
 	path('object_data/<destination>/<location_id>/bug_list/',object_data.bug_list,name='bug_list'),
 	path('object_data/<destination>/<location_id>/customer_list/',object_data.customer_list,name='customer_list'),
+	path('object_data/<destination>/<location_id>/<object_lookup>/link_list/',object_data.link_list,name='link_list'),
 	path('requirement_information/<int:requirement_id>/',requirement_views.requirement_information,name='requirement_information'),
 	path('requirement_information/<int:requirement_id>/data/item_links/',requirement_views.get_requirement_item_links,name='get_requirement_item_links'),
 	path('requirement_information/<int:requirement_id>/data/items/',requirement_views.get_requirement_items,name='get_requirement_items'),

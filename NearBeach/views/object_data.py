@@ -98,3 +98,35 @@ def customer_list(request,destination,location_id):
     )
 
     return HttpResponse(serializers.serialize('json',customer_results), content_type='application/json')
+
+
+@login_required(login_url='login',redirect_field_name="")
+def link_list(request,destination,location_id,object_lookup):
+    if not request.method == "POST":
+        # Needs to be post
+        return HttpResponseBadRequest("Sorry - needs to be done through psot")
+
+    # Get the data dependent on the object lookup
+    if object_lookup == 'project':
+        data_results = project.objects.filter(
+            is_deleted="FALSE",
+        ).exclude(
+            project_status='Closed',
+        )
+    elif object_lookup == "task":
+        data_results = task.objects.filter(
+            is_deleted="FALSE",
+        ).exclude(
+            project_status='Closed',
+        )
+    elif object_lookup == "opportunity":
+        data_results = opportunity.objects.filter(
+            is_deleted="FALSE",
+            opportunity_stage_id__opportunity_closed="FALSE",
+        )
+    else:
+        # There is an error.
+        return HttpResponseBadRequest("Sorry - but that object lookup does not exist")
+
+    # Send the data to the user
+    return HttpResponse(serializers.serialize('json',data_results), content_type='application/json')
