@@ -173,14 +173,6 @@ def login(request):
 
                 return HttpResponseRedirect(reverse('dashboard'))
 
-    # Setup background image
-    # If user-agent string contains iOS or Safari, show default image
-    background_image = 'NearBeach/images/NearBeach_Background_%(number)03d.webp' % {'number': random.randint(1, 19)}
-
-    if "HTTP_USER_AGENT" in request.META:
-        if 'iOS' in request.META['HTTP_USER_AGENT'] or 'Safari' in request.META['HTTP_USER_AGENT']:
-            background_image = 'NearBeach/images/NearBeach_Background_001.jpg'
-
     # Get recaptcha public key
     if hasattr(settings, 'RECAPTCHA_PUBLIC_KEY') and hasattr(settings, 'RECAPTCHA_PRIVATE_KEY'):
         RECAPTCHA_PUBLIC_KEY = settings.RECAPTCHA_PUBLIC_KEY
@@ -195,7 +187,7 @@ def login(request):
     c = {
         'login_form': form,
         'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
-        'background_image': background_image,
+        'image_number': '%(number)03d' % {'number': random.randint(1, 19)},
     }
 
     return HttpResponse(t.render(c, request))
