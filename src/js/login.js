@@ -16,14 +16,12 @@ var image_number =  Math.floor((Math.random() * 19) + 1);
 var elem = document.getElementsByClassName('background')[0]; //Always the first element
 
 //Get the extension type
-var extension = 'webp';
-Modernizr.on('jpeg2000', function(result) {
+Modernizr.on('webp', (result) => {
     if (result) {
-      extension = 'jp2';
+        //Use WebP
+        elem.style['background-image'] = `url('/static/NearBeach/images/NearBeach_Background_${image_number.toLocaleString('en', {minimumIntegerDigits:3,useGrouping:false})}.webp')`;
+    } else {
+        //Use jp2
+        elem.style['background-image'] = `url('/static/NearBeach/images/NearBeach_Background_${image_number.toLocaleString('en', {minimumIntegerDigits:3,useGrouping:false})}.jp2')`;
     }
 });
-
-console.log("D: ",Modernizr.userdata);
-
-//Set the background-image
-elem.style['background-image'] = `url('/static/NearBeach/images/NearBeach_Background_${image_number.toLocaleString('en', {minimumIntegerDigits:3,useGrouping:false})}.${extension}')`;
