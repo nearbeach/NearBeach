@@ -14,6 +14,58 @@ from NearBeach.user_permissions import return_user_permission_level
 import json
 
 @login_required(login_url='login',redirect_field_name="")
+def add_requirement_link(request,requirement_id):
+    if not request.method == "POST":
+        # Needs to be post
+        return HttpResponseBadRequest("Sorry - needs to be done through post")
+
+    # ADD IN PERMISSION
+    permission_results = return_user_permission_level(request, None, ['requirement','requirement_link'])
+    # What about requirement items? Will need to fix this elegantly.
+
+    if permission_results['requirement'] < 2:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    form = AddRequirementLinkForm(request.POST)
+
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+
+    # Get the requirement instnace
+    requirement_instance = requirement.objects.get(requirement_id=requirement_id)
+
+    print(request.POST.getlist("project"))
+
+    # Get the project list from the form
+    for row in request.POST.getlist("project"):
+        submit_object_assignment = object_assignment(
+            requirement_id=requirement_instance,
+            project_id=project.objects.get(project_id=row),
+            change_user=request.user,
+        )
+        submit_object_assignment.save()
+
+    for row in request.POST.getlist("task"):
+        submit_object_assignment = object_assignment(
+            requirement_id=requirement_instance,
+            task_id=task.objects.get(task_id=row),
+            change_user=request.user,
+        )
+        submit_object_assignment.save()
+
+    for row in request.POST.getlist("opportunity"):
+        submit_object_assignment = object_assignment(
+            requirement_id=requirement_instance,
+            opportunity_id=opportunity.objects.get(opportunity_id=row),
+            change_user=request.user,
+        )
+        submit_object_assignment.save()
+
+    return HttpResponse("Success")
+
+
+@login_required(login_url='login',redirect_field_name="")
 def get_requirement_item_links(request,requirement_id):
     # Return user if not through POST
     if request.method != "POST":
@@ -256,9 +308,6 @@ def new_requirement_save(request, location_id="", destination=""):
     if not form.is_valid():
         # Something went wrong with the form.
         return HttpResponseBadRequest("There was something wrong with the form")
-
-    print("ORGANISATION")
-    print(form.cleaned_data['organisation'])
 
     # Save the form
     submit_requirement = requirement(

@@ -104,7 +104,7 @@ def customer_list(request,destination,location_id):
 def link_list(request,destination,location_id,object_lookup):
     if not request.method == "POST":
         # Needs to be post
-        return HttpResponseBadRequest("Sorry - needs to be done through psot")
+        return HttpResponseBadRequest("Sorry - needs to be done through post")
 
     # Get the data dependent on the object lookup
     if object_lookup == 'project':

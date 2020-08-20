@@ -72,39 +72,12 @@
 
 
         <!-- LINKING MODAL -->
-        <div class="modal fade"
-             id="newLinkModal"
-             tabindex="-1"
-             aria-labelledby="requirementLinkModal"
-             aria-hidden="true"
-        >
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2><i data-feather="link"></i> New Requirement Link Wizard</h2>
-                        <button type="button"
-                                class="close"
-                                data-dismiss="modal"
-                                aria-label="Close"
-                        >
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <new-requirement-link-wizard v-bind:location-id="locationId"
-                                                 v-bind:destination="'requirement'"
-                    ></new-requirement-link-wizard>
-                    <div class="modal-footer">
-                        <button type="button"
-                                class="btn btn-secondary"
-                                data-dismiss="modal"
-                        >
-                            Close
-                        </button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- need to build something that resets the requirement links when adding links -->
+        <new-requirement-link-wizard v-bind:location-id="locationId"
+                                     v-bind:destination="'requirement'"
+                                     v-on:update_module="updateModel"
+        ></new-requirement-link-wizard>
+
 
     </div>
 </template>
@@ -124,6 +97,7 @@
             return {
                 linkResults: [],
                 itemLinkResults: [],
+                linkModel: [],
             };
         },
         methods: {
@@ -216,10 +190,13 @@
                     this.linkResults = response['data'];
                 });
             },
+            updateModel: function() {
+                this.updateLinkResults();
+                this.updateItemLinkResults();
+            },
         },
         mounted() {
-            this.updateLinkResults();
-            this.updateItemLinkResults();
+            this.updateModel();
         },
     }
 </script>

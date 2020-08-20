@@ -141,7 +141,7 @@ def check_recaptcha(post_data):
 
 def login(request):
     """
-	For some reason I can not use the varable "login_form" here as it is already being used.
+	For some reason I can not use the varable "LoginForm" here as it is already being used.
 	Instead I will use the work form.
 
 	The form is declared at the start and filled with either the POST data OR nothing. If this
@@ -151,7 +151,7 @@ def login(request):
 	If the form is not in POST (aka GET) OR fails the checks, then it will create the form with
 	the relevant errors.
 	"""
-    form = login_form(request.POST or None)
+    form = LoginForm(request.POST or None)
 
     # POST
     if request.method == 'POST':
@@ -185,7 +185,7 @@ def login(request):
     # context
 
     c = {
-        'login_form': form,
+        'LoginForm': form,
         'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
         'image_number': '%(number)03d' % {'number': random.randint(1, 19)},
     }

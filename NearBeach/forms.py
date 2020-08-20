@@ -4,8 +4,29 @@ from django import forms
 #Import from Models
 from .models import *
 
+class AddRequirementLinkForm(forms.Form):
+    # One external field
+    project = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=project.objects.filter(
+            is_deleted="FALSE",
+        )
+    )
+    task = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=task.objects.filter(
+            is_deleted="FALSE",
+        )
+    )
+    opportunity = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=opportunity.objects.filter(
+            is_deleted="FALSE",
+        )
+    )
 
-class login_form(forms.Form):
+
+class LoginForm(forms.Form):
     username=forms.CharField(
         widget=forms.TextInput(attrs={
             'placeholder': 'Username',
