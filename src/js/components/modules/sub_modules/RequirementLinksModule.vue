@@ -31,7 +31,6 @@
 
         <!-- Submit Button -->
         <!-- TO DO - limit it to certain users -->
-        <hr>
         <div class="row submit-row">
             <div class="col-md-12">
                 <a href="javascript:void(0)"
@@ -40,6 +39,7 @@
                 >Create new Link</a>
             </div>
         </div>
+        <hr>
 
         <h2><i data-feather="link-2"></i> Requirement Item Links</h2>
         <p class="text-instructions">

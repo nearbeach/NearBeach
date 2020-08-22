@@ -11,7 +11,8 @@ import GroupsAndUsersModule from "./components/modules/sub_modules/GroupsAndUser
 import ParentModules from "./components/modules/ParentModules.vue";
 import MiscModule from "./components/modules/sub_modules/MiscModule.vue";
 import NewRequirements from './components/requirements/NewRequirement.vue';
-import NewRequirementLinkWizard from "./components/wizards/NewRequirementLinkWizard.vue";
+import NewRequirementItemWizard from "./components/modules/wizards/NewRequirementItemWizard.vue";
+import NewRequirementLinkWizard from "./components/modules/wizards/NewRequirementLinkWizard.vue";
 import RequirementInformation from './components/requirements/RequirementInformation.vue';
 import RequirementItemsModule from "./components/modules/sub_modules/RequirementItemsModule.vue";
 import RequirementLinksModule from "./components/modules/sub_modules/RequirementLinksModule.vue";
@@ -51,6 +52,7 @@ Vue.component('GroupsAndUsersModule',GroupsAndUsersModule);
 Vue.component('ParentModules',ParentModules);
 Vue.component('MiscModule',MiscModule);
 Vue.component('NewRequirements',NewRequirements);
+Vue.component('NewRequirementItemWizard',NewRequirementItemWizard);
 Vue.component('NewRequirementLinkWizard',NewRequirementLinkWizard);
 Vue.component('RequirementInformation',RequirementInformation);
 Vue.component('RequirementItemsModule',RequirementItemsModule);

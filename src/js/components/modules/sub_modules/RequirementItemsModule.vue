@@ -44,16 +44,20 @@
         <hr>
         <div class="row submit-row">
             <div class="col-md-12">
-                <a v-bind:href="`/new_requirement_item/${locationId}`"
-                   class="btn btn-primary save-changes"
-                >Create new Requirement Item</a>
+                <button v-on:click="createNewItem"
+                        class="btn btn-primary save-changes"
+                >Create new Requirement Item</button>
             </div>
         </div>
+
+        <!-- NEW REQUIREMENT ITEM MODAL -->
+        <new-requirement-item-wizard></new-requirement-item-wizard>
     </div>
 </template>
 
 <script>
-    //JavaScript components
+    //JavaScript Libraries
+    import {Modal} from "bootstrap";
     const axios = require('axios');
 
     export default {
@@ -72,6 +76,10 @@
             }
         },
         methods: {
+            createNewItem: function() {
+                var new_item_modal = new Modal(document.getElementById('newItemModal'));
+                new_item_modal.show();
+            },
             getStatus: function(status_id) {
                 //Filter the status status id
                 var filtered_data = this.itemStatusList.filter((row) => {
