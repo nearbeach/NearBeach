@@ -100,6 +100,7 @@
             <div class="tab-content" id="misc_module_content">
                 <div class="tab-pane fade show active" id="requirement-items" role="tabpanel" aria-labelledby="home-tab">
                     <requirement-items-module v-bind:location-id="locationId"
+                                              v-bind:destination="destination"
                     ></requirement-items-module>
                 </div>
                 <div class="tab-pane fade" id="requirement-links" role="tabpanel" aria-labelledby="profile-tab">

@@ -33,15 +33,23 @@ from .views import authentication_views, \
 
 urlpatterns = [
 	path('', dashboard_views.dashboard, name='dashboard'),
+
+	# Authentication
 	path('login', authentication_views.login, name='login'),
 	path('logout', authentication_views.logout, name='logout'),
+
+	# New Objects
 	path('new_requirement',requirement_views.new_requirement, name='new_requirement'),
 	path('new_requirement/save/',requirement_views.new_requirement_save, name='new_requirement_save'),
 	path('new_requirement_item/save/<int:requirement_id>/',requirement_item_views.new_requirement_item,name='new_requirement_item'),
 	path('new_requirement_item/<int:requirement_id>/save/',requirement_item_views.new_requirement_item_save,name='new_requirement_item_save'),
+
+	# Object Data
 	path('object_data/<destination>/<location_id>/bug_list/',object_data.bug_list,name='bug_list'),
 	path('object_data/<destination>/<location_id>/customer_list/',object_data.customer_list,name='customer_list'),
 	path('object_data/<destination>/<location_id>/<object_lookup>/link_list/',object_data.link_list,name='link_list'),
+
+	# Requirements
 	path('requirement_information/<int:requirement_id>/',requirement_views.requirement_information,name='requirement_information'),
 	path('requirement_information/<int:requirement_id>/add_requirement_link/',requirement_views.add_requirement_link,name='add_requirement_link'),
 	path('requirement_information/<int:requirement_id>/data/item_links/',requirement_views.get_requirement_item_links,name='get_requirement_item_links'),
@@ -50,7 +58,10 @@ urlpatterns = [
 	path('requirement_information/<int:requirement_id>/data/item_type/',requirement_views.get_requirement_item_type_list,name='get_requirement_item_type_list'),
 	path('requirement_information/<int:requirement_id>/data/links/',requirement_views.get_requirement_links_list,name='get_requirement_links_list'),
 	path('requirement_information/<int:requirement_id>/save/',requirement_views.requirement_information_save,name='requirement_information_save'),
+
+	# Requirement Items
 	path('requirement_item_information/<int:requirement_id>',requirement_item_views.requirement_item_information,name='requirement_item_information'),
+
 	path('search/organisation/data/',search_views.search_organisation_data,name='search_organisation_data'),
 ]
 """

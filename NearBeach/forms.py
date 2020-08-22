@@ -43,6 +43,17 @@ class LoginForm(forms.Form):
         })
     )
 
+class NewRequirementItemForm(forms.ModelForm):
+    # Basic Meta data
+    class Meta:
+        model = requirement_item
+        fields = [
+            'requirement_item_title',
+            'requirement_item_scope',
+            'requirement_item_status',
+            'requirement_item_type',
+        ]
+
 class NewRequirementForm(forms.ModelForm):
     # One external field
     group_list=forms.ModelMultipleChoiceField(

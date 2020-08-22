@@ -51,7 +51,11 @@
         </div>
 
         <!-- NEW REQUIREMENT ITEM MODAL -->
-        <new-requirement-item-wizard></new-requirement-item-wizard>
+        <new-requirement-item-wizard v-bind:item-status-list="itemStatusList"
+                                     v-bind:item-type-list="itemTypeList"
+                                     v-bind:location-id="locationId"
+                                     v-on:new_item_added="new_item_added($event)"
+        ></new-requirement-item-wizard>
     </div>
 </template>
 
@@ -107,6 +111,11 @@
 
                 //Return the first result
                 return filtered_data[0]["fields"]["requirement_item_type"];
+            },
+            new_item_added: function(data) {
+                //A new item has been added in the wizard. We use the new data that has passed through to update
+                //the item results array.
+                this.itemResults = data;
             },
             updateItemResults: function() {
                 axios.get(
