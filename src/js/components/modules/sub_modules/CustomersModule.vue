@@ -38,17 +38,25 @@
         <hr>
         <div class="row submit-row">
             <div class="col-md-12">
-                <a href="javascript:void(0)"
-                   class="btn btn-primary save-changes"
-                >Add Customer</a>
+                <button class="btn btn-primary save-changes"
+                        v-on:click="addNewCustomer"
+                >
+                    Add Customer
+                </button>
             </div>
         </div>
+
+        <!-- MODALS -->
+        <new-customer-wizard v-bind:location-id="locationId"
+                             v-bind:destination="destination"
+        ></new-customer-wizard>
     </div>
 </template>
 
 <script>
     //JavaScript components
     const axios = require('axios');
+    import {Modal} from "bootstrap";
 
     export default {
         name: "CustomersModule",
@@ -63,6 +71,10 @@
             }
         },
         methods: {
+            addNewCustomer: function() {
+                var addCustomerModal = new Modal(document.getElementById('addCustomerModal'));
+                    addCustomerModal.show();
+            },
             getCustomerImage: function(customer) {
                 if (customer['fields']['customer_profile_picture'] == '') {
                     //There is no image - return the default image

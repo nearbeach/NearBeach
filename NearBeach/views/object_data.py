@@ -99,6 +99,50 @@ def customer_list(request,destination,location_id):
 
     return HttpResponse(serializers.serialize('json',customer_results), content_type='application/json')
 
+@login_required(login_url='login',redirect_field_name="")
+def customer_list_all(request,destination,location_id):
+    if not request.method == "POST":
+        # Needs to be post
+        return HttpResponseBadRequest("Sorry - needs to be done through POST")
+
+    # Get the organisation dependant on the destination source
+    organistaion_results = organisation.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    if destination == "requirement":
+        organistaion_results = organistaion_results.get(
+            organisation_id=requirement.objects.get(
+                is_deleted="FALSE",
+                requirement_id=location_id,
+            ).organisation_id
+        )
+    elif destination == "project":
+        organistaion_results = organistaion_results.get(
+            organisation_id=project.objects.get(
+                is_deleted="FALSE",
+                project_id=location_id,
+            ).organisation_id
+        )
+    elif destination == "task":
+        organisation_results = organisation_results.get(
+            organisation_id=task.objects.get(
+                is_deleted="FALSE",
+                task_id=location_id,
+            )
+        )
+    else:
+        # There is no destination that could match this. Send user to errors
+        return HttpResponseBadRequest("Sorry - there was an error getting the Customer List")
+
+    customer_results = customer.objects.filter(
+        is_deleted="FALSE",
+        organisation_id=organisation_results.organisation_id
+    )
+
+    return HttpResponse(serializers.serialize('json',customer_results), content_type='application/json')
+
+
 
 @login_required(login_url='login',redirect_field_name="")
 def link_list(request,destination,location_id,object_lookup):
