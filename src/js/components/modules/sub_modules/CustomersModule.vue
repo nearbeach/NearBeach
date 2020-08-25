@@ -49,6 +49,8 @@
         <!-- MODALS -->
         <new-customer-wizard v-bind:location-id="locationId"
                              v-bind:destination="destination"
+                             v-bind:exclude-customers="customerResults"
+                             v-on:update_customer_results="updateCustomerResults($event)"
         ></new-customer-wizard>
     </div>
 </template>
@@ -82,7 +84,7 @@
                 }
                 return customer['customer_profile_picture'];
             },
-            updateCustomerResults: function() {
+            loadCustomerResults: function() {
                 axios.post(
                     `/object_data/${this.destination}/${this.locationId}/customer_list/`,
                 ).then((response) => {
@@ -91,9 +93,12 @@
                     console.log("ERROR: ",error);
                 })
             },
+            updateCustomerResults: function(data) {
+                this.customerResults = data;
+            },
         },
         mounted() {
-            this.updateCustomerResults();
+            this.loadCustomerResults();
         }
     }
 </script>

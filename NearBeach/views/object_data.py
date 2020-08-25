@@ -13,6 +13,41 @@ from NearBeach.user_permissions import return_user_permission_level
 import json
 
 @login_required(login_url='login',redirect_field_name="")
+def add_customer(request,destination,location_id):
+    if not request.method == "POST":
+        # Needs to be post
+        return HttpResponseBadRequest("Sorry - needs to be done through psot")
+
+    #ADD IN CHECK PERMISSIONS THAT USES THE DESTINATION AND LOCATION!
+
+    # Get data from form
+    form = AddCustomerForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Obtain the data dependent on the destination
+    submit_object_assignment = object_assignment(
+        change_user=request.user,
+        customer=form.cleaned_data['customer']
+    )
+    if destination == "project":
+        submit_object_assignment.project_id=project.objects.get(project_id=location_id)
+    elif destination == "requirement":
+        submit_object_assignment.requirement_id=requirement.objects.get(requirement_id=location_id)
+    elif destination == "task":
+        submit_object_assignment.task_id=task.objects.get(task_id=location_id)
+    else:
+        # Oh there was an issue
+        return HttpResponseBadRequest("Sorry - there was an issue getting the bugs")
+
+    # Save the data
+    submit_object_assignment.save()
+
+    customer_results = get_customer_list(request, destination, location_id)
+
+    return HttpResponse(serializers.serialize('json', customer_results), content_type='application/json')
+
+@login_required(login_url='login',redirect_field_name="")
 def bug_list(request,destination,location_id):
     if not request.method == "POST":
         # Needs to be post
@@ -67,8 +102,53 @@ def bug_list(request,destination,location_id):
 def customer_list(request,destination,location_id):
     if not request.method == "POST":
         # Needs to be post
-        return HttpResponseBadRequest("Sorry - needs to be done through psot")
+        return HttpResponseBadRequest("Sorry - needs to be done through post")
 
+    customer_results = get_customer_list(request, destination, location_id)
+
+    return HttpResponse(serializers.serialize('json', customer_results), content_type='application/json')
+
+@login_required(login_url='login',redirect_field_name="")
+def customer_list_all(request,destination,location_id):
+    if not request.method == "POST":
+        # Needs to be post
+        return HttpResponseBadRequest("Sorry - needs to be done through POST")
+
+    # Get the organisation dependant on the destination source
+    if destination == "requirement":
+        organisation_results = organisation.objects.get(
+            organisation_id=requirement.objects.get(
+                is_deleted="FALSE",
+                requirement_id=location_id,
+            ).organisation_id
+        )
+    elif destination == "project":
+        organisation_results = organisation.objects.get(
+            organisation_id=project.objects.get(
+                is_deleted="FALSE",
+                project_id=location_id,
+            ).organisation_id
+        )
+    elif destination == "task":
+        organisation_results = organisation.objects.get(
+            organisation_id=task.objects.get(
+                is_deleted="FALSE",
+                task_id=location_id,
+            )
+        )
+    else:
+        # There is no destination that could match this. Send user to errors
+        return HttpResponseBadRequest("Sorry - there was an error getting the Customer List")
+
+    customer_results = customer.objects.filter(
+        is_deleted="FALSE",
+        organisation_id=organisation_results.organisation_id
+    )
+
+    return HttpResponse(serializers.serialize('json',customer_results), content_type='application/json')
+
+# Internal function
+def get_customer_list(request,destination,location_id):
     # Get a list of all objects assignments dependant on the destination
     if destination == "requirement":
         object_customers = object_assignment.objects.filter(
@@ -92,55 +172,11 @@ def customer_list(request,destination,location_id):
         # There is no destination that could match this. Send user to errors
         return HttpResponseBadRequest("Sorry - there was an error getting the Customer List")
 
-    customer_results = customer.objects.filter(
+    return customer.objects.filter(
         is_deleted="FALSE",
         customer_id__in=object_customers.values('customer_id')
     )
 
-    return HttpResponse(serializers.serialize('json',customer_results), content_type='application/json')
-
-@login_required(login_url='login',redirect_field_name="")
-def customer_list_all(request,destination,location_id):
-    if not request.method == "POST":
-        # Needs to be post
-        return HttpResponseBadRequest("Sorry - needs to be done through POST")
-
-    # Get the organisation dependant on the destination source
-    organistaion_results = organisation.objects.filter(
-        is_deleted="FALSE",
-    )
-
-    if destination == "requirement":
-        organistaion_results = organistaion_results.get(
-            organisation_id=requirement.objects.get(
-                is_deleted="FALSE",
-                requirement_id=location_id,
-            ).organisation_id
-        )
-    elif destination == "project":
-        organistaion_results = organistaion_results.get(
-            organisation_id=project.objects.get(
-                is_deleted="FALSE",
-                project_id=location_id,
-            ).organisation_id
-        )
-    elif destination == "task":
-        organisation_results = organisation_results.get(
-            organisation_id=task.objects.get(
-                is_deleted="FALSE",
-                task_id=location_id,
-            )
-        )
-    else:
-        # There is no destination that could match this. Send user to errors
-        return HttpResponseBadRequest("Sorry - there was an error getting the Customer List")
-
-    customer_results = customer.objects.filter(
-        is_deleted="FALSE",
-        organisation_id=organisation_results.organisation_id
-    )
-
-    return HttpResponse(serializers.serialize('json',customer_results), content_type='application/json')
 
 
 

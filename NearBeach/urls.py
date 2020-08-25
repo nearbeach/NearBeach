@@ -45,6 +45,7 @@ urlpatterns = [
 	path('new_requirement_item/<int:requirement_id>/save/',requirement_item_views.new_requirement_item_save,name='new_requirement_item_save'),
 
 	# Object Data
+	path('object_data/<destination>/<location_id>/add_customer/',object_data.add_customer,name='add_customer'),
 	path('object_data/<destination>/<location_id>/bug_list/',object_data.bug_list,name='bug_list'),
 	path('object_data/<destination>/<location_id>/customer_list/',object_data.customer_list,name='customer_list'),
 	path('object_data/<destination>/<location_id>/customer_list_all/',object_data.customer_list_all,name='customer_list_all'),

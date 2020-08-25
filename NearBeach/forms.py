@@ -4,6 +4,12 @@ from django import forms
 #Import from Models
 from .models import *
 
+class AddCustomerForm(forms.Form):
+    customer = forms.ModelChoiceField(
+        required=True,
+        queryset=customer.objects.all(),
+    )
+
 class AddRequirementLinkForm(forms.Form):
     # One external field
     project = forms.ModelMultipleChoiceField(
