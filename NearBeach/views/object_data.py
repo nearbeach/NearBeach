@@ -1,3 +1,5 @@
+import urllib
+
 from django.contrib.auth.decorators import login_required
 from NearBeach.models import *
 from django.core import serializers
@@ -10,7 +12,8 @@ from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from NearBeach.user_permissions import return_user_permission_level
 
-import json
+
+import json, urllib3
 
 @login_required(login_url='login',redirect_field_name="")
 def add_customer(request,destination,location_id):
@@ -48,10 +51,22 @@ def add_customer(request,destination,location_id):
     return HttpResponse(serializers.serialize('json', customer_results), content_type='application/json')
 
 @login_required(login_url='login',redirect_field_name="")
+def bug_client_list(request):
+    if not request.method == "POST":
+        # Needs to be post
+        return HttpResponseBadRequest("Sorry - needs to be done through post")
+
+    bug_client_results = bug_client.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    return HttpResponse(serializers.serialize('json',bug_client_results), content_type='application/json')
+
+@login_required(login_url='login',redirect_field_name="")
 def bug_list(request,destination,location_id):
     if not request.method == "POST":
         # Needs to be post
-        return HttpResponseBadRequest("Sorry - needs to be done through psot")
+        return HttpResponseBadRequest("Sorry - needs to be done through post")
 
     # Obtain the data dependent on the destination
     if destination == "project":
@@ -210,3 +225,86 @@ def link_list(request,destination,location_id,object_lookup):
 
     # Send the data to the user
     return HttpResponse(serializers.serialize('json',data_results), content_type='application/json')
+
+
+@login_required(login_url='login',redirect_field_name="")
+def query_bug_client(request,destination,location_id):
+    # Check to make sure method is POST
+    if not request.method == "POST":
+        return HttpResponseBadRequest("Sorry - you need to do this as a POST")
+
+    # Insert data into form
+    form = QueryBugClientForm(request.POST)
+
+    # Check to make sure everything is fine with the form
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Extract the information from the form
+    bug_client_instance = form.cleaned_data['bug_client_id']
+    search_terms = form.cleaned_data['search']
+
+    # Get existing bugs that we want to extract out
+    existing_bugs = bug.objects.filter(
+        is_deleted="FALSE",
+        bug_client_id=bug_client_instance.bug_client_id,
+    )
+
+    if destination == "project":
+        existing_bugs = existing_bugs.filter(
+            project_id=location_id,
+        )
+    elif destination == "task":
+        existing_bugs = existing_bugs.filter(
+            task_id=location_id,
+        )
+    elif destination == "requirement":
+        existing_bugs = existing_bugs.filter(
+            requirement_id=location_id,
+        )
+    else:
+        return HttpResponseBadRequest("Sorry - it looks like that destination does not exist.")
+
+    # The values in the URL
+    f_bugs = ''
+    o_notequals = ''
+    v_values = ''
+
+    # The for loop
+    for idx, row in enumerate(existing_bugs):
+        nidx = str(idx + 1)
+        f_bugs = f_bugs + "&f" + nidx + "=bug_id"
+        o_notequals = o_notequals + "&o" + nidx + "=notequals"
+        v_values = v_values + "&v" + nidx + "=" + str(row.bug_code)
+
+    exclude_url = f_bugs + o_notequals + v_values
+
+    url = bug_client_instance.bug_client_url \
+          + bug_client_instance.list_of_bug_client.bug_client_api_url \
+          + bug_client_instance.list_of_bug_client.api_search_bugs \
+          + urllib.parse.quote(form.cleaned_data['search']) \
+          + exclude_url
+
+    """
+    SECURITY ISSUE
+    ~~~~~~~~~~~~~~
+    The URL could contain a file. Which we do not want executed by mistake. So we just make sure that the URL starts
+    with a http instead of ftp or file.
+
+    We place the  at the end of the json_data because we have checked the field. This should be just a json 
+    response. If it is not at this point then it will produce a server issue.
+    """
+    if url.lower().startswith('http'):
+        # setup the pool manager for urllib3
+        http = urllib3.PoolManager()
+
+        # Plug in the url
+        r = http.request('GET',url)
+
+        # Extract the data
+        json_data = json.loads(r.data.decode('utf-8'))
+    else:
+        raise ValueError from None
+
+    # Send back the JSON data
+    return JsonResponse(json_data['bugs'], safe=False)

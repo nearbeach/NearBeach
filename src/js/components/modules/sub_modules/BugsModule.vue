@@ -45,17 +45,25 @@
         <hr>
         <div class="row submit-row">
             <div class="col-md-12">
-                <a href="javascript:void(0)"
-                   class="btn btn-primary save-changes"
-                >Add New Bug</a>
+                <button class="btn btn-primary save-changes"
+                        v-on:click="addNewBug"
+                >
+                    Add Bug
+                </button>
             </div>
         </div>
+
+        <!-- Modals -->
+        <new-bug-wizard v-bind:destination="destination"
+                        v-bind:location-id="locationId"
+        ></new-bug-wizard>
     </div>
 </template>
 
 <script>
     //JavaScript components
     const axios = require('axios');
+    import {Modal} from "bootstrap";
 
     export default {
         name: "BugsModule",
@@ -69,6 +77,10 @@
             }
         },
         methods: {
+            addNewBug: function() {
+                var addBugModal = new Modal(document.getElementById('addBugModal'));
+                    addBugModal.show();
+            },
             getBugHyperLink: function(bug) {
                 if (bug['bug_client__list_of_bug_client'] == 'Bugzilla') {
                     return `${bug['bug_client__bug_client_url']}/show_bug.cgi?id=${bug['bug_code']}`;

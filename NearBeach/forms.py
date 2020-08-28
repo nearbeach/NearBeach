@@ -80,6 +80,17 @@ class NewRequirementForm(forms.ModelForm):
             'organisation',
         ]
 
+class QueryBugClientForm(forms.Form):
+    bug_client_id=forms.ModelChoiceField(
+        required=True,
+        queryset=bug_client.objects.filter(
+            is_deleted="FALSE",
+        )
+    )
+    search=forms.CharField(
+        max_length=50,
+    )
+
 
 class SearchForm(forms.Form):
     #Just have a simple search field

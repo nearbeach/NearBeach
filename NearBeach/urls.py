@@ -30,7 +30,6 @@ from .views import authentication_views, \
 	requirement_item_views, \
 	requirement_views, \
 	search_views
-
 urlpatterns = [
 	path('', dashboard_views.dashboard, name='dashboard'),
 
@@ -46,10 +45,12 @@ urlpatterns = [
 
 	# Object Data
 	path('object_data/<destination>/<location_id>/add_customer/',object_data.add_customer,name='add_customer'),
+	path('object_data/bug_client_list/',object_data.bug_client_list,name='bug_client_list'),
 	path('object_data/<destination>/<location_id>/bug_list/',object_data.bug_list,name='bug_list'),
 	path('object_data/<destination>/<location_id>/customer_list/',object_data.customer_list,name='customer_list'),
 	path('object_data/<destination>/<location_id>/customer_list_all/',object_data.customer_list_all,name='customer_list_all'),
 	path('object_data/<destination>/<location_id>/<object_lookup>/link_list/',object_data.link_list,name='link_list'),
+	path('object_data/<destination>/<location_id>/query_bug_client/',object_data.query_bug_client,name='query_bug_client'),
 
 	# Requirements
 	path('requirement_information/<int:requirement_id>/',requirement_views.requirement_information,name='requirement_information'),
@@ -66,6 +67,7 @@ urlpatterns = [
 
 	path('search/organisation/data/',search_views.search_organisation_data,name='search_organisation_data'),
 ]
+
 """
 urlpatterns = [
 	
