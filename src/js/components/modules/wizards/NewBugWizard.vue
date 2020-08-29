@@ -78,8 +78,10 @@
                                     </thead>
                                     <tbody>
                                         <tr v-for="bug in bugResults">
-                                            <td>
-                                                <input type="checkbox" v-model="bugModel" v-bind:value="bug['id']">
+                                            <td v-bind:id="`bug_no_${bug['id']}`">
+                                                <a href="javascript:void(0)" v-on:click="submitBug(bug['id'])">
+                                                    Add Bug
+                                                </a>
                                             </td>
                                             <td>
                                                 {{bug['summary']}}
@@ -97,13 +99,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button"
-                            class="btn btn-primary"
-                            v-bind:diabled="bugModel == ''"
-                            v-on:click="submitBugs"
-                    >
-                        Save changes
-                    </button>
                 </div>
             </div>
         </div>
@@ -124,7 +119,6 @@
             return {
                 bugClientModel: '',
                 bugClientList: [],
-                bugModel: [],
                 bugResults: [],
                 searchModel: '',
                 searchOn: false,
@@ -183,12 +177,36 @@
                     console.log("ERROR: ",error);
                 })
             },
-            submitBugs: function() {
-                //GET BUG LIST
+            submitBug: function(bug_id) {
+                //Tell user you are adding the bug
+                var add_bug_element = document.getElementById(`bug_no_${bug_id}`);
+                add_bug_element.innerHTML = "Adding Bug";
 
-                //POST IT
+                //Filter for the bug information out of the bugResults
+                var filted_bug_results = this.bugResults.filter((row) => {
+                    return row['id'] == bug_id;
+                });
 
-                //CLOSE EVERYTHING
+                //Setup data
+                const data_to_send = new FormData();
+                data_to_send.set('bug_client',this.bugClientModel['bug_client_id'])
+                data_to_send.set('bug_id',bug_id);
+                data_to_send.set('bug_description', filted_bug_results[0]['summary']);
+                data_to_send.set('bug_status', filted_bug_results[0]['status']);
+
+                //Send data to the backend
+                axios.post(
+                    `/object_data/${this.destination}/${this.locationId}/add_bug/`,
+                    data_to_send,
+                ).then(response => {
+                    //Send the updated bug list up
+                    this.$emit('append_bug_list',response['data']);
+
+                    //Update the user that the bug has been added
+                    add_bug_element.innerHTML = "Done";
+                }).catch(error => {
+                    console.log("Error: ",error);
+                })
             }
         },
         mounted() {

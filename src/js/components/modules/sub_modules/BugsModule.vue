@@ -56,6 +56,7 @@
         <!-- Modals -->
         <new-bug-wizard v-bind:destination="destination"
                         v-bind:location-id="locationId"
+                        v-on:append_bug_list="appendBugList($event)"
         ></new-bug-wizard>
     </div>
 </template>
@@ -81,13 +82,17 @@
                 var addBugModal = new Modal(document.getElementById('addBugModal'));
                     addBugModal.show();
             },
+            appendBugList: function(data) {
+                //Append the data
+                this.bugList.push(data[0]['fields']);
+            },
             getBugHyperLink: function(bug) {
                 if (bug['bug_client__list_of_bug_client'] == 'Bugzilla') {
                     return `${bug['bug_client__bug_client_url']}/show_bug.cgi?id=${bug['bug_code']}`;
                 }
                 return 'javascript:void(0)';
             },
-            updateBugList: function() {
+            getBugList: function() {
                 axios.post(
                     `/object_data/${this.destination}/${this.locationId}/bug_list/`
                 ).then((response) => {
@@ -104,7 +109,7 @@
             },
         },
         mounted() {
-            this.updateBugList();
+            this.getBugList();
         }
     }
 </script>

@@ -16,6 +16,49 @@ from NearBeach.user_permissions import return_user_permission_level
 import json, urllib3
 
 @login_required(login_url='login',redirect_field_name="")
+def add_bug(request,destination,location_id):
+    if not request.method == "POST":
+        # Needs to be post
+        return HttpResponseBadRequest("Sorry - needs to be done through psot")
+
+    #ADD IN CHECK PERMISSIONS THAT USES THE DESTINATION AND LOCATION!
+
+    # Get data from form
+    form = AddBugForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Save the data
+    submit_bug = bug(
+        bug_client=form.cleaned_data['bug_client'],
+        bug_code=form.cleaned_data['bug_id'],
+        bug_description=form.cleaned_data['bug_description'],
+        bug_status=form.cleaned_data['bug_status'],
+        change_user=request.user,
+    )
+
+    # Connect to the correct destination
+    if destination == "project":
+        submit_bug.project_id = location_id
+    elif destination == "task":
+        submit_bug.task_id = location_id
+    elif destination == "requirement":
+        submit_bug.requirement_id = location_id
+    else:
+        return HttpResponseBadRequest("Sorry - something went wrong")
+
+    # Save
+    submit_bug.save()
+
+    # Get new bug to send back to use
+    bug_results = bug.objects.filter(bug_id=submit_bug.bug_id)
+
+    # Return the JSON data
+    return HttpResponse(serializers.serialize('json',bug_results),content_type='application/json')
+
+
+
+@login_required(login_url='login',redirect_field_name="")
 def add_customer(request,destination,location_id):
     if not request.method == "POST":
         # Needs to be post

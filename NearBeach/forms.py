@@ -4,6 +4,24 @@ from django import forms
 #Import from Models
 from .models import *
 
+class AddBugForm(forms.Form):
+    bug_client = forms.ModelChoiceField(
+        required=True,
+        queryset=bug_client.objects.filter(
+            is_deleted="FALSE",
+        )
+    )
+    bug_id = forms.IntegerField(
+        required=True,
+        min_value=0,
+    )
+    bug_description = forms.CharField(
+        required=True,
+    )
+    bug_status = forms.CharField(
+        required=True,
+    )
+
 class AddCustomerForm(forms.Form):
     customer = forms.ModelChoiceField(
         required=True,
