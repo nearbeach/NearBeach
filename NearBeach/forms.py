@@ -28,6 +28,11 @@ class AddCustomerForm(forms.Form):
         queryset=customer.objects.all(),
     )
 
+class AddNoteForm(forms.Form):
+    note = forms.CharField(
+        required=True,
+    )
+
 class AddRequirementLinkForm(forms.Form):
     # One external field
     project = forms.ModelMultipleChoiceField(

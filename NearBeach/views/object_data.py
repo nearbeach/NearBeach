@@ -94,6 +94,24 @@ def add_customer(request,destination,location_id):
     return HttpResponse(serializers.serialize('json', customer_results), content_type='application/json')
 
 @login_required(login_url='login',redirect_field_name="")
+def add_notes(request,destination,location_id):
+    # Checks that this is done in POST
+    if not request.method == "POST":
+        return HttpResponseBadRequest("Sorry - this needs to be in post")
+
+    # ADD IN PERMISSIONS HERE!
+
+    # Fill out the form
+    form = AddNoteForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # SAVE DATA
+
+    return HttpResponse("SAVED!")
+
+
+@login_required(login_url='login',redirect_field_name="")
 def bug_client_list(request):
     if not request.method == "POST":
         # Needs to be post
