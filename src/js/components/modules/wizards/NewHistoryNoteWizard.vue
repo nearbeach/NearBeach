@@ -36,6 +36,7 @@
                     <button type="button"
                             class="btn btn-primary"
                             v-bind:disabled="newNoteModel == ''"
+                            v-on:click="submitNote"
                     >
                         Submit Note
                     </button>
@@ -70,9 +71,19 @@
             submitNote: function() {
                 //Construct the form data to send
                 const data_to_send = new FormData();
+                data_to_send.set('destination',this.destination);
+                data_to_send.set('location_id',this.locationId);
+                data_to_send.set('note',this.newNoteModel);
 
                 //Add the data to data_to_send
-                // NEED TO CREATE A NOTES TABLE THAT CONNECTS TO ANY OBJECT!
+                axios.post(
+                    `/object_data/${this.destination}/${this.locationId}/add_notes/`,
+                    data_to_send,
+                ).then(response => {
+                    console.log("Response: ",response);
+                }).catch(error => {
+                    console.log("Error: ",error);
+                })
             }
         }
     }

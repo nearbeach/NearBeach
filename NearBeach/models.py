@@ -1796,6 +1796,67 @@ class object_assignment(models.Model):
     class Meta:
         db_table = "object_assignment"
 
+class object_note(models.Model):
+    object_note_id = models.AutoField(primary_key=True)
+    opportunity_id = models.ForeignKey(
+        'opportunity',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    quote_id = models.ForeignKey(
+        'quote',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    requirement_id = models.ForeignKey(
+        'requirement',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    requirement_item_id = models.ForeignKey(
+        'requirement_item',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    project_id = models.ForeignKey(
+        'project',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    task_id = models.ForeignKey(
+        'task',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    request_for_change = models.ForeignKey(
+        'request_for_change',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user'
+    )
+    is_deleted = models.CharField(
+        max_length=5,
+        choices=IS_DELETED_CHOICE,
+        default='FALSE'
+    )
+
+    class Meta:
+        db_table = "object_notes"
 
 
 class opportunity(models.Model):
@@ -2344,7 +2405,7 @@ class project_group(models.Model):
         db_table = "project_group"
 """
 
-
+"""
 class project_history(models.Model):
     project_history_id = models.AutoField(primary_key=True)
     project_id = models.ForeignKey(
@@ -2376,6 +2437,7 @@ class project_history(models.Model):
 
     class Meta:
         db_table = "project_history"
+"""
 
 """
 class project_opportunity(models.Model):
@@ -3522,6 +3584,7 @@ class task_group(models.Model):
         db_table = "task_group"
 """
 
+"""
 class task_history(models.Model):
     task_history_id = models.AutoField(primary_key=True)
     task_id = models.ForeignKey(
@@ -3549,7 +3612,7 @@ class task_history(models.Model):
 
     class Meta:
         db_table = "task_history"
-
+"""
 
 """
 class task_opportunity(models.Model):
