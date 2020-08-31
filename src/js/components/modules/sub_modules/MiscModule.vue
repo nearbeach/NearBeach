@@ -14,7 +14,24 @@
             </div>
         </div>
         <div v-else>
-            ADD IN CODE
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>Note</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="noteHistory in noteHistoryResults">
+                        <td>
+                            {{noteHistory['fields']['object_note'].substr(0, 400)}}
+                            <div class="spacer"></div>
+                            <p class="small-text">
+                                {{noteHistory['fields']['date_created']}}
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <!-- ADD NOTE HISTORY -->
@@ -32,6 +49,7 @@
         <!-- Modals for Notes section -->
         <new-history-note-wizard v-bind:location-id="locationId"
                                  v-bind:destination="destination"
+                                 v-on:update_note_history_results="updateNoteHistoryResults($event)"
         ></new-history-note-wizard>
     </div>
 </template>
@@ -39,6 +57,7 @@
 <script>
     // JavaScript Libraries
     import {Modal} from "bootstrap";
+    const axios = require('axios');
 
     export default {
         name: "MiscModule",
@@ -57,9 +76,22 @@
                 var newNoteModal = new Modal(document.getElementById('newNoteModal'));
                     newNoteModal.show();
             },
-            updateNoteHistoryResults: function() {
-
+            getNoteHistoryResults: function() {
+                axios.post(
+                    `/object_data/${this.destination}/${this.locationId}/note_list/`,
+                ).then(response => {
+                    this.noteHistoryResults = response['data'];
+                }).catch(error => {
+                    console.log("Error: ",error);
+                })
+            },
+            updateNoteHistoryResults: function(data) {
+                //Add the extra data
+                this.noteHistoryResults.push(data);
             }
+        },
+        mounted() {
+            this.getNoteHistoryResults();
         }
 
     }

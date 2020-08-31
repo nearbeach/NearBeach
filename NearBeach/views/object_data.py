@@ -38,14 +38,7 @@ def add_bug(request,destination,location_id):
     )
 
     # Connect to the correct destination
-    if destination == "project":
-        submit_bug.project_id = location_id
-    elif destination == "task":
-        submit_bug.task_id = location_id
-    elif destination == "requirement":
-        submit_bug.requirement_id = location_id
-    else:
-        return HttpResponseBadRequest("Sorry - something went wrong")
+    submit_bug = set_object_from_destination(submit_bug,destination,location_id)
 
     # Save
     submit_bug.save()
@@ -76,15 +69,11 @@ def add_customer(request,destination,location_id):
         change_user=request.user,
         customer=form.cleaned_data['customer']
     )
-    if destination == "project":
-        submit_object_assignment.project_id=project.objects.get(project_id=location_id)
-    elif destination == "requirement":
-        submit_object_assignment.requirement_id=requirement.objects.get(requirement_id=location_id)
-    elif destination == "task":
-        submit_object_assignment.task_id=task.objects.get(task_id=location_id)
-    else:
-        # Oh there was an issue
-        return HttpResponseBadRequest("Sorry - there was an issue getting the bugs")
+    submit_object_assignment = set_object_from_destination(
+        submit_object_assignment,
+        destination,
+        location_id
+    )
 
     # Save the data
     submit_object_assignment.save()
@@ -107,8 +96,21 @@ def add_notes(request,destination,location_id):
         return HttpResponseBadRequest(form.errors)
 
     # SAVE DATA
+    submit_object_note = object_note(
+        change_user = request.user,
+        object_note = form.cleaned_data['note']
+    )
+    submit_object_note = set_object_from_destination(
+        submit_object_note,
+        destination,
+        location_id
+    )
+    submit_object_note.save()
 
-    return HttpResponse("SAVED!")
+    # Get data to send back to user
+    note_resuts = object_note.objects.filter(object_note_id=submit_object_note.object_note_id)
+
+    return HttpResponse(serializers.serialize('json',note_resuts),content_type='application.json')
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -130,25 +132,12 @@ def bug_list(request,destination,location_id):
         return HttpResponseBadRequest("Sorry - needs to be done through post")
 
     # Obtain the data dependent on the destination
-    if destination == "project":
-        bug_list = bug.objects.filter(
-            is_deleted="FALSE",
-            project_id=location_id,
-        )
-    elif destination == "requirement":
-        bug_list = bug.objects.filter(
-            is_deleted="FALSE",
-            requirement_id=location_id,
-        )
-    elif destination ==  "task":
-        bug_list = bug.objects.filter(
-            is_deleted="FALSE",
-            task_id=location_id,
-        )
-    else:
-        # Oh there was an issue
-        return HttpResponseBadRequest("Sorry - there was an issue getting the bugs")
+    bug_list = bug.objects.filter(
+        is_deleted="FALSE",
+    )
+    bug_list = get_object_from_destination(bug_list,destination,location_id)
 
+    # Limit to certain values
     bug_list = bug_list.values(
         'bug_client',
         'bug_client__list_of_bug_client',
@@ -226,32 +215,42 @@ def customer_list_all(request,destination,location_id):
 # Internal function
 def get_customer_list(request,destination,location_id):
     # Get a list of all objects assignments dependant on the destination
-    if destination == "requirement":
-        object_customers = object_assignment.objects.filter(
-            is_deleted="FALSE",
-            customer_id__isnull=False,
-            requirement_id=location_id,
-        )
-    elif destination == "project":
-        object_customers = object_assignment.objects.filter(
-            is_deleted="FALSE",
-            customer_id__isnull=False,
-            project_id=location_id,
-        )
-    elif destination == "task":
-        object_customers = object_assignment.objects.filter(
-            is_deleted="FALSE",
-            customer_id__isnull=False,
-            task_id=location_id,
-        )
-    else:
-        # There is no destination that could match this. Send user to errors
-        return HttpResponseBadRequest("Sorry - there was an error getting the Customer List")
+    object_customers = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        customer_id__isnull=False,
+    )
+    object_customers = get_object_from_destination(object_customers,destination,location_id)
 
     return customer.objects.filter(
         is_deleted="FALSE",
         customer_id__in=object_customers.values('customer_id')
     )
+
+# Internal function
+def get_object_from_destination(input_object,destination,location_id):
+    """
+    To stop the repeat code of finding specific objects using destination and location_id - we will import
+    the object filter for it here - before returning it.
+    :param object: The object we want to filter
+    :param destination: The destination we are interested in
+    :param location_id: The location_id
+    :return:
+    """
+    if destination == "requirement":
+        input_object = input_object.filter(
+            requirement_id=location_id,
+        )
+    elif destination == "project":
+        input_object = input_object.filter(
+            project_id=location_id,
+        )
+    elif destination == "task":
+        input_object = input_object.filter(
+            task_id=location_id,
+        )
+
+    # Just send back the array
+    return input_object
 
 
 
@@ -289,6 +288,26 @@ def link_list(request,destination,location_id,object_lookup):
 
 
 @login_required(login_url='login',redirect_field_name="")
+def note_list(request,destination,location_id):
+    # Check to make sure method is POST
+    if not request.method == "POST":
+        return HttpResponseBadRequest("Sorry - you need to do this as a POST")
+
+    # Everyone should have access to the notes section.
+
+    # Get the notes dependent on the user destination and location
+    note_results = object_note.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    # Filter by destination and location_id
+    note_results = get_object_from_destination(note_results,destination,location_id)
+
+    # Return JSON results
+    return HttpResponse(serializers.serialize('json',note_results),content_type='application/json')
+
+
+@login_required(login_url='login',redirect_field_name="")
 def query_bug_client(request,destination,location_id):
     # Check to make sure method is POST
     if not request.method == "POST":
@@ -310,21 +329,7 @@ def query_bug_client(request,destination,location_id):
         is_deleted="FALSE",
         bug_client_id=bug_client_instance.bug_client_id,
     )
-
-    if destination == "project":
-        existing_bugs = existing_bugs.filter(
-            project_id=location_id,
-        )
-    elif destination == "task":
-        existing_bugs = existing_bugs.filter(
-            task_id=location_id,
-        )
-    elif destination == "requirement":
-        existing_bugs = existing_bugs.filter(
-            requirement_id=location_id,
-        )
-    else:
-        return HttpResponseBadRequest("Sorry - it looks like that destination does not exist.")
+    existing_bugs = get_object_from_destination(existing_bugs,destination,location_id)
 
     # The values in the URL
     f_bugs = ''
@@ -369,3 +374,23 @@ def query_bug_client(request,destination,location_id):
 
     # Send back the JSON data
     return JsonResponse(json_data['bugs'], safe=False)
+
+
+# Internal function
+def set_object_from_destination(input_object,destination,location_id):
+    """
+    This function is used to set data against an object using the destination and location data.
+    :param input_object: The input object that we are setting data for
+    :param destination: The destination we are interested in
+    :param location_id: The location we are interested in
+    :return:
+    """
+    if destination == "project":
+        input_object.project = project.objects.get(project_id=location_id)
+    elif destination == "task":
+        input_object.task = task.objects.get(task_id=location_id)
+    elif destination == "requirement":
+        input_object.requirement = requirement.objects.get(requirement_id=location_id)
+
+    # Return what we have
+    return input_object

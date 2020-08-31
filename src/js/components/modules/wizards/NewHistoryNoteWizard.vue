@@ -13,7 +13,12 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h2><i data-feather="git-branch"></i> New Note</h2>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                            id="newNoteCloseButton"
+                    >
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -80,7 +85,11 @@
                     `/object_data/${this.destination}/${this.locationId}/add_notes/`,
                     data_to_send,
                 ).then(response => {
-                    console.log("Response: ",response);
+                    //Submit the note up
+                    this.$emit('update_note_history_results',response['data']);
+
+                    //Close the modal
+                    document.getElementById("newNoteCloseButton").click();
                 }).catch(error => {
                     console.log("Error: ",error);
                 })

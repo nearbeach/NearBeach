@@ -1798,6 +1798,10 @@ class object_assignment(models.Model):
 
 class object_note(models.Model):
     object_note_id = models.AutoField(primary_key=True)
+    object_note = models.TextField(
+        blank=False,
+        null=False,
+    )
     opportunity_id = models.ForeignKey(
         'opportunity',
         on_delete=models.CASCADE,
