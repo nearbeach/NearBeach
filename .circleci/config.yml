@@ -16,7 +16,7 @@ jobs:
           name: Install pipenv and coverage
           command: |
             sudo pip3 install --upgrade pip
-            sudo pip3 install pipenv coverage
+            sudo pip3 install pipenv coverage urllib3
             sudo pip3 install -r ./requirements.txt
             pipenv install
       - run:
