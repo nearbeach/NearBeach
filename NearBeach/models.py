@@ -137,7 +137,7 @@ WEBSITE_SOURCE=(
 # List of tables - in alphabetical order
 class about_user(models.Model):
     about_user_id=models.AutoField(primary_key=True)
-    about_user_text=HTMLField()
+    about_user_text=models.TextField()
     user=models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -189,7 +189,7 @@ class contact_history(models.Model):
         on_delete=models.CASCADE,
     )
     contact_date = models.DateTimeField()
-    contact_history = HTMLField('contact_history')
+    contact_history = models.TextField('contact_history')
     document_key = models.ForeignKey(
         'document',
         on_delete=models.CASCADE,
@@ -383,7 +383,7 @@ class change_task(models.Model):
     change_task_title=models.CharField(
         max_length=255,
     )
-    change_task_description=HTMLField(
+    change_task_description=models.TextField(
         'change_task_description',
     )
     change_task_start_date=models.DateTimeField()
@@ -756,7 +756,7 @@ class email_contact(models.Model):
 class email_content(models.Model):
     email_content_id = models.AutoField(primary_key=True)
     email_subject = models.CharField(max_length=255)
-    email_content = HTMLField('email_content')
+    email_content = models.TextField('email_content')
     is_private = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -1154,11 +1154,11 @@ class kudos(models.Model):
         choices=RATING_SCORE,
         default=0,
     )
-    improvement_note=HTMLField(
+    improvement_note=models.TextField(
         blank=True,
         null=True,
     )
-    liked_note=HTMLField(
+    liked_note=models.TextField(
         blank=True,
         null=True,
     )
@@ -1865,7 +1865,7 @@ class object_note(models.Model):
 class opportunity(models.Model):
     opportunity_id = models.AutoField(primary_key=True)
     opportunity_name = models.CharField(max_length=255)
-    opportunity_description = HTMLField('oppertunity_description')
+    opportunity_description = models.TextField('oppertunity_description')
     currency = models.ForeignKey(
         'list_of_currency',
         on_delete=models.CASCADE,
@@ -2301,7 +2301,7 @@ class product_and_service(models.Model):
 class project(models.Model):
     project_id = models.AutoField(primary_key=True)
     project_name = models.CharField(max_length=255)
-    project_description = HTMLField('project_description')
+    project_description = models.TextField('project_description')
     organisation = models.ForeignKey(
         'organisation',
         on_delete=models.CASCADE,
@@ -2421,7 +2421,7 @@ class project_history(models.Model):
         null=True
     )
     user_infomation = models.CharField(max_length=255)
-    project_history = HTMLField('project_history')
+    project_history = models.TextField('project_history')
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
@@ -2565,11 +2565,11 @@ class quote(models.Model):
         default='DRAFT',
     )
     """
-    quote_terms = HTMLField(
+    quote_terms = models.TextField(
         null=True,
         blank=True,
     )
-    customer_notes = HTMLField(
+    customer_notes = models.TextField(
         null=True,
         blank=True,
     )
@@ -2832,12 +2832,12 @@ class quote_template(models.Model):
         null=True,
         blank=True,
     )
-    header=HTMLField(
+    header=models.TextField(
         null=True,
         blank=True,
     )
     #To clarify - this is YOUR company
-    company_letter_head=HTMLField(
+    company_letter_head=models.TextField(
         null=True,
         blank=True,
     )
@@ -2852,18 +2852,18 @@ class quote_template(models.Model):
         blank=True,
     )
     #The Organisation's details you are sending the quote to
-    organisation_details=HTMLField(
+    organisation_details=models.TextField(
         null=True,
         blank=True,
     )
     #For project/service lines - it will store the order of fields in as a variable :)
     product_line=models.TextField()
     service_line=models.TextField()
-    payment_method=HTMLField(
+    payment_method=models.TextField(
         null=True,
         blank=True,
     )
-    footer=HTMLField(
+    footer=models.TextField(
         null=True,
         blank=True,
     )
@@ -2922,7 +2922,7 @@ class request_for_change(models.Model):
     rfc_title=models.CharField(
         max_length=255,
     )
-    rfc_summary=HTMLField(
+    rfc_summary=models.TextField(
         'rfc_summary'
     )
     rfc_type=models.IntegerField(
@@ -2957,16 +2957,16 @@ class request_for_change(models.Model):
         choices=RFC_IMPACT,
         default=1,
     )
-    rfc_risk_and_impact_analysis=HTMLField(
+    rfc_risk_and_impact_analysis=models.TextField(
         'rfc_risk_and_impact_analysis',
     )
-    rfc_implementation_plan=HTMLField(
+    rfc_implementation_plan=models.TextField(
         'rfc_implementation_plan',
     )
-    rfc_backout_plan=HTMLField(
+    rfc_backout_plan=models.TextField(
         'rfc_backout_plan',
     )
-    rfc_test_plan=HTMLField(
+    rfc_test_plan=models.TextField(
         'rfc_test_plan',
     )
     date_created = models.DateTimeField(auto_now_add=True)
@@ -3099,7 +3099,7 @@ class requirement(models.Model):
     requirement_title = models.CharField(
         max_length=255,
     )
-    requirement_scope = HTMLField(
+    requirement_scope = models.TextField(
         null=True,
         blank=True,
     )
@@ -3453,7 +3453,7 @@ class tag_assignment(models.Model):
 class task(models.Model):
     task_id = models.AutoField(primary_key=True)
     task_short_description = models.CharField(max_length=255)
-    task_long_description = HTMLField()
+    task_long_description = models.TextField()
     organisation = models.ForeignKey(
         'organisation',
         on_delete=models.CASCADE,
