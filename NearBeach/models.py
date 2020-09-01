@@ -3,7 +3,6 @@ from django.db import models, connection
 from .private_media import *
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
-from tinymce import HTMLField
 import uuid
 
 # ENUM choices
