@@ -29,10 +29,10 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'NearBeach.apps.NearBeachConfig',
-    'django.contrib.humanize',
-    'tinymce',
-    'django_select2',
-    'phonenumber_field',
+    # 'django.contrib.humanize',
+    # 'tinymce',
+    # 'django_select2',
+    # 'phonenumber_field',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
