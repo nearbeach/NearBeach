@@ -115,10 +115,25 @@
     }
   }
 
+  .group-and-user-table {
+    max-width: 350px;
+  }
 
+  .user-table-module {
+    max-width: 450px;
 
+    .user-card-email {
+      font-weight: lighter;
+      colour: #737373;
+      font-size: 15px;
+      margin-bottom: 2px;
+    }
 
-
+    .default-user-profile {
+      width: 100px;
+      border-radius: 50%;
+    }
+  }
 
 
 }

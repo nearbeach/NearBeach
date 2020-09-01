@@ -84,7 +84,7 @@
                 axios.post(
                     `/object_data/${this.destination}/${this.locationId}/add_notes/`,
                     data_to_send,
-                ).then(response => {
+                ).then((response) => {
                     //Submit the note up
                     this.$emit('update_note_history_results',response['data']);
 

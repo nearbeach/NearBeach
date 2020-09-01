@@ -105,6 +105,7 @@ def add_notes(request,destination,location_id):
         destination,
         location_id
     )
+
     submit_object_note.save()
 
     # Get data to send back to user
@@ -253,6 +254,30 @@ def get_object_from_destination(input_object,destination,location_id):
     return input_object
 
 
+@login_required(login_url='login',redirect_field_name="")
+def group_list(request,destination,location_id):
+    if not request.method == "POST":
+        # Needs to be post
+        return HttpResponseBadRequest("Sorry - needs to be done through post")
+
+    # Get the data dependant on the object lookup
+    object_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+    )
+    object_results = get_object_from_destination(
+        object_results,
+        destination,
+        location_id
+    )
+
+    # Now get the groups
+    group_results = group.objects.filter(
+        is_deleted="FALSE",
+        group_id__in=object_results.values('group_id')
+    )
+
+    # Return the data
+    return HttpResponse(serializers.serialize('json',group_results),content_type='application/json')
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -394,3 +419,25 @@ def set_object_from_destination(input_object,destination,location_id):
 
     # Return what we have
     return input_object
+
+@login_required(login_url='login',redirect_field_name="")
+def user_list(request,destination,location_id):
+    # Make sure it is in post
+    if not request.method == "POST":
+        return HttpResponseBadRequest("Sorry - needs to be in POST")
+
+    # Get the data we want
+    object_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        assigned_user_id__isnull=False,
+    )
+    object_results = get_object_from_destination(
+        object_results,
+        destination,
+        location_id
+    )
+
+    # Get the user details
+    user_results = User.objects.filter(id__in=object_results.values('assigned_user_id'))
+
+    return HttpResponse(serializers.serialize('json',user_results),content_type='application/json')

@@ -173,13 +173,13 @@ when a user applies it to a customer. :)
 
 class contact_history(models.Model):
     contact_history_id = models.AutoField(primary_key=True)
-    organisation_id = models.ForeignKey(
+    organisation = models.ForeignKey(
         'organisation',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    customer_id = models.ForeignKey(
+    customer = models.ForeignKey(
         'customer',
         on_delete=models.CASCADE,
         blank=True,
@@ -197,7 +197,7 @@ class contact_history(models.Model):
         null=True,
         blank=True,
     )
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         on_delete=models.CASCADE
     )
@@ -295,7 +295,7 @@ class bug_client(models.Model):
 
 class campus(models.Model):
     campus_id = models.AutoField(primary_key=True)
-    organisation_id = models.ForeignKey(
+    organisation = models.ForeignKey(
         'organisation',
         on_delete=models.CASCADE,
         blank=True,
@@ -329,7 +329,7 @@ class campus(models.Model):
         null=True
     )
     campus_suburb = models.CharField(max_length=50)
-    campus_region_id = models.ForeignKey(
+    campus_region = models.ForeignKey(
         'list_of_country_region',
         on_delete=models.CASCADE,
     )
@@ -338,7 +338,7 @@ class campus(models.Model):
         null=True,
         blank=True,
     )
-    campus_country_id = models.ForeignKey(
+    campus_country = models.ForeignKey(
         'list_of_country',
         on_delete=models.CASCADE,
     )
@@ -435,13 +435,13 @@ class change_task(models.Model):
 
 class cost(models.Model):
     cost_id = models.AutoField(primary_key=True)
-    project_id = models.ForeignKey(
+    project = models.ForeignKey(
         'project',
         on_delete=models.CASCADE,
         blank=True,
         null=True
     )
-    task_id = models.ForeignKey(
+    task = models.ForeignKey(
         'task',
         on_delete=models.CASCADE,
         blank=True,
@@ -486,7 +486,7 @@ class customer(models.Model):
         null=True,
         upload_to='profile_pictures'
     )
-    organisation_id = models.ForeignKey(
+    organisation = models.ForeignKey(
         'organisation',
         on_delete=models.CASCADE,
         null=True,
@@ -520,11 +520,11 @@ class customer(models.Model):
 
 class customer_campus(models.Model):
     customer_campus_id = models.AutoField(primary_key=True)
-    customer_id = models.ForeignKey(
+    customer = models.ForeignKey(
         'customer',
         on_delete=models.CASCADE,
     )
-    campus_id = models.ForeignKey(
+    campus = models.ForeignKey(
         'campus',
         on_delete=models.CASCADE,
     )
@@ -596,37 +596,37 @@ class document_permission(models.Model):
         'document',
         on_delete=models.CASCADE,
     )
-    project_id = models.ForeignKey(
+    project = models.ForeignKey(
         'project',
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
-    task_id = models.ForeignKey(
+    task = models.ForeignKey(
         'task',
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
-    organisation_id = models.ForeignKey(
+    organisation = models.ForeignKey(
         'organisation',
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
-    customer_id = models.ForeignKey(
+    customer = models.ForeignKey(
         'customer',
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
-    opportunity_id = models.ForeignKey(
+    opportunity = models.ForeignKey(
         'opportunity',
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
-    whiteboard_id = models.ForeignKey(
+    whiteboard = models.ForeignKey(
         'whiteboard',
         blank=True,
         null=True,
@@ -650,13 +650,13 @@ class document_permission(models.Model):
         null=True,
         on_delete=models.CASCADE,
     )
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         null=True,
         blank=True
     )
-    folder_id = models.ForeignKey(
+    folder = models.ForeignKey(
         'folder',
         on_delete=models.CASCADE,
         null=True,
@@ -778,25 +778,25 @@ class email_content(models.Model):
 
 class folder(models.Model):
     folder_id = models.AutoField(primary_key=True)
-    project_id = models.ForeignKey(
+    project = models.ForeignKey(
         'project',
         on_delete=models.CASCADE,
         blank=True,
         null=True
     )
-    task_id = models.ForeignKey(
+    task = models.ForeignKey(
         'task',
         on_delete=models.CASCADE,
         blank=True,
         null=True
     )
-    customer_id=models.ForeignKey(
+    customer=models.ForeignKey(
         'customer',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    organisation_id=models.ForeignKey(
+    organisation=models.ForeignKey(
         'organisation',
         on_delete=models.CASCADE,
         blank=True,
@@ -821,7 +821,7 @@ class folder(models.Model):
         null=True,
     )
     folder_description = models.CharField(max_length=255)
-    parent_folder_id = models.ForeignKey(
+    parent_folder = models.ForeignKey(
         'self',
         blank=True,
         null=True,
@@ -1089,7 +1089,7 @@ class kanban_comment(models.Model):
         null=True,
         blank=True,
     )
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         null=True
@@ -1344,7 +1344,7 @@ class list_of_country(models.Model):
 
 class list_of_country_region(models.Model):
     region_id = models.AutoField(primary_key=True)
-    country_id = models.ForeignKey(
+    country = models.ForeignKey(
         'list_of_country',
         on_delete=models.CASCADE,
     )
@@ -1413,7 +1413,7 @@ class list_of_opportunity_stage(models.Model):
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         null=True,
@@ -1712,43 +1712,43 @@ class object_assignment(models.Model):
         blank=True,
         null=True,
     )
-    opportunity_id=models.ForeignKey(
+    opportunity=models.ForeignKey(
         'opportunity',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    quote_id = models.ForeignKey(
+    quote = models.ForeignKey(
         'quote',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    requirement_id = models.ForeignKey(
+    requirement = models.ForeignKey(
         'requirement',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    requirement_item_id = models.ForeignKey(
+    requirement_item = models.ForeignKey(
         'requirement_item',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    project_id = models.ForeignKey(
+    project = models.ForeignKey(
         'project',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    task_id = models.ForeignKey(
+    task = models.ForeignKey(
         'task',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    kanban_board_id = models.ForeignKey(
+    kanban_board = models.ForeignKey(
         'kanban_board',
         on_delete=models.CASCADE,
         blank=True,
@@ -1802,37 +1802,37 @@ class object_note(models.Model):
         blank=False,
         null=False,
     )
-    opportunity_id = models.ForeignKey(
+    opportunity = models.ForeignKey(
         'opportunity',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    quote_id = models.ForeignKey(
+    quote = models.ForeignKey(
         'quote',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    requirement_id = models.ForeignKey(
+    requirement = models.ForeignKey(
         'requirement',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    requirement_item_id = models.ForeignKey(
+    requirement_item = models.ForeignKey(
         'requirement_item',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    project_id = models.ForeignKey(
+    project = models.ForeignKey(
         'project',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    task_id = models.ForeignKey(
+    task = models.ForeignKey(
         'task',
         on_delete=models.CASCADE,
         blank=True,
@@ -1867,7 +1867,7 @@ class opportunity(models.Model):
     opportunity_id = models.AutoField(primary_key=True)
     opportunity_name = models.CharField(max_length=255)
     opportunity_description = HTMLField('oppertunity_description')
-    currency_id = models.ForeignKey(
+    currency = models.ForeignKey(
         'list_of_currency',
         on_delete=models.CASCADE,
     )
@@ -1875,17 +1875,17 @@ class opportunity(models.Model):
         max_digits=12,
         decimal_places=2
     )  # Turn into a number widget
-    amount_type_id = models.ForeignKey(
+    amount_type = models.ForeignKey(
         'list_of_amount_type',
         on_delete=models.CASCADE
     )
     opportunity_expected_close_date = models.DateTimeField()
-    opportunity_stage_id = models.ForeignKey(
+    opportunity_stage = models.ForeignKey(
         'list_of_opportunity_stage',
         on_delete=models.CASCADE
     )
     opportunity_success_probability = models.IntegerField()  # Between 0% and 100%
-    lead_source_id = models.ForeignKey(
+    lead_source = models.ForeignKey(
         'list_of_lead_source',
         on_delete=models.CASCADE
     )
@@ -2303,7 +2303,7 @@ class project(models.Model):
     project_id = models.AutoField(primary_key=True)
     project_name = models.CharField(max_length=255)
     project_description = HTMLField('project_description')
-    organisation_id = models.ForeignKey(
+    organisation = models.ForeignKey(
         'organisation',
         on_delete=models.CASCADE,
         blank=True,
@@ -2352,11 +2352,11 @@ class project(models.Model):
 
 class project_customer(models.Model):
     project_customer_id = models.AutoField(primary_key=True)
-    project_id = models.ForeignKey(
+    project = models.ForeignKey(
         'project',
         on_delete=models.CASCADE,
     )
-    customer_id = models.ForeignKey(
+    customer = models.ForeignKey(
         'customer',
         on_delete=models.CASCADE,
     )
@@ -2544,7 +2544,7 @@ class quote(models.Model):
     )
     quote_title = models.CharField(max_length=255)
     quote_valid_till = models.DateTimeField()
-    quote_stage_id = models.ForeignKey(
+    quote_stage = models.ForeignKey(
         'list_of_quote_stage',
         on_delete=models.CASCADE,
     )
@@ -2574,35 +2574,35 @@ class quote(models.Model):
         null=True,
         blank=True,
     )
-    project_id = models.ForeignKey(
+    project = models.ForeignKey(
         'project',
         on_delete=models.CASCADE,
         db_column='project_id',
         null=True,
         blank=True,
     )
-    task_id = models.ForeignKey(
+    task = models.ForeignKey(
         'task',
         on_delete=models.CASCADE,
         db_column='task_id',
         null=True,
         blank=True,
     )
-    opportunity_id = models.ForeignKey(
+    opportunity = models.ForeignKey(
         'opportunity',
         on_delete=models.CASCADE,
         db_column='opportunity_id',
         null=True,
         blank=True,
     )
-    customer_id = models.ForeignKey(
+    customer = models.ForeignKey(
         'customer',
         on_delete=models.CASCADE,
         db_column='customer_id',
         null=True,
         blank=True,
     )
-    organisation_id = models.ForeignKey(
+    organisation = models.ForeignKey(
         'organisation',
         on_delete=models.CASCADE,
         db_column='organisation_id',
@@ -2799,11 +2799,11 @@ class quote_product_and_service(models.Model):
 
 class quote_responsible_customer(models.Model):
     quote_responsible_customer_id = models.AutoField(primary_key=True)
-    quote_id = models.ForeignKey(
+    quote = models.ForeignKey(
         'quote',
         on_delete=models.CASCADE,
     )
-    customer_id = models.ForeignKey(
+    customer = models.ForeignKey(
         'customer',
         on_delete=models.CASCADE,
     )
@@ -2940,7 +2940,7 @@ class request_for_change(models.Model):
     rfc_status=models.IntegerField(
         choices=RFC_STATUS,
     )
-    rfc_lead=models.ForeignKey(
+    rfc_lead = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='rfc_lead',
@@ -2997,11 +2997,11 @@ class request_for_change(models.Model):
 
 class request_for_change_group_approval(models.Model):
     rfc_group_approval_id=models.AutoField(primary_key=True)
-    rfc_id=models.ForeignKey(
+    rfc=models.ForeignKey(
         'request_for_change',
         on_delete=models.CASCADE,
     )
-    group_id=models.ForeignKey(
+    group=models.ForeignKey(
         'group',
         on_delete=models.CASCADE,
     )
@@ -3177,7 +3177,7 @@ class requirement_customer(models.Model):
 
 class requirement_item(models.Model):
     requirement_item_id = models.AutoField(primary_key=True)
-    requirement_id = models.ForeignKey(
+    requirement = models.ForeignKey(
         'requirement',
         on_delete=models.CASCADE,
     )
@@ -3405,29 +3405,29 @@ class tag(models.Model):
 
 class tag_assignment(models.Model):
     tag_assignment_id = models.AutoField(primary_key=True)
-    tag_id = models.ForeignKey(
+    tag = models.ForeignKey(
         tag,
         on_delete=models.CASCADE,
     )
-    project_id=models.ForeignKey(
+    project=models.ForeignKey(
         project,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
-    task_id = models.ForeignKey(
+    task = models.ForeignKey(
         'task',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
-    opportunity_id = models.ForeignKey(
+    opportunity = models.ForeignKey(
         opportunity,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
-    requirement_id = models.ForeignKey(
+    requirement = models.ForeignKey(
         requirement,
         on_delete=models.CASCADE,
         null=True,
@@ -3455,7 +3455,7 @@ class task(models.Model):
     task_id = models.AutoField(primary_key=True)
     task_short_description = models.CharField(max_length=255)
     task_long_description = HTMLField()
-    organisation_id = models.ForeignKey(
+    organisation = models.ForeignKey(
         'organisation',
         on_delete=models.CASCADE,
         null=True,
@@ -3503,7 +3503,7 @@ class task(models.Model):
 
 class task_action(models.Model):
     task_action_id = models.AutoField(primary_key=True)
-    task_id = models.ForeignKey(
+    task = models.ForeignKey(
         'task',
         on_delete=models.CASCADE,
     )
@@ -3531,11 +3531,11 @@ class task_action(models.Model):
 
 class task_customer(models.Model):
     task_customer_id = models.AutoField(primary_key=True)
-    task_id = models.ForeignKey(
+    task = models.ForeignKey(
         'task',
         on_delete=models.CASCADE,
     )
-    customer_id = models.ForeignKey(
+    customer = models.ForeignKey(
         'customer',
         on_delete=models.CASCADE,
     )
@@ -3656,7 +3656,7 @@ class timesheet(models.Model):
     timesheet_date = models.DateField()
     timesheet_start_time = models.TimeField()
     timesheet_end_time = models.TimeField()
-    project=models.ForeignKey(
+    project = models.ForeignKey(
         'project',
         on_delete=models.CASCADE,
         null=True,

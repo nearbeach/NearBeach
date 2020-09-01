@@ -87,7 +87,7 @@
             },
             updateNoteHistoryResults: function(data) {
                 //Add the extra data
-                this.noteHistoryResults.push(data);
+                this.noteHistoryResults.push(data[0]);
             }
         },
         mounted() {
