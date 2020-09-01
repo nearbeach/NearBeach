@@ -16,7 +16,7 @@ setuptools.setup(
     install_requires=[
 	'django',
 	'simplejson',
-	# 'pillow',
+	'pillow',
 	# 'geolocation-python',
 	# 'django-tinymce4-lite',
 	# 'weasyprint',
