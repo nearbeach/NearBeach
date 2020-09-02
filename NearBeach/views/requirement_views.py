@@ -40,24 +40,24 @@ def add_requirement_link(request,requirement_id):
     # Get the project list from the form
     for row in request.POST.getlist("project"):
         submit_object_assignment = object_assignment(
-            requirement_id=requirement_instance,
-            project_id=project.objects.get(project_id=row),
+            requirement=requirement_instance,
+            project=project.objects.get(project_id=row),
             change_user=request.user,
         )
         submit_object_assignment.save()
 
     for row in request.POST.getlist("task"):
         submit_object_assignment = object_assignment(
-            requirement_id=requirement_instance,
-            task_id=task.objects.get(task_id=row),
+            requirement=requirement_instance,
+            task=task.objects.get(task_id=row),
             change_user=request.user,
         )
         submit_object_assignment.save()
 
     for row in request.POST.getlist("opportunity"):
         submit_object_assignment = object_assignment(
-            requirement_id=requirement_instance,
-            opportunity_id=opportunity.objects.get(opportunity_id=row),
+            requirement=requirement_instance,
+            opportunity=opportunity.objects.get(opportunity_id=row),
             change_user=request.user,
         )
         submit_object_assignment.save()
@@ -331,7 +331,7 @@ def new_requirement_save(request, location_id="", destination=""):
         # Save the group instance against object assignment
         submit_object_assignment = object_assignment(
             group_id=group_instance,
-            requirement_id=submit_requirement,
+            requirement=submit_requirement,
             change_user=request.user,
         )
 

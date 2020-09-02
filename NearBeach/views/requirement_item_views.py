@@ -55,7 +55,7 @@ def new_requirement_item(request,requirement_id):
 
     # Save the data
     submit_requirement_item = requirement_item(
-        requirement_id=requirement.objects.get(requirement_id=requirement_id),
+        requirement=requirement.objects.get(requirement_id=requirement_id),
         requirement_item_title=form.cleaned_data['requirement_item_title'],
         requirement_item_scope=form.cleaned_data['requirement_item_scope'],
         requirement_item_status=form.cleaned_data['requirement_item_status'],
@@ -66,9 +66,6 @@ def new_requirement_item(request,requirement_id):
 
     # Actuall return all the new requirement_item results to feed upstream
     return get_requirement_items(request,requirement_id)
-
-def new_requirement_item_save(request,requirement_id):
-    return HttpResponse("Hello World... need to create this page")
 
 def requirement_item_information(request,requirement_item_id):
     # TO DO - THIS ACTUAL PROGRAM!

@@ -218,13 +218,13 @@ def get_customer_list(request,destination,location_id):
     # Get a list of all objects assignments dependant on the destination
     object_customers = object_assignment.objects.filter(
         is_deleted="FALSE",
-        customer_id__isnull=False,
+        customer__isnull=False,
     )
     object_customers = get_object_from_destination(object_customers,destination,location_id)
 
     return customer.objects.filter(
         is_deleted="FALSE",
-        customer_id__in=object_customers.values('customer_id')
+        customer__in=object_customers.values('customer_id')
     )
 
 # Internal function
