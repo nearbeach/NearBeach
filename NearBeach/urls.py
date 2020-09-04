@@ -52,10 +52,12 @@ urlpatterns = [
 	path('object_data/<destination>/<location_id>/customer_list/',object_data.customer_list,name='customer_list'),
 	path('object_data/<destination>/<location_id>/customer_list_all/',object_data.customer_list_all,name='customer_list_all'),
 	path('object_data/<destination>/<location_id>/group_list/',object_data.group_list,name='group_list'),
+	path('object_data/<destination>/<location_id>/group_list_all/',object_data.group_list_all,name='group_list_all'),
 	path('object_data/<destination>/<location_id>/<object_lookup>/link_list/',object_data.link_list,name='link_list'),
 	path('object_data/<destination>/<location_id>/note_list/',object_data.note_list,name='note_list'),
 	path('object_data/<destination>/<location_id>/query_bug_client/',object_data.query_bug_client,name='query_bug_client'),
 	path('object_data/<destination>/<location_id>/user_list/',object_data.user_list,name='user_list'),
+	path('object_data/<destination>/<location_id>/user_list_all/',object_data.user_list_all,name='user_list_all'),
 
 	# Requirements
 	path('requirement_information/<int:requirement_id>/',requirement_views.requirement_information,name='requirement_information'),

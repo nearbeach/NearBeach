@@ -113,7 +113,7 @@
     const axios = require('axios');
 
     export default {
-        name: "NewBugWizard",
+        name: "AddBugWizard",
         props: [
             'destination',
             'locationId',

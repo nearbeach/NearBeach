@@ -47,11 +47,11 @@
         </div>
 
         <!-- MODALS -->
-        <new-customer-wizard v-bind:location-id="locationId"
+        <add-customer-wizard v-bind:location-id="locationId"
                              v-bind:destination="destination"
                              v-bind:exclude-customers="customerResults"
                              v-on:update_customer_results="updateCustomerResults($event)"
-        ></new-customer-wizard>
+        ></add-customer-wizard>
     </div>
 </template>
 

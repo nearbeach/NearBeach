@@ -54,10 +54,10 @@
         </div>
 
         <!-- Modals -->
-        <new-bug-wizard v-bind:destination="destination"
+        <add-bug-wizard v-bind:destination="destination"
                         v-bind:location-id="locationId"
                         v-on:append_bug_list="appendBugList($event)"
-        ></new-bug-wizard>
+        ></add-bug-wizard>
     </div>
 </template>
 

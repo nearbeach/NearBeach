@@ -78,7 +78,7 @@ def add_customer(request,destination,location_id):
     # Save the data
     submit_object_assignment.save()
 
-    customer_results = get_customer_list(request, destination, location_id)
+    customer_results = get_customer_list(destination, location_id)
 
     return HttpResponse(serializers.serialize('json', customer_results), content_type='application/json')
 
@@ -170,7 +170,7 @@ def customer_list(request,destination,location_id):
         # Needs to be post
         return HttpResponseBadRequest("Sorry - needs to be done through post")
 
-    customer_results = get_customer_list(request, destination, location_id)
+    customer_results = get_customer_list(destination, location_id)
 
     return HttpResponse(serializers.serialize('json', customer_results), content_type='application/json')
 
@@ -214,17 +214,17 @@ def customer_list_all(request,destination,location_id):
     return HttpResponse(serializers.serialize('json',customer_results), content_type='application/json')
 
 # Internal function
-def get_customer_list(request,destination,location_id):
+def get_customer_list(destination,location_id):
     # Get a list of all objects assignments dependant on the destination
     object_customers = object_assignment.objects.filter(
         is_deleted="FALSE",
-        customer__isnull=False,
+        customer_id__isnull=False,
     )
     object_customers = get_object_from_destination(object_customers,destination,location_id)
 
     return customer.objects.filter(
         is_deleted="FALSE",
-        customer__in=object_customers.values('customer_id')
+        customer_id__in=object_customers.values('customer_id')
     )
 
 # Internal function
@@ -279,6 +279,29 @@ def group_list(request,destination,location_id):
     # Return the data
     return HttpResponse(serializers.serialize('json',group_results),content_type='application/json')
 
+
+@login_required(login_url='login',redirect_field_name="")
+def group_list_all(request,destination,location_id):
+    if not request.method == "POST":
+        return HttpResponseBadRequest("Sorry - this request needs to be done through post")
+
+    # ADD CHECKS FOR USER PERMISSIONS!
+
+    # Obtain data
+    group_existing_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        group_id__isnull=False,
+    )
+    group_existing_results = get_object_from_destination(group_existing_results,destination,location_id)
+
+    group_results = group.objects.filter(
+        is_deleted="FALSE",
+    ).exclude(
+        group_id__in=group_existing_results.values('group_id')
+    )
+
+    # Return data as json
+    return HttpResponse(serializers.serialize('json',group_results),content_type='application/json')
 
 @login_required(login_url='login',redirect_field_name="")
 def link_list(request,destination,location_id,object_lookup):
@@ -441,3 +464,29 @@ def user_list(request,destination,location_id):
     user_results = User.objects.filter(id__in=object_results.values('assigned_user_id'))
 
     return HttpResponse(serializers.serialize('json',user_results),content_type='application/json')
+
+
+@login_required(login_url='login',redirect_field_name="")
+def user_list_all(request,destination,location):
+    # Make sure it is in post
+    if not request.method == "POST":
+        return HttpResponseBadRequest("Sorry - needs to be in POST")
+
+    # ADD IN PERMISSIONS LATER
+
+    # Get exclusion list first
+    user_exclude = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        assigned_user__isnull=False,
+    )
+    user_exclude = get_object_from_destination(user_exclude, destination, location)
+
+    # Limit to these groups
+    group_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        group_id__isnull=False,
+    )
+    group_results = get_object_from_destination(group_results, destination, location)
+
+    # Extract the users connected to the list
+    return HttpResponse("WILL DO THIS TOMORROW")

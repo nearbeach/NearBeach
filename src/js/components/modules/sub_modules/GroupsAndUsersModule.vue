@@ -76,6 +76,19 @@
             </div>
         </div>
 
+        <!-- MODALS -->
+        <!-- ADD GROUPS WIZARD -->
+        <add-group-wizard v-bind:destination="destination"
+                          v-bind:location-id="locationId"
+                          v-on:update_group_list="updateGroupList($data)"
+        ></add-group-wizard>
+
+        <!-- ADD USER WIZARD -->
+        <add-user-wizard v-bind:destination="destination"
+                         v-bind:location-id="locationId"
+                         v-bind:refresh-user-list="refreshUserListBoolean"
+                         v-bind:update_user_list="updateUserList($data)"
+        ></add-user-wizard>
 
     </div>
 </template>
@@ -83,6 +96,7 @@
 <script>
     //JavaScript extras
     const axios = require('axios');
+    import {Modal} from "bootstrap";
 
     export default {
         name: "GroupsAndUsersModule",
@@ -93,15 +107,18 @@
         data() {
             return {
                 groupList: [],
+                refreshUserListBoolean: false,
                 userList: [],
             }
         },
         methods: {
             addNewGroup: function() {
-                //ADD CODE
+                var addGroupModal = new Modal(document.getElementById('addGroupModal'));
+                addGroupModal.show();
             },
             addNewUser: function() {
-                //ADD CODE
+                var addUserModal = new Modal(document.getElementById('addUserModal'));
+                addUserModal.show();
             },
             getGroupList: function() {
                 //Get the data from the database
@@ -125,8 +142,16 @@
             },
             updateGroupList: function(data) {
                 //Update the group list with the data results
-                this.groupList.push(data[0]);
+                //this.groupList.push(data[0]);
+                //THERE COULD BE MORE THAN ONE GROUP!!!
+
+                //Now update the list of potential users
+                this.refreshUserListBoolean = true;
             },
+            updateUserList: function(data) {
+                //this.userList.push(data[0]);
+                //THERE COULD BE MORE THAN ONE USER!!!
+            }
 
         },
         mounted() {

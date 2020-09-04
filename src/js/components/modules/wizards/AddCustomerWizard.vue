@@ -66,7 +66,7 @@
     const axios = require('axios');
 
     export default {
-        name: "NewCustomerWizard",
+        name: "AddCustomerWizard",
         props: [
             'destination',
             'locationId',
