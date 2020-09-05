@@ -28,6 +28,14 @@ class AddCustomerForm(forms.Form):
         queryset=customer.objects.all(),
     )
 
+
+class AddGroupForm(forms.Form):
+    group_list = forms.ModelMultipleChoiceField(
+        required=True,
+        queryset=group.objects.all(),
+    )
+
+
 class AddNoteForm(forms.Form):
     note = forms.CharField(
         required=True,
@@ -52,6 +60,12 @@ class AddRequirementLinkForm(forms.Form):
         queryset=opportunity.objects.filter(
             is_deleted="FALSE",
         )
+    )
+
+class AddUserForm(forms.Form):
+    user_list = forms.ModelMultipleChoiceField(
+        required=True,
+        queryset=User.objects.all(),
     )
 
 

@@ -5,6 +5,7 @@ from NearBeach.models import *
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.template import loader
@@ -15,12 +16,9 @@ from NearBeach.user_permissions import return_user_permission_level
 
 import json, urllib3
 
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def add_bug(request,destination,location_id):
-    if not request.method == "POST":
-        # Needs to be post
-        return HttpResponseBadRequest("Sorry - needs to be done through psot")
-
     #ADD IN CHECK PERMISSIONS THAT USES THE DESTINATION AND LOCATION!
 
     # Get data from form
@@ -50,13 +48,9 @@ def add_bug(request,destination,location_id):
     return HttpResponse(serializers.serialize('json',bug_results),content_type='application/json')
 
 
-
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def add_customer(request,destination,location_id):
-    if not request.method == "POST":
-        # Needs to be post
-        return HttpResponseBadRequest("Sorry - needs to be done through psot")
-
     #ADD IN CHECK PERMISSIONS THAT USES THE DESTINATION AND LOCATION!
 
     # Get data from form
@@ -83,11 +77,40 @@ def add_customer(request,destination,location_id):
     return HttpResponse(serializers.serialize('json', customer_results), content_type='application/json')
 
 @login_required(login_url='login',redirect_field_name="")
-def add_notes(request,destination,location_id):
-    # Checks that this is done in POST
-    if not request.method == "POST":
-        return HttpResponseBadRequest("Sorry - this needs to be in post")
+@require_http_methods(['POST'])
+def add_group(request,destination,location_id):
+    # ADD IN CHECK PERMISSIONS THAT USES THE DESTINATION AND LOCATION!
 
+    # Get data from form
+    form = AddGroupForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # We loop through the responses and add them to the destination's object association
+    group_list = request.POST.getlist('group_list')
+
+    for single_group in group_list:
+        # Get group instance
+        group_instance = group.objects.get(group_id=single_group)
+
+        # Construct the object assignment
+        submit_object_assignment = object_assignment(
+            group_id=group_instance,
+            change_user=request.user,
+        )
+        submit_object_assignment = set_object_from_destination(submit_object_assignment,destination,location_id)
+
+        # Save the data
+        submit_object_assignment.save()
+
+    # Get the new group list data
+    group_results = get_group_list(destination,location_id)
+
+    return HttpResponse(serializers.serialize('json',group_results),content_type='application/json')
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def add_notes(request,destination,location_id):
     # ADD IN PERMISSIONS HERE!
 
     # Fill out the form
@@ -113,25 +136,51 @@ def add_notes(request,destination,location_id):
 
     return HttpResponse(serializers.serialize('json',note_resuts),content_type='application.json')
 
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def add_user(request,destination,location_id):
+    # ADD IN A CHECK TO CHECK USER'S PERMISSION!
 
+    # Check the data against the form
+    form = AddUserForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Extract the list of users from the POST data
+    user_list = request.POST.getlist('user_list')
+
+    # Loop through them and add them to the object assignment
+    for single_user in user_list:
+        # Get user instance
+        user_instance = User.objects.get(id=single_user)
+
+        # Create object assignment
+        submit_object_assignment = object_assignment(
+            change_user=request.user,
+            assigned_user_id=user_instance,
+        )
+        submit_object_assignment = set_object_from_destination(submit_object_assignment,destination,location_id)
+
+        # Save
+        submit_object_assignment.save()
+
+    # Get the data to return to the user
+    user_results = get_user_list(destination,location_id)
+
+    return HttpResponse(serializers.serialize('json',user_results),content_type='application/json')
+
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def bug_client_list(request):
-    if not request.method == "POST":
-        # Needs to be post
-        return HttpResponseBadRequest("Sorry - needs to be done through post")
-
     bug_client_results = bug_client.objects.filter(
         is_deleted="FALSE",
     )
 
     return HttpResponse(serializers.serialize('json',bug_client_results), content_type='application/json')
 
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def bug_list(request,destination,location_id):
-    if not request.method == "POST":
-        # Needs to be post
-        return HttpResponseBadRequest("Sorry - needs to be done through post")
-
     # Obtain the data dependent on the destination
     bug_list = bug.objects.filter(
         is_deleted="FALSE",
@@ -164,22 +213,17 @@ def bug_list(request,destination,location_id):
     return HttpResponse(json_results, content_type='application/json')
 
 
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def customer_list(request,destination,location_id):
-    if not request.method == "POST":
-        # Needs to be post
-        return HttpResponseBadRequest("Sorry - needs to be done through post")
-
     customer_results = get_customer_list(destination, location_id)
 
     return HttpResponse(serializers.serialize('json', customer_results), content_type='application/json')
 
+
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def customer_list_all(request,destination,location_id):
-    if not request.method == "POST":
-        # Needs to be post
-        return HttpResponseBadRequest("Sorry - needs to be done through POST")
-
     # Get the organisation dependant on the destination source
     if destination == "requirement":
         organisation_results = organisation.objects.get(
@@ -228,6 +272,23 @@ def get_customer_list(destination,location_id):
     )
 
 # Internal function
+def get_group_list(destination,location_id):
+    object_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+    )
+    object_results = get_object_from_destination(
+        object_results,
+        destination,
+        location_id
+    )
+
+    # Now return the groups
+    return group.objects.filter(
+        is_deleted="FALSE",
+        group_id__in=object_results.values('group_id')
+    )
+
+# Internal function
 def get_object_from_destination(input_object,destination,location_id):
     """
     To stop the repeat code of finding specific objects using destination and location_id - we will import
@@ -253,16 +314,12 @@ def get_object_from_destination(input_object,destination,location_id):
     # Just send back the array
     return input_object
 
-
-@login_required(login_url='login',redirect_field_name="")
-def group_list(request,destination,location_id):
-    if not request.method == "POST":
-        # Needs to be post
-        return HttpResponseBadRequest("Sorry - needs to be done through post")
-
-    # Get the data dependant on the object lookup
+# Internal Function
+def get_user_list(destination,location_id):
+    # Get the data we want
     object_results = object_assignment.objects.filter(
         is_deleted="FALSE",
+        assigned_user_id__isnull=False,
     )
     object_results = get_object_from_destination(
         object_results,
@@ -270,21 +327,57 @@ def group_list(request,destination,location_id):
         location_id
     )
 
-    # Now get the groups
-    group_results = group.objects.filter(
+    # Get the user details
+    return User.objects.filter(id__in=object_results.values('assigned_user_id'))
+
+
+# Internal Function
+def get_user_list_all(destination,location_id):
+    # Get a list of users we want to exclude
+    object_results = object_assignment.objects.filter(
         is_deleted="FALSE",
-        group_id__in=object_results.values('group_id')
+        assigned_user_id__isnull=False,
     )
+    object_results = get_object_from_destination(
+        object_results,
+        destination,
+        location_id
+    )
+
+    # Get a list of all the groups associated with this destination
+    group_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+        group_id__isnull=False,
+    )
+    group_results = get_object_from_destination(group_results,destination,location_id)
+
+    # Get a list of users who are associated with these groups & not in the excluded list
+    user_results = User.objects.filter(
+        id__in=user_group.objects.filter(
+            is_deleted="FALSE",
+            group_id__in=group_results.values('group_id'),
+        ).values('username_id'),
+    ).exclude(
+        id__in=object_results.values('assigned_user_id')
+    )
+
+    # Send the results back
+    return user_results
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def group_list(request,destination,location_id):
+    # Get the data dependant on the object lookup
+    group_results = get_group_list(destination,location_id)
 
     # Return the data
     return HttpResponse(serializers.serialize('json',group_results),content_type='application/json')
 
 
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def group_list_all(request,destination,location_id):
-    if not request.method == "POST":
-        return HttpResponseBadRequest("Sorry - this request needs to be done through post")
-
     # ADD CHECKS FOR USER PERMISSIONS!
 
     # Obtain data
@@ -303,12 +396,10 @@ def group_list_all(request,destination,location_id):
     # Return data as json
     return HttpResponse(serializers.serialize('json',group_results),content_type='application/json')
 
+
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def link_list(request,destination,location_id,object_lookup):
-    if not request.method == "POST":
-        # Needs to be post
-        return HttpResponseBadRequest("Sorry - needs to be done through post")
-
     # Get the data dependent on the object lookup
     if object_lookup == 'project':
         data_results = project.objects.filter(
@@ -335,12 +426,9 @@ def link_list(request,destination,location_id,object_lookup):
     return HttpResponse(serializers.serialize('json',data_results), content_type='application/json')
 
 
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def note_list(request,destination,location_id):
-    # Check to make sure method is POST
-    if not request.method == "POST":
-        return HttpResponseBadRequest("Sorry - you need to do this as a POST")
-
     # Everyone should have access to the notes section.
 
     # Get the notes dependent on the user destination and location
@@ -355,12 +443,9 @@ def note_list(request,destination,location_id):
     return HttpResponse(serializers.serialize('json',note_results),content_type='application/json')
 
 
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def query_bug_client(request,destination,location_id):
-    # Check to make sure method is POST
-    if not request.method == "POST":
-        return HttpResponseBadRequest("Sorry - you need to do this as a POST")
-
     # Insert data into form
     form = QueryBugClientForm(request.POST)
 
@@ -443,50 +528,21 @@ def set_object_from_destination(input_object,destination,location_id):
     # Return what we have
     return input_object
 
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def user_list(request,destination,location_id):
-    # Make sure it is in post
-    if not request.method == "POST":
-        return HttpResponseBadRequest("Sorry - needs to be in POST")
-
     # Get the data we want
-    object_results = object_assignment.objects.filter(
-        is_deleted="FALSE",
-        assigned_user_id__isnull=False,
-    )
-    object_results = get_object_from_destination(
-        object_results,
-        destination,
-        location_id
-    )
-
-    # Get the user details
-    user_results = User.objects.filter(id__in=object_results.values('assigned_user_id'))
+    user_results = get_user_list(destination,location_id)
 
     return HttpResponse(serializers.serialize('json',user_results),content_type='application/json')
 
 
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
-def user_list_all(request,destination,location):
-    # Make sure it is in post
-    if not request.method == "POST":
-        return HttpResponseBadRequest("Sorry - needs to be in POST")
-
+def user_list_all(request,destination,location_id):
     # ADD IN PERMISSIONS LATER
 
-    # Get exclusion list first
-    user_exclude = object_assignment.objects.filter(
-        is_deleted="FALSE",
-        assigned_user__isnull=False,
-    )
-    user_exclude = get_object_from_destination(user_exclude, destination, location)
+    # Get Data we want
+    user_results = get_user_list_all(destination,location_id)
 
-    # Limit to these groups
-    group_results = object_assignment.objects.filter(
-        is_deleted="FALSE",
-        group_id__isnull=False,
-    )
-    group_results = get_object_from_destination(group_results, destination, location)
-
-    # Extract the users connected to the list
-    return HttpResponse("WILL DO THIS TOMORROW")
+    return HttpResponse(serializers.serialize('json',user_results),content_type='application/json')

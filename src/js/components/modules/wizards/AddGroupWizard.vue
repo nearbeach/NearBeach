@@ -30,6 +30,7 @@
                         <div class="col-md-8">
                             <v-select :options="groupFixList"
                                       v-model="groupModel"
+                                      multiple
                             ></v-select>
                         </div>
                     </div>
@@ -58,6 +59,7 @@
                     <button type="button"
                             class="btn btn-primary"
                             v-bind:disabled="groupModel.length==0"
+                            v-on:click="addGroup"
                     >Add Group(s)</button>
                 </div>
             </div>
@@ -81,6 +83,33 @@
             };
         },
         methods: {
+            addGroup: function() {
+                //Send the database the new groups to add
+                //Get the data_to_send ready
+                const data_to_send = new FormData();
+
+                //Loop through the model and append the results
+                this.groupModel.forEach(row => {
+                    data_to_send.append('group_list',row['value']);
+                });
+
+                //user axios
+                axios.post(
+                    `/object_data/${this.destination}/${this.locationId}/add_group/`,
+                    data_to_send,
+                ).then(response => {
+                    //Send the data upstream
+                    this.$emit('update_group_list',response['data']);
+
+                    //Close this modal
+                    document.getElementById("addGroupCloseButton").click();
+
+                    //Get a new group list
+                    this.getGroupList();
+                }).catch(error => {
+                    console.log("Error: ",error);
+                })
+            },
             getGroupList: function() {
                 axios.post(
                     `/object_data/${this.destination}/${this.locationId}/group_list_all/`,

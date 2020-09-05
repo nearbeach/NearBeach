@@ -80,14 +80,14 @@
         <!-- ADD GROUPS WIZARD -->
         <add-group-wizard v-bind:destination="destination"
                           v-bind:location-id="locationId"
-                          v-on:update_group_list="updateGroupList($data)"
+                          v-on:update_group_list="updateGroupList($event)"
         ></add-group-wizard>
 
         <!-- ADD USER WIZARD -->
         <add-user-wizard v-bind:destination="destination"
                          v-bind:location-id="locationId"
                          v-bind:refresh-user-list="refreshUserListBoolean"
-                         v-bind:update_user_list="updateUserList($data)"
+                         v-on:update_user_list="updateUserList($event)"
         ></add-user-wizard>
 
     </div>
@@ -141,9 +141,8 @@
                 });
             },
             updateGroupList: function(data) {
-                //Update the group list with the data results
-                //this.groupList.push(data[0]);
-                //THERE COULD BE MORE THAN ONE GROUP!!!
+                //Clear the group list
+                this.groupList = data;
 
                 //Now update the list of potential users
                 this.refreshUserListBoolean = true;

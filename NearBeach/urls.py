@@ -46,7 +46,9 @@ urlpatterns = [
 	# Object Data
 	path('object_data/<destination>/<location_id>/add_bug/',object_data.add_bug,name='add_bug'),
 	path('object_data/<destination>/<location_id>/add_customer/',object_data.add_customer,name='add_customer'),
+	path('object_data/<destination>/<location_id>/add_group/',object_data.add_group,name='add_group'),
 	path('object_data/<destination>/<location_id>/add_notes/',object_data.add_notes,name='add_notes'),
+	path('object_data/<destination>/<location_id>/add_user/',object_data.add_user,name='add_user'),
 	path('object_data/bug_client_list/',object_data.bug_client_list,name='bug_client_list'),
 	path('object_data/<destination>/<location_id>/bug_list/',object_data.bug_list,name='bug_list'),
 	path('object_data/<destination>/<location_id>/customer_list/',object_data.customer_list,name='customer_list'),

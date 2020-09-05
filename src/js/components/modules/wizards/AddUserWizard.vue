@@ -30,6 +30,7 @@
                         <div class="col-md-8">
                             <v-select :options="userFixList"
                                       v-model="userModel"
+                                      multiple
                             ></v-select>
                         </div>
                     </div>
@@ -61,6 +62,7 @@
                     <button type="button"
                             class="btn btn-primary"
                             v-bind:disabled="userModel.length==0"
+                            v-on:click="addUser"
                     >Add User(s)</button>
                 </div>
             </div>
@@ -69,6 +71,8 @@
 </template>
 
 <script>
+    const axios = require('axios');
+
     export default {
         name: "AddUserWizard",
         props: [
@@ -82,8 +86,28 @@
             }
         },
         methods: {
+            addUser: function() {
+
+            },
             getUserList: function() {
-                //ADD CODE
+                axios.post(
+                    `/object_data/${this.destination}/${this.locationId}/user_list_all/`,
+                ).then(response => {
+                    //Clear the user fix list
+                    this.userFixList = [];
+
+                    //Loop through the response data and add each result to the userFixList
+                    response['data'].forEach(row => {
+                        //Construct object array
+                        var construction_object = {
+                            'value': row['pk'],
+                            'label': `${row['fields']['username']}: ${row['fields']['first_name']} ${row['fields']['last_name']}`
+                        };
+
+                        //Push the changes
+                        this.userFixList.push(construction_object);
+                    });
+                });
             }
         },
         mounted() {
