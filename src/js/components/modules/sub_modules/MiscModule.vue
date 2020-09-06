@@ -23,7 +23,7 @@
                 <tbody>
                     <tr v-for="noteHistory in noteHistoryResults">
                         <td>
-                            {{noteHistory['fields']['object_note'].substr(0, 400)}}
+                            <div v-html="noteHistory['fields']['object_note'].substr(0, 400)" />
                             <div class="spacer"></div>
                             <p class="small-text">
                                 {{noteHistory['fields']['date_created']}}

@@ -1,35 +1,39 @@
 {
-  "_from": "tinymce@^5.3.2",
+  "_args": [
+    [
+      "tinymce@5.4.1",
+      "/Users/cedricquenette/Local/NearBeach"
+    ]
+  ],
+  "_development": true,
+  "_from": "tinymce@5.4.1",
   "_id": "tinymce@5.4.1",
   "_inBundle": false,
   "_integrity": "sha512-eUjwDVCTSHSnFfpzX5TjTHXsGj5gvPQwzo3RFDF374gfK5voHqcRGojvQnu4NtNW1BAb012/KW1tkXBbUrEveg==",
   "_location": "/tinymce",
   "_phantomChildren": {},
   "_requested": {
-    "type": "range",
+    "type": "version",
     "registry": true,
-    "raw": "tinymce@^5.3.2",
+    "raw": "tinymce@5.4.1",
     "name": "tinymce",
     "escapedName": "tinymce",
-    "rawSpec": "^5.3.2",
+    "rawSpec": "5.4.1",
     "saveSpec": null,
-    "fetchSpec": "^5.3.2"
+    "fetchSpec": "5.4.1"
   },
   "_requiredBy": [
     "#DEV:/"
   ],
   "_resolved": "https://registry.npmjs.org/tinymce/-/tinymce-5.4.1.tgz",
-  "_shasum": "4c101e78cbd22c148d6013f7c66eb0cb480723db",
-  "_spec": "tinymce@^5.3.2",
-  "_where": "/home/luke/Sites/NearBeach",
+  "_spec": "5.4.1",
+  "_where": "/Users/cedricquenette/Local/NearBeach",
   "author": {
     "name": "Ephox Corporation"
   },
   "bugs": {
     "url": "https://github.com/tinymce/tinymce/issues"
   },
-  "bundleDependencies": false,
-  "deprecated": false,
   "description": "Web based JavaScript HTML WYSIWYG editor control.",
   "homepage": "https://github.com/tinymce/tinymce-dist#readme",
   "keywords": [
