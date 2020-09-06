@@ -14,7 +14,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div v-if="userFixList > 0"
+                    <div v-if="userFixList.length > 0"
                          class="row">
                         <div class="col-md-4">
                             <strong>Add Users</strong>
@@ -78,6 +78,7 @@
         props: [
             'destination',
             'locationId',
+            'refreshUserList'
         ],
         data() {
             return {
@@ -87,6 +88,27 @@
         },
         methods: {
             addUser: function() {
+                //Construct the data_to_send array
+                const data_to_send = new FormData();
+
+                //Look through all of the results in user model and append
+                this.userModel.forEach(row => {
+                    data_to_send.append('user_list',row['value']);
+                });
+
+                //User axios to send the data to the backend
+                axios.post(
+                    `/object_data/${this.destination}/${this.locationId}/add_user/`,
+                    data_to_send
+                ).then(response => {
+                    //Emit the data up
+                    this.$emit('update_user_list',response['data']);
+
+                    //Close the modal
+                    document.getElementById("addUserCloseButton").click();
+                }).catch(error => {
+                    console.log("Error: ",error);
+                });
 
             },
             getUserList: function() {
@@ -109,6 +131,17 @@
                     });
                 });
             }
+        },
+        watch: {
+            refreshUserList: function() {
+                //Looks like the system has send the call function to reset the user list.
+                if (this.refreshUserList) {
+                    this.getUserList();
+                }
+
+                //Turn it false again
+                this.$emit('reset_refresh_user_list');
+            },
         },
         mounted() {
             this.getUserList();

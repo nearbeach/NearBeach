@@ -157,7 +157,7 @@ def add_user(request,destination,location_id):
         # Create object assignment
         submit_object_assignment = object_assignment(
             change_user=request.user,
-            assigned_user_id=user_instance,
+            assigned_user=user_instance,
         )
         submit_object_assignment = set_object_from_destination(submit_object_assignment,destination,location_id)
 
@@ -357,6 +357,7 @@ def get_user_list_all(destination,location_id):
             is_deleted="FALSE",
             group_id__in=group_results.values('group_id'),
         ).values('username_id'),
+        is_active=True,
     ).exclude(
         id__in=object_results.values('assigned_user_id')
     )

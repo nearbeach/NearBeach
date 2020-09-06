@@ -88,6 +88,7 @@
                          v-bind:location-id="locationId"
                          v-bind:refresh-user-list="refreshUserListBoolean"
                          v-on:update_user_list="updateUserList($event)"
+                         v-on:reset_refresh_user_list="resetRefreshUserList($event)"
         ></add-user-wizard>
 
     </div>
@@ -140,6 +141,9 @@
                     console.log("Error: ",error);
                 });
             },
+            resetRefreshUserList: function() {
+                this.refreshUserListBoolean = false;
+            },
             updateGroupList: function(data) {
                 //Clear the group list
                 this.groupList = data;
@@ -148,8 +152,10 @@
                 this.refreshUserListBoolean = true;
             },
             updateUserList: function(data) {
-                //this.userList.push(data[0]);
-                //THERE COULD BE MORE THAN ONE USER!!!
+                //Loop throught the data array and add each line item
+                data.forEach(row => {
+                    this.userList.push(row);
+                });
             }
 
         },
