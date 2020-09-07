@@ -26,12 +26,23 @@ from . import views, \
 """
 from .views import authentication_views, \
 	dashboard_views, \
+	document_views, \
 	object_data, \
 	requirement_item_views, \
 	requirement_views, \
 	search_views
+
+
 urlpatterns = [
 	path('', dashboard_views.dashboard, name='dashboard'),
+
+	# Documentation
+
+	# Create these two functions
+	#path('documentation/<destination>/<location_id>/list/files',document_views.document_list_files,name='document_list_files'),
+	#path('documentation/<destination>/<location_id>/list/folders',document_views.document_list_folders,name='document_list_folders'),
+	path('documentation/<destination>/<location_id>/upload/',document_views.document_upload,name='document_upload'),
+
 
 	# Authentication
 	path('login', authentication_views.login, name='login'),
@@ -41,7 +52,6 @@ urlpatterns = [
 	path('new_requirement',requirement_views.new_requirement, name='new_requirement'),
 	path('new_requirement/save/',requirement_views.new_requirement_save, name='new_requirement_save'),
 	path('new_requirement_item/save/<int:requirement_id>/',requirement_item_views.new_requirement_item,name='new_requirement_item'),
-	#path('new_requirement_item/<int:requirement_id>/save/',requirement_item_views.new_requirement_item_save,name='new_requirement_item_save'),
 
 	# Object Data
 	path('object_data/<destination>/<location_id>/add_bug/',object_data.add_bug,name='add_bug'),

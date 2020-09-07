@@ -1,8 +1,10 @@
 from __future__ import unicode_literals
 from django import forms
+from django.forms import ModelForm
 
-#Import from Models
+# Import from Models
 from .models import *
+
 
 class AddBugForm(forms.Form):
     bug_client = forms.ModelChoiceField(
@@ -22,6 +24,7 @@ class AddBugForm(forms.Form):
         required=True,
     )
 
+
 class AddCustomerForm(forms.Form):
     customer = forms.ModelChoiceField(
         required=True,
@@ -40,6 +43,7 @@ class AddNoteForm(forms.Form):
     note = forms.CharField(
         required=True,
     )
+
 
 class AddRequirementLinkForm(forms.Form):
     # One external field
@@ -62,6 +66,21 @@ class AddRequirementLinkForm(forms.Form):
         )
     )
 
+
+class DocumentUploadForm(ModelForm):
+    folder = forms.ModelChoiceField(
+        required=False,
+        queryset=folder.objects.all(),
+    )
+
+    class Meta:
+        model = document
+        fields = {
+            'document',
+            'document_description',
+        }
+
+
 class AddUserForm(forms.Form):
     user_list = forms.ModelMultipleChoiceField(
         required=True,
@@ -70,7 +89,7 @@ class AddUserForm(forms.Form):
 
 
 class LoginForm(forms.Form):
-    username=forms.CharField(
+    username = forms.CharField(
         widget=forms.TextInput(attrs={
             'placeholder': 'Username',
             'class': 'form-control',
@@ -78,13 +97,14 @@ class LoginForm(forms.Form):
             'autofocus': True,
         })
     )
-    password=forms.CharField(
+    password = forms.CharField(
         widget=forms.PasswordInput(attrs={
             'placeholder': 'Password',
             'class': 'form-control',
             'required': True,
         })
     )
+
 
 class NewRequirementItemForm(forms.ModelForm):
     # Basic Meta data
@@ -97,9 +117,10 @@ class NewRequirementItemForm(forms.ModelForm):
             'requirement_item_type',
         ]
 
+
 class NewRequirementForm(forms.ModelForm):
     # One external field
-    group_list=forms.ModelMultipleChoiceField(
+    group_list = forms.ModelMultipleChoiceField(
         required=True,
         queryset=group.objects.filter(
             is_deleted="FALSE",
@@ -117,21 +138,22 @@ class NewRequirementForm(forms.ModelForm):
             'organisation',
         ]
 
+
 class QueryBugClientForm(forms.Form):
-    bug_client_id=forms.ModelChoiceField(
+    bug_client_id = forms.ModelChoiceField(
         required=True,
         queryset=bug_client.objects.filter(
             is_deleted="FALSE",
         )
     )
-    search=forms.CharField(
+    search = forms.CharField(
         max_length=50,
     )
 
 
 class SearchForm(forms.Form):
-    #Just have a simple search field
-    search=forms.CharField(
+    # Just have a simple search field
+    search = forms.CharField(
         required=False,
     )
 
