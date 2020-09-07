@@ -11,8 +11,42 @@
         >
             <div class="alert alert-dark">Sorry - there are no documents or folders uploaded.</div>
         </div>
-        <div v-else>
-            ADD CODE!
+        <div v-else class="document-widget">
+            <!-- GO TO PARENT DIRECTORY -->
+            <div class="document-child">
+                <i data-feather="arrow-up" width="80px" height="80px" stroke-width="1"></i>
+                <p class="text-instructions">
+                    Go to Parent Directory...
+                </p>
+            </div>
+
+            <!-- RENDER THE FOLDERS -->
+            <div v-for="item in documentList" class="document-child">
+                <i data-feather="folder" width="80px" height="80px" stroke-width="1"></i>
+                <p class="text-instructions">
+                    {{shortName("The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog")}}
+                </p>
+            </div>
+
+            <!-- RENDER THE FILES -->
+            <div v-for="item in documentList" class="document-child">
+                <i data-feather="file-text" width="80px" height="80px" stroke-width="1"></i>
+                <p class="text-instructions">
+                    {{shortName("The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog")}}
+                </p>
+            </div>
+            <div v-for="item in documentList" class="document-child">
+                <i data-feather="image" width="80px" height="80px" stroke-width="1"></i>
+                <p class="text-instructions">
+                    {{shortName("The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog")}}
+                </p>
+            </div>
+            <div v-for="item in documentList" class="document-child">
+                <i data-feather="external-link" width="80px" height="80px" stroke-width="1"></i>
+                <p class="text-instructions">
+                    {{shortName("The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog")}}
+                </p>
+            </div>
         </div>
 
         <!-- ADD DOCUMENTS AND FOLDER BUTTON -->
@@ -45,9 +79,26 @@
         ],
         data() {
             return {
-                documentList: [],
+                documentList: [1,2,3,4,5,7],
             }
         },
+        methods: {
+            shortName: function(input_string) {
+                //The following method will determine if we need an ellipsis (...) at the end of the file/folder name
+                const max_string_length = 50;
+
+                //If string is less than the max length, then just return the string
+                if (input_string.length <= max_string_length) {
+                    return input_string;
+                }
+
+                //Now we split the string by max_string_length - 3 (3 for the ...)
+                var new_string = `${input_string.substring(0,max_string_length-3)}...`;
+
+                //Return the new string
+                return new_string;
+            },
+        }
     }
 </script>
 
