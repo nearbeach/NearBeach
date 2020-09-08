@@ -6,7 +6,7 @@
         </p>
 
         <!-- DOCUMENT FOLDER TREE -->
-        <div v-if="documentFilteredList.length + folderFilteredList.length == 0"
+        <div v-if="documentList.length + folderList.length == 0"
              class="module-spacer"
         >
             <div class="alert alert-dark">Sorry - there are no documents or folders uploaded.</div>
@@ -14,6 +14,7 @@
         <div v-else class="document-widget">
             <!-- GO TO PARENT DIRECTORY -->
             <div v-if="this.currentFolder != null"
+                 v-on:click="goToParentDirectory()"
                  class="document-child"
             >
                 <i data-feather="arrow-up" width="80px" height="80px" stroke-width="1"></i>
@@ -23,7 +24,10 @@
             </div>
 
             <!-- RENDER THE FOLDERS -->
-            <div v-for="folder in folderFilteredList" class="document-child">
+            <div v-for="folder in folderFilteredList"
+                 v-on:click="updateCurrentFolder(folder['pk'])"
+                 class="document-child"
+            >
                 <i data-feather="folder" width="80px" height="80px" stroke-width="1"></i>
                 <p class="text-instructions">
                     {{shortName(folder['fields']['folder_description'])}}
@@ -31,7 +35,7 @@
             </div>
 
             <!-- RENDER THE FILES -->
-            <div v-for="document in documentList" class="document-child">
+            <div v-for="document in documentFilteredList" class="document-child">
                 <i v-bind:data-feather="getIcon(document)"
                    width="80px"
                    height="80px"
@@ -41,20 +45,6 @@
                     {{shortName(document['document_key__document_description'])}}
                 </p>
             </div>
-            <!--
-            <div v-for="item in documentList" class="document-child">
-                <i data-feather="image" width="80px" height="80px" stroke-width="1"></i>
-                <p class="text-instructions">
-                    {{shortName("The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog")}}
-                </p>
-            </div>
-            <div v-for="item in documentList" class="document-child">
-                <i data-feather="external-link" width="80px" height="80px" stroke-width="1"></i>
-                <p class="text-instructions">
-                    {{shortName("The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog")}}
-                </p>
-            </div>
-            -->
         </div>
 
         <!-- ADD DOCUMENTS AND FOLDER BUTTON -->
@@ -137,6 +127,15 @@
                       return 'file-text';
                 }
             },
+            goToParentDirectory: function() {
+                //Filter for the directory - then obtain it's parent directory variable.
+                var filtered_data = this.folderList.filter(row => {
+                    return row['pk'] == this.currentFolder;
+                })[0];
+
+                //Update the current directory to the parent folder
+                this.updateCurrentFolder(filtered_data['fields']['parent_folder']);
+            },
             shortName: function(input_string) {
                 //The following method will determine if we need an ellipsis (...) at the end of the file/folder name
                 const max_string_length = 50;
@@ -151,6 +150,14 @@
 
                 //Return the new string
                 return new_string;
+            },
+            updateCurrentFolder: function(new_folder_id) {
+                //Update the current folder id
+                this.currentFolder = new_folder_id;
+
+                //Update the filtered lists
+                this.updateDocumentFilteredList();
+                this.updateFolderFilteredList();
             },
             updateDocumentFilteredList: function() {
                 //Filter the results to contain only the documents in the current folder
