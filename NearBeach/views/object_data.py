@@ -11,6 +11,7 @@ from django.urls import reverse
 from django.template import loader
 from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
+from NearBeach.views.tools.internal_functions import *
 from NearBeach.user_permissions import return_user_permission_level
 
 
@@ -288,31 +289,6 @@ def get_group_list(destination,location_id):
         group_id__in=object_results.values('group_id')
     )
 
-# Internal function
-def get_object_from_destination(input_object,destination,location_id):
-    """
-    To stop the repeat code of finding specific objects using destination and location_id - we will import
-    the object filter for it here - before returning it.
-    :param object: The object we want to filter
-    :param destination: The destination we are interested in
-    :param location_id: The location_id
-    :return:
-    """
-    if destination == "requirement":
-        input_object = input_object.filter(
-            requirement_id=location_id,
-        )
-    elif destination == "project":
-        input_object = input_object.filter(
-            project_id=location_id,
-        )
-    elif destination == "task":
-        input_object = input_object.filter(
-            task_id=location_id,
-        )
-
-    # Just send back the array
-    return input_object
 
 # Internal Function
 def get_user_list(destination,location_id):
@@ -509,25 +485,6 @@ def query_bug_client(request,destination,location_id):
     # Send back the JSON data
     return JsonResponse(json_data['bugs'], safe=False)
 
-
-# Internal function
-def set_object_from_destination(input_object,destination,location_id):
-    """
-    This function is used to set data against an object using the destination and location data.
-    :param input_object: The input object that we are setting data for
-    :param destination: The destination we are interested in
-    :param location_id: The location we are interested in
-    :return:
-    """
-    if destination == "project":
-        input_object.project = project.objects.get(project_id=location_id)
-    elif destination == "task":
-        input_object.task = task.objects.get(task_id=location_id)
-    elif destination == "requirement":
-        input_object.requirement = requirement.objects.get(requirement_id=location_id)
-
-    # Return what we have
-    return input_object
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")

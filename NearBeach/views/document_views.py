@@ -1,10 +1,87 @@
-
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 from django.template import loader
+from NearBeach.views.tools.internal_functions import *
+from django.core.serializers.json import DjangoJSONEncoder
+
 
 from ..forms import *
+
+import json
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def document_list_files(request,destination,location_id):
+    """
+    Get the documents that are associated with the destination and location id
+
+    Method
+    ~~~~~~
+    1. Get all the document permissions connected to the destination and location
+    2. Get the document information from this
+    :param request:
+    :param destination:
+    :param location_id:
+    :return:
+    """
+    document_permission_results = document_permission.objects.filter(
+        is_deleted="FALSE",
+    ).values(
+        'document_key__document_description',
+        'document_key__document_url_location',
+        'document_key__document',
+        'document_key__whiteboard',
+        'folder',
+    )
+
+    # Limit to the required destination and location id
+    document_permission_results = get_object_from_destination(
+        document_permission_results,
+        destination,
+        location_id
+    )
+
+    # Send back json data
+    json_results = json.dumps(list(document_permission_results), cls=DjangoJSONEncoder)
+
+    return HttpResponse(json_results, content_type='application/json')
+
+
+    # # Get the document information
+    # document_results = document.objects.filter(
+    #     is_deleted="FALSE",
+    #     document_key__in=document_permission_results.values('document_key')
+    # )
+    #
+    # return HttpResponse(serializers.serialize('json',document_results),content_type='application/json')
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def document_list_folders(request,destination,location_id):
+    """
+    Get the folders that are associated with the destination and location id
+
+    Method
+    ~~~~~~
+    1. Get all the document permissions connected to the destination and location
+    2. Get the folder information from this
+
+    :param request:
+    :param destination:
+    :param location_id:
+    :return:
+    """
+    # Get the document information
+    folder_results = folder.objects.filter(
+        is_deleted="FALSE",
+    )
+    folder_results = get_object_from_destination(folder_results,destination,location_id)
+
+    return HttpResponse(serializers.serialize('json',folder_results),content_type='application/json')
+
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
@@ -29,6 +106,35 @@ def document_upload(request,destination,location_id,folder_id):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
-    # Create a new row for documentation
+    # Get the document description - if blank we use the file name
+    document_description = form.cleaned_data['document_description']
+    file = form.cleaned_data['document']
+    if document_description == "":
+        # Replace the document description with the file name
+        document_description = str(file)
 
-    return HttpResponse("HELLO WORLD - I have to complete this tomorrow")
+    # Add the document row
+    document_submit = document(
+        change_user=request.user,
+        document_description=document_description,
+        document=file,
+    )
+    document_submit.save()
+
+    # Add the document permission row
+    document_permission_submit = document_permission(
+        change_user=request.user,
+        document_key=document_submit,
+        folder=form.cleaned_data['folder'],
+    )
+    document_permission_submit = set_object_from_destination(
+        document_permission_submit,
+        destination,
+        location_id
+    )
+    document_permission_submit.save()
+
+    # Get the new document information and send back to user
+    document_results = document.objects.get(document_id=document_submit)
+
+    return HttpResponse(serializers.serialize('json',document_results),content_type='application/json')

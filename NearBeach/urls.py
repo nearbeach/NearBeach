@@ -37,10 +37,8 @@ urlpatterns = [
 	path('', dashboard_views.dashboard, name='dashboard'),
 
 	# Documentation
-
-	# Create these two functions
-	#path('documentation/<destination>/<location_id>/list/files',document_views.document_list_files,name='document_list_files'),
-	#path('documentation/<destination>/<location_id>/list/folders',document_views.document_list_folders,name='document_list_folders'),
+	path('documentation/<destination>/<location_id>/list/files/',document_views.document_list_files,name='document_list_files'),
+	path('documentation/<destination>/<location_id>/list/folders/',document_views.document_list_folders,name='document_list_folders'),
 	path('documentation/<destination>/<location_id>/upload/',document_views.document_upload,name='document_upload'),
 
 
