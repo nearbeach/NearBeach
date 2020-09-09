@@ -12,7 +12,9 @@ import ParentModules from "./components/modules/ParentModules.vue";
 import MiscModule from "./components/modules/sub_modules/MiscModule.vue";
 import AddBugWizard from "./components/modules/wizards/AddBugWizard.vue";
 import AddCustomerWizard from "./components/modules/wizards/AddCustomerWizard.vue";
+import AddFolderWizard from "./components/modules/wizards/AddFolderWizard.vue";
 import AddGroupWizard from "./components/modules/wizards/AddGroupWizard.vue";
+import AddLinkWizard from "./components/modules/wizards/AddLinkWizard.vue";
 import AddUserWizard from "./components/modules/wizards/AddUserWizard.vue";
 import NewRequirements from './components/requirements/NewRequirement.vue';
 import NewHistoryNoteWizard from "./components/modules/wizards/NewHistoryNoteWizard.vue";
@@ -21,6 +23,7 @@ import NewRequirementLinkWizard from "./components/modules/wizards/NewRequiremen
 import RequirementInformation from './components/requirements/RequirementInformation.vue';
 import RequirementItemsModule from "./components/modules/sub_modules/RequirementItemsModule.vue";
 import RequirementLinksModule from "./components/modules/sub_modules/RequirementLinksModule.vue";
+import UploadDocumentWizard from "./components/modules/wizards/UploadDocumentWizard.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -50,7 +53,9 @@ Vue.component('Editor',Editor);
 //Global NearBeach Vue Components
 Vue.component('AddBugWizard',AddBugWizard);
 Vue.component('AddCustomerWizard',AddCustomerWizard);
+Vue.component('AddFolderWizard',AddFolderWizard);
 Vue.component('AddGroupWizard',AddGroupWizard);
+Vue.component('AddLinkWizard',AddLinkWizard);
 Vue.component('AddUserWizard',AddUserWizard);
 Vue.component('BugsModule',BugsModule);
 Vue.component('CustomersModule',CustomersModule);
@@ -66,7 +71,7 @@ Vue.component('NewRequirementItemWizard',NewRequirementItemWizard);
 Vue.component('NewRequirementLinkWizard',NewRequirementLinkWizard);
 Vue.component('RequirementInformation',RequirementInformation);
 Vue.component('RequirementItemsModule',RequirementItemsModule);
-Vue.component('RequirementLinksModule',RequirementLinksModule);
+Vue.component('UploadDocumentWizard',UploadDocumentWizard);
 
 //Validation
 import Vuelidate from 'vuelidate'

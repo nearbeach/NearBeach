@@ -59,18 +59,50 @@
                 New Document/File
             </button>
             <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0)">New File Upload</a>
-                <a class="dropdown-item" href="javascript:void(0)">New File URL Link</a>
+                <a class="dropdown-item"
+                   href="javascript:void(0)"
+                   v-on:click="uploadDocument"
+                >
+                    Upload Document
+                </a>
+                <a class="dropdown-item"
+                   href="javascript:void(0)"
+                   v-on:click="addLink"
+                >
+                    Add Link
+                </a>
                 <!--<a class="dropdown-item" href="javascript:void(0)">New Whiteboard</a>-->
-                <a class="dropdown-item" href="javascript:void(0)">New Folder</a>
+                <a class="dropdown-item"
+                   href="javascript:void(0)"
+                   v-on:click="addFolder"
+                >
+                    Add Folder
+                </a>
             </div>
         </div>
+
+        <!-- MODALS -->
+        <!-- ADD FOLDER ID -->
+        <add-folder-wizard v-bind:destination="destination"
+                           v-bind:location-id="locationId"
+        ></add-folder-wizard>
+
+        <!-- ADD LINK WIZARD -->
+        <add-link-wizard v-bind:destination="destination"
+                         v-bind:location-id="locationId"
+        ></add-link-wizard>
+
+        <!-- UPLOAD DOCUMENT WIZARD -->
+        <upload-document-wizard v-bind:destination="destination"
+                                v-bind:location-id="locationId"
+        ></upload-document-wizard>
     </div>
 </template>
 
 <script>
     const axios = require('axios');
-    const feather = require('feather-icons')
+    const feather = require('feather-icons');
+    import {Modal} from "bootstrap";
 
     export default {
         name: "DocumentsModule",
@@ -88,6 +120,15 @@
             }
         },
         methods: {
+            addFolder: function() {
+                var addFolderModal = new Modal(document.getElementById('addFolderModal'));
+                addFolderModal.show();
+
+            },
+            addLink: function() {
+                var addLinkModal = new Modal(document.getElementById("addLinkModal"));
+                addLinkModal.show();
+            },
             getDocumentList: function() {
                 axios.post(
                     `/documentation/${this.destination}/${this.locationId}/list/files/`,
@@ -170,7 +211,11 @@
                 this.folderFilteredList = this.folderList.filter(row => {
                     return row['fields']['parent_folder'] == this.currentFolder;
                 })
-            }
+            },
+            uploadDocument: function() {
+                var uploadDocumentModal = new Modal(document.getElementById('uploadDocumentModal'));
+                uploadDocumentModal.show();
+            },
         },
         mounted() {
             this.getDocumentList();
