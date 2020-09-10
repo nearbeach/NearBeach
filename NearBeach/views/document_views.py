@@ -13,6 +13,39 @@ import json
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
+def document_add_folder(request,destination,location_id):
+    """
+    This will add a folder to the user's destination and location_id
+    :param request:
+    :param destination:
+    :param location_id:
+    :return:
+    """
+
+    # Check users PERMISSION - NEED TO ADD
+
+    # Obtain the data and verify against the form
+    form = AddFolderForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Save the form information
+    folder_submit = folder(
+        change_user=request.user,
+        folder_description=form.cleaned_data['folder_description'],
+        parent_folder=form.cleaned_data['parent_folder'],
+    )
+    folder_submit = set_object_from_destination(folder_submit,destination,location_id)
+    folder_submit.save()
+
+    # Return the data back
+    folder_results = folder.objects.filter(folder_id=folder_submit.folder_id)
+
+    return HttpResponse(serializers.serialize('json',folder_results),content_type='application/json')
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
 def document_list_files(request,destination,location_id):
     """
     Get the documents that are associated with the destination and location id

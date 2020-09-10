@@ -71,6 +71,7 @@ Vue.component('NewRequirementItemWizard',NewRequirementItemWizard);
 Vue.component('NewRequirementLinkWizard',NewRequirementLinkWizard);
 Vue.component('RequirementInformation',RequirementInformation);
 Vue.component('RequirementItemsModule',RequirementItemsModule);
+Vue.component('RequirementLinksModule',RequirementLinksModule);
 Vue.component('UploadDocumentWizard',UploadDocumentWizard);
 
 //Validation

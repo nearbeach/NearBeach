@@ -24,11 +24,12 @@
                         </div>
                         <div class="col-md-8">
                             <div class="form-group">
-                                <label for="folder">Folder Name</label>
+                                <label for="folder_description">Folder Name</label>
                                 <input type="text"
-                                       v-model="folderModel"
+                                       v-model="folderDescriptionModel"
                                        class="form-control"
-                                       id="folder"
+                                       id="folder_description"
+                                       maxlength="50"
                                 >
                             </div>
                         </div>
@@ -38,7 +39,7 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button"
                             class="btn btn-primary"
-                            v-bind:disabled="folderModel==''"
+                            v-bind:disabled="folderDescriptionModel==''"
                             v-on:click="addFolder"
                     >
                         Add Folder
@@ -62,12 +63,35 @@
         ],
         data() {
             return {
-                folderModel: '',
+                folderDescriptionModel: '',
             };
         },
         methods: {
             addFolder: function() {
-                //ADD CODE
+                //Construct the data to send
+                const data_to_send = new FormData();
+                data_to_send.set('folder_description',this.folderDescriptionModel);
+
+                if (this.currentFolder != null && this.currentFolder != '') {
+                    data_to_send.set('parent_folder',this.currentFolder);
+                }
+
+                //Send the data in POST
+                axios.post(
+                    `/documentation/${this.destination}/${this.locationId}/add_folder/`,
+                    data_to_send,
+                ).then(response => {
+                    //Send the data up stream to get appended
+                    this.$emit('update_folder_list',response['data']);
+
+                    //Clear the model
+                    this.folderDescriptionModel = '';
+
+                    //Close the modal
+                    document.getElementById('addFolderCloseButton').click();
+                }).catch(error => {
+                    console.log("Error: ",error);
+                })
             }
         }
     }

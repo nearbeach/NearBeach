@@ -85,6 +85,7 @@
         <!-- ADD FOLDER ID -->
         <add-folder-wizard v-bind:destination="destination"
                            v-bind:location-id="locationId"
+                           v-on:update_folder_list="updateFolderList($event)"
         ></add-folder-wizard>
 
         <!-- ADD LINK WIZARD -->
@@ -205,6 +206,13 @@
                 this.documentFilteredList = this.documentList.filter(row => {
                     return row['folder'] == this.currentFolder;
                 });
+            },
+            updateFolderList: function(data) {
+                //Append the first row of the data (there will always be one row)
+                this.folderList.push(data[0]);
+
+                //Update the folder filtered list
+                this.updateFolderFilteredList();
             },
             updateFolderFilteredList: function() {
                 //Filter the results to contain only the folders in the current folder

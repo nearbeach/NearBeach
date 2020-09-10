@@ -32,6 +32,17 @@ class AddCustomerForm(forms.Form):
     )
 
 
+class AddFolderForm(forms.Form):
+    folder_description = forms.CharField(
+        required=True,
+        max_length=50,
+    )
+    parent_folder = forms.ModelChoiceField(
+        required=False,
+        queryset=folder.objects.all(),
+    )
+
+
 class AddGroupForm(forms.Form):
     group_list = forms.ModelMultipleChoiceField(
         required=True,
