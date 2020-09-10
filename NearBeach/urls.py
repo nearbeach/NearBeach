@@ -39,6 +39,7 @@ urlpatterns = [
 	# Documentation
 	#path('documentation/<destination>/<location_id>/add_file/',document_views.document_add_file,name='document_add_file'),
 	path('documentation/<destination>/<location_id>/add_folder/',document_views.document_add_folder,name='document_add_folder'),
+	path('documentation/<destination>/<location_id>/add_link/',document_views.document_add_link,name='document_add_link'),
 	path('documentation/<destination>/<location_id>/list/files/',document_views.document_list_files,name='document_list_files'),
 	path('documentation/<destination>/<location_id>/list/folders/',document_views.document_list_folders,name='document_list_folders'),
 	path('documentation/<destination>/<location_id>/upload/',document_views.document_upload,name='document_upload'),

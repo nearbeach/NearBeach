@@ -13,6 +13,18 @@ import json
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
+def add_file(request,destination,location_id):
+    """
+
+    :param request:
+    :param destination:
+    :param location_id:
+    :return:
+    """
+    return HttpResponse("ARGH - I am tired")
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
 def document_add_folder(request,destination,location_id):
     """
     This will add a folder to the user's destination and location_id
@@ -42,6 +54,63 @@ def document_add_folder(request,destination,location_id):
     folder_results = folder.objects.filter(folder_id=folder_submit.folder_id)
 
     return HttpResponse(serializers.serialize('json',folder_results),content_type='application/json')
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def document_add_link(request,destination,location_id):
+    """
+
+    :param request:
+    :param destination:
+    :param location_id:
+    :return:
+    """
+    # ADD IN PERMISSION CHECKS
+
+    # Get the form data
+    form = AddLinkForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Save the document link
+    document_submit = document(
+        change_user=request.user,
+        document_description=form.cleaned_data['document_description'],
+        document_url_location=form.cleaned_data['document_url_location'],
+    )
+    document_submit.save()
+
+    # Save the document permissions
+    document_permission_submit = document_permission(
+        change_user=request.user,
+        document_key=document_submit,
+        folder=form.cleaned_data['parent_folder'],
+    )
+    document_permission_submit = set_object_from_destination(
+        document_permission_submit,
+        destination,
+        location_id
+    )
+    document_permission_submit.save()
+
+    # Get current document results to send back
+    document_results = document_permission.objects.filter(
+        is_deleted="FALSE",
+        document_key=document_submit,
+    ).values(
+        'document_key__document_description',
+        'document_key__document_url_location',
+        'document_key__document',
+        'document_key__whiteboard',
+        'folder',
+    )
+
+    # Send back json data
+    json_results = json.dumps(list(document_results), cls=DjangoJSONEncoder)
+
+    return HttpResponse(json_results, content_type='application/json')
+
 
 
 @require_http_methods(['POST'])

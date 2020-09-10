@@ -50,6 +50,20 @@ class AddGroupForm(forms.Form):
     )
 
 
+class AddLinkForm(forms.Form):
+    document_description = forms.CharField(
+        max_length=50,
+        required=True,
+    )
+    document_url_location = forms.URLField(
+        required=True,
+    )
+    parent_folder = forms.ModelChoiceField(
+        required=False,
+        queryset=folder.objects.all(),
+    )
+
+
 class AddNoteForm(forms.Form):
     note = forms.CharField(
         required=True,

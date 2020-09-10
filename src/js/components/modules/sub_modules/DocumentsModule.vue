@@ -85,17 +85,25 @@
         <!-- ADD FOLDER ID -->
         <add-folder-wizard v-bind:destination="destination"
                            v-bind:location-id="locationId"
+                           v-bind:current-folder="currentFolder"
+                           v-bind:existing-folders="folderFilteredList"
                            v-on:update_folder_list="updateFolderList($event)"
         ></add-folder-wizard>
 
         <!-- ADD LINK WIZARD -->
         <add-link-wizard v-bind:destination="destination"
                          v-bind:location-id="locationId"
+                         v-bind:current-folder="currentFolder"
+                         v-bind:exclude-documents="documentFilteredList"
+                         v-on:update_document_list="updateDocumentList($event)"
         ></add-link-wizard>
 
         <!-- UPLOAD DOCUMENT WIZARD -->
         <upload-document-wizard v-bind:destination="destination"
                                 v-bind:location-id="locationId"
+                                v-bind:current-folder="currentFolder"
+                                v-bind:exclude-documents="documentFilteredList"
+                                v-on:update_document_list="updateDocumentList($event)"
         ></upload-document-wizard>
     </div>
 </template>
@@ -200,6 +208,13 @@
                 //Update the filtered lists
                 this.updateDocumentFilteredList();
                 this.updateFolderFilteredList();
+            },
+            updateDocumentList: function(data) {
+                //Add data to the docuemnt List
+                this.documentList.push(data[0]);
+
+                //Update the filtered list
+                this.updateDocumentFilteredList();
             },
             updateDocumentFilteredList: function() {
                 //Filter the results to contain only the documents in the current folder

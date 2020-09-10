@@ -39,7 +39,7 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button"
                             class="btn btn-primary"
-                            v-bind:disabled="folderDescriptionModel==''"
+                            v-bind:disabled="disableAddFolderButton"
                             v-on:click="addFolder"
                     >
                         Add Folder
@@ -59,10 +59,12 @@
         props: [
             'currentFolder',
             'destination',
+            'existingFolders',
             'locationId',
         ],
         data() {
             return {
+                disableAddFolderButton: true,
                 folderDescriptionModel: '',
             };
         },
@@ -93,7 +95,16 @@
                     console.log("Error: ",error);
                 })
             }
-        }
+        },
+        updated() {
+            /*If there is no folder description OR the folder description already exists - we want to disable the add
+            button.*/
+            var match = this.existingFolders.filter(row => {
+                return row['fields']['folder_description'] == this.folderDescriptionModel;
+            });
+
+            this.disableAddFolderButton = match.length > 0 || this.folderDescriptionModel == '';
+        },
     }
 </script>
 
