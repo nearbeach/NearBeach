@@ -23,14 +23,32 @@
                         </div>
                         <div class="col-md-8">
                             <div class="form-group">
-                                <label for="document_url_location">Document URL</label>
+                                <label for="document_url_location">
+                                    Document URL
+                                    <span class="error"
+                                          v-if="!$v.documentUrlLocationModel.required && $v.documentUrlLocationModel.$dirty"
+                                    > Please suppy a URL.</span>
+                                    <span class="error"
+                                          v-if="!$v.documentUrlLocationModel.url && $v.documentUrlLocationModel.$dirty"
+                                    > Please suppy a proper URL.</span>
+
+                                </label>
                                 <input id="document_url_location"
                                        v-model="documentUrlLocationModel"
                                        class="form-control"
                                 >
                             </div>
                             <div class="form-group">
-                                <label for="document_description">Document Description</label>
+                                <label for="document_description">
+                                    Document Description
+                                    <span class="error"
+                                          v-if="!$v.documentDescriptionModel.required && $v.documentDescriptionModel.$dirty"
+                                    > Please suppy a description of the link.</span>
+                                    <span class="error"
+                                          v-if="duplicateDescription"
+                                    > Sorry - but this is a duplicated description.</span>
+
+                                </label>
                                 <input id="document_description"
                                        v-model="documentDescriptionModel"
                                        class="form-control"
@@ -45,6 +63,7 @@
                     <button type="button"
                             class="btn btn-primary"
                             v-on:click="addLink"
+                            v-bind:disabled="disableAddButton"
                     >
                         Add Link
                     </button>
@@ -56,6 +75,9 @@
 
 <script>
     const axios = require('axios');
+
+    //Validation
+    import { required, url } from 'vuelidate/lib/validators';
 
     export default {
         name: "AddLinkWizard",
@@ -71,15 +93,29 @@
                 disableAddButton: true,
                 documentDescriptionModel: '',
                 documentUrlLocationModel: '',
+                duplicateDescription: false,
 
             };
+        },
+        validations: {
+            documentDescriptionModel: {
+                required,
+            },
+            documentUrlLocationModel: {
+                required,
+                url,
+            },
         },
         methods: {
             addLink: function() {
                 const data_to_send = new FormData();
                 data_to_send.set('document_description',this.documentDescriptionModel);
                 data_to_send.set('document_url_location',this.documentUrlLocationModel);
-                data_to_send.set('parent_folder',this.currentFolder);
+
+                //Only set the parent folder variable if there exists a variable in current folder
+                if (this.currentFolder != null && this.currentFolder != '') {
+                    data_to_send.set('parent_folder',this.currentFolder);
+                }
 
                 axios.post(
                     `/documentation/${this.destination}/${this.locationId}/add_link/`,
@@ -101,12 +137,14 @@
                 return row['document_key__document_description'] == this.documentDescriptionModel;
             });
 
-            //Determining the add button will be disabled
-            // this.disableAddButton = match.length > 0 ||         //If there are any matches
-            //     this.documentDescriptionModel.length > 0 ||     //If there is no description
-            //     !this.validURL(this.documentUrlLocationModel);  //Validate the URL
-            //WE SHOULD USE THE VALIDATION LIBRARY TO VALIDATE EVERYTHING
-            this.disableAddButton = false;
+            //Notify the user of duplicate descriptions (if there is any)
+            this.duplicateDescription = match.length > 0;
+
+            // Check the validation
+            this.$v.$touch();
+
+            //Disable the button (if it does not meet our standards)
+            this.disableAddButton = this.$v.$invalid || match.length > 0;
         },
     }
 </script>

@@ -93,7 +93,7 @@ class AddRequirementLinkForm(forms.Form):
 
 
 class DocumentUploadForm(ModelForm):
-    folder = forms.ModelChoiceField(
+    parent_folder = forms.ModelChoiceField(
         required=False,
         queryset=folder.objects.all(),
     )

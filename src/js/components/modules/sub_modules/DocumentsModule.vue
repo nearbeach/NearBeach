@@ -158,7 +158,8 @@
             },
             getIcon: function(document) {
                 //If the document is a weblink - just return the link image
-                if (document['document_key__document_url_location'] != "") {
+                if (document['document_key__document_url_location'] != "" &&
+                    document['document_key__document_url_location'] != null) {
                     return 'external-link';
                 }
 

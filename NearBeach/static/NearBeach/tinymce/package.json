@@ -2,7 +2,7 @@
   "_args": [
     [
       "tinymce@5.4.1",
-      "/Users/luke/PycharmProjects/source_code/NearBeach"
+      "/home/luke/Sites/NearBeach"
     ]
   ],
   "_development": true,
@@ -27,7 +27,7 @@
   ],
   "_resolved": "https://registry.npmjs.org/tinymce/-/tinymce-5.4.1.tgz",
   "_spec": "5.4.1",
-  "_where": "/Users/luke/PycharmProjects/source_code/NearBeach",
+  "_where": "/home/luke/Sites/NearBeach",
   "author": {
     "name": "Ephox Corporation"
   },
