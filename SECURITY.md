@@ -1,5 +1,7 @@
 # Security Policy
 
+NearBeach looks at security as a high importance. If you find any security issues please contact us.
+
 ## Supported Versions
 
 The following versions are supported for security updates.
