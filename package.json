@@ -34,8 +34,6 @@
     "bootstrap": "^5.0.0-alpha1",
     "feather-icons": "^4.28.0",
     "popper.js": "^1.16.1",
-    "vee-validate": "^3.3.7",
-    "vue-feather-icons": "^5.0.0",
     "vuelidate": "^0.7.5"
   },
   "devDependencies": {

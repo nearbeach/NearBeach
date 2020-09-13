@@ -11,10 +11,12 @@
 ![Twitter Follow](https://img.shields.io/twitter/follow/robotichead.svg?style=social)
 
 
-NearBeach is currently in beta development. If you find any issues, or require any help, please do not hesitate to contact on our forums. https://help.nearbeach.org
+NearBeach is currently in beta development. If you find any issues, or require any help, please do not hesitate to 
+contact on our forums. https://help.nearbeach.org
 
 ## What is NearBeach?
-NearBeach is a project and task management tool (PATMT) with a basic customer relationship management tool to help you manage your projects and task. The phillosophy of NearBeach is to be easy to install and use, be open sourced, be flexible, and aimed at small/personal organisation to large enterprises. Each new module brought to NearBeach expands it's capability tenfold and brings it closer to a competing product.
+
+NearBeach is an open source project management system, built using Django and VueJS. The phillosophy of NearBeach is to be easy to install and use, be open sourced, and to be flexible. NearBeach is currently aimed at small/personal organisation to large enterprises. Each new module brought to NearBeach expands it's capability tenfold and brings it closer to a competing product.
 
 
 ## Helpful links
@@ -27,22 +29,7 @@ NearBeach is a project and task management tool (PATMT) with a basic customer re
 
 
 ## Features
-NearBeach's main focus is to create both projects and task. Each task can then be assigned to as many projects required (sometimes multiple projects will need to have the same task completed). Each project and task can also be assigned to multiple users to complete.
-![NearBeach - Project Information](https://github.com/robotichead/Store_Github_Pictures/blob/master/NearBeach%20-%20project%20information.png?raw=true)
-
-However projects and task are but a small feature to a PATMT system. You will need to store user requirement and be able to assign those requirement items to projects/task for completion. You will need to track these requirement to make sure they are completed. NearBeach has recently implemented a requirement module to help you store all your customer's requirement
-![NearBeach - Requirements](https://github.com/robotichead/Store_Github_Pictures/blob/master/NearBeach%20-%20Requirements.png?raw=true)
-
-What if you have an opportunity? You do not have the user's full requirement yet, but there could easily be a sale involved. NearBeach has also implemented the opportunity module, to help you store each potential opportunity that comes through the pipeline.
-![NearBeach - Opportunity](https://github.com/robotichead/Store_Github_Pictures/blob/master/NearBeach%20-%20Opportunity?raw=true)
-
-
-Finally, you might need to send a quote to your customer. As a new feature, the Quotes module has been implemented into NearBeach.
-![NearBeach - Quotes](https://github.com/robotichead/Store_Github_Pictures/blob/master/NearBeach%20-%20Quote3.png?raw=true)
-![NearBeach - Quotes](https://github.com/robotichead/Store_Github_Pictures/blob/master/NearBeach%20-%20Quote1.png?raw=true)
-
-These are not the only features in NearBeach, but some which you may start using strait away. Feel free to download and install and start using NearBeach right away.
-
+NearBeach is currently going through a massive rewrite - we have stripped out a lot of the features temporarily. We are however writting them back in. Our focus of the rewrite is to improve UI/UX, and the speed of page rendering.
 
 ## Software References (thank you)
 
@@ -59,56 +46,15 @@ Python Modules - [![Known Vulnerabilities](https://snyk.io/test/github/robotiche
 
 JavaScript Modules - [![Known Vulnerabilities](https://snyk.io/test/github/robotichead/NearBeach/badge.svg?targetFile=package.json)](https://snyk.io/test/github/robotichead/NearBeach?targetFile=package.json)
 
-### Chosen-js
-Concept and development by Patrick Filler for Harvest.
 
-Design and CSS by Matthew Lettini
+### VueJS
+Creator(s): Evan You
 
-Repository maintained by @pfiller, @kenearley, @stof, @koenpunt, and @tjschuck.
+Github: https://github.com/vuejs/vue
 
-Github: https://github.com/harvesthq/chosen
+License: The MIT License (MIT)
 
-Link: https://harvesthq.github.io/chosen/
-
-License: MIT
-
-Note: Chosen-js is used to help streamline the select boxes, to make it easier for the user to select item(s).
-
-### jQuery
-Creator(s): John Resig
-
-Github: https://github.com/jquery/jquery
-
-Link: jquery.com
-
-License: MIT
-
-Note: jQuery help shorten a lot of the javascript code within NearBeach. There are also a few widgets that rely on this technology (i.e. Chosen-js).
-
-
-
-### jQuery File Upload
-Creator(s): Sebastian Tschan
-
-Github: https://github.com/blueimp/jQuery-File-Upload
-
-Link: https://blueimp.github.io/jQuery-File-Upload/
-
-License : MIT
-
-Note: jQuery File Upload is used when there is a file to be uploaded through the AJAX method.
-
-
-
-### jQuery Plugin Date and Time Picker
-Creator(s): Valeriy Chupurnov
-
-Github: https://github.com/xdan/datetimepicker
-
-License: MIT
-
-Note: This plugin is a widget used to help improve picking dates and time.
-
+Note: VueJS is used to render all front-end UI.
 
 
 ### TinyMCE
@@ -157,18 +103,6 @@ License: BSD 3-Clause
 Note: D3 is used for producing graphical representatives of data for NearBeach
 
 
-
-
-### Gantt-Chart
-Creator(s): Dimitry Kudryavtsev
-
-Github: https://github.com/dk8996/Gantt-Chart
-
-License: Apache-2.0
-
-Note: Gantt-Chart will be used for NearBeach's timeline feature.
-
-
 ### Bootstrap
 Creator(s): Mark Otto, Jacob Thornton
 
@@ -188,3 +122,13 @@ Github: https://github.com/feathericons/feather
 License: MIT
 
 Note: Feather icons are icons being utilised by NearBeach
+
+
+### Vuelidate
+Creator(s): Damian Dulisz, Natalia Tepluhina, Dobromir Hristov, Marina Mosti
+
+Github: https://github.com/vuelidate/vuelidate
+
+License: MIT
+
+Note: We use Vuelidate for validating the form fields before submitting.
