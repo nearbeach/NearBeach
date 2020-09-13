@@ -2,14 +2,15 @@
 Django
 simplejson
 pillow
-geolocation-python
-django-tinymce4-lite
-weasyprint
-pyperclip
-python-docx
-BeautifulSoup4
-pandoc
-pypandoc
-django_select2
-django-phonenumber-field
-phonenumbers
+urllib3
+# geolocation-python
+# django-tinymce4-lite
+# weasyprint
+# pyperclip
+# python-docx
+# BeautifulSoup4
+# pandoc
+# pypandoc
+# django_select2
+# django-phonenumber-field
+# phonenumbers

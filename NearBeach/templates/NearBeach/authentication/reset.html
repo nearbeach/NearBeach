@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <meta charset="UTF-8">
+    <title>NearBeach Password Change</title>
+
+    <!--
+    Bootstrap and jquery are utilised throughout ALL of NearBeach
+    -->
+    {% load static %}
+    <script src="{% static 'NearBeach/js/jquery.min.js' %}"></script>
+    <script src="{% static 'NearBeach/js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'NearBeach/css/bootstrap.min.css' %}" />
+
+    <style>
+        .bg-image {
+            background-image: url('{% static "NearBeach/images/NearBeach_Background_005.webp" %}');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+        }
+
+        .align-center {
+            align-self: center;
+        }
+
+        .login-heading {
+            font-weight: 300;
+            color: white;
+            text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
+        }
+
+        label {
+            color: white;
+            text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
+        }
+
+        a {
+            color: white;
+            text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
+        }
+
+
+
+        @media (min-width: 992px) {
+            .login_dialog {
+                position: fixed;
+                top: 50%;
+                left: 100%;
+                margin-top: -90px;
+                margin-left: -35%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row no-gutter bg-image">
+        <div class="login_dialog col-md-12 col-lg-4 align-center" id="login_dialog">
+            <h3 class="login-heading">NearBeach Password Change</h3>
+            {% if validlink %}
+                <form action="" method="post" id="password-form">
+                    {% csrf_token %}
+                    <!-- Any errors -->
+                    {% if form.new_password1.errors %}
+                        {% for error in form.new_password1.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- Password reset form -->
+                    <div class="alert alert-primary" role="alert">
+                        Please type in your new password.
+                    </div>
+
+                    <div class="alert alert-danger" role="alert" id="passwords_not_same" style="display:none;">
+                        The passwords are not the same
+                    </div>
+
+                    <!-- New password fields -->
+                    <div class="form-label-group">
+                        <label for="id_new_password1">New Password</label>
+                        {{ form.new_password1 }}
+                    </div>
+
+                    <div class="form-label-group">
+                        <label for="id_new_password2">Confirm Password</label>
+                        {{ form.new_password2 }}
+                    </div>
+
+                    <button class="btn btn-lg btn-primary btn-block btn-login mt-4" type="submit" disabled id="change_passwords">Change Passwords</button>
+
+                </form>
+            {% else %}
+                <div class="alert alert-danger mt-4" role="alert">
+                    The password reset link was invalid, possibly because it has already been used. Please request a new password reset.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+<script>
+    //Add the placeholder to id_email
+    document.getElementById("id_new_password1").placeholder = "New Passsword";
+    document.getElementById("id_new_password1").classList.add("form-control");
+
+    document.getElementById("id_new_password2").placeholder = "Confirm Password";
+    document.getElementById("id_new_password2").classList.add("form-control");
+
+    //For the password fields, we want to enable the button if the passwords are the same
+    $("#id_new_password1").on('keyup',function() { password_field_changed()});
+    $("#id_new_password2").on('keyup',function() { password_field_changed()});
+
+    function password_field_changed() {
+        var password1 = document.getElementById("id_new_password1").value,
+            password2 = document.getElementById("id_new_password2").value;
+
+        if (password1 == password2)  {
+            $("#passwords_not_same").hide();
+            $("#change_passwords").prop("disabled",false);
+        } else {
+            $("#passwords_not_same").show();
+            $("#change_passwords").prop("disabled",true);
+        }
+    }
+</script>
+
+</body>
+</html>

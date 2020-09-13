@@ -2,6 +2,7 @@
 Django
 simplejson
 pillow
+urllib3
 geolocation-python
 django-tinymce4-lite
 weasyprint

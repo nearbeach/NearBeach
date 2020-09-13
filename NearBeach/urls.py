@@ -11,6 +11,7 @@ from django.urls import re_path
 from django.contrib.auth import views as auth_views
 
 
+"""
 from . import views, \
 	views_lookup, \
 	views_quotes, \
@@ -22,10 +23,73 @@ from . import views, \
 	views_requirements, \
 	views_administration, \
 	views_whiteboard
-
+"""
+from .views import authentication_views, \
+	dashboard_views, \
+	document_views, \
+	object_data, \
+	requirement_item_views, \
+	requirement_views, \
+	search_views
 
 
 urlpatterns = [
+	path('', dashboard_views.dashboard, name='dashboard'),
+
+	# Documentation
+	path('documentation/<destination>/<location_id>/add_folder/',document_views.document_add_folder,name='document_add_folder'),
+	path('documentation/<destination>/<location_id>/add_link/',document_views.document_add_link,name='document_add_link'),
+	path('documentation/<destination>/<location_id>/list/files/',document_views.document_list_files,name='document_list_files'),
+	path('documentation/<destination>/<location_id>/list/folders/',document_views.document_list_folders,name='document_list_folders'),
+	path('documentation/<destination>/<location_id>/upload/',document_views.document_upload,name='document_upload'),
+
+
+	# Authentication
+	path('login', authentication_views.login, name='login'),
+	path('logout', authentication_views.logout, name='logout'),
+
+	# New Objects
+	path('new_requirement',requirement_views.new_requirement, name='new_requirement'),
+	path('new_requirement/save/',requirement_views.new_requirement_save, name='new_requirement_save'),
+	path('new_requirement_item/save/<int:requirement_id>/',requirement_item_views.new_requirement_item,name='new_requirement_item'),
+
+	# Object Data
+	path('object_data/<destination>/<location_id>/add_bug/',object_data.add_bug,name='add_bug'),
+	path('object_data/<destination>/<location_id>/add_customer/',object_data.add_customer,name='add_customer'),
+	path('object_data/<destination>/<location_id>/add_group/',object_data.add_group,name='add_group'),
+	path('object_data/<destination>/<location_id>/add_notes/',object_data.add_notes,name='add_notes'),
+	path('object_data/<destination>/<location_id>/add_user/',object_data.add_user,name='add_user'),
+	path('object_data/bug_client_list/',object_data.bug_client_list,name='bug_client_list'),
+	path('object_data/<destination>/<location_id>/bug_list/',object_data.bug_list,name='bug_list'),
+	path('object_data/<destination>/<location_id>/customer_list/',object_data.customer_list,name='customer_list'),
+	path('object_data/<destination>/<location_id>/customer_list_all/',object_data.customer_list_all,name='customer_list_all'),
+	path('object_data/<destination>/<location_id>/group_list/',object_data.group_list,name='group_list'),
+	path('object_data/<destination>/<location_id>/group_list_all/',object_data.group_list_all,name='group_list_all'),
+	path('object_data/<destination>/<location_id>/<object_lookup>/link_list/',object_data.link_list,name='link_list'),
+	path('object_data/<destination>/<location_id>/note_list/',object_data.note_list,name='note_list'),
+	path('object_data/<destination>/<location_id>/query_bug_client/',object_data.query_bug_client,name='query_bug_client'),
+	path('object_data/<destination>/<location_id>/user_list/',object_data.user_list,name='user_list'),
+	path('object_data/<destination>/<location_id>/user_list_all/',object_data.user_list_all,name='user_list_all'),
+
+	# Requirements
+	path('requirement_information/<int:requirement_id>/',requirement_views.requirement_information,name='requirement_information'),
+	path('requirement_information/<int:requirement_id>/add_requirement_link/',requirement_views.add_requirement_link,name='add_requirement_link'),
+	path('requirement_information/<int:requirement_id>/data/item_links/',requirement_views.get_requirement_item_links,name='get_requirement_item_links'),
+	path('requirement_information/<int:requirement_id>/data/items/',requirement_views.get_requirement_items,name='get_requirement_items'),
+	path('requirement_information/<int:requirement_id>/data/item_status/',requirement_views.get_requirement_item_status_list,name='get_requirement_item_status_list'),
+	path('requirement_information/<int:requirement_id>/data/item_type/',requirement_views.get_requirement_item_type_list,name='get_requirement_item_type_list'),
+	path('requirement_information/<int:requirement_id>/data/links/',requirement_views.get_requirement_links_list,name='get_requirement_links_list'),
+	path('requirement_information/<int:requirement_id>/save/',requirement_views.requirement_information_save,name='requirement_information_save'),
+
+	# Requirement Items
+	path('requirement_item_information/<int:requirement_id>',requirement_item_views.requirement_item_information,name='requirement_item_information'),
+
+	path('search/organisation/data/',search_views.search_organisation_data,name='search_organisation_data'),
+]
+
+"""
+urlpatterns = [
+	
 re_path(r'^$', views.index, name='index'),
 re_path(r'^add_campus_to_customer/(?P<customer_id>[0-9]+)/(?P<campus_id>[0-9]+)/', views.add_campus_to_customer,name='add_campus_to_customer'),
 re_path(r'^admin_group/(?P<location_id>[0-9]+)/(?P<destination>["group","permission_set","user"])',views.admin_group,name="admin_group"),
@@ -288,8 +352,9 @@ re_path(r'^whiteboard_save/(?P<whiteboard_id>[0-9]+)',views_whiteboard.whiteboar
 
 ]
 
+
 if settings.DEBUG:
 	urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 	urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
+"""
 

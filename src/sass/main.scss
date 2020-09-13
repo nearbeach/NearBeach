@@ -1,0 +1,27 @@
+//Import variables
+@import './common/variables';
+
+// Import Bootstrap
+@import "~bootstrap/scss/bootstrap";
+
+//Import components
+@import 'components/body';
+@import 'components/buttons';
+@import 'components/cards';
+@import 'components/documents';
+@import 'components/errors';
+@import 'components/modals';
+@import 'components/nav';
+@import 'components/tables';
+@import 'components/tinymce';
+@import 'components/vselect';
+
+
+//Import layouts'
+@import 'layouts/footer';
+@import 'layouts/header';
+
+
+//Import any vue components
+@import "~vue-select/src/scss/vue-select.scss";
+

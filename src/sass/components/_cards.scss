@@ -1,0 +1,139 @@
+.card {
+  h1 {
+    width: 100%;
+    font-size: 35px;
+    font-weight: bold;
+    margin-bottom: -10px;
+    margin-top: 3px;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 0;
+  }
+
+  hr {
+    //width: 100%;
+    border-top: 2px solid #ABCEB4;
+    margin: 15px -1rem 30px -1rem;
+  }
+
+  .loader-image {
+    width: 500px;
+    position: absolute;
+    transform: translate(75px,30px);
+
+    @media screen and (max-width: 1020px) {
+      width: 45vw;
+      transform: translate(10vw,30px);
+    }
+    @media screen and (max-width: 767px) {
+      width: 70vw;
+      transform: translate(15vw,30px);
+    }
+  }
+
+  .v-select {
+    margin-right: 10px;
+  }
+
+  .text-instructions {
+    color: #4F4F4F;
+    font-weight: lighter;
+  }
+
+  .organisation-details {
+    padding-left: 130px;
+    min-height: 120px;
+
+    .organisation-email, .organisation-link {
+      font-weight: lighter;
+      colour: #737373;
+      font-size: 15px;
+      margin-bottom: 2px;
+
+      & svg {
+        width: 14px;
+        color: #474f57;
+      }
+    }
+
+    .organisation-name {
+      margin-bottom: 6px;
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    .organisation-image {
+      position: absolute;
+      transform: translateX(-130px);
+      width: 120px;
+      border-radius: 50%;
+    }
+  }
+
+  .requirement-item-spacer, .customers-module-spacer, .module-spacer {
+    min-height: 240px;
+  }
+
+  //Customer Module
+  .customer-modules {
+    display: flex;
+    flex-wrap: wrap;
+    min-width: 420px;
+    margin: 0 40px;
+
+    .card-customer {
+      display: block;
+      margin: 14px 35px;
+
+      .single-customer-card {
+        margin-left: 110px;
+        min-height: 75px;
+
+        .customer-card-name {
+          margin-bottom: 6px;
+          font-weight: bold;
+          font-size: 20px;
+        }
+
+        .customer-card-email {
+          font-weight: lighter;
+          colour: #737373;
+          font-size: 15px;
+          margin-bottom: 2px;
+        }
+
+        img {
+          width: 100px;
+          position: absolute;
+          border-radius: 50%;
+          transform: translateX(-110px);
+        }
+      }
+    }
+  }
+
+  .group-and-user-table {
+    max-width: 350px;
+  }
+
+  .user-table-module {
+    max-width: 450px;
+
+    .user-card-email {
+      font-weight: lighter;
+      colour: #737373;
+      font-size: 15px;
+      margin-bottom: 2px;
+    }
+
+    .default-user-profile {
+      width: 100px;
+      border-radius: 50%;
+    }
+  }
+
+
+}

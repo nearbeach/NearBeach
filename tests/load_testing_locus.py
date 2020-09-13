@@ -1,60 +1,27 @@
-#Import required libraries
-from locust import HttpLocust, TaskSet, task
-import getpass
+# Import the locust libraries
+import time, getpass
+from locust import HttpUser, task, between
 
 #Request the username and password to login into NearBeach
 username = input("\nPlease enter the username: ")
 password = getpass.getpass("\nPlease enter the password: ")
 
-#The tests
-class WebsiteUserTests(TaskSet):
-    #On start - log in using above credentials
+class QuickstartUser(HttpUser):
+    wait_time = between(1, 2)
+
     def on_start(self):
         """ on_start is called when a Locust start before any task is scheduled """
-        self.client.post(
-            "/login",
-            {
-                "username":username,
-                "password":password
-            }
-        )
+        self.client.post("/login", json={"username": username, "password": password})
 
-    #On stop - we want everyone to log off
-    def on_stop(self):
-        """ on_stop is called when the TaskSet is stopping """
-        self.client.post("/logout")
+    @task
+    def dashboard(self):
+        self.client.get("/")
+       
 
-    #The tasks/pages we are looking at.
-    @task(1)
-    def index(self):
-        self.client.get("/dashboard")
+    @task(3)
+    def requirement_information(self):
+        for item_id in range(10):
+            self.client.get(f"/requirement_information/1")
 
-    @task(1)
-    def profile(self):
-        self.client.get("/my_profile")
 
-    @task(1)
-    def new_project(self):
-        self.client.get("/new_project")
 
-    @task(1)
-    def project_information(self):
-        self.client.get("/project_information/1")
-
-    @task(1)
-    def task_information(self):
-        self.client.get("/task_information/1")
-
-    @task(1)
-    def timelinke(self):
-        self.client.get("/timeline")
-
-    @task(1)
-    def search(self):
-        self.client.get("/search")
-
-#Get locus to start
-class WebsiteUser(HttpLocust):    
-    task_set = WebsiteUserTests
-    min_wait = 5000
-    max_wait = 9000

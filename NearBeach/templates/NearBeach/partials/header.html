@@ -1,152 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<head>
+<head role="head">
 	<title>NearBeach Beta</title>
 
     {% load static %}
 
-    <!-- Load Bootstrap -->
-    <script type="text/javascript" src="{% static 'NearBeach/js/jquery.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/js/popper.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/js/bootstrap.min.js' %}"></script>
+    <!-- load the loader CSS -->
+    <script async type="text/javascript" src="{% static 'NearBeach/loader.min.js' %}"></script>
 
-    <!-- Load other misc libraries -->
-    <script type="text/javascript" src="{% static 'NearBeach/js/d3.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/js/jquery.datetimepicker.full.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'NearBeach/js/NearBeach-min.js' %}"></script>
-
-    <!-- Load CSS -->
-    <link rel="stylesheet" href="{% static 'NearBeach/css/NearBeach.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'NearBeach/css/bootstrap.min.css' %}" />
+    <!-- tinymce -->
+    <link preload type="text/css" src="{% static 'NearBeach/tinymce/skins/ui/oxide/skin.min.css' %}" />
+    <link preload type="text/css" src="{% static 'NearBeach/tinymce/skins/content/default/content.min.css' %}" />
+    <link preload type="text/css" src="{% static 'NearBeach/tinymce/skins/ui/oxide/content.min.css' %}" />
+    <script defer type="text/javascript" src="{% static 'NearBeach/tinymce/tinymce.min.js' %}"></script>
 
     <!-- fav icon -->
-    <link rel="shortcut icon" type="image/png" href="{% static '/NearBeach/NearBeach_Logo_Small.png' %}"/>
-    <style>
-        .col-3 {
-            flex: 0 0 24%;
-        }
-
-        .container-fluid {
-            overflow: scroll;
-
-        }
-
-        .requirement-kanban {
-            height: calc(100vh - 139px);
-        }
-
-        .card-block {
-            min-height: 200px;
-        }
-
-        #timeline {
-            height: calc(100vh - 139px);
-        }
-
-        body {
-            overflow-x: hidden;
-        }
-    </style>
+    <link async rel="shortcut icon" type="image/png" href="{% static '/NearBeach/NearBeach_Small.png' %}"/>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand" href="{% url 'dashboard' %}">NearBeach</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark"
+             role="navigation"
+        >
+            <!-- Navbar branding and burger menu -->
+            <a class="navbar-brand" href="{% url 'dashboard' %}">
+                <img src="{% static 'NearBeach/images/NearBeach_logo.svg' %}" width="30" height="30" alt="">
+                NearBeach
+            </a>
+            <button class="navbar-toggler"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+            >
                 <span class="navbar-toggler-icon"></span>
             </button>
 
+            <!-- Menu Items -->
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
-                    <!--DASHBOARD-->
+                    <!-- Timeline -->
                     <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                        <a class="nav-link" href="#">Timeline</a>
                     </li>
 
-                    <!--MY PROFILE-->
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'my_profile' %}">My Profile</a>
-                    </li>
-
-                    <!--TIMELINE-->
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'timeline' %}">Timeline</a>
-                    </li>
-
-                    {% if new_item_permission >= 3 %}
-                    <!--NEW ITEMS-->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light" href="javascript:void(0)" id="new_items_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                New Items
-                            </a>
-                            <div class="dropdown-menu bg-dark" aria-labelledby="new_items_dropdown">
-                                <a class="dropdown-item text-light" href="{% url 'new_customer' 0 %}">New Customer</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_kanban_board' %}">New Kanban Board</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_opportunity' %}">New Opportunity</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_organisation' %}">New Organisation</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_project' %}">New Project</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_request_for_change' %}">New Request For Change</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_requirement' %}">New Requirement</a>
-                                <a class="dropdown-item text-light" href="{% url 'new_task' %}">New Task</a>
-                            </div>
-                        </li>
-                    {% endif %}
-
-                    <!--SEARCH-->
-                    <!--Temp code - might be replaced by a proper search functionality-->
+                    <!-- New Objects -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-light" href="javascript:void(0)" id="list_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            List Objects
+                        <a class="nav-link dropdown-toggle"
+                           href="#"
+                           id="newObjectsDropdown"
+                           role="button"
+                           data-toggle="dropdown"
+                           aria-haspopup="true"
+                           aria-expanded="false"
+                        >
+                            New Object
                         </a>
-                        <div class="dropdown-menu bg-dark" aria-labelledby="list_dropdown">
-                            <a class="dropdown-item text-light" href="{% url 'search' %}">List All</a>
-                            <a class="dropdown-item text-light" href="{% url 'search_tags' %}">List by Tag</a>
-                            <a class="dropdown-item text-light" href="{% url 'search_customer' %}">List Customers</a>
-                            <a class="dropdown-item text-light" href="{% url 'search_kanban' %}">List Kanban Boards</a>
-                            <a class="dropdown-item text-light" href="{% url 'search_organisation' %}">List Organisations</a>
+                        <div class="dropdown-menu" aria-labelledby="newObjectsDropdown">
+                            <a class="dropdown-item" href="#">New Customer</a>
+                            <a class="dropdown-item" href="#">New Kanban Board</a>
+                            <a class="dropdown-item" href="#">New Opportunity</a>
+                            <a class="dropdown-item" href="#">New Organisation</a>
+                            <a class="dropdown-item" href="#">New Project</a>
+                            <a class="dropdown-item" href="#">New Request For Change</a>
+                            <a class="dropdown-item" href="{% url 'new_requirement' %}">New Requirement</a>
+                            <a class="dropdown-item" href="#">New Task</a>
                         </div>
                     </li>
 
-                    {% if administration_permission >= 1 %}
-                        <!--CONFIGURATION-->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light" href="javascript:void(0)" id="configuration_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Configuration
-                            </a>
-                            <div class="dropdown-menu bg-dark" aria-labelledby="administration_dropdown">
-                                <a class="dropdown-item text-light" href="{% url 'bug_client_list' %}">Bug Client List</a>
-                                <a class="dropdown-item text-light" href="{% url 'search_templates' %}">Edit Templates</a>
-                                <a class="dropdown-item text-light" href="{% url 'list_of_tags' %}">List of Tags</a>
-                                <a class="dropdown-item text-light" href="{% url 'list_of_taxes_information' %}">List of Taxes</a>
-                                <a class="dropdown-item text-light" href="{% url 'product_and_service_search' %}">Products and Services</a>
-                            </div>
-                        </li>
-
-                        <!--ADMINISTRATION-->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light" href="javascript:void(0)" id="administration_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Administration
-                            </a>
-                            <div class="dropdown-menu bg-dark" aria-labelledby="administration_dropdown">
-                                <a class="dropdown-item text-light" href="{% url 'diagnostic_information' %}">Diagnostics</a>
-                                <a class="dropdown-item text-light" href="{% url 'search_group' %}">Groups</a>
-                                <a class="dropdown-item text-light" href="{% url 'search_permission_set' %}">Permission Sets</a>
-                                <a class="dropdown-item text-light" href="{% url 'search_users' %}">Users</a>
-                            </div>
-                        </li>
-                    {% endif %}
+                    <!-- Find Objects -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle"
+                           href="#"
+                           id="findObjectsDropdown"
+                           role="button"
+                           data-toggle="dropdown"
+                           aria-haspopup="true"
+                           aria-expanded="false"
+                        >
+                            Find Objects
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="findObjectsDropdown">
+                            <a class="dropdown-item" href="#">List All</a>
+                            <a class="dropdown-item" href="#">List by Tag</a>
+                            <a class="dropdown-item" href="#">List Customers</a>
+                            <a class="dropdown-item" href="#">List Kanban Boards</a>
+                            <a class="dropdown-item" href="#">List Organisations</a>
+                        </div>
+                    </li>
                 </ul>
 
-                <!--SEARCH FIELD-->
-                <form action={% url 'search' %} method="post" class="search_for form-inline my-2 my-lg-0">
-                    {% csrf_token %}
-                    <input id="id_search_for" name="search_for" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-secondary" type="submit">Search</button>
-                </form>
-
-                <!--LOGOUT-->
-                <a class="btn btn-dark" href="{% url 'logout' %}">Logout</a>
+                <!-- Right side of navbar -->
+                <ul class="navbar-nav navbar-right">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle"
+                           href="#"
+                           id="userDropdown"
+                           role="button"
+                           data-toggle="dropdown"
+                           aria-haspopup="true"
+                           aria-expanded="false"
+                        >
+                            <i data-feather="user"></i> User
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                            <a class="dropdown-item" href="#">My Profile</a>
+                            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </nav>
     </header>
+
+    <!-- Simple loader -->
+    <div class="loader" id="loader" role="complementary">
+        <div class="loader-text">
+            <strong>NearBeach</strong>
+            <p>We care about your project</p>
+        </div>
+        <div class="loader-image">
+            <img src="{% static 'NearBeach/images/NearBeach_logo.svg' %}"
+                 alt="NearBeach logo"
+            />
+        </div>
+    </div>

@@ -1,0 +1,8 @@
+{% extends 'NearBeach/template.html' %}
+{% load static %}
+{% block content %}
+    <new-requirements v-bind:status-list="{{status_list}}"
+                      v-bind:type-list="{{type_list}}"
+                      v-bind:group-results="{{group_results}}"
+    ></new-requirements>
+{% endblock %}

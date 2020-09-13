@@ -1,0 +1,24 @@
+body {
+  background-color: #F4F2F2;
+}
+
+.container {
+  margin: 70px auto;
+  max-width: 1020px;
+  padding-left: 0;
+  padding-right: 0;
+
+  @media screen and (max-width: 767px) {
+    padding-left: 5px;
+    padding-right: 5px;
+    margin: 10px 0 10px 0;
+  }
+}
+
+.spacer {
+  min-height: 30px;
+}
+
+.misc-modules {
+  min-height: 500px;
+}

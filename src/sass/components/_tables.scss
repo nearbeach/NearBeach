@@ -1,0 +1,21 @@
+thead {
+  background-color: #cecece;
+}
+
+.requirement-link-type, .small-text {
+  padding: 0;
+  margin: 0;
+  font-weight: lighter;
+}
+
+td {
+  a {
+    text-decoration: none;
+    color: black
+  }
+  a:hover {
+    text-decoration: none;
+    color: black;
+    text-shadow: 1px 1px #cecece;
+  }
+}

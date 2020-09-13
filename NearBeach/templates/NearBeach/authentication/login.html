@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <meta charset="UTF-8">
+    <title>NearBeach Login</title>
+
+    <!-- Webpack file with Foundation -->
+    {% load static %}
+    <script defer src="{% static 'NearBeach/login.min.js' %}"></script>
+</head>
+<body>
+    <div class="background">
+        <div class="login-dialog">
+            <h1>NearBeach Login</h1>
+            <form action="{%  url 'login' %}" method="post" id="login-form">
+                {% csrf_token %}
+
+                <!-- LOGIN form -->
+                <div class="form-group">
+                    <label for="id_username">Username</label>
+                    {{ LoginForm.username }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_password">Password</label>
+                    {{ LoginForm.password }}
+                </div>
+
+                <button class="btn btn-primary" type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
