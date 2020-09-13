@@ -1,15 +1,15 @@
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
+from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 from django.template import loader
 from NearBeach.views.tools.internal_functions import *
 from django.core.serializers.json import DjangoJSONEncoder
 
-
 from ..forms import *
 
-import json
+import json, os
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
@@ -230,6 +230,7 @@ def document_upload(request,destination,location_id):
         is_deleted="FALSE",
         document_key=document_submit,
     ).values(
+        'document_key_id',
         'document_key__document_description',
         'document_key__document_url_location',
         'document_key__document',
@@ -237,7 +238,39 @@ def document_upload(request,destination,location_id):
         'folder',
     )
 
+    # Handle the document upload
+    handle_file_upload(request.FILES['document'],document_results)
+
     # Send back json data
     json_results = json.dumps(list(document_results), cls=DjangoJSONEncoder)
 
     return HttpResponse(json_results, content_type='application/json')
+
+
+#Internal Function
+def handle_file_upload(upload_document,document_results):
+    """
+    This function will upload the file and store it in the private folder destination under a subfolder that contains
+    the same document_key value.
+    :param upload_document: The FILE itself - to be uploaded
+    :param document_results: The document_results - with variables we require
+    :return:
+    """
+    # Make the directory we want to save the file in. The directory will have the document_key
+    file_permissions = 0o755 #Look at these permissions later
+    path = os.path.join(
+        settings.PRIVATE_MEDIA_ROOT,
+        '%s' % (document_results[0]['document_key_id'],),
+    )
+    os.mkdir(path, file_permissions)
+
+    storage_location = '%s/%s/%s' % (
+        settings.PRIVATE_MEDIA_ROOT,
+        document_results[0]['document_key_id'],
+        document_results[0]['document_key__document_description'],
+    )
+
+    #Save the upload document in the location
+    with open(storage_location,'wb+') as destination:
+        for chunk in upload_document.chunks():
+            destination.write(chunk)

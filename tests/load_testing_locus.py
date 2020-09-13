@@ -1,5 +1,5 @@
 #Import required libraries
-from locust import HttpLocust, TaskSet, task
+from locust import HttpUser, TaskSet, task
 import getpass
 
 #Request the username and password to login into NearBeach
@@ -27,34 +27,14 @@ class WebsiteUserTests(TaskSet):
     #The tasks/pages we are looking at.
     @task(1)
     def index(self):
-        self.client.get("/dashboard")
+        self.client.get("/")
 
     @task(1)
     def profile(self):
-        self.client.get("/my_profile")
-
-    @task(1)
-    def new_project(self):
-        self.client.get("/new_project")
-
-    @task(1)
-    def project_information(self):
-        self.client.get("/project_information/1")
-
-    @task(1)
-    def task_information(self):
-        self.client.get("/task_information/1")
-
-    @task(1)
-    def timelinke(self):
-        self.client.get("/timeline")
-
-    @task(1)
-    def search(self):
-        self.client.get("/search")
+        self.client.get("/requirement_information/1")
 
 #Get locus to start
-class WebsiteUser(HttpLocust):    
+class WebsiteUser(HttpUser):    
     task_set = WebsiteUserTests
     min_wait = 5000
     max_wait = 9000

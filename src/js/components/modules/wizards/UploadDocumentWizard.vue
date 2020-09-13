@@ -24,9 +24,12 @@
                             <p v-if="documentModel.length == 0">
                                 1. Please click on "Upload File" button to upload a file
                             </p>
-                            <p v-else>
+                            <p v-else-if="uploadPercentage == ''">
                                 2. Please modify the document descript to be more human readable. Or click the "Reset"
                                 button to remove the uploaded file.
+                            </p>
+                            <p v-else>
+                                3. Document is currently uploading. Please be patient.
                             </p>
                         </div>
                         <div class="col-md-8">
@@ -46,7 +49,7 @@
                                 </label>
                             </div>
                             <div class="form-group"
-                                 v-else
+                                 v-else-if="uploadPercentage == ''"
                              >
                                 <!-- DOCUMENT DESCRIPTION -->
                                 <div class="form-group">
@@ -66,6 +69,25 @@
                                     >
                                         Reset Form
                                     </button>
+                                </div>
+                            </div>
+                            <div v-else>
+                                <!-- THE UPLOAD SPINNER -->
+                                <div v-if="parseFloat(uploadPercentage).toFixed(0)<1"
+                                     class="alert alert-warning"
+                                >
+                                    Uploading {{(parseFloat(uploadPercentage)*100).toFixed(2)}}%
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+
+                                <!-- THE FINAL WRITING -->
+                                <div v-else
+                                     class="alert alert-success"
+                                >
+                                    The document has been uploaded. The server is currently writing the file to disk.
+                                    Please be patient - this modal will close automatically. Thank you
                                 </div>
                             </div>
                         </div>
@@ -102,6 +124,7 @@
                 disableUploadButton: true,
                 documentModel: [],
                 documentDescriptionModel: '',
+                uploadPercentage: '',
             };
         },
         methods: {
@@ -116,6 +139,7 @@
                 //Blank out all the models
                 this.documentModel = '';
                 this.documentDescriptionModel = '';
+                this.uploadPercentage = '';
             },
             uploadFile: function() {
                 //Create the data to send
@@ -128,16 +152,28 @@
                     data_to_send.set('parent_folder',this.currentFolder);
                 }
 
+                //Configuration for axios
+                const config = {
+                    onUploadProgress: progressEvent => {
+                        //As the document gets uploaded - we want to update the upload Percentage
+                        this.uploadPercentage = parseFloat(progressEvent['loaded']) / parseFloat(progressEvent['total']);
+                    }
+                }
+
                 //Use axios to send it to the backend
                 axios.post(
                     `/documentation/${this.destination}/${this.locationId}/upload/`,
                     data_to_send,
+                    config,
                 ).then(response => {
                     //Send the data upstream
                     this.$emit('update_document_list',response['data']);
 
                     //Close the modal
                     document.getElementById('uploadDocumentCloseButton').click();
+
+                    //Reset the document
+                    this.resetForm();
                 }).catch(error => {
                     console.log("Error: ",error);
                 })
