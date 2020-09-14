@@ -95,3 +95,17 @@ Method
 
 
 Your new version of NearBeach should be ready.
+
+--------------
+Caching Issues
+--------------
+
+NearBeach does not use a mixer to notify the browser or the cache that the static files (JavaScript, CSS, and Images)
+have been updated. This can cause issues when applying a patch for users. We recommend people clean their cache to stop
+any issues.
+
+
+.. note::
+
+    Please note - if you are using services like CloudFlare - it might cache an old version of the static files. You
+    will need to purge the cache on these services.
