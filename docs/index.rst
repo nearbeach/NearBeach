@@ -103,6 +103,7 @@ Installation Process
   :name: sec-update-or-patch-nearbeach
 
   update/update_or_patch_nearbeach
+  update/update_python_libraries
 
 
 .. toctree::
