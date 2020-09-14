@@ -46,6 +46,14 @@ Method
     pip install --upgrade django pillow
 
 
+4. Restart gunicorn and nginx
+
+  .. code-block:: bash
+
+    sudo service gunicorn restart
+    sudo service nginx restart
+
+
 .. note::
 
   Do not use the above method to update NearBeach. Please follow the instructions located in chapter "Update Or Patch
