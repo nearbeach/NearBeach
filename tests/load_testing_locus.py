@@ -11,7 +11,7 @@ class QuickstartUser(HttpUser):
 
     def on_start(self):
         """ on_start is called when a Locust start before any task is scheduled """
-        self.client.post("/login", json={"username": username, "password": password})
+        self.client.post("/login", json={"id_username": username, "id_password": password})
 
     @task
     def dashboard(self):

@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
+from django.utils.encoding import smart_str
 from django.views.decorators.http import require_http_methods
 from django.template import loader
 from NearBeach.views.tools.internal_functions import *
@@ -245,6 +246,42 @@ def document_upload(request,destination,location_id):
     json_results = json.dumps(list(document_results), cls=DjangoJSONEncoder)
 
     return HttpResponse(json_results, content_type='application/json')
+
+
+@login_required(login_url='login',redirect_field_name="")
+def private_download_file(request,document_key):
+    """
+    The following function will check;
+    1. The user's permission to the document
+    2. If the document exists
+
+    From there it will use X-Sendfile to send the document.
+    :param request:
+    :param document_key:
+    :return:
+    """
+    # PROGRAM CHECK FOR DOCUMENT PERMISSION
+
+    # Get Document information
+    document_results = document.objects.get(document_key=document_key)
+
+    # If not a document but a URL
+    if document_results.document_url_location:
+        return HttpResponseRedirect(document_results.document_url_location)
+
+    # Get the Document path information
+    path = '%s/%s/%s' % (
+        settings.PRIVATE_MEDIA_ROOT,
+        document_key,
+        document_results.document.name
+    )
+
+    # Construct the response
+    response = HttpResponse(content_type='application/force-download')
+    response['Content-Disposition'] = 'attachment; filename=%s' % smart_str(document_results.document.name)
+    response['X-Sendfile'] = smart_str(path)
+
+    return response
 
 
 #Internal Function
