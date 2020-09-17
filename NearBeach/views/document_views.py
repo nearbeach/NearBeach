@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
+from django.db.models import Q
 from django.utils.encoding import smart_str
 from django.views.decorators.http import require_http_methods
 from django.template import loader
@@ -260,10 +261,74 @@ def private_download_file(request,document_key):
     :param document_key:
     :return:
     """
-    # PROGRAM CHECK FOR DOCUMENT PERMISSION
+    # Extract the user groups the user is associated with
+    user_group_results = user_group.objects.filter(
+        is_deleted="FALSE",
+        username=request.user,
+    )
+
+    # Extract the permissions the document is associated with
+    document_permission_results = document_permission.objects.filter(
+        is_deleted="FALSE",
+        document_key=document_key,
+    )
+
+    # Consolidate at the object assignment
+    object_assignment_results = object_assignment.objects.filter(
+        Q(
+            is_deleted="FALSE",
+            # JOIN IN USER GROUPS
+            group_id__in=user_group_results.values('group_id')
+        ) &
+        Q(
+            # One of these conditions have to be met
+            Q(
+                # If the document is uploaded against a customer
+                customer__isnull=False,
+            ) |
+            Q(
+                # If the document is uploaded against an organisation
+                organisation__isnull=False,
+            ) |
+            Q(
+                # Project Links
+                project__isnull=False,
+                project_id__in=document_permission_results.values('project_id')
+            ) |
+            Q(
+                # Task links
+                task__isnull=False,
+                task_id__in=document_permission_results.values('task_id')
+            ) |
+            Q(
+                # Whiteboard
+                whiteboard__isnull=False,
+                whiteboard_id__in=document_permission_results.values('whiteboard_id')
+            ) |
+            Q(
+                # Requirement
+                requirement__isnull=False,
+                requirement_id__in=document_permission_results.values('requirement_id')
+            ) |
+            Q(
+                # Requirement Item
+                requirement_item__isnull=False,
+                requirement_item_id__in=document_permission_results.values('requirement_item_id')
+            ) |
+            Q(
+                # Request for change
+                request_for_change__isnull=False,
+                request_for_change_id__in=document_permission_results.values('request_for_change_id')
+            )
+        )
+    )
+
+    # If the object_assignment_results.count() == 0, then user does not have permissions
+    if object_assignment_results.count() == 0:
+        return HttpResponseBadRequest("Sorry - there is no document")
 
     # Get Document information
-    document_results = document.objects.get(document_key=document_key)
+    document_results = document.objects.get(document_key=document_key)  # Need to change this to a 404
 
     # If not a document but a URL
     if document_results.document_url_location:

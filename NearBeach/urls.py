@@ -48,6 +48,9 @@ urlpatterns = [
 	path('login', authentication_views.login, name='login'),
 	path('logout', authentication_views.logout, name='logout'),
 
+	# Private files
+	path('private/<uuid:document_key>/',document_views.private_download_file,name='private_download_file'),
+
 	# New Objects
 	path('new_requirement',requirement_views.new_requirement, name='new_requirement'),
 	path('new_requirement/save/',requirement_views.new_requirement_save, name='new_requirement_save'),
