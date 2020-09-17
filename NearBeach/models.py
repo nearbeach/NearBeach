@@ -1486,6 +1486,9 @@ class list_of_requirement_item_status(models.Model):
     requirement_item_status = models.CharField(
         max_length=100,
     )
+    status_is_closed = models.BooleanField(
+        default=False,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(

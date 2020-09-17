@@ -24,6 +24,7 @@ import RequirementInformation from './components/requirements/RequirementInforma
 import RequirementItemsModule from "./components/modules/sub_modules/RequirementItemsModule.vue";
 import RequirementLinksModule from "./components/modules/sub_modules/RequirementLinksModule.vue";
 import UploadDocumentWizard from "./components/modules/wizards/UploadDocumentWizard.vue";
+import RequirementItemInformation from "./components/requirement_items/RequirementItemInformation.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -73,6 +74,7 @@ Vue.component('RequirementInformation',RequirementInformation);
 Vue.component('RequirementItemsModule',RequirementItemsModule);
 Vue.component('RequirementLinksModule',RequirementLinksModule);
 Vue.component('UploadDocumentWizard',UploadDocumentWizard);
+Vue.component('RequirementItemInformation',RequirementItemInformation);
 
 //Validation
 import Vuelidate from 'vuelidate'

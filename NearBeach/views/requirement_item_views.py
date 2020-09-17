@@ -67,12 +67,63 @@ def new_requirement_item(request,requirement_id):
     # Actuall return all the new requirement_item results to feed upstream
     return get_requirement_items(request,requirement_id)
 
+
 def requirement_item_information(request,requirement_item_id):
-    # TO DO - THIS ACTUAL PROGRAM!
-    # Get all status - even deleted ones.
-    status_list = list_of_requirement_item_status.objects.all()
+    """
+        Loads the requirement item information.
+        :param request:
+        :param requirement_item_id:
+        :return:
+        """
+    # Get the requirement information
+    requirement_item_results = requirement_item.objects.get(requirement_item_id=requirement_item_id)
 
-    # Send back json data
-    json_results = serializers.serialize('json', status_list)
+    # Check the permissions
+    permission_results = get_user_requirement_item_permissions(request, requirement_item_id)
 
-    return HttpResponse(json_results, content_type='application/json')
+    # If user has no permissions to this requirement send them to the appropriate location
+    if permission_results['requirement'] == 0:
+        # Users who create the requirement get at least read only
+        if requirement_item_results.creation_user == request.user:
+            return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_item_id}))
+
+        # Users who did not create the requirement get sent to permission denied.
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    # If the requirement has been closed - send user to the read only section
+    if requirement_item_results.requirement_item_status.status_is_closed:
+        return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_item_id}))
+
+    # Load template
+    t = loader.get_template('NearBeach/requirement_items/requirement_item_information.html')
+
+    # Get any extra data required
+    organisation_results = organisation.objects.get(
+        organisation_id=requirement_item_results.requirement.organisation_id,
+    )
+
+    status_list = list_of_requirement_item_status.objects.filter(
+        is_deleted="FALSE",
+        status_is_closed=False,
+    )
+
+    type_list = list_of_requirement_item_type.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    group_results = group.objects.filter(
+        is_deleted="FALSE",
+    )
+
+    # context
+    c = {
+        'group_results': serializers.serialize("json", group_results),
+        'organisation_results': serializers.serialize("json", [organisation_results]),
+        'permission_results': permission_results,
+        'requirement_item_id': requirement_item_id,
+        'requirement_item_results': serializers.serialize("json", [requirement_item_results]),
+        'status_list': serializers.serialize("json", status_list),
+        'type_list': serializers.serialize("json", type_list),
+    }
+
+    return HttpResponse(t.render(c, request))

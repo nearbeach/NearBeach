@@ -85,6 +85,9 @@ urlpatterns = [
 	path('requirement_information/<int:requirement_id>/save/',requirement_views.requirement_information_save,name='requirement_information_save'),
 
 	# Requirement Items
+	path('requirement_item_information/<int:requirement_item_id>/', requirement_item_views.requirement_item_information,name='requirement_item_information'),
+
+	# Requirement Items
 	path('requirement_item_information/<int:requirement_id>',requirement_item_views.requirement_item_information,name='requirement_item_information'),
 
 	path('search/organisation/data/',search_views.search_organisation_data,name='search_organisation_data'),
