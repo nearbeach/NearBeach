@@ -36,14 +36,16 @@
 
             <!-- RENDER THE FILES -->
             <div v-for="document in documentFilteredList" class="document-child">
-                <i v-bind:data-feather="getIcon(document)"
-                   width="80px"
-                   height="80px"
-                   stroke-width="1"
-                ></i>
-                <p class="text-instructions">
-                    {{shortName(document['document_key__document_description'])}}
-                </p>
+                <a v-bind:href="`/private/${document['document_key']}/`" target="_blank">
+                    <i v-bind:data-feather="getIcon(document)"
+                       width="80px"
+                       height="80px"
+                       stroke-width="1"
+                    ></i>
+                    <p class="text-instructions">
+                        {{shortName(document['document_key__document_description'])}}
+                    </p>
+                </a>
             </div>
         </div>
 

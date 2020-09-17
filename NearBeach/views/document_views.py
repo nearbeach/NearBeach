@@ -122,6 +122,7 @@ def document_list_files(request,destination,location_id):
     document_permission_results = document_permission.objects.filter(
         is_deleted="FALSE",
     ).values(
+        'document_key',
         'document_key__document_description',
         'document_key__document_url_location',
         'document_key__document',
@@ -324,7 +325,7 @@ def private_download_file(request,document_key):
     )
 
     # If the object_assignment_results.count() == 0, then user does not have permissions
-    if object_assignment_results.count() == 0:
+    if object_assignment_results.count() == 0 & request.user.is_superuser == False:
         return HttpResponseBadRequest("Sorry - there is no document")
 
     # Get Document information
