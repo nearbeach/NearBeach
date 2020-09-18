@@ -1,5 +1,6 @@
 from NearBeach.models import *
 
+
 # Internal function
 def get_object_from_destination(input_object,destination,location_id):
     """
@@ -10,17 +11,41 @@ def get_object_from_destination(input_object,destination,location_id):
     :param location_id: The location_id
     :return:
     """
-    if destination == "requirement":
+    if destination == "kanban_board":
         input_object = input_object.filter(
-            requirement_id=location_id,
+            kanban_board_id=location_id,
+        )
+    elif destination == "opportunity":
+        input_object = input_object.filter(
+            opportunity_id=location_id,
         )
     elif destination == "project":
         input_object = input_object.filter(
             project_id=location_id,
         )
+    elif destination == "quote":
+        input_object = input_object.filter(
+            quote_id=location_id,
+        )
+    elif destination == "requirement":
+        input_object = input_object.filter(
+            requirement_id=location_id,
+        )
+    elif destination == "request_for_change":
+        input_object = input_object.filter(
+            request_for_change_id=location_id,
+        )
+    elif destination == "requirement_item":
+        input_object = input_object.filter(
+            requirement_item_id=location_id,
+        )
     elif destination == "task":
         input_object = input_object.filter(
             task_id=location_id,
+        )
+    elif destination == "whiteboard":
+        input_object = input_object.filter(
+            whiteboard_id=location_id,
         )
 
     # Just send back the array
@@ -36,12 +61,24 @@ def set_object_from_destination(input_object,destination,location_id):
     :param location_id: The location we are interested in
     :return:
     """
+    if destination == "kanban_board":
+        input_object.kanban_board = kanban_board.objects.get(kanban_board_id=location_id)
+    elif destination == "opportunity":
+        input_object.opportunity = opportunity.objects.get(object_id=location_id)
+    elif destination == "quote":
+        input_object.quote = quote.objects.get(quote_id=location_id)
     if destination == "project":
         input_object.project = project.objects.get(project_id=location_id)
-    elif destination == "task":
-        input_object.task = task.objects.get(task_id=location_id)
+    elif destination == "request_for_change":
+        input_object.request_for_change = request_for_change.objects.get(request_for_change_id=location_id)
     elif destination == "requirement":
         input_object.requirement = requirement.objects.get(requirement_id=location_id)
+    elif destination == "requirement_item":
+        input_object.requirement_item = requirement_item.objects.get(requirement_item_id=location_id)
+    elif destination == "task":
+        input_object.task = task.objects.get(task_id=location_id)
+    elif destination == "whiteboard":
+        input_object.whiteboard = whiteboard.objects.get(white_board_id=location_id)
 
     # Return what we have
     return input_object

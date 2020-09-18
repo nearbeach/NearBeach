@@ -36,7 +36,7 @@
 
             <!-- RENDER THE FILES -->
             <div v-for="document in documentFilteredList" class="document-child">
-                <a v-bind:href="`/private/${document['document_key']}/`" target="_blank">
+                <a v-bind:href="`/private/${document['document_key_id']}/`" target="_blank">
                     <i v-bind:data-feather="getIcon(document)"
                        width="80px"
                        height="80px"

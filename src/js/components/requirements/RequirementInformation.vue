@@ -250,8 +250,6 @@
 
             this.requirementScopeModel = requirement_results['requirement_scope'];
             this.requirementTitleModel = requirement_results['requirement_title'];
-            //this.statusModel = requirement_results['requirement_status'];
-            //this.typeModel = requirement_results['requirement_type'];
 
             //Extract the organisation results directly
             this.stakeholderModel = this.organisationResults[0]['fields'];

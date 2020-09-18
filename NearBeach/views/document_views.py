@@ -122,7 +122,7 @@ def document_list_files(request,destination,location_id):
     document_permission_results = document_permission.objects.filter(
         is_deleted="FALSE",
     ).values(
-        'document_key',
+        'document_key_id',
         'document_key__document_description',
         'document_key__document_url_location',
         'document_key__document',
@@ -313,8 +313,12 @@ def private_download_file(request,document_key):
             ) |
             Q(
                 # Requirement Item
-                requirement_item__isnull=False,
-                requirement_item_id__in=document_permission_results.values('requirement_item_id')
+                # Have to use the requirement item's requirement as permissions are not on the item
+                requirement_id__in=requirement_item.objects.filter(
+                    is_deleted="FALSE",
+                    requirement_item_id__in=document_permission_results.values('requirement_item_id'),
+                    requirement_item_id__isnull=False,
+                ).values('requirement_id')
             ) |
             Q(
                 # Request for change

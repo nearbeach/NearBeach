@@ -233,6 +233,15 @@ def customer_list_all(request,destination,location_id):
                 requirement_id=location_id,
             ).organisation_id
         )
+    elif destination == "requirement_item":
+        organisation_results = organisation.objects.get(
+            organisation_id=requirement.objects.get(
+                is_deleted="FALSE",
+                requirement_id=requirement_item.objects.get(
+                    requirement_item_id=location_id
+                ).requirement_id,
+            ).organisation_id
+        )
     elif destination == "project":
         organisation_results = organisation.objects.get(
             organisation_id=project.objects.get(

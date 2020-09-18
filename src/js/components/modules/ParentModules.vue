@@ -58,8 +58,10 @@
                 </li>
 
                 <!-- CUSTOMERS -->
+                <!-- Customers are not needed by requirement items as the parent requirements take care of this -->
                 <li class="nav-item"
                     role="presentation"
+                    v-if="destination!='requirement_item'"
                 >
                     <a class="nav-link"
                        id="customer-tab"
@@ -71,8 +73,10 @@
                 </li>
 
                 <!-- BUGS -->
+                <!-- This module will only appear for project, task, and requirement -->
                 <li class="nav-item"
                     role="presentation"
+                    v-if="['project','task','requirement'].includes(destination)"
                 >
                     <a class="nav-link"
                        id="bug-tab"
@@ -84,8 +88,10 @@
                 </li>
 
                 <!-- GROUPS AND USERS -->
+                <!-- Don't need to show to requirement items - as permissions are gained from parent requirement -->
                 <li class="nav-item"
                     role="presentation"
+                    v-if="destination!='requirement_item'"
                 >
                     <a class="nav-link"
                        id="group-and-user-tab"
