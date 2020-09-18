@@ -1,7 +1,7 @@
 # requirement.txt
 Django
 simplejson
-pillow
+pillow>=7.1.0
 urllib3
 # geolocation-python
 # django-tinymce4-lite
