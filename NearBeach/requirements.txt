@@ -3,17 +3,17 @@ Django
 simplejson
 pillow>=7.1.0
 urllib3
-geolocation-python
-django-tinymce4-lite
-weasyprint
-pyperclip
-python-docx
-BeautifulSoup4
-pandoc
-pypandoc
-django_select2
-django-phonenumber-field
-phonenumbers
+# geolocation-python
+# django-tinymce4-lite
+# weasyprint
+# pyperclip
+# python-docx
+# BeautifulSoup4
+# pandoc
+# pypandoc
+# django_select2
+# django-phonenumber-field
+# phonenumbers
 
 
 pip>=19.2 # not directly required, pinned by Snyk to avoid a vulnerability
