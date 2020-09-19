@@ -33,6 +33,8 @@ def get_user_requirement_item_permissions(request,requirement_id):
 
     return return_user_permission_level(request, requirement_groups, ['requirement','requirement_link'])
 
+
+@login_required(login_url='login',redirect_field_name="")
 def new_requirement_item(request,requirement_id):
     # Check to see if POST
     if not request.method == "POST":
@@ -68,6 +70,7 @@ def new_requirement_item(request,requirement_id):
     return get_requirement_items(request,requirement_id)
 
 
+@login_required(login_url='login',redirect_field_name="")
 def requirement_item_information(request,requirement_item_id):
     """
         Loads the requirement item information.
