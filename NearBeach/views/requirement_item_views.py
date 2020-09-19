@@ -9,6 +9,7 @@ from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from NearBeach.user_permissions import return_user_permission_level
 from NearBeach.views.requirement_views import get_requirement_items
+from django.views.decorators.http import require_http_methods
 
 
 import json
@@ -130,3 +131,37 @@ def requirement_item_information(request,requirement_item_id):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def requirement_information_save(request,requirement_item_id):
+    """
+    The following will save data
+    :param request:
+    :param requirement_id:
+    :return:
+    """
+    # Check the permissions
+    permission_results = get_user_requirement_item_permissions(request, requirement_item_id)
+
+    # If user has no permissions to this requirement send them to the appropriate location
+    if permission_results['requirement'] <= 1:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    # Get form data
+    form = UpdateRequirementItemForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Save the data
+    requirement_item_submit = requirement_item.objects.get(requirement_item_id=requirement_item_id)
+    requirement_item_submit.change_user = request.user
+    requirement_item_submit.requirement_item_title = form.cleaned_data['requirement_item_title']
+    requirement_item_submit.requirement_item_scope = form.cleaned_data['requirement_item_scope']
+    requirement_item_submit.requirement_item_status = form.cleaned_data['requirement_item_status']
+    requirement_item_submit.requirement_item_type = form.cleaned_data['requirement_item_type']
+    requirement_item_submit.save()
+
+    # Send back an empty response
+    return HttpResponse("")

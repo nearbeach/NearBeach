@@ -196,3 +196,15 @@ class UpdateRequirementForm(forms.ModelForm):
             'requirement_status',
             'requirement_type',
         ]
+
+
+class UpdateRequirementItemForm(forms.ModelForm):
+    # Basic Meta data
+    class Meta:
+        model = requirement_item
+        fields = [
+            'requirement_item_title',
+            'requirement_item_scope',
+            'requirement_item_status',
+            'requirement_item_type',
+        ]

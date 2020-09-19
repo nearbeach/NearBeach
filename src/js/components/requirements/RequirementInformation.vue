@@ -205,8 +205,6 @@
                 data_to_send.set('requirement_status',this.statusModel['value']);
                 data_to_send.set('requirement_type',this.typeModel['value']);
 
-                console.log("DATA TO SEND: ",data_to_send);
-
                 // Use Axion to send the data
                 axios.post(
                     'save/',

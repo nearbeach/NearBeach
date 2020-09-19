@@ -188,8 +188,66 @@
         },
         methods: {
             updateRequirementItem: function() {
+                // Check the validation first
+                this.$v.$touch();
 
-            },
+                if (this.$v.$invalid) {
+                    //Show the error dialog and notify to the user that there were field missing.
+                    var elem_cont = document.getElementById("errorModalContent");
+
+                    // Update the content
+                    elem_cont.innerHTML =
+                        `<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.`;
+
+                    // Show the modal
+                    var errorModal = new Modal(document.getElementById('errorModal'));
+                    errorModal.show();
+
+                    //Just return - as we do not need to do the rest of this function
+                    return;
+                }
+
+                //Open up the loading modal
+                var loadingModal = new Modal(document.getElementById('loadingModal'));
+                loadingModal.show();
+
+                //Update message in loading modal
+                document.getElementById("loadingModalContent").innerHTML = `Updating your Requirement Item details`;
+
+                // Set up the data object to send
+                const data_to_send = new FormData();
+                data_to_send.set('requirement_item_title', this.requirementItemTitleModel);
+                data_to_send.set('requirement_item_scope',this.requirementItemScopeModel);
+                data_to_send.set('requirement_item_status',this.statusModel['value']);
+                data_to_send.set('requirement_item_type',this.typeModel['value']);
+
+                // Use Axion to send the data
+                axios.post(
+                    'save/',
+                    data_to_send
+                ).then(response => {
+                    //Update the message in the loading modal
+                    document.getElementById("loadingModalContent").innerHTML = `UPDATED SUCCESSFULLY`;
+
+                    //Close after 1 second
+                    setTimeout(() => {
+                        loadingModal.hide();
+                    },1000)
+                }).catch((error) => {
+                    //Hide the loading modal
+                    loadingModal.hide();
+
+                    // Get the error modal
+                    var elem_cont = document.getElementById("errorModalContent");
+
+                    // Update the content
+                    elem_cont.innerHTML = `<strong>HTML ISSUE:</strong> We could not save the new requirement item<hr>${error}`;
+
+                    // Show the modal
+                    var errorModal = new Modal(document.getElementById('errorModal'));
+                    errorModal.show();
+                });
+            }
         },
         mounted() {
             //Get data from the requirementResults and delegate to the Models
