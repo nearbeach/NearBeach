@@ -9,16 +9,15 @@ from django.template import loader
 from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from NearBeach.user_permissions import return_user_permission_level
+from django.views.decorators.http import require_http_methods
 
 
 import json
 
+
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def add_requirement_link(request,requirement_id):
-    if not request.method == "POST":
-        # Needs to be post
-        return HttpResponseBadRequest("Sorry - needs to be done through post")
-
     # ADD IN PERMISSION
     permission_results = return_user_permission_level(request, None, ['requirement','requirement_link'])
     # What about requirement items? Will need to fix this elegantly.
@@ -34,8 +33,6 @@ def add_requirement_link(request,requirement_id):
 
     # Get the requirement instnace
     requirement_instance = requirement.objects.get(requirement_id=requirement_id)
-
-    print(request.POST.getlist("project"))
 
     # Get the project list from the form
     for row in request.POST.getlist("project"):

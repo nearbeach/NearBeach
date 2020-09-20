@@ -21,6 +21,7 @@ import NewHistoryNoteWizard from "./components/modules/wizards/NewHistoryNoteWiz
 import NewRequirementItemWizard from "./components/modules/wizards/NewRequirementItemWizard.vue";
 import NewRequirementLinkWizard from "./components/modules/wizards/NewRequirementLinkWizard.vue";
 import RequirementInformation from './components/requirements/RequirementInformation.vue';
+import RequirementItemLinksModule from "./components/modules/sub_modules/RequirementItemLinksModule.vue";
 import RequirementItemsModule from "./components/modules/sub_modules/RequirementItemsModule.vue";
 import RequirementLinksModule from "./components/modules/sub_modules/RequirementLinksModule.vue";
 import UploadDocumentWizard from "./components/modules/wizards/UploadDocumentWizard.vue";
@@ -72,6 +73,7 @@ Vue.component('NewRequirementItemWizard',NewRequirementItemWizard);
 Vue.component('NewRequirementLinkWizard',NewRequirementLinkWizard);
 Vue.component('RequirementInformation',RequirementInformation);
 Vue.component('RequirementItemsModule',RequirementItemsModule);
+Vue.component('RequirementItemLinksModule',RequirementItemLinksModule);
 Vue.component('RequirementLinksModule',RequirementLinksModule);
 Vue.component('UploadDocumentWizard',UploadDocumentWizard);
 Vue.component('RequirementItemInformation',RequirementItemInformation);

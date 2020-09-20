@@ -76,7 +76,7 @@ urlpatterns = [
 
 	# Requirements
 	path('requirement_information/<int:requirement_id>/',requirement_views.requirement_information,name='requirement_information'),
-	path('requirement_information/<int:requirement_id>/add_requirement_link/',requirement_views.add_requirement_link,name='add_requirement_link'),
+	path('requirement_information/<int:requirement_id>/add_link/',requirement_views.add_requirement_link,name='add_requirement_link'),
 	path('requirement_information/<int:requirement_id>/data/item_links/',requirement_views.get_requirement_item_links,name='get_requirement_item_links'),
 	path('requirement_information/<int:requirement_id>/data/items/',requirement_views.get_requirement_items,name='get_requirement_items'),
 	path('requirement_information/<int:requirement_id>/data/item_status/',requirement_views.get_requirement_item_status_list,name='get_requirement_item_status_list'),
@@ -86,9 +86,9 @@ urlpatterns = [
 
 	# Requirement Items
 	path('requirement_item_information/<int:requirement_item_id>/', requirement_item_views.requirement_item_information,name='requirement_item_information'),
-
-	# Requirement Items
-	path('requirement_item_information/<int:requirement_item_id>',requirement_item_views.requirement_item_information,name='requirement_item_information'),
+	path('requirement_item_information/<int:requirement_item_id>/add_link/',requirement_item_views.add_requirement_item_link,name='add_requirement_item_link'),
+	path('requirement_item_information/<int:requirement_item_id>/',requirement_item_views.requirement_item_information,name='requirement_item_information'),
+	path('requirement_item_information/<int:requirement_item_id>/data/links/',requirement_item_views.get_requirement_item_links_list,name='get_requirement_item_links_list'),
 	path('requirement_item_information/<int:requirement_item_id>/save/',requirement_item_views.requirement_information_save,name='requirement_information_save'),
 
 	path('search/organisation/data/',search_views.search_organisation_data,name='search_organisation_data'),

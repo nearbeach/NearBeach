@@ -144,7 +144,9 @@
                      aria-labelledby="profile-tab"
                      v-else-if="destination=='requirement_item'"
                 >
-                    ADD CODE FOR REQUIREMENT ITEM LINKS!
+                    <requirement-item-links-module v-bind:location-id="locationId"
+                                                   v-bind:destination="destination"
+                    ></requirement-item-links-module>
                 </div>
 
                 <div class="tab-pane fade" id="documents" role="tabpanel" aria-labelledby="contact-tab">

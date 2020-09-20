@@ -1,46 +1,5 @@
 <template>
     <div>
-        <h2><i data-feather="link"></i> Requirement Links</h2>
-        <p class="text-instructions">
-            The following are links to other projects/tasks. You can link a Requirement to these other objects to
-            symbolise a connection between the two.
-        </p>
-
-        <!-- REQUIREMENT LINKS -->
-        <div v-if="linkResults.length == 0"
-             class="requirement-item-spacer"
-        >
-            <div class="alert alert-dark">Sorry - there are no Links for this requirement.</div>
-        </div>
-        <div v-else>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <td width="75%">Object Description</td>
-                        <td width="25%">Status</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="link in linkResults">
-                        <td v-html="extractObjectDescription(link)"></td>
-                        <td>{{extractObjectStatus(link)}}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Submit Button -->
-        <!-- TO DO - limit it to certain users -->
-        <div class="row submit-row">
-            <div class="col-md-12">
-                <a href="javascript:void(0)"
-                   class="btn btn-primary save-changes"
-                   v-on:click="newRequirementLink"
-                >Create new Link</a>
-            </div>
-        </div>
-        <hr>
-
         <h2><i data-feather="link-2"></i> Requirement Item Links</h2>
         <p class="text-instructions">
             The following are links for the Items to other projects/tasks.
@@ -70,36 +29,42 @@
             </table>
         </div>
 
+        <!-- Submit Button -->
+        <!-- TO DO - limit it to certain users -->
+        <hr>
+        <div class="row submit-row">
+            <div class="col-md-12">
+                <a href="javascript:void(0)"
+                   class="btn btn-primary save-changes"
+                   v-on:click="newRequirementItemLink"
+                >Create new Link</a>
+            </div>
+        </div>
+
 
         <!-- LINKING MODAL -->
         <!-- need to build something that resets the requirement links when adding links -->
         <new-requirement-link-wizard v-bind:location-id="locationId"
-                                     v-bind:destination="'requirement'"
+                                     v-bind:destination="destination"
                                      v-on:update_module="updateModel"
         ></new-requirement-link-wizard>
-
-
     </div>
 </template>
 
 <script>
-    //JavaScript components
-    import {Modal} from "bootstrap";
     const axios = require('axios');
+    import {Modal} from "bootstrap";
 
     export default {
-        name: "RequirementLinksModule",
+        name: "RequirementItemLinksModule",
         props: [
-            'activateLazyLoading',
             'destination',
             'locationId',
         ],
         data() {
             return {
-                linkResults: [],
                 itemLinkResults: [],
-                linkModel: [],
-            };
+            }
         },
         methods: {
             extractObjectDescription: function(link) {
@@ -170,34 +135,24 @@
                 return object_status;
 
             },
-            newRequirementLink: function() {
-                //Open up the modal
-                var elem_modal = new Modal(document.getElementById('newLinkModal'));
-                elem_modal.show();
-            },
-            updateItemLinkResults: function() {
-                //Get the data from the database
-                axios.post(
-                    'data/item_links/',
-                ).then((response) => {
-                    this.itemLinkResults = response['data'];
-                });
-            },
             updateLinkResults: function() {
                 //Get the data from the database
                 axios.post(
                     'data/links/',
                 ).then((response) => {
-                    this.linkResults = response['data'];
+                    this.itemLinkResults = response['data'];
                 });
             },
-            updateModel: function() {
-                this.updateLinkResults();
-                this.updateItemLinkResults();
+            newRequirementItemLink: function() {
+                //Open up the modal
+                var elem_modal = new Modal(document.getElementById('newLinkModal'));
+                elem_modal.show();
             },
+            updateModel: function() {},
         },
         mounted() {
-            this.updateModel();
+            //Get the required data we need
+            this.updateLinkResults();
         },
     }
 </script>
