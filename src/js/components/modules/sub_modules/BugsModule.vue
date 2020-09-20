@@ -65,12 +65,16 @@
     //JavaScript components
     const axios = require('axios');
     import {Modal} from "bootstrap";
+    import errorModalMixin from '../../../mixins/errorModalMixin';
 
     export default {
         name: "BugsModule",
         props: [
             'destination',
             'locationId',
+        ],
+        mixins: [
+            errorModalMixin,
         ],
         data() {
             return {
@@ -110,6 +114,8 @@
         },
         mounted() {
             this.getBugList();
+
+            this.showErrorModal("STRING","BUGS","1");
         }
     }
 </script>
