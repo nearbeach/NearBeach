@@ -165,6 +165,8 @@
 
 <script>
     //JavaScript components
+    import errorModalMixin from "../../../mixins/errorModalMixin";
+
     const axios = require('axios');
 
     export default {
@@ -172,6 +174,9 @@
         props: [
             'destination',
             'locationId',
+        ],
+        mixins: [
+            errorModalMixin,
         ],
         data() {
             return {
@@ -234,7 +239,7 @@
                     //Tell the user we are no longer searching
                     this.isSearching = false;
                 }).catch((error) => {
-                    console.log("ERROR: ",error);
+                    this.showErrorModal(error, this.destination);
                 })
             },
             linkModel: function() {

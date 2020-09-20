@@ -51,6 +51,8 @@
 </template>
 
 <script>
+    import errorModalMixin from "../../../mixins/errorModalMixin";
+
     const axios = require('axios');
 
     export default {
@@ -61,6 +63,9 @@
             'destination',
             'existingFolders',
             'locationId',
+        ],
+        mixins: [
+            errorModalMixin,
         ],
         data() {
             return {
@@ -92,7 +97,7 @@
                     //Close the modal
                     document.getElementById('addFolderCloseButton').click();
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    this.showErrorModal(error, this.destination);
                 })
             }
         },

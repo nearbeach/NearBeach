@@ -57,6 +57,8 @@
 
 <script>
     //JavaScript components
+    import errorModalMixin from "../../../mixins/errorModalMixin";
+
     const axios = require('axios');
     import {Modal} from "bootstrap";
 
@@ -65,6 +67,9 @@
         props: [
             'destination',
             'locationId',
+        ],
+        mixins: [
+            errorModalMixin,
         ],
         data() {
             return {
@@ -90,7 +95,7 @@
                 ).then((response) => {
                     this.customerResults = response['data'];
                 }).catch((error) => {
-                    console.log("ERROR: ",error);
+                    this.showErrorModal(error, this.destination);
                 })
             },
             updateCustomerResults: function(data) {
