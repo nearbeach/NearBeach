@@ -113,6 +113,8 @@
 
 <script>
     //JavaScript Libraries
+    import errorModalMixin from "../../../mixins/errorModalMixin";
+
     const axios = require('axios');
 
     //Validation
@@ -124,6 +126,9 @@
             'itemStatusList',
             'itemTypeList',
             'locationId',
+        ],
+        mixins: [
+            errorModalMixin,
         ],
         data() {
             return {
@@ -182,7 +187,7 @@
                     //SHOULD CLOSE MODAL HERE!
                     document.getElementById("requirementItemCloseButton").click();
                 }).catch(error => {
-                    console.log("ERROR: ",error);
+                    this.showErrorModal(error, this.destination);
                 })
 
             },

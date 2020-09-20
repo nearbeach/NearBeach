@@ -68,6 +68,8 @@
 </template>
 
 <script>
+    import errorModalMixin from "../../../mixins/errorModalMixin";
+
     const axios = require('axios');
 
     export default {
@@ -75,6 +77,9 @@
         props: [
             'destination',
             'locationId',
+        ],
+        mixins: [
+            errorModalMixin,
         ],
         data() {
             return {
@@ -107,7 +112,7 @@
                     //Get a new group list
                     this.getGroupList();
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    this.showErrorModal(error, this.destination);
                 })
             },
             getGroupList: function() {
@@ -129,7 +134,7 @@
                         this.groupFixList.push(construction_object);
                     });
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    this.showErrorModal(error, this.destination);
                 });
             }
         },

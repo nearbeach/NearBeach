@@ -63,6 +63,8 @@
 
 <script>
     //JavaScript components
+    import errorModalMixin from "../../../mixins/errorModalMixin";
+
     const axios = require('axios');
 
     export default {
@@ -71,6 +73,9 @@
             'destination',
             'locationId',
             'excludeCustomers',
+        ],
+        mixins: [
+            errorModalMixin,
         ],
         data() {
             return {
@@ -95,7 +100,7 @@
                     //Close the modal
                     document.getElementById("addCustomerCloseButton").click();
                 }).catch(error => {
-                    console.log("ERROR: ",error);
+                    this.showErrorModal(error, this.destination);
                 })
             },
             getCustomerList: function() {
@@ -105,7 +110,7 @@
                     //Place all the data into the "CustomerList" array.
                     this.customerList = response['data'];
                 }).catch(error => {
-                    console.log("ERROR: ",error);
+                    this.showErrorModal(error, this.destination);
                 })
             },
             updateCustomerFixList: function() {

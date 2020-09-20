@@ -74,6 +74,8 @@
 </template>
 
 <script>
+    import errorModalMixin from "../../../mixins/errorModalMixin";
+
     const axios = require('axios');
 
     //Validation
@@ -86,6 +88,9 @@
             'destination',
             'excludeDocuments',
             'locationId',
+        ],
+        mixins: [
+            errorModalMixin,
         ],
         data() {
             return {
@@ -127,7 +132,7 @@
                     //Close the modal
                     document.getElementById("addLinkCloseButton").click();
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    this.showErrorModal(error, this.destination);
                 });
             },
         },

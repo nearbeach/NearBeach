@@ -96,6 +96,8 @@
 
 <script>
     //JavaScript extras
+    import errorModalMixin from "../../../mixins/errorModalMixin";
+
     const axios = require('axios');
     import {Modal} from "bootstrap";
 
@@ -104,6 +106,9 @@
         props: [
             'destination',
             'locationId',
+        ],
+        mixins: [
+            errorModalMixin,
         ],
         data() {
             return {
@@ -128,7 +133,7 @@
                 ).then(response => {
                     this.groupList = response['data'];
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    this.showErrorModal(error, this.destination);
                 })
             },
             getUserList: function() {
@@ -138,7 +143,7 @@
                 ).then(response => {
                     this.userList = response['data'];
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    this.showErrorModal(error, this.destination);
                 });
             },
             resetRefreshUserList: function() {

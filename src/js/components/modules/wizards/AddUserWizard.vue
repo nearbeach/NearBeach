@@ -71,6 +71,8 @@
 </template>
 
 <script>
+    import errorModalMixin from "../../../mixins/errorModalMixin";
+
     const axios = require('axios');
 
     export default {
@@ -79,6 +81,9 @@
             'destination',
             'locationId',
             'refreshUserList'
+        ],
+        mixins: [
+            errorModalMixin,
         ],
         data() {
             return {
@@ -107,7 +112,7 @@
                     //Close the modal
                     document.getElementById("addUserCloseButton").click();
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    this.showErrorModal(error, this.destination);
                 });
 
             },

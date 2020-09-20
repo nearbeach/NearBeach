@@ -108,14 +108,12 @@
                         this.bugList.push(row);
                     });
                 }).catch((error) => {
-                    console.log("ERROR: ",error);
+                    this.showErrorModal(error, this.destination);
                 })
             },
         },
         mounted() {
             this.getBugList();
-
-            this.showErrorModal("STRING","BUGS","1");
         }
     }
 </script>
