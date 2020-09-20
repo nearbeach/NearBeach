@@ -25,9 +25,11 @@ from . import views, \
 	views_whiteboard
 """
 from .views import authentication_views, \
+	customer_view, \
 	dashboard_views, \
 	document_views, \
 	object_data, \
+	organisation_view, \
 	requirement_item_views, \
 	requirement_views, \
 	search_views
@@ -52,6 +54,8 @@ urlpatterns = [
 	path('private/<uuid:document_key>/',document_views.private_download_file,name='private_download_file'),
 
 	# New Objects
+	path('new_customer',customer_view.new_customer,name='new_customer'),
+	path('new_organisation',organisation_view.new_organisation,name='new_organisation'),
 	path('new_requirement',requirement_views.new_requirement, name='new_requirement'),
 	path('new_requirement/save/',requirement_views.new_requirement_save, name='new_requirement_save'),
 	path('new_requirement_item/save/<int:requirement_id>/',requirement_item_views.new_requirement_item,name='new_requirement_item'),
