@@ -343,13 +343,15 @@ def private_download_file(request,document_key):
     path = '%s/%s/%s' % (
         settings.PRIVATE_MEDIA_ROOT,
         document_key,
-        document_results.document.name
+        document_results.document
     )
 
     # Construct the response
     response = HttpResponse(content_type='application/force-download')
     response['Content-Disposition'] = 'attachment; filename=%s' % smart_str(document_results.document.name)
     response['X-Sendfile'] = smart_str(path)
+
+    print(response)
 
     return response
 
@@ -374,7 +376,8 @@ def handle_file_upload(upload_document,document_results):
     storage_location = '%s/%s/%s' % (
         settings.PRIVATE_MEDIA_ROOT,
         document_results[0]['document_key_id'],
-        document_results[0]['document_key__document_description'],
+        #document_results[0]['document_key__document_description'],
+        document_results[0]['document_key__document'],
     )
 
     #Save the upload document in the location
