@@ -78,6 +78,9 @@ urlpatterns = [
 	path('object_data/<destination>/<location_id>/user_list/',object_data.user_list,name='user_list'),
 	path('object_data/<destination>/<location_id>/user_list_all/',object_data.user_list_all,name='user_list_all'),
 
+	# Organisation
+	path('organisation_duplicates/',organisation_view.organisation_duplicates,name='organisation_duplicates'),
+
 	# Requirements
 	path('requirement_information/<int:requirement_id>/',requirement_views.requirement_information,name='requirement_information'),
 	path('requirement_information/<int:requirement_id>/add_link/',requirement_views.add_requirement_link,name='add_requirement_link'),

@@ -134,6 +134,17 @@ class LoginForm(forms.Form):
     )
 
 
+class NewOrgnanisationForm(forms.ModelForm):
+    # Basic Meta data
+    class Meta:
+        model = organisation
+        fields = [
+            'organisation_name',
+            'organisation_website',
+            'organisation_email',
+        ]
+
+
 class NewRequirementItemForm(forms.ModelForm):
     # Basic Meta data
     class Meta:
