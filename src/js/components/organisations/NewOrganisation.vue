@@ -84,9 +84,76 @@
             <div class="row submit-row">
                 <div class="col-md-12">
                     <button class="btn btn-primary save-changes"
-                        v-on:click="addOrganisation"
+                            v-on:click="addOrganisation"
                     >
                         Add Organisation
+                    </button>
+                </div>
+            </div>
+
+            <h2 v-if="duplicateOrganisations.length > 0"
+            >
+                Potential Duplication
+            </h2>
+            <div class="row"
+                 v-if="duplicateOrganisations.length > 0"
+            >
+                <!-- PLEASE READ -->
+                <div class="col-md-4">
+                    <strong>Please Read</strong>
+                    <p class="text-instructions">
+                        The server has found potential duplications. Please review the following Organisations. If you
+                        would like to create the organisation, please scroll to the bottom of the page and hit "Submit
+                        Organisation". If the organisation you are looking for is already created. Click
+                        on the name and you will be taken to the Organisation's Information page.
+                    </p>
+                    <strong>Alternatively</strong>
+                    <p class="text-instructions">
+                        You can also change the information above and resubmit.
+                    </p>
+                </div>
+                <!-- DUPLICATE ORGANISATION LIST -->
+                <div class="col-md-8">
+                    <div v-for="organisation in duplicateOrganisations" class="row">
+                        <hr>
+                        <div class="organisation-details">
+                            <img v-if="organisation['fields']['organisation_profile_picture'] == ''"
+                                 src="static/NearBeach/images/placeholder/product_tour.svg"
+                                 alt="Stakeholder Logo"
+                                 class="organisation-image"
+                            >
+                            <img v-else
+                                 v-bind:src="organisation['fields']['organisation_profile_picture']"
+                                 alt="Stakeholder Logo"
+                                 class="organisation-image"
+                            >
+                            <div class="organisation-name">
+                                <a href="#">{{organisation['fields']['organisation_name']}}</a>
+                            </div>
+                            <div class="organisation-link">
+                                <i data-feather="external-link"></i> Website:
+                                <a v-bind:href="organisation['fields']['organisation_website']" target="_blank">
+                                    {{ organisation['fields']['organisation_website'] }}
+                                </a>
+                            </div>
+                            <div class="organisation-email">
+                                <i data-feather="mail"></i> Email:
+                                <a v-bind:href="`mailto:${organisation['fields']['organisation_email']}`">
+                                    {{organisation['fields']['organisation_email']}}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STILL SUBMIT ORGANISATION -->
+            <div class="row submit-row" v-if="duplicateOrganisations.length > 0">
+                <div class="col-md-12">
+                    <button class="btn btn-primary save-changes"
+                            v-on:click="uploadOrganisationData"
+                    >
+                        Submit Organisation
                     </button>
                 </div>
             </div>
@@ -107,6 +174,7 @@
         props: [],
         data() {
             return {
+                duplicateOrganisations: [],
                 organisationNameModel: '',
                 organisationWebsiteModel: '',
                 organisationEmailModel: '',
@@ -144,11 +212,21 @@
                     'organisation_duplicates/',
                     data_to_send,
                 ).then(response => {
-                    console.log("Response: ",response);
+                    //If the response data has nothing in it - we want to submit that data.
+                    if (response['data'].length > 0) {
+                        //Submit that data
+                        this.uploadOrganisationData(data_to_send);
+                    }
+
+                    //Copy over the response data
+                    this.duplicateOrganisations = response['data'];
                 }).catch(error => {
                     console.log("ERROR");
                 })
             },
+            uploadOrganisationData: function (data_to_send) {
+                //Only run this after we have checked for duplications;
+            }
 
         },
         validations: {
