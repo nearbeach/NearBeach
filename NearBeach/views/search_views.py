@@ -1,10 +1,32 @@
 from NearBeach.models import *
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
+from django.template import loader
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse, HttpResponseNotFound
 
 # Import Forms
 from NearBeach.forms import *
+
+
+@login_required(login_url='login',redirect_field_name="")
+def search_organisation(request):
+    """
+
+    :param request:
+    :return:
+    """
+    t = loader.get_template('NearBeach/search/search_organisations.html')
+
+    # Get the first 25 organisations
+    organisation_results = organisation.objects.filter(
+        is_deleted="FALSE",
+    ).order_by('organisation_name')[:25]
+
+    c = {
+        'organisation_results': serializers.serialize('json',organisation_results),
+    }
+
+    return HttpResponse(t.render(c,request))
 
 
 @login_required(login_url='login',redirect_field_name="")

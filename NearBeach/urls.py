@@ -54,9 +54,10 @@ urlpatterns = [
 	path('private/<uuid:document_key>/',document_views.private_download_file,name='private_download_file'),
 
 	# New Objects
-	path('new_customer',customer_view.new_customer,name='new_customer'),
-	path('new_organisation',organisation_view.new_organisation,name='new_organisation'),
-	path('new_requirement',requirement_views.new_requirement, name='new_requirement'),
+	path('new_customer/',customer_view.new_customer,name='new_customer'),
+	path('new_organisation/',organisation_view.new_organisation,name='new_organisation'),
+	path('new_organisation/save/',organisation_view.new_organisation_save,name='new_organisation_save'),
+	path('new_requirement/',requirement_views.new_requirement, name='new_requirement'),
 	path('new_requirement/save/',requirement_views.new_requirement_save, name='new_requirement_save'),
 	path('new_requirement_item/save/<int:requirement_id>/',requirement_item_views.new_requirement_item,name='new_requirement_item'),
 
@@ -80,6 +81,7 @@ urlpatterns = [
 
 	# Organisation
 	path('organisation_duplicates/',organisation_view.organisation_duplicates,name='organisation_duplicates'),
+	path('organisation_information/<int:organisation_id>/',organisation_view.organisation_information,name='organisation_information'),
 
 	# Requirements
 	path('requirement_information/<int:requirement_id>/',requirement_views.requirement_information,name='requirement_information'),
@@ -98,7 +100,9 @@ urlpatterns = [
 	path('requirement_item_information/<int:requirement_item_id>/data/links/',requirement_item_views.get_requirement_item_links_list,name='get_requirement_item_links_list'),
 	path('requirement_item_information/<int:requirement_item_id>/save/',requirement_item_views.requirement_information_save,name='requirement_information_save'),
 
+	path('search/organisation/',search_views.search_organisation,name='search_organisation'),
 	path('search/organisation/data/',search_views.search_organisation_data,name='search_organisation_data'),
+
 ]
 
 """

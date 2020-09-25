@@ -1,0 +1,6 @@
+{% extends 'NearBeach/template.html' %}
+{% load static %}
+{% block content %}
+    <search-organisations v-bind:organisation-results="{{organisation_results}}"
+    ></search-organisations>
+{% endblock %}

@@ -81,7 +81,9 @@
             <hr>
 
             <!-- SUBMIT ORGANISATION BUTTON -->
-            <div class="row submit-row">
+            <div class="row submit-row"
+                 v-if="duplicateOrganisations.length == 0"
+            >
                 <div class="col-md-12">
                     <button class="btn btn-primary save-changes"
                             v-on:click="addOrganisation"
@@ -114,36 +116,8 @@
                 </div>
                 <!-- DUPLICATE ORGANISATION LIST -->
                 <div class="col-md-8">
-                    <div v-for="organisation in duplicateOrganisations" class="row">
-                        <hr>
-                        <div class="organisation-details">
-                            <img v-if="organisation['fields']['organisation_profile_picture'] == ''"
-                                 src="static/NearBeach/images/placeholder/product_tour.svg"
-                                 alt="Stakeholder Logo"
-                                 class="organisation-image"
-                            >
-                            <img v-else
-                                 v-bind:src="organisation['fields']['organisation_profile_picture']"
-                                 alt="Stakeholder Logo"
-                                 class="organisation-image"
-                            >
-                            <div class="organisation-name">
-                                <a href="#">{{organisation['fields']['organisation_name']}}</a>
-                            </div>
-                            <div class="organisation-link">
-                                <i data-feather="external-link"></i> Website:
-                                <a v-bind:href="organisation['fields']['organisation_website']" target="_blank">
-                                    {{ organisation['fields']['organisation_website'] }}
-                                </a>
-                            </div>
-                            <div class="organisation-email">
-                                <i data-feather="mail"></i> Email:
-                                <a v-bind:href="`mailto:${organisation['fields']['organisation_email']}`">
-                                    {{organisation['fields']['organisation_email']}}
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                    <list-organisations v-bind:organisation-results="duplicateOrganisations"
+                    ></list-organisations>
                 </div>
             </div>
 
@@ -180,6 +154,20 @@
                 organisationEmailModel: '',
             }
         },
+        watch: {
+            organisationNameModel: function() {
+                //If user changes anything - reset the duplicate results
+                this.duplicateOrganisations = [];
+            },
+            organisationWebsiteModel: function() {
+                //If user changes anything - reset the duplicate results
+                this.duplicateOrganisations = [];
+            },
+            organisationEmailModel: function() {
+                //If user changes anything - reset the duplicate results
+                this.duplicateOrganisations = [];
+            },
+        },
         methods: {
             addOrganisation: function() {
                 // Check the validation first
@@ -202,20 +190,15 @@
                 }
 
                 //Check the organisation's data to make sure there are no duplicates
-                const data_to_send = new FormData();
-                data_to_send.set('organisation_name',this.organisationNameModel);
-                data_to_send.set('organisation_website',this.organisationWebsiteModel);
-                data_to_send.set('organisation_email',this.organisationEmailModel);
-
                 //Use axios to contact the database
                 axios.post(
-                    'organisation_duplicates/',
-                    data_to_send,
+                    '/organisation_duplicates/',
+                    this.dataToSend(),
                 ).then(response => {
                     //If the response data has nothing in it - we want to submit that data.
-                    if (response['data'].length > 0) {
+                    if (response['data'].length == 0) {
                         //Submit that data
-                        this.uploadOrganisationData(data_to_send);
+                        this.uploadOrganisationData();
                     }
 
                     //Copy over the response data
@@ -224,8 +207,27 @@
                     console.log("ERROR");
                 })
             },
-            uploadOrganisationData: function (data_to_send) {
-                //Only run this after we have checked for duplications;
+            dataToSend: function() {
+                const data_to_send = new FormData();
+                data_to_send.set('organisation_name',this.organisationNameModel);
+                data_to_send.set('organisation_website',this.organisationWebsiteModel);
+                data_to_send.set('organisation_email',this.organisationEmailModel);
+
+                //Return the data
+                return data_to_send;
+            },
+            uploadOrganisationData: function () {
+                //Use Axios to send the data
+                //Get the data to send
+                axios.post(
+                    'save/',
+                    this.dataToSend(),
+                ).then(response => {
+                    //Go to the url sent back
+                    window.location.href = response['data'];
+                }).catch(error => {
+                    console.log("Error: ",error);
+                });
             }
 
         },

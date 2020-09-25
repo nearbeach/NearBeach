@@ -76,7 +76,7 @@
 
                 // Now that the timer has run out, lets use AJAX to get the organisations.
                 axios.post(
-                    'search/organisation/data/',
+                    '/search/organisation/data/',
                     data_to_send
                 ).then(response => {
                     //Clear the stakeholderFixList

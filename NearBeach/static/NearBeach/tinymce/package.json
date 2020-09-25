@@ -1,39 +1,35 @@
 {
-  "_args": [
-    [
-      "tinymce@5.4.1",
-      "/home/luke/Sites/NearBeach"
-    ]
-  ],
-  "_development": true,
-  "_from": "tinymce@5.4.1",
-  "_id": "tinymce@5.4.1",
+  "_from": "tinymce@^5.3.2",
+  "_id": "tinymce@5.4.2",
   "_inBundle": false,
-  "_integrity": "sha512-eUjwDVCTSHSnFfpzX5TjTHXsGj5gvPQwzo3RFDF374gfK5voHqcRGojvQnu4NtNW1BAb012/KW1tkXBbUrEveg==",
+  "_integrity": "sha512-MRquvKxI28AiSn2ikypgJFD7LH4mQZLtgFn+yROF1bTFp92MdlLeGBrI38/O5mej3cvz27g3Pgr+3MShepbJ+w==",
   "_location": "/tinymce",
   "_phantomChildren": {},
   "_requested": {
-    "type": "version",
+    "type": "range",
     "registry": true,
-    "raw": "tinymce@5.4.1",
+    "raw": "tinymce@^5.3.2",
     "name": "tinymce",
     "escapedName": "tinymce",
-    "rawSpec": "5.4.1",
+    "rawSpec": "^5.3.2",
     "saveSpec": null,
-    "fetchSpec": "5.4.1"
+    "fetchSpec": "^5.3.2"
   },
   "_requiredBy": [
     "#DEV:/"
   ],
-  "_resolved": "https://registry.npmjs.org/tinymce/-/tinymce-5.4.1.tgz",
-  "_spec": "5.4.1",
-  "_where": "/home/luke/Sites/NearBeach",
+  "_resolved": "https://registry.npmjs.org/tinymce/-/tinymce-5.4.2.tgz",
+  "_shasum": "a1df417ea7e85697c2932269f7f93fbef30d4502",
+  "_spec": "tinymce@^5.3.2",
+  "_where": "/Users/luke/PycharmProjects/source_code/NearBeach",
   "author": {
     "name": "Ephox Corporation"
   },
   "bugs": {
     "url": "https://github.com/tinymce/tinymce/issues"
   },
+  "bundleDependencies": false,
+  "deprecated": false,
   "description": "Web based JavaScript HTML WYSIWYG editor control.",
   "homepage": "https://github.com/tinymce/tinymce-dist#readme",
   "keywords": [
@@ -51,5 +47,5 @@
     "type": "git",
     "url": "git+https://github.com/tinymce/tinymce-dist.git"
   },
-  "version": "5.4.1"
+  "version": "5.4.2"
 }

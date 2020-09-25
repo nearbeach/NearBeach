@@ -15,6 +15,54 @@ from django.views.decorators.http import require_http_methods
 import json
 
 
+@login_required(login_url='login',redirect_field_name="")
+def new_organisation(request):
+    """
+
+    :param request:
+    :return:
+    """
+    # Get user permission
+
+    # Get templates
+    t = loader.get_template('NearBeach/organisations/new_organisations.html')
+
+    # Get Context
+    c = {}
+
+    return HttpResponse(t.render(c,request))
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name='')
+def new_organisation_save(request):
+    """
+
+    :param request:
+    :return:
+    """
+    permission_results = return_user_permission_level(request, None, 'organisation')
+
+    if permission_results['organisation'] < 3:
+        return HttpResponseRedirect(reverse('permission_denied'))
+
+    # Get the data
+    form = NewOrgnanisationForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Save the data
+    organisation_submit = organisation(
+        change_user=request.user,
+        organisation_name=form.cleaned_data['organisation_name'],
+        organisation_email=form.cleaned_data['organisation_email'],
+        organisation_website=form.cleaned_data['organisation_website'],
+    )
+    organisation_submit.save()
+
+    return HttpResponse(reverse('organisation_information',args={organisation_submit.organisation_id}))
+
+
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def organisation_duplicates(request):
@@ -45,20 +93,15 @@ def organisation_duplicates(request):
     return HttpResponse(serializers.serialize('json',organisation_results),content_type='application/json')
 
 
-
-@login_required(login_url='login',redirect_field_name="")
-def new_organisation(request):
+def organisation_information(request,organisation_id):
     """
 
     :param request:
+    :param organisation_id:
     :return:
     """
-    # Get user permission
+    t = loader.get_template('NearBeach/organisations/organisation_information.html')
 
-    # Get templates
-    t = loader.get_template('NearBeach/organisations/new_organisations.html')
-
-    # Get Context
     c = {}
 
     return HttpResponse(t.render(c,request))

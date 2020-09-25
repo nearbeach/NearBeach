@@ -33,7 +33,7 @@
                         <span class="error" v-if="!$v.requirementScopeModel.required && $v.requirementScopeModel.$dirty"> Please supply a scope.</span>
                         <span class="error" v-if="!$v.requirementScopeModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
-                    <img src="static/NearBeach/images/placeholder/body_text.svg"
+                    <img src="/static/NearBeach/images/placeholder/body_text.svg"
                          class="loader-image"
                          alt="loading image for Tinymce"
                     />
@@ -199,7 +199,7 @@
 
                 // Use Axion to send the data
                 axios.post(
-                    'new_requirement/save/',
+                    'save/',
                     data_to_send
                 ).then((response) => {
                     // Use the result to go to the url
