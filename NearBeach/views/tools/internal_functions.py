@@ -19,6 +19,10 @@ def get_object_from_destination(input_object,destination,location_id):
         input_object = input_object.filter(
             opportunity_id=location_id,
         )
+    elif destination == "organisation":
+        input_object = input_object.filter(
+            organisation_id=location_id,
+        )
     elif destination == "project":
         input_object = input_object.filter(
             project_id=location_id,

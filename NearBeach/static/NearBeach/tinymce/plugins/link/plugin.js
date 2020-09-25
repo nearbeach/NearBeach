@@ -4,7 +4,7 @@
  * For LGPL see License.txt in the project root for license information.
  * For commercial licenses see https://www.tiny.cloud/
  *
- * Version: 5.4.2 (2020-08-17)
+ * Version: 5.4.1 (2020-07-08)
  */
 (function (domGlobals) {
     'use strict';
@@ -263,9 +263,6 @@
         arr[i].each(push);
       }
       return r;
-    };
-    var someIf = function (b, a) {
-      return b ? Option.some(a) : Option.none();
     };
 
     var global$2 = tinymce.util.Tools.resolve('tinymce.util.Tools');
@@ -541,9 +538,25 @@
       }
     };
 
+    var Cell = function (initial) {
+      var value = initial;
+      var get = function () {
+        return value;
+      };
+      var set = function (v) {
+        value = v;
+      };
+      return {
+        get: get,
+        set: set
+      };
+    };
+
     var findTextByValue = function (value, catalog) {
       return findMap(catalog, function (item) {
-        return someIf(item.value === value, item);
+        return Option.some(item).filter(function (i) {
+          return i.value === value;
+        });
       });
     };
     var getDelta = function (persistentText, fieldName, catalog, data) {
@@ -562,54 +575,43 @@
         };
       }) : Option.none();
     };
-    var findCatalog = function (catalogs, fieldName) {
+    var findCatalog = function (settings, fieldName) {
       if (fieldName === 'link') {
-        return catalogs.link;
+        return settings.catalogs.link;
       } else if (fieldName === 'anchor') {
-        return catalogs.anchor;
+        return settings.catalogs.anchor;
       } else {
         return Option.none();
       }
     };
-    var init = function (initialData, linkCatalog) {
-      var persistentData = {
-        text: initialData.text,
-        title: initialData.title
-      };
-      var getTitleFromUrlChange = function (url) {
-        return someIf(persistentData.title.length <= 0, Option.from(url.meta.title).getOr(''));
-      };
-      var getTextFromUrlChange = function (url) {
-        return someIf(persistentData.text.length <= 0, Option.from(url.meta.text).getOr(url.value));
-      };
+    var init = function (initialData, linkSettings) {
+      var persistentText = Cell(initialData.text);
       var onUrlChange = function (data) {
-        var text = getTextFromUrlChange(data.url);
-        var title = getTitleFromUrlChange(data.url);
-        if (text.isSome() || title.isSome()) {
-          return Option.some(__assign(__assign({}, text.map(function (text) {
-            return { text: text };
-          }).getOr({})), title.map(function (title) {
-            return { title: title };
-          }).getOr({})));
+        if (persistentText.get().length <= 0) {
+          var urlText = data.url.meta.text !== undefined ? data.url.meta.text : data.url.value;
+          var urlTitle = data.url.meta.title !== undefined ? data.url.meta.title : '';
+          return Option.some({
+            text: urlText,
+            title: urlTitle
+          });
         } else {
           return Option.none();
         }
       };
       var onCatalogChange = function (data, change) {
-        var catalog = findCatalog(linkCatalog, change.name).getOr([]);
-        return getDelta(persistentData.text, change.name, catalog, data);
+        var catalog = findCatalog(linkSettings, change.name).getOr([]);
+        return getDelta(persistentText.get(), change.name, catalog, data);
       };
       var onChange = function (getData, change) {
-        var name = change.name;
-        if (name === 'url') {
+        if (change.name === 'url') {
           return onUrlChange(getData());
         } else if (contains([
             'anchor',
             'link'
-          ], name)) {
+          ], change.name)) {
           return onCatalogChange(getData(), change);
-        } else if (name === 'text' || name === 'title') {
-          persistentData[name] = getData()[name];
+        } else if (change.name === 'text') {
+          persistentText.set(getData().text);
           return Option.none();
         } else {
           return Option.none();
@@ -863,20 +865,27 @@
       return DialogInfo.collect(editor, anchorNode);
     };
     var getInitialData = function (info, defaultTarget) {
-      var anchor = info.anchor;
-      var url = anchor.url.getOr('');
       return {
         url: {
-          value: url,
-          meta: { original: { value: url } }
+          value: info.anchor.url.getOr(''),
+          meta: {
+            attach: function () {
+            },
+            text: info.anchor.url.fold(function () {
+              return '';
+            }, function () {
+              return info.anchor.text.getOr('');
+            }),
+            original: { value: info.anchor.url.getOr('') }
+          }
         },
-        text: anchor.text.getOr(''),
-        title: anchor.title.getOr(''),
-        anchor: url,
-        link: url,
-        rel: anchor.rel.getOr(''),
-        target: anchor.target.or(defaultTarget).getOr(''),
-        linkClass: anchor.linkClass.getOr('')
+        text: info.anchor.text.getOr(''),
+        title: info.anchor.title.getOr(''),
+        anchor: info.anchor.url.getOr(''),
+        link: info.anchor.url.getOr(''),
+        rel: info.anchor.rel.getOr(''),
+        target: info.anchor.target.or(defaultTarget).getOr(''),
+        linkClass: info.anchor.linkClass.getOr('')
       };
     };
     var makeDialog = function (settings, onSubmit, editor) {
@@ -900,8 +909,8 @@
         }] : [];
       var defaultTarget = Option.from(getDefaultLinkTarget(editor));
       var initialData = getInitialData(settings, defaultTarget);
+      var dialogDelta = DialogChanges.init(initialData, settings);
       var catalogs = settings.catalogs;
-      var dialogDelta = DialogChanges.init(initialData, catalogs);
       var body = {
         type: 'panel',
         items: flatten([

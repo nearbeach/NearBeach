@@ -100,8 +100,13 @@ def organisation_information(request,organisation_id):
     :param organisation_id:
     :return:
     """
+    organisation_results = organisation.objects.get(organisation_id=organisation_id)
+
     t = loader.get_template('NearBeach/organisations/organisation_information.html')
 
-    c = {}
+    c = {
+        'organisation_id': organisation_id,
+        'organisation_results': serializers.serialize('json',[organisation_results]),
+    }
 
     return HttpResponse(t.render(c,request))

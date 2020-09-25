@@ -30,6 +30,9 @@ import UploadDocumentWizard from "./components/modules/wizards/UploadDocumentWiz
 import RequirementItemInformation from "./components/requirement_items/RequirementItemInformation.vue";
 import ListOrganisations from "./components/organisations/ListOrganisations.vue";
 import SearchOrganisations from "./components/search/SearchOrganisations.vue";
+import OrganisationInformation from "./components/organisations/OrganisationInformation.vue";
+import OrganisationModules from "./components/organisations/OrganisationModules.vue";
+
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -85,6 +88,8 @@ Vue.component('UploadDocumentWizard',UploadDocumentWizard);
 Vue.component('RequirementItemInformation',RequirementItemInformation);
 Vue.component('ListOrganisations',ListOrganisations);
 Vue.component('SearchOrganisations',SearchOrganisations);
+Vue.component('OrganisationInformation',OrganisationInformation);
+Vue.component('OrganisationModules',OrganisationModules);
 
 
 //Validation
