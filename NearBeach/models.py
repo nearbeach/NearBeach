@@ -1810,6 +1810,12 @@ class object_note(models.Model):
         blank=True,
         null=True,
     )
+    organisation = models.ForeignKey(
+        'organisation',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
     quote = models.ForeignKey(
         'quote',
         on_delete=models.CASCADE,
@@ -1862,7 +1868,7 @@ class object_note(models.Model):
     )
 
     class Meta:
-        db_table = "object_notes"
+        db_table = "object_note"
 
 
 class opportunity(models.Model):

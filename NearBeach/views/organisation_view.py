@@ -101,10 +101,15 @@ def organisation_information(request,organisation_id):
     :return:
     """
     organisation_results = organisation.objects.get(organisation_id=organisation_id)
+    customer_results = customer.objects.filter(
+        is_deleted="FALSE",
+        organisation_id=organisation_id,
+    )
 
     t = loader.get_template('NearBeach/organisations/organisation_information.html')
 
     c = {
+        'customer_results': serializers.serialize('json',customer_results),
         'organisation_id': organisation_id,
         'organisation_results': serializers.serialize('json',[organisation_results]),
     }

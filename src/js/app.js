@@ -32,7 +32,8 @@ import ListOrganisations from "./components/organisations/ListOrganisations.vue"
 import SearchOrganisations from "./components/search/SearchOrganisations.vue";
 import OrganisationInformation from "./components/organisations/OrganisationInformation.vue";
 import OrganisationModules from "./components/organisations/OrganisationModules.vue";
-
+import CustomersListModule from "./components/modules/sub_modules/CustomersListModule.vue";
+import AssociatedObjects from "./components/modules/sub_modules/AssociatedObjects.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -90,6 +91,9 @@ Vue.component('ListOrganisations',ListOrganisations);
 Vue.component('SearchOrganisations',SearchOrganisations);
 Vue.component('OrganisationInformation',OrganisationInformation);
 Vue.component('OrganisationModules',OrganisationModules);
+Vue.component('CustomersListModule',CustomersListModule);
+Vue.component('AssociatedObjects',AssociatedObjects);
+
 
 
 //Validation

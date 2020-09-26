@@ -69,6 +69,8 @@ def set_object_from_destination(input_object,destination,location_id):
         input_object.kanban_board = kanban_board.objects.get(kanban_board_id=location_id)
     elif destination == "opportunity":
         input_object.opportunity = opportunity.objects.get(object_id=location_id)
+    elif destination == "organisation":
+        input_object.organisation = organisation.objects.get(organisation_id=location_id)
     elif destination == "quote":
         input_object.quote = quote.objects.get(quote_id=location_id)
     if destination == "project":

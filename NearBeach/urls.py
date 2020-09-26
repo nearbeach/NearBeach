@@ -28,7 +28,7 @@ from .views import authentication_views, \
 	customer_view, \
 	dashboard_views, \
 	document_views, \
-	object_data, \
+	object_data_views, \
 	organisation_view, \
 	requirement_item_views, \
 	requirement_views, \
@@ -62,22 +62,23 @@ urlpatterns = [
 	path('new_requirement_item/save/<int:requirement_id>/',requirement_item_views.new_requirement_item,name='new_requirement_item'),
 
 	# Object Data
-	path('object_data/<destination>/<location_id>/add_bug/',object_data.add_bug,name='add_bug'),
-	path('object_data/<destination>/<location_id>/add_customer/',object_data.add_customer,name='add_customer'),
-	path('object_data/<destination>/<location_id>/add_group/',object_data.add_group,name='add_group'),
-	path('object_data/<destination>/<location_id>/add_notes/',object_data.add_notes,name='add_notes'),
-	path('object_data/<destination>/<location_id>/add_user/',object_data.add_user,name='add_user'),
-	path('object_data/bug_client_list/',object_data.bug_client_list,name='bug_client_list'),
-	path('object_data/<destination>/<location_id>/bug_list/',object_data.bug_list,name='bug_list'),
-	path('object_data/<destination>/<location_id>/customer_list/',object_data.customer_list,name='customer_list'),
-	path('object_data/<destination>/<location_id>/customer_list_all/',object_data.customer_list_all,name='customer_list_all'),
-	path('object_data/<destination>/<location_id>/group_list/',object_data.group_list,name='group_list'),
-	path('object_data/<destination>/<location_id>/group_list_all/',object_data.group_list_all,name='group_list_all'),
-	path('object_data/<destination>/<location_id>/<object_lookup>/link_list/',object_data.link_list,name='link_list'),
-	path('object_data/<destination>/<location_id>/note_list/',object_data.note_list,name='note_list'),
-	path('object_data/<destination>/<location_id>/query_bug_client/',object_data.query_bug_client,name='query_bug_client'),
-	path('object_data/<destination>/<location_id>/user_list/',object_data.user_list,name='user_list'),
-	path('object_data/<destination>/<location_id>/user_list_all/',object_data.user_list_all,name='user_list_all'),
+	path('object_data/<destination>/<location_id>/add_bug/',object_data_views.add_bug,name='add_bug'),
+	path('object_data/<destination>/<location_id>/add_customer/',object_data_views.add_customer,name='add_customer'),
+	path('object_data/<destination>/<location_id>/add_group/',object_data_views.add_group,name='add_group'),
+	path('object_data/<destination>/<location_id>/add_notes/',object_data_views.add_notes,name='add_notes'),
+	path('object_data/<destination>/<location_id>/add_user/',object_data_views.add_user,name='add_user'),
+	path('object_data/<destination>/<location_id>/associated_objects/',object_data_views.associated_objects,name='associated_objects'),
+	path('object_data/bug_client_list/',object_data_views.bug_client_list,name='bug_client_list'),
+	path('object_data/<destination>/<location_id>/bug_list/',object_data_views.bug_list,name='bug_list'),
+	path('object_data/<destination>/<location_id>/customer_list/',object_data_views.customer_list,name='customer_list'),
+	path('object_data/<destination>/<location_id>/customer_list_all/',object_data_views.customer_list_all,name='customer_list_all'),
+	path('object_data/<destination>/<location_id>/group_list/',object_data_views.group_list,name='group_list'),
+	path('object_data/<destination>/<location_id>/group_list_all/',object_data_views.group_list_all,name='group_list_all'),
+	path('object_data/<destination>/<location_id>/<object_lookup>/link_list/',object_data_views.link_list,name='link_list'),
+	path('object_data/<destination>/<location_id>/note_list/',object_data_views.note_list,name='note_list'),
+	path('object_data/<destination>/<location_id>/query_bug_client/',object_data_views.query_bug_client,name='query_bug_client'),
+	path('object_data/<destination>/<location_id>/user_list/',object_data_views.user_list,name='user_list'),
+	path('object_data/<destination>/<location_id>/user_list_all/',object_data_views.user_list_all,name='user_list_all'),
 
 	# Organisation
 	path('organisation_duplicates/',organisation_view.organisation_duplicates,name='organisation_duplicates'),

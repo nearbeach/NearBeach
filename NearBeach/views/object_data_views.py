@@ -14,7 +14,6 @@ from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
 from NearBeach.user_permissions import return_user_permission_level
 
-
 import json, urllib3
 
 @require_http_methods(['POST'])
@@ -169,6 +168,111 @@ def add_user(request,destination,location_id):
     user_results = get_user_list(destination,location_id)
 
     return HttpResponse(serializers.serialize('json',user_results),content_type='application/json')
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def associated_objects(request,destination,location_id):
+    """
+
+    :param request:
+    :param destination:
+    :param location_id:
+    :return:
+    """
+
+    # Organisations have a special method. We will return the results directly from this method to the user.
+    if destination == 'organisation':
+        return associated_objects_organisations(location_id)
+
+    # Get the data
+    object_assignment_results = object_assignment.objects.filter(
+        is_deleted="FALSE",
+    )
+    object_assignment_results = get_object_from_destination(object_assignment_results, destination, location_id)
+
+    opportunity_results = opportunity.objects.filter(
+        is_deleted="FALSE",
+        opportunity_id__in=object_assignment_results.filter(
+            opportunity_id__isnull=False
+        ).values('opportunity_id')
+    ).values()
+
+    project_results = project.objects.filter(
+        is_deleted="FALSE",
+        project_id__in=object_assignment_results.filter(
+            project_id__isnull=False
+        ).values('project_id')
+    ).values()
+
+    requirement_results = requirement.objects.filter(
+        is_deleted="FALSE",
+        requirement_id__in=object_assignment_results.filter(
+            requirement_id__isnull=False
+        ).values('requirement_id')
+    ).values()
+
+    task_results = task.objects.filter(
+        is_deleted="FALSE",
+        task_id__in=object_assignment_results.filter(
+            task_id__isnull=False
+        ).values('task_id')
+    ).values()
+
+    # Return the JSON Response back - which will return strait to the user
+    return JsonResponse({
+        'opportunity': list(opportunity_results),
+        'project': list(project_results),
+        'requirement': list(requirement_results),
+        'task': list(task_results),
+    })
+
+
+# Internal Functions
+def associated_objects_organisations(location_id):
+    """
+    Due to organisation's links being connected to the objects directly. We will need to query all the objects that
+    can be related to an organisation, and combine them into one JSON output.
+
+    Please note - opportunities are the exception here - hence they are utilising the object assignment table.
+
+    To make it JSON friendly, we have to add .values() to each object lookup, and then simple list them in the JSON
+    return function below.
+    :param location_id:
+    :return:
+    """
+    # Get the data
+    opportunity_results = opportunity.objects.filter(
+        is_deleted="FALSE",
+        opportunity_id__in=object_assignment.objects.filter(
+            is_deleted="FALSE",
+            opportunity_id__isnull=False,
+            organisation_id=location_id,
+        ).values('opportunity_id')
+    ).values()
+
+    project_results = project.objects.filter(
+        is_deleted="FALSE",
+        organisation__in=location_id,
+    ).values()
+
+    requirement_results = requirement.objects.filter(
+        is_deleted="FALSE",
+        organisation__in=location_id,
+    ).values()
+
+    task_results = task.objects.filter(
+        is_deleted="FALSE",
+        organisation__in=location_id,
+    ).values()
+
+    # Return the JSON Response back - which will return strait to the user
+    return JsonResponse({
+        'opportunity': list(opportunity_results),
+        'project': list(project_results),
+        'requirement': list(requirement_results),
+        'task': list(task_results),
+    })
+
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")

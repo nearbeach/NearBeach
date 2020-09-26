@@ -82,7 +82,25 @@
                      role="tabpanel"
                      aria-labelledby="home-tab"
                 >
-                    ORGANISATION CONTACTS
+                    <h2><i data-feather="users"></i> Contacts</h2>
+                    <p class="text-instructions">
+                        Below are a list of contacts who are connected to this organisation.
+                    </p>
+                    <customers-list-module v-bind:customer-results="customerResults"
+                    ></customers-list-module>
+
+                    <!-- ADD CUSTOMER BUTTON -->
+                    <!-- ADD IN PERMISSIONS -->
+                    <hr>
+                    <div class="row submit-row">
+                        <div class="col-md-12">
+                            <button class="btn btn-primary save-changes"
+                                    v-on:click="addNewContact"
+                            >
+                                Add Contact
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div class="tab-pane fade"
                      id="document-uploads"
@@ -98,11 +116,13 @@
                      role="tabpanel"
                      aria-labelledby="profile-tab"
                 >
-                    Associated Objects
+                    <associated-objects v-bind:destination="destination"
+                                        v-bind:location-id="locationId"
+                    ></associated-objects>
                 </div>
-                <div class="tab-pane fade" id="organisation-quotes" role="tabpanel" aria-labelledby="contact-tab">
-                    Organisation Quotes
-                </div>
+<!--                <div class="tab-pane fade" id="organisation-quotes" role="tabpanel" aria-labelledby="contact-tab">-->
+<!--                    Organisation Quotes-->
+<!--                </div>-->
                 <div class="tab-pane fade" id="misc-modules" role="tabpanel" aria-labelledby="contact-tab">
                     <misc-module v-bind:destination="destination"
                                  v-bind:location-id="locationId"
@@ -117,9 +137,15 @@
     export default {
         name: "OrganisationModules",
         props: [
+            'customerResults',
             'destination',
             'locationId',
-        ]
+        ],
+        methods: {
+            addNewContact: function() {
+                //ADD CODE
+            }
+        }
     }
 </script>
 
