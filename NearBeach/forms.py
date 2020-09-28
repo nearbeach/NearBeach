@@ -134,6 +134,18 @@ class LoginForm(forms.Form):
     )
 
 
+class NewCustomerForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = customer
+        fields = [
+            'customer_title',
+            'customer_first_name',
+            'customer_last_name',
+            'customer_email',
+        ]
+
+
 class NewOrgnanisationForm(forms.ModelForm):
     # Basic Meta data
     class Meta:

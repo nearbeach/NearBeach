@@ -55,6 +55,7 @@ urlpatterns = [
 
 	# New Objects
 	path('new_customer/',customer_view.new_customer,name='new_customer'),
+	path('new_customer/save/',customer_view.new_customer_save,name='new_customer_save'),
 	path('new_organisation/',organisation_view.new_organisation,name='new_organisation'),
 	path('new_organisation/save/',organisation_view.new_organisation_save,name='new_organisation_save'),
 	path('new_requirement/',requirement_views.new_requirement, name='new_requirement'),
