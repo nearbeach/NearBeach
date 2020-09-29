@@ -272,3 +272,12 @@ Certbot is recommended by NearBeach to supply free certified SSL certificates.
     sudo certbot --nginx
 
 Follow the prompts to install certbot. This will enable https to your NearBeach site.
+
+
+-------------------------
+Installation of XSendFile
+-------------------------
+
+.. note::
+
+    Nginx might require user to setup XSendFile, please see more information here - https://www.nginx.com/resources/wiki/start/topics/examples/xsendfile/
