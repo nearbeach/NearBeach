@@ -102,6 +102,7 @@
     export default {
         name: "NewCustomerForm",
         props: [
+            'flagValidationCheck',
             'organisationName',
             'titleList',
         ],
@@ -210,6 +211,65 @@
                     var loader_element = document.getElementById("loader");
                     loader_element.style.display = "none";
                 });
+            },
+        },
+        watch: {
+            customerEmailModel: function() {
+                //Emit up this function's data
+                this.$emit(
+                    'update_customer_data',
+                    {
+                        'field': 'customerEmailModel',
+                        'value': this.customerEmailModel,
+                    }
+                )
+            },
+            customerFirstNameModel: function() {
+                //Emit up this function's data
+                this.$emit(
+                    'update_customer_data',
+                    {
+                        'field': 'customerFirstNameModel',
+                        'value': this.customerFirstNameModel,
+                    }
+                )
+            },
+            customerLastNameModel: function() {
+                //Emit up this function's data
+                this.$emit(
+                    'update_customer_data',
+                    {
+                        'field': 'customerLastNameModel',
+                        'value': this.customerLastNameModel,
+                    }
+                )
+            },
+            flagValidationCheck: function() {
+                //Don't worry if it is false
+                if (!this.flagValidationCheck) return;
+
+                //Touch the validation
+                this.$v.$touch();
+            },
+            organisationModel: function() {
+                //Emit up this function's data
+                this.$emit(
+                    'update_customer_data',
+                    {
+                        'field': 'organisationModel',
+                        'value': this.organisationModel
+                    }
+                )
+            },
+            titleModel: function() {
+                //Emit up this function's data
+                this.$emit(
+                    'update_customer_data',
+                    {
+                        'field': 'titleModel',
+                        'value': this.titleModel,
+                    }
+                )
             },
         },
         mounted() {
