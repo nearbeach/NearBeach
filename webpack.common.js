@@ -51,7 +51,12 @@ module.exports = {
                 { from: './src/resources/NearBeach.png', to: '' },
                 { from: './src/resources/NearBeach_Small.png', to: '' },
                 { from: './src/resources/images/', to: './images' },
-                { from: './node_modules/tinymce/', to: './tinymce' },
+
+                //TinyMce Files
+                { from: './node_modules/tinymce/tinymce.min.js', to: './tinymce/tinymce.min.js' },
+                { from: './node_modules/tinymce/skins/ui/oxide/skin.min.css', to: './tinymce/skins/ui/oxide/skin.min.css' },
+                { from: './node_modules/tinymce/skins/content/default/content.min.css', to: './tinymce/skins/content/default/content.min.css' },
+                { from: './node_modules/tinymce/skins/ui/oxide/content.min.css', to: './tinymce/skins/ui/oxide/content.min.css' },
             ],
         }),
         new HtmlWebpackPlugin({
