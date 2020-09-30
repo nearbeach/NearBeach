@@ -29,7 +29,7 @@ from .views import authentication_views, \
 	dashboard_views, \
 	document_views, \
 	object_data_views, \
-	organisation_view, \
+	organisation_views, \
 	requirement_item_views, \
 	requirement_views, \
 	search_views
@@ -59,8 +59,8 @@ urlpatterns = [
 	# New Objects
 	path('new_customer/',customer_view.new_customer,name='new_customer'),
 	path('new_customer/save/',customer_view.new_customer_save,name='new_customer_save'),
-	path('new_organisation/',organisation_view.new_organisation,name='new_organisation'),
-	path('new_organisation/save/',organisation_view.new_organisation_save,name='new_organisation_save'),
+	path('new_organisation/',organisation_views.new_organisation,name='new_organisation'),
+	path('new_organisation/save/',organisation_views.new_organisation_save,name='new_organisation_save'),
 	path('new_requirement/',requirement_views.new_requirement, name='new_requirement'),
 	path('new_requirement/save/',requirement_views.new_requirement_save, name='new_requirement_save'),
 	path('new_requirement_item/save/<int:requirement_id>/',requirement_item_views.new_requirement_item,name='new_requirement_item'),
@@ -85,10 +85,10 @@ urlpatterns = [
 	path('object_data/<destination>/<location_id>/user_list_all/',object_data_views.user_list_all,name='user_list_all'),
 
 	# Organisation
-	path('organisation_duplicates/',organisation_view.organisation_duplicates,name='organisation_duplicates'),
-	path('organisation_information/<int:organisation_id>/',organisation_view.organisation_information,name='organisation_information'),
-	path('organisation_information/<int:organisation_id>/save/',organisation_view.organisation_information_save,name='organisation_information_save'),
-	path('organisation_information/<int:organisation_id>/update_profile/',organisation_view.organisation_update_profile,name='organisation_update_profile'),
+	path('organisation_duplicates/',organisation_views.organisation_duplicates,name='organisation_duplicates'),
+	path('organisation_information/<int:organisation_id>/',organisation_views.organisation_information,name='organisation_information'),
+	path('organisation_information/<int:organisation_id>/save/',organisation_views.organisation_information_save,name='organisation_information_save'),
+	path('organisation_information/<int:organisation_id>/update_profile/',organisation_views.organisation_update_profile,name='organisation_update_profile'),
 
 	# Requirements
 	path('requirement_information/<int:requirement_id>/',requirement_views.requirement_information,name='requirement_information'),

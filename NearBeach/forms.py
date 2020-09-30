@@ -151,7 +151,7 @@ class NewCustomerForm(forms.ModelForm):
         ]
 
 
-class NewOrgnanisationForm(forms.ModelForm):
+class OrganisationForm(forms.ModelForm):
     # Basic Meta data
     class Meta:
         model = organisation
@@ -159,6 +159,14 @@ class NewOrgnanisationForm(forms.ModelForm):
             'organisation_name',
             'organisation_website',
             'organisation_email',
+        ]
+
+
+class OrganisationProfilePictureForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        fields = [
+            'organisation_picture'
         ]
 
 

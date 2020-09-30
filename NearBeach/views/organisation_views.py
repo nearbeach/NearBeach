@@ -47,7 +47,7 @@ def new_organisation_save(request):
         return HttpResponseRedirect(reverse('permission_denied'))
 
     # Get the data
-    form = NewOrgnanisationForm(request.POST)
+    form = OrganisationForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
@@ -75,7 +75,7 @@ def organisation_duplicates(request):
     # ADD IN USER PERMISSION CHECKS
 
     # Extract data from POST
-    form = NewOrgnanisationForm(request.POST)
+    form = OrganisationForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
@@ -127,6 +127,21 @@ def organisation_information_save(request,organisation_id):
     :param organisation_id:
     :return:
     """
+
+    # ADD IN PERMISSION CHECKING
+
+    # Get the form data
+    form = OrganisationForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get the instance
+    organisation_instance = organisation.objects.get(organisation_id=organisation_id)
+    organisation_instance.organisation_name = form.cleaned_data['organisation_name']
+    organisation_instance.organisation_email = form.cleaned_data['organisation_email']
+    organisation_instance.organisation_website = form.cleaned_data['organisation_website']
+    organisation_instance.save()
+
     return HttpResponse('')
 
 
