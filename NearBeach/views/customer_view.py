@@ -90,11 +90,11 @@ def new_customer_save(request):
     )
 
     # If the organisation is not null in the form - set the data
-    if not form.cleaned_data['organisation'] == '':
-        customer_submit.organisation=organisation.objects.get(form.cleaned_data['organisation'])
+    if form.cleaned_data['organisation']:
+        customer_submit.organisation = form.cleaned_data['organisation']
 
     # Save the data
     customer_submit.save()
 
     # Send back the URL to the new customer
-    return HttpResponseRedirect(reverse('customer_information', args={customer_submit.customer_id}))
+    return HttpResponse(reverse('customer_information', args={customer_submit.customer_id}))

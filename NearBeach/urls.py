@@ -38,6 +38,9 @@ from .views import authentication_views, \
 urlpatterns = [
 	path('', dashboard_views.dashboard, name='dashboard'),
 
+	# Customer
+	path('customer_information/<int:customer_id>/',customer_view.customer_information,name='customer_information'),
+
 	# Documentation
 	path('documentation/<destination>/<location_id>/add_folder/',document_views.document_add_folder,name='document_add_folder'),
 	path('documentation/<destination>/<location_id>/add_link/',document_views.document_add_link,name='document_add_link'),
@@ -84,6 +87,8 @@ urlpatterns = [
 	# Organisation
 	path('organisation_duplicates/',organisation_view.organisation_duplicates,name='organisation_duplicates'),
 	path('organisation_information/<int:organisation_id>/',organisation_view.organisation_information,name='organisation_information'),
+	path('organisation_information/<int:organisation_id>/save/',organisation_view.organisation_information_save,name='organisation_information_save'),
+	path('organisation_information/<int:organisation_id>/update_profile/',organisation_view.organisation_update_profile,name='organisation_update_profile'),
 
 	# Requirements
 	path('requirement_information/<int:requirement_id>/',requirement_views.requirement_information,name='requirement_information'),

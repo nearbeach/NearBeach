@@ -135,6 +135,10 @@ class LoginForm(forms.Form):
 
 
 class NewCustomerForm(forms.ModelForm):
+    organisation = forms.ModelChoiceField(
+        queryset=organisation.objects.all(),
+        required=False,
+    )
     # Basic Meta Data
     class Meta:
         model = customer
@@ -143,6 +147,7 @@ class NewCustomerForm(forms.ModelForm):
             'customer_first_name',
             'customer_last_name',
             'customer_email',
+            'organisation',
         ]
 
 

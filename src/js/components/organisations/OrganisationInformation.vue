@@ -74,6 +74,8 @@
 </template>
 
 <script>
+    const axios = require('axios');
+
     export default {
         name: "OrganisationInformation",
         props: [
@@ -88,7 +90,21 @@
         },
         methods: {
             updateOrganisation: function() {
+                //Construct the data_to_send
+                const data_to_send = new FormData();
+                data_to_send.set('organisation_name',this.organisationNameModel);
+                data_to_send.set('organisation_email',this.organisationEmailModel);
+                data_to_send.set('organisation_website',this.organisationWebsiteModel);
 
+                //Use axios to send the data
+                axios.post(
+                    `/organisation_information/${this.organisationResults[0]['pk']}/save/`,
+                    data_to_send,
+                ).then(response => {
+                    console.log("Response: ",response);
+                }).catch(error => {
+                    console.log("Error: ",error);
+                })
             },
         }
     }

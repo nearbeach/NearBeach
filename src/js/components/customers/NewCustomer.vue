@@ -23,21 +23,39 @@
                     <!-- CUSTOMER DETAILS -->
                     <div class="row">
                         <div class="form-group col-sm-3">
-                            <label>Title:</label>
+                            <label>
+                                Title:
+                                <span class="error"
+                                      v-if="!$v.titleModel.required && $v.titleModel.$dirty"
+                                      > Please supply
+                                </span>
+                            </label>
                             <v-select :options="titleFixList"
                                       label="title"
                                       v-model="titleModel"
                             ></v-select>
                         </div>
                         <div class="form-group col-sm-4">
-                            <label>First Name:</label>
+                            <label>
+                                First Name:
+                                <span class="error"
+                                      v-if="!$v.customerFirstNameModel.required && $v.customerFirstNameModel.$dirty"
+                                      > Please supply
+                                </span>
+                            </label>
                             <input type="text"
                                    class="form-control"
                                    v-model="customerFirstNameModel"
                             >
                         </div>
                         <div class="form-group col-sm-5">
-                            <label>Last Name:</label>
+                            <label>
+                                Last Name:
+                                <span class="error"
+                                      v-if="!$v.customerLastNameModel.required && $v.customerLastNameModel.$dirty"
+                                      > Please supply
+                                </span>
+                            </label>
                             <input type="text"
                                    class="form-control"
                                    v-model="customerLastNameModel"
@@ -48,7 +66,17 @@
 
                     <!-- Customer Email -->
                     <div class="form-group col-sm-8">
-                        <label>Email:</label>
+                        <label>
+                            Email:
+                            <span class="error"
+                                  v-if="!$v.customerEmailModel.required && $v.customerEmailModel.$dirty"
+                                  > Please supply
+                            </span>
+                            <span class="error"
+                                  v-if="!$v.customerEmailModel.email && $v.customerEmailModel.$dirty"
+                                  > Please format as Email
+                            </span>
+                        </label>
                         <input type="text"
                                class="form-control"
                                v-model="customerEmailModel"
@@ -87,7 +115,10 @@
 
 <script>
     const axios = require('axios');
-    import { Model } from 'bootstrap';
+    import { Modal } from "bootstrap";
+
+    //Validation
+    import { email, required } from 'vuelidate/lib/validators';
 
     export default {
         name: "NewCustomer",
@@ -101,11 +132,29 @@
                 customerFirstNameModel: '',
                 customerLastNameModel: '',
                 organisationFixList: [],
-                organisationModel: [],
+                organisationModel: {},
                 searchTimeout: '',
                 titleFixList: [],
                 titleModel: [],
             }
+        },
+        validations: {
+            customerEmailModel: {
+                required,
+                email,
+            },
+            customerFirstNameModel: {
+                required,
+            },
+            customerLastNameModel: {
+                required,
+            },
+            organisationModel: {
+                required,
+            },
+            titleModel: {
+                required,
+            },
         },
         methods: {
             fetchOptions: function(search, loading) {
@@ -184,6 +233,25 @@
                 });
             },
             submitNewCustomer: function() {
+                                // Check the validation first
+                this.$v.$touch();
+
+                if (this.$v.$invalid) {
+                    //Show the error dialog and notify to the user that there were field missing.
+                    var elem_cont = document.getElementById("errorModalContent");
+
+                    // Update the content
+                    elem_cont.innerHTML =
+                        `<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.`;
+
+                    // Show the modal
+                    var errorModal = new Modal(document.getElementById('errorModal'));
+                    errorModal.show();
+
+                    //Just return - as we do not need to do the rest of this function
+                    return;
+                }
+
                 //Create the data_to_send
                 const data_to_send = new FormData();
                 data_to_send.set('customer_title',this.titleModel['value']);
@@ -192,8 +260,8 @@
                 data_to_send.set('customer_email',this.customerEmailModel);
 
                 //If there is an organisation in the model - send it
-                if (this.organisationModel.length > 0) {
-                    data_to_send.set('organisation',this.organisationModel[0]['value']);
+                if (Object.keys(this.organisationModel).length != 0) {
+                    data_to_send.set('organisation',this.organisationModel['value']);
                 }
 
                 //Send the data using axios
@@ -201,7 +269,8 @@
                     '/new_customer/save/',
                     data_to_send,
                 ).then(response => {
-                    console.log("Response: ",response);
+                    //Go to the new customer page
+                    window.location.href = response['data'];
                 }).catch(error => {
                     console.log("Error: ",error);
                 })

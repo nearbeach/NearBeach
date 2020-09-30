@@ -93,6 +93,7 @@ def organisation_duplicates(request):
     return HttpResponse(serializers.serialize('json',organisation_results),content_type='application/json')
 
 
+@login_required(login_url='login',redirect_field_name="")
 def organisation_information(request,organisation_id):
     """
 
@@ -115,3 +116,27 @@ def organisation_information(request,organisation_id):
     }
 
     return HttpResponse(t.render(c,request))
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def organisation_information_save(request,organisation_id):
+    """
+
+    :param request:
+    :param organisation_id:
+    :return:
+    """
+    return HttpResponse('')
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def organisation_update_profile(request,organisation_id):
+    """
+
+    :param request:
+    :param organisation_id:
+    :return:
+    """
+    return HttpResponse('')
