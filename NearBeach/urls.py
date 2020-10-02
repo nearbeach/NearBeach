@@ -25,7 +25,7 @@ from . import views, \
 	views_whiteboard
 """
 from .views import authentication_views, \
-	customer_view, \
+	customer_views, \
 	dashboard_views, \
 	document_views, \
 	object_data_views, \
@@ -39,7 +39,7 @@ urlpatterns = [
 	path('', dashboard_views.dashboard, name='dashboard'),
 
 	# Customer
-	path('customer_information/<int:customer_id>/',customer_view.customer_information,name='customer_information'),
+	path('customer_information/<int:customer_id>/',customer_views.customer_information,name='customer_information'),
 
 	# Documentation
 	path('documentation/<destination>/<location_id>/add_folder/',document_views.document_add_folder,name='document_add_folder'),
@@ -57,8 +57,8 @@ urlpatterns = [
 	path('private/<uuid:document_key>/',document_views.private_download_file,name='private_download_file'),
 
 	# New Objects
-	path('new_customer/',customer_view.new_customer,name='new_customer'),
-	path('new_customer/save/',customer_view.new_customer_save,name='new_customer_save'),
+	path('new_customer/',customer_views.new_customer,name='new_customer'),
+	path('new_customer/save/',customer_views.new_customer_save,name='new_customer_save'),
 	path('new_organisation/',organisation_views.new_organisation,name='new_organisation'),
 	path('new_organisation/save/',organisation_views.new_organisation_save,name='new_organisation_save'),
 	path('new_requirement/',requirement_views.new_requirement, name='new_requirement'),
@@ -107,6 +107,9 @@ urlpatterns = [
 	path('requirement_item_information/<int:requirement_item_id>/data/links/',requirement_item_views.get_requirement_item_links_list,name='get_requirement_item_links_list'),
 	path('requirement_item_information/<int:requirement_item_id>/save/',requirement_item_views.requirement_information_save,name='requirement_information_save'),
 
+	# Search Items
+	path('search/customer/',search_views.search_customer,name='search_customer'),
+	path('search/customer/data/',search_views.search_customer_data,name='search_customer_data'),
 	path('search/organisation/',search_views.search_organisation,name='search_organisation'),
 	path('search/organisation/data/',search_views.search_organisation_data,name='search_organisation_data'),
 

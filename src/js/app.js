@@ -37,6 +37,9 @@ import AssociatedObjects from "./components/modules/sub_modules/AssociatedObject
 
 import NewCustomerForm from "./components/customers/NewCustomerForm.vue";
 import NewCustomerModal from "./components/customers/NewCustomerModal.vue";
+import SearchCustomers from "./components/search/SearchCustomers.vue";
+import ListCustomers from "./components/customers/ListCustomers.vue";
+import CustomerInformation from "./components/customers/CustomerInformation.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -98,6 +101,9 @@ Vue.component('CustomersListModule',CustomersListModule);
 Vue.component('AssociatedObjects',AssociatedObjects);
 Vue.component('NewCustomerForm',NewCustomerForm);
 Vue.component('NewCustomerModal',NewCustomerModal);
+Vue.component('SearchCustomers',SearchCustomers);
+Vue.component('ListCustomers',ListCustomers);
+Vue.component('CustomerInformation',CustomerInformation);
 
 
 

@@ -130,6 +130,11 @@
                 </div>
             </div>
         </div>
+
+        <!-- MODALS -->
+        <new-customer-modal v-bind:organisation-name="'NearBeach Incorporated'"
+                            v-bind:title-list="[]"
+        ></new-customer-modal>
     </div>
 </template>
 

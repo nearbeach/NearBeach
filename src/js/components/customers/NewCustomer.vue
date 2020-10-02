@@ -66,9 +66,6 @@
             },
         },
         methods: {
-            resetCheckValidation: function() {
-                this.checkValidation = false;
-            },
             submitNewCustomer: function() {
                 //Flag downstream to check validation
                 this.flagValidationCheck = true;
@@ -125,9 +122,7 @@
                 //Update the modal field with the value data
                 this[data['field']] = data['value'];
             },
-
         },
-
     }
 </script>
 

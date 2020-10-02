@@ -1,5 +1,7 @@
 {% extends 'NearBeach/template.html' %}
 {% load static %}
 {% block content %}
-    <h1>CUSTOMER INFORMATION</h1>
+    <customer-information v-bind:customer-results="{{customer_results}}"
+                          v-bind:title-list="{{title_results}}"
+    ></customer-information>
 {% endblock %}
