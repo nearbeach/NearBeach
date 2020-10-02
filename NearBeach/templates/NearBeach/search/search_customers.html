@@ -1,0 +1,6 @@
+{% extends 'NearBeach/template.html' %}
+{% load static %}
+{% block content %}
+    <search-customers v-bind:customer-results="{{customer_results}}"
+    ></search-customers>
+{% endblock %}

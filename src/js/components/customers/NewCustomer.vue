@@ -8,6 +8,8 @@
             <!-- New Customer Form -->
             <new-customer-form v-bind:organisation-name="organisationName"
                                v-bind:title-list="titleList"
+                               v-bind:flag-validation-check="flagValidationCheck"
+                               v-on:update_customer_data="updateCustomerData($event)"
             ></new-customer-form>
 
             <!-- REMEMBER TO ADD IN USER PERMISSIONS HERE!! -->
@@ -26,7 +28,11 @@
 </template>
 
 <script>
+    const axios = require('axios');
     import { Modal } from "bootstrap";
+
+    //Validation
+    import { email, required } from 'vuelidate/lib/validators';
 
     export default {
         name: "NewCustomer",
@@ -36,17 +42,40 @@
         ],
         data() {
             return {
-                //These values are modified downstream
                 customerEmailModel: '',
                 customerFirstNameModel: '',
                 customerLastNameModel: '',
+                flagValidationCheck: false,
                 organisationModel: {},
                 titleModel: [],
             }
         },
+        validations: {
+            customerEmailModel: {
+                required,
+                email,
+            },
+            customerFirstNameModel: {
+                required,
+            },
+            customerLastNameModel: {
+                required,
+            },
+            titleModel: {
+                required,
+            },
+        },
         methods: {
             submitNewCustomer: function() {
-                // Check the validation first
+                //Flag downstream to check validation
+                this.flagValidationCheck = true;
+
+                //Reset this check after 100ms
+                setTimeout(() => {
+                    this.flagValidationCheck = false;
+                },100);
+
+                // Check the validation at this level
                 this.$v.$touch();
 
                 //NEED TO USE MIXIN FOR THIS SECTION
@@ -89,21 +118,9 @@
                     console.log("Error: ",error);
                 })
             },
-            //UPDATE ALL THE MODALS - WHY THE HELL AM I DOING IT THIS WAY!! THERE IS A BETTER WAY!!!
-            updateCustomerEmailModel: function(data) {
-                this.customerEmailModel = data;
-            },
-            updateCustomerFirstNameModel: function(data) {
-                this.customerFirstNameModel = data;
-            },
-            updateCustomerLastNameModel: function(data) {
-                this.customerLastNameModel = data;
-            },
-            updateOrganisationModel: function(data) {
-                this.organisationModel = data;
-            },
-            updateTitleModel: function(data) {
-                this.titleModel = data;
+            updateCustomerData: function(data) {
+                //Update the modal field with the value data
+                this[data['field']] = data['value'];
             },
         },
     }
