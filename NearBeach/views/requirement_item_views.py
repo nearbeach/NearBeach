@@ -74,7 +74,7 @@ def get_requirement_item_links_list(request,requirement_item_id):
     # Use object_assignment to get the requirme
     link_results = object_assignment.objects.filter(
         Q(
-            is_deleted="FALSE",
+            is_deleted=False,
             requirement_item_id=requirement_item_id
         ) & Q(
             Q(opportunity_id__isnull=False) |
@@ -119,7 +119,7 @@ def get_user_requirement_item_permissions(request, requirement_id):
     :return:
     """
     requirement_groups = object_assignment.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         # requirement_id=requirement_id
     ).values('group_id')
 
@@ -204,16 +204,16 @@ def requirement_item_information(request, requirement_item_id):
     )
 
     status_list = list_of_requirement_item_status.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         status_is_closed=False,
     )
 
     type_list = list_of_requirement_item_type.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     )
 
     group_results = group.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     )
 
     # context

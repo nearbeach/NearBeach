@@ -28,7 +28,7 @@ def customer_information(request,customer_id):
     # Get customer data
     customer_results = customer.objects.get(customer_id=customer_id)
     title_results = list_of_title.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     )
 
     # Get tempalte
@@ -54,7 +54,7 @@ def new_customer(request):
 
     # Get data
     title_list = list_of_title.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     )
 
     # Get templates

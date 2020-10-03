@@ -87,7 +87,7 @@ def document_add_link(request,destination,location_id):
 
     # Get current document results to send back
     document_results = document_permission.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         document_key=document_submit,
     ).values(
         'document_key__document_description',
@@ -120,7 +120,7 @@ def document_list_files(request,destination,location_id):
     :return:
     """
     document_permission_results = document_permission.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     ).values(
         'document_key_id',
         'document_key__document_description',
@@ -145,7 +145,7 @@ def document_list_files(request,destination,location_id):
 
     # # Get the document information
     # document_results = document.objects.filter(
-    #     is_deleted="FALSE",
+    #     is_deleted=False,
     #     document_key__in=document_permission_results.values('document_key')
     # )
     #
@@ -170,7 +170,7 @@ def document_list_folders(request,destination,location_id):
     """
     # Get the document information
     folder_results = folder.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     )
     folder_results = get_object_from_destination(folder_results,destination,location_id)
 
@@ -230,7 +230,7 @@ def document_upload(request,destination,location_id):
 
     # Get current document results to send back
     document_results = document_permission.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         document_key=document_submit,
     ).values(
         'document_key_id',
@@ -264,20 +264,20 @@ def private_download_file(request,document_key):
     """
     # Extract the user groups the user is associated with
     user_group_results = user_group.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         username=request.user,
     )
 
     # Extract the permissions the document is associated with
     document_permission_results = document_permission.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         document_key=document_key,
     )
 
     # Consolidate at the object assignment
     object_assignment_results = object_assignment.objects.filter(
         Q(
-            is_deleted="FALSE",
+            is_deleted=False,
             # JOIN IN USER GROUPS
             group_id__in=user_group_results.values('group_id')
         ) &
@@ -315,7 +315,7 @@ def private_download_file(request,document_key):
                 # Requirement Item
                 # Have to use the requirement item's requirement as permissions are not on the item
                 requirement_id__in=requirement_item.objects.filter(
-                    is_deleted="FALSE",
+                    is_deleted=False,
                     requirement_item_id__in=document_permission_results.values('requirement_item_id'),
                     requirement_item_id__isnull=False,
                 ).values('requirement_id')

@@ -82,7 +82,7 @@ def organisation_duplicates(request):
     # Check to see if there are any matches
     organisation_results = organisation.objects.filter(
         Q(
-            is_deleted="FALSE",
+            is_deleted=False,
         ) & Q(
             Q(organisation_name__contains=form.cleaned_data['organisation_name']) |
             Q(organisation_website__contains=form.cleaned_data['organisation_website']) |
@@ -103,7 +103,7 @@ def organisation_information(request,organisation_id):
     """
     organisation_results = organisation.objects.get(organisation_id=organisation_id)
     customer_results = customer.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         organisation_id=organisation_id,
     )
 

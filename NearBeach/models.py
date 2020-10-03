@@ -11,11 +11,6 @@ DISCOUNT_CHOICE = (
     ('Amount', 'Amount'),
 )
 
-IS_DELETED_CHOICE = (
-    ('TRUE', 'TRUE'),
-    ('FALSE', 'FALSE'),
-)
-
 KANBAN_BOARD_STATUS_CHOICE = (
     ('Open','Open'),
     ('Closed','Closed'),
@@ -149,9 +144,7 @@ class about_user(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user',
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
+    is_deleted = models.BooleanField(
         default='FALSE',
     )
 
@@ -207,10 +200,8 @@ class contact_history(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -251,10 +242,8 @@ class bug(models.Model):
          on_delete=models.CASCADE,
          related_name='%(class)s_change_user',
          )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -279,10 +268,8 @@ class bug_client(models.Model):
          on_delete=models.CASCADE,
          related_name='%(class)s_change_user',
          )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -360,10 +347,8 @@ class campus(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -420,10 +405,8 @@ class change_task(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_creation_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -458,10 +441,8 @@ class cost(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user',
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -498,10 +479,8 @@ class customer(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -536,10 +515,8 @@ class customer_campus(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -576,9 +553,7 @@ class document(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
+    is_deleted = models.BooleanField(
         default='FALSE',
     )
 
@@ -668,10 +643,8 @@ class document_permission(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -743,10 +716,8 @@ class email_contact(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -765,10 +736,8 @@ class email_content(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -833,10 +802,8 @@ class folder(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -864,10 +831,8 @@ class group(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def natural_key(self):
@@ -912,9 +877,7 @@ class group_permission(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
+    is_deleted = models.BooleanField(
         default='FALSE',
     )
 
@@ -951,9 +914,7 @@ class kanban_board(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_creation_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
+    is_deleted = models.BooleanField(
         default='FALSE',
     )
 
@@ -981,10 +942,8 @@ class kanban_board_group(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -1032,9 +991,7 @@ class kanban_card(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
+    is_deleted = models.BooleanField(
         default='FALSE',
     )
 
@@ -1060,9 +1017,7 @@ class kanban_column(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
+    is_deleted = models.BooleanField(
         default='FALSE',
     )
 
@@ -1101,9 +1056,7 @@ class kanban_comment(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
+    is_deleted = models.BooleanField(
         default='FALSE',
     )
 
@@ -1131,9 +1084,7 @@ class kanban_level(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
+    is_deleted = models.BooleanField(
         default='FALSE',
     )
 
@@ -1168,10 +1119,8 @@ class kudos(models.Model):
         null=True,
         blank=True,
     )
-    submitted_kudos=models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default="FALSE",
+    submitted_kudos=models.BooleanField(
+        default=False,
     )
     project=models.ForeignKey(
         'project',
@@ -1191,10 +1140,8 @@ class kudos(models.Model):
         blank=True,
         null=True
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -1214,10 +1161,8 @@ class list_of_amount_type(models.Model):
         blank=True,
         null=True
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -1249,10 +1194,8 @@ class list_of_bug_client(models.Model):
         blank=True,
         null=True
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -1278,10 +1221,8 @@ class list_of_currency(models.Model):
         blank=True,
         null=True
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -1303,10 +1244,8 @@ class list_of_contact_type(models.Model):
         blank=True,
         null=True
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -1328,10 +1267,8 @@ class list_of_country(models.Model):
         blank=True,
         null=True
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -1356,10 +1293,8 @@ class list_of_country_region(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='%(class)s_change_user', blank=True,
                                     null=True)
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -1384,10 +1319,8 @@ class list_of_lead_source(models.Model):
         blank=True,
         null=True
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -1405,10 +1338,8 @@ class list_of_opportunity_stage(models.Model):
         decimal_places=0,
     )
     list_order = models.IntegerField(unique=True)
-    opportunity_closed = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE',
+    opportunity_closed = models.BooleanField(
+        default=False,
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -1427,10 +1358,8 @@ class list_of_opportunity_stage(models.Model):
         blank=True,
         null=True
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -1448,15 +1377,11 @@ class list_of_quote_stage(models.Model):
         unique=True,
     )
 
-    is_invoice = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_invoice = models.BooleanField(
+        default=False,
     )
-    quote_closed = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE',
+    quote_closed = models.BooleanField(
+        default=False,
     )
     sort_order = models.IntegerField(unique=True, auto_created=True)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -1468,10 +1393,8 @@ class list_of_quote_stage(models.Model):
         blank=True,
         null=True
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -1498,10 +1421,8 @@ class list_of_requirement_item_status(models.Model):
         blank=True,
         null=True,
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -1525,10 +1446,8 @@ class list_of_requirement_item_type(models.Model):
         blank=True,
         null=True,
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -1543,10 +1462,8 @@ class list_of_requirement_status(models.Model):
     requirement_status = models.CharField(
         max_length=50,
     )
-    requirement_status_is_closed = models.CharField(
-        max_length=10,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    requirement_status_is_closed = models.BooleanField(
+        default=False,
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -1557,10 +1474,8 @@ class list_of_requirement_status(models.Model):
         blank=True,
         null=True,
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -1584,10 +1499,8 @@ class list_of_requirement_type(models.Model):
         blank=True,
         null=True,
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -1619,10 +1532,8 @@ class list_of_tax(models.Model):
         blank=True,
         null=True,
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -1644,10 +1555,8 @@ class list_of_title(models.Model):
         blank=True,
         null=True
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -1789,10 +1698,8 @@ class object_assignment(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -1861,10 +1768,8 @@ class object_note(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -1912,10 +1817,8 @@ class opportunity(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_creation_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -1947,10 +1850,8 @@ class opportunity_connection(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -1973,10 +1874,8 @@ class organisation(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -2017,6 +1916,7 @@ class permission_set_manager(models.Manager):
             tag,
             task,
             tax,
+            template,
             document,
             contact_history,
             kanban_comment,
@@ -2213,10 +2113,8 @@ class permission_set(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def natural_key(self):
@@ -2294,10 +2192,8 @@ class product_and_service(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -2345,10 +2241,8 @@ class project(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_creation_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -2380,10 +2274,8 @@ class project_customer(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -2407,10 +2299,8 @@ class project_group(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -2438,10 +2328,8 @@ class project_history(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -2474,10 +2362,8 @@ class project_opportunity(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -2502,10 +2388,8 @@ class project_stage(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -2532,10 +2416,8 @@ class project_task(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -2562,10 +2444,8 @@ class quote(models.Model):
         null=True,
         blank=True,
     )
-    is_invoice = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_invoice = models.BooleanField(
+        default=False,
     )
     """
     quote_approval_status_id = models.CharField(
@@ -2629,10 +2509,8 @@ class quote(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_creation_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -2640,79 +2518,6 @@ class quote(models.Model):
 
     class Meta:
         db_table = "quote"
-
-
-"""
-class quote_group(models.Model):
-    quote_id = models.ForeignKey(
-        'quote',
-        on_delete=models.CASCADE,
-    )
-    group_id = models.ForeignKey(
-        'group',
-        on_delete=models.CASCADE,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
-    )
-
-    class Meta:
-        db_table = "quote_group"
-"""
-
-
-"""
-class quote_permission(models.Model):
-    quote_permission_id = models.AutoField(primary_key=True)
-    quote = models.ForeignKey(
-        'quote',
-        on_delete=models.CASCADE
-    )
-    assigned_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_assigned_user',
-        null=True,
-        blank=True,
-    )
-    group_id = models.ForeignKey(
-        'group',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    all_user = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE',
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
-    )
-
-    class Meta:
-        db_table = "quote_permission"
-"""
 
 
 class quote_product_and_service(models.Model):
@@ -2792,10 +2597,8 @@ class quote_product_and_service(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -2822,10 +2625,8 @@ class quote_responsible_customer(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -2910,10 +2711,8 @@ class quote_template(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -2990,10 +2789,8 @@ class request_for_change(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_creation_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -3024,10 +2821,8 @@ class request_for_change_group_approval(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -3049,10 +2844,8 @@ class request_for_change_note(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -3093,10 +2886,8 @@ class request_for_change_stakeholder(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -3140,10 +2931,8 @@ class requirement(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_creation_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -3170,10 +2959,8 @@ class requirement_customer(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -3211,10 +2998,8 @@ class requirement_item(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -3222,167 +3007,6 @@ class requirement_item(models.Model):
 
     class Meta:
         db_table = "requirement_item"
-
-"""
-class requirement_item_link(models.Model):
-    requirement_item_link_id = models.AutoField(primary_key=True)
-    requirement_item = models.ForeignKey(
-        'requirement_item',
-        on_delete=models.CASCADE,
-    )
-    project_id = models.ForeignKey(
-        'project',
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
-    task_id = models.ForeignKey(
-        'task',
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
-    organisation_id = models.ForeignKey(
-        'organisation',
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
-    )
-
-    class Meta:
-        db_table = "requirement_item_permission"
-
-
-class requirement_link(models.Model):
-    requirement_link_id = models.AutoField(primary_key=True)
-    requirement = models.ForeignKey(
-        'requirement',
-        on_delete=models.CASCADE,
-    )
-    project_id = models.ForeignKey(
-        'project',
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
-    task_id = models.ForeignKey(
-        'task',
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
-    organisation_id = models.ForeignKey(
-        'organisation',
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
-    opportunity_id = models.ForeignKey(
-        'opportunity',
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
-    )
-
-    class Meta:
-        db_table = "requirement_link"
-"""
-
-"""
-class requirement_permission(models.Model):
-    requirement_permission_id = models.AutoField(primary_key=True)
-    requirement = models.ForeignKey(
-        'requirement',
-        on_delete=models.CASCADE
-    )
-    assigned_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_assigned_user',
-        null=True,
-        blank=True,
-    )
-    group_id = models.ForeignKey(
-        'group',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    all_user = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE',
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
-    )
-
-    class Meta:
-        db_table = "requirement_permission"
-"""
-
-"""
-class stage(models.Model):
-    stage_id = models.AutoField(primary_key=True)
-    group_id = models.ForeignKey(
-        'group',
-        on_delete=models.CASCADE,
-    )
-    stage = models.CharField(max_length=45)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
-    )
-
-    def __str__(self):
-        return str(self.stage)
-
-    class Meta:
-        db_table = "stage"
-"""
 
 
 class tag(models.Model):
@@ -3398,10 +3022,8 @@ class tag(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -3448,10 +3070,8 @@ class tag_assignment(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -3496,10 +3116,8 @@ class task(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_creation_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -3527,10 +3145,8 @@ class task_action(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -3559,10 +3175,8 @@ class task_customer(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -3586,10 +3200,8 @@ class task_group(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -3616,10 +3228,8 @@ class task_history(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -3644,10 +3254,8 @@ class task_opportunity(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -3690,10 +3298,8 @@ class timesheet(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -3730,10 +3336,8 @@ class to_do(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -3761,10 +3365,8 @@ class user_group(models.Model):
         null=True,
         blank=True,
     )
-    group_leader=models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default="FALSE",
+    group_leader=models.BooleanField(
+        default=False,
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -3773,10 +3375,8 @@ class user_group(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     class Meta:
@@ -3806,10 +3406,8 @@ class user_want(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -3833,10 +3431,8 @@ class user_weblink(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
@@ -3860,10 +3456,8 @@ class whiteboard(models.Model):
         on_delete=models.CASCADE,
         related_name='%(class)s_change_user'
     )
-    is_deleted = models.CharField(
-        max_length=5,
-        choices=IS_DELETED_CHOICE,
-        default='FALSE'
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
     def __str__(self):
