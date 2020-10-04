@@ -40,6 +40,7 @@ import NewCustomerModal from "./components/customers/NewCustomerModal.vue";
 import SearchCustomers from "./components/search/SearchCustomers.vue";
 import ListCustomers from "./components/customers/ListCustomers.vue";
 import CustomerInformation from "./components/customers/CustomerInformation.vue";
+import SearchObjects from "./components/search/SearchObjects.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -104,6 +105,7 @@ Vue.component('NewCustomerModal',NewCustomerModal);
 Vue.component('SearchCustomers',SearchCustomers);
 Vue.component('ListCustomers',ListCustomers);
 Vue.component('CustomerInformation',CustomerInformation);
+Vue.component('SearchObjects',SearchObjects);
 
 
 

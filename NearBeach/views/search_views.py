@@ -10,6 +10,100 @@ from django.db.models import Q
 from NearBeach.forms import *
 
 
+# Internal Function
+def get_object_search_data(search_form):
+    """
+    The following internal function will search the following objects using the form's data;
+    - Requirements
+    - Projects
+    - Tasks
+    It will combine them into a single JSON array and send back to the previous function
+    :param form: Contains all the data we require.
+    :return:
+    """
+
+    # Get instance data for all objects
+    requirement_results = requirement.objects.filter()
+    project_results = project.objects.filter()
+    task_results = task.objects.filter()
+
+    # Check to see if we are searching for closed objects
+    include_closed = search_form.cleaned_data['include_closed']
+
+    # If we are NOT including closed - then we will limit to those with status is_deleted=False
+    if not include_closed:
+        requirement_results = requirement_results.filter(is_deleted=False)
+        project_results = project_results.filter(is_deleted=False)
+        task_results = task_results.filter(is_deleted=False)
+
+    # Split the space results - then apply the filter of each split value
+    for split_row in search_form.cleaned_data['search'].split(' '):
+        # Update the each instance with the split row results
+        requirement_results = requirement_results.filter(
+            Q(requirement_title__icontains=split_row)
+        )
+        project_results = project_results.filter(
+            Q(project_name__icontains=split_row)
+        )
+        task_results = task_results.filter(
+            Q(task_short_description__icontains=split_row)
+        )
+
+        # If the split row is a number - also check against the id
+        if split_row.isnumeric():
+            requirement_results = requirement_results.filter(
+                Q(requirement_id=split_row)
+            )
+            project_results = project_results.filter(
+                Q(project_id=split_row)
+            )
+            task_results = task_results.filter(
+                Q(task_id=split_row)
+            )
+
+    # Only have 25 results and order by alphabetical order
+    requirement_results.order_by('requirement_title')[:25]
+    project_results.order_by('project_title')[:25]
+    task_results.order_by('task_short_description')[:25]
+
+    # Send back a JSON array
+    return JsonResponse({
+        'requirement': list(requirement_results),
+        'project': list(project_results),
+        'task': list(task_results),
+    })
+
+
+@login_required(login_url='login',redirect_field_name="")
+def search(request):
+    """
+
+    :param request:
+    :return:
+    """
+    form = SearchObjectsForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Template
+    t = loader.get_template('NearBeach/search/search.html')
+
+    # Translate the include closed, from Python Boolean to JavaScript boolean
+    if form.cleaned_data['include_closed']: #If exists and true
+        include_closed = 'true'
+    else:
+        include_closed = 'false'
+
+    # Context
+    c = {
+        'search_input': form.cleaned_data['search'],
+        'include_closed': include_closed,
+        'search_results': get_object_search_data(form),
+    }
+
+    return HttpResponse(t.render(c,request))
+
+
 @login_required(login_url='login',redirect_field_name="")
 def search_customer(request):
     """

@@ -506,7 +506,7 @@ def link_list(request,destination,location_id,object_lookup):
     elif object_lookup == "opportunity":
         data_results = opportunity.objects.filter(
             is_deleted=False,
-            opportunity_stage_id__opportunity_closed="FALSE",
+            opportunity_stage_id__opportunity_closed=False,
         )
     else:
         # There is an error.

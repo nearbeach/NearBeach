@@ -235,6 +235,16 @@ class SearchForm(forms.Form):
     )
 
 
+class SearchObjectsForm(forms.Form):
+    include_closed = forms.BooleanField(
+        required=False,
+        initial=False,
+    )
+    search = forms.CharField(
+        required=False,
+    )
+
+
 class UpdateRequirementForm(forms.ModelForm):
     # Basic Meta data
     class Meta:

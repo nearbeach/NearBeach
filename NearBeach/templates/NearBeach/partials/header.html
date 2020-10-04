@@ -61,10 +61,10 @@
                             <a class="dropdown-item" href="#">New Kanban Board</a>
                             <a class="dropdown-item" href="#">New Opportunity</a>
                             <a class="dropdown-item" href="{% url 'new_organisation' %}">New Organisation</a>
-                            <a class="dropdown-item" href="#">New Project</a>
+                            <a class="dropdown-item" href="{% url 'new_project' %}">New Project</a>
                             <a class="dropdown-item" href="#">New Request For Change</a>
                             <a class="dropdown-item" href="{% url 'new_requirement' %}">New Requirement</a>
-                            <a class="dropdown-item" href="#">New Task</a>
+                            <a class="dropdown-item" href="{% url 'new_task' %}">New Task</a>
                         </div>
                     </li>
 
@@ -81,7 +81,7 @@
                             Find Objects
                         </a>
                         <div class="dropdown-menu" aria-labelledby="findObjectsDropdown">
-                            <a class="dropdown-item" href="#">List All</a>
+                            <a class="dropdown-item" href="{% url 'search' %}">List All</a>
                             <a class="dropdown-item" href="#">List by Tag</a>
                             <a class="dropdown-item" href="{% url 'search_customer' %}">List Customers</a>
                             <a class="dropdown-item" href="#">List Kanban Boards</a>
@@ -92,6 +92,24 @@
 
                 <!-- Right side of navbar -->
                 <ul class="navbar-nav navbar-right">
+                    <form class="d-flex"
+                          action="{% url 'search' %}"
+                          method="POST"
+                    >
+                        {% csrf_token %}
+                        <input class="form-control mr-2"
+                               id="id_search"
+                               name="search"
+                               type="search"
+                               placeholder="Search"
+                               aria-label="Search"
+                        >
+                        <button class="btn btn-outline-success"
+                                type="submit"
+                        >
+                            Search
+                        </button>
+                    </form>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle"
                            href="#"
