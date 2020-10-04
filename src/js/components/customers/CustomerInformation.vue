@@ -14,53 +14,59 @@
                         NearBeach will treat this customer as a freelancer.
                     </p>
                 </div>
-                <div class="col-md-3">
-                    <img src="/static/NearBeach/images/placeholder/product_tour.svg"
-                         alt="No Profile Picture"
-                         class="customer-profile-image"
-                    />
+                <div class="col-md-8">
+                    <div class="row customer-profile-image">
+                        <!-- PROFILE IMAGE -->
+                        <img src="/static/NearBeach/images/placeholder/product_tour.svg"
+                             alt="No Profile Picture"
+                             class="customer-profile-image"
+                        />
+                        <br/>
+                        <button class="btn btn-primary">Update Profile...</button>
+                    </div>
                     <br/>
-                    <button class="btn btn-primary">Update Profile...</button>
-                </div>
-                <div class="col-md-5">
-                    <div class="form-group col-sm-3">
-                        <label>
-                            Title:
-                            <span class="error"
-                                  v-if="!$v.titleModel.required && $v.titleModel.$dirty"
-                                  > Please supply
-                            </span>
-                        </label>
-                        <v-select :options="titleFixList"
-                                  label="title"
-                                  v-model="titleModel"
-                        ></v-select>
-                    </div>
-                    <div class="form-group col-sm-4">
-                        <label>
-                            First Name:
-                            <span class="error"
-                                  v-if="!$v.customerFirstNameModel.required && $v.customerFirstNameModel.$dirty"
-                                  > Please supply
-                            </span>
-                        </label>
-                        <input type="text"
-                               class="form-control"
-                               v-model="customerFirstNameModel"
-                        >
-                    </div>
-                    <div class="form-group col-sm-5">
-                        <label>
-                            Last Name:
-                            <span class="error"
-                                  v-if="!$v.customerLastNameModel.required && $v.customerLastNameModel.$dirty"
-                                  > Please supply
-                            </span>
-                        </label>
-                        <input type="text"
-                               class="form-control"
-                               v-model="customerLastNameModel"
-                        >
+
+                    <!-- CUSTOMER INFORMATION -->
+                    <div class="row">
+                        <div class="form-group col-sm-3">
+                            <label>
+                                Title:
+                                <span class="error"
+                                      v-if="!$v.customerTitleModel.required && $v.customerTitleModel.$dirty"
+                                      > Please supply
+                                </span>
+                            </label>
+                            <v-select :options="titleFixList"
+                                      label="title"
+                                      v-model="customerTitleModel"
+                            ></v-select>
+                        </div>
+                        <div class="form-group col-sm-4">
+                            <label>
+                                First Name:
+                                <span class="error"
+                                      v-if="!$v.customerFirstNameModel.required && $v.customerFirstNameModel.$dirty"
+                                      > Please supply
+                                </span>
+                            </label>
+                            <input type="text"
+                                   class="form-control"
+                                   v-model="customerFirstNameModel"
+                            >
+                        </div>
+                        <div class="form-group col-sm-5">
+                            <label>
+                                Last Name:
+                                <span class="error"
+                                      v-if="!$v.customerLastNameModel.required && $v.customerLastNameModel.$dirty"
+                                      > Please supply
+                                </span>
+                            </label>
+                            <input type="text"
+                                   class="form-control"
+                                   v-model="customerLastNameModel"
+                            >
+                        </div>
                     </div>
                 </div>
             </div>
@@ -101,7 +107,6 @@
                 customerLastNameModel: this.customerResults[0]['fields']['customer_last_name'],
                 customerTitleModel: this.customerResults[0]['fields']['customer_title'],
                 titleFixList: [],
-                titleModel: [],
             }
         },
         validations: {
@@ -118,7 +123,7 @@
             organisationModel: {
                 required,
             },
-            titleModel: {
+            customerTitleModel: {
                 required,
             },
         },
@@ -149,6 +154,14 @@
                     'value': row['pk'],
                     'title': row['fields']['title'],
                 });
+
+                //If the primary key is the same as the customerTitleModel - update customerTitleModel with this object
+                if (row['pk'] == this.customerTitleModel) {
+                    this.customerTitleModel = {
+                        'value': row['pk'],
+                        'title': row['fields']['title'],
+                    }
+                }
             });
         }
     }

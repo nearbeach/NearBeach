@@ -27,9 +27,11 @@ def customer_information(request,customer_id):
 
     # Get customer data
     customer_results = customer.objects.get(customer_id=customer_id)
-    title_results = list_of_title.objects.filter(
-        is_deleted="FALSE",
+    title_list = list_of_title.objects.filter(
+        #is_deleted=False, # NEED TO RECONSTRUCT DATABASE TO GET THIS TO WORK!
     )
+
+    print("TITLE LIST: %s" % title_list)
 
     # Get tempalte
     t = loader.get_template('NearBeach/customers/customer_information.html')
@@ -37,10 +39,43 @@ def customer_information(request,customer_id):
     # Context
     c = {
         'customer_results': serializers.serialize('json',[customer_results]),
-        'title_results': serializers.serialize('json',title_results),
+        'title_list': serializers.serialize('json',title_list),
     }
 
     return HttpResponse(t.render(c,request))
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name='')
+def customer_information_save(request,customer_id):
+    """
+
+    :param request:
+    :param customer_id:
+    :return:
+    """
+    # ADD IN USER PERMISSION CHECKS
+
+    # Get form data
+    form = CustomerForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get the customer instance
+    customer_results = customer.objects.get(customer_id=customer_id)
+
+    # Update the fields
+    customer_results.customer_title = form.cleaned_data['customer_title']
+    customer_results.customer_first_name = form.cleaned_data['customer_first_name']
+    customer_results.customer_last_name = form.cleaned_data['customer_last_name']
+    customer_results.customer_email = form.cleaned_data['customer_email']
+    customer_results.organisation = form.cleaned_data['organisation']
+
+    # Save
+    customer_results.save()
+
+    # Return back a sucessful statement
+    return HttpResponse("Success")
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -54,7 +89,7 @@ def new_customer(request):
 
     # Get data
     title_list = list_of_title.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     )
 
     # Get templates

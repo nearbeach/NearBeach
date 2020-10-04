@@ -10,7 +10,7 @@ class AddBugForm(forms.Form):
     bug_client = forms.ModelChoiceField(
         required=True,
         queryset=bug_client.objects.filter(
-            is_deleted="FALSE",
+            is_deleted=False,
         )
     )
     bug_id = forms.IntegerField(
@@ -75,21 +75,34 @@ class AddRequirementLinkForm(forms.Form):
     project = forms.ModelMultipleChoiceField(
         required=False,
         queryset=project.objects.filter(
-            is_deleted="FALSE",
+            is_deleted=False,
         )
     )
     task = forms.ModelMultipleChoiceField(
         required=False,
         queryset=task.objects.filter(
-            is_deleted="FALSE",
+            is_deleted=False,
         )
     )
     opportunity = forms.ModelMultipleChoiceField(
         required=False,
         queryset=opportunity.objects.filter(
-            is_deleted="FALSE",
+            is_deleted=False,
         )
     )
+
+
+class CustomerForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = customer
+        fields = [
+            'customer_title',
+            'customer_first_name',
+            'customer_last_name',
+            'customer_email',
+            'organisation',
+        ]
 
 
 class DocumentUploadForm(ModelForm):
@@ -187,7 +200,7 @@ class NewRequirementForm(forms.ModelForm):
     group_list = forms.ModelMultipleChoiceField(
         required=True,
         queryset=group.objects.filter(
-            is_deleted="FALSE",
+            is_deleted=False,
         )
     )
 
@@ -207,7 +220,7 @@ class QueryBugClientForm(forms.Form):
     bug_client_id = forms.ModelChoiceField(
         required=True,
         queryset=bug_client.objects.filter(
-            is_deleted="FALSE",
+            is_deleted=False,
         )
     )
     search = forms.CharField(

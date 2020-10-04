@@ -21,7 +21,7 @@ def search_customer(request):
 
     # Get the first 50 customers
     customer_results = customer.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     ).order_by('customer_last_name','customer_first_name')[:50]
 
     c = {
@@ -42,7 +42,7 @@ def search_customer_data(request):
         return HttpResponseBadRequest("There is an issue with the search functionality")
 
     # Get the base results
-    customer_results = customer.objects.filter(is_deleted="FALSE")
+    customer_results = customer.objects.filter(is_deleted=False)
 
     # Split the space results - then apply the filter of each split value
     for split_row in search_form.cleaned_data['search'].split(' '):
@@ -73,7 +73,7 @@ def search_organisation(request):
 
     # Get the first 25 organisations
     organisation_results = organisation.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     ).order_by('organisation_name')[:25]
 
     c = {
@@ -94,7 +94,7 @@ def search_organisation_data(request):
         return HttpResponseBadRequest("There is an issue with the search functionality")
 
     # Get the base results
-    organisation_results = organisation.objects.filter(is_deleted="FALSE")
+    organisation_results = organisation.objects.filter(is_deleted=False)
 
     # Split the space results - then apply the filter of each split value
     for split_row in search_form.cleaned_data['search'].split(' '):

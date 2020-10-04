@@ -40,6 +40,7 @@ urlpatterns = [
 
 	# Customer
 	path('customer_information/<int:customer_id>/',customer_views.customer_information,name='customer_information'),
+	path('customer_information/<int:customer_id>/save/',customer_views.customer_information_save,name='customer_information_save'),
 
 	# Documentation
 	path('documentation/<destination>/<location_id>/add_folder/',document_views.document_add_folder,name='document_add_folder'),

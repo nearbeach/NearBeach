@@ -186,33 +186,33 @@ def associated_objects(request,destination,location_id):
 
     # Get the data
     object_assignment_results = object_assignment.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     )
     object_assignment_results = get_object_from_destination(object_assignment_results, destination, location_id)
 
     opportunity_results = opportunity.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         opportunity_id__in=object_assignment_results.filter(
             opportunity_id__isnull=False
         ).values('opportunity_id')
     ).values()
 
     project_results = project.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         project_id__in=object_assignment_results.filter(
             project_id__isnull=False
         ).values('project_id')
     ).values()
 
     requirement_results = requirement.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         requirement_id__in=object_assignment_results.filter(
             requirement_id__isnull=False
         ).values('requirement_id')
     ).values()
 
     task_results = task.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         task_id__in=object_assignment_results.filter(
             task_id__isnull=False
         ).values('task_id')
@@ -242,26 +242,26 @@ def associated_objects_organisations(location_id):
     """
     # Get the data
     opportunity_results = opportunity.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         opportunity_id__in=object_assignment.objects.filter(
-            is_deleted="FALSE",
+            is_deleted=False,
             opportunity_id__isnull=False,
             organisation_id=location_id,
         ).values('opportunity_id')
     ).values()
 
     project_results = project.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         organisation__in=location_id,
     ).values()
 
     requirement_results = requirement.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         organisation__in=location_id,
     ).values()
 
     task_results = task.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         organisation__in=location_id,
     ).values()
 
@@ -278,7 +278,7 @@ def associated_objects_organisations(location_id):
 @login_required(login_url='login',redirect_field_name="")
 def bug_client_list(request):
     bug_client_results = bug_client.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     )
 
     return HttpResponse(serializers.serialize('json',bug_client_results), content_type='application/json')
@@ -288,7 +288,7 @@ def bug_client_list(request):
 def bug_list(request,destination,location_id):
     # Obtain the data dependent on the destination
     bug_list = bug.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     )
     bug_list = get_object_from_destination(bug_list,destination,location_id)
 
@@ -333,14 +333,14 @@ def customer_list_all(request,destination,location_id):
     if destination == "requirement":
         organisation_results = organisation.objects.get(
             organisation_id=requirement.objects.get(
-                is_deleted="FALSE",
+                is_deleted=False,
                 requirement_id=location_id,
             ).organisation_id
         )
     elif destination == "requirement_item":
         organisation_results = organisation.objects.get(
             organisation_id=requirement.objects.get(
-                is_deleted="FALSE",
+                is_deleted=False,
                 requirement_id=requirement_item.objects.get(
                     requirement_item_id=location_id
                 ).requirement_id,
@@ -349,14 +349,14 @@ def customer_list_all(request,destination,location_id):
     elif destination == "project":
         organisation_results = organisation.objects.get(
             organisation_id=project.objects.get(
-                is_deleted="FALSE",
+                is_deleted=False,
                 project_id=location_id,
             ).organisation_id
         )
     elif destination == "task":
         organisation_results = organisation.objects.get(
             organisation_id=task.objects.get(
-                is_deleted="FALSE",
+                is_deleted=False,
                 task_id=location_id,
             )
         )
@@ -365,7 +365,7 @@ def customer_list_all(request,destination,location_id):
         return HttpResponseBadRequest("Sorry - there was an error getting the Customer List")
 
     customer_results = customer.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         organisation_id=organisation_results.organisation_id
     )
 
@@ -375,20 +375,20 @@ def customer_list_all(request,destination,location_id):
 def get_customer_list(destination,location_id):
     # Get a list of all objects assignments dependant on the destination
     object_customers = object_assignment.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         customer_id__isnull=False,
     )
     object_customers = get_object_from_destination(object_customers,destination,location_id)
 
     return customer.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         customer_id__in=object_customers.values('customer_id')
     )
 
 # Internal function
 def get_group_list(destination,location_id):
     object_results = object_assignment.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     )
     object_results = get_object_from_destination(
         object_results,
@@ -398,7 +398,7 @@ def get_group_list(destination,location_id):
 
     # Now return the groups
     return group.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         group_id__in=object_results.values('group_id')
     )
 
@@ -407,7 +407,7 @@ def get_group_list(destination,location_id):
 def get_user_list(destination,location_id):
     # Get the data we want
     object_results = object_assignment.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         assigned_user_id__isnull=False,
     )
     object_results = get_object_from_destination(
@@ -424,7 +424,7 @@ def get_user_list(destination,location_id):
 def get_user_list_all(destination,location_id):
     # Get a list of users we want to exclude
     object_results = object_assignment.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         assigned_user_id__isnull=False,
     )
     object_results = get_object_from_destination(
@@ -435,7 +435,7 @@ def get_user_list_all(destination,location_id):
 
     # Get a list of all the groups associated with this destination
     group_results = object_assignment.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         group_id__isnull=False,
     )
     group_results = get_object_from_destination(group_results,destination,location_id)
@@ -443,7 +443,7 @@ def get_user_list_all(destination,location_id):
     # Get a list of users who are associated with these groups & not in the excluded list
     user_results = User.objects.filter(
         id__in=user_group.objects.filter(
-            is_deleted="FALSE",
+            is_deleted=False,
             group_id__in=group_results.values('group_id'),
         ).values('username_id'),
         is_active=True,
@@ -472,13 +472,13 @@ def group_list_all(request,destination,location_id):
 
     # Obtain data
     group_existing_results = object_assignment.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         group_id__isnull=False,
     )
     group_existing_results = get_object_from_destination(group_existing_results,destination,location_id)
 
     group_results = group.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     ).exclude(
         group_id__in=group_existing_results.values('group_id')
     )
@@ -493,19 +493,19 @@ def link_list(request,destination,location_id,object_lookup):
     # Get the data dependent on the object lookup
     if object_lookup == 'project':
         data_results = project.objects.filter(
-            is_deleted="FALSE",
+            is_deleted=False,
         ).exclude(
             project_status='Closed',
         )
     elif object_lookup == "task":
         data_results = task.objects.filter(
-            is_deleted="FALSE",
+            is_deleted=False,
         ).exclude(
             task_status='Closed',
         )
     elif object_lookup == "opportunity":
         data_results = opportunity.objects.filter(
-            is_deleted="FALSE",
+            is_deleted=False,
             opportunity_stage_id__opportunity_closed="FALSE",
         )
     else:
@@ -523,7 +523,7 @@ def note_list(request,destination,location_id):
 
     # Get the notes dependent on the user destination and location
     note_results = object_note.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     )
 
     # Filter by destination and location_id
@@ -549,7 +549,7 @@ def query_bug_client(request,destination,location_id):
 
     # Get existing bugs that we want to extract out
     existing_bugs = bug.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         bug_client_id=bug_client_instance.bug_client_id,
     )
     existing_bugs = get_object_from_destination(existing_bugs,destination,location_id)
