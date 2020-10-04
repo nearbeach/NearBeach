@@ -92,6 +92,19 @@ class AddRequirementLinkForm(forms.Form):
     )
 
 
+class CustomerForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = customer
+        fields = [
+            'customer_title',
+            'customer_first_name',
+            'customer_last_name',
+            'customer_email',
+            'organisation',
+        ]
+
+
 class DocumentUploadForm(ModelForm):
     document = forms.FileField(
         required=True,

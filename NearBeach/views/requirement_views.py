@@ -62,12 +62,9 @@ def add_requirement_link(request,requirement_id):
     return HttpResponse("Success")
 
 
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def get_requirement_item_links(request,requirement_id):
-    # Return user if not through POST
-    if request.method != "POST":
-        return HttpResponseBadRequest("Sorry - have to use POST for this data")
-
     # Get the requirement information
     requirement_results = requirement.objects.get(requirement_id=requirement_id)
 
@@ -158,12 +155,10 @@ def get_requirement_items(request,requirement_id):
 
     return HttpResponse(json_results, content_type='application/json')
 
+
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def get_requirement_links_list(request,requirement_id):
-    # Return user if not through POST
-    if request.method != "POST":
-        return HttpResponseBadRequest("Sorry - have to use POST for this data")
-
     # Get the requirement information
     requirement_results = requirement.objects.get(requirement_id=requirement_id)
 
