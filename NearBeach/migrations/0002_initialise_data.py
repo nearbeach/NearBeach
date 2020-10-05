@@ -32,7 +32,7 @@ def initialise_data(apps, schema_editor):
         list_of_bug_client(
             bug_client_name="Bugzilla",
             bug_client_api_url="/rest/",
-            api_open_bugs="?open_status='True'",
+            api_open_bugs="?open_status=True",
             api_search_bugs="bug?quicksearch=",
             api_bug="/show_bug.cgi?id=",
         )
@@ -100,8 +100,8 @@ def initialise_data(apps, schema_editor):
         list_of_opportunity_stage(list_order="6", opportunity_stage_description="Perception Analysis",probability_success="60"),
         list_of_opportunity_stage(list_order="7", opportunity_stage_description="Proposal/Price Quote",probability_success="70"),
         list_of_opportunity_stage(list_order="8", opportunity_stage_description="Negotiation/Review",probability_success="80"),
-        list_of_opportunity_stage(list_order="9", opportunity_stage_description="Closed Won",probability_success="100",opportunity_closed="TRUE"),
-        list_of_opportunity_stage(list_order="10", opportunity_stage_description="Closed Lost",probability_success="0",opportunity_closed="TRUE"),
+        list_of_opportunity_stage(list_order="9", opportunity_stage_description="Closed Won",probability_success="100",opportunity_closed=True),
+        list_of_opportunity_stage(list_order="10", opportunity_stage_description="Closed Lost",probability_success="0",opportunity_closed=True),
     ])
 
     #List of requirement items status
@@ -140,7 +140,7 @@ def initialise_data(apps, schema_editor):
         list_of_requirement_status(requirement_status="Blocked"),
         list_of_requirement_status(requirement_status="In Progress"),
         list_of_requirement_status(requirement_status="Testing/Review"),
-        list_of_requirement_status(requirement_status="Closed",requirement_status_is_closed='TRUE'),
+        list_of_requirement_status(requirement_status="Closed",requirement_status_is_closed=True),
     ])
 
     #List of requirement type
@@ -5541,25 +5541,25 @@ def initialise_data(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     list_of_quote_stages.objects.using(db_alias).bulk_create([
         #Quote Stage
-        list_of_quote_stages(quote_stage="Quote Draft",is_invoice='FALSE',sort_order=1),
-        list_of_quote_stages(quote_stage="Quote Negotiation",is_invoice='FALSE',sort_order=2),
-        list_of_quote_stages(quote_stage="Quote Delivered",is_invoice='FALSE',sort_order=3),
-        list_of_quote_stages(quote_stage="Quote On Hold",is_invoice='FALSE',sort_order=4),
-        list_of_quote_stages(quote_stage="Quote Confirmed",is_invoice='FALSE',sort_order=5),
-        list_of_quote_stages(quote_stage="Quote Close Accepted",is_invoice='FALSE',sort_order=6,quote_closed="TRUE"),
-        list_of_quote_stages(quote_stage="Quote Close Rejected",is_invoice='FALSE',sort_order=7,quote_closed="TRUE"),
-        list_of_quote_stages(quote_stage="Quote Close Lost",is_invoice='FALSE',sort_order=8,quote_closed="TRUE"),
-        list_of_quote_stages(quote_stage="Quote Close Dead",is_invoice='FALSE',sort_order=9,quote_closed="TRUE"),
+        list_of_quote_stages(quote_stage="Quote Draft",is_invoice=False,sort_order=1),
+        list_of_quote_stages(quote_stage="Quote Negotiation",is_invoice=False,sort_order=2),
+        list_of_quote_stages(quote_stage="Quote Delivered",is_invoice=False,sort_order=3),
+        list_of_quote_stages(quote_stage="Quote On Hold",is_invoice=False,sort_order=4),
+        list_of_quote_stages(quote_stage="Quote Confirmed",is_invoice=False,sort_order=5),
+        list_of_quote_stages(quote_stage="Quote Close Accepted",is_invoice=False,sort_order=6,quote_closed=True),
+        list_of_quote_stages(quote_stage="Quote Close Rejected",is_invoice=False,sort_order=7,quote_closed=True),
+        list_of_quote_stages(quote_stage="Quote Close Lost",is_invoice=False,sort_order=8,quote_closed=True),
+        list_of_quote_stages(quote_stage="Quote Close Dead",is_invoice=False,sort_order=9,quote_closed=True),
         #Invoice Stage
-        list_of_quote_stages(quote_stage="Invoice Draft",is_invoice='TRUE',sort_order=10),
-        list_of_quote_stages(quote_stage="Invoice Negotiation",is_invoice='TRUE',sort_order=11),
-        list_of_quote_stages(quote_stage="Invoice Delivered",is_invoice='TRUE',sort_order=12),
-        list_of_quote_stages(quote_stage="Invoice On Hold",is_invoice='TRUE',sort_order=13),
-        list_of_quote_stages(quote_stage="Invoice Confirmed",is_invoice='TRUE',sort_order=14),
-        list_of_quote_stages(quote_stage="Invoice Close Accepted",is_invoice='TRUE',sort_order=15,quote_closed="TRUE"),
-        list_of_quote_stages(quote_stage="Invoice Close Rejected",is_invoice='TRUE',sort_order=16,quote_closed="TRUE"),
-        list_of_quote_stages(quote_stage="Invoice Close Lost",is_invoice='TRUE',sort_order=17,quote_closed="TRUE"),
-        list_of_quote_stages(quote_stage="Invoice Close Dead",is_invoice='TRUE',sort_order=18,quote_closed="TRUE"),
+        list_of_quote_stages(quote_stage="Invoice Draft",is_invoice=True,sort_order=10),
+        list_of_quote_stages(quote_stage="Invoice Negotiation",is_invoice=True,sort_order=11),
+        list_of_quote_stages(quote_stage="Invoice Delivered",is_invoice=True,sort_order=12),
+        list_of_quote_stages(quote_stage="Invoice On Hold",is_invoice=True,sort_order=13),
+        list_of_quote_stages(quote_stage="Invoice Confirmed",is_invoice=True,sort_order=14),
+        list_of_quote_stages(quote_stage="Invoice Close Accepted",is_invoice=True,sort_order=15,quote_closed=True),
+        list_of_quote_stages(quote_stage="Invoice Close Rejected",is_invoice=True,sort_order=16,quote_closed=True),
+        list_of_quote_stages(quote_stage="Invoice Close Lost",is_invoice=True,sort_order=17,quote_closed=True),
+        list_of_quote_stages(quote_stage="Invoice Close Dead",is_invoice=True,sort_order=18,quote_closed=True),
     ])
 
     nearbeach_option = apps.get_model("NearBeach","nearbeach_option")
