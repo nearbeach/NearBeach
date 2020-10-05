@@ -1,5 +1,6 @@
 from NearBeach.models import *
 from django.core import serializers
+from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
 from django.template import loader
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse, HttpResponseNotFound
@@ -8,6 +9,8 @@ from django.db.models import Q
 
 # Import Forms
 from NearBeach.forms import *
+
+import json
 
 
 # Internal Function
@@ -66,12 +69,26 @@ def get_object_search_data(search_form):
     project_results.order_by('project_title')[:25]
     task_results.order_by('task_short_description')[:25]
 
-    # Send back a JSON array
-    return JsonResponse({
-        'requirement': list(requirement_results),
-        'project': list(project_results),
-        'task': list(task_results),
-    })
+    """
+    The pain point
+    ~~~~~~~~~~~~~~
+    Due to Django wanting to send converted json data as a string, we have to;
+    1. Apply serialisation
+    2. Apply a json.loads function
+    3. Compile data and send back.
+    
+    Note to Django developers - there has to be a better way
+    """
+    requirement_results = serializers.serialize('json',requirement_results)
+    project_results = serializers.serialize('json',project_results)
+    task_results = serializers.serialize('json',task_results)
+
+    # Send back a JSON array with JSON arrays inside
+    return {
+        'requirement': json.loads(requirement_results),
+        'project': json.loads(project_results),
+        'task': json.loads(task_results),
+    }
 
 
 @login_required(login_url='login',redirect_field_name="")

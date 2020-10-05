@@ -28,13 +28,10 @@
         <br/>
 
         <!-- REQUIREMENTS RESULTS -->
-        <div class="card">
-            <div class="card-body">
-                <h2>Requirement Search Results</h2>
-                <hr>
-                ADD CODE
-            </div>
-        </div>
+        <list-search-results v-if="searchResults['requirement'].length > 0"
+                             v-bind:search-results="searchResults['requirement']"
+                             v-bind:import-variables="requirementVariables"
+        ></list-search-results>
         <br/>
 
         <!-- PROJECT RESULTS -->
@@ -78,7 +75,11 @@
         data() {
             return {
                 includeClosedObjectsModel: this.includeClosed,
+                requirementVariables: {
+                    header: 'Requirements',
+                },
                 searchModel: this.searchInput,
+
             }
         },
         methods: {
