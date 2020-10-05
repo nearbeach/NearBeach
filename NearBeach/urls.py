@@ -120,6 +120,7 @@ urlpatterns = [
 
 	# Search Items
 	path('search/',search_views.search,name='search'),
+	path('search/data/',search_views.search_data,name='search_data'),
 	path('search/customer/',search_views.search_customer,name='search_customer'),
 	path('search/customer/data/',search_views.search_customer_data,name='search_customer_data'),
 	path('search/organisation/',search_views.search_organisation,name='search_organisation'),

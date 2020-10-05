@@ -26,15 +26,28 @@ def get_object_search_data(search_form):
     """
 
     # Get instance data for all objects
-    requirement_results = requirement.objects.filter()
-    project_results = project.objects.filter()
-    task_results = task.objects.filter()
+    requirement_results = requirement.objects.filter(is_deleted=False).values(
+        'requirement_id',
+        'requirement_title',
+        'requirement_status__requirement_status',
+    )
+    project_results = project.objects.filter(is_deleted=False).values(
+        'project_id',
+        'project_name',
+        'project_status',
+    )
+    task_results = task.objects.filter(is_deleted=False).values(
+        'task_id',
+        'task_short_description',
+        'task_status',
+    )
 
     # Check to see if we are searching for closed objects
     include_closed = search_form.cleaned_data['include_closed']
 
     # If we are NOT including closed - then we will limit to those with status is_deleted=False
     if not include_closed:
+        ### NEED TO PROGRAM IN THE REAL CLOSED VALUES!!! ###
         requirement_results = requirement_results.filter(is_deleted=False)
         project_results = project_results.filter(is_deleted=False)
         task_results = task_results.filter(is_deleted=False)
@@ -66,8 +79,8 @@ def get_object_search_data(search_form):
 
     # Only have 25 results and order by alphabetical order
     requirement_results.order_by('requirement_title')[:25]
-    project_results.order_by('project_title')[:25]
-    task_results.order_by('task_short_description')[:25]
+    project_results.order_by('project_name')[:25]
+    task_results.order_by('task_short_description').values()[:25]
 
     """
     The pain point
@@ -79,9 +92,9 @@ def get_object_search_data(search_form):
     
     Note to Django developers - there has to be a better way
     """
-    requirement_results = serializers.serialize('json',requirement_results)
-    project_results = serializers.serialize('json',project_results)
-    task_results = serializers.serialize('json',task_results)
+    requirement_results = json.dumps(list(requirement_results), cls=DjangoJSONEncoder)
+    project_results = json.dumps(list(project_results), cls=DjangoJSONEncoder)
+    task_results = json.dumps(list(task_results), cls=DjangoJSONEncoder)
 
     # Send back a JSON array with JSON arrays inside
     return {
@@ -119,6 +132,23 @@ def search(request):
     }
 
     return HttpResponse(t.render(c,request))
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def search_data(request):
+    """
+
+    :param request:
+    :return:
+    """
+    # Get the form data
+    form = SearchObjectsForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Return the JSON data
+    return JsonResponse(get_object_search_data(form))
 
 
 @login_required(login_url='login',redirect_field_name="")

@@ -28,35 +28,35 @@
         <br/>
 
         <!-- REQUIREMENTS RESULTS -->
-        <list-search-results v-if="searchResults['requirement'].length > 0"
-                             v-bind:search-results="searchResults['requirement']"
+        <list-search-results v-if="localSearchResults['requirement'].length > 0"
+                             v-bind:search-results="localSearchResults['requirement']"
                              v-bind:import-variables="requirementVariables"
         ></list-search-results>
-        <br/>
 
         <!-- PROJECT RESULTS -->
-        <div class="card">
-            <div class="card-body">
-                <h2>Project Search Results</h2>
-                <hr>
-                ADD CODE
-            </div>
-        </div>
-        <br/>
+        <list-search-results v-if="localSearchResults['project'].length > 0"
+                             v-bind:search-results="localSearchResults['project']"
+                             v-bind:import-variables="projectVariables"
+        ></list-search-results>
 
         <!-- TASK RESULTS -->
-        <div class="card">
-            <div class="card-body">
-                <h2>Task Search Results</h2>
-                <hr>
-                ADD CODE
-            </div>
+        <list-search-results v-if="localSearchResults['task'].length > 0"
+                             v-bind:search-results="localSearchResults['task']"
+                             v-bind:import-variables="taskVariables"
+        ></list-search-results>
+
+        <!-- WHEN THERE ARE NO RESULTS -->
+        <div v-if="localSearchResults['requirement'].length + localSearchResults['project'].length + localSearchResults['task'].length == 0"
+             class="alert alert-warning"
+        >
+            Sorry - but there are no results for this search term. Please try searching for a different search term.
         </div>
-        <br/>
     </div>
 </template>
 
 <script>
+    const axios = require('axios');
+
     export default {
         name: "SearchObjects",
         props: {
@@ -75,18 +75,76 @@
         data() {
             return {
                 includeClosedObjectsModel: this.includeClosed,
+                localSearchResults: this.searchResults,
+                projectVariables: {
+                    header: 'Projects',
+                    prefix: 'Pro',
+                    id: 'project_id',
+                    title: 'project_name',
+                    status: 'project_status',
+
+                },
                 requirementVariables: {
                     header: 'Requirements',
+                    prefix: 'Req',
+                    id: 'requirement_id',
+                    title: 'requirement_title',
+                    status: 'requirement_status__requirement_status',
                 },
                 searchModel: this.searchInput,
-
+                searchTimeout: '',
+                taskVariables: {
+                    header: 'Tasks',
+                    prefix: 'Task',
+                    id: 'task_id',
+                    title: 'task_short_description',
+                    status: 'task_status',
+                },
             }
         },
         methods: {
+            getSearchResults: function() {
+                // Setup the data_to_send
+                const data_to_send = new FormData();
+                data_to_send.set('search',this.searchModel);
+                data_to_send.set('include_closed',this.includeClosedObjectsModel);
 
+                //Use axios to request data
+                axios.post(
+                    `/search/data/`,
+                    data_to_send,
+                ).then(response => {
+                    //Update the localSearchResults with the data
+                    this.localSearchResults = response['data'];
+                }).catch(error => {
+                    console.log("ERROR: ",error);
+                })
+            },
         },
         watch: {
+            includeClosedObjectsModel: function() {
+                //Stop the clock
+                if (this.searchTimeout != '') {
+                    //Stop the clock!
+                    clearTimeout(this.searchTimeout);
+                }
 
+                //Get the search results - we don't need to wait for this case
+                this.getSearchResults();
+            },
+            searchModel: function() {
+                // Make sure the timer isn't running
+                if (this.searchTimeout != '') {
+                    //Stop the clock!
+                    clearTimeout(this.searchTimeout);
+                }
+
+                //Set the search Timout
+                this.searchTimeout = setTimeout(
+                    this.getSearchResults,
+                    500,
+                )
+            },
         },
         mounted() {
             //If the include closed is undefined - then we want to define it

@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div class="card search-card">
         <div class="card-body">
             <h2>{{importVariables['header']}} Search Results</h2>
             <hr>
@@ -8,12 +8,26 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <td></td>
+                        <td width="75%">{{importVariables['header']}}</td>
+                        <td width="25%">Status</td>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="result in searchResults">
-                        <td></td>
+                        <td>
+                            <!-- LINK -->
+                            <a v-bind:href="`/requirement_information/${result[importVariables['id']]}/`">
+                                <p>{{result[importVariables['title']]}}</p>
+                                <div class="spacer"></div>
+                                <p class="small-text">
+                                    {{importVariables['prefix']}}{{result[importVariables['id']]}}
+                                </p>
+                            </a>
+                        </td>
+                        <td>
+                            <!-- STATUS -->
+                            {{result[importVariables['status']]}}
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -25,8 +39,7 @@
     export default {
         name: "ListSearchResults",
         props: {
-            importVariables: Object,
-            //{header, }
+            importVariables: Object,  // {header, prefix,id, title, status}
             searchResults: Array,
         }
     }
