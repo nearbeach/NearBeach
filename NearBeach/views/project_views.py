@@ -89,7 +89,7 @@ def new_project_save(request):
         submit_object_assignment.save()
 
     # Send back requirement_information URL
-    return HttpResponse(reverse('project_information', args={project_submit.requirement_id}))
+    return HttpResponse(reverse('project_information', args={project_submit.project_id}))
 
 
 @login_required(login_url='login',redirect_field_name="")

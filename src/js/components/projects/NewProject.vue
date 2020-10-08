@@ -111,15 +111,15 @@
                 data_to_send.set('project_name',this.projectNameModel);
                 data_to_send.set('project_description',this.projectDescriptionModel);
                 data_to_send.set('organisation',this.stakeholderModel['value']);
-                // data_to_send.set('project_start_date',this.projectStartDateModel);
-                // data_to_send.set('project_end_date',this.projectEndDateModel);
+                data_to_send.set('project_start_date',this.projectStartDateModel);
+                data_to_send.set('project_end_date',this.projectEndDateModel);
 
-                //Get the datetime from start and end date and send as an int of seconds
-                var end_date = new Date(this.projectEndDateModel),
-                    start_date = new Date(this.projectStartDateModel);
-
-                data_to_send.set('project_start_date', start_date.getTime());
-                data_to_send.set('project_end_date',end_date.getTime());
+                // //Get the datetime from start and end date and send as an int of seconds
+                // var end_date = new Date(this.projectEndDateModel),
+                //     start_date = new Date(this.projectStartDateModel);
+                //
+                // data_to_send.set('project_start_date', start_date.getTime());
+                // data_to_send.set('project_end_date',end_date.getTime());
 
                 // Insert a new row for each group list item
                 this.groupModel.forEach((row,index) => {

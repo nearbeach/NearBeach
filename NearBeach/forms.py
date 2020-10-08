@@ -166,9 +166,17 @@ class NewCustomerForm(forms.ModelForm):
 
 
 class NewProjectForm(forms.ModelForm):
-    group = forms.ModelMultipleChoiceField(
-        queryset=group.objects.all(),
+    project_start_date = forms.DateTimeField(
+        input_formats=['c'],
+    )
+    project_end_date = forms.DateTimeField(
+        input_formats=['c'],
+    )
+    group_list = forms.ModelMultipleChoiceField(
         required=True,
+        queryset=group.objects.filter(
+            is_deleted=False,
+        )
     )
 
     # Basic Meta Data
