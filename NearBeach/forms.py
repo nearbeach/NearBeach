@@ -152,6 +152,7 @@ class NewCustomerForm(forms.ModelForm):
         queryset=organisation.objects.all(),
         required=False,
     )
+
     # Basic Meta Data
     class Meta:
         model = customer
@@ -160,6 +161,24 @@ class NewCustomerForm(forms.ModelForm):
             'customer_first_name',
             'customer_last_name',
             'customer_email',
+            'organisation',
+        ]
+
+
+class NewProjectForm(forms.ModelForm):
+    group = forms.ModelMultipleChoiceField(
+        queryset=group.objects.all(),
+        required=True,
+    )
+
+    # Basic Meta Data
+    class Meta:
+        model = project
+        fields = [
+            'project_name',
+            'project_description',
+            'project_start_date',
+            'project_end_date',
             'organisation',
         ]
 

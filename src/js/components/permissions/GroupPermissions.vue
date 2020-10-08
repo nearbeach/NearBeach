@@ -3,8 +3,8 @@
         <div class="col-md-4">
             <h2>Group Permissions</h2>
             <p class="text-instructions">
-                Add or remove groups from this requirement. Adding a group will allow users
-                from that group to access this requirement.
+                Add or remove groups from this {{destination}}. Adding a group will allow users
+                from that group to access this {{destination}}.
             </p>
             <p class="text-instructions">
                 If you do not add one of your own group(s), you will only get readonly access.
@@ -31,6 +31,7 @@
         name: "GroupPermissions",
         components: {},
         props: [
+            'destination',
             'groupResults',
             'isDirty', //Passes the value from the template above where the checking is done
         ],

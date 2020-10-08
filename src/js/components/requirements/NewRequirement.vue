@@ -91,6 +91,7 @@
             <!-- Group Permissions -->
             <hr>
             <group-permissions v-bind:group-results="groupResults"
+                               v-bind:destination="'requirement'"
                                v-on:update_group_model="updateGroupModel($event)"
                                v-bind:is-dirty="$v.groupModel.$dirty"
             ></group-permissions>
