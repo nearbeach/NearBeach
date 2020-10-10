@@ -2,6 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
+from django.db.models import Q
+from django.utils.encoding import smart_str
 from django.views.decorators.http import require_http_methods
 from django.template import loader
 from NearBeach.views.tools.internal_functions import *
@@ -85,7 +87,7 @@ def document_add_link(request,destination,location_id):
 
     # Get current document results to send back
     document_results = document_permission.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         document_key=document_submit,
     ).values(
         'document_key__document_description',
@@ -118,8 +120,9 @@ def document_list_files(request,destination,location_id):
     :return:
     """
     document_permission_results = document_permission.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     ).values(
+        'document_key_id',
         'document_key__document_description',
         'document_key__document_url_location',
         'document_key__document',
@@ -142,7 +145,7 @@ def document_list_files(request,destination,location_id):
 
     # # Get the document information
     # document_results = document.objects.filter(
-    #     is_deleted="FALSE",
+    #     is_deleted=False,
     #     document_key__in=document_permission_results.values('document_key')
     # )
     #
@@ -167,7 +170,7 @@ def document_list_folders(request,destination,location_id):
     """
     # Get the document information
     folder_results = folder.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     )
     folder_results = get_object_from_destination(folder_results,destination,location_id)
 
@@ -227,7 +230,7 @@ def document_upload(request,destination,location_id):
 
     # Get current document results to send back
     document_results = document_permission.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         document_key=document_submit,
     ).values(
         'document_key_id',
@@ -245,6 +248,112 @@ def document_upload(request,destination,location_id):
     json_results = json.dumps(list(document_results), cls=DjangoJSONEncoder)
 
     return HttpResponse(json_results, content_type='application/json')
+
+
+@login_required(login_url='login',redirect_field_name="")
+def private_download_file(request,document_key):
+    """
+    The following function will check;
+    1. The user's permission to the document
+    2. If the document exists
+
+    From there it will use X-Sendfile to send the document.
+    :param request:
+    :param document_key:
+    :return:
+    """
+    # Extract the user groups the user is associated with
+    user_group_results = user_group.objects.filter(
+        is_deleted=False,
+        username=request.user,
+    )
+
+    # Extract the permissions the document is associated with
+    document_permission_results = document_permission.objects.filter(
+        is_deleted=False,
+        document_key=document_key,
+    )
+
+    # Consolidate at the object assignment
+    object_assignment_results = object_assignment.objects.filter(
+        Q(
+            is_deleted=False,
+            # JOIN IN USER GROUPS
+            group_id__in=user_group_results.values('group_id')
+        ) &
+        Q(
+            # One of these conditions have to be met
+            Q(
+                # If the document is uploaded against a customer
+                customer__isnull=False,
+            ) |
+            Q(
+                # If the document is uploaded against an organisation
+                organisation__isnull=False,
+            ) |
+            Q(
+                # Project Links
+                project__isnull=False,
+                project_id__in=document_permission_results.values('project_id')
+            ) |
+            Q(
+                # Task links
+                task__isnull=False,
+                task_id__in=document_permission_results.values('task_id')
+            ) |
+            Q(
+                # Whiteboard
+                whiteboard__isnull=False,
+                whiteboard_id__in=document_permission_results.values('whiteboard_id')
+            ) |
+            Q(
+                # Requirement
+                requirement__isnull=False,
+                requirement_id__in=document_permission_results.values('requirement_id')
+            ) |
+            Q(
+                # Requirement Item
+                # Have to use the requirement item's requirement as permissions are not on the item
+                requirement_id__in=requirement_item.objects.filter(
+                    is_deleted=False,
+                    requirement_item_id__in=document_permission_results.values('requirement_item_id'),
+                    requirement_item_id__isnull=False,
+                ).values('requirement_id')
+            ) |
+            Q(
+                # Request for change
+                request_for_change__isnull=False,
+                request_for_change_id__in=document_permission_results.values('request_for_change_id')
+            )
+        )
+    )
+
+    # If the object_assignment_results.count() == 0, then user does not have permissions
+    if object_assignment_results.count() == 0 & request.user.is_superuser == False:
+        return HttpResponseBadRequest("Sorry - there is no document")
+
+    # Get Document information
+    document_results = document.objects.get(document_key=document_key)  # Need to change this to a 404
+
+    # If not a document but a URL
+    if document_results.document_url_location:
+        return HttpResponseRedirect(document_results.document_url_location)
+
+    # Get the Document path information
+    path = '%s/%s/%s' % (
+        settings.PRIVATE_MEDIA_ROOT,
+        document_key,
+        document_results.document
+    )
+
+    # Construct the response
+    response = HttpResponse(content_type='application/force-download')
+    response['Content-Disposition'] = 'attachment; filename=%s' % smart_str(document_results.document.name)
+    response['X-Sendfile'] = smart_str(path)
+
+    print(response)
+
+    return response
 
 
 #Internal Function
@@ -267,7 +376,8 @@ def handle_file_upload(upload_document,document_results):
     storage_location = '%s/%s/%s' % (
         settings.PRIVATE_MEDIA_ROOT,
         document_results[0]['document_key_id'],
-        document_results[0]['document_key__document_description'],
+        #document_results[0]['document_key__document_description'],
+        document_results[0]['document_key__document'],
     )
 
     #Save the upload document in the location

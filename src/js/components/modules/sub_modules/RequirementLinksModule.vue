@@ -91,6 +91,7 @@
         name: "RequirementLinksModule",
         props: [
             'activateLazyLoading',
+            'destination',
             'locationId',
         ],
         data() {

@@ -91,9 +91,9 @@ def return_user_permission_level(request, group_list,permission_field):
         if group_list == None:
             #There is no group. Select the max value :)
             user_groups_results = user_group.objects.filter(
-                is_deleted="FALSE",
+                is_deleted=False,
                 username=request.user,
-                permission_set__is_deleted="FALSE",
+                permission_set__is_deleted=False,
             ).aggregate(Max('permission_set__' + row))
             user_permission_level[row] = user_groups_results['permission_set__' + row + '__max']
         else:
@@ -104,16 +104,16 @@ def return_user_permission_level(request, group_list,permission_field):
                 #Grab user's permission for that group
                 try:
                     user_groups_results = user_group.objects.filter(
-                        is_deleted="FALSE",
+                        is_deleted=False,
                         username=request.user,
-                        permission_set__is_deleted="FALSE",
+                        permission_set__is_deleted=False,
                         group_id=group_id['group_id'],
                     ).aggregate(Max('permission_set__' + row))
                 except:
                     user_groups_results = user_group.objects.filter(
-                        is_deleted="FALSE",
+                        is_deleted=False,
                         username=request.user,
-                        permission_set__is_deleted="FALSE",
+                        permission_set__is_deleted=False,
                         group_id=group_id['group_id_id'],
                     ).aggregate(Max('permission_set__' + row))
 
@@ -130,9 +130,9 @@ def return_user_permission_level(request, group_list,permission_field):
     administration.
     """
     permission_results = user_group.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         username=request.user,
-        permission_set__is_deleted="FALSE",
+        permission_set__is_deleted=False,
     ).aggregate(
         Max('permission_set__project'),
         Max('permission_set__task'),

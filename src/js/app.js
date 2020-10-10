@@ -16,14 +16,30 @@ import AddFolderWizard from "./components/modules/wizards/AddFolderWizard.vue";
 import AddGroupWizard from "./components/modules/wizards/AddGroupWizard.vue";
 import AddLinkWizard from "./components/modules/wizards/AddLinkWizard.vue";
 import AddUserWizard from "./components/modules/wizards/AddUserWizard.vue";
+import NewCustomer from './components/customers/NewCustomer.vue';
+import NewOrganisation from './components/organisations/NewOrganisation.vue';
 import NewRequirements from './components/requirements/NewRequirement.vue';
 import NewHistoryNoteWizard from "./components/modules/wizards/NewHistoryNoteWizard.vue";
 import NewRequirementItemWizard from "./components/modules/wizards/NewRequirementItemWizard.vue";
 import NewRequirementLinkWizard from "./components/modules/wizards/NewRequirementLinkWizard.vue";
 import RequirementInformation from './components/requirements/RequirementInformation.vue';
+import RequirementItemLinksModule from "./components/modules/sub_modules/RequirementItemLinksModule.vue";
 import RequirementItemsModule from "./components/modules/sub_modules/RequirementItemsModule.vue";
 import RequirementLinksModule from "./components/modules/sub_modules/RequirementLinksModule.vue";
 import UploadDocumentWizard from "./components/modules/wizards/UploadDocumentWizard.vue";
+import RequirementItemInformation from "./components/requirement_items/RequirementItemInformation.vue";
+import ListOrganisations from "./components/organisations/ListOrganisations.vue";
+import SearchOrganisations from "./components/search/SearchOrganisations.vue";
+import OrganisationInformation from "./components/organisations/OrganisationInformation.vue";
+import OrganisationModules from "./components/organisations/OrganisationModules.vue";
+import CustomersListModule from "./components/modules/sub_modules/CustomersListModule.vue";
+import AssociatedObjects from "./components/modules/sub_modules/AssociatedObjects.vue";
+
+import NewCustomerForm from "./components/customers/NewCustomerForm.vue";
+import NewCustomerModal from "./components/customers/NewCustomerModal.vue";
+import SearchCustomers from "./components/search/SearchCustomers.vue";
+import ListCustomers from "./components/customers/ListCustomers.vue";
+import CustomerInformation from "./components/customers/CustomerInformation.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -65,14 +81,32 @@ Vue.component('GroupPermissions',GroupPermissions);
 Vue.component('GroupsAndUsersModule',GroupsAndUsersModule);
 Vue.component('ParentModules',ParentModules);
 Vue.component('MiscModule',MiscModule);
+Vue.component('NewCustomer',NewCustomer);
+Vue.component('NewOrganisation',NewOrganisation);
 Vue.component('NewRequirements',NewRequirements);
 Vue.component('NewHistoryNoteWizard',NewHistoryNoteWizard);
 Vue.component('NewRequirementItemWizard',NewRequirementItemWizard);
 Vue.component('NewRequirementLinkWizard',NewRequirementLinkWizard);
 Vue.component('RequirementInformation',RequirementInformation);
 Vue.component('RequirementItemsModule',RequirementItemsModule);
+Vue.component('RequirementItemLinksModule',RequirementItemLinksModule);
 Vue.component('RequirementLinksModule',RequirementLinksModule);
 Vue.component('UploadDocumentWizard',UploadDocumentWizard);
+Vue.component('RequirementItemInformation',RequirementItemInformation);
+Vue.component('ListOrganisations',ListOrganisations);
+Vue.component('SearchOrganisations',SearchOrganisations);
+Vue.component('OrganisationInformation',OrganisationInformation);
+Vue.component('OrganisationModules',OrganisationModules);
+Vue.component('CustomersListModule',CustomersListModule);
+Vue.component('AssociatedObjects',AssociatedObjects);
+Vue.component('NewCustomerForm',NewCustomerForm);
+Vue.component('NewCustomerModal',NewCustomerModal);
+Vue.component('SearchCustomers',SearchCustomers);
+Vue.component('ListCustomers',ListCustomers);
+Vue.component('CustomerInformation',CustomerInformation);
+
+
+
 
 //Validation
 import Vuelidate from 'vuelidate'

@@ -1,0 +1,12 @@
+{% extends 'NearBeach/template.html' %}
+{% load static %}
+{% block content %}
+    <organisation-information v-bind:organisation-results="{{organisation_results}}"
+    ></organisation-information>
+    <br/>
+
+    <organisation-modules v-bind:destination="'organisation'"
+                          v-bind:location-id="{{organisation_id}}"
+                          v-bind:customer-results="{{customer_results}}"
+    ></organisation-modules>
+{% endblock %}

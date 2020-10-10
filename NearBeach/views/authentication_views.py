@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
+from random import SystemRandom
 
 # Import Python Libraries
 import json, urllib.parse, random
@@ -182,12 +183,14 @@ def login(request):
     # load template
     t = loader.get_template('NearBeach/authentication/login.html')
 
-    # context
+    # Get random number
+    cryptogen = SystemRandom()
 
+    # context
     c = {
         'LoginForm': form,
         'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
-        'image_number': '%(number)03d' % {'number': random.randint(1, 19)},
+        'image_number': '%(number)03d' % {'number': 1 + cryptogen.randrange(1,19)},
     }
 
     return HttpResponse(t.render(c, request))

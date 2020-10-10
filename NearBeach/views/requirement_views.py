@@ -9,16 +9,15 @@ from django.template import loader
 from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from NearBeach.user_permissions import return_user_permission_level
+from django.views.decorators.http import require_http_methods
 
 
 import json
 
+
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def add_requirement_link(request,requirement_id):
-    if not request.method == "POST":
-        # Needs to be post
-        return HttpResponseBadRequest("Sorry - needs to be done through post")
-
     # ADD IN PERMISSION
     permission_results = return_user_permission_level(request, None, ['requirement','requirement_link'])
     # What about requirement items? Will need to fix this elegantly.
@@ -34,8 +33,6 @@ def add_requirement_link(request,requirement_id):
 
     # Get the requirement instnace
     requirement_instance = requirement.objects.get(requirement_id=requirement_id)
-
-    print(request.POST.getlist("project"))
 
     # Get the project list from the form
     for row in request.POST.getlist("project"):
@@ -65,12 +62,9 @@ def add_requirement_link(request,requirement_id):
     return HttpResponse("Success")
 
 
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def get_requirement_item_links(request,requirement_id):
-    # Return user if not through POST
-    if request.method != "POST":
-        return HttpResponseBadRequest("Sorry - have to use POST for this data")
-
     # Get the requirement information
     requirement_results = requirement.objects.get(requirement_id=requirement_id)
 
@@ -89,9 +83,9 @@ def get_requirement_item_links(request,requirement_id):
     # Use object_assignment to get the requirme
     link_results = object_assignment.objects.filter(
         Q(
-            is_deleted="FALSE",
+            is_deleted=False,
             requirement_item_id__in=requirement_item.objects.filter(
-                is_deleted="FALSE",
+                is_deleted=False,
                 requirement_id=requirement_id,
             ).values('requirement_item_id')
         ) & Q(
@@ -152,7 +146,7 @@ def get_requirement_item_type_list(request,requirement_id):
 def get_requirement_items(request,requirement_id):
     # Get all the requirement items assigned to the requirement
     requirement_item_results = requirement_item.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         requirement_id=requirement_id,
     )
 
@@ -161,12 +155,10 @@ def get_requirement_items(request,requirement_id):
 
     return HttpResponse(json_results, content_type='application/json')
 
+
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def get_requirement_links_list(request,requirement_id):
-    # Return user if not through POST
-    if request.method != "POST":
-        return HttpResponseBadRequest("Sorry - have to use POST for this data")
-
     # Get the requirement information
     requirement_results = requirement.objects.get(requirement_id=requirement_id)
 
@@ -185,7 +177,7 @@ def get_requirement_links_list(request,requirement_id):
     # Use object_assignment to get the requirme
     link_results = object_assignment.objects.filter(
         Q(
-            is_deleted="FALSE",
+            is_deleted=False,
             requirement_id=requirement_id,
         ) & Q(
             Q(opportunity_id__isnull=False) |
@@ -230,7 +222,7 @@ def get_user_requirement_permissions(request,requirement_id):
     :return:
     """
     requirement_groups = object_assignment.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         #requirement_id=requirement_id
     ).values('group_id')
 
@@ -262,16 +254,16 @@ def new_requirement(request, location_id="", destination=""):
 
     #Extract Data
     status_list = list_of_requirement_status.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         requirement_status_is_closed="FALSE",
     )
 
     type_list = list_of_requirement_type.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     )
 
     group_results = group.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     )
 
     #Load template
@@ -381,20 +373,20 @@ def requirement_information(request, requirement_id):
     )
 
     status_list = list_of_requirement_status.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         requirement_status_is_closed="FALSE",
     )
 
     type_list = list_of_requirement_type.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     )
 
     group_results = group.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
     )
 
     requirement_item_results = requirement_item.objects.filter(
-        is_deleted="FALSE",
+        is_deleted=False,
         requirement_id=requirement_id,
     )
 

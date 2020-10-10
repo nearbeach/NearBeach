@@ -65,12 +65,16 @@
     //JavaScript components
     const axios = require('axios');
     import {Modal} from "bootstrap";
+    import errorModalMixin from '../../../mixins/errorModalMixin';
 
     export default {
         name: "BugsModule",
         props: [
             'destination',
             'locationId',
+        ],
+        mixins: [
+            errorModalMixin,
         ],
         data() {
             return {
@@ -104,7 +108,7 @@
                         this.bugList.push(row);
                     });
                 }).catch((error) => {
-                    console.log("ERROR: ",error);
+                    this.showErrorModal(error, this.destination);
                 })
             },
         },

@@ -19,12 +19,26 @@
                 <!-- REQUIREMENT LINKS -->
                 <li class="nav-item"
                     role="presentation"
-                    v-if="destination=='requirement' || destination=='requirement_item'"
+                    v-if="destination=='requirement'"
                 >
                     <a class="nav-link"
                        id="requirement-link-tab"
                        data-toggle="tab"
                        href="#requirement-links"
+                       role="tab"
+                       aria-controls="home"
+                       aria-selected="true">Links</a>
+                </li>
+
+                <!-- REQUIREMENT ITEM LINKS -->
+                <li class="nav-item"
+                    role="presentation"
+                    v-if="destination=='requirement_item'"
+                >
+                    <a class="nav-link"
+                       id="requirement-item-link-tab"
+                       data-toggle="tab"
+                       href="#requirement-item-links"
                        role="tab"
                        aria-controls="home"
                        aria-selected="true">Links</a>
@@ -44,8 +58,10 @@
                 </li>
 
                 <!-- CUSTOMERS -->
+                <!-- Customers are not needed by requirement items as the parent requirements take care of this -->
                 <li class="nav-item"
                     role="presentation"
+                    v-if="destination!='requirement_item'"
                 >
                     <a class="nav-link"
                        id="customer-tab"
@@ -57,8 +73,10 @@
                 </li>
 
                 <!-- BUGS -->
+                <!-- This module will only appear for project, task, and requirement -->
                 <li class="nav-item"
                     role="presentation"
+                    v-if="['project','task','requirement'].includes(destination)"
                 >
                     <a class="nav-link"
                        id="bug-tab"
@@ -70,8 +88,10 @@
                 </li>
 
                 <!-- GROUPS AND USERS -->
+                <!-- Don't need to show to requirement items - as permissions are gained from parent requirement -->
                 <li class="nav-item"
                     role="presentation"
+                    v-if="destination!='requirement_item'"
                 >
                     <a class="nav-link"
                        id="group-and-user-tab"
@@ -98,16 +118,37 @@
             <hr>
 
             <div class="tab-content" id="misc_module_content">
-                <div class="tab-pane fade show active" id="requirement-items" role="tabpanel" aria-labelledby="home-tab">
+                <div class="tab-pane fade show active"
+                     id="requirement-items"
+                     role="tabpanel"
+                     aria-labelledby="home-tab"
+                     v-if="destination=='requirement'"
+                >
                     <requirement-items-module v-bind:location-id="locationId"
                                               v-bind:destination="destination"
                     ></requirement-items-module>
                 </div>
-                <div class="tab-pane fade" id="requirement-links" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="tab-pane fade"
+                     id="requirement-links"
+                     role="tabpanel"
+                     aria-labelledby="profile-tab"
+                     v-if="destination=='requirement'"
+                >
                     <requirement-links-module v-bind:location-id="locationId"
                                               v-bind:destination="destination"
                     ></requirement-links-module>
                 </div>
+                <div class="tab-pane fade active"
+                     id="requirement-item-links"
+                     role="tabpanel"
+                     aria-labelledby="profile-tab"
+                     v-else-if="destination=='requirement_item'"
+                >
+                    <requirement-item-links-module v-bind:location-id="locationId"
+                                                   v-bind:destination="destination"
+                    ></requirement-item-links-module>
+                </div>
+
                 <div class="tab-pane fade" id="documents" role="tabpanel" aria-labelledby="contact-tab">
                     <documents-module v-bind:location-id="locationId"
                                       v-bind:destination="destination"

@@ -10,9 +10,6 @@
     <script async type="text/javascript" src="{% static 'NearBeach/loader.min.js' %}"></script>
 
     <!-- tinymce -->
-    <link preload type="text/css" src="{% static 'NearBeach/tinymce/skins/ui/oxide/skin.min.css' %}" />
-    <link preload type="text/css" src="{% static 'NearBeach/tinymce/skins/content/default/content.min.css' %}" />
-    <link preload type="text/css" src="{% static 'NearBeach/tinymce/skins/ui/oxide/content.min.css' %}" />
     <script defer type="text/javascript" src="{% static 'NearBeach/tinymce/tinymce.min.js' %}"></script>
 
     <!-- fav icon -->
@@ -60,10 +57,10 @@
                             New Object
                         </a>
                         <div class="dropdown-menu" aria-labelledby="newObjectsDropdown">
-                            <a class="dropdown-item" href="#">New Customer</a>
+                            <a class="dropdown-item" href="{% url 'new_customer' %}">New Customer</a>
                             <a class="dropdown-item" href="#">New Kanban Board</a>
                             <a class="dropdown-item" href="#">New Opportunity</a>
-                            <a class="dropdown-item" href="#">New Organisation</a>
+                            <a class="dropdown-item" href="{% url 'new_organisation' %}">New Organisation</a>
                             <a class="dropdown-item" href="#">New Project</a>
                             <a class="dropdown-item" href="#">New Request For Change</a>
                             <a class="dropdown-item" href="{% url 'new_requirement' %}">New Requirement</a>
@@ -86,9 +83,9 @@
                         <div class="dropdown-menu" aria-labelledby="findObjectsDropdown">
                             <a class="dropdown-item" href="#">List All</a>
                             <a class="dropdown-item" href="#">List by Tag</a>
-                            <a class="dropdown-item" href="#">List Customers</a>
+                            <a class="dropdown-item" href="{% url 'search_customer' %}">List Customers</a>
                             <a class="dropdown-item" href="#">List Kanban Boards</a>
-                            <a class="dropdown-item" href="#">List Organisations</a>
+                            <a class="dropdown-item" href="{% url 'search_organisation' %}">List Organisations</a>
                         </div>
                     </li>
                 </ul>

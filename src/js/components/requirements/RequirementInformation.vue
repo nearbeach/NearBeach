@@ -205,8 +205,6 @@
                 data_to_send.set('requirement_status',this.statusModel['value']);
                 data_to_send.set('requirement_type',this.typeModel['value']);
 
-                console.log("DATA TO SEND: ",data_to_send);
-
                 // Use Axion to send the data
                 axios.post(
                     'save/',
@@ -250,8 +248,6 @@
 
             this.requirementScopeModel = requirement_results['requirement_scope'];
             this.requirementTitleModel = requirement_results['requirement_title'];
-            //this.statusModel = requirement_results['requirement_status'];
-            //this.typeModel = requirement_results['requirement_type'];
 
             //Extract the organisation results directly
             this.stakeholderModel = this.organisationResults[0]['fields'];

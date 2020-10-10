@@ -28,6 +28,8 @@ variables;
 
 These will need to be set in the SETTINGS.PY
 """
+
+
 class File_Storage(FileSystemStorage):
     def __init__(self, location=None, base_url=None):
         if location is None:
@@ -55,14 +57,16 @@ METHOD
     If user meets at least one condition, then the value
     TRUE is returned, else FALSE
 """
+
+
 class Check_Permissions(object):
     def has_read_permission(self, request, path):
-        #Is user logged in
+        # Is user logged in
         user = request.user
         if not user.is_authenticated():
             return False
 
-        #TEMP RETURN LINE
+        # TEMP RETURN LINE
         return True
 
         """
@@ -80,7 +84,7 @@ class Check_Permissions(object):
         + CASE WHEN document_permission.organisations_id_id IS NULL THEN 0 ELSE 1 END
         + CASE WHEN document_permission.customer_id_id IS NULL THEN 0 ELSE 1 END
         AS PERMISSION
-        
+
         FROM
         user_group
         , document_permission
@@ -96,34 +100,32 @@ class Check_Permissions(object):
         Currently opportunities do not have a limit to. I will need to
         apply this.
         */
-        
-        
+
+
         WHERE 1=1
         -- THE USER INPUT
         AND user_group.username_id = %s
-        
+
         --THE DOCUMENT INPUT
         AND document_permission.document_key_id = %s
-        
+
         -- Make sure the doc is not deleted
         AND document_permission.is_deleted = 'FALSE'
        	""", [current_user.id, object])
         has_permission = cursor.fetchall()
 
         if not has_permission[0][0] >= 1:
-            #User have permission to view the file
+            # User have permission to view the file
             return True
         else:
             return False
 
 
-
-
-
-
 """
 Left unchanged
 """
+
+
 class NginxXAccelRedirectServer(object):
     def serve(self, request, path):
         response = HttpResponse()
@@ -132,9 +134,12 @@ class NginxXAccelRedirectServer(object):
         response['Content-Type'] = mimetypes.guess_type(path)[0] or 'application/octet-stream'
         return response
 
+
 """
 Left unchanged
 """
+
+
 class ApacheXSendfileServer(object):
     def serve(self, request, path):
         fullpath = os.path.join(settings.PRIVATE_MEDIA_ROOT, path)
@@ -156,6 +161,8 @@ class ApacheXSendfileServer(object):
 """
 Left unchanged
 """
+
+
 class DefaultServer(object):
     """
     Serve static files from the local filesystem through django.
@@ -163,6 +170,7 @@ class DefaultServer(object):
 
     This will only work for files that can be accessed in the local filesystem.
     """
+
     def serve(self, request, path):
         # the following code is largely borrowed from `django.views.static.serve`
         # and django-filetransfers: filetransfers.backends.default
@@ -181,10 +189,13 @@ class DefaultServer(object):
         # response['Content-Disposition'] = smart_str(u'attachment; filename={0}'.format(filename))
         return response
 
+
 """
 Left unchanged
 """
 from importlib import import_module
+
+
 def get_class(import_path=None):
     """
     Largely based on django.core.files.storage's get_storage_class
@@ -196,7 +207,7 @@ def get_class(import_path=None):
         dot = import_path.rindex('.')
     except ValueError:
         raise ImproperlyConfigured("%s isn't a module." % import_path)
-    module, classname = import_path[:dot], import_path[dot+1:]
+    module, classname = import_path[:dot], import_path[dot + 1:]
     try:
         mod = import_module(module)
     except ImportError as e:
@@ -214,8 +225,9 @@ if settings.DEBUG == True:
     server = DefaultServer(**getattr(settings, 'PRIVATE_MEDIA_SERVER_OPTIONS', {}))
 else:
     server = ApacheXSendfileServer(**getattr(settings, 'PRIVATE_MEDIA_SERVER_OPTIONS', {}))
-if hasattr(settings,'PRIVATE_MEDIA_PERMISSIONS'):
-    permissions = get_class(settings.PRIVATE_MEDIA_PERMISSIONS)(**getattr(settings, 'PRIVATE_MEDIA_PERMISSIONS_OPTIONS', {}))
+if hasattr(settings, 'PRIVATE_MEDIA_PERMISSIONS'):
+    permissions = get_class(settings.PRIVATE_MEDIA_PERMISSIONS)(
+        **getattr(settings, 'PRIVATE_MEDIA_PERMISSIONS_OPTIONS', {}))
 else:
     permissions = Check_Permissions()
 

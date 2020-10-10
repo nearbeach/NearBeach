@@ -110,6 +110,7 @@
 
 <script>
     const axios = require('axios');
+    import errorModalMixin from "../../../mixins/errorModalMixin";
 
     export default {
         name: "UploadDocumentWizard",
@@ -118,6 +119,9 @@
             'destination',
             'excludeDocuments',
             'locationId',
+        ],
+        mixins: [
+            errorModalMixin,
         ],
         data() {
             return {
@@ -175,7 +179,7 @@
                     //Reset the document
                     this.resetForm();
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    this.showErrorModal(error, this.destination);
                 })
             }
         },

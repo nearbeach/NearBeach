@@ -25,9 +25,11 @@ from . import views, \
 	views_whiteboard
 """
 from .views import authentication_views, \
+	customer_views, \
 	dashboard_views, \
 	document_views, \
-	object_data, \
+	object_data_views, \
+	organisation_views, \
 	requirement_item_views, \
 	requirement_views, \
 	search_views
@@ -35,6 +37,10 @@ from .views import authentication_views, \
 
 urlpatterns = [
 	path('', dashboard_views.dashboard, name='dashboard'),
+
+	# Customer
+	path('customer_information/<int:customer_id>/',customer_views.customer_information,name='customer_information'),
+	path('customer_information/<int:customer_id>/save/',customer_views.customer_information_save,name='customer_information_save'),
 
 	# Documentation
 	path('documentation/<destination>/<location_id>/add_folder/',document_views.document_add_folder,name='document_add_folder'),
@@ -48,32 +54,46 @@ urlpatterns = [
 	path('login', authentication_views.login, name='login'),
 	path('logout', authentication_views.logout, name='logout'),
 
+	# Private files
+	path('private/<uuid:document_key>/',document_views.private_download_file,name='private_download_file'),
+
 	# New Objects
-	path('new_requirement',requirement_views.new_requirement, name='new_requirement'),
+	path('new_customer/',customer_views.new_customer,name='new_customer'),
+	path('new_customer/save/',customer_views.new_customer_save,name='new_customer_save'),
+	path('new_organisation/',organisation_views.new_organisation,name='new_organisation'),
+	path('new_organisation/save/',organisation_views.new_organisation_save,name='new_organisation_save'),
+	path('new_requirement/',requirement_views.new_requirement, name='new_requirement'),
 	path('new_requirement/save/',requirement_views.new_requirement_save, name='new_requirement_save'),
 	path('new_requirement_item/save/<int:requirement_id>/',requirement_item_views.new_requirement_item,name='new_requirement_item'),
 
 	# Object Data
-	path('object_data/<destination>/<location_id>/add_bug/',object_data.add_bug,name='add_bug'),
-	path('object_data/<destination>/<location_id>/add_customer/',object_data.add_customer,name='add_customer'),
-	path('object_data/<destination>/<location_id>/add_group/',object_data.add_group,name='add_group'),
-	path('object_data/<destination>/<location_id>/add_notes/',object_data.add_notes,name='add_notes'),
-	path('object_data/<destination>/<location_id>/add_user/',object_data.add_user,name='add_user'),
-	path('object_data/bug_client_list/',object_data.bug_client_list,name='bug_client_list'),
-	path('object_data/<destination>/<location_id>/bug_list/',object_data.bug_list,name='bug_list'),
-	path('object_data/<destination>/<location_id>/customer_list/',object_data.customer_list,name='customer_list'),
-	path('object_data/<destination>/<location_id>/customer_list_all/',object_data.customer_list_all,name='customer_list_all'),
-	path('object_data/<destination>/<location_id>/group_list/',object_data.group_list,name='group_list'),
-	path('object_data/<destination>/<location_id>/group_list_all/',object_data.group_list_all,name='group_list_all'),
-	path('object_data/<destination>/<location_id>/<object_lookup>/link_list/',object_data.link_list,name='link_list'),
-	path('object_data/<destination>/<location_id>/note_list/',object_data.note_list,name='note_list'),
-	path('object_data/<destination>/<location_id>/query_bug_client/',object_data.query_bug_client,name='query_bug_client'),
-	path('object_data/<destination>/<location_id>/user_list/',object_data.user_list,name='user_list'),
-	path('object_data/<destination>/<location_id>/user_list_all/',object_data.user_list_all,name='user_list_all'),
+	path('object_data/<destination>/<location_id>/add_bug/',object_data_views.add_bug,name='add_bug'),
+	path('object_data/<destination>/<location_id>/add_customer/',object_data_views.add_customer,name='add_customer'),
+	path('object_data/<destination>/<location_id>/add_group/',object_data_views.add_group,name='add_group'),
+	path('object_data/<destination>/<location_id>/add_notes/',object_data_views.add_notes,name='add_notes'),
+	path('object_data/<destination>/<location_id>/add_user/',object_data_views.add_user,name='add_user'),
+	path('object_data/<destination>/<location_id>/associated_objects/',object_data_views.associated_objects,name='associated_objects'),
+	path('object_data/bug_client_list/',object_data_views.bug_client_list,name='bug_client_list'),
+	path('object_data/<destination>/<location_id>/bug_list/',object_data_views.bug_list,name='bug_list'),
+	path('object_data/<destination>/<location_id>/customer_list/',object_data_views.customer_list,name='customer_list'),
+	path('object_data/<destination>/<location_id>/customer_list_all/',object_data_views.customer_list_all,name='customer_list_all'),
+	path('object_data/<destination>/<location_id>/group_list/',object_data_views.group_list,name='group_list'),
+	path('object_data/<destination>/<location_id>/group_list_all/',object_data_views.group_list_all,name='group_list_all'),
+	path('object_data/<destination>/<location_id>/<object_lookup>/link_list/',object_data_views.link_list,name='link_list'),
+	path('object_data/<destination>/<location_id>/note_list/',object_data_views.note_list,name='note_list'),
+	path('object_data/<destination>/<location_id>/query_bug_client/',object_data_views.query_bug_client,name='query_bug_client'),
+	path('object_data/<destination>/<location_id>/user_list/',object_data_views.user_list,name='user_list'),
+	path('object_data/<destination>/<location_id>/user_list_all/',object_data_views.user_list_all,name='user_list_all'),
+
+	# Organisation
+	path('organisation_duplicates/',organisation_views.organisation_duplicates,name='organisation_duplicates'),
+	path('organisation_information/<int:organisation_id>/',organisation_views.organisation_information,name='organisation_information'),
+	path('organisation_information/<int:organisation_id>/save/',organisation_views.organisation_information_save,name='organisation_information_save'),
+	path('organisation_information/<int:organisation_id>/update_profile/',organisation_views.organisation_update_profile,name='organisation_update_profile'),
 
 	# Requirements
 	path('requirement_information/<int:requirement_id>/',requirement_views.requirement_information,name='requirement_information'),
-	path('requirement_information/<int:requirement_id>/add_requirement_link/',requirement_views.add_requirement_link,name='add_requirement_link'),
+	path('requirement_information/<int:requirement_id>/add_link/',requirement_views.add_requirement_link,name='add_requirement_link'),
 	path('requirement_information/<int:requirement_id>/data/item_links/',requirement_views.get_requirement_item_links,name='get_requirement_item_links'),
 	path('requirement_information/<int:requirement_id>/data/items/',requirement_views.get_requirement_items,name='get_requirement_items'),
 	path('requirement_information/<int:requirement_id>/data/item_status/',requirement_views.get_requirement_item_status_list,name='get_requirement_item_status_list'),
@@ -82,9 +102,18 @@ urlpatterns = [
 	path('requirement_information/<int:requirement_id>/save/',requirement_views.requirement_information_save,name='requirement_information_save'),
 
 	# Requirement Items
-	path('requirement_item_information/<int:requirement_id>',requirement_item_views.requirement_item_information,name='requirement_item_information'),
+	path('requirement_item_information/<int:requirement_item_id>/', requirement_item_views.requirement_item_information,name='requirement_item_information'),
+	path('requirement_item_information/<int:requirement_item_id>/add_link/',requirement_item_views.add_requirement_item_link,name='add_requirement_item_link'),
+	path('requirement_item_information/<int:requirement_item_id>/',requirement_item_views.requirement_item_information,name='requirement_item_information'),
+	path('requirement_item_information/<int:requirement_item_id>/data/links/',requirement_item_views.get_requirement_item_links_list,name='get_requirement_item_links_list'),
+	path('requirement_item_information/<int:requirement_item_id>/save/',requirement_item_views.requirement_information_save,name='requirement_information_save'),
 
+	# Search Items
+	path('search/customer/',search_views.search_customer,name='search_customer'),
+	path('search/customer/data/',search_views.search_customer_data,name='search_customer_data'),
+	path('search/organisation/',search_views.search_organisation,name='search_organisation'),
 	path('search/organisation/data/',search_views.search_organisation_data,name='search_organisation_data'),
+
 ]
 
 """

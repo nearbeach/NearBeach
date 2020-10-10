@@ -110,6 +110,8 @@
 
 <script>
     //JavaScript extras
+    import errorModalMixin from "../../../mixins/errorModalMixin";
+
     const axios = require('axios');
 
     export default {
@@ -117,6 +119,9 @@
         props: [
             'destination',
             'locationId',
+        ],
+        mixins: [
+            errorModalMixin,
         ],
         data() {
             return {
@@ -177,7 +182,7 @@
                     //Turn off the search
                     this.searchOn = false;
                 }).catch(error => {
-                    console.log("ERROR: ",error);
+                    this.showErrorModal(error, this.destination);
                 })
             },
             submitBug: function(bug_id) {
@@ -208,7 +213,7 @@
                     //Update the user that the bug has been added
                     add_bug_element.innerHTML = "Done";
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    this.showErrorModal(error, this.destination);
                 })
             }
         },

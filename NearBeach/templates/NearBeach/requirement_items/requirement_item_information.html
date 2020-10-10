@@ -1,0 +1,18 @@
+{% extends 'NearBeach/template.html' %}
+{% load static %}
+{% block content %}
+    <requirement-item-information v-bind:requirement-item-results="{{requirement_item_results}}"
+                             v-bind:organisation-results="{{organisation_results}}"
+                             v-bind:default-stakeholder-image="`{% static 'NearBeach/images/placeholder/product_tour.svg' %}`"
+                             v-bind:status-list="{{status_list}}"
+                             v-bind:type-list="{{type_list}}"
+    ></requirement-item-information>
+
+    <div class="spacer"></div>
+
+    <parent-modules class="misc-modules"
+                    v-bind:group-list="{{group_results}}"
+                    v-bind:destination="'requirement_item'"
+                    v-bind:location-id="{{requirement_item_id}}"
+    ></parent-modules>
+{% endblock %}

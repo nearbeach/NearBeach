@@ -10,7 +10,7 @@ class AddBugForm(forms.Form):
     bug_client = forms.ModelChoiceField(
         required=True,
         queryset=bug_client.objects.filter(
-            is_deleted="FALSE",
+            is_deleted=False,
         )
     )
     bug_id = forms.IntegerField(
@@ -75,21 +75,34 @@ class AddRequirementLinkForm(forms.Form):
     project = forms.ModelMultipleChoiceField(
         required=False,
         queryset=project.objects.filter(
-            is_deleted="FALSE",
+            is_deleted=False,
         )
     )
     task = forms.ModelMultipleChoiceField(
         required=False,
         queryset=task.objects.filter(
-            is_deleted="FALSE",
+            is_deleted=False,
         )
     )
     opportunity = forms.ModelMultipleChoiceField(
         required=False,
         queryset=opportunity.objects.filter(
-            is_deleted="FALSE",
+            is_deleted=False,
         )
     )
+
+
+class CustomerForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = customer
+        fields = [
+            'customer_title',
+            'customer_first_name',
+            'customer_last_name',
+            'customer_email',
+            'organisation',
+        ]
 
 
 class DocumentUploadForm(ModelForm):
@@ -134,6 +147,42 @@ class LoginForm(forms.Form):
     )
 
 
+class NewCustomerForm(forms.ModelForm):
+    organisation = forms.ModelChoiceField(
+        queryset=organisation.objects.all(),
+        required=False,
+    )
+    # Basic Meta Data
+    class Meta:
+        model = customer
+        fields = [
+            'customer_title',
+            'customer_first_name',
+            'customer_last_name',
+            'customer_email',
+            'organisation',
+        ]
+
+
+class OrganisationForm(forms.ModelForm):
+    # Basic Meta data
+    class Meta:
+        model = organisation
+        fields = [
+            'organisation_name',
+            'organisation_website',
+            'organisation_email',
+        ]
+
+
+class OrganisationProfilePictureForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        fields = [
+            'organisation_picture'
+        ]
+
+
 class NewRequirementItemForm(forms.ModelForm):
     # Basic Meta data
     class Meta:
@@ -151,7 +200,7 @@ class NewRequirementForm(forms.ModelForm):
     group_list = forms.ModelMultipleChoiceField(
         required=True,
         queryset=group.objects.filter(
-            is_deleted="FALSE",
+            is_deleted=False,
         )
     )
 
@@ -171,7 +220,7 @@ class QueryBugClientForm(forms.Form):
     bug_client_id = forms.ModelChoiceField(
         required=True,
         queryset=bug_client.objects.filter(
-            is_deleted="FALSE",
+            is_deleted=False,
         )
     )
     search = forms.CharField(
@@ -195,4 +244,16 @@ class UpdateRequirementForm(forms.ModelForm):
             'requirement_scope',
             'requirement_status',
             'requirement_type',
+        ]
+
+
+class UpdateRequirementItemForm(forms.ModelForm):
+    # Basic Meta data
+    class Meta:
+        model = requirement_item
+        fields = [
+            'requirement_item_title',
+            'requirement_item_scope',
+            'requirement_item_status',
+            'requirement_item_type',
         ]
