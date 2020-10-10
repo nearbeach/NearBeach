@@ -91,11 +91,17 @@
     const axios = require('axios');
     import { required, maxLength } from 'vuelidate/lib/validators';
 
+    //Mixins
+    import errorModalMixin from "../../mixins/errorModalMixin";
+
     export default {
         name: "NewProject",
         props: {
             groupResults: Array,
         },
+        mixins: [
+            errorModalMixin,
+        ],
         data() {
             return {
                 groupModel: {},
@@ -132,9 +138,10 @@
                 //Check form validation
                 this.$v.$touch();
 
-                //If the form is not valid - escape
                 if (this.$v.$invalid) {
-                    console.log("ADD CODE - MIXIN ERRORS!");
+                    this.showValidationErrorModal();
+
+                    //Just return - as we do not need to do the rest of this function
                     return;
                 }
 
@@ -159,7 +166,7 @@
                     //Go to the new project
                     window.location.href = response['data'];
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    this.showErrorModal(error, this.destination);
                 });
             },
             updateDates: function(data) {

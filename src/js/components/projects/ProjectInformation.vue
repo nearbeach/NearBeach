@@ -87,6 +87,10 @@
     //Validations
     import { required, maxLength } from 'vuelidate/lib/validators';
 
+    //Mixins
+    import errorModalMixin from "../../mixins/errorModalMixin";
+    import loadingModalMixin from "../../mixins/loadingModalMixin";
+
     export default {
         name: "ProjectInformation",
         props: {
@@ -94,6 +98,10 @@
             organisationResults: Array,
             projectResults: Array,
         },
+        mixins: [
+            errorModalMixin,
+            loadingModalMixin,
+        ],
         data() {
             return {
                 projectDescriptionModel: this.projectResults[0]['fields']['project_description'],
@@ -127,16 +135,7 @@
                 this.$v.$touch();
 
                 if (this.$v.$invalid) {
-                    //Show the error dialog and notify to the user that there were field missing.
-                    var elem_cont = document.getElementById("errorModalContent");
-
-                    // Update the content
-                    elem_cont.innerHTML =
-                        `<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.`;
-
-                    // Show the modal
-                    var errorModal = new Modal(document.getElementById('errorModal'));
-                    errorModal.show();
+                    this.showValidationErrorModal();
 
                     //Just return - as we do not need to do the rest of this function
                     return;
@@ -150,28 +149,18 @@
                 data_to_send.set('project_start_date',this.projectStartDateModel);
 
                 //Open up the loading modal
-                var loadingModal = new Modal(document.getElementById('loadingModal'));
-                loadingModal.show();
-
-                //Update message in loading modal
-                document.getElementById("loadingModalContent").innerHTML = `Updating your Requirement details`;
+                this.showLoadingModal('Project');
 
                 //Use axios to send data
                 axios.post(
                     `/project_information/${this.projectResults[0]['pk']}/save/`,
                     data_to_send
                 ).then(response => {
-                    //Update the message in the loading modal
-                    document.getElementById("loadingModalContent").innerHTML = `UPDATED SUCCESSFULLY`;
-
-                    //Close after 1 second
-                    setTimeout(() => {
-                        loadingModal.hide();
-                    },1000);
+                    //Notify user of success update
+                    this.closeLoadingModal();
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    this.showErrorModal(error, this.destination);
                 })
-
             },
         },
     }

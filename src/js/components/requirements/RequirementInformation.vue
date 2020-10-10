@@ -113,6 +113,10 @@
     //Validation
     import { required, maxLength } from 'vuelidate/lib/validators';
 
+    //Mixins
+    import errorModalMixin from "../../mixins/errorModalMixin.js";
+    import loadingModalMixin from "../../mixins/loadingModalMixin.js";
+
     export default {
         name: "RequirementInformation",
         components: {},
@@ -122,6 +126,10 @@
             'requirementResults',
             'statusList',
             'typeList',
+        ],
+        mixins: [
+            errorModalMixin,
+            loadingModalMixin
         ],
         data() {
             return {
@@ -155,27 +163,13 @@
                 this.$v.$touch();
 
                 if (this.$v.$invalid) {
-                    //Show the error dialog and notify to the user that there were field missing.
-                    var elem_cont = document.getElementById("errorModalContent");
-
-                    // Update the content
-                    elem_cont.innerHTML =
-                        `<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.`;
-
-                    // Show the modal
-                    var errorModal = new Modal(document.getElementById('errorModal'));
-                    errorModal.show();
+                    this.showValidationErrorModal();
 
                     //Just return - as we do not need to do the rest of this function
                     return;
                 }
 
-                //Open up the loading modal
-                var loadingModal = new Modal(document.getElementById('loadingModal'));
-                loadingModal.show();
-
-                //Update message in loading modal
-                document.getElementById("loadingModalContent").innerHTML = `Updating your Requirement details`;
+                this.showLoadingModal('Requirement');
 
                 // Set up the data object to send
                 const data_to_send = new FormData();
@@ -189,26 +183,9 @@
                     'save/',
                     data_to_send
                 ).then(response => {
-                    //Update the message in the loading modal
-                    document.getElementById("loadingModalContent").innerHTML = `UPDATED SUCCESSFULLY`;
-
-                    //Close after 1 second
-                    setTimeout(() => {
-                        loadingModal.hide();
-                    },1000)
+                    this.closeLoadingModal();
                 }).catch((error) => {
-                    //Hide the loading modal
-                    loadingModal.hide();
-
-                    // Get the error modal
-                    var elem_cont = document.getElementById("errorModalContent");
-
-                    // Update the content
-                    elem_cont.innerHTML = `<strong>HTML ISSUE:</strong> We could not save the new requirement<hr>${error}`;
-
-                    // Show the modal
-                    var errorModal = new Modal(document.getElementById('errorModal'));
-                    errorModal.show();
+                    this.showErrorModal(error, this.destination);
                 });
             }
         },
