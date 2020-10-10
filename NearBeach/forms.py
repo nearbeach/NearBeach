@@ -210,6 +210,25 @@ class OrganisationProfilePictureForm(forms.ModelForm):
         ]
 
 
+class ProjectForm(forms.ModelForm):
+    project_start_date = forms.DateTimeField(
+        input_formats=['c'],
+    )
+    project_end_date = forms.DateTimeField(
+        input_formats=['c'],
+    )
+
+    # Basic Meta Data
+    class Meta:
+        model = project
+        fields = [
+            'project_name',
+            'project_description',
+            'project_start_date',
+            'project_end_date',
+        ]
+
+
 class NewRequirementItemForm(forms.ModelForm):
     # Basic Meta data
     class Meta:

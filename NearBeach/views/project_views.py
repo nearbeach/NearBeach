@@ -105,8 +105,20 @@ def project_information(request,project_id):
     # Template
     t = loader.get_template('NearBeach/projects/project_information.html')
 
+    # Get data
+    project_results = project.objects.get(project_id=project_id)
+
+    organisation_results = organisation.objects.filter(
+        is_deleted=False,
+        organisation_id=project_results.organisation_id,
+    )
+
     # Context
-    c = {}
+    c = {
+        'organisation_results': serializers.serialize('json',organisation_results),
+        'project_id': project_id,
+        'project_results': serializers.serialize('json',[project_results]),
+    }
 
     return HttpResponse(t.render(c,request))
 
@@ -120,4 +132,22 @@ def project_information_save(request,project_id):
     :param project_id:
     :return:
     """
-    return HttpResponseBadRequest("GOT TO WRITE THE CODE")
+
+    # ADD IN PERMISSION CHECKER
+
+    # Get the form data
+    form = ProjectForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get the project data
+    project_update = project.objects.get(project_id=project_id)
+    project_update.project_name = form.cleaned_data['project_name']
+    project_update.project_description = form.cleaned_data['project_description']
+    project_update.project_start_date = form.cleaned_data['project_start_date']
+    project_update.project_end_date = form.cleaned_data['project_end_date']
+
+    # Save
+    project_update.save()
+
+    return HttpResponse("Good")

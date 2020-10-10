@@ -9,7 +9,11 @@
         </div>
         <div class="col-md-4">
             <div class="form-group">
-                <label>{{destination}} Start Date:</label>
+                <label>{{destination}} Start Date:
+                    <span class="error"
+                          v-if="!$v.localStartDateModel.required && isDirty"
+                    > Please select a date.</span>
+                </label>
                 <datetime type="datetime"
                           v-model="localStartDateModel"
                           input-class="form-control"
@@ -19,7 +23,11 @@
         </div>
         <div class="col-md-4">
             <div class="form-group">
-                <label>{{destination}} End Date:</label>
+                <label>{{destination}} End Date:
+                    <span class="error"
+                          v-if="!$v.localEndDateModel.required && isDirty"
+                    > Please select a date.</span>
+                </label>
                 <datetime type="datetime"
                           v-model="localEndDateModel"
                           input-class="form-control"
@@ -32,6 +40,9 @@
 
 <script>
     import { DateTime } from "luxon";
+
+    //Validation
+    import { required } from 'vuelidate/lib/validators';
 
     export default {
         name: "BetweenDates",
@@ -50,12 +61,21 @@
                     return date;
                 }
             },
+            isDirty: Boolean,
             startDateModel: {
                 type: Object,
                 default() {
                     //Just return today's date
                     return DateTime.local();
                 }
+            },
+        },
+        validations: {
+            localEndDateModel: {
+                required,
+            },
+            localStartDateModel: {
+                required,
             },
         },
         data() {

@@ -54,30 +54,9 @@
 
             <!-- Stakeholder Information -->
             <hr>
-            <div class="row">
-                <!-- Description -->
-                <div class="col-md-4">
-                    <h2>Stakeholder</h2>
-                </div>
-                <div class="col-md-8 organisation-details">
-                    <img v-bind:src="getStakeholderImage" alt="Stakeholder Logo" class="organisation-image">
-                    <div class="organisation-name">
-                        {{stakeholderModel['organisation_name']}}
-                    </div>
-                    <div class="organisation-link">
-                        <i data-feather="external-link"></i> Website:
-                        <a v-bind:href="stakeholderModel['organisation_website']" target="_blank">
-                            {{ stakeholderModel['organisation_website'] }}
-                        </a>
-                    </div>
-                    <div class="organisation-email">
-                        <i data-feather="mail"></i> Email:
-                        <a v-bind:href="`mailto:${stakeholderModel['organisation_email']}`">
-                            {{stakeholderModel['organisation_email']}}
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <stakeholder-information v-bind:organisation-results="organisationResults"
+                                     v-bind:default-stakeholder-image="defaultStakeholderImage"
+            ></stakeholder-information>
 
             <!-- Status -->
             <hr>
@@ -233,24 +212,12 @@
                 });
             }
         },
-        computed: {
-            getStakeholderImage: function() {
-                if (this.stakeholderModel['organisation_profile_picture'] == '') {
-                    //There is no image - return the default image
-                    return this.defaultStakeholderImage;
-                }
-                return this.stakeholderModel['organisation_profile_picture']
-            }
-        },
         mounted() {
             //Get data from the requirementResults and delegate to the Models
             var requirement_results = this.requirementResults[0]['fields'];
 
             this.requirementScopeModel = requirement_results['requirement_scope'];
             this.requirementTitleModel = requirement_results['requirement_title'];
-
-            //Extract the organisation results directly
-            this.stakeholderModel = this.organisationResults[0]['fields'];
 
             //We need to extract "fields" array from the statusList/typeList json data
             this.statusList.forEach((row) => {

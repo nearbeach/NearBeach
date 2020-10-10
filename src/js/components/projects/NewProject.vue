@@ -18,8 +18,8 @@
                     <!-- PROJECT NAME -->
                     <div class="form-group">
                         <label>Project Name
-<!--                            <span class="error" v-if="!$v.projectNameModel.required && $v.projectNameModel.$dirty"-->
-<!--                            > Please suppy a title.</span>-->
+                            <span class="error" v-if="!$v.projectNameModel.required && $v.projectNameModel.$dirty"
+                            > Please suppy a title.</span>
                         </label>
                         <input type="text"
                                v-model="projectNameModel"
@@ -30,8 +30,8 @@
 
                     <!-- PROJECT DESCRIPTION -->
                     <label>Project Description:
-<!--                        <span class="error" v-if="!$v.documentDescriptionModel.required && $v.documentDescriptionModel.$dirty"> Please supply a scope.</span>-->
-<!--                        <span class="error" v-if="!$v.documentDescriptionModel.maxLength"> Sorry - too many characters.</span>-->
+                        <span class="error" v-if="!$v.projectDescriptionModel.required && $v.projectDescriptionModel.$dirty"> Please supply a description.</span>
+                        <span class="error" v-if="!$v.projectDescriptionModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
                     <img src="/static/NearBeach/images/placeholder/body_text.svg"
                          class="loader-image"
@@ -55,12 +55,14 @@
             <!-- STAKEHOLDER ORGANISATION -->
             <hr>
             <get-stakeholders v-on:update_stakeholder_model="updateStakeholderModel($event)"
+                              v-bind:is-dirty="$v.stakeholderModel.$dirty"
             ></get-stakeholders>
 
             <!-- START DATE & END DATE -->
             <hr>
             <between-dates destination="project"
                            v-on:update_dates="updateDates($event)"
+                           v-bind:is-dirty-end="$v.projectEndDateModel.$dirty || $v.projectStartDateModel.$dirty"
             ></between-dates>
 
             <!-- Group Permissions -->
@@ -68,6 +70,7 @@
             <group-permissions v-bind:group-results="groupResults"
                                v-bind:destination="'project'"
                                v-on:update_group_model="updateGroupModel($event)"
+                               v-bind:is-dirty="$v.groupModel.$dirty"
             ></group-permissions>
 
             <!-- Submit Button -->
@@ -86,8 +89,7 @@
 
 <script>
     const axios = require('axios');
-    import { DateTime } from "luxon";
-    import { Modal } from 'bootstrap';
+    import { required, maxLength } from 'vuelidate/lib/validators';
 
     export default {
         name: "NewProject",
@@ -104,8 +106,38 @@
                 stakeholderModel: {},
             }
         },
+        validations: {
+            groupModel: {
+                required,
+            },
+            projectDescriptionModel: {
+                required,
+                maxLength: maxLength(630000),
+            },
+            projectEndDateModel: {
+                required
+            },
+            projectNameModel: {
+                required
+            },
+            projectStartDateModel: {
+                required
+            },
+            stakeholderModel: {
+                required
+            },
+        },
         methods: {
             submitNewProject: function() {
+                //Check form validation
+                this.$v.$touch();
+
+                //If the form is not valid - escape
+                if (this.$v.$invalid) {
+                    console.log("ADD CODE - MIXIN ERRORS!");
+                    return;
+                }
+
                 //Create data_to_send
                 const data_to_send = new FormData();
                 data_to_send.set('project_name',this.projectNameModel);
@@ -113,13 +145,6 @@
                 data_to_send.set('organisation',this.stakeholderModel['value']);
                 data_to_send.set('project_start_date',this.projectStartDateModel);
                 data_to_send.set('project_end_date',this.projectEndDateModel);
-
-                // //Get the datetime from start and end date and send as an int of seconds
-                // var end_date = new Date(this.projectEndDateModel),
-                //     start_date = new Date(this.projectStartDateModel);
-                //
-                // data_to_send.set('project_start_date', start_date.getTime());
-                // data_to_send.set('project_end_date',end_date.getTime());
 
                 // Insert a new row for each group list item
                 this.groupModel.forEach((row,index) => {
@@ -138,7 +163,6 @@
                 });
             },
             updateDates: function(data) {
-                console.log("DATA: ",data);
                 //Update both the start and end dates
                 this.projectStartDateModel = data['start_date'];
                 this.projectEndDateModel = data['end_date'];
