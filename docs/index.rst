@@ -45,7 +45,7 @@ Software
 
 * Ubuntu 18.04
 * Python 3.6+
-* Django 2.1+
+* Django 3.1+
 * Nginx
 * Gunicorn
 * MySQL
