@@ -359,7 +359,7 @@ def customer_list_all(request,destination,location_id):
             organisation_id=task.objects.get(
                 is_deleted=False,
                 task_id=location_id,
-            )
+            ).organisation_id
         )
     else:
         # There is no destination that could match this. Send user to errors
