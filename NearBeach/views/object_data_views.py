@@ -296,6 +296,7 @@ def bug_list(request,destination,location_id):
     bug_list = bug_list.values(
         'bug_client',
         'bug_client__list_of_bug_client',
+        'bug_client__list_of_bug_client__bug_client_name',
         'bug_client__bug_client_name',
         'bug_client__bug_client_url',
         'bug_code',

@@ -25,7 +25,13 @@
                 <div class="col-md-5">
                     <!-- ORGANISATION NAME -->
                     <div class="form-group">
-                        <label for="id_organisation_name">Organisation Name</label>
+                        <label for="id_organisation_name">
+                            Organisation Name
+                            <span class="error"
+                                  v-if="!$v.organisationNameModel.required && $v.organisationNameModel.$dirty"
+                                > Please suppy a title.
+                            </span>
+                        </label>
                         <input id="id_organisation_name"
                                v-model="organisationNameModel"
                                type="text"
@@ -36,7 +42,17 @@
 
                     <!-- ORGANISATION WEBSITE -->
                     <div class="form-group">
-                        <label for="id_organisation_website">Organisation Website</label>
+                        <label for="id_organisation_website">
+                            Organisation Website
+                            <span class="error"
+                                  v-if="!$v.organisationWebsiteModel.required && $v.organisationWebsiteModel.$dirty"
+                                  > Please supply
+                            </span>
+                            <span class="error"
+                                  v-if="!$v.organisationWebsiteModel.url && $v.organisationWebsiteModel.$dirty"
+                                  > Please format at URL
+                            </span>
+                        </label>
                         <input id="id_organisation_website"
                                v-model="organisationWebsiteModel"
                                type="text"
@@ -47,7 +63,17 @@
 
                     <!-- ORGANISATION EMAIL -->
                     <div class="form-group">
-                        <label for="id_organisation_email">Organisation Email</label>
+                        <label for="id_organisation_email">
+                            Organisation Email
+                            <span class="error"
+                                  v-if="!$v.organisationEmailModel.required && $v.organisationEmailModel.$dirty"
+                                  > Please supply
+                            </span>
+                            <span class="error"
+                                  v-if="!$v.organisationEmailModel.email && $v.organisationEmailModel.$dirty"
+                                  > Please format as Email
+                            </span>
+                        </label>
                         <input id="id_organisation_email"
                                v-model="organisationEmailModel"
                                type="text"
@@ -76,10 +102,21 @@
 <script>
     const axios = require('axios');
 
+    //Validation
+    import { email, maxLength, required , url } from 'vuelidate/lib/validators';
+
+    //Mixins
+    import errorModalMixin from "../../mixins/errorModalMixin";
+    import loadingModalMixin from "../../mixins/loadingModalMixin";
+
     export default {
         name: "OrganisationInformation",
         props: [
             'organisationResults',
+        ],
+        mixins: [
+            errorModalMixin,
+            loadingModalMixin,
         ],
         data() {
             return {
@@ -88,22 +125,49 @@
                 organisationWebsiteModel: this.organisationResults[0]['fields']['organisation_website'],
             }
         },
+        validations: {
+            organisationNameModel: {
+                required,
+                maxLength: maxLength(255),
+            },
+            organisationWebsiteModel: {
+                required,
+                url,
+            },
+            organisationEmailModel: {
+                required,
+                email,
+            },
+        },
         methods: {
             updateOrganisation: function() {
+                //Check validation
+                this.$v.$touch();
+
+                if (this.$v.$invalid) {
+                    this.showValidationErrorModal();
+
+                    //Just return - as we do not need to do the rest of this function
+                    return;
+                }
+
                 //Construct the data_to_send
                 const data_to_send = new FormData();
                 data_to_send.set('organisation_name',this.organisationNameModel);
                 data_to_send.set('organisation_email',this.organisationEmailModel);
                 data_to_send.set('organisation_website',this.organisationWebsiteModel);
 
+                //Show the loader
+                this.showLoadingModal('Organisation');
+
                 //Use axios to send the data
                 axios.post(
                     `/organisation_information/${this.organisationResults[0]['pk']}/save/`,
                     data_to_send,
                 ).then(response => {
-                    console.log("Response: ",response);
+                    this.closeLoadingModal();
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    this.showErrorModal(error,'organisation',this.organisationResults[0]['pk']);
                 })
             },
         }

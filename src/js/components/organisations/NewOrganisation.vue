@@ -143,9 +143,17 @@
     //Validation
     import { email, maxLength, required , url } from 'vuelidate/lib/validators';
 
+    //Mixins
+    import errorModalMixin from "../../mixins/errorModalMixin";
+    import loadingModalMixin from "../../mixins/loadingModalMixin";
+
     export default {
         name: "NewOrganisation",
         props: [],
+        mixins: [
+            errorModalMixin,
+            loadingModalMixin,
+        ],
         data() {
             return {
                 duplicateOrganisations: [],
@@ -174,17 +182,7 @@
                 this.$v.$touch();
 
                 if (this.$v.$invalid) {
-                    //Show the error dialog and notify to the user that there were field missing.
-                    var elem_cont = document.getElementById("errorModalContent");
-
-                    // Update the content
-                    elem_cont.innerHTML =
-                        `<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.`;
-
-                    // Show the modal
-                    var errorModal = new Modal(document.getElementById('errorModal'));
-                    errorModal.show();
-
+                    this.showValidationErrorModal();
                     //Just return - as we do not need to do the rest of this function
                     return;
                 }
@@ -204,7 +202,7 @@
                     //Copy over the response data
                     this.duplicateOrganisations = response['data'];
                 }).catch(error => {
-                    console.log("ERROR");
+                    this.showErrorModal(error,'organisation','')
                 })
             },
             dataToSend: function() {
@@ -244,7 +242,7 @@
                 required,
                 email,
             },
-        }
+        },
     }
 </script>
 

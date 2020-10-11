@@ -91,7 +91,8 @@
                 this.bugList.push(data[0]['fields']);
             },
             getBugHyperLink: function(bug) {
-                if (bug['bug_client__list_of_bug_client'] == 'Bugzilla') {
+                console.log("BUG: ",bug);
+                if (bug['bug_client__list_of_bug_client__bug_client_name'] == 'Bugzilla') {
                     return `${bug['bug_client__bug_client_url']}/show_bug.cgi?id=${bug['bug_code']}`;
                 }
                 return 'javascript:void(0)';

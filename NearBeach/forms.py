@@ -191,6 +191,32 @@ class NewProjectForm(forms.ModelForm):
         ]
 
 
+class NewTaskForm(forms.ModelForm):
+    task_start_date = forms.DateTimeField(
+        input_formats=['c'],
+    )
+    task_end_date = forms.DateTimeField(
+        input_formats=['c'],
+    )
+    group_list = forms.ModelMultipleChoiceField(
+        required=True,
+        queryset=group.objects.filter(
+            is_deleted=False,
+        )
+    )
+
+    # Basic Meta Data
+    class Meta:
+        model = task
+        fields = [
+            'task_short_description',
+            'task_long_description',
+            'task_start_date',
+            'task_end_date',
+            'organisation',
+        ]
+
+
 class OrganisationForm(forms.ModelForm):
     # Basic Meta data
     class Meta:

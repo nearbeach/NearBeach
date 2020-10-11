@@ -56,7 +56,6 @@ def new_project_save(request):
     # Get the form data
     form = NewProjectForm(request.POST)
     if not form.is_valid():
-        print(form.errors)
         return HttpResponseBadRequest(form.errors)
 
     # Create the project
