@@ -20,7 +20,7 @@
                     <div class="form-group">
                         <label>Project Name
                             <span class="error" v-if="!$v.projectNameModel.required && $v.projectNameModel.$dirty"
-                            > Please suppy a title.</span>
+                            > Please supply a title.</span>
                         </label>
                         <input type="text"
                                v-model="projectNameModel"

@@ -19,7 +19,7 @@
                     <div class="form-group">
                         <label>Task Short Description:
                             <span class="error" v-if="!$v.taskShortDescriptionModel.required && $v.taskShortDescriptionModel.$dirty"
-                            > Please suppy a title.</span>
+                            > Please supply a title.</span>
                         </label>
                         <input type="text"
                                v-model="taskShortDescriptionModel"
