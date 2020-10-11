@@ -104,8 +104,20 @@ def task_information(request,task_id):
     # Template
     t = loader.get_template('NearBeach/tasks/task_information.html')
 
+    # Get Data
+    task_results = task.objects.get(task_id=task_id)
+
+    organisation_results = organisation.objects.filter(
+        is_deleted=False,
+        organisation_id=task_results.organisation_id,
+    )
+
     # Context
-    c = {}
+    c = {
+        'organisation_results': serializers.serialize('json',organisation_results),
+        'task_id': task_id,
+        'task_results': serializers.serialize('json',[task_results]),
+    }
 
     return HttpResponse(t.render(c,request))
 

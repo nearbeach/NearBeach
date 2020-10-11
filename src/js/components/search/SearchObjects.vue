@@ -31,18 +31,21 @@
         <list-search-results v-if="localSearchResults['requirement'].length > 0"
                              v-bind:search-results="localSearchResults['requirement']"
                              v-bind:import-variables="requirementVariables"
+                             v-bind:destination="'requirement'"
         ></list-search-results>
 
         <!-- PROJECT RESULTS -->
         <list-search-results v-if="localSearchResults['project'].length > 0"
                              v-bind:search-results="localSearchResults['project']"
                              v-bind:import-variables="projectVariables"
+                             v-bind:destination="'project'"
         ></list-search-results>
 
         <!-- TASK RESULTS -->
         <list-search-results v-if="localSearchResults['task'].length > 0"
                              v-bind:search-results="localSearchResults['task']"
                              v-bind:import-variables="taskVariables"
+                             v-bind:destination="'task'"
         ></list-search-results>
 
         <!-- WHEN THERE ARE NO RESULTS -->
