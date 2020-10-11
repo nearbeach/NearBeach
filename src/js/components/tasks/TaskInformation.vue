@@ -84,6 +84,7 @@
 <script>
     const axios = require('axios');
     import { required, maxLength } from 'vuelidate/lib/validators';
+    import { DateTime } from "luxon";
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -100,9 +101,9 @@
         data() {
             return {
                 taskDescriptionModel: this.taskResults[0]['fields']['task_long_description'],
-                taskEndDateModel: this.taskResults[0]['fields']['task_end_date'],
+                taskEndDateModel: DateTime.fromISO(this.taskResults[0]['fields']['task_end_date']),
                 taskShortDescriptionModel: this.taskResults[0]['fields']['task_short_description'],
-                taskStartDateModel: this.taskResults[0]['fields']['task_start_date'],
+                taskStartDateModel: DateTime.fromISO(this.taskResults[0]['fields']['task_start_date']),
             }
         },
         mixins: [

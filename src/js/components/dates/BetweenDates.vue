@@ -49,7 +49,7 @@
         props: {
             destination: String,
             endDateModel: {
-                type: Object,
+                type: [Object,String],
                 default() {
                     //Define a date variable
                     var date = DateTime.local();
@@ -63,7 +63,7 @@
             },
             isDirty: Boolean,
             startDateModel: {
-                type: Object,
+                type: [Object,String],
                 default() {
                     //Just return today's date
                     return DateTime.local();

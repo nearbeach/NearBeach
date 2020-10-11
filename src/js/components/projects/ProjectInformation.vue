@@ -64,6 +64,8 @@
             <between-dates destination="project"
                            v-on:update_dates="updateDates($event)"
                            v-bind:is-dirty-end="$v.projectEndDateModel.$dirty || $v.projectStartDateModel.$dirty"
+                           v-bind:end-date-model="projectEndDateModel"
+                           v-bind:start-date-model="projectStartDateModel"
             ></between-dates>
 
             <!-- Submit Button -->
@@ -83,6 +85,7 @@
 <script>
     const axios = require('axios');
     import { Modal } from "bootstrap";
+    import { DateTime } from "luxon";
 
     //Validations
     import { required, maxLength } from 'vuelidate/lib/validators';
@@ -105,9 +108,9 @@
         data() {
             return {
                 projectDescriptionModel: this.projectResults[0]['fields']['project_description'],
-                projectEndDateModel: this.projectResults[0]['fields']['project_end_date'],
+                projectEndDateModel: DateTime.fromISO(this.projectResults[0]['fields']['project_end_date']),
                 projectNameModel: this.projectResults[0]['fields']['project_name'],
-                projectStartDateModel: this.projectResults[0]['fields']['project_start_date'],
+                projectStartDateModel: DateTime.fromISO(this.projectResults[0]['fields']['project_start_date']),
             }
         },
         validations: {
