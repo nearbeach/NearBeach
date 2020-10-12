@@ -111,9 +111,9 @@
 
     export default {
         name: "OrganisationInformation",
-        props: [
-            'organisationResults',
-        ],
+        props: {
+            organisationResults: Array,
+        },
         mixins: [
             errorModalMixin,
             loadingModalMixin,
