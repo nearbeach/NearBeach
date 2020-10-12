@@ -13,9 +13,16 @@
                        v-model="searchModel"
                 >
             </div>
+
+            <!-- LIST OUT RESULTS -->
             <hr>
             <list-customers v-bind:customer-results="localCustomerResults"
             ></list-customers>
+
+            <!-- SHOW IF NO RESULTS -->
+            <div class="alert alert-warning"
+                 v-if="localCustomerResults.length == 0"
+            >There are no customers with the search parameters used. Please try again.</div>
         </div>
     </div>
 </template>

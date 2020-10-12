@@ -102,9 +102,14 @@ def organisation_information(request,organisation_id):
     :return:
     """
     organisation_results = organisation.objects.get(organisation_id=organisation_id)
+
     customer_results = customer.objects.filter(
         is_deleted=False,
         organisation_id=organisation_id,
+    )
+
+    title_list = list_of_title.objects.filter(
+        is_deleted=False,
     )
 
     t = loader.get_template('NearBeach/organisations/organisation_information.html')
@@ -113,6 +118,7 @@ def organisation_information(request,organisation_id):
         'customer_results': serializers.serialize('json',customer_results),
         'organisation_id': organisation_id,
         'organisation_results': serializers.serialize('json',[organisation_results]),
+        'title_list': serializers.serialize('json',title_list),
     }
 
     return HttpResponse(t.render(c,request))

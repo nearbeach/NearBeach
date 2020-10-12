@@ -1,0 +1,8 @@
+{% extends 'NearBeach/template.html' %}
+{% load static %}
+{% block content %}
+    <search-objects v-bind:search-input="'{{search_input}}'"
+                    v-bind:include-closed="{{include_closed}}"
+                    v-bind:search-results="{{search_results}}"
+    ></search-objects>
+{% endblock %}

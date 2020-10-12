@@ -255,7 +255,7 @@ def new_requirement(request, location_id="", destination=""):
     #Extract Data
     status_list = list_of_requirement_status.objects.filter(
         is_deleted=False,
-        requirement_status_is_closed="FALSE",
+        requirement_status_is_closed=False,
     )
 
     type_list = list_of_requirement_type.objects.filter(
@@ -374,7 +374,7 @@ def requirement_information(request, requirement_id):
 
     status_list = list_of_requirement_status.objects.filter(
         is_deleted=False,
-        requirement_status_is_closed="FALSE",
+        requirement_status_is_closed=False,
     )
 
     type_list = list_of_requirement_type.objects.filter(

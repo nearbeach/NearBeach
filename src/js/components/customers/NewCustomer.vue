@@ -12,6 +12,30 @@
                                v-on:update_customer_data="updateCustomerData($event)"
             ></new-customer-form>
 
+            <!-- CUSTOMER ORGANISATION -->
+            <hr>
+            <div class="row">
+                <div class="col-md-4">
+                    <strong>Customer Organisation</strong>
+                    <p class="text-instructions">
+                        This field is optional. If this customer does not have any organisations attached, it will
+                        treat this customer as a freelancer.
+                    </p>
+                </div>
+                <div class="col-md-8">
+                    <div class="form-group col-sm-8">
+                        <label>Organisation:</label>
+                        <v-select :options="organisationFixList"
+                          @search="fetchOptions"
+                          v-model="organisationModel"
+                          label="organisation_name"
+                          class="get-stakeholders"
+                        ></v-select>
+                    </div>
+                </div>
+            </div>
+
+
             <!-- REMEMBER TO ADD IN USER PERMISSIONS HERE!! -->
             <!-- Submit Button -->
             <hr>
@@ -46,6 +70,7 @@
                 customerFirstNameModel: '',
                 customerLastNameModel: '',
                 flagValidationCheck: false,
+                organisationFixList: [],
                 organisationModel: {},
                 titleModel: [],
             }
@@ -66,6 +91,81 @@
             },
         },
         methods: {
+            fetchOptions: function(search, loading) {
+                // Make sure the timer isn't running
+                if (this.searchTimeout != '') {
+                    //Stop the clock!
+                    clearTimeout(this.searchTimeout);
+                }
+
+                // Reset the clock, to only search if there is an uninterupted 0.5s of no typing.
+                if (search.length >= 3) {
+                    this.searchTimeout = setTimeout(
+                        this.getOrganisationData,
+                        500,
+                        search,
+                        loading
+                    )
+                }
+            },
+            getOrganisationData: function(search,loading) {
+                // Save the seach data in FormData
+                const data_to_send = new FormData();
+                data_to_send.set('search',search);
+
+                // Now that the timer has run out, lets use AJAX to get the organisations.
+                axios.post(
+                    '/search/organisation/data/',
+                    data_to_send
+                ).then(response => {
+                    //Clear the stakeholderFixList
+                    this.organisationFixList = [];
+
+                    //Extract the required JSON data
+                    var extracted_data = response['data'];
+
+                    //Look through the extracted data - and map the required fields into stakeholder fix list
+                    extracted_data.forEach((row) => {
+                        //Create the creation object
+                        var creation_object = {
+                            'value': row['pk'],
+                            'organisation_name': row['fields']['organisation_name'],
+                            'organisation_website': row['fields']['organisation_website'],
+                            'organisation_email': row['fields']['organisation_email'],
+                            'organisation_profile_picture': row['fields']['organisation_profile_picture'],
+                        };
+
+                        //Push that object into the stakeholders
+                        this.organisationFixList.push(creation_object)
+                    });
+
+                    //If there is an organisation Name - we want to filter it out of the results and place it into
+                    //the modal
+                    var filtered_results = this.organisationFixList.filter(row => {
+                        return row['organisation_name'] == this.organisationName;
+                    });
+                    if (filtered_results.length > 0) {
+                        //Get the first value - which should be the proper organisation
+                        this.organisationModel = filtered_results[0];
+                    }
+                }).catch(function (error) {
+                    // Get the error modal
+                    var elem_cont = document.getElementById("errorModalContent");
+
+                    // Update the content
+                    elem_cont.innerHTML = `<strong>Search Organisation Issue:</strong><br/>${error}`;
+
+                    // Show the modal
+                    var errorModal = new Modal(document.getElementById('errorModal'), {
+                      keyboard: false
+                    })
+                    errorModal.show();
+
+                    // Hide the loader
+                    var loader_element = document.getElementById("loader");
+                    loader_element.style.display = "none";
+                });
+            },
             submitNewCustomer: function() {
                 //Flag downstream to check validation
                 this.flagValidationCheck = true;

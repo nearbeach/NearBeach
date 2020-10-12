@@ -30,9 +30,11 @@ from .views import authentication_views, \
 	document_views, \
 	object_data_views, \
 	organisation_views, \
+	project_views, \
 	requirement_item_views, \
 	requirement_views, \
-	search_views
+	search_views, \
+	task_views
 
 
 urlpatterns = [
@@ -62,9 +64,13 @@ urlpatterns = [
 	path('new_customer/save/',customer_views.new_customer_save,name='new_customer_save'),
 	path('new_organisation/',organisation_views.new_organisation,name='new_organisation'),
 	path('new_organisation/save/',organisation_views.new_organisation_save,name='new_organisation_save'),
+	path('new_project/',project_views.new_project,name='new_project'),
+	path('new_project/save/',project_views.new_project_save,name='new_project_save'),
 	path('new_requirement/',requirement_views.new_requirement, name='new_requirement'),
 	path('new_requirement/save/',requirement_views.new_requirement_save, name='new_requirement_save'),
 	path('new_requirement_item/save/<int:requirement_id>/',requirement_item_views.new_requirement_item,name='new_requirement_item'),
+	path('new_task/',task_views.new_task,name='new_task'),
+	path('new_task/save/',task_views.new_task_save,name='new_task_save'),
 
 	# Object Data
 	path('object_data/<destination>/<location_id>/add_bug/',object_data_views.add_bug,name='add_bug'),
@@ -91,6 +97,10 @@ urlpatterns = [
 	path('organisation_information/<int:organisation_id>/save/',organisation_views.organisation_information_save,name='organisation_information_save'),
 	path('organisation_information/<int:organisation_id>/update_profile/',organisation_views.organisation_update_profile,name='organisation_update_profile'),
 
+	# Projects
+	path('project_information/<int:project_id>/',project_views.project_information,name='project_information'),
+	path('project_information/<int:project_id>/save/',project_views.project_information_save,name='project_information_save'),
+
 	# Requirements
 	path('requirement_information/<int:requirement_id>/',requirement_views.requirement_information,name='requirement_information'),
 	path('requirement_information/<int:requirement_id>/add_link/',requirement_views.add_requirement_link,name='add_requirement_link'),
@@ -109,11 +119,16 @@ urlpatterns = [
 	path('requirement_item_information/<int:requirement_item_id>/save/',requirement_item_views.requirement_information_save,name='requirement_information_save'),
 
 	# Search Items
+	path('search/',search_views.search,name='search'),
+	path('search/data/',search_views.search_data,name='search_data'),
 	path('search/customer/',search_views.search_customer,name='search_customer'),
 	path('search/customer/data/',search_views.search_customer_data,name='search_customer_data'),
 	path('search/organisation/',search_views.search_organisation,name='search_organisation'),
 	path('search/organisation/data/',search_views.search_organisation_data,name='search_organisation_data'),
 
+	# Tasks
+	path('task_information/<int:task_id>/',task_views.task_information,name='task_information'),
+	path('task_information/<int:task_id>/save/',task_views.task_information_save,name='task_information_save'),
 ]
 
 """

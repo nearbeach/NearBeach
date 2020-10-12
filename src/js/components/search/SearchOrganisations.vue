@@ -13,9 +13,16 @@
                        v-model="searchModel"
                 >
             </div>
+
+            <!-- LIST OUT SEARCH RESULTS -->
             <hr>
             <list-organisations v-bind:organisation-results="localOrganisationResults"
             ></list-organisations>
+
+            <!-- SHOW IF NO RESULTS -->
+            <div class="alert alert-warning"
+                 v-if="localOrganisationResults.length == 0"
+            >There are no organisations with the search parameters used. Please try again.</div>
         </div>
     </div>
 </template>

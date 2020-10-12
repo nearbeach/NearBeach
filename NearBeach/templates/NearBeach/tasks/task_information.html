@@ -1,0 +1,14 @@
+{% extends 'NearBeach/template.html' %}
+{% load static %}
+{% block content %}
+    <task-information v-bind:task-results="{{task_results}}"
+                      v-bind:default-stakeholder-image="`{% static 'NearBeach/images/placeholder/product_tour.svg' %}`"
+                      v-bind:organisation-results="{{organisation_results}}"
+    ></task-information>
+
+    <br/>
+
+    <parent-modules v-bind:destination="'task'"
+                    v-bind:location-id="{{task_id}}"
+    ></parent-modules>
+{% endblock %}

@@ -53,9 +53,15 @@
                         <div class="col-md-8">
                             <!-- LOADING PLACEHOLDER -->
                             <div id="link_wizard_results"
-                                 v-if="isSearching || objectResults.length == 0 || objectModel == null"
+                                 v-if="isSearching || objectModel == null"
                             >
                                 <img src="/static/NearBeach/images/placeholder/search.svg" alt="Searching..." />
+                            </div>
+
+                            <div v-if="objectResults.length == 0 && objectModel != null"
+                                 class="alert alert-warning"
+                            >
+                                Sorry - there are no results.
                             </div>
 
                             <!-- TABLE CONTAINING RESULTS -->

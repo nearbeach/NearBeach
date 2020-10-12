@@ -296,6 +296,7 @@ def bug_list(request,destination,location_id):
     bug_list = bug_list.values(
         'bug_client',
         'bug_client__list_of_bug_client',
+        'bug_client__list_of_bug_client__bug_client_name',
         'bug_client__bug_client_name',
         'bug_client__bug_client_url',
         'bug_code',
@@ -358,7 +359,7 @@ def customer_list_all(request,destination,location_id):
             organisation_id=task.objects.get(
                 is_deleted=False,
                 task_id=location_id,
-            )
+            ).organisation_id
         )
     else:
         # There is no destination that could match this. Send user to errors
@@ -506,7 +507,7 @@ def link_list(request,destination,location_id,object_lookup):
     elif object_lookup == "opportunity":
         data_results = opportunity.objects.filter(
             is_deleted=False,
-            opportunity_stage_id__opportunity_closed="FALSE",
+            opportunity_stage_id__opportunity_closed=False,
         )
     else:
         # There is an error.

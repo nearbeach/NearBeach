@@ -54,30 +54,9 @@
 
             <!-- Stakeholder Information -->
             <hr>
-            <div class="row">
-                <!-- Description -->
-                <div class="col-md-4">
-                    <h2>Stakeholder</h2>
-                </div>
-                <div class="col-md-8 organisation-details">
-                    <img v-bind:src="getStakeholderImage" alt="Stakeholder Logo" class="organisation-image">
-                    <div class="organisation-name">
-                        {{stakeholderModel['organisation_name']}}
-                    </div>
-                    <div class="organisation-link">
-                        <i data-feather="external-link"></i> Website:
-                        <a v-bind:href="stakeholderModel['organisation_website']" target="_blank">
-                            {{ stakeholderModel['organisation_website'] }}
-                        </a>
-                    </div>
-                    <div class="organisation-email">
-                        <i data-feather="mail"></i> Email:
-                        <a v-bind:href="`mailto:${stakeholderModel['organisation_email']}`">
-                            {{stakeholderModel['organisation_email']}}
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <stakeholder-information v-bind:organisation-results="organisationResults"
+                                     v-bind:default-stakeholder-image="defaultStakeholderImage"
+            ></stakeholder-information>
 
             <!-- Status -->
             <hr>
@@ -134,6 +113,10 @@
     //Validation
     import { required, maxLength } from 'vuelidate/lib/validators';
 
+    //Mixins
+    import errorModalMixin from "../../mixins/errorModalMixin.js";
+    import loadingModalMixin from "../../mixins/loadingModalMixin.js";
+
     export default {
         name: "RequirementInformation",
         components: {},
@@ -143,6 +126,10 @@
             'requirementResults',
             'statusList',
             'typeList',
+        ],
+        mixins: [
+            errorModalMixin,
+            loadingModalMixin
         ],
         data() {
             return {
@@ -176,27 +163,13 @@
                 this.$v.$touch();
 
                 if (this.$v.$invalid) {
-                    //Show the error dialog and notify to the user that there were field missing.
-                    var elem_cont = document.getElementById("errorModalContent");
-
-                    // Update the content
-                    elem_cont.innerHTML =
-                        `<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.`;
-
-                    // Show the modal
-                    var errorModal = new Modal(document.getElementById('errorModal'));
-                    errorModal.show();
+                    this.showValidationErrorModal();
 
                     //Just return - as we do not need to do the rest of this function
                     return;
                 }
 
-                //Open up the loading modal
-                var loadingModal = new Modal(document.getElementById('loadingModal'));
-                loadingModal.show();
-
-                //Update message in loading modal
-                document.getElementById("loadingModalContent").innerHTML = `Updating your Requirement details`;
+                this.showLoadingModal('Requirement');
 
                 // Set up the data object to send
                 const data_to_send = new FormData();
@@ -210,36 +183,10 @@
                     'save/',
                     data_to_send
                 ).then(response => {
-                    //Update the message in the loading modal
-                    document.getElementById("loadingModalContent").innerHTML = `UPDATED SUCCESSFULLY`;
-
-                    //Close after 1 second
-                    setTimeout(() => {
-                        loadingModal.hide();
-                    },1000)
+                    this.closeLoadingModal();
                 }).catch((error) => {
-                    //Hide the loading modal
-                    loadingModal.hide();
-
-                    // Get the error modal
-                    var elem_cont = document.getElementById("errorModalContent");
-
-                    // Update the content
-                    elem_cont.innerHTML = `<strong>HTML ISSUE:</strong> We could not save the new requirement<hr>${error}`;
-
-                    // Show the modal
-                    var errorModal = new Modal(document.getElementById('errorModal'));
-                    errorModal.show();
+                    this.showErrorModal(error, this.destination);
                 });
-            }
-        },
-        computed: {
-            getStakeholderImage: function() {
-                if (this.stakeholderModel['organisation_profile_picture'] == '') {
-                    //There is no image - return the default image
-                    return this.defaultStakeholderImage;
-                }
-                return this.stakeholderModel['organisation_profile_picture']
             }
         },
         mounted() {
@@ -248,9 +195,6 @@
 
             this.requirementScopeModel = requirement_results['requirement_scope'];
             this.requirementTitleModel = requirement_results['requirement_title'];
-
-            //Extract the organisation results directly
-            this.stakeholderModel = this.organisationResults[0]['fields'];
 
             //We need to extract "fields" array from the statusList/typeList json data
             this.statusList.forEach((row) => {

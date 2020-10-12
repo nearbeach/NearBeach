@@ -152,6 +152,7 @@ class NewCustomerForm(forms.ModelForm):
         queryset=organisation.objects.all(),
         required=False,
     )
+
     # Basic Meta Data
     class Meta:
         model = customer
@@ -160,6 +161,58 @@ class NewCustomerForm(forms.ModelForm):
             'customer_first_name',
             'customer_last_name',
             'customer_email',
+            'organisation',
+        ]
+
+
+class NewProjectForm(forms.ModelForm):
+    project_start_date = forms.DateTimeField(
+        input_formats=['c'],
+    )
+    project_end_date = forms.DateTimeField(
+        input_formats=['c'],
+    )
+    group_list = forms.ModelMultipleChoiceField(
+        required=True,
+        queryset=group.objects.filter(
+            is_deleted=False,
+        )
+    )
+
+    # Basic Meta Data
+    class Meta:
+        model = project
+        fields = [
+            'project_name',
+            'project_description',
+            'project_start_date',
+            'project_end_date',
+            'organisation',
+        ]
+
+
+class NewTaskForm(forms.ModelForm):
+    task_start_date = forms.DateTimeField(
+        input_formats=['c'],
+    )
+    task_end_date = forms.DateTimeField(
+        input_formats=['c'],
+    )
+    group_list = forms.ModelMultipleChoiceField(
+        required=True,
+        queryset=group.objects.filter(
+            is_deleted=False,
+        )
+    )
+
+    # Basic Meta Data
+    class Meta:
+        model = task
+        fields = [
+            'task_short_description',
+            'task_long_description',
+            'task_start_date',
+            'task_end_date',
             'organisation',
         ]
 
@@ -180,6 +233,25 @@ class OrganisationProfilePictureForm(forms.ModelForm):
     class Meta:
         fields = [
             'organisation_picture'
+        ]
+
+
+class ProjectForm(forms.ModelForm):
+    project_start_date = forms.DateTimeField(
+        input_formats=['c'],
+    )
+    project_end_date = forms.DateTimeField(
+        input_formats=['c'],
+    )
+
+    # Basic Meta Data
+    class Meta:
+        model = project
+        fields = [
+            'project_name',
+            'project_description',
+            'project_start_date',
+            'project_end_date',
         ]
 
 
@@ -230,6 +302,16 @@ class QueryBugClientForm(forms.Form):
 
 class SearchForm(forms.Form):
     # Just have a simple search field
+    search = forms.CharField(
+        required=False,
+    )
+
+
+class SearchObjectsForm(forms.Form):
+    include_closed = forms.BooleanField(
+        required=False,
+        initial=False,
+    )
     search = forms.CharField(
         required=False,
     )

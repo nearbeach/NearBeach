@@ -14,9 +14,17 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <new-customer-form></new-customer-form>
+                    <new-customer-form v-bind:title-list="titleList"
+                                       v-bind:flag-validation-check="flagValidationCheck"
+                                       v-on:update_customer_data="updateCustomerData($event)"
+                    ></new-customer-form>
                 </div>
                 <div class="modal-footer">
+                    <a href="javascript:void(0)"
+                       class="btn btn-primary"
+                       v-on:click="submitNewCustomer"
+                    >Add Contact</a>
+
                     <button type="button"
                             class="btn btn-secondary"
                             data-dismiss="modal"
@@ -37,7 +45,7 @@
     export default {
         name: "NewCustomerModal",
         props: [
-                'organisationName',
+                'organisationId',
                 'titleList',
         ],
         data() {
@@ -101,11 +109,7 @@
                 data_to_send.set('customer_first_name',this.customerFirstNameModel);
                 data_to_send.set('customer_last_name',this.customerLastNameModel);
                 data_to_send.set('customer_email',this.customerEmailModel);
-
-                //If there is an organisation in the model - send it
-                if (Object.keys(this.organisationModel).length != 0) {
-                    data_to_send.set('organisation',this.organisationModel['value']);
-                }
+                data_to_send.set('organisation',this.organisationId);
 
                 //Send the data using axios
                 axios.post(

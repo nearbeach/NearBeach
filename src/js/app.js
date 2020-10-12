@@ -40,6 +40,14 @@ import NewCustomerModal from "./components/customers/NewCustomerModal.vue";
 import SearchCustomers from "./components/search/SearchCustomers.vue";
 import ListCustomers from "./components/customers/ListCustomers.vue";
 import CustomerInformation from "./components/customers/CustomerInformation.vue";
+import SearchObjects from "./components/search/SearchObjects.vue";
+import ListSearchResults from "./components/search/ListSearchResults.vue";
+import ProjectInformation from "./components/projects/ProjectInformation.vue";
+import NewProject from "./components/projects/NewProject.vue";
+import TaskInformation from "./components/tasks/TaskInformation.vue";
+import NewTask from "./components/tasks/NewTask.vue";
+import BetweenDates from "./components/dates/BetweenDates.vue";
+import StakeholderInformation from "./components/organisations/StakeholderInformation.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -104,13 +112,25 @@ Vue.component('NewCustomerModal',NewCustomerModal);
 Vue.component('SearchCustomers',SearchCustomers);
 Vue.component('ListCustomers',ListCustomers);
 Vue.component('CustomerInformation',CustomerInformation);
-
-
+Vue.component('SearchObjects',SearchObjects);
+Vue.component('ListSearchResults',ListSearchResults);
+Vue.component('ProjectInformation',ProjectInformation);
+Vue.component('NewProject',NewProject);
+Vue.component('TaskInformation',TaskInformation);
+Vue.component('NewTask',NewTask);
+Vue.component('BetweenDates',BetweenDates);
+Vue.component('StakeholderInformation',StakeholderInformation);
 
 
 //Validation
 import Vuelidate from 'vuelidate'
 Vue.use(Vuelidate)
+
+//Vue-datetime
+import { Datetime } from 'vue-datetime';
+import 'vue-datetime/dist/vue-datetime.css'
+Vue.use(Datetime);
+Vue.component('datetime', Datetime);
 
 //Feater Icons
 const feather = require('feather-icons')

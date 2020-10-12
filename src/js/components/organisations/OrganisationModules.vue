@@ -132,23 +132,27 @@
         </div>
 
         <!-- MODALS -->
-        <new-customer-modal v-bind:organisation-name="'NearBeach Incorporated'"
-                            v-bind:title-list="[]"
+        <new-customer-modal v-bind:organisation-id="locationId"
+                            v-bind:title-list="titleList"
         ></new-customer-modal>
     </div>
 </template>
 
 <script>
+    import { Modal } from "bootstrap";
+
     export default {
         name: "OrganisationModules",
-        props: [
-            'customerResults',
-            'destination',
-            'locationId',
-        ],
+        props: {
+            customerResults: Array,
+            destination: String,
+            locationId: Number,
+            titleList: Array,
+        },
         methods: {
             addNewContact: function() {
-                //ADD CODE
+                var new_customer_modal = new Modal(document.getElementById('addCustomerModal'));
+                new_customer_modal.show();
             }
         }
     }
