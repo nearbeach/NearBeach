@@ -48,6 +48,7 @@ import TaskInformation from "./components/tasks/TaskInformation.vue";
 import NewTask from "./components/tasks/NewTask.vue";
 import BetweenDates from "./components/dates/BetweenDates.vue";
 import StakeholderInformation from "./components/organisations/StakeholderInformation.vue";
+import NewKanban from "./components/kanban/NewKanban.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -120,6 +121,7 @@ Vue.component('TaskInformation',TaskInformation);
 Vue.component('NewTask',NewTask);
 Vue.component('BetweenDates',BetweenDates);
 Vue.component('StakeholderInformation',StakeholderInformation);
+Vue.component('NewKanban',NewKanban);
 
 
 //Validation

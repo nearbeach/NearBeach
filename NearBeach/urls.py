@@ -28,6 +28,7 @@ from .views import authentication_views, \
 	customer_views, \
 	dashboard_views, \
 	document_views, \
+	kanban_views, \
 	object_data_views, \
 	organisation_views, \
 	project_views, \
@@ -51,6 +52,9 @@ urlpatterns = [
 	path('documentation/<destination>/<location_id>/list/folders/',document_views.document_list_folders,name='document_list_folders'),
 	path('documentation/<destination>/<location_id>/upload/',document_views.document_upload,name='document_upload'),
 
+
+	# Kanban
+	path('new_kanban/',kanban_views.new_kanban,name='new_kanban'),
 
 	# Authentication
 	path('login', authentication_views.login, name='login'),
