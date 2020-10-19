@@ -66,6 +66,8 @@ urlpatterns = [
 	# New Objects
 	path('new_customer/',customer_views.new_customer,name='new_customer'),
 	path('new_customer/save/',customer_views.new_customer_save,name='new_customer_save'),
+	path('new_kanban/',kanban_views.new_kanban,name='new_kanban'),
+	path('new_kanban_save/',kanban_views.new_kanban_save,name='new_kanban_save'),
 	path('new_organisation/',organisation_views.new_organisation,name='new_organisation'),
 	path('new_organisation/save/',organisation_views.new_organisation_save,name='new_organisation_save'),
 	path('new_project/',project_views.new_project,name='new_project'),

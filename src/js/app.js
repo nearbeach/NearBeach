@@ -49,6 +49,8 @@ import NewTask from "./components/tasks/NewTask.vue";
 import BetweenDates from "./components/dates/BetweenDates.vue";
 import StakeholderInformation from "./components/organisations/StakeholderInformation.vue";
 import NewKanban from "./components/kanban/NewKanban.vue";
+import KanbanPropertyOrder from "./components/kanban/KanbanPropertyOrder.vue";
+
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -63,6 +65,10 @@ import Editor from '@tinymce/tinymce-vue'
 //vSelect
 import vSelect from "vue-select";
 
+//VueSortable
+import draggable from 'vuedraggable';
+
+
 //custom javascript
 import './global.js';
 
@@ -74,6 +80,7 @@ axios.defaults.xsrfCookieName = "csrftoken"
 //Global Vue Components
 Vue.component('vSelect',vSelect);
 Vue.component('Editor',Editor);
+Vue.component('draggable',draggable);
 
 //Global NearBeach Vue Components
 Vue.component('AddBugWizard',AddBugWizard);
@@ -122,6 +129,7 @@ Vue.component('NewTask',NewTask);
 Vue.component('BetweenDates',BetweenDates);
 Vue.component('StakeholderInformation',StakeholderInformation);
 Vue.component('NewKanban',NewKanban);
+Vue.component('KanbanPropertyOrder',KanbanPropertyOrder);
 
 
 //Validation

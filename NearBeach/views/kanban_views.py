@@ -17,6 +17,7 @@ from NearBeach.user_permissions import return_user_permission_level
 import json, urllib3
 
 
+@login_required(login_url='login',redirect_field_name="")
 def new_kanban(request):
     """
 
@@ -35,10 +36,15 @@ def new_kanban(request):
     return HttpResponse(t.render(c,request))
 
 
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
 def new_kanban_save(request):
     """
 
     :param request:
     :return:
     """
-    return HttpResponseBadRequest("HELLO WORLD")
+
+    # CHECK USERS PERMISSIONS
+
+    return "ADD CODE"
