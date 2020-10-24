@@ -51,6 +51,9 @@ import StakeholderInformation from "./components/organisations/StakeholderInform
 import NewKanban from "./components/kanban/NewKanban.vue";
 import KanbanPropertyOrder from "./components/kanban/KanbanPropertyOrder.vue";
 import KanbanInformation from "./components/kanban/KanbanInformation.vue";
+import KanbanCard from "./components/kanban/KanbanCard.vue";
+import KanbanBoard from "./components/kanban/KanbanBoard.vue";
+import KanbanRow from "./components/kanban/KanbanRow.vue";
 
 
 //Import Bootstrap
@@ -132,6 +135,10 @@ Vue.component('StakeholderInformation',StakeholderInformation);
 Vue.component('NewKanban',NewKanban);
 Vue.component('KanbanPropertyOrder',KanbanPropertyOrder);
 Vue.component('KanbanInformation',KanbanInformation);
+Vue.component('KanbanCard',KanbanCard);
+Vue.component('KanbanBoard',KanbanBoard);
+Vue.component('KanbanRow',KanbanRow);
+
 
 
 //Validation
