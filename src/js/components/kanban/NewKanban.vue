@@ -50,6 +50,14 @@
                 </div>
             </div>
 
+
+            <!-- Group Permissions -->
+            <hr>
+            <group-permissions v-bind:group-results="groupResults"
+                               v-bind:destination="'kanban_board'"
+                               v-on:update_group_model="updateGroupModel($event)"
+            ></group-permissions>
+
             <!-- SAVE -->
             <hr>
             <div class="row submit-row">
@@ -70,7 +78,9 @@
 
     export default {
         name: "NewKanban",
-        props: {},
+        props: {
+            groupResults: Array,
+        },
         data() {
             return {
                 columnModel: [{
@@ -89,6 +99,7 @@
                     id: 5,
                     title: 'Completed',
                 },],
+                groupModel: [],
                 kanbanBoardNameModel: '',
                 levelModel: [{
                     id: 0,
@@ -119,10 +130,14 @@
                     `/new_kanban_save/`,
                     data_to_send
                 ).then(response => {
-                    console.log("Response: ",response);
+                    //Go to that webpage
+                    window.location.href = response['data'];
                 }).catch(error => {
                     console.log("Error: ",error);
                 });
+            },
+            updateGroupModel: function(data) {
+                this.groupModel = data;
             },
             updatePropertyList: function(data) {
                 this[data['source']] = data['data'];

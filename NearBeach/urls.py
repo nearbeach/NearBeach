@@ -54,7 +54,8 @@ urlpatterns = [
 
 
 	# Kanban
-	path('new_kanban/',kanban_views.new_kanban,name='new_kanban'),
+	path('kanban_information/<int:kanban_board_id>/',kanban_views.kanban_information,name='kanban_information'),
+
 
 	# Authentication
 	path('login', authentication_views.login, name='login'),

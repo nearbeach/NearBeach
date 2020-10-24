@@ -145,7 +145,7 @@ class about_user(models.Model):
         related_name='%(class)s_change_user',
     )
     is_deleted = models.BooleanField(
-        default='FALSE',
+        default=False,
     )
 
     class Meta:
@@ -554,7 +554,7 @@ class document(models.Model):
         related_name='%(class)s_change_user'
     )
     is_deleted = models.BooleanField(
-        default='FALSE',
+        default=False,
     )
 
     class Meta:
@@ -878,7 +878,7 @@ class group_permission(models.Model):
         related_name='%(class)s_change_user'
     )
     is_deleted = models.BooleanField(
-        default='FALSE',
+        default=False,
     )
 
     def __str__(self):
@@ -915,7 +915,7 @@ class kanban_board(models.Model):
         related_name='%(class)s_creation_user'
     )
     is_deleted = models.BooleanField(
-        default='FALSE',
+        default=False,
     )
 
     class Meta:
@@ -992,7 +992,7 @@ class kanban_card(models.Model):
         related_name='%(class)s_change_user'
     )
     is_deleted = models.BooleanField(
-        default='FALSE',
+        default=False,
     )
 
     class Meta:
@@ -1018,7 +1018,7 @@ class kanban_column(models.Model):
         related_name='%(class)s_change_user'
     )
     is_deleted = models.BooleanField(
-        default='FALSE',
+        default=False,
     )
 
     class Meta:
@@ -1057,7 +1057,7 @@ class kanban_comment(models.Model):
         related_name='%(class)s_change_user'
     )
     is_deleted = models.BooleanField(
-        default='FALSE',
+        default=False,
     )
 
     class Meta:
@@ -1085,7 +1085,7 @@ class kanban_level(models.Model):
         related_name='%(class)s_change_user'
     )
     is_deleted = models.BooleanField(
-        default='FALSE',
+        default=False,
     )
 
     class Meta:

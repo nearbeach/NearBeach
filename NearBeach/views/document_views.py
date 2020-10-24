@@ -13,6 +13,7 @@ from ..forms import *
 
 import json, os
 
+
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def document_add_folder(request,destination,location_id):

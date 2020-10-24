@@ -1,0 +1,39 @@
+.kanban-cell, .kanban-column-header {
+  min-width: 400px;
+}
+
+.kanban-cell {
+  min-height: 300px;
+  background-color: #E0E0E0;
+  margin: 1px;
+  max-width: 350px;
+}
+
+.kanban-column-header {
+  background-color: #6FCF97;
+  margin: 1px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.kanban-level-header {
+  background-color: #56CCF2;
+  margin: 2px 1px;
+  text-align: center;
+  width: 100%;
+}
+
+.kanban-container {
+  overflow: auto;
+  margin: 5px 35px;
+}
+
+.kanban-row {
+  display: flex;
+}
+
+.kanban-card {
+  background-color: #F2994A;
+  margin: 3px 5px;
+  padding: 3px;
+}

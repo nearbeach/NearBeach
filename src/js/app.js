@@ -50,6 +50,7 @@ import BetweenDates from "./components/dates/BetweenDates.vue";
 import StakeholderInformation from "./components/organisations/StakeholderInformation.vue";
 import NewKanban from "./components/kanban/NewKanban.vue";
 import KanbanPropertyOrder from "./components/kanban/KanbanPropertyOrder.vue";
+import KanbanInformation from "./components/kanban/KanbanInformation.vue";
 
 
 //Import Bootstrap
@@ -130,6 +131,7 @@ Vue.component('BetweenDates',BetweenDates);
 Vue.component('StakeholderInformation',StakeholderInformation);
 Vue.component('NewKanban',NewKanban);
 Vue.component('KanbanPropertyOrder',KanbanPropertyOrder);
+Vue.component('KanbanInformation',KanbanInformation);
 
 
 //Validation

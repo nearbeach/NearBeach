@@ -165,6 +165,18 @@ class NewCustomerForm(forms.ModelForm):
         ]
 
 
+class NewKanbanForm(forms.ModelForm):
+    column_title = forms.SelectMultiple()
+    level_title = forms.SelectMultiple()
+
+    # Basic Meta Data
+    class Meta:
+        model = kanban_board
+        fields = [
+            'kanban_board_name',
+        ]
+
+
 class NewProjectForm(forms.ModelForm):
     project_start_date = forms.DateTimeField(
         input_formats=['c'],
