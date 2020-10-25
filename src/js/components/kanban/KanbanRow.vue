@@ -1,6 +1,6 @@
 <template>
     <div class="kanban-row">
-        ROW ROW ROW
+        <kanban-card v-for="card in columnResults"></kanban-card>
     </div>
 </template>
 
@@ -8,7 +8,8 @@
     export default {
         name: "KanbanRow",
         props: {
-            kanbanRowModel: Array,
+            columnResults: Array,
+            kanbanRowModel: Array
         }
     }
 </script>

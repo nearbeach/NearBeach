@@ -9,14 +9,15 @@
             </div>
         </div>
 
-
         <!-- Render each row -->
-        <div v-for="(row, index) in kanbanModel">
+        <div v-for="level in levelResults">
             <!-- CREATE THE LEVEL HEADER -->
-            <div class="kanban-level-header">{{levelResults[index]['fields']['kanban_level_name']}}</div>
+            <div class="kanban-level-header">{{level['fields']['kanban_level_name']}}</div>
 
             <!-- RENDER THE CELLS -->
-            <kanban-row v-bind:kanban-row-model="row"></kanban-row>
+            <kanban-row v-bind:kanban-row-model="kanbanModel[level['pk']]"
+                        v-bind:column-results="columnResults"
+            ></kanban-row>
         </div>
     </div>
 </template>
