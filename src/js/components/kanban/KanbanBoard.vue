@@ -19,6 +19,7 @@
                         v-bind:column-results="columnResults"
             ></kanban-row>
         </div>
+
     </div>
 </template>
 
@@ -34,6 +35,8 @@
         data() {
             return {
                 kanbanModel: {}, //Stores the data here temporarily
+                list1: [{'id':1,'name':'The fart copter'}],
+                list2: [{'id':2,'name':'The fart copter'}],
             }
         },
         methods: {

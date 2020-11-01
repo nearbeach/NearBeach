@@ -7,7 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
-
+from django.views.decorators.http import require_http_methods
+from django.core import serializers
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Count
 
 # Import Python Libraries
 import json, urllib.parse, random
@@ -36,3 +39,23 @@ def dashboard(request):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login',redirect_field_name="")
+@require_http_methods(['POST'])
+def get_bug_list(request):
+    """
+
+    :param request:
+    :return:
+    """
+    bug_results = bug.objects.filter(
+        is_deleted=False,
+        # Add in ability to tell if bugs are opened or closed
+    ).values('bug_status').annotate(Count("bug_status"))
+
+    # Send back json data
+    json_results = json.dumps(list(bug_results), cls=DjangoJSONEncoder)
+
+    return HttpResponse(json_results, content_type='application/json')
+

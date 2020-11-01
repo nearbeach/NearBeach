@@ -54,6 +54,7 @@ import KanbanInformation from "./components/kanban/KanbanInformation.vue";
 import KanbanCard from "./components/kanban/KanbanCard.vue";
 import KanbanBoard from "./components/kanban/KanbanBoard.vue";
 import KanbanRow from "./components/kanban/KanbanRow.vue";
+import DashboardBugList from "./components/dashboard/DashboardBugList.vue";
 
 
 //Import Bootstrap
@@ -75,6 +76,9 @@ import draggable from 'vuedraggable';
 
 //custom javascript
 import './global.js';
+
+//D3 Elements
+//import * as d3 from "d3";
 
 //Import axios for ajax
 const axios = require('axios');
@@ -138,6 +142,7 @@ Vue.component('KanbanInformation',KanbanInformation);
 Vue.component('KanbanCard',KanbanCard);
 Vue.component('KanbanBoard',KanbanBoard);
 Vue.component('KanbanRow',KanbanRow);
+Vue.component('DashboardBugList',DashboardBugList);
 
 
 

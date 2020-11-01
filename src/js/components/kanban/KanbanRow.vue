@@ -1,8 +1,6 @@
 <template>
     <div class="kanban-row">
-        <div v-for="card in columnResults">
-            <kanban-card v-bind:master-list="getMasterList(card['pk'])"></kanban-card>
-        </div>
+        <kanban-card v-for="card in columnResults" v-bind:master-list="getMasterList(card['pk'])"></kanban-card>
     </div>
 </template>
 

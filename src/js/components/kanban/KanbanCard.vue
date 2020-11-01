@@ -1,7 +1,7 @@
 <template>
-    <draggable class="kanban-cell" v-model="localMasterList" groups="tasks" @end="onEnd($event)">
+    <draggable class="list-group kanban-cell" group="tasks" :list="masterList" @end="onEnd($event)">
         <div class="list-group-item"
-             v-for="card in localMasterList"
+             v-for="card in masterList"
              :key="card['pk']"
              :id="card['pk']"
         >
@@ -16,22 +16,11 @@
         props: {
             masterList: Array,
         },
-        data() {
-            return {
-                localMasterList: this.masterList,
-            }
-        },
         methods: {
             onEnd: function(event) {
                 console.log("Event: ",event);
-            }
+            },
         },
-        watch: {
-            masterList: function() {
-                //Update the local master list
-                this.localMasterList = this.masterList;
-            }
-        }
     }
 </script>
 

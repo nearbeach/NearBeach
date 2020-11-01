@@ -45,6 +45,9 @@ urlpatterns = [
 	path('customer_information/<int:customer_id>/',customer_views.customer_information,name='customer_information'),
 	path('customer_information/<int:customer_id>/save/',customer_views.customer_information_save,name='customer_information_save'),
 
+	# Dashboard
+	path('dashboard/get/bug_list/',dashboard_views.get_bug_list,name='get_bug_list'),
+
 	# Documentation
 	path('documentation/<destination>/<location_id>/add_folder/',document_views.document_add_folder,name='document_add_folder'),
 	path('documentation/<destination>/<location_id>/add_link/',document_views.document_add_link,name='document_add_link'),

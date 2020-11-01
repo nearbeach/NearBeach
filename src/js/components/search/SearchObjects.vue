@@ -48,6 +48,13 @@
                              v-bind:destination="'task'"
         ></list-search-results>
 
+        <!-- KANBAN RESULTS -->
+        <list-search-results v-if="localSearchResults['kanban'].length > 0"
+                             v-bind:search-results="localSearchResults['kanban']"
+                             v-bind:import-variables="kanbanVariables"
+                             v-bind:destination="'kanban'"
+        ></list-search-results>
+
         <!-- WHEN THERE ARE NO RESULTS -->
         <div v-if="localSearchResults['requirement'].length + localSearchResults['project'].length + localSearchResults['task'].length == 0"
              class="alert alert-warning"
@@ -78,6 +85,13 @@
         data() {
             return {
                 includeClosedObjectsModel: this.includeClosed,
+                kanbanVariables: {
+                    header: 'Kanban',
+                    prefix: 'Kb',
+                    id: 'kanban_board_id',
+                    title: 'kanban_board_name',
+                    status: 'kanban_board_status',
+                },
                 localSearchResults: this.searchResults,
                 projectVariables: {
                     header: 'Projects',
