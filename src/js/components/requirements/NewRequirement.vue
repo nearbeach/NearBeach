@@ -41,6 +41,8 @@
                        :init="{
                          height: 500,
                          menubar: false,
+                         skin:false,
+                         content_css:false,
                          toolbar: 'undo redo | formatselect | ' +
                           'bold italic backcolor | alignleft aligncenter ' +
                           'alignright alignjustify | bullist numlist outdent indent | ',
