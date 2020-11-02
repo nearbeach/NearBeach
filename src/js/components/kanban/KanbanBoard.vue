@@ -17,6 +17,7 @@
             <!-- RENDER THE CELLS -->
             <kanban-row v-bind:kanban-row-model="kanbanModel[level['pk']]"
                         v-bind:column-results="columnResults"
+                        v-bind:level-id="level['pk']"
             ></kanban-row>
         </div>
 

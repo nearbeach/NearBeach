@@ -1,5 +1,10 @@
 <template>
-    <draggable class="list-group kanban-cell" group="tasks" :list="masterList" @end="onEnd($event)">
+    <draggable class="list-group kanban-cell"
+               group="tasks"
+               :list="masterList"
+               @end="onEnd($event)"
+               v-bind:id="`kanban_cell_${levelId}_${cardId}`"
+    >
         <div class="list-group-item"
              v-for="card in masterList"
              :key="card['pk']"
@@ -14,11 +19,14 @@
     export default {
         name: "KanbanCard",
         props: {
+            cardId: Number,
+            levelId: Number,
             masterList: Array,
         },
         methods: {
             onEnd: function(event) {
                 console.log("Event: ",event);
+
             },
         },
     }
