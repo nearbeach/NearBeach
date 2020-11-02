@@ -13,6 +13,7 @@ from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
 from NearBeach.user_permissions import return_user_permission_level
+from django.db.models import Max
 
 import json, urllib3
 
@@ -84,6 +85,46 @@ def new_kanban(request):
     }
 
     return HttpResponse(t.render(c,request))
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def new_kanban_card(request,kanban_board_id):
+    """
+    """
+
+    # CHECK USER PERMISSIONS
+
+    # Get the kanban instance
+    kanban_instance = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+
+    # Get the form data
+    form = NewKanbanCardForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get the newest card number id
+    kanban_card_sort_number = kanban_card.objects.filter(
+        is_deleted=False,
+        kanban_board_id=kanban_board_id,
+        kanban_column=form.cleaned_data['kanban_column'],
+        kanban_level=form.cleaned_data['kanban_level'],
+    ).aggregate(Max('kanban_card_sort_number'))
+
+    # Save the data
+    submit_kanban_card = kanban_card(
+        change_user=request.user,
+        kanban_board=kanban_instance,
+        kanban_card_text=form.cleaned_data['kanban_card_text'],
+        kanban_column=form.cleaned_data['kanban_column'],
+        kanban_level=form.cleaned_data['kanban_level'],
+        kanban_card_sort_number=kanban_card_sort_number['kanban_card_sort_number__max'] + 1,
+    )
+    submit_kanban_card.save()
+
+    # Send back the kanban card data
+    kanban_card_results = kanban_card.objects.get(kanban_card_id=submit_kanban_card.kanban_card_id)
+    return HttpResponse(serializers.serialize('json',[kanban_card_results]),content_type='application/json')
 
 
 @require_http_methods(['POST'])

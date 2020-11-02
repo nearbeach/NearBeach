@@ -1,9 +1,9 @@
 <template>
     <div class="kanban-row">
-        <kanban-card v-for="card in columnResults"
-                     v-bind:master-list="getMasterList(card['pk'])"
+        <kanban-card v-for="column in columnResults"
+                     v-bind:master-list="getMasterList(column['pk'])"
                      v-bind:level-id="levelId"
-                     v-bind:card-id="card['pk']"
+                     v-bind:column-id="column['pk']"
         ></kanban-card>
     </div>
 </template>

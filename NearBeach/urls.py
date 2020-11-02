@@ -58,6 +58,7 @@ urlpatterns = [
 
 	# Kanban
 	path('kanban_information/<int:kanban_board_id>/',kanban_views.kanban_information,name='kanban_information'),
+	path('kanban_information/<int:kanban_board_id>/new_card/',kanban_views.new_kanban_card,name='new_kanban_card'),
 
 
 	# Authentication

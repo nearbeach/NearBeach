@@ -21,7 +21,12 @@
                         <!-- Add cards -->
                         <div class="col-md-8">
                             <h2 v-html="kanbanBoardResults[0]['fields']['kanban_board_name']"></h2><br/>
-                            <div class="kanban-link">New Card</div>
+                            <a class="kanban-link"
+                               href="javascript:void(0)"
+                               v-on:click="addNewKanbanCard"
+                            >
+                                New Card
+                            </a>
                             <div class="kanban-link">Link Existing Object</div>
                         </div>
                     </div>
@@ -36,10 +41,19 @@
                       v-bind:kanban-card-results="kanbanCardResults"
                       v-bind:level-results="levelResults"
         ></kanban-board>
+
+        <!-- MODALS -->
+        <new-kanban-card v-bind:kanban-card-results="kanbanCardResults"
+                         v-bind:column-results="columnResults"
+                         v-bind:level-results="levelResults"
+                         v-bind:kanban-board-results="kanbanBoardResults"
+        ></new-kanban-card>
     </div>
 </template>
 
 <script>
+    import { Modal } from "bootstrap";
+
     export default {
         name: "KanbanInformation",
         props: {
@@ -51,6 +65,12 @@
         data() {
             return {}
         },
+        methods: {
+            addNewKanbanCard: function() {
+                var addKanbanCardModal = new Modal(document.getElementById('addKanbanCardModal'));
+                    addKanbanCardModal.show();
+            },
+        }
     }
 </script>
 

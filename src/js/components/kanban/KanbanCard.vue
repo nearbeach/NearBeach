@@ -3,7 +3,9 @@
                group="tasks"
                :list="masterList"
                @end="onEnd($event)"
-               v-bind:id="`kanban_cell_${levelId}_${cardId}`"
+               v-bind:id="`kanban_cell_${levelId}_${columnId}`"
+               v-bind:data-level="levelId"
+               v-bind:data-column="columnId"
     >
         <div class="list-group-item"
              v-for="card in masterList"
@@ -19,7 +21,7 @@
     export default {
         name: "KanbanCard",
         props: {
-            cardId: Number,
+            columnId: Number,
             levelId: Number,
             masterList: Array,
         },

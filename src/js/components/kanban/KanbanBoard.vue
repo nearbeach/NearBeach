@@ -41,7 +41,7 @@
             }
         },
         methods: {
-            getCards(level_id,column_id) {
+            getCards: function(level_id,column_id) {
                 //Use the inputs to filter for those cards
                 var return_data = this.kanbanCardResults.filter(row => {
                     return row['fields']['kanban_column'] == column_id &&

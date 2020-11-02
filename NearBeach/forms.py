@@ -165,6 +165,17 @@ class NewCustomerForm(forms.ModelForm):
         ]
 
 
+class NewKanbanCardForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = kanban_card
+        fields = [
+            'kanban_card_text',
+            'kanban_level',
+            'kanban_column',
+        ]
+
+
 class NewKanbanForm(forms.ModelForm):
     column_title = forms.SelectMultiple()
     level_title = forms.SelectMultiple()
