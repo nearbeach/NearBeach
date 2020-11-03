@@ -37,7 +37,6 @@ from .views import authentication_views, \
 	search_views, \
 	task_views
 
-
 urlpatterns = [
 	path('', dashboard_views.dashboard, name='dashboard'),
 
@@ -59,6 +58,7 @@ urlpatterns = [
 	# Kanban
 	path('kanban_information/<int:kanban_board_id>/',kanban_views.kanban_information,name='kanban_information'),
 	path('kanban_information/<int:kanban_board_id>/new_card/',kanban_views.new_kanban_card,name='new_kanban_card'),
+	path('kanban_information/<int:kanban_card_id>/move_card/',kanban_views.move_kanban_card,name='move_kanban_card'),
 
 
 	# Authentication
@@ -141,6 +141,7 @@ urlpatterns = [
 	path('task_information/<int:task_id>/',task_views.task_information,name='task_information'),
 	path('task_information/<int:task_id>/save/',task_views.task_information_save,name='task_information_save'),
 ]
+
 
 """
 urlpatterns = [

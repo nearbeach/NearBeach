@@ -40,6 +40,7 @@
                       v-bind:kanban-board-results="kanbanBoardResults"
                       v-bind:kanban-card-results="kanbanCardResults"
                       v-bind:level-results="levelResults"
+                      v-bind:new-card-info="newCardInfo"
         ></kanban-board>
 
         <!-- MODALS -->
@@ -47,6 +48,7 @@
                          v-bind:column-results="columnResults"
                          v-bind:level-results="levelResults"
                          v-bind:kanban-board-results="kanbanBoardResults"
+                         v-on:new_card="newCard($event)"
         ></new-kanban-card>
     </div>
 </template>
@@ -63,12 +65,17 @@
             levelResults: Array,
         },
         data() {
-            return {}
+            return {
+                newCardInfo: [],
+            }
         },
         methods: {
             addNewKanbanCard: function() {
                 var addKanbanCardModal = new Modal(document.getElementById('addKanbanCardModal'));
                     addKanbanCardModal.show();
+            },
+            newCard: function(data) {
+                this.newCardInfo = data;
             },
         }
     }

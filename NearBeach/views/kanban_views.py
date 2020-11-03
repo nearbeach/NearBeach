@@ -35,7 +35,7 @@ def kanban_information(request,kanban_board_id):
     kanban_card_results = kanban_card.objects.filter(
         is_deleted=False,
         kanban_board_id=kanban_board_id,
-    )
+    ).order_by('kanban_card_sort_number')
 
     column_results = kanban_column.objects.filter(
         is_deleted=False,
@@ -59,6 +59,106 @@ def kanban_information(request,kanban_board_id):
     }
 
     return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login',redirect_field_name="")
+@require_http_methods(['POST'])
+def move_kanban_card(request,kanban_card_id):
+    """
+
+    :param request:
+    :param kanban_board_id:
+    :return:
+    """
+
+    # CHECK USER PERMISSIONS
+
+    # Get the kanban card instance
+    kanban_card_update = kanban_card.objects.get(kanban_card_id=kanban_card_id)
+
+    # Get the form data
+    form = MoveKanbanCardForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Update the card data
+    kanban_card_update.kanban_column = form.cleaned_data['new_card_column']
+    kanban_card_update.kanban_level = form.cleaned_data['new_card_level']
+    kanban_card_update.kanban_card_sort_number = form.cleaned_data['new_card_sort_number']
+    kanban_card_update.save()
+
+    """
+    Update the sort order
+    ~~~~~~~~~~~~~~~~~~~~~
+    
+    If both the old and new level/column destination are the same, we take the difference between the two values
+    Otherwise we apply two sort orders to both the old and the new
+    """
+    if form.cleaned_data['new_card_column'] == form.cleaned_data['old_card_column'] and \
+        form.cleaned_data['new_card_level'] == form.cleaned_data['old_card_level']:
+        #The card has stayed in the same column/level
+        resort_array = kanban_card.objects.filter(
+            Q(
+                Q(
+                    is_deleted=False,
+                    kanban_card_sort_number__range=[
+                        form.cleaned_data['old_card_sort_number'],
+                        form.cleaned_data['new_card_sort_number']
+                    ],
+                ) |
+                Q(
+                    is_deleted=False,
+                    kanban_card_sort_number__range=[
+                        form.cleaned_data['new_card_sort_number'],
+                        form.cleaned_data['old_card_sort_number']
+                    ],
+                )
+            ) &
+            ~Q(
+                kanban_card_id=kanban_card_id,
+            )
+        ).order_by('kanban_card_sort_number')
+
+        # Determine if we are using a positive or negative delta - using math
+        delta = (-1)*(form.cleaned_data['new_card_sort_number'] > form.cleaned_data['old_card_sort_number']) + \
+                (form.cleaned_data['new_card_sort_number'] < form.cleaned_data['old_card_sort_number'])
+
+        # Send the data away to get manipulated
+        update_sort_number(resort_array,delta)
+    else:
+        """
+        The cards have been moved outside the origianl column/level. We need to update both the old and new location's
+        sort orders.
+        
+        The old location will have a delta -1, to move the higher cards into the place left by the card
+        
+        The new location will have a delta +1, to move the higher cards away, to create a space for the card
+        """
+        old_resort_array = kanban_card.objects.filter(
+            Q(
+                is_deleted=False,
+                kanban_card_sort_number__gte=form.cleaned_data['old_card_sort_number'],
+            ) &
+            ~Q(
+                kanban_card_id=kanban_card_id,
+            )
+        ).order_by('kanban_card_sort_number')
+
+        new_resort_array = kanban_card.objects.filter(
+            Q(
+                is_deleted=False,
+                kanban_card_sort_number__gte=form.cleaned_data['new_card_sort_number'],
+            ) &
+            ~Q(
+                kanban_card_id=kanban_card_id,
+            )
+        ).order_by('kanban_card_sort_number')
+
+        update_sort_number(old_resort_array,-1)
+        update_sort_number(new_resort_array,1)
+
+
+    return HttpResponse("")
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -110,6 +210,10 @@ def new_kanban_card(request,kanban_board_id):
         kanban_column=form.cleaned_data['kanban_column'],
         kanban_level=form.cleaned_data['kanban_level'],
     ).aggregate(Max('kanban_card_sort_number'))
+
+    # If the card is new in that particular column & row - then we need to implement a sort number of 0
+    if kanban_card_sort_number['kanban_card_sort_number__max'] == None:
+        kanban_card_sort_number['kanban_card_sort_number__max'] = 0
 
     # Save the data
     submit_kanban_card = kanban_card(
@@ -195,3 +299,16 @@ def new_kanban_save(request):
 
     # Send back project_information URL
     return HttpResponse(reverse('kanban_information', args={submit_kanban_board.kanban_board_id}))
+
+
+# Internal Function
+def update_sort_number(resort_array,delta):
+    """
+    The following function will loop through the resort array and apply the delta (which should be either a 1 or -1)
+    :param resort_array:
+    :param delta:
+    :return:
+    """
+    for row in resort_array:
+        row.kanban_card_sort_number = row.kanban_card_sort_number + delta
+        row.save()

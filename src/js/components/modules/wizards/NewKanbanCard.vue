@@ -74,16 +74,8 @@
                     `/kanban_information/${this.kanbanBoardResults[0]['pk']}/new_card/`,
                     data_to_send,
                 ).then(response => {
-                    //Find the first card section and place the new card at the end
-                    var card_elem = document.getElementById(
-                        `kanban_cell_${this.levelResults[0]['pk']}_${this.columnResults[0]['pk']}`
-                    );
-
-                    //Add the element
-                    var card_id = response['data'][0]['pk'],
-                        card_text = response['data'][0]['fields']['kanban_card_text'];
-
-                    card_elem.innerHTML = `${card_elem.innerHTML}<div id="${card_id}" class="list-group-item">${card_text}</div>`
+                    //Emit the data upstream
+                    this.$emit('new_card',response['data']);
 
                     //Blank the model
                     this.kanbanCardTextModel = '';

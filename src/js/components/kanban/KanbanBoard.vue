@@ -18,6 +18,7 @@
             <kanban-row v-bind:kanban-row-model="kanbanModel[level['pk']]"
                         v-bind:column-results="columnResults"
                         v-bind:level-id="level['pk']"
+                        v-bind:new-card-info="newCardInfo"
             ></kanban-row>
         </div>
 
@@ -32,6 +33,7 @@
             kanbanBoardResults: Array,
             kanbanCardResults: Array,
             levelResults: Array,
+            newCardInfo: Array,
         },
         data() {
             return {

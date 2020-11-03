@@ -147,6 +147,36 @@ class LoginForm(forms.Form):
     )
 
 
+class MoveKanbanCardForm(forms.Form):
+    # Get Query Sets
+    kanban_column_results = kanban_column.objects.all()
+    kanban_level_results = kanban_level.objects.all()
+
+    # New card information
+    new_card_column = forms.ModelChoiceField(
+        required=True,
+        queryset=kanban_column_results,
+    )
+    new_card_level = forms.ModelChoiceField(
+        required=True,
+        queryset=kanban_level_results,
+    )
+    new_card_sort_number = forms.IntegerField()
+
+    # Old card information
+    old_card_column = forms.ModelChoiceField(
+        required=True,
+        queryset=kanban_column_results,
+    )
+    old_card_level = forms.ModelChoiceField(
+        required=True,
+        queryset=kanban_level_results,
+    )
+    old_card_sort_number = forms.IntegerField()
+
+
+
+
 class NewCustomerForm(forms.ModelForm):
     organisation = forms.ModelChoiceField(
         queryset=organisation.objects.all(),

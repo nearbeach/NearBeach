@@ -4,6 +4,7 @@
                      v-bind:master-list="getMasterList(column['pk'])"
                      v-bind:level-id="levelId"
                      v-bind:column-id="column['pk']"
+                     v-bind:new-card-info="newCardInfo"
         ></kanban-card>
     </div>
 </template>
@@ -15,6 +16,7 @@
             columnResults: Array,
             kanbanRowModel: Object,
             levelId: Number,
+            newCardInfo: Array,
         },
         methods: {
             getMasterList: function(row_id) {
