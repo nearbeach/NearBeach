@@ -12,7 +12,11 @@
         <!-- Render each row -->
         <div v-for="level in levelResults">
             <!-- CREATE THE LEVEL HEADER -->
-            <div class="kanban-level-header">{{level['fields']['kanban_level_name']}}</div>
+            <div class="kanban-level-header">
+                <div class="kanban-level-div"
+                     v-bind:style="`width: ${columnResults.length * 402}px;`"
+                >{{level['fields']['kanban_level_name']}}</div>
+            </div>
 
             <!-- RENDER THE CELLS -->
             <kanban-row v-bind:kanban-row-model="kanbanModel[level['pk']]"

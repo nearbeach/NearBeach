@@ -17,11 +17,12 @@
   padding: 10px;
 }
 
-.kanban-level-header {
+.kanban-level-div {
   background-color: #56CCF2;
   margin: 2px 1px;
   text-align: center;
-  width: 100%;
+  padding: 4px;
+  font-weight: bold;
 }
 
 .kanban-container {
@@ -29,8 +30,9 @@
   margin: 5px 35px;
 }
 
-.kanban-row {
+.kanban-row, .kanban-level-header {
   display: flex;
+  justify-content: center;
 }
 
 .kanban-card {
