@@ -14,6 +14,7 @@
              :id="card['pk']"
              v-bind:data-sort-number="card['fields']['kanban_card_sort_number']"
              v-bind:data-card-id="card['pk']"
+             v-on:dblclick="doubleClickCard($event)"
         >
             {{card['fields']['kanban_card_text']}}
         </div>
@@ -22,6 +23,8 @@
 
 <script>
     const axios = require('axios');
+
+    import { Modal } from "bootstrap";
 
     export default {
         name: "KanbanCard",
@@ -32,7 +35,14 @@
             newCardInfo: Array,
         },
         methods: {
-            addCard: function() {},
+            doubleClickCard: function(data) {
+                //Emit the current card information
+                this.$emit('double_clicked_card',data['target']['dataset']['cardId']);
+
+                //Show the modal
+                const cardInformationModal = new Modal(document.getElementById("cardInformationModal"));
+                cardInformationModal.show();
+            },
             onEnd: function(event) {
                 console.log("Event: ",event);
                 //Get the data

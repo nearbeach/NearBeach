@@ -23,6 +23,7 @@
                         v-bind:column-results="columnResults"
                         v-bind:level-id="level['pk']"
                         v-bind:new-card-info="newCardInfo"
+                        v-on:double_clicked_card="doubleClickedCard($event)"
             ></kanban-row>
         </div>
 
@@ -47,6 +48,10 @@
             }
         },
         methods: {
+            doubleClickedCard: function(data) {
+                //Send data upstream
+                this.$emit('double_clicked_card',data);
+            },
             getCards: function(level_id,column_id) {
                 //Use the inputs to filter for those cards
                 var return_data = this.kanbanCardResults.filter(row => {

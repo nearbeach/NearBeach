@@ -5,6 +5,7 @@
                      v-bind:level-id="levelId"
                      v-bind:column-id="column['pk']"
                      v-bind:new-card-info="newCardInfo"
+                     v-on:double_clicked_card="doubleClickedCard($event)"
         ></kanban-card>
     </div>
 </template>
@@ -19,6 +20,10 @@
             newCardInfo: Array,
         },
         methods: {
+            doubleClickedCard(data) {
+                //Emit the card id up stream
+                this.$emit('double_clicked_card',data);
+            },
             getMasterList: function(row_id) {
                 //Determine if the kanban Row exists - if not defined, send back empty array.
                 if (this.kanbanRowModel == undefined) {

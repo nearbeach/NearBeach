@@ -41,6 +41,7 @@
                       v-bind:kanban-card-results="kanbanCardResults"
                       v-bind:level-results="levelResults"
                       v-bind:new-card-info="newCardInfo"
+                      v-on:double_clicked_card="doubleClickedCard($event)"
         ></kanban-board>
 
         <!-- MODALS -->
@@ -50,6 +51,8 @@
                          v-bind:kanban-board-results="kanbanBoardResults"
                          v-on:new_card="newCard($event)"
         ></new-kanban-card>
+
+        <card-information v-bind:card-id="cardInformationId"></card-information>
     </div>
 </template>
 
@@ -66,13 +69,18 @@
         },
         data() {
             return {
+                cardInformationId: '',
                 newCardInfo: [],
             }
         },
         methods: {
             addNewKanbanCard: function() {
                 var addKanbanCardModal = new Modal(document.getElementById('addKanbanCardModal'));
-                    addKanbanCardModal.show();
+                addKanbanCardModal.show();
+            },
+            doubleClickedCard: function(data) {
+                //Update the cardInformationId with the card id
+                this.cardInformationId = data;
             },
             newCard: function(data) {
                 this.newCardInfo = data;
