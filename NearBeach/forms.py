@@ -92,6 +92,10 @@ class AddRequirementLinkForm(forms.Form):
     )
 
 
+class CheckKanbanBoardName(forms.Form):
+    kanban_board_name = forms.CharField(max_length=255)
+
+
 class CustomerForm(forms.ModelForm):
     # Basic Meta Data
     class Meta:

@@ -10,13 +10,22 @@
                     <strong>Please note</strong>
                     <p class="text-instructions">
                         Board names must be unique.
+
                     </p>
                 </div>
 
                 <!-- BOARD NAME -->
                 <div class="col-md-8">
                     <div class="form-group">
-                        <label>Kanban Board Name</label>
+                        <label>Kanban Board Name
+                            <span class="error"
+                                  v-if="!$v.kanbanBoardNameModel.required && $v.kanbanBoardNameModel.$dirty"
+                            >
+                                Please suppy a title.
+                            </span>
+                            <span class="error" v-if="!uniqueKanbanBoardName"> Please supply a unique name</span>
+                            <span class="error" v-if="checkingKanbanBoardName"> Checking kanban name...</span>
+                        </label>
                         <input type="text"
                                class="form-control"
                                v-model="kanbanBoardNameModel"
@@ -38,6 +47,7 @@
                     <kanban-property-order v-bind:property-name="'Columns'"
                                            v-bind:property-list="columnModel"
                                            v-bind:source="'columnModel'"
+                                           v-bind:is-dirty="$v.columnModel.$dirty"
                                            v-on:update_property_list="updatePropertyList($event)"
                     ></kanban-property-order>
                 </div>
@@ -45,6 +55,7 @@
                     <kanban-property-order v-bind:property-name="'Levels'"
                                            v-bind:property-list="levelModel"
                                            v-bind:source="'levelModel'"
+                                           v-bind:is-dirty="$v.columnModel.$dirty"
                                            v-on:update_property_list="updatePropertyList($event)"
                     ></kanban-property-order>
                 </div>
@@ -56,6 +67,7 @@
             <group-permissions v-bind:group-results="groupResults"
                                v-bind:destination="'kanban_board'"
                                v-on:update_group_model="updateGroupModel($event)"
+                               v-bind:is-dirty="$v.groupModel.$dirty"
             ></group-permissions>
 
             <!-- SAVE -->
@@ -76,13 +88,23 @@
 <script>
     const axios = require('axios');
 
+    // Validation
+    import { required } from 'vuelidate/lib/validators';
+
+    //Mixins
+    import errorModalMixin from "../../mixins/errorModalMixin";
+
     export default {
         name: "NewKanban",
         props: {
             groupResults: Array,
         },
+        mixins: [
+            errorModalMixin,
+        ],
         data() {
             return {
+                checkingKanbanBoardName: false,
                 columnModel: [{
                     id: 0,
                     title: 'Backlog',
@@ -108,10 +130,58 @@
                     id: 1,
                     title: 'Sprint 2',
                 },],
+                searchTimeout: '',
+                uniqueKanbanBoardName: true,
+
+            }
+        },
+        validations: {
+                columnModel: {
+                    required,
+                },
+                groupModel: {
+                    required,
+                },
+                kanbanBoardNameModel: {
+                    required,
+                },
+                levelModel: {
+                    required,
+                },
+        },
+        watch: {
+            kanbanBoardNameModel: function() {
+                //Apply checking flag
+                this.checkingKanbanBoardName = true;
+
+                // Make sure the timer isn't running
+                if (this.searchTimeout != '') {
+                    //Stop the clock!
+                    clearTimeout(this.searchTimeout);
+                }
+
+                // Reset the clock, to only search if there is an uninterupted 0.5s of no typing.
+                if (this.kanbanBoardNameModel.length >= 3) {
+                    this.searchTimeout = setTimeout(
+                        this.checkKanbanBoardName,
+                        500,
+                    )
+                }
             }
         },
         methods: {
             addNewKanban: function() {
+                //Check form validation
+                this.$v.$touch();
+
+                if (this.$v.$invalid || !this.uniqueKanbanBoardName || this.checkingKanbanBoardName) {
+                    this.showValidationErrorModal();
+
+                    //Just return - as we do not need to do the rest of this function
+                    return;
+                }
+
+
                 //Create the data_to_send
                 const data_to_send = new FormData();
                 data_to_send.set('kanban_board_name',this.kanbanBoardNameModel);
@@ -135,6 +205,25 @@
                 }).catch(error => {
                     console.log("Error: ",error);
                 });
+            },
+            checkKanbanBoardName: function() {
+                //Send the Kanban board name to the backend - it will send back the results.
+                const data_to_send = new FormData();
+                data_to_send.set('kanban_board_name',this.kanbanBoardNameModel);
+
+                //Use axios to query the database
+                axios.post(
+                    `/kanban_information/check_kanban_board_name/`,
+                    data_to_send,
+                ).then(response => {
+                    //If the data came back empty - then the kanban board name is unique
+                    this.uniqueKanbanBoardName = response['data'].length == 0;
+
+                    //Checking kanban board name is finished
+                    this.checkingKanbanBoardName = false;
+                }).catch(error => {
+                    console.log("Error: ",error);
+                })
             },
             updateGroupModel: function(data) {
                 this.groupModel = data;

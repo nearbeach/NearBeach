@@ -1,6 +1,7 @@
 <template>
     <div>
         <strong>{{propertyName}}</strong>
+        <span class="error" v-if="!$v.localPropertyList.required && isDirty"> Please create at least one {{propertyName}}.</span>
         <br/>
 
         <!-- The column of data where you can sort the properties -->
@@ -73,18 +74,27 @@
 <script>
     import { Modal } from "bootstrap";
 
+    //Validation
+    import { required } from 'vuelidate/lib/validators'
+
     export default {
         name: "KanbanPropertyOrder",
         props: {
             propertyList: Array,
             propertyName: String,
             source: String,
+            isDirty: Boolean, //Passes the value from the template above where the checking is done
         },
         data() {
             return {
                 localPropertyList: this.propertyList,
                 newPropertyItem: '',
                 singleItemId: '',
+            }
+        },
+        validations: {
+            localPropertyList: {
+                required,
             }
         },
         methods: {

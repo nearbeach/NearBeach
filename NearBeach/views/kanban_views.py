@@ -19,6 +19,30 @@ import json, urllib3
 
 
 @login_required(login_url='login',redirect_field_name="")
+@require_http_methods(['POST'])
+def check_kanban_board_name(request):
+    """
+    The following will get a list of all kanban boards with the same name. The idea is that each kanban board should
+    have a unique name.
+    :param request:
+    :return:
+    """
+
+    # Get the form data
+    form = CheckKanbanBoardName(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    kanban_board_results = kanban_board.objects.filter(
+        is_deleted=False,
+        kanban_board_name=form.cleaned_data['kanban_board_name'],
+    )
+
+    # Send back data
+    return HttpResponse(serializers.serialize('json',kanban_board_results),content_type='application/json')
+
+
+@login_required(login_url='login',redirect_field_name="")
 def kanban_information(request,kanban_board_id):
     """
 
