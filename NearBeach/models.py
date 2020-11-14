@@ -1028,43 +1028,43 @@ class kanban_column(models.Model):
         return str(self.kanban_column_name)
 
 
-class kanban_comment(models.Model):
-    kanban_comment_id = models.AutoField(primary_key=True)
-    kanban_comment = models.TextField()
-    kanban_board = models.ForeignKey(
-        'kanban_board',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    kanban_card = models.ForeignKey(
-        'kanban_card',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        null=True
-    )
-    user_infomation = models.CharField(max_length=255)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    class Meta:
-        db_table = "kanban_comment"
-
-    def __str__(self):
-        return str(self.kanban_comment)
+# class kanban_comment(models.Model):
+#     kanban_comment_id = models.AutoField(primary_key=True)
+#     kanban_comment = models.TextField()
+#     kanban_board = models.ForeignKey(
+#         'kanban_board',
+#         on_delete=models.CASCADE,
+#         null=True,
+#         blank=True,
+#     )
+#     kanban_card = models.ForeignKey(
+#         'kanban_card',
+#         on_delete=models.CASCADE,
+#         null=True,
+#         blank=True,
+#     )
+#     user = models.ForeignKey(
+#         User,
+#         on_delete=models.CASCADE,
+#         null=True
+#     )
+#     user_infomation = models.CharField(max_length=255)
+#     date_created = models.DateTimeField(auto_now_add=True)
+#     date_modified = models.DateTimeField(auto_now=True)
+#     change_user = models.ForeignKey(
+#         User,
+#         on_delete=models.CASCADE,
+#         related_name='%(class)s_change_user'
+#     )
+#     is_deleted = models.BooleanField(
+#         default=False,
+#     )
+#
+#     class Meta:
+#         db_table = "kanban_comment"
+#
+#     def __str__(self):
+#         return str(self.kanban_comment)
 
 
 
@@ -1710,6 +1710,12 @@ class object_note(models.Model):
     object_note = models.TextField(
         blank=False,
         null=False,
+    )
+    kanban_card = models.ForeignKey(
+        'kanban_card',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
     )
     opportunity = models.ForeignKey(
         'opportunity',

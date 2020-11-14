@@ -52,7 +52,7 @@
                          v-on:new_card="newCard($event)"
         ></new-kanban-card>
 
-        <card-information v-bind:card-id="cardInformationId"></card-information>
+        <card-information v-bind:card-information="cardInformation"></card-information>
     </div>
 </template>
 
@@ -69,7 +69,7 @@
         },
         data() {
             return {
-                cardInformationId: '',
+                cardInformation: {},
                 newCardInfo: [],
             }
         },
@@ -80,7 +80,7 @@
             },
             doubleClickedCard: function(data) {
                 //Update the cardInformationId with the card id
-                this.cardInformationId = data;
+                this.cardInformation = data;
             },
             newCard: function(data) {
                 this.newCardInfo = data;

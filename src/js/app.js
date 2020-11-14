@@ -57,6 +57,7 @@ import KanbanRow from "./components/kanban/KanbanRow.vue";
 import DashboardBugList from "./components/dashboard/DashboardBugList.vue";
 import NewKanbanCard from "./components/modules/wizards/NewKanbanCard.vue";
 import CardInformation from "./components/kanban/CardInformation.vue";
+import ListNotes from "./components/modules/sub_modules/ListNotes.vue";
 
 
 //Import Bootstrap
@@ -147,6 +148,7 @@ Vue.component('KanbanRow',KanbanRow);
 Vue.component('DashboardBugList',DashboardBugList);
 Vue.component('NewKanbanCard',NewKanbanCard);
 Vue.component('CardInformation',CardInformation);
+Vue.component('ListNotes',ListNotes);
 
 
 

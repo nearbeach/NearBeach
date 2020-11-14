@@ -36,8 +36,14 @@
         },
         methods: {
             doubleClickCard: function(data) {
+                //Setup data to send upstream
+                var data_to_send = {
+                    'cardId': data['target']['dataset']['cardId'],
+                    'cardTitle': data['target']['innerText'],
+                }
+
                 //Emit the current card information
-                this.$emit('double_clicked_card',data['target']['dataset']['cardId']);
+                this.$emit('double_clicked_card',data_to_send);
 
                 //Show the modal
                 const cardInformationModal = new Modal(document.getElementById("cardInformationModal"));

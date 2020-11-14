@@ -36,14 +36,14 @@
 
                     <div class="row">
                         <div class="col-md-4">
-                            <strong>Comments</strong>
+                            <strong>Notes</strong>
                             <p class="text-instructions">
-                                To add a comment - type your comment in the comment box and hit the "Submit Comment"
+                                To add a note - type your note in the Note Box and hit the "Submit Note"
                                 button.
                             </p>
                         </div>
                         <div class="col-md-8">
-                            <label>Comment</label>
+                            <label>Note Box</label>
                             <editor
                                :init="{
                                  height: 250,
@@ -54,24 +54,23 @@
                                }"
                                v-bind:content_css="false"
                                v-bind:skin="false"
-                               v-model="cardCommentModel"
+                               v-model="cardNoteModel"
                             />
                             <br/>
                             <button class="btn btn-primary save-changes"
-                                    v-on:click="updateCard"
-                                    v-bind:disabled="cardCommentModel==''"
+                                    v-on:click="addNote"
+                                    v-bind:disabled="cardNoteModel==''"
                             >
-                                Submit Comment
+                                Add Note
                             </button>
                         </div>
                     </div>
                     <hr>
 
-                    <!-- ADD CODE FOR PRIOR COMMENTS -->
-                    <div id="card-comments">
-                        <!-- PLACE HOLDER IMAGE -->
-<!--                        <img alt="Placeholder Image" src="/static/NearBeach/images/placeholder/product_tour.svg">-->
-                    </div>
+                    <!-- NOTE HISTORY -->
+                    <list-notes v-bind:note-history-results="noteHistoryResults"
+                                v-bind:destination="'card'"
+                    ></list-notes>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -82,29 +81,62 @@
 </template>
 
 <script>
+    const axios = require('axios');
+
     export default {
         name: "CardInformation",
         props: {
-            cardId: Number,
-            cardTitle: String,
+            cardInformation: Object,
         },
         data() {
             return {
-                cardCommentModel: '',
+                cardId: '',
+                cardNoteModel: '',
                 cardTitleModel: '',
+                noteHistoryResults: [],
             }
         },
         watch: {
-            cardId: function() {
+            cardInformation: function() {
+                //Update the local information
+                this.cardId = this.cardInformation['cardId'];
+                this.cardTitleModel = this.cardInformation['cardTitle'];
 
-            },
-            cardTitle: function() {
-                //Update the title
-                this.cardTitleModel = this.cardTitle;
+                //Now update the card notes
+                this.getCardNotes();
             },
         },
         methods: {
-            getCardComments: function() {},
+            addNote: function() {
+                //Setup data to send
+                const data_to_send = new FormData();
+                data_to_send.set('note',this.cardNoteModel);
+
+                //Use axios to send the data
+                axios.post(
+                    `/object_data/kanban_card/${this.cardId}/add_notes/`,
+                    data_to_send,
+                ).then(response => {
+                    //DO STUFF
+                    console.log("Response: ",response);
+                }).catch(error => {
+                    console.log("Error: ",error);
+                })
+            },
+            getCardNotes: function() {
+                //Clear the current list of notes
+                this.noteHistoryResults = [];
+
+                //Use axios to get the card list
+                axios.post(
+                    `/object_data/kanban_card/${this.cardId}/note_list/`
+                ).then(response => {
+                    //Save the data into noteHistoryResults
+                    this.noteHistoryResults = response['data'];
+                }).catch(error => {
+                    console.log("Error: ",error);
+                })
+            },
             updateCard: function() {
                 //ADD CODE
             },
