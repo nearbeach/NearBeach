@@ -48,6 +48,19 @@ import TaskInformation from "./components/tasks/TaskInformation.vue";
 import NewTask from "./components/tasks/NewTask.vue";
 import BetweenDates from "./components/dates/BetweenDates.vue";
 import StakeholderInformation from "./components/organisations/StakeholderInformation.vue";
+import NewKanban from "./components/kanban/NewKanban.vue";
+import KanbanPropertyOrder from "./components/kanban/KanbanPropertyOrder.vue";
+import KanbanInformation from "./components/kanban/KanbanInformation.vue";
+import KanbanCard from "./components/kanban/KanbanCard.vue";
+import KanbanBoard from "./components/kanban/KanbanBoard.vue";
+import KanbanRow from "./components/kanban/KanbanRow.vue";
+import DashboardBugList from "./components/dashboard/DashboardBugList.vue";
+import NewKanbanCard from "./components/modules/wizards/NewKanbanCard.vue";
+import CardInformation from "./components/kanban/CardInformation.vue";
+import ListNotes from "./components/modules/sub_modules/ListNotes.vue";
+import NewKanbanLinkWizard from "./components/modules/wizards/NewKanbanLinkWizard.vue";
+import DashboardMyObjects from "./components/dashboard/DashboardMyObjects.vue";
+import RenderObjectTable from "./components/render/RenderObjectTable.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -62,8 +75,15 @@ import Editor from '@tinymce/tinymce-vue'
 //vSelect
 import vSelect from "vue-select";
 
+//VueSortable
+import draggable from 'vuedraggable';
+
+
 //custom javascript
 import './global.js';
+
+//D3 Elements
+//import * as d3 from "d3";
 
 //Import axios for ajax
 const axios = require('axios');
@@ -73,6 +93,7 @@ axios.defaults.xsrfCookieName = "csrftoken"
 //Global Vue Components
 Vue.component('vSelect',vSelect);
 Vue.component('Editor',Editor);
+Vue.component('draggable',draggable);
 
 //Global NearBeach Vue Components
 Vue.component('AddBugWizard',AddBugWizard);
@@ -120,7 +141,19 @@ Vue.component('TaskInformation',TaskInformation);
 Vue.component('NewTask',NewTask);
 Vue.component('BetweenDates',BetweenDates);
 Vue.component('StakeholderInformation',StakeholderInformation);
-
+Vue.component('NewKanban',NewKanban);
+Vue.component('KanbanPropertyOrder',KanbanPropertyOrder);
+Vue.component('KanbanInformation',KanbanInformation);
+Vue.component('KanbanCard',KanbanCard);
+Vue.component('KanbanBoard',KanbanBoard);
+Vue.component('KanbanRow',KanbanRow);
+Vue.component('DashboardBugList',DashboardBugList);
+Vue.component('NewKanbanCard',NewKanbanCard);
+Vue.component('CardInformation',CardInformation);
+Vue.component('ListNotes',ListNotes);
+Vue.component('NewKanbanLinkWizard',NewKanbanLinkWizard);
+Vue.component('DashboardMyObjects',DashboardMyObjects);
+Vue.component('RenderObjectTable',RenderObjectTable);
 
 //Validation
 import Vuelidate from 'vuelidate'

@@ -1,11 +1,5 @@
 {% extends 'NearBeach/template.html' %}
 {% block content %}
-    <div class="card">
-        <h1>Welcome</h1>
-        <hr>
-        <p>
-            Thank you for looking at NearBeach. Currently we are refactoring our code base. The only working slice is
-            the "New Requirements" module. Please click <a href="{% url 'new_requirement' %}"> here to start.</a>
-        </p>
-    </div>
+    <dashboard-my-objects></dashboard-my-objects>
+<!--    <dashboard-bug-list></dashboard-bug-list>-->
 {% endblock %}

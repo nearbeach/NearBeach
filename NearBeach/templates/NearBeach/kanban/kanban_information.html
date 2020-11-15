@@ -1,0 +1,10 @@
+{% extends 'NearBeach/template_wide.html' %}
+{% load static %}
+{% block content %}
+    <kanban-information v-bind:kanban-board-results="{{kanban_board_results}}"
+                        v-bind:kanban-card-results="{{kanban_card_results}}"
+                        v-bind:column-results="{{column_results}}"
+                        v-bind:level-results="{{level_results}}"
+                        v-bind:location-id="{{kanban_board_id}}"
+    ></kanban-information>
+{% endblock %}

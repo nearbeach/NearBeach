@@ -30,6 +30,11 @@ label {
 
 .login-dialog {
 
+    input {
+        box-sizing: border-box;
+        margin-bottom: 15px;
+    }
+
     .row.columns {
         margin-bottom: 15px;
     }

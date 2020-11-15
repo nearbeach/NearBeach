@@ -41,6 +41,11 @@ def get_object_search_data(search_form):
         'task_short_description',
         'task_status',
     )
+    kanban_results = kanban_board.objects.filter(is_deleted=False).values(
+        'kanban_board_id',
+        'kanban_board_name',
+        'kanban_board_status',
+    )
 
     # Check to see if we are searching for closed objects
     include_closed = search_form.cleaned_data['include_closed']
@@ -51,6 +56,7 @@ def get_object_search_data(search_form):
         requirement_results = requirement_results.filter(is_deleted=False)
         project_results = project_results.filter(is_deleted=False)
         task_results = task_results.filter(is_deleted=False)
+        kanban_results = kanban_results.filter(is_deleted=False)
 
     # Split the space results - then apply the filter of each split value
     for split_row in search_form.cleaned_data['search'].split(' '):
@@ -64,6 +70,9 @@ def get_object_search_data(search_form):
         task_results = task_results.filter(
             Q(task_short_description__icontains=split_row)
         )
+        kanban_results = kanban_results.filter(
+            Q(kanban_board_name__icontains=split_row)
+        )
 
         # If the split row is a number - also check against the id
         if split_row.isnumeric():
@@ -76,11 +85,16 @@ def get_object_search_data(search_form):
             task_results = task_results.filter(
                 Q(task_id=split_row)
             )
+            kanban_results = kanban_results.filter(
+                Q(kanban_board_id=split_row)
+            )
+
 
     # Only have 25 results and order by alphabetical order
     requirement_results.order_by('requirement_title')[:25]
     project_results.order_by('project_name')[:25]
     task_results.order_by('task_short_description').values()[:25]
+    kanban_results.order_by('kanban_board_name').values()[:25]
 
     """
     The pain point
@@ -95,12 +109,14 @@ def get_object_search_data(search_form):
     requirement_results = json.dumps(list(requirement_results), cls=DjangoJSONEncoder)
     project_results = json.dumps(list(project_results), cls=DjangoJSONEncoder)
     task_results = json.dumps(list(task_results), cls=DjangoJSONEncoder)
+    kanban_results = json.dumps(list(kanban_results), cls=DjangoJSONEncoder)
 
     # Send back a JSON array with JSON arrays inside
     return {
         'requirement': json.loads(requirement_results),
         'project': json.loads(project_results),
         'task': json.loads(task_results),
+        'kanban': json.loads(kanban_results),
     }
 
 

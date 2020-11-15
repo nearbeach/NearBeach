@@ -50,6 +50,39 @@ class AddGroupForm(forms.Form):
     )
 
 
+class AddKanbanLinkForm(forms.Form):
+    project = forms.ModelChoiceField(
+        required=False,
+        queryset=project.objects.filter(
+            is_deleted=False,
+        )
+    )
+    requirement = forms.ModelChoiceField(
+        required=False,
+        queryset=requirement.objects.filter(
+            is_deleted=False,
+        )
+    )
+    task = forms.ModelChoiceField(
+        required=False,
+        queryset=task.objects.filter(
+            is_deleted=False,
+        )
+    )
+    kanban_column = forms.ModelChoiceField(
+        required=True,
+        queryset=kanban_column.objects.filter(
+            is_deleted=False,
+        )
+    )
+    kanban_level = forms.ModelChoiceField(
+        required=True,
+        queryset=kanban_level.objects.filter(
+            is_deleted=False,
+        )
+    )
+
+
 class AddLinkForm(forms.Form):
     document_description = forms.CharField(
         max_length=50,
@@ -84,12 +117,10 @@ class AddRequirementLinkForm(forms.Form):
             is_deleted=False,
         )
     )
-    opportunity = forms.ModelMultipleChoiceField(
-        required=False,
-        queryset=opportunity.objects.filter(
-            is_deleted=False,
-        )
-    )
+
+
+class CheckKanbanBoardName(forms.Form):
+    kanban_board_name = forms.CharField(max_length=255)
 
 
 class CustomerForm(forms.ModelForm):
@@ -147,6 +178,36 @@ class LoginForm(forms.Form):
     )
 
 
+class MoveKanbanCardForm(forms.Form):
+    # Get Query Sets
+    kanban_column_results = kanban_column.objects.all()
+    kanban_level_results = kanban_level.objects.all()
+
+    # New card information
+    new_card_column = forms.ModelChoiceField(
+        required=True,
+        queryset=kanban_column_results,
+    )
+    new_card_level = forms.ModelChoiceField(
+        required=True,
+        queryset=kanban_level_results,
+    )
+    new_card_sort_number = forms.IntegerField()
+
+    # Old card information
+    old_card_column = forms.ModelChoiceField(
+        required=True,
+        queryset=kanban_column_results,
+    )
+    old_card_level = forms.ModelChoiceField(
+        required=True,
+        queryset=kanban_level_results,
+    )
+    old_card_sort_number = forms.IntegerField()
+
+
+
+
 class NewCustomerForm(forms.ModelForm):
     organisation = forms.ModelChoiceField(
         queryset=organisation.objects.all(),
@@ -162,6 +223,29 @@ class NewCustomerForm(forms.ModelForm):
             'customer_last_name',
             'customer_email',
             'organisation',
+        ]
+
+
+class NewKanbanCardForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = kanban_card
+        fields = [
+            'kanban_card_text',
+            'kanban_level',
+            'kanban_column',
+        ]
+
+
+class NewKanbanForm(forms.ModelForm):
+    column_title = forms.SelectMultiple()
+    level_title = forms.SelectMultiple()
+
+    # Basic Meta Data
+    class Meta:
+        model = kanban_board
+        fields = [
+            'kanban_board_name',
         ]
 
 

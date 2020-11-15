@@ -28,6 +28,7 @@ from .views import authentication_views, \
 	customer_views, \
 	dashboard_views, \
 	document_views, \
+	kanban_views, \
 	object_data_views, \
 	organisation_views, \
 	project_views, \
@@ -36,7 +37,6 @@ from .views import authentication_views, \
 	search_views, \
 	task_views
 
-
 urlpatterns = [
 	path('', dashboard_views.dashboard, name='dashboard'),
 
@@ -44,12 +44,25 @@ urlpatterns = [
 	path('customer_information/<int:customer_id>/',customer_views.customer_information,name='customer_information'),
 	path('customer_information/<int:customer_id>/save/',customer_views.customer_information_save,name='customer_information_save'),
 
+	# Dashboard
+	path('dashboard/get/bug_list/',dashboard_views.get_bug_list,name='get_bug_list'),
+	path('dashboard/get/my_objects/',dashboard_views.get_my_objects,name='get_my_objects'),
+
 	# Documentation
 	path('documentation/<destination>/<location_id>/add_folder/',document_views.document_add_folder,name='document_add_folder'),
 	path('documentation/<destination>/<location_id>/add_link/',document_views.document_add_link,name='document_add_link'),
 	path('documentation/<destination>/<location_id>/list/files/',document_views.document_list_files,name='document_list_files'),
 	path('documentation/<destination>/<location_id>/list/folders/',document_views.document_list_folders,name='document_list_folders'),
 	path('documentation/<destination>/<location_id>/upload/',document_views.document_upload,name='document_upload'),
+
+
+	# Kanban
+	path('kanban_information/<int:kanban_board_id>/',kanban_views.kanban_information,name='kanban_information'),
+	path('kanban_information/<int:kanban_board_id>/<object_lookup>/add_link/',kanban_views.add_kanban_link,name='add_kanban_link'),
+	path('kanban_information/<int:kanban_board_id>/<object_lookup>/link_list/',kanban_views.kanban_link_list,name='kanban_link_list'),
+	path('kanban_information/<int:kanban_board_id>/new_card/',kanban_views.new_kanban_card,name='new_kanban_card'),
+	path('kanban_information/<int:kanban_card_id>/move_card/',kanban_views.move_kanban_card,name='move_kanban_card'),
+	path('kanban_information/check_kanban_board_name/',kanban_views.check_kanban_board_name,name='check_kanban_board_name'),
 
 
 	# Authentication
@@ -62,6 +75,8 @@ urlpatterns = [
 	# New Objects
 	path('new_customer/',customer_views.new_customer,name='new_customer'),
 	path('new_customer/save/',customer_views.new_customer_save,name='new_customer_save'),
+	path('new_kanban/',kanban_views.new_kanban,name='new_kanban'),
+	path('new_kanban_save/',kanban_views.new_kanban_save,name='new_kanban_save'),
 	path('new_organisation/',organisation_views.new_organisation,name='new_organisation'),
 	path('new_organisation/save/',organisation_views.new_organisation_save,name='new_organisation_save'),
 	path('new_project/',project_views.new_project,name='new_project'),
@@ -130,6 +145,7 @@ urlpatterns = [
 	path('task_information/<int:task_id>/',task_views.task_information,name='task_information'),
 	path('task_information/<int:task_id>/save/',task_views.task_information_save,name='task_information_save'),
 ]
+
 
 """
 urlpatterns = [

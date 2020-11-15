@@ -192,7 +192,6 @@
                 objectSelection: [
                     'Project',
                     'Task',
-                    'Opportunity',
                 ],
                 linkModel: [],
             }

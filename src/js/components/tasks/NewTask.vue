@@ -45,6 +45,8 @@
                           'bold italic backcolor | alignleft aligncenter ' +
                           'alignright alignjustify | bullist numlist outdent indent | ',
                        }"
+                       v-bind:content_css="false"
+                       v-bind:skin="false"
                        v-model="taskDescriptionModel"
                     />
                 </div>

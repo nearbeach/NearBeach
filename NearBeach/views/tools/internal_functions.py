@@ -15,6 +15,10 @@ def get_object_from_destination(input_object,destination,location_id):
         input_object = input_object.filter(
             kanban_board_id=location_id,
         )
+    if destination == "kanban_card":
+        input_object = input_object.filter(
+            kanban_card_id=location_id,
+        )
     elif destination == "opportunity":
         input_object = input_object.filter(
             opportunity_id=location_id,
@@ -67,6 +71,8 @@ def set_object_from_destination(input_object,destination,location_id):
     """
     if destination == "kanban_board":
         input_object.kanban_board = kanban_board.objects.get(kanban_board_id=location_id)
+    if destination == "kanban_card":
+        input_object.kanban_card = kanban_card.objects.get(kanban_card_id=location_id)
     elif destination == "opportunity":
         input_object.opportunity = opportunity.objects.get(object_id=location_id)
     elif destination == "organisation":

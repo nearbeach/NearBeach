@@ -5,34 +5,9 @@
             The following are saved notes against this {{destination}}. Add notes by clicking on the button below.
         </p>
 
-        <!-- NOTE HISTORY -->
-        <div v-if="noteHistoryResults.length == 0"
-             class="module-spacer"
-        >
-            <div class="alert alert-dark">
-                Sorry - but there are no notes for this {{destination}}.
-            </div>
-        </div>
-        <div v-else>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <td>Note</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="noteHistory in noteHistoryResults">
-                        <td>
-                            <div v-html="noteHistory['fields']['object_note'].substr(0, 400)" />
-                            <div class="spacer"></div>
-                            <p class="small-text">
-                                {{noteHistory['fields']['date_created']}}
-                            </p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <list-notes v-bind:note-history-results="noteHistoryResults"
+                    v-bind:destination="destination"
+        ></list-notes>
 
         <!-- ADD NOTE HISTORY -->
         <!-- TO DO - limit it to certain users -->
