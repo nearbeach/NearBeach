@@ -49,15 +49,8 @@ def add_kanban_link(request,kanban_board_id,object_lookup):
     )
 
     # Check the data
-    if object_lookup == "project":
-        kanban_card_submit.project = form.cleaned_data['project']
-        kanban_card_submit.kanban_card_text = form.cleaned_data['project']
-    elif object_lookup == "requirement":
-        kanban_card_submit.requirement = form.cleaned_data['requirement']
-        kanban_card_submit.kanban_card_text = form.cleaned_data['requirement']
-    elif object_lookup == "task":
-        kanban_card_submit.task = form.cleaned_data['task']
-        kanban_card_submit.kanban_card_text = form.cleaned_data['task']
+    kanban_card_submit.project = form.cleaned_data[object_lookup]
+    kanban_card_submit.kanban_card_text = form.cleaned_data[object_lookup]
 
     # Save the data
     kanban_card_submit.save()
