@@ -60,6 +60,7 @@ import CardInformation from "./components/kanban/CardInformation.vue";
 import ListNotes from "./components/modules/sub_modules/ListNotes.vue";
 import NewKanbanLinkWizard from "./components/modules/wizards/NewKanbanLinkWizard.vue";
 import DashboardMyObjects from "./components/dashboard/DashboardMyObjects.vue";
+import RenderObjectTable from "./components/render/RenderObjectTable.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -152,7 +153,7 @@ Vue.component('CardInformation',CardInformation);
 Vue.component('ListNotes',ListNotes);
 Vue.component('NewKanbanLinkWizard',NewKanbanLinkWizard);
 Vue.component('DashboardMyObjects',DashboardMyObjects);
-
+Vue.component('RenderObjectTable',RenderObjectTable);
 
 //Validation
 import Vuelidate from 'vuelidate'
