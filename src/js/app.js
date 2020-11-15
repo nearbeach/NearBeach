@@ -58,6 +58,7 @@ import DashboardBugList from "./components/dashboard/DashboardBugList.vue";
 import NewKanbanCard from "./components/modules/wizards/NewKanbanCard.vue";
 import CardInformation from "./components/kanban/CardInformation.vue";
 import ListNotes from "./components/modules/sub_modules/ListNotes.vue";
+import NewKanbanLinkWizard from "./components/modules/wizards/NewKanbanLinkWizard.vue";
 
 
 //Import Bootstrap
@@ -149,6 +150,7 @@ Vue.component('DashboardBugList',DashboardBugList);
 Vue.component('NewKanbanCard',NewKanbanCard);
 Vue.component('CardInformation',CardInformation);
 Vue.component('ListNotes',ListNotes);
+Vue.component('NewKanbanLinkWizard',NewKanbanLinkWizard);
 
 
 

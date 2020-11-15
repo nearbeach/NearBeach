@@ -26,8 +26,13 @@
                                v-on:click="addNewKanbanCard"
                             >
                                 New Card
+                            </a><br/>
+                            <a class="kanban-link"
+                               href="javascript:void(0)"
+                               v-on:click="addNewLink"
+                            >
+                                Link Existing Object
                             </a>
-                            <div class="kanban-link">Link Existing Object</div>
                         </div>
                     </div>
                 </div>
@@ -53,6 +58,12 @@
         ></new-kanban-card>
 
         <card-information v-bind:card-information="cardInformation"></card-information>
+
+        <new-kanban-link-wizard v-bind:location-id="locationId"
+                                v-bind:column-results="columnResults"
+                                v-bind:level-results="levelResults"
+                                v-on:new_card="newCard($event)"
+        ></new-kanban-link-wizard>
     </div>
 </template>
 
@@ -66,6 +77,7 @@
             kanbanBoardResults: Array,
             kanbanCardResults: Array,
             levelResults: Array,
+            locationId: Number,
         },
         data() {
             return {
@@ -77,6 +89,10 @@
             addNewKanbanCard: function() {
                 var addKanbanCardModal = new Modal(document.getElementById('addKanbanCardModal'));
                 addKanbanCardModal.show();
+            },
+            addNewLink: function() {
+                var newLinkModal = new Modal(document.getElementById('newLinkModal'));
+                newLinkModal.show();
             },
             doubleClickedCard: function(data) {
                 //Update the cardInformationId with the card id

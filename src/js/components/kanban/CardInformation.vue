@@ -117,8 +117,11 @@
                     `/object_data/kanban_card/${this.cardId}/add_notes/`,
                     data_to_send,
                 ).then(response => {
-                    //DO STUFF
-                    console.log("Response: ",response);
+                    //Add the response to the end of the noteHistoryResults
+                    this.noteHistoryResults.push(response['data'][0]);
+
+                    //Clear the card note model
+                    this.cardNoteModel = '';
                 }).catch(error => {
                     console.log("Error: ",error);
                 })

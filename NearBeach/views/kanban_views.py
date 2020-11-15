@@ -18,7 +18,57 @@ from django.db.models import Max
 import json, urllib3
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(['POST'])
+def add_kanban_link(request,kanban_board_id,object_lookup):
+    """
+
+    :param request:
+    :param destination:
+    :param location_id:
+    :return:
+    """
+
+    # CHECK USER PERMISSION LATER
+
+    # Get form data and check
+    form = AddKanbanLinkForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get the newest card number id
+    kanban_card_sort_number = get_max_sort_id(kanban_board_id, form)
+
+    # Submit the kanban board link
+    kanban_card_submit = kanban_card(
+        change_user=request.user,
+        kanban_board_id=kanban_board_id,
+        kanban_column=form.cleaned_data['kanban_column'],
+        kanban_level=form.cleaned_data['kanban_level'],
+        kanban_card_sort_number=kanban_card_sort_number + 1,
+    )
+
+    # Check the data
+    if object_lookup == "project":
+        kanban_card_submit.project = form.cleaned_data['project']
+        kanban_card_submit.kanban_card_text = form.cleaned_data['project']
+    elif object_lookup == "requirement":
+        kanban_card_submit.requirement = form.cleaned_data['requirement']
+        kanban_card_submit.kanban_card_text = form.cleaned_data['requirement']
+    elif object_lookup == "task":
+        kanban_card_submit.task = form.cleaned_data['task']
+        kanban_card_submit.kanban_card_text = form.cleaned_data['task']
+
+    # Save the data
+    kanban_card_submit.save()
+
+    # Send back the data we just created
+    kanban_card_results = kanban_card.objects.get(kanban_card_id=kanban_card_submit.kanban_card_id)
+
+    return HttpResponse(serializers.serialize('json',[kanban_card_results]),content_type='application/json')
+
+
+@login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
 def check_kanban_board_name(request):
     """
@@ -39,11 +89,28 @@ def check_kanban_board_name(request):
     )
 
     # Send back data
-    return HttpResponse(serializers.serialize('json',kanban_board_results),content_type='application/json')
+    return HttpResponse(serializers.serialize('json', kanban_board_results), content_type='application/json')
 
 
-@login_required(login_url='login',redirect_field_name="")
-def kanban_information(request,kanban_board_id):
+# Internal function
+def get_max_sort_id(kanban_board_id,form):
+    # Get the newest card number id
+    kanban_card_sort_number = kanban_card.objects.filter(
+        is_deleted=False,
+        kanban_board_id=kanban_board_id,
+        kanban_column=form.cleaned_data['kanban_column'],
+        kanban_level=form.cleaned_data['kanban_level'],
+    ).aggregate(Max('kanban_card_sort_number'))
+
+    # If the card is new in that particular column & row - then we need to implement a sort number of 0
+    if kanban_card_sort_number['kanban_card_sort_number__max'] == None:
+        kanban_card_sort_number['kanban_card_sort_number__max'] = 0
+
+    return kanban_card_sort_number['kanban_card_sort_number__max']
+
+
+@login_required(login_url='login', redirect_field_name="")
+def kanban_information(request, kanban_board_id):
     """
 
     :param request:
@@ -76,18 +143,62 @@ def kanban_information(request,kanban_board_id):
 
     # Context
     c = {
-        'kanban_board_results': serializers.serialize('json',[kanban_board_results]),
-        'kanban_card_results': serializers.serialize('json',kanban_card_results),
-        'column_results': serializers.serialize('json',column_results),
-        'level_results': serializers.serialize('json',level_results),
+        'kanban_board_results': serializers.serialize('json', [kanban_board_results]),
+        'kanban_card_results': serializers.serialize('json', kanban_card_results),
+        'column_results': serializers.serialize('json', column_results),
+        'kanban_board_id': kanban_board_id,
+        'level_results': serializers.serialize('json', level_results),
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
-def move_kanban_card(request,kanban_card_id):
+def kanban_link_list(request, kanban_board_id, object_lookup):
+    """
+
+    :param request:
+    :param kanban_board_id:
+    :return:
+    """
+
+    # CHECK USER PERMISSIONS
+
+    # Get a list of all existing cards
+    existing_objects = kanban_card.objects.filter(
+        is_deleted=False,
+        kanban_board_id=kanban_board_id,
+    )
+
+    # Get the results we require
+    if object_lookup == "Project":
+        object_results = project.objects.filter(
+            is_deleted=False,
+        ).exclude(project_id__in=existing_objects.exclude(
+            project_id__isnull=True
+        ).values('project_id'))
+    elif object_lookup == "Requirement":
+        object_results = requirement.objects.filter(
+            is_deleted=False,
+        ).exclude(requirement_id__in=existing_objects.exclude(
+            requirement_id__isnull=True
+        ).values('requirement_id'))
+    elif object_lookup == "Task":
+        object_results = task.objects.filter(
+            is_deleted=False,
+        ).exclude(task_id__in=existing_objects.exclude(
+            task_id__isnull=True,
+        ).values('task_id'))
+    else:
+        return HttpResponseBadRequest("Sorry - there was an issue with your object lookup")
+
+    return HttpResponse(serializers.serialize('json', object_results), content_type='application/json')
+
+
+@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(['POST'])
+def move_kanban_card(request, kanban_card_id):
     """
 
     :param request:
@@ -119,8 +230,8 @@ def move_kanban_card(request,kanban_card_id):
     Otherwise we apply two sort orders to both the old and the new
     """
     if form.cleaned_data['new_card_column'] == form.cleaned_data['old_card_column'] and \
-        form.cleaned_data['new_card_level'] == form.cleaned_data['old_card_level']:
-        #The card has stayed in the same column/level
+            form.cleaned_data['new_card_level'] == form.cleaned_data['old_card_level']:
+        # The card has stayed in the same column/level
         resort_array = kanban_card.objects.filter(
             Q(
                 Q(
@@ -144,11 +255,11 @@ def move_kanban_card(request,kanban_card_id):
         ).order_by('kanban_card_sort_number')
 
         # Determine if we are using a positive or negative delta - using math
-        delta = (-1)*(form.cleaned_data['new_card_sort_number'] > form.cleaned_data['old_card_sort_number']) + \
+        delta = (-1) * (form.cleaned_data['new_card_sort_number'] > form.cleaned_data['old_card_sort_number']) + \
                 (form.cleaned_data['new_card_sort_number'] < form.cleaned_data['old_card_sort_number'])
 
         # Send the data away to get manipulated
-        update_sort_number(resort_array,delta)
+        update_sort_number(resort_array, delta)
     else:
         """
         The cards have been moved outside the origianl column/level. We need to update both the old and new location's
@@ -178,14 +289,13 @@ def move_kanban_card(request,kanban_card_id):
             )
         ).order_by('kanban_card_sort_number')
 
-        update_sort_number(old_resort_array,-1)
-        update_sort_number(new_resort_array,1)
-
+        update_sort_number(old_resort_array, -1)
+        update_sort_number(new_resort_array, 1)
 
     return HttpResponse("")
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def new_kanban(request):
     """
 
@@ -205,15 +315,15 @@ def new_kanban(request):
 
     # Context
     c = {
-        'group_results': serializers.serialize('json',group_results),
+        'group_results': serializers.serialize('json', group_results),
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def new_kanban_card(request,kanban_board_id):
+@login_required(login_url='login', redirect_field_name="")
+def new_kanban_card(request, kanban_board_id):
     """
     """
 
@@ -228,16 +338,7 @@ def new_kanban_card(request,kanban_board_id):
         return HttpResponseBadRequest(form.errors)
 
     # Get the newest card number id
-    kanban_card_sort_number = kanban_card.objects.filter(
-        is_deleted=False,
-        kanban_board_id=kanban_board_id,
-        kanban_column=form.cleaned_data['kanban_column'],
-        kanban_level=form.cleaned_data['kanban_level'],
-    ).aggregate(Max('kanban_card_sort_number'))
-
-    # If the card is new in that particular column & row - then we need to implement a sort number of 0
-    if kanban_card_sort_number['kanban_card_sort_number__max'] == None:
-        kanban_card_sort_number['kanban_card_sort_number__max'] = 0
+    kanban_card_sort_number = get_max_sort_id(kanban_board_id,form)
 
     # Save the data
     submit_kanban_card = kanban_card(
@@ -246,17 +347,17 @@ def new_kanban_card(request,kanban_board_id):
         kanban_card_text=form.cleaned_data['kanban_card_text'],
         kanban_column=form.cleaned_data['kanban_column'],
         kanban_level=form.cleaned_data['kanban_level'],
-        kanban_card_sort_number=kanban_card_sort_number['kanban_card_sort_number__max'] + 1,
+        kanban_card_sort_number=kanban_card_sort_number + 1,
     )
     submit_kanban_card.save()
 
     # Send back the kanban card data
     kanban_card_results = kanban_card.objects.get(kanban_card_id=submit_kanban_card.kanban_card_id)
-    return HttpResponse(serializers.serialize('json',[kanban_card_results]),content_type='application/json')
+    return HttpResponse(serializers.serialize('json', [kanban_card_results]), content_type='application/json')
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def new_kanban_save(request):
     """
 
@@ -285,7 +386,7 @@ def new_kanban_save(request):
     level_title_list = request.POST.getlist("level_title")
 
     # Loop through the column title list to save the titles
-    for index,column_title in enumerate(column_title_list):
+    for index, column_title in enumerate(column_title_list):
         submit_column_title = kanban_column(
             change_user=request.user,
             kanban_column_name=column_title,
@@ -295,7 +396,7 @@ def new_kanban_save(request):
         submit_column_title.save()
 
     # Loop throuhg the level title list to save the titles
-    for index,level_title in enumerate(level_title_list):
+    for index, level_title in enumerate(level_title_list):
         submit_level_title = kanban_level(
             change_user=request.user,
             kanban_level_name=level_title,
@@ -326,7 +427,7 @@ def new_kanban_save(request):
 
 
 # Internal Function
-def update_sort_number(resort_array,delta):
+def update_sort_number(resort_array, delta):
     """
     The following function will loop through the resort array and apply the delta (which should be either a 1 or -1)
     :param resort_array:

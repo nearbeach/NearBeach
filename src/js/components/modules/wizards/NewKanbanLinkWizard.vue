@@ -2,13 +2,13 @@
     <div class="modal fade"
              id="newLinkModal"
              tabindex="-1"
-             aria-labelledby="requirementLinkModal"
+             aria-labelledby="kanbanLinkModal"
              aria-hidden="true"
     >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><i data-feather="link"></i> New Requirement Link Wizard</h2>
+                    <h2><i data-feather="link"></i> New Kanban Link Wizard</h2>
                     <button type="button"
                             class="close"
                             data-dismiss="modal"
@@ -81,13 +81,14 @@
                                         <td>
                                             <div class="form-check">
                                                 <input class="form-check-input"
-                                                       type="checkbox"
+                                                       type="radio"
+                                                       name="link-option"
                                                        v-bind:value="result['pk']"
-                                                       v-bind:id="`checkbox_project_${result['pk']}`"
+                                                       v-bind:id="`radio_project_${result['pk']}`"
                                                        v-model="linkModel"
                                                 >
                                                 <label class="form-check-label"
-                                                       v-bind:for="`checkbox_project_${result['pk']}`"
+                                                       v-bind:for="`radio_project_${result['pk']}`"
                                                 >
                                                     {{result['fields']['project_name']}}
                                                 </label>
@@ -99,19 +100,44 @@
                                     </tr>
                                 </tbody>
 
+                                <!-- REQUIREMENTS -->
+                                <tbody v-if="objectModel == 'Requirement'">
+                                    <tr v-for="result in objectResults">
+                                        <td>
+                                            <div class="form-check">
+                                                <input class="form-check-input"
+                                                       type="radio"
+                                                       name="link-option"
+                                                       v-bind:value="result['pk']"
+                                                       v-bind:id="`radio_requirement_${result['pk']}`"
+                                                       v-model="linkModel"
+                                                >
+                                                <label class="form-check-label"
+                                                       v-bind:for="`radio_task_${result['pk']}`"
+                                                >
+                                                    {{result['fields']['requirement_title']}}
+                                                </label>
+                                            </div>
+                                            <div class="spacer"></div>
+                                            <p class="small-text">Requirement {{result['pk']}}</p>
+                                        </td>
+                                        <td>{{result['fields']['requirement_status']}}</td>
+                                    </tr>
+                                </tbody>
+
                                 <!-- TASKS -->
                                 <tbody v-if="objectModel == 'Task'">
                                     <tr v-for="result in objectResults">
                                         <td>
                                             <div class="form-check">
                                                 <input class="form-check-input"
-                                                       type="checkbox"
+                                                       type="radio"
                                                        v-bind:value="result['pk']"
-                                                       v-bind:id="`checkbox_task_${result['pk']}`"
+                                                       v-bind:id="`radio_task_${result['pk']}`"
                                                        v-model="linkModel"
                                                 >
                                                 <label class="form-check-label"
-                                                       v-bind:for="`checkbox_task_${result['pk']}`"
+                                                       v-bind:for="`radio_task_${result['pk']}`"
                                                 >
                                                     {{result['fields']['task_short_description']}}
                                                 </label>
@@ -120,30 +146,6 @@
                                             <p class="small-text">Task {{result['pk']}}</p>
                                         </td>
                                         <td>{{result['fields']['task_status']}}</td>
-                                    </tr>
-                                </tbody>
-
-                                <!-- OPPORTUNITY -->
-                                <tbody v-if="objectModel == 'Opportunity'">
-                                    <tr v-for="result in objectResults">
-                                        <td>
-                                            <div class="form-check">
-                                                <input class="form-check-input"
-                                                       type="checkbox"
-                                                       v-bind:value="result['pk']"
-                                                       v-bind:id="`checkbox_opportunity_${result['pk']}`"
-                                                       v-model="linkModel"
-                                                >
-                                                <label class="form-check-label"
-                                                       v-bind:for="`checkbox_opportunity_${result['pk']}`"
-                                                >
-                                                    {{result['fields']['opportunity_name']}}
-                                                </label>
-                                            </div>
-                                            <div class="spacer"></div>
-                                            <p class="small-text">Opportunity {{result['pk']}}</p>
-                                        </td>
-                                        <td>{{result['fields']['opportunity_success_probability']}}%</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -176,11 +178,12 @@
     const axios = require('axios');
 
     export default {
-        name: "NewRequirementLinkWizard",
-        props: [
-            'destination',
-            'locationId',
-        ],
+        name: "NewKanbanLinkWizard",
+        props: {
+            columnResults: Array,
+            levelResults: Array,
+            locationId: Number,
+        },
         mixins: [
             errorModalMixin,
         ],
@@ -191,6 +194,7 @@
                 objectResults: [],
                 objectSelection: [
                     'Project',
+                    'Requirement',
                     'Task',
                 ],
                 linkModel: [],
@@ -201,18 +205,21 @@
                 // Set up the data object to send
                 const data_to_send = new FormData();
 
-                // Go through all link models to add to data_to_send
-                this.linkModel.forEach((link) => {
-                    data_to_send.append(`${this.objectModel.toLowerCase()}`,link);
-                });
+                //Depending on what the object model is - depends what is sent
+                data_to_send.set(`${this.objectModel.toLowerCase()}`,this.linkModel);
+                data_to_send.set('kanban_level', this.levelResults[0]['pk']);
+                data_to_send.set('kanban_column', this.columnResults[0]['pk']);
 
                 // Use axios to send data
                 axios.post(
-                    `/${this.destination}_information/${this.locationId}/add_link/`,
+                    `/kanban_information/${this.locationId}/${this.objectModel.toLowerCase()}/add_link/`,
                     data_to_send,
                 ).then(response => {
-                    //Data has been successfully saved. Time to update the requirement links
-                    this.$emit('update_module',{});
+                    //Data has been successfully saved. Time to add the card to the board
+                    this.$emit('new_card',response['data']);
+
+                    //Clear the object model
+                    this.objectModel = null;
 
                     //Click on the close button - a hack, but it should close the modal
                     document.getElementById("requirementLinkCloseButton").click();
@@ -236,15 +243,15 @@
 
                 //Now to use axios to get the data we require
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
+                    `/kanban_information/${this.locationId}/${this.objectModel}/link_list/`
                 ).then(response => {
                     //Load the data into the array
                     this.objectResults = response['data'];
 
                     //Tell the user we are no longer searching
                     this.isSearching = false;
-                }).catch((error) => {
-                    this.showErrorModal(error, this.destination);
+                }).catch(error => {
+                    this.showErrorModal(error,'kanban');
                 })
             },
             linkModel: function() {

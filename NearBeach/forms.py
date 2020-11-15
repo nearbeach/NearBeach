@@ -50,6 +50,39 @@ class AddGroupForm(forms.Form):
     )
 
 
+class AddKanbanLinkForm(forms.Form):
+    project = forms.ModelChoiceField(
+        required=False,
+        queryset=project.objects.filter(
+            is_deleted=False,
+        )
+    )
+    requirement = forms.ModelChoiceField(
+        required=False,
+        queryset=requirement.objects.filter(
+            is_deleted=False,
+        )
+    )
+    task = forms.ModelChoiceField(
+        required=False,
+        queryset=task.objects.filter(
+            is_deleted=False,
+        )
+    )
+    kanban_column = forms.ModelChoiceField(
+        required=True,
+        queryset=kanban_column.objects.filter(
+            is_deleted=False,
+        )
+    )
+    kanban_level = forms.ModelChoiceField(
+        required=True,
+        queryset=kanban_level.objects.filter(
+            is_deleted=False,
+        )
+    )
+
+
 class AddLinkForm(forms.Form):
     document_description = forms.CharField(
         max_length=50,
@@ -81,12 +114,6 @@ class AddRequirementLinkForm(forms.Form):
     task = forms.ModelMultipleChoiceField(
         required=False,
         queryset=task.objects.filter(
-            is_deleted=False,
-        )
-    )
-    opportunity = forms.ModelMultipleChoiceField(
-        required=False,
-        queryset=opportunity.objects.filter(
             is_deleted=False,
         )
     )

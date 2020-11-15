@@ -57,6 +57,8 @@ urlpatterns = [
 
 	# Kanban
 	path('kanban_information/<int:kanban_board_id>/',kanban_views.kanban_information,name='kanban_information'),
+	path('kanban_information/<int:kanban_board_id>/<object_lookup>/add_link/',kanban_views.add_kanban_link,name='add_kanban_link'),
+	path('kanban_information/<int:kanban_board_id>/<object_lookup>/link_list/',kanban_views.kanban_link_list,name='kanban_link_list'),
 	path('kanban_information/<int:kanban_board_id>/new_card/',kanban_views.new_kanban_card,name='new_kanban_card'),
 	path('kanban_information/<int:kanban_card_id>/move_card/',kanban_views.move_kanban_card,name='move_kanban_card'),
 	path('kanban_information/check_kanban_board_name/',kanban_views.check_kanban_board_name,name='check_kanban_board_name'),
