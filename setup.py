@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="NearBeach",
-    version="0.26.1",
+    version="0.27.3",
     author="Luke Christopher Clarke",
     author_email="luke@nearbeach.org",
     description="NearBeach - an open source project management tool",
@@ -17,7 +17,8 @@ setuptools.setup(
 	'django',
 	'simplejson',
 	'pillow',
-	# 'geolocation-python',
+	'urllib3',
+    # 'geolocation-python',
 	# 'django-tinymce4-lite',
 	# 'weasyprint',
 	# 'pyperclip',

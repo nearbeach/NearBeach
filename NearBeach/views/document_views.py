@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, FileResponse
 from django.db.models import Q
 from django.utils.encoding import smart_str
 from django.views.decorators.http import require_http_methods
@@ -347,14 +347,8 @@ def private_download_file(request,document_key):
         document_results.document
     )
 
-    # Construct the response
-    response = HttpResponse(content_type='application/force-download')
-    response['Content-Disposition'] = 'attachment; filename=%s' % smart_str(document_results.document.name)
-    response['X-Sendfile'] = smart_str(path)
-
-    print(response)
-
-    return response
+    # Send file to user
+    return FileResponse(open(path, 'rb'))
 
 
 #Internal Function
