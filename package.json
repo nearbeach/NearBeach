@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/robotichead/NearBeach#readme",
   "dependencies": {
-    "@tinymce/tinymce-vue": "^3.2.5",
+    "@tinymce/tinymce-vue": "^3.2.6",
     "@popperjs/core": "^2.5.4",
     "axios": "^0.21.0",
     "bootstrap": "^5.0.0-alpha1",
