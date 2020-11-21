@@ -419,6 +419,28 @@ def new_kanban_save(request):
     return HttpResponse(reverse('kanban_information', args={submit_kanban_board.kanban_board_id}))
 
 
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name="")
+def update_card(request):
+    """
+    The following function will update the card information sent through the form in POST
+    """
+    
+    # ADD IN CHECKING USER PERMISSIONS
+
+    # Get data and validate in the form
+    form = KanbanCardForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Save the data
+    kanban_card_update = form.cleaned_data['kanban_card_id']
+    kanban_card_update.kanban_card_text = form.cleaned_data['kanban_card_text']
+    kanban_card_update.save()
+
+    return HttpResponse("")
+
+
 # Internal Function
 def update_sort_number(resort_array, delta):
     """

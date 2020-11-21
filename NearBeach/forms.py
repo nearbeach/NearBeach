@@ -153,6 +153,19 @@ class DocumentUploadForm(ModelForm):
         }
 
 
+class KanbanCardForm(forms.ModelForm):
+    kanban_card_id = forms.ModelChoiceField(
+        required=True,
+        queryset=kanban_card.objects.all(),
+    )
+    class Meta:
+        model = kanban_card
+        fields = {
+            'kanban_card_id',
+            'kanban_card_text',
+        }
+
+
 class AddUserForm(forms.Form):
     user_list = forms.ModelMultipleChoiceField(
         required=True,

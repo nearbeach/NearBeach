@@ -43,7 +43,7 @@
         <!-- Rendering the Kanban Container -->
         <kanban-board v-bind:column-results="columnResults"
                       v-bind:kanban-board-results="kanbanBoardResults"
-                      v-bind:kanban-card-results="kanbanCardResults"
+                      v-bind:kanban-card-results="localKanbanCardResults"
                       v-bind:level-results="levelResults"
                       v-bind:new-card-info="newCardInfo"
                       v-on:double_clicked_card="doubleClickedCard($event)"
@@ -57,7 +57,9 @@
                          v-on:new_card="newCard($event)"
         ></new-kanban-card>
 
-        <card-information v-bind:card-information="cardInformation"></card-information>
+        <card-information v-bind:card-information="cardInformation"
+                          v-on:update_card="updateCard($event)"
+        ></card-information>
 
         <new-kanban-link-wizard v-bind:location-id="locationId"
                                 v-bind:column-results="columnResults"
@@ -82,6 +84,7 @@
         data() {
             return {
                 cardInformation: {},
+                localKanbanCardResults: this.kanbanCardResults,
                 newCardInfo: [],
             }
         },
@@ -100,6 +103,16 @@
             },
             newCard: function(data) {
                 this.newCardInfo = data;
+            },
+            updateCard: function(data) {
+                console.log("GOT HERE!");
+                //Loop through the results - when the id's match. Update the data.
+                this.localKanbanCardResults.forEach(row => {
+                    //Check to see if the primary keys match - if they do update the data
+                    if (row['pk'] == data['kanban_card_id']) {
+                        row['fields']['kanban_card_text'] = data['kanban_card_text'];
+                    }
+                }) 
             },
         }
     }

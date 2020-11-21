@@ -63,6 +63,7 @@ urlpatterns = [
 	path('kanban_information/<int:kanban_board_id>/new_card/',kanban_views.new_kanban_card,name='new_kanban_card'),
 	path('kanban_information/<int:kanban_card_id>/move_card/',kanban_views.move_kanban_card,name='move_kanban_card'),
 	path('kanban_information/check_kanban_board_name/',kanban_views.check_kanban_board_name,name='check_kanban_board_name'),
+	path('kanban_information/update_card/',kanban_views.update_card,name='kanban_update_card'),
 
 
 	# Authentication
