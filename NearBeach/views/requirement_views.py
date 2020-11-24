@@ -10,6 +10,7 @@ from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from NearBeach.user_permissions import return_user_permission_level
 from django.views.decorators.http import require_http_methods
+from django.shortcuts import get_object_or_404
 
 
 import json
@@ -344,7 +345,8 @@ def requirement_information(request, requirement_id):
     :return:
     """
     # Get the requirement information
-    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    # requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    requirement_results = get_object_or_404(requirement,requirement_id=requirement_id)
 
     # Check the permissions
     permission_results = get_user_requirement_permissions(request,requirement_id)

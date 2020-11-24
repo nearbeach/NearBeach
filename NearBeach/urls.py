@@ -10,24 +10,15 @@ from django.urls import re_path
 #Password reset
 from django.contrib.auth import views as auth_views
 
+# 404 and 500 pages
+from django.conf.urls import handler404, handler500
 
-"""
-from . import views, \
-	views_lookup, \
-	views_quotes, \
-	views_project_information, \
-	views_task_information, \
-	views_organisation_information, \
-	views_customer_information, \
-	views_document_tree, \
-	views_requirements, \
-	views_administration, \
-	views_whiteboard
-"""
+
 from .views import authentication_views, \
 	customer_views, \
 	dashboard_views, \
 	document_views, \
+	error_views, \
 	kanban_views, \
 	object_data_views, \
 	organisation_views, \
@@ -54,6 +45,7 @@ urlpatterns = [
 	path('documentation/<destination>/<location_id>/list/files/',document_views.document_list_files,name='document_list_files'),
 	path('documentation/<destination>/<location_id>/list/folders/',document_views.document_list_folders,name='document_list_folders'),
 	path('documentation/<destination>/<location_id>/upload/',document_views.document_upload,name='document_upload'),
+	path('documentation/get/max_upload/',document_views.get_max_upload,name='document_get_max_upload'),
 
 
 	# Kanban
@@ -147,6 +139,8 @@ urlpatterns = [
 	path('task_information/<int:task_id>/save/',task_views.task_information_save,name='task_information_save'),
 ]
 
+# handler404 = error_views.error_404
+# handler500 = error_views.error_500
 
 """
 urlpatterns = [

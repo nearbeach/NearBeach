@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, FileResponse
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, FileResponse, JsonResponse
 from django.db.models import Q
 from django.utils.encoding import smart_str
 from django.views.decorators.http import require_http_methods
@@ -102,7 +102,6 @@ def document_add_link(request,destination,location_id):
     json_results = json.dumps(list(document_results), cls=DjangoJSONEncoder)
 
     return HttpResponse(json_results, content_type='application/json')
-
 
 
 @require_http_methods(['POST'])
@@ -249,6 +248,23 @@ def document_upload(request,destination,location_id):
     json_results = json.dumps(list(document_results), cls=DjangoJSONEncoder)
 
     return HttpResponse(json_results, content_type='application/json')
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def get_max_upload(request):
+    """
+    This function will query the settings file for the variable "max_upload_size". If it does not exist it will send back
+    a simple 0. If it does exist it will send back itself
+    :param request:
+    :return:
+    """
+    if hasattr(settings, 'MAX_UPLOAD_SIZE'):
+        send_value = {'max_upload_size': settings.MAX_UPLOAD_SIZE}
+    else:
+        max_upload_size = {'max_upload_size': 0}
+
+    return JsonResponse(max_upload_size)
 
 
 @login_required(login_url='login',redirect_field_name="")
