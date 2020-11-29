@@ -61,6 +61,7 @@ import ListNotes from "./components/modules/sub_modules/ListNotes.vue";
 import NewKanbanLinkWizard from "./components/modules/wizards/NewKanbanLinkWizard.vue";
 import DashboardMyObjects from "./components/dashboard/DashboardMyObjects.vue";
 import RenderObjectTable from "./components/render/RenderObjectTable.vue";
+import ObjectLinks from "./components/modules/sub_modules/ObjectLinks.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -154,6 +155,7 @@ Vue.component('ListNotes',ListNotes);
 Vue.component('NewKanbanLinkWizard',NewKanbanLinkWizard);
 Vue.component('DashboardMyObjects',DashboardMyObjects);
 Vue.component('RenderObjectTable',RenderObjectTable);
+Vue.component('ObjectLinks',ObjectLinks);
 
 //Validation
 import Vuelidate from 'vuelidate'

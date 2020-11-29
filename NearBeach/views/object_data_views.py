@@ -536,6 +536,21 @@ def note_list(request,destination,location_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
+def object_link_list(request,destination,location_id):
+    """
+
+    :param request:
+    :param destination:
+    :param location_id:
+    :return:
+    """
+    # NEED TO WRITE CODE
+
+    return HttpResponse("HELLO WORLD!")
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
 def query_bug_client(request,destination,location_id):
     # Insert data into form
     form = QueryBugClientForm(request.POST)
