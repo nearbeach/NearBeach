@@ -103,6 +103,25 @@ class AddNoteForm(forms.Form):
     )
 
 
+class AddObjectLinkForm(forms.Form):
+    project = forms.ModelMultipleChoiceField(
+        queryset=project.objects.all(),
+        required=False,
+    )
+    requirement = forms.ModelMultipleChoiceField(
+        queryset=requirement.objects.all(),
+        required=False,
+    )
+    requirement_item = forms.ModelMultipleChoiceField(
+        queryset=requirement_item.objects.all(),
+        required=False,
+    )
+    task = forms.ModelMultipleChoiceField(
+        queryset=task.objects.all(),
+        required=False,
+    )
+
+
 class AddRequirementLinkForm(forms.Form):
     # One external field
     project = forms.ModelMultipleChoiceField(
@@ -158,6 +177,7 @@ class KanbanCardForm(forms.ModelForm):
         required=True,
         queryset=kanban_card.objects.all(),
     )
+
     class Meta:
         model = kanban_card
         fields = {
@@ -217,8 +237,6 @@ class MoveKanbanCardForm(forms.Form):
         queryset=kanban_level_results,
     )
     old_card_sort_number = forms.IntegerField()
-
-
 
 
 class NewCustomerForm(forms.ModelForm):

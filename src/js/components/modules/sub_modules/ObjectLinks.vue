@@ -28,15 +28,35 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Submit Button -->
+        <!-- TO DO - limit it to certain users -->
+        <div class="row submit-row">
+            <div class="col-md-12">
+                <a href="javascript:void(0)"
+                   class="btn btn-primary save-changes"
+                   v-on:click="newLink"
+                >Create new Link</a>
+            </div>
+        </div>
+        <hr>
+
+        <!-- MODAL FOR NEW OBJECT LINKS -->
+        <new-link-wizard v-bind:destination="destination"
+                         v-bind:location-id="locationId"
+                         v-on:update_link_results="updateLinkResults"
+        ></new-link-wizard>
     </div>
 </template>
 
 <script>
+    import {Modal} from "bootstrap";
+
     export default {
         name: "ObjectLinks",
         props: {
             destination: String,
-            location_id: Number,
+            locationId: Number,
         },
         data() {
             return {
@@ -49,6 +69,11 @@
             },
             extractObjectStatus: function(link) {
                 return "NEED TO PROGRAM";
+            },
+            newLink: function() {
+                //Open up the modal
+                var elem_modal = new Modal(document.getElementById('newLinkModal'));
+                elem_modal.show();
             },
             updateLinkResults: function() {
                 //Get the data from the database

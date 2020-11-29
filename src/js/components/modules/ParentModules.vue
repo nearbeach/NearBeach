@@ -169,7 +169,9 @@
                     ></documents-module>
                 </div>
                 <div class="tab-pane fade" id="object-links" role="tabpanel" aria-labelledby="contact-tab">
-                    <object-links></object-links>
+                    <object-links v-bind:destination="destination"
+                                  v-bind:location-id="locationId"
+                    ></object-links>
                 </div>
                 <div class="tab-pane fade" id="customers" role="tabpanel" aria-labelledby="contact-tab">
                     <customers-module v-bind:location-id="locationId"

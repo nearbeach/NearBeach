@@ -110,6 +110,35 @@ def add_group(request,destination,location_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
+def add_link(request,destination,location_id):
+    """
+
+    :param request:
+    :param destination:
+    :param location_id:
+    :return:
+    """
+
+    # ADD IN CHECKER FOR USER PERMISSIONS
+
+    # Get the data
+    form = AddObjectLinkForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Start saving the data
+    object_assignment_submit = object_assignment(
+        change_user=request.user,
+    )
+
+    # Add the destination/location_id to the object
+    object_assignment_submit = link_object(object_assignment_submit,destination,location_id)
+
+    # Loop through the results and add them in.
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
 def add_notes(request,destination,location_id):
     # ADD IN PERMISSIONS HERE!
 
@@ -504,10 +533,28 @@ def link_list(request,destination,location_id,object_lookup):
         ).exclude(
             task_status='Closed',
         )
-    elif object_lookup == "opportunity":
-        data_results = opportunity.objects.filter(
+    elif object_lookup == "requirement":
+        data_results = requirement.objects.filter(
             is_deleted=False,
-            opportunity_stage_id__opportunity_closed=False,
+            requirement_status_id__in=list_of_requirement_status.objects.filter(
+                is_deleted=False,
+                requirement_status_is_closed=False,
+            ).values('requirement_status_id'),
+        )
+    elif object_lookup == "requirement_item":
+        data_results = requirement_item.objects.filter(
+            is_deleted=False,
+            requirement_item_status_id__in=list_of_requirement_item_status.objects.filter(
+                is_deleted=False,
+                status_is_closed=False,
+            ).values('requirement_item_status_id'),
+            requirement_id__in=requirement.objects.filter(
+                is_deleted=False,
+                requirement_status_id__in=list_of_requirement_status.objects.filter(
+                    is_deleted=False,
+                    requirement_status_is_closed=False,
+                ).values('requirement_status_id')
+            ).values('requirement_id'),
         )
     else:
         # There is an error.
@@ -515,6 +562,29 @@ def link_list(request,destination,location_id,object_lookup):
 
     # Send the data to the user
     return HttpResponse(serializers.serialize('json',data_results), content_type='application/json')
+
+
+# Internal function
+def link_object(object_assignment_submit,destination,location_id):
+    """
+    This is an internal function - depending on the destination, depends on what we are linking in the
+    object_association_submit
+    :param object_assignment_submit:
+    :param destination:
+    :param location_id:
+    :return:
+    """
+    if destination == "project":
+        object_assignment_submit.project = project.objects.get(project_id=location_id)
+    elif destination == "requirement":
+        object_assignment_submit.requirement = requirement.objects.get(requirement_id=location_id)
+    elif destination == "requirement_item":
+        object_assignment_submit.requirement_item = requirement_item.objects.get(requirement_item_id=location_id)
+    elif destination == "task":
+        object_assignment_submit.task = task.objects.get(task_id=location_id)
+
+    # Return the results
+    return object_assignment_submit
 
 
 @require_http_methods(['POST'])
