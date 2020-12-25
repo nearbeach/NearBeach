@@ -135,7 +135,40 @@ def add_link(request,destination,location_id):
     object_assignment_submit = link_object(object_assignment_submit,destination,location_id)
 
     # Loop through the results and add them in.
+    for row in request.POST.getlist("project"):
+        submit_object_assignment = object_assignment(
+            project=project.objects.get(project_id=row),
+            change_user=request.user,
+        )
+        set_object_from_destination(submit_object_assignment,destination,location_id)
+        submit_object_assignment.save()
 
+    for row in request.POST.getlist("task"):
+        submit_object_assignment = object_assignment(
+            task=task.objects.get(task_id=row),
+            change_user=request.user,
+        )
+        set_object_from_destination(submit_object_assignment, destination, location_id)
+        submit_object_assignment.save()
+
+    for row in request.POST.getlist("requirement"):
+        submit_object_assignment = object_assignment(
+            requirement=requirement.objects.get(requirement_id=row),
+            change_user=request.user,
+        )
+        set_object_from_destination(submit_object_assignment, destination, location_id)
+        submit_object_assignment.save()
+
+    for row in request.POST.getlist("requirement_item"):
+        submit_object_assignment = object_assignment(
+            requirement_item=requirement_item.objects.get(requirement_item_id=row),
+            change_user=request.user,
+        )
+        set_object_from_destination(submit_object_assignment, destination, location_id)
+        submit_object_assignment.save()
+
+
+    return HttpResponse("Success")
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")

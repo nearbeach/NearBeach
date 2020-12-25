@@ -2,74 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d33fa832-af9e-4e77-8cfd-f50f0ec36326" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/NearBeach.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/NearBeach.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/NearBeach.min.js.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/NearBeach.min.js.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/NearBeach.png.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/NearBeach.png.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/NearBeach_Small.png.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/NearBeach_Small.png.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/NearBeach_logo.svg.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/NearBeach_logo.svg.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/placeholder/body_text.svg.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/placeholder/body_text.svg.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/placeholder/online_connection.svg.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/placeholder/online_connection.svg.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/placeholder/people_tax.svg.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/placeholder/people_tax.svg.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/placeholder/product_tour.svg.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/placeholder/product_tour.svg.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/placeholder/profile_pic.svg.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/placeholder/profile_pic.svg.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/placeholder/questions.svg.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/placeholder/questions.svg.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/placeholder/road_to_knowledge.svg.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/placeholder/road_to_knowledge.svg.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/placeholder/search.svg.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/placeholder/search.svg.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/placeholder/setup.svg.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/images/placeholder/setup.svg.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/loader.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/loader.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/loader.min.js.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/loader.min.js.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/login.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/login.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/login.min.js.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/login.min.js.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/tinymce/icons/default/icons.min.js.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/tinymce/icons/default/icons.min.js.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/tinymce/skins/content/default/content.min.css.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/tinymce/skins/content/default/content.min.css.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/tinymce/skins/ui/oxide/content.min.css.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/tinymce/skins/ui/oxide/content.min.css.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/tinymce/skins/ui/oxide/skin.min.css.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/tinymce/skins/ui/oxide/skin.min.css.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/tinymce/themes/silver/theme.min.js.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/tinymce/themes/silver/theme.min.js.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/tinymce/tinymce.min.js.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/tinymce/tinymce.min.js.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard.min.js.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard.min.js.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/bg.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/bg.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/bold.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/bold.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/bottom.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/bottom.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/cmp-bg.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/cmp-bg.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/connect.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/connect.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/connector.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/connector.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/cylinder.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/cylinder.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/delete.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/delete.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/draw/drawbg.jpg.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/draw/drawbg.jpg.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/draw/drawbgcolor.jpg.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/draw/drawbgcolor.jpg.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/draw/drawfooter.jpg.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/draw/drawfooter.jpg.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/draw/drawheader.jpg.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/draw/drawheader.jpg.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/help.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/help.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/hexagon.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/hexagon.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/house.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/house.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/image.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/image.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/middle.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/middle.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/open.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/open.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/paste.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/paste.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/preferences.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/preferences.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/press.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/press.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/refresh.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/refresh.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/rhombus.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/rhombus.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/rounded.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/rounded.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/saveas.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/saveas.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/symbols/small_event_intermediate.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/symbols/small_event_intermediate.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/symbols/small_fork.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/symbols/small_fork.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/symbols/small_link.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/symbols/small_link.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/symbols/small_message.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/symbols/small_message.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/symbols/small_multiple.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/symbols/small_multiple.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/symbols/small_terminate.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/symbols/small_terminate.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/text.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/text.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/toback.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/toback.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/tofront.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/tofront.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/top.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/top.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/triangle.gif.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard/images/triangle.gif.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/templates/NearBeach/partials/header.html" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/templates/NearBeach/partials/header.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/templates/NearBeach/projects/new_project.html" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/templates/NearBeach/projects/new_project.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/js/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/js/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,8 +35,10 @@
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="nodejs_package_manager_path" value="npm" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -116,10 +51,11 @@
       <updated>1565561496787</updated>
       <workItem from="1565561499536" duration="153000" />
       <workItem from="1601991889972" duration="29000" />
+      <workItem from="1607303642686" duration="414000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
+    <option name="version" value="3" />
   </component>
 </project>

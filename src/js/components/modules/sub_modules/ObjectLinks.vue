@@ -52,6 +52,8 @@
 <script>
     import {Modal} from "bootstrap";
 
+    const axios = require('axios');
+
     export default {
         name: "ObjectLinks",
         props: {
