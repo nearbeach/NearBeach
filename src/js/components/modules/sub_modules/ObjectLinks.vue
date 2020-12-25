@@ -67,6 +67,7 @@
         },
         methods: {
             extractObjectDescription: function(link) {
+                console.log("LINK: :",link);
                 return "NEED TO PROGRAM";
             },
             extractObjectStatus: function(link) {

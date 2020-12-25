@@ -647,9 +647,19 @@ def object_link_list(request,destination,location_id):
     :param location_id:
     :return:
     """
-    # NEED TO WRITE CODE
+    object_assignment_results = object_assignment.objects.filter(
+        is_deleted=False,
+    )
+    object_assignment_results = get_object_from_destination(object_assignment_results,destination,location_id)
 
-    return HttpResponse("HELLO WORLD!")
+    object_assignment_results = object_assignment_results.filter(
+        Q(project__isnull=False) |
+        Q(requirement__isnull=False) |
+        Q(requirement_item__isnull=False) |
+        Q(task__isnull=False)
+    )
+
+    return HttpResponse(serializers.serialize('JSON',object_assignment_results))
 
 
 @require_http_methods(['POST'])
