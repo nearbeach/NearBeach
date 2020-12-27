@@ -58,11 +58,17 @@
     //Validation
     import { email, required } from 'vuelidate/lib/validators';
 
+    //Mixins
+    import searchMixin from "../../mixins/searchMixin";
+
     export default {
         name: "NewCustomer",
         props: [
             'organisationName',
             'titleList',
+        ],
+        mixins: [
+            searchMixin,
         ],
         data() {
             return {
@@ -92,21 +98,12 @@
         },
         methods: {
             fetchOptions: function(search, loading) {
-                // Make sure the timer isn't running
-                if (this.searchTimeout != '') {
-                    //Stop the clock!
-                    clearTimeout(this.searchTimeout);
-                }
-
-                // Reset the clock, to only search if there is an uninterupted 0.5s of no typing.
-                if (search.length >= 3) {
-                    this.searchTimeout = setTimeout(
-                        this.getOrganisationData,
-                        500,
-                        search,
-                        loading
-                    )
-                }
+                this.searchTrigger({
+                   'return_function': this.getOrganisationData,
+                   'searchTimeout': this.searchTimeout,
+                   'search': search,
+                   'loading': loading,
+                });
             },
             getOrganisationData: function(search,loading) {
                 // Save the seach data in FormData

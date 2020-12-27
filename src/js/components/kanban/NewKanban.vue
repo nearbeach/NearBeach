@@ -93,6 +93,7 @@
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
+    import searchMixin from "../../mixins/searchMixin";
 
     export default {
         name: "NewKanban",
@@ -101,6 +102,7 @@
         },
         mixins: [
             errorModalMixin,
+            searchMixin,
         ],
         data() {
             return {
@@ -167,6 +169,13 @@
                         500,
                     )
                 }
+
+                this.searchTrigger({
+                    'return_function': this.checkKanbanBoardName,
+                    'searchTimeout': this.searchTimeout,
+                    'search': this.kanbanBoardNameModel,
+                    'loading': null,
+                });
             }
         },
         methods: {
