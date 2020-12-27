@@ -35,9 +35,6 @@ The following instructions will inform you how to setup NearBeach and get it run
   .. code-block:: bash
 
     'NearBeach.apps.NearBeachConfig',
-    'django.contrib.humanize',
-    'tinymce',
-    'django_select2',
 
   Now save the document
 
@@ -127,8 +124,6 @@ The following instructions will inform you how to setup NearBeach and get it run
   .. code-block:: bash
 
     path('', include('NearBeach.urls')),
-    path('tinymce/', include('tinymce.urls')),
-    path('select2/', include('django_select2.urls')),
 
 10. Create Database/Migrations
 
@@ -143,7 +138,7 @@ The following instructions will inform you how to setup NearBeach and get it run
 
   ..  code-block:: bash
 
-    sudo chmod 7777 ./db.sqlite
+    sudo chmod 755 ./db.sqlite
 
 11. Create superuser
   A superuser will need to be created. This superuser will be able to enter the ADMIN site of Django, which from there will be able to do administration items.
@@ -173,8 +168,8 @@ The following instructions will inform you how to setup NearBeach and get it run
 
   .. code-block:: bash
 
-    $ sudo chmod -R 777 ./media
-    $ sudo chmod -R 777 ./private_media
+    $ sudo chmod -R 755 ./media
+    $ sudo chmod -R 755 ./private_media
 
   Restart gunicorn
 
