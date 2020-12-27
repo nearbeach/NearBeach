@@ -4,6 +4,8 @@
 Setup Development Environment
 =============================
 
+.. Warning:: Current instructions are not working. Will fix as an URGENT task
+
 These instructions will help you install a development environment. Setup is
 slightly different to a production environment.
 
