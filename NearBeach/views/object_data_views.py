@@ -657,9 +657,31 @@ def object_link_list(request,destination,location_id):
         Q(requirement__isnull=False) |
         Q(requirement_item__isnull=False) |
         Q(task__isnull=False)
+    ).values(
+        'project_id',
+        'project_id__project_name',
+        'project_id__project_status',
+        'task_id',
+        'task_id__task_short_description',
+        'task_id__task_status',
+        'requirement_id',
+        'requirement_id__requirement_title',
+        'requirement_id__requirement_status__requirement_status',
+        'requirement_item_id',
+        'requirement_item_id__requirement_item_title',
+        'requirement_item_id__requirement_item_status__requirement_item_status',
     )
 
-    return HttpResponse(serializers.serialize('JSON',object_assignment_results))
+    """
+    As explained on stack overflow here - https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
+    We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard 
+    json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
+    """
+
+    # Send back json data
+    json_results = json.dumps(list(object_assignment_results), cls=DjangoJSONEncoder)
+
+    return HttpResponse(json_results, content_type='application/json')
 
 
 @require_http_methods(['POST'])
