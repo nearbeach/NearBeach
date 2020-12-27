@@ -1,6 +1,6 @@
 .. _installation_of_server:
 
-Installation of Server - Ubuntu 18.04
+Installation of Server - Ubuntu 20.04
 =====================================
 
 
@@ -16,26 +16,28 @@ Installation of Server - Ubuntu 18.04
 3. Boot up from USB on Server and choose your preferred language
   .. image:: images/server-installation-002.png
 
-4. Choose the keyboard layout
+4. If there is an installer update available, chose to update. The update might take a few minutes
   .. image:: images/server-installation-003.png
 
-5. Choose the type of Ubuntu server you are after, i.e. Bare metal as a service
+5. Setup your network conditions for the server. You will also need to setup the proxy on the next screen
   .. image:: images/server-installation-004.png
 
-6. Configure you network - click the "Done" button if there is nothing to change
+6. Configure the Ubuntu Archive mirror
   .. image:: images/server-installation-005.png
 
-7. Configure the proxy - click "Done" if there is no proxy
+7. Configure your file partition - click the "Done" if you are happy with the default. Please refer to the Ubuntu help docs for partitioning at the top of the page
   .. image:: images/server-installation-006.png
 
-8. Configure the Ubuntu Archive mirror - click "Done" if there is no change
+8. Setup your default user profile
   .. image:: images/server-installation-007.png
 
-9. Configure your file partition - click the "Done" if you are happy with the default. Please refer to the Ubuntu help docs for partitioning at the top of the page
+9. Setup the OpenSSH so you can ssh into the server
   .. image:: images/server-installation-008.png
 
-10. Setup your default user profile
+11. You will not need to install any snap objects - once completed the installation should start
   .. image:: images/server-installation-009.png
 
-11. You will not need to install any snap objects - once completed the installation should start
-  .. image:: images/server-installation-010.png
+
+Your installation process should be starting. It will take a few minutes to install.
+
+
