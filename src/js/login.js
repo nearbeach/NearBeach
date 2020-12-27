@@ -22,9 +22,9 @@ var static_elem = document.getElementById('login_script')['dataset']['static'];
 Modernizr.on('webp', (result) => {
     if (result) {
         //Use WebP
-        elem.style['background-image'] = `url('${static_elem}/NearBeach/images/NearBeach_Background_${image_number.toLocaleString('en', {minimumIntegerDigits:3,useGrouping:false})}.webp')`;
+        elem.style['background-image'] = `url('${static_elem}NearBeach/images/NearBeach_Background_${image_number.toLocaleString('en', {minimumIntegerDigits:3,useGrouping:false})}.webp')`;
     } else {
         //Use jp2
-        elem.style['background-image'] = `url('${static_elem}/NearBeach/images/NearBeach_Background_${image_number.toLocaleString('en', {minimumIntegerDigits:3,useGrouping:false})}.jp2')`;
+        elem.style['background-image'] = `url('${static_elem}NearBeach/images/NearBeach_Background_${image_number.toLocaleString('en', {minimumIntegerDigits:3,useGrouping:false})}.jp2')`;
     }
 });
