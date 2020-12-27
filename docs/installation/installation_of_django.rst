@@ -9,14 +9,14 @@ Installation of Django and Gunicorn
 
   .. code-block:: bash
 
-    sudo apt-get update && sudo apt-get upgrade -y
+    sudo apt update && sudo apt upgrade -y
 
 
 2. Next we will need to install all the packages we will use in NearBeach
 
   .. code-block:: bash
 
-    sudo apt install python3-dev libpq-dev nginx curl build-essential python3-setuptools libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info
+    sudo apt install python3-dev nginx curl build-essential python3-setuptools shared-mime-info
 
 3. Install pip
 
@@ -55,6 +55,8 @@ Installation of Django and Gunicorn
 
     virtualenv <<project_environment>>
 
+  .. note:: Please do not use the name 'NearBeach' or variations of this for the Project Virtual Environment. Our recommended name would be 'venv'
+
   This will create a directory called "<<project_environment>>", this will store NearBeach's libraries for python
 
 8. Activate the virtual environment using the following command
@@ -75,13 +77,15 @@ Installation of Django and Gunicorn
 
     pip install django gunicorn
 
-10. Django and gunicorn is now installed - we will now configure the webserver to server the pages. Use the cd command to navigateYou terminal prompt will change to indicate that it is working in the virtual environment now. It should look like the following to the directory where you would like to store the django project
+10. Django and gunicorn is now installed - we will now configure the webserver to server the pages.
 
 11. Create a new django project
 
   .. code-block:: bash
 
-    django-admin.py startproject <<django_project>>
+    django-admin startproject <<django_project>>
+
+  .. note:: Please do not create a project called 'NearBeach' as it will conflict with the NearBeach application. Our recommened name would be 'oceansuite'
 
 12. Adjust the project's settings to allow debugging and accept ALL allowed hosts
 
@@ -91,7 +95,7 @@ Installation of Django and Gunicorn
 
 13. Change the following lines to reflect the following
 
-  ..image:: images/django-installation-001.png
+  .. image:: images/django-installation-001.png
 
   This will allow us to test the web server. We will be modifying this file later to be more security conscience
 
@@ -113,7 +117,7 @@ Installation of Django and Gunicorn
 
   You should see the following page load - note there will be no styling, that is fine as Gunicorn does not know how to find it.
 
-  ..image:: images/django-installation-002.png
+  .. image:: images/django-installation-002.png
 
   If not, please check your error logs
 
@@ -127,13 +131,7 @@ Installation of systemd Socket and Service files
 
   .. code-block:: bash
 
-    sudo nano /etc/systemd/system/gunic
-
-  Your terminal prompt will change to indicate that it is working in the virtual environment now. It should look like the following
-
-  .. code-block:: bash
-
-    (<<project_environment>>)user@computer:
+    sudo nano /etc/systemd/system/gunicorn.socket
 
 3. Inside the file you will need the following code
 
@@ -257,21 +255,7 @@ More information on this install can be found on `digital ocean's documentation 
 Installation of Certbot
 -----------------------
 
-Certbot is recommended by NearBeach to supply free certified SSL certificates.
-
-1. Install certbox
-
-  .. code-block:: bash
-
-    sudo apt-get install python-certbot-nginx
-
-2. Once installed, run certbot
-
-  .. code-block:: bash
-
-    sudo certbot --nginx
-
-Follow the prompts to install certbot. This will enable https to your NearBeach site.
+Certbot is recommended by NearBeach to supply free certified SSL certificates. Please follow the instructions found on the `Certbot's Site <https://certbot.eff.org/>`_
 
 
 -------------------------
