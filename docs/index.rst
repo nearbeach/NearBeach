@@ -13,23 +13,9 @@ framework. `NearBeach.org <https://nearbeach.org/>`_
 
 .. note:: NearBeach is licensed under the MIT license
 
------------------------
-NearBeach documentation
------------------------
-NearBeach's documentation is broken down into the following sections;
-
-* Installation of a new Server
-* Installation of a new NearBeach instance
-* Administration tasks and first time setup
-* Basic User instructions
-
-================================
-Ubuntu 18.04 Server Installation
-================================
-
---------------------
+====================
 Minimum requirements
---------------------
+====================
 
 ^^^^^^^^
 Hardware
@@ -43,21 +29,14 @@ Hardware
 Software
 ^^^^^^^^
 
-* Ubuntu 18.04
+* Ubuntu 20.04
 * Python 3.6+
 * Django 3.1+
 * Nginx
 * Gunicorn
 * MySQL
 
-The following instructions will allow you to install Ubuntu 18.04 on your server.
-These are just the quick steps and do not go into detail. If you wish to go into
-more detail please visit the Ubuntu help site -
- `https://help.ubuntu.com/lts/serverguide/ <https://help.ubuntu.com/lts/serverguide/>`_
 
---------------------
-Installation Process
---------------------
 
 .. toctree::
   :maxdepth: 1
