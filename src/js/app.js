@@ -63,6 +63,13 @@ import DashboardMyObjects from "./components/dashboard/DashboardMyObjects.vue";
 import RenderObjectTable from "./components/render/RenderObjectTable.vue";
 import ObjectLinks from "./components/modules/sub_modules/ObjectLinks.vue";
 import NewLinkWizard from "./components/modules/wizards/NewLinkWizard.vue";
+import NewRequestForChange from "./components/request_for_change/NewRequestForChange.vue";
+import RfcBackoutPlan from "./components/request_for_change/tabs/RfcBackoutPlan.vue";
+import RfcDetails from "./components/request_for_change/tabs/RfcDetails.vue";
+import RfcImplementationPlan from "./components/request_for_change/tabs/RfcImplementationPlan.vue";
+import RfcPermissions from "./components/request_for_change/tabs/RfcPermissions.vue";
+import RfcRisk from "./components/request_for_change/tabs/RfcRisk.vue";
+import RfcTestPlan from "./components/request_for_change/tabs/RfcTestPlan.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -158,6 +165,13 @@ Vue.component('DashboardMyObjects',DashboardMyObjects);
 Vue.component('RenderObjectTable',RenderObjectTable);
 Vue.component('ObjectLinks',ObjectLinks);
 Vue.component('NewLinkWizard',NewLinkWizard);
+Vue.component('NewRequestForChange',NewRequestForChange);
+Vue.component('RfcBackoutPlan',RfcBackoutPlan);
+Vue.component('RfcDetails',RfcDetails);
+Vue.component('RfcImplementationPlan',RfcImplementationPlan);
+Vue.component('RfcPermissions',RfcPermissions);
+Vue.component('RfcRisk',RfcRisk);
+Vue.component('RfcTestPlan',RfcTestPlan);
 
 //Validation
 import Vuelidate from 'vuelidate'

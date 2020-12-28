@@ -23,6 +23,7 @@ from .views import authentication_views, \
 	object_data_views, \
 	organisation_views, \
 	project_views, \
+	request_for_change_views, \
 	requirement_item_views, \
 	requirement_views, \
 	search_views, \
@@ -74,6 +75,7 @@ urlpatterns = [
 	path('new_organisation/save/',organisation_views.new_organisation_save,name='new_organisation_save'),
 	path('new_project/',project_views.new_project,name='new_project'),
 	path('new_project/save/',project_views.new_project_save,name='new_project_save'),
+	path('new_request_for_change/',request_for_change_views.new_request_for_change,name='new_request_for_change'),
 	path('new_requirement/',requirement_views.new_requirement, name='new_requirement'),
 	path('new_requirement/save/',requirement_views.new_requirement_save, name='new_requirement_save'),
 	path('new_requirement_item/save/<int:requirement_id>/',requirement_item_views.new_requirement_item,name='new_requirement_item'),

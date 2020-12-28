@@ -28,14 +28,15 @@
   },
   "homepage": "https://github.com/robotichead/NearBeach#readme",
   "dependencies": {
-    "@tinymce/tinymce-vue": "^3.2.6",
     "@popperjs/core": "^2.5.4",
+    "@tinymce/tinymce-vue": "^3.2.6",
     "axios": "^0.21.1",
     "bootstrap": "^5.0.0-alpha1",
     "feather-icons": "^4.28.0",
     "luxon": "^1.25.0",
     "popper.js": "^1.16.1",
     "vue-datetime": "^1.0.0-beta.14",
+    "vue-form-wizard": "^0.8.4",
     "vuedraggable": "^2.24.3",
     "vuelidate": "^0.7.6"
   },
