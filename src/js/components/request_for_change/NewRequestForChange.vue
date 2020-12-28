@@ -9,9 +9,16 @@
                          title=""
                          subtitle=""
             >
+                <!-- Description -->
+                <tab-content title="Description">
+                    <rfc-description></rfc-description>
+                </tab-content>
+
                 <!-- Details -->
                 <tab-content title="Details">
-                    <rfc-details></rfc-details>
+                    <rfc-details v-bind:group-results="groupResults"
+                                 v-bind:user-results="userResults"
+                    ></rfc-details>
                 </tab-content>
 
                 <!-- Risk -->
@@ -33,11 +40,6 @@
                 <tab-content title="Test Plan">
                     <rfc-test-plan></rfc-test-plan>
                 </tab-content>
-
-                <!-- Permissions -->
-                <tab-content title="Permissions">
-                    <rfc-permissions></rfc-permissions>
-                </tab-content>
             </form-wizard>
         </div>
     </div>
@@ -53,7 +55,10 @@
             FormWizard,
             TabContent
         },
-        props: {},
+        props: {
+            groupResults: Array,
+            userResults: Array,
+        },
         methods: {
             onComplete: function() {},
         }
