@@ -67,6 +67,9 @@
 <script>
     const axios = require('axios');
 
+    //Import mixins
+    import searchMixin from "../../mixins/searchMixin";
+
     export default {
         name: "SearchObjects",
         props: {
@@ -82,6 +85,9 @@
                 required: true,
             },
         },
+        mixins: [
+            searchMixin,
+        ],
         data() {
             return {
                 includeClosedObjectsModel: this.includeClosed,
@@ -150,17 +156,10 @@
                 this.getSearchResults();
             },
             searchModel: function() {
-                // Make sure the timer isn't running
-                if (this.searchTimeout != '') {
-                    //Stop the clock!
-                    clearTimeout(this.searchTimeout);
-                }
-
-                //Set the search Timout
-                this.searchTimeout = setTimeout(
-                    this.getSearchResults,
-                    500,
-                )
+                this.searchTrigger({
+                   'return_function': this.getSearchResults,
+                   'searchTimeout': this.searchTimeout,
+                });
             },
         },
         mounted() {

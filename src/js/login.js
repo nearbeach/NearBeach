@@ -15,13 +15,16 @@ var image_number =  Math.floor((Math.random() * 19) + 1);
 //Get the background element
 var elem = document.getElementsByClassName('background')[0]; //Always the first element
 
+//Get the static directory location
+var static_elem = document.getElementById('login_script')['dataset']['static'];
+
 //Get the extension type
 Modernizr.on('webp', (result) => {
     if (result) {
         //Use WebP
-        elem.style['background-image'] = `url('/static/NearBeach/images/NearBeach_Background_${image_number.toLocaleString('en', {minimumIntegerDigits:3,useGrouping:false})}.webp')`;
+        elem.style['background-image'] = `url('${static_elem}NearBeach/images/NearBeach_Background_${image_number.toLocaleString('en', {minimumIntegerDigits:3,useGrouping:false})}.webp')`;
     } else {
         //Use jp2
-        elem.style['background-image'] = `url('/static/NearBeach/images/NearBeach_Background_${image_number.toLocaleString('en', {minimumIntegerDigits:3,useGrouping:false})}.jp2')`;
+        elem.style['background-image'] = `url('${static_elem}NearBeach/images/NearBeach_Background_${image_number.toLocaleString('en', {minimumIntegerDigits:3,useGrouping:false})}.jp2')`;
     }
 });

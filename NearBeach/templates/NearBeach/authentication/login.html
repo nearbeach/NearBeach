@@ -7,7 +7,11 @@
 
     <!-- Webpack file with Foundation -->
     {% load static %}
-    <script defer src="{% static 'NearBeach/login.min.js' %}"></script>
+    <script defer
+            src="{% static 'NearBeach/login.min.js' %}"
+            id="login_script"
+            data-static="{% static '' %}"
+    ></script>
 </head>
 <body>
     <div class="background">

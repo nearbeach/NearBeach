@@ -57,6 +57,20 @@
                        aria-selected="true">Documents</a>
                 </li>
 
+                <!-- LINKED OBJECTS -->
+                <li class="nav-item"
+                    role="presentation"
+                    v-if="destination!='requirement' || destination!='requirement_item'"
+                >
+                    <a class="nav-link"
+                       id="object-link-tabs"
+                       data-toggle="tab"
+                       href="#object-links"
+                       role="tab"
+                       aria-controls="home"
+                       aria-selected="true">Linked Objects</a>
+                </li>
+
                 <!-- CUSTOMERS -->
                 <!-- Customers are not needed by requirement items as the parent requirements take care of this -->
                 <li class="nav-item"
@@ -118,7 +132,7 @@
             <hr>
 
             <div class="tab-content" id="misc_module_content">
-                <div class="tab-pane fade show active"
+                <div class="tab-pane fade"
                      id="requirement-items"
                      role="tabpanel"
                      aria-labelledby="home-tab"
@@ -138,7 +152,7 @@
                                               v-bind:destination="destination"
                     ></requirement-links-module>
                 </div>
-                <div class="tab-pane fade active"
+                <div class="tab-pane fade"
                      id="requirement-item-links"
                      role="tabpanel"
                      aria-labelledby="profile-tab"
@@ -153,6 +167,11 @@
                     <documents-module v-bind:location-id="locationId"
                                       v-bind:destination="destination"
                     ></documents-module>
+                </div>
+                <div class="tab-pane fade" id="object-links" role="tabpanel" aria-labelledby="contact-tab">
+                    <object-links v-bind:destination="destination"
+                                  v-bind:location-id="locationId"
+                    ></object-links>
                 </div>
                 <div class="tab-pane fade" id="customers" role="tabpanel" aria-labelledby="contact-tab">
                     <customers-module v-bind:location-id="locationId"

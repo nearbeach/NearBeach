@@ -10,6 +10,7 @@ from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from NearBeach.user_permissions import return_user_permission_level
 from django.views.decorators.http import require_http_methods
+from django.shortcuts import get_object_or_404
 
 
 import json
@@ -180,18 +181,11 @@ def get_requirement_links_list(request,requirement_id):
             is_deleted=False,
             requirement_id=requirement_id,
         ) & Q(
-            Q(opportunity_id__isnull=False) |
             Q(quote_id__isnull=False) |
             Q(project_id__isnull=False) |
             Q(task_id__isnull=False)
         )
     ).values(
-        'opportunity_id',
-        'opportunity_id__opportunity_name',
-        'opportunity_id__opportunity_stage_id__opportunity_stage_description',
-        'quote_id',
-        'quote_id__quote_title',
-        'quote_id__quote_stage_id__quote_stage',
         'project_id',
         'project_id__project_name',
         'project_id__project_status',
@@ -344,7 +338,8 @@ def requirement_information(request, requirement_id):
     :return:
     """
     # Get the requirement information
-    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    # requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    requirement_results = get_object_or_404(requirement,requirement_id=requirement_id)
 
     # Check the permissions
     permission_results = get_user_requirement_permissions(request,requirement_id)

@@ -10,24 +10,15 @@ from django.urls import re_path
 #Password reset
 from django.contrib.auth import views as auth_views
 
+# 404 and 500 pages
+from django.conf.urls import handler404, handler500
 
-"""
-from . import views, \
-	views_lookup, \
-	views_quotes, \
-	views_project_information, \
-	views_task_information, \
-	views_organisation_information, \
-	views_customer_information, \
-	views_document_tree, \
-	views_requirements, \
-	views_administration, \
-	views_whiteboard
-"""
+
 from .views import authentication_views, \
 	customer_views, \
 	dashboard_views, \
 	document_views, \
+	error_views, \
 	kanban_views, \
 	object_data_views, \
 	organisation_views, \
@@ -54,6 +45,7 @@ urlpatterns = [
 	path('documentation/<destination>/<location_id>/list/files/',document_views.document_list_files,name='document_list_files'),
 	path('documentation/<destination>/<location_id>/list/folders/',document_views.document_list_folders,name='document_list_folders'),
 	path('documentation/<destination>/<location_id>/upload/',document_views.document_upload,name='document_upload'),
+	path('documentation/get/max_upload/',document_views.get_max_upload,name='document_get_max_upload'),
 
 
 	# Kanban
@@ -63,6 +55,7 @@ urlpatterns = [
 	path('kanban_information/<int:kanban_board_id>/new_card/',kanban_views.new_kanban_card,name='new_kanban_card'),
 	path('kanban_information/<int:kanban_card_id>/move_card/',kanban_views.move_kanban_card,name='move_kanban_card'),
 	path('kanban_information/check_kanban_board_name/',kanban_views.check_kanban_board_name,name='check_kanban_board_name'),
+	path('kanban_information/update_card/',kanban_views.update_card,name='kanban_update_card'),
 
 
 	# Authentication
@@ -91,6 +84,7 @@ urlpatterns = [
 	path('object_data/<destination>/<location_id>/add_bug/',object_data_views.add_bug,name='add_bug'),
 	path('object_data/<destination>/<location_id>/add_customer/',object_data_views.add_customer,name='add_customer'),
 	path('object_data/<destination>/<location_id>/add_group/',object_data_views.add_group,name='add_group'),
+	path('object_data/<destination>/<location_id>/add_link/',object_data_views.add_link,name='add_link'),
 	path('object_data/<destination>/<location_id>/add_notes/',object_data_views.add_notes,name='add_notes'),
 	path('object_data/<destination>/<location_id>/add_user/',object_data_views.add_user,name='add_user'),
 	path('object_data/<destination>/<location_id>/associated_objects/',object_data_views.associated_objects,name='associated_objects'),
@@ -102,6 +96,7 @@ urlpatterns = [
 	path('object_data/<destination>/<location_id>/group_list_all/',object_data_views.group_list_all,name='group_list_all'),
 	path('object_data/<destination>/<location_id>/<object_lookup>/link_list/',object_data_views.link_list,name='link_list'),
 	path('object_data/<destination>/<location_id>/note_list/',object_data_views.note_list,name='note_list'),
+	path('object_data/<destination>/<location_id>/object_link_list/',object_data_views.object_link_list,name='objeect_link_list'), #WTF - Please check to make sure we need this function?
 	path('object_data/<destination>/<location_id>/query_bug_client/',object_data_views.query_bug_client,name='query_bug_client'),
 	path('object_data/<destination>/<location_id>/user_list/',object_data_views.user_list,name='user_list'),
 	path('object_data/<destination>/<location_id>/user_list_all/',object_data_views.user_list_all,name='user_list_all'),
@@ -146,6 +141,8 @@ urlpatterns = [
 	path('task_information/<int:task_id>/save/',task_views.task_information_save,name='task_information_save'),
 ]
 
+# handler404 = error_views.error_404
+# handler500 = error_views.error_500
 
 """
 urlpatterns = [

@@ -141,7 +141,27 @@
                 })
             },
             updateCard: function() {
-                //ADD CODE
+                //Create the data_to_send
+                const data_to_send = new FormData();
+                data_to_send.set('kanban_card_text',this.cardTitleModel);
+                data_to_send.set('kanban_card_id',this.cardId);
+
+                //Use Axios to send data
+                axios.post(
+                    `/kanban_information/update_card/`,
+                    data_to_send,
+                ).then(response => {
+                    //Send the new data upstream
+                    this.$emit('update_card',{
+                        'kanban_card_id': this.cardId,
+                        'kanban_card_text': this.cardTitleModel,
+                    });
+
+                    //Close the modal
+                    document.getElementById("cardInformationModal").click();
+                }).catch(error => {
+                    console.log("Error: ",error);
+                })
             },
         }
     }

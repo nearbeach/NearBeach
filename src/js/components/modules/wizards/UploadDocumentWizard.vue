@@ -39,6 +39,7 @@
                                 <input type="file"
                                        class="form-file-input"
                                        id="document"
+                                       allow="audio/*,image/*,video/*,text/*"
                                        v-on:change="handleFileUploads($event.target.files)"
                                 >
                                 <label class="form-file-label"
@@ -129,10 +130,26 @@
                 documentModel: [],
                 documentDescriptionModel: '',
                 uploadPercentage: '',
+                maxUploadSize: 0,
             };
         },
         methods: {
             handleFileUploads: function(fileList) {
+                /*Check that the size of the fileList is not too big
+                  The boolean (0!=this.maxUploadSize) will product a 0 result when maxUploadSize is 0. Thus negating
+                  the need for an extra if statement*/
+                console.log("MAX: ",this.maxUploadSize);
+                console.log("EQN: ",this.maxUploadSize!=0);
+                console.log("EQN: ",fileList[0]['size']*(this.maxUploadSize!=0))
+                if (fileList[0]['size']*(this.maxUploadSize!=0) > this.maxUploadSize) {
+                    //The max upload size does not equal 0, and yet it is smaller than the file trying to be uploaded
+                    this.showErrorModal('Document too large.',this.destination);
+
+                    //Just return
+                    return;
+                }
+                console.log("FileList: ",fileList);
+
                 //Update the document modal
                 this.documentModel = fileList[0];
 
@@ -190,6 +207,18 @@
 
             this.disableUploadButton = this.documentModel == '' || this.documentDescriptionModel.length == 0 ||
                     match.length > 0;
+        },
+        mounted() {
+            //Get the max file upload size
+            axios.post(
+                `/documentation/get/max_upload/`,
+            ).then(response => {
+                //Set the value
+                console.log("GET RESPONSE: ",response);
+                this.maxUploadSize = response['data']['max_upload_size'];
+            }).catch(error => {
+                this.showErrorModal(error,this.destination);
+            })
         }
     }
 </script>
