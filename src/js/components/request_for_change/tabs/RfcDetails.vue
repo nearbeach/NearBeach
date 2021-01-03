@@ -45,9 +45,9 @@
                     <div class="form-group">
                         <label>Implementation Start: </label>
                         <datetime type="datetime"
-                              v-model="rfcImplementationStartModel"
-                              input-class="form-control"
-                              v-bind:minute-step="5"
+                                  v-model="rfcImplementationStartModel"
+                                  input-class="form-control"
+                                  v-bind:minute-step="5"
                         ></datetime>
                     </div>
                 </div>
@@ -55,9 +55,9 @@
                     <div class="form-group">
                         <label>Implementation End: </label>
                         <datetime type="datetime"
-                              v-model="rfcImplementationEndModel"
-                              input-class="form-control"
-                              v-bind:minute-step="5"
+                                  v-model="rfcImplementationEndModel"
+                                  input-class="form-control"
+                                  v-bind:minute-step="5"
                         ></datetime>
                     </div>
                 </div>
@@ -65,9 +65,9 @@
                     <div class="form-group">
                         <label>Release Date: </label>
                         <datetime type="datetime"
-                              v-model="rfcReleaseModel"
-                              input-class="form-control"
-                              v-bind:minute-step="5"
+                                  v-model="rfcReleaseModel"
+                                  input-class="form-control"
+                                  v-bind:minute-step="5"
                         ></datetime>
                     </div>
                 </div>
@@ -86,7 +86,9 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label>LEAD: </label>
-                    <v-select :options="[{label: 'Canada', code: 'ca'}]"></v-select> <!-- TO DO FIX THIS -->
+                    <v-select :options="[{label: 'Canada', code: 'ca'}]"
+                              v-model="rfcChangeLead"
+                    ></v-select> <!-- TO DO FIX THIS -->
                 </div>
             </div>
         </div>
@@ -110,6 +112,7 @@
         },
         data() {
             return {
+                rfcChangeLead: '',
                 rfcImplementationStartModel: '',
                 rfcImplementationEndModel: '',
                 rfcReleaseModel: '',
@@ -134,6 +137,41 @@
         methods: {
             updateGroupModel: function(data) {
                 this.groupModel = data;
+
+                //Update up stream
+                this.updateValues('groupModel',data);
+            },
+            updateValues: function(modelName,modelValue) {
+                this.$emit('update_values',{
+                    'modelName': modelName,
+                    'modelValue': modelValue,
+                });
+            },
+        },
+        watch: {
+            rfcChangeLead: function() {
+                this.updateValues('rfcChangeLead',this.rfcChangeLead);
+            },
+            rfcImplementationStartModel: function() {
+                this.updateValues('rfcImplementationStartModel',this.rfcImplementationStartModel);
+            },
+            rfcImplementationEndModel: function() {
+                this.updateValues('rfcImplementationEndModel',this.rfcImplementationEndModel);
+            },
+            rfcReleaseModel: function() {
+                this.updateValues('rfcReleaseModel',this.rfcReleaseModel);
+            },
+            rfcStatus: function() {
+                this.updateValues('rfcStatus',this.rfcStatus);
+            },
+            rfcType: function() {
+                this.updateValues('rfcType',this.rfcType);
+            },
+            rfcTypeModel: function() {
+                this.updateValues('rfcTypeModel',this.rfcTypeModel);
+            },
+            rfcVersionModel: function() {
+                this.updateValues('rfcVersionModel',this.rfcVersionModel);
             },
         }
     }

@@ -3,7 +3,7 @@
         <div class="col-md-4">
             <h2>Test Plan</h2>
             <p class="text-instructions">
-                ...
+                Outline your test plan. How will you test the Request for Change once it has been implemented.
             </p>
         </div>
         <div class="col-md-8" style="min-height: 610px;">
@@ -37,7 +37,20 @@ export default {
     props: {},
     data: () => ({
         rfcTestPlan: '',
-    })
+    }),
+    methods: {
+        updateValues: function(modelName,modelValue) {
+            this.$emit('update_values',{
+                'modelName': modelName,
+                'modelValue': modelValue,
+            });
+        },
+    },
+    watch: {
+        rfcTestPlan: function() {
+            this.updateValues('rfcTestPlan',this.rfcTestPlan);
+        },
+    },
 }
 </script>
 

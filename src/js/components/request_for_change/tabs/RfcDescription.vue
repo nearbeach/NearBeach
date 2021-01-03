@@ -50,7 +50,24 @@
         data: () => ({
             rfcSummaryModel: '',
             rfcTitleModel: '',
+
         }),
+        methods: {
+            updateValues: function(modelName,modelValue) {
+                this.$emit('update_values',{
+                    'modelName': modelName,
+                    'modelValue': modelValue,
+                });
+            },
+        },
+        watch: {
+            rfcSummaryModel: function() {
+                this.updateValues('rfcSummaryModel',this.rfcSummaryModel);
+            },
+            rfcTitleModel: function() {
+                this.updateValues('rfcTitleModel',this.rfcTitleModel);
+            },
+        }
     }
 </script>
 

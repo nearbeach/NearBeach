@@ -3,7 +3,8 @@
         <div class="col-md-4">
             <h2>Backout Plan</h2>
             <p class="text-instructions">
-                ...
+                Please outline the backout plan that will be implemented, and when it will be implemented, when something
+                goes wrong with the Request for Change.
             </p>
         </div>
         <div class="col-md-8" style="min-height: 610px;">
@@ -37,7 +38,20 @@ export default {
     props: {},
     data: () => ({
         rfcBackoutPlan: '',
-    })
+    }),
+    methods: {
+        updateValues: function(modelName,modelValue) {
+            this.$emit('update_values',{
+                'modelName': modelName,
+                'modelValue': modelValue,
+            });
+        },
+    },
+    watch: {
+        rfcBackoutPlan: function() {
+            this.updateValues('rfcBackoutPlan',this.rfcBackoutPlan)
+        },
+    },
 }
 </script>
 

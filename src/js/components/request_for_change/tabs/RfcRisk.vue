@@ -3,7 +3,8 @@
         <div class="col-md-4">
             <h2>Risk</h2>
             <p class="text-instructions">
-                Please outline all risks associated with this Request for Change.
+                Please outline all risks associated with this Request for Change. A detail list of all risks should be
+                noted.
             </p>
         </div>
 
@@ -31,7 +32,7 @@
             <br/>
 
             <!-- RFC SUMMARY -->
-            <label>Request for Change Summary:
+            <label>Request for Change Risk Association:
 <!--                <span class="error" v-if="!$v.projectDescriptionModel.required && $v.projectDescriptionModel.$dirty"> Please supply a description.</span>-->
 <!--                <span class="error" v-if="!$v.projectDescriptionModel.maxLength"> Sorry - too many characters.</span>-->
             </label><br>
@@ -82,7 +83,38 @@
                 { label: 'Low', value: 1 },
             ],
             rfcImpactModel: '',
-        })
+        }),
+        methods: {
+            updateValues: function(modelName,modelValue) {
+                this.$emit('update_values',{
+                    'modelName': modelName,
+                    'modelValue': modelValue,
+                });
+            },
+        },
+        watch: {
+            rfcPriority: function() {
+                this.updateValues('rfcPriority',this.rfcPriority)
+            },
+            rfcPriorityModel: function() {
+                this.updateValues('rfcPriorityModel',this.rfcPriorityModel)
+            },
+            rfcRisk: function() {
+                this.updateValues('rfcRisk',this.rfcRisk)
+            },
+            rfcRiskModel: function() {
+                this.updateValues('rfcRiskModel',this.rfcRiskModel)
+            },
+            rfcRiskSummaryModel: function() {
+                this.updateValues('rfcRiskSummaryModel',this.rfcRiskSummaryModel)
+            },
+            rfcImpact: function() {
+                this.updateValues('rfcImpact',this.rfcImpact)
+            },
+            rfcImpactModel: function() {
+                this.updateValues('rfcImpactModel',this.rfcImpactModel)
+            },
+        },
     }
 </script>
 

@@ -3,7 +3,7 @@
         <div class="col-md-4">
             <h2>Implementation Plan</h2>
             <p class="text-instructions">
-                ...
+                Please outline your implementation plan for this request for change.
             </p>
         </div>
         <div class="col-md-8" style="min-height: 610px;">
@@ -37,7 +37,20 @@
         props: {},
         data: () => ({
             rfcImplementationPlanModel: '',
-        })
+        }),
+        methods: {
+            updateValues: function(modelName,modelValue) {
+                this.$emit('update_values',{
+                    'modelName': modelName,
+                    'modelValue': modelValue,
+                });
+            },
+        },
+        watch: {
+            rfcImplementationPlanModel: function() {
+                this.updateValues('rfcImplementationPlanModel',this.rfcImplementationPlanModel);
+            }
+        },
     }
 </script>
 
