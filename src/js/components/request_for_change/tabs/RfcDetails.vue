@@ -89,6 +89,12 @@
                     <v-select :options="[{label: 'Canada', code: 'ca'}]"
                               v-model="rfcChangeLead"
                     ></v-select> <!-- TO DO FIX THIS -->
+<!--                    <v-select :options="stakeholderFixList"-->
+<!--                          @search="fetchOptions"-->
+<!--                          v-model="stakeholderModel"-->
+<!--                          label="organisation_name"-->
+<!--                          class="get-stakeholders"-->
+<!--                    />-->
                 </div>
             </div>
         </div>

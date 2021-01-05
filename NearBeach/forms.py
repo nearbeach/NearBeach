@@ -306,6 +306,30 @@ class NewProjectForm(forms.ModelForm):
         ]
 
 
+class NewRequestForChangeForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = request_for_change
+        fields = [
+            'rfc_title',
+            'rfc_summary',
+            'rfc_type',
+            'rfc_implementation_start_date',
+            'rfc_implementation_end_date',
+            'rfc_implementation_release_date',
+            'rfc_version_number',
+            'rfc_status',
+            'rfc_lead',
+            'rfc_priority',
+            'rfc_risk',
+            'rfc_impact',
+            'rfc_risk_and_impact_analysis',
+            'rfc_implementation_plan',
+            'rfc_backout_plan',
+            'rfc_test_plan',
+        ]
+
+
 class NewTaskForm(forms.ModelForm):
     task_start_date = forms.DateTimeField(
         input_formats=['c'],

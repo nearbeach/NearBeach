@@ -6,6 +6,7 @@
 
             <!-- FORM WIZARD -->
             <form-wizard @on-complete="onComplete"
+                         @on-change="onChange($event)"
                          title=""
                          subtitle=""
             >
@@ -80,6 +81,9 @@
             },
         }),
         methods: {
+            onChange: function(prevIndex,nextIndex) {
+                console.log("Prev Index: ",prevIndex," | Next Index: ",nextIndex);
+            },
             onComplete: function() {
                 console.log("Need to send this data: ",this.rfcData);
                 //ADD CODE
