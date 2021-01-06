@@ -86,15 +86,10 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label>LEAD: </label>
-                    <v-select :options="[{label: 'Canada', code: 'ca'}]"
-                              v-model="rfcChangeLead"
+                    <v-select :options="rfcChangeLeadFixList"
+                              @search="fetchOptions"
+                              v-model="rfcChangeLeadModel"
                     ></v-select> <!-- TO DO FIX THIS -->
-<!--                    <v-select :options="stakeholderFixList"-->
-<!--                          @search="fetchOptions"-->
-<!--                          v-model="stakeholderModel"-->
-<!--                          label="organisation_name"-->
-<!--                          class="get-stakeholders"-->
-<!--                    />-->
                 </div>
             </div>
         </div>
@@ -110,15 +105,24 @@
 </template>
 
 <script>
+    const axios = require('axios');
+
+    //Mixins
+    import searchMixin from "../../../mixins/searchMixin";
+
     export default {
         name: "RfcDetails",
         props: {
             groupResults: Array,
             userResults: Array,
         },
+        mixins: [
+            searchMixin
+        ],
         data() {
             return {
-                rfcChangeLead: '',
+                rfcChangeLeadFixList: [],
+                rfcChangeLeadModel: '',
                 rfcImplementationStartModel: '',
                 rfcImplementationEndModel: '',
                 rfcReleaseModel: '',
@@ -138,9 +142,65 @@
                 ],
                 rfcTypeModel: '',
                 rfcVersionModel: '',
+                searchTimeout: '',
             }
         },
         methods: {
+            fetchOptions: function(search, loading) {
+                this.searchTrigger({
+                   'return_function': this.getChangeLeadData,
+                   'searchTimeout': this.searchTimeout,
+                   'search': search,
+                   'loading': loading,
+                });
+            },
+            getChangeLeadData: function(search,loading) {
+                // Save the seach data in FormData
+                const data_to_send = new FormData();
+                data_to_send.set('search',search);
+
+                // Now that the timer has run out, lets use AJAX to get the organisations.
+                axios.post(
+                    '/object_data/lead_user_list/',
+                    data_to_send
+                ).then(response => {
+                    //Clear the stakeholderFixList
+                    this.rfcChangeLeadFixList = [];
+
+                    //Extract the required JSON data
+                    var extracted_data = response['data'];
+
+                    console.log("RESULTS: ",response);
+
+                    //Look through the extracted data - and map the required fields into stakeholder fix list
+                    extracted_data.forEach((row) => {
+                        //Create the creation object
+                        var creation_object = {
+                            'value': row['pk'],
+                            'label': `${row['fields']['username']} - ${row['fields']['first_name']} ${row['fields']['last_name']}`,
+                        };
+
+                        //Push that object into the stakeholders
+                        this.rfcChangeLeadFixList.push(creation_object)
+                    });
+                }).catch(function (error) {
+                    // Get the error modal
+                    var elem_cont = document.getElementById("errorModalContent");
+
+                    // Update the content
+                    elem_cont.innerHTML = `<strong>Search Lead User Issue:</strong><br/>${error}`;
+
+                    // Show the modal
+                    var errorModal = new bootstrap.Modal(document.getElementById('errorModal'), {
+                      keyboard: false
+                    })
+                    errorModal.show();
+
+                    // Hide the loader
+                    var loader_element = document.getElementById("loader");
+                    loader_element.style.display = "none";
+                });
+            },
             updateGroupModel: function(data) {
                 this.groupModel = data;
 
@@ -155,8 +215,8 @@
             },
         },
         watch: {
-            rfcChangeLead: function() {
-                this.updateValues('rfcChangeLead',this.rfcChangeLead);
+            rfcChangeLeadModel: function() {
+                this.updateValues('rfcChangeLeadModel',this.rfcChangeLeadModel);
             },
             rfcImplementationStartModel: function() {
                 this.updateValues('rfcImplementationStartModel',this.rfcImplementationStartModel);

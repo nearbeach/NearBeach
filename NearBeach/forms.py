@@ -307,6 +307,13 @@ class NewProjectForm(forms.ModelForm):
 
 
 class NewRequestForChangeForm(forms.ModelForm):
+    group_list = forms.ModelMultipleChoiceField(
+        required=True,
+        queryset=group.objects.filter(
+            is_deleted=False,
+        )
+    )
+
     # Basic Meta Data
     class Meta:
         model = request_for_change
@@ -318,7 +325,6 @@ class NewRequestForChangeForm(forms.ModelForm):
             'rfc_implementation_end_date',
             'rfc_implementation_release_date',
             'rfc_version_number',
-            'rfc_status',
             'rfc_lead',
             'rfc_priority',
             'rfc_risk',

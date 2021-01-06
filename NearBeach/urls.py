@@ -76,6 +76,7 @@ urlpatterns = [
 	path('new_project/',project_views.new_project,name='new_project'),
 	path('new_project/save/',project_views.new_project_save,name='new_project_save'),
 	path('new_request_for_change/',request_for_change_views.new_request_for_change,name='new_request_for_change'),
+	path('new_request_for_change/save/',request_for_change_views.new_request_for_change_save,name='new_request_for_change_save'),
 	path('new_requirement/',requirement_views.new_requirement, name='new_requirement'),
 	path('new_requirement/save/',requirement_views.new_requirement_save, name='new_requirement_save'),
 	path('new_requirement_item/save/<int:requirement_id>/',requirement_item_views.new_requirement_item,name='new_requirement_item'),
@@ -102,6 +103,7 @@ urlpatterns = [
 	path('object_data/<destination>/<location_id>/query_bug_client/',object_data_views.query_bug_client,name='query_bug_client'),
 	path('object_data/<destination>/<location_id>/user_list/',object_data_views.user_list,name='user_list'),
 	path('object_data/<destination>/<location_id>/user_list_all/',object_data_views.user_list_all,name='user_list_all'),
+	path('object_data/lead_user_list/',object_data_views.lead_user_list,name='lead_user_list'),
 
 	# Organisation
 	path('organisation_duplicates/',organisation_views.organisation_duplicates,name='organisation_duplicates'),
@@ -129,6 +131,9 @@ urlpatterns = [
 	path('requirement_item_information/<int:requirement_item_id>/',requirement_item_views.requirement_item_information,name='requirement_item_information'),
 	path('requirement_item_information/<int:requirement_item_id>/data/links/',requirement_item_views.get_requirement_item_links_list,name='get_requirement_item_links_list'),
 	path('requirement_item_information/<int:requirement_item_id>/save/',requirement_item_views.requirement_information_save,name='requirement_information_save'),
+
+	# Request for Change
+	path('rfc_information/<int:rfc_id>/', request_for_change_views.rfc_information, name='rfc_information'),
 
 	# Search Items
 	path('search/',search_views.search,name='search'),

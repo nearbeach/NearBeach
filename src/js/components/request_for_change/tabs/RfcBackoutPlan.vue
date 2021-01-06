@@ -8,7 +8,7 @@
             </p>
         </div>
         <div class="col-md-8" style="min-height: 610px;">
-            <label>Request for Change Summary:
+            <label>Backout Plan:
 <!--                <span class="error" v-if="!$v.projectDescriptionModel.required && $v.projectDescriptionModel.$dirty"> Please supply a description.</span>-->
 <!--                <span class="error" v-if="!$v.projectDescriptionModel.maxLength"> Sorry - too many characters.</span>-->
             </label><br>

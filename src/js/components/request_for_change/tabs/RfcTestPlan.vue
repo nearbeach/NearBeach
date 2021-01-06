@@ -7,7 +7,7 @@
             </p>
         </div>
         <div class="col-md-8" style="min-height: 610px;">
-            <label>Request for Change Summary:
+            <label>Test Plan:
 <!--                <span class="error" v-if="!$v.projectDescriptionModel.required && $v.projectDescriptionModel.$dirty"> Please supply a description.</span>-->
 <!--                <span class="error" v-if="!$v.projectDescriptionModel.maxLength"> Sorry - too many characters.</span>-->
             </label><br>
@@ -25,7 +25,7 @@
                }"
                v-bind:content_css="false"
                v-bind:skin="false"
-               v-model="rfcTestPlan"
+               v-model="rfcTestPlanModel"
             />
         </div>
     </div>
@@ -36,7 +36,7 @@ export default {
     name: "RfcTestPlan",
     props: {},
     data: () => ({
-        rfcTestPlan: '',
+        rfcTestPlanModel: '',
     }),
     methods: {
         updateValues: function(modelName,modelValue) {
@@ -47,8 +47,8 @@ export default {
         },
     },
     watch: {
-        rfcTestPlan: function() {
-            this.updateValues('rfcTestPlan',this.rfcTestPlan);
+        rfcTestPlanModel: function() {
+            this.updateValues('rfcTestPlanModel',this.rfcTestPlanModel);
         },
     },
 }
