@@ -35,7 +35,7 @@ The following quick instructions will inform you on how to install MySQL in Ubun
 
     CREATE USER 'nearbeach'@'localhost' IDENTIFIED BY '<<password>>';
     Create the database NearBeach
-    CREATE DATABSE NearBeach;
+    CREATE DATABASE NearBeach;
     Grant the nearbeach user access to the NearBeach database
 
     GRANT ALL PRIVILEGES ON NearBeach.* TO 'nearbeach'@'localhost';
