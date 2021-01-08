@@ -134,6 +134,7 @@ urlpatterns = [
 
 	# Request for Change
 	path('rfc_information/<int:rfc_id>/', request_for_change_views.rfc_information, name='rfc_information'),
+	path('rfc_readonly/<int:rfc_id>/', request_for_change_views.rfc_readonly, name='rfc_readonly'),
 
 	# Search Items
 	path('search/',search_views.search,name='search'),
@@ -148,8 +149,8 @@ urlpatterns = [
 	path('task_information/<int:task_id>/save/',task_views.task_information_save,name='task_information_save'),
 ]
 
-# handler404 = error_views.error_404
-# handler500 = error_views.error_500
+handler404 = error_views.error_404
+handler500 = error_views.error_500
 
 """
 urlpatterns = [

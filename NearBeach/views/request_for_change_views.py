@@ -9,6 +9,27 @@ from NearBeach.models import *
 from NearBeach.forms import NewRequestForChangeForm
 
 
+# Internal function
+def get_rfc_context(rfc_id):
+    """
+    Using the rfc ID, it will extract the required context for the rfc_information and rfc_readonly
+    :param rfc_id:
+    :return:
+    """
+    # Get data
+    rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
+    rfc_change_lead = User.objects.get(id=rfc_results.rfc_lead.id)
+
+    # Context
+    c = {
+        'rfc_id': rfc_id,
+        'rfc_results': serializers.serialize('json', [rfc_results]),
+        'rfc_change_lead': serializers.serialize('json', [rfc_change_lead]),
+    }
+
+    return c
+
+
 @login_required(login_url='login', redirect_field_name="")
 def new_request_for_change(request):
     """
@@ -108,4 +129,27 @@ def rfc_information(request,rfc_id):
     :param rfc_id:
     :return:
     """
-    return HttpResponse("Hello World")
+    # Get template
+    t = loader.get_template('NearBeach/request_for_change/rfc_information.html')
+
+    # Get context
+    c = get_rfc_context(rfc_id)
+
+    return HttpResponse(t.render(c,request))
+
+
+def rfc_readonly(request,rfc_id):
+    """
+
+    :param request:
+    :param rfc_id:
+    :return:
+    """
+
+    # Get template
+    t = loader.get_template('NearBeach/request_for_change/rfc_readonly.html')
+
+    # Get context
+    c = get_rfc_context(rfc_id)
+
+    return HttpResponse(t.render(c,request))

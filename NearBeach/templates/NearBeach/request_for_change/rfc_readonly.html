@@ -1,0 +1,14 @@
+{% extends 'NearBeach/template.html' %}
+{% load static %}
+{% block content %}
+    <fieldset disabled="disabled">
+        <rfc-information v-bind:rfc-results="{{rfc_results}}"
+                         v-bind:rfc-change-lead="{{rfc_change_lead}}"
+                         v-bind:is-read-only="true"
+        ></rfc-information>
+
+        <parent-modules v-bind:destination="'request_for_change'"
+                        v-bind:location-id="{{rfc_id}}"
+        ></parent-modules>
+    </fieldset>
+{% endblock %}
