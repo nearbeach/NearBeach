@@ -1,5 +1,3 @@
-import urllib
-
 from django.contrib.auth.decorators import login_required
 from NearBeach.models import *
 from django.core import serializers
