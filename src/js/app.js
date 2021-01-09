@@ -72,6 +72,8 @@ import RfcTestPlan from "./components/request_for_change/tabs/RfcTestPlan.vue";
 import RfcDescription from "./components/request_for_change/tabs/RfcDescription.vue";
 import RfcInformation from "./components/request_for_change/RfcInformation.vue";
 import RfcModules from "./components/request_for_change/RfcModules.vue";
+import RfcNewRunItem from "./components/request_for_change/modules/RfcNewRunItem.vue";
+import RfcRunSheetList from "./components/request_for_change/modules/RfcRunSheetList.vue";
 
 
 //Import Bootstrap
@@ -177,6 +179,8 @@ Vue.component('RfcTestPlan',RfcTestPlan);
 Vue.component('RfcDescription',RfcDescription);
 Vue.component('RfcInformation',RfcInformation);
 Vue.component('RfcModules',RfcModules);
+Vue.component('RfcNewRunItem',RfcNewRunItem);
+Vue.component('RfcRunSheetList',RfcRunSheetList);
 
 
 //Validation

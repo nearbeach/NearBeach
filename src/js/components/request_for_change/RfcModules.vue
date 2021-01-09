@@ -76,6 +76,18 @@
                      aria-labelledby="home-tab"
                 >
                     <rfc-risk></rfc-risk>
+
+                    <!-- Update Button -->
+                    <hr v-if="!isReadOnly">
+                    <div class="row submit-row"
+                         v-if="!isReadOnly"
+                    >
+                        <div class="col-md-12">
+                            <a href="javascript:void(0)"
+                               class="btn btn-primary save-changes"
+                            >Update Request for Change</a>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="tab-pane fade"
@@ -84,6 +96,18 @@
                      aria-labelledby="home-tab"
                 >
                     <rfc-implementation-plan></rfc-implementation-plan>
+
+                    <!-- Update Button -->
+                    <hr v-if="!isReadOnly">
+                    <div class="row submit-row"
+                         v-if="!isReadOnly"
+                    >
+                        <div class="col-md-12">
+                            <a href="javascript:void(0)"
+                               class="btn btn-primary save-changes"
+                            >Update Request for Change</a>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="tab-pane fade"
@@ -92,6 +116,18 @@
                      aria-labelledby="home-tab"
                 >
                     <rfc-backout-plan></rfc-backout-plan>
+
+                    <!-- Update Button -->
+                    <hr v-if="!isReadOnly">
+                    <div class="row submit-row"
+                         v-if="!isReadOnly"
+                    >
+                        <div class="col-md-12">
+                            <a href="javascript:void(0)"
+                               class="btn btn-primary save-changes"
+                            >Update Request for Change</a>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="tab-pane fade"
@@ -100,6 +136,18 @@
                      aria-labelledby="home-tab"
                 >
                     <rfc-backout-plan></rfc-backout-plan>
+
+                    <!-- Update Button -->
+                    <hr v-if="!isReadOnly">
+                    <div class="row submit-row"
+                         v-if="!isReadOnly"
+                    >
+                        <div class="col-md-12">
+                            <a href="javascript:void(0)"
+                               class="btn btn-primary save-changes"
+                            >Update Request for Change</a>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="tab-pane fade"
@@ -107,7 +155,7 @@
                      role="tabpanel"
                      aria-labelledby="home-tab"
                 >
-                    PROGRAM THE RUN SHEET
+                    <rfc-run-sheet-list></rfc-run-sheet-list>
                 </div>
             </div>
         </div>
@@ -120,6 +168,10 @@
         props: {
             locationId: Number,
             destination: String,
+            isReadOnly: {
+                type: Boolean,
+                default: false,
+            },
         },
     }
 </script>
