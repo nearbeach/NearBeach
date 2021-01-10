@@ -25,6 +25,7 @@
                }"
                v-bind:content_css="false"
                v-bind:skin="false"
+               v-bind:disabled="isReadOnly"
                v-model="rfcImplementationPlanModel"
             />
         </div>
@@ -35,6 +36,10 @@
     export default {
         name: "RfcImplementationPlan",
         props: {
+            isReadOnly: {
+                type: Boolean,
+                default: false,
+            },
             rfcResults: {
                 type: Array,
                 default: function() {

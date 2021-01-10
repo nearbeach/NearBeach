@@ -75,7 +75,10 @@
                      role="tabpanel"
                      aria-labelledby="home-tab"
                 >
-                    <rfc-risk v-bind:rfc-results="rfcResults"></rfc-risk>
+                    <rfc-risk v-bind:rfc-results="rfcResults"
+                              v-bind:is-read-only="isReadOnly"
+                              v-on:update_values="updateValues($event)"
+                    ></rfc-risk>
 
                     <!-- Update Button -->
                     <hr v-if="!isReadOnly">
@@ -85,7 +88,8 @@
                         <div class="col-md-12">
                             <a href="javascript:void(0)"
                                class="btn btn-primary save-changes"
-                            >Update Request for Change</a>
+                               v-on:click="updateRisk"
+                            >Update Risks</a>
                         </div>
                     </div>
                 </div>
@@ -95,7 +99,10 @@
                      role="tabpanel"
                      aria-labelledby="home-tab"
                 >
-                    <rfc-implementation-plan v-bind:rfc-results="rfcResults"></rfc-implementation-plan>
+                    <rfc-implementation-plan v-bind:rfc-results="rfcResults"
+                                             v-bind:is-read-only="isReadOnly"
+                                             v-on:update_values="updateValues($event)"
+                    ></rfc-implementation-plan>
 
                     <!-- Update Button -->
                     <hr v-if="!isReadOnly">
@@ -105,7 +112,8 @@
                         <div class="col-md-12">
                             <a href="javascript:void(0)"
                                class="btn btn-primary save-changes"
-                            >Update Request for Change</a>
+                               v-on:click="updateImplementation"
+                            >Update Implementation Plan</a>
                         </div>
                     </div>
                 </div>
@@ -115,7 +123,10 @@
                      role="tabpanel"
                      aria-labelledby="home-tab"
                 >
-                    <rfc-backout-plan v-bind:rfc-results="rfcResults"></rfc-backout-plan>
+                    <rfc-backout-plan v-bind:rfc-results="rfcResults"
+                                      v-bind:is-read-only="isReadOnly"
+                                      v-on:update_values="updateValues($event)"
+                    ></rfc-backout-plan>
 
                     <!-- Update Button -->
                     <hr v-if="!isReadOnly">
@@ -125,7 +136,8 @@
                         <div class="col-md-12">
                             <a href="javascript:void(0)"
                                class="btn btn-primary save-changes"
-                            >Update Request for Change</a>
+                               v-on:click="updateBackoutPlan"
+                            >Update Backout Plan</a>
                         </div>
                     </div>
                 </div>
@@ -135,7 +147,10 @@
                      role="tabpanel"
                      aria-labelledby="home-tab"
                 >
-                    <rfc-test-plan v-bind:rfc-results="rfcResults"></rfc-test-plan>
+                    <rfc-test-plan v-bind:rfc-results="rfcResults"
+                                   v-bind:is-read-only="isReadOnly"
+                                   v-on:update_values="updateValues($event)"
+                    ></rfc-test-plan>
 
                     <!-- Update Button -->
                     <hr v-if="!isReadOnly">
@@ -145,7 +160,8 @@
                         <div class="col-md-12">
                             <a href="javascript:void(0)"
                                class="btn btn-primary save-changes"
-                            >Update Request for Change</a>
+                               v-on:click="updateTestPlan"
+                            >Update Test Plan</a>
                         </div>
                     </div>
                 </div>
@@ -156,6 +172,7 @@
                      aria-labelledby="home-tab"
                 >
                     <rfc-run-sheet-list v-bind:is-read-only="isReadOnly"
+                                        v-on:update_values="updateValues($event)"
                     ></rfc-run-sheet-list>
                 </div>
             </div>
@@ -164,6 +181,8 @@
 </template>
 
 <script>
+    const axios = require('axios');
+
     export default {
         name: "RfcModules",
         props: {
@@ -178,6 +197,40 @@
                 default: [],
             },
         },
+        data: () => ({
+            rfcData: {
+                'rfcBackoutPlan': '',
+                'rfcImpactModel': {},
+                'rfcImplementationPlanModel': '',
+                'rfcPriorityModel': {},
+                'rfcRiskModel': {},
+                'rfcRiskSummaryModel': '',
+                'rfcTestPlanModel': '',
+                'rfcTypeModel': {},
+            },
+        }),
+        methods: {
+            updateBackoutPlan: function() {
+                const data_to_send = new FormData();
+                data_to_send.set('text_input',this.rfcData['rfcBackoutPlan']);
+
+                axios.post(
+                    `/rfc_information/${this.rfcResults[0]['pk']}/save/backout_plan/`,
+                    data_to_send,
+                ).then(response => {
+                    //ADD CODE TO TELL USER YAY DID IT!
+                }).catch(error => {
+                    //CODE IN MIXIN STUFF :D
+                })
+            },
+            updateImplementation: function() {},
+            updateRisk: function() {},
+            updateTestPlan: function() {},
+            updateValues: function(data) {
+                //Update the value
+                this.rfcData[data['modelName']] = data['modelValue'];
+            }
+        }
     }
 </script>
 

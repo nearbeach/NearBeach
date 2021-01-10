@@ -13,18 +13,21 @@
                 <div class="col-md-4">
                     <label>Priority of Change</label>
                     <v-select v-bind:options="rfcPriority"
+                              v-bind:disabled="isReadOnly"
                               v-model="rfcPriorityModel"
                     ></v-select>
                 </div>
                 <div class="col-md-4">
                     <label>Risk of Change</label>
                     <v-select v-bind:options="rfcRisk"
+                              v-bind:disabled="isReadOnly"
                               v-model="rfcRiskModel"
                     ></v-select>
                 </div>
                 <div class="col-md-4">
                     <label>Impact of Change</label>
                     <v-select v-bind:options="rfcImpact"
+                              v-bind:disabled="isReadOnly"
                               v-model="rfcImpactModel"
                     ></v-select>
                 </div>
@@ -50,6 +53,7 @@
                }"
                v-bind:content_css="false"
                v-bind:skin="false"
+               v-bind:disabled="isReadOnly"
                v-model="rfcRiskSummaryModel"
             />
         </div>
@@ -60,12 +64,16 @@
     export default {
         name: "RfcRisk",
         props: {
+            isReadOnly: {
+                type: Boolean,
+                default: false,
+            },
             rfcResults: {
                 type: Array,
                 default: function() {
                     return [];
                 },
-            }
+            },
         },
         data: () => ({
             rfcPriority: [

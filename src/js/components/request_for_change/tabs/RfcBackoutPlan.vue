@@ -26,6 +26,7 @@
                }"
                v-bind:content_css="false"
                v-bind:skin="false"
+               v-bind:disabled="isReadOnly"
                v-model="rfcBackoutPlanModel"
             />
         </div>
@@ -36,6 +37,10 @@
 export default {
     name: "RfcBackoutPlan",
     props: {
+        isReadOnly: {
+            type: Boolean,
+            default: false,
+        },
         rfcResults: {
             type: Array,
             default: function() {

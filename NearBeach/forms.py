@@ -445,6 +445,22 @@ class QueryBugClientForm(forms.Form):
     )
 
 
+class RfcModuleForm(forms.Form):
+    # This form is for all the sub modules that need to be saved separately.
+    text_input = forms.CharField(
+        required=True,
+    )
+    priority_of_change = forms.IntegerField(
+        required=False,
+    )
+    risk_of_change = forms.IntegerField(
+        required=False,
+    )
+    impact_of_change = forms.IntegerField(
+        required=False,
+    )
+
+
 class SearchForm(forms.Form):
     # Just have a simple search field
     search = forms.CharField(

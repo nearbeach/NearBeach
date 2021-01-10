@@ -122,6 +122,7 @@ def new_request_for_change_save(request):
     return HttpResponse(reverse('rfc_information', args={rfc_submit.rfc_id}))
 
 
+@login_required(login_url='login', redirect_field_name="")
 def rfc_information(request,rfc_id):
     """
 
@@ -138,6 +139,19 @@ def rfc_information(request,rfc_id):
     return HttpResponse(t.render(c,request))
 
 
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name="")
+def rfc_information_save(request,rfc_id):
+    """
+
+    :param request:
+    :param rfc_id:
+    :return:
+    """
+    return HttpResponse("OPPS - need to code this section :D")
+
+
+@login_required(login_url='login', redirect_field_name="")
 def rfc_readonly(request,rfc_id):
     """
 
@@ -153,3 +167,15 @@ def rfc_readonly(request,rfc_id):
     c = get_rfc_context(rfc_id)
 
     return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(['POST'])
+def rfc_save_backout_plan(request,rfc_id):
+    """
+
+    :param request:
+    :return:
+    """
+
+    return HttpResponse("")

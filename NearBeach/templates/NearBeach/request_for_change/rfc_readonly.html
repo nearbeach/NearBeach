@@ -6,10 +6,10 @@
                          v-bind:rfc-change-lead="{{rfc_change_lead}}"
                          v-bind:is-read-only="true"
         ></rfc-information>
-
-        <parent-modules v-bind:destination="'request_for_change'"
-                        v-bind:location-id="{{rfc_id}}"
-                        v-bind:rfc-results="{{rfc_results}}"
-        ></parent-modules>
     </fieldset>
+    <br/>
+
+    <rfc-modules v-bind:rfc-results="{{rfc_results}}"
+                 v-bind:is-read-only="true"
+    ></rfc-modules>
 {% endblock %}

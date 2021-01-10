@@ -5,6 +5,7 @@
             <hr>
 
             <rfc-description v-bind:rfc-results="rfcResults"
+                             v-bind:is-read-only="isReadOnly"
                              v-on:update_values="updateValues($event)"
             ></rfc-description>
 
@@ -22,6 +23,7 @@
                     <div class="form-group">
                         <label>Request for Change Type: </label>
                         <v-select v-bind:options="rfcType"
+                                  v-bind:disabled="isReadOnly"
                                   v-model="rfcTypeModel"
                         ></v-select>
                     </div>
@@ -166,6 +168,7 @@
         methods: {
             updateRFC: function() {
                 //ADD CODE HERE
+                console.log("UPDATING RFC");
             },
             updateValues: function() {
                 //ADD CODE HERE
