@@ -34,7 +34,14 @@
 <script>
 export default {
     name: "RfcTestPlan",
-    props: {},
+    props: {
+        rfcResults: {
+            type: Array,
+            default: function() {
+                return [];
+            },
+        }
+    },
     data: () => ({
         rfcTestPlanModel: '',
     }),
@@ -51,6 +58,12 @@ export default {
             this.updateValues('rfcTestPlanModel',this.rfcTestPlanModel);
         },
     },
+    mounted() {
+        //If the rfc results import - update the rfcBackout Model
+        if (this.rfcResults.length > 0) {
+            this.rfcTestPlanModel = this.rfcResults[0]['fields']['rfc_test_plan'];
+        }
+    }
 }
 </script>
 

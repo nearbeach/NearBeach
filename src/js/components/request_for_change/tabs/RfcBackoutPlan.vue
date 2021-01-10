@@ -26,7 +26,7 @@
                }"
                v-bind:content_css="false"
                v-bind:skin="false"
-               v-model="rfcBackoutPlan"
+               v-model="rfcBackoutPlanModel"
             />
         </div>
     </div>
@@ -35,9 +35,16 @@
 <script>
 export default {
     name: "RfcBackoutPlan",
-    props: {},
+    props: {
+        rfcResults: {
+            type: Array,
+            default: function() {
+                return [];
+            },
+        }
+    },
     data: () => ({
-        rfcBackoutPlan: '',
+        rfcBackoutPlanModel: '',
     }),
     methods: {
         updateValues: function(modelName,modelValue) {
@@ -48,10 +55,16 @@ export default {
         },
     },
     watch: {
-        rfcBackoutPlan: function() {
-            this.updateValues('rfcBackoutPlan',this.rfcBackoutPlan)
+        rfcBackoutPlanModel: function() {
+            this.updateValues('rfcBackoutPlan',this.rfcBackoutPlanModel)
         },
     },
+    mounted() {
+        //If the rfc results import - update the rfcBackout Model
+        if (this.rfcResults.length > 0) {
+            this.rfcBackoutPlanModel = this.rfcResults[0]['fields']['rfc_backout_plan'];
+        }
+    }
 }
 </script>
 

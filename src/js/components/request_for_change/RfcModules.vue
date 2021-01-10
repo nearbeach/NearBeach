@@ -75,7 +75,7 @@
                      role="tabpanel"
                      aria-labelledby="home-tab"
                 >
-                    <rfc-risk></rfc-risk>
+                    <rfc-risk v-bind:rfc-results="rfcResults"></rfc-risk>
 
                     <!-- Update Button -->
                     <hr v-if="!isReadOnly">
@@ -95,7 +95,7 @@
                      role="tabpanel"
                      aria-labelledby="home-tab"
                 >
-                    <rfc-implementation-plan></rfc-implementation-plan>
+                    <rfc-implementation-plan v-bind:rfc-results="rfcResults"></rfc-implementation-plan>
 
                     <!-- Update Button -->
                     <hr v-if="!isReadOnly">
@@ -115,7 +115,7 @@
                      role="tabpanel"
                      aria-labelledby="home-tab"
                 >
-                    <rfc-backout-plan></rfc-backout-plan>
+                    <rfc-backout-plan v-bind:rfc-results="rfcResults"></rfc-backout-plan>
 
                     <!-- Update Button -->
                     <hr v-if="!isReadOnly">
@@ -135,7 +135,7 @@
                      role="tabpanel"
                      aria-labelledby="home-tab"
                 >
-                    <rfc-backout-plan></rfc-backout-plan>
+                    <rfc-test-plan v-bind:rfc-results="rfcResults"></rfc-test-plan>
 
                     <!-- Update Button -->
                     <hr v-if="!isReadOnly">
@@ -155,7 +155,8 @@
                      role="tabpanel"
                      aria-labelledby="home-tab"
                 >
-                    <rfc-run-sheet-list></rfc-run-sheet-list>
+                    <rfc-run-sheet-list v-bind:is-read-only="isReadOnly"
+                    ></rfc-run-sheet-list>
                 </div>
             </div>
         </div>
@@ -171,6 +172,10 @@
             isReadOnly: {
                 type: Boolean,
                 default: false,
+            },
+            rfcResults: {
+                type: Array,
+                default: [],
             },
         },
     }

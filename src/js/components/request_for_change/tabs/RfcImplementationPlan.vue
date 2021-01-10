@@ -34,7 +34,14 @@
 <script>
     export default {
         name: "RfcImplementationPlan",
-        props: {},
+        props: {
+            rfcResults: {
+                type: Array,
+                default: function() {
+                    return [];
+                },
+            }
+        },
         data: () => ({
             rfcImplementationPlanModel: '',
         }),
@@ -51,6 +58,12 @@
                 this.updateValues('rfcImplementationPlanModel',this.rfcImplementationPlanModel);
             }
         },
+        mounted() {
+            //If the rfcResults are imported, update the rfcImplementationPlan
+            if (this.rfcResults.length > 0) {
+                this.rfcImplementationPlanModel = this.rfcResults[0]['fields']['rfc_implementation_plan'];
+            }
+        }
     }
 </script>
 

@@ -81,6 +81,7 @@
                 'rfcPriorityModel': {},
                 'rfcReleaseModel': '',
                 'rfcRiskModel': {},
+                'rfcRiskSummaryModel': '',
                 'rfcSummaryModel': '',
                 'rfcTestPlanModel': '',
                 'rfcTitleModel': '',
@@ -108,7 +109,7 @@
                 data_to_send.set('rfc_priority', data.rfcPriorityModel['value']);
                 data_to_send.set('rfc_risk', data.rfcRiskModel['value']);
                 data_to_send.set('rfc_impact', data.rfcImpactModel['value']);
-                data_to_send.set('rfc_risk_and_impact_analysis', data.rfcImplementationPlanModel);
+                data_to_send.set('rfc_risk_and_impact_analysis', data.rfcRiskSummaryModel);
                 data_to_send.set('rfc_implementation_plan', data.rfcImplementationPlanModel);
                 data_to_send.set('rfc_backout_plan', data.rfcBackoutPlan);
                 data_to_send.set('rfc_test_plan', data.rfcTestPlanModel);

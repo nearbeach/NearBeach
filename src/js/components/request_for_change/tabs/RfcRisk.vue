@@ -32,7 +32,7 @@
             <br/>
 
             <!-- RFC SUMMARY -->
-            <label>Request for Change Risk Association:
+            <label>Risk Association:
 <!--                <span class="error" v-if="!$v.projectDescriptionModel.required && $v.projectDescriptionModel.$dirty"> Please supply a description.</span>-->
 <!--                <span class="error" v-if="!$v.projectDescriptionModel.maxLength"> Sorry - too many characters.</span>-->
             </label><br>
@@ -59,7 +59,14 @@
 <script>
     export default {
         name: "RfcRisk",
-        props: {},
+        props: {
+            rfcResults: {
+                type: Array,
+                default: function() {
+                    return [];
+                },
+            }
+        },
         data: () => ({
             rfcPriority: [
                 { label: 'Critical', value: 4 },
@@ -115,6 +122,27 @@
                 this.updateValues('rfcImpactModel',this.rfcImpactModel)
             },
         },
+        mounted() {
+            //When template loads - check to see if there is any data within the rfcResults. If so -> update all models
+            if (this.rfcResults.length > 0) {
+                // Filter for the correct rfcPriority
+                this.rfcPriorityModel = this.rfcPriority.filter(row => {
+                    return row['value'] === this.rfcResults[0]['fields']['rfc_priority'];
+                });
+
+                //Filter for the correct rfcRisk
+                this.rfcRiskModel = this.rfcRisk.filter(row => {
+                    return row['value'] === this.rfcResults[0]['fields']['rfc_risk'];
+                });
+
+                this.rfcRiskSummaryModel = this.rfcResults[0]['fields']['rfc_risk_and_impact_analysis'];
+
+                //Filter for the correct rfc Impact
+                this.rfcImpactModel = this.rfcImpact.filter(row => {
+                    return row['value'] === this.rfcResults[0]['fields']['rfc_impact'];
+                });
+            }
+        }
     }
 </script>
 
