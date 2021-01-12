@@ -9,8 +9,12 @@ The following versions are supported for security updates.
 | Version | Supported          |
 | ------- | ------------------ |
 | 0.26.2  | Until the release of 0.28 |
-| 0.27.0  | Until the relase of 0.28 |
-| 0.27.1  | Until the relase of 0.28 |
+| 0.27.0  | Until the relase of 0.28  |
+| 0.27.1  | Until the relase of 0.28  |
+| 0.27.2  | Until the release of 0.28 |
+| 0.27.3  | Until the release of 0.28 |
+| 0.27.4  | Until the release of 0.28 |
+| 0.27.5  | Until the release of 0.28 |
 | <= 0.28.1 | :x:                |
 
 ## Reporting a Vulnerability
