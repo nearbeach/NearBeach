@@ -1,5 +1,5 @@
 from django.test import TestCase, Client
-from .models import *
+from NearBeach.models import *
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.models import User

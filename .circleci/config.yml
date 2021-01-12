@@ -24,6 +24,7 @@ jobs:
             pipenv run coverage run manage.py test
             pipenv run coverage report
       - store_test_results: # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
+          command: mkdir test-results
           path: test-results
             pipenv run coverage  html
       - store_artifacts: # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
