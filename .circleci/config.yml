@@ -26,8 +26,8 @@ jobs:
       - store_test_results: # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
           command: |
             ls -al
-          path: test-results
-            pipenv run coverage  html
+            pipenv run coverage html
+            ls -al
       - store_artifacts: # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
           path: test-results
           destination: tr1
