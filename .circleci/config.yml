@@ -23,6 +23,7 @@ jobs:
           command: |
             pipenv run coverage run manage.py test
             pipenv run coverage report
+            pipenv run coverage html
             ls -al
       - store_test_results: # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
           path: test-results
