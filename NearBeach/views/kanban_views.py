@@ -312,8 +312,8 @@ def new_kanban(request):
     return HttpResponse(t.render(c, request))
 
 
-@require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
+@require_http_methods(['POST'])
 def new_kanban_card(request, kanban_board_id):
     """
     """
@@ -417,8 +417,8 @@ def new_kanban_save(request):
     return HttpResponse(reverse('kanban_information', args={submit_kanban_board.kanban_board_id}))
 
 
-@require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
+@require_http_methods(['POST'])
 def update_card(request):
     """
     The following function will update the card information sent through the form in POST
