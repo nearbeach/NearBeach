@@ -246,3 +246,128 @@ class CheckKanban(TestCase):
         print("Non Logged in users redirected when visiting kanban information")
 
 
+class CheckPrivateDocument(TestCase):
+    def test_private_document(self):
+        # Make sure the user gets redirected to the login page
+        c = Client()
+        response_get = c.get(reverse('private_download_file', args=['12345678-1234-5678-1234-567812345678']))
+
+        self.assertRedirects(
+            response_get,
+            reverse('login'),
+            status_code = 302,
+            target_status_code = 200,
+            msg_prefix = '',
+            fetch_redirect_response = True
+        )
+
+        print("Non Logged in users redirected when visiting private document")
+
+class CheckNew(TestCase):
+    def new(self):
+        # Make sure the user gets redirected to the login page
+        c = Client()
+        
+        response_get_new_customer = c.get(reverse('new_customer'))
+        response_get_new_kanban = c.get(reverse('new_kanban'))
+        response_get_new_organisation = c.get(reverse('new_organisation'))
+        response_get_new_project = c.get(reverse('new_project'))
+        response_get_new_rfc = c.get(reverse('new_request_for_change'))
+        response_get_new_requirement = c.get(reverse('new_requirement'))
+        response_get_new_requirement_item = c.get(reverse('new_requirement_item', args=[1]))
+        response_get_new_task = c.get(reverse('new_task'))
+        
+        self.assertEqual(response_get_new_customer.status_code,405)
+        self.assertEqual(response_get_new_kanban.status_code,405)
+        self.assertEqual(response_get_new_organisation.status_code,405)
+        self.assertEqual(response_get_new_project.status_code,405)
+        self.assertEqual(response_get_new_rfc.status_code,405)
+        self.assertEqual(response_get_new_requirement.status_code,405)
+        self.assertEqual(response_get_new_requirement_item.status_code,405)
+        self.assertEqual(response_get_new_task.status_code,405)
+
+        print("Non Logged in users redirected when visiting private document")
+        
+    def new_save(self):
+        # Make sure the user gets redirected to the login page
+        c = Client()
+
+        response_post_new_customer = c.post(reverse('new_customer_save'))
+        response_post_new_kanban = c.post(reverse('new_kanban_save'))
+        response_post_new_organisation = c.post(reverse('new_organisation_save'))
+        response_post_new_project = c.post(reverse('new_project_save'))
+        response_post_new_rfc = c.post(reverse('new_request_for_change_save'))
+        response_post_new_requirement = c.post(reverse('new_requirement_save'))
+        response_post_new_requirement_item = c.post(reverse('new_requirement_item_save', args=[1]))
+        response_post_new_task = c.post(reverse('new_task_save'))
+
+        self.assertRedirects(
+            response_post_new_customer,
+            reverse('login'),
+            status_code = 302,
+            target_status_code = 200,
+            msg_prefix = '',
+            fetch_redirect_response = True
+        )
+
+        self.assertRedirects(
+            response_post_new_kanban,
+            reverse('login'),
+            status_code = 302,
+            target_status_code = 200,
+            msg_prefix = '',
+            fetch_redirect_response = True
+        )
+
+        self.assertRedirects(
+            response_post_new_organisation,
+            reverse('login'),
+            status_code = 302,
+            target_status_code = 200,
+            msg_prefix = '',
+            fetch_redirect_response = True
+        )
+
+        self.assertRedirects(
+            response_post_new_project,
+            reverse('login'),
+            status_code = 302,
+            target_status_code = 200,
+            msg_prefix = '',
+            fetch_redirect_response = True
+        )
+
+        self.assertRedirects(
+            response_post_new_rfc,
+            reverse('login'),
+            status_code = 302,
+            target_status_code = 200,
+            msg_prefix = '',
+            fetch_redirect_response = True
+        )
+
+        self.assertRedirects(
+            response_post_new_requirement,
+            reverse('login'),
+            status_code = 302,
+            target_status_code = 200,
+            msg_prefix = '',
+            fetch_redirect_response = True
+        )
+
+        self.assertRedirects(
+            response_post_new_requirement_item,
+            reverse('login'),
+            status_code = 302,
+            target_status_code = 200,
+            msg_prefix = '',
+            fetch_redirect_response = True
+        )
+        self.assertRedirects(
+            response_post_new_task,
+            reverse('login'),
+            status_code = 302,
+            target_status_code = 200,
+            msg_prefix = '',
+            fetch_re
+
