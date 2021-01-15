@@ -369,5 +369,6 @@ class CheckNew(TestCase):
             status_code = 302,
             target_status_code = 200,
             msg_prefix = '',
-            fetch_re
+            fetch_redirect_response = True
+        )
 
