@@ -149,6 +149,37 @@ urlpatterns = [
 	# Tasks
 	path('task_information/<int:task_id>/',task_views.task_information,name='task_information'),
 	path('task_information/<int:task_id>/save/',task_views.task_information_save,name='task_information_save'),
+
+	# Changing and Resetting Passwords
+	# path('change-password/', auth_views.PasswordChangeView.as_view()),
+	path(
+		'password_reset/',
+		auth_views.PasswordResetView.as_view(
+			template_name='NearBeach/authentication/password_reset.html',
+		),
+		name='password_reset',
+	),
+	path(
+		'password_reset/done/',
+		auth_views.PasswordResetDoneView.as_view(
+			template_name='NearBeach/authentication/password_reset_done.html',
+		),
+		name='password_reset_done',
+	),
+	path(
+		'reset/<uidb64>/<token>/',
+		auth_views.PasswordResetConfirmView.as_view(
+			template_name='NearBeach/authentication/reset.html',
+		),
+		name='password_reset_confirm',
+	),
+	path(
+		'reset/done',
+		auth_views.PasswordResetCompleteView.as_view(
+			template_name='NearBeach/authentication/reset_done.html',
+		),
+		name='password_reset_complete'
+	),
 ]
 
 handler404 = error_views.error_404
