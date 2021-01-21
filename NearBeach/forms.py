@@ -461,7 +461,7 @@ class RfcModuleForm(forms.Form):
     )
 
 
-class RfcUpdateForm(forms.ModelForm):
+class RfcInformationSaveForm(forms.ModelForm):
     class Meta:
         model = request_for_change
         fields = [
@@ -472,6 +472,17 @@ class RfcUpdateForm(forms.ModelForm):
             'rfc_implementation_start_date',
             'rfc_implementation_end_date',
             'rfc_implementation_release_date',
+        ]
+
+
+class RfcSaveRiskForm(forms.ModelForm):
+    class Meta:
+        model = request_for_change
+        fields = [
+            'rfc_priority',
+            'rfc_risk',
+            'rfc_impact',
+            'rfc_risk_and_impact_analysis',
         ]
 
 

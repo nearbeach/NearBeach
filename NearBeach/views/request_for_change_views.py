@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 from django.core import serializers
 
 from NearBeach.models import *
-from NearBeach.forms import NewRequestForChangeForm, RfcUpdateForm
+from NearBeach.forms import NewRequestForChangeForm, RfcInformationSaveForm, RfcSaveRiskForm
 
 
 # Internal function
@@ -152,7 +152,7 @@ def rfc_information_save(request,rfc_id):
     # PROGRAM IN PERMISSIONS
     
     # Get the form data
-    form = RfcUpdateForm(request.POST)
+    form = RfcInformationSaveForm(request.POST)
     if not form.is_valid():
         print(form.errors)
         return HttpResponseBadRequest(form.errors)
@@ -194,8 +194,8 @@ def rfc_readonly(request,rfc_id):
     return HttpResponse(t.render(c,request))
 
 
-@login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name="")
 def rfc_save_backout_plan(request,rfc_id):
     """
 
@@ -204,3 +204,35 @@ def rfc_save_backout_plan(request,rfc_id):
     """
 
     return HttpResponse("")
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name='')
+def rfc_save_risk(request, rfc_id):
+    """
+    """
+
+    # CHECK USER PERMISSIONS
+
+    # Get the form data
+    form = RfcSaveRiskForm(request.POST) 
+    if not form.is_valid():
+        print(request.POST)
+        print(form.errors)
+        return HttpResponseBadRequest(form.errors)
+
+    # Save the data
+    update_rfc = request_for_change.objects.get(rfc_id=rfc_id)
+
+    # Fill in the data
+    update_rfc.rfc_priority = form.cleaned_data['rfc_priority']
+    update_rfc.rfc_risk = form.cleaned_data['rfc_risk']
+    update_rfc.rfc_impact = form.cleaned_data['rfc_impact']
+    update_rfc.rfc_risk_and_impact_analysis = form.cleaned_data['rfc_risk_and_impact_analysis']
+
+    # Save the data
+    update_rfc.save()
+
+    # Return blank result
+    return HttpResponse("")
+

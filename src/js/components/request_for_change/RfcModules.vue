@@ -183,6 +183,10 @@
 <script>
     const axios = require('axios');
 
+    //Mixins
+    import errorModalMixin from "../../mixins/errorModalMixin";
+    import loadingModalMixin from "../../mixins/loadingModalMixin";
+
     export default {
         name: "RfcModules",
         props: {
@@ -197,6 +201,10 @@
                 default: [],
             },
         },
+        mixins: [
+            errorModalMixin,
+            loadingModalMixin,
+        ],
         data: () => ({
             rfcData: {
                 'rfcBackoutPlan': '',
@@ -224,7 +232,28 @@
                 })
             },
             updateImplementation: function() {},
-            updateRisk: function() {},
+            updateRisk: function() {
+                //Create the data to send
+                const data_to_send = new FormData();
+                data_to_send.set('rfc_priority', this.rfcData['rfcPriorityModel']['value']);
+                data_to_send.set('rfc_risk', this.rfcData['rfcRiskModel']['value']);
+                data_to_send.set('rfc_impact', this.rfcData['rfcImpactModel']['value']);
+                data_to_send.set('rfc_risk_and_impact_analysis', this.rfcData['rfcRiskSummaryModel']);
+
+                //Open up the loading modal
+                this.showLoadingModal('Project');
+                
+                //Use axios to send the data
+                axios.post(
+                    `/rfc_information/${this.rfcResults[0]['pk']}/save/risk/`,
+                    data_to_send,
+                ).then(response => {
+                    //Notify user of success update
+                    this.closeLoadingModal();
+                }).catch(error => {
+                    this.showErrorModal(error, this.destination);
+                })
+            },
             updateTestPlan: function() {},
             updateValues: function(data) {
                 //Update the value

@@ -136,19 +136,19 @@
                 // Filter for the correct rfcPriority
                 this.rfcPriorityModel = this.rfcPriority.filter(row => {
                     return row['value'] === this.rfcResults[0]['fields']['rfc_priority'];
-                });
+                })[0];
 
                 //Filter for the correct rfcRisk
                 this.rfcRiskModel = this.rfcRisk.filter(row => {
                     return row['value'] === this.rfcResults[0]['fields']['rfc_risk'];
-                });
+                })[0];
 
                 this.rfcRiskSummaryModel = this.rfcResults[0]['fields']['rfc_risk_and_impact_analysis'];
 
                 //Filter for the correct rfc Impact
                 this.rfcImpactModel = this.rfcImpact.filter(row => {
                     return row['value'] === this.rfcResults[0]['fields']['rfc_impact'];
-                });
+                })[0];
             }
         }
     }
