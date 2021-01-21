@@ -461,6 +461,20 @@ class RfcModuleForm(forms.Form):
     )
 
 
+class RfcUpdateForm(forms.ModelForm):
+    class Meta:
+        model = request_for_change
+        fields = [
+            'rfc_title',
+            'rfc_summary',
+            'rfc_type',
+            'rfc_version_number',
+            'rfc_implementation_start_date',
+            'rfc_implementation_end_date',
+            'rfc_implementation_release_date',
+        ]
+
+
 class SearchForm(forms.Form):
     # Just have a simple search field
     search = forms.CharField(

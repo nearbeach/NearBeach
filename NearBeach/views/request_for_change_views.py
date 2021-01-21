@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 from django.core import serializers
 
 from NearBeach.models import *
-from NearBeach.forms import NewRequestForChangeForm
+from NearBeach.forms import NewRequestForChangeForm, RfcUpdateForm
 
 
 # Internal function
@@ -148,7 +148,32 @@ def rfc_information_save(request,rfc_id):
     :param rfc_id:
     :return:
     """
-    return HttpResponse("OPPS - need to code this section :D")
+
+    # PROGRAM IN PERMISSIONS
+    
+    # Get the form data
+    form = RfcUpdateForm(request.POST)
+    if not form.is_valid():
+        print(form.errors)
+        return HttpResponseBadRequest(form.errors)
+
+    # Get the request for change data
+    update_rfc = request_for_change.objects.get(rfc_id=rfc_id)
+
+    # Update the data
+    update_rfc.rfc_title = form.cleaned_data['rfc_title']
+    update_rfc.rfc_summary = form.cleaned_data['rfc_summary']
+    update_rfc.rfc_type = form.cleaned_data['rfc_type']
+    update_rfc.rfc_version_number = form.cleaned_data['rfc_version_number']
+    update_rfc.rfc_implementation_start_date = form.cleaned_data['rfc_implementation_start_date']
+    update_rfc.rfc_implementation_end_date = form.cleaned_data['rfc_implementation_end_date']
+    update_rfc.rfc_implementation_release_date = form.cleaned_data['rfc_implementation_release_date']
+
+    # Save the data
+    update_rfc.save()
+    
+    # Return blank success
+    return HttpResponse("")
 
 
 @login_required(login_url='login', redirect_field_name="")
