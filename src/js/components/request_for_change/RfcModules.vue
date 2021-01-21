@@ -218,34 +218,13 @@
             },
         }),
         methods: {
-            updateBackoutPlan: function() {
-                const data_to_send = new FormData();
-                data_to_send.set('text_input',this.rfcData['rfcBackoutPlan']);
-
-                axios.post(
-                    `/rfc_information/${this.rfcResults[0]['pk']}/save/backout_plan/`,
-                    data_to_send,
-                ).then(response => {
-                    //ADD CODE TO TELL USER YAY DID IT!
-                }).catch(error => {
-                    //CODE IN MIXIN STUFF :D
-                })
-            },
-            updateImplementation: function() {},
-            updateRisk: function() {
-                //Create the data to send
-                const data_to_send = new FormData();
-                data_to_send.set('rfc_priority', this.rfcData['rfcPriorityModel']['value']);
-                data_to_send.set('rfc_risk', this.rfcData['rfcRiskModel']['value']);
-                data_to_send.set('rfc_impact', this.rfcData['rfcImpactModel']['value']);
-                data_to_send.set('rfc_risk_and_impact_analysis', this.rfcData['rfcRiskSummaryModel']);
-
+            sendData: function(data_to_send,url) {
                 //Open up the loading modal
                 this.showLoadingModal('Project');
-                
+
                 //Use axios to send the data
                 axios.post(
-                    `/rfc_information/${this.rfcResults[0]['pk']}/save/risk/`,
+                    url,
                     data_to_send,
                 ).then(response => {
                     //Notify user of success update
@@ -254,7 +233,38 @@
                     this.showErrorModal(error, this.destination);
                 })
             },
-            updateTestPlan: function() {},
+            updateBackoutPlan: function() {
+                const data_to_send = new FormData();
+                data_to_send.set('text_input', this.rfcData['rfcBackoutPlan']);
+
+                //Send data
+                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/backout/`)
+            },
+            updateImplementation: function() {
+                const data_to_send = new FormData();
+                data_to_send.set('text_input', this.rfcData['rfcImplementationPlanModel']);
+                
+                //Send data
+                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/implementation/`);
+            },
+            updateRisk: function() {
+                //Create the data to send
+                const data_to_send = new FormData();
+                data_to_send.set('priority_of_change', this.rfcData['rfcPriorityModel']['value']);
+                data_to_send.set('risk_of_change', this.rfcData['rfcRiskModel']['value']);
+                data_to_send.set('impact_of_change', this.rfcData['rfcImpactModel']['value']);
+                data_to_send.set('text_input', this.rfcData['rfcRiskSummaryModel']);
+
+                //Send the data
+                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/risk/`)
+            },
+            updateTestPlan: function() {
+                const data_to_send = new FormData();
+                data_to_send.set('text_input', this.rfcData['rfcTestPlanModel']);
+
+                //Send data
+                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/test/`);
+            },
             updateValues: function(data) {
                 //Update the value
                 this.rfcData[data['modelName']] = data['modelValue'];

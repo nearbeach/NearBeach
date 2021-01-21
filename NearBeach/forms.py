@@ -475,17 +475,6 @@ class RfcInformationSaveForm(forms.ModelForm):
         ]
 
 
-class RfcSaveRiskForm(forms.ModelForm):
-    class Meta:
-        model = request_for_change
-        fields = [
-            'rfc_priority',
-            'rfc_risk',
-            'rfc_impact',
-            'rfc_risk_and_impact_analysis',
-        ]
-
-
 class SearchForm(forms.Form):
     # Just have a simple search field
     search = forms.CharField(

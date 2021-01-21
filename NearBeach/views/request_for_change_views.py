@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 from django.core import serializers
 
 from NearBeach.models import *
-from NearBeach.forms import NewRequestForChangeForm, RfcInformationSaveForm, RfcSaveRiskForm
+from NearBeach.forms import NewRequestForChangeForm, RfcModuleForm, RfcInformationSaveForm
 
 
 # Internal function
@@ -75,7 +75,6 @@ def new_request_for_change_save(request):
     # Get the form data
     form = NewRequestForChangeForm(request.POST)
     if not form.is_valid():
-        print(form.errors)
         return HttpResponseBadRequest(form.errors)
 
     # Save the data
@@ -154,7 +153,6 @@ def rfc_information_save(request,rfc_id):
     # Get the form data
     form = RfcInformationSaveForm(request.POST)
     if not form.is_valid():
-        print(form.errors)
         return HttpResponseBadRequest(form.errors)
 
     # Get the request for change data
@@ -196,15 +194,53 @@ def rfc_readonly(request,rfc_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-def rfc_save_backout_plan(request,rfc_id):
+def rfc_save_backout(request,rfc_id):
     """
 
     :param request:
     :return:
     """
 
+    # Get the form data
+    form = RfcModuleForm(request.POST) 
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get the RFC in question
+    update_rfc = request_for_change.objects.get(rfc_id=rfc_id)
+
+    # Update the rfc
+    update_rfc.rfc_backout_plan = form.cleaned_data['text_input']
+
+    # Save
+    update_rfc.save()
+
     return HttpResponse("")
 
+
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name="")
+def rfc_save_implementation(request,rfc_id):
+    """
+    """
+
+    # Check user permissions
+
+    # Get the form data
+    form = RfcModuleForm(request.POST) 
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get the rfc in question
+    update_rfc = request_for_change.objects.get(rfc_id=rfc_id)
+
+    # Update the data
+    update_rfc.rfc_implementation_plan = form.cleaned_data['text_input']
+
+    #Save
+    update_rfc.save()
+    
+    return HttpResponse("")
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name='')
@@ -215,20 +251,18 @@ def rfc_save_risk(request, rfc_id):
     # CHECK USER PERMISSIONS
 
     # Get the form data
-    form = RfcSaveRiskForm(request.POST) 
+    form = RfcModuleForm(request.POST) 
     if not form.is_valid():
-        print(request.POST)
-        print(form.errors)
         return HttpResponseBadRequest(form.errors)
 
-    # Save the data
+    # Get the RFC in question
     update_rfc = request_for_change.objects.get(rfc_id=rfc_id)
 
     # Fill in the data
-    update_rfc.rfc_priority = form.cleaned_data['rfc_priority']
-    update_rfc.rfc_risk = form.cleaned_data['rfc_risk']
-    update_rfc.rfc_impact = form.cleaned_data['rfc_impact']
-    update_rfc.rfc_risk_and_impact_analysis = form.cleaned_data['rfc_risk_and_impact_analysis']
+    update_rfc.rfc_priority = form.cleaned_data['priority_of_change']
+    update_rfc.rfc_risk = form.cleaned_data['risk_of_change']
+    update_rfc.rfc_impact = form.cleaned_data['impact_of_change']
+    update_rfc.rfc_risk_and_impact_analysis = form.cleaned_data['text_input']
 
     # Save the data
     update_rfc.save()
@@ -236,3 +270,27 @@ def rfc_save_risk(request, rfc_id):
     # Return blank result
     return HttpResponse("")
 
+
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name="")
+def rfc_save_test(request,rfc_id):
+    """
+    """
+
+    # Check user permissions
+
+    # Get the form data
+    form = RfcModuleForm(request.POST) 
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get the rfc in question
+    update_rfc = request_for_change.objects.get(rfc_id=rfc_id)
+
+    # Update the rfc's data
+    update_rfc.rfc_test_plan = form.cleaned_data['text_input']
+
+    # Save data
+    update_rfc.save()
+
+    return HttpResponse("")
