@@ -172,6 +172,8 @@
                      aria-labelledby="home-tab"
                 >
                     <rfc-run-sheet-list v-bind:is-read-only="isReadOnly"
+                                        v-bind:location-id="locationId" 
+                                        v-bind:user-list="userList"
                                         v-on:update_values="updateValues($event)"
                     ></rfc-run-sheet-list>
                 </div>
@@ -200,6 +202,7 @@
                 type: Array,
                 default: [],
             },
+            userList: Array,
         },
         mixins: [
             errorModalMixin,

@@ -16,24 +16,33 @@
             >
                 <thead>
                     <tr>
-                        <td style="width: 10%;">Start Time</td>
-                        <td style="width: 10%;">End Time</td>
-                        <td style="width: 40%;">Title</td>
-                        <td style="width: 15%;">Assigned User</td>
-                        <td style="width: 15%;">QA User</td>
-                        <td style="width: 10%;">Status</td>
+                        <td style="width: 20%;">Timings</td>
+                        <td style="width: 55%;">Title</td>
+                        <td style="width: 25%;">Assigned Users</td>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="changeTask in changeTaskList">
-                        <td>{{changeTask['fields']['change_task_start_date']}}</td>
-                        <td>{{changeTask['fields']['change_task_end_date']}}</td>
                         <td>
-                            <a href="#">{{changeTask['fields']['change_task_description']}}</a>
+                            <div>Start Time:</div>
+                            <div class="small-text">{{getNiceDate(changeTask['fields']['change_task_start_date'])}}</div>
+                            <div class="spacer"></div>
+                            <div>End Time:</div>
+                            <div class="small-text">{{getNiceDate(changeTask['fields']['change_task_end_date'])}}</div>
                         </td>
-                        <td>{{changeTask['fields']['change_task_assigned_user']}}</td>
-                        <td>{{changeTask['fields']['change_task_qa_user']}}</td>
-                        <td>{{changeTask['fields']['change_task_status']}}</td>
+                        <td>
+                            <a href="#">{{changeTask['fields']['change_task_title']}}</a>
+                        </td>
+                        <td>
+                            <div>Assigned User:</div>
+                            <div class="small-text">{{getUserName(changeTask['fields']['change_task_assigned_user'])}}</div>
+                            <div class="spacer"></div>
+                            <div>QA User:</div>
+                            <div class="small-text">{{getUserName(changeTask['fields']['change_task_qa_user'])}}</div>
+                            <div class="spacer"></div>
+                            <div>Status:</div>
+                            <div class="small-text">{{getStatus(changeTask['fields']['change_task_status'])}}</div>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -67,6 +76,9 @@
 <script>
     const axios = require('axios');
 
+    // Import Luxon (for datetime)
+    import { DateTime } from "luxon";
+
     // Mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
 
@@ -78,7 +90,11 @@
                 default: false,
             },
             locationId: Number,
+            userList: Array,
         },
+        mixins: [
+            errorModalMixin,
+        ],
         data: () => ({
             changeTaskList: [],
         }),
@@ -86,9 +102,63 @@
             addNewChangeItem: function() {
                 //ADD CODE
             },
+            getNiceDate: function(input_date) {
+                //Use Luxon to convert the date nicely
+                var new_date = DateTime.fromISO(input_date);
+
+                //Return the nice outputted date
+                return new_date.toLocaleString(DateTime.DATETIME_MED); 
+            },
             getRunSheetList: function() {
-                //ADD CODE TO GET DATA
-            }
+                axios.post(
+                    `/rfc_information/${this.locationId}/change_task_list/`,
+                ).then(response => {
+                    // Update the changeTaskList
+                    this.changeTaskList = response['data'];
+                }).catch(error => {
+                    this.showErrorModal(error, 'request_for_change');
+                });    
+            },
+            getStatus: function(status_id) {
+                switch(status_id) {
+                    case 1:
+                        return 'Draft';
+                        break;
+                    case 2:
+                        return 'Waiting for approval';
+                        break;
+                    case 3:
+                        return 'Waiting to start';
+                        break;
+                    case 4:
+                        return 'Task Started';
+                        break;
+                    case 5:
+                        return 'Task Finished';
+                        break;
+                    default:
+                        return '---';
+                }
+                return '---';
+            },
+            getUserName: function(user_id) {
+                //Filter for the user by using the user_id
+                var single_user = this.userList.filter(row => {
+                    return row['pk'] == user_id;
+                });
+                
+                //If there are no results - default to ---
+                if (single_user.length == 0) {
+                    return '---';
+                }
+                
+                //User was filtered out - return their name
+                return `${single_user[0]['fields']['username']}: ${single_user[0]['fields']['first_name']} ${single_user[0]['fields']['last_name']}`;
+            },
+        },
+        mounted() {
+            // Get the run sheet list
+            this.getRunSheetList();
         }
     }
 </script>

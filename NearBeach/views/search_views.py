@@ -17,6 +17,7 @@ import json
 def get_object_search_data(search_form):
     """
     The following internal function will search the following objects using the form's data;
+    - Request for Change
     - Requirements
     - Projects
     - Tasks
@@ -26,6 +27,11 @@ def get_object_search_data(search_form):
     """
 
     # Get instance data for all objects
+    rfc_results = request_for_change.objects.filter(is_deleted=False).values(
+        'rfc_id',
+        'rfc_title',
+        'rfc_status',
+    )
     requirement_results = requirement.objects.filter(is_deleted=False).values(
         'requirement_id',
         'requirement_title',
@@ -53,6 +59,7 @@ def get_object_search_data(search_form):
     # If we are NOT including closed - then we will limit to those with status is_deleted=False
     if not include_closed:
         ### NEED TO PROGRAM IN THE REAL CLOSED VALUES!!! ###
+        rfc_results = rfc_results.filter(is_deleted=False)
         requirement_results = requirement_results.filter(is_deleted=False)
         project_results = project_results.filter(is_deleted=False)
         task_results = task_results.filter(is_deleted=False)
@@ -61,6 +68,9 @@ def get_object_search_data(search_form):
     # Split the space results - then apply the filter of each split value
     for split_row in search_form.cleaned_data['search'].split(' '):
         # Update the each instance with the split row results
+        rfc_results = rfc_results.filter(
+            Q(rfc_title__icontains=split_row)
+        )
         requirement_results = requirement_results.filter(
             Q(requirement_title__icontains=split_row)
         )
@@ -76,6 +86,9 @@ def get_object_search_data(search_form):
 
         # If the split row is a number - also check against the id
         if split_row.isnumeric():
+            rfc_results = rfc_results.filter(
+                Q(rfc_id=split_row)
+            )
             requirement_results = requirement_results.filter(
                 Q(requirement_id=split_row)
             )
@@ -91,6 +104,7 @@ def get_object_search_data(search_form):
 
 
     # Only have 25 results and order by alphabetical order
+    rfc_results.order_by('rfc_title')[:25]
     requirement_results.order_by('requirement_title')[:25]
     project_results.order_by('project_name')[:25]
     task_results.order_by('task_short_description').values()[:25]
@@ -106,6 +120,7 @@ def get_object_search_data(search_form):
     
     Note to Django developers - there has to be a better way
     """
+    rfc_results = json.dumps(list(rfc_results), cls=DjangoJSONEncoder)
     requirement_results = json.dumps(list(requirement_results), cls=DjangoJSONEncoder)
     project_results = json.dumps(list(project_results), cls=DjangoJSONEncoder)
     task_results = json.dumps(list(task_results), cls=DjangoJSONEncoder)
@@ -113,6 +128,7 @@ def get_object_search_data(search_form):
 
     # Send back a JSON array with JSON arrays inside
     return {
+        'request_for_change': json.loads(rfc_results),
         'requirement': json.loads(requirement_results),
         'project': json.loads(project_results),
         'task': json.loads(task_results),

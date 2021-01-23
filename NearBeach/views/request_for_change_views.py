@@ -19,15 +19,40 @@ def get_rfc_context(rfc_id):
     # Get data
     rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
     rfc_change_lead = User.objects.get(id=rfc_results.rfc_lead.id)
+    user_list = User.objects.filter(
+        is_active=True,
+        id__in=user_group.objects.filter(
+            is_deleted=False,
+            group_id__in=object_assignment.objects.filter(
+                is_deleted=False,
+                request_for_change_id=rfc_id,
+            ).values('group_id')
+        ).values('username_id')
+    )
 
     # Context
     c = {
         'rfc_id': rfc_id,
         'rfc_results': serializers.serialize('json', [rfc_results]),
         'rfc_change_lead': serializers.serialize('json', [rfc_change_lead]),
+        'user_list': serializers.serialize('json', user_list),
     }
 
     return c
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name="")
+def rfc_change_task_list(request,rfc_id):
+    """
+    """
+    change_task_results = change_task.objects.filter(
+        is_deleted=False,
+        request_for_change=rfc_id,
+    ).order_by('change_task_start_date','change_task_end_date')
+
+    # Send back JSON response
+    return HttpResponse(serializers.serialize('json', change_task_results), content_type='application/json')
 
 
 @login_required(login_url='login', redirect_field_name="")
@@ -61,8 +86,8 @@ def new_request_for_change(request):
     return HttpResponse(t.render(c,request))
 
 
-@login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name="")
 def new_request_for_change_save(request):
     """
 

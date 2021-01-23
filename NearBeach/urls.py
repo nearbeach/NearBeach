@@ -134,6 +134,7 @@ urlpatterns = [
 
 	# Request for Change
 	path('rfc_information/<int:rfc_id>/', request_for_change_views.rfc_information, name='rfc_information'),
+	path('rfc_information/<int:rfc_id>/change_task_list/', request_for_change_views.rfc_change_task_list, name='rfc_change_task_list'),
 	path('rfc_information/<int:rfc_id>/save/', request_for_change_views.rfc_information_save, name='rfc_information_save'),
 	path('rfc_information/<int:rfc_id>/save/backout/', request_for_change_views.rfc_save_backout, name='rfc_save_backout'),
 	path('rfc_information/<int:rfc_id>/save/implementation/', request_for_change_views.rfc_save_implementation, name='rfc_save_implementation'),
