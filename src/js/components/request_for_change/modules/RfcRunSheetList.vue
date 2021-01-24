@@ -69,12 +69,13 @@
         </div>
 
         <!-- Modal -->
-        <rfc-new-run-item></rfc-new-run-item>
+        <rfc-new-run-item v-bind:location-id="locationId"></rfc-new-run-item>
     </div>
 </template>
 
 <script>
     const axios = require('axios');
+    import { Modal } from "bootstrap";
 
     // Import Luxon (for datetime)
     import { DateTime } from "luxon";
@@ -100,7 +101,8 @@
         }),
         methods: {
             addNewChangeItem: function() {
-                //ADD CODE
+                var newChangeTaskModal = new Modal(document.getElementById('newRunItemModal'));
+                newChangeTaskModal.show();
             },
             getNiceDate: function(input_date) {
                 //Use Luxon to convert the date nicely
@@ -138,7 +140,7 @@
                         break;
                     default:
                         return '---';
-                }
+                }locationId
                 return '---';
             },
             getUserName: function(user_id) {

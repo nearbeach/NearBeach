@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 from django.core import serializers
 
 from NearBeach.models import *
-from NearBeach.forms import NewRequestForChangeForm, RfcModuleForm, RfcInformationSaveForm
+from NearBeach.forms import NewRequestForChangeForm, RfcModuleForm, RfcInformationSaveForm, NewChangeTaskForm
 
 
 # Internal function
@@ -145,6 +145,44 @@ def new_request_for_change_save(request):
     # Send back requirement_information URL
     return HttpResponse(reverse('rfc_information', args={rfc_submit.rfc_id}))
 
+@require_http_methods(["POST"])
+def rfc_new_change_task(request, rfc_id):
+    """
+
+    :param request:
+    :param rfc_id:
+    :return:
+    """
+
+    # ADD IN USER PERMISSIONS
+
+    # Place data into forms for validation
+    form = NewChangeTaskForm(request.POST)
+    if not form.is_valid():
+        # Send user bad request
+        return HttpResponseBadRequest(form.errors)
+
+    # Save the data
+    submit_change_task = change_task(
+        request_for_change = form.cleaned_data['request_for_change'],
+        change_task_title = form.cleaned_data['change_task_title'],
+        change_task_description = form.cleaned_data['change_task_description'],
+        change_task_start_date = form.cleaned_data['change_task_start_date'],
+        change_task_end_date = form.cleaned_data['change_task_end_date'],
+        change_task_seconds = form.cleaned_data['change_task_seconds'],
+        # change_task_assigned_user = form.cleaned_data['change_task_assigned_user'],
+        # change_task_qa_user = form.cleaned_data['change_task_qa_user'],
+        change_task_assigned_user = request.user,
+        change_task_qa_user = request.user,
+        change_task_required_by = form.cleaned_data['change_task_required_by'],
+        is_downtime = form.cleaned_data['is_downtime'],
+        change_task_status = 1,
+        change_user = request.user,
+        creation_user = request.user,
+    )
+    submit_change_task.save()
+
+    return HttpResponse()
 
 @login_required(login_url='login', redirect_field_name="")
 def rfc_information(request,rfc_id):

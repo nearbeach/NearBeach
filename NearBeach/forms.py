@@ -239,6 +239,24 @@ class MoveKanbanCardForm(forms.Form):
     old_card_sort_number = forms.IntegerField()
 
 
+class NewChangeTaskForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = change_task
+        fields = [
+            'request_for_change',
+            'change_task_title',
+            'change_task_description',
+            'change_task_start_date',
+            'change_task_end_date',
+            'change_task_seconds',
+            # 'change_task_assigned_user',
+            # 'change_task_qa_user',
+            'change_task_required_by',
+            'is_downtime',
+        ]
+
+
 class NewCustomerForm(forms.ModelForm):
     organisation = forms.ModelChoiceField(
         queryset=organisation.objects.all(),
