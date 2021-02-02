@@ -134,8 +134,13 @@ urlpatterns = [
 
 	# Request for Change
 	path('rfc_information/<int:rfc_id>/', request_for_change_views.rfc_information, name='rfc_information'),
+	path('rfc_information/<int:rfc_id>/change_task_list/', request_for_change_views.rfc_change_task_list, name='rfc_change_task_list'),
+	path('rfc_information/<int:rfc_id>/new_change_task/', request_for_change_views.rfc_new_change_task, name='rfc_new_change_task'),
 	path('rfc_information/<int:rfc_id>/save/', request_for_change_views.rfc_information_save, name='rfc_information_save'),
-	path('rfc_information/<int:rfc_id>/save/backout_plan/', request_for_change_views.rfc_save_backout_plan, name='rfc_save_backout_plan'),
+	path('rfc_information/<int:rfc_id>/save/backout/', request_for_change_views.rfc_save_backout, name='rfc_save_backout'),
+	path('rfc_information/<int:rfc_id>/save/implementation/', request_for_change_views.rfc_save_implementation, name='rfc_save_implementation'),
+	path('rfc_information/<int:rfc_id>/save/risk/', request_for_change_views.rfc_save_risk, name='rfc_save_risk'),
+	path('rfc_information/<int:rfc_id>/save/test/', request_for_change_views.rfc_save_test, name='rfc_save_test'),
 	path('rfc_readonly/<int:rfc_id>/', request_for_change_views.rfc_readonly, name='rfc_readonly'),
 
 	# Search Items
@@ -149,6 +154,38 @@ urlpatterns = [
 	# Tasks
 	path('task_information/<int:task_id>/',task_views.task_information,name='task_information'),
 	path('task_information/<int:task_id>/save/',task_views.task_information_save,name='task_information_save'),
+
+	# Changing and Resetting Passwords
+	# path('change-password/', auth_views.PasswordChangeView.as_view()),
+	path(
+		'password_reset/',
+		auth_views.PasswordResetView.as_view(
+			template_name='NearBeach/authentication/password_reset.html',
+			email_template_name='NearBeach/authentication/password_reset_email.html',
+		),
+		name='password_reset',
+	),
+	path(
+		'password_reset/done/',
+		auth_views.PasswordResetDoneView.as_view(
+			template_name='NearBeach/authentication/password_reset_done.html',
+		),
+		name='password_reset_done',
+	),
+	path(
+		'reset/<uidb64>/<token>/',
+		auth_views.PasswordResetConfirmView.as_view(
+			template_name='NearBeach/authentication/reset.html',
+		),
+		name='password_reset_confirm',
+	),
+	path(
+		'reset/done',
+		auth_views.PasswordResetCompleteView.as_view(
+			template_name='NearBeach/authentication/reset_done.html',
+		),
+		name='password_reset_complete'
+	),
 ]
 
 handler404 = error_views.error_404

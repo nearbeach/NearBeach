@@ -172,6 +172,8 @@
                      aria-labelledby="home-tab"
                 >
                     <rfc-run-sheet-list v-bind:is-read-only="isReadOnly"
+                                        v-bind:location-id="locationId" 
+                                        v-bind:user-list="userList"
                                         v-on:update_values="updateValues($event)"
                     ></rfc-run-sheet-list>
                 </div>
@@ -182,6 +184,10 @@
 
 <script>
     const axios = require('axios');
+
+    //Mixins
+    import errorModalMixin from "../../mixins/errorModalMixin";
+    import loadingModalMixin from "../../mixins/loadingModalMixin";
 
     export default {
         name: "RfcModules",
@@ -196,7 +202,12 @@
                 type: Array,
                 default: [],
             },
+            userList: Array,
         },
+        mixins: [
+            errorModalMixin,
+            loadingModalMixin,
+        ],
         data: () => ({
             rfcData: {
                 'rfcBackoutPlan': '',
@@ -210,22 +221,53 @@
             },
         }),
         methods: {
-            updateBackoutPlan: function() {
-                const data_to_send = new FormData();
-                data_to_send.set('text_input',this.rfcData['rfcBackoutPlan']);
+            sendData: function(data_to_send,url) {
+                //Open up the loading modal
+                this.showLoadingModal('Project');
 
+                //Use axios to send the data
                 axios.post(
-                    `/rfc_information/${this.rfcResults[0]['pk']}/save/backout_plan/`,
+                    url,
                     data_to_send,
                 ).then(response => {
-                    //ADD CODE TO TELL USER YAY DID IT!
+                    //Notify user of success update
+                    this.closeLoadingModal();
                 }).catch(error => {
-                    //CODE IN MIXIN STUFF :D
+                    this.showErrorModal(error, this.destination);
                 })
             },
-            updateImplementation: function() {},
-            updateRisk: function() {},
-            updateTestPlan: function() {},
+            updateBackoutPlan: function() {
+                const data_to_send = new FormData();
+                data_to_send.set('text_input', this.rfcData['rfcBackoutPlan']);
+
+                //Send data
+                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/backout/`)
+            },
+            updateImplementation: function() {
+                const data_to_send = new FormData();
+                data_to_send.set('text_input', this.rfcData['rfcImplementationPlanModel']);
+                
+                //Send data
+                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/implementation/`);
+            },
+            updateRisk: function() {
+                //Create the data to send
+                const data_to_send = new FormData();
+                data_to_send.set('priority_of_change', this.rfcData['rfcPriorityModel']['value']);
+                data_to_send.set('risk_of_change', this.rfcData['rfcRiskModel']['value']);
+                data_to_send.set('impact_of_change', this.rfcData['rfcImpactModel']['value']);
+                data_to_send.set('text_input', this.rfcData['rfcRiskSummaryModel']);
+
+                //Send the data
+                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/risk/`)
+            },
+            updateTestPlan: function() {
+                const data_to_send = new FormData();
+                data_to_send.set('text_input', this.rfcData['rfcTestPlanModel']);
+
+                //Send data
+                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/test/`);
+            },
             updateValues: function(data) {
                 //Update the value
                 this.rfcData[data['modelName']] = data['modelValue'];

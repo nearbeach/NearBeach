@@ -130,6 +130,12 @@
 </template>
 
 <script>
+    const axios = require('axios');
+    
+    //Import mixins
+    import errorModalMixin from "../../mixins/errorModalMixin";
+    import loadingModalMixin from "../../mixins/loadingModalMixin";
+
     export default {
         name: "RfcInformation",
         props: {
@@ -140,10 +146,18 @@
             rfcChangeLead: Array,
             rfcResults: Array,
         },
+        mixins: [
+            errorModalMixin,
+            loadingModalMixin,
+        ],
         data() {
             return {
                 rfcChangeLeadFixList: [],
                 rfcChangeLeadModel: '',
+                rfcData: {
+                    'rfcTitleModel': this.rfcResults[0]['fields']['rfc_title'],
+                    'rfcSummaryModel': this.rfcResults[0]['fields']['rfc_summary'],
+                },
                 rfcImplementationStartModel: this.rfcResults[0]['fields']['rfc_implementation_start_date'],
                 rfcImplementationEndModel: this.rfcResults[0]['fields']['rfc_implementation_end_date'],
                 rfcReleaseModel: this.rfcResults[0]['fields']['rfc_implementation_release_date'],
@@ -167,11 +181,32 @@
         },
         methods: {
             updateRFC: function() {
-                //ADD CODE HERE
-                console.log("UPDATING RFC");
+                const data_to_send = new FormData();
+                data_to_send.set('rfc_title',this.rfcData['rfcTitleModel']); //TODO FIND OUT WHERE THIS VALUE IS!!!
+                data_to_send.set('rfc_summary', this.rfcData['rfcSummaryModel']); //TODO FIND OUT WHERE THIS VALUES IS!!!
+                data_to_send.set('rfc_type', this.rfcTypeModel['value']);
+                data_to_send.set('rfc_version_number', this.rfcVersionModel);
+                data_to_send.set('rfc_implementation_start_date', this.rfcImplementationStartModel);
+                data_to_send.set('rfc_implementation_end_date', this.rfcImplementationEndModel);
+                data_to_send.set('rfc_implementation_release_date', this.rfcReleaseModel); 
+
+                //Open up the loading modal
+                this.showLoadingModal('Project');
+
+                //Use Axios to send the data
+                axios.post(
+                    `/rfc_information/${this.rfcResults[0]['pk']}/save/`,
+                    data_to_send,
+                ).then(response => {
+                    //Notify user of success update
+                    this.closeLoadingModal();
+                }).catch(error => {
+                    this.showErrorModal(error, this.destination);
+                });
             },
-            updateValues: function() {
-                //ADD CODE HERE
+            updateValues: function(data) {
+                //Update the value
+                this.rfcData[data['modelName']] = data['modelValue'];
             },
         },
         mounted() {

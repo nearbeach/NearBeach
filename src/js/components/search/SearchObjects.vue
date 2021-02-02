@@ -27,6 +27,13 @@
         </div>
         <br/>
 
+        <!-- REQUEST FOR CHANGE RESULTS -->
+        <list-search-results v-if="localSearchResults['request_for_change'].length > 0"
+                             v-bind:search-results="localSearchResults['request_for_change']"
+                             v-bind:import-variables="requestForChangeVariables"
+                             v-bind:destination="'rfc'"
+        ></list-search-results>
+
         <!-- REQUIREMENTS RESULTS -->
         <list-search-results v-if="localSearchResults['requirement'].length > 0"
                              v-bind:search-results="localSearchResults['requirement']"
@@ -56,7 +63,7 @@
         ></list-search-results>
 
         <!-- WHEN THERE ARE NO RESULTS -->
-        <div v-if="localSearchResults['requirement'].length + localSearchResults['project'].length + localSearchResults['task'].length == 0"
+        <div v-if="localSearchResults['requirement'].length + localSearchResults['project'].length + localSearchResults['task'].length + localSearchResults['request_for_change'] == 0"
              class="alert alert-warning"
         >
             Sorry - but there are no results for this search term. Please try searching for a different search term.
@@ -106,6 +113,13 @@
                     title: 'project_name',
                     status: 'project_status',
 
+                },
+                requestForChangeVariables: {
+                    header: 'Request for Change',
+                    prefix: 'Rfc',
+                    id: 'rfc_id',
+                    title: 'rfc_title',
+                    status: 'rfc_status',
                 },
                 requirementVariables: {
                     header: 'Requirements',

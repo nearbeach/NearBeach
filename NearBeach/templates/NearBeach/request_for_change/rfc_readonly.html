@@ -10,6 +10,8 @@
     <br/>
 
     <rfc-modules v-bind:rfc-results="{{rfc_results}}"
+                 v-bind:location-id="{{rfc_id}}"
+                 v-bind:user-list="{{user_list}}"   
                  v-bind:is-read-only="true"
     ></rfc-modules>
 {% endblock %}

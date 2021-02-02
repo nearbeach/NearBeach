@@ -7,5 +7,7 @@
     ></project-information>
     <br/>
 
-    <rfc-modules></rfc-modules>
+    <parent-modules v-bind:destination="'project'"
+                    v-bind:location-id="{{project_id}}"
+    ></parent-modules>
 {% endblock %}

@@ -369,7 +369,8 @@ class change_task(models.Model):
         max_length=255,
     )
     change_task_description=models.TextField(
-        'change_task_description',
+        blank=True,
+        null=True,
     )
     change_task_start_date=models.DateTimeField()
     change_task_end_date=models.DateTimeField()
@@ -393,6 +394,9 @@ class change_task(models.Model):
     change_task_status=models.IntegerField(
         choices=RFC_STATUS, #Similar FLOW to RFC
     )
+    is_downtime=models.BooleanField(
+        default=False,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
@@ -414,6 +418,41 @@ class change_task(models.Model):
 
     class Meta:
         db_table = "change_task"
+
+
+class change_task_block(models.Model):
+    change_task_blocks = models.ForeignKey(
+        change_task,
+        on_delete=models.CASCADE,
+        related_name='change_task_blocks',
+    )
+    blocked_change_task = models.ForeignKey(
+        change_task,
+        on_delete=models.CASCADE,
+        related_name='blocked_change_task',
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user',
+    )
+    creation_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_creation_user'
+    )
+    is_deleted = models.BooleanField(
+        default=False,
+    )
+
+    def __str__(self):
+        return str('$' + str(self.change_task_title))
+
+    class Meta:
+        db_table = "change_task_block"
+
 
 class cost(models.Model):
     cost_id = models.AutoField(primary_key=True)
