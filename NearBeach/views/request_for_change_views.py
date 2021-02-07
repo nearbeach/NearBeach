@@ -43,13 +43,13 @@ def get_rfc_context(rfc_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-def rfc_change_task_list(request,rfc_id):
+def rfc_change_task_list(request, rfc_id):
     """
     """
     change_task_results = change_task.objects.filter(
         is_deleted=False,
         request_for_change=rfc_id,
-    ).order_by('change_task_start_date','change_task_end_date')
+    ).order_by('change_task_start_date', 'change_task_end_date')
 
     # Send back JSON response
     return HttpResponse(serializers.serialize('json', change_task_results), content_type='application/json')
@@ -73,7 +73,7 @@ def new_request_for_change(request):
         is_deleted=False,
     )
 
-    user_results = User.objects.filter( #This should only be group leaders
+    user_results = User.objects.filter(  # This should only be group leaders
         is_active=True,
     )
 
@@ -83,7 +83,7 @@ def new_request_for_change(request):
         'user_results': serializers.serialize('json', user_results),
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
@@ -145,6 +145,7 @@ def new_request_for_change_save(request):
     # Send back requirement_information URL
     return HttpResponse(reverse('rfc_information', args={rfc_submit.rfc_id}))
 
+
 @require_http_methods(["POST"])
 def rfc_new_change_task(request, rfc_id):
     """
@@ -164,28 +165,35 @@ def rfc_new_change_task(request, rfc_id):
 
     # Save the data
     submit_change_task = change_task(
-        request_for_change = form.cleaned_data['request_for_change'],
-        change_task_title = form.cleaned_data['change_task_title'],
-        change_task_description = form.cleaned_data['change_task_description'],
-        change_task_start_date = form.cleaned_data['change_task_start_date'],
-        change_task_end_date = form.cleaned_data['change_task_end_date'],
-        change_task_seconds = form.cleaned_data['change_task_seconds'],
+        request_for_change=form.cleaned_data['request_for_change'],
+        change_task_title=form.cleaned_data['change_task_title'],
+        change_task_description=form.cleaned_data['change_task_description'],
+        change_task_start_date=form.cleaned_data['change_task_start_date'],
+        change_task_end_date=form.cleaned_data['change_task_end_date'],
+        change_task_seconds=form.cleaned_data['change_task_seconds'],
         # change_task_assigned_user = form.cleaned_data['change_task_assigned_user'],
         # change_task_qa_user = form.cleaned_data['change_task_qa_user'],
-        change_task_assigned_user = request.user,
-        change_task_qa_user = request.user,
-        change_task_required_by = form.cleaned_data['change_task_required_by'],
-        is_downtime = form.cleaned_data['is_downtime'],
-        change_task_status = 1,
-        change_user = request.user,
-        creation_user = request.user,
+        change_task_assigned_user=request.user,
+        change_task_qa_user=request.user,
+        change_task_required_by=form.cleaned_data['change_task_required_by'],
+        is_downtime=form.cleaned_data['is_downtime'],
+        change_task_status=1,
+        change_user=request.user,
+        creation_user=request.user,
     )
     submit_change_task.save()
 
-    return HttpResponse()
+    #Send back all the RFC change items
+    change_item_results = change_task.objects.filter(
+        is_deleted=False,
+        request_for_change_id=rfc_id,
+    )
+
+    return HttpResponse(serializers.serialize('json', change_item_results), content_type='application/json')
+
 
 @login_required(login_url='login', redirect_field_name="")
-def rfc_information(request,rfc_id):
+def rfc_information(request, rfc_id):
     """
 
     :param request:
@@ -198,12 +206,12 @@ def rfc_information(request,rfc_id):
     # Get context
     c = get_rfc_context(rfc_id)
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-def rfc_information_save(request,rfc_id):
+def rfc_information_save(request, rfc_id):
     """
 
     :param request:
@@ -212,7 +220,7 @@ def rfc_information_save(request,rfc_id):
     """
 
     # PROGRAM IN PERMISSIONS
-    
+
     # Get the form data
     form = RfcInformationSaveForm(request.POST)
     if not form.is_valid():
@@ -232,13 +240,13 @@ def rfc_information_save(request,rfc_id):
 
     # Save the data
     update_rfc.save()
-    
+
     # Return blank success
     return HttpResponse("")
 
 
 @login_required(login_url='login', redirect_field_name="")
-def rfc_readonly(request,rfc_id):
+def rfc_readonly(request, rfc_id):
     """
 
     :param request:
@@ -252,12 +260,12 @@ def rfc_readonly(request,rfc_id):
     # Get context
     c = get_rfc_context(rfc_id)
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-def rfc_save_backout(request,rfc_id):
+def rfc_save_backout(request, rfc_id):
     """
 
     :param request:
@@ -265,7 +273,7 @@ def rfc_save_backout(request,rfc_id):
     """
 
     # Get the form data
-    form = RfcModuleForm(request.POST) 
+    form = RfcModuleForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
@@ -283,14 +291,14 @@ def rfc_save_backout(request,rfc_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-def rfc_save_implementation(request,rfc_id):
+def rfc_save_implementation(request, rfc_id):
     """
     """
 
     # Check user permissions
 
     # Get the form data
-    form = RfcModuleForm(request.POST) 
+    form = RfcModuleForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
@@ -300,10 +308,11 @@ def rfc_save_implementation(request,rfc_id):
     # Update the data
     update_rfc.rfc_implementation_plan = form.cleaned_data['text_input']
 
-    #Save
+    # Save
     update_rfc.save()
-    
+
     return HttpResponse("")
+
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name='')
@@ -314,7 +323,7 @@ def rfc_save_risk(request, rfc_id):
     # CHECK USER PERMISSIONS
 
     # Get the form data
-    form = RfcModuleForm(request.POST) 
+    form = RfcModuleForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
@@ -336,14 +345,14 @@ def rfc_save_risk(request, rfc_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-def rfc_save_test(request,rfc_id):
+def rfc_save_test(request, rfc_id):
     """
     """
 
     # Check user permissions
 
     # Get the form data
-    form = RfcModuleForm(request.POST) 
+    form = RfcModuleForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 

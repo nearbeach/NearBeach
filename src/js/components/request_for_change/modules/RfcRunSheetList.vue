@@ -69,7 +69,9 @@
         </div>
 
         <!-- Modal -->
-        <rfc-new-run-item v-bind:location-id="locationId"></rfc-new-run-item>
+        <rfc-new-run-item v-bind:location-id="locationId"
+                          v-on:update_change_task_list="updateChangeTaskList($event)"
+        ></rfc-new-run-item>
     </div>
 </template>
 
@@ -140,7 +142,7 @@
                         break;
                     default:
                         return '---';
-                }locationId
+                }
                 return '---';
             },
             getUserName: function(user_id) {
@@ -156,6 +158,10 @@
                 
                 //User was filtered out - return their name
                 return `${single_user[0]['fields']['username']}: ${single_user[0]['fields']['first_name']} ${single_user[0]['fields']['last_name']}`;
+            },
+            updateChangeTaskList: function(data) {
+                //Update change task list
+                this.changeTaskList = data;
             },
         },
         mounted() {

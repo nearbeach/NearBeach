@@ -2,21 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d33fa832-af9e-4e77-8cfd-f50f0ec36326" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/NearBeach.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/NearBeach.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/NearBeach.min.js.gz" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/NearBeach.min.js.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/loader.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/loader.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/loader.min.js.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/login.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/login.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/login.min.js.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/static/NearBeach/whiteboard.min.js.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearBeach/views/request_for_change_views.py" beforeDir="false" afterPath="$PROJECT_DIR$/NearBeach/views/request_for_change_views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/js/components/request_for_change/modules/RfcNewRunItem.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/js/components/request_for_change/modules/RfcNewRunItem.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/js/components/request_for_change/modules/RfcRunSheetList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/js/components/request_for_change/modules/RfcRunSheetList.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,6 +52,7 @@
       <workItem from="1607303642686" duration="414000" />
       <workItem from="1611482390373" duration="48000" />
       <workItem from="1611482458034" duration="8171000" />
+      <workItem from="1612654450575" duration="21000" />
     </task>
     <servers />
   </component>

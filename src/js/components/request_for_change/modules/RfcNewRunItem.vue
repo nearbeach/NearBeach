@@ -4,7 +4,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title" id="newRunItemModalLabel">New Change Task</h2>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                        id="newRunItemCloseButton"
+                >
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <!-- CHANGE TASK TITLE -->
@@ -93,7 +100,10 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-dismiss="modal"
+                >Close</button>
                 <button type="button"
                         class="btn btn-primary"
                         v-on:click="submitChangeTask($event)"
@@ -158,7 +168,11 @@
                     `/rfc_information/${this.locationId}/new_change_task/`,
                     data_to_send,
                 ).then(response => {
-                    console.log("RESPONSE", response);
+                    //Update the runsheet variables
+                    this.$emit('update_change_task_list',response['data']);
+
+                    //Close the modal
+                    document.getElementById("newRunItemCloseButton").click();
                 }).catch(error => {
                     this.showErrorModal(error, 'Change Task');
                 })
