@@ -6,7 +6,8 @@ from django.views.decorators.http import require_http_methods
 from django.core import serializers
 
 from NearBeach.models import *
-from NearBeach.forms import NewRequestForChangeForm, RfcModuleForm, RfcInformationSaveForm, NewChangeTaskForm, UpdateRFCStatus
+from NearBeach.forms import NewRequestForChangeForm, RfcModuleForm, RfcInformationSaveForm, NewChangeTaskForm, \
+    UpdateRFCStatus
 
 
 # Internal function
@@ -183,7 +184,7 @@ def rfc_new_change_task(request, rfc_id):
     )
     submit_change_task.save()
 
-    #Send back all the RFC change items
+    # Send back all the RFC change items
     change_item_results = change_task.objects.filter(
         is_deleted=False,
         request_for_change_id=rfc_id,
@@ -369,37 +370,66 @@ def rfc_save_test(request, rfc_id):
 
 
 # Internal function
-def rfc_status_approved(rfc_id):
+def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
     """
-
+    Method
+    ~~~~~~
+    1. Find all groups associated with the RFC
+    2. Create a single row for all groups in the request_for_change_group_approval
+    3. Check to see if there are any group leaders in said groups - or auto approve
+    4. Check to see if all tasks are auto approved, if so - auto apprve the rfc :)
     :param rfc_id:
     :return:
     """
-    print("Approved")
 
-    return
+    # Get the group results
+    group_results = group.objects.filter(
+        is_deleted=False,
+        group_id__in=object_assignment.objects.filter(
+            is_deleted=False,
+            group_id__isnull=False,
+            request_for_change_id=rfc_id,
+        ).values('group_id')
+    )
 
+    # Loop through the groups, create the group approval, and see if there are ANY group leaders
+    for single_group in group_results:
+        # Create the group_approval
+        submit_group_approval = request_for_change_group_approval(
+            rfc_id=rfc_id,
+            group_id=single_group.group_id,
+            change_user_id=request.user.id,
+        )
 
-# Internal function
-def rfc_status_cancel(rfc_id):
-    """
+        # Check to see if there are any group leaders
+        group_leader_count = user_group.objects.filter(
+            is_deleted=False,
+            group_id=single_group.group_id,
+            group_leader=True,
+        ).count()
 
-    :param rfc_id:
-    :return:
-    """
-    print("Cancelled")
+        if group_leader_count == 0:
+            submit_group_approval.approval = 2
+        else:
+            submit_group_approval.approval = 1
 
-    return
+        # Save the data
+        submit_group_approval.save()
 
+    # Check all submitted group approvals to make sure that they are all approved - if they are, update the status.
+    non_approved_group_approvals = request_for_change_group_approval.objects.filter(
+        is_deleted=False,
+        group_id__in=group_results.values('group_id'),
+        rfc_id=rfc_id,
+        approval=1,
+    ).count()
 
-# Internal function
-def rfc_status_rejected(rfc_id):
-    """
+    print("THE COUNT IS: %s " % non_approved_group_approvals)
 
-    :param rfc_id:
-    :return:
-    """
-    print("Rejected")
+    # If there are no waiting for approval results - we default up to approved
+    if non_approved_group_approvals == 0:
+        rfc_results.rfc_status = 3  # Approved value
+        rfc_results.save()
 
     return
 
@@ -425,16 +455,12 @@ def rfc_update_status(request, rfc_id):
     rfc_update = request_for_change.objects.get(rfc_id=rfc_id)
 
     # Update the status
-    rfc_update.rfc_status = form.cleaned_data['rfc_status']
+    rfc_update.rfc_status = int(form.cleaned_data['rfc_status'])
     rfc_update.save()
 
     # Depending on what the status is depends what to do
-    if form.cleaned_data['rfc_status'] == RFC_APPROVAL['Approved']:
-        # Apply the method when approved
-        rfc_status_approved(rfc_id)
-    elif form.cleaned_data['rfc_status'] == RFC_APPROVAL['Rejected']:
-        print("Rejected")
-    elif form.cleaned_data['rfc_status'] == RFC_APPROVAL['Cancel']:
-        print("Cancel")
+    status_dict = dict(RFC_STATUS)
+    if status_dict[form.cleaned_data['rfc_status']] == 'Waiting for approval':
+        rfc_status_waiting_for_approval(rfc_id, rfc_update, request)
 
     return HttpResponse("")

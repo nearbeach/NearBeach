@@ -210,7 +210,18 @@
                 });
             },
             updateRFCStatus: function() {
-                
+                const data_to_send = new FormData();
+                data_to_send.set('rfc_status','2'); //Value 2: Waiting for Approval
+
+                axios.post(
+                    `/rfc_information/${this.rfcResults[0]['pk']}/update_status/`,
+                    data_to_send,
+                ).then(response => {
+                    //Reload the page to get redirected to the correct place
+                    window.location.reload(true);
+                }).catch(error => {
+                    //ADD MIXIN
+                })
             },
             updateValues: function(data) {
                 //Update the value
