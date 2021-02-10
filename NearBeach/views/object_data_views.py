@@ -78,8 +78,9 @@ def add_customer(request,destination,location_id):
 
     return HttpResponse(serializers.serialize('json', customer_results), content_type='application/json')
 
-@login_required(login_url='login',redirect_field_name="")
+
 @require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
 def add_group(request,destination,location_id):
     # ADD IN CHECK PERMISSIONS THAT USES THE DESTINATION AND LOCATION!
 

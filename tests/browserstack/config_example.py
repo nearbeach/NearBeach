@@ -3,8 +3,8 @@
 	'browserstack_apikey': '',
 	"login": {
 		"administrator": {
-			"username": "luke",
-			"password": "$$kumu09"
+			"username": "#RandomUser",
+			"password": "#RandomPassword"
 		},
 		"basicuser": {
 			"username": "",
