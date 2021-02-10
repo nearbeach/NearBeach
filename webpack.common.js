@@ -81,11 +81,7 @@ module.exports = {
         path: path.resolve(__dirname, 'NearBeach/static/NearBeach'),
         filename: '[name].min.js'
     },
-    externals: {
-        jQuery: 'jQuery',
-        foundation: 'Foundation'
-    },
-    optimization: {
-        //runtimeChunk: 'single',
-    }
+    // optimization: {
+    //     runtimeChunk: 'single',
+    // }
 };

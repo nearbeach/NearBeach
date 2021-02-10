@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.urls import reverse
 from django.template import loader
 from django.contrib.auth.decorators import login_required
@@ -201,6 +201,12 @@ def rfc_information(request, rfc_id):
     :param rfc_id:
     :return:
     """
+
+    # If rfc is not in draft mode - send user away
+    rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
+    if not rfc_results.rfc_status == 1: #Draft
+        return HttpResponseRedirect(reverse('rfc_readonly', args={rfc_id}))
+
     # Get template
     t = loader.get_template('NearBeach/request_for_change/rfc_information.html')
 
@@ -221,6 +227,7 @@ def rfc_information_save(request, rfc_id):
     """
 
     # PROGRAM IN PERMISSIONS
+
 
     # Get the form data
     form = RfcInformationSaveForm(request.POST)
