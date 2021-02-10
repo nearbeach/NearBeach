@@ -120,6 +120,11 @@
             >
                 <div class="col-md-12">
                     <a href="javascript:void(0)"
+                       class="btn btn-dark"
+                       v-on:click="updateRFCStatus"
+                    >Submit RFC for Approval</a>
+
+                    <a href="javascript:void(0)"
                        class="btn btn-primary save-changes"
                        v-on:click="updateRFC"
                     >Update Request for Change</a>
@@ -203,6 +208,9 @@
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 });
+            },
+            updateRFCStatus: function() {
+                
             },
             updateValues: function(data) {
                 //Update the value

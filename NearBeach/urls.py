@@ -141,6 +141,7 @@ urlpatterns = [
 	path('rfc_information/<int:rfc_id>/save/implementation/', request_for_change_views.rfc_save_implementation, name='rfc_save_implementation'),
 	path('rfc_information/<int:rfc_id>/save/risk/', request_for_change_views.rfc_save_risk, name='rfc_save_risk'),
 	path('rfc_information/<int:rfc_id>/save/test/', request_for_change_views.rfc_save_test, name='rfc_save_test'),
+	path('rfc_information/<int:rfc_id>/update_status/', request_for_change_views.rfc_update_status, name='rfc_update_status'),
 	path('rfc_readonly/<int:rfc_id>/', request_for_change_views.rfc_readonly, name='rfc_readonly'),
 
 	# Search Items

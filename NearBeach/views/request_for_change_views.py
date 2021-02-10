@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 from django.core import serializers
 
 from NearBeach.models import *
-from NearBeach.forms import NewRequestForChangeForm, RfcModuleForm, RfcInformationSaveForm, NewChangeTaskForm
+from NearBeach.forms import NewRequestForChangeForm, RfcModuleForm, RfcInformationSaveForm, NewChangeTaskForm, UpdateRFCStatus
 
 
 # Internal function
@@ -364,5 +364,77 @@ def rfc_save_test(request, rfc_id):
 
     # Save data
     update_rfc.save()
+
+    return HttpResponse("")
+
+
+# Internal function
+def rfc_status_approved(rfc_id):
+    """
+
+    :param rfc_id:
+    :return:
+    """
+    print("Approved")
+
+    return
+
+
+# Internal function
+def rfc_status_cancel(rfc_id):
+    """
+
+    :param rfc_id:
+    :return:
+    """
+    print("Cancelled")
+
+    return
+
+
+# Internal function
+def rfc_status_rejected(rfc_id):
+    """
+
+    :param rfc_id:
+    :return:
+    """
+    print("Rejected")
+
+    return
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name="")
+def rfc_update_status(request, rfc_id):
+    """
+    Using a simple form, we determine which status we are going to update to - and apply the correct status.
+    :param request:
+    :param rfc_id:
+    :return:
+    """
+
+    # Add in user permissions
+
+    # Get the form data
+    form = UpdateRFCStatus(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get the rfc
+    rfc_update = request_for_change.objects.get(rfc_id=rfc_id)
+
+    # Update the status
+    rfc_update.rfc_status = form.cleaned_data['rfc_status']
+    rfc_update.save()
+
+    # Depending on what the status is depends what to do
+    if form.cleaned_data['rfc_status'] == RFC_APPROVAL['Approved']:
+        # Apply the method when approved
+        rfc_status_approved(rfc_id)
+    elif form.cleaned_data['rfc_status'] == RFC_APPROVAL['Rejected']:
+        print("Rejected")
+    elif form.cleaned_data['rfc_status'] == RFC_APPROVAL['Cancel']:
+        print("Cancel")
 
     return HttpResponse("")

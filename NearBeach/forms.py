@@ -532,3 +532,12 @@ class UpdateRequirementItemForm(forms.ModelForm):
             'requirement_item_status',
             'requirement_item_type',
         ]
+
+
+class UpdateRFCStatus(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = request_for_change
+        fields = [
+            'rfc_status',
+        ]
