@@ -268,6 +268,20 @@ def rfc_readonly(request, rfc_id):
     # Get context
     c = get_rfc_context(rfc_id)
 
+    # Determine if the user is a group leader for ANY of the groups assigned to this rfc
+    group_leader_count = object_assignment.objects.filter(
+        is_deleted=False,
+        request_for_change_id=rfc_id,
+        group_id__in=user_group.objects.filter(
+            is_deleted=False,
+            username_id=request.user,
+            group_leader=True,
+        ).values('group_id')
+    ).count()
+
+    # Add the group_leader_count to c dict
+    c.update({'group_leader_count': group_leader_count})
+
     return HttpResponse(t.render(c, request))
 
 
