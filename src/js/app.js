@@ -74,7 +74,7 @@ import RfcInformation from "./components/request_for_change/RfcInformation.vue";
 import RfcModules from "./components/request_for_change/RfcModules.vue";
 import RfcNewRunItem from "./components/request_for_change/modules/RfcNewRunItem.vue";
 import RfcRunSheetList from "./components/request_for_change/modules/RfcRunSheetList.vue";
-
+import DashboardRfcApprovals from "./components/dashboard/DashboardRfcApprovals.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -181,6 +181,7 @@ Vue.component('RfcInformation',RfcInformation);
 Vue.component('RfcModules',RfcModules);
 Vue.component('RfcNewRunItem',RfcNewRunItem);
 Vue.component('RfcRunSheetList',RfcRunSheetList);
+Vue.component('DashboardRfcApprovals',DashboardRfcApprovals);
 
 
 //Validation

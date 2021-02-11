@@ -79,10 +79,8 @@
     const axios = require('axios');
     import { Modal } from "bootstrap";
 
-    // Import Luxon (for datetime)
-    import { DateTime } from "luxon";
-
     // Mixins
+    import datetimeMixins from "../../../mixins/datetimeMixins";
     import errorModalMixin from "../../../mixins/errorModalMixin";
 
     export default {
@@ -97,6 +95,7 @@
         },
         mixins: [
             errorModalMixin,
+            datetimeMixins,
         ],
         data: () => ({
             changeTaskList: [],
@@ -105,13 +104,6 @@
             addNewChangeItem: function() {
                 var newChangeTaskModal = new Modal(document.getElementById('newRunItemModal'));
                 newChangeTaskModal.show();
-            },
-            getNiceDate: function(input_date) {
-                //Use Luxon to convert the date nicely
-                var new_date = DateTime.fromISO(input_date);
-
-                //Return the nice outputted date
-                return new_date.toLocaleString(DateTime.DATETIME_MED); 
             },
             getRunSheetList: function() {
                 axios.post(
