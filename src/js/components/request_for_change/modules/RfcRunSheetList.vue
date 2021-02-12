@@ -41,7 +41,33 @@
                             <div class="small-text">{{getUserName(changeTask['fields']['change_task_qa_user'])}}</div>
                             <div class="spacer"></div>
                             <div>Status:</div>
-                            <div class="small-text">{{getStatus(changeTask['fields']['change_task_status'])}}</div>
+                            <div class="small-text"
+                                 v-if="!isDeployment"
+                            >
+                                {{getStatus(changeTask['fields']['change_task_status'])}}
+                            </div>
+                            <div v-else>
+                                <!-- START BUTTON -->
+                                <a href="javascript:void(0)"
+                                   class="btn btn-primary change-task-button"
+                                   v-on:click="updateChangeTaskStatus(changeTask['pk'],4)"
+                                   v-if="changeTask['fields']['change_task_status']==3"
+                                >Start Task</a>
+
+                                <!-- FINISH BUTTON -->
+                                <a href="javascript:void(0)"
+                                   class="btn btn-warning change-task-button"
+                                   v-on:click="updateChangeTaskStatus(changeTask['pk'],5)"
+                                   v-if="changeTask['fields']['change_task_status']==4"
+                                >Finish Task</a>
+
+                                <!-- SUCCESS BUTTON -->
+                                <a href="javascript:void(0)"
+                                   class="btn btn-success change-task-button"
+                                   v-on:click=""
+                                   v-if="changeTask['fields']['change_task_status']==5"
+                                >Successful</a>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
@@ -68,9 +94,22 @@
             </div>
         </div>
 
+        <!-- If ALL Change Tasks have been completed - you can close the RFC -->
+        <div class="row submit-row"
+             v-if="isCompleted"
+        >
+            <div class="col-md-12">
+                <a href="javascript:void(0)"
+                   class="btn btn-warning save-changes"
+                   v-on:click="closeRfc"
+                >Close Request for Change</a>
+            </div>
+        </div>
+
         <!-- Modal -->
         <rfc-new-run-item v-bind:location-id="locationId"
                           v-on:update_change_task_list="updateChangeTaskList($event)"
+                          v-if="!isReadOnly"
         ></rfc-new-run-item>
     </div>
 </template>
@@ -86,11 +125,16 @@
     export default {
         name: "RfcRunSheetList",
         props: {
+            isDeployment: {
+                type: Boolean,
+                default: false,
+            },
             isReadOnly: {
                 type: Boolean,
                 default: false,
             },
             locationId: Number,
+            rfcId: Number,
             userList: Array,
         },
         mixins: [
@@ -100,10 +144,35 @@
         data: () => ({
             changeTaskList: [],
         }),
+        computed: {
+            isCompleted: function() {
+                var count_of_uncompleted_tasks = this.changeTaskList.filter(changeTask => {
+                    return changeTask['fields']['change_task_status'] != 5;
+                }).length;
+
+                //Return true when there are no uncompleted tasks (all finished)
+                return count_of_uncompleted_tasks == 0;
+            }
+        },
         methods: {
             addNewChangeItem: function() {
                 var newChangeTaskModal = new Modal(document.getElementById('newRunItemModal'));
                 newChangeTaskModal.show();
+            },
+            closeRfc: function() {
+                //Construct the data to send
+                const data_to_send = new FormData();
+                data_to_send.set('rfc_status', 5);
+
+                axios.post(
+                    `/rfc_information/${this.rfcId}/update_status/`,
+                    data_to_send,
+                ).then(response => {
+                    //Refresh Page
+                    window.location.reload(true);
+                }).catch(error => {
+                    this.showErrorModal(error, 'request_for_change');
+                });
             },
             getRunSheetList: function() {
                 axios.post(
@@ -154,6 +223,37 @@
             updateChangeTaskList: function(data) {
                 //Update change task list
                 this.changeTaskList = data;
+            },
+            updateChangeTaskStatus: function(change_task_id,change_task_status) {
+                //Construct data to send
+                const data_to_send = new FormData()
+                data_to_send.set('change_task_status',change_task_status)
+
+                axios.post(
+                    `/change_task_update_status/${change_task_id}/`,
+                    data_to_send,
+                ).then(response => {
+                    /*
+                    We are using the map function to make a single variable change without having to write a loop function.
+                    The change task has been update, so we are only changing that task when mapping the results back
+                    to itself.
+                     */
+                    this.changeTaskList = this.changeTaskList.map(changeTask => {
+                        //The change task that we have just updated :)
+                        if (changeTask['pk'] == change_task_id) {
+                            //Update the change Task Status
+                            changeTask['fields']['change_task_status'] = change_task_status;
+
+                            //Send back the change task status
+                            return changeTask;
+                        } else {
+                            // Not the change task we updated :(
+                            return changeTask;
+                        }
+                    });
+                }).catch(error => {
+                    this.showErrorModal(error, 'request_for_change');
+                })
             },
         },
         mounted() {

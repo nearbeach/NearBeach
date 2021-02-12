@@ -138,6 +138,14 @@ class AddRequirementLinkForm(forms.Form):
     )
 
 
+class ChangeTaskStatusForm(forms.ModelForm):
+    class Meta:
+        model = change_task
+        fields = [
+            'change_task_status',
+        ]
+
+
 class CheckKanbanBoardName(forms.Form):
     kanban_board_name = forms.CharField(max_length=255)
 

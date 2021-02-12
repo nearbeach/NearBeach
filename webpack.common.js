@@ -53,7 +53,7 @@ module.exports = {
         new CompressionPlugin(),
         new CopyPlugin({
             patterns: [
-                { from: './src/resources/whiteboard/', to: './whiteboard' },
+                // { from: './src/resources/whiteboard/', to: './whiteboard' },
                 { from: './src/resources/NearBeach.png', to: '' },
                 { from: './src/resources/NearBeach_Small.png', to: '' },
                 { from: './src/resources/images/', to: './images' },
@@ -74,7 +74,7 @@ module.exports = {
     entry: {
         'NearBeach': './src/js/app.js',
         'login': './src/js/login.js',
-        'whiteboard': './src/js/whiteboard.js',
+        // 'whiteboard': './src/js/whiteboard.js',
         'loader': './src/js/loader.js',
     },
     output: {

@@ -42,20 +42,6 @@ def get_rfc_context(rfc_id):
     return c
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
-def rfc_change_task_list(request, rfc_id):
-    """
-    """
-    change_task_results = change_task.objects.filter(
-        is_deleted=False,
-        request_for_change=rfc_id,
-    ).order_by('change_task_start_date', 'change_task_end_date')
-
-    # Send back JSON response
-    return HttpResponse(serializers.serialize('json', change_task_results), content_type='application/json')
-
-
 @login_required(login_url='login', redirect_field_name="")
 def new_request_for_change(request):
     """
@@ -147,7 +133,45 @@ def new_request_for_change_save(request):
     return HttpResponse(reverse('rfc_information', args={rfc_submit.rfc_id}))
 
 
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name="")
+def rfc_change_task_list(request, rfc_id):
+    """
+    """
+    change_task_results = change_task.objects.filter(
+        is_deleted=False,
+        request_for_change=rfc_id,
+    ).order_by('change_task_start_date', 'change_task_end_date')
+
+    # Send back JSON response
+    return HttpResponse(serializers.serialize('json', change_task_results), content_type='application/json')
+
+
+@login_required(login_url='login', redirect_field_name="")
+def rfc_deployment(request, rfc_id):
+    """
+
+    :param request:
+    :param rfc_id:
+    :return:
+    """
+    # If rfc is not in draft mode - send user away
+    rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
+    if not rfc_results.rfc_status == 3:  # Approved
+        return HttpResponseRedirect(reverse('rfc_readonly', args={rfc_id}))
+
+    # Get template
+    t = loader.get_template('NearBeach/request_for_change/rfc_deployment.html')
+
+    # Get context
+    c = get_rfc_context(rfc_id)
+
+    return HttpResponse(t.render(c, request))
+
+
+
 @require_http_methods(["POST"])
+@login_required(login_url='login', redirect_field_name="")
 def rfc_new_change_task(request, rfc_id):
     """
 
@@ -204,7 +228,7 @@ def rfc_information(request, rfc_id):
 
     # If rfc is not in draft mode - send user away
     rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
-    if not rfc_results.rfc_status == 1: #Draft
+    if not rfc_results.rfc_status == 1:  # Draft
         return HttpResponseRedirect(reverse('rfc_readonly', args={rfc_id}))
 
     # Get template
@@ -227,7 +251,6 @@ def rfc_information_save(request, rfc_id):
     """
 
     # PROGRAM IN PERMISSIONS
-
 
     # Get the form data
     form = RfcInformationSaveForm(request.POST)
@@ -391,6 +414,97 @@ def rfc_save_test(request, rfc_id):
 
 
 # Internal function
+def rfc_status_approved(rfc_id, rfc_results, request):
+    """
+    Method
+    ~~~~~~
+    1. Gather all User's rfc_group_rfc_approvals - and approve
+    2. Check if there are any waiting rfc_group_rfc_approvals left - if none, approve rfc
+    :param request:
+    :param rfc_results:
+    :param rfc_id:
+    :return:
+    """
+    # Get group results
+    group_results = user_group.objects.filter(
+        is_deleted=False,
+        username=request.user,
+    )
+
+    # Update all user's rfc_group_approvals to approved
+    request_for_change_group_approval.objects.filter(
+        is_deleted=False,
+        rfc_id=rfc_id,
+        group_id__in=group_results.values('group_id')
+    ).update(approval=2)
+
+    # Send off to check to make sure that the rfc status needs updating
+    rfc_status_check_approval_status(rfc_id, rfc_results, group_results)
+
+    return
+
+
+# Internal function
+def rfc_status_check_approval_status(rfc_id, rfc_results, group_results):
+    """
+
+    :param group_results:
+    :param rfc_results:
+    :param rfc_id:
+    :return:
+    """
+
+    # Check all submitted group approvals to make sure that they are all approved - if they are, update the status.
+    non_approved_group_approvals = request_for_change_group_approval.objects.filter(
+        is_deleted=False,
+        group_id__in=group_results.values('group_id'),
+        rfc_id=rfc_id,
+        approval=1,
+    ).count()
+
+    # If there are no waiting for approval results - we default up to approved
+    if non_approved_group_approvals == 0:
+        rfc_results.rfc_status = 3  # Approved value
+        rfc_results.save()
+
+        # Update all change tasks to approved
+        change_task.objects.filter(
+            is_deleted=False,
+            rfc_id=rfc_id,
+            change_task_status=2,
+        ).update(change_task_status=3)
+
+    return
+
+
+# Internal function
+def rfc_status_rejected(rfc_id, rfc_results):
+    """
+
+    :param rfc_results:
+    :param rfc_id:
+    :return:
+    """
+    # Update all user's rfc_group_approvals to approved
+    request_for_change_group_approval.objects.filter(
+        is_deleted=False,
+        rfc_id=rfc_id,
+    ).update(approval=3)
+
+    # Reject who RFC
+    rfc_results.rfc_status = 6
+    rfc_results.save()
+
+    # Reject all the change tasks
+    change_task.objects.filter(
+        is_deleted=False,
+        rfc_id=rfc_id,
+    ).update(change_task_status=6)
+
+    return
+
+
+# Internal function
 def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
     """
     Method
@@ -399,6 +513,8 @@ def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
     2. Create a single row for all groups in the request_for_change_group_approval
     3. Check to see if there are any group leaders in said groups - or auto approve
     4. Check to see if all tasks are auto approved, if so - auto apprve the rfc :)
+    :param request:
+    :param rfc_results:
     :param rfc_id:
     :return:
     """
@@ -412,6 +528,13 @@ def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
             request_for_change_id=rfc_id,
         ).values('group_id')
     )
+
+    # Place all change tasks into waiting
+    change_task.objects.filter(
+        is_deleted=False,
+        rfc_id=rfc_id,
+        change_task_status=1,
+    ).update(change_task_status=2)
 
     # Loop through the groups, create the group approval, and see if there are ANY group leaders
     for single_group in group_results:
@@ -437,20 +560,7 @@ def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
         # Save the data
         submit_group_approval.save()
 
-    # Check all submitted group approvals to make sure that they are all approved - if they are, update the status.
-    non_approved_group_approvals = request_for_change_group_approval.objects.filter(
-        is_deleted=False,
-        group_id__in=group_results.values('group_id'),
-        rfc_id=rfc_id,
-        approval=1,
-    ).count()
-
-    print("THE COUNT IS: %s " % non_approved_group_approvals)
-
-    # If there are no waiting for approval results - we default up to approved
-    if non_approved_group_approvals == 0:
-        rfc_results.rfc_status = 3  # Approved value
-        rfc_results.save()
+    rfc_status_check_approval_status(rfc_id, rfc_results, group_results)
 
     return
 
@@ -483,5 +593,9 @@ def rfc_update_status(request, rfc_id):
     status_dict = dict(RFC_STATUS)
     if status_dict[form.cleaned_data['rfc_status']] == 'Waiting for approval':
         rfc_status_waiting_for_approval(rfc_id, rfc_update, request)
+    if status_dict[form.cleaned_data['rfc_status']] == 'Approved':
+        rfc_status_approved(rfc_id, rfc_update, request)
+    if status_dict[form.cleaned_data['rfc_status']] == 'Rejected':
+        rfc_status_rejected(rfc_id, rfc_update)
 
     return HttpResponse("")

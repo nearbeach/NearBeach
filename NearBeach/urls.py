@@ -15,6 +15,7 @@ from django.conf.urls import handler404, handler500
 
 
 from .views import authentication_views, \
+	change_task_views, \
 	customer_views, \
 	dashboard_views, \
 	document_views, \
@@ -31,6 +32,9 @@ from .views import authentication_views, \
 
 urlpatterns = [
 	path('', dashboard_views.dashboard, name='dashboard'),
+
+	# Change Task
+	path('change_task_update_status/<int:change_task_id>/', change_task_views.update_status, name='change_task_update_status'),
 
 	# Customer
 	path('customer_information/<int:customer_id>/',customer_views.customer_information,name='customer_information'),
@@ -134,6 +138,7 @@ urlpatterns = [
 	path('requirement_item_information/<int:requirement_item_id>/save/',requirement_item_views.requirement_information_save,name='requirement_information_save'),
 
 	# Request for Change
+	path('rfc_deployment/<int:rfc_id>/', request_for_change_views.rfc_deployment, name='rfc_deployment'),
 	path('rfc_information/<int:rfc_id>/', request_for_change_views.rfc_information, name='rfc_information'),
 	path('rfc_information/<int:rfc_id>/change_task_list/', request_for_change_views.rfc_change_task_list, name='rfc_change_task_list'),
 	path('rfc_information/<int:rfc_id>/new_change_task/', request_for_change_views.rfc_new_change_task, name='rfc_new_change_task'),

@@ -130,29 +130,6 @@
                     >Update Request for Change</a>
                 </div>
             </div>
-
-            <!-- Approval Buttons -->
-            <!-- Only show this section when;
-                - is Read Only
-                - RFC Status is waiting for approval
-                - User is a group leader (groupLeaderCount > 0)
-            -->
-            <hr v-if="showApprovalButton">
-            <div class="row submit-row"
-                 v-if="showApprovalButton"
-            >
-                <div class="col-md-12">
-                    <a href="javascript:void(0)"
-                       class="btn btn-primary"
-                       v-on:click=""
-                    >Approve RFC</a>
-
-                    <a href="javascript:void(0)"
-                       class="btn btn-danger reject-rfc"
-                       v-on:click=""
-                    >REJECT RFC</a>
-                </div>
-            </div>
         </div>
     </div>
 </template>
@@ -210,15 +187,6 @@
                 rfcTypeModel: '',
                 rfcVersionModel: this.rfcResults[0]['fields']['rfc_version_number'],
             }
-        },
-        computed: {
-            showApprovalButton: function() {
-                // Only show this section when;
-                // - is Read Only
-                // - RFC Status is waiting for approval
-                // - User is a group leader (groupLeaderCount > 0)
-                return this.isReadOnly && this.rfcResults[0]['fields']['rfc_status'] === 2 && this.groupLeaderCount > 0;
-            },
         },
         methods: {
             updateRFC: function() {

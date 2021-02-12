@@ -34,7 +34,6 @@ import OrganisationInformation from "./components/organisations/OrganisationInfo
 import OrganisationModules from "./components/organisations/OrganisationModules.vue";
 import CustomersListModule from "./components/modules/sub_modules/CustomersListModule.vue";
 import AssociatedObjects from "./components/modules/sub_modules/AssociatedObjects.vue";
-
 import NewCustomerForm from "./components/customers/NewCustomerForm.vue";
 import NewCustomerModal from "./components/customers/NewCustomerModal.vue";
 import SearchCustomers from "./components/search/SearchCustomers.vue";
@@ -75,6 +74,8 @@ import RfcModules from "./components/request_for_change/RfcModules.vue";
 import RfcNewRunItem from "./components/request_for_change/modules/RfcNewRunItem.vue";
 import RfcRunSheetList from "./components/request_for_change/modules/RfcRunSheetList.vue";
 import DashboardRfcApprovals from "./components/dashboard/DashboardRfcApprovals.vue";
+import RfcApprovalButtons from "./components/request_for_change/modules/RfcApprovalButtons.vue";
+
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -182,7 +183,7 @@ Vue.component('RfcModules',RfcModules);
 Vue.component('RfcNewRunItem',RfcNewRunItem);
 Vue.component('RfcRunSheetList',RfcRunSheetList);
 Vue.component('DashboardRfcApprovals',DashboardRfcApprovals);
-
+Vue.component('RfcApprovalButtons',RfcApprovalButtons);
 
 //Validation
 import Vuelidate from 'vuelidate'

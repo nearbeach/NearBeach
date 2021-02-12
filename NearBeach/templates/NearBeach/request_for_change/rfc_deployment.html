@@ -13,9 +13,6 @@
                  v-bind:location-id="{{rfc_id}}"
                  v-bind:user-list="{{user_list}}"   
                  v-bind:is-read-only="true"
+                 v-bind:is-deployment="true"
     ></rfc-modules>
-
-    <rfc-approval-buttons v-bind:rfc-results="{{rfc_results}}"
-                          v-bind:group-leader-count="{{group_leader_count}}"
-    ></rfc-approval-buttons>
 {% endblock %}
