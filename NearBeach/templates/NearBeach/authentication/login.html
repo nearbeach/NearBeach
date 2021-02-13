@@ -31,6 +31,10 @@
                     {{ LoginForm.password }}
                 </div>
 
+                <div class="form-group">
+                    <a href="{% url 'password_reset' %}">Forgotten Password</a>
+                </div>
+
                 <button class="btn btn-primary" type="submit">Login</button>
             </form>
         </div>

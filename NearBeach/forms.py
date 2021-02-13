@@ -138,6 +138,14 @@ class AddRequirementLinkForm(forms.Form):
     )
 
 
+class ChangeTaskStatusForm(forms.ModelForm):
+    class Meta:
+        model = change_task
+        fields = [
+            'change_task_status',
+        ]
+
+
 class CheckKanbanBoardName(forms.Form):
     kanban_board_name = forms.CharField(max_length=255)
 
@@ -239,6 +247,24 @@ class MoveKanbanCardForm(forms.Form):
     old_card_sort_number = forms.IntegerField()
 
 
+class NewChangeTaskForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = change_task
+        fields = [
+            'request_for_change',
+            'change_task_title',
+            'change_task_description',
+            'change_task_start_date',
+            'change_task_end_date',
+            'change_task_seconds',
+            # 'change_task_assigned_user',
+            # 'change_task_qa_user',
+            'change_task_required_by',
+            'is_downtime',
+        ]
+
+
 class NewCustomerForm(forms.ModelForm):
     organisation = forms.ModelChoiceField(
         queryset=organisation.objects.all(),
@@ -303,6 +329,36 @@ class NewProjectForm(forms.ModelForm):
             'project_start_date',
             'project_end_date',
             'organisation',
+        ]
+
+
+class NewRequestForChangeForm(forms.ModelForm):
+    group_list = forms.ModelMultipleChoiceField(
+        required=True,
+        queryset=group.objects.filter(
+            is_deleted=False,
+        )
+    )
+
+    # Basic Meta Data
+    class Meta:
+        model = request_for_change
+        fields = [
+            'rfc_title',
+            'rfc_summary',
+            'rfc_type',
+            'rfc_implementation_start_date',
+            'rfc_implementation_end_date',
+            'rfc_implementation_release_date',
+            'rfc_version_number',
+            'rfc_lead',
+            'rfc_priority',
+            'rfc_risk',
+            'rfc_impact',
+            'rfc_risk_and_impact_analysis',
+            'rfc_implementation_plan',
+            'rfc_backout_plan',
+            'rfc_test_plan',
         ]
 
 
@@ -415,6 +471,36 @@ class QueryBugClientForm(forms.Form):
     )
 
 
+class RfcModuleForm(forms.Form):
+    # This form is for all the sub modules that need to be saved separately.
+    text_input = forms.CharField(
+        required=True,
+    )
+    priority_of_change = forms.IntegerField(
+        required=False,
+    )
+    risk_of_change = forms.IntegerField(
+        required=False,
+    )
+    impact_of_change = forms.IntegerField(
+        required=False,
+    )
+
+
+class RfcInformationSaveForm(forms.ModelForm):
+    class Meta:
+        model = request_for_change
+        fields = [
+            'rfc_title',
+            'rfc_summary',
+            'rfc_type',
+            'rfc_version_number',
+            'rfc_implementation_start_date',
+            'rfc_implementation_end_date',
+            'rfc_implementation_release_date',
+        ]
+
+
 class SearchForm(forms.Form):
     # Just have a simple search field
     search = forms.CharField(
@@ -453,4 +539,13 @@ class UpdateRequirementItemForm(forms.ModelForm):
             'requirement_item_scope',
             'requirement_item_status',
             'requirement_item_type',
+        ]
+
+
+class UpdateRFCStatus(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = request_for_change
+        fields = [
+            'rfc_status',
         ]

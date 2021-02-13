@@ -1,0 +1,7 @@
+{% extends 'NearBeach/template.html' %}
+{% load static %}
+{% block content %}
+    <new-request-for-change v-bind:group-results="{{ group_results }}"
+                            v-bind:user-results="{{user_results}}"
+    ></new-request-for-change>
+{% endblock %}

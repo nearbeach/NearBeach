@@ -1,0 +1,21 @@
+{% extends 'NearBeach/template.html' %}
+{% load static %}
+{% block content %}
+    <fieldset disabled="disabled">
+        <rfc-information v-bind:rfc-results="{{rfc_results}}"
+                         v-bind:rfc-change-lead="{{rfc_change_lead}}"
+                         v-bind:is-read-only="true"
+        ></rfc-information>
+    </fieldset>
+    <br/>
+
+    <rfc-modules v-bind:rfc-results="{{rfc_results}}"
+                 v-bind:location-id="{{rfc_id}}"
+                 v-bind:user-list="{{user_list}}"   
+                 v-bind:is-read-only="true"
+    ></rfc-modules>
+
+    <rfc-approval-buttons v-bind:rfc-results="{{rfc_results}}"
+                          v-bind:group-leader-count="{{group_leader_count}}"
+    ></rfc-approval-buttons>
+{% endblock %}

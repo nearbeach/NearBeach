@@ -7,10 +7,12 @@ from django.views.decorators.http import require_http_methods
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.template import loader
-from django.db.models import Sum, Q, Min
+from django.db.models import Sum, Q, Min, CharField, Value as V
+from django.db.models.functions import Concat
 from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
 from NearBeach.user_permissions import return_user_permission_level
+
 
 import json, urllib3
 
@@ -74,8 +76,9 @@ def add_customer(request,destination,location_id):
 
     return HttpResponse(serializers.serialize('json', customer_results), content_type='application/json')
 
-@login_required(login_url='login',redirect_field_name="")
+
 @require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
 def add_group(request,destination,location_id):
     # ADD IN CHECK PERMISSIONS THAT USES THE DESTINATION AND LOCATION!
 
@@ -546,6 +549,41 @@ def group_list_all(request,destination,location_id):
 
     # Return data as json
     return HttpResponse(serializers.serialize('json',group_results),content_type='application/json')
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def lead_user_list(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    # Get the data
+    search_form = SearchForm(request.POST)
+    if not search_form.is_valid():
+        return HttpResponseBadRequest(search_form.errors)
+
+    # First we create a search string and annotate it onto our results
+    user_results = User.objects.annotate(
+        search_string=Concat(
+            'username', V(' '), 'first_name', V(' '), 'last_name', V(' '), 'email',
+            output_field=CharField()
+        )
+    ).filter(
+        is_active=True,
+    )
+
+    for split_row in search_form.cleaned_data['search'].split(' '):
+        """
+        """
+        user_results.filter(
+            search_string__icontains=split_row,
+        )
+
+    # Return the json data
+    return HttpResponse(serializers.serialize('json', user_results), content_type='application/json')
 
 
 @require_http_methods(['POST'])

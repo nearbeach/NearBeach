@@ -34,7 +34,6 @@ import OrganisationInformation from "./components/organisations/OrganisationInfo
 import OrganisationModules from "./components/organisations/OrganisationModules.vue";
 import CustomersListModule from "./components/modules/sub_modules/CustomersListModule.vue";
 import AssociatedObjects from "./components/modules/sub_modules/AssociatedObjects.vue";
-
 import NewCustomerForm from "./components/customers/NewCustomerForm.vue";
 import NewCustomerModal from "./components/customers/NewCustomerModal.vue";
 import SearchCustomers from "./components/search/SearchCustomers.vue";
@@ -63,6 +62,20 @@ import DashboardMyObjects from "./components/dashboard/DashboardMyObjects.vue";
 import RenderObjectTable from "./components/render/RenderObjectTable.vue";
 import ObjectLinks from "./components/modules/sub_modules/ObjectLinks.vue";
 import NewLinkWizard from "./components/modules/wizards/NewLinkWizard.vue";
+import NewRequestForChange from "./components/request_for_change/NewRequestForChange.vue";
+import RfcBackoutPlan from "./components/request_for_change/tabs/RfcBackoutPlan.vue";
+import RfcDetails from "./components/request_for_change/tabs/RfcDetails.vue";
+import RfcImplementationPlan from "./components/request_for_change/tabs/RfcImplementationPlan.vue";
+import RfcRisk from "./components/request_for_change/tabs/RfcRisk.vue";
+import RfcTestPlan from "./components/request_for_change/tabs/RfcTestPlan.vue";
+import RfcDescription from "./components/request_for_change/tabs/RfcDescription.vue";
+import RfcInformation from "./components/request_for_change/RfcInformation.vue";
+import RfcModules from "./components/request_for_change/RfcModules.vue";
+import RfcNewRunItem from "./components/request_for_change/modules/RfcNewRunItem.vue";
+import RfcRunSheetList from "./components/request_for_change/modules/RfcRunSheetList.vue";
+import DashboardRfcApprovals from "./components/dashboard/DashboardRfcApprovals.vue";
+import RfcApprovalButtons from "./components/request_for_change/modules/RfcApprovalButtons.vue";
+
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -158,6 +171,19 @@ Vue.component('DashboardMyObjects',DashboardMyObjects);
 Vue.component('RenderObjectTable',RenderObjectTable);
 Vue.component('ObjectLinks',ObjectLinks);
 Vue.component('NewLinkWizard',NewLinkWizard);
+Vue.component('NewRequestForChange',NewRequestForChange);
+Vue.component('RfcBackoutPlan',RfcBackoutPlan);
+Vue.component('RfcDetails',RfcDetails);
+Vue.component('RfcImplementationPlan',RfcImplementationPlan);
+Vue.component('RfcRisk',RfcRisk);
+Vue.component('RfcTestPlan',RfcTestPlan);
+Vue.component('RfcDescription',RfcDescription);
+Vue.component('RfcInformation',RfcInformation);
+Vue.component('RfcModules',RfcModules);
+Vue.component('RfcNewRunItem',RfcNewRunItem);
+Vue.component('RfcRunSheetList',RfcRunSheetList);
+Vue.component('DashboardRfcApprovals',DashboardRfcApprovals);
+Vue.component('RfcApprovalButtons',RfcApprovalButtons);
 
 //Validation
 import Vuelidate from 'vuelidate'

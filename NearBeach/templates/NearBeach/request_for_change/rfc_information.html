@@ -1,0 +1,13 @@
+{% extends 'NearBeach/template.html' %}
+{% load static %}
+{% block content %}
+    <rfc-information v-bind:rfc-results="{{rfc_results}}"
+                     v-bind:rfc-change-lead="{{rfc_change_lead}}"
+    ></rfc-information>
+    <br/>
+
+    <rfc-modules v-bind:rfc-results="{{rfc_results}}"
+                 v-bind:user-list="{{user_list}}"
+                 v-bind:location-id={{rfc_id}}
+    ></rfc-modules>
+{% endblock %}
