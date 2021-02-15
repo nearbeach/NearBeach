@@ -75,7 +75,9 @@ import RfcNewRunItem from "./components/request_for_change/modules/RfcNewRunItem
 import RfcRunSheetList from "./components/request_for_change/modules/RfcRunSheetList.vue";
 import DashboardRfcApprovals from "./components/dashboard/DashboardRfcApprovals.vue";
 import RfcApprovalButtons from "./components/request_for_change/modules/RfcApprovalButtons.vue";
-
+import SearchGroups from "./components/search/SearchGroups.vue";
+import SearchPermissionSets from "./components/search/SearchPermissionSets.vue";
+import SearchUsers from "./components/search/SearchUsers.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -184,6 +186,9 @@ Vue.component('RfcNewRunItem',RfcNewRunItem);
 Vue.component('RfcRunSheetList',RfcRunSheetList);
 Vue.component('DashboardRfcApprovals',DashboardRfcApprovals);
 Vue.component('RfcApprovalButtons',RfcApprovalButtons);
+Vue.component('SearchGroups',SearchGroups);
+Vue.component('SearchPermissionSets',SearchPermissionSets);
+Vue.component('SearchUsers',SearchUsers);
 
 //Validation
 import Vuelidate from 'vuelidate'

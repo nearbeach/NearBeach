@@ -1,0 +1,6 @@
+{% extends 'NearBeach/template.html' %}
+{% load static %}
+{% block content %}
+    <search-permission-sets v-bind:permission-set-results="{{permission_set_results}}"
+    ></search-permission-sets>
+{% endblock %}

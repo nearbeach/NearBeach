@@ -236,6 +236,65 @@ def search_customer_data(request):
 
 
 @login_required(login_url='login',redirect_field_name="")
+def search_group(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    # ADD IN PERMISSIONS
+
+    # Get template
+    t = loader.get_template('NearBeach/search/search_groups.html')
+
+    # Get user data
+    group_results = group.objects.filter(
+        is_deleted=False,
+    ).order_by('group_name')[:25]
+
+    # Get context
+    c = {
+        'group_results': serializers.serialize('json', group_results),
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+# @require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def search_group_data(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    # Obtain form data
+    search_form = SearchForm(request.POST)
+    if not search_form.is_valid():
+        return HttpResponseBadRequest(search_form.errors)
+
+    # Get the base group results
+    group_results = group.objects.filter(
+        is_deleted=False,
+    )
+
+    # Loop through the search results
+    for split_row in search_form.cleaned_data['search'].split(' '):
+        group_results = group_results.filter(
+            group_name__icontains=split_row,
+        )
+
+    group_results.order_by('group_name')[:25]
+
+    # Send back json data
+    json_results = serializers.serialize('json', group_results)
+
+    return HttpResponse(json_results, content_type='application/json')
+
+
+@login_required(login_url='login',redirect_field_name="")
 def search_organisation(request):
     """
 
@@ -285,3 +344,119 @@ def search_organisation_data(request):
     return HttpResponse(json_results, content_type='application/json')
 
 
+@login_required(login_url='login',redirect_field_name="")
+def search_permission_set(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    # Add permissions
+
+    # Get template
+    t = loader.get_template('NearBeach/search/search_permission_sets.html')
+
+    # Get data
+    permission_set_results = permission_set.objects.filter(
+        is_deleted=False,
+    ).order_by('permission_set_name')[:25]
+
+    # Get context
+    c = {
+        'permission_set_results': serializers.serialize('json', permission_set_results),
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def search_permission_set_data(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    # Check user permission
+
+    # Get form data
+    search_form = SearchForm(request.POST)
+    if not search_form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get base data
+    permission_set_results = permission_set.objects.filter(
+        is_deleted=False,
+    )
+
+    # Loop through the search results
+    for split_row in search_form.cleaned_data['search'].split(' '):
+        permission_set_results = permission_set_results.filter(
+            permission_set_name__icontains=split_row,
+        )
+
+    permission_set_results.order_by('permission_set_name')[:25]
+
+    # Send back json data
+    json_results = serializers.serialize('json', permission_set_results)
+
+    return HttpResponse(json_results, content_type='application/json')
+
+
+@login_required(login_url='login',redirect_field_name="")
+def search_user(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    # Add permissions
+
+    # Get template
+    t = loader.get_template('NearBeach/search/search_users.html')
+
+    # Get Data
+    user_results = User.objects.filter(
+    ).order_by('last_name','first_name')[:50]
+
+    # Context
+    c = {
+        'user_results': serializers.serialize('json', user_results),
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def search_user_data(request):
+    # Get the data from request
+    search_form = SearchForm(request.POST)
+
+    # If there are errors - send 500
+    if not search_form.is_valid():
+        return HttpResponseBadRequest("There is an issue with the search functionality")
+
+    # Get the base results
+    user_results = User.objects.filter()
+
+    # Split the space results - then apply the filter of each split value
+    for split_row in search_form.cleaned_data['search'].split(' '):
+        # Update the organisation results SQL
+        user_results = user_results.filter(
+            Q(first_name__icontains=split_row) |
+            Q(last_name__icontains=split_row) |
+            Q(username__icontains=split_row) |
+            Q(email__icontains=split_row)
+        )
+
+    # Only have 50 results and order by alphabetical order
+    user_results.order_by('last_name','first_name')[:50]
+
+    # Send back json data
+    json_results = serializers.serialize('json', user_results)
+
+    return HttpResponse(json_results, content_type='application/json')
