@@ -78,6 +78,7 @@ import RfcApprovalButtons from "./components/request_for_change/modules/RfcAppro
 import SearchGroups from "./components/search/SearchGroups.vue";
 import SearchPermissionSets from "./components/search/SearchPermissionSets.vue";
 import SearchUsers from "./components/search/SearchUsers.vue";
+import NewGroup from "./components/groups/NewGroup.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -189,6 +190,8 @@ Vue.component('RfcApprovalButtons',RfcApprovalButtons);
 Vue.component('SearchGroups',SearchGroups);
 Vue.component('SearchPermissionSets',SearchPermissionSets);
 Vue.component('SearchUsers',SearchUsers);
+Vue.component('NewGroup', NewGroup);
+
 
 //Validation
 import Vuelidate from 'vuelidate'

@@ -17,6 +17,7 @@ from .views import authentication_views, \
     dashboard_views, \
     document_views, \
     error_views, \
+    group_views, \
     kanban_views, \
     object_data_views, \
     organisation_views, \
@@ -56,6 +57,9 @@ urlpatterns = [
     path('documentation/<destination>/<location_id>/upload/', document_views.document_upload, name='document_upload'),
     path('documentation/get/max_upload/', document_views.get_max_upload, name='document_get_max_upload'),
 
+    # Groups
+
+
     # Kanban
     path('kanban_information/<int:kanban_board_id>/', kanban_views.kanban_information, name='kanban_information'),
     path('kanban_information/<int:kanban_board_id>/<object_lookup>/add_link/', kanban_views.add_kanban_link,
@@ -78,6 +82,7 @@ urlpatterns = [
     # New Objects
     path('new_customer/', customer_views.new_customer, name='new_customer'),
     path('new_customer/save/', customer_views.new_customer_save, name='new_customer_save'),
+    path('new_group/', group_views.new_group, name='new_group'),
     path('new_kanban/', kanban_views.new_kanban, name='new_kanban'),
     path('new_kanban_save/', kanban_views.new_kanban_save, name='new_kanban_save'),
     path('new_organisation/', organisation_views.new_organisation, name='new_organisation'),
