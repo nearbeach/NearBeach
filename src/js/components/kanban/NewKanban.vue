@@ -157,18 +157,18 @@
                 this.checkingKanbanBoardName = true;
 
                 // Make sure the timer isn't running
-                if (this.searchTimeout != '') {
-                    //Stop the clock!
-                    clearTimeout(this.searchTimeout);
-                }
-
-                // Reset the clock, to only search if there is an uninterupted 0.5s of no typing.
-                if (this.kanbanBoardNameModel.length >= 3) {
-                    this.searchTimeout = setTimeout(
-                        this.checkKanbanBoardName,
-                        500,
-                    )
-                }
+                // if (this.searchTimeout != '') {
+                //     //Stop the clock!
+                //     clearTimeout(this.searchTimeout);
+                // }
+                //
+                // // Reset the clock, to only search if there is an uninterupted 0.5s of no typing.
+                // if (this.kanbanBoardNameModel.length >= 3) {
+                //     this.searchTimeout = setTimeout(
+                //         this.checkKanbanBoardName,
+                //         500,
+                //     )
+                // }
 
                 this.searchTrigger({
                     'return_function': this.checkKanbanBoardName,

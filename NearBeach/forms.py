@@ -283,6 +283,21 @@ class NewCustomerForm(forms.ModelForm):
         ]
 
 
+class NewGroupForm(forms.ModelForm):
+    parent_group = forms.ModelChoiceField(
+        queryset=group.objects.all(),
+        required=False,
+    )
+
+    # Basic Meta Data
+    class Meta:
+        model = group
+        fields = [
+            'group_name',
+            'parent_group',
+        ]
+
+
 class NewKanbanCardForm(forms.ModelForm):
     # Basic Meta Data
     class Meta:

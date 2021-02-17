@@ -27,7 +27,6 @@ from .views import authentication_views, \
     requirement_views, \
     search_views, \
     task_views
-
 urlpatterns = [
     path('', dashboard_views.dashboard, name='dashboard'),
 
@@ -58,6 +57,8 @@ urlpatterns = [
     path('documentation/get/max_upload/', document_views.get_max_upload, name='document_get_max_upload'),
 
     # Groups
+    path('group_information/<int:group_id>/', group_views.group_information, name='group_information'),
+    path('group_information/check_group_name/', group_views.check_group_name, name='check_group_name'),
 
 
     # Kanban
@@ -83,6 +84,7 @@ urlpatterns = [
     path('new_customer/', customer_views.new_customer, name='new_customer'),
     path('new_customer/save/', customer_views.new_customer_save, name='new_customer_save'),
     path('new_group/', group_views.new_group, name='new_group'),
+    path('new_group/save/', group_views.new_group_save, name='new_group_save'),
     path('new_kanban/', kanban_views.new_kanban, name='new_kanban'),
     path('new_kanban_save/', kanban_views.new_kanban_save, name='new_kanban_save'),
     path('new_organisation/', organisation_views.new_organisation, name='new_organisation'),
@@ -242,6 +244,7 @@ urlpatterns = [
         name='password_reset_complete'
     ),
 ]
+
 
 handler404 = error_views.error_404
 handler500 = error_views.error_500
