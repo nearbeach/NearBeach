@@ -58,6 +58,7 @@ urlpatterns = [
 
     # Groups
     path('group_information/<int:group_id>/', group_views.group_information, name='group_information'),
+    path('group_information/<int:group_id>/save/', group_views.group_information_save, name='group_information_save'),
     path('group_information/check_group_name/', group_views.check_group_name, name='check_group_name'),
 
 

@@ -79,6 +79,9 @@ import SearchGroups from "./components/search/SearchGroups.vue";
 import SearchPermissionSets from "./components/search/SearchPermissionSets.vue";
 import SearchUsers from "./components/search/SearchUsers.vue";
 import NewGroup from "./components/groups/NewGroup.vue";
+import GroupInformation from "./components/groups/GroupInformation.vue";
+import UserList from "./components/administration/UserList.vue";
+
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -191,7 +194,8 @@ Vue.component('SearchGroups',SearchGroups);
 Vue.component('SearchPermissionSets',SearchPermissionSets);
 Vue.component('SearchUsers',SearchUsers);
 Vue.component('NewGroup', NewGroup);
-
+Vue.component('GroupInformation', GroupInformation);
+Vue.component('UserList', UserList);
 
 //Validation
 import Vuelidate from 'vuelidate'

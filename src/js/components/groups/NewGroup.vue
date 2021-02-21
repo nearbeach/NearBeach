@@ -33,10 +33,10 @@
                             Parent Group (optional)
                         </label>
                         <v-select :options="groupResultsFixList"
-                          v-model="parentGroupModel"
-                          label="group_name"
-                          class="form-control"
-                />
+                                  v-model="parentGroupModel"
+                                  label="group_name"
+                                  class="form-control"
+                        />
                     </div>
                 </div>
             </div>
