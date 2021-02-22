@@ -138,6 +138,18 @@ class AddRequirementLinkForm(forms.Form):
     )
 
 
+class AdminAddUserForm(forms.Form):
+    group = forms.ModelMultipleChoiceField(
+        queryset=group.objects.all(),
+    )
+    permission_set = forms.ModelMultipleChoiceField(
+        queryset=permission_set.objects.all(),
+    )
+    username = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+    )
+
+
 class ChangeTaskStatusForm(forms.ModelForm):
     class Meta:
         model = change_task

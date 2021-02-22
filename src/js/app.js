@@ -81,6 +81,7 @@ import SearchUsers from "./components/search/SearchUsers.vue";
 import NewGroup from "./components/groups/NewGroup.vue";
 import GroupInformation from "./components/groups/GroupInformation.vue";
 import UserList from "./components/administration/UserList.vue";
+import AdminAddUser from "./components/administration/AdminAddUser.vue";
 
 
 //Import Bootstrap
@@ -196,6 +197,7 @@ Vue.component('SearchUsers',SearchUsers);
 Vue.component('NewGroup', NewGroup);
 Vue.component('GroupInformation', GroupInformation);
 Vue.component('UserList', UserList);
+Vue.component('AdminAddUser', AdminAddUser);
 
 //Validation
 import Vuelidate from 'vuelidate'

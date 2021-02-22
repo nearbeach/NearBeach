@@ -11,7 +11,8 @@ from django.contrib.auth import views as auth_views
 # 404 and 500 pages
 from django.conf.urls import handler404, handler500
 
-from .views import authentication_views, \
+from .views import admin_views, \
+    authentication_views, \
     change_task_views, \
     customer_views, \
     dashboard_views, \
@@ -21,6 +22,7 @@ from .views import authentication_views, \
     kanban_views, \
     object_data_views, \
     organisation_views, \
+    permission_set_views, \
     project_views, \
     request_for_change_views, \
     requirement_item_views, \
@@ -29,6 +31,9 @@ from .views import authentication_views, \
     task_views
 urlpatterns = [
     path('', dashboard_views.dashboard, name='dashboard'),
+
+    # Administration
+    path('admin/add_user/', admin_views.add_user, name='admin_add_user'),
 
     # Change Task
     path('change_task_update_status/<int:change_task_id>/', change_task_views.update_status,
@@ -78,6 +83,10 @@ urlpatterns = [
     path('login', authentication_views.login, name='login'),
     path('logout', authentication_views.logout, name='logout'),
 
+    # Permission Sets
+    path('permission_set_information/<int:permission_set_id>/', permission_set_views.permission_set_information,
+         name='permission_set_information'),
+
     # Private files
     path('private/<uuid:document_key>/', document_views.private_download_file, name='private_download_file'),
 
@@ -103,6 +112,7 @@ urlpatterns = [
     path('new_task/save/', task_views.new_task_save, name='new_task_save'),
 
     # Object Data
+    path('object_data/admin_add_user/', object_data_views.admin_add_user, name='admin_add_user'),
     path('object_data/<destination>/<location_id>/add_bug/', object_data_views.add_bug, name='add_bug'),
     path('object_data/<destination>/<location_id>/add_customer/', object_data_views.add_customer, name='add_customer'),
     path('object_data/<destination>/<location_id>/add_group/', object_data_views.add_group, name='add_group'),

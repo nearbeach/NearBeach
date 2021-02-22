@@ -41,10 +41,20 @@
                 </div>
             </div>
         </div>
+
+        <!-- MODALS -->
+        <admin-add-user v-bind:destination="destination"
+                        v-bind:location-id="locationId"
+        ></admin-add-user>
     </div>
 </template>
 
 <script>
+    import {Modal} from 'bootstrap';
+
+    //Import mixins
+    import errorModalMixin from "../../mixins/errorModalMixin";
+
     export default {
         name: "UserList",
         props: {
@@ -59,7 +69,9 @@
         },
         methods: {
             addUser: function() {
-                //ADD CODE
+                //Show the user's modal
+                const addUserModal = new Modal(document.getElementById('addUserModal'))
+                addUserModal.show();
             },
             getList: function(username, field) {
                 //Filter the data for all username
