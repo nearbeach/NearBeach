@@ -28,7 +28,9 @@ from .views import admin_views, \
     requirement_item_views, \
     requirement_views, \
     search_views, \
-    task_views
+    task_views, \
+    user_views
+
 urlpatterns = [
     path('', dashboard_views.dashboard, name='dashboard'),
 
@@ -222,6 +224,9 @@ urlpatterns = [
     # Tasks
     path('task_information/<int:task_id>/', task_views.task_information, name='task_information'),
     path('task_information/<int:task_id>/save/', task_views.task_information_save, name='task_information_save'),
+
+    # Users
+    path('user_information/<int:username>/', user_views.user_information, name='user_information'),
 
     # Changing and Resetting Passwords
     # path('change-password/', auth_views.PasswordChangeView.as_view()),

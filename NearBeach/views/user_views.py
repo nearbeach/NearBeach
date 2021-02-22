@@ -9,9 +9,8 @@ from NearBeach.models import *
 
 import json
 
-
 @login_required(login_url='login',redirect_field_name="")
-def permission_set_information(request, permission_set_id):
+def user_information(request, username):
     """
 
     :param request:
@@ -19,17 +18,17 @@ def permission_set_information(request, permission_set_id):
     :return:
     """
 
-    # Add in permission checks
+    # check user permissions
 
     # Import template
-    t = loader.get_template('NearBeach/permission_sets/permission_set_information.html')
+    t = loader.get_template('NearBeach/users/user_information.html')
 
-    # Get data
-    permission_set_results = permission_set.objects.get(permission_set_id=permission_set_id)
+    # Get user data
+    user_results = User.objects.get(id=username)
 
     user_list_results = user_group.objects.filter(
         is_deleted=False,
-        permission_set_id=permission_set_id,
+        username=username,
     ).values(
         'username',
         'username__first_name',
@@ -48,9 +47,9 @@ def permission_set_information(request, permission_set_id):
 
     # Create the context
     c = {
-        'permission_set_results': serializers.serialize('json', [permission_set_results]),
         'user_list_results': user_list_results,
-        'permission_set_id': permission_set_id,
+        'user_results': user_results,
+        'username': username,
     }
 
     return HttpResponse(t.render(c, request))

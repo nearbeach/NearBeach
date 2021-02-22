@@ -174,7 +174,7 @@
                             //Filter user model data from user results
                             this.userModel = this.userResults.filter(row => {
                                 return row['value'] === this.locationId;
-                            });
+                            })[0];
                             break;
                         default:
                             break;
