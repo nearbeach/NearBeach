@@ -116,7 +116,10 @@
                 //Get the data
                 const data_to_send = new FormData();
                 data_to_send.set('group_name', this.groupNameModel);
-                data_to_send.set('parent_group', this.parentGroupModel['value']);
+
+                if (data_to_send['value'] !== undefined) {
+                    data_to_send.set('parent_group', this.parentGroupModel['value']);
+                }
 
                 //Use Axios to send data
                 axios.post(

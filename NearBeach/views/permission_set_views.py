@@ -51,6 +51,8 @@ def permission_set_information(request, permission_set_id):
         'permission_set_results': serializers.serialize('json', [permission_set_results]),
         'user_list_results': user_list_results,
         'permission_set_id': permission_set_id,
+        'permission_boolean': json.dumps(PERMISSION_BOOLEAN),
+        'permission_level': json.dumps(PERMISSION_LEVEL),
     }
 
     return HttpResponse(t.render(c, request))

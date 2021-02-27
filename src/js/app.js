@@ -82,6 +82,8 @@ import NewGroup from "./components/groups/NewGroup.vue";
 import GroupInformation from "./components/groups/GroupInformation.vue";
 import UserList from "./components/administration/UserList.vue";
 import AdminAddUser from "./components/administration/AdminAddUser.vue";
+import PermissionInformation from "./components/permissions/PermissionInformation.vue";
+import SinglePermissionProperties from "./components/permissions/SinglePermissionProperties.vue";
 
 
 //Import Bootstrap
@@ -198,6 +200,8 @@ Vue.component('NewGroup', NewGroup);
 Vue.component('GroupInformation', GroupInformation);
 Vue.component('UserList', UserList);
 Vue.component('AdminAddUser', AdminAddUser);
+Vue.component('PermissionInformation', PermissionInformation);
+Vue.component('SinglePermissionProperties', SinglePermissionProperties);
 
 //Validation
 import Vuelidate from 'vuelidate'

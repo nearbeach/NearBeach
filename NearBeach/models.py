@@ -34,11 +34,6 @@ PERMISSION_BOOLEAN = (
     (1, 'Has Permission'),
 )
 
-PRODUCT_OR_SERVICE = (
-    ('Product', 'Product'),
-    ('Service', 'Service'),
-)
-
 PROJECT_STATUS_CHOICE = (
     ('Backlog', 'Backlog'),
     ('Blocked', 'Blocked'),
@@ -1940,34 +1935,20 @@ class permission_set_manager(models.Manager):
             administration_create_group,
             administration_create_permission_set,
             administration_create_user,
-            assign_campus_to_customer,
-            associate_project_and_task,
-            bug,
             bug_client,
             customer,
             email,
-            invoice,
-            invoice_product,
             kanban,
             kanban_card,
-            opportunity,
             organisation,
-            organisation_campus,
             project,
-            quote,
             request_for_change,
             requirement,
-            requirement_link,
-            tag,
             task,
-            tax,
-            template,
             document,
-            contact_history,
             kanban_comment,
             project_history,
             task_history,
-            whiteboard,
     ):
         return self.get(
             permission_set_id=permission_set_id,
@@ -1976,34 +1957,23 @@ class permission_set_manager(models.Manager):
             administration_create_group=administration_create_group,
             administration_create_permission_set=administration_create_permission_set,
             administration_create_user=administration_create_user,
-            assign_campus_to_customer=assign_campus_to_customer,
-            associate_project_and_task=associate_project_and_task,
             bug=bug,
             bug_client=bug_client,
             customer=customer,
             email=email,
-            invoice=invoice,
-            invoice_product=invoice_product,
             kanban=kanban,
             kanban_card=kanban_card,
             opportunity=opportunity,
             organisation=organisation,
-            organisation_campus=organisation_campus,
             project=project,
             quote=quote,
             request_for_change=request_for_change,
             requirement=requirement,
-            requirement_link=requirement_link,
-            tag=tag,
             task=task,
-            tax=tax,
-            template=template,
             document=document,
-            contact_history=contact_history,
             kanban_comment=kanban_comment,
             project_history=project_history,
             task_history=task_history,
-            whiteboard=whiteboard,
         )
 
 
@@ -2015,7 +1985,7 @@ class permission_set(models.Model):
         max_length=255,
         #unique=True, #issue when we delete previous permission sets
     )
-    # BASELINE permission
+    # ADMINISTRATION PERMISSIONS
     administration_assign_user_to_group = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
@@ -2032,31 +2002,7 @@ class permission_set(models.Model):
         choices=PERMISSION_LEVEL,
         default=0,
     )
-    assign_campus_to_customer = models.IntegerField(
-        choices=PERMISSION_LEVEL,
-        default=0,
-    )
-    associate_project_and_task = models.IntegerField(
-        choices=PERMISSION_LEVEL,
-        default=0,
-    )
-    bug = models.IntegerField(
-        choices=PERMISSION_LEVEL,
-        default=0,
-    )
     bug_client = models.IntegerField(
-        choices=PERMISSION_LEVEL,
-        default=0,
-    )
-    email = models.IntegerField(
-        choices=PERMISSION_LEVEL,
-        default=0,
-    )
-    invoice = models.IntegerField(
-        choices=PERMISSION_LEVEL,
-        default=0,
-    )
-    invoice_product = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
     )
@@ -2072,23 +2018,11 @@ class permission_set(models.Model):
         choices=PERMISSION_LEVEL,
         default=0,
     )
-    opportunity = models.IntegerField(
-        choices=PERMISSION_LEVEL,
-        default=0,
-    )
     organisation = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
     )
-    organisation_campus = models.IntegerField(
-        choices=PERMISSION_LEVEL,
-        default=0,
-    )
     project = models.IntegerField(
-        choices=PERMISSION_LEVEL,
-        default=0,
-    )
-    quote = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
     )
@@ -2100,27 +2034,7 @@ class permission_set(models.Model):
         choices=PERMISSION_LEVEL,
         default=0
     )
-    requirement_link = models.IntegerField(
-        choices=PERMISSION_LEVEL,
-        default=0
-    )
-    tag = models.IntegerField(
-        choices=PERMISSION_LEVEL,
-        default=0,
-    )
     task = models.IntegerField(
-        choices=PERMISSION_LEVEL,
-        default=0,
-    )
-    tax = models.IntegerField(
-        choices=PERMISSION_LEVEL,
-        default=0,
-    )
-    template = models.IntegerField(
-        choices=PERMISSION_LEVEL,
-        default=0,
-    )
-    whiteboard = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
     )
@@ -2132,10 +2046,6 @@ class permission_set(models.Model):
     need to be populated with data.
     """
     document = models.IntegerField(
-        choices=PERMISSION_BOOLEAN,
-        default=0,
-    )
-    contact_history = models.IntegerField(
         choices=PERMISSION_BOOLEAN,
         default=0,
     )
@@ -2173,8 +2083,6 @@ class permission_set(models.Model):
             self.assign_campus_to_customer,  # 6
             self.associate_project_and_task,  # 7
             self.customer,  # 8
-            self.invoice,  # 9
-            self.invoice_product,  # 10
             self.opportunity,  # 11
             self.organisation,  # 12
             self.organisation_campus,  # 13
@@ -2186,66 +2094,13 @@ class permission_set(models.Model):
             self.contact_history,  # 19
             self.project_history,  # 20
             self.task_history,  # 21
-            self.whiteboard #22
         )
-
-    # class Meta:
-    #    unique_together = (('first_name', 'last_name'),)
 
     def __str__(self):
         return str(self.permission_set_name)
 
     class Meta:
         db_table = "permission_set"
-
-
-class product_and_service(models.Model):
-    """
-	For naming convention, product and service will be shorten to
-	just product. The product name contains both product and service
-	"""
-    product_id = models.AutoField(primary_key=True)
-    product_or_service = models.CharField(
-        max_length=7,
-        choices=PRODUCT_OR_SERVICE,
-    )
-    product_name = models.CharField(
-        max_length=100,
-        unique=True,  # To stop the user inputting the same product!
-    )
-    product_part_number = models.CharField(
-        max_length=100,
-        null=True,
-        blank=True,
-    )
-    product_cost = models.DecimalField(
-        max_digits=19,
-        decimal_places=2
-    )
-    product_price = models.DecimalField(
-        max_digits=19,
-        decimal_places=2,
-    )
-    product_description = models.TextField(
-        blank=True,
-        null=True,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    def __str__(self):
-        return str(self.product_name)
-
-    class Meta:
-        db_table = "product_and_service"
 
 
 class project(models.Model):
@@ -2563,208 +2418,6 @@ class quote(models.Model):
 
     class Meta:
         db_table = "quote"
-
-
-class quote_product_and_service(models.Model):
-    quotes_product_and_service_id = models.AutoField(primary_key=True)
-    quote = models.ForeignKey(
-        'quote',
-        on_delete=models.CASCADE,
-    )
-    product_and_service = models.ForeignKey(
-        'product_and_service',
-        on_delete=models.CASCADE,
-    )
-    # Price of the product BEFORE Discounts
-    product_price = models.DecimalField(
-        max_digits=19,
-        decimal_places=2,
-    )
-    quantity = models.IntegerField()
-    product_description = models.CharField(
-        max_length=255,
-        blank=True,
-        null=True,
-    )
-    product_cost = models.DecimalField(
-        max_digits=19,
-        decimal_places=2
-    )
-    discount_choice = models.CharField(
-        max_length=10,
-        choices=DISCOUNT_CHOICE,
-        default='PERCENTAGE',
-    )
-    discount_percent = models.DecimalField(
-        default=0,
-        max_digits=5,
-        decimal_places=2,
-        validators=[MaxValueValidator(100), MinValueValidator(0)]  # Could I use this for the money too? :D
-    )
-    discount_amount = models.DecimalField(
-        default=0,
-        max_digits=19,
-        decimal_places=2,
-        validators=[MaxValueValidator(1000000000), MinValueValidator(0)]  # Could I use this for the money too? :D
-    )
-    # The price of the product AFTER discounts
-    sales_price = models.DecimalField(
-        default=0,
-        max_digits=19,
-        decimal_places=2,
-        validators=[MaxValueValidator(1000000000), MinValueValidator(0)]  # Could I use this for the money too? :D
-    )
-    tax = models.ForeignKey(
-        'list_of_tax',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    tax_amount = models.DecimalField(
-        max_digits=19,
-        decimal_places=2,
-        default=0,
-    )
-    total = models.DecimalField(
-        max_digits=19,
-        decimal_places=2,
-        validators=[MaxValueValidator(99999999999999999999), MinValueValidator(-99999999999999999999)],
-    )
-    product_note = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    def __str__(self):
-        return str(self.quotes_product_and_service_id) + "| " + self.product_description
-
-    class Meta:
-        db_table = "quote_product_and_service"
-
-
-class quote_responsible_customer(models.Model):
-    quote_responsible_customer_id = models.AutoField(primary_key=True)
-    quote = models.ForeignKey(
-        'quote',
-        on_delete=models.CASCADE,
-    )
-    customer = models.ForeignKey(
-        'customer',
-        on_delete=models.CASCADE,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    class Meta:
-        db_table = "quote_responsible_customer"
-
-
-class quote_template(models.Model):
-    quote_template_id=models.AutoField(primary_key=True)
-    quote_template_description=models.CharField(
-        max_length=255,
-    )
-    template_css=models.TextField(
-        null=True,
-        blank=True,
-    )
-    header=models.TextField(
-        null=True,
-        blank=True,
-    )
-    #To clarify - this is YOUR company
-    company_letter_head=models.TextField(
-        null=True,
-        blank=True,
-    )
-    payment_terms=models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-    notes=models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-    #The Organisation's details you are sending the quote to
-    organisation_details=models.TextField(
-        null=True,
-        blank=True,
-    )
-    #For project/service lines - it will store the order of fields in as a variable :)
-    product_line=models.TextField()
-    service_line=models.TextField()
-    payment_method=models.TextField(
-        null=True,
-        blank=True,
-    )
-    footer=models.TextField(
-        null=True,
-        blank=True,
-    )
-
-    # Landscape/Portrait
-    # Margins - left, right, top, bottom, header, footer
-    page_layout=models.CharField(
-        max_length=50,
-        choices=PAGE_LAYOUT,
-        default='Landscape',
-    )
-    margin_left=models.IntegerField(
-        default=1,
-    )
-    margin_right = models.IntegerField(
-        default=1,
-    )
-    margin_top = models.IntegerField(
-        default=1,
-    )
-    margin_bottom = models.IntegerField(
-        default=1,
-    )
-    margin_header = models.IntegerField(
-        default=1,
-    )
-    margin_footer = models.IntegerField(
-        default=1,
-    )
-
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    def __str__(self):
-        return self.quote_template_description
-
-    class Meta:
-        db_table = "quote_template"
 
 
 class request_for_change(models.Model):
