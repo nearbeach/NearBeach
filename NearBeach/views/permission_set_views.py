@@ -6,6 +6,7 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 
 from NearBeach.models import *
+from NearBeach.forms import *
 
 import json
 
@@ -56,3 +57,53 @@ def permission_set_information(request, permission_set_id):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def permission_set_information_save(request, permission_set_id):
+    """
+
+    :param request:
+    :param permission_set_id:
+    :return:
+    """
+
+    # ADD IN USER PERMISSIONS LATER
+
+    # Check to make sure nothing changes for the administration permissions
+    if permission_set_id == 1:
+        return HttpResponseBadRequest("Error - can not edit administration")
+
+    # Get form data
+    form = PermissionSetForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get the object
+    update_permission_set = permission_set.objects.get(permission_set_id=permission_set_id)
+
+    # Update the object
+    update_permission_set.permission_set_name = form.cleaned_data['permission_set_name']
+    update_permission_set.administration_assign_user_to_group = form.cleaned_data['administration_assign_user_to_group']
+    update_permission_set.administration_create_group = form.cleaned_data['administration_create_group']
+    update_permission_set.administration_create_permission_set = form.cleaned_data[
+        'administration_create_permission_set']
+    update_permission_set.administration_create_user = form.cleaned_data['administration_create_user']
+    update_permission_set.bug_client = form.cleaned_data['bug_client']
+    update_permission_set.customer = form.cleaned_data['customer']
+    update_permission_set.kanban = form.cleaned_data['kanban']
+    update_permission_set.kanban_card = form.cleaned_data['kanban_card']
+    update_permission_set.organisation = form.cleaned_data['organisation']
+    update_permission_set.project = form.cleaned_data['project']
+    update_permission_set.requirement = form.cleaned_data['requirement']
+    update_permission_set.request_for_change = form.cleaned_data['request_for_change']
+    update_permission_set.task = form.cleaned_data['task']
+    update_permission_set.document = form.cleaned_data['document']
+    update_permission_set.kanban_comment = form.cleaned_data['kanban_comment']
+    update_permission_set.project_history = form.cleaned_data['project_history']
+    update_permission_set.task_history = form.cleaned_data['task_history']
+
+    update_permission_set.save()
+
+    return HttpResponse("")

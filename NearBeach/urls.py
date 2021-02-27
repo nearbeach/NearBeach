@@ -88,6 +88,10 @@ urlpatterns = [
     # Permission Sets
     path('permission_set_information/<int:permission_set_id>/', permission_set_views.permission_set_information,
          name='permission_set_information'),
+    path('permission_set_information/<int:permission_set_id>/save/',
+         permission_set_views.permission_set_information_save,
+         name='permission_set_information_save'
+     ),
 
     # Private files
     path('private/<uuid:document_key>/', document_views.private_download_file, name='private_download_file'),

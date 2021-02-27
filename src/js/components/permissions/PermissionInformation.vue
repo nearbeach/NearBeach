@@ -4,6 +4,10 @@
             <h1>Permission Information</h1>
             <hr>
 
+            <div class="alert alert-danger"
+                 v-if="this.permissionSetResults[0]['pk'] === 1"
+            >Can not edit administration permission set.</div>
+
             <!-- BASIC INFORMATION -->
             <div class="row">
                 <div class="col-md-4">
@@ -135,6 +139,13 @@
                                                   v-on:update_property_value="updatePropertyValue($event)"
                     ></single-permission-properties>
 
+                    <single-permission-properties v-bind:property="'requestForChangeModel'"
+                                                  v-bind:property-label="'Request for Change'"
+                                                  v-bind:property-value="requestForChangeModel"
+                                                  v-bind:list-of-choices="permissionLevel"
+                                                  v-on:update_property_value="updatePropertyValue($event)"
+                    ></single-permission-properties>
+
                     <single-permission-properties v-bind:property="'requirementModel'"
                                                   v-bind:property-label="'Requirements'"
                                                   v-bind:property-value="requirementModel"
@@ -159,38 +170,56 @@
                     <single-permission-properties v-bind:property="'documentModel'"
                                                   v-bind:property-label="'Grants upload ability'"
                                                   v-bind:property-value="documentModel"
-                                                  v-bind:list-of-choices="permissionLevel"
+                                                  v-bind:list-of-choices="permissionBoolean"
                                                   v-on:update_property_value="updatePropertyValue($event)"
                     ></single-permission-properties>
 
                     <single-permission-properties v-bind:property="'kanbanCommentModel'"
                                                   v-bind:property-label="'Grants comments on Kanban Boards'"
                                                   v-bind:property-value="kanbanCommentModel"
-                                                  v-bind:list-of-choices="permissionLevel"
+                                                  v-bind:list-of-choices="permissionBoolean"
                                                   v-on:update_property_value="updatePropertyValue($event)"
                     ></single-permission-properties>
 
                     <single-permission-properties v-bind:property="'projectHistoryModel'"
                                                   v-bind:property-label="'Grants comments on Projects'"
                                                   v-bind:property-value="projectHistoryModel"
-                                                  v-bind:list-of-choices="permissionLevel"
+                                                  v-bind:list-of-choices="permissionBoolean"
                                                   v-on:update_property_value="updatePropertyValue($event)"
                     ></single-permission-properties>
 
                     <single-permission-properties v-bind:property="'taskHistoryModel'"
                                                   v-bind:property-label="'Grants comments on Tasks'"
                                                   v-bind:property-value="taskHistoryModel"
-                                                  v-bind:list-of-choices="permissionLevel"
+                                                  v-bind:list-of-choices="permissionBoolean"
                                                   v-on:update_property_value="updatePropertyValue($event)"
                     ></single-permission-properties>
                 </div>
             </div>
-            <hr>
+
+            <!-- Save Changes -->
+            <!-- Don't show if we are looking at admin -->
+            <hr v-if="this.permissionSetResults[0]['pk'] !== 1">
+            <div class="row submit-row"
+                 v-if="this.permissionSetResults[0]['pk'] !== 1"
+            >
+                <div class="col-md-12">
+                    <a href="javascript:void(0)"
+                       class="btn btn-primary save-changes"
+                       v-on:click="saveChanges"
+                    >Save Permission Set</a>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+    const axios = require('axios');
+
+    //Mixins
+    import errorModalMixin from "../../mixins/errorModalMixin";
+
     export default {
         name: "PermissionInformation",
         props: {
@@ -211,6 +240,7 @@
                 kanbanCardModel: this.permissionSetResults[0]['fields']['kanban_card'],
                 organisationModel: this.permissionSetResults[0]['fields']['organisation'],
                 projectModel: this.permissionSetResults[0]['fields']['project'],
+                requestForChangeModel: this.permissionSetResults[0]['fields']['request_for_change'],
                 requirementModel: this.permissionSetResults[0]['fields']['requirement'],
                 taskModel: this.permissionSetResults[0]['fields']['task'],
                 documentModel: this.permissionSetResults[0]['fields']['document'],
@@ -219,11 +249,48 @@
                 taskHistoryModel: this.permissionSetResults[0]['fields']['task_history'],
             }
         },
+        mixins: [
+            errorModalMixin,
+        ],
         methods: {
+            saveChanges: function() {
+                //Setup the data we want to send to the backend
+                const data_to_send = new FormData();
+                data_to_send.set('permission_set_id', this.permissionSetResults[0]['pk']);
+                data_to_send.set('permission_set_name', this.permissionSetNameModel);
+                data_to_send.set('administration_assign_user_to_group', this.administrationAssignUserToGroupModel);
+                data_to_send.set('administration_create_group', this.administrationCreateGroupModel);
+                data_to_send.set('administration_create_permission_set', this.administrationCreatePermissionSetModel);
+                data_to_send.set('administration_create_user', this.administrationCreateUserModel);
+                data_to_send.set('bug_client', this.bugClientModel);
+                data_to_send.set('customer', this.customerModel);
+                data_to_send.set('kanban', this.kanbanModel);
+                data_to_send.set('kanban_card', this.kanbanCardModel);
+                data_to_send.set('organisation', this.organisationModel);
+                data_to_send.set('project', this.projectModel);
+                data_to_send.set('requirement', this.requirementModel);
+                data_to_send.set('request_for_change', this.requestForChangeModel);
+                data_to_send.set('task', this.taskModel);
+                data_to_send.set('document', this.documentModel);
+                data_to_send.set('kanban_comment', this.kanbanCommentModel);
+                data_to_send.set('project_history', this.projectHistoryModel);
+                data_to_send.set('task_history', this.taskHistoryModel);
+
+                //Send data
+                axios.post(
+                    `/permission_set_information/${this.permissionSetResults[0]['pk']}/save/`,
+                    data_to_send
+                ).then(response => {
+                    console.log("Response: ", response);
+                }).catch(error => {
+                    this.showErrorModal(error, "Permission Set",'');
+                });
+            },
             updatePropertyValue: function(data) {
-                console.log("Data: ",data," | This: ",this);
-            }
-        }
+                //Update the property with what we require
+                this._data[data['property']] = data['value']
+            },
+        },
     }
 </script>
 

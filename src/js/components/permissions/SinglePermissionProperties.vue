@@ -40,11 +40,11 @@ export default {
                 }
             }
 
-            //Send the new property value up stream
-            // this.$emit('update_property_value',{
-            //     'property': this.property,
-            //     'value': this.propertyModel['value'],
-            // });
+            // Send the new property value up stream
+            this.$emit('update_property_value',{
+                'property': this.property,
+                'value': this.propertyModel['value'],
+            });
         },
     },
     methods: {
