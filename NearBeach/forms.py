@@ -333,6 +333,14 @@ class NewKanbanForm(forms.ModelForm):
         ]
 
 
+class NewPermissionSetForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = permission_set
+        fields = [
+            'permission_set_name',
+        ]
+
 class NewProjectForm(forms.ModelForm):
     project_start_date = forms.DateTimeField(
         input_formats=['c'],

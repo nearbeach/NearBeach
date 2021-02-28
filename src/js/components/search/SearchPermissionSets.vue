@@ -32,9 +32,9 @@
             <hr>
             <div class="row submit-row">
                 <div class="col-md-12">
-                    <a href="/new_group/"
+                    <a href="/new_permission_set/"
                        class="btn btn-primary save-changes">
-                        Add new Group
+                        Add new Permission Set
                     </a>
                 </div>
             </div>

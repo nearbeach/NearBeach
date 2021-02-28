@@ -1,4 +1,5 @@
 from django.http import HttpResponse, HttpResponseBadRequest
+from django.shortcuts import reverse
 from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
@@ -10,6 +11,52 @@ from NearBeach.forms import *
 
 import json
 
+
+@login_required(login_url='login',redirect_field_name="")
+def new_permission_set(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    # Check user permissions
+
+    # Get template
+    t = loader.get_template('NearBeach/permission_sets/new_permission_set.html')
+
+    # Get context
+    c = {}
+
+    return HttpResponse(t.render(c, request))
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def new_permission_set_save(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    # Check user permissions
+
+    # Get form data
+    form = NewPermissionSetForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Save the data
+    submit_permission_set = permission_set(
+        permission_set_name=form.cleaned_data['permission_set_name'],
+        change_user=request.user,
+    )
+
+    submit_permission_set.save()
+
+    # Return back the permission set information URL
+    return HttpResponse(reverse('permission_set_information',args={submit_permission_set.permission_set_id}))
 
 @login_required(login_url='login',redirect_field_name="")
 def permission_set_information(request, permission_set_id):

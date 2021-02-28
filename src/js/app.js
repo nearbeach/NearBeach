@@ -84,6 +84,7 @@ import UserList from "./components/administration/UserList.vue";
 import AdminAddUser from "./components/administration/AdminAddUser.vue";
 import PermissionInformation from "./components/permissions/PermissionInformation.vue";
 import SinglePermissionProperties from "./components/permissions/SinglePermissionProperties.vue";
+import NewPermissionSet from "./components/permissions/NewPermissionSet.vue";
 
 
 //Import Bootstrap
@@ -202,6 +203,7 @@ Vue.component('UserList', UserList);
 Vue.component('AdminAddUser', AdminAddUser);
 Vue.component('PermissionInformation', PermissionInformation);
 Vue.component('SinglePermissionProperties', SinglePermissionProperties);
+Vue.component('NewPermissionSet', NewPermissionSet);
 
 //Validation
 import Vuelidate from 'vuelidate'
