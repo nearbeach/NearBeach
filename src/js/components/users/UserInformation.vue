@@ -110,10 +110,53 @@
 </template>
 
 <script>
+    const axios = require('axios');
+
+    //Import mixins
+    import errorModalMixin from "../../mixins/errorModalMixin";
+    import loadingModalMixin from "../../mixins/loadingModalMixin";
+
     export default {
         name: "UserInformation",
         props: {
             userResults: Array,
+        },
+        data() {
+            return {
+                emailModel: this.userResults[0]['fields']['email'],
+                isActiveModel: this.userResults[0]['fields']['is_active'],
+                isSuperuserModel: this.userResults[0]['fields']['is_superuser'],
+                firstNameModel: this.userResults[0]['fields']['first_name'],
+                lastNameModel: this.userResults[0]['fields']['last_name'],
+            }
+        },
+        mixins: [
+            errorModalMixin,
+            loadingModalMixin,
+        ],
+        methods: {
+            updateUser: function() {
+                //Start the loading modal
+                this.showLoadingModal("User Information")
+
+                //Setup data to send
+                const data_to_send = new FormData();
+                data_to_send.set('email', this.emailModel);
+                data_to_send.set('is_active', this.isActiveModel);
+                data_to_send.set('is_superuser', this.isSuperuserModel);
+                data_to_send.set('first_name', this.firstNameModel);
+                data_to_send.set('last_name', this.lastNameModel);
+
+                axios.post(
+                    `/user_information/${this.userResults[0]['pk']}/save/`,
+                    data_to_send,
+                ).then(response => {
+                    //Hide the loading modal
+                    this.closeLoadingModal();
+                }).catch(error => {
+                    this.showErrorModal(error, "Update User", this.userResults[0]['pk']);
+                });
+            },
         }
     }
 </script>

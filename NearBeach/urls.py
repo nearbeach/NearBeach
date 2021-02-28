@@ -235,6 +235,7 @@ urlpatterns = [
 
     # Users
     path('user_information/<int:username>/', user_views.user_information, name='user_information'),
+    path('user_information/<int:username>/save/', user_views.user_information_save, name='user_information_save'),
 
     # Changing and Resetting Passwords
     # path('change-password/', auth_views.PasswordChangeView.as_view()),

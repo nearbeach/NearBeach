@@ -614,3 +614,16 @@ class UpdateRFCStatus(forms.ModelForm):
         fields = [
             'rfc_status',
         ]
+
+
+class UpdateUserForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = User
+        fields = [
+            'first_name',
+            'last_name',
+            'email',
+            'is_active',
+            'is_superuser',
+        ]

@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
+from django.contrib.auth.models import User
 
 from NearBeach.models import *
 from NearBeach.forms import *
@@ -106,3 +107,37 @@ def user_information(request, username):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def user_information_save(request, username):
+    """
+
+    :param request:
+    :param username:
+    :return:
+    """
+
+    # Add in user permissions
+
+    # Get form
+    form = UpdateUserForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get user
+    update_user = User.objects.get(id=username)
+
+    # Update the user
+    update_user.first_name = form.cleaned_data['first_name']
+    update_user.last_name = form.cleaned_data['last_name']
+    update_user.email = form.cleaned_data['email']
+    update_user.is_active = form.cleaned_data['is_active']
+    update_user.is_superuser = form.cleaned_data['is_superuser']
+
+    # Save
+    update_user.save()
+
+    # Send back blank 200
+    return HttpResponse("")
