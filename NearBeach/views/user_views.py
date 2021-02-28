@@ -1,4 +1,5 @@
 from django.http import HttpResponse, HttpResponseBadRequest
+from django.shortcuts import reverse
 from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
@@ -6,8 +7,60 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 
 from NearBeach.models import *
+from NearBeach.forms import *
 
 import json
+
+@login_required(login_url='login',redirect_field_name="")
+def new_user(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    # Add in user permissions
+
+    # Get template
+    t = loader.get_template('NearBeach/users/new_user.html')
+
+    # Get context
+    c = {}
+
+    return HttpResponse(t.render(c, request))
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def new_user_save(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    # CHECK USER PERMISSSIONS
+
+    # Get form data
+    form = NewUserForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Create the new user
+    submit_user = User(
+        username=form.cleaned_data['username'],
+        first_name=form.cleaned_data['first_name'],
+        last_name=form.cleaned_data['last_name'],
+        is_active=True,
+    )
+
+    # Set the user password
+    submit_user.set_password(form.cleaned_data['password1'])
+
+    # Save
+    submit_user.save()
+
+    return HttpResponse(reverse('user_information', args={submit_user.id}))
 
 @login_required(login_url='login',redirect_field_name="")
 def user_information(request, username):
@@ -48,7 +101,7 @@ def user_information(request, username):
     # Create the context
     c = {
         'user_list_results': user_list_results,
-        'user_results': user_results,
+        'user_results': serializers.serialize('json', [user_results]),
         'username': username,
     }
 

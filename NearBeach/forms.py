@@ -423,6 +423,27 @@ class NewTaskForm(forms.ModelForm):
         ]
 
 
+class NewUserForm(forms.ModelForm):
+    password1 = forms.CharField(
+        max_length=255,
+        required=True,
+    )
+    password2 = forms.CharField(
+        max_length=255,
+        required=True,
+    )
+
+    # Basic Meta data
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+        ]
+
+
 class OrganisationForm(forms.ModelForm):
     # Basic Meta data
     class Meta:

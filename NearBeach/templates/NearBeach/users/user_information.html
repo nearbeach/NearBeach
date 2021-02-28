@@ -1,7 +1,11 @@
 {% extends 'NearBeach/template.html' %}
 {% load static %}
 {% block content %}
-    <h1>HELLO WORLD</h1>
+    <user-information v-bind:user-results="{{user_results}}"
+    ></user-information>
+
+    <br/>
+    <reset-user-password></reset-user-password>
 
     <br/>
     <user-list v-bind:user-list-results="{{user_list_results}}"

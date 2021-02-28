@@ -118,6 +118,8 @@ urlpatterns = [
          name='new_requirement_item'),
     path('new_task/', task_views.new_task, name='new_task'),
     path('new_task/save/', task_views.new_task_save, name='new_task_save'),
+    path('new_user/', user_views.new_user, name='new_user'),
+    path('new_user/save/', user_views.new_user_save, name='new_user_save'),
 
     # Object Data
     path('object_data/admin_add_user/', object_data_views.admin_add_user, name='admin_add_user'),
