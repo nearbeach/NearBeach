@@ -49,7 +49,7 @@ module.exports = {
     plugins: [
         new VueLoaderPlugin(),
         new MiniCssExtractplugin(),
-        new CleanWebpackPlugin(),
+        // new CleanWebpackPlugin(),
         new CompressionPlugin(),
         new CopyPlugin({
             patterns: [

@@ -31,7 +31,7 @@
     "@popperjs/core": "^2.6.0",
     "@tinymce/tinymce-vue": "^3.2.8",
     "axios": "^0.21.1",
-    "bootstrap": "^5.0.0-alpha1",
+    "bootstrap": "^5.0.0-beta2",
     "feather-icons": "^4.28.0",
     "luxon": "^1.25.0",
     "popper.js": "^1.16.1",
