@@ -120,6 +120,10 @@
                 //Send the changes upstream
                 this.$emit('update_stakeholder_model',this.stakeholderModel);
             }
+        },
+        mounted() {
+            //Get a default list when mounted
+            this.getOrganisationData('','');
         }
     }
 </script>

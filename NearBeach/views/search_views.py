@@ -336,7 +336,7 @@ def search_organisation_data(request):
         )
 
     # Only have 25 results and order by alphabetical order
-    organisation_results.order_by('organisation_name')[:25]
+    organisation_results = organisation_results.order_by('organisation_name')[:25]
 
     # Send back json data
     json_results = serializers.serialize('json', organisation_results)
