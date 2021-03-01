@@ -96,8 +96,22 @@
                     };
                 });
 
-                //User the Set functionality to create unique set
-                this.uniqueListOfUsers = [...new Set(mapped_results)];
+                //A simple for loop to extract out the unique usernames
+                var unique_list_of_users = [];
+                mapped_results.forEach(row => {
+                    //Find out if the username already exists in the unique_list_of_users
+                    const count_exists = unique_list_of_users.filter(unique_row => {
+                        //If there exists the same username
+                        return unique_row['username'] === row['username'];
+                    }).length;
+
+                    //If the count_exists is 0, it means it does not exist in the unique list. Add it
+                    if (count_exists === 0) {
+                        unique_list_of_users.push(row);
+                    }
+                });
+
+                this.uniqueListOfUsers = unique_list_of_users;
             },
         },
         mounted() {
