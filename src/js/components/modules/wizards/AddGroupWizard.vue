@@ -5,8 +5,8 @@
                 <div class="modal-header">
                     <h2><i data-feather="grid"></i> Add Group Wizard</h2>
                     <button type="button"
-                            class="close"
-                            data-dismiss="modal"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
                             aria-label="Close"
                             id="addGroupCloseButton"
                     >

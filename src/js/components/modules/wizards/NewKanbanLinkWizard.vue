@@ -10,8 +10,8 @@
                 <div class="modal-header">
                     <h2><i data-feather="link"></i> New Kanban Link Wizard</h2>
                     <button type="button"
-                            class="close"
-                            data-dismiss="modal"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
                             aria-label="Close"
                             id="requirementLinkCloseButton"
                     >

@@ -5,8 +5,8 @@
             <div class="modal-header">
                 <h2 class="modal-title" id="newRunItemModalLabel">New Change Task</h2>
                 <button type="button"
-                        class="close"
-                        data-dismiss="modal"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
                         aria-label="Close"
                         id="newRunItemCloseButton"
                 >

@@ -14,8 +14,8 @@
                 <div class="modal-header">
                     <h2><i data-feather="git-branch"></i> New Note</h2>
                     <button type="button"
-                            class="close"
-                            data-dismiss="modal"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
                             aria-label="Close"
                             id="newNoteCloseButton"
                     >

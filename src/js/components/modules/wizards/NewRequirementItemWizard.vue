@@ -10,8 +10,8 @@
                 <div class="modal-header">
                     <h2><i data-feather="clipboard"></i> New Requirement Item Wizard</h2>
                     <button type="button"
-                            class="close"
-                            data-dismiss="modal"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
                             aria-label="Close"
                             id="requirementItemCloseButton"
                     >
