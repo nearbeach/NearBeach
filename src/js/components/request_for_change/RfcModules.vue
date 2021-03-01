@@ -6,65 +6,75 @@
                 <li class="nav-item"
                     role="presentation"
                 >
-                    <a class="nav-link"
-                       id="rfc-risk-tab"
-                       data-toggle="tab"
-                       href="#rfc-risk"
-                       role="tab"
-                       aria-controls="home"
-                       aria-selected="true">Risk</a>
+                    <button class="nav-link"
+                            id="rfc-risk-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#rfc-risk"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >Risk</button>
                 </li>
 
                 <!-- IMPLEMENTATION -->
                 <li class="nav-item"
                     role="presentation"
                 >
-                    <a class="nav-link"
-                       id="rfc-implementation-tab"
-                       data-toggle="tab"
-                       href="#rfc-implementation"
-                       role="tab"
-                       aria-controls="home"
-                       aria-selected="true">Implementation</a>
+                    <button class="nav-link"
+                            id="rfc-implementation-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#rfc-implementation"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >Implementation</button>
                 </li>
 
                 <!-- BACKOUT PLAN -->
                 <li class="nav-item"
                     role="presentation"
                 >
-                    <a class="nav-link"
-                       id="rfc-backout-tab"
-                       data-toggle="tab"
-                       href="#rfc-backout"
-                       role="tab"
-                       aria-controls="home"
-                       aria-selected="true">Backout Plan</a>
+                    <button class="nav-link"
+                            id="rfc-backout-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#rfc-backout"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >Backout Plan</button>
                 </li>
 
                 <!-- TEST PLAN -->
                 <li class="nav-item"
                     role="presentation"
                 >
-                    <a class="nav-link"
-                       id="rfc-test-plan-tab"
-                       data-toggle="tab"
-                       href="#rfc-test"
-                       role="tab"
-                       aria-controls="home"
-                       aria-selected="true">Test Plan</a>
+                    <button class="nav-link"
+                            id="rfc-test-plan-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#rfc-test"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >Test Plan</button>
                 </li>
 
                 <!-- RUN SHEET -->
                 <li class="nav-item"
                     role="presentation"
                 >
-                    <a class="nav-link"
-                       id="rfc-run-sheet-tab"
-                       data-toggle="tab"
-                       href="#rfc-run-sheet"
-                       role="tab"
-                       aria-controls="home"
-                       aria-selected="true">Run Sheet</a>
+                    <button class="nav-link"
+                            id="rfc-run-sheet-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#rfc-run-sheet"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >Run Sheet</button>
                 </li>
             </ul>
             <hr>
