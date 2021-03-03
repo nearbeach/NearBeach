@@ -19,7 +19,7 @@
                             aria-label="Close"
                             id="newNoteCloseButton"
                     >
-                        <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true"></span>
                     </button>
                 </div>
                 <div class="modal-body">
