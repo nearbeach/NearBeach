@@ -219,6 +219,7 @@
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
+    import loadingModalMixin from "../../mixins/loadingModalMixin";
 
     export default {
         name: "PermissionInformation",
@@ -251,6 +252,7 @@
         },
         mixins: [
             errorModalMixin,
+            loadingModalMixin,
         ],
         methods: {
             saveChanges: function() {
@@ -276,12 +278,16 @@
                 data_to_send.set('project_history', this.projectHistoryModel);
                 data_to_send.set('task_history', this.taskHistoryModel);
 
+                //Show the loading modal mixing
+                this.showLoadingModal('permission set');
+
                 //Send data
                 axios.post(
                     `/permission_set_information/${this.permissionSetResults[0]['pk']}/save/`,
                     data_to_send
                 ).then(response => {
-                    console.log("Response: ", response);
+                    //Hide loading modal mixing
+                    this.closeLoadingModal();
                 }).catch(error => {
                     this.showErrorModal(error, "Permission Set",'');
                 });
