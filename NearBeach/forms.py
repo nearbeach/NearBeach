@@ -583,6 +583,18 @@ class SearchObjectsForm(forms.Form):
     )
 
 
+class TaskInformationForm(forms.ModelForm):
+    # Basic Meta data
+    class Meta:
+        model = task
+        fields = [
+            'task_short_description',
+            'task_long_description',
+            'task_start_date',
+            'task_end_date',
+        ]
+
+
 class UpdateRequirementForm(forms.ModelForm):
     # Basic Meta data
     class Meta:

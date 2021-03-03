@@ -131,4 +131,24 @@ def task_information_save(request,task_id):
     :param task_id:
     :return:
     """
-    return HttpResponseBadRequest("GOT TO WRITE THE CODE")
+
+    # CHECK USER PERMISSIONS
+
+    # Form
+    form = TaskInformationForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get the instance
+    update_task = task.objects.get(task_id=task_id)
+
+    # Update the values
+    update_task.task_short_description = form.cleaned_data['task_short_description']
+    update_task.task_long_description = form.cleaned_data['task_long_description']
+    update_task.task_start_date = form.cleaned_data['task_start_date']
+    update_task.task_end_date = form.cleaned_data['task_end_date']
+
+    update_task.save()
+
+    return HttpResponse("")
+

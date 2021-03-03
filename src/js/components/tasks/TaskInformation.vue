@@ -90,6 +90,7 @@
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
+    import loadingModalMixin from "../../mixins/loadingModalMixin";
 
     export default {
         name: "TaskInformation",
@@ -110,6 +111,7 @@
         },
         mixins: [
             errorModalMixin,
+            loadingModalMixin,
         ],
         validations: {
             taskDescriptionModel: {
@@ -139,26 +141,23 @@
                     return;
                 }
 
+                //Show the saving modal
+                this.showLoadingModal('task');
+
                 //Create the data_to_send array
                 const data_to_send = new FormData();
-                data_to_send.set('organisation',this.stakeholderModel['value']);
                 data_to_send.set('task_long_description',this.taskDescriptionModel);
                 data_to_send.set('task_end_date',this.taskEndDateModel);
                 data_to_send.set('task_short_description',this.taskShortDescriptionModel);
                 data_to_send.set('task_start_date',this.taskStartDateModel);
 
-                // Insert a new row for each group list item
-                this.groupModel.forEach((row,index) => {
-                    data_to_send.append(`group_list`,row['value']);
-                });
-
                 //Send data to backend
                 axios.post(
-                    '/new_task/save/',
+                    `/task_information/${this.taskResults[0]['pk']}/save/`,
                     data_to_send
                 ).then(response => {
-                    //Go to the new project
-                    window.location.href = response['data'];
+                    //Hide the loading modal
+                    this.closeLoadingModal();
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 });
