@@ -58,6 +58,7 @@ def new_permission_set_save(request):
     # Return back the permission set information URL
     return HttpResponse(reverse('permission_set_information',args={submit_permission_set.permission_set_id}))
 
+
 @login_required(login_url='login',redirect_field_name="")
 def permission_set_information(request, permission_set_id):
     """
