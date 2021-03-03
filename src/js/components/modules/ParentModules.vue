@@ -31,7 +31,7 @@
                             role="tab"
                             aria-controls="home"
                             aria-selected="true"
-                    >Requirement Item</button>
+                    >Requirement Links</button>
                 </li>
 
                 <!-- REQUIREMENT ITEM LINKS -->
