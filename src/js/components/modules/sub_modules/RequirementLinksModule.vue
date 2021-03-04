@@ -172,7 +172,7 @@
             },
             newRequirementLink: function() {
                 //Open up the modal
-                var elem_modal = new Modal(document.getElementById('newLinkModal'));
+                var elem_modal = new Modal(document.getElementById('newRequirementLinkModal'));
                 elem_modal.show();
             },
             updateItemLinkResults: function() {

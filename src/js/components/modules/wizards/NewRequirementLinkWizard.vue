@@ -1,6 +1,6 @@
 <template>
     <div class="modal fade"
-             id="newLinkModal"
+             id="newRequirementLinkModal"
              tabindex="-1"
              aria-labelledby="requirementLinkModal"
              aria-hidden="true"
