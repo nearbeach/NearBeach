@@ -75,6 +75,19 @@ import RfcNewRunItem from "./components/request_for_change/modules/RfcNewRunItem
 import RfcRunSheetList from "./components/request_for_change/modules/RfcRunSheetList.vue";
 import DashboardRfcApprovals from "./components/dashboard/DashboardRfcApprovals.vue";
 import RfcApprovalButtons from "./components/request_for_change/modules/RfcApprovalButtons.vue";
+import SearchGroups from "./components/search/SearchGroups.vue";
+import SearchPermissionSets from "./components/search/SearchPermissionSets.vue";
+import SearchUsers from "./components/search/SearchUsers.vue";
+import NewGroup from "./components/groups/NewGroup.vue";
+import GroupInformation from "./components/groups/GroupInformation.vue";
+import UserList from "./components/administration/UserList.vue";
+import AdminAddUser from "./components/administration/AdminAddUser.vue";
+import PermissionInformation from "./components/permissions/PermissionInformation.vue";
+import SinglePermissionProperties from "./components/permissions/SinglePermissionProperties.vue";
+import NewPermissionSet from "./components/permissions/NewPermissionSet.vue";
+import NewUser from "./components/users/NewUser.vue";
+import UserInformation from "./components/users/UserInformation.vue";
+import ResetUserPassword from "./components/users/ResetUserPassword.vue";
 
 
 //Import Bootstrap
@@ -184,6 +197,19 @@ Vue.component('RfcNewRunItem',RfcNewRunItem);
 Vue.component('RfcRunSheetList',RfcRunSheetList);
 Vue.component('DashboardRfcApprovals',DashboardRfcApprovals);
 Vue.component('RfcApprovalButtons',RfcApprovalButtons);
+Vue.component('SearchGroups',SearchGroups);
+Vue.component('SearchPermissionSets',SearchPermissionSets);
+Vue.component('SearchUsers',SearchUsers);
+Vue.component('NewGroup', NewGroup);
+Vue.component('GroupInformation', GroupInformation);
+Vue.component('UserList', UserList);
+Vue.component('AdminAddUser', AdminAddUser);
+Vue.component('PermissionInformation', PermissionInformation);
+Vue.component('SinglePermissionProperties', SinglePermissionProperties);
+Vue.component('NewPermissionSet', NewPermissionSet);
+Vue.component('NewUser', NewUser);
+Vue.component('UserInformation', UserInformation);
+Vue.component('ResetUserPassword', ResetUserPassword);
 
 //Validation
 import Vuelidate from 'vuelidate'

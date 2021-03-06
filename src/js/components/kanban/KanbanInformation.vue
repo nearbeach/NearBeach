@@ -3,7 +3,7 @@
         <div class="container">
             <div class="card">
                 <div class="card-body">
-                    <h1>Kanban Information</h1>
+                    <h1>{{kanbanBoardResults[0]['fields']['kanban_board_name']}}</h1>
                     <hr>
                     <div class="row">
                         <!-- Instructions -->

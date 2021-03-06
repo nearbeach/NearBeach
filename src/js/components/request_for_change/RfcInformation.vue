@@ -224,7 +224,8 @@
                     //Reload the page to get redirected to the correct place
                     window.location.reload(true);
                 }).catch(error => {
-                    //ADD MIXIN
+                    //Show error if there is one
+                    this.showErrorModal(error, 'Request for Change', this.rfcResults[0]['pk']);
                 })
             },
             updateValues: function(data) {

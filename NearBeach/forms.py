@@ -138,6 +138,18 @@ class AddRequirementLinkForm(forms.Form):
     )
 
 
+class AdminAddUserForm(forms.Form):
+    group = forms.ModelMultipleChoiceField(
+        queryset=group.objects.all(),
+    )
+    permission_set = forms.ModelMultipleChoiceField(
+        queryset=permission_set.objects.all(),
+    )
+    username = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+    )
+
+
 class ChangeTaskStatusForm(forms.ModelForm):
     class Meta:
         model = change_task
@@ -283,6 +295,21 @@ class NewCustomerForm(forms.ModelForm):
         ]
 
 
+class NewGroupForm(forms.ModelForm):
+    parent_group = forms.ModelChoiceField(
+        queryset=group.objects.all(),
+        required=False,
+    )
+
+    # Basic Meta Data
+    class Meta:
+        model = group
+        fields = [
+            'group_name',
+            'parent_group',
+        ]
+
+
 class NewKanbanCardForm(forms.ModelForm):
     # Basic Meta Data
     class Meta:
@@ -305,6 +332,14 @@ class NewKanbanForm(forms.ModelForm):
             'kanban_board_name',
         ]
 
+
+class NewPermissionSetForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = permission_set
+        fields = [
+            'permission_set_name',
+        ]
 
 class NewProjectForm(forms.ModelForm):
     project_start_date = forms.DateTimeField(
@@ -388,6 +423,27 @@ class NewTaskForm(forms.ModelForm):
         ]
 
 
+class NewUserForm(forms.ModelForm):
+    password1 = forms.CharField(
+        max_length=255,
+        required=True,
+    )
+    password2 = forms.CharField(
+        max_length=255,
+        required=True,
+    )
+
+    # Basic Meta data
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+        ]
+
+
 class OrganisationForm(forms.ModelForm):
     # Basic Meta data
     class Meta:
@@ -404,6 +460,15 @@ class OrganisationProfilePictureForm(forms.ModelForm):
     class Meta:
         fields = [
             'organisation_picture'
+        ]
+
+
+class PermissionSetForm(forms.ModelForm):
+    class Meta:
+        model = permission_set
+        exclude = [
+            'change_user',
+            'is_deleted',
         ]
 
 
@@ -518,6 +583,18 @@ class SearchObjectsForm(forms.Form):
     )
 
 
+class TaskInformationForm(forms.ModelForm):
+    # Basic Meta data
+    class Meta:
+        model = task
+        fields = [
+            'task_short_description',
+            'task_long_description',
+            'task_start_date',
+            'task_end_date',
+        ]
+
+
 class UpdateRequirementForm(forms.ModelForm):
     # Basic Meta data
     class Meta:
@@ -548,4 +625,17 @@ class UpdateRFCStatus(forms.ModelForm):
         model = request_for_change
         fields = [
             'rfc_status',
+        ]
+
+
+class UpdateUserForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = User
+        fields = [
+            'first_name',
+            'last_name',
+            'email',
+            'is_active',
+            'is_superuser',
         ]

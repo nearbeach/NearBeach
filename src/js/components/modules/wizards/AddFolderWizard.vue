@@ -5,12 +5,12 @@
                 <div class="modal-header">
                     <h2><i data-feather="users"></i> Add Folder Wizard</h2>
                     <button type="button"
-                            class="close"
-                            data-dismiss="modal"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
                             aria-label="Close"
                             id="addFolderCloseButton"
                     >
-                        <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true"></span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -36,7 +36,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button"
                             class="btn btn-primary"
                             v-bind:disabled="disableAddFolderButton"

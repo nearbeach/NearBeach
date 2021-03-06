@@ -3,6 +3,12 @@
         <div class="card-body">
             <h1>My Current Objects</h1>
             <hr>
+
+            <div class="alert alert-dark"
+                 v-if="!isLoaded"
+            >
+                Still obtaining your assigned jobs.
+            </div>
             
             <!-- Requirements -->
             <render-object-table v-if="objectResults['requirement'].length > 0"
@@ -26,7 +32,7 @@
             ></render-object-table>
             
             <!-- If there are no objects -->
-            <div v-if="countObjects == 0"
+            <div v-if="countObjects === 0 && isLoaded"
                  class="alert alert-primary"
             >
                 It looks like no one has assigned you any tasks.
@@ -46,6 +52,7 @@
         props: {},
         data() {
             return {
+                isLoaded: false,
                 objectResults: {
                     'requirement': [],
                     'project': [],
@@ -84,7 +91,10 @@
                 axios.post(
                     `/dashboard/get/my_objects/`,
                 ).then(response => {
-                   this.objectResults = response['data']; 
+                    this.objectResults = response['data'];
+
+                    //Update loading status
+                    this.isLoaded = true;
                 }).catch(error => {
                     this.showErrorModal(error, 'Dashboard My Objects');
                 })

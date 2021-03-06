@@ -10,12 +10,12 @@
                 <div class="modal-header">
                     <h2><i data-feather="clipboard"></i> New Requirement Item Wizard</h2>
                     <button type="button"
-                            class="close"
-                            data-dismiss="modal"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
                             aria-label="Close"
                             id="requirementItemCloseButton"
                     >
-                        <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true"></span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -99,7 +99,7 @@
                 <div class="modal-footer">
                     <button type="button"
                             class="btn btn-secondary"
-                            data-dismiss="modal"
+                            data-bs-dismiss="modal"
                     >
                         Close
                     </button>

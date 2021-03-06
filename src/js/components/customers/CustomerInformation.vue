@@ -70,6 +70,13 @@
                     </div>
                 </div>
             </div>
+            <!-- STAKEHOLDER ORGANISATION -->
+            <hr>
+            <stakeholder-information v-bind:organisation-results="organisationResults"
+                                     v-bind:default-stakeholder-image="defaultStakeholderImage"
+                                     v-if="organisationResults.length>0"
+            ></stakeholder-information>
+
             <br/>
 
             <!-- NEED TO APPLY PERMISSIONS -->
@@ -94,12 +101,18 @@
     //Validation
     import { email, required } from 'vuelidate/lib/validators';
 
+    //Import Mixins
+    import errorModalMixin from "../../mixins/errorModalMixin";
+    import loadingModalMixin from "../../mixins/loadingModalMixin";
+
     export default {
         name: "CustomerInformation",
-        props: [
-            'customerResults',
-            'titleList',
-        ],
+        props: {
+            customerResults: Array,
+            defaultStakeholderImage: String,
+            organisationResults: Array,
+            titleList: Array,
+        },
         data() {
             return {
                 customerEmailModel: this.customerResults[0]['fields']['customer_email'],
@@ -109,6 +122,10 @@
                 titleFixList: [],
             }
         },
+        mixins: [
+            errorModalMixin,
+            loadingModalMixin,
+        ],
         validations: {
             customerEmailModel: {
                 required,
@@ -134,16 +151,21 @@
                 data_to_send.set('customer_email',this.customerEmailModel);
                 data_to_send.set('customer_first_name',this.customerFirstNameModel);
                 data_to_send.set('customer_last_name',this.customerLastNameModel);
-                data_to_send.set('customer_title',this.customerTitleModel);
+                data_to_send.set('customer_title',this.customerTitleModel['value']);
+
+                //Show loading screen
+                this.showLoadingModal('Customer Information');
 
                 //Use axios to send the data
                 axios.post(
                     `/customer_information/${this.customerResults[0]['pk']}/save/`,
                     data_to_send,
                 ).then(response => {
-                    console.log("Response: ",response);
+                    //Close the loading screen
+                    this.closeLoadingModal();
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    //Show the error modal
+                    this.showErrorModal(error, 'customer',this.customerResults[0]['pk']);
                 })
             },
         },

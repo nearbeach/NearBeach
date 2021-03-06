@@ -239,6 +239,10 @@
             rfcVersionModel: function() {
                 this.updateValues('rfcVersionModel',this.rfcVersionModel);
             },
+        },
+        mounted() {
+            //Get the lead user data
+            this.getChangeLeadData()
         }
     }
 </script>

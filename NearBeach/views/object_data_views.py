@@ -14,7 +14,7 @@ from NearBeach.views.tools.internal_functions import *
 from NearBeach.user_permissions import return_user_permission_level
 
 
-import json, urllib3
+import json, urllib, urllib3
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
@@ -231,6 +231,44 @@ def add_user(request,destination,location_id):
     user_results = get_user_list(destination,location_id)
 
     return HttpResponse(serializers.serialize('json',user_results),content_type='application/json')
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def admin_add_user(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    # Make sure user has permissions
+
+    # Get data
+    group_results = group.objects.filter(
+        is_deleted=False,
+    ).values()
+
+    permission_set_results = permission_set.objects.filter(
+        is_deleted=False,
+    ).values()
+
+    user_results = User.objects.filter(
+        is_active=True,
+    ).values()
+
+    # Convert data to json format
+    group_results = json.dumps(list(group_results), cls=DjangoJSONEncoder)
+    permission_set_results = json.dumps(list(permission_set_results), cls=DjangoJSONEncoder)
+    user_results = json.dumps(list(user_results), cls=DjangoJSONEncoder)
+
+    return_data = {
+        'group_results': json.loads(group_results),
+        'permission_set_results': json.loads(permission_set_results),
+        'user_results': json.loads(user_results),
+    }
+
+    return JsonResponse(return_data)
+
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
@@ -583,7 +621,7 @@ def lead_user_list(request):
         )
 
     # Return the json data
-    return HttpResponse(serializers.serialize('json', user_results), content_type='application/json')
+    return HttpResponse(serializers.serialize('json', user_results[:25]), content_type='application/json')
 
 
 @require_http_methods(['POST'])

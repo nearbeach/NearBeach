@@ -1,0 +1,15 @@
+{% extends 'NearBeach/template.html' %}
+{% load static %}
+{% block content %}
+    <user-information v-bind:user-results="{{user_results}}"
+    ></user-information>
+
+    <br/>
+    <reset-user-password></reset-user-password>
+
+    <br/>
+    <user-list v-bind:user-list-results="{{user_list_results}}"
+               v-bind:destination="'user'"
+               v-bind:location-id="{{username}}"
+    ></user-list>
+{% endblock %}

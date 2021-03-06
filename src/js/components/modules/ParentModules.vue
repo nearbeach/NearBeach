@@ -7,13 +7,15 @@
                     role="presentation"
                     v-if="destination=='requirement'"
                 >
-                    <a class="nav-link"
-                       id="requirement-item-tab"
-                       data-toggle="tab"
-                       href="#requirement-items"
-                       role="tab"
-                       aria-controls="home"
-                       aria-selected="true">Requirement Item</a>
+                    <button class="nav-link"
+                            id="requirement-item-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#requirement-items"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >Requirement Item</button>
                 </li>
 
                 <!-- REQUIREMENT LINKS -->
@@ -21,13 +23,15 @@
                     role="presentation"
                     v-if="destination=='requirement'"
                 >
-                    <a class="nav-link"
-                       id="requirement-link-tab"
-                       data-toggle="tab"
-                       href="#requirement-links"
-                       role="tab"
-                       aria-controls="home"
-                       aria-selected="true">Links</a>
+                    <button class="nav-link"
+                            id="requirement-link-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#requirement-links"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >Requirement Links</button>
                 </li>
 
                 <!-- REQUIREMENT ITEM LINKS -->
@@ -35,55 +39,63 @@
                     role="presentation"
                     v-if="destination=='requirement_item'"
                 >
-                    <a class="nav-link"
-                       id="requirement-item-link-tab"
-                       data-toggle="tab"
-                       href="#requirement-item-links"
-                       role="tab"
-                       aria-controls="home"
-                       aria-selected="true">Links</a>
+                    <button class="nav-link"
+                            id="requirement-item-link-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#requirement-item-links"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >Links</button>
                 </li>
 
                 <!-- DOCUMENTS -->
                 <li class="nav-item"
                     role="presentation"
                 >
-                    <a class="nav-link"
-                       id="documents-tab"
-                       data-toggle="tab"
-                       href="#documents"
-                       role="tab"
-                       aria-controls="home"
-                       aria-selected="true">Documents</a>
+                    <button class="nav-link"
+                            id="documents-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#documents"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >Documents</button>
                 </li>
 
                 <!-- LINKED OBJECTS -->
                 <li class="nav-item"
                     role="presentation"
-                    v-if="destination!='requirement' || destination!='requirement_item'"
+                    v-if="destination!=='requirement' && destination!=='requirement_item'"
                 >
-                    <a class="nav-link"
-                       id="object-link-tabs"
-                       data-toggle="tab"
-                       href="#object-links"
-                       role="tab"
-                       aria-controls="home"
-                       aria-selected="true">Linked Objects</a>
+                    <button class="nav-link"
+                            id="object-link-tabs"
+                            data-bs-toggle="tab"
+                            data-bs-target="#object-links"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >Linked Objects</button>
                 </li>
 
                 <!-- CUSTOMERS -->
                 <!-- Customers are not needed by requirement items as the parent requirements take care of this -->
                 <li class="nav-item"
                     role="presentation"
-                    v-if="destination!='requirement_item'"
+                    v-if="destination!=='requirement_item'"
                 >
-                    <a class="nav-link"
-                       id="customer-tab"
-                       data-toggle="tab"
-                       href="#customers"
-                       role="tab"
-                       aria-controls="home"
-                       aria-selected="true">Customers</a>
+                    <button class="nav-link"
+                            id="customer-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#customers"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >Customers</button>
                 </li>
 
                 <!-- BUGS -->
@@ -92,13 +104,15 @@
                     role="presentation"
                     v-if="['project','task','requirement'].includes(destination)"
                 >
-                    <a class="nav-link"
-                       id="bug-tab"
-                       data-toggle="tab"
-                       href="#bugs"
-                       role="tab"
-                       aria-controls="home"
-                       aria-selected="true">Bugs</a>
+                    <button class="nav-link"
+                            id="bug-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#bugs"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >Bugs</button>
                 </li>
 
                 <!-- GROUPS AND USERS -->
@@ -107,26 +121,30 @@
                     role="presentation"
                     v-if="destination!='requirement_item'"
                 >
-                    <a class="nav-link"
-                       id="group-and-user-tab"
-                       data-toggle="tab"
-                       href="#group-and-users"
-                       role="tab"
-                       aria-controls="home"
-                       aria-selected="true">Groups and Users</a>
+                    <button class="nav-link"
+                            id="group-and-user-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#group-and-users"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >Groups and Users</button>
                 </li>
 
                 <!-- MISC -->
                 <li class="nav-item"
                     role="presentation"
                 >
-                    <a class="nav-link"
-                       id="misc-tab"
-                       data-toggle="tab"
-                       href="#misc"
-                       role="tab"
-                       aria-controls="home"
-                       aria-selected="true">Misc</a>
+                    <button class="nav-link"
+                            id="misc-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#misc"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >Misc</button>
                 </li>
             </ul>
             <hr>

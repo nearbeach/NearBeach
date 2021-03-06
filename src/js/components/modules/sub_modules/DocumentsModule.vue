@@ -54,33 +54,37 @@
         <div class="btn-group save-changes">
             <button class="btn btn-primary dropdown-toggle"
                     type="button"
-                    data-toggle="dropdown"
-                    aria-haspopup="true"
+                    data-bs-toggle="dropdown"
                     aria-expanded="false"
             >
                 New Document/File
             </button>
-            <div class="dropdown-menu">
-                <a class="dropdown-item"
-                   href="javascript:void(0)"
-                   v-on:click="uploadDocument"
-                >
-                    Upload Document
-                </a>
-                <a class="dropdown-item"
-                   href="javascript:void(0)"
-                   v-on:click="addLink"
-                >
-                    Add Link
-                </a>
-                <!--<a class="dropdown-item" href="javascript:void(0)">New Whiteboard</a>-->
-                <a class="dropdown-item"
-                   href="javascript:void(0)"
-                   v-on:click="addFolder"
-                >
-                    Add Folder
-                </a>
-            </div>
+            <ul class="dropdown-menu">
+                <li>
+                    <a class="dropdown-item"
+                       href="javascript:void(0)"
+                       v-on:click="uploadDocument"
+                    >
+                        Upload Document
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item"
+                       href="javascript:void(0)"
+                       v-on:click="addLink"
+                    >
+                        Add Link
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item"
+                       href="javascript:void(0)"
+                       v-on:click="addFolder"
+                    >
+                        Add Folder
+                    </a>
+                </li>
+            </ul>
         </div>
 
         <!-- MODALS -->

@@ -7,80 +7,76 @@
                 <li class="nav-item"
                     role="presentation"
                 >
-                    <a class="nav-link"
-                       id="organisation-contacts-tab"
-                       data-toggle="tab"
-                       href="#organisation-contacts"
-                       role="tab"
-                       aria-controls="home"
-                       aria-selected="true">Organisation Contacts
-                    </a>
+                    <button class="nav-link"
+                            id="organi`sation-contacts-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#organisation-contacts"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >
+                        Organisation Contacts
+                    </button>
                 </li>
 
                 <!-- Document Uploads -->
                 <li class="nav-item"
                     role="presentation"
                 >
-                    <a class="nav-link"
-                       id="document-uploads-tab"
-                       data-toggle="tab"
-                       href="#document-uploads"
-                       role="tab"
-                       aria-controls="home"
-                       aria-selected="true">Document Uploads
-                    </a>
+                    <button class="nav-link"
+                            id="document-uploads-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#document-uploads"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >
+                        Document Uploads
+                    </button>
                 </li>
 
                 <!-- Associated Projects & Tasks -->
                 <li class="nav-item"
                     role="presentation"
                 >
-                    <a class="nav-link"
-                       id="associated-objects-tab"
-                       data-toggle="tab"
-                       href="#associated-objects"
-                       role="tab"
-                       aria-controls="home"
-                       aria-selected="true">Associated Objects
-                    </a>
+                    <button class="nav-link"
+                            id="associated-objects-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#associated-objects"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >
+                        Associated Objects
+                    </button>
                 </li>
-
-                <!-- Organisation Quotes -->
-<!--                <li class="nav-item"-->
-<!--                    role="presentation"-->
-<!--                >-->
-<!--                    <a class="nav-link"-->
-<!--                       id="organisation-quotes-tab"-->
-<!--                       data-toggle="tab"-->
-<!--                       href="#organisation-quotes"-->
-<!--                       role="tab"-->
-<!--                       aria-controls="home"-->
-<!--                       aria-selected="true">Organisation Quotes-->
-<!--                    </a>-->
-<!--                </li>-->
 
                 <!-- Misc Modules -->
                 <li class="nav-item"
                     role="presentation"
                 >
-                    <a class="nav-link"
-                       id="misc-modules-tab"
-                       data-toggle="tab"
-                       href="#misc-modules"
-                       role="tab"
-                       aria-controls="home"
-                       aria-selected="true">Misc
-                    </a>
+                    <button class="nav-link"
+                            id="misc-modules-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#misc-modules"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true">Misc
+                    </button>
                 </li>
             </ul>
             <hr>
 
             <!-- The Modules -->
             <div class="tab-content" id="misc_module_content">
-                <div class="tab-pane fade show active"
+                <div class="tab-pane fade"
                      id="organisation-contacts"
                      role="tabpanel"
-                     aria-labelledby="home-tab"
+                     aria-labelledby="profile-tab"
                 >
                     <h2><i data-feather="users"></i> Contacts</h2>
                     <p class="text-instructions">
@@ -111,7 +107,7 @@
                                       v-bind:location-id="locationId"
                     ></documents-module>
                 </div>
-                <div class="tab-pane fade active"
+                <div class="tab-pane fade"
                      id="associated-objects"
                      role="tabpanel"
                      aria-labelledby="profile-tab"
@@ -120,10 +116,11 @@
                                         v-bind:location-id="locationId"
                     ></associated-objects>
                 </div>
-<!--                <div class="tab-pane fade" id="organisation-quotes" role="tabpanel" aria-labelledby="contact-tab">-->
-<!--                    Organisation Quotes-->
-<!--                </div>-->
-                <div class="tab-pane fade" id="misc-modules" role="tabpanel" aria-labelledby="contact-tab">
+                <div class="tab-pane fade"
+                     id="misc-modules"
+                     role="tabpanel"
+                     aria-labelledby="profile-tab"
+                >
                     <misc-module v-bind:destination="destination"
                                  v-bind:location-id="locationId"
                     ></misc-module>

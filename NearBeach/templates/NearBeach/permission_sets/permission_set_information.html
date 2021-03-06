@@ -1,0 +1,14 @@
+{% extends 'NearBeach/template.html' %}
+{% load static %}
+{% block content %}
+    <permission-information v-bind:permission-set-results="{{permission_set_results}}"
+                            v-bind:permission-level="{{permission_level}}"
+                            v-bind:permission-boolean="{{permission_boolean}}"
+    ></permission-information>
+
+    <br/>
+    <user-list v-bind:user-list-results="{{user_list_results}}"
+               v-bind:destination="'permission_set'"
+               v-bind:location-id="{{permission_set_id}}"
+    ></user-list>
+{% endblock %}

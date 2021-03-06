@@ -5,12 +5,12 @@
                 <div class="modal-header">
                     <h2><i data-feather="users"></i> Add Customers Wizard</h2>
                     <button type="button"
-                            class="close"
-                            data-dismiss="modal"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
                             aria-label="Close"
                             id="addCustomerCloseButton"
                     >
-                        <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true"></span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -47,7 +47,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button"
                             class="btn btn-primary"
                             v-bind:diabled="customerModel == ''"
@@ -96,6 +96,9 @@
                 ).then((response) => {
                     //Send the new data up stream
                     this.$emit('update_customer_results',response['data']);
+
+                    //Clear the model
+                    this.customerModel = '';
 
                     //Close the modal
                     document.getElementById("addCustomerCloseButton").click();

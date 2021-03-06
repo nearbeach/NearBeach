@@ -5,12 +5,12 @@
             <div class="modal-header">
                 <h2 class="modal-title" id="newRunItemModalLabel">New Change Task</h2>
                 <button type="button"
-                        class="close"
-                        data-dismiss="modal"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
                         aria-label="Close"
                         id="newRunItemCloseButton"
                 >
-                    <span aria-hidden="true">&times;</span>
+                    <span aria-hidden="true"></span>
                 </button>
             </div>
             <div class="modal-body">
@@ -102,7 +102,7 @@
             <div class="modal-footer">
                 <button type="button"
                         class="btn btn-secondary"
-                        data-dismiss="modal"
+                        data-bs-dismiss="modal"
                 >Close</button>
                 <button type="button"
                         class="btn btn-primary"
