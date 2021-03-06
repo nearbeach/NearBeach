@@ -70,6 +70,13 @@
                     </div>
                 </div>
             </div>
+            <!-- STAKEHOLDER ORGANISATION -->
+            <hr>
+            <stakeholder-information v-bind:organisation-results="organisationResults"
+                                     v-bind:default-stakeholder-image="defaultStakeholderImage"
+                                     v-if="organisationResults.length>0"
+            ></stakeholder-information>
+
             <br/>
 
             <!-- NEED TO APPLY PERMISSIONS -->
@@ -100,10 +107,12 @@
 
     export default {
         name: "CustomerInformation",
-        props: [
-            'customerResults',
-            'titleList',
-        ],
+        props: {
+            customerResults: Array,
+            defaultStakeholderImage: String,
+            organisationResults: Array,
+            titleList: Array,
+        },
         data() {
             return {
                 customerEmailModel: this.customerResults[0]['fields']['customer_email'],

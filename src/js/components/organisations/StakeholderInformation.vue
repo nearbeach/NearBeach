@@ -7,7 +7,9 @@
         <div class="col-md-8 organisation-details">
             <img v-bind:src="getStakeholderImage" alt="Stakeholder Logo" class="organisation-image">
             <div class="organisation-name">
-                {{stakeholderModel['organisation_name']}}
+                <a v-bind:href="`/organisation_information/${organisationResults[0]['pk']}/`">
+                    {{stakeholderModel['organisation_name']}}
+                </a>
             </div>
             <div class="organisation-link">
                 <i data-feather="external-link"></i> Website:

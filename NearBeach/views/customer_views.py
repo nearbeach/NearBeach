@@ -27,11 +27,16 @@ def customer_information(request,customer_id):
 
     # Get customer data
     customer_results = customer.objects.get(customer_id=customer_id)
+
+    print("Customer Organisation id: %s " % customer_results.organisation_id)
+
+    organisation_results = organisation.objects.filter(
+        organisation_id=customer_results.organisation_id,
+    )
+
     title_list = list_of_title.objects.filter(
         #is_deleted=False, # NEED TO RECONSTRUCT DATABASE TO GET THIS TO WORK!
     )
-
-    print("TITLE LIST: %s" % title_list)
 
     # Get tempalte
     t = loader.get_template('NearBeach/customers/customer_information.html')
@@ -39,6 +44,7 @@ def customer_information(request,customer_id):
     # Context
     c = {
         'customer_results': serializers.serialize('json',[customer_results]),
+        'organisation_results': serializers.serialize('json', organisation_results),
         'title_list': serializers.serialize('json',title_list),
     }
 
