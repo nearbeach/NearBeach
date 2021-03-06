@@ -621,7 +621,7 @@ def lead_user_list(request):
         )
 
     # Return the json data
-    return HttpResponse(serializers.serialize('json', user_results), content_type='application/json')
+    return HttpResponse(serializers.serialize('json', user_results[:25]), content_type='application/json')
 
 
 @require_http_methods(['POST'])
