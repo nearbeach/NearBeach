@@ -129,6 +129,10 @@
                     //Emit the results up stream
                     this.$emit('update_document_list',response['data']);
 
+                    //Clear the data
+                    this.documentDescriptionModel = '';
+                    this.documentUrlLocationModel = '';
+
                     //Close the modal
                     document.getElementById("addLinkCloseButton").click();
                 }).catch(error => {
