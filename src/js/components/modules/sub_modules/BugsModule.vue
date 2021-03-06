@@ -98,6 +98,12 @@
                 return 'javascript:void(0)';
             },
             getBugList: function() {
+                //We don't need to get the bug list when destination is requirement_items
+                if (this.destination === 'requirement_item') {
+                    //Jet pack out of there
+                    return;
+                }
+
                 axios.post(
                     `/object_data/${this.destination}/${this.locationId}/bug_list/`
                 ).then((response) => {
