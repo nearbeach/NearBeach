@@ -1,47 +1,7 @@
 <template>
     <div>
         <h2><i data-feather="compass"></i> Associated Objects</h2>
-        <hr>
-
-        <!-- Opportunity Results -->
-        <div class="row"
-             v-if="opportunityResults.length > 0"
-        >
-            <div class="col-md-4">
-                <strong>Opportunity</strong>
-                <p class="text-instructions">
-                    The following are current OPEN opportunities associated with the organisation.
-                </p>
-            </div>
-            <div class="col-md-8">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <td>Opportunity Information</td>
-                            <td>Status</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="opportunity in opportunityResults">
-                            <td>
-                                <a v-bind:href="`/opportunity_information/${opportunity['opportunity_id']}/`">
-                                    <p>{{opportunity['opportunity_name']}}</p>
-                                    <div class="spacer"></div>
-                                    <p class="small-text">
-                                        Opportunity {{opportunity['opportunity_id']}} -
-                                        Expected Close Date:
-                                        {{getFriendlyDate(opportunity['opportunity_expected_close_date'])}}
-                                    </p>
-                                </a>
-                            </td>
-                            <td>{{opportunity['opportunity_success_probability']}}%</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <!-- THE FOLLOWING HR WILL NEED TO BE FIXED! -->
-        <hr v-if="opportunityResults.length > 0">
+        <hr v-if="projectResults.length + taskResults.length > 0">
 
         <!-- Project Results -->
         <div class="row"
@@ -156,8 +116,19 @@
                 </table>
             </div>
         </div>
-        <!-- THE FOLLOWING HR WILL NEED TO BE FIXED! -->
-        <hr v-if="projectResults.length > 0">
+
+        <!-- Only show when there are no associated tasks -->
+        <div class="spacer"
+             v-if="projectResults.length + taskResults.length === 0"
+        ></div>
+
+        <div class="alert alert-info"
+             v-if="projectResults.length + taskResults.length === 0"
+        >
+            There are currently no Objects associated with this Organisation. You can create some new objects by
+            click on the "New Objects" menu item.
+        </div>
+
     </div>
 </template>
 

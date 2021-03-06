@@ -163,6 +163,11 @@
                 },700);
             },
             startSearch: function() {
+                //Escape conditions
+                if (this.searchModel === '') {
+                    return;
+                }
+
                 //We want to tell the user that we are actually searching
                 this.searchOn = true;
 

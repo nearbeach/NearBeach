@@ -97,6 +97,9 @@
                     //Send the new data up stream
                     this.$emit('update_customer_results',response['data']);
 
+                    //Clear the model
+                    this.customerModel = '';
+
                     //Close the modal
                     document.getElementById("addCustomerCloseButton").click();
                 }).catch(error => {
