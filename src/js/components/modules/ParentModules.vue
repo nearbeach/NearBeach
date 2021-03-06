@@ -68,7 +68,7 @@
                 <!-- LINKED OBJECTS -->
                 <li class="nav-item"
                     role="presentation"
-                    v-if="destination!='requirement' || destination!='requirement_item'"
+                    v-if="destination!=='requirement' && destination!=='requirement_item'"
                 >
                     <button class="nav-link"
                             id="object-link-tabs"
@@ -85,7 +85,7 @@
                 <!-- Customers are not needed by requirement items as the parent requirements take care of this -->
                 <li class="nav-item"
                     role="presentation"
-                    v-if="destination!='requirement_item'"
+                    v-if="destination!=='requirement_item'"
                 >
                     <button class="nav-link"
                             id="customer-tab"
