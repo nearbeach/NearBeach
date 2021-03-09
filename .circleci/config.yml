@@ -4,7 +4,7 @@ jobs:
     working_directory: ~/NearBeach
     docker: # run the steps with Docker
       # CircleCI Python images available at: https://hub.docker.com/r/circleci/python/
-      - image: circleci/python:3.9.2
+      - image: circleci/python:3.6.4
         environment: # environment variables for primary container
           PIPENV_VENV_IN_PROJECT: true
     steps: # steps that comprise the `build` job
