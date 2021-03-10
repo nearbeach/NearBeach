@@ -197,12 +197,16 @@ class KanbanCardForm(forms.ModelForm):
         required=True,
         queryset=kanban_card.objects.all(),
     )
+    kanban_card_description = forms.CharField(
+        required=False,
+    )
 
     class Meta:
         model = kanban_card
         fields = {
             'kanban_card_id',
             'kanban_card_text',
+            'kanban_card_description',
         }
 
 
@@ -311,11 +315,16 @@ class NewGroupForm(forms.ModelForm):
 
 
 class NewKanbanCardForm(forms.ModelForm):
+    kanban_card_description = forms.CharField(
+        required=False,
+    )
+
     # Basic Meta Data
     class Meta:
         model = kanban_card
         fields = [
             'kanban_card_text',
+            'kanban_card_description',
             'kanban_level',
             'kanban_column',
         ]

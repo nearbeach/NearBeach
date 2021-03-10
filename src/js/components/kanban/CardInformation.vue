@@ -17,7 +17,9 @@
                     <div class="row">
                         <div class="col-md-4">
                             <strong>Card Text</strong>
-                            <p class="text-instructions">Update the card title and then click on "Update Card" button</p>
+                            <p class="text-instructions">
+                                Write an appropriate name for the kanban card. To update click on the "Update" button.
+                            </p>
                         </div>
                         <div class="col-md-8">
                             <label>Card Title</label>
@@ -30,6 +32,32 @@
                             >
                                 Update Card
                             </button>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <!-- CARD DESCRIPTION -->
+                    <div class="row">
+                        <div class="col-md-4">
+                            <strong>Card Description</strong>
+                            <p class="text-instructions">
+                                Fill out a detailed description for the card, then click on the "Update Card" button
+                                to update the card.
+                            </p>
+                        </div>
+                        <div class="col-md-8">
+                            <editor
+                               :init="{
+                                 height: 300,
+                                 menubar: false,
+                                 toolbar: 'undo redo | formatselect | ' +
+                                  'bold italic backcolor | alignleft aligncenter ' +
+                                  'alignright alignjustify | bullist numlist outdent indent | ',
+                               }"
+                               v-bind:content_css="false"
+                               v-bind:skin="false"
+                               v-model="cardDescriptionModel"
+                            />
                         </div>
                     </div>
                     <hr>
@@ -56,10 +84,15 @@
                                v-bind:skin="false"
                                v-model="cardNoteModel"
                             />
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-12">
                             <br/>
                             <button class="btn btn-primary save-changes"
                                     v-on:click="addNote"
-                                    v-bind:disabled="cardNoteModel==''"
+                                    v-bind:disabled="cardNoteModel===''"
                             >
                                 Add Note
                             </button>
@@ -91,6 +124,7 @@
         data() {
             return {
                 cardId: '',
+                cardDescriptionModel: '',
                 cardNoteModel: '',
                 cardTitleModel: '',
                 noteHistoryResults: [],
@@ -98,9 +132,19 @@
         },
         watch: {
             cardInformation: function() {
+                console.log("Card Information Changed");
                 //Update the local information
                 this.cardId = this.cardInformation['cardId'];
                 this.cardTitleModel = this.cardInformation['cardTitle'];
+
+                //Bug fix - needs to blank it out or the value does nto blank out correctly
+                if (this.cardInformation['cardDescription'] === null) {
+                    //Can not seem to blank out the model correctly?
+                    this.cardDescriptionModel = "No Description";
+                } else {
+                    this.cardDescriptionModel = `${this.cardInformation['cardDescription']}`;
+                }
+
 
                 //Now update the card notes
                 this.getCardNotes();
@@ -144,6 +188,7 @@
                 //Create the data_to_send
                 const data_to_send = new FormData();
                 data_to_send.set('kanban_card_text',this.cardTitleModel);
+                data_to_send.set('kanban_card_description', this.cardDescriptionModel);
                 data_to_send.set('kanban_card_id',this.cardId);
 
                 //Use Axios to send data

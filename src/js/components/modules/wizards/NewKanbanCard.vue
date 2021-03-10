@@ -27,6 +27,30 @@
                             >
                         </div>
                     </div>
+                    <!-- CARD DESCRIPTION -->
+                    <div class="row">
+                        <div class="col-md-4">
+                            <strong>Card Description</strong>
+                            <p class="text-instructions">
+                                Fill out a detailed description for the card, then click on the "Update Card" button
+                                to update the card.
+                            </p>
+                        </div>
+                        <div class="col-md-8">
+                            <editor
+                               :init="{
+                                 height: 300,
+                                 menubar: false,
+                                 toolbar: 'undo redo | formatselect | ' +
+                                  'bold italic backcolor | alignleft aligncenter ' +
+                                  'alignright alignjustify | bullist numlist outdent indent | ',
+                               }"
+                               v-bind:content_css="false"
+                               v-bind:skin="false"
+                               v-model="kanbanCardDescriptionModel"
+                            />
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -57,6 +81,7 @@
         data() {
             return {
                 disableAddButton: true,
+                kanbanCardDescriptionModel: '',
                 kanbanCardTextModel: '',
             }
         },
@@ -65,6 +90,7 @@
                 //Create the data_to_send
                 const data_to_send = new FormData();
                 data_to_send.set('kanban_card_text',this.kanbanCardTextModel);
+                data_to_send.set('kanban_card_description',this.kanbanCardDescriptionModel);
                 data_to_send.set('kanban_level',this.levelResults[0]['pk']);
                 data_to_send.set('kanban_column',this.columnResults[0]['pk']);
 
