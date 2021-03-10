@@ -243,6 +243,12 @@ window.vm = new Vue({
         var loader_elem = document.getElementById("loader");
         loader_elem.style.transform = "translateY(-100vh)";
 
+        //Remove the element when we are finished with it
+        setTimeout(() => {
+            //Destroy the evidance
+            loader_elem.remove();
+        },500)
+
         //Run the feather app
         feather.replace();
     }
