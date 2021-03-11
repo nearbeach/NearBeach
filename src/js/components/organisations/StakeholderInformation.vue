@@ -12,13 +12,13 @@
                 </a>
             </div>
             <div class="organisation-link">
-                <i data-feather="external-link"></i> Website:
+                <IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> Website:
                 <a v-bind:href="stakeholderModel['organisation_website']" target="_blank">
                     {{ stakeholderModel['organisation_website'] }}
                 </a>
             </div>
             <div class="organisation-email">
-                <i data-feather="mail"></i> Email:
+                <IconifyIcon v-bind:icon="icons.mailIcon"></IconifyIcon> Email:
                 <a v-bind:href="`mailto:${stakeholderModel['organisation_email']}`">
                     {{stakeholderModel['organisation_email']}}
                 </a>
@@ -28,6 +28,10 @@
 </template>
 
 <script>
+    //Import icons
+    import linkOut from '@iconify-icons/akar-icons/link-out';
+    import mailIcon from '@iconify-icons/fe/mail';
+
     export default {
         name: "StakeholderInformation",
         props: {
@@ -36,6 +40,10 @@
         },
         data() {
             return {
+                icons: {
+                    linkOut: linkOut,
+                    mailIcon: mailIcon,
+                },
                 stakeholderModel: this.organisationResults[0]['fields'],
             }
         },

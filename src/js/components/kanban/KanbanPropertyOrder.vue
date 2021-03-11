@@ -20,7 +20,7 @@
                 >
                     <strong>{{item['title']}}</strong>
                     <span v-on:click="removeItem(item['id'])">
-                        <i data-feather="x-circle"></i>
+                        <IconifyIcon v-bind:icon="icons.xCircle"></IconifyIcon>
                     </span>
                 </div>
             </transition-group>
@@ -77,6 +77,11 @@
     //Validation
     import { required } from 'vuelidate/lib/validators'
 
+    //Icons
+    import infoCircle from '@iconify-icons/bi/info-circle';
+    import xCircle from '@iconify-icons/feather/x-circle';
+
+
     export default {
         name: "KanbanPropertyOrder",
         props: {
@@ -87,6 +92,10 @@
         },
         data() {
             return {
+                icons: {
+                    infoCircle: infoCircle,
+                    xCircle: xCircle,
+                },
                 localPropertyList: this.propertyList,
                 newPropertyItem: '',
                 singleItemId: '',
