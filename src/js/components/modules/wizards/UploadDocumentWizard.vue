@@ -39,7 +39,7 @@
                                 <input type="file"
                                        class="form-file-input"
                                        id="document"
-                                       allow="audio/*,image/*,video/*,text/*"
+                                       accept="audio/*,image/*,video/*,text/*"
                                        v-on:change="handleFileUploads($event.target.files)"
                                 >
                                 <label class="form-file-label"
