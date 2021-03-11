@@ -97,6 +97,9 @@ import bootstrap from 'bootstrap'
 //SCSS Library
 import '../sass/main.scss';
 
+//Import icons
+import IconifyIcon from '@iconify/vue';
+
 //TinyMce
 import Editor from '@tinymce/tinymce-vue'
 
@@ -210,6 +213,7 @@ Vue.component('NewPermissionSet', NewPermissionSet);
 Vue.component('NewUser', NewUser);
 Vue.component('UserInformation', UserInformation);
 Vue.component('ResetUserPassword', ResetUserPassword);
+Vue.component('IconifyIcon', IconifyIcon);
 
 //Validation
 import Vuelidate from 'vuelidate'
@@ -221,18 +225,12 @@ import 'vue-datetime/dist/vue-datetime.css'
 Vue.use(Datetime);
 Vue.component('datetime', Datetime);
 
-//Feater Icons
-const feather = require('feather-icons')
-
 //Construction of the VUE App
 window.vm = new Vue({
     el: "#app",
     components: {
         //Validation
         Vuelidate,
-
-        //Icons
-        feather,
     },
     data() {
         return {};
@@ -248,8 +246,5 @@ window.vm = new Vue({
             //Destroy the evidance
             loader_elem.remove();
         },500)
-
-        //Run the feather app
-        feather.replace();
     }
 });
