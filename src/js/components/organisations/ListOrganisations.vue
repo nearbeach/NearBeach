@@ -18,7 +18,7 @@
                     </a>
                 </div>
                 <div class="organisation-link">
-                    <i data-feather="external-link"></i> Website:
+                    <IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> Website:
                     <a v-bind:href="organisation['fields']['organisation_website']" target="_blank">
                         {{ organisation['fields']['organisation_website'] }}
                     </a>
@@ -35,10 +35,16 @@
 </template>
 
 <script>
+    //Mixins
+    import iconMixin from "../../mixins/iconMixin";
+
     export default {
         name: "ListOrganisations",
-        props: [
-            'organisationResults',
+        props: {
+            organisationResults: Array,
+        },
+        mixins: [
+            iconMixin,
         ],
         methods: {
 

@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><i data-feather="users"></i> Add Kanban Card Wizard</h2>
+                    <h2><IconifyIcon v-bind:icon="icons.cardChecklist"></IconifyIcon> Add Kanban Card Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -70,6 +70,9 @@
 <script>
     const axios = require('axios');
 
+    //Mixins
+    import iconMixin from "../../../mixins/iconMixin";
+
     export default {
         name: "NewKanbanCard",
         props: {
@@ -78,6 +81,9 @@
             levelResults: Array,
             kanbanBoardResults: Array,
         },
+        mixins: [
+            iconMixin,
+        ],
         data() {
             return {
                 disableAddButton: true,

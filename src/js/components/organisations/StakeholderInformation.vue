@@ -28,9 +28,8 @@
 </template>
 
 <script>
-    //Import icons
-    import linkOut from '@iconify-icons/akar-icons/link-out';
-    import mailIcon from '@iconify-icons/fe/mail';
+    //Mixins
+    import iconMixin from "../../mixins/iconMixin";
 
     export default {
         name: "StakeholderInformation",
@@ -40,16 +39,15 @@
         },
         data() {
             return {
-                icons: {
-                    linkOut: linkOut,
-                    mailIcon: mailIcon,
-                },
                 stakeholderModel: this.organisationResults[0]['fields'],
             }
         },
+        mixins: [
+            iconMixin,
+        ],
         computed: {
             getStakeholderImage: function() {
-                if (this.stakeholderModel['organisation_profile_picture'] == '') {
+                if (this.stakeholderModel['organisation_profile_picture'] === '') {
                     //There is no image - return the default image
                     return this.defaultStakeholderImage;
                 }

@@ -77,10 +77,8 @@
     //Validation
     import { required } from 'vuelidate/lib/validators'
 
-    //Icons
-    import infoCircle from '@iconify-icons/bi/info-circle';
-    import xCircle from '@iconify-icons/feather/x-circle';
-
+    //Mixins
+    import iconMixin from "../../mixins/iconMixin";
 
     export default {
         name: "KanbanPropertyOrder",
@@ -92,15 +90,14 @@
         },
         data() {
             return {
-                icons: {
-                    infoCircle: infoCircle,
-                    xCircle: xCircle,
-                },
                 localPropertyList: this.propertyList,
                 newPropertyItem: '',
                 singleItemId: '',
             }
         },
+        mixins: [
+            iconMixin,
+        ],
         validations: {
             localPropertyList: {
                 required,

@@ -1,13 +1,13 @@
 <template>
     <div>
-        <h2><i data-feather="link"></i> Requirement Links</h2>
+        <h2><IconifyIcon v-bind:icon="icons.linkIcon"></IconifyIcon> Requirement Links</h2>
         <p class="text-instructions">
             The following are links to other projects/tasks. You can link a Requirement to these other objects to
             symbolise a connection between the two.
         </p>
 
         <!-- REQUIREMENT LINKS -->
-        <div v-if="linkResults.length == 0"
+        <div v-if="linkResults.length === 0"
              class="requirement-item-spacer"
         >
             <div class="alert alert-dark">Sorry - there are no Links for this requirement.</div>
@@ -41,7 +41,7 @@
         </div>
         <hr>
 
-        <h2><i data-feather="link-2"></i> Requirement Item Links</h2>
+        <h2><IconifyIcon v-bind:icon="icons.linkIcon2"></IconifyIcon> Requirement Item Links</h2>
         <p class="text-instructions">
             The following are links for the Items to other projects/tasks.
         </p>
@@ -87,12 +87,18 @@
     import {Modal} from "bootstrap";
     const axios = require('axios');
 
+    //Mixins
+    import iconMixin from "../../../mixins/iconMixin";
+
     export default {
         name: "RequirementLinksModule",
         props: [
             'activateLazyLoading',
             'destination',
             'locationId',
+        ],
+        mixins: [
+            iconMixin,
         ],
         data() {
             return {

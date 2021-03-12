@@ -48,6 +48,8 @@
     "@iconify-icons/feather": "^1.1.0",
     "@iconify-icons/mdi": "^1.1.12",
     "@iconify-icons/typcn": "^1.1.0",
+    "@iconify/icons-bi": "^1.1.2",
+    "@iconify/icons-feather": "^1.1.0",
     "@iconify/vue": "^1.0.6",
     "@vue/test-utils": "^1.1.2",
     "clean-webpack-plugin": "^3.0.0",

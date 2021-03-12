@@ -123,17 +123,8 @@
     const axios = require('axios');
     import {Modal} from "bootstrap";
 
-    //Icons
-    import arrowUp from '@iconify-icons/akar-icons/arrow-up';
-    import bxBriefcase from '@iconify-icons/bx/bx-briefcase';
-    import documentPdf from '@iconify-icons/carbon/document-pdf';
-    import documentText from '@iconify-icons/typcn/document-text';
-    import folderIcon from '@iconify-icons/akar-icons/folder';
-    import imageIcon from '@iconify-icons/akar-icons/image';
-    import linkOut from '@iconify-icons/akar-icons/link-out';
-    import microsoftExcel from '@iconify-icons/mdi/microsoft-excel';
-    import microsoftPowerpoint from '@iconify-icons/mdi/microsoft-powerpoint';
-    import microsoftWord from '@iconify-icons/mdi/microsoft-word';
+    //Mixins
+    import iconMixin from "../../../mixins/iconMixin";
 
     export default {
         name: "DocumentsModule",
@@ -148,20 +139,11 @@
                 documentFilteredList: [],
                 folderList: [],
                 folderFilteredList: [],
-                icons: {
-                    arrowUp: arrowUp,
-                    bxBriefcase: bxBriefcase,
-                    documentPdf: documentPdf,
-                    documentText: documentText,
-                    folderIcon: folderIcon,
-                    imageIcon: imageIcon,
-                    linkOut: linkOut,
-                    microsoftExcel: microsoftExcel,
-                    microsoftPowerpoint: microsoftPowerpoint,
-                    microsoftWord: microsoftWord,
-                }
             }
         },
+        mixins: [
+            iconMixin,
+        ],
         methods: {
             addFolder: function() {
                 var addFolderModal = new Modal(document.getElementById('addFolderModal'));

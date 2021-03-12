@@ -6,7 +6,7 @@
         </p>
 
         <!-- TABLE OF BUGS -->
-        <div v-if="bugList.length == 0"
+        <div v-if="bugList.length === 0"
              class="spacer"
         >
             <div class="alert alert-dark">Sorry - there are no bugs associated with this {{destination}}</div>
