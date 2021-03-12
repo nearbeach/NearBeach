@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><i data-feather="users"></i> Add Bugs Wizard</h2>
+                    <h2><IconifyIcon v-bind:icon="icons.usersIcon"></IconifyIcon> Add Bugs Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"

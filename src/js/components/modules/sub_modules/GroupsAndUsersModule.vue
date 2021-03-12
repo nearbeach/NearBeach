@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- GROUPS -->
-        <h2><i data-feather="grid"></i> Groups</h2>
+        <h2><IconifyIcon v-bind:icon="icons.groupPresentation"></IconifyIcon> Groups</h2>
         <p class="text-instructions">
             The following list are all the Groups connected to this {{destination}}. Users will have to be included
             in these groups to be added to this {{destination}}
@@ -32,7 +32,7 @@
         <hr>
 
         <!-- USERS -->
-        <h2><i data-feather="users"></i> Users</h2>
+        <h2><IconifyIcon v-bind:icon="icons.userIcon"></IconifyIcon> Users</h2>
         <p class="text-instructions">
             The following are a list of users who are connected to this {{destination}}. Please note - users have to be
             a part of the groups list above.
@@ -97,6 +97,7 @@
 <script>
     //JavaScript extras
     import errorModalMixin from "../../../mixins/errorModalMixin";
+    import iconMixin from "../../../mixins/iconMixin";
 
     const axios = require('axios');
     import {Modal} from "bootstrap";
@@ -109,6 +110,7 @@
         ],
         mixins: [
             errorModalMixin,
+            iconMixin,
         ],
         data() {
             return {

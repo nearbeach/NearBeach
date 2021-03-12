@@ -12,7 +12,7 @@
         >
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><i data-feather="git-branch"></i> New Note</h2>
+                    <h2><IconifyIcon v-bind:icon="icons.noteAdd"></IconifyIcon> New Note</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -62,6 +62,7 @@
 <script>
     //JavaScript components
     import errorModalMixin from "../../../mixins/errorModalMixin";
+    import iconMixin from "../../../mixins/iconMixin";
 
     const axios = require('axios');
 
@@ -73,6 +74,7 @@
         ],
         mixins: [
             errorModalMixin,
+            iconMixin,
         ],
         data() {
             return {

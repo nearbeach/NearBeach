@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><i data-feather="x-octagon"></i> Bugs List</h2>
+        <h2><IconifyIcon v-bind:icon="icons.bugIcon"></IconifyIcon> Bugs List</h2>
         <p class="text-instructions">
             The following is a list of bugs associated with this {{destination}}
         </p>
@@ -65,7 +65,10 @@
     //JavaScript components
     const axios = require('axios');
     import {Modal} from "bootstrap";
+
+    //Mixins
     import errorModalMixin from '../../../mixins/errorModalMixin';
+    import iconMixin from "../../../mixins/iconMixin";
 
     export default {
         name: "BugsModule",
@@ -75,6 +78,7 @@
         ],
         mixins: [
             errorModalMixin,
+            iconMixin,
         ],
         data() {
             return {

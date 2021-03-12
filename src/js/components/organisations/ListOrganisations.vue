@@ -24,7 +24,7 @@
                     </a>
                 </div>
                 <div class="organisation-email">
-                    <i data-feather="mail"></i> Email:
+                    <IconifyIcon v-bind:icon="icons.mailIcon"></IconifyIcon> Email:
                     <a v-bind:href="`mailto:${organisation['fields']['organisation_email']}`">
                         {{organisation['fields']['organisation_email']}}
                     </a>

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><i data-feather="users"></i> Customers</h2>
+        <h2><IconifyIcon v-bind:icon="icons.userIcon"></IconifyIcon> Customers</h2>
         <p class="text-instructions">
             Below are a list of customers who are stakeholders to this {{destination}}.
         </p>
@@ -43,6 +43,7 @@
 <script>
     //JavaScript components
     import errorModalMixin from "../../../mixins/errorModalMixin";
+    import iconMixin from "../../../mixins/iconMixin";
 
     const axios = require('axios');
     import {Modal} from "bootstrap";
@@ -55,6 +56,7 @@
         ],
         mixins: [
             errorModalMixin,
+            iconMixin,
         ],
         data() {
             return {

@@ -74,13 +74,13 @@
                         {{stakeholderModel['organisation_name']}}
                     </div>
                     <div class="organisation-link">
-                        <i data-feather="external-link"></i> Website:
+                        <IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> Website:
                         <a v-bind:href="stakeholderModel['organisation_website']" target="_blank">
                             {{ stakeholderModel['organisation_website'] }}
                         </a>
                     </div>
                     <div class="organisation-email">
-                        <i data-feather="mail"></i> Email:
+                        <IconifyIcon v-bind:icon="icons.mailIcon"></IconifyIcon> Email:
                         <a v-bind:href="`mailto:${stakeholderModel['organisation_email']}`">
                             {{stakeholderModel['organisation_email']}}
                         </a>
@@ -140,6 +140,9 @@
 
     const axios = require('axios');
 
+    //Mixins
+    import iconMixin from "../../mixins/iconMixin";
+
     //Validation
     import { required, maxLength } from 'vuelidate/lib/validators';
 
@@ -151,6 +154,9 @@
             'defaultStakeholderImage',
             'statusList',
             'typeList',
+        ],
+        mixins: [
+            iconMixin,
         ],
         data() {
             return {

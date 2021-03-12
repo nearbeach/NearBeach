@@ -8,7 +8,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><i data-feather="link"></i> New Kanban Link Wizard</h2>
+                    <h2><IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> New Kanban Link Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -172,10 +172,11 @@
 </template>
 
 <script>
-    //JavaScript components
-    import errorModalMixin from "../../../mixins/errorModalMixin";
-
     const axios = require('axios');
+
+    //Mixins
+    import iconMixin from "../../../mixins/iconMixin";
+    import errorModalMixin from "../../../mixins/errorModalMixin";
 
     export default {
         name: "NewKanbanLinkWizard",
@@ -186,6 +187,7 @@
         },
         mixins: [
             errorModalMixin,
+            iconMixin,
         ],
         data() {
             return {

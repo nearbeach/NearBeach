@@ -78,7 +78,7 @@
                      role="tabpanel"
                      aria-labelledby="profile-tab"
                 >
-                    <h2><i data-feather="users"></i> Contacts</h2>
+                    <h2><IconifyIcon v-bind:icon="icons.userIcon"></IconifyIcon> Contacts</h2>
                     <p class="text-instructions">
                         Below are a list of contacts who are connected to this organisation.
                     </p>
@@ -138,6 +138,9 @@
 <script>
     import { Modal } from "bootstrap";
 
+    //Mixins
+    import iconMixin from "../../mixins/iconMixin";
+
     export default {
         name: "OrganisationModules",
         props: {
@@ -146,6 +149,9 @@
             locationId: Number,
             titleList: Array,
         },
+        mixins: [
+            iconMixin,
+        ],
         methods: {
             addNewContact: function() {
                 var new_customer_modal = new Modal(document.getElementById('addCustomerModal'));

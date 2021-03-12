@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><i data-feather="link-2"></i> Requirement Item Links</h2>
+        <h2><IconifyIcon v-bind:icon="icons.linkIcon2"></IconifyIcon> Requirement Item Links</h2>
         <p class="text-instructions">
             The following are links for the Items to other projects/tasks.
         </p>
@@ -55,11 +55,17 @@
     const axios = require('axios');
     import {Modal} from "bootstrap";
 
+    //Mixins
+    import iconMixin from "../../../mixins/iconMixin";
+
     export default {
         name: "RequirementItemLinksModule",
-        props: [
-            'destination',
-            'locationId',
+        props: {
+            destination: String,
+            locationId: Number,
+        },
+        mixins: [
+            iconMixin,
         ],
         data() {
             return {

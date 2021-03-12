@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><i data-feather="clipboard"></i> Requirement Items</h2>
+        <h2><IconifyIcon v-bind:icon="icons.clipboardIcon"></IconifyIcon> Requirement Items</h2>
         <p class="text-instructions">
             Requirements should be broken down into smaller compoenents called Requirement Items.
         </p>
@@ -64,10 +64,16 @@
     import {Modal} from "bootstrap";
     const axios = require('axios');
 
+    //Mixins
+    import iconMixin from "../../../mixins/iconMixin";
+
     export default {
         name: "RequirementItemsModule",
         props: [
             'locationId',
+        ],
+        mixins: [
+            iconMixin,
         ],
         components: {
             axios,
