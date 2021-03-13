@@ -21,7 +21,11 @@
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Request for Change Type: </label>
+                        <label>
+                            Request for Change Type:
+                            <span class="error" v-if="!$v.rfcTypeModel.required && $v.rfcTypeModel.$dirty"
+                            > Please suppy a title.</span>
+                        </label>
                         <v-select v-bind:options="rfcType"
                                   v-bind:disabled="isReadOnly"
                                   v-model="rfcTypeModel"
@@ -51,6 +55,13 @@
                     </p>
                 </div>
                 <div class="row col-md-8">
+                    <!-- Validation row -->
+                    <div class="col-md-12">
+                        <span class="error" v-if="checkDateValidation"
+                            > Please select an appropriate date for ALL fields.</span>
+                    </div>
+
+                    <!-- Dates Row -->
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label>Implementation Start: </label>
@@ -141,6 +152,9 @@
     import errorModalMixin from "../../mixins/errorModalMixin";
     import loadingModalMixin from "../../mixins/loadingModalMixin";
 
+    //Validation
+    import { required, maxLength } from 'vuelidate/lib/validators';
+
     export default {
         name: "RfcInformation",
         props: {
@@ -163,10 +177,8 @@
             return {
                 rfcChangeLeadFixList: [],
                 rfcChangeLeadModel: '',
-                rfcData: {
-                    'rfcTitleModel': this.rfcResults[0]['fields']['rfc_title'],
-                    'rfcSummaryModel': this.rfcResults[0]['fields']['rfc_summary'],
-                },
+                rfcTitleModel: this.rfcResults[0]['fields']['rfc_title'],
+                rfcSummaryModel: this.rfcResults[0]['fields']['rfc_summary'],
                 rfcImplementationStartModel: this.rfcResults[0]['fields']['rfc_implementation_start_date'],
                 rfcImplementationEndModel: this.rfcResults[0]['fields']['rfc_implementation_end_date'],
                 rfcReleaseModel: this.rfcResults[0]['fields']['rfc_implementation_release_date'],
@@ -188,11 +200,56 @@
                 rfcVersionModel: this.rfcResults[0]['fields']['rfc_version_number'],
             }
         },
+        validations: {
+            rfcTitleModel: {
+                required,
+            },
+            rfcSummaryModel: {
+                required,
+                maxLength: maxLength(630000),
+            },
+            rfcImplementationStartModel: {
+                required,
+            },
+            rfcImplementationEndModel: {
+                required,
+            },
+            rfcReleaseModel: {
+                required,
+            },
+            rfcTypeModel: {
+                required,
+            },
+            rfcVersionModel: {
+                maxLength: maxLength(25),
+            },
+        },
+        computed: {
+            checkDateValidation: function() {
+                //Check the validation for each date
+                const start_date = !this.$v.rfcImplementationStartModel.required && this.$v.rfcImplementationStartModel.$dirty,
+                    end_date = !this.$v.rfcImplementationEndModel.required && this.$v.rfcImplementationEndModel.$dirty,
+                    release_date = !this.$v.rfcReleaseModel.required && this.$v.rfcReleaseModel.$dirty;
+
+                //If there is ONE invalidation, we send back true => invalid
+                return start_date || end_date || release_date;
+            }
+        },
         methods: {
             updateRFC: function() {
+                //Check form validation
+                this.$v.$touch();
+
+                if (this.$v.$invalid) {
+                    this.showValidationErrorModal();
+
+                    //Just return - as we do not need to do the rest of this function
+                    return;
+                }
+
                 const data_to_send = new FormData();
-                data_to_send.set('rfc_title',this.rfcData['rfcTitleModel']); //TODO FIND OUT WHERE THIS VALUE IS!!!
-                data_to_send.set('rfc_summary', this.rfcData['rfcSummaryModel']); //TODO FIND OUT WHERE THIS VALUES IS!!!
+                data_to_send.set('rfc_title',this.rfcTitleModel);
+                data_to_send.set('rfc_summary', this.rfcSummaryModel);
                 data_to_send.set('rfc_type', this.rfcTypeModel['value']);
                 data_to_send.set('rfc_version_number', this.rfcVersionModel);
                 data_to_send.set('rfc_implementation_start_date', this.rfcImplementationStartModel);
@@ -230,7 +287,7 @@
             },
             updateValues: function(data) {
                 //Update the value
-                this.rfcData[data['modelName']] = data['modelValue'];
+                this['_data'][data['modelName']] = data['modelValue'];
             },
         },
         mounted() {

@@ -135,6 +135,10 @@
             },
             locationId: Number,
             rfcId: Number,
+            rfcStatus: {
+                type: Number,
+                default: 0,
+            },
             userList: Array,
         },
         mixins: [
@@ -147,11 +151,11 @@
         computed: {
             isCompleted: function() {
                 var count_of_uncompleted_tasks = this.changeTaskList.filter(changeTask => {
-                    return changeTask['fields']['change_task_status'] != 5;
+                    return changeTask['fields']['change_task_status'] !== 5;
                 }).length;
 
                 //Return true when there are no uncompleted tasks (all finished)
-                return count_of_uncompleted_tasks == 0;
+                return count_of_uncompleted_tasks === 0 && this.rfcStatus === 3;
             }
         },
         methods: {

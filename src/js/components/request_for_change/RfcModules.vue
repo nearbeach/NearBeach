@@ -87,6 +87,7 @@
                 >
                     <rfc-risk v-bind:rfc-results="rfcResults"
                               v-bind:is-read-only="isReadOnly"
+                              v-on:update_validation="updateValidation($event)"
                               v-on:update_values="updateValues($event)"
                     ></rfc-risk>
 
@@ -111,6 +112,7 @@
                 >
                     <rfc-implementation-plan v-bind:rfc-results="rfcResults"
                                              v-bind:is-read-only="isReadOnly"
+                                             v-on:update_validation="updateValidation($event)"
                                              v-on:update_values="updateValues($event)"
                     ></rfc-implementation-plan>
 
@@ -135,6 +137,7 @@
                 >
                     <rfc-backout-plan v-bind:rfc-results="rfcResults"
                                       v-bind:is-read-only="isReadOnly"
+                                      v-on:update_validation="updateValidation($event)"
                                       v-on:update_values="updateValues($event)"
                     ></rfc-backout-plan>
 
@@ -159,6 +162,7 @@
                 >
                     <rfc-test-plan v-bind:rfc-results="rfcResults"
                                    v-bind:is-read-only="isReadOnly"
+                                   v-on:update_validation="updateValidation($event)"
                                    v-on:update_values="updateValues($event)"
                     ></rfc-test-plan>
 
@@ -186,6 +190,7 @@
                                         v-bind:user-list="userList"
                                         v-bind:is-deployment="isDeployment"
                                         v-bind:rfc-id="rfcResults[0]['pk']"
+                                        v-bind:rfc-status="rfcResults[0]['fields']['rfc_status']"
                                         v-on:update_values="updateValues($event)"
                     ></rfc-run-sheet-list>
                 </div>
@@ -235,6 +240,12 @@
                 'rfcTestPlanModel': '',
                 'rfcTypeModel': {},
             },
+            validationData: {
+                'tab_2': true,
+                'tab_3': true,
+                'tab_4': true,
+                'tab_5': true,
+            }
         }),
         methods: {
             sendData: function(data_to_send,url) {
@@ -253,6 +264,14 @@
                 })
             },
             updateBackoutPlan: function() {
+                if (this.validationData['tab_4'] === false) {
+                    //The data isn't valid. Notify the user, and do nothing else
+                    this.showErrorModal("Please fill out all data","Backout Plan","");
+
+                    //Doing nothing else
+                    return;
+                }
+
                 const data_to_send = new FormData();
                 data_to_send.set('text_input', this.rfcData['rfcBackoutPlan']);
 
@@ -260,6 +279,14 @@
                 this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/backout/`)
             },
             updateImplementation: function() {
+                if (this.validationData['tab_3'] === false) {
+                    //The data isn't valid. Notify the user, and do nothing else
+                    this.showErrorModal("Please fill out all data","Implementation","");
+
+                    //Doing nothing else
+                    return;
+                }
+
                 const data_to_send = new FormData();
                 data_to_send.set('text_input', this.rfcData['rfcImplementationPlanModel']);
                 
@@ -267,6 +294,14 @@
                 this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/implementation/`);
             },
             updateRisk: function() {
+                if (this.validationData['tab_2'] === false) {
+                    //The data isn't valid. Notify the user, and do nothing else
+                    this.showErrorModal("Please fill out all data","Risk","");
+
+                    //Doing nothing else
+                    return;
+                }
+
                 //Create the data to send
                 const data_to_send = new FormData();
                 data_to_send.set('priority_of_change', this.rfcData['rfcPriorityModel']['value']);
@@ -277,7 +312,19 @@
                 //Send the data
                 this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/risk/`)
             },
+            updateValidation: function(data) {
+                //Update the value
+                this.validationData[data['tab']] = data['value'];
+            },
             updateTestPlan: function() {
+                if (this.validationData['tab_5'] === false) {
+                    //The data isn't valid. Notify the user, and do nothing else
+                    this.showErrorModal("Please fill out all data","Test Plan","");
+
+                    //Doing nothing else
+                    return;
+                }
+
                 const data_to_send = new FormData();
                 data_to_send.set('text_input', this.rfcData['rfcTestPlanModel']);
 
