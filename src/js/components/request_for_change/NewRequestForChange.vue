@@ -126,7 +126,11 @@
                 return this.validationData[`tab_${this.currentTab}`];
             },
             onChange: function(prevIndex,nextIndex) {
+                //Update current tab once the validation has been completed.
                 this.currentTab = nextIndex;
+
+                //Scroll to the top of the page
+                window.scrollTo(0,60);
             },
             onComplete: function() {
                 // Setup the new data form
