@@ -170,12 +170,31 @@ class ModelsTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         print("Login Page working correctly")
 
+    def test_logging_in_as_admin(self):
+        """
+        Test to see if we can login
+        :return:
+        """
+        c = Client()
+        response = self.client.post(
+            '/login',
+            {
+                'username': 'admin',
+                'password': 'test',
+            },
+            follow=True
+        )
+        # User should be logged in now
+
+        self.assertTrue(response.context['user'].is_authenticated)
+
 
 class NonLoggedInRedirectionTestCases(TestCase):
     """
     The following test cases will look at those users who have not logged in. They will force the user back to the
     login page.
     """
+
     def test_login_page(self):
         """
         Before completing any other tests. We need to make sure that the login page is working fine.
@@ -221,8 +240,6 @@ class NonLoggedInRedirectionTestCases(TestCase):
         print("Non logged in user redirect from <new_requirement> to <login> screen")
 
 
-
-
 class LoggedInTestCases(TestCase):
     def test_login_page(self):
         """
@@ -265,8 +282,7 @@ class LoggedInTestCases(TestCase):
 
         print("Administration User successfully loaded <new_requirement>")
 
-
-    def logout_administrator(self):
+    def logout(self):
         c = Client()
         response = c.get("/logout")
 
@@ -280,4 +296,3 @@ class LoggedInTestCases(TestCase):
         )
 
         print("Administrator successfully logged out.")
-

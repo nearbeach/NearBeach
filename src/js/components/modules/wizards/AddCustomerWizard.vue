@@ -62,12 +62,10 @@
 </template>
 
 <script>
-    //JavaScript components
-    import errorModalMixin from "../../../mixins/errorModalMixin";
-
     const axios = require('axios');
 
     //Mixins
+    import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
 
     export default {

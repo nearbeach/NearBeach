@@ -218,7 +218,6 @@
                 `/documentation/get/max_upload/`,
             ).then(response => {
                 //Set the value
-                console.log("GET RESPONSE: ",response);
                 this.maxUploadSize = response['data']['max_upload_size'];
             }).catch(error => {
                 this.showErrorModal(error,this.destination);

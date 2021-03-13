@@ -111,6 +111,7 @@
 <script>
     //JavaScript extras
     import errorModalMixin from "../../../mixins/errorModalMixin";
+    import iconMixin from "../../../mixins/iconMixin";
 
     const axios = require('axios');
 
@@ -122,6 +123,7 @@
         ],
         mixins: [
             errorModalMixin,
+            iconMixin,
         ],
         data() {
             return {
