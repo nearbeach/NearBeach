@@ -11,21 +11,33 @@
         <div class="col-md-8" style="min-height: 610px;">
             <div class="row">
                 <div class="col-md-4">
-                    <label>Priority of Change</label>
+                    <label>
+                        Priority of Change
+                        <span class="error" v-if="!$v.rfcPriorityModel.required && $v.rfcPriorityModel.$dirty"
+                        > Please select a Change Type.</span>
+                    </label>
                     <v-select v-bind:options="rfcPriority"
                               v-bind:disabled="isReadOnly"
                               v-model="rfcPriorityModel"
                     ></v-select>
                 </div>
                 <div class="col-md-4">
-                    <label>Risk of Change</label>
+                    <label>
+                        Risk of Change
+                        <span class="error" v-if="!$v.rfcRiskModel.required && $v.rfcRiskModel.$dirty"
+                        > Please select a Change Type.</span>
+                    </label>
                     <v-select v-bind:options="rfcRisk"
                               v-bind:disabled="isReadOnly"
                               v-model="rfcRiskModel"
                     ></v-select>
                 </div>
                 <div class="col-md-4">
-                    <label>Impact of Change</label>
+                    <label>
+                        Impact of Change
+                        <span class="error" v-if="!$v.rfcImpactModel.required && $v.rfcImpactModel.$dirty"
+                        > Please select a Change Type.</span>
+                    </label>
                     <v-select v-bind:options="rfcImpact"
                               v-bind:disabled="isReadOnly"
                               v-model="rfcImpactModel"
@@ -36,8 +48,8 @@
 
             <!-- RFC SUMMARY -->
             <label>Risk Association:
-<!--                <span class="error" v-if="!$v.projectDescriptionModel.required && $v.projectDescriptionModel.$dirty"> Please supply a description.</span>-->
-<!--                <span class="error" v-if="!$v.projectDescriptionModel.maxLength"> Sorry - too many characters.</span>-->
+                <span class="error" v-if="!$v.rfcRiskSummaryModel.required && $v.rfcRiskSummaryModel.$dirty"> Please supply a description.</span>
+                <span class="error" v-if="!$v.rfcRiskSummaryModel.maxLength"> Sorry - too many characters.</span>
             </label><br>
             <img src="/static/NearBeach/images/placeholder/body_text.svg"
                  class="loader-image"
@@ -61,6 +73,8 @@
 </template>
 
 <script>
+    import { required, maxLength } from 'vuelidate/lib/validators';
+
     export default {
         name: "RfcRisk",
         props: {
@@ -99,7 +113,30 @@
             ],
             rfcImpactModel: '',
         }),
+        validations: {
+            rfcPriorityModel: {
+                required,
+            },
+            rfcRiskModel: {
+                required,
+            },
+            rfcRiskSummaryModel: {
+                required,
+                maxLength: maxLength(630000),
+            },
+            rfcImpactModel: {
+                required,
+            },
+        },
         methods: {
+            updateValidation: function() {
+                this.$v.$touch();
+
+                this.$emit('update_validation', {
+                    'tab': 'tab_2',
+                    'value': !this.$v.$invalid,
+                });
+            },
             updateValues: function(modelName,modelValue) {
                 this.$emit('update_values',{
                     'modelName': modelName,
@@ -109,25 +146,32 @@
         },
         watch: {
             rfcPriority: function() {
-                this.updateValues('rfcPriority',this.rfcPriority)
+                this.updateValues('rfcPriority',this.rfcPriority);
+                this.updateValidation();
             },
             rfcPriorityModel: function() {
                 this.updateValues('rfcPriorityModel',this.rfcPriorityModel)
+                this.updateValidation();
             },
             rfcRisk: function() {
                 this.updateValues('rfcRisk',this.rfcRisk)
+                this.updateValidation();
             },
             rfcRiskModel: function() {
                 this.updateValues('rfcRiskModel',this.rfcRiskModel)
+                this.updateValidation();
             },
             rfcRiskSummaryModel: function() {
                 this.updateValues('rfcRiskSummaryModel',this.rfcRiskSummaryModel)
+                this.updateValidation();
             },
             rfcImpact: function() {
                 this.updateValues('rfcImpact',this.rfcImpact)
+                this.updateValidation();
             },
             rfcImpactModel: function() {
                 this.updateValues('rfcImpactModel',this.rfcImpactModel)
+                this.updateValidation();
             },
         },
         mounted() {
@@ -150,6 +194,9 @@
                     return row['value'] === this.rfcResults[0]['fields']['rfc_impact'];
                 })[0];
             }
+
+            //Just run the validations to show the error messages
+            this.$v.$touch();
         }
     }
 </script>

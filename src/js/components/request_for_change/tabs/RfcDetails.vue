@@ -12,7 +12,11 @@
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <label>Request for Change Type: </label>
+                    <label>
+                        Request for Change Type:
+                        <span class="error" v-if="!$v.rfcTypeModel.required && $v.rfcTypeModel.$dirty"
+                        > Please select a Change Type.</span>
+                    </label>
                     <v-select v-bind:options="rfcType"
                               v-model="rfcTypeModel"
                     ></v-select>
@@ -20,7 +24,10 @@
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <label>Version/Release Number</label>
+                    <label>
+                        Version/Release Number
+                        <span class="error" v-if="!$v.rfcVersionModel.maxLength"> Sorry - too many characters.</span>
+                    </label>
                     <input type="text"
                            maxlength="25"
                            class="form-control"
@@ -41,6 +48,13 @@
                 </p>
             </div>
             <div class="row col-md-8">
+                <!-- Validation row -->
+                <div class="col-md-12">
+                    <span class="error" v-if="checkDateValidation"
+                        > Please select an appropriate date for ALL fields.</span>
+                </div>
+
+                <!-- Dates Row -->
                 <div class="col-sm-4">
                     <div class="form-group">
                         <label>Implementation Start: </label>
@@ -85,7 +99,11 @@
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <label>LEAD: </label>
+                    <label>
+                        LEAD:
+                        <span class="error" v-if="!$v.rfcChangeLeadModel.required && $v.rfcChangeLeadModel.$dirty"
+                        > Please select a Change Lead.</span>
+                    </label>
                     <v-select :options="rfcChangeLeadFixList"
                               @search="fetchOptions"
                               v-model="rfcChangeLeadModel"
@@ -98,7 +116,8 @@
         <!-- Group Permissions -->
         <hr>
         <group-permissions v-bind:group-results="groupResults"
-                           v-bind:destination="'project'"
+                           v-bind:destination="'request_for_change'"
+                           v-bind:is-dirty="$v.groupModel.$dirty"
                            v-on:update_group_model="updateGroupModel($event)"
         ></group-permissions>
     </div>
@@ -109,6 +128,9 @@
 
     //Mixins
     import searchMixin from "../../../mixins/searchMixin";
+
+    //Validation
+    import { required, maxLength } from 'vuelidate/lib/validators';
 
     export default {
         name: "RfcDetails",
@@ -121,6 +143,7 @@
         ],
         data() {
             return {
+                groupModel: [],
                 rfcChangeLeadFixList: [],
                 rfcChangeLeadModel: '',
                 rfcImplementationStartModel: '',
@@ -143,6 +166,40 @@
                 rfcTypeModel: '',
                 rfcVersionModel: '',
                 searchTimeout: '',
+            }
+        },
+        validations: {
+            groupModel: {
+                required,
+            },
+            rfcChangeLeadModel: {
+                required,
+            },
+            rfcImplementationStartModel: {
+                required,
+            },
+            rfcImplementationEndModel: {
+                required,
+            },
+            rfcReleaseModel: {
+                required,
+            },
+            rfcTypeModel: {
+                required,
+            },
+            rfcVersionModel: {
+                maxLength: maxLength(25),
+            },
+        },
+        computed: {
+            checkDateValidation: function() {
+                //Check the validation for each date
+                const start_date = !this.$v.rfcImplementationStartModel.required && this.$v.rfcImplementationStartModel.$dirty,
+                    end_date = !this.$v.rfcImplementationEndModel.required && this.$v.rfcImplementationEndModel.$dirty,
+                    release_date = !this.$v.rfcReleaseModel.required && this.$v.rfcReleaseModel.$dirty;
+
+                //If there is ONE invalidation, we send back true => invalid
+                return start_date || end_date || release_date;
             }
         },
         methods: {
@@ -206,6 +263,15 @@
 
                 //Update up stream
                 this.updateValues('groupModel',data);
+                this.updateValidation();
+            },
+            updateValidation: function() {
+                this.$v.$touch();
+
+                this.$emit('update_validation', {
+                    'tab': 'tab_1',
+                    'value': !this.$v.$invalid,
+                });
             },
             updateValues: function(modelName,modelValue) {
                 this.$emit('update_values',{
@@ -217,32 +283,43 @@
         watch: {
             rfcChangeLeadModel: function() {
                 this.updateValues('rfcChangeLeadModel',this.rfcChangeLeadModel);
+                this.updateValidation();
             },
             rfcImplementationStartModel: function() {
                 this.updateValues('rfcImplementationStartModel',this.rfcImplementationStartModel);
+                this.updateValidation();
             },
             rfcImplementationEndModel: function() {
                 this.updateValues('rfcImplementationEndModel',this.rfcImplementationEndModel);
+                this.updateValidation();
             },
             rfcReleaseModel: function() {
                 this.updateValues('rfcReleaseModel',this.rfcReleaseModel);
+                this.updateValidation();
             },
             rfcStatus: function() {
                 this.updateValues('rfcStatus',this.rfcStatus);
+                this.updateValidation();
             },
             rfcType: function() {
                 this.updateValues('rfcType',this.rfcType);
+                this.updateValidation();
             },
             rfcTypeModel: function() {
                 this.updateValues('rfcTypeModel',this.rfcTypeModel);
+                this.updateValidation();
             },
             rfcVersionModel: function() {
                 this.updateValues('rfcVersionModel',this.rfcVersionModel);
+                this.updateValidation();
             },
         },
         mounted() {
             //Get the lead user data
             this.getChangeLeadData()
+
+            //Just run the validations to show the error messages
+            this.$v.$touch();
         }
     }
 </script>
