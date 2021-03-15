@@ -74,20 +74,19 @@
     const axios = require('axios');
 
     import {FormWizard, TabContent} from 'vue-form-wizard';
-    // import 'vue-form-wizard/dist/vue-form-wizard.min.css';
 
     // Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
 
     export default {
         name: "NewRequestForChange",
-        components: {
-            FormWizard,
-            TabContent
-        },
         props: {
             groupResults: Array,
             userResults: Array,
+        },
+        components: {
+            FormWizard,
+            TabContent,
         },
         mixins: [
             errorModalMixin,

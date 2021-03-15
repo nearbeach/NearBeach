@@ -121,6 +121,10 @@ const axios = require('axios');
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
 axios.defaults.xsrfCookieName = "csrftoken"
 
+//FormWizard
+import 'vue-form-wizard/dist/vue-form-wizard.min.css';
+
+
 //Global Vue Components
 Vue.component('vSelect',vSelect);
 Vue.component('Editor',Editor);
@@ -221,9 +225,10 @@ Vue.use(Vuelidate)
 
 //Vue-datetime
 import { Datetime } from 'vue-datetime';
-// import 'vue-datetime/dist/vue-datetime.css'
+import 'vue-datetime/dist/vue-datetime.css'
 Vue.use(Datetime);
 Vue.component('datetime', Datetime);
+
 
 //Construction of the VUE App
 window.vm = new Vue({
