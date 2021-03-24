@@ -42,11 +42,17 @@
     //Validation
     import { email, required } from 'vuelidate/lib/validators';
 
+    //Mixin
+    import iconMixin from "../../mixins/iconMixin";
+
     export default {
         name: "NewCustomerModal",
         props: [
                 'organisationId',
                 'titleList',
+        ],
+        mixins: [
+            iconMixin,
         ],
         data() {
             return {

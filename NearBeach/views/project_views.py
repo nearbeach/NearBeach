@@ -13,10 +13,12 @@ from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
 from NearBeach.user_permissions import return_user_permission_level
+from NearBeach.check_user_permissions import project_permissions
 
 import json, urllib3
 
 
+@project_permissions
 @login_required(login_url='login',redirect_field_name="")
 def new_project(request):
     """

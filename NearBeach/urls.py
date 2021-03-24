@@ -1,15 +1,6 @@
-from django.urls import path, include
-
-# The following two imports are for the static files
-from django.conf import settings
-from django.conf.urls.static import static
-from django.urls import re_path
-
 # Password reset
 from django.contrib.auth import views as auth_views
-
-# 404 and 500 pages
-from django.conf.urls import handler404, handler500
+from django.urls import path
 
 from .views import admin_views, \
     authentication_views, \
@@ -30,6 +21,9 @@ from .views import admin_views, \
     search_views, \
     task_views, \
     user_views
+
+# The following two imports are for the static files
+# 404 and 500 pages
 
 urlpatterns = [
     path('', dashboard_views.dashboard, name='dashboard'),
@@ -68,7 +62,6 @@ urlpatterns = [
     path('group_information/<int:group_id>/save/', group_views.group_information_save, name='group_information_save'),
     path('group_information/check_group_name/', group_views.check_group_name, name='check_group_name'),
 
-
     # Kanban
     path('kanban_information/<int:kanban_board_id>/', kanban_views.kanban_information, name='kanban_information'),
     path('kanban_information/<int:kanban_board_id>/<object_lookup>/add_link/', kanban_views.add_kanban_link,
@@ -87,11 +80,12 @@ urlpatterns = [
 
     # Permission Sets
     path('permission_set_information/<int:permission_set_id>/', permission_set_views.permission_set_information,
-         name='permission_set_information'),
+         name='permission_set_information'
+    ),
     path('permission_set_information/<int:permission_set_id>/save/',
          permission_set_views.permission_set_information_save,
          name='permission_set_information_save'
-     ),
+    ),
 
     # Private files
     path('private/<uuid:document_key>/', document_views.private_download_file, name='private_download_file'),
@@ -270,7 +264,7 @@ urlpatterns = [
     ),
 ]
 
-
+handler403 = error_views.error_403
 handler404 = error_views.error_404
 handler500 = error_views.error_500
 
