@@ -7,12 +7,6 @@ jobs:
       - image: circleci/python:3.6.4
         environment: # environment variables for primary container
           PIPENV_VENV_IN_PROJECT: true
-      - image: circleci/mysql:8.0.4
-        environment:
-          MYSQL_ROOT_PASSWORD: rootpw
-          MYSQL_DATABASE: test_db
-          MYSQL_USER: user
-          MYSQL_PASSWORD: passw0rd
     steps: # steps that comprise the `build` job
       - checkout # check out source code to working directory
       - run: sudo chown -R circleci:circleci /usr/local/bin

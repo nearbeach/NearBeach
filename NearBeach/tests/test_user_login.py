@@ -2,8 +2,9 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
+
 class LogInTest(TestCase):
-    fixtures = ['NearBeach_empty_setup']
+    fixtures = ['NearBeach_basic_setup.json']
     def setUp(self):
         self.credentials = {
             'username': 'admin',
