@@ -12,7 +12,7 @@ def login_user(c: object, self: object) -> object:
     self.assertTrue(response.context['user'].is_active)
 
 
-class AdminUserCanAccessAllObjects(TestCase):
+class AdminUserPermissionTest(TestCase):
     """
     The admin user will have full access to the whole site - even if they are not associated with
     a group that is associated with the object.
@@ -43,7 +43,7 @@ class AdminUserCanAccessAllObjects(TestCase):
         print("Admin user can access a project without overlapping groups")
 
 
-class TeamLeaderCanAccessGroupObjects(TestCase):
+class TeamLeaderPermissionTest(TestCase):
     """
     The team leader will only have access to objects that have at least one cross over group with that
     particular team leader.
@@ -73,7 +73,7 @@ class TeamLeaderCanAccessGroupObjects(TestCase):
         print("Team Lead can NOT access a project without overlapping groups")
 
 
-class TeamMemberCanAccessGroupObjects(TestCase):
+class TeamMemberPermissionTest(TestCase):
     """
     The team MEMBER will only have access to objects that have at least one cross over group with that
     particular team leader.
@@ -103,7 +103,7 @@ class TeamMemberCanAccessGroupObjects(TestCase):
         print("Team Member can NOT access a project without overlapping groups")
 
 
-class TeamInternCanAccessGroupObjects(TestCase):
+class TeamInternPermissionTest(TestCase):
     """
     The team leader will only have access to objects that have at least one cross over group with that
     particular team leader.
@@ -133,7 +133,7 @@ class TeamInternCanAccessGroupObjects(TestCase):
         print("Team Intern can NOT access a project without overlapping groups")
 
 
-class ReadOnlyCanAccessGroupObjects(TestCase):
+class ReadOnlyPermissionTest(TestCase):
     """
     The read only user should be forwarded to the read only template, if they have access to at least
     one group that the object has been assigned to.
