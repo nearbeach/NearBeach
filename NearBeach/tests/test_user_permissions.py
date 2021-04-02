@@ -157,7 +157,7 @@ class ReadOnlyPermissionTest(TestCase):
         self.assertEqual(response.status_code, 200)
         print("Read only can access a project with overlapping groups")
 
-        # # Make sure the admin user can open up the project
+        # Make sure the admin user can open up the project
         # response = c.get(reverse('project_information', args=['2']))
         # self.assertEqual(response.status_code, 403)
         # print("Read Only can NOT access a project without overlapping groups")

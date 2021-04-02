@@ -29,10 +29,6 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'NearBeach.apps.NearBeachConfig',
-    # 'django.contrib.humanize',
-    # 'tinymce',
-    # 'django_select2',
-    # 'phonenumber_field',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -83,6 +79,17 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'nearbeach_test',
+#         'USER': 'root',
+#         'PASSWORD': '',
+#         'HOST': 'localhost',
+#         'PORT': '3306',
+#     }
+# }
 
 
 # Password validation

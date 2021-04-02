@@ -16,15 +16,13 @@ jobs:
           name: Install pipenv and coverage
           command: |
             sudo pip3 install --upgrade pip
-            sudo pip3 install pipenv coverage urllib3
-            sudo pip3 install -r ./requirements.txt
+            sudo pip3 install pipenv coverage urllib3 django simplejson pillow
             pipenv install
       - run:
           command: |
             pipenv run coverage run manage.py test
             pipenv run coverage report
             pipenv run coverage html
-            ls -al
       - store_test_results: # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
           path: ~/NearBeach
           desintation: tr1
