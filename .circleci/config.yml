@@ -21,14 +21,22 @@ jobs:
           name: Wait for db
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
       - run:
-          name: build
+          name: Building Virtual Environment
           command: |
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
             pip install coverage mysqlclient
       - run:
-          name: test
+          name: Running Tests
           command: |
             . venv/bin/activate
             coverage run manage.py test
+            coverage report
+            coverage html
+      - store_test_results: # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
+          path: ~/NearBeach
+          desintation: tr1
+      - store_artifacts: # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
+          path: ~/NearBeach/htmlcov
+          destination: tr1
