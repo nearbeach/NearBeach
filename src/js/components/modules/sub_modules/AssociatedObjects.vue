@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><i data-feather="compass"></i> Associated Objects</h2>
+        <h2><IconifyIcon v-bind:icon="icons.objectStorage"></IconifyIcon> Associated Objects</h2>
         <hr v-if="projectResults.length + taskResults.length > 0">
 
         <!-- Project Results -->
@@ -135,11 +135,17 @@
 <script>
     const axios = require('axios');
 
+    //Mixins
+    import iconMixin from "../../../mixins/iconMixin";
+
     export default {
         name: "AssociatedObjects",
         props: [
             'destination',
             'locationId',
+        ],
+        mixins: [
+            iconMixin,
         ],
         data() {
             return {

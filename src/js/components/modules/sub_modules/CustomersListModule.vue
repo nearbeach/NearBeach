@@ -9,7 +9,8 @@
                     <div class="customer-card-name">
                         {{customer['fields']['customer_first_name']}} {{customer['fields']['customer_last_name']}}
                     </div>
-                    <div class="customer-card-email"><i data-feather="email"></i>
+                    <div class="customer-card-email">
+                        <IconifyIcon v-bind:icon="icons.email"></IconifyIcon>
                         {{customer['fields']['customer_email']}}
                     </div>
                 </div>
@@ -19,10 +20,16 @@
 </template>
 
 <script>
+    //Mixins
+    import iconMixin from "../../../mixins/iconMixin";
+
     export default {
         name: "CustomersListModule",
         props: [
             'customerResults',
+        ],
+        mixins: [
+            iconMixin,
         ],
         data() {
             return {

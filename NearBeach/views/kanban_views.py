@@ -47,7 +47,13 @@ def add_kanban_link(request,kanban_board_id,object_lookup):
     )
 
     # Check the data
-    kanban_card_submit.project = form.cleaned_data[object_lookup]
+    if object_lookup == 'project':
+        kanban_card_submit.project = form.cleaned_data[object_lookup]
+    elif object_lookup == 'task':
+        kanban_card_submit.task = form.cleaned_data[object_lookup]
+    elif object_lookup == 'requirement':
+        kanban_card_submit.requirement = form.cleaned_data[object_lookup]
+
     kanban_card_submit.kanban_card_text = form.cleaned_data[object_lookup]
 
     # Save the data
@@ -336,6 +342,7 @@ def new_kanban_card(request, kanban_board_id):
         change_user=request.user,
         kanban_board=kanban_instance,
         kanban_card_text=form.cleaned_data['kanban_card_text'],
+        kanban_card_description=form.cleaned_data['kanban_card_description'],
         kanban_column=form.cleaned_data['kanban_column'],
         kanban_level=form.cleaned_data['kanban_level'],
         kanban_card_sort_number=kanban_card_sort_number + 1,
@@ -434,6 +441,7 @@ def update_card(request):
     # Save the data
     kanban_card_update = form.cleaned_data['kanban_card_id']
     kanban_card_update.kanban_card_text = form.cleaned_data['kanban_card_text']
+    kanban_card_update.kanban_card_description = form.cleaned_data['kanban_card_description']
     kanban_card_update.save()
 
     return HttpResponse("")

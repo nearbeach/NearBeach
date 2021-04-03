@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><i data-feather="grid"></i> Add Group Wizard</h2>
+                    <h2><IconifyIcon v-bind:icon="icons.groupPresentation"></IconifyIcon> Add Group Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -68,7 +68,9 @@
 </template>
 
 <script>
+    //Mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
+    import iconMixin from "../../../mixins/iconMixin";
 
     const axios = require('axios');
 
@@ -80,6 +82,7 @@
         ],
         mixins: [
             errorModalMixin,
+            iconMixin,
         ],
         data() {
             return {

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><i data-feather="briefcase"></i> Documents</h2>
+        <h2><IconifyIcon :icon="icons.bxBriefcase" /> Documents</h2>
         <p class="text-instructions">
             The following is a folder structure of all documents uploaded to this {{destination}}
         </p>
@@ -17,7 +17,10 @@
                  v-on:click="goToParentDirectory()"
                  class="document-child"
             >
-                <i data-feather="arrow-up" width="80px" height="80px" stroke-width="1"></i>
+                <IconifyIcon v-bind:icon="icons.arrowUp"
+                             width="80px"
+                             height="80px"
+                />
                 <p class="text-instructions">
                     Go to Parent Directory...
                 </p>
@@ -28,7 +31,10 @@
                  v-on:click="updateCurrentFolder(folder['pk'])"
                  class="document-child"
             >
-                <i data-feather="folder" width="80px" height="80px" stroke-width="1"></i>
+                <IconifyIcon v-bind:icon="icons.folderIcon"
+                             width="80px"
+                             height="80px"
+                />
                 <p class="text-instructions">
                     {{shortName(folder['fields']['folder_description'])}}
                 </p>
@@ -37,11 +43,10 @@
             <!-- RENDER THE FILES -->
             <div v-for="document in documentFilteredList" class="document-child">
                 <a v-bind:href="`/private/${document['document_key_id']}/`" target="_blank">
-                    <i v-bind:data-feather="getIcon(document)"
-                       width="80px"
-                       height="80px"
-                       stroke-width="1"
-                    ></i>
+                    <IconifyIcon v-bind:icon="getIcon(document)"
+                                 width="80px"
+                                 height="80px"
+                    />
                     <p class="text-instructions">
                         {{shortName(document['document_key__document_description'])}}
                     </p>
@@ -116,8 +121,10 @@
 
 <script>
     const axios = require('axios');
-    const feather = require('feather-icons');
     import {Modal} from "bootstrap";
+
+    //Mixins
+    import iconMixin from "../../../mixins/iconMixin";
 
     export default {
         name: "DocumentsModule",
@@ -134,6 +141,9 @@
                 folderFilteredList: [],
             }
         },
+        mixins: [
+            iconMixin,
+        ],
         methods: {
             addFolder: function() {
                 var addFolderModal = new Modal(document.getElementById('addFolderModal'));
@@ -166,7 +176,7 @@
                 //If the document is a weblink - just return the link image
                 if (document['document_key__document_url_location'] != "" &&
                     document['document_key__document_url_location'] != null) {
-                    return 'external-link';
+                    return this.icons.linkOut;
                 }
 
                 //We know the document is not a link - now we use the suffix to the document name to determine the icon
@@ -179,9 +189,20 @@
                     case 'jpg':
                     case 'png':
                     case 'bmp':
-                      return 'image';
+                      return this.icons.imageIcon;
+                    case 'doc':
+                    case 'docx':
+                        return this.icons.microsoftWord;
+                    case 'xls':
+                    case 'xlsx':
+                        return this.icons.microsoftExcel;
+                    case 'ppt':
+                    case 'pptx':
+                        return this.icons.microsoftPowerpoint;
+                    case 'pdf':
+                        return this.icons.documentPdf;
                     default:
-                      return 'file-text';
+                      return this.icons.documentText;
                 }
             },
             goToParentDirectory: function() {
@@ -251,9 +272,6 @@
             this.getDocumentList();
             this.getFolderList();
         },
-        updated() {
-            feather.replace();
-        }
     }
 </script>
 

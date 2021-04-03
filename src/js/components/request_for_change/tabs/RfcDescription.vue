@@ -9,7 +9,11 @@
         </div>
         <div class="col-md-8" style="min-height: 610px;">
             <div class="form-group">
-                <label>Request for Change Title: </label>
+                <label>
+                    Request for Change Title:
+                    <span class="error" v-if="!$v.rfcTitleModel.required && $v.rfcTitleModel.$dirty"
+                    > Please suppy a title.</span>
+                </label>
                 <input type="text"
                        maxlength="255"
                        class="form-control"
@@ -20,8 +24,8 @@
 
             <!-- RFC SUMMARY -->
             <label>Request for Change Summary:
-<!--                <span class="error" v-if="!$v.projectDescriptionModel.required && $v.projectDescriptionModel.$dirty"> Please supply a description.</span>-->
-<!--                <span class="error" v-if="!$v.projectDescriptionModel.maxLength"> Sorry - too many characters.</span>-->
+                <span class="error" v-if="!$v.rfcSummaryModel.required && $v.rfcSummaryModel.$dirty"> Please supply a description.</span>
+                <span class="error" v-if="!$v.rfcSummaryModel.maxLength"> Sorry - too many characters.</span>
             </label><br>
             <img src="/static/NearBeach/images/placeholder/body_text.svg"
                  class="loader-image"
@@ -45,6 +49,8 @@
 </template>
 
 <script>
+    import { required, maxLength } from 'vuelidate/lib/validators'
+
     export default {
         name: "RfcDescription",
         props: {
@@ -62,8 +68,17 @@
         data: () => ({
             rfcSummaryModel: '',
             rfcTitleModel: '',
-
         }),
+        validations: {
+            rfcSummaryModel: {
+                required,
+                maxLength: maxLength(630000),
+            },
+            rfcTitleModel: {
+                required,
+                maxLength: maxLength(250),
+            },
+        },
         methods: {
             updateValues: function(modelName,modelValue) {
                 this.$emit('update_values',{
@@ -80,12 +95,23 @@
                 this.updateValues('rfcTitleModel',this.rfcTitleModel);
             },
         },
+        updated() {
+            this.$v.$touch();
+
+            this.$emit('update_validation', {
+                'tab': 'tab_0',
+                'value': !this.$v.$invalid,
+            });
+        },
         mounted() {
             //If there is data in the rfcResults - we will update the rfcSummary and rfcTitle
             if (this.rfcResults.length > 0) {
                 this.rfcSummaryModel = this.rfcResults[0]['fields']['rfc_summary'];
                 this.rfcTitleModel = this.rfcResults[0]['fields']['rfc_title'];
             }
+
+            //Just run the validations to show the error messages
+            this.$v.$touch();
         }
     }
 </script>

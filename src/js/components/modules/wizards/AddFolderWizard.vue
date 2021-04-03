@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><i data-feather="users"></i> Add Folder Wizard</h2>
+                    <h2><IconifyIcon v-bind:icon="icons.userIcon"></IconifyIcon> Add Folder Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -51,9 +51,11 @@
 </template>
 
 <script>
-    import errorModalMixin from "../../../mixins/errorModalMixin";
-
     const axios = require('axios');
+
+    //Mixins
+    import errorModalMixin from "../../../mixins/errorModalMixin";
+    import iconMixin from "../../../mixins/iconMixin";
 
     export default {
 
@@ -66,6 +68,7 @@
         ],
         mixins: [
             errorModalMixin,
+            iconMixin,
         ],
         data() {
             return {

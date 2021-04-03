@@ -8,8 +8,8 @@
         </div>
         <div class="col-md-8" style="min-height: 610px;">
             <label>Implementation Plan:
-<!--                <span class="error" v-if="!$v.projectDescriptionModel.required && $v.projectDescriptionModel.$dirty"> Please supply a description.</span>-->
-<!--                <span class="error" v-if="!$v.projectDescriptionModel.maxLength"> Sorry - too many characters.</span>-->
+                <span class="error" v-if="!$v.rfcImplementationPlanModel.required && $v.rfcImplementationPlanModel.$dirty"> Please supply a description.</span>
+                <span class="error" v-if="!$v.rfcImplementationPlanModel.maxLength"> Sorry - too many characters.</span>
             </label><br>
             <img src="/static/NearBeach/images/placeholder/body_text.svg"
                  class="loader-image"
@@ -33,6 +33,8 @@
 </template>
 
 <script>
+    import { required, maxLength } from 'vuelidate/lib/validators';
+
     export default {
         name: "RfcImplementationPlan",
         props: {
@@ -50,7 +52,21 @@
         data: () => ({
             rfcImplementationPlanModel: '',
         }),
+        validations: {
+            rfcImplementationPlanModel: {
+                required,
+                maxLength: maxLength(630000),
+            },
+        },
         methods: {
+            updateValidation: function() {
+                this.$v.$touch();
+
+                this.$emit('update_validation', {
+                    'tab': 'tab_3',
+                    'value': !this.$v.$invalid,
+                });
+            },
             updateValues: function(modelName,modelValue) {
                 this.$emit('update_values',{
                     'modelName': modelName,
@@ -61,6 +77,7 @@
         watch: {
             rfcImplementationPlanModel: function() {
                 this.updateValues('rfcImplementationPlanModel',this.rfcImplementationPlanModel);
+                this.updateValidation();
             }
         },
         mounted() {

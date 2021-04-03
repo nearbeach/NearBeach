@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><i data-feather="git-branch"></i> Note History</h2>
+        <h2><IconifyIcon v-bind:icon="icons.noteAdd"></IconifyIcon> Note History</h2>
         <p class="text-instructions">
             The following are saved notes against this {{destination}}. Add notes by clicking on the button below.
         </p>
@@ -33,6 +33,7 @@
     // JavaScript Libraries
     import {Modal} from "bootstrap";
     import errorModalMixin from "../../../mixins/errorModalMixin";
+    import iconMixin from "../../../mixins/iconMixin";
     const axios = require('axios');
 
     export default {
@@ -44,6 +45,7 @@
         ],
         mixins: [
             errorModalMixin,
+            iconMixin,
         ],
         data() {
             return {

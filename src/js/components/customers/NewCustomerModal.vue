@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><i data-feather="user"></i> Add Customer Wizard</h2>
+                    <h2><IconifyIcon v-bind:icon="icons.userIcon"></IconifyIcon> Add Customer Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -42,11 +42,17 @@
     //Validation
     import { email, required } from 'vuelidate/lib/validators';
 
+    //Mixin
+    import iconMixin from "../../mixins/iconMixin";
+
     export default {
         name: "NewCustomerModal",
         props: [
                 'organisationId',
                 'titleList',
+        ],
+        mixins: [
+            iconMixin,
         ],
         data() {
             return {

@@ -8,8 +8,8 @@
         </div>
         <div class="col-md-8" style="min-height: 610px;">
             <label>Test Plan:
-<!--                <span class="error" v-if="!$v.projectDescriptionModel.required && $v.projectDescriptionModel.$dirty"> Please supply a description.</span>-->
-<!--                <span class="error" v-if="!$v.projectDescriptionModel.maxLength"> Sorry - too many characters.</span>-->
+                <span class="error" v-if="!$v.rfcTestPlanModel.required && $v.rfcTestPlanModel.$dirty"> Please supply a description.</span>
+                <span class="error" v-if="!$v.rfcTestPlanModel.maxLength"> Sorry - too many characters.</span>
             </label><br>
             <img src="/static/NearBeach/images/placeholder/body_text.svg"
                  class="loader-image"
@@ -33,43 +33,60 @@
 </template>
 
 <script>
-export default {
-    name: "RfcTestPlan",
-    props: {
-        isReadOnly: {
-            type: Boolean,
-            default: false,
-        },
-        rfcResults: {
-            type: Array,
-            default: function() {
-                return [];
+    import { required, maxLength } from 'vuelidate/lib/validators';
+
+    export default {
+        name: "RfcTestPlan",
+        props: {
+            isReadOnly: {
+                type: Boolean,
+                default: false,
+            },
+            rfcResults: {
+                type: Array,
+                default: function() {
+                    return [];
+                },
             },
         },
-    },
-    data: () => ({
-        rfcTestPlanModel: '',
-    }),
-    methods: {
-        updateValues: function(modelName,modelValue) {
-            this.$emit('update_values',{
-                'modelName': modelName,
-                'modelValue': modelValue,
-            });
+        data: () => ({
+            rfcTestPlanModel: '',
+        }),
+        validations: {
+            rfcTestPlanModel: {
+                required,
+                maxLength: maxLength(630000),
+            }
         },
-    },
-    watch: {
-        rfcTestPlanModel: function() {
-            this.updateValues('rfcTestPlanModel',this.rfcTestPlanModel);
+        methods: {
+            updateValidation: function() {
+                this.$v.$touch();
+
+                this.$emit('update_validation', {
+                    'tab': 'tab_5',
+                    'value': !this.$v.$invalid,
+                });
+            },
+            updateValues: function(modelName,modelValue) {
+                this.$emit('update_values',{
+                    'modelName': modelName,
+                    'modelValue': modelValue,
+                });
+            },
         },
-    },
-    mounted() {
-        //If the rfc results import - update the rfcBackout Model
-        if (this.rfcResults.length > 0) {
-            this.rfcTestPlanModel = this.rfcResults[0]['fields']['rfc_test_plan'];
+        watch: {
+            rfcTestPlanModel: function() {
+                this.updateValues('rfcTestPlanModel',this.rfcTestPlanModel);
+                this.updateValidation();
+            },
+        },
+        mounted() {
+            //If the rfc results import - update the rfcBackout Model
+            if (this.rfcResults.length > 0) {
+                this.rfcTestPlanModel = this.rfcResults[0]['fields']['rfc_test_plan'];
+            }
         }
     }
-}
 </script>
 
 <style scoped>

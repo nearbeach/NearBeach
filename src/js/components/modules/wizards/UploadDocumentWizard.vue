@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><i data-feather="users"></i> Upload Document Wizard</h2>
+                    <h2><IconifyIcon v-bind:icon="icons.userIcon"></IconifyIcon> Upload Document Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -39,7 +39,7 @@
                                 <input type="file"
                                        class="form-file-input"
                                        id="document"
-                                       allow="audio/*,image/*,video/*,text/*"
+                                       accept="audio/*,image/*,video/*,text/*"
                                        v-on:change="handleFileUploads($event.target.files)"
                                 >
                                 <label class="form-file-label"
@@ -111,7 +111,10 @@
 
 <script>
     const axios = require('axios');
+
+    //Mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
+    import iconMixin from "../../../mixins/iconMixin";
 
     export default {
         name: "UploadDocumentWizard",
@@ -123,6 +126,7 @@
         ],
         mixins: [
             errorModalMixin,
+            iconMixin,
         ],
         data() {
             return {
@@ -214,7 +218,6 @@
                 `/documentation/get/max_upload/`,
             ).then(response => {
                 //Set the value
-                console.log("GET RESPONSE: ",response);
                 this.maxUploadSize = response['data']['max_upload_size'];
             }).catch(error => {
                 this.showErrorModal(error,this.destination);

@@ -8,7 +8,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><i data-feather="link"></i> New {{destination}} Link Wizard</h2>
+                    <h2><IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> New {{destination}} Link Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -196,6 +196,7 @@
 <script>
     //JavaScript components
     import errorModalMixin from "../../../mixins/errorModalMixin";
+    import iconMixin from "../../../mixins/iconMixin";
 
     const axios = require('axios');
 
@@ -207,6 +208,7 @@
         },
         mixins: [
             errorModalMixin,
+            iconMixin,
         ],
         data() {
             return {

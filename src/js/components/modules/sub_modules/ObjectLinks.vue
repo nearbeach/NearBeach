@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><i data-feather="link"></i> {{destination}} Links</h2>
+        <h2><IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> {{destination}} Links</h2>
         <p class="text-instructions">
             The following are links to other objects like projects/tasks/requirements. You can link a {{destination}}
             to these other objects to symbolise a connection between the two.
@@ -54,12 +54,18 @@
 
     const axios = require('axios');
 
+    //Mixins
+    import iconMixin from "../../../mixins/iconMixin";
+
     export default {
         name: "ObjectLinks",
         props: {
             destination: String,
             locationId: Number,
         },
+        mixins: [
+            iconMixin,
+        ],
         data() {
             return {
                 linkResults: [],

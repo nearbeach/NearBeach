@@ -959,34 +959,13 @@ class kanban_board(models.Model):
         return str(self.kanban_board_name)
 
 
-"""
-class kanban_board_group(models.Model):
-    kanban_board_id = models.ForeignKey(
-        'kanban_board',
-        on_delete=models.CASCADE,
-    )
-    group_id = models.ForeignKey(
-        'group',
-        on_delete=models.CASCADE,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    class Meta:
-        db_table = "kanban_board_group"
-"""
-
 class kanban_card(models.Model):
     kanban_card_id = models.AutoField(primary_key=True)
     kanban_card_text = models.CharField(max_length=255)
+    kanban_card_description = models.TextField(
+        blank=True,
+        null=True,
+    )
     kanban_card_sort_number = models.IntegerField()
     kanban_level = models.ForeignKey(
         'kanban_level',

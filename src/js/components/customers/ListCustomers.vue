@@ -18,7 +18,7 @@
                     </a>
                 </div>
                 <div class="organisation-email">
-                    <i data-feather="mail"></i> Email:
+                    <IconifyIcon v-bind:icon="icons.mailIcon"></IconifyIcon> Email:
                     <a v-bind:href="`mailto:${customer['fields']['customer_email']}`">
                         {{customer['fields']['customer_email']}}
                     </a>
@@ -29,10 +29,16 @@
 </template>
 
 <script>
+    //Mixin
+    import iconMixin from "../../mixins/iconMixin";
+
     export default {
         name: "ListCustomers",
-        props: [
-            'customerResults',
+        props: {
+            customerResults: Array,
+        },
+        mixins: [
+            iconMixin
         ],
         methods: {
 

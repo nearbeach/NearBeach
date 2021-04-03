@@ -6,41 +6,64 @@
 
             <!-- FORM WIZARD -->
             <form-wizard @on-complete="onComplete"
-                         @on-change="onChange($event)"
+                         @on-change="onChange"
                          title=""
                          subtitle=""
             >
                 <!-- Description -->
-                <tab-content title="Description">
-                    <rfc-description v-on:update_values="updateValues($event)"></rfc-description>
+                <tab-content title="Description"
+                             :before-change="beforeChange"
+                >
+                    <rfc-description v-on:update_values="updateValues($event)"
+                                     v-on:update_validation="updateValidation($event)"
+                    ></rfc-description>
                 </tab-content>
 
                 <!-- Details -->
-                <tab-content title="Details">
+                <tab-content title="Details"
+                             :before-change="beforeChange"
+                >
                     <rfc-details v-bind:group-results="groupResults"
                                  v-bind:user-results="userResults"
+                                 v-on:update_validation="updateValidation($event)"
                                  v-on:update_values="updateValues($event)"
                     ></rfc-details>
                 </tab-content>
 
                 <!-- Risk -->
-                <tab-content title="Risk">
-                    <rfc-risk v-on:update_values="updateValues($event)"></rfc-risk>
+                <tab-content title="Risk"
+                             :before-change="beforeChange"
+                >
+                    <rfc-risk v-on:update_values="updateValues($event)"
+                              v-on:update_validation="updateValidation($event)"
+                    ></rfc-risk>
                 </tab-content>
 
                 <!-- Implementation Plan -->
-                <tab-content title="Implementation Plan">
-                    <rfc-implementation-plan v-on:update_values="updateValues($event)"></rfc-implementation-plan>
+                <tab-content title="Implementation Plan"
+                             :before-change="beforeChange"
+                >
+                    <rfc-implementation-plan v-on:update_values="updateValues($event)"
+                                             v-on:update_validation="updateValidation($event)"
+                    ></rfc-implementation-plan>
                 </tab-content>
 
                 <!-- Backout Plan -->
-                <tab-content title="Backout Plan">
-                    <rfc-backout-plan v-on:update_values="updateValues($event)"></rfc-backout-plan>
+                <tab-content title="Backout Plan"
+                             :before-change="beforeChange"
+                >
+                    <rfc-backout-plan v-on:update_values="updateValues($event)"
+                                      v-on:update_validation="updateValidation($event)"
+                    ></rfc-backout-plan>
                 </tab-content>
 
                 <!-- Test Plan -->
-                <tab-content title="Test Plan">
-                    <rfc-test-plan v-on:update_values="updateValues($event)"></rfc-test-plan>
+                <tab-content title="Test Plan"
+                             :before-change="beforeChange"
+                >
+                    <rfc-test-plan v-on:update_values="updateValues($event)"
+                                   v-on:update_validation="updateValidation($event)"
+                    ></rfc-test-plan>
                 </tab-content>
             </form-wizard>
         </div>
@@ -50,26 +73,26 @@
 <script>
     const axios = require('axios');
 
-    import {FormWizard, TabContent} from 'vue-form-wizard'
-    import 'vue-form-wizard/dist/vue-form-wizard.min.css'
+    import {FormWizard, TabContent} from 'vue-form-wizard';
 
     // Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
 
     export default {
         name: "NewRequestForChange",
-        components: {
-            FormWizard,
-            TabContent
-        },
         props: {
             groupResults: Array,
             userResults: Array,
+        },
+        components: {
+            FormWizard,
+            TabContent,
         },
         mixins: [
             errorModalMixin,
         ],
         data: () => ({
+            currentTab: 0,
             rfcData: {
                 'groupModel': [],
                 'rfcBackoutPlan': '',
@@ -88,10 +111,25 @@
                 'rfcTypeModel': {},
                 'rfcVersionModel': '',
             },
+            validationData: {
+                'tab_0': false,
+                'tab_1': false,
+                'tab_2': false,
+                'tab_3': false,
+                'tab_4': false,
+                'tab_5': false,
+            }
         }),
         methods: {
+            beforeChange: function() {
+                return this.validationData[`tab_${this.currentTab}`];
+            },
             onChange: function(prevIndex,nextIndex) {
-                console.log("Prev Index: ",prevIndex," | Next Index: ",nextIndex);
+                //Update current tab once the validation has been completed.
+                this.currentTab = nextIndex;
+
+                //Scroll to the top of the page
+                window.scrollTo(0,60);
             },
             onComplete: function() {
                 // Setup the new data form
@@ -128,6 +166,10 @@
                 }).catch(error => {
                     this.showErrorModal(error,'request_for_change','')
                 });
+            },
+            updateValidation: function(data) {
+                //Update the value
+                this.validationData[data['tab']] = data['value'];
             },
             updateValues: function(data) {
                 //Update the value

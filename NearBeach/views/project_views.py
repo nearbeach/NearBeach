@@ -1,23 +1,16 @@
-import urllib
-
-from django.contrib.auth.decorators import login_required
-from NearBeach.models import *
 from django.core import serializers
-from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseBadRequest
 from django.urls import reverse
 from django.template import loader
-from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
-from NearBeach.user_permissions import return_user_permission_level
-
-import json, urllib3
+from NearBeach.decorators.check_user_permissions import project_permissions
 
 
 @login_required(login_url='login',redirect_field_name="")
+@project_permissions(min_permission_level=3)
 def new_project(request):
     """
 
@@ -44,6 +37,7 @@ def new_project(request):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name='')
+@project_permissions(min_permission_level=3)
 def new_project_save(request):
     """
 
@@ -92,6 +86,7 @@ def new_project_save(request):
 
 
 @login_required(login_url='login',redirect_field_name="")
+@project_permissions(min_permission_level=1)
 def project_information(request,project_id):
     """
 
@@ -124,6 +119,7 @@ def project_information(request,project_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name='')
+@project_permissions(min_permission_level=2)
 def project_information_save(request,project_id):
     """
 

@@ -13,7 +13,6 @@ from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
 from NearBeach.user_permissions import return_user_permission_level
-
 import json, urllib3
 
 

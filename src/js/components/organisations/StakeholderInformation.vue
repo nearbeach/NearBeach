@@ -12,13 +12,13 @@
                 </a>
             </div>
             <div class="organisation-link">
-                <i data-feather="external-link"></i> Website:
+                <IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> Website:
                 <a v-bind:href="stakeholderModel['organisation_website']" target="_blank">
                     {{ stakeholderModel['organisation_website'] }}
                 </a>
             </div>
             <div class="organisation-email">
-                <i data-feather="mail"></i> Email:
+                <IconifyIcon v-bind:icon="icons.mailIcon"></IconifyIcon> Email:
                 <a v-bind:href="`mailto:${stakeholderModel['organisation_email']}`">
                     {{stakeholderModel['organisation_email']}}
                 </a>
@@ -28,6 +28,9 @@
 </template>
 
 <script>
+    //Mixins
+    import iconMixin from "../../mixins/iconMixin";
+
     export default {
         name: "StakeholderInformation",
         props: {
@@ -39,9 +42,12 @@
                 stakeholderModel: this.organisationResults[0]['fields'],
             }
         },
+        mixins: [
+            iconMixin,
+        ],
         computed: {
             getStakeholderImage: function() {
-                if (this.stakeholderModel['organisation_profile_picture'] == '') {
+                if (this.stakeholderModel['organisation_profile_picture'] === '') {
                     //There is no image - return the default image
                     return this.defaultStakeholderImage;
                 }

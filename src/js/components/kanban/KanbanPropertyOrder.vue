@@ -20,7 +20,7 @@
                 >
                     <strong>{{item['title']}}</strong>
                     <span v-on:click="removeItem(item['id'])">
-                        <i data-feather="x-circle"></i>
+                        <IconifyIcon v-bind:icon="icons.xCircle"></IconifyIcon>
                     </span>
                 </div>
             </transition-group>
@@ -77,6 +77,9 @@
     //Validation
     import { required } from 'vuelidate/lib/validators'
 
+    //Mixins
+    import iconMixin from "../../mixins/iconMixin";
+
     export default {
         name: "KanbanPropertyOrder",
         props: {
@@ -92,6 +95,9 @@
                 singleItemId: '',
             }
         },
+        mixins: [
+            iconMixin,
+        ],
         validations: {
             localPropertyList: {
                 required,

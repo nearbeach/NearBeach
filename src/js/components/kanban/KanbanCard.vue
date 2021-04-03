@@ -36,11 +36,19 @@
         },
         methods: {
             doubleClickCard: function(data) {
+                //Filter out the data we want to send up stream
+                const filtered_data = this.masterList.filter(row => {
+                    return row['pk'] == data['target']['dataset']['cardId'];
+                })[0];
+
                 //Setup data to send upstream
-                var data_to_send = {
-                    'cardId': data['target']['dataset']['cardId'],
-                    'cardTitle': data['target']['innerText'],
+                const data_to_send = {
+                    'cardId': filtered_data['pk'],
+                    'cardTitle': filtered_data['fields']['kanban_card_text'],
+                    'cardDescription': filtered_data['fields']['kanban_card_description'],
                 }
+
+                console.log("Data To Send: ",data_to_send);
 
                 //Emit the current card information
                 this.$emit('double_clicked_card',data_to_send);
