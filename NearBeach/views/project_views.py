@@ -87,14 +87,14 @@ def new_project_save(request):
 
 @login_required(login_url='login',redirect_field_name="")
 @project_permissions(min_permission_level=1)
-def project_information(request,project_id):
+def project_information(request, project_id, *args, **kwargs):
     """
 
     :param request:
     :param project_id:
     :return:
     """
-    # ADD IN PERMISSIONS CHECKER
+    user_level = kwargs['user_level']
 
     # Template
     t = loader.get_template('NearBeach/projects/project_information.html')
@@ -112,6 +112,7 @@ def project_information(request,project_id):
         'organisation_results': serializers.serialize('json',organisation_results),
         'project_id': project_id,
         'project_results': serializers.serialize('json',[project_results]),
+        'user_level': user_level,
     }
 
     return HttpResponse(t.render(c,request))

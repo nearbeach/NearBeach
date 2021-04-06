@@ -13,7 +13,8 @@ def project_permissions(min_permission_level):
         def inner(request, *args, **kwargs):
             # If user is admin - grant them all permissions
             if request.user.is_superuser:
-                return func(request, *args, **kwargs)
+                # Return the function with a user_level of 4
+                return func(request, *args, **kwargs, user_level=4)
 
             # Default user level is 0
             user_group_results = user_group.objects.filter(
@@ -53,7 +54,7 @@ def project_permissions(min_permission_level):
 
             if user_level >= min_permission_level:
                 # Everything is fine - continue on
-                return func(request, *args, **kwargs)
+                return func(request, *args, **kwargs, user_level=user_level)
 
             # Does not meet conditions
             raise PermissionDenied
