@@ -45,8 +45,6 @@ def new_project_save(request):
     :return:
     """
 
-    # CHECK USERS PERMISSION HERE
-
     # Get the form data
     form = NewProjectForm(request.POST)
     if not form.is_valid():
@@ -101,6 +99,7 @@ def project_information(request, project_id, *args, **kwargs):
 
     # Get data
     project_results = project.objects.get(project_id=project_id)
+    project_status = project_results.project_status
 
     organisation_results = organisation.objects.filter(
         is_deleted=False,
@@ -112,6 +111,7 @@ def project_information(request, project_id, *args, **kwargs):
         'organisation_results': serializers.serialize('json',organisation_results),
         'project_id': project_id,
         'project_results': serializers.serialize('json',[project_results]),
+        'project_status': project_status,
         'user_level': user_level,
     }
 
@@ -121,15 +121,13 @@ def project_information(request, project_id, *args, **kwargs):
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name='')
 @project_permissions(min_permission_level=2)
-def project_information_save(request,project_id):
+def project_information_save(request, project_id, *args, **kwargs):
     """
 
     :param request:
     :param project_id:
     :return:
     """
-
-    # ADD IN PERMISSION CHECKER
 
     # Get the form data
     form = ProjectForm(request.POST)
@@ -142,6 +140,7 @@ def project_information_save(request,project_id):
     project_update.project_description = form.cleaned_data['project_description']
     project_update.project_start_date = form.cleaned_data['project_start_date']
     project_update.project_end_date = form.cleaned_data['project_end_date']
+    project_update.project_status = form.cleaned_data['project_status']
 
     # Save
     project_update.save()

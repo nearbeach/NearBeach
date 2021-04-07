@@ -497,6 +497,7 @@ class ProjectForm(forms.ModelForm):
             'project_description',
             'project_start_date',
             'project_end_date',
+            'project_status',
         ]
 
 
