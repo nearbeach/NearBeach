@@ -11,7 +11,7 @@ from NearBeach.decorators.check_user_permissions import project_permissions
 
 @login_required(login_url='login',redirect_field_name="")
 @project_permissions(min_permission_level=3)
-def new_project(request):
+def new_project(request, *args, **kwargs):
     """
 
     :param request:
@@ -38,7 +38,7 @@ def new_project(request):
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name='')
 @project_permissions(min_permission_level=3)
-def new_project_save(request):
+def new_project_save(request, *args, **kwargs):
     """
 
     :param request:
