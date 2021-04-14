@@ -12,13 +12,13 @@ DISCOUNT_CHOICE = (
 )
 
 KANBAN_BOARD_STATUS_CHOICE = (
-    ('Open','Open'),
-    ('Closed','Closed'),
+    ('Open', 'Open'),
+    ('Closed', 'Closed'),
 )
 
 PAGE_LAYOUT = (
-    ('Landscape','Landscape'),
-    ('Portrait','Portrait'),
+    ('Landscape', 'Landscape'),
+    ('Portrait', 'Portrait'),
 )
 
 PERMISSION_LEVEL = (
@@ -57,78 +57,78 @@ RATING_SCORE = (
 )
 
 RFC_APPROVAL = (
-    (1,'Waiting'),
-    (2,'Approved'),
-    (3,'Rejected'),
-    (4,'Cancel'),
+    (1, 'Waiting'),
+    (2, 'Approved'),
+    (3, 'Rejected'),
+    (4, 'Cancel'),
 )
 
 RFC_IMPACT = (
-    (3,'High'),
-    (2,'Medium'),
-    (1,'Low'),
+    (3, 'High'),
+    (2, 'Medium'),
+    (1, 'Low'),
 )
 
 RFC_PRIORITY = (
-    (4,'Critical'),
-    (3,'High'),
-    (2,'Medium'),
-    (1,'Low'),
+    (4, 'Critical'),
+    (3, 'High'),
+    (2, 'Medium'),
+    (1, 'Low'),
 )
 
 RFC_RISK = (
-    (5,'Very High'),
-    (4,'High'),
-    (3,'Moderate'),
-    (2,'Low'),
-    (1,'None'),
+    (5, 'Very High'),
+    (4, 'High'),
+    (3, 'Moderate'),
+    (2, 'Low'),
+    (1, 'None'),
 )
 
 RFC_STATUS = (
-    (1,'Draft'),
-    (2,'Waiting for approval'),
-    (3,'Approved'),
-    (4,'Started'),
-    (5,'Finished'),
-    (6,'Rejected'),
+    (1, 'Draft'),
+    (2, 'Waiting for approval'),
+    (3, 'Approved'),
+    (4, 'Started'),
+    (5, 'Finished'),
+    (6, 'Rejected'),
 )
 
 RFC_TYPE = (
-    (4,'Emergency'),
-    (3,'High'),
-    (2,'Medium'),
-    (1,'Low'),
+    (4, 'Emergency'),
+    (3, 'High'),
+    (2, 'Medium'),
+    (1, 'Low'),
 )
 
+WANT_CHOICE = (
+    ('0', 'Do not want to do'),
+    ('1', 'Want to do'),
+)
+SKILL_CHOICE = (
+    ('0', 'Can not do'),
+    ('1', 'Willing to learn'),
+    ('2', 'Knows a little'),
+    ('3', 'Knows a lot'),
+    ('4', 'Proficient'),
+)
 
-WANT_CHOICE=(
-    ('0','Do not want to do'),
-    ('1','Want to do'),
-)
-SKILL_CHOICE=(
-    ('0','Can not do'),
-    ('1','Willing to learn'),
-    ('2','Knows a little'),
-    ('3','Knows a lot'),
-    ('4','Proficient'),
+WEBSITE_SOURCE = (
+    ('Twitter', 'Twitter'),
+    ('Facebook', 'Facebook'),
+    ('Github', 'Github'),
+    ('Gitlab', 'Gitlab'),
+    ('Website', 'Website'),
+    ('LinkedIn', 'LinkedIn'),
+    ('Staff Page', 'Staff page'),
+    ('Other', 'Other'),
 )
 
-WEBSITE_SOURCE=(
-    ('Twitter','Twitter'),
-    ('Facebook','Facebook'),
-    ('Github','Github'),
-    ('Gitlab','Gitlab'),
-    ('Website','Website'),
-    ('LinkedIn','LinkedIn'),
-    ('Staff Page','Staff page'),
-    ('Other','Other'),
-)
 
 # List of tables - in alphabetical order
 class about_user(models.Model):
-    about_user_id=models.AutoField(primary_key=True)
-    about_user_text=models.TextField()
-    user=models.ForeignKey(
+    about_user_id = models.AutoField(primary_key=True)
+    about_user_text = models.TextField()
+    user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
     )
@@ -145,7 +145,6 @@ class about_user(models.Model):
 
     class Meta:
         db_table = "about_user"
-
 
 
 """
@@ -353,43 +352,42 @@ class campus(models.Model):
         db_table = "campus"
 
 
-
 class change_task(models.Model):
-    change_task_id=models.AutoField(primary_key=True)
-    request_for_change=models.ForeignKey(
+    change_task_id = models.AutoField(primary_key=True)
+    request_for_change = models.ForeignKey(
         'request_for_change',
         on_delete=models.CASCADE,
     )
-    change_task_title=models.CharField(
+    change_task_title = models.CharField(
         max_length=255,
     )
-    change_task_description=models.TextField(
+    change_task_description = models.TextField(
         blank=True,
         null=True,
     )
-    change_task_start_date=models.DateTimeField()
-    change_task_end_date=models.DateTimeField()
-    change_task_seconds=models.BigIntegerField(
+    change_task_start_date = models.DateTimeField()
+    change_task_end_date = models.DateTimeField()
+    change_task_seconds = models.BigIntegerField(
         default=0,
     )
-    change_task_assigned_user=models.ForeignKey(
+    change_task_assigned_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='change_assigned_user',
     )
-    change_task_qa_user=models.ForeignKey(
+    change_task_qa_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='change_qa_user',
     )
-    change_task_required_by=models.CharField(
+    change_task_required_by = models.CharField(
         max_length=255,
         default='Stakeholder(s)',
     )
-    change_task_status=models.IntegerField(
-        choices=RFC_STATUS, #Similar FLOW to RFC
+    change_task_status = models.IntegerField(
+        choices=RFC_STATUS,  # Similar FLOW to RFC
     )
-    is_downtime=models.BooleanField(
+    is_downtime = models.BooleanField(
         default=False,
     )
     date_created = models.DateTimeField(auto_now_add=True)
@@ -646,7 +644,7 @@ class document_permission(models.Model):
         null=True,
         on_delete=models.CASCADE,
     )
-    requirement_item=models.ForeignKey(
+    requirement_item = models.ForeignKey(
         'requirement_item',
         blank=True,
         null=True,
@@ -792,19 +790,19 @@ class folder(models.Model):
         blank=True,
         null=True
     )
-    customer=models.ForeignKey(
+    customer = models.ForeignKey(
         'customer',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    organisation=models.ForeignKey(
+    organisation = models.ForeignKey(
         'organisation',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    requirement=models.ForeignKey(
+    requirement = models.ForeignKey(
         'requirement',
         on_delete=models.CASCADE,
         blank=True,
@@ -931,7 +929,7 @@ class kanban_board(models.Model):
         blank=True,
         on_delete=models.CASCADE,
     )
-    kanban_board_status= models.CharField(
+    kanban_board_status = models.CharField(
         max_length=10,
         choices=KANBAN_BOARD_STATUS_CHOICE,
         default="Open",
@@ -1080,8 +1078,6 @@ class kanban_column(models.Model):
 #         return str(self.kanban_comment)
 
 
-
-
 class kanban_level(models.Model):
     kanban_level_id = models.AutoField(primary_key=True)
     kanban_level_name = models.CharField(max_length=255)
@@ -1118,29 +1114,29 @@ class kudos(models.Model):
         choices=RATING_SCORE,
         default=0,
     )
-    improvement_note=models.TextField(
+    improvement_note = models.TextField(
         blank=True,
         null=True,
     )
-    liked_note=models.TextField(
+    liked_note = models.TextField(
         blank=True,
         null=True,
     )
-    extra_kudos=models.ForeignKey(
+    extra_kudos = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
-    submitted_kudos=models.BooleanField(
+    submitted_kudos = models.BooleanField(
         default=False,
     )
-    project=models.ForeignKey(
+    project = models.ForeignKey(
         'project',
         on_delete=models.CASCADE,
 
     )
-    customer=models.ForeignKey(
+    customer = models.ForeignKey(
         'customer',
         on_delete=models.CASCADE,
     )
@@ -1584,11 +1580,11 @@ class nearbeach_option(models.Model):
     This table will store the options for NearBeach. These options will have a new row each time a new option is created
     There does not need to be a is_deleted function
     """
-    nearbeach_option_id=models.AutoField(primary_key=True)
-    story_point_hour_min=models.IntegerField(
+    nearbeach_option_id = models.AutoField(primary_key=True)
+    story_point_hour_min = models.IntegerField(
         default=4,
     )
-    story_point_hour_max=models.IntegerField(
+    story_point_hour_max = models.IntegerField(
         default=10,
     )
     date_created = models.DateTimeField(auto_now_add=True)
@@ -1622,7 +1618,7 @@ class object_assignment(models.Model):
     These permission are only "ACCESS" permissions. The user/group's over riding permissions determine if the user
     can add, edit etc.
     """
-    object_assignment_id=models.AutoField(primary_key=True)
+    object_assignment_id = models.AutoField(primary_key=True)
     assigned_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -1630,13 +1626,13 @@ class object_assignment(models.Model):
         null=True,
         blank=True,
     )
-    group_id=models.ForeignKey(
+    group_id = models.ForeignKey(
         'group',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    opportunity=models.ForeignKey(
+    opportunity = models.ForeignKey(
         'opportunity',
         on_delete=models.CASCADE,
         blank=True,
@@ -1717,6 +1713,7 @@ class object_assignment(models.Model):
 
     class Meta:
         db_table = "object_assignment"
+
 
 class object_note(models.Model):
     object_note_id = models.AutoField(primary_key=True)
@@ -1843,6 +1840,7 @@ class opportunity(models.Model):
     class Meta:
         db_table = "opportunities"
 
+
 """
 class opportunity_connection(models.Model):
     opportunity_connection_id = models.AutoField(primary_key=True)
@@ -1877,6 +1875,7 @@ class opportunity_connection(models.Model):
         db_table = "organisation_connection"
         """
 
+
 class organisation(models.Model):
     organisation_id = models.AutoField(primary_key=True)
     organisation_name = models.CharField(max_length=255)
@@ -1902,7 +1901,6 @@ class organisation(models.Model):
 
     class Meta:
         db_table = "organisation"
-
 
 
 class permission_set_manager(models.Manager):
@@ -1962,7 +1960,7 @@ class permission_set(models.Model):
     permission_set_id = models.AutoField(primary_key=True)
     permission_set_name = models.CharField(
         max_length=255,
-        #unique=True, #issue when we delete previous permission sets
+        # unique=True, #issue when we delete previous permission sets
     )
     # ADMINISTRATION PERMISSIONS
     administration_assign_user_to_group = models.IntegerField(
@@ -2092,7 +2090,7 @@ class project(models.Model):
         blank=True,
         null=True,
     )
-    #Only fill this field out if there are no organisation
+    # Only fill this field out if there are no organisation
     customer = models.ForeignKey(
         'customer',
         on_delete=models.CASCADE,
@@ -2303,6 +2301,7 @@ class project_task(models.Model):
         db_table = "project_task"
 """
 
+
 class quote(models.Model):
     quote_id = models.AutoField(primary_key=True)
     quote_uuid = models.UUIDField(
@@ -2317,7 +2316,7 @@ class quote(models.Model):
         'list_of_quote_stage',
         on_delete=models.CASCADE,
     )
-    quote_billing_address=models.ForeignKey(
+    quote_billing_address = models.ForeignKey(
         'campus',
         on_delete=models.CASCADE,
         null=True,
@@ -2403,25 +2402,25 @@ class request_for_change(models.Model):
     """
     Due to the long and complicated name, request for change will be shortened to rfc for ALL fields.
     """
-    rfc_id=models.AutoField(primary_key=True)
-    rfc_title=models.CharField(
+    rfc_id = models.AutoField(primary_key=True)
+    rfc_title = models.CharField(
         max_length=255,
     )
-    rfc_summary=models.TextField(
+    rfc_summary = models.TextField(
         'rfc_summary'
     )
-    rfc_type=models.IntegerField(
+    rfc_type = models.IntegerField(
         choices=RFC_TYPE,
     )
-    rfc_implementation_start_date=models.DateTimeField()
-    rfc_implementation_end_date=models.DateTimeField()
-    rfc_implementation_release_date=models.DateTimeField()
-    rfc_version_number=models.CharField(
+    rfc_implementation_start_date = models.DateTimeField()
+    rfc_implementation_end_date = models.DateTimeField()
+    rfc_implementation_release_date = models.DateTimeField()
+    rfc_version_number = models.CharField(
         max_length=25,
         blank=True,
         null=True,
     )
-    rfc_status=models.IntegerField(
+    rfc_status = models.IntegerField(
         choices=RFC_STATUS,
     )
     rfc_lead = models.ForeignKey(
@@ -2430,7 +2429,7 @@ class request_for_change(models.Model):
         related_name='rfc_lead',
 
     )
-    rfc_priority=models.IntegerField(
+    rfc_priority = models.IntegerField(
         choices=RFC_PRIORITY,
         default=1,
     )
@@ -2442,16 +2441,16 @@ class request_for_change(models.Model):
         choices=RFC_IMPACT,
         default=1,
     )
-    rfc_risk_and_impact_analysis=models.TextField(
+    rfc_risk_and_impact_analysis = models.TextField(
         'rfc_risk_and_impact_analysis',
     )
-    rfc_implementation_plan=models.TextField(
+    rfc_implementation_plan = models.TextField(
         'rfc_implementation_plan',
     )
-    rfc_backout_plan=models.TextField(
+    rfc_backout_plan = models.TextField(
         'rfc_backout_plan',
     )
-    rfc_test_plan=models.TextField(
+    rfc_test_plan = models.TextField(
         'rfc_test_plan',
     )
     date_created = models.DateTimeField(auto_now_add=True)
@@ -2478,16 +2477,16 @@ class request_for_change(models.Model):
 
 
 class request_for_change_group_approval(models.Model):
-    rfc_group_approval_id=models.AutoField(primary_key=True)
-    rfc=models.ForeignKey(
+    rfc_group_approval_id = models.AutoField(primary_key=True)
+    rfc = models.ForeignKey(
         'request_for_change',
         on_delete=models.CASCADE,
     )
-    group=models.ForeignKey(
+    group = models.ForeignKey(
         'group',
         on_delete=models.CASCADE,
     )
-    approval=models.IntegerField(
+    approval = models.IntegerField(
         choices=RFC_APPROVAL,
         default=1,  # Waiting
     )
@@ -2508,9 +2507,10 @@ class request_for_change_group_approval(models.Model):
     class Meta:
         db_table = "request_for_change_group_approval"
 
+
 class request_for_change_note(models.Model):
-    rfc_note_id=models.AutoField(primary_key=True)
-    rfc_note=models.TextField(
+    rfc_note_id = models.AutoField(primary_key=True)
+    rfc_note = models.TextField(
         blank=True,
         null=True,
     )
@@ -2539,7 +2539,7 @@ class request_for_change_stakeholder(models.Model):
 
     rfc = request for change. It is shortened to make it easier for the programmer.
     """
-    rfc_stakeholder_id=models.AutoField(primary_key=True)
+    rfc_stakeholder_id = models.AutoField(primary_key=True)
     request_for_change = models.ForeignKey(
         'request_for_change',
         on_delete=models.CASCADE,
@@ -2716,7 +2716,7 @@ class tag_assignment(models.Model):
         tag,
         on_delete=models.CASCADE,
     )
-    project=models.ForeignKey(
+    project = models.ForeignKey(
         project,
         on_delete=models.CASCADE,
         null=True,
@@ -2752,8 +2752,7 @@ class tag_assignment(models.Model):
     )
 
     class Meta:
-        db_table="tag_assignment"
-
+        db_table = "tag_assignment"
 
 
 class task(models.Model):
@@ -2859,6 +2858,7 @@ class task_customer(models.Model):
     class Meta:
         db_table = "task_customer"
 
+
 """
 class task_group(models.Model):
     task_group_id = models.AutoField(primary_key=True)
@@ -2939,6 +2939,7 @@ class task_opportunity(models.Model):
         db_table = "task_opportunity"
 """
 
+
 class timesheet(models.Model):
     timesheet_id = models.AutoField(primary_key=True)
     timesheet_description = models.CharField(
@@ -2969,7 +2970,7 @@ class timesheet(models.Model):
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    #Doubles up as the user inputting the time
+    # Doubles up as the user inputting the time
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -2981,6 +2982,7 @@ class timesheet(models.Model):
 
     class Meta:
         db_table = "timesheet"
+
 
 class to_do(models.Model):
     to_do_id = models.AutoField(primary_key=True)
@@ -3035,14 +3037,14 @@ class user_group(models.Model):
         'permission_set',
         on_delete=models.CASCADE,
     )
-    report_to=models.ForeignKey(
+    report_to = models.ForeignKey(
         User,
         related_name='report_to',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
-    group_leader=models.BooleanField(
+    group_leader = models.BooleanField(
         default=False,
     )
     date_created = models.DateTimeField(auto_now_add=True)
@@ -3060,19 +3062,18 @@ class user_group(models.Model):
         db_table = "user_group"
 
 
-
 class user_want(models.Model):
-    user_want_id=models.AutoField(
+    user_want_id = models.AutoField(
         primary_key=True,
     )
-    want_choice=models.CharField(
+    want_choice = models.CharField(
         max_length=50,
         choices=WANT_CHOICE,
     )
-    want_choice_text=models.CharField(
+    want_choice_text = models.CharField(
         max_length=50,
     )
-    want_skill=models.CharField(
+    want_skill = models.CharField(
         max_length=50,
         choices=SKILL_CHOICE,
     )
@@ -3095,9 +3096,9 @@ class user_want(models.Model):
 
 
 class user_weblink(models.Model):
-    user_weblink_id=models.AutoField(primary_key=True)
-    user_weblink_url=models.URLField(max_length=255)
-    user_weblink_source=models.CharField(
+    user_weblink_id = models.AutoField(primary_key=True)
+    user_weblink_url = models.URLField(max_length=255)
+    user_weblink_source = models.CharField(
         max_length=50,
         choices=WEBSITE_SOURCE,
     )
@@ -3120,9 +3121,9 @@ class user_weblink(models.Model):
 
 
 class whiteboard(models.Model):
-    whiteboard_id=models.AutoField(primary_key=True)
-    whiteboard_title=models.CharField(max_length=255)
-    whiteboard_xml=models.TextField(
+    whiteboard_id = models.AutoField(primary_key=True)
+    whiteboard_title = models.CharField(max_length=255)
+    whiteboard_xml = models.TextField(
         null=True,
         blank=True,
     )

@@ -1,7 +1,7 @@
 {% extends 'NearBeach/template.html' %}
 {% load static %}
 {% block content %}
-    {% if project_status == 'Closed' %}
+    {% if project_status == 'Closed' or user_level == 1 %}
         <fieldset disabled="disabled">
     {% endif %}
 
@@ -10,7 +10,7 @@
                          v-bind:organisation-results="{{organisation_results}}"
                          v-bind:user-level="{{ user_level }}"
     ></project-information>
-    {% if project_status == 'Closed' %}
+    {% if project_status == 'Closed' or user_level == 1 %}
         </fieldset>
     {% endif %}
 

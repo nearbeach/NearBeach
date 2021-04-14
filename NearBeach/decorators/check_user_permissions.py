@@ -7,7 +7,7 @@ from functools import wraps
 from NearBeach.models import *
 
 
-def project_permissions(min_permission_level):
+def check_user_permissions(min_permission_level, object_lookup=''):
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
@@ -25,7 +25,7 @@ def project_permissions(min_permission_level):
             # If we are passing the project_id through, we will use a different function
             if len(kwargs) > 0:
                 # Check user permissions AGAINST the project and it's groups
-                project_instance = project.objects.get(project_id=kwargs['project_id'])
+                # project_instance = project.objects.get(project_id=kwargs['project_id'])
 
                 # Determine if there are any cross over with user groups and project groups
                 group_results = group.objects.filter(
@@ -34,7 +34,7 @@ def project_permissions(min_permission_level):
                         # The project groups
                         group_id__in=object_assignment.objects.filter(
                             is_deleted=False,
-                            project_id=kwargs['project_id'],
+                            **{object_lookup: kwargs[object_lookup]},
                         ).values('group_id'),
                     ) &
                     Q(

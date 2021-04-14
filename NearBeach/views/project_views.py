@@ -6,11 +6,11 @@ from django.urls import reverse
 from django.template import loader
 from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
-from NearBeach.decorators.check_user_permissions import project_permissions
+from NearBeach.decorators.check_user_permissions import check_user_permissions
 
 
-@login_required(login_url='login',redirect_field_name="")
-@project_permissions(min_permission_level=3)
+@login_required(login_url='login', redirect_field_name="")
+@check_user_permissions(min_permission_level=3, object_lookup='project_id')
 def new_project(request, *args, **kwargs):
     """
 
@@ -29,15 +29,15 @@ def new_project(request, *args, **kwargs):
 
     # Context
     c = {
-        'group_results': serializers.serialize('json',group_results),
+        'group_results': serializers.serialize('json', group_results),
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name='')
-@project_permissions(min_permission_level=3)
+@login_required(login_url='login', redirect_field_name='')
+@check_user_permissions(min_permission_level=3, object_lookup='project_id')
 def new_project_save(request, *args, **kwargs):
     """
 
@@ -83,8 +83,8 @@ def new_project_save(request, *args, **kwargs):
     return HttpResponse(reverse('project_information', args={project_submit.project_id}))
 
 
-@login_required(login_url='login',redirect_field_name="")
-@project_permissions(min_permission_level=1)
+@login_required(login_url='login', redirect_field_name="")
+@check_user_permissions(min_permission_level=1, object_lookup='project_id')
 def project_information(request, project_id, *args, **kwargs):
     """
 
@@ -108,19 +108,19 @@ def project_information(request, project_id, *args, **kwargs):
 
     # Context
     c = {
-        'organisation_results': serializers.serialize('json',organisation_results),
+        'organisation_results': serializers.serialize('json', organisation_results),
         'project_id': project_id,
-        'project_results': serializers.serialize('json',[project_results]),
+        'project_results': serializers.serialize('json', [project_results]),
         'project_status': project_status,
         'user_level': user_level,
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name='')
-@project_permissions(min_permission_level=2)
+@login_required(login_url='login', redirect_field_name='')
+@check_user_permissions(min_permission_level=2, object_lookup='project_id')
 def project_information_save(request, project_id, *args, **kwargs):
     """
 

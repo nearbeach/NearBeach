@@ -602,6 +602,7 @@ class TaskInformationForm(forms.ModelForm):
             'task_long_description',
             'task_start_date',
             'task_end_date',
+            'task_status',
         ]
 
 
