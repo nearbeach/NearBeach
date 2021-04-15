@@ -42,6 +42,8 @@ class AdminUserPermissionTest(TestCase):
         self.assertEqual(response.status_code, 200)
         print("Admin user can access a project without overlapping groups")
 
+        c.get(reverse('logout'))
+
     def test_task_permissions(self):
         c = Client()
 
@@ -57,6 +59,8 @@ class AdminUserPermissionTest(TestCase):
         response = c.get(reverse('task_information', args=['2']))
         self.assertEqual(response.status_code, 200)
         print("Admin user can access a task without overlapping groups")
+
+        c.get(reverse('logout'))
 
 
 class TeamLeaderPermissionTest(TestCase):
@@ -88,6 +92,8 @@ class TeamLeaderPermissionTest(TestCase):
         # self.assertEqual(response.status_code, 403)
         # print("Team Lead can NOT access a project without overlapping groups")
 
+        c.get(reverse('logout'))
+
     def test_task_permissions(self):
         c = Client()
 
@@ -103,6 +109,8 @@ class TeamLeaderPermissionTest(TestCase):
         # response = c.get(reverse('task_information', args=['2']))
         # self.assertEqual(response.status_code, 403)
         # print("Team Lead can NOT access a task without overlapping groups")
+
+        c.get(reverse('logout'))
 
 class TeamMemberPermissionTest(TestCase):
     """
@@ -133,6 +141,8 @@ class TeamMemberPermissionTest(TestCase):
         # self.assertEqual(response.status_code, 403)
         # print("Team Member can NOT access a project without overlapping groups")
 
+        c.get(reverse('logout'))
+
     def test_task_permissions(self):
         c = Client()
 
@@ -148,6 +158,8 @@ class TeamMemberPermissionTest(TestCase):
         # response = c.get(reverse('task_information', args=['2']))
         # self.assertEqual(response.status_code, 403)
         # print("Team Member can NOT access a task without overlapping groups")
+
+        c.get(reverse('logout'))
 
 class TeamInternPermissionTest(TestCase):
     """
@@ -178,6 +190,8 @@ class TeamInternPermissionTest(TestCase):
         # self.assertEqual(response.status_code, 403)
         # print("Team Intern can NOT access a project without overlapping groups")
 
+        c.get(reverse('logout'))
+
     def test_task_permissions(self):
         c = Client()
 
@@ -193,6 +207,9 @@ class TeamInternPermissionTest(TestCase):
         # response = c.get(reverse('task_information', args=['2']))
         # self.assertEqual(response.status_code, 403)
         # print("Team Intern can NOT access a task without overlapping groups")
+
+        c.get(reverse('logout'))
+
 
 class ReadOnlyPermissionTest(TestCase):
     """
@@ -223,6 +240,8 @@ class ReadOnlyPermissionTest(TestCase):
         # self.assertEqual(response.status_code, 403)
         # print("Read Only can NOT access a task without overlapping groups")
 
+        c.get(reverse('logout'))
+
     def test_task_permissions(self):
         c = Client()
 
@@ -235,6 +254,19 @@ class ReadOnlyPermissionTest(TestCase):
         print("Read only can access a task with overlapping groups")
 
         # Make sure the admin user can open up the project
-        # response = c.get(reverse('task_information', args=['2']))
-        # self.assertEqual(response.status_code, 403)
-        # print("Read Only can NOT access a task without overlapping groups")
+        response = c.get(reverse('task_information', args=['2']))
+        self.assertEqual(response.status_code, 403)
+        print("Read Only can NOT access a task without overlapping groups")
+
+        c.get(reverse('logout'))
+
+
+    # def test_do_users_logout(self):
+    #     c = Client()
+    #
+    #     login_user(c, self)
+    #
+    #     # Make sure the admin user can open up the task
+    #     response = c.get(reverse('task_information', args=['2']))
+    #     self.assertEqual(response.status_code, 200)
+    #     print("Read only can access a task with overlapping groups")
