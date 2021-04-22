@@ -1,4 +1,3 @@
-
 // Global Test Variables
 let project_title = 'Automatic Project Creation - by administrator',
     project_description = `Automatic Testing with Cypress - writing in a simple description`;
@@ -18,7 +17,7 @@ describe("Shakeout Project", () => {
         url: "/login",
         form: true,
         body: {
-          username: "admin",
+          username: "team_leader",
           password: "Test1234$",
         },
         headers: {
