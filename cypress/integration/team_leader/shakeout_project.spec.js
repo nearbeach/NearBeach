@@ -5,26 +5,7 @@ let project_title = 'Automatic Project Creation - by administrator',
 describe("Shakeout Project", () => {
   // Before running tests - we have to make sure the admin user is logged in
   before(() => {
-    cy.visit("http://localhost:8000/");
-    cy.get("[name=csrfmiddlewaretoken]")
-      .should("exist")
-      .should("have.attr", "value")
-      .as("csrfToken");
-
-    cy.get("@csrfToken").then((token) => {
-      cy.request({
-        method: "POST",
-        url: "/login",
-        form: true,
-        body: {
-          username: "team_leader",
-          password: "Test1234$",
-        },
-        headers: {
-          "X-CSRFTOKEN": token,
-        },
-      });
-    });
+    cy.login('team_leader','Test1234$');
 
     cy.getCookie("sessionid").should("exist");
     cy.getCookie("csrftoken").should("exist");

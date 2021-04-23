@@ -6,26 +6,7 @@ let project_title = 'Automatic Project Creation - by administrator',
 describe("Shakeout Project", () => {
   // Before running tests - we have to make sure the admin user is logged in
   before(() => {
-    cy.visit("http://localhost:8000/");
-    cy.get("[name=csrfmiddlewaretoken]")
-      .should("exist")
-      .should("have.attr", "value")
-      .as("csrfToken");
-
-    cy.get("@csrfToken").then((token) => {
-      cy.request({
-        method: "POST",
-        url: "/login",
-        form: true,
-        body: {
-          username: "admin",
-          password: "Test1234$",
-        },
-        headers: {
-          "X-CSRFTOKEN": token,
-        },
-      });
-    });
+    cy.login('admin','Test1234$');
 
     cy.getCookie("sessionid").should("exist");
     cy.getCookie("csrftoken").should("exist");
@@ -79,10 +60,7 @@ describe("Shakeout Project", () => {
 
     // User searches for NearBeach in the organisation search bar
     cy.get('#vs1__combobox > .vs__selected-options > .vs__search')
-        .type("NearBeach");
-
-    // User selects first option (which should be NearBeach) from the dropdown box
-    cy.get("#vs1__listbox").click();
+        .type("NearBeach{enter}");
 
     //Navigate through the start calendar options to find the correct date
     cy.get(':nth-child(2) > .form-group > .vdatetime > .vdatetime-input').click();

@@ -1,6 +1,11 @@
 describe('Test All Logins for each Test User', () => {
     //The following tests will make sure that every user can log in.
 
+    //Before each - we need to make sure the users are logged out.
+    beforeEach(() => {
+        cy.visit('http://localhost:8000/logout');
+    })
+
     //Admin user logs in
     it('Admin User Logs In', () => {
         //Go to the login page
