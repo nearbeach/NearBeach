@@ -50,6 +50,7 @@ def new_user_save(request):
     # Create the new user
     submit_user = User(
         username=form.cleaned_data['username'],
+        email=form.cleaned_data['email'],
         first_name=form.cleaned_data['first_name'],
         last_name=form.cleaned_data['last_name'],
         is_active=True,

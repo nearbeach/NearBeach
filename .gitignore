@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+# Cypress
+cypress/screenshots
+cypress/downloads
+
 # Distribution / packaging
 .Python
 build/

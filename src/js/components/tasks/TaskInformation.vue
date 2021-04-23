@@ -54,6 +54,42 @@
 
             </div>
 
+            <!-- TASK STATUS -->
+            <hr>
+            <div class="row">
+                <div class="col-md-4">
+                    <strong>Task Status</strong>
+                    <p class="text-instructions">
+                        Please update the task's status to reflect it's current status. Then click on the "Update
+                        Task" button to save the change.
+                    </p>
+                </div>
+                <div class="col-md-4"
+                     v-if="!isReadOnly"
+                >
+                    <v-select v-bind:options="statusOptions"
+                              v-model="taskStatusModel"
+                    ></v-select>
+                </div>
+                <div class="col-md-4"
+                     v-if="!isReadOnly"
+                >
+                    <div class="alert alert-danger"
+                         v-if="taskStatusModel === 'Closed'"
+                    >
+                        Saving the task with this status will close the task.
+                    </div>
+                </div>
+                <div class="col-md-4"
+                     v-if="isReadOnly"
+                >
+                    <div class="alert alert-info"
+                         v-if="taskStatusModel === 'Closed'"
+                    >
+                        Project has been closed.
+                    </div>
+                </div>
+            </div>
             <!-- STAKEHOLDER ORGANISATION -->
             <hr>
             <stakeholder-information v-bind:organisation-results="organisationResults"
@@ -70,11 +106,22 @@
             ></between-dates>
 
             <!-- Submit Button -->
-            <hr>
-            <div class="row submit-row">
+            <hr v-if="userLevel >= 2 && !isReadOnly">
+            <div class="row submit-row"
+                 v-if="!isReadOnly"
+            >
                 <div class="col-md-12">
+                    <!-- Close Task -->
+                    <a href="javascript:void(0)"
+                       v-if="userLevel >= 3"
+                       class="btn btn-danger"
+                       v-on:click="closeTask"
+                    >Close Task</a>
+
+                    <!-- Update Task -->
                     <a href="javascript:void(0)"
                        class="btn btn-primary save-changes"
+                       v-if="userLevel >= 2"
                        v-on:click="updateTask"
                     >Update Task</a>
                 </div>
@@ -95,18 +142,30 @@
     export default {
         name: "TaskInformation",
         props: {
+            defaultStakeholderImage: String,
             groupResults: Array,
             stakeholderModel: Array,
             taskResults: Array,
             organisationResults: Array,
-            defaultStakeholderImage: String,
+            userLevel: {
+              type: Number,
+              default: 1,
+            },
         },
         data() {
             return {
+                isReadOnly: false,
+                statusOptions: [
+                    'Backlog',
+                    'Blocked',
+                    'In Progress',
+                    'Test/Review',
+                ],
                 taskDescriptionModel: this.taskResults[0]['fields']['task_long_description'],
                 taskEndDateModel: DateTime.fromISO(this.taskResults[0]['fields']['task_end_date']),
                 taskShortDescriptionModel: this.taskResults[0]['fields']['task_short_description'],
                 taskStartDateModel: DateTime.fromISO(this.taskResults[0]['fields']['task_start_date']),
+                taskStatusModel: this.taskResults[0]['fields']['task_status'],
             }
         },
         mixins: [
@@ -129,6 +188,13 @@
             },
         },
         methods: {
+            closeTask: function() {
+                //Set the status to closed
+                this.taskStatusModel = 'Closed';
+
+                //Save the status
+                this.updateTask();
+            },
             updateTask: function() {
                 //Check validation
                 this.$v.$touch();
@@ -150,6 +216,7 @@
                 data_to_send.set('task_end_date',this.taskEndDateModel);
                 data_to_send.set('task_short_description',this.taskShortDescriptionModel);
                 data_to_send.set('task_start_date',this.taskStartDateModel);
+                data_to_send.set('task_status', this.taskStatusModel);
 
                 //Send data to backend
                 axios.post(
@@ -158,6 +225,9 @@
                 ).then(response => {
                     //Hide the loading modal
                     this.closeLoadingModal();
+
+                    //Reload the page IF the status is closed
+                    window.location.reload(this.taskStatusModel === 'Closed');
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 });
@@ -172,7 +242,16 @@
             updateStakeholderModel: function(data) {
                 this.stakeholderModel = data;
             }
-        }
+        },
+        mounted() {
+            //If users have enough permissions add in the "Closed" functionaly
+            if (this.userLevel >= 3) {
+                this.statusOptions.push('Closed')
+            }
+
+            //If the project is closed -> we state that is read only is true
+            this.isReadOnly = this.taskResults[0]['fields']['task_status'] === 'Closed';
+        },
     }
 </script>
 

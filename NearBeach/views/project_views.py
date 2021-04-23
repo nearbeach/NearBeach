@@ -6,12 +6,12 @@ from django.urls import reverse
 from django.template import loader
 from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
-from NearBeach.decorators.check_user_permissions import project_permissions
+from NearBeach.decorators.check_user_permissions import check_user_permissions
 
 
-@login_required(login_url='login',redirect_field_name="")
-@project_permissions(min_permission_level=3)
-def new_project(request):
+@login_required(login_url='login', redirect_field_name="")
+@check_user_permissions(min_permission_level=3, object_lookup='project_id')
+def new_project(request, *args, **kwargs):
     """
 
     :param request:
@@ -29,23 +29,21 @@ def new_project(request):
 
     # Context
     c = {
-        'group_results': serializers.serialize('json',group_results),
+        'group_results': serializers.serialize('json', group_results),
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name='')
-@project_permissions(min_permission_level=3)
-def new_project_save(request):
+@login_required(login_url='login', redirect_field_name='')
+@check_user_permissions(min_permission_level=3, object_lookup='project_id')
+def new_project_save(request, *args, **kwargs):
     """
 
     :param request:
     :return:
     """
-
-    # CHECK USERS PERMISSION HERE
 
     # Get the form data
     form = NewProjectForm(request.POST)
@@ -85,22 +83,23 @@ def new_project_save(request):
     return HttpResponse(reverse('project_information', args={project_submit.project_id}))
 
 
-@login_required(login_url='login',redirect_field_name="")
-@project_permissions(min_permission_level=1)
-def project_information(request,project_id):
+@login_required(login_url='login', redirect_field_name="")
+@check_user_permissions(min_permission_level=1, object_lookup='project_id')
+def project_information(request, project_id, *args, **kwargs):
     """
 
     :param request:
     :param project_id:
     :return:
     """
-    # ADD IN PERMISSIONS CHECKER
+    user_level = kwargs['user_level']
 
     # Template
     t = loader.get_template('NearBeach/projects/project_information.html')
 
     # Get data
     project_results = project.objects.get(project_id=project_id)
+    project_status = project_results.project_status
 
     organisation_results = organisation.objects.filter(
         is_deleted=False,
@@ -109,26 +108,26 @@ def project_information(request,project_id):
 
     # Context
     c = {
-        'organisation_results': serializers.serialize('json',organisation_results),
+        'organisation_results': serializers.serialize('json', organisation_results),
         'project_id': project_id,
-        'project_results': serializers.serialize('json',[project_results]),
+        'project_results': serializers.serialize('json', [project_results]),
+        'project_status': project_status,
+        'user_level': user_level,
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name='')
-@project_permissions(min_permission_level=2)
-def project_information_save(request,project_id):
+@login_required(login_url='login', redirect_field_name='')
+@check_user_permissions(min_permission_level=2, object_lookup='project_id')
+def project_information_save(request, project_id, *args, **kwargs):
     """
 
     :param request:
     :param project_id:
     :return:
     """
-
-    # ADD IN PERMISSION CHECKER
 
     # Get the form data
     form = ProjectForm(request.POST)
@@ -141,6 +140,7 @@ def project_information_save(request,project_id):
     project_update.project_description = form.cleaned_data['project_description']
     project_update.project_start_date = form.cleaned_data['project_start_date']
     project_update.project_end_date = form.cleaned_data['project_end_date']
+    project_update.project_status = form.cleaned_data['project_status']
 
     # Save
     project_update.save()

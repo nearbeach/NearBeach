@@ -12,12 +12,13 @@ from django.template import loader
 from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
-from NearBeach.user_permissions import return_user_permission_level
+from NearBeach.decorators.check_user_permissions import check_user_permissions
 import json, urllib3
 
 
-@login_required(login_url='login',redirect_field_name="")
-def new_task(request):
+@login_required(login_url='login', redirect_field_name="")
+@check_user_permissions(min_permission_level=3, object_lookup='task_id')
+def new_task(request, *args, **kwargs):
     """
 
     :param request:
@@ -35,15 +36,16 @@ def new_task(request):
 
     # Context
     c = {
-        'group_results': serializers.serialize('json',group_results),
+        'group_results': serializers.serialize('json', group_results),
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name='')
-def new_task_save(request):
+@login_required(login_url='login', redirect_field_name='')
+@check_user_permissions(min_permission_level=3, object_lookup='task_id')
+def new_task_save(request, *args, **kwargs):
     """
 
     :param request:
@@ -90,21 +92,23 @@ def new_task_save(request):
     return HttpResponse(reverse('task_information', args={task_submit.task_id}))
 
 
-@login_required(login_url='login',redirect_field_name="")
-def task_information(request,task_id):
+@login_required(login_url='login', redirect_field_name="")
+@check_user_permissions(min_permission_level=1, object_lookup='task_id')
+def task_information(request, task_id, *args, **kwargs):
     """
 
     :param request:
     :param task_id:
     :return:
     """
-    # ADD IN PERMISSIONS CHECKER
+    user_level = kwargs['user_level']
 
     # Template
     t = loader.get_template('NearBeach/tasks/task_information.html')
 
     # Get Data
     task_results = task.objects.get(task_id=task_id)
+    task_status = task_results.task_status
 
     organisation_results = organisation.objects.filter(
         is_deleted=False,
@@ -113,25 +117,26 @@ def task_information(request,task_id):
 
     # Context
     c = {
-        'organisation_results': serializers.serialize('json',organisation_results),
+        'organisation_results': serializers.serialize('json', organisation_results),
+        'user_level': user_level,
         'task_id': task_id,
-        'task_results': serializers.serialize('json',[task_results]),
+        'task_results': serializers.serialize('json', [task_results]),
+        'task_status': task_status,
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name='')
-def task_information_save(request,task_id):
+@login_required(login_url='login', redirect_field_name='')
+@check_user_permissions(min_permission_level=2, object_lookup='task_id')
+def task_information_save(request, task_id, *args, **kwargs):
     """
 
     :param request:
     :param task_id:
     :return:
     """
-
-    # CHECK USER PERMISSIONS
 
     # Form
     form = TaskInformationForm(request.POST)
@@ -146,8 +151,8 @@ def task_information_save(request,task_id):
     update_task.task_long_description = form.cleaned_data['task_long_description']
     update_task.task_start_date = form.cleaned_data['task_start_date']
     update_task.task_end_date = form.cleaned_data['task_end_date']
+    update_task.task_status = form.cleaned_data['task_status']
 
     update_task.save()
 
     return HttpResponse("")
-

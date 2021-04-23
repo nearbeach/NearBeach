@@ -1,10 +1,17 @@
 {% extends 'NearBeach/template.html' %}
 {% load static %}
 {% block content %}
+    {% if task_status == 'Closed' or user_level == 1 %}
+        <fieldset disabled="disabled">
+    {% endif %}
     <task-information v-bind:task-results="{{task_results}}"
                       v-bind:default-stakeholder-image="`{% static 'NearBeach/images/placeholder/product_tour.svg' %}`"
                       v-bind:organisation-results="{{organisation_results}}"
+                      v-bind:user-level="{{ user_level }}"
     ></task-information>
+    {% if task_status == 'Closed' or user_level == 1 %}
+        </fieldset>
+    {% endif %}
 
     <br/>
 

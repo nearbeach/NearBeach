@@ -497,6 +497,7 @@ class ProjectForm(forms.ModelForm):
             'project_description',
             'project_start_date',
             'project_end_date',
+            'project_status',
         ]
 
 
@@ -601,6 +602,7 @@ class TaskInformationForm(forms.ModelForm):
             'task_long_description',
             'task_start_date',
             'task_end_date',
+            'task_status',
         ]
 
 
