@@ -14,6 +14,7 @@ def check_user_permissions(min_permission_level, object_lookup=''):
             # If user is admin - grant them all permissions
             if request.user.is_superuser:
                 # Return the function with a user_level of 4
+                print("User Is SysAdmin")
                 return func(request, *args, **kwargs, user_level=4)
 
             # Default user level is 0

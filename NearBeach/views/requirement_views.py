@@ -8,29 +8,21 @@ from django.urls import reverse
 from django.template import loader
 from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
-from NearBeach.user_permissions import return_user_permission_level
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import get_object_or_404
-
+from NearBeach.decorators.check_user_permissions import check_user_permissions
 
 import json
 
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
-def add_requirement_link(request,requirement_id):
-    # ADD IN PERMISSION
-    permission_results = return_user_permission_level(request, None, ['requirement','requirement_link'])
-    # What about requirement items? Will need to fix this elegantly.
-
-    if permission_results['requirement'] < 2:
-        return HttpResponseRedirect(reverse('permission_denied'))
-
+@check_user_permissions(min_permission_level=2, object_lookup='requirement_id')
+def add_requirement_link(request,requirement_id, *args, **kwargs):
+    # Check user form is valid
     form = AddRequirementLinkForm(request.POST)
-
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-
 
     # Get the requirement instnace
     requirement_instance = requirement.objects.get(requirement_id=requirement_id)
@@ -65,7 +57,8 @@ def add_requirement_link(request,requirement_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
-def get_requirement_item_links(request,requirement_id):
+@check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
+def get_requirement_item_links(request,requirement_id, *args, **kwargs):
     # Get the requirement information
     requirement_results = requirement.objects.get(requirement_id=requirement_id)
 
@@ -123,8 +116,10 @@ def get_requirement_item_links(request,requirement_id):
 
     return HttpResponse(json_results, content_type='application/json')
 
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
-def get_requirement_item_status_list(request,requirement_id):
+@check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
+def get_requirement_item_status_list(request,requirement_id, *args, **kwargs):
     # Get all status - even deleted ones.
     status_list = list_of_requirement_item_status.objects.all()
 
@@ -133,8 +128,11 @@ def get_requirement_item_status_list(request,requirement_id):
 
     return HttpResponse(json_results, content_type='application/json')
 
+
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
-def get_requirement_item_type_list(request,requirement_id):
+@check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
+def get_requirement_item_type_list(request,requirement_id, *args, **kwargs):
     # Get all status - even deleted ones.
     type_list = list_of_requirement_item_type.objects.all()
 
@@ -143,8 +141,11 @@ def get_requirement_item_type_list(request,requirement_id):
 
     return HttpResponse(json_results, content_type='application/json')
 
+
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
-def get_requirement_items(request,requirement_id):
+@check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
+def get_requirement_items(request,requirement_id, *args, **kwargs):
     # Get all the requirement items assigned to the requirement
     requirement_item_results = requirement_item.objects.filter(
         is_deleted=False,
@@ -159,7 +160,8 @@ def get_requirement_items(request,requirement_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
-def get_requirement_links_list(request,requirement_id):
+@check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
+def get_requirement_links_list(request,requirement_id, *args, **kwargs):
     # Get the requirement information
     requirement_results = requirement.objects.get(requirement_id=requirement_id)
 
@@ -209,28 +211,8 @@ def get_requirement_links_list(request,requirement_id):
 
 
 @login_required(login_url='login',redirect_field_name="")
-def get_user_requirement_permissions(request,requirement_id):
-    """
-    Use the requirement_id and find out if the user has access to this requirement
-    :param requirement_id:
-    :return:
-    """
-    requirement_groups = object_assignment.objects.filter(
-        is_deleted=False,
-        #requirement_id=requirement_id
-    ).values('group_id')
-
-    if requirement_id > 0:
-        # Make sure to filter by requirement groups
-        requirement_groups = requirement_groups.filter(
-            requirement_id=requirement_id
-        )
-
-    return return_user_permission_level(request, requirement_groups, ['requirement','requirement_link'])
-
-
-@login_required(login_url='login',redirect_field_name="")
-def new_requirement(request, location_id="", destination=""):
+@check_user_permissions(min_permission_level=3, object_lookup='requirement_id')
+def new_requirement(request, *args, **kwargs):
     """
     Loads the new requirement page
     :param request:
@@ -238,14 +220,6 @@ def new_requirement(request, location_id="", destination=""):
     :param destination:
     :return:
     """
-    # Get user permission
-    permission_results = get_user_requirement_permissions(request,0)
-
-    # If user has no permissions to create requirements, then send them to the appropriate location
-    if permission_results['requirement'] <= 2:
-        # Users can not create requirement.
-        return HttpResponseRedirect(reverse('permission_denied'))
-
     #Extract Data
     status_list = list_of_requirement_status.objects.filter(
         is_deleted=False,
@@ -272,25 +246,13 @@ def new_requirement(request, location_id="", destination=""):
 
     return HttpResponse(t.render(c, request))
 
+
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name='')
-def new_requirement_save(request, location_id="", destination=""):
-    # Make sure this is a post
-    if not request.method == "POST":
-        #Give the user a 404
-        return HttpResponseBadRequest("Sorry - Post only")
-
-    # Get user permission
-    permission_results = get_user_requirement_permissions(request,0)
-
-    # If user has no permissions to create requirements, then send them to the appropriate location
-    if permission_results['requirement'] <= 2:
-        # Users can not create requirement.
-        return HttpResponseRedirect(reverse('permission_denied'))
-
+@check_user_permissions(min_permission_level=3, object_lookup='requirement_id')
+def new_requirement_save(request, *args, **kwargs):
     # Get the data and place into the form
-
     form = NewRequirementForm(request.POST)
-
     if not form.is_valid():
         # Something went wrong with the form.
         return HttpResponseBadRequest("There was something wrong with the form")
@@ -330,30 +292,15 @@ def new_requirement_save(request, location_id="", destination=""):
 
 
 @login_required(login_url='login',redirect_field_name='')
-def requirement_information(request, requirement_id):
+@check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
+def requirement_information(request, requirement_id, *args, **kwargs):
     """
     Loads the requirement information.
     :param request:
     :param requirement_id:
     :return:
     """
-    # Get the requirement information
-    # requirement_results = requirement.objects.get(requirement_id=requirement_id)
-    requirement_results = get_object_or_404(requirement,requirement_id=requirement_id)
-
-    # Check the permissions
-    permission_results = get_user_requirement_permissions(request,requirement_id)
-
-    # If user has no permissions to this requirement send them to the appropriate location
-    if permission_results['requirement'] == 0:
-        # Users who create the requirement get at least read only
-        if requirement_results.creation_user == request.user:
-            return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_id}))
-
-        # Users who did not create the requirement get sent to permission denied.
-        return HttpResponseRedirect(reverse('permission_denied'))
-
-
+    # TODO: Check if I need to have a separate read only tempalte now.
     # If the requirement has been closed - send user to the read only section
     if requirement_results.requirement_status.requirement_status == "Completed":
         return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_id}))
@@ -400,26 +347,17 @@ def requirement_information(request, requirement_id):
 
     return HttpResponse(t.render(c, request))
 
+
+@require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
-def requirement_information_save(request, requirement_id):
+@check_user_permissions(min_permission_level=2, object_lookup='requirement_id')
+def requirement_information_save(request, requirement_id, *args, **kwargs):
     """
 
     :param request:
     :param requirement_id:
     :return:
     """
-    # This request needs to be in POST
-    if request.method != "POST":
-        return HttpResponseBadRequest("Request must be in POST")
-
-    # Check the permissions
-    permission_results = get_user_requirement_permissions(request, requirement_id)
-
-    # Users will need an edit permission
-    if permission_results['requirement'] <= 1:
-        # On your bike - you do not have enough permission
-        return HttpResponseRedirect(reverse('permission_denied'))
-
     # Insert POST into form
     form = UpdateRequirementForm(request.POST)
 
@@ -442,7 +380,3 @@ def requirement_information_save(request, requirement_id):
     # Return a success
     return HttpResponse("Requirement Saved")
 
-
-@login_required(login_url='login',redirect_field_name="")
-def update_requirement(request,requirement_id):
-    return False

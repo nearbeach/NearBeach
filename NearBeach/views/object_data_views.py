@@ -11,7 +11,6 @@ from django.db.models import Sum, Q, Min, CharField, Value as V
 from django.db.models.functions import Concat
 from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
-from NearBeach.user_permissions import return_user_permission_level
 
 
 import json, urllib, urllib3

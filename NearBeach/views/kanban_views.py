@@ -10,7 +10,6 @@ from django.template import loader
 from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
-from NearBeach.user_permissions import return_user_permission_level
 from django.db.models import Max
 from NearBeach.decorators.check_user_permissions import check_user_permissions
 

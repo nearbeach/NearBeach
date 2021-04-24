@@ -15,10 +15,6 @@ from django.db.models import Count
 # Import Python Libraries
 import json, urllib.parse, random
 
-# Import user permission library
-from ..user_permissions import return_user_permission_level
-
-
 @login_required(login_url='login', redirect_field_name="")
 def dashboard(request):
     """
@@ -27,17 +23,11 @@ def dashboard(request):
     """
     request.session['is_superuser'] = request.user.is_superuser
 
-    # Get user's default permissions
-    permission_results = return_user_permission_level(request, None, 'project')
-
     # Load the template
     t = loader.get_template('NearBeach/dashboard/dashboard.html')
 
     # context
-    c = {
-        'new_item_permission': permission_results['new_item'],
-        'administration_permission': permission_results['administration'],
-    }
+    c = {}
 
     return HttpResponse(t.render(c, request))
 
