@@ -22,11 +22,8 @@ def check_user_permissions(min_permission_level, object_lookup=''):
                 username=request.user,
             )
 
-            # If we are passing the project_id through, we will use a different function
+            # If we are passing the object_lookup through, we will use a different function
             if len(kwargs) > 0:
-                # Check user permissions AGAINST the project and it's groups
-                # project_instance = project.objects.get(project_id=kwargs['project_id'])
-
                 # Determine if there are any cross over with user groups and project groups
                 group_results = group.objects.filter(
                     Q(
@@ -49,8 +46,9 @@ def check_user_permissions(min_permission_level, object_lookup=''):
 
             # Get the max permission value from user_group_results
             user_level = user_group_results.aggregate(
-                Max('permission_set__project')
-            )['permission_set__project__max']
+                Max('permission_set__%s' % object_lookup.replace('_id',''))
+            )['permission_set__%s__max' % object_lookup.replace('_id','')]
+
 
             if user_level >= min_permission_level:
                 # Everything is fine - continue on
