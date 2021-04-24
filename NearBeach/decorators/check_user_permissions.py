@@ -24,11 +24,11 @@ def check_user_permissions(min_permission_level, object_lookup=''):
 
             # If we are passing the object_lookup through, we will use a different function
             if len(kwargs) > 0:
-                # Determine if there are any cross over with user groups and project groups
+                # Determine if there are any cross over with user groups and object_lookup groups
                 group_results = group.objects.filter(
                     Q(
                         is_deleted=False,
-                        # The project groups
+                        # The object_lookup groups
                         group_id__in=object_assignment.objects.filter(
                             is_deleted=False,
                             **{object_lookup: kwargs[object_lookup]},
@@ -49,9 +49,11 @@ def check_user_permissions(min_permission_level, object_lookup=''):
                 Max('permission_set__%s' % object_lookup.replace('_id',''))
             )['permission_set__%s__max' % object_lookup.replace('_id','')]
 
+            print("user Level %s" % user_level)
 
             if user_level >= min_permission_level:
                 # Everything is fine - continue on
+                print("User Level Again: %s" % user_level)
                 return func(request, *args, **kwargs, user_level=user_level)
 
             # Does not meet conditions
