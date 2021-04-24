@@ -16,9 +16,9 @@ import json
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=2, object_lookup='requirement_id')
-def add_requirement_link(request,requirement_id, *args, **kwargs):
+def add_requirement_link(request, requirement_id, *args, **kwargs):
     # Check user form is valid
     form = AddRequirementLinkForm(request.POST)
     if not form.is_valid():
@@ -56,9 +56,9 @@ def add_requirement_link(request,requirement_id, *args, **kwargs):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
-def get_requirement_item_links(request,requirement_id, *args, **kwargs):
+def get_requirement_item_links(request, requirement_id, *args, **kwargs):
     # Get the requirement information
     requirement_results = requirement.objects.get(requirement_id=requirement_id)
 
@@ -116,10 +116,11 @@ def get_requirement_item_links(request,requirement_id, *args, **kwargs):
 
     return HttpResponse(json_results, content_type='application/json')
 
+
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
-def get_requirement_item_status_list(request,requirement_id, *args, **kwargs):
+def get_requirement_item_status_list(request, requirement_id, *args, **kwargs):
     # Get all status - even deleted ones.
     status_list = list_of_requirement_item_status.objects.all()
 
@@ -130,9 +131,9 @@ def get_requirement_item_status_list(request,requirement_id, *args, **kwargs):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
-def get_requirement_item_type_list(request,requirement_id, *args, **kwargs):
+def get_requirement_item_type_list(request, requirement_id, *args, **kwargs):
     # Get all status - even deleted ones.
     type_list = list_of_requirement_item_type.objects.all()
 
@@ -143,9 +144,9 @@ def get_requirement_item_type_list(request,requirement_id, *args, **kwargs):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
-def get_requirement_items(request,requirement_id, *args, **kwargs):
+def get_requirement_items(request, requirement_id, *args, **kwargs):
     # Get all the requirement items assigned to the requirement
     requirement_item_results = requirement_item.objects.filter(
         is_deleted=False,
@@ -159,14 +160,14 @@ def get_requirement_items(request,requirement_id, *args, **kwargs):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
-def get_requirement_links_list(request,requirement_id, *args, **kwargs):
+def get_requirement_links_list(request, requirement_id, *args, **kwargs):
     # Get the requirement information
     requirement_results = requirement.objects.get(requirement_id=requirement_id)
 
     # Check the permissions
-    permission_results = get_user_requirement_permissions(request,requirement_id)
+    permission_results = get_user_requirement_permissions(request, requirement_id)
 
     # If user has no permissions to this requirement send them to the appropriate location
     if permission_results['requirement'] == 0:
@@ -205,12 +206,12 @@ def get_requirement_links_list(request,requirement_id, *args, **kwargs):
     """
 
     # Send back json data
-    json_results = json.dumps(list(link_results),cls=DjangoJSONEncoder)
+    json_results = json.dumps(list(link_results), cls=DjangoJSONEncoder)
 
     return HttpResponse(json_results, content_type='application/json')
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=3, object_lookup='requirement_id')
 def new_requirement(request, *args, **kwargs):
     """
@@ -220,7 +221,7 @@ def new_requirement(request, *args, **kwargs):
     :param destination:
     :return:
     """
-    #Extract Data
+    # Extract Data
     status_list = list_of_requirement_status.objects.filter(
         is_deleted=False,
         requirement_status_is_closed=False,
@@ -234,21 +235,21 @@ def new_requirement(request, *args, **kwargs):
         is_deleted=False,
     )
 
-    #Load template
+    # Load template
     t = loader.get_template('NearBeach/requirements/new_requirements.html')
 
     # context
     c = {
-        'status_list': serializers.serialize("json",status_list),
-        'type_list': serializers.serialize("json",type_list),
-        'group_results': serializers.serialize("json",group_results),
+        'status_list': serializers.serialize("json", status_list),
+        'type_list': serializers.serialize("json", type_list),
+        'group_results': serializers.serialize("json", group_results),
     }
 
     return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name='')
+@login_required(login_url='login', redirect_field_name='')
 @check_user_permissions(min_permission_level=3, object_lookup='requirement_id')
 def new_requirement_save(request, *args, **kwargs):
     # Get the data and place into the form
@@ -287,11 +288,10 @@ def new_requirement_save(request, *args, **kwargs):
         submit_object_assignment.save()
 
     # Send back requirement_information URL
-    return HttpResponse(reverse('requirement_information',args={submit_requirement.requirement_id}))
+    return HttpResponse(reverse('requirement_information', args={submit_requirement.requirement_id}))
 
 
-
-@login_required(login_url='login',redirect_field_name='')
+@login_required(login_url='login', redirect_field_name='')
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
 def requirement_information(request, requirement_id, *args, **kwargs):
     """
@@ -301,15 +301,16 @@ def requirement_information(request, requirement_id, *args, **kwargs):
     :return:
     """
     # TODO: Check if I need to have a separate read only tempalte now.
+    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+
     # If the requirement has been closed - send user to the read only section
     if requirement_results.requirement_status.requirement_status == "Completed":
         return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_id}))
 
-
-    #Load template
+    # Load template
     t = loader.get_template('NearBeach/requirements/requirement_information.html')
 
-    #Get any extra data required
+    # Get any extra data required
     organisation_results = organisation.objects.get(
         organisation_id=requirement_results.organisation_id,
     )
@@ -336,20 +337,18 @@ def requirement_information(request, requirement_id, *args, **kwargs):
     c = {
         'group_results': serializers.serialize("json", group_results),
         'organisation_results': serializers.serialize("json", [organisation_results]),
-        'permission_results': permission_results,
         'requirement_results': serializers.serialize("json", [requirement_results]),
         'requirement_id': requirement_id,
-        'requirement_item_results': serializers.serialize("json",requirement_item_results),
+        'requirement_item_results': serializers.serialize("json", requirement_item_results),
         'status_list': serializers.serialize("json", status_list),
         'type_list': serializers.serialize("json", type_list),
-
     }
 
     return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=2, object_lookup='requirement_id')
 def requirement_information_save(request, requirement_id, *args, **kwargs):
     """
@@ -365,7 +364,6 @@ def requirement_information_save(request, requirement_id, *args, **kwargs):
     if not form.is_valid():
         return HttpResponseBadRequest("Sorry, there is an error with the form: %s" % form.errors)
 
-
     # Get the requirement
     requirement_result = requirement.objects.get(requirement_id=requirement_id)
 
@@ -379,4 +377,3 @@ def requirement_information_save(request, requirement_id, *args, **kwargs):
 
     # Return a success
     return HttpResponse("Requirement Saved")
-

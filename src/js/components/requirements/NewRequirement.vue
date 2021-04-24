@@ -183,9 +183,6 @@
                     //Just return - as we do not need to do the rest of this function
                     return;
                 }
-                // Apply the loading screen to hide everything
-                var loader_elem = document.getElementById("loader");
-                loader_elem.style.transform = "translateY(0)";
 
                 // Set up the data object to send
                 const data_to_send = new FormData();
