@@ -9,14 +9,13 @@ from django.template import loader
 from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import check_user_permissions
+from NearBeach.decorators.check_user_permissions import check_user_customer_permissions
 
 import json
 
 
 @login_required(login_url='login',redirect_field_name='')
-@check_user_permissions(min_permission_level=1, object_lookup='customer_id')
-@check_user_permissions(min_permission_level=2, object_lookup='customer_id')
+@check_user_customer_permissions(min_permission_level=1)
 def customer_information(request,customer_id, *args, **kwargs):
     """
 
@@ -54,7 +53,7 @@ def customer_information(request,customer_id, *args, **kwargs):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name='')
-@check_user_permissions(min_permission_level=2, object_lookup='customer_id')
+@check_user_customer_permissions(min_permission_level=2)
 def customer_information_save(request,customer_id, *args, **kwargs):
     """
 
@@ -87,7 +86,7 @@ def customer_information_save(request,customer_id, *args, **kwargs):
 
 
 @login_required(login_url='login',redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup='customer_id')
+@check_user_customer_permissions(min_permission_level=3)
 def new_customer(request, *args, **kwargs):
     """
 
@@ -114,7 +113,7 @@ def new_customer(request, *args, **kwargs):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
-@check_user_permissions(min_permission_level=2, object_lookup='customer_id')
+@check_user_customer_permissions(min_permission_level=2)
 def new_customer_save(request, *args, **kwargs):
     """
 

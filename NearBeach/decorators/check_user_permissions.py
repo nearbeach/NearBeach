@@ -6,6 +6,36 @@ from functools import wraps
 
 from NearBeach.models import *
 
+def check_user_customer_permissions(min_permission_level):
+    #Function is only used when checking user permissions against customers - as they are different
+    def decorator(func):
+        @wraps(func)
+        def inner(request, *args, **kwargs):
+            #if user is admin -grant them all permissions
+            if request.user.is_superuser:
+                # Return the function with a user_level of 4
+                return func(request, *args, **kwargs, user_level=4)
+
+            # Default user level is 0
+            user_group_results = user_group.objects.filter(
+                is_deleted=False,
+                username=request.user,
+            )
+
+            # Get the max permission value from user_group_results
+            user_level = user_group_results.aggregate(
+                Max('permission_set__customer')
+            )['permission_set__customer__max']
+
+            if user_level >= min_permission_level:
+                # Everything is fine - continue on
+                return func(request, *args, **kwargs, user_level=user_level)
+
+            # Does not meet conditions
+            raise PermissionDenied
+        return inner
+    return decorator
+
 
 def check_user_permissions(min_permission_level, object_lookup=''):
     def decorator(func):
@@ -14,7 +44,6 @@ def check_user_permissions(min_permission_level, object_lookup=''):
             # If user is admin - grant them all permissions
             if request.user.is_superuser:
                 # Return the function with a user_level of 4
-                print("User Is SysAdmin")
                 return func(request, *args, **kwargs, user_level=4)
 
             # Default user level is 0
@@ -50,11 +79,8 @@ def check_user_permissions(min_permission_level, object_lookup=''):
                 Max('permission_set__%s' % object_lookup.replace('_id',''))
             )['permission_set__%s__max' % object_lookup.replace('_id','')]
 
-            print("user Level %s" % user_level)
-
             if user_level >= min_permission_level:
                 # Everything is fine - continue on
-                print("User Level Again: %s" % user_level)
                 return func(request, *args, **kwargs, user_level=user_level)
 
             # Does not meet conditions

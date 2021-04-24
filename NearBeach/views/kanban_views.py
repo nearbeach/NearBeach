@@ -18,7 +18,7 @@ import json, urllib3
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
-@check_user_permissions(min_permission_level=2, object_lookup='kanban_id')
+@check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
 def add_kanban_link(request,kanban_board_id,object_lookup, *args, **kwargs):
     """
 
@@ -68,7 +68,7 @@ def add_kanban_link(request,kanban_board_id,object_lookup, *args, **kwargs):
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
-@check_user_permissions(min_permission_level=3, object_lookup='kanban_id')
+@check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
 def check_kanban_board_name(request, *args, **kwargs):
     """
     The following will get a list of all kanban boards with the same name. The idea is that each kanban board should
@@ -109,7 +109,7 @@ def get_max_sort_id(kanban_board_id,form):
 
 
 @login_required(login_url='login', redirect_field_name="")
-@check_user_permissions(min_permission_level=1, object_lookup='kanban_id')
+@check_user_permissions(min_permission_level=1, object_lookup='kanban_board_id')
 def kanban_information(request, kanban_board_id, *args, **kwargs):
     """
 
@@ -155,7 +155,7 @@ def kanban_information(request, kanban_board_id, *args, **kwargs):
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
-@check_user_permissions(min_permission_level=1, object_lookup='kanban_id')
+@check_user_permissions(min_permission_level=1, object_lookup='kanban_board_id')
 def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
     """
 
@@ -199,7 +199,7 @@ def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
-@check_user_permissions(min_permission_level=2, object_lookup='kanban_id')
+@check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
 def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     """
 
@@ -298,7 +298,7 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
 
 
 @login_required(login_url='login', redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup='kanban_id')
+@check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
 def new_kanban(request, *args, **kwargs):
     """
 
@@ -326,7 +326,7 @@ def new_kanban(request, *args, **kwargs):
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
-@check_user_permissions(min_permission_level=2, object_lookup='kanban_id')
+@check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
 def new_kanban_card(request, kanban_board_id, *args, **kwargs):
     """
     """
@@ -363,16 +363,13 @@ def new_kanban_card(request, kanban_board_id, *args, **kwargs):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup='kanban_id')
+@check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
 def new_kanban_save(request, *args, **kwargs):
     """
 
     :param request:
     :return:
     """
-
-    # CHECK USERS PERMISSIONS
-
     # Check the user form
     form = NewKanbanForm(request.POST)
     if not form.is_valid():
@@ -434,7 +431,7 @@ def new_kanban_save(request, *args, **kwargs):
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
-@check_user_permissions(min_permission_level=2, object_lookup='kanban_id')
+@check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
 def update_card(request, *args, **kwargs):
     """
     The following function will update the card information sent through the form in POST
