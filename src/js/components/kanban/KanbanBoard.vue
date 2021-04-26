@@ -1,7 +1,7 @@
 <template>
     <div class="kanban-container">
         <!-- Render out the header -->
-        <div class="kanban-row">
+        <div class="kanban-header-row">
             <div class="kanban-column-header"
                  v-for="column in columnResults"
             >
@@ -14,7 +14,6 @@
             <!-- CREATE THE LEVEL HEADER -->
             <div class="kanban-level-header">
                 <div class="kanban-level-div"
-                     v-bind:style="`width: ${columnResults.length * 402}px;`"
                 >{{level['fields']['kanban_level_name']}}</div>
             </div>
 

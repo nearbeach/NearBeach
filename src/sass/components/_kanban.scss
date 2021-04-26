@@ -23,6 +23,9 @@
   text-align: center;
   padding: 4px;
   font-weight: bold;
+  width: calc(100vw - 72px);
+  position: absolute;
+  left: 36px;
 }
 
 .kanban-container {
@@ -30,8 +33,12 @@
   margin: 5px 35px;
 }
 
-.kanban-row, .kanban-level-header {
+.kanban-row, .kanban-level-header, .kanban-header-row {
   display: flex;
+}
+
+.kanban-row {
+  margin-bottom: 50px;
 }
 
 .kanban-card {
