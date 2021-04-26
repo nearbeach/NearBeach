@@ -6,6 +6,7 @@ from django.urls import reverse
 username = 'read_only'
 password = 'Test1234$'
 
+
 def login_user(c: object, self: object) -> object:
     response = c.post(
         reverse('login'),
