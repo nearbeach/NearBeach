@@ -16,7 +16,13 @@
              v-bind:data-card-id="card['pk']"
              v-on:dblclick="doubleClickCard($event)"
         >
+            <b>#{{card['pk']}}</b><br/>
             {{card['fields']['kanban_card_text']}}
+            <IconifyIcon class="kanban-card-info-icon"
+                         v-bind:icon="icons.infoCircle"
+                         v-on:click="singleClickCard(card['pk'])"
+                         v-on:dblclick="singleClickCard(card['pk'])"
+            ></IconifyIcon>
         </div>
     </draggable>
 </template>
@@ -26,6 +32,9 @@
 
     import { Modal } from "bootstrap";
 
+    //Mixins
+    import iconMixin from "../../mixins/iconMixin";
+
     export default {
         name: "KanbanCard",
         props: {
@@ -34,6 +43,9 @@
             masterList: Array,
             newCardInfo: Array,
         },
+        mixins: [
+            iconMixin,
+        ],
         methods: {
             doubleClickCard: function(data) {
                 //Filter out the data we want to send up stream
@@ -42,20 +54,7 @@
                 })[0];
 
                 //Setup data to send upstream
-                const data_to_send = {
-                    'cardId': filtered_data['pk'],
-                    'cardTitle': filtered_data['fields']['kanban_card_text'],
-                    'cardDescription': filtered_data['fields']['kanban_card_description'],
-                }
-
-                console.log("Data To Send: ",data_to_send);
-
-                //Emit the current card information
-                this.$emit('double_clicked_card',data_to_send);
-
-                //Show the modal
-                const cardInformationModal = new Modal(document.getElementById("cardInformationModal"));
-                cardInformationModal.show();
+                this.sendDataUpstream(filtered_data);
             },
             onEnd: function(event) {
                 console.log("Event: ",event);
@@ -83,6 +82,29 @@
                     console.log("Error: ",error);
                 })
             },
+            sendDataUpstream: function(filtered_data) {
+                const data_to_send = {
+                    'cardId': filtered_data['pk'],
+                    'cardTitle': filtered_data['fields']['kanban_card_text'],
+                    'cardDescription': filtered_data['fields']['kanban_card_description'],
+                }
+
+                //Emit the current card information
+                this.$emit('double_clicked_card',data_to_send);
+
+                //Show the modal
+                const cardInformationModal = new Modal(document.getElementById("cardInformationModal"));
+                cardInformationModal.show();
+            },
+            singleClickCard: function(data) {
+                //Filter out the data we want to send up stream
+                const filtered_data = this.masterList.filter(row => {
+                    return row['pk'] == data;
+                })[0];
+
+                //Setup data to send upstream
+                this.sendDataUpstream(filtered_data);
+            }
         },
         watch: {
             newCardInfo: function() {
