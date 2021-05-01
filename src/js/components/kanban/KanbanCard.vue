@@ -24,6 +24,22 @@
                          v-on:dblclick="singleClickCard(card['pk'])"
             ></IconifyIcon>
         </div>
+
+        <!-- ADD NEW CARDS + LINK OBJECTS -->
+        <div class="kanban-add-new-cards">
+            <a class="kanban-link btn btn-primary"
+               href="javascript:void(0)"
+               v-on:click="addNewKanbanCard"
+            >
+                New Card
+            </a>
+            <a class="kanban-link btn btn-warning"
+               href="javascript:void(0)"
+               v-on:click="addNewLink"
+            >
+                Link Existing Object
+            </a>
+        </div>
     </draggable>
 </template>
 
@@ -47,6 +63,26 @@
             iconMixin,
         ],
         methods: {
+            addNewKanbanCard: function() {
+                //Update the modal's data-attributes to reflect the column ID and Level ID
+                var addKanbanCardModal = document.getElementById('addKanbanCardModal');
+                addKanbanCardModal['dataset']['kanbanLevel'] = this.levelId;
+                addKanbanCardModal['dataset']['kanbanColumn'] = this.columnId;
+
+                //Get the Modal from the above modal
+                var addKanbanCardModal = new Modal(addKanbanCardModal);
+                addKanbanCardModal.show();
+            },
+            addNewLink: function() {
+                //Update the modal's data-attributes to reflect the column ID and Level ID
+                var newLinkModal = document.getElementById('newLinkModal');
+                newLinkModal['dataset']['kanbanLevel'] = this.levelId;
+                newLinkModal['dataset']['kanbanColumn']
+
+                //Get the Modal from the above modal
+                var newLinkModal = new Modal(newLinkModal);
+                newLinkModal.show();
+            },
             doubleClickCard: function(data) {
                 //Filter out the data we want to send up stream
                 const filtered_data = this.masterList.filter(row => {

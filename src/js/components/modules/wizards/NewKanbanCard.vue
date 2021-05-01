@@ -1,5 +1,12 @@
 <template>
-    <div class="modal fade" id="addKanbanCardModal" tabindex="-1" aria-labelledby="addKanbanCardModalLabel" aria-hidden="true">
+    <div class="modal fade" 
+         id="addKanbanCardModal" 
+         tabindex="-1" 
+         aria-labelledby="addKanbanCardModalLabel" 
+         aria-hidden="true"
+         v-bind:data-kanban-level="levelResults[0]['pk']"
+         v-bind:data-kanban-column="columnResults[0]['pk']"
+    >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -93,12 +100,17 @@
         },
         methods: {
             addKanbanCard: function() {
+                //Get the modal to extract data from
+                var self_modal = document.getElementById('addKanbanCardModal');
+
                 //Create the data_to_send
                 const data_to_send = new FormData();
                 data_to_send.set('kanban_card_text',this.kanbanCardTextModel);
                 data_to_send.set('kanban_card_description',this.kanbanCardDescriptionModel);
-                data_to_send.set('kanban_level',this.levelResults[0]['pk']);
-                data_to_send.set('kanban_column',this.columnResults[0]['pk']);
+                //data_to_send.set('kanban_level',this.levelResults[0]['pk']);
+                //data_to_send.set('kanban_column',this.columnResults[0]['p
+                data_to_send.set('kanban_level',self_modal['dataset']['kanbanLevel']);
+                data_to_send.set('kanban_column',self_modal['dataset']['kanbanColumn']);
 
                 //Send the data
                 axios.post(
