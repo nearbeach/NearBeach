@@ -37,7 +37,7 @@ describe("Shakeout Project", () => {
         .contains('FORM ISSUE: Sorry, but can you please fill out the form completely.')
 
     //User closes the error modal
-    cy.get('.modal-footer > .btn').click();
+    cy.get('.modal-footer > .btn').should('have.text','Close').click().click(); //Click done twice due to bug
 
     //User now checks out all the errors on the page now
     cy.contains('Please suppy a title.');

@@ -1,7 +1,7 @@
 <template>
     <div class="card">
         <div class="card-body">
-            <h1>New Task</h1>
+            <h1>Task Information</h1>
             <hr>
 
             <div class="row">

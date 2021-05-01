@@ -44,7 +44,7 @@ def get_rfc_context(rfc_id):
 
 
 @login_required(login_url='login', redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup='organisation_id')
+@check_user_permissions(min_permission_level=3, object_lookup='request_for_change_id')
 def new_request_for_change(request, *args, **kwargs):
     """
 
@@ -224,7 +224,7 @@ def rfc_new_change_task(request, rfc_id, *args, **kwargs):
 
 
 @login_required(login_url='login', redirect_field_name="")
-@check_user_permissions(min_permission_level=1, object_lookup='organisation_id')
+@check_user_permissions(min_permission_level=1, object_lookup='request_for_change')
 def rfc_information(request, rfc_id, *args, **kwargs):
     """
 
