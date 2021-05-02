@@ -57,7 +57,7 @@ describe("Shakeout Project", () => {
   it('Permission Checking on RFC', () => {
     //User goes to Requirement 1 -> is allowed access
     cy.visit('http://localhost:8000/rfc_information/1/');
-    cy.get('h1').should('have.text', 'Requirement Information');
+    cy.get('h1').should('have.text', 'Request for Change');
 
     //User goes to Requirement 2 -> is denied access
     cy.visit('http://localhost:8000/rfc_information/2/', {

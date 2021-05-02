@@ -62,18 +62,6 @@ def get_requirement_item_links(request, requirement_id, *args, **kwargs):
     # Get the requirement information
     requirement_results = requirement.objects.get(requirement_id=requirement_id)
 
-    # Check the permissions
-    permission_results = get_user_requirement_permissions(request, requirement_id)
-
-    # If user has no permissions to this requirement send them to the appropriate location
-    if permission_results['requirement'] == 0:
-        # Users who create the requirement get at least read only
-        if requirement_results.creation_user == request.user:
-            return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_id}))
-
-        # Users who did not create the requirement get sent to permission denied.
-        return HttpResponseRedirect(reverse('permission_denied'))
-
     # Use object_assignment to get the requirme
     link_results = object_assignment.objects.filter(
         Q(
@@ -165,18 +153,6 @@ def get_requirement_items(request, requirement_id, *args, **kwargs):
 def get_requirement_links_list(request, requirement_id, *args, **kwargs):
     # Get the requirement information
     requirement_results = requirement.objects.get(requirement_id=requirement_id)
-
-    # Check the permissions
-    permission_results = get_user_requirement_permissions(request, requirement_id)
-
-    # If user has no permissions to this requirement send them to the appropriate location
-    if permission_results['requirement'] == 0:
-        # Users who create the requirement get at least read only
-        if requirement_results.creation_user == request.user:
-            return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_id}))
-
-        # Users who did not create the requirement get sent to permission denied.
-        return HttpResponseRedirect(reverse('permission_denied'))
 
     # Use object_assignment to get the requirme
     link_results = object_assignment.objects.filter(
