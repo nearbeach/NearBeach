@@ -4,7 +4,7 @@ from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
-from NearBeach.decorators.check_user_permissions import check_user_permissions
+from NearBeach.decorators.check_user_permissions import check_user_permissions, check_rfc_permissions
 
 from NearBeach.models import *
 from NearBeach.forms import NewRequestForChangeForm, RfcModuleForm, RfcInformationSaveForm, NewChangeTaskForm, \
@@ -44,7 +44,7 @@ def get_rfc_context(rfc_id):
 
 
 @login_required(login_url='login', redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup='request_for_change_id')
+@check_rfc_permissions(min_permission_level=3)
 def new_request_for_change(request, *args, **kwargs):
     """
 
@@ -77,7 +77,7 @@ def new_request_for_change(request, *args, **kwargs):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup='organisation_id')
+@check_rfc_permissions(min_permission_level=3)
 def new_request_for_change_save(request, *args, **kwargs):
     """
 
@@ -138,7 +138,7 @@ def new_request_for_change_save(request, *args, **kwargs):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-@check_user_permissions(min_permission_level=1, object_lookup='organisation_id')
+@check_rfc_permissions(min_permission_level=1)
 def rfc_change_task_list(request, rfc_id, *args, **kwargs):
     """
     """
@@ -152,7 +152,7 @@ def rfc_change_task_list(request, rfc_id, *args, **kwargs):
 
 
 @login_required(login_url='login', redirect_field_name="")
-@check_user_permissions(min_permission_level=2, object_lookup='organisation_id')
+@check_rfc_permissions(min_permission_level=2)
 def rfc_deployment(request, rfc_id, *args, **kwargs):
     """
 
@@ -177,7 +177,7 @@ def rfc_deployment(request, rfc_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url='login', redirect_field_name="")
-@check_user_permissions(min_permission_level=2, object_lookup='organisation_id')
+@check_rfc_permissions(min_permission_level=2)
 def rfc_new_change_task(request, rfc_id, *args, **kwargs):
     """
 
@@ -224,7 +224,7 @@ def rfc_new_change_task(request, rfc_id, *args, **kwargs):
 
 
 @login_required(login_url='login', redirect_field_name="")
-@check_user_permissions(min_permission_level=1, object_lookup='request_for_change')
+@check_rfc_permissions(min_permission_level=1)
 def rfc_information(request, rfc_id, *args, **kwargs):
     """
 
@@ -249,7 +249,7 @@ def rfc_information(request, rfc_id, *args, **kwargs):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-@check_user_permissions(min_permission_level=2, object_lookup='organisation_id')
+@check_rfc_permissions(min_permission_level=2)
 def rfc_information_save(request, rfc_id, *args, **kwargs):
     """
 
@@ -285,7 +285,7 @@ def rfc_information_save(request, rfc_id, *args, **kwargs):
 
 
 @login_required(login_url='login', redirect_field_name="")
-@check_user_permissions(min_permission_level=1, object_lookup='organisation_id')
+@check_rfc_permissions(min_permission_level=1)
 def rfc_readonly(request, rfc_id, *args, **kwargs):
     """
 
@@ -319,7 +319,7 @@ def rfc_readonly(request, rfc_id, *args, **kwargs):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-@check_user_permissions(min_permission_level=2, object_lookup='organisation_id')
+@check_rfc_permissions(min_permission_level=2)
 def rfc_save_backout(request, rfc_id, *args, **kwargs):
     """
 
@@ -346,7 +346,7 @@ def rfc_save_backout(request, rfc_id, *args, **kwargs):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-@check_user_permissions(min_permission_level=2, object_lookup='organisation_id')
+@check_rfc_permissions(min_permission_level=2)
 def rfc_save_implementation(request, rfc_id, *args, **kwargs):
     """
     """
@@ -372,7 +372,7 @@ def rfc_save_implementation(request, rfc_id, *args, **kwargs):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name='')
-@check_user_permissions(min_permission_level=2, object_lookup='organisation_id')
+@check_rfc_permissions(min_permission_level=2)
 def rfc_save_risk(request, rfc_id, *args, **kwargs):
     """
     """
@@ -402,7 +402,7 @@ def rfc_save_risk(request, rfc_id, *args, **kwargs):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-@check_user_permissions(min_permission_level=2, object_lookup='organisation_id')
+@check_rfc_permissions(min_permission_level=2)
 def rfc_save_test(request, rfc_id, *args, **kwargs):
     """
     """
@@ -580,7 +580,7 @@ def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-@check_user_permissions(min_permission_level=2, object_lookup='organisation_id')
+@check_rfc_permissions(min_permission_level=2)
 def rfc_update_status(request, rfc_id, *args, **kwargs):
     """
     Using a simple form, we determine which status we are going to update to - and apply the correct status.
