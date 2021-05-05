@@ -110,14 +110,6 @@ def new_requirement_item(request, requirement_id):
     if not request.method == "POST":
         return HttpResponseBadRequest("Sorry - needs to be in POST")
 
-    # Check user permissions
-    permission_results = get_user_requirement_item_permissions(request, requirement_id)
-
-    # If user has no permissions to create requirements or requirement items, then send them to the appropriate location
-    if permission_results['requirement'] <= 2 and permission_results['requirement_item'] <= 2:
-        # Users can not create requirement.
-        return HttpResponseRedirect(reverse('permission_denied'))
-
     # Get the data into the form for cleaning
     form = NewRequirementItemForm(request.POST)
 
@@ -150,18 +142,6 @@ def requirement_item_information(request, requirement_item_id):
         """
     # Get the requirement information
     requirement_item_results = requirement_item.objects.get(requirement_item_id=requirement_item_id)
-
-    # Check the permissions
-    permission_results = get_user_requirement_item_permissions(request, requirement_item_id)
-
-    # If user has no permissions to this requirement send them to the appropriate location
-    if permission_results['requirement'] == 0:
-        # Users who create the requirement get at least read only
-        if requirement_item_results.creation_user == request.user:
-            return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_item_id}))
-
-        # Users who did not create the requirement get sent to permission denied.
-        return HttpResponseRedirect(reverse('permission_denied'))
 
     # If the requirement has been closed - send user to the read only section
     if requirement_item_results.requirement_item_status.status_is_closed:
@@ -211,12 +191,6 @@ def requirement_information_save(request, requirement_item_id):
     :param requirement_id:
     :return:
     """
-    # Check the permissions
-    permission_results = get_user_requirement_item_permissions(request, requirement_item_id)
-
-    # If user has no permissions to this requirement send them to the appropriate location
-    if permission_results['requirement'] <= 1:
-        return HttpResponseRedirect(reverse('permission_denied'))
 
     # Get form data
     form = UpdateRequirementItemForm(request.POST)
