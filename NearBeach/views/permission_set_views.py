@@ -126,6 +126,7 @@ def permission_set_information_save(request, permission_set_id):
     # Get form data
     form = PermissionSetForm(request.POST)
     if not form.is_valid():
+        print(form.errors)
         return HttpResponseBadRequest(form.errors)
 
     # Get the object
@@ -140,7 +141,7 @@ def permission_set_information_save(request, permission_set_id):
     update_permission_set.administration_create_user = form.cleaned_data['administration_create_user']
     update_permission_set.bug_client = form.cleaned_data['bug_client']
     update_permission_set.customer = form.cleaned_data['customer']
-    update_permission_set.kanban = form.cleaned_data['kanban']
+    update_permission_set.kanban_board = form.cleaned_data['kanban_board']
     update_permission_set.kanban_card = form.cleaned_data['kanban_card']
     update_permission_set.organisation = form.cleaned_data['organisation']
     update_permission_set.project = form.cleaned_data['project']

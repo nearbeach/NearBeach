@@ -204,6 +204,10 @@
                     data_to_send.append('level_title',level['title']);
                 });
 
+                this.groupModel.forEach(single_group => {
+                    data_to_send.append('group_list',single_group['value']);
+                })
+
                 //Use axios to send the data
                 axios.post(
                     `/new_kanban_save/`,

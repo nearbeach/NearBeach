@@ -1,44 +1,6 @@
 <template>
     <div>
-        <div class="container">
-            <div class="card">
-                <div class="card-body">
-                    <h1>{{kanbanBoardResults[0]['fields']['kanban_board_name']}}</h1>
-                    <hr>
-                    <div class="row">
-                        <!-- Instructions -->
-                        <div class="col-md-4">
-                            <strong>Instructions</strong>
-                            <p class="text-instructions">
-                                To add a new card to the board - please click on "New Card". You can link a card to an
-                                existing object like a project or task by clicking on "Link Existing Object".
-                            </p>
-                            <p class="text-instructions">
-                                You can drag and drop cards.
-                            </p>
-                        </div>
-
-                        <!-- Add cards -->
-                        <div class="col-md-8">
-                            <h2 v-html="kanbanBoardResults[0]['fields']['kanban_board_name']"></h2><br/>
-                            <a class="kanban-link"
-                               href="javascript:void(0)"
-                               v-on:click="addNewKanbanCard"
-                            >
-                                New Card
-                            </a><br/>
-                            <a class="kanban-link"
-                               href="javascript:void(0)"
-                               v-on:click="addNewLink"
-                            >
-                                Link Existing Object
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <hr>
+        <h1 class="kanban-header">{{kanbanBoardResults[0]['fields']['kanban_board_name']}}</h1>
 
         <!-- Rendering the Kanban Container -->
         <kanban-board v-bind:column-results="columnResults"
@@ -89,14 +51,6 @@
             }
         },
         methods: {
-            addNewKanbanCard: function() {
-                var addKanbanCardModal = new Modal(document.getElementById('addKanbanCardModal'));
-                addKanbanCardModal.show();
-            },
-            addNewLink: function() {
-                var newLinkModal = new Modal(document.getElementById('newLinkModal'));
-                newLinkModal.show();
-            },
             doubleClickedCard: function(data) {
                 //Update the cardInformationId with the card id
                 this.cardInformation = data;

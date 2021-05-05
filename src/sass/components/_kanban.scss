@@ -23,6 +23,9 @@
   text-align: center;
   padding: 4px;
   font-weight: bold;
+  width: calc(100vw - 72px);
+  position: absolute;
+  left: 36px;
 }
 
 .kanban-container {
@@ -30,12 +33,61 @@
   margin: 5px 35px;
 }
 
-.kanban-row, .kanban-level-header {
+.kanban-row, .kanban-level-header, .kanban-header-row {
   display: flex;
+}
+
+.kanban-row {
+  margin: 37px 0;
 }
 
 .kanban-card {
   background-color: #F2994A;
   margin: 3px 5px;
   padding: 3px;
+}
+
+.kanban-card-info-icon {
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  &:hover {
+    background-color: #d3ddff;
+  }
+}
+
+.list-group-item {
+  margin: 0 0 3px 0;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  &:hover{
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  }
+}
+
+.kanban-add-new-cards {
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  a {
+    align-self: flex-end;
+  }
+}
+
+.kanban-link {
+  margin: 4px;
+}
+
+.kanban-cell .kanban-add-new-cards {
+  opacity: 0;
+  transition: 200ms linear;
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.kanban-header {
+  margin: 10px 35px;
 }

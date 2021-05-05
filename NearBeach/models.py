@@ -1987,7 +1987,7 @@ class permission_set(models.Model):
         choices=PERMISSION_LEVEL,
         default=0,
     )
-    kanban = models.IntegerField(
+    kanban_board = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
     )

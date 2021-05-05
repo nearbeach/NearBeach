@@ -1,9 +1,11 @@
 <template>
     <div class="modal fade"
-             id="newLinkModal"
-             tabindex="-1"
-             aria-labelledby="kanbanLinkModal"
-             aria-hidden="true"
+         id="newLinkModal"
+         tabindex="-1"
+         aria-labelledby="kanbanLinkModal"
+         aria-hidden="true"
+         v-bind:data-kanban-level="levelResults[0]['pk']"
+         v-bind:data-kanban-column="columnResults[0]['pk']"
     >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -207,10 +209,14 @@
                 // Set up the data object to send
                 const data_to_send = new FormData();
 
+                
+                //Get the modal to extract data from
+                var self_modal = document.getElementById('newLinkModal');
+
                 //Depending on what the object model is - depends what is sent
                 data_to_send.set(`${this.objectModel.toLowerCase()}`,this.linkModel);
-                data_to_send.set('kanban_level', this.levelResults[0]['pk']);
-                data_to_send.set('kanban_column', this.columnResults[0]['pk']);
+                data_to_send.set('kanban_level',self_modal['dataset']['kanbanLevel']);
+                data_to_send.set('kanban_column',self_modal['dataset']['kanbanColumn']);
 
                 // Use axios to send data
                 axios.post(

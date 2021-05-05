@@ -16,7 +16,29 @@
              v-bind:data-card-id="card['pk']"
              v-on:dblclick="doubleClickCard($event)"
         >
+            <b>#{{card['pk']}}</b><br/>
             {{card['fields']['kanban_card_text']}}
+            <IconifyIcon class="kanban-card-info-icon"
+                         v-bind:icon="icons.infoCircle"
+                         v-on:click="singleClickCard(card['pk'])"
+                         v-on:dblclick="singleClickCard(card['pk'])"
+            ></IconifyIcon>
+        </div>
+
+        <!-- ADD NEW CARDS + LINK OBJECTS -->
+        <div class="kanban-add-new-cards">
+            <a class="kanban-link btn btn-primary"
+               href="javascript:void(0)"
+               v-on:click="addNewKanbanCard"
+            >
+                New Card
+            </a>
+            <a class="kanban-link btn btn-warning"
+               href="javascript:void(0)"
+               v-on:click="addNewLink"
+            >
+                Link Existing Object
+            </a>
         </div>
     </draggable>
 </template>
@@ -26,6 +48,9 @@
 
     import { Modal } from "bootstrap";
 
+    //Mixins
+    import iconMixin from "../../mixins/iconMixin";
+
     export default {
         name: "KanbanCard",
         props: {
@@ -34,7 +59,30 @@
             masterList: Array,
             newCardInfo: Array,
         },
+        mixins: [
+            iconMixin,
+        ],
         methods: {
+            addNewKanbanCard: function() {
+                //Update the modal's data-attributes to reflect the column ID and Level ID
+                var addKanbanCardModal = document.getElementById('addKanbanCardModal');
+                addKanbanCardModal['dataset']['kanbanLevel'] = this.levelId;
+                addKanbanCardModal['dataset']['kanbanColumn'] = this.columnId;
+
+                //Get the Modal from the above modal
+                var addKanbanCardModal = new Modal(addKanbanCardModal);
+                addKanbanCardModal.show();
+            },
+            addNewLink: function() {
+                //Update the modal's data-attributes to reflect the column ID and Level ID
+                var newLinkModal = document.getElementById('newLinkModal');
+                newLinkModal['dataset']['kanbanLevel'] = this.levelId;
+                newLinkModal['dataset']['kanbanColumn']
+
+                //Get the Modal from the above modal
+                var newLinkModal = new Modal(newLinkModal);
+                newLinkModal.show();
+            },
             doubleClickCard: function(data) {
                 //Filter out the data we want to send up stream
                 const filtered_data = this.masterList.filter(row => {
@@ -42,20 +90,7 @@
                 })[0];
 
                 //Setup data to send upstream
-                const data_to_send = {
-                    'cardId': filtered_data['pk'],
-                    'cardTitle': filtered_data['fields']['kanban_card_text'],
-                    'cardDescription': filtered_data['fields']['kanban_card_description'],
-                }
-
-                console.log("Data To Send: ",data_to_send);
-
-                //Emit the current card information
-                this.$emit('double_clicked_card',data_to_send);
-
-                //Show the modal
-                const cardInformationModal = new Modal(document.getElementById("cardInformationModal"));
-                cardInformationModal.show();
+                this.sendDataUpstream(filtered_data);
             },
             onEnd: function(event) {
                 console.log("Event: ",event);
@@ -83,6 +118,29 @@
                     console.log("Error: ",error);
                 })
             },
+            sendDataUpstream: function(filtered_data) {
+                const data_to_send = {
+                    'cardId': filtered_data['pk'],
+                    'cardTitle': filtered_data['fields']['kanban_card_text'],
+                    'cardDescription': filtered_data['fields']['kanban_card_description'],
+                }
+
+                //Emit the current card information
+                this.$emit('double_clicked_card',data_to_send);
+
+                //Show the modal
+                const cardInformationModal = new Modal(document.getElementById("cardInformationModal"));
+                cardInformationModal.show();
+            },
+            singleClickCard: function(data) {
+                //Filter out the data we want to send up stream
+                const filtered_data = this.masterList.filter(row => {
+                    return row['pk'] == data;
+                })[0];
+
+                //Setup data to send upstream
+                this.sendDataUpstream(filtered_data);
+            }
         },
         watch: {
             newCardInfo: function() {
