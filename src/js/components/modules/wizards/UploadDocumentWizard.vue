@@ -36,18 +36,19 @@
                             <div class="form-file"
                                  v-if="documentModel.length ==0"
                             >
-                                <input type="file"
-                                       class="form-file-input"
-                                       id="document"
-                                       accept="audio/*,image/*,video/*,text/*"
-                                       v-on:change="handleFileUploads($event.target.files)"
-                                >
-                                <label class="form-file-label"
-                                       for="document"
-                                >
-                                    <span class="form-file-text">Choose file...</span>
-                                    <span class="form-file-button">Browse</span>
-                                </label>
+                                <div class="mb-3">
+                                    <label for="document" 
+                                           class="form-label"
+                                    >
+                                        Please upload a file
+                                    </label>
+                                    <input type="file"
+                                           class="form-control"
+                                           id="document"
+                                           accept="image/*,text/*,.pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                           v-on:change="handleFileUploads($event.target.files)"
+                                    >
+                                </div>
                             </div>
                             <div class="form-group"
                                  v-else-if="uploadPercentage == ''"
