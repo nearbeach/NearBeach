@@ -35,6 +35,7 @@ PERMISSION_BOOLEAN = (
 )
 
 PROJECT_STATUS_CHOICE = (
+    ('New', 'New'),
     ('Backlog', 'Backlog'),
     ('Blocked', 'Blocked'),
     ('In Progress', 'In Progress'),
