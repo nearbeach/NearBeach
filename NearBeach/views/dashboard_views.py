@@ -68,6 +68,8 @@ def get_my_objects(request):
             project_id__isnull=False,
             assigned_user=request.user,
         ).values('project_id')
+    ).exclude(
+        project_status='Closed',
     )
 
     requirement_results = requirement.objects.filter(
@@ -77,6 +79,8 @@ def get_my_objects(request):
             requirement_id__isnull=False,
             assigned_user=request.user,
         ).values('requirement_id')
+    ).exclude(
+        requirement_status__requirement_status_is_closed=True,
     )
 
     task_results = task.objects.filter(
@@ -86,6 +90,8 @@ def get_my_objects(request):
             task_id__isnull=False,
             assigned_user=request.user,
         ).values('task_id')
+    ).exclude(
+        task_status='Closed',
     )
 
     # Only have 25 results and order by alphabetical order
