@@ -31,7 +31,7 @@
     "@popperjs/core": "^2.9.1",
     "@tinymce/tinymce-vue": "^3.2.8",
     "axios": "^0.21.1",
-    "bootstrap": "^5.0.0-beta3",
+    "bootstrap": "5.0.0",
     "luxon": "^1.26.0",
     "vue-datetime": "^1.0.0-beta.14",
     "vue-form-wizard": "^0.8.4",

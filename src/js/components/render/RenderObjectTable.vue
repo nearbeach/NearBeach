@@ -21,7 +21,7 @@
                 </td>
                 <td>
                     <!-- STATUS -->
-                    {{result[importVariables['status']]}}
+                    {{result['fields'][importVariables['status']]}}
                 </td>
             </tr>
         </tbody>
