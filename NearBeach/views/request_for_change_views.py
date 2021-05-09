@@ -220,7 +220,14 @@ def rfc_new_change_task(request, rfc_id, *args, **kwargs):
         request_for_change_id=rfc_id,
     )
 
-    return HttpResponse(serializers.serialize('json', change_item_results), content_type='application/json')
+    # Get all the change task results and send it back
+    change_task_results = change_task.objects.filter(
+        is_deleted=False,
+        request_for_change=rfc_id,
+    ).order_by('change_task_start_date', 'change_task_end_date')
+
+    # Send back JSON response
+    return HttpResponse(serializers.serialize('json', change_task_results), content_type='application/json')
 
 
 @login_required(login_url='login', redirect_field_name="")
