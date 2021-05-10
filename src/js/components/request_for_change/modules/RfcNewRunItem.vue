@@ -173,10 +173,10 @@
 
                     //Clear the modal
                     this.changeDescriptionModel = '';
-                    this.changeEndDateModel = '';
+                    //this.changeEndDateModel = '';
                     this.changeIsDowntimeModel = false;
                     this.changeStakeholderModel = 'Stakeholder(s)';
-                    this.changeStartDateModel = '';
+                    //this.changeStartDateModel = '';
                     this.changeTitleModel = '';
 
                     //Close the modal
