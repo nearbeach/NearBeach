@@ -10,12 +10,14 @@ from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from NearBeach.views.requirement_views import get_requirement_items
 from django.views.decorators.http import require_http_methods
+from NearBeach.decorators.check_user_permissions import check_user_requirement_item_permissions
 
 import json
 
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
+@check_user_requirement_item_permissions(min_permission_level=2)
 def add_requirement_item_link(request, requirement_item_id):
     # Obtain form data and validate
     form = AddRequirementLinkForm(request.POST)
@@ -56,6 +58,7 @@ def add_requirement_item_link(request, requirement_item_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
+@check_user_requirement_item_permissions(min_permission_level=1)
 def get_requirement_item_links_list(request,requirement_item_id):
     """
 
@@ -105,6 +108,7 @@ def get_requirement_item_links_list(request,requirement_item_id):
 
 
 @login_required(login_url='login', redirect_field_name="")
+@check_user_requirement_item_permissions(min_permission_level=3)
 def new_requirement_item(request, requirement_id):
     # Check to see if POST
     if not request.method == "POST":
@@ -133,7 +137,8 @@ def new_requirement_item(request, requirement_id):
 
 
 @login_required(login_url='login', redirect_field_name="")
-def requirement_item_information(request, requirement_item_id):
+@check_user_requirement_item_permissions(min_permission_level=1)
+def requirement_item_information(request, requirement_item_id,*args,**kwargs):
     """
         Loads the requirement item information.
         :param request:
@@ -172,7 +177,6 @@ def requirement_item_information(request, requirement_item_id):
     c = {
         'group_results': serializers.serialize("json", group_results),
         'organisation_results': serializers.serialize("json", [organisation_results]),
-        'permission_results': permission_results,
         'requirement_item_id': requirement_item_id,
         'requirement_item_results': serializers.serialize("json", [requirement_item_results]),
         'status_list': serializers.serialize("json", status_list),
@@ -184,6 +188,7 @@ def requirement_item_information(request, requirement_item_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
+@check_user_requirement_item_permissions(min_permission_level=2)
 def requirement_information_save(request, requirement_item_id):
     """
     The following will save data

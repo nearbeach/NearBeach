@@ -171,6 +171,14 @@
                     //Update the runsheet variables
                     this.$emit('update_change_task_list',response['data']);
 
+                    //Clear the modal
+                    this.changeDescriptionModel = '';
+                    //this.changeEndDateModel = '';
+                    this.changeIsDowntimeModel = false;
+                    this.changeStakeholderModel = 'Stakeholder(s)';
+                    //this.changeStartDateModel = '';
+                    this.changeTitleModel = '';
+
                     //Close the modal
                     document.getElementById("newRunItemCloseButton").click();
                 }).catch(error => {

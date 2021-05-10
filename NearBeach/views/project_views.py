@@ -132,6 +132,7 @@ def project_information_save(request, project_id, *args, **kwargs):
     # Get the form data
     form = ProjectForm(request.POST)
     if not form.is_valid():
+        print(form.errors)
         return HttpResponseBadRequest(form.errors)
 
     # Get the project data

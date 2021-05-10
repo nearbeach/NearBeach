@@ -8,6 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
 from random import SystemRandom
+from django.db.models import Count
 
 # Import Python Libraries
 import json, urllib.parse, random
@@ -148,8 +149,15 @@ def login(request):
                 username = form.cleaned_data.get("username")
                 password = form.cleaned_data.get("password")
 
+                # Check how many groups user is in
+                user_group_count = len(user_group.objects.filter(
+                    is_deleted=False,
+                    username_id=User.objects.get(username=username).id,
+                ))
+
+                # Check to see if user exists AND has more than one group assigned
                 user = auth.authenticate(username=username, password=password)
-                if user is not None:
+                if user is not None and user_group_count > 0:
                     auth.login(request, user)
 
             # Just double checking. :)
