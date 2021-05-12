@@ -75,7 +75,7 @@
                 data_to_send.set('group_name', this.groupNameModel);
 
                 //If there is a value in parent group - setup the data
-                if (this.parentGroupResults['value'] !== undefined) {
+                if (this.parentGroupModel['value'] !== undefined) {
                     data_to_send.set('parent_group', this.parentGroupModel['value']);
                 }
 
