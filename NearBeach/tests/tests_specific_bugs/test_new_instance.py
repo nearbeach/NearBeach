@@ -37,7 +37,7 @@ class NewInstanceLoginTest(TestCase):
             'password': password
         }
 
-    def test_admin_login(self):
+    #def test_admin_login(self):
         #c = Client()
 
         # User will be logged in
