@@ -11,7 +11,7 @@ from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
 from django.db.models import Max
-from NearBeach.decorators.check_user_permissions import check_user_permissions
+from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_kanban_permissions
 
 import json, urllib3
 
@@ -199,7 +199,7 @@ def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
-@check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
+@check_user_kanban_permissions(min_permission_level=2)
 def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     """
 

@@ -38,7 +38,6 @@ def check_first_time_login(request):
             administration_create_user=4,
             bug_client=4,
             customer=4,
-            kanban=4,
             kanban_card=4,
             organisation=4,
             project=4,
@@ -149,21 +148,24 @@ def login(request):
                 username = form.cleaned_data.get("username")
                 password = form.cleaned_data.get("password")
 
-                # Check how many groups user is in
-                user_group_count = len(user_group.objects.filter(
-                    is_deleted=False,
-                    username_id=User.objects.get(username=username).id,
-                ))
-
                 # Check to see if user exists AND has more than one group assigned
                 user = auth.authenticate(username=username, password=password)
-                if user is not None and user_group_count > 0:
+                if user is not None:
                     auth.login(request, user)
 
             # Just double checking. :)
             if request.user.is_authenticated:
                 #Check to make sure it isn't first time login -> need to setup functionalities
                 check_first_time_login(request)
+
+                # Check how many groups user is in
+                user_group_count = len(user_group.objects.filter(
+                    is_deleted=False,
+                    username_id=User.objects.get(username=username).id,
+                ))
+
+                if user_group_count == 0:
+                    return HttpResponseRedirect(reverse('logout'))
 
                 return HttpResponseRedirect(reverse('dashboard'))
 

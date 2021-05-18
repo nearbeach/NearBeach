@@ -37,6 +37,58 @@ def check_user_customer_permissions(min_permission_level):
     return decorator
 
 
+def check_user_kanban_permissions(min_permission_level):
+    def decorator(func):
+        @wraps(func)
+        def inner(request, kanban_card_id, *args, **kwargs):
+            # If user is admin - grant them all permissions
+            if request.user.is_superuser:
+                # Return the function with a user_level of 4
+                return func(request, *args, **kwargs, user_level=4)
+
+            # Default user level is 0
+            user_group_results = user_group.objects.filter(
+                is_deleted=False,
+                username=request.user,
+            )
+
+            # Determine if there are any cross over with user groups and object_lookup groups
+            group_results = group.objects.filter(
+                Q(
+                    is_deleted=False,
+                    # The object_lookup groups
+                    group_id__in=object_assignment.objects.filter(
+                        is_deleted=False,
+                        kanban_board_id__in=kanban_card.objects.filter(
+                            kanban_card_id=kanban_card_id,
+                        ).values('kanban_board_id')
+                    ).values('group_id'),
+                ) &
+                Q(
+                    group_id__in=user_group_results.values('group_id')
+                )
+            )
+
+            # Check to make sure the user groups intersect
+            if len(group_results) == 0:
+                # There are no matching groups - i.e. the user does not have any permission
+                raise PermissionDenied
+
+            # Get the max permission value from user_group_results
+            user_level = user_group_results.aggregate(
+                Max('permission_set__kanban_board')
+            )['permission_set__kanban_board__max']
+
+            if user_level >= min_permission_level:
+                # Everything is fine - continue on
+                return func(request, kanban_card_id, *args, **kwargs, user_level=user_level)
+
+            # Does not meet conditions
+            raise PermissionDenied
+        return inner
+    return decorator
+
+
 def check_user_permissions(min_permission_level, object_lookup=''):
     def decorator(func):
         @wraps(func)
