@@ -8,6 +8,9 @@ from django.views.decorators.http import require_http_methods
 from django.template import loader
 from NearBeach.views.tools.internal_functions import *
 from django.core.serializers.json import DjangoJSONEncoder
+from django.conf import settings
+import boto3
+from botocore.exceptions import NoCredentialsError
 
 from ..forms import *
 
@@ -216,7 +219,7 @@ def document_upload(request,destination,location_id):
     document_submit.save()
 
     # Add the document location
-    document_submit.document = '%s/%s' % (document_submit.document_key, file)
+    document_submit.document = 'private/%s/%s' % (document_submit.document_key, file)
     document_submit.save()
 
     # Add the document permission row
@@ -246,7 +249,22 @@ def document_upload(request,destination,location_id):
     )
 
     # Handle the document upload
-    handle_file_upload(request.FILES['document'],document_results,file)
+    if hasattr(settings, 'AWS_ACCESS_KEY_ID'):
+        # Use boto to upload the file
+        s3 = boto3.client(
+            's3', 
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+        )
+
+        # Upload a new file
+        s3.upload_fileobj(
+            file,
+            settings.AWS_STORAGE_BUCKET_NAME,
+            'private/%s/%s' % (document_submit.document_key, file)
+        )
+    else:
+        handle_file_upload(request.FILES['document'],document_results,file)
 
     # Send back json data
     json_results = json.dumps(list(document_results), cls=DjangoJSONEncoder)
@@ -355,14 +373,35 @@ def private_download_file(request,document_key):
     if document_results.document_url_location:
         return HttpResponseRedirect(document_results.document_url_location)
 
+    # If S3 has been setup - download file from S3 bucket
+    if hasattr(settings, 'AWS_ACCESS_KEY_ID'):
+        # Use boto3 to download
+        s3 = boto3.client(
+            's3', 
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+        )
+
+        response = s3.get_object(
+            Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+            Key="%s" % document_results.document,
+        )
+
+        print(response['Body'])
+
+        return FileResponse(
+            response['Body'], 
+            as_attachment=True,
+            filename=document_results.document_description,
+        )
+
+    # Normal setup - find document on server and serve
     # Get the Document path information
     path = '%s/%s' % (
         settings.PRIVATE_MEDIA_ROOT,
         # document_key,
         document_results.document
     )
-
-    print("Path: %s" % path)
 
     # Send file to user
     return FileResponse(open(path, 'rb'))
@@ -388,8 +427,6 @@ def handle_file_upload(upload_document,document_results,file):
     storage_location = '%s/%s/%s' % (
         settings.PRIVATE_MEDIA_ROOT,
         document_results[0]['document_key_id'],
-        #document_results[0]['document_key__document_description'],
-        #document_results[0]['document_key__document'],
         file
     )
 
