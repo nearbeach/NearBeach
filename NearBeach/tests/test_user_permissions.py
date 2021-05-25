@@ -12,7 +12,7 @@ def login_user(c: object, self: object) -> object:
     self.assertTrue(response.context['user'].is_active)
 
 
-class AdminUserPermissionTest(TestCase):
+class AdminUserPermissionTest(TransactionTestCase):
     """
     The admin user will have full access to the whole site - even if they are not associated with
     a group that is associated with the object.
@@ -63,7 +63,7 @@ class AdminUserPermissionTest(TestCase):
         c.get(reverse('logout'))
 
 
-class TeamLeaderPermissionTest(TestCase):
+class TeamLeaderPermissionTest(TransactionTestCase):
     """
     The team leader will only have access to objects that have at least one cross over group with that
     particular team leader.
@@ -112,7 +112,7 @@ class TeamLeaderPermissionTest(TestCase):
 
         c.get(reverse('logout'))
 
-class TeamMemberPermissionTest(TestCase):
+class TeamMemberPermissionTest(TransactionTestCase):
     """
     The team MEMBER will only have access to objects that have at least one cross over group with that
     particular team leader.
@@ -155,13 +155,13 @@ class TeamMemberPermissionTest(TestCase):
         print("Team Member can access a task with overlapping groups")
 
         # # Make sure the admin user can open up the task
-        # response = c.get(reverse('task_information', args=['2']))
-        # self.assertEqual(response.status_code, 403)
-        # print("Team Member can NOT access a task without overlapping groups")
+        response = c.get(reverse('task_information', args=['2']))
+        self.assertEqual(response.status_code, 403)
+        print("Team Member can NOT access a task without overlapping groups")
 
         c.get(reverse('logout'))
 
-class TeamInternPermissionTest(TestCase):
+class TeamInternPermissionTest(TransactionTestCase):
     """
     The team leader will only have access to objects that have at least one cross over group with that
     particular team leader.
@@ -186,9 +186,9 @@ class TeamInternPermissionTest(TestCase):
         print("Team Intern can access a project with overlapping groups")
 
         # # Make sure the admin user can open up the project
-        # response = c.get(reverse('project_information', args=['2']))
-        # self.assertEqual(response.status_code, 403)
-        # print("Team Intern can NOT access a project without overlapping groups")
+        response = c.get(reverse('project_information', args=['2']))
+        self.assertEqual(response.status_code, 403)
+        print("Team Intern can NOT access a project without overlapping groups")
 
         c.get(reverse('logout'))
 
@@ -204,9 +204,9 @@ class TeamInternPermissionTest(TestCase):
         print("Team Intern can access a task with overlapping groups")
 
         # # Make sure the admin user can open up the task
-        # response = c.get(reverse('task_information', args=['2']))
-        # self.assertEqual(response.status_code, 403)
-        # print("Team Intern can NOT access a task without overlapping groups")
+        response = c.get(reverse('task_information', args=['2']))
+        self.assertEqual(response.status_code, 403)
+        print("Team Intern can NOT access a task without overlapping groups")
 
         c.get(reverse('logout'))
 
