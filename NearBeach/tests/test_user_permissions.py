@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User
-from django.test import TestCase, Client
+from django.test import TestCase, Client, TransactionTestCase
 from django.urls import reverse
 
+import unittest
 
 def login_user(c: object, self: object) -> object:
     response = c.post(
@@ -12,7 +13,7 @@ def login_user(c: object, self: object) -> object:
     self.assertTrue(response.context['user'].is_active)
 
 
-class AdminUserPermissionTest(TransactionTestCase):
+class AdminUserPermissionTest(TestCase):
     """
     The admin user will have full access to the whole site - even if they are not associated with
     a group that is associated with the object.
@@ -63,7 +64,7 @@ class AdminUserPermissionTest(TransactionTestCase):
         c.get(reverse('logout'))
 
 
-class TeamLeaderPermissionTest(TransactionTestCase):
+class TeamLeaderPermissionTest(TestCase):
     """
     The team leader will only have access to objects that have at least one cross over group with that
     particular team leader.
@@ -112,7 +113,7 @@ class TeamLeaderPermissionTest(TransactionTestCase):
 
         c.get(reverse('logout'))
 
-class TeamMemberPermissionTest(TransactionTestCase):
+class TeamMemberPermissionTest(TestCase):
     """
     The team MEMBER will only have access to objects that have at least one cross over group with that
     particular team leader.
@@ -161,7 +162,7 @@ class TeamMemberPermissionTest(TransactionTestCase):
 
         c.get(reverse('logout'))
 
-class TeamInternPermissionTest(TransactionTestCase):
+class TeamInternPermissionTest(TestCase):
     """
     The team leader will only have access to objects that have at least one cross over group with that
     particular team leader.
