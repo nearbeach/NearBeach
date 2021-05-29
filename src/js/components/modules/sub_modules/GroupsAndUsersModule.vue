@@ -160,9 +160,10 @@
             },
             updateUserList: function(data) {
                 //Loop throught the data array and add each line item
-                data.forEach(row => {
-                    this.userList.push(row);
-                });
+                // data.forEach(row => {
+                //     this.userList.push(row);
+                // });
+                this.userList = data;
             }
 
         },

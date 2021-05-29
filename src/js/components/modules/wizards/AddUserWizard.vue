@@ -114,6 +114,12 @@
 
                     //Close the modal
                     document.getElementById("addUserCloseButton").click();
+
+                    //Clear the models
+                    this.userModel = [];
+
+                    //Update the list of users
+                    this.getUserList();
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 });
