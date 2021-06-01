@@ -88,7 +88,7 @@ import NewPermissionSet from "./components/permissions/NewPermissionSet.vue";
 import NewUser from "./components/users/NewUser.vue";
 import UserInformation from "./components/users/UserInformation.vue";
 import ResetUserPassword from "./components/users/ResetUserPassword.vue";
-
+import DashboardUnassignedObjects from "./components/dashboard/DashboardUnassignedObjects.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -218,6 +218,7 @@ Vue.component('NewUser', NewUser);
 Vue.component('UserInformation', UserInformation);
 Vue.component('ResetUserPassword', ResetUserPassword);
 Vue.component('IconifyIcon', IconifyIcon);
+Vue.component('DashboardUnassignedObjects', DashboardUnassignedObjects);
 
 //Validation
 import Vuelidate from 'vuelidate'
