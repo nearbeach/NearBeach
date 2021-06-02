@@ -45,6 +45,7 @@ urlpatterns = [
     path('dashboard/get/my_objects/', dashboard_views.get_my_objects, name='get_my_objects'),
     path('dashboard/get/rfc_approvals/', dashboard_views.rfc_approvals, name='rfc_approvals'),
     path('dashboard/get/unassigned_objects/', dashboard_views.get_unassigned_objects, name='get_unassigned_objects'),
+    path('dashboard/get/users_with_no_groups/', dashboard_views.users_with_no_groups, name='users_with_no_groups'),
 
     # Documentation
     path('documentation/<destination>/<location_id>/add_folder/', document_views.document_add_folder,

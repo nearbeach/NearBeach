@@ -1,5 +1,9 @@
 {% extends 'NearBeach/template.html' %}
 {% block content %}
+    {% if user.is_superuser %}
+        <dashboard-users-with-no-groups></dashboard-users-with-no-groups>
+        <br/>
+    {% endif %}
     <dashboard-rfc-approvals></dashboard-rfc-approvals>
     <dashboard-my-objects></dashboard-my-objects>
 

@@ -252,3 +252,33 @@ def rfc_approvals(request):
 
     return HttpResponse(serializers.serialize('json',rfc_results), content_type='application/json')
 
+
+@login_required(login_url='login', redirect_field_name='')
+@require_http_methods(['POST'])
+def users_with_no_groups(request):
+    """
+    """
+    # User has to be admin
+    if not request.user.is_superuser:
+        return HttpResponse()
+
+    # Get all users who do not have a group assigned to them
+    user_results = User.objects.filter(
+        is_active=True,
+    ).exclude(
+        # Exclude all users with groups
+        id__in=user_group.objects.filter(
+            is_deleted=False,
+        ).values('username_id')
+    ).values(
+        'id',
+        'username',
+        'first_name',
+        'last_name',
+        'email',
+    )
+
+    # Turn results into json
+    json_results = json.dumps(list(user_results), cls=DjangoJSONEncoder)
+
+    return HttpResponse(json_results, content_type='application/json')
