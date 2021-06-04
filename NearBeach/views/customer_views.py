@@ -28,8 +28,6 @@ def customer_information(request,customer_id, *args, **kwargs):
     # Get customer data
     customer_results = customer.objects.get(customer_id=customer_id)
 
-    print("Customer Organisation id: %s " % customer_results.organisation_id)
-
     organisation_results = organisation.objects.filter(
         organisation_id=customer_results.organisation_id,
     )
@@ -44,6 +42,7 @@ def customer_information(request,customer_id, *args, **kwargs):
     # Context
     c = {
         'customer_results': serializers.serialize('json',[customer_results]),
+        'nearbeach_title': 'Customer Information %s' % customer_id,
         'organisation_results': serializers.serialize('json', organisation_results),
         'title_list': serializers.serialize('json',title_list),
     }
@@ -105,6 +104,7 @@ def new_customer(request, *args, **kwargs):
 
     # Get Context
     c = {
+        'nearbeach_title': 'New Customer',
         'title_list': serializers.serialize('json',title_list),
     }
 

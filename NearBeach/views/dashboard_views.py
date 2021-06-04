@@ -27,7 +27,9 @@ def dashboard(request):
     t = loader.get_template('NearBeach/dashboard/dashboard.html')
 
     # context
-    c = {}
+    c = {
+        'nearbeach_title': 'NearBeach Dashboard',
+    }
 
     return HttpResponse(t.render(c, request))
 

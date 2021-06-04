@@ -26,7 +26,9 @@ def new_permission_set(request):
     t = loader.get_template('NearBeach/permission_sets/new_permission_set.html')
 
     # Get context
-    c = {}
+    c = {
+        'nearbeach_title': 'New Permission Set',
+    }
 
     return HttpResponse(t.render(c, request))
 
@@ -97,11 +99,12 @@ def permission_set_information(request, permission_set_id):
 
     # Create the context
     c = {
+        'nearbeach_title': 'Permission Set %s' % permission_set_id,
         'permission_set_results': serializers.serialize('json', [permission_set_results]),
-        'user_list_results': user_list_results,
         'permission_set_id': permission_set_id,
         'permission_boolean': json.dumps(PERMISSION_BOOLEAN),
         'permission_level': json.dumps(PERMISSION_LEVEL),
+        'user_list_results': user_list_results,
     }
 
     return HttpResponse(t.render(c, request))

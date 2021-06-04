@@ -184,6 +184,7 @@ def login(request):
     # context
     c = {
         'LoginForm': form,
+        'nearbeach_title': 'NearBeach Login',
         'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
         'image_number': '%(number)03d' % {'number': 1 + cryptogen.randrange(1,19)},
     }
@@ -204,6 +205,7 @@ def permission_denied(request):
 
     # context
     c = {
+        'nearbeach_title': 'NearBeach Permission Denied',
     }
 
     return HttpResponse(t.render(c, request))

@@ -158,8 +158,9 @@ def search(request):
 
     # Context
     c = {
-        'search_input': form.cleaned_data['search'],
         'include_closed': include_closed,
+        'nearbeach_title': 'Search',
+        'search_input': form.cleaned_data['search'],
         'search_results': get_object_search_data(form),
     }
 
@@ -198,7 +199,8 @@ def search_customer(request):
     ).order_by('customer_last_name','customer_first_name')[:50]
 
     c = {
-        'customer_results': serializers.serialize('json',customer_results)
+        'customer_results': serializers.serialize('json',customer_results),
+        'nearbeach_title': 'Search Customers',
     }
 
     return HttpResponse(t.render(c,request))
@@ -256,6 +258,7 @@ def search_group(request):
     # Get context
     c = {
         'group_results': serializers.serialize('json', group_results),
+        'nearbeach_title': 'Search Groups',
     }
 
     return HttpResponse(t.render(c, request))
@@ -309,6 +312,7 @@ def search_organisation(request):
     ).order_by('organisation_name')[:25]
 
     c = {
+        'nearbeach_title': 'Search Organisations',
         'organisation_results': serializers.serialize('json',organisation_results),
     }
 
@@ -364,6 +368,7 @@ def search_permission_set(request):
 
     # Get context
     c = {
+        'nearbeach_title': 'Search Permission Sets',
         'permission_set_results': serializers.serialize('json', permission_set_results),
     }
 
@@ -424,6 +429,7 @@ def search_user(request):
 
     # Context
     c = {
+        'nearbeach_title': 'Search User',
         'user_results': serializers.serialize('json', user_results),
     }
 

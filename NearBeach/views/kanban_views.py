@@ -148,6 +148,7 @@ def kanban_information(request, kanban_board_id, *args, **kwargs):
         'column_results': serializers.serialize('json', column_results),
         'kanban_board_id': kanban_board_id,
         'level_results': serializers.serialize('json', level_results),
+        'nearbeach_title': 'Kanban Information %s' % kanban_board_id,
     }
 
     return HttpResponse(t.render(c, request))

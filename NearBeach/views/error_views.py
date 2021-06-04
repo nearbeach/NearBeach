@@ -15,7 +15,9 @@ def error_403(request, exception):
 
     t = loader.get_template('403.html')
 
-    c = {}
+    c = {
+        'nearbeach_title': 'NearBeach Forbidden',
+    }
 
     return HttpResponse(t.render(c, request))
 
@@ -32,7 +34,9 @@ def error_404(request, exception):
 
     t = loader.get_template('404.html')
 
-    c = {}
+    c = {
+        'nearbeach_title': 'NearBeach Not Found',
+    }
 
     return HttpResponse(t.render(c, request))
 
@@ -49,6 +53,8 @@ def error_500(request):
 
     t = loader.get_template('500.html')
 
-    c = {}
+    c = {
+        'nearbeach_title': 'NearBeach Server Error',
+    }
 
     return HttpResponse(t.render(c, request))

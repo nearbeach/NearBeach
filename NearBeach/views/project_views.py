@@ -30,6 +30,7 @@ def new_project(request, *args, **kwargs):
     # Context
     c = {
         'group_results': serializers.serialize('json', group_results),
+        'nearbeach_title': 'New Project',
     }
 
     return HttpResponse(t.render(c, request))
@@ -108,6 +109,7 @@ def project_information(request, project_id, *args, **kwargs):
 
     # Context
     c = {
+        'nearbeach_title': 'Project Information %s' % project_id,
         'organisation_results': serializers.serialize('json', organisation_results),
         'project_id': project_id,
         'project_results': serializers.serialize('json', [project_results]),

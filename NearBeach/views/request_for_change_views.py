@@ -34,6 +34,7 @@ def get_rfc_context(rfc_id):
 
     # Context
     c = {
+        'nearbeach_title': 'RFC %s' % rfc_id,
         'rfc_id': rfc_id,
         'rfc_results': serializers.serialize('json', [rfc_results]),
         'rfc_change_lead': serializers.serialize('json', [rfc_change_lead]),
@@ -69,6 +70,7 @@ def new_request_for_change(request, *args, **kwargs):
     # Context
     c = {
         'group_results': serializers.serialize('json', group_results),
+        'nearbeach_title': 'New RFC',
         'user_results': serializers.serialize('json', user_results),
     }
 

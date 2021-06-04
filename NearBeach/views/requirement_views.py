@@ -216,6 +216,7 @@ def new_requirement(request, *args, **kwargs):
 
     # context
     c = {
+        'nearbeach_title': 'New Requirements',
         'status_list': serializers.serialize("json", status_list),
         'type_list': serializers.serialize("json", type_list),
         'group_results': serializers.serialize("json", group_results),
@@ -312,6 +313,7 @@ def requirement_information(request, requirement_id, *args, **kwargs):
     # context
     c = {
         'group_results': serializers.serialize("json", group_results),
+        'nearbeach_title': 'Requirement Information %s' % requirement_id,
         'organisation_results': serializers.serialize("json", [organisation_results]),
         'requirement_results': serializers.serialize("json", [requirement_results]),
         'requirement_id': requirement_id,
