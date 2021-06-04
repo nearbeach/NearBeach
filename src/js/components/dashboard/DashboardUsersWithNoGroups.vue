@@ -18,7 +18,10 @@
                      class="user-card"
                      v-on:click="goToUser(user['id'])"
                 >
-                    <img src="/static/NearBeach/images/placeholder/people_tax.svg" alt="default profile" class="default-user-profile" />
+                    <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/people_tax.svg`" 
+                         alt="default profile" 
+                         class="default-user-profile" 
+                    />
                     <div class="user-details">
                         <strong>{{user['first_name']}} {{user['last_name']}}</strong><br/>
                         {{user['username']}}
@@ -37,7 +40,16 @@
 
   export default {
     name: "DashboardUsersWithNoGroups",
-    props: {},
+    props: {
+      rootUrl: {
+        type: String,
+        default: '/',
+      },
+      staticUrl: {
+        type: String,
+        default: '/',
+      },
+    },
     data() {
       return {
         userList: [],
@@ -47,7 +59,7 @@
       getUserList: function() {
           //Get the data from the database
           axios.post(
-            `/dashboard/get/users_with_no_groups/`,
+            `${this.rootUrl}dashboard/get/users_with_no_groups/`,
           ).then(response => {
               this.userList = response['data'];
           }).catch(error => {
@@ -55,7 +67,7 @@
           });
       },
       goToUser: function(user_id) {
-        window.location.href = `/user_information/${user_id}/`; 
+        window.location.href = `${this.rootUrl}user_information/${user_id}/`; 
       },
     },
     mounted() {

@@ -99,6 +99,10 @@
         name: "NewKanban",
         props: {
             groupResults: Array,
+            rootUrl: {
+                type: String,
+                default: "/",
+            },
         },
         mixins: [
             errorModalMixin,
@@ -156,20 +160,6 @@
                 //Apply checking flag
                 this.checkingKanbanBoardName = true;
 
-                // Make sure the timer isn't running
-                // if (this.searchTimeout != '') {
-                //     //Stop the clock!
-                //     clearTimeout(this.searchTimeout);
-                // }
-                //
-                // // Reset the clock, to only search if there is an uninterupted 0.5s of no typing.
-                // if (this.kanbanBoardNameModel.length >= 3) {
-                //     this.searchTimeout = setTimeout(
-                //         this.checkKanbanBoardName,
-                //         500,
-                //     )
-                // }
-
                 this.searchTrigger({
                     'return_function': this.checkKanbanBoardName,
                     'searchTimeout': this.searchTimeout,
@@ -210,7 +200,7 @@
 
                 //Use axios to send the data
                 axios.post(
-                    `/new_kanban_save/`,
+                    `${this.rootUrl}new_kanban_save/`,
                     data_to_send
                 ).then(response => {
                     //Go to that webpage
@@ -226,7 +216,7 @@
 
                 //Use axios to query the database
                 axios.post(
-                    `/kanban_information/check_kanban_board_name/`,
+                    `${this.rootUrl}kanban_information/check_kanban_board_name/`,
                     data_to_send,
                 ).then(response => {
                     //If the data came back empty - then the kanban board name is unique

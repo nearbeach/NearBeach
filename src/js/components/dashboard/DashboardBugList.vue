@@ -13,18 +13,29 @@
     const axios = require('axios');
     import * as d3 from "d3";
 
+    // Mixins
+    import errorModalMixin from "../../mixins/errorModalMixin";
+
     export default {
         name: "DashboardBugList",
-        props: {},
+        props: {
+            rootUrl: {
+                type: String,
+                default: "/",
+            },
+        },
         data() {
             return {
                 bugResults: [],
             }
         },
+        mixins: [
+            errorModalMixin,
+        ],
         methods: {
             getBugData: function() {
                 axios.post(
-                    '/dashboard/get/bug_list/'
+                    `${this.rootUrl}dashboard/get/bug_list/`
                 ).then(response => {
                     //Update Bug Response
                     this.bugResults = response['data'];
@@ -32,7 +43,7 @@
                     //Start rendering the graph
                     this.renderGraph();
                 }).catch(error => {
-                    console.log("THERE WAS AN ERROR: ",error);
+                    this.showErrorModal(error, 'Dashboard Unassigned Objects');
                 });
             },
             renderGraph: function() {

@@ -117,6 +117,7 @@
                 <!-- DUPLICATE ORGANISATION LIST -->
                 <div class="col-md-8">
                     <list-organisations v-bind:organisation-results="duplicateOrganisations"
+                                        v-bind:root-url="rootUrl"
                     ></list-organisations>
                 </div>
             </div>
@@ -149,7 +150,12 @@
 
     export default {
         name: "NewOrganisation",
-        props: [],
+        props: {
+            rootUrl: {
+                type: String,
+                default: "/",
+            },
+        },
         mixins: [
             errorModalMixin,
             loadingModalMixin,
@@ -190,7 +196,7 @@
                 //Check the organisation's data to make sure there are no duplicates
                 //Use axios to contact the database
                 axios.post(
-                    '/organisation_duplicates/',
+                    `${this.rootUrl}organisation_duplicates/`,
                     this.dataToSend(),
                 ).then(response => {
                     //If the response data has nothing in it - we want to submit that data.
@@ -218,7 +224,7 @@
                 //Use Axios to send the data
                 //Get the data to send
                 axios.post(
-                    'save/',
+                    `save/`,
                     this.dataToSend(),
                 ).then(response => {
                     //Go to the url sent back

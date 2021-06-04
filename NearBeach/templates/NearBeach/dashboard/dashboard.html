@@ -1,13 +1,16 @@
 {% extends 'NearBeach/template.html' %}
+{% load static %}
 {% block content %}
     {% if user.is_superuser %}
-        <dashboard-users-with-no-groups></dashboard-users-with-no-groups>
+        <dashboard-users-with-no-groups v-bind:root-url="`{% url 'dashboard' %}`"
+                                        v-bind:static-url="`{% static '' %}`"
+        ></dashboard-users-with-no-groups>
         <br/>
     {% endif %}
-    <dashboard-rfc-approvals></dashboard-rfc-approvals>
-    <dashboard-my-objects></dashboard-my-objects>
+    <dashboard-rfc-approvals v-bind:root-url="`{% url 'dashboard' %}`"></dashboard-rfc-approvals>
+    <dashboard-my-objects v-bind:root-url="`{% url 'dashboard' %}`"></dashboard-my-objects>
 
     <br/>
-    <dashboard-unassigned-objects></dashboard-unassigned-objects>
-<!--    <dashboard-bug-list></dashboard-bug-list>-->
+    <dashboard-unassigned-objects v-bind:root-url="`{% url 'dashboard' %}`"></dashboard-unassigned-objects>
+    <!--<dashboard-bug-list></dashboard-bug-list>-->
 {% endblock %}

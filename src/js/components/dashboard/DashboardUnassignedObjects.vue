@@ -15,6 +15,7 @@
                                  v-bind:search-results="objectResults['requirement']"
                                  v-bind:import-variables="requirementVariables"
                                  v-bind:destination="'requirement'"
+                                 v-bind:root-url="rootUrl"
             ></render-object-table>
 
             <!-- Projects -->
@@ -22,6 +23,7 @@
                                  v-bind:search-results="objectResults['project']"
                                  v-bind:import-variables="projectVariables"
                                  v-bind:destination="'project'"
+                                 v-bind:root-url="rootUrl"
             ></render-object-table>
 
             <!-- Tasks -->
@@ -29,6 +31,7 @@
                                  v-bind:search-results="objectResults['task']"
                                  v-bind:import-variables="taskVariables"
                                  v-bind:destination="'task'"
+                                 v-bind:root-url="rootUrl"
             ></render-object-table>
             
             <!-- If there are no objects -->
@@ -49,7 +52,12 @@
 
     export default {
         name: "DashboardUnassignedObjects",
-        props: {},
+        props: {
+            rootUrl: {
+                type: String,
+                default: "/",
+            },
+        },
         data() {
             return {
                 isLoaded: false,
