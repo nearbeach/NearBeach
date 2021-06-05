@@ -34,15 +34,35 @@ The following quick instructions will inform you on how to install MySQL in Ubun
   .. code-block:: bash
 
     CREATE USER 'nearbeach'@'localhost' IDENTIFIED BY '<<password>>';
-    Create the database NearBeach
+
+  
+  Create the database NearBeach
+  
+  .. code-block:: bash
+
     CREATE DATABASE NearBeach;
-    Grant the nearbeach user access to the NearBeach database
+    
+  
+  Grant the nearbeach user access to the NearBeach database
+
+  .. code-block:: bash
 
     GRANT ALL PRIVILEGES ON NearBeach.* TO 'nearbeach'@'localhost';
-    Flush all priveledges
+  
+
+  Flush all priveledges
+  
+  .. code-block:: bash
+  
     FLUSH PRIVILEGES;
-    Exit mysql
+  
+
+  Exit mysql
+  
+  .. code-block:: bash
+
     exit
+
 
 6. Edit the django project settings file to allow your django project access to the mysql database
 

@@ -16,7 +16,7 @@ Installation of Django and Gunicorn
 
   .. code-block:: bash
 
-    sudo apt install python3-dev nginx curl build-essential python3-setuptools shared-mime-info
+    sudo apt install python3-dev nginx curl build-essential python3-setuptools shared-mime-info libjpeg-dev zlib1g-dev
 
 3. Install pip
 
