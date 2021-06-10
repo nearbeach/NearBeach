@@ -2,5 +2,7 @@
 {% load static %}
 {% block content %}
     <search-customers v-bind:customer-results="{{customer_results}}"
+                      v-bind:root-url="`{% url 'dashboard' %}`"
+                      v-bind:static-url="`{% static '' %}`"
     ></search-customers>
 {% endblock %}

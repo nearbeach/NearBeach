@@ -11,10 +11,6 @@
                 <span class="error" v-if="!$v.rfcImplementationPlanModel.required && $v.rfcImplementationPlanModel.$dirty"> Please supply a description.</span>
                 <span class="error" v-if="!$v.rfcImplementationPlanModel.maxLength"> Sorry - too many characters.</span>
             </label><br>
-            <img src="/static/NearBeach/images/placeholder/body_text.svg"
-                 class="loader-image"
-                 alt="loading image for Tinymce"
-            />
             <editor
                :init="{
                  height: 500,

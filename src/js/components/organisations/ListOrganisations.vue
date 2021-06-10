@@ -3,7 +3,7 @@
         <div v-for="organisation in organisationResults" class="row">
             <div class="organisation-details">
                 <img v-if="organisation['fields']['organisation_profile_picture'] == ''"
-                     v-bind:src="`${rootUrl}static/NearBeach/images/placeholder/product_tour.svg`"
+                     v-bind:src="`${staticUrl}static/NearBeach/images/placeholder/product_tour.svg`"
                      alt="Stakeholder Logo"
                      class="organisation-image"
                 >
@@ -43,6 +43,10 @@
         props: {
             organisationResults: Array,
             rootUrl: {
+                type: String,
+                default: "/",
+            },
+            staticUrl: {
                 type: String,
                 default: "/",
             },
