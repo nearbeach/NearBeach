@@ -239,6 +239,7 @@ urlpatterns = [
         'password_reset/',
         auth_views.PasswordResetView.as_view(
             template_name='NearBeach/authentication/password_reset.html',
+            html_email_template_name='NearBeach/authentication/password_reset_email.html',
             email_template_name='NearBeach/authentication/password_reset_email.html',
         ),
         name='password_reset',
