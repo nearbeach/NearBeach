@@ -55,6 +55,16 @@
             </div>
         </div>
 
+        <!-- TO DO - limit it to certain users -->
+        <div class="row submit-row">
+            <div class="col-md-12">
+                <a href="javascript:void(0)"
+                   class="btn btn-primary save-changes"
+                   v-on:click="addNewUser"
+                >Add User to {{destination}}</a>
+            </div>
+        </div>
+
         <!-- MODALS -->
         <!-- ADD GROUPS WIZARD -->
         <add-group-wizard v-bind:destination="destination"
