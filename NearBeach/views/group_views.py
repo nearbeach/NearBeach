@@ -29,7 +29,7 @@ def check_group_name(request):
     # Check to see if the group name exists
     group_name_results = group.objects.filter(
         is_deleted=False,
-        group_name=form.cleaned_data['search'],
+        group_name__icontains=form.cleaned_data['search'],
     )
 
     # Send back data
