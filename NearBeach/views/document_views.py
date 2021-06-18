@@ -399,7 +399,6 @@ def private_download_file(request,document_key):
     # Get the Document path information
     path = '%s/%s' % (
         settings.PRIVATE_MEDIA_ROOT,
-        # document_key,
         document_results.document
     )
 
