@@ -220,6 +220,10 @@
                 this[data['field']] = data['value'];
             },
         },
+        mounted() {
+            //Get a default list when mounted
+            this.getOrganisationData('','');
+        }
     }
 </script>
 

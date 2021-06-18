@@ -1,6 +1,6 @@
 {
   "name": "nearbeach",
-  "version": "0.28.2",
+  "version": "0.28.3",
   "description": "NearBeach - an Open Source project management system built with Django web framework",
   "main": "/src/js/app.js",
   "directories": {
@@ -31,8 +31,8 @@
     "@popperjs/core": "^2.9.1",
     "@tinymce/tinymce-vue": "^3.2.8",
     "axios": "^0.21.1",
-    "bootstrap": "5.0.0",
-    "luxon": "^1.26.0",
+    "luxon": "^1.27.0",
+    "bootstrap": "5.0.1",
     "vue-datetime": "^1.0.0-beta.14",
     "vue-form-wizard": "^0.8.4",
     "vuedraggable": "^2.24.3",
