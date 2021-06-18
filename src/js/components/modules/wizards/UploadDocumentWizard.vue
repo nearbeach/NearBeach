@@ -40,12 +40,16 @@
                                     <label for="document" 
                                            class="form-label"
                                     >
-                                        Please upload a file
+                                        Please upload a file<br/>
+                                        {{maxUploadString}}
+                                        <div class="alert alert-warning" v-if="maxUploadWarning">
+                                            Sorry - file too large
+                                        </div>
                                     </label>
                                     <input type="file"
                                            class="form-control"
                                            id="document"
-                                           accept="image/*,text/*,.pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                           v-bind:accept="acceptedDocuments"
                                            v-on:change="handleFileUploads($event.target.files)"
                                     >
                                 </div>
@@ -119,12 +123,19 @@
 
     export default {
         name: "UploadDocumentWizard",
-        props: [
-            'currentFolder',
-            'destination',
-            'excludeDocuments',
-            'locationId',
-        ],
+        props: {
+            acceptedDocuments: {
+                type: String,
+                default: "image/*,text/*,.pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            },
+            currentFolder: String,
+            destination: String,
+            excludeDocuments: {
+                type: Array,
+                default: [],
+            },
+            locationId: Number,
+        },
         mixins: [
             errorModalMixin,
             iconMixin,
@@ -136,6 +147,8 @@
                 documentDescriptionModel: '',
                 uploadPercentage: '',
                 maxUploadSize: 0,
+                maxUploadString: "No Upload Limit",
+                maxUploadWarning: false,
             };
         },
         methods: {
@@ -143,17 +156,15 @@
                 /*Check that the size of the fileList is not too big
                   The boolean (0!=this.maxUploadSize) will product a 0 result when maxUploadSize is 0. Thus negating
                   the need for an extra if statement*/
-                console.log("MAX: ",this.maxUploadSize);
-                console.log("EQN: ",this.maxUploadSize!=0);
-                console.log("EQN: ",fileList[0]['size']*(this.maxUploadSize!=0))
                 if (fileList[0]['size']*(this.maxUploadSize!=0) > this.maxUploadSize) {
-                    //The max upload size does not equal 0, and yet it is smaller than the file trying to be uploaded
-                    this.showErrorModal('Document too large.',this.destination);
+                    this.maxUploadWarning = true;
 
                     //Just return
                     return;
                 }
-                console.log("FileList: ",fileList);
+
+                //Remove maxUploadWarning
+                this.maxUploadWarning = false;
 
                 //Update the document modal
                 this.documentModel = fileList[0];
@@ -203,6 +214,23 @@
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 })
+            }
+        },
+        watch: {
+            maxUploadSize: function() {
+                //If the user has set 0 -> just say "No Upload Limit"
+                if (this.maxUploadSize === 0) {
+                    return "No Upload Limit";
+                }
+
+                //Define the constants we wish to use
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+                //Use math to find out which array section we are going to use from sizes 
+                const i = Math.floor(Math.log(this.maxUploadSize) / Math.log(k));
+
+                this.maxUploadString = `Max Upload Size: ${parseFloat((this.maxUploadSize / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
             }
         },
         updated() {
