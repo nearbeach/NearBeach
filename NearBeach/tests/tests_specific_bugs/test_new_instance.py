@@ -1,4 +1,3 @@
-
 from django.contrib.auth.models import User
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -29,7 +28,7 @@ def login_user(c: object, self: object) -> object:
 
 
 class NewInstanceLoginTest(TestCase):
-    #fixtures = ['NearBeach_no_setup.json']
+    fixtures = ['NearBeach_no_setup.json']
 
     def setUp(self):
         self.credentials = {
@@ -37,14 +36,14 @@ class NewInstanceLoginTest(TestCase):
             'password': password
         }
 
-    #def test_admin_login(self):
-        #c = Client()
+    def test_admin_login(self):
+        c = Client()
 
         # User will be logged in
-        #login_user(c, self)
+        login_user(c, self)
 
 
         # Make sure the admin user can open up the project
-        #response = c.get(reverse('dashboard'))
-        #self.assertEqual(response.status_code, 200)
-        #print("Admin user can log into a new instance of NearBeach")
+        response = c.get(reverse('dashboard'))
+        self.assertEqual(response.status_code, 200)
+        print("Admin user can log into a new instance of NearBeach")

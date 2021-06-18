@@ -61,8 +61,8 @@ def check_first_time_login(request):
         # Add user to admin group
         submit_user_group = user_group(
             username=request.user,
-            group=group.objects.get(group_id=1),
-            permission_set=permission_set.objects.get(permission_set_id=1),
+            group=submit_group,
+            permission_set=submit_permission_set,
             change_user=request.user,
         )
         submit_user_group.save()
