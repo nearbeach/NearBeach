@@ -17,7 +17,7 @@
             <!-- LIST OUT RESULTS -->
             <hr>
             <list-customers v-bind:customer-results="localCustomerResults"
-                            v-bind:root-url="root-url"
+                            v-bind:root-url="rootUrl"
                             v-bind:static-url="staticUrl"
             ></list-customers>
 
