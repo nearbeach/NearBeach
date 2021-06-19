@@ -3,18 +3,17 @@ from django.test import TestCase, Client
 from django.urls import reverse
 
 # Declaration of Username and Password
-username = 'admin'
+username = 'no_group_user'
 password = 'Test1234$'
 
 """
 Method to replicate
 ~~~~~~~~~~~~~~~~~~~
-1. Bring up a new instance of NearBeach (grab from fixtures)
-2. Try and log in as the admin user
+1. A user that is not associated with any groups tries to login
 
 Expected Results
 ~~~~~~~~~~~~~~~~
-User will log in with no issues, system will create all of the user's permission sets and groups
+User can not log in
 """
 
 
@@ -24,7 +23,7 @@ def login_user(c: object, self: object) -> object:
         self.credentials,
         follow=True,
     )
-    self.assertTrue(response.context['user'].is_active)
+    self.assertTrue(response.context['user'].is_active==False)
 
 
 class NewInstanceLoginTest(TestCase):
@@ -41,9 +40,3 @@ class NewInstanceLoginTest(TestCase):
 
         # User will be logged in
         login_user(c, self)
-
-
-        # Make sure the admin user can open up the project
-        response = c.get(reverse('dashboard'))
-        self.assertEqual(response.status_code, 200)
-        print("Admin user can log into a new instance of NearBeach")

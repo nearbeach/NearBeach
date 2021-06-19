@@ -83,6 +83,10 @@
             includeClosed: {
                 Boolean,
             },
+            rootUrl: {
+                type: String,
+                default: "/",
+            },
             searchInput: {
                 String,
                 required: false,
@@ -148,7 +152,7 @@
 
                 //Use axios to request data
                 axios.post(
-                    `/search/data/`,
+                    `${this.rootUrl}search/data/`,
                     data_to_send,
                 ).then(response => {
                     //Update the localSearchResults with the data

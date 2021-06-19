@@ -16,6 +16,7 @@
                 >
                     <rfc-description v-on:update_values="updateValues($event)"
                                      v-on:update_validation="updateValidation($event)"
+                                     v-bind:static-url="staticUrl"
                     ></rfc-description>
                 </tab-content>
 
@@ -82,6 +83,14 @@
         name: "NewRequestForChange",
         props: {
             groupResults: Array,
+            rootUrl: {
+                type: String,
+                default: "/",
+            },
+            statusUrl: {
+                type: String,
+                default: "/",
+            },
             userResults: Array,
         },
         components: {
@@ -158,7 +167,7 @@
                 });
 
                 axios.post(
-                    `/new_request_for_change/save/`,
+                    `${this.rootUrl}new_request_for_change/save/`,
                     data_to_send,
                 ).then(response => {
                     // Just go to the location the data sent back

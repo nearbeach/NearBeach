@@ -229,7 +229,7 @@ def add_user(request,destination,location_id):
     # Get the data to return to the user
     user_results = get_user_list(destination,location_id)
 
-    return HttpResponse(serializers.serialize('json',user_results),content_type='application/json')
+    return HttpResponse(user_results,content_type='application/json')
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
@@ -518,7 +518,17 @@ def get_user_list(destination,location_id):
     )
 
     # Get the user details
-    return User.objects.filter(id__in=object_results.values('assigned_user_id'))
+    user_results = User.objects.filter(
+        id__in=object_results.values('assigned_user_id')
+    ).values(
+        'id',
+        'username',
+        'first_name',
+        'last_name',
+        'email',
+    )
+
+    return json.dumps(list(user_results), cls=DjangoJSONEncoder)
 
 
 # Internal Function
@@ -829,7 +839,7 @@ def user_list(request,destination,location_id):
     # Get the data we want
     user_results = get_user_list(destination,location_id)
 
-    return HttpResponse(serializers.serialize('json',user_results),content_type='application/json')
+    return HttpResponse(user_results,content_type='application/json')
 
 
 @require_http_methods(['POST'])

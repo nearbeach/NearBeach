@@ -4,5 +4,6 @@
     <new-customer v-bind:organisation-id="0"
                   v-bind:title-list="{{title_list}}"
                   v-bind:organisation-name="''"
+                  v-bind:root-url="`{% url 'dashboard' %}`"
     ></new-customer>
 {% endblock %}

@@ -33,7 +33,7 @@
                         <span class="error" v-if="!$v.projectDescriptionModel.required && $v.projectDescriptionModel.$dirty"> Please supply a description.</span>
                         <span class="error" v-if="!$v.projectDescriptionModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
-                    <img src="/static/NearBeach/images/placeholder/body_text.svg"
+                    <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
                          alt="loading image for Tinymce"
                     />
@@ -100,6 +100,14 @@
         name: "NewProject",
         props: {
             groupResults: Array,
+            rootUrl: {
+                type: String,
+                default: "/",
+            },
+            staticUrl: {
+                type: String,
+                default: "/",
+            },
         },
         mixins: [
             errorModalMixin,
@@ -162,7 +170,7 @@
 
                 //Send data to backend
                 axios.post(
-                    '/new_project/save/',
+                    `${this.rootUrl}new_project/save/`,
                     data_to_send
                 ).then(response => {
                     //Go to the new project

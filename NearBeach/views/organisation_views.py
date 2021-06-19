@@ -29,7 +29,9 @@ def new_organisation(request, *args, **kwargs):
     t = loader.get_template('NearBeach/organisations/new_organisations.html')
 
     # Get Context
-    c = {}
+    c = {
+        'nearbeach_title': 'New Organisation',
+    }
 
     return HttpResponse(t.render(c,request))
 
@@ -117,6 +119,7 @@ def organisation_information(request,organisation_id, *args, **kwargs):
         'customer_results': serializers.serialize('json',customer_results),
         'organisation_id': organisation_id,
         'organisation_results': serializers.serialize('json',[organisation_results]),
+        'nearbeach_title': 'Organisation Information %s' % organisation_id,
         'title_list': serializers.serialize('json',title_list),
     }
 

@@ -1,13 +1,13 @@
 <template>
     <div class="card">
         <div class="card-body">
-            <h1>My Current Objects</h1>
+            <h1>Unassigned Objects</h1>
             <hr>
 
             <div class="alert alert-dark"
                  v-if="!isLoaded"
             >
-                Still obtaining your assigned jobs.
+                Still obtaining a list of assigned objects
             </div>
             
             <!-- Requirements -->
@@ -38,7 +38,7 @@
             <div v-if="countObjects === 0 && isLoaded"
                  class="alert alert-primary"
             >
-                It looks like no one has assigned you any tasks.
+                Good Work - all objects have been assigned to at least one user.
             </div>
         </div>
     </div>
@@ -51,11 +51,11 @@
     import errorModalMixin from "../../mixins/errorModalMixin";
 
     export default {
-        name: "DashboardMyObjects",
+        name: "DashboardUnassignedObjects",
         props: {
             rootUrl: {
                 type: String,
-                default: '/',
+                default: "/",
             },
         },
         data() {
@@ -97,14 +97,14 @@
             getMyObjects: function() {
                 //Use axios to get the objects assigned to me
                 axios.post(
-                    `${this.rootUrl}dashboard/get/my_objects/`,
+                    `/dashboard/get/unassigned_objects/`,
                 ).then(response => {
                     this.objectResults = response['data'];
 
                     //Update loading status
                     this.isLoaded = true;
                 }).catch(error => {
-                    this.showErrorModal(error, 'Dashboard My Objects');
+                    this.showErrorModal(error, 'Dashboard Unassigned Objects');
                 })
             },
         },

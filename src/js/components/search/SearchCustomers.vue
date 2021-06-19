@@ -17,6 +17,8 @@
             <!-- LIST OUT RESULTS -->
             <hr>
             <list-customers v-bind:customer-results="localCustomerResults"
+                            v-bind:root-url="root-url"
+                            v-bind:static-url="staticUrl"
             ></list-customers>
 
             <!-- SHOW IF NO RESULTS -->
@@ -35,9 +37,17 @@
 
     export default {
         name: "SearchCustomers",
-        props: [
-            'customerResults'
-        ],
+        props: {
+            customerResults: Array,
+            staticUrl: {
+                type: String,
+                default: "/",
+            },
+            rootUrl: {
+                type: String,
+                root: "/",
+            },
+        },
         mixins: [
             searchMixin,
         ],
@@ -56,7 +66,7 @@
 
                 //Use axios to obtain the data we require
                 axios.post(
-                    '/search/customer/data/',
+                    `${this.rootUrl}search/customer/data/`,
                     data_to_send
                 ).then(response => {
                     this.localCustomerResults = response['data'];

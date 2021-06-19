@@ -1,5 +1,6 @@
 {% extends 'NearBeach/template.html' %}
 {% load static %}
 {% block content %}
-    <new-organisation></new-organisation>
+    <new-organisation v-bind:root-url="`{% url 'dashboard' %}`"
+    ></new-organisation>
 {% endblock %}

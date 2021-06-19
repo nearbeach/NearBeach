@@ -26,7 +26,9 @@ def new_user(request):
     t = loader.get_template('NearBeach/users/new_user.html')
 
     # Get context
-    c = {}
+    c = {
+        'nearbeach_title': 'New User',
+    }
 
     return HttpResponse(t.render(c, request))
 
@@ -102,6 +104,7 @@ def user_information(request, username):
 
     # Create the context
     c = {
+        'nearbeach_title': 'User Information %s' % username,
         'user_list_results': user_list_results,
         'user_results': serializers.serialize('json', [user_results]),
         'username': username,

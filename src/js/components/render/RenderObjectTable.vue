@@ -11,7 +11,7 @@
             <tr v-for="result in searchResults" :key="result['pk']">
                 <td>
                     <!-- LINK -->
-                    <a v-bind:href="`/${destination}_information/${result['pk']}/`">
+                    <a v-bind:href="`${rootUrl}${destination}_information/${result['pk']}/`">
                         <p>{{result['fields'][importVariables['title']]}}</p>
                         <div class="spacer"></div>
                         <p class="small-text">
@@ -34,6 +34,10 @@
         props: {
             destination: String,
             importVariables: Object,  // {header, prefix,id, title, status}
+            rootUrl: {
+                type: String,
+                default: "/",
+            },
             searchResults: Array,
         },
         data() {

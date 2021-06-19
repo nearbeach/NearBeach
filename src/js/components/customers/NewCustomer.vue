@@ -63,10 +63,14 @@
 
     export default {
         name: "NewCustomer",
-        props: [
-            'organisationName',
-            'titleList',
-        ],
+        props: {
+            organisationName: String,
+            rootUrl: {
+                type: String,
+                default: "/",
+            },
+            titleList: Array,
+        },
         mixins: [
             searchMixin,
         ],
@@ -112,7 +116,7 @@
 
                 // Now that the timer has run out, lets use AJAX to get the organisations.
                 axios.post(
-                    '/search/organisation/data/',
+                    `${this.rootUrl}search/organisation/data/`,
                     data_to_send
                 ).then(response => {
                     //Clear the stakeholderFixList
@@ -206,7 +210,7 @@
 
                 //Send the data using axios
                 axios.post(
-                    '/new_customer/save/',
+                    `${this.rootUrl}new_customer/save/`,
                     data_to_send,
                 ).then(response => {
                     //Go to the new customer page
