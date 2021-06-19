@@ -17,7 +17,7 @@
             <!-- LIST OUT SEARCH RESULTS -->
             <hr>
             <list-organisations v-bind:organisation-results="localOrganisationResults"
-                                v-bind:root-url="root-url"
+                                v-bind:root-url="rootUrl"
                                 v-bind:static-url="staticUrl"
             ></list-organisations>
 

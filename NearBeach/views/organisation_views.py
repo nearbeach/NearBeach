@@ -9,7 +9,7 @@ from django.template import loader
 from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import check_user_permissions
+from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_organisation_permissions
 
 
 import json
@@ -94,7 +94,7 @@ def organisation_duplicates(request, *args, **kwargs):
 
 
 @login_required(login_url='login',redirect_field_name="")
-@check_user_permissions(min_permission_level=1, object_lookup='organisation_id')
+@check_user_organisation_permissions(min_permission_level=1)
 def organisation_information(request,organisation_id, *args, **kwargs):
     """
 
