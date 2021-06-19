@@ -16,7 +16,7 @@ import json
 
 
 @login_required(login_url='login',redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup='organisation_id')
+@check_user_organisation_permissions(min_permission_level=3)
 def new_organisation(request, *args, **kwargs):
     """
 
@@ -38,7 +38,7 @@ def new_organisation(request, *args, **kwargs):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name='')
-@check_user_permissions(min_permission_level=3, object_lookup='organisation_id')
+@check_user_organisation_permissions(min_permission_level=3)
 def new_organisation_save(request, *args, **kwargs):
     """
 
@@ -64,7 +64,7 @@ def new_organisation_save(request, *args, **kwargs):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup='organisation_id')
+@check_user_organisation_permissions(min_permission_level=3)
 def organisation_duplicates(request, *args, **kwargs):
     """
 
@@ -128,7 +128,7 @@ def organisation_information(request,organisation_id, *args, **kwargs):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
-@check_user_permissions(min_permission_level=2, object_lookup='organisation_id')
+@check_user_organisation_permissions(min_permission_level=2)
 def organisation_information_save(request,organisation_id, *args, **kwargs):
     """
 
@@ -156,7 +156,7 @@ def organisation_information_save(request,organisation_id, *args, **kwargs):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
-@check_user_permissions(min_permission_level=2, object_lookup='organisation_id')
+@check_user_organisation_permissions(min_permission_level=2)
 def organisation_update_profile(request,organisation_id, *args, **kwargs):
     """
 
