@@ -10,7 +10,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Count
+from django.db.models import Count, Q
 
 # Import Python Libraries
 import json, urllib.parse, random
@@ -148,14 +148,17 @@ def get_unassigned_objects(request):
             project_id__isnull=False,
         ).values('project_id')
     ).exclude(
-        project_status='Closed',
-
-        #Project has no users assigned to it
-        project_id__in=object_assignment.objects.filter(
-            is_deleted=False,
-            project_id__isnull=False,
-            assigned_user__isnull=False,
-        ).values('project_id')
+        Q(
+            project_status='Closed',
+        ) | 
+        Q(
+            #Project has no users assigned to it
+            project_id__in=object_assignment.objects.filter(
+                is_deleted=False,
+                project_id__isnull=False,
+                assigned_user__isnull=False,
+            ).values('project_id')
+        )
     )
 
     requirement_results = requirement.objects.filter(
@@ -164,13 +167,16 @@ def get_unassigned_objects(request):
             requirement_id__isnull=False,
         ).values('requirement_id'),
     ).exclude(
-        requirement_status__requirement_status_is_closed=True,
-
-        #Requirement has no users assigned to it
-        requirement_id__in=object_assignment.objects.filter(
-            is_deleted=False,
-            requirement_id__isnull=False,
-            assigned_user__isnull=False,
+        Q(
+            requirement_status__requirement_status_is_closed=True,
+        ) |
+        Q(
+            #Requirement has no users assigned to it
+            requirement_id__in=object_assignment.objects.filter(
+                is_deleted=False,
+                requirement_id__isnull=False,
+                assigned_user__isnull=False,
+            )
         )
     )
 
@@ -180,13 +186,16 @@ def get_unassigned_objects(request):
             task_id__isnull=False,
         ).values('task_id'),
     ).exclude(
-        task_status='Closed',
-
-        #Task has no users assigned to it
-        task_id__in=object_assignment.objects.filter(
-            is_deleted=False,
-            task_id__isnull=False,
-            assigned_user__isnull=False,
+        Q(
+            task_status='Closed',
+        ) |
+        Q(
+            #Task has no users assigned to it
+            task_id__in=object_assignment.objects.filter(
+                is_deleted=False,
+                task_id__isnull=False,
+                assigned_user__isnull=False,
+            )
         )
     )
 

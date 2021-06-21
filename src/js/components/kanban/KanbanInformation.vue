@@ -1,7 +1,14 @@
 <template>
     <div>
         <h1 class="kanban-header">{{kanbanBoardResults[0]['fields']['kanban_board_name']}}</h1>
-
+        <!--
+        <a class="kanban-edit-text"
+           v-if="userLevel >= 3"
+           href="edit_board/"
+        >
+            Edit Kanban
+        </a>
+        -->
         <!-- Rendering the Kanban Container -->
         <kanban-board v-bind:column-results="columnResults"
                       v-bind:kanban-board-results="kanbanBoardResults"
@@ -42,6 +49,7 @@
             kanbanCardResults: Array,
             levelResults: Array,
             locationId: Number,
+            userLevel: Number,
         },
         data() {
             return {

@@ -90,6 +90,9 @@ import UserInformation from "./components/users/UserInformation.vue";
 import ResetUserPassword from "./components/users/ResetUserPassword.vue";
 import DashboardUnassignedObjects from "./components/dashboard/DashboardUnassignedObjects.vue";
 import DashboardUsersWithNoGroups from "./components/dashboard/DashboardUsersWithNoGroups.vue";
+import KanbanEditBoard from "./components/kanban/KanbanEditBoard.vue";
+import KanbanGroupPermissions from "./components/kanban/KanbanGroupPermissions.vue";
+
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -221,6 +224,8 @@ Vue.component('ResetUserPassword', ResetUserPassword);
 Vue.component('IconifyIcon', IconifyIcon);
 Vue.component('DashboardUnassignedObjects', DashboardUnassignedObjects);
 Vue.component('DashboardUsersWithNoGroups', DashboardUsersWithNoGroups);
+Vue.component('KanbanEditBoard', KanbanEditBoard);
+Vue.component('KanbanGroupPermissions', KanbanGroupPermissions);
 
 //Validation
 import Vuelidate from 'vuelidate'

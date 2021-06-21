@@ -66,6 +66,7 @@ urlpatterns = [
 
     # Kanban
     path('kanban_information/<int:kanban_board_id>/', kanban_views.kanban_information, name='kanban_information'),
+    path('kanban_information/<int:kanban_board_id>/edit_board/', kanban_views.kanban_edit_board, name='kanban_edit_board'),
     path('kanban_information/<int:kanban_board_id>/<object_lookup>/add_link/', kanban_views.add_kanban_link,
          name='add_kanban_link'),
     path('kanban_information/<int:kanban_board_id>/<object_lookup>/link_list/', kanban_views.kanban_link_list,

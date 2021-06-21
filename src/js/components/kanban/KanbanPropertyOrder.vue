@@ -103,6 +103,11 @@
                 required,
             }
         },
+        watch: {
+            propertyList: function() {
+                this.localPropertyList = this.propertyList;
+            },
+        },
         methods: {
             addItem: function() {
                 //Check to make sure it isn't blank
