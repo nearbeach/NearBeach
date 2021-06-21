@@ -1,0 +1,11 @@
+{% extends 'NearBeach/template.html' %}
+{% load static %}
+{% block content %}
+    <kanban-edit-board v-bind:kanban-board-results="{{kanban_board_results}}"
+                       v-bind:column-results="{{column_results}}"
+                       v-bind:group-results="{{group_results}}"
+                       v-bind:level-results="{{level_results}}"
+    ></kanban-edit-board>
+
+    <kanban-group-permissions v-bind:location-id="{{kanban_board_id}}"></kanban-group-permissions>
+{% endblock %}

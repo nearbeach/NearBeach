@@ -92,6 +92,33 @@ def check_kanban_board_name(request, *args, **kwargs):
 
 
 # Internal function
+def get_context(kanban_board_id):
+    # Get the kanban data
+    kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+
+    column_results = kanban_column.objects.filter(
+        is_deleted=False,
+        kanban_board_id=kanban_board_id,
+    )
+
+    level_results = kanban_level.objects.filter(
+        is_deleted=False,
+        kanban_board_id=kanban_board_id,
+    )
+
+    # Context
+    c = {
+        'kanban_board_results': serializers.serialize('json', [kanban_board_results]),
+        'column_results': serializers.serialize('json', column_results),
+        'kanban_board_id': kanban_board_id,
+        'level_results': serializers.serialize('json', level_results),
+        'nearbeach_title': 'Kanban Information %s' % kanban_board_id,
+    }
+
+    return c
+
+
+# Internal function
 def get_max_sort_id(kanban_board_id,form):
     # Get the newest card number id
     kanban_card_sort_number = kanban_card.objects.filter(
@@ -109,6 +136,32 @@ def get_max_sort_id(kanban_board_id,form):
 
 
 @login_required(login_url='login', redirect_field_name="")
+@check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
+def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
+    """
+    """
+    user_level = kwargs['user_level']
+
+    # Get group results
+    group_results = object_assignment.objects.filter(
+        is_deleted=False,
+        group_id__isnull=False,
+        kanban_board_id=kanban_board_id,
+    )
+
+    # Get context
+    c = get_context(kanban_board_id)
+    c['user_level'] = user_level
+    c['group_results'] = serializers.serialize('json', group_results)
+
+    # Get the template
+    t = loader.get_template('NearBeach/kanban/kanban_edit_board.html')
+
+    # Get the context
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup='kanban_board_id')
 def kanban_information(request, kanban_board_id, *args, **kwargs):
     """
@@ -117,39 +170,21 @@ def kanban_information(request, kanban_board_id, *args, **kwargs):
     :param kanban_board_id:
     :return:
     """
+    user_level = kwargs['user_level']
 
-    # Check user's permissions
-
-    # Get the kanban data
-    kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
-
+    # Get kanban card results
     kanban_card_results = kanban_card.objects.filter(
         is_deleted=False,
         kanban_board_id=kanban_board_id,
     ).order_by('kanban_card_sort_number')
 
-    column_results = kanban_column.objects.filter(
-        is_deleted=False,
-        kanban_board_id=kanban_board_id,
-    )
-
-    level_results = kanban_level.objects.filter(
-        is_deleted=False,
-        kanban_board_id=kanban_board_id,
-    )
+    # Get context
+    c = get_context(kanban_board_id)
+    c['user_level'] = user_level 
+    c['kanban_card_results'] = serializers.serialize('json', kanban_card_results)
 
     # Get the template
     t = loader.get_template('NearBeach/kanban/kanban_information.html')
-
-    # Context
-    c = {
-        'kanban_board_results': serializers.serialize('json', [kanban_board_results]),
-        'kanban_card_results': serializers.serialize('json', kanban_card_results),
-        'column_results': serializers.serialize('json', column_results),
-        'kanban_board_id': kanban_board_id,
-        'level_results': serializers.serialize('json', level_results),
-        'nearbeach_title': 'Kanban Information %s' % kanban_board_id,
-    }
 
     return HttpResponse(t.render(c, request))
 

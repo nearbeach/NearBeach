@@ -44,7 +44,7 @@ def check_user_kanban_permissions(min_permission_level):
             # If user is admin - grant them all permissions
             if request.user.is_superuser:
                 # Return the function with a user_level of 4
-                return func(request, *args, **kwargs, user_level=4)
+                return func(request, kanban_card_id, *args, **kwargs, user_level=4)
 
             # Default user level is 0
             user_group_results = user_group.objects.filter(
