@@ -18,7 +18,13 @@
                      v-bind:data-title="item['title']"
                      v-on:dblclick="editItem($event)"
                 >
-                    <strong>{{item['title']}}</strong>
+                    <strong v-bind:key="item['id']"
+                            v-bind:id="item['id']"
+                            v-bind:data-id="item['id']"
+                            v-bind:data-title="item['title']"
+                    >
+                        {{item['title']}}
+                    </strong>
                     <span v-on:click="removeItem(item['id'])">
                         <IconifyIcon v-bind:icon="icons.xCircle"></IconifyIcon>
                     </span>
