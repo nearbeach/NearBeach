@@ -281,6 +281,16 @@ class NewChangeTaskForm(forms.ModelForm):
         ]
 
 
+class NewColumnForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = kanban_column
+        fields = [
+            'kanban_column_name',
+            'kanban_column_sort_number',
+        ]
+
+
 class NewCustomerForm(forms.ModelForm):
     organisation = forms.ModelChoiceField(
         queryset=organisation.objects.all(),

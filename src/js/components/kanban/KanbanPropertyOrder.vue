@@ -80,19 +80,31 @@
 <script>
     import { Modal } from "bootstrap";
 
+    //axios
+    const axios = require('axios');
+
     //Validation
     import { required } from 'vuelidate/lib/validators'
 
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
+import errorModalMixin from '../../mixins/errorModalMixin';
 
     export default {
         name: "KanbanPropertyOrder",
         props: {
+            isDirty: Boolean, //Passes the value from the template above where the checking is done
+            isNewMode: {
+                type: Boolean,
+                default: true,
+            },
+            kanbanBoardId: {
+                type: Number,
+                default: 0,
+            },
             propertyList: Array,
             propertyName: String,
             source: String,
-            isDirty: Boolean, //Passes the value from the template above where the checking is done
         },
         data() {
             return {
@@ -102,6 +114,7 @@
             }
         },
         mixins: [
+            errorModalMixin,
             iconMixin,
         ],
         validations: {
@@ -121,22 +134,11 @@
                     return;
                 }
 
-                //Depending if there is an ID associated with this depends if we are actually adding an extra item or
-                //editing an already existing one.
-                if (this.singleItemId == '') {
-                    //Add as a new item
-                    this.localPropertyList.push({
-                        'id': this.getMaxId() + 1,
-                        'title': this.newPropertyItem,
-                    });
+                //Depending on the mode (New or Edit) - depends which function we are using
+                if (this.isNewMode) {
+                    this.newModeAddItem(); 
                 } else {
-                    //Item already exists - edit the item.
-                    this.localPropertyList.forEach(row => {
-                        //If the id is the same - update the values
-                        if (row['id'] == this.singleItemId) {
-                            row['title'] = this.newPropertyItem;
-                        }
-                    });
+                    this.editModeAddItem();
                 }
 
                 //Now that the card has been updated - lets flatten the variables
@@ -157,8 +159,29 @@
                 //Open up the modal
                 this.openModal();
             },
-            endItem: function(event) {
-                console.log("EVENT: ",event);
+            editModeAddItem: async function(/*var*/) {
+                // Create the data_to_send
+                const data_to_send = new FormData();
+                data_to_send.set('kanban_column_name', this.newPropertyItem);
+                data_to_send.set('kanban_column_sort_number', this.getMaxId() + 1);
+
+                // Send data
+                await axios.post(
+                    `/kanban_${this.propertyName.toLowerCase()}/${this.kanbanBoardId}/new/`,
+                    data_to_send,
+                ).then(response => {
+                    //Data
+                    const data = response['data'][0];
+                    const name = `kanban_${this.propertyName.toLowerCase()}_name`;
+
+                    //Add as a new item
+                    this.localPropertyList.push({
+                        'id': data['pk'],
+                        'title': data['name'],
+                    });
+                }).catch(error => {
+                    this.showErrorModal(error,'kanban board',this.kanbanBoardId) 
+                })
             },
             getMaxId: function() {
                 //Lets use some math trickery
@@ -169,6 +192,26 @@
 
                 //Return the last array
                 return sorted[ids.length - 1];
+            },
+            newModeAddItem: function(/*var*/) {
+                //NEW MODE -> we are creating a NEW kanban board
+                //Depending if there is an ID associated with this depends if we are actually adding an extra item or
+                //editing an already existing one.
+                if (this.singleItemId == '') {
+                    //Add as a new item
+                    this.localPropertyList.push({
+                        'id': this.getMaxId() + 1,
+                        'title': this.newPropertyItem,
+                    });
+                } else {
+                    //Item already exists - edit the item.
+                    this.localPropertyList.forEach(row => {
+                        //If the id is the same - update the values
+                        if (row['id'] == this.singleItemId) {
+                            row['title'] = this.newPropertyItem;
+                        }
+                    });
+                }
             },
             openModal: function() {
                 var newItemModal = new Modal(document.getElementById(`addItem${this.propertyName}`));

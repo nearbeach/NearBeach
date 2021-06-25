@@ -13,15 +13,17 @@
                     </p>
                 </div>
                 <div class="col-md-4">
-                    <kanban-property-order v-bind:property-name="'Columns'"
+                    <kanban-property-order v-bind:property-name="'Column'"
                                            v-bind:property-list="columnModel"
                                            v-bind:source="'columnModel'"
                                            v-bind:is-dirty="$v.columnModel.$dirty"
+                                           v-bind:is-new-mode="false"
+                                           v-bind:kanban-board-id="kanbanBoardResults[0]['pk']"
                                            v-on:update_property_list="updatePropertyList($event)"
                     ></kanban-property-order>
                 </div>
                 <div class="col-md-4">
-                    <kanban-property-order v-bind:property-name="'Levels'"
+                    <kanban-property-order v-bind:property-name="'Level'"
                                            v-bind:property-list="levelModel"
                                            v-bind:source="'levelModel'"
                                            v-bind:is-dirty="$v.columnModel.$dirty"
@@ -84,7 +86,12 @@
                     required,
                 },
         },
-        methods: {},
+        methods: {
+            updatePropertyList: function(data) {
+                console.log("GOT HERE WITH DATA: ",data);
+                this[data['source']] = data['data'];
+            },
+        },
         mounted() {
             //Map the variables into a useable format
             this.columnModel = this.columnResults.map(row => {
