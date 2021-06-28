@@ -12,58 +12,62 @@ from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
 from django.db.models import Max
 from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_kanban_permissions
-from NearBeach.forms import NewColumnForm
+from NearBeach.forms import NewLevelForm
 import json, urllib3
 
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
 #@check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
-def edit_column(request, kanban_column_id, *args, **kwargs):
+def edit_level(request, kanban_level_id, *args, **kwargs):
     """
     """
     # Get form data
-    form = NewColumnForm(request.POST)
+    form = NewLevelForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
-    # Get the kanban_column
-    kanban_column_update = kanban_column.objects.get(kanban_column_id=kanban_column_id)
+    # Get the instance
+    kanban_level_results = kanban_level.objects.get(
+        kanban_level_id=kanban_level_id,
+    )
 
-    # Update data
-    kanban_column_update.kanban_column_name = form.cleaned_data['kanban_column_name']
-    kanban_column_update.kanban_column_sort_number = form.cleaned_data['kanban_column_sort_number']
+    # Update the data
+    kanban_level_results.kanban_level_name = form.cleaned_data['kanban_level_name']
+    kanban_level_results.kanban_level_sort_number = form.cleaned_data['kanban_level_sort_number']
 
-    # Save
-    kanban_column_update.save()
-    
-    # Return data
-    return HttpResponse(serializers.serialize('json', [kanban_column_update]), content_type='application/json')
+    # Save the data
+    kanban_level_results.save()
+
+    # Return the data
+    return HttpResponse(serializers.serialize('json', [kanban_level_results]), content_type='application/json')
 
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
 @check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
-def new_column(request, kanban_board_id, *args, **kwargs):
+def new_level(request, kanban_board_id, *args, **kwargs):
     """
     """
     # Get data from form
-    form = NewColumnForm(request.POST)
+    form = NewLevelForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
-    # Create a new column
-    kanban_column_submit = kanban_column(
-        kanban_column_name=form.cleaned_data['kanban_column_name'],
+    # Create a new level
+    kanban_level_submit = kanban_level(
+        kanban_level_name=form.cleaned_data['kanban_level_name'],
         kanban_board_id=kanban_board_id,
-        kanban_column_sort_number=form.cleaned_data['kanban_column_sort_number'],
+        kanban_level_sort_number=form.cleaned_data['kanban_level_sort_number'],
         change_user=request.user,
     )
-    kanban_column_submit.save()
+    kanban_level_submit.save()
 
     # Get the information and return as json results
-    kanban_column_results = kanban_column.objects.filter(
-        kanban_column_id = kanban_column_submit.kanban_column_id,
+    kanban_level_results = kanban_level.objects.filter(
+        kanban_level_id = kanban_level_submit.kanban_level_id,
     )
      
-    return HttpResponse(serializers.serialize('json',[kanban_column_submit]), content_type='application/json')
+    return HttpResponse(serializers.serialize('json',[kanban_level_submit]), content_type='application/json')
+
+

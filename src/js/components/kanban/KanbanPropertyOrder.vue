@@ -142,8 +142,8 @@ import errorModalMixin from '../../mixins/errorModalMixin';
                 }
 
                 //Now that the card has been updated - lets flatten the variables
-                this.singleItemId = '';
-                this.newPropertyItem = '';
+                //this.singleItemId = '';
+                //this.newPropertyItem = '';
 
                 //Push changes upstream
                 this.sendPropertyListUp();
@@ -160,25 +160,53 @@ import errorModalMixin from '../../mixins/errorModalMixin';
                 this.openModal();
             },
             editModeAddItem: async function(/*var*/) {
+                // Create variable names
+                const name = `kanban_${this.propertyName.toLowerCase()}_name`,
+                      sort_number = `kanban_${this.propertyName.toLowerCase()}_sort_number`,
+                      single_item_id = this.singleItemId;
+
                 // Create the data_to_send
                 const data_to_send = new FormData();
-                data_to_send.set('kanban_column_name', this.newPropertyItem);
-                data_to_send.set('kanban_column_sort_number', this.getMaxId() + 1);
+                data_to_send.set(name, this.newPropertyItem);
+                data_to_send.set(sort_number, this.getMaxId() + 1);
+                
+                // Check to see if we are editing an existing item, or adding
+                if (single_item_id == '') {
+                    //Get the url
+                    var url = `/kanban_${this.propertyName.toLowerCase()}/${this.kanbanBoardId}/new/`;
+                } else {
+                    //Get the url
+                    var url = `/kanban_${this.propertyName.toLowerCase()}/${this.singleItemId}/edit/`;
+                }
 
                 // Send data
                 await axios.post(
-                    `/kanban_${this.propertyName.toLowerCase()}/${this.kanbanBoardId}/new/`,
+                    url,
                     data_to_send,
                 ).then(response => {
                     //Data
                     const data = response['data'][0];
-                    const name = `kanban_${this.propertyName.toLowerCase()}_name`;
 
                     //Add as a new item
-                    this.localPropertyList.push({
-                        'id': data['pk'],
-                        'title': data['name'],
-                    });
+                    if (single_item_id == '') {
+                        //Add as a new item
+                        this.localPropertyList.push({
+                            'id': data['pk'],
+                            'title': data['fields'][name],
+                        });
+                    } else {
+                        //Item already exists - edit the item.
+                        this.localPropertyList.forEach(row => {
+                            //If the id is the same - update the values
+                            if (row['id'] == this.singleItemId) {
+                                row['title'] = this.newPropertyItem;
+                            }
+                        });
+                    }
+
+                    //Reset variables now we are finished
+                    this.singleItemId = '';
+                    this.newPropertyItem = '';
                 }).catch(error => {
                     this.showErrorModal(error,'kanban board',this.kanbanBoardId) 
                 })
@@ -212,6 +240,10 @@ import errorModalMixin from '../../mixins/errorModalMixin';
                         }
                     });
                 }
+
+                //Reset variables 
+                this.singleItemId = '';
+                this.newPropertyItem = '';
             },
             openModal: function() {
                 var newItemModal = new Modal(document.getElementById(`addItem${this.propertyName}`));
@@ -232,6 +264,29 @@ import errorModalMixin from '../../mixins/errorModalMixin';
                     'source': this.source,
                     'data': this.localPropertyList,
                 });
+                
+                if (!this.isNewMode) {
+                    //Use is in Edit mode - send the data to the backend
+                    // Check to see if we are editing an existing item, or adding
+                    const url = `/kanban_${this.propertyName.toLowerCase()}/${this.singleItemId}/resort/`;
+                     
+                    //Create data_to_send
+                    const data_to_send = new FormData();
+
+                    // Insert a new row for each group list item
+                    this.localPropertyList.forEach((row,index) => {
+                        data_to_send.append(`item`,row['id']);
+                    });
+
+                    axios.post(
+                        url,
+                        data_to_send,
+                    ).then(response => {
+                        console.log("Response");
+                    }).catch(error => {
+                        console.log("ERROR: ",error);
+                    })
+                }
             }
         }
     }

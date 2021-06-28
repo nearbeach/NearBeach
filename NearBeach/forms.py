@@ -352,6 +352,16 @@ class NewKanbanForm(forms.ModelForm):
         ]
 
 
+class NewLevelForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = kanban_level
+        fields = [
+            'kanban_level_name',
+            'kanban_level_sort_number',
+        ]
+
+
 class NewPermissionSetForm(forms.ModelForm):
     # Basic Meta Data
     class Meta:
