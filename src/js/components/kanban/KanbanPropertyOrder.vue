@@ -73,7 +73,66 @@
             </div>
         </div>
 
+        <!-- MODAL FOR DELETING ITEM -->
+        <div class="modal fade"
+             v-bind:id="`deleteItem${propertyName}`"
+             tabindex="-1"
+             aria-labelledby="exampleModalLabel"
+             aria-hidden="true"
+        >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Delete {{propertyName}}</h5>
+                        <button type="button" 
+                                class="btn-close" 
+                                data-bs-dismiss="modal" 
+                                aria-label="Close" 
+                                v-bind:id="`deleteItemClose${propertyName}`"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- CARD DESTINATIONS -->
+                        <div class="row">
+                            <label><strong>Destination for Cards</strong></label> 
+                            <v-select label="title"
+                                      values="id"
+                                      v-bind:options="newCardDestinationList"
+                                      v-model="destinationItemId"
+                                      style="z-index:9999"
+                                      class="new-card-destination"
+                            ></v-select>
+                        </div>
+                        <br/>
 
+                        <!-- WARNING -->
+                        <div class="alert alert-warning">
+                            <h4>WARNING</h4>
+                            <p>This process can not be reversed. Deleting a {propertyName} will remove it.</p>
+
+                            <p>
+                                All existing cards will be moved to the stated location you have provided.
+                                Any cards that have been archived or deleted, will still be associated with
+                                the removed card.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" 
+                                class="btn btn-secondary" 
+                                data-bs-dismiss="modal"
+                        >
+                            Close</button>
+                        <button type="button"
+                                class="btn btn-primary"
+                                v-on:click="deleteItem"
+                        >
+                            Delete {{propertyName}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -88,7 +147,7 @@
 
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
-import errorModalMixin from '../../mixins/errorModalMixin';
+    import errorModalMixin from '../../mixins/errorModalMixin';
 
     export default {
         name: "KanbanPropertyOrder",
@@ -108,7 +167,10 @@ import errorModalMixin from '../../mixins/errorModalMixin';
         },
         data() {
             return {
+                deleteItemId: '',
+                destinationItemId: '',
                 localPropertyList: this.propertyList,
+                newCardDestinationList: [],
                 newPropertyItem: '',
                 singleItemId: '',
             }
@@ -150,6 +212,38 @@ import errorModalMixin from '../../mixins/errorModalMixin';
 
                 //Close the modal
                 document.getElementById(`addItemClose${this.propertyName}`).click();
+            },
+            deleteItem: function() {
+                //Construct the data_to_send
+                const data_to_send = new FormData();
+                data_to_send.set('delete_item_id',this.deleteItemId);
+                data_to_send.set('destination_item_id',this.destinationItemId['id']);
+
+                // URL
+                const url = `/kanban_${this.propertyName.toLowerCase()}/delete/`
+
+                //Use axios to send data to backend
+                axios.post(
+                    url,
+                    data_to_send,
+                ).then(response => {
+                    //Filter out the id we want to remove
+                    this.localPropertyList = this.localPropertyList.filter(row => {
+                        //Filter out the id we don't want
+                        return row['id'] != this.deleteItemId;
+                    });
+
+                    //Send the data upstream
+                    this.$emit('update_property_list',{
+                        'source': this.source,
+                        'data': this.localPropertyList,
+                    });
+
+                    //Close the dialog
+                    document.getElementById(`deleteItemClose${this.propertyName}`).click();
+                }).catch(error => {
+                    this.showErrorModal(error,'kanban item delete',this.kanbanBoardId) 
+                })
             },
             editItem: function(event) {
                 //Get the id and title from the item
@@ -250,14 +344,33 @@ import errorModalMixin from '../../mixins/errorModalMixin';
                     newItemModal.show();
             },
             removeItem: function(id) {
-                //Filter out the id we want to remove
-                this.localPropertyList = this.localPropertyList.filter(row => {
-                    //Filter out the id we don't want
-                    return row['id'] != id;
-                });
+                if (this.isNewMode) {
+                    //Filter out the id we want to remove
+                    this.localPropertyList = this.localPropertyList.filter(row => {
+                        //Filter out the id we don't want
+                        return row['id'] != id;
+                    });
 
-                //Send the data upstream
-                this.sendPropertyListUp();
+                    //Send the data upstream
+                    this.sendPropertyListUp();
+                } else {
+                    //Store the id to delete
+                    this.deleteItemId = id;
+
+                    //Create an array of potential destinations for the cards
+                    this.newCardDestinationList = this.localPropertyList.filter(row => {
+                        return row['id'] != this.deleteItemId;
+                    });
+                    
+                    //Pick the first option by default
+                    this.destinationItemId = this.newCardDestinationList[0];
+
+                    //Show the delete modal
+                    var deleteItemModal = new Modal(
+                        document.getElementById(`deleteItem${this.propertyName}`)
+                    );
+                    deleteItemModal.show();
+                }
             },
             sendPropertyListUp: function() {
                 this.$emit('update_property_list',{
@@ -293,5 +406,4 @@ import errorModalMixin from '../../mixins/errorModalMixin';
 </script>
 
 <style scoped>
-
 </style>

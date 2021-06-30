@@ -68,6 +68,7 @@ urlpatterns = [
 
     # Kanban Columns
     path('kanban_column/<int:kanban_column_id>/edit/', kanban_column_views.edit_column, name='kanban_edit_column'),
+    path('kanban_column/delete/', kanban_column_views.delete_column, name='kanban_delete_column'),
     path('kanban_column/<int:kanban_board_id>/new/', kanban_column_views.new_column, name='kanban_new_column'),
 
     # Kanban Levels

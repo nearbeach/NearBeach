@@ -40,8 +40,9 @@
             <div class="row submit-row">
                 <div class="col-md-12">
                     <button class="btn btn-primary save-changes"
+                            v-on:click="backToBoard"
                     >
-                        Save Kanban
+                        Back to Kanban Board
                     </button>
                 </div>
             </div>
@@ -89,6 +90,9 @@
                 },
         },
         methods: {
+            backToBoard: function() {
+                window.location.href = `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0]['pk']}/`
+            },
             updatePropertyList: function(data) {
                 this[data['source']] = data['data'];
             },

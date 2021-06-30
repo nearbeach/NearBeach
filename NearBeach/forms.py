@@ -175,6 +175,16 @@ class CustomerForm(forms.ModelForm):
         ]
 
 
+class DeleteColumnForm(forms.Form):
+    delete_item_id = forms.ModelChoiceField(
+        queryset=kanban_column.objects.all(),
+        required=True,
+    )
+    destination_item_id = forms.ModelChoiceField(
+        queryset=kanban_column.objects.all(),
+        required=True,
+    )
+
 class DocumentUploadForm(ModelForm):
     document = forms.FileField(
         required=True,

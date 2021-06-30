@@ -12,7 +12,7 @@ from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
 from django.db.models import Max
 from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_kanban_permissions
-from NearBeach.forms import NewColumnForm
+from NearBeach.forms import NewColumnForm, DeleteColumnForm
 import json, urllib3
 
 
@@ -39,6 +39,35 @@ def edit_column(request, kanban_column_id, *args, **kwargs):
     
     # Return data
     return HttpResponse(serializers.serialize('json', [kanban_column_update]), content_type='application/json')
+
+
+@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(['POST'])
+#@check_user_permissions(min_permission_level=4, object_lookup='kanban_board_id')
+def delete_column(request, *args, **kwargs):
+    """
+    """
+    # Get the form data
+    form = DeleteColumnForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Update the variables
+    kanban_card.objects.filter(
+        is_deleted=False,
+        kanban_column_id=form.cleaned_data['delete_item_id'],
+    ).update(
+        kanban_column_id=form.cleaned_data['destination_item_id']
+    )
+
+    # Soft delete the old column
+    deleted_column = kanban_column.objects.get(
+        kanban_column_id=form.cleaned_data['delete_item_id'].kanban_column_id,
+    )
+    deleted_column.is_deleted=True
+    deleted_column.save()
+
+    return HttpResponse("");
 
 
 @login_required(login_url='login', redirect_field_name="")
