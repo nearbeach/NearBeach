@@ -13,18 +13,22 @@
                     </p>
                 </div>
                 <div class="col-md-4">
-                    <kanban-property-order v-bind:property-name="'Columns'"
+                    <kanban-property-order v-bind:property-name="'Column'"
                                            v-bind:property-list="columnModel"
                                            v-bind:source="'columnModel'"
                                            v-bind:is-dirty="$v.columnModel.$dirty"
+                                           v-bind:is-new-mode="false"
+                                           v-bind:kanban-board-id="kanbanBoardResults[0]['pk']"
                                            v-on:update_property_list="updatePropertyList($event)"
                     ></kanban-property-order>
                 </div>
                 <div class="col-md-4">
-                    <kanban-property-order v-bind:property-name="'Levels'"
+                    <kanban-property-order v-bind:property-name="'Level'"
                                            v-bind:property-list="levelModel"
                                            v-bind:source="'levelModel'"
                                            v-bind:is-dirty="$v.columnModel.$dirty"
+                                           v-bind:is-new-mode="false"
+                                           v-bind:kanban-board-id="kanbanBoardResults[0]['pk']"
                                            v-on:update_property_list="updatePropertyList($event)"
                     ></kanban-property-order>
                 </div>
@@ -36,8 +40,9 @@
             <div class="row submit-row">
                 <div class="col-md-12">
                     <button class="btn btn-primary save-changes"
+                            v-on:click="backToBoard"
                     >
-                        Save Kanban
+                        Back to Kanban Board
                     </button>
                 </div>
             </div>
@@ -84,7 +89,14 @@
                     required,
                 },
         },
-        methods: {},
+        methods: {
+            backToBoard: function() {
+                window.location.href = `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0]['pk']}/`
+            },
+            updatePropertyList: function(data) {
+                this[data['source']] = data['data'];
+            },
+        },
         mounted() {
             //Map the variables into a useable format
             this.columnModel = this.columnResults.map(row => {

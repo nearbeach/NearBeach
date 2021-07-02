@@ -175,6 +175,28 @@ class CustomerForm(forms.ModelForm):
         ]
 
 
+class DeleteColumnForm(forms.Form):
+    delete_item_id = forms.ModelChoiceField(
+        queryset=kanban_column.objects.all(),
+        required=True,
+    )
+    destination_item_id = forms.ModelChoiceField(
+        queryset=kanban_column.objects.all(),
+        required=True,
+    )
+
+
+class DeleteLevelForm(forms.Form):
+    delete_item_id = forms.ModelChoiceField(
+        queryset=kanban_level.objects.all(),
+        required=True,
+    )
+    destination_item_id = forms.ModelChoiceField(
+        queryset=kanban_level.objects.all(),
+        required=True,
+    )
+
+
 class DocumentUploadForm(ModelForm):
     document = forms.FileField(
         required=True,
@@ -281,6 +303,16 @@ class NewChangeTaskForm(forms.ModelForm):
         ]
 
 
+class NewColumnForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = kanban_column
+        fields = [
+            'kanban_column_name',
+            'kanban_column_sort_number',
+        ]
+
+
 class NewCustomerForm(forms.ModelForm):
     organisation = forms.ModelChoiceField(
         queryset=organisation.objects.all(),
@@ -339,6 +371,16 @@ class NewKanbanForm(forms.ModelForm):
         model = kanban_board
         fields = [
             'kanban_board_name',
+        ]
+
+
+class NewLevelForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = kanban_level
+        fields = [
+            'kanban_level_name',
+            'kanban_level_sort_number',
         ]
 
 
