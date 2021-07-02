@@ -46,6 +46,12 @@
                 list2: [{'id':2,'name':'The fart copter'}],
             }
         },
+        created() {
+            window.addEventListener("resize", this.resizeProcedure);
+        },
+        destroyed() {
+            window.removeEventListener("resize", this.resizeProcedure);
+        },
         methods: {
             doubleClickedCard: function(data) {
                 //Send data upstream
@@ -58,6 +64,32 @@
                             row['fields']['kanban_level'] == level_id;
                 });
                 return return_data;
+            },
+            resizeProcedure: function() {
+                // Get the screen size and the columns width
+                const columns_width = this.columnResults.length * 400;
+                let kanban_container_width = document.getElementsByClassName("kanban-container")
+                kanban_container_width = kanban_container_width[0].clientWidth;
+
+                //If the columns width is smaller than the screen size
+                // - we will need to adjust the kanban-level-div
+                if (columns_width < kanban_container_width) {
+                    //Add in the width restrictions
+                    var elements = document.getElementsByClassName("kanban-level-div");
+
+                    //Loop through each element
+                    Array.from(elements).forEach(element => {
+                        element.style = `max-width: ${columns_width}px;`;
+                    })
+                } else {
+                    //Remove the old CSS Styling
+                    let elements = document.getElementsByClassName("kanban-level-div");
+
+                    //Loop through each element
+                    Array.from(elements).forEach(element => {
+                        element.style = `max-width: null;`;
+                    })
+                }
             },
         },
         mounted() {
@@ -85,6 +117,9 @@
 
             //Send the data to the kanban model
             this.kanbanModel = temp_object;
+
+            //Check the resize procedure
+            this.resizeProcedure();
         },
     }
 </script>

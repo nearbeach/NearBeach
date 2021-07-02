@@ -25,7 +25,9 @@
                     >
                         {{item['title']}}
                     </strong>
-                    <span v-on:click="removeItem(item['id'])">
+                    <span v-on:click="removeItem(item['id'])"
+                          v-if="localPropertyList.length > 1"
+                    >
                         <IconifyIcon v-bind:icon="icons.xCircle"></IconifyIcon>
                     </span>
                 </div>
@@ -126,6 +128,7 @@
                         <button type="button"
                                 class="btn btn-primary"
                                 v-on:click="deleteItem"
+                                v-bind:disabled="this.destinationItemId == null"
                         >
                             Delete {{propertyName}}
                         </button>
@@ -220,7 +223,7 @@
                 data_to_send.set('destination_item_id',this.destinationItemId['id']);
 
                 // URL
-                const url = `/kanban_${this.propertyName.toLowerCase()}/delete/`
+                const url = `/kanban_${this.propertyName.toLowerCase()}/${this.kanbanBoardId}/delete/`
 
                 //Use axios to send data to backend
                 axios.post(

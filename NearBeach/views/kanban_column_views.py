@@ -43,8 +43,8 @@ def edit_column(request, kanban_column_id, *args, **kwargs):
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
-#@check_user_permissions(min_permission_level=4, object_lookup='kanban_board_id')
-def delete_column(request, *args, **kwargs):
+@check_user_permissions(min_permission_level=4, object_lookup='kanban_board_id')
+def delete_column(request, kanban_board_id, *args, **kwargs):
     """
     """
     # Get the form data

@@ -12,7 +12,7 @@ from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
 from django.db.models import Max
 from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_kanban_permissions
-from NearBeach.forms import NewLevelForm
+from NearBeach.forms import NewLevelForm, DeleteLevelForm
 import json, urllib3
 
 
@@ -41,6 +41,35 @@ def edit_level(request, kanban_level_id, *args, **kwargs):
 
     # Return the data
     return HttpResponse(serializers.serialize('json', [kanban_level_results]), content_type='application/json')
+
+
+@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(['POST'])
+@check_user_permissions(min_permission_level=4, object_lookup='kanban_board_id')
+def delete_level(request, kanban_board_id, *args, **kwargs):
+    """
+    """
+    # Get form data
+    form = DeleteLevelForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Update the variables
+    kanban_card.objects.filter(
+        is_deleted=False,
+        kanban_level_id=form.cleaned_data['delete_item_id'],
+    ).update(
+        kanban_level_id=form.cleaned_data['destination_item_id']
+    )
+
+    # Soft delete the old column
+    deleted_level = kanban_level.objects.get(
+        kanban_level_id=form.cleaned_data['delete_item_id'].kanban_level_id,
+    )
+    deleted_level.is_deleted=True
+    deleted_level.save()
+
+    return HttpResponse("");
 
 
 @login_required(login_url='login', redirect_field_name="")

@@ -185,6 +185,18 @@ class DeleteColumnForm(forms.Form):
         required=True,
     )
 
+
+class DeleteLevelForm(forms.Form):
+    delete_item_id = forms.ModelChoiceField(
+        queryset=kanban_level.objects.all(),
+        required=True,
+    )
+    destination_item_id = forms.ModelChoiceField(
+        queryset=kanban_level.objects.all(),
+        required=True,
+    )
+
+
 class DocumentUploadForm(ModelForm):
     document = forms.FileField(
         required=True,
