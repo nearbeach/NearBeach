@@ -11,7 +11,6 @@ from NearBeach.models import *
 @login_required(login_url='login',redirect_field_name="")
 def add_user(request):
     """
-https://irisnx.us/
     :param request:
     :return:
     """
