@@ -682,6 +682,24 @@ class UpdateRFCStatus(forms.ModelForm):
 
 
 class UpdateUserForm(forms.ModelForm):
+    first_name = forms.CharField(
+        max_length=255,
+        required=True,
+    )
+    last_name = forms.CharField(
+        max_length=255,
+        required=True,
+    )
+    email = forms.EmailField(
+        max_length=255,
+        required=True,
+    )
+    is_active = forms.BooleanField(
+        required=True,
+    )
+    is_superuser = forms.BooleanField(
+        required=True,
+    )
     # Basic Meta Data
     class Meta:
         model = User

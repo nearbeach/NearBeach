@@ -185,3 +185,221 @@ class TaskPermissionTest(TestCase):
         self.assertEqual(response.status_code, 200)
         print("Admin can access a task without overlapping groups")
 
+
+class AdministrationTest(TestCase):
+    fixtures = ['NearBeach_basic_setup.json']
+
+    def setUp(self):
+        self.credentials = {
+            'username': username,
+            'password': password
+        }
+
+    def test_search_users(self):
+        c = Client()
+
+        # User will be logged in
+        login_user(c, self)
+
+        # Make sure the admin user can go to the /search/users panel
+        response = c.get(reverse('search_user'))
+        self.assertEqual(response.status_code, 200)
+        print("Admin can access search user")
+
+        # Send data to the backend
+        response = c.post(
+            reverse('search_user'),
+            {'search': 'project'}
+        )
+        self.assertEqual(response.status_code, 200)
+        print("Admin can search for string")
+
+    def test_admin_user_information(self):
+        c = Client()
+
+        # User will be logged in
+        login_user(c, self)
+
+        # Make sure the admin user can go to the user/1
+        response = c.get(reverse('user_information', args=[2]))
+        self.assertEqual(response.status_code, 200)
+        print("Admin user can load up user information for team leader")
+
+        # Make sure the admin user can save information
+        response = c.post(
+            reverse('user_information_save', args=[2]),
+            {
+                'first_name': 'Team',
+                'last_name': 'Leader',
+                'email': 'support@nearbeach.org',
+                'is_active': True,
+                'is_superuser': False,
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        print("Admin user can upade user information for Team Leader")
+
+
+    def test_bad_user_information_forms(self):
+        c = Client()
+
+        # User will be logged in
+        login_user(c, self)
+
+        # Make sure the admin user can go to the user/1
+        response = c.get(reverse('user_information', args=[2]))
+
+        # The following tests will make sure the user can't submit bad forms
+        # Blank First name
+        #response = c.post(
+        #    reverse('user_information_save', args=[2]),
+        #    {
+        #        'first_name': '',
+        #        'last_name': 'Name',
+        #        'email': 'support@nearbeach.org',
+        #        'is_active': True,
+        #        'is_superuser': False,
+        #    }
+        #)
+        #self.assertEqual(response.status_code, 400)
+
+        # Blank Lastname
+        #response = c.post(
+        #    reverse('user_information_save', args=[2]),
+        #    {
+        #        'first_name': 'First',
+        #        'last_name': '',
+        #        'email': 'support@nearbeach.org',
+        #    }
+        #)
+        #self.assertEqual(response.status_code, 400)
+
+        # Blank Email
+        #response = c.post(
+        #    reverse('user_information_save', args=[2]),
+        #    {
+        #        'first_name': 'First',
+        #        'last_name': 'Name',
+        #        'email': '',
+        #    }
+        #)
+        #self.assertEqual(response.status_code, 400)
+
+        # Blank Passwords
+        #response = c.post(
+        #    reverse('user_information_save', args=[2]),
+        #    {
+        #        'first_name': 'First',
+        #        'last_name': 'Name',
+        #        'email': 'support@nearbeach.org',
+        #    }
+        #)
+        #self.assertEqual(response.status_code, 400)
+
+        # Blank Firstname
+        #response = c.post(
+        #    reverse('user_information_save', args=[2]),
+        #    {
+        #        'first_name': 'First',
+        #        'last_name': 'Name',
+        #        'email': 'support@nearbeach.org',
+        #    }
+        #)
+        #self.assertEqual(response.status_code, 400)
+        #print("Admin User can NOT submit bad form for USER INFORMATION")
+
+
+    def test_admin_new_user(self):
+        c = Client()
+
+        # User will be logged in
+        login_user(c, self)
+
+        # Make sure the admin user can go to the new_user
+        response = c.get(reverse('new_user'))
+        self.assertEqual(response.status_code, 200)
+        print("Admin user can go to new user page")
+
+        # Make sure the admin user can submit a new user
+        response = c.post(
+            reverse('new_user_save'),
+            {
+                'username': 'random_user',
+                'first_name': 'First',
+                'last_name': 'Name',
+                'email': 'support@nearbeach.org',
+                'password1': 'Test1234$',
+                'password2': 'Test1234$'
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        print("Admin user can submit new user")
+
+    def test_bad_new_user_forms(self):
+        c = Client()
+
+        # User will be logged in
+        login_user(c, self)
+
+        # Make sure the admin user can go to the user/1
+        response = c.get(reverse('user_information', args=[2]))
+        # The following tests will make sure the user can't submit bad forms
+        # Blank Username
+        response = c.post(
+            reverse('new_user_save'),
+            {
+                'username': '',
+                'first_name': 'First',
+                'last_name': 'Name',
+                'email': 'support@nearbeach.org',
+                'password1': 'Test1234$',
+                'password2': 'Test1234$'
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+
+        # Blank Email
+        #response = c.post(
+        #    reverse('new_user_save'),
+        #    {
+        #        'username': 'form_fail',
+        #        'first_name': 'First',
+        #        'last_name': 'Name',
+        #        'email': '',
+        #        'password1': 'Test1234$',
+        #        'password2': 'Test1234$'
+        #    }
+        #)
+        #self.assertEqual(response.status_code, 400)
+
+        # Blank Passwords
+        response = c.post(
+            reverse('new_user_save'),
+            {
+                'username': 'form_fail',
+                'first_name': 'First',
+                'last_name': 'Name',
+                'email': 'support@nearbeach.org',
+                'password1': '',
+                'password2': 'Test1234$'
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+
+        # Blank Firstname
+        response = c.post(
+            reverse('new_user_save'),
+            {
+                'username': 'form_fail',
+                'first_name': 'First',
+                'last_name': 'Name',
+                'email': 'support@nearbeach.org',
+                'password1': 'Test1234$',
+                'password2': ''
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+        print("Admin User can NOT submit bad form")
+
+
+
