@@ -621,6 +621,7 @@ class RfcInformationSaveForm(forms.ModelForm):
 class SearchForm(forms.Form):
     # Just have a simple search field
     search = forms.CharField(
+        max_length=250,
         required=False,
     )
 
@@ -631,6 +632,7 @@ class SearchObjectsForm(forms.Form):
         initial=False,
     )
     search = forms.CharField(
+        max_length=250,
         required=False,
     )
 
@@ -692,12 +694,6 @@ class UpdateUserForm(forms.ModelForm):
     )
     email = forms.EmailField(
         max_length=255,
-        required=True,
-    )
-    is_active = forms.BooleanField(
-        required=True,
-    )
-    is_superuser = forms.BooleanField(
         required=True,
     )
     # Basic Meta Data
