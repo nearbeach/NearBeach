@@ -31,12 +31,13 @@
     "@popperjs/core": "^2.9.1",
     "@tinymce/tinymce-vue": "^3.2.8",
     "axios": "^0.21.1",
-    "luxon": "^1.27.0",
     "bootstrap": "5.0.1",
+    "luxon": "^1.27.0",
     "vue-datetime": "^1.0.0-beta.14",
     "vue-form-wizard": "^0.8.4",
     "vuedraggable": "^2.24.3",
-    "vuelidate": "^0.7.6"
+    "vuelidate": "^0.7.6",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@iconify-icons/akar-icons": "^1.1.3",

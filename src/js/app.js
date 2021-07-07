@@ -1,5 +1,73 @@
 //import Vue from 'vue';
 import Vue from 'vue/dist/vue.js';
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
+
+const moduleDestination = {
+    state: () => ({
+        destination: 'unknown',
+    }),
+    mutations: {
+        updateDestination(state, payload) {
+            state.destination = payload.destination;
+        }
+    },
+    actions: {},
+    getters: {
+        getDestination: state => {
+            return state.destination;
+        }
+    }
+}
+
+const moduleLocationId = {
+    state: () => ({
+        locationId: 0,
+    }),
+    mutations: {},
+    actions: {},
+    getters: {
+        getLocationId: state => {
+            return state.locationId;
+        }
+    }
+}
+
+const moduleRootUrl = {
+    state: () => ({
+        rootUrl: '/',
+    }),
+    mutations: {},
+    actions: {},
+    getters: {
+        getRootUrl: state => {
+            return state.rootUrl;
+        }
+    }
+}
+
+const moduleStaticUrl = {
+    state: () => ({
+        staticUrl: '/',
+    }),
+    mutations: {},
+    actions: {},
+    getters: {
+        getStaticUrl: state => {
+            return state.staticUrl;
+        }
+    }
+}
+
+const store = new Vuex.Store({
+    modules: {
+        destination: moduleDestination,
+        location: moduleLocationId,
+        rootUrl: moduleRootUrl,
+        staticUrl: moduleStaticUrl,
+    }
+})
 
 //Vue Component Library
 import BugsModule from "./components/modules/sub_modules/BugsModule.vue";
@@ -248,6 +316,7 @@ window.vm = new Vue({
     data() {
         return {};
     },
+    store: store,
     methods: {},
     mounted() {
         //Remove the loader
