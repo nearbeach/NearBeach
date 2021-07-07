@@ -96,3 +96,27 @@ def new_column(request, kanban_board_id, *args, **kwargs):
     )
      
     return HttpResponse(serializers.serialize('json',[kanban_column_submit]), content_type='application/json')
+
+
+@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(['POST'])
+@check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
+def resort_column(request, kanban_board_id, *args, **kwargs):
+    """
+    """
+    # Get data from form
+    form = ResortColumnForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+    
+    # Extract the data
+    items = request.POST.getlist('item')
+
+    # Look through the item list and re-index the order
+    for index, item in enumerate(items, start=0):
+        kanban_column_update = kanban_column.objects.get(kanban_column_id=item)
+        kanban_column_update.kanban_column_sort_number = index
+        kanban_column_update.save()
+
+    return HttpResponse("")
+

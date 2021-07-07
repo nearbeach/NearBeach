@@ -384,7 +384,7 @@
                 if (!this.isNewMode) {
                     //Use is in Edit mode - send the data to the backend
                     // Check to see if we are editing an existing item, or adding
-                    const url = `/kanban_${this.propertyName.toLowerCase()}/${this.singleItemId}/resort/`;
+                    const url = `/kanban_${this.propertyName.toLowerCase()}/${this.kanbanBoardId}/resort/`;
                      
                     //Create data_to_send
                     const data_to_send = new FormData();

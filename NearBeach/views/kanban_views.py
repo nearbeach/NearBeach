@@ -99,11 +99,15 @@ def get_context(kanban_board_id):
     column_results = kanban_column.objects.filter(
         is_deleted=False,
         kanban_board_id=kanban_board_id,
+    ).order_by(
+        'kanban_column_sort_number',
     )
 
     level_results = kanban_level.objects.filter(
         is_deleted=False,
         kanban_board_id=kanban_board_id,
+    ).order_by(
+        'kanban_level_sort_number',
     )
 
     # Context

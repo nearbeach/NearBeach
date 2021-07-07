@@ -70,11 +70,14 @@ urlpatterns = [
     path('kanban_column/<int:kanban_column_id>/edit/', kanban_column_views.edit_column, name='kanban_edit_column'),
     path('kanban_column/<int:kanban_board_id>/delete/', kanban_column_views.delete_column, name='kanban_delete_column'),
     path('kanban_column/<int:kanban_board_id>/new/', kanban_column_views.new_column, name='kanban_new_column'),
+    path('kanban_column/<int:kanban_board_id>/resort/', kanban_column_views.resort_column, name='kanban_resort_column'),
 
     # Kanban Levels
     path('kanban_level/<int:kanban_level_id>/edit/', kanban_level_views.edit_level, name='kanban_edit_level'),
     path('kanban_level/<int:kanban_board_id>/delete/', kanban_level_views.delete_level, name='kanban_delete_level'),
     path('kanban_level/<int:kanban_board_id>/new/', kanban_level_views.new_level, name='kanban_new_level'),
+    path('kanban_level/<int:kanban_board_id>/resort/', kanban_level_views.resort_level, name='kanban_resort_level'),
+    
     # Kanban
     path('kanban_information/<int:kanban_board_id>/', kanban_views.kanban_information, name='kanban_information'),
     path('kanban_information/<int:kanban_board_id>/edit_board/', kanban_views.kanban_edit_board, name='kanban_edit_board'),
