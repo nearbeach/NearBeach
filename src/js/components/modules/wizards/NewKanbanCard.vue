@@ -122,6 +122,7 @@
 
                     //Blank the model
                     this.kanbanCardTextModel = '';
+                    this.kanbanCardDescriptionModel = '';
 
                     //Close the modal
                     document.getElementById('addKanbanCardCloseButton').click();
