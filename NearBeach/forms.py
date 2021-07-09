@@ -547,6 +547,17 @@ class OrganisationProfilePictureForm(forms.ModelForm):
         ]
 
 
+class PasswordResetForm(forms.Form):
+    password = forms.CharField(
+        max_length=50,
+        required=True,
+    )
+    user_id = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        required=True,
+    )
+
+
 class PermissionSetForm(forms.ModelForm):
     class Meta:
         model = permission_set

@@ -7,25 +7,35 @@ Vue.use(Vuex)
 const moduleDestination = {
     state: () => ({
         destination: 'unknown',
+        locationId: 0,
     }),
     mutations: {
         updateDestination(state, payload) {
             state.destination = payload.destination;
-        }
+            state.locationId = payload.locationId;
+        },
     },
     actions: {},
     getters: {
         getDestination: state => {
             return state.destination;
+        },
+        getLocationId: state => {
+            return state.locationId;
         }
     }
 }
 
+/*
 const moduleLocationId = {
     state: () => ({
         locationId: 0,
     }),
-    mutations: {},
+    mutations: {
+        updateLocationId(state, payload) {
+            state.locationId = payload.locationId;
+        }
+    },
     actions: {},
     getters: {
         getLocationId: state => {
@@ -33,25 +43,40 @@ const moduleLocationId = {
         }
     }
 }
+*/
 
-const moduleRootUrl = {
+const moduleUrl = {
     state: () => ({
         rootUrl: '/',
+        staticUrl: '/',
     }),
-    mutations: {},
+    mutations: {
+        updateUrl(state, payload) {
+            state.rootUrl = payload.rootUrl;
+            state.staticUrl = payload.staticUrl;
+        },
+    },
     actions: {},
     getters: {
         getRootUrl: state => {
             return state.rootUrl;
+        },
+        getStaticUrl: state => {
+            return state.staticUrl;
         }
     }
 }
 
+/*
 const moduleStaticUrl = {
     state: () => ({
         staticUrl: '/',
     }),
-    mutations: {},
+    mutations: {
+        updateStaticUrl(state, payload) {
+            state.staticUrl = payload.staticUrl;
+        }
+    },
     actions: {},
     getters: {
         getStaticUrl: state => {
@@ -59,13 +84,15 @@ const moduleStaticUrl = {
         }
     }
 }
+*/
 
 const store = new Vuex.Store({
     modules: {
         destination: moduleDestination,
-        location: moduleLocationId,
-        rootUrl: moduleRootUrl,
-        staticUrl: moduleStaticUrl,
+        //location: moduleLocationId,
+        //rootUrl: moduleRootUrl,
+        //staticUrl: moduleStaticUrl,
+        url: moduleUrl,
     }
 })
 

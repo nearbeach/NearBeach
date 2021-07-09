@@ -48,3 +48,23 @@ def add_user(request):
             submit_user.save()
 
     return HttpResponse("")
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def update_user_password(request):
+    """
+    """
+    # Get form data
+    form = PasswordResetForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get the User object
+    user_update = form.cleaned_data['user_id']
+    user_update.set_password(form.cleaned_data['password'])
+    user_update.save()
+
+    return HttpResponse("")
+
+
