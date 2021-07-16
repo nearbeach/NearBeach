@@ -187,6 +187,7 @@ import DashboardUnassignedObjects from "./components/dashboard/DashboardUnassign
 import DashboardUsersWithNoGroups from "./components/dashboard/DashboardUsersWithNoGroups.vue";
 import KanbanEditBoard from "./components/kanban/KanbanEditBoard.vue";
 import KanbanGroupPermissions from "./components/kanban/KanbanGroupPermissions.vue";
+import ProfileInformation from "./components/profile/ProfileInformation.vue";
 
 
 //Import Bootstrap
@@ -321,6 +322,7 @@ Vue.component('DashboardUnassignedObjects', DashboardUnassignedObjects);
 Vue.component('DashboardUsersWithNoGroups', DashboardUsersWithNoGroups);
 Vue.component('KanbanEditBoard', KanbanEditBoard);
 Vue.component('KanbanGroupPermissions', KanbanGroupPermissions);
+Vue.component('ProfileInformation', ProfileInformation);
 
 //Validation
 import Vuelidate from 'vuelidate'

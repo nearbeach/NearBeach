@@ -16,6 +16,7 @@ from .views import admin_views, \
     object_data_views, \
     organisation_views, \
     permission_set_views, \
+    profile_views, \
     project_views, \
     request_for_change_views, \
     requirement_item_views, \
@@ -32,6 +33,7 @@ urlpatterns = [
 
     # Administration
     path('admin/add_user/', admin_views.add_user, name='admin_add_user'),
+    path('admin/update_user_password/', admin_views.update_user_password, name='update_user_password'),
 
     # Change Task
     path('change_task_update_status/<int:change_task_id>/', change_task_views.update_status,
@@ -106,6 +108,10 @@ urlpatterns = [
 
     # Private files
     path('private/<uuid:document_key>/', document_views.private_download_file, name='private_download_file'),
+
+    # Profiles
+    path('profile_information/', profile_views.profile_information, name='profile_information'),
+    path('profile_information/update_data/', profile_views.update_data, name='profile_update_data'),
 
     # New Objects
     path('new_customer/', customer_views.new_customer, name='new_customer'),
@@ -247,6 +253,7 @@ urlpatterns = [
     # Users
     path('user_information/<int:username>/', user_views.user_information, name='user_information'),
     path('user_information/<int:username>/save/', user_views.user_information_save, name='user_information_save'),
+    path('user_information/update_user_password/', user_views.update_password, name='update_password'),
 
     # Changing and Resetting Passwords
     # path('change-password/', auth_views.PasswordChangeView.as_view()),

@@ -552,7 +552,7 @@ class PasswordResetForm(forms.Form):
         max_length=50,
         required=True,
     )
-    user_id = forms.ModelChoiceField(
+    username = forms.ModelChoiceField(
         queryset=User.objects.all(),
         required=True,
     )

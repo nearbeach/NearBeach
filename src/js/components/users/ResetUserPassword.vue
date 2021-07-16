@@ -45,14 +45,14 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <label>Password</label>
-                                <input type="text"
+                                <input type="password"
                                        class="form-control"
                                        v-model="password1Model"
                                 >
                             </div>
                             <div class="col-md-6">
                                 <label>Confirm Password</label>
-                                <input type="text"
+                                <input type="password"
                                        class="form-control"
                                        v-model="password2Model"
                                 >
@@ -62,7 +62,7 @@
                     <div class="modal-footer">
                         <button type="button"
                                 class="btn btn-secondary"
-                                data-bs-dismiss="modal"
+                                v-on:click="closeModal"
                         >Close</button>
                         <button type="button"
                                 class="btn btn-primary"
@@ -87,7 +87,10 @@
 
     export default {
         name: "ResetUserPassword",
-        props: {},
+        props: {
+            location: String,
+            username: Number,
+        },
         mixins: [
             errorModalMixin,
             iconMixin,
@@ -106,17 +109,41 @@
                 //Passwords can not be less than 8 character
                 let condition_2 = this.password1Model.length >= 8
 
-                return condition_1 && condition_2 == true;
+                console.log("Conditions: ",condition_1, condition_2);
+
+                //If all conditions are true, send back false (to enable the button)
+                return !(condition_1 && condition_2 == true);
             } 
         },
         methods: {
+            closeModal: function() {
+                //Clear both passwords
+                this.password1Model = '';
+                this.password2Model = '';
+
+                //Close modal
+                document.getElementById("passwordResetCloseButton").click();
+            },
             passwordResetClicked: function() {
                 //Opens the password reset modal
                 let passwordResetModal = new Modal(document.getElementById('passwordResetModal'));
                 passwordResetModal.show();
             },
             updatePassword: function() {
+                //Create data_to_send
+                const data_to_send = new FormData();
+                data_to_send.set('password', this.password1Model);
+                data_to_send.set('username', this.username);
                 
+                //Setup Axios to send data
+                axios.post(
+                    `/${this.location}/update_user_password/`,
+                    data_to_send,
+                ).then(response => {
+                    this.closeModal();
+                }).catch(error => {
+                    this.showErrorModal(error, 'Saving Password Issue', '');
+                })
             },
         }
     }

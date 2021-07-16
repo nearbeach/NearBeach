@@ -2,7 +2,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 
-from NearBeach.forms import AdminAddUserForm
+from NearBeach.forms import AdminAddUserForm, PasswordResetForm
 
 from NearBeach.models import *
 
@@ -61,7 +61,7 @@ def update_user_password(request):
         return HttpResponseBadRequest(form.errors)
 
     # Get the User object
-    user_update = form.cleaned_data['user_id']
+    user_update = form.cleaned_data['username']
     user_update.set_password(form.cleaned_data['password'])
     user_update.save()
 
