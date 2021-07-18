@@ -140,6 +140,21 @@ def get_max_sort_id(kanban_board_id,form):
 
 
 @login_required(login_url='login', redirect_field_name="")
+@require_http_methods(['POST'])
+@check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
+def kanban_close_board(request, kanban_board_id, *args, **kwargs):
+    """
+    """
+    # Close the kanban board
+    kanban_update = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+    kanban_update.kanban_board_status = 'Closed'
+    kanban_update.save()
+
+    # Return Success
+    return HttpResponse("")
+
+
+@login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
 def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
     """

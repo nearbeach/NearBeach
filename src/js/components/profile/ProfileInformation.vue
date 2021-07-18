@@ -17,7 +17,10 @@
                     </p>
                     <div class="row">
                         <div class="col-md-6">
-                            <label>First Name:</label>
+                            <label>
+                                First Name:
+                                <br/>
+                            </label>
                             <input type="text"
                                    v-model="firstNameModel"
                                    class="form-control"
@@ -62,7 +65,7 @@
     import { Modal } from "bootstrap";
 
     //Validations
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import { required, maxLength, email } from 'vuelidate/lib/validators';
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -80,6 +83,25 @@
                 lastNameModel: this.userResults[0]['last_name'],
             };
         },
+        mixins: [
+            errorModalMixin,
+            loadingModalMixin,
+        ],
+        validators: {
+            emailModel: {
+                required,
+                maxLength: maxLength(255),
+                email,
+            },
+            lastNameModel: {
+                required,
+                maxLength: maxLength(255),
+            },
+            firstNameModel: {
+                required,
+                maxLength: maxLength(255),
+            },
+        },
         methods: {
             updateUser: function() {
                 //Create data_to_send
@@ -89,14 +111,19 @@
                 data_to_send.set('first_name', this.firstNameModel);
                 data_to_send.set('last_name', this.lastNameModel);
 
+                //Open up the loading modal
+                this.showLoadingModal('Project');
+
                 //Send data via axios
                 axios.post(
                     `/profile_information/update_data/`,
                     data_to_send,
                 ).then(response => {
-                    //ADD CODE
+                    //Notify user of success update
+                    this.closeLoadingModal();
                 }).catch(error => {
-                    //ADD COD2
+                    //There was an error
+                    this.showErrorModal(error, "profile");
                 })
             },
         },
