@@ -220,16 +220,35 @@
 <script>
     export default {
         name: "ParentModules",
-        props: [
-            'destination', //Which object we are looking at, i.e. requirement
-            'groupList',
-            'locationId', //The ID of the object we are looking at.
-            'requirementItemResults',
-        ],
+        props: {
+            destination: String, //Which object we are looking at, i.e. requirement
+            locationId: Number, //The ID of the object we are looking at.
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
+            staticUrl: {
+                type: String,
+                default: '/',
+            },
+        },
         data() {
             return {}
         },
         methods: {},
+        mounted() {
+            //Send data to required VueX states
+            this.$store.commit({
+                type: 'updateDestination',
+                destination: this.destination,
+                locationId: this.locationId,
+            });
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
+            })
+        }
     }
 </script>
 

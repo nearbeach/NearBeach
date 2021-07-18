@@ -100,3 +100,26 @@ def new_level(request, kanban_board_id, *args, **kwargs):
     return HttpResponse(serializers.serialize('json',[kanban_level_submit]), content_type='application/json')
 
 
+@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(['POST'])
+@check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
+def resort_level(request, kanban_board_id, *args, **kwargs):
+    """
+    """
+    # Get data from form
+    form = ResortLevelForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+    
+    # Extract the data
+    items = request.POST.getlist('item')
+
+    # Look through the item list and re-index the order
+    for index, item in enumerate(items, start=0):
+        kanban_level_update = kanban_level.objects.get(kanban_level_id=item)
+        kanban_level_update.kanban_level_sort_number = index
+        kanban_level_update.save()
+
+    return HttpResponse("")
+
+

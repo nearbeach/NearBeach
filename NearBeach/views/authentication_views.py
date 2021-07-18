@@ -13,6 +13,10 @@ from django.db.models import Count
 # Import Python Libraries
 import json, urllib.parse, random
 
+
+
+
+
 def check_first_time_login(request):
     """
     The following function will check if it is the first time logged in by user. i.e. There are no permission sets.

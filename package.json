@@ -1,6 +1,6 @@
 {
   "name": "nearbeach",
-  "version": "0.28.8",
+  "version": "0.28.9",
   "description": "NearBeach - an Open Source project management system built with Django web framework",
   "main": "/src/js/app.js",
   "directories": {
@@ -31,18 +31,19 @@
     "@popperjs/core": "^2.9.1",
     "@tinymce/tinymce-vue": "^3.2.8",
     "axios": "^0.21.1",
-    "luxon": "^1.27.0",
     "bootstrap": "5.0.1",
+    "luxon": "^1.27.0",
     "vue-datetime": "^1.0.0-beta.14",
     "vue-form-wizard": "^0.8.4",
     "vuedraggable": "^2.24.3",
-    "vuelidate": "^0.7.6"
+    "vuelidate": "^0.7.6",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@iconify-icons/akar-icons": "^1.1.3",
     "@iconify-icons/bi": "^1.1.2",
     "@iconify-icons/bx": "^1.1.0",
-    "@iconify-icons/carbon": "^1.1.2",
+    "@iconify-icons/carbon": "^1.1.4",
     "@iconify-icons/fe": "^1.1.0",
     "@iconify-icons/feather": "^1.1.0",
     "@iconify-icons/mdi": "^1.1.12",

@@ -58,12 +58,29 @@ def get_object_search_data(search_form):
 
     # If we are NOT including closed - then we will limit to those with status is_deleted=False
     if not include_closed:
-        ### NEED TO PROGRAM IN THE REAL CLOSED VALUES!!! ###
-        rfc_results = rfc_results.filter(is_deleted=False)
-        requirement_results = requirement_results.filter(is_deleted=False)
-        project_results = project_results.filter(is_deleted=False)
-        task_results = task_results.filter(is_deleted=False)
-        kanban_results = kanban_results.filter(is_deleted=False)
+        print("IS INCLUDED")
+        rfc_results = rfc_results.exclude(
+           rfc_status__in=(5,6), 
+        )
+
+        requirement_results = requirement_results.exclude(
+            requirement_status__in=list_of_requirement_status.objects.filter(
+                is_deleted=False,
+                requirement_status_is_closed=True,
+            ).values('requirement_status_id')
+        )
+
+        project_results = project_results.exclude(
+            project_status__in=['Closed'],
+        )
+
+        task_results = task_results.exclude(
+            task_status__in=['Closed'],
+        )
+
+        kanban_results = kanban_results.exclude(
+            kanban_board_status__in=['Closed'],
+        )
 
     # Split the space results - then apply the filter of each split value
     for split_row in search_form.cleaned_data['search'].split(' '):

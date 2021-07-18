@@ -18,5 +18,7 @@
 
     <parent-modules v-bind:destination="'project'"
                     v-bind:location-id="{{project_id}}"
+                    v-bind:root-url="`{% url 'dashboard' %}`"
+                    v-bind:static-url="`{% static '/' %}`"
     ></parent-modules>
 {% endblock %}

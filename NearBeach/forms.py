@@ -448,6 +448,39 @@ class NewRequestForChangeForm(forms.ModelForm):
         ]
 
 
+class NewRequirementItemForm(forms.ModelForm):
+    # Basic Meta data
+    class Meta:
+        model = requirement_item
+        fields = [
+            'requirement_item_title',
+            'requirement_item_scope',
+            'requirement_item_status',
+            'requirement_item_type',
+        ]
+
+
+class NewRequirementForm(forms.ModelForm):
+    # One external field
+    group_list = forms.ModelMultipleChoiceField(
+        required=True,
+        queryset=group.objects.filter(
+            is_deleted=False,
+        )
+    )
+
+    # Basic Meta data
+    class Meta:
+        model = requirement
+        fields = [
+            'requirement_title',
+            'requirement_scope',
+            'requirement_status',
+            'requirement_type',
+            'organisation',
+        ]
+
+
 class NewTaskForm(forms.ModelForm):
     task_start_date = forms.DateTimeField(
         input_formats=['c'],
@@ -514,6 +547,17 @@ class OrganisationProfilePictureForm(forms.ModelForm):
         ]
 
 
+class PasswordResetForm(forms.Form):
+    password = forms.CharField(
+        max_length=50,
+        required=True,
+    )
+    username = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        required=True,
+    )
+
+
 class PermissionSetForm(forms.ModelForm):
     class Meta:
         model = permission_set
@@ -543,37 +587,18 @@ class ProjectForm(forms.ModelForm):
         ]
 
 
-class NewRequirementItemForm(forms.ModelForm):
-    # Basic Meta data
-    class Meta:
-        model = requirement_item
-        fields = [
-            'requirement_item_title',
-            'requirement_item_scope',
-            'requirement_item_status',
-            'requirement_item_type',
-        ]
-
-
-class NewRequirementForm(forms.ModelForm):
-    # One external field
-    group_list = forms.ModelMultipleChoiceField(
+class ResortColumnForm(forms.Form):
+    item = forms.ModelMultipleChoiceField(
+        queryset=kanban_column.objects.all(),
         required=True,
-        queryset=group.objects.filter(
-            is_deleted=False,
-        )
     )
 
-    # Basic Meta data
-    class Meta:
-        model = requirement
-        fields = [
-            'requirement_title',
-            'requirement_scope',
-            'requirement_status',
-            'requirement_type',
-            'organisation',
-        ]
+
+class ResortLevelForm(forms.Form):
+    item = forms.ModelMultipleChoiceField(
+        queryset=kanban_level.objects.all(),
+        required=True,
+    )
 
 
 class QueryBugClientForm(forms.Form):
@@ -621,6 +646,7 @@ class RfcInformationSaveForm(forms.ModelForm):
 class SearchForm(forms.Form):
     # Just have a simple search field
     search = forms.CharField(
+        max_length=250,
         required=False,
     )
 
@@ -631,6 +657,7 @@ class SearchObjectsForm(forms.Form):
         initial=False,
     )
     search = forms.CharField(
+        max_length=250,
         required=False,
     )
 
@@ -682,6 +709,18 @@ class UpdateRFCStatus(forms.ModelForm):
 
 
 class UpdateUserForm(forms.ModelForm):
+    first_name = forms.CharField(
+        max_length=255,
+        required=True,
+    )
+    last_name = forms.CharField(
+        max_length=255,
+        required=True,
+    )
+    email = forms.EmailField(
+        max_length=255,
+        required=True,
+    )
     # Basic Meta Data
     class Meta:
         model = User

@@ -16,6 +16,7 @@ from .views import admin_views, \
     object_data_views, \
     organisation_views, \
     permission_set_views, \
+    profile_views, \
     project_views, \
     request_for_change_views, \
     requirement_item_views, \
@@ -32,6 +33,7 @@ urlpatterns = [
 
     # Administration
     path('admin/add_user/', admin_views.add_user, name='admin_add_user'),
+    path('admin/update_user_password/', admin_views.update_user_password, name='update_user_password'),
 
     # Change Task
     path('change_task_update_status/<int:change_task_id>/', change_task_views.update_status,
@@ -70,13 +72,17 @@ urlpatterns = [
     path('kanban_column/<int:kanban_column_id>/edit/', kanban_column_views.edit_column, name='kanban_edit_column'),
     path('kanban_column/<int:kanban_board_id>/delete/', kanban_column_views.delete_column, name='kanban_delete_column'),
     path('kanban_column/<int:kanban_board_id>/new/', kanban_column_views.new_column, name='kanban_new_column'),
+    path('kanban_column/<int:kanban_board_id>/resort/', kanban_column_views.resort_column, name='kanban_resort_column'),
 
     # Kanban Levels
     path('kanban_level/<int:kanban_level_id>/edit/', kanban_level_views.edit_level, name='kanban_edit_level'),
     path('kanban_level/<int:kanban_board_id>/delete/', kanban_level_views.delete_level, name='kanban_delete_level'),
     path('kanban_level/<int:kanban_board_id>/new/', kanban_level_views.new_level, name='kanban_new_level'),
+    path('kanban_level/<int:kanban_board_id>/resort/', kanban_level_views.resort_level, name='kanban_resort_level'),
+    
     # Kanban
     path('kanban_information/<int:kanban_board_id>/', kanban_views.kanban_information, name='kanban_information'),
+    path('kanban_information/<int:kanban_board_id>/close_board/', kanban_views.kanban_close_board, name='kanban_close_board'),
     path('kanban_information/<int:kanban_board_id>/edit_board/', kanban_views.kanban_edit_board, name='kanban_edit_board'),
     path('kanban_information/<int:kanban_board_id>/<object_lookup>/add_link/', kanban_views.add_kanban_link,
          name='add_kanban_link'),
@@ -103,6 +109,10 @@ urlpatterns = [
 
     # Private files
     path('private/<uuid:document_key>/', document_views.private_download_file, name='private_download_file'),
+
+    # Profiles
+    path('profile_information/', profile_views.profile_information, name='profile_information'),
+    path('profile_information/update_data/', profile_views.update_data, name='profile_update_data'),
 
     # New Objects
     path('new_customer/', customer_views.new_customer, name='new_customer'),
@@ -244,6 +254,7 @@ urlpatterns = [
     # Users
     path('user_information/<int:username>/', user_views.user_information, name='user_information'),
     path('user_information/<int:username>/save/', user_views.user_information_save, name='user_information_save'),
+    path('user_information/update_user_password/', user_views.update_password, name='update_password'),
 
     # Changing and Resetting Passwords
     # path('change-password/', auth_views.PasswordChangeView.as_view()),

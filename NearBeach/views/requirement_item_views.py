@@ -18,7 +18,7 @@ import json
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
 @check_user_requirement_item_permissions(min_permission_level=2)
-def add_requirement_item_link(request, requirement_item_id):
+def add_requirement_item_link(request, requirement_item_id, *args, **kwargs):
     # Obtain form data and validate
     form = AddRequirementLinkForm(request.POST)
 
@@ -59,7 +59,7 @@ def add_requirement_item_link(request, requirement_item_id):
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
 @check_user_requirement_item_permissions(min_permission_level=1)
-def get_requirement_item_links_list(request,requirement_item_id):
+def get_requirement_item_links_list(request,requirement_item_id, *args, **kwargs):
     """
 
     :param request:
@@ -109,7 +109,7 @@ def get_requirement_item_links_list(request,requirement_item_id):
 
 @login_required(login_url='login', redirect_field_name="")
 @check_user_requirement_item_permissions(min_permission_level=3)
-def new_requirement_item(request, requirement_id):
+def new_requirement_item(request, requirement_id, *args, **kwargs):
     # Check to see if POST
     if not request.method == "POST":
         return HttpResponseBadRequest("Sorry - needs to be in POST")
@@ -190,7 +190,7 @@ def requirement_item_information(request, requirement_item_id,*args,**kwargs):
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
 @check_user_requirement_item_permissions(min_permission_level=2)
-def requirement_information_save(request, requirement_item_id):
+def requirement_information_save(request, requirement_item_id, *args, **kwargs):
     """
     The following will save data
     :param request:

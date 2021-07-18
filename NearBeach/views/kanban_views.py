@@ -99,11 +99,15 @@ def get_context(kanban_board_id):
     column_results = kanban_column.objects.filter(
         is_deleted=False,
         kanban_board_id=kanban_board_id,
+    ).order_by(
+        'kanban_column_sort_number',
     )
 
     level_results = kanban_level.objects.filter(
         is_deleted=False,
         kanban_board_id=kanban_board_id,
+    ).order_by(
+        'kanban_level_sort_number',
     )
 
     # Context
@@ -133,6 +137,21 @@ def get_max_sort_id(kanban_board_id,form):
         kanban_card_sort_number['kanban_card_sort_number__max'] = 0
 
     return kanban_card_sort_number['kanban_card_sort_number__max']
+
+
+@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(['POST'])
+@check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
+def kanban_close_board(request, kanban_board_id, *args, **kwargs):
+    """
+    """
+    # Close the kanban board
+    kanban_update = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+    kanban_update.kanban_board_status = 'Closed'
+    kanban_update.save()
+
+    # Return Success
+    return HttpResponse("")
 
 
 @login_required(login_url='login', redirect_field_name="")

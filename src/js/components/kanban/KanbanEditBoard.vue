@@ -39,6 +39,11 @@
             <hr>
             <div class="row submit-row">
                 <div class="col-md-12">
+                    <button class="btn btn-danger"
+                            v-on:click="closeKanban"
+                    >
+                        Close Kanban Board
+                    </button>
                     <button class="btn btn-primary save-changes"
                             v-on:click="backToBoard"
                     >
@@ -92,6 +97,15 @@
         methods: {
             backToBoard: function() {
                 window.location.href = `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0]['pk']}/`
+            },
+            closeKanban: function() {
+                axios.post(
+                    `/kanban_information/${this.kanbanBoardResults[0]['pk']}/close_board/`
+                ).then(response => {
+                    window.location.href = "/";
+                }).catch(error => {
+                    this.showErrorModal(error, this.destination);
+                })
             },
             updatePropertyList: function(data) {
                 this[data['source']] = data['data'];

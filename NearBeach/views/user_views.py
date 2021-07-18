@@ -66,6 +66,29 @@ def new_user_save(request):
 
     return HttpResponse(reverse('user_information', args={submit_user.id}))
 
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def update_password(request):
+    """
+    """
+    # Get form data
+    form = PasswordResetForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Check to make sure we are updating ONLY the current user
+    if not form.cleaned_data['username'] == request.user:
+        return HttpResponseBadRequest("Unknown Error")
+
+    # Get the User object
+    user_update = form.cleaned_data['username']
+    user_update.set_password(form.cleaned_data['password'])
+    user_update.save()
+
+    return HttpResponse("")
+
+
 @login_required(login_url='login',redirect_field_name="")
 def user_information(request, username):
     """

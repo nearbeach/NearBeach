@@ -1,5 +1,100 @@
 //import Vue from 'vue';
 import Vue from 'vue/dist/vue.js';
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
+
+const moduleDestination = {
+    state: () => ({
+        destination: 'unknown',
+        locationId: 0,
+    }),
+    mutations: {
+        updateDestination(state, payload) {
+            state.destination = payload.destination;
+            state.locationId = payload.locationId;
+        },
+    },
+    actions: {},
+    getters: {
+        getDestination: state => {
+            return state.destination;
+        },
+        getLocationId: state => {
+            return state.locationId;
+        }
+    }
+}
+
+/*
+const moduleLocationId = {
+    state: () => ({
+        locationId: 0,
+    }),
+    mutations: {
+        updateLocationId(state, payload) {
+            state.locationId = payload.locationId;
+        }
+    },
+    actions: {},
+    getters: {
+        getLocationId: state => {
+            return state.locationId;
+        }
+    }
+}
+*/
+
+const moduleUrl = {
+    state: () => ({
+        rootUrl: '/',
+        staticUrl: '/',
+    }),
+    mutations: {
+        updateUrl(state, payload) {
+            state.rootUrl = payload.rootUrl;
+            state.staticUrl = payload.staticUrl;
+        },
+    },
+    actions: {},
+    getters: {
+        getRootUrl: state => {
+            return state.rootUrl;
+        },
+        getStaticUrl: state => {
+            return state.staticUrl;
+        }
+    }
+}
+
+/*
+const moduleStaticUrl = {
+    state: () => ({
+        staticUrl: '/',
+    }),
+    mutations: {
+        updateStaticUrl(state, payload) {
+            state.staticUrl = payload.staticUrl;
+        }
+    },
+    actions: {},
+    getters: {
+        getStaticUrl: state => {
+            return state.staticUrl;
+        }
+    }
+}
+*/
+
+const store = new Vuex.Store({
+    modules: {
+        destination: moduleDestination,
+        //location: moduleLocationId,
+        //rootUrl: moduleRootUrl,
+        //staticUrl: moduleStaticUrl,
+        url: moduleUrl,
+    }
+})
 
 //Vue Component Library
 import BugsModule from "./components/modules/sub_modules/BugsModule.vue";
@@ -92,6 +187,7 @@ import DashboardUnassignedObjects from "./components/dashboard/DashboardUnassign
 import DashboardUsersWithNoGroups from "./components/dashboard/DashboardUsersWithNoGroups.vue";
 import KanbanEditBoard from "./components/kanban/KanbanEditBoard.vue";
 import KanbanGroupPermissions from "./components/kanban/KanbanGroupPermissions.vue";
+import ProfileInformation from "./components/profile/ProfileInformation.vue";
 
 
 //Import Bootstrap
@@ -226,6 +322,7 @@ Vue.component('DashboardUnassignedObjects', DashboardUnassignedObjects);
 Vue.component('DashboardUsersWithNoGroups', DashboardUsersWithNoGroups);
 Vue.component('KanbanEditBoard', KanbanEditBoard);
 Vue.component('KanbanGroupPermissions', KanbanGroupPermissions);
+Vue.component('ProfileInformation', ProfileInformation);
 
 //Validation
 import Vuelidate from 'vuelidate'
@@ -248,6 +345,7 @@ window.vm = new Vue({
     data() {
         return {};
     },
+    store: store,
     methods: {},
     mounted() {
         //Remove the loader
