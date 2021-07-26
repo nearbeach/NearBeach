@@ -36,6 +36,8 @@ urlpatterns = [
     path('admin/update_user_password/', admin_views.update_user_password, name='update_user_password'),
 
     # Change Task
+    path('change_task_information/<int:change_task_id>/', change_task_views.change_task_information,
+         name='change_task_information'),
     path('change_task_update_status/<int:change_task_id>/', change_task_views.update_status,
          name='change_task_update_status'),
 

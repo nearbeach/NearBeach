@@ -31,7 +31,7 @@
                             <div class="small-text">{{getNiceDate(changeTask['fields']['change_task_end_date'])}}</div>
                         </td>
                         <td>
-                            <a href="#">{{changeTask['fields']['change_task_title']}}</a>
+                            <a v-bind:href="`/change_task_information/${changeTask['pk']}/`">{{changeTask['fields']['change_task_title']}}</a>
                         </td>
                         <td>
                             <div>Assigned User:</div>
