@@ -4,7 +4,7 @@ from django.views.decorators.http import require_http_methods
 from django.template import loader
 from django.core import serializers
 
-from NearBeach.forms import ChangeTaskStatusForm
+from NearBeach.forms import ChangeTaskStatusForm, ChangeTaskForm
 from NearBeach.models import change_task
 
 
@@ -31,6 +31,34 @@ def change_task_information(request, change_task_id, *args, **kwargs):
     }
     
     return HttpResponse(t.render(c,request))
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name="")
+def change_task_save(request,change_task_id):
+    """
+    """
+    # Get form data
+    form  = ChangeTaskForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+    
+    # Get the instance
+    change_task_update = change_task.objects.get(change_task_id=change_task_id)
+
+    # Update the values
+    change_task_update.change_task_title = form.cleaned_data['change_task_title']
+    change_task_update.change_task_description = form.cleaned_data['change_task_description']
+    change_task_update.change_task_start_date = form.cleaned_data['change_task_start_date']
+    change_task_update.change_task_end_date = form.cleaned_data['change_task_end_date']
+    change_task_update.change_task_seconds = form.cleaned_data['change_task_seconds']
+    change_task_update.change_task_required_by = form.cleaned_data['change_task_required_by']
+    change_task_update.is_downtime = form.cleaned_data['is_downtime']
+
+    change_task_update.save()
+
+    # Send back empty but successful data
+    return HttpResponse("")
 
 
 @require_http_methods(['POST'])

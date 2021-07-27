@@ -38,6 +38,8 @@ urlpatterns = [
     # Change Task
     path('change_task_information/<int:change_task_id>/', change_task_views.change_task_information,
          name='change_task_information'),
+    path('change_task_information/<int:change_task_id>/save/', change_task_views.change_task_save,
+         name='change_task_save'),
     path('change_task_update_status/<int:change_task_id>/', change_task_views.update_status,
          name='change_task_update_status'),
 

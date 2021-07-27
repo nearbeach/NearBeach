@@ -91,14 +91,23 @@
             
             <!-- GO BACK -->
             <hr>
+            <!-- CANCEL -->
             <a v-bind:href="`/rfc_information/${changeTaskResults[0]['fields']['request_for_change']}/`"
                class="btn btn-secondary"
             >Cancel</a>
+
+            <!-- SAVE -->
+            <a href="javascript:void(0)"
+               class="btn btn-primary save-changes"
+               v-on:click="saveChangeTask"
+            >Save</a>
         </div>
     </div>
 </template>
 
 <script>
+    const axios = require('axios');
+
     export default {
         name: "ChangeTaskInformation",
         props: {
@@ -119,7 +128,7 @@
                 }
                 return `No Downtime`;
             },
-            /*submitChangeTask: function(event) {
+            saveChangeTask: function(event) {
                 //Stop the usual stuff
                 event.preventDefault();
 
@@ -127,7 +136,6 @@
 
                 // Create data_to_send
                 const data_to_send = new FormData();
-                data_to_send.set('request_for_change', this.locationId.toString());
                 data_to_send.set('change_task_title', this.changeTitleModel);
                 data_to_send.set('change_task_description', this.changeDescriptionModel);
                 data_to_send.set('change_task_start_date', this.changeStartDateModel);
@@ -139,27 +147,16 @@
                 data_to_send.set('is_downtime', this.changeIsDowntimeModel);
 
                 axios.post(
-                    `/rfc_information/${this.locationId}/new_change_task/`,
+                    `/change_task_information/${this.changeTaskResults[0]['pk']}/save/`,
                     data_to_send,
                 ).then(response => {
-                    //Update the runsheet variables
-                    this.$emit('update_change_task_list',response['data']);
-
-                    //Clear the modal
-                    this.changeDescriptionModel = '';
-                    //this.changeEndDateModel = '';
-                    this.changeIsDowntimeModel = false;
-                    this.changeStakeholderModel = 'Stakeholder(s)';
-                    //this.changeStartDateModel = '';
-                    this.changeTitleModel = '';
-
-                    //Close the modal
-                    document.getElementById("newRunItemCloseButton").click();
+                    //If successful, go back
+                    window.location.href = `/rfc_information/${this.changeTaskResults[0]['fields']['request_for_change']}/`;
                 }).catch(error => {
-                    this.showErrorModal(error, 'Change Task');
+                    //this.showErrorModal(error, 'Change Task');
+                    console.log("ERROR: ",error);
                 })
-
-            },*/
+            },
             updateDates: function(data) {
                 this.changeStartDateModel = data['start_date'];
                 this.changeEndDateModel = data['end_date'];

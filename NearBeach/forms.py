@@ -150,6 +150,21 @@ class AdminAddUserForm(forms.Form):
     )
 
 
+class ChangeTaskForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = change_task
+        fields = [
+            'change_task_title',
+            'change_task_description',
+            'change_task_start_date',
+            'change_task_end_date',
+            'change_task_seconds',
+            'change_task_required_by',
+            'is_downtime',
+        ]
+
+
 class ChangeTaskStatusForm(forms.ModelForm):
     class Meta:
         model = change_task
