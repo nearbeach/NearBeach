@@ -99,8 +99,31 @@
             <!-- SAVE -->
             <a href="javascript:void(0)"
                class="btn btn-primary save-changes"
+               v-if="changeTaskResults[0]['fields']['change_task_status'] == 1"
                v-on:click="saveChangeTask"
             >Save</a>
+
+            <!-- START CHANGE TASK -->
+            <a href="javascript:void(0)"
+               class="btn btn-danger save-changes"
+               v-if="changeTaskResults[0]['fields']['change_task_status'] == 3"
+               v-on:click="updateStatus(4)"
+            >Start Task</a>
+
+            <!-- FINISH CHANGE TASK -->
+            <a href="javascript:void(0)"
+               class="btn btn-success save-changes"
+               v-if="changeTaskResults[0]['fields']['change_task_status'] == 4"
+               v-on:click="updateStatus(5)"
+            >Finish Task</a>
+
+            <!-- REJECT CHANGE TASK -->
+            <a href="javascript:void(0)"
+               class="btn btn-danger save-changes"
+               v-if="changeTaskResults[0]['fields']['change_task_status'] == 4"
+               v-on:click="updateStatus(6)"
+            >REJECT Task</a>
+
         </div>
     </div>
 </template>
@@ -157,6 +180,22 @@
                     console.log("ERROR: ",error);
                 })
             },
+            updateStatus: function(new_status) {
+                //Setup data_to_send
+                const data_to_send = new FormData();
+                data_to_send.set('change_task_status', new_status);
+
+                //Use axios to send the data
+                axios.post(
+                    `/change_task_update_status/${this.changeTaskResults[0]['pk']}/`,
+                    data_to_send,
+                ).then(response => {
+                    //Reload the page
+                    window.location.reload(true);
+                }).catch(error => {
+                    console.log("ERROR: ",error);
+                })
+            },
             updateDates: function(data) {
                 this.changeStartDateModel = data['start_date'];
                 this.changeEndDateModel = data['end_date'];
@@ -166,5 +205,7 @@
 </script>
 
 <style scoped>
-
+.save-changes {
+    margin-left: 10px;
+}
 </style>
