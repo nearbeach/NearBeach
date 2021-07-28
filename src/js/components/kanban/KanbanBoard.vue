@@ -9,17 +9,6 @@
             </div>
         </div>
 
-        <!-- Render out the STICKY header -->
-        <div class="kanban-header-row kanban-sticky-row"
-             style="display: none;"
-        >
-            <div class="kanban-column-header"
-                 v-for="column in columnResults"
-            >
-                {{column['fields']['kanban_column_name']}}
-            </div>
-        </div>
-
         <!-- Render each row -->
         <div v-for="level in levelResults">
             <!-- CREATE THE LEVEL HEADER -->
@@ -109,13 +98,13 @@
                 var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
 
                 //Get the element
-                let elem = document.getElementsByClassName("kanban-sticky-row")[0];
+                let elem = document.getElementsByClassName("kanban-header-row")[0];
 
                 //Determine if we are hidding the element or not
                 if (scrollTop < 150) {
-                    elem['style']['display'] = "None";
+                    elem.classList.remove('kanban-sticky-row');
                 } else {
-                    elem['style']['display'] = "";
+                    elem.classList.add('kanban-sticky-row');
                 }
             },
         },
