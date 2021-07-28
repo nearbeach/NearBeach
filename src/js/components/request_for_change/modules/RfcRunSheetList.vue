@@ -42,7 +42,7 @@
                             <div class="spacer"></div>
                             <div>Status:</div>
                             <div class="small-text"
-                                 v-if="!isDeployment"
+                                 v-if="rfcStatus !== 4"
                             >
                                 {{getStatus(changeTask['fields']['change_task_status'])}}
                             </div>
@@ -64,9 +64,14 @@
                                 <!-- SUCCESS BUTTON -->
                                 <a href="javascript:void(0)"
                                    class="btn btn-success change-task-button"
-                                   v-on:click=""
                                    v-if="changeTask['fields']['change_task_status']==5"
                                 >Successful</a>
+
+                                <!-- FAILED BUTTON -->
+                                <a href="javascript:void(0)"
+                                   class="btn btn-danger change-task-button"
+                                   v-if="changeTask['fields']['change_task_status']==6"
+                                >Failed</a>
                             </div>
                         </td>
                     </tr>
@@ -125,10 +130,6 @@
     export default {
         name: "RfcRunSheetList",
         props: {
-            isDeployment: {
-                type: Boolean,
-                default: false,
-            },
             isReadOnly: {
                 type: Boolean,
                 default: false,
@@ -151,11 +152,12 @@
         computed: {
             isCompleted: function() {
                 var count_of_uncompleted_tasks = this.changeTaskList.filter(changeTask => {
-                    return changeTask['fields']['change_task_status'] !== 5;
+                    const change_task_status = changeTask['fields']['change_task_status'];
+                    return change_task_status !== 5 && change_task_status !== 6;
                 }).length;
 
                 //Return true when there are no uncompleted tasks (all finished)
-                return count_of_uncompleted_tasks === 0 && this.rfcStatus === 3;
+                return count_of_uncompleted_tasks === 0 && (this.rfcStatus === 3 || this.rfcStatus === 4);
             }
         },
         methods: {
@@ -204,6 +206,9 @@
                         break;
                     case 5:
                         return 'Task Finished';
+                        break;
+                    case 6:
+                        return 'Task FAILED';
                         break;
                     default:
                         return '---';
