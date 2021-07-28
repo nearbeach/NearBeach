@@ -119,7 +119,7 @@
                 });
 
                 axios.post(
-                    `/admin/add_user/`,
+                    `/admin_add_user/`,
                     data_to_send,
                 ).then(response => {
                     //Just refresh the page (for now)
