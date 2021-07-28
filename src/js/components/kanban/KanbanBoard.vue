@@ -9,8 +9,8 @@
             </div>
         </div>
 
-        <!-- Render out the header -->
-        <div class="kanban-header-row kanban-sticky-row">
+        <!-- Render out the STICKY header -->
+        <div class="kanban-header-row kanban-sticky-row" style="display: none;">
             <div class="kanban-column-header"
                  v-for="column in columnResults"
             >
