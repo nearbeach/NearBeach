@@ -9,6 +9,17 @@
             </div>
         </div>
 
+        <!-- Render out the STICKY header -->
+        <div class="kanban-header-row kanban-sticky-row"
+             style="display: none;"
+        >
+            <div class="kanban-column-header"
+                 v-for="column in columnResults"
+            >
+                {{column['fields']['kanban_column_name']}}
+            </div>
+        </div>
+
         <!-- Render each row -->
         <div v-for="level in levelResults">
             <!-- CREATE THE LEVEL HEADER -->
@@ -48,9 +59,11 @@
         },
         created() {
             window.addEventListener("resize", this.resizeProcedure);
+            window.addEventListener("scroll", this.scrollProcedure);
         },
         destroyed() {
             window.removeEventListener("resize", this.resizeProcedure);
+            window.removeEventListener("scroll", this.scrollProcedure);
         },
         methods: {
             doubleClickedCard: function(data) {
@@ -89,6 +102,20 @@
                     Array.from(elements).forEach(element => {
                         element.style = `max-width: null;`;
                     })
+                }
+            },
+            scrollProcedure: function() {
+                //Get the distance to the top of the page
+                var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+
+                //Get the element
+                let elem = document.getElementsByClassName("kanban-sticky-row")[0];
+
+                //Determine if we are hidding the element or not
+                if (scrollTop < 150) {
+                    elem['style']['display'] = "None";
+                } else {
+                    elem['style']['display'] = "";
                 }
             },
         },
