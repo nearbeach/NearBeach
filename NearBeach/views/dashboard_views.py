@@ -72,6 +72,10 @@ def get_my_objects(request):
         ).values('project_id')
     ).exclude(
         project_status='Closed',
+    ).values(
+        'project_id',
+        'project_name',
+        'project_status',
     )
 
     requirement_results = requirement.objects.filter(
@@ -83,6 +87,10 @@ def get_my_objects(request):
         ).values('requirement_id')
     ).exclude(
         requirement_status__requirement_status_is_closed=True,
+    ).values(
+        'requirement_id',
+        'requirement_title',
+        'requirement_status__requirement_status',
     )
 
     task_results = task.objects.filter(
@@ -94,6 +102,10 @@ def get_my_objects(request):
         ).values('task_id')
     ).exclude(
         task_status='Closed',
+    ).values(
+        'task_id',
+        'task_short_description',
+        'task_status',
     )
 
     # Only have 25 results and order by alphabetical order
@@ -111,10 +123,9 @@ def get_my_objects(request):
     
     Note to Django developers - there has to be a better way
     """
-    requirement_results = serializers.serialize('json', requirement_results)
-    # requirement_results = json.dumps(list(requirement_results), cls=DjangoJSONEncoder)
-    project_results = serializers.serialize('json', project_results)
-    task_results = serializers.serialize('json', task_results)
+    requirement_results = json.dumps(list(requirement_results), cls=DjangoJSONEncoder)
+    project_results = json.dumps(list(project_results), cls=DjangoJSONEncoder)
+    task_results = json.dumps(list(task_results), cls=DjangoJSONEncoder)
 
     # Send back a JSON array with JSON arrays inside
     return JsonResponse({
@@ -159,6 +170,10 @@ def get_unassigned_objects(request):
                 assigned_user__isnull=False,
             ).values('project_id')
         )
+    ).values(
+        'project_id',
+        'project_name',
+        'project_status',
     )
 
     requirement_results = requirement.objects.filter(
@@ -178,6 +193,10 @@ def get_unassigned_objects(request):
                 assigned_user__isnull=False,
             )
         )
+    ).values(
+        'requirement_id',
+        'requirement_title',
+        'requirement_status__requirement_status',
     )
 
     task_results = task.objects.filter(
@@ -197,7 +216,12 @@ def get_unassigned_objects(request):
                 assigned_user__isnull=False,
             )
         )
+    ).values(
+        'task_id',
+        'task_short_description',
+        'task_status',
     )
+
 
     # Only have 25 results and order by alphabetical order
     # requirement_results.order_by('requirement_title')[:25]
@@ -214,10 +238,12 @@ def get_unassigned_objects(request):
     
     Note to Django developers - there has to be a better way
     """
-    requirement_results = serializers.serialize('json', requirement_results)
-    # requirement_results = json.dumps(list(requirement_results), cls=DjangoJSONEncoder)
-    project_results = serializers.serialize('json', project_results)
-    task_results = serializers.serialize('json', task_results)
+    #requirement_results = serializers.serialize('json', requirement_results)
+    requirement_results = json.dumps(list(requirement_results), cls=DjangoJSONEncoder)
+    #project_results = serializers.serialize('json', project_results)
+    project_results = json.dumps(list(project_results), cls=DjangoJSONEncoder)
+    #task_results = serializers.serialize('json', task_results)
+    task_results = json.dumps(list(task_results), cls=DjangoJSONEncoder)
 
     # Send back a JSON array with JSON arrays inside
     return JsonResponse({

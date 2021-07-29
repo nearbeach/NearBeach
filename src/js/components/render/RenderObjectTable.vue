@@ -12,7 +12,7 @@
                 <td>
                     <!-- LINK -->
                     <a v-bind:href="`${rootUrl}${destination}_information/${result['pk']}/`">
-                        <p>{{result['fields'][importVariables['title']]}}</p>
+                        <p>{{result[importVariables['title']]}}</p>
                         <div class="spacer"></div>
                         <p class="small-text">
                             {{importVariables['prefix']}}{{result['pk']}}
@@ -21,7 +21,7 @@
                 </td>
                 <td>
                     <!-- STATUS -->
-                    {{result['fields'][importVariables['status']]}}
+                    {{result[importVariables['status']]}}
                 </td>
             </tr>
         </tbody>
