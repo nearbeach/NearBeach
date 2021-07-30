@@ -11,11 +11,11 @@
             <tr v-for="result in searchResults" :key="result['pk']">
                 <td>
                     <!-- LINK -->
-                    <a v-bind:href="`${rootUrl}${destination}_information/${result['pk']}/`">
+                    <a v-bind:href="`${rootUrl}${destination}_information/${result[importVariables['id']]}/`">
                         <p>{{result[importVariables['title']]}}</p>
                         <div class="spacer"></div>
                         <p class="small-text">
-                            {{importVariables['prefix']}}{{result['pk']}}
+                            {{importVariables['prefix']}}{{result[importVariables['id']]}}
                         </p>
                     </a>
                 </td>
