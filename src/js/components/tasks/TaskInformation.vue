@@ -227,7 +227,9 @@
                     this.closeLoadingModal();
 
                     //Reload the page IF the status is closed
-                    window.location.reload(this.taskStatusModel === 'Closed');
+                    if (this.taskStatusModel === 'Closed') {
+                        window.location.reload(this.taskStatusModel === 'Closed');
+                    }
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 });
