@@ -71,6 +71,7 @@
             <hr>
             <group-permissions v-bind:group-results="groupResults"
                                v-bind:destination="'task'"
+                               v-bind:user-group-results="userGroupResults"
                                v-on:update_group_model="updateGroupModel($event)"
                                v-bind:is-dirty="$v.groupModel.$dirty"
             ></group-permissions>
@@ -100,6 +101,12 @@
         name: "NewTask",
         props: {
             groupResults: Array,
+            userGroupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            }
         },
         data() {
             return {

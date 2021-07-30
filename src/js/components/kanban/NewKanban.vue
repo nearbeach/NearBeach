@@ -66,6 +66,7 @@
             <hr>
             <group-permissions v-bind:group-results="groupResults"
                                v-bind:destination="'kanban_board'"
+                               v-bind:user-group-results="userGroupResults"
                                v-on:update_group_model="updateGroupModel($event)"
                                v-bind:is-dirty="$v.groupModel.$dirty"
             ></group-permissions>
@@ -103,6 +104,12 @@
                 type: String,
                 default: "/",
             },
+            userGroupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            }
         },
         mixins: [
             errorModalMixin,

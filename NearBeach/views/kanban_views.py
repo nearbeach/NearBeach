@@ -368,12 +368,22 @@ def new_kanban(request, *args, **kwargs):
         is_deleted=False,
     )
 
+    # Get list of user groups
+    user_group_results = user_group.objects.filter(
+        is_deleted=False,
+        username=request.user,
+    ).values(
+        'group_id',
+        'group__group_name',
+    ).distinct()
+
     # Get tempalte
     t = loader.get_template('NearBeach/kanban/new_kanban.html')
 
     # Context
     c = {
         'group_results': serializers.serialize('json', group_results),
+        'user_group_results': json.dumps(list(user_group_results), cls=DjangoJSONEncoder),
     }
 
     return HttpResponse(t.render(c, request))

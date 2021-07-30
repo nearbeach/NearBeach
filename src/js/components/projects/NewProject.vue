@@ -71,6 +71,7 @@
             <hr>
             <group-permissions v-bind:group-results="groupResults"
                                v-bind:destination="'project'"
+                               v-bind:user-group-results="userGroupResults"
                                v-on:update_group_model="updateGroupModel($event)"
                                v-bind:is-dirty="$v.groupModel.$dirty"
             ></group-permissions>
@@ -107,6 +108,12 @@
             staticUrl: {
                 type: String,
                 default: "/",
+            },
+            userGroupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
             },
         },
         mixins: [
@@ -190,6 +197,19 @@
             updateStakeholderModel: function(data) {
                 this.stakeholderModel = data;
             }
+        },
+        mounted() {
+            //Map the results from the user_group_results to groupModels
+            /*
+            setTimeout(() => {
+                this.groupModel = this.userGroupResults.map(row => {
+                    return {
+                        group: row['group__group_name'],
+                        value: row['group_id'],
+                    }
+                });
+            },100);
+            */
         },
     }
 </script>

@@ -34,10 +34,20 @@ def new_task(request, *args, **kwargs):
         is_deleted=False,
     )
 
+    # Get list of user groups
+    user_group_results = user_group.objects.filter(
+        is_deleted=False,
+        username=request.user,
+    ).values(
+        'group_id',
+        'group__group_name',
+    ).distinct()
+
     # Context
     c = {
         'nearbeach_title': 'New Task',
         'group_results': serializers.serialize('json', group_results),
+        'user_group_results': json.dumps(list(user_group_results), cls=DjangoJSONEncoder),
     }
 
     return HttpResponse(t.render(c, request))

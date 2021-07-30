@@ -30,16 +30,21 @@
     export default {
         name: "GroupPermissions",
         components: {},
-        props: [
-            'destination',
-            'groupResults',
-            'isDirty', //Passes the value from the template above where the checking is done
-        ],
+        props: {
+            destination: String,
+            groupResults: Array,
+            isDirty: Boolean, //Passes the value from the template above where the checking is done
+            userGroupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+        },
         watch: {
             'groupModel': function() {
                 //Send the data upstream
                 this.$emit('update_group_model',this.groupModel);
-
             }
         },
         data() {
@@ -64,6 +69,14 @@
 
                 //Push the object to type fix list
                 this.groupFixResults.push(construction_object);
+            });
+
+            //Any User groups are added to the group Model
+            this.groupModel = this.userGroupResults.map(row => {
+                return {
+                    group: row['group__group_name'],
+                    value: row['group_id'],
+                }
             });
         }
     }

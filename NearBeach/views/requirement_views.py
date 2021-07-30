@@ -211,6 +211,15 @@ def new_requirement(request, *args, **kwargs):
         is_deleted=False,
     )
 
+    # Get list of user groups
+    user_group_results = user_group.objects.filter(
+        is_deleted=False,
+        username=request.user,
+    ).values(
+        'group_id',
+        'group__group_name',
+    ).distinct()
+
     # Load template
     t = loader.get_template('NearBeach/requirements/new_requirements.html')
 
@@ -220,6 +229,7 @@ def new_requirement(request, *args, **kwargs):
         'status_list': serializers.serialize("json", status_list),
         'type_list': serializers.serialize("json", type_list),
         'group_results': serializers.serialize("json", group_results),
+        'user_group_results': json.dumps(list(user_group_results), cls=DjangoJSONEncoder),
     }
 
     return HttpResponse(t.render(c, request))

@@ -1,15 +1,16 @@
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, Http404
 from django.urls import reverse
 from django.template import loader
+from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from NearBeach.decorators.check_user_permissions import check_user_permissions, check_rfc_permissions
-
 from NearBeach.models import *
 from NearBeach.forms import NewRequestForChangeForm, RfcModuleForm, RfcInformationSaveForm, NewChangeTaskForm, \
     UpdateRFCStatus
 
+import json
 
 # Internal function
 def get_rfc_context(rfc_id):
@@ -63,6 +64,15 @@ def new_request_for_change(request, *args, **kwargs):
         is_deleted=False,
     )
 
+    # Get list of user groups
+    user_group_results = user_group.objects.filter(
+        is_deleted=False,
+        username=request.user,
+    ).values(
+        'group_id',
+        'group__group_name',
+    ).distinct()
+
     user_results = User.objects.filter(  # This should only be group leaders
         is_active=True,
     )
@@ -71,6 +81,7 @@ def new_request_for_change(request, *args, **kwargs):
     c = {
         'group_results': serializers.serialize('json', group_results),
         'nearbeach_title': 'New RFC',
+        'user_group_results': json.dumps(list(user_group_results), cls=DjangoJSONEncoder),
         'user_results': serializers.serialize('json', user_results),
     }
 

@@ -2,12 +2,13 @@ from django.core import serializers
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.http import HttpResponseBadRequest
+from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 from django.template import loader
 from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
 from NearBeach.decorators.check_user_permissions import check_user_permissions
-
+import json
 
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=3, object_lookup='project_id')
@@ -27,10 +28,20 @@ def new_project(request, *args, **kwargs):
         is_deleted=False,
     )
 
+    # Get the USER groups
+    user_group_results = user_group.objects.filter(
+        is_deleted=False,
+        username=request.user,
+    ).values(
+        'group_id',
+        'group__group_name',
+    ).distinct()
+
     # Context
     c = {
         'group_results': serializers.serialize('json', group_results),
         'nearbeach_title': 'New Project',
+        'user_group_results': json.dumps(list(user_group_results), cls=DjangoJSONEncoder),
     }
 
     return HttpResponse(t.render(c, request))
