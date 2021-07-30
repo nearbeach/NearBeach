@@ -188,6 +188,7 @@ import DashboardUsersWithNoGroups from "./components/dashboard/DashboardUsersWit
 import KanbanEditBoard from "./components/kanban/KanbanEditBoard.vue";
 import KanbanGroupPermissions from "./components/kanban/KanbanGroupPermissions.vue";
 import ProfileInformation from "./components/profile/ProfileInformation.vue";
+import ChangeTaskInformation from "./components/request_for_change/ChangeTaskInformation.vue";
 
 
 //Import Bootstrap
@@ -323,6 +324,7 @@ Vue.component('DashboardUsersWithNoGroups', DashboardUsersWithNoGroups);
 Vue.component('KanbanEditBoard', KanbanEditBoard);
 Vue.component('KanbanGroupPermissions', KanbanGroupPermissions);
 Vue.component('ProfileInformation', ProfileInformation);
+Vue.component('ChangeTaskInformation', ChangeTaskInformation);
 
 //Validation
 import Vuelidate from 'vuelidate'

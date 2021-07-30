@@ -32,10 +32,14 @@ urlpatterns = [
     path('', dashboard_views.dashboard, name='dashboard'),
 
     # Administration
-    path('admin/add_user/', admin_views.add_user, name='admin_add_user'),
-    path('admin/update_user_password/', admin_views.update_user_password, name='update_user_password'),
+    path('admin_add_user/', admin_views.add_user, name='admin_add_user'),
+    path('admin_update_user_password/', admin_views.update_user_password, name='update_user_password'),
 
     # Change Task
+    path('change_task_information/<int:change_task_id>/', change_task_views.change_task_information,
+         name='change_task_information'),
+    path('change_task_information/<int:change_task_id>/save/', change_task_views.change_task_save,
+         name='change_task_save'),
     path('change_task_update_status/<int:change_task_id>/', change_task_views.update_status,
          name='change_task_update_status'),
 

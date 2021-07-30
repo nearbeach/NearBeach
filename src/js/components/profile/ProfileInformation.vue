@@ -19,6 +19,9 @@
                         <div class="col-md-6">
                             <label>
                                 First Name:
+                                <span class="error" 
+                                      v-if="!$v.firstNameModel.required && $v.firstNameModel.$dirty"
+                                > Please suppy a first name.</span>
                                 <br/>
                             </label>
                             <input type="text"
@@ -27,14 +30,34 @@
                             >
                         </div>
                         <div class="col-md-6">
-                            <label>Last Name:</label>
+                            <label>
+                                Last Name:
+                                <span class="error" 
+                                      v-if="!$v.lastNameModel.required && $v.lastNameModel.$dirty"
+                                > Please suppy a last name.</span>
+                                <br/>
+                            </label>
                             <input type="text"
                                    v-model="lastNameModel"
                                    class="form-control"
                             >
                         </div>
+                    </div>
+
+                    <div class="spacer"></div>
+
+                    <div class="row">
                         <div class="col-md-6">
-                            <label>Email:</label>
+                            <label>
+                                Email:
+                                <span class="error" 
+                                      v-if="!$v.emailModel.required && $v.emailModel.$dirty"
+                                > Please suppy an email.</span>
+                                <span class="error"
+                                      v-if="!$v.emailModel.email"
+                                >Please supply an proper email address.</span>
+                                <br/>
+                            </label>
                             <input type="email"
                                    v-model="emailModel"
                                    class="form-control"
@@ -87,7 +110,7 @@
             errorModalMixin,
             loadingModalMixin,
         ],
-        validators: {
+        validations: {
             emailModel: {
                 required,
                 maxLength: maxLength(255),
@@ -104,6 +127,16 @@
         },
         methods: {
             updateUser: function() {
+                //Check form validation
+                this.$v.$touch();
+
+                if (this.$v.$invalid) {
+                    this.showValidationErrorModal();
+
+                    //Just return - as we do not need to do the rest of this function
+                    return;
+                }
+
                 //Create data_to_send
                 const data_to_send = new FormData();
                 data_to_send.set('username', this.userResults[0]['id']);

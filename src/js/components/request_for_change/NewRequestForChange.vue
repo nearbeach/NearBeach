@@ -25,6 +25,7 @@
                              :before-change="beforeChange"
                 >
                     <rfc-details v-bind:group-results="groupResults"
+                                 v-bind:user-group-results="userGroupResults"
                                  v-bind:user-results="userResults"
                                  v-on:update_validation="updateValidation($event)"
                                  v-on:update_values="updateValues($event)"
@@ -90,6 +91,12 @@
             statusUrl: {
                 type: String,
                 default: "/",
+            },
+            userGroupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
             },
             userResults: Array,
         },

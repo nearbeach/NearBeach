@@ -2,6 +2,7 @@
 {% load static %}
 {% block content %}
     <new-task v-bind:group-results="{{group_results}}"
+              v-bind:user-group-results="{{user_group_results}}"
               v-bind:static-url="`{% static '' %}`"
     ></new-task>
 {% endblock %}

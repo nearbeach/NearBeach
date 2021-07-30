@@ -137,7 +137,7 @@
                 
                 //Setup Axios to send data
                 axios.post(
-                    `/${this.location}/update_user_password/`,
+                    `/${this.location}_update_user_password/`,
                     data_to_send,
                 ).then(response => {
                     this.closeModal();

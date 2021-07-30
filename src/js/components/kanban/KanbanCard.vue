@@ -77,7 +77,7 @@
                 //Update the modal's data-attributes to reflect the column ID and Level ID
                 var newLinkModal = document.getElementById('newLinkModal');
                 newLinkModal['dataset']['kanbanLevel'] = this.levelId;
-                newLinkModal['dataset']['kanbanColumn']
+                newLinkModal['dataset']['kanbanColumn'] = this.columnId;
 
                 //Get the Modal from the above modal
                 var newLinkModal = new Modal(newLinkModal);

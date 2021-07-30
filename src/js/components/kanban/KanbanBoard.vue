@@ -1,7 +1,16 @@
 <template>
-    <div class="kanban-container">
+    <div class="kanban-container" v-on:scroll="scrollProcedure">
         <!-- Render out the header -->
         <div class="kanban-header-row">
+            <div class="kanban-column-header"
+                 v-for="column in columnResults"
+            >
+                {{column['fields']['kanban_column_name']}}
+            </div>
+        </div>
+
+        <!-- Render out the STICKY header -->
+        <div class="kanban-header-row kanban-sticky-row" style="display: none;">
             <div class="kanban-column-header"
                  v-for="column in columnResults"
             >
@@ -48,9 +57,11 @@
         },
         created() {
             window.addEventListener("resize", this.resizeProcedure);
+            window.addEventListener("scroll", this.scrollProcedure);
         },
         destroyed() {
             window.removeEventListener("resize", this.resizeProcedure);
+            window.removeEventListener("scroll", this.scrollProcedure);
         },
         methods: {
             doubleClickedCard: function(data) {
@@ -89,6 +100,23 @@
                     Array.from(elements).forEach(element => {
                         element.style = `max-width: null;`;
                     })
+                }
+            },
+            scrollProcedure: function() {
+                //Make sure the kanban-sticky-row matches the scroll left for the kanban-container
+                var kanban_sticky = document.getElementsByClassName("kanban-sticky-row")[0],
+                    kanban_container = document.getElementsByClassName("kanban-container")[0];
+
+                kanban_sticky.scrollLeft = kanban_container.scrollLeft;
+
+                //Get the distance to the top of the page
+                var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+
+                //Determine if we are hidding the element or not
+                if (scrollTop < 90) {
+                    kanban_sticky['style']['display'] = "none";
+                } else {
+                    kanban_sticky['style']['display'] = "";
                 }
             },
         },

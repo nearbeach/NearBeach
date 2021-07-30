@@ -118,6 +118,7 @@
         <group-permissions v-bind:group-results="groupResults"
                            v-bind:destination="'request_for_change'"
                            v-bind:is-dirty="$v.groupModel.$dirty"
+                           v-bind:user-group-results="userGroupResults"
                            v-on:update_group_model="updateGroupModel($event)"
         ></group-permissions>
     </div>
@@ -136,6 +137,12 @@
         name: "RfcDetails",
         props: {
             groupResults: Array,
+            userGroupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
             userResults: Array,
         },
         mixins: [

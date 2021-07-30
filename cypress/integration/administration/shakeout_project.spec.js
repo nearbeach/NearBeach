@@ -47,6 +47,9 @@ describe("Shakeout Project", () => {
     cy.contains('Please search for a Stakeholder.');
     cy.contains('Please select at least one group.');
 
+    //Wait for the modal to go away... piss off modal
+    cy.wait(1000);
+
     //User starts to fill in the form
     cy.get('.form-group > .form-control')
         .type(project_title);
