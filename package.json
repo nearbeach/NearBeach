@@ -32,7 +32,7 @@
     "@tinymce/tinymce-vue": "^3.2.8",
     "axios": "^0.21.1",
     "bootstrap": "^5.0.2",
-    "luxon": "^1.27.0",
+    "luxon": "^1.28.0",
     "vue-datetime": "^1.0.0-beta.14",
     "vue-form-wizard": "^0.8.4",
     "vuedraggable": "^2.24.3",
