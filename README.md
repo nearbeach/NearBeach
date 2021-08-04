@@ -31,9 +31,16 @@ NearBeach is an open source project management system, built using Django and Vu
 ## Features
 NearBeach is currently going through a massive rewrite - we have stripped out a lot of the features temporarily. We are however writting them back in. Our focus of the rewrite is to improve UI/UX, and the speed of page rendering.
 
-# Holy Moly Sponsors
+## Sponsors
 
-[![Sponsor](https://pbs.twimg.com/profile_images/1374447134297124866/7ZnzzC_X_200x200.jpg)](https://twitter.com/Blw_Average)
+We would like to thank the following sponsors. Their contributions have made sure I am coving any costs associated with NearBeach, i.e. hosting. To sponsor you can use either;
+
+- [Patreon](https://www.patreon.com/NearBeach)
+- [Github](https://github.com/sponsors/robotichead)
+
+### Holy Moly Level
+
+[<img src="https://pbs.twimg.com/profile_images/1374447134297124866/7ZnzzC_X_200x200.jpg" width="15" height="15">Blw_Average](https://twitter.com/Blw_Average)
 
 
 ## Software References (thank you)
