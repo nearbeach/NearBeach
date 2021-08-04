@@ -4,6 +4,56 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+const moduleCard = {
+    state: () => ({
+        cardId: 0,
+        cardTitle: '',
+        cardColumn: 0,
+        cardLevel: 0,
+        cardDescription: '',
+        cardNotes: [],
+    }),
+    mutations: {
+        updateCard(state, payload) {
+            state.cardId = payload.cardId;
+            state.cardTitle = payload.cardTitle;
+            state.cardDescription = payload.cardDescription;
+            state.cardLevel = payload.cardLevel;
+            state.cardColumn = payload.cardColumn;
+
+            //Get data for the notes
+            axios.post(
+                `/object_data/kanban_card/${payload.cardId}/note_list/`
+            ).then(response => {
+                //Save the data into noteHistoryResults
+                state.cardNotes = response['data'];
+            }).catch(error => {
+                console.log("Error: ",error);
+            });
+        },
+        updateCardDescription(state, payload) {
+            state.cardDescription = payload.cardDescription;
+        },
+        updateCardDetails(state, payload) {
+            state.cardTitle = payload.cardTitle;
+            state.cardLevel = payload.cardLevel;
+            state.cardColumn = payload.cardColumn;
+        },
+    },
+    actions: {},
+    getters: {
+        getCardId: state => {
+            return state.cardId;
+        },
+        getCardDescription: state => {
+            return state.cardDescription;
+        },
+        getCardDetails: state => {
+            return state.cardTitle;
+        },
+    },
+}
+
 const moduleDestination = {
     state: () => ({
         destination: 'unknown',
@@ -88,6 +138,7 @@ const moduleStaticUrl = {
 
 const store = new Vuex.Store({
     modules: {
+        card: moduleCard,
         destination: moduleDestination,
         //location: moduleLocationId,
         //rootUrl: moduleRootUrl,
@@ -150,7 +201,10 @@ import KanbanBoard from "./components/kanban/KanbanBoard.vue";
 import KanbanRow from "./components/kanban/KanbanRow.vue";
 import DashboardBugList from "./components/dashboard/DashboardBugList.vue";
 import NewKanbanCard from "./components/modules/wizards/NewKanbanCard.vue";
-import CardInformation from "./components/kanban/CardInformation.vue";
+import CardInformation from "./components/card_information/CardInformation.vue";
+import CardDetails from "./components/card_information/CardDetails.vue";
+import CardDescription from "./components/card_information/CardDescription.vue";
+import CardNotes from "./components/card_information/CardNotes.vue";
 import ListNotes from "./components/modules/sub_modules/ListNotes.vue";
 import NewKanbanLinkWizard from "./components/modules/wizards/NewKanbanLinkWizard.vue";
 import DashboardMyObjects from "./components/dashboard/DashboardMyObjects.vue";
@@ -325,6 +379,9 @@ Vue.component('KanbanEditBoard', KanbanEditBoard);
 Vue.component('KanbanGroupPermissions', KanbanGroupPermissions);
 Vue.component('ProfileInformation', ProfileInformation);
 Vue.component('ChangeTaskInformation', ChangeTaskInformation);
+Vue.component('CardDetails', CardDetails);
+Vue.component('CardDescription', CardDescription);
+Vue.component('CardNotes', CardNotes);
 
 //Validation
 import Vuelidate from 'vuelidate'
