@@ -119,15 +119,17 @@
                 })
             },
             sendDataUpstream: function(filtered_data) {
-                const data_to_send = {
+                // Update VueX
+                this.$store.commit({
+                    type: 'updateCard',
                     'cardId': filtered_data['pk'],
                     'cardTitle': filtered_data['fields']['kanban_card_text'],
                     'cardDescription': filtered_data['fields']['kanban_card_description'],
-                }
+                })
 
                 //Emit the current card information
-                this.$emit('double_clicked_card',data_to_send);
-
+                //this.$emit('double_clicked_card',data_to_send);
+                
                 //Show the modal
                 const cardInformationModal = new Modal(document.getElementById("cardInformationModal"));
                 cardInformationModal.show();
