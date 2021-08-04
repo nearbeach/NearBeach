@@ -40,7 +40,7 @@ We would like to thank the following sponsors. Their contributions have made sur
 
 ### Holy Moly Level
 
-[<img src="https://pbs.twimg.com/profile_images/1374447134297124866/7ZnzzC_X_200x200.jpg" width="15" height="15">Blw_Average](https://twitter.com/Blw_Average)
+[<img src="https://pbs.twimg.com/profile_images/1374447134297124866/7ZnzzC_X_200x200.jpg" width="30" height="30"> Blw_Average](https://twitter.com/Blw_Average)
 
 
 ## Software References (thank you)
