@@ -74,6 +74,14 @@
                     }
                 }) 
             },
+        },
+        mounted() {
+            //Send columns and levels into the VueX
+            this.$store.commit({
+                type: 'updateLists',
+                columnResults: this.columnResults,
+                levelResults: this.levelResults,
+            });
         }
     }
 </script>

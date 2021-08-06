@@ -19,16 +19,34 @@
                     }"
                     v-bind:content_css="false"
                     v-bind:skin="false"
-                    v-model="cardDescriptionModel"
+                    v-model="cardDescription"
                 />
             </div>
         </div>
         <hr>
-        ADD SAVE BUTTONS
+
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn btn-secondary"
+                        v-on:click="closeModal"
+                >
+                    Close Modal
+                </button>
+                <button class="btn btn-primary save-changes"
+                        v-on:click="updateCard"
+                >
+                    Update Card
+                </button>
+            </div>
+        </div>
+        <hr>
     </div>
 </template>
 
 <script>
+    import {mapFields} from 'vuex-map-fields';
+    const axios = require('axios');
+
     export default {
         name: 'CardDescription',
         props: {},
@@ -36,21 +54,16 @@
             return {}
         },
         computed: {
-            cardDescriptionModel: {
-                get() {
-                    return this.$store.state.cardDescriptionModel;
-                },
-                set(value) {
-                    this.$store.commit({
-                        type: 'updateCardDescription',
-                        cardDescription: value,
-                    })
-                }
-            }
+            ...mapFields([
+                'cardDescription',
+            ])
         },
         methods: {
-            updateDescription: function() {
-                //ADD CODE
+            closeModal: function() {
+                document.getElementById("cardInformationModalCloseButton").click();
+            },
+            updateCard: function() {
+                this.$emit('update_card');
             },
         },
     }

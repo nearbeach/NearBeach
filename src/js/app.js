@@ -2,6 +2,8 @@
 import Vue from 'vue/dist/vue.js';
 import Vuex from 'vuex'
 
+import { getField, updateField } from 'vuex-map-fields';
+
 Vue.use(Vuex)
 
 const moduleCard = {
@@ -12,8 +14,13 @@ const moduleCard = {
         cardLevel: 0,
         cardDescription: '',
         cardNotes: [],
+        listColumns: [],
+        listLevels: [],
     }),
     mutations: {
+        appendNote(state, payload) {
+            state.cardNotes.push(payload.newNote);
+        },
         updateCard(state, payload) {
             state.cardId = payload.cardId;
             state.cardTitle = payload.cardTitle;
@@ -31,25 +38,29 @@ const moduleCard = {
                 console.log("Error: ",error);
             });
         },
-        updateCardDescription(state, payload) {
-            state.cardDescription = payload.cardDescription;
-        },
-        updateCardDetails(state, payload) {
-            state.cardTitle = payload.cardTitle;
-            state.cardLevel = payload.cardLevel;
-            state.cardColumn = payload.cardColumn;
+        updateField,
+        updateLists(state, payload) {
+            state.listColumns = payload.columnResults;
+            state.listLevels = payload.levelResults;
         },
     },
     actions: {},
     getters: {
+        getField,
+        getAllCardData: state => {
+            return {
+                cardId: state.cardId,
+                cardTitle: state.cardTitle,
+                cardDescription: state.cardDescription,
+                cardLevel: state.cardLevel,
+                cardColumn: state.cardColumn,
+            }
+        },
         getCardId: state => {
             return state.cardId;
         },
-        getCardDescription: state => {
-            return state.cardDescription;
-        },
-        getCardDetails: state => {
-            return state.cardTitle;
+        getCardNotes: state => {
+            return state.cardNotes;
         },
     },
 }

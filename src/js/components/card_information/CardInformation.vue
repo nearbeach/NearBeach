@@ -62,7 +62,8 @@
                             role="tabpanel" 
                             aria-labelledby="details-tab"
                         >
-                            <card-details></card-details>
+                            <card-details v-on:update_card="updateCard"
+                            ></card-details>
                         </div>
 
                         <div class="tab-pane fade" 
@@ -70,7 +71,8 @@
                              role="tabpanel" 
                              aria-labelledby="description-tab"
                         >
-                            <card-description></card-description>
+                            <card-description v-on:update_card="updateCard"
+                            ></card-description>
                         </div>
 
                         <div class="tab-pane fade" 
@@ -107,84 +109,35 @@
                 noteHistoryResults: [],
             }
         },
-        watch: {
-            cardInformation: function() {
-                console.log("Card Information Changed");
-                //Update the local information
-                this.cardId = this.cardInformation['cardId'];
-                this.cardTitleModel = this.cardInformation['cardTitle'];
-
-                //Bug fix - needs to blank it out or the value does nto blank out correctly
-                if (this.cardInformation['cardDescription'] === null) {
-                    //Can not seem to blank out the model correctly?
-                    this.cardDescriptionModel = "No Description";
-                } else {
-                    this.cardDescriptionModel = `${this.cardInformation['cardDescription']}`;
-                }
-
-
-                //Now update the card notes
-                this.getCardNotes();
-            },
-        },
         methods: {
-            addNote: function() {
-                //Setup data to send
-                const data_to_send = new FormData();
-                data_to_send.set('note',this.cardNoteModel);
-
-                //Use axios to send the data
-                axios.post(
-                    `/object_data/kanban_card/${this.cardId}/add_notes/`,
-                    data_to_send,
-                ).then(response => {
-                    //Add the response to the end of the noteHistoryResults
-                    this.noteHistoryResults.push(response['data'][0]);
-
-                    //Clear the card note model
-                    this.cardNoteModel = '';
-                }).catch(error => {
-                    console.log("Error: ",error);
-                })
-            },
-            getCardNotes: function() {
-                //Clear the current list of notes
-                this.noteHistoryResults = [];
-
-                //Use axios to get the card list
-                axios.post(
-                    `/object_data/kanban_card/${this.cardId}/note_list/`
-                ).then(response => {
-                    //Save the data into noteHistoryResults
-                    this.noteHistoryResults = response['data'];
-                }).catch(error => {
-                    console.log("Error: ",error);
-                })
-            },
             updateCard: function() {
-                //Create the data_to_send
-                const data_to_send = new FormData();
-                data_to_send.set('kanban_card_text',this.cardTitleModel);
-                data_to_send.set('kanban_card_description', this.cardDescriptionModel);
-                data_to_send.set('kanban_card_id',this.cardId);
+                //Get all data from VueX
+                const all_data = this.$store.getters.getAllCardData;
 
-                //Use Axios to send data
+                //Setup data_to_send
+                const data_to_send = new FormData()
+                data_to_send.set('kanban_card_text', all_data.cardTitle);
+                data_to_send.set('kanban_card_description', all_data.cardDescription);
+                data_to_send.set('kanban_card_level', all_data.cardLevel);
+                data_to_send.set('kanban_card_column', all_data.cardColumn);
+                data_to_send.set('kanban_card_id', all_data.cardId);
+
+                //Use Axios to send data to backend
                 axios.post(
                     `/kanban_information/update_card/`,
                     data_to_send,
                 ).then(response => {
                     //Send the new data upstream
                     this.$emit('update_card',{
-                        'kanban_card_id': this.cardId,
-                        'kanban_card_text': this.cardTitleModel,
+                        'kanban_card_id': all_data.cardId,
+                        'kanban_card_text': all_data.cardTitle,
                     });
 
-                    //Close the modal
-                    document.getElementById("cardInformationModal").click();
+                    document.getElementById("cardInformationModalCloseButton").click();
                 }).catch(error => {
                     console.log("Error: ",error);
                 })
-            },
+            }
         }
     }
 </script>

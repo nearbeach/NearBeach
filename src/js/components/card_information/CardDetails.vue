@@ -10,7 +10,7 @@
             </div>
             <div class="col-md-8">
                 <label>Card Title</label>
-                <input v-model="cardTitleModel"
+                <input v-model="cardTitle"
                         class="form-control"
                 >
             </div>
@@ -27,39 +27,58 @@
             </div>
 
             <div class="col-md-8">
-                ADD CODE
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Card Column</label>
+                        <v-select :options="[{label: 'Canada', code: 'ca'}]"></v-select>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label>Card Level</label>]
+                        <v-select :options="[{label: 'Canada', code: 'ca'}]"></v-select>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Update Card -->
-        <hr/>
-        <button class="btn btn-primary save-changes"
-            v-on:click="updateCard"
-        >
-            Update Card
-        </button>
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn btn-secondary"
+                        v-on:click="closeModal"
+                >
+                    Close Modal
+                </button>
+                <button class="btn btn-primary save-changes"
+                        v-on:click="updateCard"
+                >
+                    Update Card
+                </button>
+            </div>
+        </div>
+        <hr>
     </div>
 </template>
 
 <script>
-    import { createHelpers } from 'vuex-map-fields';
-    const { mapFields } = createHelpers({
-        getterType: 'getCardId',
-        mutationType: 'updateCardDetails',
-    });
+    import { mapFields } from 'vuex-map-fields';
+    const axios = require('axios');
 
     export default {
         name: 'CardDetails',
         props: {},
-        data() {
-            return {}
-        },
         computed: {
-            ...mapFields(['cardTitleModel']),
+            ...mapFields([
+                'cardTitle',
+                'listColumns',
+                'listLevels',
+            ]),
         },
         methods: {
+            closeModal: function() {
+                document.getElementById("cardInformationModalCloseButton").click();
+            },
             updateCard: function() {
-                //ADD CODE
+                this.$emit('update_card');
             },
         },
     }
