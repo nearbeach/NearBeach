@@ -39,7 +39,6 @@
                 </button>
             </div>
         </div>
-        <hr>
     </div>
 </template>
 

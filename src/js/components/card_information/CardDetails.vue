@@ -28,19 +28,28 @@
 
             <div class="col-md-8">
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-12 mt-4">
                         <label>Card Column</label>
-                        <v-select :options="[{label: 'Canada', code: 'ca'}]"></v-select>
+                        <v-select v-bind:options="listColumns"
+                                  v-bind:label="'column'"
+                                  v-bind:clearable="false"
+                                  v-model="cardColumn"
+                        ></v-select>
                     </div>
 
-                    <div class="col-md-12">
-                        <label>Card Level</label>]
-                        <v-select :options="[{label: 'Canada', code: 'ca'}]"></v-select>
+                    <div class="col-md-12 mt-4">
+                        <label>Card Level</label>
+                        <v-select v-bind:options="listLevels"
+                                  v-bind:label="'level'"
+                                  v-bind:clearable="false"
+                                  v-model="cardLevel"
+                        ></v-select>
                     </div>
                 </div>
             </div>
         </div>
 
+        <hr>
         <div class="row">
             <div class="col-md-12">
                 <button class="btn btn-secondary"
@@ -55,7 +64,6 @@
                 </button>
             </div>
         </div>
-        <hr>
     </div>
 </template>
 
@@ -66,9 +74,16 @@
     export default {
         name: 'CardDetails',
         props: {},
+        data() {
+            return {
+                tempModel: '',
+            }
+        },
         computed: {
             ...mapFields([
                 'cardTitle',
+                'cardColumn',
+                'cardLevel',
                 'listColumns',
                 'listLevels',
             ]),

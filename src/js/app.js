@@ -25,8 +25,22 @@ const moduleCard = {
             state.cardId = payload.cardId;
             state.cardTitle = payload.cardTitle;
             state.cardDescription = payload.cardDescription;
-            state.cardLevel = payload.cardLevel;
-            state.cardColumn = payload.cardColumn;
+            try {
+                //Filter for the correct column data from the list columns
+                state.cardColumn = state.listColumns.filter(row => {
+                    return payload.cardColumn == row['value'];
+                })[0];
+
+                //Filter for the correct level data from the list level
+                state.cardLevel = state.listLevels.filter(row => {
+                    return payload.cardLevel == row['value'];
+                })[0];
+            } catch {
+                state.cardColumn = 0;
+                state.cardLevel = 0;
+            }
+            //state.cardLevel = payload.cardLevel;
+            //state.cardColumn = payload.cardColumn;
 
             //Get data for the notes
             axios.post(
@@ -40,8 +54,18 @@ const moduleCard = {
         },
         updateField,
         updateLists(state, payload) {
-            state.listColumns = payload.columnResults;
-            state.listLevels = payload.levelResults;
+            state.listColumns = payload.columnResults.map(row => {
+                return {
+                    'value': row['pk'],
+                    'column': row['fields']['kanban_column_name'],
+                }
+            });
+            state.listLevels = payload.levelResults.map(row => {
+                return {
+                    'value': row['pk'],
+                    'level': row['fields']['kanban_level_name'],
+                }
+            });
         },
     },
     actions: {},

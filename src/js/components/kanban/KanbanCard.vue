@@ -93,7 +93,6 @@
                 this.sendDataUpstream(filtered_data);
             },
             onEnd: function(event) {
-                console.log("Event: ",event);
                 //Get the data
                 var new_elem = event['to'],
                     old_elem = event['from'],
@@ -125,6 +124,8 @@
                     'cardId': filtered_data['pk'],
                     'cardTitle': filtered_data['fields']['kanban_card_text'],
                     'cardDescription': filtered_data['fields']['kanban_card_description'],
+                    'cardColumn': filtered_data['fields']['kanban_column'],
+                    'cardLevel': filtered_data['fields']['kanban_level'],
                 })
 
                 //Emit the current card information
