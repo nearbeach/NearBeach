@@ -5,6 +5,7 @@ from ..forms import *
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.exceptions import PermissionDenied
 from django.template import loader
 from django.urls import reverse
 from random import SystemRandom
@@ -213,3 +214,10 @@ def permission_denied(request):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+def test_permission_denied(request):
+    """
+    This is a simple test - it will ALWAYS respond with permission denied
+    """
+    raise PermissionDenied

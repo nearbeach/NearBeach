@@ -3,6 +3,9 @@ from django.test import TestCase, Client, TransactionTestCase
 from django.urls import reverse
 
 import unittest
+import json
+from NearBeach.models import *
+from django.db.models import Q, Max
 
 def login_user(c: object, self: object) -> object:
     response = c.post(
@@ -36,12 +39,10 @@ class AdminUserPermissionTest(TestCase):
         # Make sure the admin user can open up the project
         response = c.get(reverse('project_information', args=['1']))
         self.assertEqual(response.status_code, 200)
-        print("Admin user can access a project with overlapping groups")
 
         # Make sure the admin user can open up the project
         response = c.get(reverse('project_information', args=['2']))
         self.assertEqual(response.status_code, 200)
-        print("Admin user can access a project without overlapping groups")
 
         c.get(reverse('logout'))
 
@@ -54,12 +55,10 @@ class AdminUserPermissionTest(TestCase):
         # Make sure the admin user can open up the task
         response = c.get(reverse('task_information', args=['1']))
         self.assertEqual(response.status_code, 200)
-        print("Admin user can access a task with overlapping groups")
 
         # Make sure the admin user can open up the project
         response = c.get(reverse('task_information', args=['2']))
         self.assertEqual(response.status_code, 200)
-        print("Admin user can access a task without overlapping groups")
 
         c.get(reverse('logout'))
 
@@ -72,12 +71,10 @@ class AdminUserPermissionTest(TestCase):
         # Make sure the admin user can open the kanban
         response = c.get(reverse('kanban_information', args=[1]))
         self.assertEqual(response.status_code, 200)
-        print("Admin user can access a kanban board with overlapping groups")
 
         # Make sure the admin user can open the kanban
         response = c.get(reverse('kanban_information', args=[2]))
         self.assertEqual(response.status_code, 200)
-        print("Admin user can access a kanban board without overlapping groups")
 
 
     def test_new_organisation_permissions(self):
@@ -89,7 +86,6 @@ class AdminUserPermissionTest(TestCase):
         # Make sure the admin user can open the kanban
         response = c.get(reverse('new_organisation'))
         self.assertEqual(response.status_code, 200)
-        print("Admin user can access a new_organisation with overlapping groups")
 
     def test_organisation_information_permissions(self):
         c = Client()
@@ -100,7 +96,6 @@ class AdminUserPermissionTest(TestCase):
         # Make sure the admin user can open the kanban
         response = c.get(reverse('organisation_information', args=[1]))
         self.assertEqual(response.status_code, 200)
-        print("Admin user can access a organisation_information with overlapping groups")
 
 
 class TeamLeaderPermissionTest(TestCase):
@@ -125,12 +120,10 @@ class TeamLeaderPermissionTest(TestCase):
         # Make sure the admin user can open up the project
         response = c.get(reverse('project_information', args=['1']))
         self.assertEqual(response.status_code, 200)
-        print("Team Leader can access a project with overlapping groups")
 
         # # Make sure the admin user can open up the project
         # response = c.get(reverse('project_information', args=['2']))
         # self.assertEqual(response.status_code, 403)
-        # print("Team Lead can NOT access a project without overlapping groups")
 
         c.get(reverse('logout'))
 
@@ -143,12 +136,10 @@ class TeamLeaderPermissionTest(TestCase):
         # Make sure the admin user can open up the project
         response = c.get(reverse('task_information', args=['1']))
         self.assertEqual(response.status_code, 200)
-        print("Team Leader can access a task with overlapping groups")
 
         # # Make sure the admin user can open up the project
         # response = c.get(reverse('task_information', args=['2']))
         # self.assertEqual(response.status_code, 403)
-        # print("Team Lead can NOT access a task without overlapping groups")
 
         c.get(reverse('logout'))
 
@@ -161,12 +152,32 @@ class TeamLeaderPermissionTest(TestCase):
         # Make sure the admin user can open the kanban
         response = c.get(reverse('kanban_information', args=[1]))
         self.assertEqual(response.status_code, 200)
-        print("Team Leader can access a kanban board with overlapping groups")
+
+        # TEMP CODE - CHECK USER PERMISSIONS LOGIC
+        user_group_results = user_group.objects.filter(
+            is_deleted=False,
+            username=2,
+        )
+
+        group_results = group.objects.filter(
+            Q(
+                is_deleted=False,
+                # The object_lookup groups
+                group_id__in=object_assignment.objects.filter(
+                    is_deleted=False,
+                    kanban_board_id=2,
+                ).values('group_id'),
+            ) &
+            Q(
+                group_id__in=user_group_results.values('group_id')
+            )
+        )
+
+        print("Group Results Length: %s" % len(group_results))
 
         # Make sure the admin user can open the kanban
-        response = c.get(reverse('kanban_information', args=[2]))
-        self.assertEqual(response.status_code, 403)
-        print("Team Leader can access a kanban board without overlapping groups")
+        response_2 = c.get(reverse('kanban_information', args=[2]))
+        self.assertEqual(response_2.status_code, 403)
 
     def test_new_organisation_permissions(self):
         c = Client()
@@ -177,7 +188,6 @@ class TeamLeaderPermissionTest(TestCase):
         # Make sure the admin user can open the kanban
         response = c.get(reverse('new_organisation'))
         self.assertEqual(response.status_code, 200)
-        print("Admin user can access a new_organisation with overlapping groups")
 
     def test_organisation_information_permissions(self):
         c = Client()
@@ -188,7 +198,6 @@ class TeamLeaderPermissionTest(TestCase):
         # Make sure the admin user can open the kanban
         response = c.get(reverse('organisation_information', args=[1]))
         self.assertEqual(response.status_code, 200)
-        print("Admin user can access a organisation_information with overlapping groups")
 
 
 class TeamMemberPermissionTest(TestCase):
@@ -213,12 +222,10 @@ class TeamMemberPermissionTest(TestCase):
         # Make sure the admin user can open up the project
         response = c.get(reverse('project_information', args=['1']))
         self.assertEqual(response.status_code, 200)
-        print("Team Member can access a project with overlapping groups")
 
         # # Make sure the admin user can open up the project
         # response = c.get(reverse('project_information', args=['2']))
         # self.assertEqual(response.status_code, 403)
-        # print("Team Member can NOT access a project without overlapping groups")
 
         c.get(reverse('logout'))
 
@@ -231,12 +238,10 @@ class TeamMemberPermissionTest(TestCase):
         # Make sure the admin user can open up the project
         response = c.get(reverse('task_information', args=['1']))
         self.assertEqual(response.status_code, 200)
-        print("Team Member can access a task with overlapping groups")
 
         # # Make sure the admin user can open up the task
         #response = c.get(reverse('task_information', args=['2']))
         #self.assertEqual(response.status_code, 403)
-        #print("Team Member can NOT access a task without overlapping groups")
 
         c.get(reverse('logout'))
 
@@ -262,12 +267,10 @@ class TeamInternPermissionTest(TestCase):
         # Make sure the admin user can open up the project
         response = c.get(reverse('project_information', args=['1']))
         self.assertEqual(response.status_code, 200)
-        print("Team Intern can access a project with overlapping groups")
 
         # # Make sure the admin user can open up the project
         #response = c.get(reverse('project_information', args=['2']))
         #self.assertEqual(response.status_code, 403)
-        #print("Team Intern can NOT access a project without overlapping groups")
 
         c.get(reverse('logout'))
 
@@ -280,12 +283,10 @@ class TeamInternPermissionTest(TestCase):
         # Make sure the admin user can open up the project
         response = c.get(reverse('task_information', args=['1']))
         self.assertEqual(response.status_code, 200)
-        print("Team Intern can access a task with overlapping groups")
 
         # # Make sure the admin user can open up the task
         #response = c.get(reverse('task_information', args=['2']))
         #self.assertEqual(response.status_code, 403)
-        #print("Team Intern can NOT access a task without overlapping groups")
 
         c.get(reverse('logout'))
 

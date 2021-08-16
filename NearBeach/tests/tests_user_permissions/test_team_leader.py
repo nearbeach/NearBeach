@@ -34,5 +34,4 @@ class CustomerPermissionTest(TestCase):
 #        # Go to an existing customer -> user should have access
 #        response = c.get(reverse('customer_information', args=['1']))
 #        self.assertEqual(response.status_code, 200)
-#        print("Admin can access customer information")
 #

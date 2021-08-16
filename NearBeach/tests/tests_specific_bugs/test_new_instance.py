@@ -46,4 +46,3 @@ class NewInstanceLoginTest(TestCase):
         # Make sure the admin user can open up the project
         response = c.get(reverse('dashboard'))
         self.assertEqual(response.status_code, 200)
-        print("Admin user can log into a new instance of NearBeach")

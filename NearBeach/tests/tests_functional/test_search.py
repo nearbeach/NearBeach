@@ -40,7 +40,6 @@ class TeamLeaderSearchTest(TestCase):
         # Go to an existing customer -> user should have access
         response = c.get(reverse('search'))
         self.assertEqual(response.status_code, 200)
-        print("Team Leader can go to search page")
 
         # Use the search bar to search
         response = c.post(
@@ -50,7 +49,6 @@ class TeamLeaderSearchTest(TestCase):
             }
         )
         self.assertEqual(response.status_code, 200)
-        print("Team Leader was able to search for RFC")
 
 
         # Use the search bar to search a number
@@ -61,7 +59,6 @@ class TeamLeaderSearchTest(TestCase):
             }
         )
         self.assertEqual(response.status_code, 200)
-        print("Team Leader was able to search for RFC")
 
 
         # Use the search bar to search for closed items
@@ -73,7 +70,6 @@ class TeamLeaderSearchTest(TestCase):
             }
         )
         self.assertEqual(response.status_code, 200)
-        print("Team Leader was able to search for RFC")
 
 
         # Use the search bar to search for a string that is > 250 character.
@@ -85,7 +81,6 @@ class TeamLeaderSearchTest(TestCase):
         #     }
         # )
         # self.assertEqual(response.status_code, 400)
-        # print("Team Leader was able to search for RFC")
 
 
     def test_team_leader_searches_api(self):
@@ -97,7 +92,6 @@ class TeamLeaderSearchTest(TestCase):
         # Go to an existing customer -> user should have access
         response = c.get(reverse('search_data'))
         self.assertEqual(response.status_code, 405)
-        print("Team Leader can go to search page")
 
         # Use the search bar to search
         response = c.post(
@@ -107,7 +101,6 @@ class TeamLeaderSearchTest(TestCase):
             }
         )
         self.assertEqual(response.status_code, 200)
-        print("Team Leader was able to search for RFC")
 
 
         # Use the search bar to search a number
@@ -118,7 +111,6 @@ class TeamLeaderSearchTest(TestCase):
             }
         )
         self.assertEqual(response.status_code, 200)
-        print("Team Leader was able to search for RFC")
 
 
         # Use the search bar to search for closed items
@@ -130,7 +122,6 @@ class TeamLeaderSearchTest(TestCase):
             }
         )
         self.assertEqual(response.status_code, 200)
-        print("Team Leader was able to search for RFC")
 
 
         # Use the search bar to search for a string that is > 250 character.
@@ -142,7 +133,6 @@ class TeamLeaderSearchTest(TestCase):
             }
         )
         self.assertEqual(response.status_code, 400)
-        print("Team Leader was able to search for RFC")
 
 
     def test_team_leader_searches_customers(self):
@@ -154,7 +144,6 @@ class TeamLeaderSearchTest(TestCase):
         # Go to an existing customer -> user should have access
         response = c.get(reverse('search_customer'))
         self.assertEqual(response.status_code, 200)
-        print("Team Leader can go to customer search page")
 
         # Team leader uses the API to get customer details
         response = c.post(
@@ -164,7 +153,6 @@ class TeamLeaderSearchTest(TestCase):
             }
         )
         self.assertEqual(response.status_code, 200)
-        print("Team Leader can use the API to search for a customer")
 
         # TODO: Add in the UNIT TESTS for testing data in produces certain data out
 
@@ -178,7 +166,6 @@ class TeamLeaderSearchTest(TestCase):
         # Go to an existing customer -> user should have access
         response = c.get(reverse('search_organisation'))
         self.assertEqual(response.status_code, 200)
-        print("Team Leader can go to organisation search page")
 
         # Team leader uses the API to get customer details
         response = c.post(
@@ -188,7 +175,6 @@ class TeamLeaderSearchTest(TestCase):
             }
         )
         self.assertEqual(response.status_code, 200)
-        print("Team Leader can use the API to search for an organisation")
 
         # TODO: Add in the UNIT TESTS for testing data in produces certain data out
 

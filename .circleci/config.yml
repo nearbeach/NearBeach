@@ -31,7 +31,7 @@ jobs:
           name: Running Tests
           command: |
             . venv/bin/activate
-            CI=true coverage run --omit='venv/*,NearBeach/tests/*,NearBeach/migrations/*,*/__init__.py,manage.py' manage.py test
+            CI=true coverage run --omit='venv/*,NearBeach/tests/*,NearBeach/migrations/*,*/__init__.py,manage.py' manage.py test --settings=tests.settings
             coverage report
             coverage html
       - store_test_results: # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/

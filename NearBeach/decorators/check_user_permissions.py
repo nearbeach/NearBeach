@@ -155,6 +155,7 @@ def check_user_permissions(min_permission_level, object_lookup=''):
 
                 # Check to make sure the user groups intersect
                 if len(group_results) == 0:
+                    print("USER PERMISSION DENIED - Raise Permission Denied: 403")
                     # There are no matching groups - i.e. the user does not have any permission
                     raise PermissionDenied
 

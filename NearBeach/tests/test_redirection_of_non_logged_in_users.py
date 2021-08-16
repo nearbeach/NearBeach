@@ -19,7 +19,6 @@ class CheckLoginPage(TestCase):
         c = Client()
         response = c.get(reverse('login'))
         self.assertEqual(response.status_code, 200)
-        print("Non logged in users can get access to the login page")
 
 
 class CheckCustomerInformation(TestCase):
@@ -49,7 +48,6 @@ class CheckCustomerInformation(TestCase):
         )
 
         # Notify tester
-        print("Non logged in users get redirected when visiting customers")
 
 
 class CheckDashboard(TestCase):
@@ -68,7 +66,6 @@ class CheckDashboard(TestCase):
         assertRedirectsToLogin(response_array, self)
 
         # Tell tester of results
-        print("Non Logged in users redirected when visiting dashboard")
 
 
 class CheckDocumentation(TestCase):
@@ -102,7 +99,6 @@ class CheckDocumentation(TestCase):
         #Check the array
         assertRedirectsToLogin(response_post_array, self)
 
-        print("Non Logged in users redirected when visiting documentation")
 
 
 class CheckKanban(TestCase):
@@ -124,7 +120,6 @@ class CheckKanban(TestCase):
         # Check the array
         assertRedirectsToLogin(response_array, self)
 
-        print("Non Logged in users redirected when visiting kanban information")
 
 
 class CheckPrivateDocument(TestCase):
@@ -142,7 +137,6 @@ class CheckPrivateDocument(TestCase):
             fetch_redirect_response=True
         )
 
-        print("Non Logged in users redirected when visiting private document")
 
 
 class CheckNew(TestCase):
@@ -164,7 +158,6 @@ class CheckNew(TestCase):
         # Check the array
         assertEqual405(response_array, self)
 
-        print("Non Logged in users redirected when visiting private document")
 
     def new_save(self):
         # Make sure the user gets redirected to the login page
@@ -217,7 +210,6 @@ class CheckObjects(TestCase):
         # Cheeck the array
         assertEqual405(response_array, self)
 
-        print("Non Logged in users redirected when visiting objects (GET)")
 
     def test_objects_post(self):
         # Setup the client
@@ -249,5 +241,3 @@ class CheckObjects(TestCase):
 
         # Cheeck the array
         assertRedirectsToLogin(response_array, self)
-
-        print("Non Logged in users redirected when visiting objects (GET)")
