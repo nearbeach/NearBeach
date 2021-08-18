@@ -1,37 +1,23 @@
-version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.6.7
-      - image: circleci/mysql:5.7.33
-        command: ["mysqld", "--character-set-server=utf8mb4", "--collation-server=utf8mb4_bin"]
-        environment:
-          MYSQL_ROOT_PASSWORD: rootpw
-          MYSQL_DATABASE: test_db
-          MYSQL_USER: user
-          MYSQL_PASSWORD: passw0rd
+      - image: cimg/python:3.9.6
     steps:
       - checkout
-      - run:
-          name: Install MySQL CLI
-          command: |
-            sudo apt update
-            sudo apt-get install default-mysql-client
-      - run:
-          name: Wait for db
-          command: dockerize -wait tcp://localhost:3306 -timeout 1m
       - run:
           name: Building Virtual Environment
           command: |
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
-            pip install coverage mysqlclient
+            pip install coverage
       - run:
           name: Running Tests
           command: |
             . venv/bin/activate
-            CI=true coverage run --omit='venv/*,NearBeach/tests/*,NearBeach/migrations/*,*/__init__.py,manage.py' manage.py test --settings=tests.settings
+            CI=true coverage run \
+              --omit='venv/*,NearBeach/tests/*,NearBeach/migrations/*,*/__init__.py,manage.py' \
+              manage.py test
             coverage report
             coverage html
       - store_test_results: # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/

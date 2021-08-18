@@ -10,6 +10,7 @@ from django.template import loader
 from django.urls import reverse
 from random import SystemRandom
 from django.db.models import Count
+from NearBeach.decorators.check_user_permissions import check_permission_denied
 
 # Import Python Libraries
 import json, urllib.parse, random
@@ -216,8 +217,10 @@ def permission_denied(request):
     return HttpResponse(t.render(c, request))
 
 
+@check_permission_denied(min_permission_level=1)
 def test_permission_denied(request):
     """
     This is a simple test - it will ALWAYS respond with permission denied
     """
-    raise PermissionDenied
+    print("Got here.")
+    return HttpResponse("Hello World")

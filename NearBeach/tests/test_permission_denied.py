@@ -23,7 +23,7 @@ class TestPermissionDenied(TestCase):
 
     def setUp(self):
         self.credentials = {
-            'username': 'team_leader',
+            'username': 'admin',
             'password': 'Test1234$'
         }
 

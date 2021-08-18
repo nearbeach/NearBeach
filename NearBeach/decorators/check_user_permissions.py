@@ -156,6 +156,7 @@ def check_user_permissions(min_permission_level, object_lookup=''):
                 # Check to make sure the user groups intersect
                 if len(group_results) == 0:
                     print("USER PERMISSION DENIED - Raise Permission Denied: 403")
+                    print("USER: %s" % request.user.username)
                     # There are no matching groups - i.e. the user does not have any permission
                     raise PermissionDenied
 
@@ -271,6 +272,16 @@ def check_rfc_permissions(min_permission_level):
                 # Everything is fine - continue on
                 return func(request, *args, **kwargs, user_level=user_level)
 
+            # Does not meet conditions
+            raise PermissionDenied
+        return inner
+    return decorator
+
+
+def check_permission_denied(min_permission_level):
+    def decorator(func):
+        @wraps(func)
+        def inner(request, *args, **kwargs):
             # Does not meet conditions
             raise PermissionDenied
         return inner
