@@ -20,9 +20,12 @@ jobs:
               manage.py test
             coverage report
             coverage html
+      # - run:
+      #     name: Cypress End-2-End Tests
+      #     command: npx cypress run --headless
       - store_test_results: # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
-          path: ~/NearBeach
+          path: ~/project/NearBeach
           desintation: tr1
       - store_artifacts: # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
-          path: ~/NearBeach/htmlcov
+          path: ~/project/NearBeach/htmlcov
           destination: tr1
