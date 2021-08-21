@@ -65,15 +65,24 @@
                 this.newCardInfo = data;
             },
             updateCard: function(data) {
-                console.log("GOT HERE!");
                 //Loop through the results - when the id's match. Update the data.
                 this.localKanbanCardResults.forEach(row => {
                     //Check to see if the primary keys match - if they do update the data
                     if (row['pk'] == data['kanban_card_id']) {
                         row['fields']['kanban_card_text'] = data['kanban_card_text'];
+                        row['fields']['kanban_column'] = data['kanban_column']['value'];
+                        row['fields']['kanban_level'] = data['kanban_level']['value'];
                     }
                 }) 
             },
+        },
+        mounted() {
+            //Send columns and levels into the VueX
+            this.$store.commit({
+                type: 'updateLists',
+                columnResults: this.columnResults,
+                levelResults: this.levelResults,
+            });
         }
     }
 </script>

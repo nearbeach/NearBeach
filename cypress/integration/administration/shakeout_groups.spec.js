@@ -21,6 +21,10 @@ describe("Shakeout Group -> as Admin", () => {
   });
 
   it("Search for 'Empty Group' -> make sure it is the only group left", () => {
+    //BUG FIX - scroll to the top of the page to stop earthquakes
+    cy.scrollTo(0,100);
+    cy.wait(1000);
+
     cy.get('.form-group > .form-control').type("Empty Group");
 
     cy.wait(1000);

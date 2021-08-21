@@ -58,7 +58,6 @@ def get_object_search_data(search_form):
 
     # If we are NOT including closed - then we will limit to those with status is_deleted=False
     if not include_closed:
-        print("IS INCLUDED")
         rfc_results = rfc_results.exclude(
            rfc_status__in=(5,6), 
         )

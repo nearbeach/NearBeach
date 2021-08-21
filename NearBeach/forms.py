@@ -237,6 +237,14 @@ class KanbanCardForm(forms.ModelForm):
     kanban_card_description = forms.CharField(
         required=False,
     )
+    kanban_column = forms.ModelChoiceField(
+        required=True,
+        queryset=kanban_column.objects.all()
+    )
+    kanban_level = forms.ModelChoiceField(
+        required=True,
+        queryset=kanban_level.objects.all(),
+    )
 
     class Meta:
         model = kanban_card
@@ -244,6 +252,8 @@ class KanbanCardForm(forms.ModelForm):
             'kanban_card_id',
             'kanban_card_text',
             'kanban_card_description',
+            'kanban_column',
+            'kanban_level',
         }
 
 

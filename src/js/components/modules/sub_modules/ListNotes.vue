@@ -36,7 +36,12 @@
         name: "ListNotes",
         props: {
             destination: String,
-            noteHistoryResults: Array,
+            noteHistoryResults: {
+                type: Array,
+                default: function() {
+                    return [];
+                },
+            },
         }
     }
 </script>
