@@ -85,6 +85,7 @@ urlpatterns = [
     path('kanban_level/<int:kanban_board_id>/resort/', kanban_level_views.resort_level, name='kanban_resort_level'),
     
     # Kanban
+    path('kanban_information/archive_kanban_cards/', kanban_views.archive_kanban_cards, name="archive_kanban_cards"),
     path('kanban_information/<int:kanban_board_id>/', kanban_views.kanban_information, name='kanban_information'),
     path('kanban_information/<int:kanban_board_id>/close_board/', kanban_views.kanban_close_board, name='kanban_close_board'),
     path('kanban_information/<int:kanban_board_id>/edit_board/', kanban_views.kanban_edit_board, name='kanban_edit_board'),

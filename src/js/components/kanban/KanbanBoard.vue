@@ -39,6 +39,9 @@
 </template>
 
 <script>
+    //Mixins
+    import iconMixin from "../../mixins/iconMixin";
+
     export default {
         name: "KanbanBoard",
         props: {
@@ -48,6 +51,9 @@
             levelResults: Array,
             newCardInfo: Array,
         },
+        mixins: [
+            iconMixin,
+        ],
         data() {
             return {
                 kanbanModel: {}, //Stores the data here temporarily
@@ -119,32 +125,35 @@
                     kanban_sticky['style']['display'] = "";
                 }
             },
+            updateKanbanModel: function() {
+                /* When the kanban board mounts - we need to setup the kanbanModel. The kanbanModel will store all the lists
+                 * where the cards are kept.
+                 *
+                 * Method
+                 * ~~~~~~
+                 * 1. Loop through the level
+                 * 2. Inside loop, create the object for that level. Then loop through each column
+                 * 3. Inside the column - create that column and insert all the cards associated with that model
+                 */
+                var temp_object = {}
+
+                this.levelResults.forEach(level_row => {
+                    //Make sure there is a blank object for this level id
+                    temp_object[level_row['pk']] = {};
+
+                    //Loop through each level and add the data in
+                    this.columnResults.forEach(column_row => {
+                        //Insert the filtered data for this object location
+                        temp_object[level_row['pk']][column_row['pk']] = this.getCards(level_row['pk'],column_row['pk']);
+                    });
+                });
+
+                //Send the data to the kanban model
+                this.kanbanModel = temp_object;
+            }
         },
         mounted() {
-            /* When the kanban board mounts - we need to setup the kanbanModel. The kanbanModel will store all the lists
-             * where the cards are kept.
-             *
-             * Method
-             * ~~~~~~
-             * 1. Loop through the level
-             * 2. Inside loop, create the object for that level. Then loop through each column
-             * 3. Inside the column - create that column and insert all the cards associated with that model
-             */
-            var temp_object = {}
-
-            this.levelResults.forEach(level_row => {
-                //Make sure there is a blank object for this level id
-                temp_object[level_row['pk']] = {};
-
-                //Loop through each level and add the data in
-                this.columnResults.forEach(column_row => {
-                    //Insert the filtered data for this object location
-                    temp_object[level_row['pk']][column_row['pk']] = this.getCards(level_row['pk'],column_row['pk']);
-                });
-            });
-
-            //Send the data to the kanban model
-            this.kanbanModel = temp_object;
+            this.updateKanbanModel();
 
             //Check the resize procedure
             this.resizeProcedure();

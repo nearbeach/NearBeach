@@ -257,6 +257,13 @@ class KanbanCardForm(forms.ModelForm):
         }
 
 
+class KanbanCardArchiveForm(forms.Form):
+    kanban_card_id = forms.ModelMultipleChoiceField(
+        required=True,
+        queryset=kanban_card.objects.all(),
+    )
+
+
 class AddUserForm(forms.Form):
     user_list = forms.ModelMultipleChoiceField(
         required=True,

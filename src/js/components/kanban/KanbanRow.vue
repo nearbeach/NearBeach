@@ -20,7 +20,7 @@
             newCardInfo: Array,
         },
         methods: {
-            doubleClickedCard(data) {
+            doubleClickedCard: function(data) {
                 //Emit the card id up stream
                 this.$emit('double_clicked_card',data);
             },

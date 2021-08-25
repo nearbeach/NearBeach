@@ -996,6 +996,9 @@ class kanban_card(models.Model):
         null=True,
         blank=True,
     )
+    is_archived = models.BooleanField(
+        default=False,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(

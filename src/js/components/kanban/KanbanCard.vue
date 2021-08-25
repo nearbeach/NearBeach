@@ -37,7 +37,13 @@
                href="javascript:void(0)"
                v-on:click="addNewLink"
             >
-                Link Existing Object
+                Link Object
+            </a>
+            <a class="kanban-link btn btn-danger"
+               href="javascript:void(0)"
+               v-on:click="archiveCards"
+            >
+                Archive Cards
             </a>
         </div>
     </draggable>
@@ -82,6 +88,25 @@
                 //Get the Modal from the above modal
                 var newLinkModal = new Modal(newLinkModal);
                 newLinkModal.show();
+            },
+            archiveCards: function() {
+                // Create data_to_send
+                const data_to_send = new FormData();
+
+                // Loop through the master list and get all card ids
+                this.masterList.forEach(row => {
+                    data_to_send.append('kanban_card_id', row['pk']);
+                });
+
+                // Use axios to contact backend
+                axios.post(
+                    `/kanban_information/archive_kanban_cards/`,
+                    data_to_send,
+                ).then(response => {
+                    document.location.reload(true)
+                }).catch(error => {
+                    console.log("ERROR: ",error); 
+                })
             },
             doubleClickCard: function(data) {
                 //Filter out the data we want to send up stream

@@ -51,6 +51,7 @@
     "@iconify-icons/typcn": "^1.1.0",
     "@iconify/icons-akar-icons": "^1.1.17",
     "@iconify/icons-bi": "^1.1.2",
+    "@iconify/icons-bx": "^1.1.2",
     "@iconify/icons-carbon": "^1.1.4",
     "@iconify/icons-cil": "^1.1.0",
     "@iconify/icons-feather": "^1.1.0",
@@ -67,11 +68,13 @@
     "html-webpack-plugin": "^4.3.0",
     "mini-css-extract-plugin": "^0.9.0",
     "node-sass": "^4.14.1",
+    "path-parse": ">=1.0.7",
     "postcss-loader": "^3.0.0",
     "precss": "^4.0.0",
     "sass": "^1.35.2",
     "sass-loader": "^8.0.2",
     "style-loader": "^1.2.1",
+    "tar": ">=6.1.2",
     "tinymce": "^5.8.2",
     "vue": "^2.6.14",
     "vue-loader": "^15.9.3",
@@ -81,8 +84,6 @@
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
     "webpack-merge": "^4.2.2",
-    "ws": ">=6.2.2",
-    "tar": ">=6.1.2",
-    "path-parse": ">=1.0.7"
+    "ws": ">=6.2.2"
   }
 }
