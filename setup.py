@@ -36,6 +36,7 @@ setuptools.setup(
 	'simplejson',
 	'pillow',
 	'urllib3',
+    'boto3',
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
