@@ -96,12 +96,10 @@
             updateCard: function() {
                 this.$store.commit({
                     type: 'updateKanbanCard',
-                    cardId: this.cardId,
-                    cardTitle: this.cardTitle,
-                    cardColumn: this.cardColumn,
-                    cardLevel: this.cardLevel,
-                    listColumns: this.listColumns,
-                    listLevels: this.listLevels,
+                    card_id: this.cardId,
+                    kanban_card_text: this.cardTitle,
+                    kanban_column: this.cardColumn,
+                    kanban_level: this.cardLevel,
                 })
 
                 //TEMP - need to replace with a close functionality

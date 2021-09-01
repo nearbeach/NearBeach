@@ -123,15 +123,25 @@ const moduleKanban = {
         updateKanbanCard(state, payload) {
             //Get the index location
             const index_location = state.kanbanCardResults.findIndex(row => {
-                return row['pk'] == payload.cardId;
+                return row['pk'] == payload.card_id;
             });
 
-            //Update the kanbanCardResults at the index location
-            state.kanbanCardResults[index_location]['fields']['kanban_card_text'] = payload.cardTitle;
-            state.kanbanCardResults[index_location]['fields']['kanban_column'] = payload.cardColumn.value;
-            state.kanbanCardResults[index_location]['fields']['kanban_level'] = payload.cardLevel.value;
+            console.log("Index Location: ",index_location);
 
-            console.log(state.kanbanCardResults[index_location]);
+            //Loop through each property and 
+            console.log("OBJECT KEYS: ",Object.keys(payload));
+            
+            //Loop through each keys for the payload, and update the relevant field
+            const continue_keys = ['type', 'card_id']
+            Object.keys(payload).forEach(key => {
+                //Skip some certain keys
+                if (continue_keys.includes(key)) {
+                    return;
+                }
+
+                //Update the results
+                state.kanbanCardResults[index_location]['fields'][key] = payload[key];
+            })
         },
         deletedCard(state, payload) {},
         

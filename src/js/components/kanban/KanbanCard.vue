@@ -70,13 +70,19 @@
         },
         data() {
             return {
-                masterList: [],
+                //masterList: [],
             }
         },
         computed: {
             ...mapGetters({
                 allCards: 'getCards',
             }),
+            masterList: function() {
+                return this.allCards.filter(card => {
+                    return card['fields']['kanban_column'] == this.columnId &&
+                           card['fields']['kanban_level'] == this.levelId;
+                })
+            },
         },
         mixins: [
             iconMixin,
@@ -130,12 +136,12 @@
                 //Setup data to send upstream
                 this.sendDataUpstream(filtered_data);
             },
-            filterCards: function() {
-                this.masterList = this.allCards.filter(card => {
+            /*masterList: function() {
+                return this.allCards.filter(card => {
                     return card['fields']['kanban_column'] == this.columnId &&
                            card['fields']['kanban_level'] == this.levelId;
                 })
-            },
+            },*/
             onEnd: function(event) {
                 //Get the data
                 var new_elem = event['to'],
@@ -156,6 +162,14 @@
                     `/kanban_information/${card_id}/move_card/`,
                     data_to_send,
                 ).then(response => {
+                    //Update VueX kanban data
+                    this.$store.commit({
+                        type: 'updateKanbanCard',
+                        card_id: card_id,
+                        kanban_column: new_elem['dataset']['column'],
+                        kanban_level: new_elem['dataset']['level'],
+                        kanban_card_sort_number: event['newIndex'],
+                    })
                     console.log("Response: ",response);
                 }).catch(error => {
                     console.log("Error: ",error);
@@ -200,15 +214,7 @@
                     this.masterList.push(this.newCardInfo[0]);
                 }
             },
-            allCards: function() {
-                console.log("All Cards Update: ",allCards);
-                this.filterCards();
-            },
         },
-        mounted() {
-            //Update the mastList cards
-            this.filterCards();
-        }
     }
 </script>
 
