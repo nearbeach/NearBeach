@@ -111,6 +111,47 @@ const moduleDestination = {
     }
 }
 
+const moduleKanban = {
+    state: () => ({
+        kanbanCardResults: [],
+        columnResults: [],
+        levelResults: [],
+    }),
+    mutations: {
+        //CUD Operations
+        creationCard(state, payload) {},
+        updateKanbanCard(state, payload) {
+            //Get the index location
+            const index_location = state.kanbanCardResults.findIndex(row => {
+                return row['pk'] == payload.cardId;
+            });
+
+            //Update the kanbanCardResults at the index location
+            state.kanbanCardResults[index_location]['fields']['kanban_card_text'] = payload.cardTitle;
+            state.kanbanCardResults[index_location]['fields']['kanban_column'] = payload.cardColumn.value;
+            state.kanbanCardResults[index_location]['fields']['kanban_level'] = payload.cardLevel.value;
+
+            console.log(state.kanbanCardResults[index_location]);
+        },
+        deletedCard(state, payload) {},
+        
+        //The initial payload of kanban card results
+        initPayload(state, payload) {
+            state.kanbanCardResults = payload.kanbanCardResults;
+            state.columnResults = payload.columnResults;
+            state.levelResults = payload.levelResults;
+        },
+    },
+    actions: {},
+    getters: {
+        getCards: state => {
+            return state.kanbanCardResults;
+        },
+        getColumns: state => {
+            return state.columnResults;
+        },
+    },
+}
 /*
 const moduleLocationId = {
     state: () => ({
@@ -178,6 +219,7 @@ const store = new Vuex.Store({
         //location: moduleLocationId,
         //rootUrl: moduleRootUrl,
         //staticUrl: moduleStaticUrl,
+        kanban: moduleKanban,
         url: moduleUrl,
     }
 })

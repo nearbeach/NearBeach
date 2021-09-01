@@ -56,14 +56,27 @@
 
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
+    
+    //VUEX MAP GETTERS
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "KanbanCard",
         props: {
             columnId: Number,
             levelId: Number,
-            masterList: Array,
+            //masterList: Array,
             newCardInfo: Array,
+        },
+        data() {
+            return {
+                masterList: [],
+            }
+        },
+        computed: {
+            ...mapGetters({
+                allCards: 'getCards',
+            }),
         },
         mixins: [
             iconMixin,
@@ -116,6 +129,12 @@
 
                 //Setup data to send upstream
                 this.sendDataUpstream(filtered_data);
+            },
+            filterCards: function() {
+                this.masterList = this.allCards.filter(card => {
+                    return card['fields']['kanban_column'] == this.columnId &&
+                           card['fields']['kanban_level'] == this.levelId;
+                })
             },
             onEnd: function(event) {
                 //Get the data
@@ -180,7 +199,15 @@
                     //The new card is for this level and column. Add it to the masterList
                     this.masterList.push(this.newCardInfo[0]);
                 }
-            }
+            },
+            allCards: function() {
+                console.log("All Cards Update: ",allCards);
+                this.filterCards();
+            },
+        },
+        mounted() {
+            //Update the mastList cards
+            this.filterCards();
         }
     }
 </script>
