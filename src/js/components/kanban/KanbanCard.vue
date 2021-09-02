@@ -136,41 +136,122 @@
                 //Setup data to send upstream
                 this.sendDataUpstream(filtered_data);
             },
-            /*masterList: function() {
-                return this.allCards.filter(card => {
-                    return card['fields']['kanban_column'] == this.columnId &&
-                           card['fields']['kanban_level'] == this.levelId;
+            dragDifferentColumn(data) {},
+            dragSameColumn(data) {
+                //Short hand - making it easy to read code later
+                let new_sort = parseInt(data.get('new_card_sort_number')),
+                    old_sort = parseInt(data.get('old_card_sort_number')),
+                    column = parseInt(data.get('new_card_column')),
+                    level = parseInt(data.get('new_card_level'));
+
+                //Determine the delta - -1 or 1.
+                //Negative number if old_sort is less than new sort, i.e. move
+                //everything back one
+                let delta = 1 - 2*(old_sort < new_sort);
+
+                //Get the largest and smallest values
+                let largest = (new_sort >= old_sort)*new_sort + (new_sort < old_sort)*old_sort,
+                    smallest = (new_sort >= old_sort)*old_sort + (new_sort < old_sort)*new_sort;
+
+                console.log(`Largest: ${largest} | Smallest: ${smallest}`);
+
+                //If they are the same (i.e. drag and dropped in same place) - return
+                if (largest == smallest) {
+                    return [];
+                }
+
+                //Filter for the data we need
+                let filtered_data = this.allCards.filter(row => {
+                    //Return when same column and level, whilst also in range of smallest and largest
+                    return row['fields']['kanban_column'] === column &&
+                           row['fields']['kanban_level'] === level &&
+                           row['fields']['kanban_card_sort_number'] >= smallest &&
+                           row['fields']['kanban_card_sort_number'] <= largest;
                 })
-            },*/
+
+                //Create the return array
+                let return_array = [];
+
+                //Loop through the filtered data, and apply the changes required
+                filtered_data.forEach(row => {
+                    return_array.push({
+                        card_id: row['pk'],
+                        kanban_column: column,
+                        kanban_level: level,
+                        kanban_card_sort_number: row['fields']['kanban_card_sort_number'] + delta, 
+                    })
+                })
+
+                return return_array;
+            },
             onEnd: function(event) {
-                //Get the data
+                /* Update the sort order
+                If both the old and new level/column destinations are the same,
+                we take the difference between the two values. Otherwise we apply
+                two sort orders to both the old and the new*/
+                
+                //Get the y=data
                 var new_elem = event['to'],
                     old_elem = event['from'],
                     card_id = event['item']['dataset']['cardId'];
 
+                //Setup variables (for shorthand)
+                let new_card_column = new_elem['dataset']['column'],
+                    new_card_level = new_elem['dataset']['level'],
+                    new_card_sort_number = event['newIndex'],
+                    old_card_column = old_elem['dataset']['column'],
+                    old_card_level = old_elem['dataset']['level'],
+                    old_card_sort_number = event['oldIndex'];
+
+
                 //Create data_to_send
                 const data_to_send = new FormData();
-                data_to_send.set('new_card_column',new_elem['dataset']['column']);
-                data_to_send.set('new_card_level',new_elem['dataset']['level']);
-                data_to_send.set('new_card_sort_number',event['newIndex']);
-                data_to_send.set('old_card_column',old_elem['dataset']['column']);
-                data_to_send.set('old_card_level',old_elem['dataset']['level']);
-                data_to_send.set('old_card_sort_number',event['oldIndex']);
+                data_to_send.set('new_card_column', new_card_column);
+                data_to_send.set('new_card_level', new_card_level);
+                data_to_send.set('new_card_sort_number', new_card_sort_number);
+                data_to_send.set('old_card_column', old_card_column);
+                data_to_send.set('old_card_level', old_card_level);
+                data_to_send.set('old_card_sort_number', old_card_sort_number);
 
                 //Use axios to send the data to the database
                 axios.post(
                     `/kanban_information/${card_id}/move_card/`,
                     data_to_send,
                 ).then(response => {
+                    //Define cards_to_change
+                    let cards_to_change = [];
+
+                    //Depending if the card moves columns depends what we do
+                    if ((new_card_column == old_card_column) && 
+                        (new_card_level == old_card_level)) {
+                        //The card stayed in the same place.
+                        cards_to_change = this.dragSameColumn(data_to_send);
+                    } else {
+                        //The card move to a different place
+                        cards_to_change = this.dragDifferentColumn(data_to_send);
+                    }
+
+                    console.log("Cards to Change: ",cards_to_change);
+
+                    //ADD CODE - loop through the cards to change
+                    cards_to_change.forEach(row => {
+                        this.$store.commit({
+                            type: 'updateKanbanCard',
+                            card_id: row['card_id'],
+                            kanban_column: row['kanban_column'], 
+                            kanban_level: row['kanban_level'],
+                            kanban_card_sort_number: row['kanban_card_sort_number'],
+                        })
+                    })
+
                     //Update VueX kanban data
-                    this.$store.commit({
+                    /*this.$store.commit({
                         type: 'updateKanbanCard',
                         card_id: card_id,
                         kanban_column: new_elem['dataset']['column'],
                         kanban_level: new_elem['dataset']['level'],
                         kanban_card_sort_number: event['newIndex'],
-                    })
-                    console.log("Response: ",response);
+                    })*/
                 }).catch(error => {
                     console.log("Error: ",error);
                 })

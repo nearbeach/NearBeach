@@ -126,11 +126,6 @@ const moduleKanban = {
                 return row['pk'] == payload.card_id;
             });
 
-            console.log("Index Location: ",index_location);
-
-            //Loop through each property and 
-            console.log("OBJECT KEYS: ",Object.keys(payload));
-            
             //Loop through each keys for the payload, and update the relevant field
             const continue_keys = ['type', 'card_id']
             Object.keys(payload).forEach(key => {
