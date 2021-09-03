@@ -3,6 +3,7 @@ from django.db import models, connection
 from .private_media import *
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.utils.translation import gettext_lazy as _
 import uuid
 
 # ENUM choices
@@ -2696,6 +2697,10 @@ class tag(models.Model):
         max_length=50,
         unique=True,
     )
+    tag_colour = models.CharField(
+        max_length=6,
+        default="ff69b4",
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
@@ -2715,34 +2720,29 @@ class tag(models.Model):
 
 
 class tag_assignment(models.Model):
+    class ObjectEnum(models.TextChoices):
+        REQUIREMENT = 'REQ', _('Requirement')
+        REQUIREMENT_ITEM = 'ITEM', _('Requirement Item')
+        PROJECT = 'PRO', _('Project')
+        TASK = 'TASK', _('Task')
+        KANBAN = 'KAN', _('Kanban Board')
+        CARD = 'CARD', _('Kanban Card')
+        REQUEST_FOR_CHANGE = 'RFC', _('Reuqest for Change')
+        CUSTOMER = 'CUST', _('Customer')
+        ORGANISATION = 'ORG', _('Organisation')
+
     tag_assignment_id = models.AutoField(primary_key=True)
     tag = models.ForeignKey(
         tag,
         on_delete=models.CASCADE,
     )
-    project = models.ForeignKey(
-        project,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
+    object_enum = models.CharField(
+        max_length=4,
+        choices=ObjectEnum.choices,
+        default=ObjectEnum.REQUIREMENT,
     )
-    task = models.ForeignKey(
-        'task',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    opportunity = models.ForeignKey(
-        opportunity,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    requirement = models.ForeignKey(
-        requirement,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
+    object_id = models.IntegerField(
+        default=0,
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
