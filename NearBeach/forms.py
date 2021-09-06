@@ -212,6 +212,16 @@ class DeleteLevelForm(forms.Form):
     )
 
 
+class DeleteTagForm(forms.ModelForm):
+    class Meta:
+        model = tag_assignment
+        fields = {
+            'tag',
+            'object_enum',
+            'object_id',
+        }
+
+
 class DocumentUploadForm(ModelForm):
     document = forms.FileField(
         required=True,

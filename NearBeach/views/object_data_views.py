@@ -472,6 +472,29 @@ def customer_list_all(request,destination,location_id):
 
     return HttpResponse(serializers.serialize('json',customer_results), content_type='application/json')
 
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def delete_tag(request):
+    # Get form data
+    form = DeleteTagForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Update/Delete tag associations
+    tag_assignment.objects.filter(
+        is_deleted=False,
+        tag_id=form.cleaned_data['tag'],
+        object_enum=form.cleaned_data['object_enum'],
+        object_id=form.cleaned_data['object_id']
+    ).update(
+        is_deleted=True,
+    )
+
+    # Ok - return blank
+    return HttpResponse("")
+
+
 # Internal function
 def get_customer_list(destination,location_id):
     # Get a list of all objects assignments dependant on the destination
@@ -832,6 +855,24 @@ def query_bug_client(request,destination,location_id):
     # Send back the JSON data
     return JsonResponse(json_data['bugs'], safe=False)
 
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def tag_list(request, destination, location_id):
+    # Get the data we want
+    tag_results = tag.objects.filter(
+        is_deleted=False,
+        tag_id__in=tag_assignment.objects.filter(
+            is_deleted=False,
+            object_enum=destination,
+            object_id=location_id,
+        ).values('tag_id')
+    )
+
+    return HttpResponse(
+        serializers.serialize('json', tag_results),
+        content_type='application/json',
+    )
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")

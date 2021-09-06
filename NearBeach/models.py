@@ -2721,15 +2721,15 @@ class tag(models.Model):
 
 class tag_assignment(models.Model):
     class ObjectEnum(models.TextChoices):
-        REQUIREMENT = 'REQ', _('Requirement')
-        REQUIREMENT_ITEM = 'ITEM', _('Requirement Item')
-        PROJECT = 'PRO', _('Project')
-        TASK = 'TASK', _('Task')
-        KANBAN = 'KAN', _('Kanban Board')
-        CARD = 'CARD', _('Kanban Card')
-        REQUEST_FOR_CHANGE = 'RFC', _('Reuqest for Change')
-        CUSTOMER = 'CUST', _('Customer')
-        ORGANISATION = 'ORG', _('Organisation')
+        REQUIREMENT = 'requirement', _('Requirement')
+        REQUIREMENT_ITEM = 'requirement_item', _('Requirement Item')
+        PROJECT = 'project', _('Project')
+        TASK = 'task', _('Task')
+        KANBAN = 'kanban_board', _('Kanban Board')
+        CARD = 'kanban_card', _('Kanban Card')
+        REQUEST_FOR_CHANGE = 'request_for_change', _('Reuqest for Change')
+        CUSTOMER = 'customer', _('Customer')
+        ORGANISATION = 'organisation', _('Organisation')
 
     tag_assignment_id = models.AutoField(primary_key=True)
     tag = models.ForeignKey(
@@ -2737,7 +2737,7 @@ class tag_assignment(models.Model):
         on_delete=models.CASCADE,
     )
     object_enum = models.CharField(
-        max_length=4,
+        max_length=40,
         choices=ObjectEnum.choices,
         default=ObjectEnum.REQUIREMENT,
     )

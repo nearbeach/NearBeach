@@ -278,6 +278,8 @@ import KanbanEditBoard from "./components/kanban/KanbanEditBoard.vue";
 import KanbanGroupPermissions from "./components/kanban/KanbanGroupPermissions.vue";
 import ProfileInformation from "./components/profile/ProfileInformation.vue";
 import ChangeTaskInformation from "./components/request_for_change/ChangeTaskInformation.vue";
+import NotesModule from "./components/modules/sub_modules/NotesModule.vue";
+import ListTagsModule from "./components/modules/sub_modules/ListTagsModule.vue";
 
 
 //Import Bootstrap
@@ -417,6 +419,8 @@ Vue.component('ChangeTaskInformation', ChangeTaskInformation);
 Vue.component('CardDetails', CardDetails);
 Vue.component('CardDescription', CardDescription);
 Vue.component('CardNotes', CardNotes);
+Vue.component('NotesModule', NotesModule);
+Vue.component('ListTagsModule', ListTagsModule);
 
 //Validation
 import Vuelidate from 'vuelidate'
