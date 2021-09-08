@@ -280,7 +280,7 @@ import ProfileInformation from "./components/profile/ProfileInformation.vue";
 import ChangeTaskInformation from "./components/request_for_change/ChangeTaskInformation.vue";
 import NotesModule from "./components/modules/sub_modules/NotesModule.vue";
 import ListTagsModule from "./components/modules/sub_modules/ListTagsModule.vue";
-
+import AddTagWizard from "./components/modules/wizards/AddTagWizard.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -421,8 +421,8 @@ Vue.component('CardDescription', CardDescription);
 Vue.component('CardNotes', CardNotes);
 Vue.component('NotesModule', NotesModule);
 Vue.component('ListTagsModule', ListTagsModule);
+Vue.component('AddTagWizard', AddTagWizard);
 
-//Validation
 import Vuelidate from 'vuelidate'
 Vue.use(Vuelidate)
 

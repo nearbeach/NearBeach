@@ -198,6 +198,46 @@ def add_notes(request,destination,location_id):
 
     return HttpResponse(serializers.serialize('json',note_resuts),content_type='application.json')
 
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def add_tags(request, destination, location_id):
+    #Check the data against the form
+    form = AddTagsForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors);
+
+    # Loop throgh each tag
+    tag_list = request.POST.getlist("tag_id")
+
+    for single_tag in tag_list:
+        # Grab the tag instance
+        tag_instance = tag.objects.get(tag_id=single_tag)
+
+        submit_tag_assignment = tag_assignment(
+            tag=tag_instance,
+            object_enum=destination,
+            object_id=location_id,
+            change_user=request.user,
+        )
+        submit_tag_assignment.save()
+
+    # Return all tags associated with the destination/locationid
+    tag_results = tag.objects.filter(
+        is_deleted=False,
+        tag_id__in=tag_assignment.objects.filter(
+            is_deleted=False,
+            object_enum=destination,
+            object_id=location_id,
+        ).values('tag_id')
+    )
+
+    return HttpResponse(
+        serializers.serialize('json', tag_results),
+        content_type='application/json',
+    )
+
+
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def add_user(request,destination,location_id):
@@ -873,6 +913,21 @@ def tag_list(request, destination, location_id):
         serializers.serialize('json', tag_results),
         content_type='application/json',
     )
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def tag_list_all(request):
+    # Get the data we want
+    tag_results = tag.objects.filter(
+        is_deleted=False,
+    )
+
+    return HttpResponse(
+        serializers.serialize('json', tag_results),
+        content_type='application/json',
+    )
+
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")

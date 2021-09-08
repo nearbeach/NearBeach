@@ -138,6 +138,12 @@ class AddRequirementLinkForm(forms.Form):
     )
 
 
+class AddTagsForm(forms.Form):
+    tag_id = forms.ModelMultipleChoiceField(
+        queryset=tag.objects.all(),
+    )
+
+
 class AdminAddUserForm(forms.Form):
     group = forms.ModelMultipleChoiceField(
         queryset=group.objects.all(),

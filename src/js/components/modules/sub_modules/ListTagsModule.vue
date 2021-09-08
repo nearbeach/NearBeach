@@ -18,16 +18,38 @@
                 </span>
             </div>
         </div>
+
+        <!-- ADD TAG BUTTON -->
+        <hr>
+        <div class="row submit-row">
+            <div class="col-md-12">
+                <a href="javascript:void(0)"
+                   class="btn btn-primary save-changes"
+                   v-on:click="createNewTag"
+                >Add Tag to {{destination}}</a>
+            </div>
+        </div>
+
+        <!-- ADD TAG MODULE -->
+        <add-tag-wizard v-bind:destination="destination"
+                        v-bind:location-id="locationId"
+                        v-bind:assigned-tags="tagList"
+                        v-on:add_tags="addTags($event)"
+        ></add-tag-wizard>
+
     </div>
 </template>
 
 <script>
     const axios = require('axios');
+    import {Modal} from "bootstrap";
     
     //Mixin
     import iconMixin from "../../../mixins/iconMixin";
+    import AddTagWizard from '../wizards/AddTagWizard.vue';
 
     export default {
+        components: { AddTagWizard },
         name: "ListTagsModule",
         props: {
             destination: String,
@@ -42,6 +64,14 @@
             iconMixin,
         ],
         methods: {
+            addTags: function(data) {
+                this.tagList = data;
+            },
+            createNewTag: function() {
+                //Open up modal
+                var newTagModal = new Modal(document.getElementById('addTagModal'));
+                newTagModal.show();
+            },
             getAssignedTags: function() {
                 axios.post(
                     `/object_data/${this.destination}/${this.locationId}/tag_list/`
