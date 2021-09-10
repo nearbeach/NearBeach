@@ -253,6 +253,7 @@ urlpatterns = [
     path('search/organisation/data/', search_views.search_organisation_data, name='search_organisation_data'),
     path('search/permission_set/', search_views.search_permission_set, name='search_permission_set'),
     path('search/permission_set/data/', search_views.search_permission_set_data, name='search_permission_set_data'),
+    path('search/tag/', search_views.search_tag, name='search_tag'),
     path('search/user/', search_views.search_user, name='search_user'),
     path('search/user/data/', search_views.search_user_data, name='search_user_data'),
 

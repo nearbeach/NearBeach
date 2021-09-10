@@ -1,6 +1,7 @@
 .tag-list {
     display: flex;
     justify-content: start;
+    flex-wrap: wrap;
 }
 
 .single-tag {

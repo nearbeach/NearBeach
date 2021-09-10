@@ -211,6 +211,7 @@ import UploadDocumentWizard from "./components/modules/wizards/UploadDocumentWiz
 import RequirementItemInformation from "./components/requirement_items/RequirementItemInformation.vue";
 import ListOrganisations from "./components/organisations/ListOrganisations.vue";
 import SearchOrganisations from "./components/search/SearchOrganisations.vue";
+import SearchTags from "./components/search/SearchTags.vue";
 import OrganisationInformation from "./components/organisations/OrganisationInformation.vue";
 import OrganisationModules from "./components/organisations/OrganisationModules.vue";
 import CustomersListModule from "./components/modules/sub_modules/CustomersListModule.vue";
@@ -422,6 +423,7 @@ Vue.component('CardNotes', CardNotes);
 Vue.component('NotesModule', NotesModule);
 Vue.component('ListTagsModule', ListTagsModule);
 Vue.component('AddTagWizard', AddTagWizard);
+Vue.component('SearchTags', SearchTags);
 
 import Vuelidate from 'vuelidate'
 Vue.use(Vuelidate)
