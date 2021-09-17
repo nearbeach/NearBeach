@@ -25,6 +25,7 @@
                     <div v-for="tag in tagResults" 
                          v-bind:key="tag['pk']" 
                          v-bind:style="`background-color: #${tag['fields']['tag_colour']};`"
+                         v-on:dblclick="editTag(tag['pk'])"
                          class="single-tag"
                     >
                         {{tag['fields']['tag_name']}}
@@ -46,6 +47,9 @@
                     </div>
                 </div>
             </div>
+
+            <!-- MODALS -->
+            <edit-tag-modal v-bind:single-tag="singleTag"></edit-tag-modal>
         </div>
     </div>
 </template>
@@ -53,6 +57,7 @@
 <script>
     //MIXINS
     import iconMixin from '../../mixins/iconMixin';
+    import { Modal } from 'bootstrap';
 
     export default {
         name: 'SearchTags',
@@ -64,6 +69,14 @@
                 },
             },
         },
+        data() {
+            return {
+                singleTag: {
+                    tagName: '',
+                    tagColour: '',
+                },
+            }
+        },
         mixins: [
             iconMixin
         ],
@@ -71,8 +84,19 @@
             addTag: function() {
                 //ADD CODE
             },
-            editTag: function() {
-                //ADD CODE
+            editTag: function(tag_id) {
+                //Filter for the tag information
+                let single_tag = this.tagResults.filter(row => {
+                    return row['pk'] == tag_id;
+                })[0];
+
+                //Send data down to the modal
+                this.singleTag['tagName'] = single_tag['fields']['tag_name'];
+                this.singleTag['tagColour'] = single_tag['fields']['tag_colour'];
+
+                //Open up modal
+                let edit_tag_modal = new Modal(document.getElementById('editTagModal'));
+                edit_tag_modal.show();
             }
         }
     }

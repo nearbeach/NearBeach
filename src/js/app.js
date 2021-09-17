@@ -282,6 +282,7 @@ import ChangeTaskInformation from "./components/request_for_change/ChangeTaskInf
 import NotesModule from "./components/modules/sub_modules/NotesModule.vue";
 import ListTagsModule from "./components/modules/sub_modules/ListTagsModule.vue";
 import AddTagWizard from "./components/modules/wizards/AddTagWizard.vue";
+import EditTagModal from "./components/tags/EditTagModal.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -424,6 +425,7 @@ Vue.component('NotesModule', NotesModule);
 Vue.component('ListTagsModule', ListTagsModule);
 Vue.component('AddTagWizard', AddTagWizard);
 Vue.component('SearchTags', SearchTags);
+Vue.component('EditTagModal', EditTagModal);
 
 import Vuelidate from 'vuelidate'
 Vue.use(Vuelidate)
