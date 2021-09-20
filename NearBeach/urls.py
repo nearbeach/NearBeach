@@ -22,6 +22,7 @@ from .views import admin_views, \
     requirement_item_views, \
     requirement_views, \
     search_views, \
+    tag_views, \
     task_views, \
     user_views
 
@@ -256,6 +257,11 @@ urlpatterns = [
     path('search/tag/', search_views.search_tag, name='search_tag'),
     path('search/user/', search_views.search_user, name='search_user'),
     path('search/user/data/', search_views.search_user_data, name='search_user_data'),
+
+    # Tags
+    path('tag/delete/', tag_views.delete_tag, name='delete_tag'),
+    path('tag/new/', tag_views.new_tag, name='new_tag'),
+    path('tag/save/', tag_views.save_tag, name='save_tag'),
 
     # Tasks
     path('task_information/<int:task_id>/', task_views.task_information, name='task_information'),

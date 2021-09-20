@@ -2695,11 +2695,10 @@ class tag(models.Model):
     tag_id = models.AutoField(primary_key=True)
     tag_name = models.CharField(
         max_length=50,
-        unique=True,
     )
     tag_colour = models.CharField(
-        max_length=6,
-        default="ff69b4",
+        max_length=7,
+        default="#651794",
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)

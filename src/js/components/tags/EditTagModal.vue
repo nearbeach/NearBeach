@@ -11,7 +11,12 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editTagModalLabel">Edit Tag</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button"
+                            id="editTagCloseModal"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                    ></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
@@ -49,8 +54,20 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Understood</button>
+                    <button type="button"
+                            class="btn btn-danger"
+                            v-on:click="deleteTag"
+                            v-if="tagId !== 0"
+                    >Delete Tag</button>
+
+                    <button type="button" 
+                            class="btn btn-secondary" 
+                            data-bs-dismiss="modal"
+                    >Close</button>
+                    <button type="button" 
+                            class="btn btn-primary"
+                            v-on:click="saveTag"
+                    >Save Tag</button>
                 </div>
             </div>
         </div>
@@ -58,6 +75,8 @@
 </template>
 
 <script>
+    const axios = require('axios');
+
     export default {
         name: 'EditTagModal',
         props: {
@@ -80,12 +99,34 @@
                     '#33ae24',
                 ],
                 tagColourModel: this.singleTag['tagColour'],
+                tagId: this.singleTag['tagId'],
                 tagNameModel: this.singleTag['tagName'],
             }
+        },
+        watch: {
+            singleTag: {
+                handler(newValue, oldValue) {
+                    //Update values                            
+                    this.tagColourModel = newValue['tagColour'];
+                    this.tagId = newValue['tagId'];
+                    this.tagNameModel = newValue['tagName'];
+                },
+                deep: true,
+            },
         },
         computed: {
         },
         methods: {
+            deleteTag: function() {
+                //Use axios to send the request
+                axios.post(
+                    `/tag/delete/${this.tagId}/`,
+                ).then(response => {
+                    console.log("DID IT WELL!")
+                }).catch(error => {
+                    console.log("ERROR: ",error);
+                })
+            },
             getClasses: function(colour) {
                 let return_class = 'single-colour';
 
@@ -95,31 +136,58 @@
 
                 return return_class;
             },
+            newTag: function(data_to_send) {
+                //Use axios to send data
+                axios.post(
+                    `/tag/new/`,
+                    data_to_send,
+                ).then(response => {
+                    // Send data upstream
+                    this.$emit('new_tag', response['data']);
+
+                    //Close the modal
+                    document.getElementById("editTagCloseModal").click();
+                }).catch(error => {
+                    //ADD CODE
+                })
+            },
+            saveTag: function() {
+                //Create data to send
+                const data_to_send = new FormData();
+                data_to_send.set('tag_id', this.tagId);
+                data_to_send.set('tag_name', this.tagNameModel);
+                data_to_send.set('tag_colour', this.tagColourModel);
+
+                if (this.tagId === 0) {
+                    //CREATE A NEW TAG
+                    this.newTag(data_to_send);
+                } else {
+                    //Save existing tag
+                    this.updateTag(data_to_send);
+                }
+            },
             updateColour: function(selected_colour) {
                 this.tagColourModel = selected_colour;
-            }
+            },
+            updateTag: function(data_to_send) {
+                //Use axios to send data
+                axios.post(
+                    `/tag/save/`,
+                    data_to_send,
+                ).then(response => {
+                    // Send data upstream
+                    this.$emit('update_tags', {
+                        'tag_id': this.tagId,
+                        'tag_name': this.tagNameModel,
+                        'tag_colour': this.tagColourModel,
+                    });
+
+                    //Close the modal
+                    document.getElementById("editTagCloseModal").click();
+                }).catch(error => {
+                    //ADD CODE
+                })
+            },
         }   
     }
 </script>
-
-<style scoped>
-    .single-colour {
-        height: 50px;
-        width: 50px;
-        margin: 6px;
-        display: flex;
-        justify-content: center;
-        align-content: center;
-        font-size: larger;
-    }
-
-    .colour-picker {
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    .selected-colour {
-        border: 3px solid rgba(51, 51, 51, 0.75);
-        background-image: repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(255,255,255,.5) 10px, rgba(255,255,255,.5) 10px);
-    }
-</style>

@@ -26,10 +26,15 @@ class Migration(migrations.Migration):
             model_name='tag_assignment',
             name='task',
         ),
+        migrations.AlterField(
+            model_name='tag',
+            name='tag_name',
+            field=models.CharField(max_length=50),
+        ),
         migrations.AddField(
             model_name='tag',
             name='tag_colour',
-            field=models.CharField(default='ff69b4', max_length=6),
+            field=models.CharField(default='#651794', max_length=7),
         ),
         migrations.AddField(
             model_name='tag_assignment',
