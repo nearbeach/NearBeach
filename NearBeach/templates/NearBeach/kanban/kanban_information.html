@@ -8,4 +8,11 @@
                         v-bind:location-id="{{kanban_board_id}}"
                         v-bind:user-level="{{user_level}}"
     ></kanban-information>
+
+    <div id="sort_error">
+        <h2>Sorting Error</h2>
+        <p class="text-instructions">
+            Sorry, we have found a sorting issue with the cards. We are fixing.
+        </p>
+    </div>
 {% endblock %}

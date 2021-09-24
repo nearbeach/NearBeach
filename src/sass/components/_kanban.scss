@@ -112,3 +112,18 @@
   float: right;
   font-size: 24px;
 }
+
+#sort_error {
+  z-index: 99;
+  position: fixed;
+  min-width: 100vw;
+  min-height: 100vh;
+  background-color: aliceblue;
+  top: 0;
+  left: 0;
+  display: none;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  flex-direction: column;
+}

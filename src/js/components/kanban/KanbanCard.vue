@@ -135,11 +135,81 @@
                     console.log("ERROR: ",error); 
                 })
             },
+            checkCardOrder: function() {
+                /* Due to an issue - sometimes some of the cards will contain a -1 for the sort order. This sadly
+                throws a spanner into the dragging and dropping functionality. When the board boots up, we will check to
+                make sure the cards are in order. If they are not - we adjust them and upload the changes.
+
+                Checks
+                ~~~~~~
+                1. Make sure there are no values under 0
+                2. Make sure the lowest value is 0
+                3. Make sure the highest value is length of the set minus 1.
+                 */
+
+                //Don't worry about it when masterList is empty
+                if (this.masterList.length === 0) {
+                    //Escape
+                    return;
+                }
+
+                //Get the list of values for sort array
+                const sort_array = this.masterList.map(row => {
+                    return row['fields']['kanban_card_sort_number'];
+                });
+
+                //Get the min and max
+                const min_value = Math.min.apply(null, sort_array),
+                      max_value = Math.max.apply(null, sort_array);
+
+                if (min_value === 0 && max_value === this.masterList.length - 1) {
+                    //Nothing to do :) YAY
+                    return;
+                }
+
+                //Show error screen
+                document.getElementById('sort_error')['style']['display'] = "flex";
+
+                //There is an issue - we need to fix all the variables and send that information upstream to the
+                //backend AND the VueX
+                //Loop through the data
+                this.masterList.forEach((row, index) => {
+                    //Setup data_to_send
+                    const data_to_send = new FormData();
+                    data_to_send.set('new_card_column', this.columnId.toString());
+                    data_to_send.set('new_card_level', this.levelId.toString());
+                    data_to_send.set('new_card_sort_number', index.toString());
+                    data_to_send.set('old_card_column', row['fields']['kanban_column']);
+                    data_to_send.set('old_card_level', row['fields']['kanban_level']);
+                    data_to_send.set('old_card_sort_number', row['fields']['kanban_card_sort_number']);
+                    data_to_send.set('card_id', row['pk']);
+
+                    //Use axios to send the data to the database
+                    axios.post(
+                        `/kanban_information/${row['pk']}/move_card/`,
+                        data_to_send,
+                    ).then(response => {
+                        this.$store.commit({
+                            type: 'updateKanbanCard',
+                            card_id: row['pk'],
+                            kanban_column: this.columnId,
+                            kanban_level: this.levelId,
+                            kanban_card_sort_number: index,
+                        })
+                    });
+                });
+
+                //Done - hide the error screen
+                document.getElementById('sort_error')['style']['display'] = "";
+            },
             doubleClickCard: function(data) {
                 //Filter out the data we want to send up stream
                 const filtered_data = this.masterList.filter(row => {
                     return row['pk'] == data['target']['dataset']['cardId'];
                 })[0];
+
+                console.log("Data: ",data['target']['dataset']['cardId']);
+                console.log("FILTERED DATA: ",this.masterList);
 
                 //Setup data to send upstream
                 this.sendDataUpstream(filtered_data);
@@ -318,8 +388,6 @@
                         cards_to_change = this.dragDifferentColumn(data_to_send);
                     }
 
-                    console.log("Cards to Change: ",cards_to_change);
-
                     //ADD CODE - loop through the cards to change
                     cards_to_change.forEach(row => {
                         this.$store.commit({
@@ -373,6 +441,9 @@
                     this.masterList.push(this.newCardInfo[0]);
                 }
             },
+        },
+        mounted() {
+            this.checkCardOrder();
         },
     }
 </script>
