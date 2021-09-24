@@ -104,6 +104,9 @@
 
                     //Close the modal
                     document.getElementById('addTagsCloseButton').click();
+
+                    //Clear the results
+                    this.tagModel = [];
                 })
             },
             getTagList: function() {

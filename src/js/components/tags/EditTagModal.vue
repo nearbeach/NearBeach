@@ -55,7 +55,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button"
-                            class="btn btn-danger"
+                            class="btn btn-danger delete-tag"
                             v-on:click="deleteTag"
                             v-if="tagId !== 0"
                     >Delete Tag</button>
@@ -66,6 +66,7 @@
                     >Close</button>
                     <button type="button" 
                             class="btn btn-primary"
+                            v-bind:disabled="!canSave"
                             v-on:click="saveTag"
                     >Save Tag</button>
                 </div>
@@ -80,7 +81,10 @@
     export default {
         name: 'EditTagModal',
         props: {
-            singleTag: Object,
+            existingTags: Array,
+            tagColour: String,
+            tagId: Number,
+            tagName: String,
         },
         data() {
             return {
@@ -98,23 +102,32 @@
                     '#e01059',
                     '#33ae24',
                 ],
-                tagColourModel: this.singleTag['tagColour'],
-                tagId: this.singleTag['tagId'],
-                tagNameModel: this.singleTag['tagName'],
+                tagColourModel: this.tagColour,
+                tagNameModel: this.tagName,
             }
         },
         watch: {
-            singleTag: {
-                handler(newValue, oldValue) {
-                    //Update values                            
-                    this.tagColourModel = newValue['tagColour'];
-                    this.tagId = newValue['tagId'];
-                    this.tagNameModel = newValue['tagName'];
-                },
-                deep: true,
+            tagColour: function() {
+                this.tagColourModel = this.tagColour;
+            },
+            tagName: function() {
+                this.tagNameModel = this.tagName;
             },
         },
         computed: {
+            canSave: function() {
+                //Return false if user has written a duplicate tag name
+                const count = this.existingTags.filter(row => {
+                    const tag_name_1 = row['fields']['tag_name'].toUpperCase(),
+                          tag_name_2 = this.tagNameModel.toUpperCase();
+
+                    //Return if the tag names are the same WHILST NOT being the same tag ID
+                    return tag_name_1 === tag_name_2 && row['pk'] !== this.tagId;
+                }).length;
+
+                //Return true if there is no duplicate
+                return count === 0;
+            }
         },
         methods: {
             deleteTag: function() {
@@ -122,7 +135,13 @@
                 axios.post(
                     `/tag/delete/${this.tagId}/`,
                 ).then(response => {
-                    console.log("DID IT WELL!")
+                    //Tell the component up stream that we removed this tag
+                    this.$emit('delete_tag', {
+                        'tag_id': this.tagId,
+                    });
+
+                    //Close the modal
+                    document.getElementById("editTagCloseModal").click();
                 }).catch(error => {
                     console.log("ERROR: ",error);
                 })

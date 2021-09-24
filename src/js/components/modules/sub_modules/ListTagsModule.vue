@@ -9,7 +9,7 @@
             <div v-for="tag in tagList"
                  :key="tag['pk']"
                  class="single-tag"
-                 v-bind:style="`background-color: #${tag['fields']['tag_colour']};`"
+                 v-bind:style="`background-color: ${tag['fields']['tag_colour']};`"
             >
                 {{tag['fields']['tag_name']}}
                 <span v-on:click="removeTag(tag['pk'])"

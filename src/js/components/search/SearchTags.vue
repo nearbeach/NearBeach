@@ -49,8 +49,12 @@
             </div>
 
             <!-- MODALS -->
-            <edit-tag-modal v-bind:single-tag="singleTag"
+            <edit-tag-modal v-bind:existing-tags="localTagResults"
+                            v-bind:tag-colour="singleTagColour"
+                            v-bind:tag-id="singleTagId"
+                            v-bind:tag-name="singleTagName"
                             v-on:new_tag="newTag"
+                            v-on:delete_tag="deleteTag($event)"
                             v-on:update_tags="updateTags"
             ></edit-tag-modal>
         </div>
@@ -74,10 +78,13 @@
         },
         data() {
             return {
-                singleTag: {
+                /*singleTag: {
                     tagName: '',
                     tagColour: '',
-                },
+                },*/
+                singleTagColour: '',
+                singleTagId: 0,
+                singleTagName: '',
                 localTagResults: this.tagResults,
             }
         },
@@ -87,13 +94,19 @@
         methods: {
             addTag: function() {
                 //Send data down to the modal
-                this.singleTag['tagName'] = 'default tag';
-                this.singleTag['tagId'] = 0;
-                this.singleTag['tagColour'] = '#37cbd2';
+                this.singleTagName = 'default tag';
+                this.singleTagId = 0;
+                this.singleTagColour = '#37cbd2';
 
                 //Open up modal
                 let edit_tag_modal = new Modal(document.getElementById('editTagModal'));
                 edit_tag_modal.show();
+            },
+            deleteTag: function(data) {
+                //Filter out the tag
+                this.localTagResults = this.localTagResults.filter(row => {
+                    return row['pk'] !== data['tag_id'];
+                })
             },
             editTag: function(tag_id) {
                 //Filter for the tag information
@@ -102,9 +115,9 @@
                 })[0];
 
                 //Send data down to the modal
-                this.singleTag['tagName'] = single_tag['fields']['tag_name'];
-                this.singleTag['tagId'] = tag_id;
-                this.singleTag['tagColour'] = single_tag['fields']['tag_colour'];
+                this.singleTagName = single_tag['fields']['tag_name'];
+                this.singleTagId = tag_id;
+                this.singleTagColour = single_tag['fields']['tag_colour'];
 
                 //Open up modal
                 let edit_tag_modal = new Modal(document.getElementById('editTagModal'));

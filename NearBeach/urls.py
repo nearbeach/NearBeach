@@ -259,7 +259,7 @@ urlpatterns = [
     path('search/user/data/', search_views.search_user_data, name='search_user_data'),
 
     # Tags
-    path('tag/delete/', tag_views.delete_tag, name='delete_tag'),
+    path('tag/delete/<int:tag_id>/', tag_views.delete_tag, name='delete_tag'),
     path('tag/new/', tag_views.new_tag, name='new_tag'),
     path('tag/save/', tag_views.save_tag, name='save_tag'),
 
