@@ -3,6 +3,7 @@ from django.db import models, connection
 from .private_media import *
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.utils.translation import gettext_lazy as _
 import uuid
 
 # ENUM choices
@@ -2694,7 +2695,10 @@ class tag(models.Model):
     tag_id = models.AutoField(primary_key=True)
     tag_name = models.CharField(
         max_length=50,
-        unique=True,
+    )
+    tag_colour = models.CharField(
+        max_length=7,
+        default="#651794",
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -2715,34 +2719,29 @@ class tag(models.Model):
 
 
 class tag_assignment(models.Model):
+    class ObjectEnum(models.TextChoices):
+        REQUIREMENT = 'requirement', _('Requirement')
+        REQUIREMENT_ITEM = 'requirement_item', _('Requirement Item')
+        PROJECT = 'project', _('Project')
+        TASK = 'task', _('Task')
+        KANBAN = 'kanban_board', _('Kanban Board')
+        CARD = 'kanban_card', _('Kanban Card')
+        REQUEST_FOR_CHANGE = 'request_for_change', _('Reuqest for Change')
+        CUSTOMER = 'customer', _('Customer')
+        ORGANISATION = 'organisation', _('Organisation')
+
     tag_assignment_id = models.AutoField(primary_key=True)
     tag = models.ForeignKey(
         tag,
         on_delete=models.CASCADE,
     )
-    project = models.ForeignKey(
-        project,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
+    object_enum = models.CharField(
+        max_length=40,
+        choices=ObjectEnum.choices,
+        default=ObjectEnum.REQUIREMENT,
     )
-    task = models.ForeignKey(
-        'task',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    opportunity = models.ForeignKey(
-        opportunity,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    requirement = models.ForeignKey(
-        requirement,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
+    object_id = models.IntegerField(
+        default=0,
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)

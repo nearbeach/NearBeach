@@ -22,6 +22,7 @@ from .views import admin_views, \
     requirement_item_views, \
     requirement_views, \
     search_views, \
+    tag_views, \
     task_views, \
     user_views
 
@@ -151,6 +152,7 @@ urlpatterns = [
     path('object_data/<destination>/<location_id>/add_group/', object_data_views.add_group, name='add_group'),
     path('object_data/<destination>/<location_id>/add_link/', object_data_views.add_link, name='add_link'),
     path('object_data/<destination>/<location_id>/add_notes/', object_data_views.add_notes, name='add_notes'),
+    path('object_data/<destination>/<location_id>/add_tags/', object_data_views.add_tags, name='add_tags'),
     path('object_data/<destination>/<location_id>/add_user/', object_data_views.add_user, name='add_user'),
     path('object_data/<destination>/<location_id>/associated_objects/', object_data_views.associated_objects,
          name='associated_objects'),
@@ -170,9 +172,12 @@ urlpatterns = [
          name='object_link_list'),  # WTF - Please check to make sure we need this function?
     path('object_data/<destination>/<location_id>/query_bug_client/', object_data_views.query_bug_client,
          name='query_bug_client'),
+    path('object_data/<destination>/<location_id>/tag_list/', object_data_views.tag_list, name='tag_list'),
+    path('object_data/tag_list_all/', object_data_views.tag_list_all, name='tag_list_all'),
     path('object_data/<destination>/<location_id>/user_list/', object_data_views.user_list, name='user_list'),
     path('object_data/<destination>/<location_id>/user_list_all/', object_data_views.user_list_all,
          name='user_list_all'),
+    path('object_data/delete_tag/', object_data_views.delete_tag, name='delete_tag'),
     path('object_data/lead_user_list/', object_data_views.lead_user_list, name='lead_user_list'),
 
     # Organisation
@@ -249,8 +254,14 @@ urlpatterns = [
     path('search/organisation/data/', search_views.search_organisation_data, name='search_organisation_data'),
     path('search/permission_set/', search_views.search_permission_set, name='search_permission_set'),
     path('search/permission_set/data/', search_views.search_permission_set_data, name='search_permission_set_data'),
+    path('search/tag/', search_views.search_tag, name='search_tag'),
     path('search/user/', search_views.search_user, name='search_user'),
     path('search/user/data/', search_views.search_user_data, name='search_user_data'),
+
+    # Tags
+    path('tag/delete/<int:tag_id>/', tag_views.delete_tag, name='delete_tag'),
+    path('tag/new/', tag_views.new_tag, name='new_tag'),
+    path('tag/save/', tag_views.save_tag, name='save_tag'),
 
     # Tasks
     path('task_information/<int:task_id>/', task_views.task_information, name='task_information'),

@@ -147,6 +147,21 @@
                             aria-selected="false"
                     >Misc</button>
                 </li>
+                
+                <!-- Notes -->
+                <li class="nav-item"
+                    role="presentation"
+                >
+                    <button class="nav-link"
+                            id="notes-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#notes"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-select="false"
+                    >Notes</button>
+                </li>
             </ul>
             <hr>
 
@@ -211,6 +226,11 @@
                     <misc-module v-bind:location-id="locationId"
                                  v-bind:destination="destination"
                     ></misc-module>
+                </div>
+                <div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="contact-tab">
+                    <notes-module v-bind:location-id="locationId"
+                                 v-bind:destination="destination"
+                    ></notes-module>
                 </div>
             </div>
         </div>

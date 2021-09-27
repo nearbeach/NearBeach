@@ -258,6 +258,7 @@ import UploadDocumentWizard from "./components/modules/wizards/UploadDocumentWiz
 import RequirementItemInformation from "./components/requirement_items/RequirementItemInformation.vue";
 import ListOrganisations from "./components/organisations/ListOrganisations.vue";
 import SearchOrganisations from "./components/search/SearchOrganisations.vue";
+import SearchTags from "./components/search/SearchTags.vue";
 import OrganisationInformation from "./components/organisations/OrganisationInformation.vue";
 import OrganisationModules from "./components/organisations/OrganisationModules.vue";
 import CustomersListModule from "./components/modules/sub_modules/CustomersListModule.vue";
@@ -325,7 +326,10 @@ import KanbanEditBoard from "./components/kanban/KanbanEditBoard.vue";
 import KanbanGroupPermissions from "./components/kanban/KanbanGroupPermissions.vue";
 import ProfileInformation from "./components/profile/ProfileInformation.vue";
 import ChangeTaskInformation from "./components/request_for_change/ChangeTaskInformation.vue";
-
+import NotesModule from "./components/modules/sub_modules/NotesModule.vue";
+import ListTagsModule from "./components/modules/sub_modules/ListTagsModule.vue";
+import AddTagWizard from "./components/modules/wizards/AddTagWizard.vue";
+import EditTagModal from "./components/tags/EditTagModal.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -464,8 +468,12 @@ Vue.component('ChangeTaskInformation', ChangeTaskInformation);
 Vue.component('CardDetails', CardDetails);
 Vue.component('CardDescription', CardDescription);
 Vue.component('CardNotes', CardNotes);
+Vue.component('NotesModule', NotesModule);
+Vue.component('ListTagsModule', ListTagsModule);
+Vue.component('AddTagWizard', AddTagWizard);
+Vue.component('SearchTags', SearchTags);
+Vue.component('EditTagModal', EditTagModal);
 
-//Validation
 import Vuelidate from 'vuelidate'
 Vue.use(Vuelidate)
 

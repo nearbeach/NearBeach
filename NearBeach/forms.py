@@ -138,6 +138,12 @@ class AddRequirementLinkForm(forms.Form):
     )
 
 
+class AddTagsForm(forms.Form):
+    tag_id = forms.ModelMultipleChoiceField(
+        queryset=tag.objects.all(),
+    )
+
+
 class AdminAddUserForm(forms.Form):
     group = forms.ModelMultipleChoiceField(
         queryset=group.objects.all(),
@@ -210,6 +216,16 @@ class DeleteLevelForm(forms.Form):
         queryset=kanban_level.objects.all(),
         required=True,
     )
+
+
+class DeleteTagForm(forms.ModelForm):
+    class Meta:
+        model = tag_assignment
+        fields = {
+            'tag',
+            'object_enum',
+            'object_id',
+        }
 
 
 class DocumentUploadForm(ModelForm):
@@ -513,6 +529,15 @@ class NewRequirementForm(forms.ModelForm):
         ]
 
 
+class NewTagForm(forms.ModelForm):
+    class Meta:
+        model = tag
+        fields = [
+            'tag_name',
+            'tag_colour',
+        ]
+
+
 class NewTaskForm(forms.ModelForm):
     task_start_date = forms.DateTimeField(
         input_formats=['c'],
@@ -691,6 +716,18 @@ class SearchObjectsForm(forms.Form):
     search = forms.CharField(
         max_length=250,
         required=False,
+    )
+
+
+class TagForm(forms.Form):
+    tag_id = forms.IntegerField(required=True)
+    tag_name = forms.CharField(
+        required=True,
+        max_length=50,
+    )
+    tag_colour = forms.CharField(
+        required=True,
+        max_length=7,
     )
 
 
