@@ -30,7 +30,7 @@
   "dependencies": {
     "@popperjs/core": "^2.9.1",
     "@tinymce/tinymce-vue": "^3.2.8",
-    "axios": "^0.21.1",
+    "axios": "^0.21.3",
     "bootstrap": "^5.0.2",
     "luxon": "^1.28.0",
     "vue-datetime": "^1.0.0-beta.14",
@@ -84,6 +84,8 @@
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
     "webpack-merge": "^4.2.2",
-    "ws": ">=6.2.2"
+    "ws": ">=6.2.2",
+    "tar": ">=6.1.9",
+    "path-parse": ">=1.0.7"
   }
 }
