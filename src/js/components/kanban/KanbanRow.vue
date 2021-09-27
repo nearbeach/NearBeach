@@ -1,7 +1,6 @@
 <template>
     <div class="kanban-row">
-        <kanban-card v-for="column in columnResults"
-                     v-bind:master-list="getMasterList(column['pk'])"
+        <kanban-card v-for="column in columnResults" :key="column.pk"
                      v-bind:level-id="levelId"
                      v-bind:column-id="column['pk']"
                      v-bind:new-card-info="newCardInfo"
@@ -11,28 +10,26 @@
 </template>
 
 <script>
+    import { mapGetters } from 'vuex';
+    
     export default {
         name: "KanbanRow",
         props: {
-            columnResults: Array,
-            kanbanRowModel: Object,
+            //columnResults: Array,
+            //kanbanRowModel: Object,
             levelId: Number,
             newCardInfo: Array,
         },
+        computed: {
+            ...mapGetters({
+                columnResults: 'getColumns',
+            })
+        },
         methods: {
-            doubleClickedCard(data) {
+            doubleClickedCard: function(data) {
                 //Emit the card id up stream
                 this.$emit('double_clicked_card',data);
             },
-            getMasterList: function(row_id) {
-                //Determine if the kanban Row exists - if not defined, send back empty array.
-                if (this.kanbanRowModel == undefined) {
-                    return [];
-                }
-
-                //There exists data -> send it back to the user
-                return this.kanbanRowModel[row_id];
-            }
         }
     }
 </script>

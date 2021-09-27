@@ -427,6 +427,25 @@ def search_permission_set_data(request):
 
 
 @login_required(login_url='login',redirect_field_name="")
+def search_tag(request):
+    # Get template
+    t = loader.get_template('NearBeach/search/search_tags.html')
+
+    # Get data
+    tag_results = tag.objects.filter(
+        is_deleted=False,
+    ).order_by('tag_name')
+
+    #Context
+    c = {
+        'tag_results': serializers.serialize('json', tag_results),   
+    }
+
+    #Send back json data
+    return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login',redirect_field_name="")
 def search_user(request):
     """
 

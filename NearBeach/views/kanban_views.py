@@ -68,6 +68,32 @@ def add_kanban_link(request,kanban_board_id,object_lookup, *args, **kwargs):
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
+@check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
+def archive_kanban_cards(request, *args, **kwargs):
+    """
+    """
+
+    # Get the form data
+    form = KanbanCardArchiveForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get all cards from POST
+    card_list = request.POST.getlist('kanban_card_id')
+    
+    # Update all cards
+    kanban_card.objects.filter(
+        kanban_card_id__in=card_list,
+    ).update(
+        is_archived=True,
+    )
+
+    # Return success
+    return HttpResponse("")
+    
+
+@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(['POST'])
 @check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
 def check_kanban_board_name(request, *args, **kwargs):
     """
@@ -193,6 +219,7 @@ def kanban_information(request, kanban_board_id, *args, **kwargs):
 
     # Get kanban card results
     kanban_card_results = kanban_card.objects.filter(
+        is_archived=False,
         is_deleted=False,
         kanban_board_id=kanban_board_id,
     ).order_by('kanban_card_sort_number')

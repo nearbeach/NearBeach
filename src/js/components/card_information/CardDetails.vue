@@ -81,6 +81,7 @@
         },
         computed: {
             ...mapFields([
+                'cardId',
                 'cardTitle',
                 'cardColumn',
                 'cardLevel',
@@ -93,6 +94,15 @@
                 document.getElementById("cardInformationModalCloseButton").click();
             },
             updateCard: function() {
+                this.$store.commit({
+                    type: 'updateKanbanCard',
+                    card_id: this.cardId,
+                    kanban_card_text: this.cardTitle,
+                    kanban_column: this.cardColumn,
+                    kanban_level: this.cardLevel,
+                })
+
+                //TEMP - need to replace with a close functionality
                 this.$emit('update_card');
             },
         },
