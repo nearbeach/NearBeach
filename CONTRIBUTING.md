@@ -69,6 +69,11 @@ Bug reporting is a very important role for NearBeach. During Hacktoberfest, you 
 NearBeach currently has a number of easy tasks/issues located on our [Deepsource - https://deepsource.io/gh/robotichead/NearBeach/issues](https://deepsource.io/gh/robotichead/NearBeach/issues).
 
 
+## CodeClimate Issues
+
+NearBeach currently has a number of easy tasks/issues located on our [CodeClimte - https://codeclimate.com/github/robotichead/NearBeach/issues](https://codeclimate.com/github/robotichead/NearBeach/issues)
+
+
 ## Pull Requests
 
 Please fork NearBeach, git your changes in and then submit a simple pull request. 
