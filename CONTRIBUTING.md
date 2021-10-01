@@ -64,6 +64,11 @@ and many many more. Join our [community on discord to see what you can do](https
 Bug reporting is a very important role for NearBeach. During Hacktoberfest, you are more than welcome to submit issues. Alternatively you could use your [bugzilla](https://bugzilla.nearbeach.org).
 
 
+## Deepsource Issues
+
+NearBeach currently has a number of easy tasks/issues located on our [Deepsource - https://deepsource.io/gh/robotichead/NearBeach/issues](https://deepsource.io/gh/robotichead/NearBeach/issues).
+
+
 ## Pull Requests
 
 Please fork NearBeach, git your changes in and then submit a simple pull request. 
