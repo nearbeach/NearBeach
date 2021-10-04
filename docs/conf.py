@@ -22,7 +22,7 @@ copyright = '2019, Luke Christopher Clarke'
 author = 'Luke Christopher Clarke'
 
 # The full version, including alpha/beta/rc tags
-release = '0.24.1'
+release = '0.28.13'
 
 
 # -- General configuration ---------------------------------------------------
@@ -31,6 +31,7 @@ release = '0.24.1'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.todo',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -54,3 +55,6 @@ html_theme = "sphinx_rtd_theme"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 master_doc = 'index'
+
+# Display todos by setting to True
+todo_include_todos = True

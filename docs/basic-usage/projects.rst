@@ -11,7 +11,7 @@ Create New Project
 
 #. The `New Project` page will load
 
-    .. image:: /images/new-project.png
+    .. image:: images/new-project.png
 
 #. Add in a project title - this should be short and descriptive. This piece of information will be viewable from the dashboard and any searches.
 
@@ -29,3 +29,31 @@ Create New Project
 
 
 #. Click on the `Create New Project` button. You will automatically be taken to the project information page.
+
+
+Search for Project
+------------------
+
+You can either search for a project using the search bar at the top right of the page. Alternatively you can use the `search all` functionality, but click on the menu `Find Objects` then selecting `List all`.
+
+A new page will be shown with all the results of that search. You can use the search bar at the top of this page to filter down.
+
+
+Edit a project
+--------------
+You can edit a project by click on any Project card on the dashboard, or by searching.
+
+
+Closing a project
+-----------------
+
+  .. note:: Only users with a "Edit" functionality can close a project.
+
+
+You can easily close a project by either
+
+* Change the project status to `closed` then save
+* Click on the `Close project` button
+
+Please note - there is not an easy way to reopen a project once closed. Your system administrator will have to do this for you.
+
