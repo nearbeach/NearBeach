@@ -4,7 +4,8 @@
 Setup Development Environment
 =============================
 
-.. Warning:: Current instructions are not working. Will fix as an URGENT task
+  .. attention:: If you would like any help setting up these environments, why not join our discord - https://discord.gg/64uhRztS6n
+
 
 These instructions will help you install a development environment. Setup is
 slightly different to a production environment.
@@ -14,7 +15,7 @@ Security fixes/patches are applied for a longer period of time, helping keep you
 
 NearBeach currently supports the following Django versions;
 
-- Django Version 3.1
+- Django Version 3.1+
 
 More information about upgrading Django can be found `found in the Django Documentation <https://docs.djangoproject.com/en/3.0/howto/upgrade-version/>`_
 
@@ -25,51 +26,54 @@ More information about upgrading Django can be found `found in the Django Docume
 Download Git Repository
 -----------------------
 
-1. In a terminal, navigate to your project development folder
+#. In a terminal, navigate to your project development folder
 
   .. code-block:: bash
 
     cd /<<project-dev-folder>>
 
-2. Use Git to download NearBeach source code
+#. Use Git to download NearBeach source code
 
   .. code-block:: bash
 
     git clone https://github.com/robotichead/NearBeach
 
-3. First update and upgrade the system so you are working with the latest packages;
+#. First update and upgrade the system so you are working with the latest packages;
 
   .. code-block:: bash
 
     sudo apt-get update && sudo apt-get upgrade -y
 
 
-4. Next we will need to install all the packages we will use in NearBeach
+#. Install the required system libraries for Django and NearBeach to working
 
   .. code-block:: bash
 
-    sudo apt install python3-dev libpq-dev nginx curl build-essential python3-setuptools libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info
+    sudo apt install python3-dev curl build-essential python3-setuptools shared-mime-info libjpeg-dev zlib1g-dev
 
-5. Install pip
+
+#. Install pip
 
   .. code-block:: bash
 
     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
     sudo python3 get-pip.py
 
-6. After installing the required packages, you will need to update pip
+
+#. After installing the required packages, you will need to update pip
 
   .. code-block:: bash
 
     sudo pip3 install --upgrade pip
 
-7. Once pip is upgraded, you will need to create a virtual environment
+
+#. Once pip is upgraded, you will need to create a virtual environment
 
   .. code-block:: bash
 
     sudo pip3 install virtualenv
 
-8. Create your own virtual environment for python
+#. Create your own virtual environment for python
 
   .. code-block:: bash
 
@@ -77,7 +81,7 @@ Download Git Repository
 
   This will create a directory called "<<project_environment>>", this will store NearBeach's libraries for python
 
-9. Activate the virtual environment using the following command
+#. Activate the virtual environment using the following command
 
   .. code-block:: bash
 
@@ -89,23 +93,34 @@ Download Git Repository
 
     (<<project_environment>>)user@computer:
 
-10. Install Django
+#. Install Django
 
   .. code-block:: bash
 
     pip install django
 
-12. Adjust the project's settings to allow debugging and accept ALL allowed hosts
+
+#. Create your project
+
+  .. code-block:: bash
+
+  djangoadmin startproject <<django_project>>
+
+  .. note:: Please do NOT call the <<django_project>> NearBeach, or any variation of it.
+
+
+#. Adjust the project's settings to allow debugging and accept ALL allowed hosts
 
   .. code-block:: bash
 
     nano ./<<django_project>>/<<django_project>>/settings.py
 
-13. Change the following lines to reflect the following
+
+#. Change the following lines to reflect the following
 
   ..image:: images/django-installation-001.png
 
-  This will allow us to test the web server. We will be modifying this file later to be more security conscience
+  This will allow us to test the web server.
 
   Save the settings file and exit
 
@@ -141,16 +156,13 @@ Download Git Repository
 
   .. code-block:: bash
 
-    $ nano ./<<project name>>/settings.py
+    $ nano ./<<django_project>>/<<django_project>/settings.py
 
-19. Add the following line to the "INSTALLED_APPS" section
+19. Add the following line to the top of "INSTALLED_APPS" section
 
   .. code-block:: bash
 
     'NearBeach.apps.NearBeachConfig',
-    'django.contrib.humanize',
-    'tinymce',
-    'django_select2',
 
   Now save the document
 
@@ -208,7 +220,7 @@ Download Git Repository
 
   .. code-block:: bash
 
-    nano ./<<project name>>/url.py
+    nano ./<<django_project>>/url.py
 
   Please make sure that the following import in included at the top of the file
 

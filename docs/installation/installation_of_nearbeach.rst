@@ -51,13 +51,18 @@ The following instructions will inform you how to setup NearBeach and get it run
     RECAPTCHA_PUBLIC_KEY = 'Your public key'
     RECAPTCHA_PRIVATE_KEY = 'Your private key'
 
-    Security - Add the following lines of code into the settings.py
+
+7. Security - Add the following lines of code into the settings.py
+  
+  .. code-block:: bash
+  
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     CSRF_HTTPONLY = True
 
-7. Email - optional however required for resetting passwords
+
+8. Email - optional however required for resetting passwords
 
   .. code-block:: bash
 
@@ -75,7 +80,7 @@ The following instructions will inform you how to setup NearBeach and get it run
     EMAIL_HOST_PASSWORD = '<< your password >>'
     DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-8. Private Documents
+9. Private Documents
 
   .. code-block:: bash
 
@@ -112,7 +117,7 @@ The following instructions will inform you how to setup NearBeach and get it run
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR,'media/')
 
-9. Edit the project's URL.py to include NearBeach
+10. Edit the project's URL.py to include NearBeach
 
   .. code-block:: bash
 
@@ -130,7 +135,7 @@ The following instructions will inform you how to setup NearBeach and get it run
 
     path('', include('NearBeach.urls')),
 
-10. Create Database/Migrations
+11. Create Database/Migrations
 
   The database will need to be setup. Please note by default Django uses sqlite3, however it is possible to setup NearBeach to use a mysql database.
 
@@ -145,7 +150,7 @@ The following instructions will inform you how to setup NearBeach and get it run
 
     sudo chmod 755 ./db.sqlite
 
-11. Create superuser
+12. Create superuser
   A superuser will need to be created. This superuser will be able to enter the ADMIN site of Django, which from there will be able to do administration items.
 
   .. code-block:: bash
@@ -154,7 +159,7 @@ The following instructions will inform you how to setup NearBeach and get it run
 
   Enter in the correct details for the superuser
 
-12. Collect the static
+13. Collect the static
 
   The website uses static images, javascript, and CSS. You will need to collect this data to the static folder (set in the settings.py). Please run the following command
 
@@ -163,13 +168,13 @@ The following instructions will inform you how to setup NearBeach and get it run
     python ./manage.py collectstatic
 
 
-13. Create the private media folder
+14. Create the private media folder
 
   .. code-block:: bash
 
     $ mkdir ./private_media/
 
-14. Assign write permissions to the ./media/ and ./private_media/ folder
+15. Assign write permissions to the ./media/ and ./private_media/ folder
 
   .. code-block:: bash
 

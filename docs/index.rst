@@ -69,12 +69,11 @@ Software
   :name: sec-basic-usage
 
   basic-usage/nearbeach-flow
-  basic-usage/opportunities
-  basic-usage/quotes-and-invoices
   basic-usage/requirements-and-requirement-items
   basic-usage/projects
   basic-usage/tasks
   basic-usage/requests-for-change
+  basic-usage/basic-modules
 
 .. toctree::
   :maxdepth: 1
