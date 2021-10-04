@@ -30,9 +30,7 @@ release = '0.28.13'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-    'sphinx.ext.todo',
-]
+extensions = []
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -56,5 +54,3 @@ html_theme = "sphinx_rtd_theme"
 html_static_path = ['_static']
 master_doc = 'index'
 
-# Display todos by setting to True
-todo_include_todos = True
