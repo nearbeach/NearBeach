@@ -1,7 +1,7 @@
 Basic Modules
 =============
 
-  .. images:: images/basic-module.png
+  .. image:: images/basic-module.png
 
 
 About
@@ -29,11 +29,8 @@ Group and Users
 
 This module will allow you to add/remove groups and users to the particular object. Please note you will need to have a permission base of `Edit` or higher.
 
-  .. todo:: Add more instructions around how to add/remove groups + users.
 
-
-  .. note:: 
-     Users are limited to the groups also assinged to the objects. A user will not have any access to this object, if any of their groups are not included.
+.. note:: Users are limited to the groups also assinged to the objects. A user will not have any access to this object, if any of their groups are not included.
 
 
 Documents
