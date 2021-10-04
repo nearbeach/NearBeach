@@ -4,7 +4,7 @@
 Setup Development Environment
 =============================
 
-  .. attention:: If you would like any help setting up these environments, why not join our .. _a discord: https://discord.gg/64uhRztS6n
+  .. attention:: If you would like any help setting up these environments, why not join our discord - https://discord.gg/64uhRztS6n
 
 
 These instructions will help you install a development environment. Setup is
