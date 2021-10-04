@@ -23,7 +23,7 @@
                         class="bg-white"
                     >
                         <td>
-                            <a v-bind:href="`/rfc_readonly/${rfc['pk']}/`">
+                            <a v-bind:href="`${rootUrl}rfc_readonly/${rfc['pk']}/`">
                                 <p>{{ rfc['fields']['rfc_title'] }}</p>
                                 <div class="spacer"></div>
                                 <p class="small-text">RFC{{rfc['pk']}}</p>
@@ -46,6 +46,12 @@
 
     export default {
         name: "DashboardRfcApprovals.vue",
+        props: {
+            rootUrl: {
+                type: String,
+                default: "/",
+            },
+        },
         data() {
             return {
                 rfcApprovalsList: [],
@@ -59,7 +65,7 @@
             getRfcApprovalsList: function() {
                 //Use axios to get data
                 axios.post(
-                    `/dashboard/get/rfc_approvals/`,
+                    `${this.rootUrl}dashboard/get/rfc_approvals/`,
                 ).then(response => {
                     //Place the data into rfcApprovalsList
                     this.rfcApprovalsList = response['data'];

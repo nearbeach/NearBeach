@@ -1,5 +1,8 @@
 {% extends 'NearBeach/template.html' %}
 {% load static %}
 {% block content %}
-    <new-kanban v-bind:group-results="{{group_results}}"></new-kanban>
+    <new-kanban v-bind:group-results="{{group_results}}"
+                v-bind:root-url="`{% url 'dashboard' %}`"
+                v-bind:user-group-results="{{user_group_results}}"
+    ></new-kanban>
 {% endblock %}

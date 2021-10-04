@@ -3,7 +3,7 @@
         <div v-for="customer in customerResults" class="row">
             <div class="organisation-details">
                 <img v-if="customer['fields']['customer_profile_picture'] == ''"
-                     src="/static/NearBeach/images/placeholder/product_tour.svg"
+                     v-bind:src="`${staticUrl}static/NearBeach/images/placeholder/product_tour.svg`"
                      alt="Stakeholder Logo"
                      class="organisation-image"
                 >
@@ -13,7 +13,7 @@
                      class="organisation-image"
                 >
                 <div class="organisation-name">
-                    <a v-bind:href="`/customer_information/${customer['pk']}/`">
+                    <a v-bind:href="`${rootUrl}customer_information/${customer['pk']}/`">
                         {{customer['fields']['customer_first_name']}} {{customer['fields']['customer_last_name']}}
                     </a>
                 </div>
@@ -36,6 +36,14 @@
         name: "ListCustomers",
         props: {
             customerResults: Array,
+            staticUrl: {
+                type: String,
+                default: "/",
+            },
+            rootUrl: {
+                type: String,
+                default: "/",
+            },
         },
         mixins: [
             iconMixin

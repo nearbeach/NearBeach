@@ -2,7 +2,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 
-from NearBeach.forms import AdminAddUserForm
+from NearBeach.forms import AdminAddUserForm, PasswordResetForm
 
 from NearBeach.models import *
 
@@ -11,7 +11,6 @@ from NearBeach.models import *
 @login_required(login_url='login',redirect_field_name="")
 def add_user(request):
     """
-https://irisnx.us/
     :param request:
     :return:
     """
@@ -49,3 +48,23 @@ https://irisnx.us/
             submit_user.save()
 
     return HttpResponse("")
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def update_user_password(request):
+    """
+    """
+    # Get form data
+    form = PasswordResetForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get the User object
+    user_update = form.cleaned_data['username']
+    user_update.set_password(form.cleaned_data['password'])
+    user_update.save()
+
+    return HttpResponse("")
+
+

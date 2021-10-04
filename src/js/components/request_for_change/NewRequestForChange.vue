@@ -16,6 +16,7 @@
                 >
                     <rfc-description v-on:update_values="updateValues($event)"
                                      v-on:update_validation="updateValidation($event)"
+                                     v-bind:static-url="staticUrl"
                     ></rfc-description>
                 </tab-content>
 
@@ -24,6 +25,7 @@
                              :before-change="beforeChange"
                 >
                     <rfc-details v-bind:group-results="groupResults"
+                                 v-bind:user-group-results="userGroupResults"
                                  v-bind:user-results="userResults"
                                  v-on:update_validation="updateValidation($event)"
                                  v-on:update_values="updateValues($event)"
@@ -82,6 +84,20 @@
         name: "NewRequestForChange",
         props: {
             groupResults: Array,
+            rootUrl: {
+                type: String,
+                default: "/",
+            },
+            statusUrl: {
+                type: String,
+                default: "/",
+            },
+            userGroupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
             userResults: Array,
         },
         components: {
@@ -158,7 +174,7 @@
                 });
 
                 axios.post(
-                    `/new_request_for_change/save/`,
+                    `${this.rootUrl}new_request_for_change/save/`,
                     data_to_send,
                 ).then(response => {
                     // Just go to the location the data sent back

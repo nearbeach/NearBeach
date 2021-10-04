@@ -40,32 +40,21 @@
         <div v-if="userList.length==0" class="alert alert-dark">
             Sorry - there are no current users active.
         </div>
-        <div v-else>
-            <table class="table user-table-module">
-                <thead>
-                    <tr>
-                        <td style="width: 10px;"></td>
-                        <td>User</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="user in userList">
-                        <td>
-                            <img src="/static/NearBeach/images/placeholder/people_tax.svg" alt="default profile" class="default-user-profile" />
-                        </td>
-                        <td>
-                            <strong>{{user['fields']['username']}}: </strong>{{user['fields']['first_name']}} {{user['fields']['last_name']}}
-                            <div class="spacer"></div>
-                            <p class="user-card-email">
-                                {{user['fields']['email']}}
-                            </p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div v-else
+             class="user-card-layouts"
+        >
+            <div v-for="user in userList" 
+                 class="user-card">
+                <img src="/static/NearBeach/images/placeholder/people_tax.svg" alt="default profile" class="default-user-profile" />
+                <div class="user-details">
+                    <strong>{{user['first_name']}} {{user['last_name']}}</strong><br/>
+                    {{user['username']}}
+                    <div class="spacer"></div>
+                    {{user['email']}}
+                </div>
+            </div>
         </div>
 
-        <!-- ADD GROUP -->
         <!-- TO DO - limit it to certain users -->
         <div class="row submit-row">
             <div class="col-md-12">
@@ -160,9 +149,10 @@
             },
             updateUserList: function(data) {
                 //Loop throught the data array and add each line item
-                data.forEach(row => {
-                    this.userList.push(row);
-                });
+                // data.forEach(row => {
+                //     this.userList.push(row);
+                // });
+                this.userList = data;
             }
 
         },

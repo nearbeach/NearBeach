@@ -2,6 +2,23 @@
     <div class="card">
         <div class="card-body">
             <ul class="nav nav-tabs" id="misc_module_tabs" role="tablist">
+                <!-- GROUPS AND USERS -->
+                <!-- Don't need to show to requirement items - as permissions are gained from parent requirement -->
+                <li class="nav-item"
+                    role="presentation"
+                    v-if="destination!='requirement_item'"
+                >
+                    <button class="nav-link active"
+                            id="group-and-user-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#group-and-users"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >Groups and Users</button>
+                </li>
+
                 <!-- REQUIREMENT ITEMS -->
                 <li class="nav-item"
                     role="presentation"
@@ -14,7 +31,7 @@
                             type="button"
                             role="tab"
                             aria-controls="home"
-                            aria-selected="true"
+                            aria-selected="false"
                     >Requirement Item</button>
                 </li>
 
@@ -30,7 +47,7 @@
                             type="button"
                             role="tab"
                             aria-controls="home"
-                            aria-selected="true"
+                            aria-selected="false"
                     >Requirement Links</button>
                 </li>
 
@@ -46,7 +63,7 @@
                             type="button"
                             role="tab"
                             aria-controls="home"
-                            aria-selected="true"
+                            aria-selected="false"
                     >Links</button>
                 </li>
 
@@ -61,7 +78,7 @@
                             type="button"
                             role="tab"
                             aria-controls="home"
-                            aria-selected="true"
+                            aria-selected="false"
                     >Documents</button>
                 </li>
 
@@ -77,7 +94,7 @@
                             type="button"
                             role="tab"
                             aria-controls="home"
-                            aria-selected="true"
+                            aria-selected="false"
                     >Linked Objects</button>
                 </li>
 
@@ -94,7 +111,7 @@
                             type="button"
                             role="tab"
                             aria-controls="home"
-                            aria-selected="true"
+                            aria-selected="false"
                     >Customers</button>
                 </li>
 
@@ -111,26 +128,10 @@
                             type="button"
                             role="tab"
                             aria-controls="home"
-                            aria-selected="true"
+                            aria-selected="false"
                     >Bugs</button>
                 </li>
 
-                <!-- GROUPS AND USERS -->
-                <!-- Don't need to show to requirement items - as permissions are gained from parent requirement -->
-                <li class="nav-item"
-                    role="presentation"
-                    v-if="destination!='requirement_item'"
-                >
-                    <button class="nav-link"
-                            id="group-and-user-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#group-and-users"
-                            type="button"
-                            role="tab"
-                            aria-controls="home"
-                            aria-selected="true"
-                    >Groups and Users</button>
-                </li>
 
                 <!-- MISC -->
                 <li class="nav-item"
@@ -143,13 +144,33 @@
                             type="button"
                             role="tab"
                             aria-controls="home"
-                            aria-selected="true"
+                            aria-selected="false"
                     >Misc</button>
+                </li>
+                
+                <!-- Notes -->
+                <li class="nav-item"
+                    role="presentation"
+                >
+                    <button class="nav-link"
+                            id="notes-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#notes"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-select="false"
+                    >Notes</button>
                 </li>
             </ul>
             <hr>
 
             <div class="tab-content" id="misc_module_content">
+                <div class="tab-pane fade show active" id="group-and-users" role="tabpanel" aria-labelledby="contact-tab">
+                    <groups-and-users-module v-bind:location-id="locationId"
+                                             v-bind:destination="destination"
+                    ></groups-and-users-module>
+                </div>
                 <div class="tab-pane fade"
                      id="requirement-items"
                      role="tabpanel"
@@ -201,15 +222,15 @@
                                  v-bind:destination="destination"
                     ></bugs-module>
                 </div>
-                <div class="tab-pane fade" id="group-and-users" role="tabpanel" aria-labelledby="contact-tab">
-                    <groups-and-users-module v-bind:location-id="locationId"
-                                             v-bind:destination="destination"
-                    ></groups-and-users-module>
-                </div>
                 <div class="tab-pane fade" id="misc" role="tabpanel" aria-labelledby="contact-tab">
                     <misc-module v-bind:location-id="locationId"
                                  v-bind:destination="destination"
                     ></misc-module>
+                </div>
+                <div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="contact-tab">
+                    <notes-module v-bind:location-id="locationId"
+                                 v-bind:destination="destination"
+                    ></notes-module>
                 </div>
             </div>
         </div>
@@ -219,16 +240,35 @@
 <script>
     export default {
         name: "ParentModules",
-        props: [
-            'destination', //Which object we are looking at, i.e. requirement
-            'groupList',
-            'locationId', //The ID of the object we are looking at.
-            'requirementItemResults',
-        ],
+        props: {
+            destination: String, //Which object we are looking at, i.e. requirement
+            locationId: Number, //The ID of the object we are looking at.
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
+            staticUrl: {
+                type: String,
+                default: '/',
+            },
+        },
         data() {
             return {}
         },
         methods: {},
+        mounted() {
+            //Send data to required VueX states
+            this.$store.commit({
+                type: 'updateDestination',
+                destination: this.destination,
+                locationId: this.locationId,
+            });
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
+            })
+        }
     }
 </script>
 

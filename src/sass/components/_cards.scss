@@ -157,3 +157,30 @@
 .submit-rfc-card {
   margin-top: 50px;
 }
+
+.user-card-layouts {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  overflow: hidden;
+}
+
+.user-card {
+  display: flex;
+  border: solid 2px #e8f0ea;
+  margin: 5px;
+  width: 300px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
+  > img {
+    width: 80px;
+  }
+
+  &:hover {
+    background-color: #d3ddff;
+  }
+}
+
+.user-details {
+  padding: 20px 15px;
+}

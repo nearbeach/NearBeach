@@ -8,15 +8,16 @@ from django.urls import reverse
 from django.template import loader
 from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
-from NearBeach.user_permissions import return_user_permission_level
 from django.views.decorators.http import require_http_methods
+from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_organisation_permissions
 
 
 import json
 
 
 @login_required(login_url='login',redirect_field_name="")
-def new_organisation(request):
+@check_user_organisation_permissions(min_permission_level=3)
+def new_organisation(request, *args, **kwargs):
     """
 
     :param request:
@@ -28,24 +29,22 @@ def new_organisation(request):
     t = loader.get_template('NearBeach/organisations/new_organisations.html')
 
     # Get Context
-    c = {}
+    c = {
+        'nearbeach_title': 'New Organisation',
+    }
 
     return HttpResponse(t.render(c,request))
 
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name='')
-def new_organisation_save(request):
+@check_user_organisation_permissions(min_permission_level=3)
+def new_organisation_save(request, *args, **kwargs):
     """
 
     :param request:
     :return:
     """
-    permission_results = return_user_permission_level(request, None, 'organisation')
-
-    if permission_results['organisation'] < 3:
-        return HttpResponseRedirect(reverse('permission_denied'))
-
     # Get the data
     form = OrganisationForm(request.POST)
     if not form.is_valid():
@@ -65,7 +64,8 @@ def new_organisation_save(request):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
-def organisation_duplicates(request):
+@check_user_organisation_permissions(min_permission_level=3)
+def organisation_duplicates(request, *args, **kwargs):
     """
 
     :param request:
@@ -94,7 +94,8 @@ def organisation_duplicates(request):
 
 
 @login_required(login_url='login',redirect_field_name="")
-def organisation_information(request,organisation_id):
+@check_user_organisation_permissions(min_permission_level=1)
+def organisation_information(request,organisation_id, *args, **kwargs):
     """
 
     :param request:
@@ -118,6 +119,7 @@ def organisation_information(request,organisation_id):
         'customer_results': serializers.serialize('json',customer_results),
         'organisation_id': organisation_id,
         'organisation_results': serializers.serialize('json',[organisation_results]),
+        'nearbeach_title': 'Organisation Information %s' % organisation_id,
         'title_list': serializers.serialize('json',title_list),
     }
 
@@ -126,7 +128,8 @@ def organisation_information(request,organisation_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
-def organisation_information_save(request,organisation_id):
+@check_user_organisation_permissions(min_permission_level=2)
+def organisation_information_save(request,organisation_id, *args, **kwargs):
     """
 
     :param request:
@@ -153,7 +156,8 @@ def organisation_information_save(request,organisation_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
-def organisation_update_profile(request,organisation_id):
+@check_user_organisation_permissions(min_permission_level=2)
+def organisation_update_profile(request,organisation_id, *args, **kwargs):
     """
 
     :param request:

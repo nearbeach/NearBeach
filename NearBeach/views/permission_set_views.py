@@ -26,7 +26,9 @@ def new_permission_set(request):
     t = loader.get_template('NearBeach/permission_sets/new_permission_set.html')
 
     # Get context
-    c = {}
+    c = {
+        'nearbeach_title': 'New Permission Set',
+    }
 
     return HttpResponse(t.render(c, request))
 
@@ -97,11 +99,12 @@ def permission_set_information(request, permission_set_id):
 
     # Create the context
     c = {
+        'nearbeach_title': 'Permission Set %s' % permission_set_id,
         'permission_set_results': serializers.serialize('json', [permission_set_results]),
-        'user_list_results': user_list_results,
         'permission_set_id': permission_set_id,
         'permission_boolean': json.dumps(PERMISSION_BOOLEAN),
         'permission_level': json.dumps(PERMISSION_LEVEL),
+        'user_list_results': user_list_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -126,6 +129,7 @@ def permission_set_information_save(request, permission_set_id):
     # Get form data
     form = PermissionSetForm(request.POST)
     if not form.is_valid():
+        print(form.errors)
         return HttpResponseBadRequest(form.errors)
 
     # Get the object
@@ -140,7 +144,7 @@ def permission_set_information_save(request, permission_set_id):
     update_permission_set.administration_create_user = form.cleaned_data['administration_create_user']
     update_permission_set.bug_client = form.cleaned_data['bug_client']
     update_permission_set.customer = form.cleaned_data['customer']
-    update_permission_set.kanban = form.cleaned_data['kanban']
+    update_permission_set.kanban_board = form.cleaned_data['kanban_board']
     update_permission_set.kanban_card = form.cleaned_data['kanban_card']
     update_permission_set.organisation = form.cleaned_data['organisation']
     update_permission_set.project = form.cleaned_data['project']

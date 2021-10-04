@@ -232,7 +232,7 @@
                     this.closeLoadingModal();
 
                     //Reload the page IF the status is closed
-                    window.location.reload(this.projectStatusModel === 'Closed');
+                    if (this.projectStatusModel === 'Closed') window.location.reload(true);
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 })

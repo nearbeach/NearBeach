@@ -10,15 +10,16 @@ from django.template import loader
 from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
-from NearBeach.user_permissions import return_user_permission_level
 from django.db.models import Max
+from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_kanban_permissions
 
 import json, urllib3
 
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
-def add_kanban_link(request,kanban_board_id,object_lookup):
+@check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
+def add_kanban_link(request,kanban_board_id,object_lookup, *args, **kwargs):
     """
 
     :param request:
@@ -67,7 +68,34 @@ def add_kanban_link(request,kanban_board_id,object_lookup):
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
-def check_kanban_board_name(request):
+@check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
+def archive_kanban_cards(request, *args, **kwargs):
+    """
+    """
+
+    # Get the form data
+    form = KanbanCardArchiveForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get all cards from POST
+    card_list = request.POST.getlist('kanban_card_id')
+    
+    # Update all cards
+    kanban_card.objects.filter(
+        kanban_card_id__in=card_list,
+    ).update(
+        is_archived=True,
+    )
+
+    # Return success
+    return HttpResponse("")
+    
+
+@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(['POST'])
+@check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
+def check_kanban_board_name(request, *args, **kwargs):
     """
     The following will get a list of all kanban boards with the same name. The idea is that each kanban board should
     have a unique name.
@@ -90,6 +118,37 @@ def check_kanban_board_name(request):
 
 
 # Internal function
+def get_context(kanban_board_id):
+    # Get the kanban data
+    kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+
+    column_results = kanban_column.objects.filter(
+        is_deleted=False,
+        kanban_board_id=kanban_board_id,
+    ).order_by(
+        'kanban_column_sort_number',
+    )
+
+    level_results = kanban_level.objects.filter(
+        is_deleted=False,
+        kanban_board_id=kanban_board_id,
+    ).order_by(
+        'kanban_level_sort_number',
+    )
+
+    # Context
+    c = {
+        'kanban_board_results': serializers.serialize('json', [kanban_board_results]),
+        'column_results': serializers.serialize('json', column_results),
+        'kanban_board_id': kanban_board_id,
+        'level_results': serializers.serialize('json', level_results),
+        'nearbeach_title': 'Kanban Information %s' % kanban_board_id,
+    }
+
+    return c
+
+
+# Internal function
 def get_max_sort_id(kanban_board_id,form):
     # Get the newest card number id
     kanban_card_sort_number = kanban_card.objects.filter(
@@ -107,52 +166,79 @@ def get_max_sort_id(kanban_board_id,form):
 
 
 @login_required(login_url='login', redirect_field_name="")
-def kanban_information(request, kanban_board_id):
+@require_http_methods(['POST'])
+@check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
+def kanban_close_board(request, kanban_board_id, *args, **kwargs):
+    """
+    """
+    # Close the kanban board
+    kanban_update = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+    kanban_update.kanban_board_status = 'Closed'
+    kanban_update.save()
+
+    # Return Success
+    return HttpResponse("")
+
+
+@login_required(login_url='login', redirect_field_name="")
+@check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
+def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
+    """
+    """
+    user_level = kwargs['user_level']
+
+    # Get group results
+    group_results = object_assignment.objects.filter(
+        is_deleted=False,
+        group_id__isnull=False,
+        kanban_board_id=kanban_board_id,
+    )
+
+    # Get context
+    c = get_context(kanban_board_id)
+    c['user_level'] = user_level
+    c['group_results'] = serializers.serialize('json', group_results)
+
+    # Get the template
+    t = loader.get_template('NearBeach/kanban/kanban_edit_board.html')
+
+    # Get the context
+    return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url='login', redirect_field_name="")
+@check_user_permissions(min_permission_level=1, object_lookup='kanban_board_id')
+def kanban_information(request, kanban_board_id, *args, **kwargs):
     """
 
     :param request:
     :param kanban_board_id:
     :return:
     """
+    user_level = kwargs['user_level']
 
-    # Check user's permissions
-
-    # Get the kanban data
-    kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
-
+    # Get kanban card results
     kanban_card_results = kanban_card.objects.filter(
+        is_archived=False,
         is_deleted=False,
         kanban_board_id=kanban_board_id,
     ).order_by('kanban_card_sort_number')
 
-    column_results = kanban_column.objects.filter(
-        is_deleted=False,
-        kanban_board_id=kanban_board_id,
-    )
-
-    level_results = kanban_level.objects.filter(
-        is_deleted=False,
-        kanban_board_id=kanban_board_id,
-    )
+    # Get context
+    c = get_context(kanban_board_id)
+    c['user_level'] = user_level 
+    c['kanban_card_results'] = serializers.serialize('json', kanban_card_results)
 
     # Get the template
     t = loader.get_template('NearBeach/kanban/kanban_information.html')
-
-    # Context
-    c = {
-        'kanban_board_results': serializers.serialize('json', [kanban_board_results]),
-        'kanban_card_results': serializers.serialize('json', kanban_card_results),
-        'column_results': serializers.serialize('json', column_results),
-        'kanban_board_id': kanban_board_id,
-        'level_results': serializers.serialize('json', level_results),
-    }
 
     return HttpResponse(t.render(c, request))
 
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
-def kanban_link_list(request, kanban_board_id, object_lookup):
+@check_user_permissions(min_permission_level=1, object_lookup='kanban_board_id')
+def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
     """
 
     :param request:
@@ -195,7 +281,8 @@ def kanban_link_list(request, kanban_board_id, object_lookup):
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
-def move_kanban_card(request, kanban_card_id):
+@check_user_kanban_permissions(min_permission_level=2)
+def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     """
 
     :param request:
@@ -293,7 +380,8 @@ def move_kanban_card(request, kanban_card_id):
 
 
 @login_required(login_url='login', redirect_field_name="")
-def new_kanban(request):
+@check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
+def new_kanban(request, *args, **kwargs):
     """
 
     :param request:
@@ -307,12 +395,22 @@ def new_kanban(request):
         is_deleted=False,
     )
 
+    # Get list of user groups
+    user_group_results = user_group.objects.filter(
+        is_deleted=False,
+        username=request.user,
+    ).values(
+        'group_id',
+        'group__group_name',
+    ).distinct()
+
     # Get tempalte
     t = loader.get_template('NearBeach/kanban/new_kanban.html')
 
     # Context
     c = {
         'group_results': serializers.serialize('json', group_results),
+        'user_group_results': json.dumps(list(user_group_results), cls=DjangoJSONEncoder),
     }
 
     return HttpResponse(t.render(c, request))
@@ -320,7 +418,8 @@ def new_kanban(request):
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
-def new_kanban_card(request, kanban_board_id):
+@check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
+def new_kanban_card(request, kanban_board_id, *args, **kwargs):
     """
     """
 
@@ -356,15 +455,13 @@ def new_kanban_card(request, kanban_board_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-def new_kanban_save(request):
+@check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
+def new_kanban_save(request, *args, **kwargs):
     """
 
     :param request:
     :return:
     """
-
-    # CHECK USERS PERMISSIONS
-
     # Check the user form
     form = NewKanbanForm(request.POST)
     if not form.is_valid():
@@ -426,7 +523,8 @@ def new_kanban_save(request):
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
-def update_card(request):
+@check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
+def update_card(request, *args, **kwargs):
     """
     The following function will update the card information sent through the form in POST
     """
@@ -442,6 +540,8 @@ def update_card(request):
     kanban_card_update = form.cleaned_data['kanban_card_id']
     kanban_card_update.kanban_card_text = form.cleaned_data['kanban_card_text']
     kanban_card_update.kanban_card_description = form.cleaned_data['kanban_card_description']
+    kanban_card_update.kanban_column = form.cleaned_data['kanban_column']
+    kanban_card_update.kanban_level = form.cleaned_data['kanban_level']
     kanban_card_update.save()
 
     return HttpResponse("")

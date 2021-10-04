@@ -66,6 +66,7 @@
             <hr>
             <group-permissions v-bind:group-results="groupResults"
                                v-bind:destination="'kanban_board'"
+                               v-bind:user-group-results="userGroupResults"
                                v-on:update_group_model="updateGroupModel($event)"
                                v-bind:is-dirty="$v.groupModel.$dirty"
             ></group-permissions>
@@ -99,6 +100,16 @@
         name: "NewKanban",
         props: {
             groupResults: Array,
+            rootUrl: {
+                type: String,
+                default: "/",
+            },
+            userGroupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            }
         },
         mixins: [
             errorModalMixin,
@@ -156,20 +167,6 @@
                 //Apply checking flag
                 this.checkingKanbanBoardName = true;
 
-                // Make sure the timer isn't running
-                // if (this.searchTimeout != '') {
-                //     //Stop the clock!
-                //     clearTimeout(this.searchTimeout);
-                // }
-                //
-                // // Reset the clock, to only search if there is an uninterupted 0.5s of no typing.
-                // if (this.kanbanBoardNameModel.length >= 3) {
-                //     this.searchTimeout = setTimeout(
-                //         this.checkKanbanBoardName,
-                //         500,
-                //     )
-                // }
-
                 this.searchTrigger({
                     'return_function': this.checkKanbanBoardName,
                     'searchTimeout': this.searchTimeout,
@@ -204,9 +201,13 @@
                     data_to_send.append('level_title',level['title']);
                 });
 
+                this.groupModel.forEach(single_group => {
+                    data_to_send.append('group_list',single_group['value']);
+                })
+
                 //Use axios to send the data
                 axios.post(
-                    `/new_kanban_save/`,
+                    `${this.rootUrl}new_kanban_save/`,
                     data_to_send
                 ).then(response => {
                     //Go to that webpage
@@ -222,7 +223,7 @@
 
                 //Use axios to query the database
                 axios.post(
-                    `/kanban_information/check_kanban_board_name/`,
+                    `${this.rootUrl}kanban_information/check_kanban_board_name/`,
                     data_to_send,
                 ).then(response => {
                     //If the data came back empty - then the kanban board name is unique

@@ -33,7 +33,7 @@
                         <span class="error" v-if="!$v.taskDescriptionModel.required && $v.taskDescriptionModel.$dirty"> Please supply a description.</span>
                         <span class="error" v-if="!$v.taskDescriptionModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
-                    <img src="/static/NearBeach/images/placeholder/body_text.svg"
+                    <img v-bind:src="`${staticUrl}static/NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
                          alt="loading image for Tinymce"
                     />
@@ -71,6 +71,7 @@
             <hr>
             <group-permissions v-bind:group-results="groupResults"
                                v-bind:destination="'task'"
+                               v-bind:user-group-results="userGroupResults"
                                v-on:update_group_model="updateGroupModel($event)"
                                v-bind:is-dirty="$v.groupModel.$dirty"
             ></group-permissions>
@@ -100,11 +101,21 @@
         name: "NewTask",
         props: {
             groupResults: Array,
+            userGroupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            }
         },
         data() {
             return {
                 groupModel: {},
                 stakeholderModel: '',
+                staticUrl: {
+                    type: String,
+                    default: "/",
+                },
                 taskDescriptionModel: '',
                 taskEndDateModel: '',
                 taskShortDescriptionModel: '',
@@ -163,7 +174,7 @@
 
                 //Send data to backend
                 axios.post(
-                    '/new_task/save/',
+                    'save/',
                     data_to_send
                 ).then(response => {
                     //Go to the new project

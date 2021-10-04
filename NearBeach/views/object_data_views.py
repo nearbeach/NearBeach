@@ -11,7 +11,6 @@ from django.db.models import Sum, Q, Min, CharField, Value as V
 from django.db.models.functions import Concat
 from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
-from NearBeach.user_permissions import return_user_permission_level
 
 
 import json, urllib, urllib3
@@ -199,6 +198,46 @@ def add_notes(request,destination,location_id):
 
     return HttpResponse(serializers.serialize('json',note_resuts),content_type='application.json')
 
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def add_tags(request, destination, location_id):
+    #Check the data against the form
+    form = AddTagsForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors);
+
+    # Loop throgh each tag
+    tag_list = request.POST.getlist("tag_id")
+
+    for single_tag in tag_list:
+        # Grab the tag instance
+        tag_instance = tag.objects.get(tag_id=single_tag)
+
+        submit_tag_assignment = tag_assignment(
+            tag=tag_instance,
+            object_enum=destination,
+            object_id=location_id,
+            change_user=request.user,
+        )
+        submit_tag_assignment.save()
+
+    # Return all tags associated with the destination/locationid
+    tag_results = tag.objects.filter(
+        is_deleted=False,
+        tag_id__in=tag_assignment.objects.filter(
+            is_deleted=False,
+            object_enum=destination,
+            object_id=location_id,
+        ).values('tag_id')
+    )
+
+    return HttpResponse(
+        serializers.serialize('json', tag_results),
+        content_type='application/json',
+    )
+
+
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
 def add_user(request,destination,location_id):
@@ -230,7 +269,7 @@ def add_user(request,destination,location_id):
     # Get the data to return to the user
     user_results = get_user_list(destination,location_id)
 
-    return HttpResponse(serializers.serialize('json',user_results),content_type='application/json')
+    return HttpResponse(user_results,content_type='application/json')
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
@@ -473,6 +512,29 @@ def customer_list_all(request,destination,location_id):
 
     return HttpResponse(serializers.serialize('json',customer_results), content_type='application/json')
 
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def delete_tag(request):
+    # Get form data
+    form = DeleteTagForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Update/Delete tag associations
+    tag_assignment.objects.filter(
+        is_deleted=False,
+        tag_id=form.cleaned_data['tag'],
+        object_enum=form.cleaned_data['object_enum'],
+        object_id=form.cleaned_data['object_id']
+    ).update(
+        is_deleted=True,
+    )
+
+    # Ok - return blank
+    return HttpResponse("")
+
+
 # Internal function
 def get_customer_list(destination,location_id):
     # Get a list of all objects assignments dependant on the destination
@@ -519,7 +581,17 @@ def get_user_list(destination,location_id):
     )
 
     # Get the user details
-    return User.objects.filter(id__in=object_results.values('assigned_user_id'))
+    user_results = User.objects.filter(
+        id__in=object_results.values('assigned_user_id')
+    ).values(
+        'id',
+        'username',
+        'first_name',
+        'last_name',
+        'email',
+    )
+
+    return json.dumps(list(user_results), cls=DjangoJSONEncoder)
 
 
 # Internal Function
@@ -826,11 +898,44 @@ def query_bug_client(request,destination,location_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
+def tag_list(request, destination, location_id):
+    # Get the data we want
+    tag_results = tag.objects.filter(
+        is_deleted=False,
+        tag_id__in=tag_assignment.objects.filter(
+            is_deleted=False,
+            object_enum=destination,
+            object_id=location_id,
+        ).values('tag_id')
+    )
+
+    return HttpResponse(
+        serializers.serialize('json', tag_results),
+        content_type='application/json',
+    )
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def tag_list_all(request):
+    # Get the data we want
+    tag_results = tag.objects.filter(
+        is_deleted=False,
+    )
+
+    return HttpResponse(
+        serializers.serialize('json', tag_results),
+        content_type='application/json',
+    )
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
 def user_list(request,destination,location_id):
     # Get the data we want
     user_results = get_user_list(destination,location_id)
 
-    return HttpResponse(serializers.serialize('json',user_results),content_type='application/json')
+    return HttpResponse(user_results,content_type='application/json')
 
 
 @require_http_methods(['POST'])

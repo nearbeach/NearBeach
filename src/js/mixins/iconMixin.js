@@ -19,9 +19,11 @@ import microsoftPowerpoint from '@iconify-icons/mdi/microsoft-powerpoint';
 import microsoftWord from '@iconify-icons/mdi/microsoft-word';
 import noteAdd from '@iconify/icons-cil/note-add';
 import objectStorage from '@iconify/icons-carbon/object-storage';
+import passwordIcon from '@iconify-icons/carbon/password';
 import userIcon from '@iconify/icons-feather/user';
 import usersIcon from '@iconify/icons-feather/users';
 import xCircle from '@iconify-icons/feather/x-circle';
+
 
 
 export default {
@@ -48,6 +50,7 @@ export default {
                 microsoftWord: microsoftWord,
                 noteAdd: noteAdd,
                 objectStorage: objectStorage,
+                passwordIcon: passwordIcon,
                 userIcon: userIcon,
                 usersIcon: usersIcon,
                 xCircle: xCircle,

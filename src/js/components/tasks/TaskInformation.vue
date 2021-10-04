@@ -1,7 +1,7 @@
 <template>
     <div class="card">
         <div class="card-body">
-            <h1>New Task</h1>
+            <h1>Task Information</h1>
             <hr>
 
             <div class="row">
@@ -227,7 +227,9 @@
                     this.closeLoadingModal();
 
                     //Reload the page IF the status is closed
-                    window.location.reload(this.taskStatusModel === 'Closed');
+                    if (this.taskStatusModel === 'Closed') {
+                        window.location.reload(this.taskStatusModel === 'Closed');
+                    }
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 });

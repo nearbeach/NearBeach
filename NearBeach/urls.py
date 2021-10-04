@@ -10,15 +10,19 @@ from .views import admin_views, \
     document_views, \
     error_views, \
     group_views, \
+    kanban_column_views, \
+    kanban_level_views, \
     kanban_views, \
     object_data_views, \
     organisation_views, \
     permission_set_views, \
+    profile_views, \
     project_views, \
     request_for_change_views, \
     requirement_item_views, \
     requirement_views, \
     search_views, \
+    tag_views, \
     task_views, \
     user_views
 
@@ -29,9 +33,14 @@ urlpatterns = [
     path('', dashboard_views.dashboard, name='dashboard'),
 
     # Administration
-    path('admin/add_user/', admin_views.add_user, name='admin_add_user'),
+    path('admin_add_user/', admin_views.add_user, name='admin_add_user'),
+    path('admin_update_user_password/', admin_views.update_user_password, name='update_user_password'),
 
     # Change Task
+    path('change_task_information/<int:change_task_id>/', change_task_views.change_task_information,
+         name='change_task_information'),
+    path('change_task_information/<int:change_task_id>/save/', change_task_views.change_task_save,
+         name='change_task_save'),
     path('change_task_update_status/<int:change_task_id>/', change_task_views.update_status,
          name='change_task_update_status'),
 
@@ -44,6 +53,8 @@ urlpatterns = [
     path('dashboard/get/bug_list/', dashboard_views.get_bug_list, name='get_bug_list'),
     path('dashboard/get/my_objects/', dashboard_views.get_my_objects, name='get_my_objects'),
     path('dashboard/get/rfc_approvals/', dashboard_views.rfc_approvals, name='rfc_approvals'),
+    path('dashboard/get/unassigned_objects/', dashboard_views.get_unassigned_objects, name='get_unassigned_objects'),
+    path('dashboard/get/users_with_no_groups/', dashboard_views.users_with_no_groups, name='users_with_no_groups'),
 
     # Documentation
     path('documentation/<destination>/<location_id>/add_folder/', document_views.document_add_folder,
@@ -62,8 +73,23 @@ urlpatterns = [
     path('group_information/<int:group_id>/save/', group_views.group_information_save, name='group_information_save'),
     path('group_information/check_group_name/', group_views.check_group_name, name='check_group_name'),
 
+    # Kanban Columns
+    path('kanban_column/<int:kanban_column_id>/edit/', kanban_column_views.edit_column, name='kanban_edit_column'),
+    path('kanban_column/<int:kanban_board_id>/delete/', kanban_column_views.delete_column, name='kanban_delete_column'),
+    path('kanban_column/<int:kanban_board_id>/new/', kanban_column_views.new_column, name='kanban_new_column'),
+    path('kanban_column/<int:kanban_board_id>/resort/', kanban_column_views.resort_column, name='kanban_resort_column'),
+
+    # Kanban Levels
+    path('kanban_level/<int:kanban_level_id>/edit/', kanban_level_views.edit_level, name='kanban_edit_level'),
+    path('kanban_level/<int:kanban_board_id>/delete/', kanban_level_views.delete_level, name='kanban_delete_level'),
+    path('kanban_level/<int:kanban_board_id>/new/', kanban_level_views.new_level, name='kanban_new_level'),
+    path('kanban_level/<int:kanban_board_id>/resort/', kanban_level_views.resort_level, name='kanban_resort_level'),
+    
     # Kanban
+    path('kanban_information/archive_kanban_cards/', kanban_views.archive_kanban_cards, name="archive_kanban_cards"),
     path('kanban_information/<int:kanban_board_id>/', kanban_views.kanban_information, name='kanban_information'),
+    path('kanban_information/<int:kanban_board_id>/close_board/', kanban_views.kanban_close_board, name='kanban_close_board'),
+    path('kanban_information/<int:kanban_board_id>/edit_board/', kanban_views.kanban_edit_board, name='kanban_edit_board'),
     path('kanban_information/<int:kanban_board_id>/<object_lookup>/add_link/', kanban_views.add_kanban_link,
          name='add_kanban_link'),
     path('kanban_information/<int:kanban_board_id>/<object_lookup>/link_list/', kanban_views.kanban_link_list,
@@ -89,6 +115,10 @@ urlpatterns = [
 
     # Private files
     path('private/<uuid:document_key>/', document_views.private_download_file, name='private_download_file'),
+
+    # Profiles
+    path('profile_information/', profile_views.profile_information, name='profile_information'),
+    path('profile_information/update_data/', profile_views.update_data, name='profile_update_data'),
 
     # New Objects
     path('new_customer/', customer_views.new_customer, name='new_customer'),
@@ -122,6 +152,7 @@ urlpatterns = [
     path('object_data/<destination>/<location_id>/add_group/', object_data_views.add_group, name='add_group'),
     path('object_data/<destination>/<location_id>/add_link/', object_data_views.add_link, name='add_link'),
     path('object_data/<destination>/<location_id>/add_notes/', object_data_views.add_notes, name='add_notes'),
+    path('object_data/<destination>/<location_id>/add_tags/', object_data_views.add_tags, name='add_tags'),
     path('object_data/<destination>/<location_id>/add_user/', object_data_views.add_user, name='add_user'),
     path('object_data/<destination>/<location_id>/associated_objects/', object_data_views.associated_objects,
          name='associated_objects'),
@@ -141,9 +172,12 @@ urlpatterns = [
          name='object_link_list'),  # WTF - Please check to make sure we need this function?
     path('object_data/<destination>/<location_id>/query_bug_client/', object_data_views.query_bug_client,
          name='query_bug_client'),
+    path('object_data/<destination>/<location_id>/tag_list/', object_data_views.tag_list, name='tag_list'),
+    path('object_data/tag_list_all/', object_data_views.tag_list_all, name='tag_list_all'),
     path('object_data/<destination>/<location_id>/user_list/', object_data_views.user_list, name='user_list'),
     path('object_data/<destination>/<location_id>/user_list_all/', object_data_views.user_list_all,
          name='user_list_all'),
+    path('object_data/delete_tag/', object_data_views.delete_tag, name='delete_tag'),
     path('object_data/lead_user_list/', object_data_views.lead_user_list, name='lead_user_list'),
 
     # Organisation
@@ -220,8 +254,14 @@ urlpatterns = [
     path('search/organisation/data/', search_views.search_organisation_data, name='search_organisation_data'),
     path('search/permission_set/', search_views.search_permission_set, name='search_permission_set'),
     path('search/permission_set/data/', search_views.search_permission_set_data, name='search_permission_set_data'),
+    path('search/tag/', search_views.search_tag, name='search_tag'),
     path('search/user/', search_views.search_user, name='search_user'),
     path('search/user/data/', search_views.search_user_data, name='search_user_data'),
+
+    # Tags
+    path('tag/delete/<int:tag_id>/', tag_views.delete_tag, name='delete_tag'),
+    path('tag/new/', tag_views.new_tag, name='new_tag'),
+    path('tag/save/', tag_views.save_tag, name='save_tag'),
 
     # Tasks
     path('task_information/<int:task_id>/', task_views.task_information, name='task_information'),
@@ -230,13 +270,16 @@ urlpatterns = [
     # Users
     path('user_information/<int:username>/', user_views.user_information, name='user_information'),
     path('user_information/<int:username>/save/', user_views.user_information_save, name='user_information_save'),
+    path('user_information/update_user_password/', user_views.update_password, name='update_password'),
 
+    path('test/permission_denied/', authentication_views.test_permission_denied,name='test_permission_denied'),
     # Changing and Resetting Passwords
     # path('change-password/', auth_views.PasswordChangeView.as_view()),
     path(
         'password_reset/',
         auth_views.PasswordResetView.as_view(
             template_name='NearBeach/authentication/password_reset.html',
+            html_email_template_name='NearBeach/authentication/password_reset_email.html',
             email_template_name='NearBeach/authentication/password_reset_email.html',
         ),
         name='password_reset',
@@ -262,6 +305,8 @@ urlpatterns = [
         ),
         name='password_reset_complete'
     ),
+
+    # Simple Test Functions
 ]
 
 handler403 = error_views.error_403

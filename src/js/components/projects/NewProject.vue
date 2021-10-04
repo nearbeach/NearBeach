@@ -33,7 +33,7 @@
                         <span class="error" v-if="!$v.projectDescriptionModel.required && $v.projectDescriptionModel.$dirty"> Please supply a description.</span>
                         <span class="error" v-if="!$v.projectDescriptionModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
-                    <img src="/static/NearBeach/images/placeholder/body_text.svg"
+                    <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
                          alt="loading image for Tinymce"
                     />
@@ -71,6 +71,7 @@
             <hr>
             <group-permissions v-bind:group-results="groupResults"
                                v-bind:destination="'project'"
+                               v-bind:user-group-results="userGroupResults"
                                v-on:update_group_model="updateGroupModel($event)"
                                v-bind:is-dirty="$v.groupModel.$dirty"
             ></group-permissions>
@@ -100,6 +101,20 @@
         name: "NewProject",
         props: {
             groupResults: Array,
+            rootUrl: {
+                type: String,
+                default: "/",
+            },
+            staticUrl: {
+                type: String,
+                default: "/",
+            },
+            userGroupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
         },
         mixins: [
             errorModalMixin,
@@ -162,7 +177,7 @@
 
                 //Send data to backend
                 axios.post(
-                    '/new_project/save/',
+                    `${this.rootUrl}new_project/save/`,
                     data_to_send
                 ).then(response => {
                     //Go to the new project
@@ -182,6 +197,19 @@
             updateStakeholderModel: function(data) {
                 this.stakeholderModel = data;
             }
+        },
+        mounted() {
+            //Map the results from the user_group_results to groupModels
+            /*
+            setTimeout(() => {
+                this.groupModel = this.userGroupResults.map(row => {
+                    return {
+                        group: row['group__group_name'],
+                        value: row['group_id'],
+                    }
+                });
+            },100);
+            */
         },
     }
 </script>

@@ -2,7 +2,7 @@
 <html lang="en">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <head role="head">
-	<title>NearBeach Beta</title>
+	<title>{{ nearbeach_title }}</title>
 
     {% load static %}
 
@@ -101,6 +101,7 @@
                             <div class="dropdown-menu" aria-labelledby="administrationDropdown">
                                 <a class="dropdown-item" href="{% url 'search_group' %}">Groups</a>
                                 <a class="dropdown-item" href="{% url 'search_permission_set' %}">Permission Sets</a>
+                                <a class="dropdown-item" href="{% url 'search_tag' %}">Tags</a>
                                 <a class="dropdown-item" href="{% url 'search_user' %}">Users</a>
                             </div>
                         </li>
@@ -137,8 +138,8 @@
                             >
                                 User
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">My Profile</a>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="{% url 'profile_information' %}">My Profile</a>
                                 <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
                             </div>
                         </li>

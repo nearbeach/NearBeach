@@ -124,7 +124,7 @@
                 this.itemResults = data;
             },
             updateItemResults: function() {
-                axios.get(
+                axios.post(
                         'data/items/',
                     ).then((response) => {
                         //Clear the current list
@@ -138,7 +138,7 @@
                     });
             },
             updateStatusList: function() {
-                axios.get(
+                axios.post(
                         'data/item_status/',
                     ).then((response) => {
                         //Clear the current list
@@ -151,7 +151,7 @@
                     });
             },
             updateTypeList: function() {
-                axios.get(
+                axios.post(
                         'data/item_type/',
                     ).then((response) => {
                         //Clear the current list

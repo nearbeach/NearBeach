@@ -34,9 +34,20 @@ def new_task(request, *args, **kwargs):
         is_deleted=False,
     )
 
+    # Get list of user groups
+    user_group_results = user_group.objects.filter(
+        is_deleted=False,
+        username=request.user,
+    ).values(
+        'group_id',
+        'group__group_name',
+    ).distinct()
+
     # Context
     c = {
+        'nearbeach_title': 'New Task',
         'group_results': serializers.serialize('json', group_results),
+        'user_group_results': json.dumps(list(user_group_results), cls=DjangoJSONEncoder),
     }
 
     return HttpResponse(t.render(c, request))
@@ -117,6 +128,7 @@ def task_information(request, task_id, *args, **kwargs):
 
     # Context
     c = {
+        'nearbeach_title': 'Task Information %s' % task_id,
         'organisation_results': serializers.serialize('json', organisation_results),
         'user_level': user_level,
         'task_id': task_id,

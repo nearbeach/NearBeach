@@ -8,15 +8,15 @@ from django.urls import reverse
 from django.template import loader
 from django.db.models import Sum, Q, Min
 from NearBeach.forms import *
-from NearBeach.user_permissions import return_user_permission_level
 from django.views.decorators.http import require_http_methods
-
+from NearBeach.decorators.check_user_permissions import check_user_customer_permissions
 
 import json
 
 
 @login_required(login_url='login',redirect_field_name='')
-def customer_information(request,customer_id):
+@check_user_customer_permissions(min_permission_level=1)
+def customer_information(request,customer_id, *args, **kwargs):
     """
 
     :param request:
@@ -27,8 +27,6 @@ def customer_information(request,customer_id):
 
     # Get customer data
     customer_results = customer.objects.get(customer_id=customer_id)
-
-    print("Customer Organisation id: %s " % customer_results.organisation_id)
 
     organisation_results = organisation.objects.filter(
         organisation_id=customer_results.organisation_id,
@@ -44,6 +42,7 @@ def customer_information(request,customer_id):
     # Context
     c = {
         'customer_results': serializers.serialize('json',[customer_results]),
+        'nearbeach_title': 'Customer Information %s' % customer_id,
         'organisation_results': serializers.serialize('json', organisation_results),
         'title_list': serializers.serialize('json',title_list),
     }
@@ -53,7 +52,8 @@ def customer_information(request,customer_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name='')
-def customer_information_save(request,customer_id):
+@check_user_customer_permissions(min_permission_level=2)
+def customer_information_save(request,customer_id, *args, **kwargs):
     """
 
     :param request:
@@ -85,7 +85,8 @@ def customer_information_save(request,customer_id):
 
 
 @login_required(login_url='login',redirect_field_name="")
-def new_customer(request):
+@check_user_customer_permissions(min_permission_level=3)
+def new_customer(request, *args, **kwargs):
     """
 
     :param request:
@@ -103,6 +104,7 @@ def new_customer(request):
 
     # Get Context
     c = {
+        'nearbeach_title': 'New Customer',
         'title_list': serializers.serialize('json',title_list),
     }
 
@@ -111,7 +113,8 @@ def new_customer(request):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login',redirect_field_name="")
-def new_customer_save(request):
+@check_user_customer_permissions(min_permission_level=2)
+def new_customer_save(request, *args, **kwargs):
     """
 
     :param reqeust:

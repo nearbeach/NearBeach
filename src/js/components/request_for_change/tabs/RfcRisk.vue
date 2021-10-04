@@ -51,10 +51,6 @@
                 <span class="error" v-if="!$v.rfcRiskSummaryModel.required && $v.rfcRiskSummaryModel.$dirty"> Please supply a description.</span>
                 <span class="error" v-if="!$v.rfcRiskSummaryModel.maxLength"> Sorry - too many characters.</span>
             </label><br>
-            <img src="/static/NearBeach/images/placeholder/body_text.svg"
-                 class="loader-image"
-                 alt="loading image for Tinymce"
-            />
             <editor
                :init="{
                  height: 500,

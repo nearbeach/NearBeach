@@ -188,7 +188,6 @@
                     <rfc-run-sheet-list v-bind:is-read-only="isReadOnly"
                                         v-bind:location-id="locationId" 
                                         v-bind:user-list="userList"
-                                        v-bind:is-deployment="isDeployment"
                                         v-bind:rfc-id="rfcResults[0]['pk']"
                                         v-bind:rfc-status="rfcResults[0]['fields']['rfc_status']"
                                         v-on:update_values="updateValues($event)"
@@ -211,10 +210,6 @@
         props: {
             locationId: Number,
             destination: String,
-            isDeployment: {
-                type: Boolean,
-                default: false,
-            },
             isReadOnly: {
                 type: Boolean,
                 default: false,

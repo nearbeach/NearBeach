@@ -33,7 +33,7 @@
                         <span class="error" v-if="!$v.requirementScopeModel.required && $v.requirementScopeModel.$dirty"> Please supply a scope.</span>
                         <span class="error" v-if="!$v.requirementScopeModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
-                    <img src="/static/NearBeach/images/placeholder/body_text.svg"
+                    <img v-bind:src="`${staticUrl}static/NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
                          alt="loading image for Tinymce"
                     />
@@ -94,6 +94,7 @@
             <hr>
             <group-permissions v-bind:group-results="groupResults"
                                v-bind:destination="'requirement'"
+                               v-bind:user-group-results="userGroupResults"
                                v-on:update_group_model="updateGroupModel($event)"
                                v-bind:is-dirty="$v.groupModel.$dirty"
             ></group-permissions>
@@ -125,11 +126,21 @@
         components: {
             axios,
         },
-        props: [
-            'statusList',
-            'typeList',
-            'groupResults',
-        ],
+        props: {
+            groupResults: Array,
+            staticUrl: {
+                type: String,
+                default: "/",
+            },
+            statusList: Array,
+            typeList: Array,
+            userGroupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+        },
         data() {
             return {
                 groupModel: '',
@@ -183,9 +194,6 @@
                     //Just return - as we do not need to do the rest of this function
                     return;
                 }
-                // Apply the loading screen to hide everything
-                var loader_elem = document.getElementById("loader");
-                loader_elem.style.transform = "translateY(0)";
 
                 // Set up the data object to send
                 const data_to_send = new FormData();

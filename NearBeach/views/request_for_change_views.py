@@ -1,14 +1,16 @@
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, Http404
 from django.urls import reverse
 from django.template import loader
+from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
-
+from NearBeach.decorators.check_user_permissions import check_user_permissions, check_rfc_permissions
 from NearBeach.models import *
 from NearBeach.forms import NewRequestForChangeForm, RfcModuleForm, RfcInformationSaveForm, NewChangeTaskForm, \
     UpdateRFCStatus
 
+import json
 
 # Internal function
 def get_rfc_context(rfc_id):
@@ -33,6 +35,7 @@ def get_rfc_context(rfc_id):
 
     # Context
     c = {
+        'nearbeach_title': 'RFC %s' % rfc_id,
         'rfc_id': rfc_id,
         'rfc_results': serializers.serialize('json', [rfc_results]),
         'rfc_change_lead': serializers.serialize('json', [rfc_change_lead]),
@@ -43,7 +46,8 @@ def get_rfc_context(rfc_id):
 
 
 @login_required(login_url='login', redirect_field_name="")
-def new_request_for_change(request):
+@check_rfc_permissions(min_permission_level=3)
+def new_request_for_change(request, *args, **kwargs):
     """
 
     :param request:
@@ -60,6 +64,15 @@ def new_request_for_change(request):
         is_deleted=False,
     )
 
+    # Get list of user groups
+    user_group_results = user_group.objects.filter(
+        is_deleted=False,
+        username=request.user,
+    ).values(
+        'group_id',
+        'group__group_name',
+    ).distinct()
+
     user_results = User.objects.filter(  # This should only be group leaders
         is_active=True,
     )
@@ -67,6 +80,8 @@ def new_request_for_change(request):
     # Context
     c = {
         'group_results': serializers.serialize('json', group_results),
+        'nearbeach_title': 'New RFC',
+        'user_group_results': json.dumps(list(user_group_results), cls=DjangoJSONEncoder),
         'user_results': serializers.serialize('json', user_results),
     }
 
@@ -75,7 +90,8 @@ def new_request_for_change(request):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-def new_request_for_change_save(request):
+@check_rfc_permissions(min_permission_level=3)
+def new_request_for_change_save(request, *args, **kwargs):
     """
 
     :param request:
@@ -135,7 +151,8 @@ def new_request_for_change_save(request):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-def rfc_change_task_list(request, rfc_id):
+@check_rfc_permissions(min_permission_level=1)
+def rfc_change_task_list(request, rfc_id, *args, **kwargs):
     """
     """
     change_task_results = change_task.objects.filter(
@@ -148,7 +165,8 @@ def rfc_change_task_list(request, rfc_id):
 
 
 @login_required(login_url='login', redirect_field_name="")
-def rfc_deployment(request, rfc_id):
+@check_rfc_permissions(min_permission_level=2)
+def rfc_deployment(request, rfc_id, *args, **kwargs):
     """
 
     :param request:
@@ -172,7 +190,8 @@ def rfc_deployment(request, rfc_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url='login', redirect_field_name="")
-def rfc_new_change_task(request, rfc_id):
+@check_rfc_permissions(min_permission_level=2)
+def rfc_new_change_task(request, rfc_id, *args, **kwargs):
     """
 
     :param request:
@@ -214,11 +233,19 @@ def rfc_new_change_task(request, rfc_id):
         request_for_change_id=rfc_id,
     )
 
-    return HttpResponse(serializers.serialize('json', change_item_results), content_type='application/json')
+    # Get all the change task results and send it back
+    change_task_results = change_task.objects.filter(
+        is_deleted=False,
+        request_for_change=rfc_id,
+    ).order_by('change_task_start_date', 'change_task_end_date')
+
+    # Send back JSON response
+    return HttpResponse(serializers.serialize('json', change_task_results), content_type='application/json')
 
 
 @login_required(login_url='login', redirect_field_name="")
-def rfc_information(request, rfc_id):
+@check_rfc_permissions(min_permission_level=1)
+def rfc_information(request, rfc_id, *args, **kwargs):
     """
 
     :param request:
@@ -242,7 +269,8 @@ def rfc_information(request, rfc_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-def rfc_information_save(request, rfc_id):
+@check_rfc_permissions(min_permission_level=2)
+def rfc_information_save(request, rfc_id, *args, **kwargs):
     """
 
     :param request:
@@ -277,7 +305,8 @@ def rfc_information_save(request, rfc_id):
 
 
 @login_required(login_url='login', redirect_field_name="")
-def rfc_readonly(request, rfc_id):
+@check_rfc_permissions(min_permission_level=1)
+def rfc_readonly(request, rfc_id, *args, **kwargs):
     """
 
     :param request:
@@ -310,7 +339,8 @@ def rfc_readonly(request, rfc_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-def rfc_save_backout(request, rfc_id):
+@check_rfc_permissions(min_permission_level=2)
+def rfc_save_backout(request, rfc_id, *args, **kwargs):
     """
 
     :param request:
@@ -336,7 +366,8 @@ def rfc_save_backout(request, rfc_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-def rfc_save_implementation(request, rfc_id):
+@check_rfc_permissions(min_permission_level=2)
+def rfc_save_implementation(request, rfc_id, *args, **kwargs):
     """
     """
 
@@ -361,7 +392,8 @@ def rfc_save_implementation(request, rfc_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name='')
-def rfc_save_risk(request, rfc_id):
+@check_rfc_permissions(min_permission_level=2)
+def rfc_save_risk(request, rfc_id, *args, **kwargs):
     """
     """
 
@@ -390,7 +422,8 @@ def rfc_save_risk(request, rfc_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-def rfc_save_test(request, rfc_id):
+@check_rfc_permissions(min_permission_level=2)
+def rfc_save_test(request, rfc_id, *args, **kwargs):
     """
     """
 
@@ -567,7 +600,8 @@ def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-def rfc_update_status(request, rfc_id):
+@check_rfc_permissions(min_permission_level=2)
+def rfc_update_status(request, rfc_id, *args, **kwargs):
     """
     Using a simple form, we determine which status we are going to update to - and apply the correct status.
     :param request:

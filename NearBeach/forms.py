@@ -138,6 +138,12 @@ class AddRequirementLinkForm(forms.Form):
     )
 
 
+class AddTagsForm(forms.Form):
+    tag_id = forms.ModelMultipleChoiceField(
+        queryset=tag.objects.all(),
+    )
+
+
 class AdminAddUserForm(forms.Form):
     group = forms.ModelMultipleChoiceField(
         queryset=group.objects.all(),
@@ -148,6 +154,21 @@ class AdminAddUserForm(forms.Form):
     username = forms.ModelChoiceField(
         queryset=User.objects.all(),
     )
+
+
+class ChangeTaskForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = change_task
+        fields = [
+            'change_task_title',
+            'change_task_description',
+            'change_task_start_date',
+            'change_task_end_date',
+            'change_task_seconds',
+            'change_task_required_by',
+            'is_downtime',
+        ]
 
 
 class ChangeTaskStatusForm(forms.ModelForm):
@@ -175,6 +196,38 @@ class CustomerForm(forms.ModelForm):
         ]
 
 
+class DeleteColumnForm(forms.Form):
+    delete_item_id = forms.ModelChoiceField(
+        queryset=kanban_column.objects.all(),
+        required=True,
+    )
+    destination_item_id = forms.ModelChoiceField(
+        queryset=kanban_column.objects.all(),
+        required=True,
+    )
+
+
+class DeleteLevelForm(forms.Form):
+    delete_item_id = forms.ModelChoiceField(
+        queryset=kanban_level.objects.all(),
+        required=True,
+    )
+    destination_item_id = forms.ModelChoiceField(
+        queryset=kanban_level.objects.all(),
+        required=True,
+    )
+
+
+class DeleteTagForm(forms.ModelForm):
+    class Meta:
+        model = tag_assignment
+        fields = {
+            'tag',
+            'object_enum',
+            'object_id',
+        }
+
+
 class DocumentUploadForm(ModelForm):
     document = forms.FileField(
         required=True,
@@ -200,6 +253,14 @@ class KanbanCardForm(forms.ModelForm):
     kanban_card_description = forms.CharField(
         required=False,
     )
+    kanban_column = forms.ModelChoiceField(
+        required=True,
+        queryset=kanban_column.objects.all()
+    )
+    kanban_level = forms.ModelChoiceField(
+        required=True,
+        queryset=kanban_level.objects.all(),
+    )
 
     class Meta:
         model = kanban_card
@@ -207,7 +268,16 @@ class KanbanCardForm(forms.ModelForm):
             'kanban_card_id',
             'kanban_card_text',
             'kanban_card_description',
+            'kanban_column',
+            'kanban_level',
         }
+
+
+class KanbanCardArchiveForm(forms.Form):
+    kanban_card_id = forms.ModelMultipleChoiceField(
+        required=True,
+        queryset=kanban_card.objects.all(),
+    )
 
 
 class AddUserForm(forms.Form):
@@ -281,6 +351,16 @@ class NewChangeTaskForm(forms.ModelForm):
         ]
 
 
+class NewColumnForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = kanban_column
+        fields = [
+            'kanban_column_name',
+            'kanban_column_sort_number',
+        ]
+
+
 class NewCustomerForm(forms.ModelForm):
     organisation = forms.ModelChoiceField(
         queryset=organisation.objects.all(),
@@ -339,6 +419,16 @@ class NewKanbanForm(forms.ModelForm):
         model = kanban_board
         fields = [
             'kanban_board_name',
+        ]
+
+
+class NewLevelForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = kanban_level
+        fields = [
+            'kanban_level_name',
+            'kanban_level_sort_number',
         ]
 
 
@@ -403,6 +493,48 @@ class NewRequestForChangeForm(forms.ModelForm):
             'rfc_implementation_plan',
             'rfc_backout_plan',
             'rfc_test_plan',
+        ]
+
+
+class NewRequirementItemForm(forms.ModelForm):
+    # Basic Meta data
+    class Meta:
+        model = requirement_item
+        fields = [
+            'requirement_item_title',
+            'requirement_item_scope',
+            'requirement_item_status',
+            'requirement_item_type',
+        ]
+
+
+class NewRequirementForm(forms.ModelForm):
+    # One external field
+    group_list = forms.ModelMultipleChoiceField(
+        required=True,
+        queryset=group.objects.filter(
+            is_deleted=False,
+        )
+    )
+
+    # Basic Meta data
+    class Meta:
+        model = requirement
+        fields = [
+            'requirement_title',
+            'requirement_scope',
+            'requirement_status',
+            'requirement_type',
+            'organisation',
+        ]
+
+
+class NewTagForm(forms.ModelForm):
+    class Meta:
+        model = tag
+        fields = [
+            'tag_name',
+            'tag_colour',
         ]
 
 
@@ -472,6 +604,17 @@ class OrganisationProfilePictureForm(forms.ModelForm):
         ]
 
 
+class PasswordResetForm(forms.Form):
+    password = forms.CharField(
+        max_length=50,
+        required=True,
+    )
+    username = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        required=True,
+    )
+
+
 class PermissionSetForm(forms.ModelForm):
     class Meta:
         model = permission_set
@@ -501,37 +644,18 @@ class ProjectForm(forms.ModelForm):
         ]
 
 
-class NewRequirementItemForm(forms.ModelForm):
-    # Basic Meta data
-    class Meta:
-        model = requirement_item
-        fields = [
-            'requirement_item_title',
-            'requirement_item_scope',
-            'requirement_item_status',
-            'requirement_item_type',
-        ]
-
-
-class NewRequirementForm(forms.ModelForm):
-    # One external field
-    group_list = forms.ModelMultipleChoiceField(
+class ResortColumnForm(forms.Form):
+    item = forms.ModelMultipleChoiceField(
+        queryset=kanban_column.objects.all(),
         required=True,
-        queryset=group.objects.filter(
-            is_deleted=False,
-        )
     )
 
-    # Basic Meta data
-    class Meta:
-        model = requirement
-        fields = [
-            'requirement_title',
-            'requirement_scope',
-            'requirement_status',
-            'requirement_type',
-            'organisation',
-        ]
+
+class ResortLevelForm(forms.Form):
+    item = forms.ModelMultipleChoiceField(
+        queryset=kanban_level.objects.all(),
+        required=True,
+    )
 
 
 class QueryBugClientForm(forms.Form):
@@ -579,6 +703,7 @@ class RfcInformationSaveForm(forms.ModelForm):
 class SearchForm(forms.Form):
     # Just have a simple search field
     search = forms.CharField(
+        max_length=250,
         required=False,
     )
 
@@ -589,7 +714,20 @@ class SearchObjectsForm(forms.Form):
         initial=False,
     )
     search = forms.CharField(
+        max_length=250,
         required=False,
+    )
+
+
+class TagForm(forms.Form):
+    tag_id = forms.IntegerField(required=True)
+    tag_name = forms.CharField(
+        required=True,
+        max_length=50,
+    )
+    tag_colour = forms.CharField(
+        required=True,
+        max_length=7,
     )
 
 
@@ -640,6 +778,18 @@ class UpdateRFCStatus(forms.ModelForm):
 
 
 class UpdateUserForm(forms.ModelForm):
+    first_name = forms.CharField(
+        max_length=255,
+        required=True,
+    )
+    last_name = forms.CharField(
+        max_length=255,
+        required=True,
+    )
+    email = forms.EmailField(
+        max_length=255,
+        required=True,
+    )
     # Basic Meta Data
     class Meta:
         model = User

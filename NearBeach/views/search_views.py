@@ -58,12 +58,28 @@ def get_object_search_data(search_form):
 
     # If we are NOT including closed - then we will limit to those with status is_deleted=False
     if not include_closed:
-        ### NEED TO PROGRAM IN THE REAL CLOSED VALUES!!! ###
-        rfc_results = rfc_results.filter(is_deleted=False)
-        requirement_results = requirement_results.filter(is_deleted=False)
-        project_results = project_results.filter(is_deleted=False)
-        task_results = task_results.filter(is_deleted=False)
-        kanban_results = kanban_results.filter(is_deleted=False)
+        rfc_results = rfc_results.exclude(
+           rfc_status__in=(5,6), 
+        )
+
+        requirement_results = requirement_results.exclude(
+            requirement_status__in=list_of_requirement_status.objects.filter(
+                is_deleted=False,
+                requirement_status_is_closed=True,
+            ).values('requirement_status_id')
+        )
+
+        project_results = project_results.exclude(
+            project_status__in=['Closed'],
+        )
+
+        task_results = task_results.exclude(
+            task_status__in=['Closed'],
+        )
+
+        kanban_results = kanban_results.exclude(
+            kanban_board_status__in=['Closed'],
+        )
 
     # Split the space results - then apply the filter of each split value
     for split_row in search_form.cleaned_data['search'].split(' '):
@@ -158,8 +174,9 @@ def search(request):
 
     # Context
     c = {
-        'search_input': form.cleaned_data['search'],
         'include_closed': include_closed,
+        'nearbeach_title': 'Search',
+        'search_input': form.cleaned_data['search'],
         'search_results': get_object_search_data(form),
     }
 
@@ -198,7 +215,8 @@ def search_customer(request):
     ).order_by('customer_last_name','customer_first_name')[:50]
 
     c = {
-        'customer_results': serializers.serialize('json',customer_results)
+        'customer_results': serializers.serialize('json',customer_results),
+        'nearbeach_title': 'Search Customers',
     }
 
     return HttpResponse(t.render(c,request))
@@ -256,6 +274,7 @@ def search_group(request):
     # Get context
     c = {
         'group_results': serializers.serialize('json', group_results),
+        'nearbeach_title': 'Search Groups',
     }
 
     return HttpResponse(t.render(c, request))
@@ -309,6 +328,7 @@ def search_organisation(request):
     ).order_by('organisation_name')[:25]
 
     c = {
+        'nearbeach_title': 'Search Organisations',
         'organisation_results': serializers.serialize('json',organisation_results),
     }
 
@@ -364,6 +384,7 @@ def search_permission_set(request):
 
     # Get context
     c = {
+        'nearbeach_title': 'Search Permission Sets',
         'permission_set_results': serializers.serialize('json', permission_set_results),
     }
 
@@ -406,6 +427,25 @@ def search_permission_set_data(request):
 
 
 @login_required(login_url='login',redirect_field_name="")
+def search_tag(request):
+    # Get template
+    t = loader.get_template('NearBeach/search/search_tags.html')
+
+    # Get data
+    tag_results = tag.objects.filter(
+        is_deleted=False,
+    ).order_by('tag_name')
+
+    #Context
+    c = {
+        'tag_results': serializers.serialize('json', tag_results),   
+    }
+
+    #Send back json data
+    return HttpResponse(t.render(c,request))
+
+
+@login_required(login_url='login',redirect_field_name="")
 def search_user(request):
     """
 
@@ -424,6 +464,7 @@ def search_user(request):
 
     # Context
     c = {
+        'nearbeach_title': 'Search User',
         'user_results': serializers.serialize('json', user_results),
     }
 

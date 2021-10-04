@@ -95,13 +95,18 @@ The following instructions will inform you how to setup NearBeach and get it run
         # dev
         import os
 
-        PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
-        PRIVATE_MEDIA_ROOT = os.path.join(PROJECT_PATH, 'private')
+        PRIVATE_MEDIA_ROOT = os.path.abspath(os.path.dirname(__file__))
         PRIVATE_MEDIA_SERVER = 'DefaultServer'
     else:
         # prod
-        PRIVATE_MEDIA_ROOT = '<< private documents location >>'
+        PRIVATE_MEDIA_ROOT = '<< folder containing private folder >>'
         PRIVATE_MEDIA_SERVER = 'ApacheXSendfileServer'
+
+
+  .. note::
+
+    Please note: The PRIVATE_MEDIA_ROOT variable will only contain the folder that contains the Private
+    folder. The system will automatically append the 'private' variable onto the end of PRIVATE_MEDIA_ROOT.
 
   The following redundant code will need to be used at the moment.
 

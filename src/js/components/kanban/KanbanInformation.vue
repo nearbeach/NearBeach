@@ -1,45 +1,12 @@
 <template>
     <div>
-        <div class="container">
-            <div class="card">
-                <div class="card-body">
-                    <h1>{{kanbanBoardResults[0]['fields']['kanban_board_name']}}</h1>
-                    <hr>
-                    <div class="row">
-                        <!-- Instructions -->
-                        <div class="col-md-4">
-                            <strong>Instructions</strong>
-                            <p class="text-instructions">
-                                To add a new card to the board - please click on "New Card". You can link a card to an
-                                existing object like a project or task by clicking on "Link Existing Object".
-                            </p>
-                            <p class="text-instructions">
-                                You can drag and drop cards.
-                            </p>
-                        </div>
-
-                        <!-- Add cards -->
-                        <div class="col-md-8">
-                            <h2 v-html="kanbanBoardResults[0]['fields']['kanban_board_name']"></h2><br/>
-                            <a class="kanban-link"
-                               href="javascript:void(0)"
-                               v-on:click="addNewKanbanCard"
-                            >
-                                New Card
-                            </a><br/>
-                            <a class="kanban-link"
-                               href="javascript:void(0)"
-                               v-on:click="addNewLink"
-                            >
-                                Link Existing Object
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <hr>
-
+        <h1 class="kanban-header">{{kanbanBoardResults[0]['fields']['kanban_board_name']}}</h1>
+        <a class="kanban-edit-text"
+           v-if="userLevel >= 3"
+           href="edit_board/"
+        >
+            Edit Kanban
+        </a>
         <!-- Rendering the Kanban Container -->
         <kanban-board v-bind:column-results="columnResults"
                       v-bind:kanban-board-results="kanbanBoardResults"
@@ -80,6 +47,7 @@
             kanbanCardResults: Array,
             levelResults: Array,
             locationId: Number,
+            userLevel: Number,
         },
         data() {
             return {
@@ -89,14 +57,6 @@
             }
         },
         methods: {
-            addNewKanbanCard: function() {
-                var addKanbanCardModal = new Modal(document.getElementById('addKanbanCardModal'));
-                addKanbanCardModal.show();
-            },
-            addNewLink: function() {
-                var newLinkModal = new Modal(document.getElementById('newLinkModal'));
-                newLinkModal.show();
-            },
             doubleClickedCard: function(data) {
                 //Update the cardInformationId with the card id
                 this.cardInformation = data;
@@ -105,15 +65,24 @@
                 this.newCardInfo = data;
             },
             updateCard: function(data) {
-                console.log("GOT HERE!");
                 //Loop through the results - when the id's match. Update the data.
                 this.localKanbanCardResults.forEach(row => {
                     //Check to see if the primary keys match - if they do update the data
                     if (row['pk'] == data['kanban_card_id']) {
                         row['fields']['kanban_card_text'] = data['kanban_card_text'];
+                        row['fields']['kanban_column'] = data['kanban_column']['value'];
+                        row['fields']['kanban_level'] = data['kanban_level']['value'];
                     }
                 }) 
             },
+        },
+        mounted() {
+            //Send columns and levels into the VueX
+            this.$store.commit({
+                type: 'updateLists',
+                columnResults: this.columnResults,
+                levelResults: this.levelResults,
+            });
         }
     }
 </script>

@@ -8,6 +8,9 @@ from django.views.decorators.http import require_http_methods
 from django.template import loader
 from NearBeach.views.tools.internal_functions import *
 from django.core.serializers.json import DjangoJSONEncoder
+from django.conf import settings
+import boto3
+from botocore.exceptions import NoCredentialsError
 
 from ..forms import *
 
@@ -211,8 +214,12 @@ def document_upload(request,destination,location_id):
     document_submit = document(
         change_user=request.user,
         document_description=document_description,
-        document=file,
+        #document=file,
     )
+    document_submit.save()
+
+    # Add the document location
+    document_submit.document = 'private/%s/%s' % (document_submit.document_key, file)
     document_submit.save()
 
     # Add the document permission row
@@ -242,7 +249,22 @@ def document_upload(request,destination,location_id):
     )
 
     # Handle the document upload
-    handle_file_upload(request.FILES['document'],document_results)
+    if hasattr(settings, 'AWS_ACCESS_KEY_ID'):
+        # Use boto to upload the file
+        s3 = boto3.client(
+            's3', 
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+        )
+
+        # Upload a new file
+        s3.upload_fileobj(
+            file,
+            settings.AWS_STORAGE_BUCKET_NAME,
+            'private/%s/%s' % (document_submit.document_key, file)
+        )
+    else:
+        handle_file_upload(request.FILES['document'],document_results,file)
 
     # Send back json data
     json_results = json.dumps(list(document_results), cls=DjangoJSONEncoder)
@@ -260,7 +282,7 @@ def get_max_upload(request):
     :return:
     """
     if hasattr(settings, 'MAX_UPLOAD_SIZE'):
-        send_value = {'max_upload_size': settings.MAX_UPLOAD_SIZE}
+        max_upload_size = {'max_upload_size': settings.MAX_UPLOAD_SIZE}
     else:
         max_upload_size = {'max_upload_size': 0}
 
@@ -319,11 +341,6 @@ def private_download_file(request,document_key):
                 task_id__in=document_permission_results.values('task_id')
             ) |
             Q(
-                # Whiteboard
-                whiteboard__isnull=False,
-                whiteboard_id__in=document_permission_results.values('whiteboard_id')
-            ) |
-            Q(
                 # Requirement
                 requirement__isnull=False,
                 requirement_id__in=document_permission_results.values('requirement_id')
@@ -356,10 +373,32 @@ def private_download_file(request,document_key):
     if document_results.document_url_location:
         return HttpResponseRedirect(document_results.document_url_location)
 
+    # If S3 has been setup - download file from S3 bucket
+    if hasattr(settings, 'AWS_ACCESS_KEY_ID'):
+        # Use boto3 to download
+        s3 = boto3.client(
+            's3', 
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+        )
+
+        response = s3.get_object(
+            Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+            Key="%s" % document_results.document,
+        )
+
+        print(response['Body'])
+
+        return FileResponse(
+            response['Body'], 
+            as_attachment=True,
+            filename=document_results.document_description,
+        )
+
+    # Normal setup - find document on server and serve
     # Get the Document path information
-    path = '%s/%s/%s' % (
+    path = '%s/%s' % (
         settings.PRIVATE_MEDIA_ROOT,
-        document_key,
         document_results.document
     )
 
@@ -368,7 +407,7 @@ def private_download_file(request,document_key):
 
 
 #Internal Function
-def handle_file_upload(upload_document,document_results):
+def handle_file_upload(upload_document,document_results,file):
     """
     This function will upload the file and store it in the private folder destination under a subfolder that contains
     the same document_key value.
@@ -387,8 +426,7 @@ def handle_file_upload(upload_document,document_results):
     storage_location = '%s/%s/%s' % (
         settings.PRIVATE_MEDIA_ROOT,
         document_results[0]['document_key_id'],
-        #document_results[0]['document_key__document_description'],
-        document_results[0]['document_key__document'],
+        file
     )
 
     #Save the upload document in the location

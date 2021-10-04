@@ -117,7 +117,7 @@
                 const data_to_send = new FormData();
                 data_to_send.set('group_name', this.groupNameModel);
 
-                if (data_to_send['value'] !== undefined) {
+                if (this.parentGroupModel['value'] !== undefined) {
                     data_to_send.set('parent_group', this.parentGroupModel['value']);
                 }
 

@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponseForbidden, Http404, HttpResponseServerError
 from django.template import loader
 from django.contrib.auth.decorators import login_required
 
@@ -15,9 +15,11 @@ def error_403(request, exception):
 
     t = loader.get_template('403.html')
 
-    c = {}
+    c = {
+        'nearbeach_title': 'NearBeach Forbidden',
+    }
 
-    return HttpResponse(t.render(c, request))
+    return HttpResponseForbidden(t.render(c, request))
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -32,9 +34,11 @@ def error_404(request, exception):
 
     t = loader.get_template('404.html')
 
-    c = {}
+    c = {
+        'nearbeach_title': 'NearBeach Not Found',
+    }
 
-    return HttpResponse(t.render(c, request))
+    return Http404(t.render(c, request))
 
 
 @login_required(login_url='login',redirect_field_name="")
@@ -49,6 +53,8 @@ def error_500(request):
 
     t = loader.get_template('500.html')
 
-    c = {}
+    c = {
+        'nearbeach_title': 'NearBeach Server Error',
+    }
 
-    return HttpResponse(t.render(c, request))
+    return HttpResponseServerError(t.render(c, request))

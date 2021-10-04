@@ -4,5 +4,7 @@
     <new-requirements v-bind:status-list="{{status_list}}"
                       v-bind:type-list="{{type_list}}"
                       v-bind:group-results="{{group_results}}"
+                      v-bind:static-url="`{% static '' %}`"
+                      v-bind:user-group-results="{{user_group_results}}"
     ></new-requirements>
 {% endblock %}

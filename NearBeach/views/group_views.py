@@ -29,7 +29,7 @@ def check_group_name(request):
     # Check to see if the group name exists
     group_name_results = group.objects.filter(
         is_deleted=False,
-        group_name=form.cleaned_data['search'],
+        group_name__icontains=form.cleaned_data['search'],
     )
 
     # Send back data
@@ -79,6 +79,7 @@ def group_information(request, group_id):
     c = {
         'group_id': group_id,
         'group_results': serializers.serialize('json', [group_results]),
+        'nearbeach_title': 'Group Information %s' % group_id,
         'parent_group_results': serializers.serialize('json', parent_group_results),
         'user_list_results': user_list_results,
     }
@@ -137,6 +138,7 @@ def new_group(request):
     # Get the context
     c = {
         'group_results': serializers.serialize('json', group_results),
+        'nearbeach_title': 'New Group',
     }
 
     # Return

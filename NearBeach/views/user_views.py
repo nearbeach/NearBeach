@@ -26,7 +26,9 @@ def new_user(request):
     t = loader.get_template('NearBeach/users/new_user.html')
 
     # Get context
-    c = {}
+    c = {
+        'nearbeach_title': 'New User',
+    }
 
     return HttpResponse(t.render(c, request))
 
@@ -63,6 +65,29 @@ def new_user_save(request):
     submit_user.save()
 
     return HttpResponse(reverse('user_information', args={submit_user.id}))
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login',redirect_field_name="")
+def update_password(request):
+    """
+    """
+    # Get form data
+    form = PasswordResetForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Check to make sure we are updating ONLY the current user
+    if not form.cleaned_data['username'] == request.user:
+        return HttpResponseBadRequest("Unknown Error")
+
+    # Get the User object
+    user_update = form.cleaned_data['username']
+    user_update.set_password(form.cleaned_data['password'])
+    user_update.save()
+
+    return HttpResponse("")
+
 
 @login_required(login_url='login',redirect_field_name="")
 def user_information(request, username):
@@ -102,6 +127,7 @@ def user_information(request, username):
 
     # Create the context
     c = {
+        'nearbeach_title': 'User Information %s' % username,
         'user_list_results': user_list_results,
         'user_results': serializers.serialize('json', [user_results]),
         'username': username,

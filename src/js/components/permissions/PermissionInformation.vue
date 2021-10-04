@@ -237,7 +237,7 @@
                 administrationCreateUserModel: this.permissionSetResults[0]['fields']['administration_create_user'],
                 bugClientModel: this.permissionSetResults[0]['fields']['bug_client'],
                 customerModel: this.permissionSetResults[0]['fields']['customer'],
-                kanbanModel: this.permissionSetResults[0]['fields']['kanban'],
+                kanbanModel: this.permissionSetResults[0]['fields']['kanban_board'],
                 kanbanCardModel: this.permissionSetResults[0]['fields']['kanban_card'],
                 organisationModel: this.permissionSetResults[0]['fields']['organisation'],
                 projectModel: this.permissionSetResults[0]['fields']['project'],
@@ -266,7 +266,7 @@
                 data_to_send.set('administration_create_user', this.administrationCreateUserModel);
                 data_to_send.set('bug_client', this.bugClientModel);
                 data_to_send.set('customer', this.customerModel);
-                data_to_send.set('kanban', this.kanbanModel);
+                data_to_send.set('kanban_board', this.kanbanModel);
                 data_to_send.set('kanban_card', this.kanbanCardModel);
                 data_to_send.set('organisation', this.organisationModel);
                 data_to_send.set('project', this.projectModel);

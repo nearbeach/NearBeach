@@ -5,12 +5,19 @@ from ..forms import *
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.exceptions import PermissionDenied
 from django.template import loader
 from django.urls import reverse
 from random import SystemRandom
+from django.db.models import Count
+from NearBeach.decorators.check_user_permissions import check_permission_denied
 
 # Import Python Libraries
 import json, urllib.parse, random
+
+
+
+
 
 def check_first_time_login(request):
     """
@@ -37,7 +44,6 @@ def check_first_time_login(request):
             administration_create_user=4,
             bug_client=4,
             customer=4,
-            kanban=4,
             kanban_card=4,
             organisation=4,
             project=4,
@@ -61,8 +67,8 @@ def check_first_time_login(request):
         # Add user to admin group
         submit_user_group = user_group(
             username=request.user,
-            group=group.objects.get(group_id=1),
-            permission_set=permission_set.objects.get(permission_set_id=1),
+            group=submit_group,
+            permission_set=submit_permission_set,
             change_user=request.user,
         )
         submit_user_group.save()
@@ -148,6 +154,7 @@ def login(request):
                 username = form.cleaned_data.get("username")
                 password = form.cleaned_data.get("password")
 
+                # Check to see if user exists AND has more than one group assigned
                 user = auth.authenticate(username=username, password=password)
                 if user is not None:
                     auth.login(request, user)
@@ -156,6 +163,15 @@ def login(request):
             if request.user.is_authenticated:
                 #Check to make sure it isn't first time login -> need to setup functionalities
                 check_first_time_login(request)
+
+                # Check how many groups user is in
+                user_group_count = len(user_group.objects.filter(
+                    is_deleted=False,
+                    username_id=User.objects.get(username=username).id,
+                ))
+
+                if user_group_count == 0:
+                    return HttpResponseRedirect(reverse('logout'))
 
                 return HttpResponseRedirect(reverse('dashboard'))
 
@@ -174,6 +190,7 @@ def login(request):
     # context
     c = {
         'LoginForm': form,
+        'nearbeach_title': 'NearBeach Login',
         'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
         'image_number': '%(number)03d' % {'number': 1 + cryptogen.randrange(1,19)},
     }
@@ -194,6 +211,16 @@ def permission_denied(request):
 
     # context
     c = {
+        'nearbeach_title': 'NearBeach Permission Denied',
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@check_permission_denied(min_permission_level=1)
+def test_permission_denied(request):
+    """
+    This is a simple test - it will ALWAYS respond with permission denied
+    """
+    print("Got here.")
+    return HttpResponse("Hello World")

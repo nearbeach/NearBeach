@@ -1,5 +1,233 @@
 //import Vue from 'vue';
 import Vue from 'vue/dist/vue.js';
+import Vuex from 'vuex'
+
+import { getField, updateField } from 'vuex-map-fields';
+
+Vue.use(Vuex)
+
+const moduleCard = {
+    state: () => ({
+        cardId: 0,
+        cardTitle: '',
+        cardColumn: 0,
+        cardLevel: 0,
+        cardDescription: '',
+        cardNotes: [],
+        listColumns: [],
+        listLevels: [],
+    }),
+    mutations: {
+        appendNote(state, payload) {
+            state.cardNotes.push(payload.newNote);
+        },
+        updateCard(state, payload) {
+            state.cardId = payload.cardId;
+            state.cardTitle = payload.cardTitle;
+            state.cardDescription = payload.cardDescription;
+            try {
+                //Filter for the correct column data from the list columns
+                state.cardColumn = state.listColumns.filter(row => {
+                    return payload.cardColumn == row['value'];
+                })[0];
+
+                //Filter for the correct level data from the list level
+                state.cardLevel = state.listLevels.filter(row => {
+                    return payload.cardLevel == row['value'];
+                })[0];
+            } catch {
+                state.cardColumn = 0;
+                state.cardLevel = 0;
+            }
+            //state.cardLevel = payload.cardLevel;
+            //state.cardColumn = payload.cardColumn;
+
+            //Get data for the notes
+            axios.post(
+                `/object_data/kanban_card/${payload.cardId}/note_list/`
+            ).then(response => {
+                //Save the data into noteHistoryResults
+                state.cardNotes = response['data'];
+            }).catch(error => {
+                console.log("Error: ",error);
+            });
+        },
+        updateField,
+        updateLists(state, payload) {
+            state.listColumns = payload.columnResults.map(row => {
+                return {
+                    'value': row['pk'],
+                    'column': row['fields']['kanban_column_name'],
+                }
+            });
+            state.listLevels = payload.levelResults.map(row => {
+                return {
+                    'value': row['pk'],
+                    'level': row['fields']['kanban_level_name'],
+                }
+            });
+        },
+    },
+    actions: {},
+    getters: {
+        getField,
+        getAllCardData: state => {
+            return {
+                cardId: state.cardId,
+                cardTitle: state.cardTitle,
+                cardDescription: state.cardDescription,
+                cardLevel: state.cardLevel,
+                cardColumn: state.cardColumn,
+            }
+        },
+        getCardId: state => {
+            return state.cardId;
+        },
+        getCardNotes: state => {
+            return state.cardNotes;
+        },
+    },
+}
+
+const moduleDestination = {
+    state: () => ({
+        destination: 'unknown',
+        locationId: 0,
+    }),
+    mutations: {
+        updateDestination(state, payload) {
+            state.destination = payload.destination;
+            state.locationId = payload.locationId;
+        },
+    },
+    actions: {},
+    getters: {
+        getDestination: state => {
+            return state.destination;
+        },
+        getLocationId: state => {
+            return state.locationId;
+        }
+    }
+}
+
+const moduleKanban = {
+    state: () => ({
+        kanbanCardResults: [],
+        columnResults: [],
+        levelResults: [],
+    }),
+    mutations: {
+        //CUD Operations
+        creationCard(state, payload) {},
+        updateKanbanCard(state, payload) {
+            //Get the index location
+            const index_location = state.kanbanCardResults.findIndex(row => {
+                return row['pk'] == payload.card_id;
+            });
+
+            //Loop through each keys for the payload, and update the relevant field
+            const continue_keys = ['type', 'card_id']
+            Object.keys(payload).forEach(key => {
+                //Skip some certain keys
+                if (continue_keys.includes(key)) {
+                    return;
+                }
+
+                //Update the results
+                state.kanbanCardResults[index_location]['fields'][key] = payload[key];
+            })
+        },
+        deletedCard(state, payload) {},
+        
+        //The initial payload of kanban card results
+        initPayload(state, payload) {
+            state.kanbanCardResults = payload.kanbanCardResults;
+            state.columnResults = payload.columnResults;
+            state.levelResults = payload.levelResults;
+        },
+    },
+    actions: {},
+    getters: {
+        getCards: state => {
+            return state.kanbanCardResults;
+        },
+        getColumns: state => {
+            return state.columnResults;
+        },
+    },
+}
+/*
+const moduleLocationId = {
+    state: () => ({
+        locationId: 0,
+    }),
+    mutations: {
+        updateLocationId(state, payload) {
+            state.locationId = payload.locationId;
+        }
+    },
+    actions: {},
+    getters: {
+        getLocationId: state => {
+            return state.locationId;
+        }
+    }
+}
+*/
+
+const moduleUrl = {
+    state: () => ({
+        rootUrl: '/',
+        staticUrl: '/',
+    }),
+    mutations: {
+        updateUrl(state, payload) {
+            state.rootUrl = payload.rootUrl;
+            state.staticUrl = payload.staticUrl;
+        },
+    },
+    actions: {},
+    getters: {
+        getRootUrl: state => {
+            return state.rootUrl;
+        },
+        getStaticUrl: state => {
+            return state.staticUrl;
+        }
+    }
+}
+
+/*
+const moduleStaticUrl = {
+    state: () => ({
+        staticUrl: '/',
+    }),
+    mutations: {
+        updateStaticUrl(state, payload) {
+            state.staticUrl = payload.staticUrl;
+        }
+    },
+    actions: {},
+    getters: {
+        getStaticUrl: state => {
+            return state.staticUrl;
+        }
+    }
+}
+*/
+
+const store = new Vuex.Store({
+    modules: {
+        card: moduleCard,
+        destination: moduleDestination,
+        //location: moduleLocationId,
+        //rootUrl: moduleRootUrl,
+        //staticUrl: moduleStaticUrl,
+        kanban: moduleKanban,
+        url: moduleUrl,
+    }
+})
 
 //Vue Component Library
 import BugsModule from "./components/modules/sub_modules/BugsModule.vue";
@@ -30,6 +258,7 @@ import UploadDocumentWizard from "./components/modules/wizards/UploadDocumentWiz
 import RequirementItemInformation from "./components/requirement_items/RequirementItemInformation.vue";
 import ListOrganisations from "./components/organisations/ListOrganisations.vue";
 import SearchOrganisations from "./components/search/SearchOrganisations.vue";
+import SearchTags from "./components/search/SearchTags.vue";
 import OrganisationInformation from "./components/organisations/OrganisationInformation.vue";
 import OrganisationModules from "./components/organisations/OrganisationModules.vue";
 import CustomersListModule from "./components/modules/sub_modules/CustomersListModule.vue";
@@ -55,7 +284,10 @@ import KanbanBoard from "./components/kanban/KanbanBoard.vue";
 import KanbanRow from "./components/kanban/KanbanRow.vue";
 import DashboardBugList from "./components/dashboard/DashboardBugList.vue";
 import NewKanbanCard from "./components/modules/wizards/NewKanbanCard.vue";
-import CardInformation from "./components/kanban/CardInformation.vue";
+import CardInformation from "./components/card_information/CardInformation.vue";
+import CardDetails from "./components/card_information/CardDetails.vue";
+import CardDescription from "./components/card_information/CardDescription.vue";
+import CardNotes from "./components/card_information/CardNotes.vue";
 import ListNotes from "./components/modules/sub_modules/ListNotes.vue";
 import NewKanbanLinkWizard from "./components/modules/wizards/NewKanbanLinkWizard.vue";
 import DashboardMyObjects from "./components/dashboard/DashboardMyObjects.vue";
@@ -88,7 +320,16 @@ import NewPermissionSet from "./components/permissions/NewPermissionSet.vue";
 import NewUser from "./components/users/NewUser.vue";
 import UserInformation from "./components/users/UserInformation.vue";
 import ResetUserPassword from "./components/users/ResetUserPassword.vue";
-
+import DashboardUnassignedObjects from "./components/dashboard/DashboardUnassignedObjects.vue";
+import DashboardUsersWithNoGroups from "./components/dashboard/DashboardUsersWithNoGroups.vue";
+import KanbanEditBoard from "./components/kanban/KanbanEditBoard.vue";
+import KanbanGroupPermissions from "./components/kanban/KanbanGroupPermissions.vue";
+import ProfileInformation from "./components/profile/ProfileInformation.vue";
+import ChangeTaskInformation from "./components/request_for_change/ChangeTaskInformation.vue";
+import NotesModule from "./components/modules/sub_modules/NotesModule.vue";
+import ListTagsModule from "./components/modules/sub_modules/ListTagsModule.vue";
+import AddTagWizard from "./components/modules/wizards/AddTagWizard.vue";
+import EditTagModal from "./components/tags/EditTagModal.vue";
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -218,8 +459,21 @@ Vue.component('NewUser', NewUser);
 Vue.component('UserInformation', UserInformation);
 Vue.component('ResetUserPassword', ResetUserPassword);
 Vue.component('IconifyIcon', IconifyIcon);
+Vue.component('DashboardUnassignedObjects', DashboardUnassignedObjects);
+Vue.component('DashboardUsersWithNoGroups', DashboardUsersWithNoGroups);
+Vue.component('KanbanEditBoard', KanbanEditBoard);
+Vue.component('KanbanGroupPermissions', KanbanGroupPermissions);
+Vue.component('ProfileInformation', ProfileInformation);
+Vue.component('ChangeTaskInformation', ChangeTaskInformation);
+Vue.component('CardDetails', CardDetails);
+Vue.component('CardDescription', CardDescription);
+Vue.component('CardNotes', CardNotes);
+Vue.component('NotesModule', NotesModule);
+Vue.component('ListTagsModule', ListTagsModule);
+Vue.component('AddTagWizard', AddTagWizard);
+Vue.component('SearchTags', SearchTags);
+Vue.component('EditTagModal', EditTagModal);
 
-//Validation
 import Vuelidate from 'vuelidate'
 Vue.use(Vuelidate)
 
@@ -240,6 +494,7 @@ window.vm = new Vue({
     data() {
         return {};
     },
+    store: store,
     methods: {},
     mounted() {
         //Remove the loader
