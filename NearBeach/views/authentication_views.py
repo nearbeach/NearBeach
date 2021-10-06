@@ -133,16 +133,16 @@ def check_recaptcha(post_data):
 
 def login(request):
     """
-	For some reason I can not use the varable "LoginForm" here as it is already being used.
-	Instead I will use the work form.
+    For some reason I can not use the varable "LoginForm" here as it is already being used.
+    Instead I will use the work form.
 
-	The form is declared at the start and filled with either the POST data OR nothing. If this
-	process is called in POST, then the form will be checked and if it passes the checks, the
-	user will be logged in.
+    The form is declared at the start and filled with either the POST data OR nothing. If this
+    process is called in POST, then the form will be checked and if it passes the checks, the
+    user will be logged in.
 
-	If the form is not in POST (aka GET) OR fails the checks, then it will create the form with
-	the relevant errors.
-	"""
+    If the form is not in POST (aka GET) OR fails the checks, then it will create the form with
+    the relevant errors.
+    """
     form = LoginForm(request.POST or None)
 
     # POST
