@@ -9,12 +9,12 @@ with open('config.py') as json_file:
 	login_data = json.load(json_file)
 
 desired_cap = {
- 'browser': 'Edge',
- 'browser_version': '80.0',
- 'os': 'Windows',
- 'os_version': '10',
- 'resolution': '1024x768',
- 'name': 'Shakeout Testing for Windows 10 Edge'
+    'browser': 'Edge',
+    'browser_version': '80.0',
+    'os': 'Windows',
+    'os_version': '10',
+    'resolution': '1024x768',
+    'name': 'Shakeout Testing for Windows 10 Edge'
 }
 
 
