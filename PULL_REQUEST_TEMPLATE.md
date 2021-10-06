@@ -16,7 +16,9 @@ bug fixes # (bugs from https://bugzilla.nearbeach.org)
 
 Please describe the tests that you ran to verify your changes. Provide instructions so we can reproduce. Please also list any relevant details for your test configuration
 
-- [ ] Local testing via "./manage runserver"
+- [ ] Local manual testing via "./manage runserver"
+- [ ] Local Python Unit Testing via "./manage test"
+- [ ] Local Cypress E2E Testing
 - [ ] Tested on virtual box
 - [ ] Tested on server
 
