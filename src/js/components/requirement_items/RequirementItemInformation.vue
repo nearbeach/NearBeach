@@ -75,7 +75,10 @@
                     </div>
                     <div class="organisation-link">
                         <IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> Website:
-                        <a v-bind:href="stakeholderModel['organisation_website']" target="_blank">
+                        <a v-bind:href="stakeholderModel['organisation_website']" 
+                           target="_blank"
+                           rel="noopener noreferrer"
+                        >
                             {{ stakeholderModel['organisation_website'] }}
                         </a>
                     </div>

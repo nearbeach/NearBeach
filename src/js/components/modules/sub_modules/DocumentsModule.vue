@@ -28,6 +28,7 @@
 
             <!-- RENDER THE FOLDERS -->
             <div v-for="folder in folderFilteredList"
+                 :key="folder.pk"
                  v-on:click="updateCurrentFolder(folder['pk'])"
                  class="document-child"
             >
@@ -41,8 +42,14 @@
             </div>
 
             <!-- RENDER THE FILES -->
-            <div v-for="document in documentFilteredList" class="document-child">
-                <a v-bind:href="`/private/${document['document_key_id']}/`" target="_blank">
+            <div v-for="document in documentFilteredList" 
+                 :key="document.document_key_id"
+                 class="document-child"
+            >
+                <a v-bind:href="`/private/${document['document_key_id']}/`" 
+                   rel="noopener noreferrer"
+                   target="_blank"
+                >
                     <IconifyIcon v-bind:icon="getIcon(document)"
                                  width="80px"
                                  height="80px"

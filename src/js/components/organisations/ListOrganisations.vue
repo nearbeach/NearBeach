@@ -1,6 +1,9 @@
 <template>
     <div>
-        <div v-for="organisation in organisationResults" class="row">
+        <div v-for="organisation in organisationResults" 
+             :key="organisation.id"
+             class="row"
+        >
             <div class="organisation-details">
                 <img v-if="organisation['fields']['organisation_profile_picture'] == ''"
                      v-bind:src="`${staticUrl}static/NearBeach/images/placeholder/product_tour.svg`"
@@ -19,7 +22,10 @@
                 </div>
                 <div class="organisation-link">
                     <IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> Website:
-                    <a v-bind:href="organisation['fields']['organisation_website']" target="_blank">
+                    <a v-bind:href="organisation['fields']['organisation_website']" 
+                       target="_blank"
+                       rel="noopener noreferrer"
+                    >
                         {{ organisation['fields']['organisation_website'] }}
                     </a>
                 </div>
