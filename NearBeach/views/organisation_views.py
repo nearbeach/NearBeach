@@ -19,7 +19,6 @@ import json
 @check_user_organisation_permissions(min_permission_level=3)
 def new_organisation(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
@@ -41,7 +40,6 @@ def new_organisation(request, *args, **kwargs):
 @check_user_organisation_permissions(min_permission_level=3)
 def new_organisation_save(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
@@ -67,7 +65,6 @@ def new_organisation_save(request, *args, **kwargs):
 @check_user_organisation_permissions(min_permission_level=3)
 def organisation_duplicates(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
@@ -97,7 +94,6 @@ def organisation_duplicates(request, *args, **kwargs):
 @check_user_organisation_permissions(min_permission_level=1)
 def organisation_information(request,organisation_id, *args, **kwargs):
     """
-
     :param request:
     :param organisation_id:
     :return:
@@ -131,7 +127,6 @@ def organisation_information(request,organisation_id, *args, **kwargs):
 @check_user_organisation_permissions(min_permission_level=2)
 def organisation_information_save(request,organisation_id, *args, **kwargs):
     """
-
     :param request:
     :param organisation_id:
     :return:
@@ -159,7 +154,6 @@ def organisation_information_save(request,organisation_id, *args, **kwargs):
 @check_user_organisation_permissions(min_permission_level=2)
 def organisation_update_profile(request,organisation_id, *args, **kwargs):
     """
-
     :param request:
     :param organisation_id:
     :return:

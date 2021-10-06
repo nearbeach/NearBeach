@@ -112,7 +112,6 @@ def add_group(request,destination,location_id):
 @login_required(login_url='login',redirect_field_name="")
 def add_link(request,destination,location_id):
     """
-
     :param request:
     :param destination:
     :param location_id:
@@ -275,7 +274,6 @@ def add_user(request,destination,location_id):
 @login_required(login_url='login',redirect_field_name="")
 def admin_add_user(request):
     """
-
     :param request:
     :return:
     """
@@ -313,7 +311,6 @@ def admin_add_user(request):
 @login_required(login_url='login',redirect_field_name="")
 def associated_objects(request,destination,location_id):
     """
-
     :param request:
     :param destination:
     :param location_id:
@@ -665,7 +662,6 @@ def group_list_all(request,destination,location_id):
 @login_required(login_url='login',redirect_field_name="")
 def lead_user_list(request):
     """
-
     :param request:
     :return:
     """
@@ -787,7 +783,6 @@ def note_list(request,destination,location_id):
 @login_required(login_url='login',redirect_field_name="")
 def object_link_list(request,destination,location_id):
     """
-
     :param request:
     :param destination:
     :param location_id:

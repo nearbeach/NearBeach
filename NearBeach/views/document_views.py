@@ -54,7 +54,6 @@ def document_add_folder(request,destination,location_id):
 @login_required(login_url='login',redirect_field_name="")
 def document_add_link(request,destination,location_id):
     """
-
     :param request:
     :param destination:
     :param location_id:

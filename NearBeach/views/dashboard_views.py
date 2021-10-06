@@ -38,7 +38,6 @@ def dashboard(request):
 @require_http_methods(['POST'])
 def get_bug_list(request):
     """
-
     :param request:
     :return:
     """
@@ -57,7 +56,6 @@ def get_bug_list(request):
 @require_http_methods(['POST'])
 def get_my_objects(request):
     """
-    
     :param request:
     :return:
     """
@@ -139,7 +137,6 @@ def get_my_objects(request):
 @require_http_methods(['POST'])
 def get_unassigned_objects(request):
     """
-    
     :param request:
     :return:
     """
@@ -258,7 +255,6 @@ def get_unassigned_objects(request):
 @require_http_methods(['POST'])
 def rfc_approvals(request):
     """
-
     :param request:
     :return:
     """

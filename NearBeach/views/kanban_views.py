@@ -21,7 +21,6 @@ import json, urllib3
 @check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
 def add_kanban_link(request,kanban_board_id,object_lookup, *args, **kwargs):
     """
-
     :param request:
     :param destination:
     :param location_id:
@@ -210,7 +209,6 @@ def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=1, object_lookup='kanban_board_id')
 def kanban_information(request, kanban_board_id, *args, **kwargs):
     """
-
     :param request:
     :param kanban_board_id:
     :return:
@@ -240,7 +238,6 @@ def kanban_information(request, kanban_board_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=1, object_lookup='kanban_board_id')
 def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
     """
-
     :param request:
     :param kanban_board_id:
     :return:
@@ -284,7 +281,6 @@ def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
 @check_user_kanban_permissions(min_permission_level=2)
 def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     """
-
     :param request:
     :param kanban_board_id:
     :return:
@@ -383,7 +379,6 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
 def new_kanban(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
@@ -458,7 +453,6 @@ def new_kanban_card(request, kanban_board_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
 def new_kanban_save(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """

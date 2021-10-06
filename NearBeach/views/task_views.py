@@ -20,7 +20,6 @@ import json, urllib3
 @check_user_permissions(min_permission_level=3, object_lookup='task_id')
 def new_task(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
@@ -58,7 +57,6 @@ def new_task(request, *args, **kwargs):
 @check_user_permissions(min_permission_level=3, object_lookup='task_id')
 def new_task_save(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
@@ -107,7 +105,6 @@ def new_task_save(request, *args, **kwargs):
 @check_user_permissions(min_permission_level=1, object_lookup='task_id')
 def task_information(request, task_id, *args, **kwargs):
     """
-
     :param request:
     :param task_id:
     :return:
@@ -144,7 +141,6 @@ def task_information(request, task_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=2, object_lookup='task_id')
 def task_information_save(request, task_id, *args, **kwargs):
     """
-
     :param request:
     :param task_id:
     :return:

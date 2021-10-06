@@ -49,7 +49,6 @@ def get_rfc_context(rfc_id):
 @check_rfc_permissions(min_permission_level=3)
 def new_request_for_change(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
@@ -93,7 +92,6 @@ def new_request_for_change(request, *args, **kwargs):
 @check_rfc_permissions(min_permission_level=3)
 def new_request_for_change_save(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
@@ -168,7 +166,6 @@ def rfc_change_task_list(request, rfc_id, *args, **kwargs):
 @check_rfc_permissions(min_permission_level=2)
 def rfc_deployment(request, rfc_id, *args, **kwargs):
     """
-
     :param request:
     :param rfc_id:
     :return:
@@ -193,7 +190,6 @@ def rfc_deployment(request, rfc_id, *args, **kwargs):
 @check_rfc_permissions(min_permission_level=2)
 def rfc_new_change_task(request, rfc_id, *args, **kwargs):
     """
-
     :param request:
     :param rfc_id:
     :return:
@@ -247,7 +243,6 @@ def rfc_new_change_task(request, rfc_id, *args, **kwargs):
 @check_rfc_permissions(min_permission_level=1)
 def rfc_information(request, rfc_id, *args, **kwargs):
     """
-
     :param request:
     :param rfc_id:
     :return:
@@ -272,7 +267,6 @@ def rfc_information(request, rfc_id, *args, **kwargs):
 @check_rfc_permissions(min_permission_level=2)
 def rfc_information_save(request, rfc_id, *args, **kwargs):
     """
-
     :param request:
     :param rfc_id:
     :return:
@@ -308,7 +302,6 @@ def rfc_information_save(request, rfc_id, *args, **kwargs):
 @check_rfc_permissions(min_permission_level=1)
 def rfc_readonly(request, rfc_id, *args, **kwargs):
     """
-
     :param request:
     :param rfc_id:
     :return:
@@ -342,7 +335,6 @@ def rfc_readonly(request, rfc_id, *args, **kwargs):
 @check_rfc_permissions(min_permission_level=2)
 def rfc_save_backout(request, rfc_id, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
@@ -370,7 +362,6 @@ def rfc_save_backout(request, rfc_id, *args, **kwargs):
 def rfc_save_implementation(request, rfc_id, *args, **kwargs):
     """
     """
-
     # Check user permissions
 
     # Get the form data
@@ -396,7 +387,6 @@ def rfc_save_implementation(request, rfc_id, *args, **kwargs):
 def rfc_save_risk(request, rfc_id, *args, **kwargs):
     """
     """
-
     # CHECK USER PERMISSIONS
 
     # Get the form data
@@ -426,9 +416,7 @@ def rfc_save_risk(request, rfc_id, *args, **kwargs):
 def rfc_save_test(request, rfc_id, *args, **kwargs):
     """
     """
-
     # Check user permissions
-
     # Get the form data
     form = RfcModuleForm(request.POST)
     if not form.is_valid():
@@ -480,7 +468,6 @@ def rfc_status_approved(rfc_id, rfc_results, request):
 # Internal function
 def rfc_status_check_approval_status(rfc_id, rfc_results, group_results):
     """
-
     :param group_results:
     :param rfc_results:
     :param rfc_id:
@@ -513,7 +500,6 @@ def rfc_status_check_approval_status(rfc_id, rfc_results, group_results):
 # Internal function
 def rfc_status_rejected(rfc_id, rfc_results):
     """
-
     :param rfc_results:
     :param rfc_id:
     :return:

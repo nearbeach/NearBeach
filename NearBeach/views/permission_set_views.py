@@ -15,7 +15,6 @@ import json
 @login_required(login_url='login',redirect_field_name="")
 def new_permission_set(request):
     """
-
     :param request:
     :return:
     """
@@ -37,7 +36,6 @@ def new_permission_set(request):
 @login_required(login_url='login',redirect_field_name="")
 def new_permission_set_save(request):
     """
-
     :param request:
     :return:
     """
@@ -64,7 +62,6 @@ def new_permission_set_save(request):
 @login_required(login_url='login',redirect_field_name="")
 def permission_set_information(request, permission_set_id):
     """
-
     :param request:
     :param permission_set_id:
     :return:
@@ -114,7 +111,6 @@ def permission_set_information(request, permission_set_id):
 @login_required(login_url='login',redirect_field_name="")
 def permission_set_information_save(request, permission_set_id):
     """
-
     :param request:
     :param permission_set_id:
     :return:
