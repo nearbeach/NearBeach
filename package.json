@@ -74,7 +74,7 @@
     "sass": "^1.35.2",
     "sass-loader": "^8.0.2",
     "style-loader": "^1.2.1",
-    "tar": ">=6.1.2",
+    "tar": ">=6.1.9",
     "tinymce": "^5.8.2",
     "vue": "^2.6.14",
     "vue-loader": "^15.9.3",
@@ -85,7 +85,6 @@
     "webpack-dev-server": "^3.11.0",
     "webpack-merge": "^4.2.2",
     "ws": ">=6.2.2",
-    "tar": ">=6.1.9",
-    "path-parse": ">=1.0.7"
+    "url-parse": ">=1.5.2"
   }
 }
