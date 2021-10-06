@@ -32,11 +32,11 @@ setuptools.setup(
     url="https://github.com/robotichead/NearBeach",
     packages=setuptools.find_packages(),
     install_requires=[
-	'django',
-	'simplejson',
-	'pillow',
-	'urllib3',
-    'boto3',
+        'django',
+        'simplejson',
+        'pillow',
+        'urllib3',
+        'boto3',
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

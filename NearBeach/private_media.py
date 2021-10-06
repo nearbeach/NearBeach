@@ -111,7 +111,7 @@ class Check_Permissions(object):
 
         -- Make sure the doc is not deleted
         AND document_permission.is_deleted = 'FALSE'
-       	""", [current_user.id, object])
+        """, [current_user.id, object])
         has_permission = cursor.fetchall()
 
         if not has_permission[0][0] >= 1:
