@@ -183,11 +183,14 @@ class DefaultServer(object):
         if not was_modified_since(request.META.get('HTTP_IF_MODIFIED_SINCE'),
                                   statobj[stat.ST_MTIME], statobj[stat.ST_SIZE]):
             return HttpResponseNotModified(content_type=content_type)
-        response = HttpResponse(open(fullpath, 'rb').read(), content_type=content_type)
-        response["Last-Modified"] = http_date(statobj[stat.ST_MTIME])
+
+        with open(fullpath, 'rb') as f:
+            response = HttpResponse(f.read(), content_type=content_type)
+            response["Last-Modified"] = http_date(statobj[stat.ST_MTIME])
+            return response
+
         # filename = os.path.basename(path)
         # response['Content-Disposition'] = smart_str(u'attachment; filename={0}'.format(filename))
-        return response
 
 
 """
