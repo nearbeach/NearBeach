@@ -1,16 +1,15 @@
-from django.contrib.auth.decorators import login_required
-from NearBeach.models import *
+from django.contrib.auth.decorators import login_required, login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
-from django.urls import reverse
-from django.template import loader
 from django.db.models import Sum, Q, Min
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.template import loader
+from django.urls import reverse
+from django.views.decorators.http import require_http_methods
+from NearBeach.models import *
+from NearBeach.decorators.check_user_permissions import check_user_requirement_item_permissions
 from NearBeach.forms import *
 from NearBeach.views.requirement_views import get_requirement_items
-from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import check_user_requirement_item_permissions
 
 import json
 

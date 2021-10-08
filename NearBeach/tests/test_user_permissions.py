@@ -1,11 +1,11 @@
 from django.contrib.auth.models import User
 from django.test import TestCase, Client, TransactionTestCase
 from django.urls import reverse
+from django.db.models import Q, Max
 
 import unittest
 import json
 from NearBeach.models import *
-from django.db.models import Q, Max
 
 def login_user(c: object, self: object) -> object:
     response = c.post(

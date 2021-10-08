@@ -1,18 +1,15 @@
-from django.contrib.auth.decorators import login_required
-from NearBeach.models import *
+from django.contrib.auth.decorators import login_required, login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_http_methods
+from django.db.models import Max, Min, Q, Sum
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
-from django.urls import reverse
 from django.template import loader
-from django.db.models import Sum, Q, Min
+from django.urls import reverse
+from django.views.decorators.http import require_http_methods
+from NearBeach.models import *
+from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_kanban_permissions
 from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
-from django.db.models import Max
-from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_kanban_permissions
-from NearBeach.forms import NewLevelForm, DeleteLevelForm
 import json, urllib3
 
 

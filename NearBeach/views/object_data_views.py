@@ -1,14 +1,13 @@
-from django.contrib.auth.decorators import login_required
-from NearBeach.models import *
+from django.contrib.auth.decorators import login_required, login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_http_methods
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
-from django.urls import reverse
-from django.template import loader
 from django.db.models import Sum, Q, Min, CharField, Value as V
 from django.db.models.functions import Concat
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.template import loader
+from django.urls import reverse
+from django.views.decorators.http import require_http_methods
+from NearBeach.models import *
 from NearBeach.forms import *
 from NearBeach.views.tools.internal_functions import *
 
