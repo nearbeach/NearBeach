@@ -69,7 +69,7 @@ def delete_level(request, kanban_board_id, *args, **kwargs):
     deleted_level.is_deleted=True
     deleted_level.save()
 
-    return HttpResponse("");
+    return HttpResponse("")
 
 
 @login_required(login_url='login', redirect_field_name="")
