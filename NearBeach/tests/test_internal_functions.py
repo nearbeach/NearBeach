@@ -26,7 +26,8 @@ class TestInternalFunctions(TestCase):
         # Make sure there are no groups for second response
         self.assertEqual(len(response_kanban_board_2), 0)
 
-    def test_organisation(self):
+    @staticmethod
+    def test_organisation():
         # Get basic input object
         input_object = object_assignment.objects.filter(
             is_deleted=False,
