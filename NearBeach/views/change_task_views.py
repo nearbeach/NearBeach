@@ -65,7 +65,6 @@ def change_task_save(request,change_task_id):
 @login_required(login_url='login', redirect_field_name="")
 def update_status(request,change_task_id):
     """
-
     :param request:
     :param change_task_id:
     :return:

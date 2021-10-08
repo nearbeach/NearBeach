@@ -34,7 +34,6 @@ def delete_tag(request, tag_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=3, object_lookup='tag')
 def new_tag(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
@@ -63,7 +62,6 @@ def new_tag(request, *args, **kwargs):
 @check_user_permissions(min_permission_level=2, object_lookup='tag')
 def save_tag(request, *args, **kwargs):
     """
-
     :param request:
     :param task_id:
     :return:

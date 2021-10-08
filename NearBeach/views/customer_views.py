@@ -18,7 +18,6 @@ import json
 @check_user_customer_permissions(min_permission_level=1)
 def customer_information(request,customer_id, *args, **kwargs):
     """
-
     :param request:
     :param customer_id:
     :return:
@@ -55,7 +54,6 @@ def customer_information(request,customer_id, *args, **kwargs):
 @check_user_customer_permissions(min_permission_level=2)
 def customer_information_save(request,customer_id, *args, **kwargs):
     """
-
     :param request:
     :param customer_id:
     :return:
@@ -88,7 +86,6 @@ def customer_information_save(request,customer_id, *args, **kwargs):
 @check_user_customer_permissions(min_permission_level=3)
 def new_customer(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
@@ -116,7 +113,6 @@ def new_customer(request, *args, **kwargs):
 @check_user_customer_permissions(min_permission_level=2)
 def new_customer_save(request, *args, **kwargs):
     """
-
     :param reqeust:
     :return:
     """

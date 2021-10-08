@@ -155,7 +155,6 @@ def get_object_search_data(search_form):
 @login_required(login_url='login',redirect_field_name="")
 def search(request):
     """
-
     :param request:
     :return:
     """
@@ -187,7 +186,6 @@ def search(request):
 @login_required(login_url='login',redirect_field_name="")
 def search_data(request):
     """
-
     :param request:
     :return:
     """
@@ -203,7 +201,6 @@ def search_data(request):
 @login_required(login_url='login',redirect_field_name="")
 def search_customer(request):
     """
-
     :param request:
     :return:
     """
@@ -256,7 +253,6 @@ def search_customer_data(request):
 @login_required(login_url='login',redirect_field_name="")
 def search_group(request):
     """
-
     :param request:
     :return:
     """
@@ -284,7 +280,6 @@ def search_group(request):
 @login_required(login_url='login',redirect_field_name="")
 def search_group_data(request):
     """
-
     :param request:
     :return:
     """
@@ -316,7 +311,6 @@ def search_group_data(request):
 @login_required(login_url='login',redirect_field_name="")
 def search_organisation(request):
     """
-
     :param request:
     :return:
     """
@@ -367,7 +361,6 @@ def search_organisation_data(request):
 @login_required(login_url='login',redirect_field_name="")
 def search_permission_set(request):
     """
-
     :param request:
     :return:
     """
@@ -395,7 +388,6 @@ def search_permission_set(request):
 @login_required(login_url='login',redirect_field_name="")
 def search_permission_set_data(request):
     """
-
     :param request:
     :return:
     """
@@ -448,7 +440,6 @@ def search_tag(request):
 @login_required(login_url='login',redirect_field_name="")
 def search_user(request):
     """
-
     :param request:
     :return:
     """

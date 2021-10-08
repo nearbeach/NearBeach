@@ -61,7 +61,6 @@ def add_requirement_item_link(request, requirement_item_id, *args, **kwargs):
 @check_user_requirement_item_permissions(min_permission_level=1)
 def get_requirement_item_links_list(request,requirement_item_id, *args, **kwargs):
     """
-
     :param request:
     :param requirement_item_id:
     :return:

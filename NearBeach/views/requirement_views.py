@@ -340,7 +340,6 @@ def requirement_information(request, requirement_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=2, object_lookup='requirement_id')
 def requirement_information_save(request, requirement_id, *args, **kwargs):
     """
-
     :param request:
     :param requirement_id:
     :return:

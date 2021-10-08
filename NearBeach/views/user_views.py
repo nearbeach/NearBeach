@@ -15,7 +15,6 @@ import json
 @login_required(login_url='login',redirect_field_name="")
 def new_user(request):
     """
-
     :param request:
     :return:
     """
@@ -37,7 +36,6 @@ def new_user(request):
 @login_required(login_url='login',redirect_field_name="")
 def new_user_save(request):
     """
-
     :param request:
     :return:
     """
@@ -92,7 +90,6 @@ def update_password(request):
 @login_required(login_url='login',redirect_field_name="")
 def user_information(request, username):
     """
-
     :param request:
     :param permission_set_id:
     :return:
@@ -140,7 +137,6 @@ def user_information(request, username):
 @login_required(login_url='login',redirect_field_name="")
 def user_information_save(request, username):
     """
-
     :param request:
     :param username:
     :return:
