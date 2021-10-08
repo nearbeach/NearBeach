@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
-from django.conf import settings, settings
+from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, FileResponse, JsonResponse
 from django.db.models import Q
 from django.utils.encoding import smart_str

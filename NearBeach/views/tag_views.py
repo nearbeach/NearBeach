@@ -1,5 +1,5 @@
 import urllib
-from django.contrib.auth.decorators import login_required, login_required
+from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Sum, Q, Min
