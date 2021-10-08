@@ -1,14 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
-from django.conf import settings
+from django.conf import settings, settings
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, FileResponse, JsonResponse
 from django.db.models import Q
 from django.utils.encoding import smart_str
 from django.views.decorators.http import require_http_methods
 from django.template import loader
-from NearBeach.views.tools.internal_functions import *
 from django.core.serializers.json import DjangoJSONEncoder
-from django.conf import settings
+from NearBeach.views.tools.internal_functions import *
 import boto3
 from botocore.exceptions import NoCredentialsError
 

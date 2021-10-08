@@ -1,4 +1,5 @@
 from NearBeach.models import *
+from NearBeach.forms import *
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
@@ -6,9 +7,6 @@ from django.template import loader
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse, HttpResponseNotFound
 from django.views.decorators.http import require_http_methods
 from django.db.models import Q
-
-# Import Forms
-from NearBeach.forms import *
 
 import json
 
