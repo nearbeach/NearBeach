@@ -60,7 +60,8 @@ METHOD
 
 
 class Check_Permissions(object):
-    def has_read_permission(self, request, path):
+    @staticmethod
+    def has_read_permission(request, path):
         # Is user logged in
         user = request.user
         if not user.is_authenticated():
@@ -127,7 +128,8 @@ Left unchanged
 
 
 class NginxXAccelRedirectServer(object):
-    def serve(self, request, path):
+    @staticmethod
+    def serve(request, path):
         response = HttpResponse()
         fullpath = os.path.join(settings.PRIVATE_MEDIA_ROOT, path)
         response['X-Accel-Redirect'] = fullpath
@@ -141,7 +143,8 @@ Left unchanged
 
 
 class ApacheXSendfileServer(object):
-    def serve(self, request, path):
+    @staticmethod
+    def serve(request, path):
         fullpath = os.path.join(settings.PRIVATE_MEDIA_ROOT, path)
         response = HttpResponse()
         response['X-Sendfile'] = fullpath
@@ -171,7 +174,8 @@ class DefaultServer(object):
     This will only work for files that can be accessed in the local filesystem.
     """
 
-    def serve(self, request, path):
+    @staticmethod
+    def serve(request, path):
         # the following code is largely borrowed from `django.views.static.serve`
         # and django-filetransfers: filetransfers.backends.default
         fullpath = os.path.join(settings.PRIVATE_MEDIA_ROOT, path)
