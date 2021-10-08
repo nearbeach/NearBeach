@@ -67,7 +67,7 @@ def delete_column(request, kanban_board_id, *args, **kwargs):
     deleted_column.is_deleted=True
     deleted_column.save()
 
-    return HttpResponse("");
+    return HttpResponse("")
 
 
 @login_required(login_url='login', redirect_field_name="")

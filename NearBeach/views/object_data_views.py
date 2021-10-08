@@ -204,7 +204,7 @@ def add_tags(request, destination, location_id):
     #Check the data against the form
     form = AddTagsForm(request.POST)
     if not form.is_valid():
-        return HttpResponseBadRequest(form.errors);
+        return HttpResponseBadRequest(form.errors)
 
     # Loop throgh each tag
     tag_list = request.POST.getlist("tag_id")
