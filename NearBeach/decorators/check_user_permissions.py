@@ -276,7 +276,7 @@ def check_rfc_permissions(min_permission_level):
     return decorator
 
 
-def check_permission_denied(min_permission_level):
+def check_permission_denied():
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
