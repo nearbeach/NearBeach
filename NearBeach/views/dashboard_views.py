@@ -283,7 +283,7 @@ def rfc_approvals(request):
         ).values('request_for_change_id')
     )
 
-    return HttpResponse(serializers.serialize('json',rfc_results), content_type='application/json')
+    return HttpResponse(serializers.serialize('json', rfc_results), content_type='application/json')
 
 
 @login_required(login_url='login', redirect_field_name='')

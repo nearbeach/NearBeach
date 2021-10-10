@@ -35,7 +35,7 @@ def check_group_name(request):
     return HttpResponse(serializers.serialize('json', group_name_results), content_type='application/json')
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def group_information(request, group_id):
     """
     :param request:
@@ -112,7 +112,7 @@ def group_information_save(request, group_id):
     return HttpResponse("")
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def new_group(request):
     """
     :param request:
@@ -165,4 +165,4 @@ def new_group_save(request):
     group_submit.save()
 
     # Send back the URL for the group
-    return HttpResponse(reverse('group_information',args={group_submit.group_id}))
+    return HttpResponse(reverse('group_information', args={group_submit.group_id}))

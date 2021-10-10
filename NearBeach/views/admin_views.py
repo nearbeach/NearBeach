@@ -8,7 +8,7 @@ from NearBeach.models import *
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def add_user(request):
     """
     :param request:
@@ -51,7 +51,7 @@ def add_user(request):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def update_user_password(request):
     """
     """

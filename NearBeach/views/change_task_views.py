@@ -30,12 +30,12 @@ def change_task_information(request, change_task_id, *args, **kwargs):
         'change_task_results': serializers.serialize('json', change_task_results),
     }
     
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-def change_task_save(request,change_task_id):
+def change_task_save(request, change_task_id):
     """
     """
     # Get form data
@@ -63,7 +63,7 @@ def change_task_save(request,change_task_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-def update_status(request,change_task_id):
+def update_status(request, change_task_id):
     """
     :param request:
     :param change_task_id:

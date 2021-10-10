@@ -58,7 +58,7 @@ def add_requirement_item_link(request, requirement_item_id, *args, **kwargs):
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
 @check_user_requirement_item_permissions(min_permission_level=1)
-def get_requirement_item_links_list(request,requirement_item_id, *args, **kwargs):
+def get_requirement_item_links_list(request, requirement_item_id, *args, **kwargs):
     """
     :param request:
     :param requirement_item_id:
@@ -136,7 +136,7 @@ def new_requirement_item(request, requirement_id, *args, **kwargs):
 
 @login_required(login_url='login', redirect_field_name="")
 @check_user_requirement_item_permissions(min_permission_level=1)
-def requirement_item_information(request, requirement_item_id,*args,**kwargs):
+def requirement_item_information(request, requirement_item_id, *args, **kwargs):
     """
         Loads the requirement item information.
         :param request:

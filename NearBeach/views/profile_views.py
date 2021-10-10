@@ -12,7 +12,7 @@ from NearBeach.forms import *
 import json
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def profile_information(request):
     """
     """
@@ -36,7 +36,7 @@ def profile_information(request):
         'username': request.user.id,
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])

@@ -13,9 +13,9 @@ from NearBeach.forms import *
 import json
 
 
-@login_required(login_url='login',redirect_field_name='')
+@login_required(login_url='login', redirect_field_name='')
 @check_user_customer_permissions(min_permission_level=1)
-def customer_information(request,customer_id, *args, **kwargs):
+def customer_information(request, customer_id, *args, **kwargs):
     """
     :param request:
     :param customer_id:
@@ -39,19 +39,19 @@ def customer_information(request,customer_id, *args, **kwargs):
 
     # Context
     c = {
-        'customer_results': serializers.serialize('json',[customer_results]),
+        'customer_results': serializers.serialize('json', [customer_results]),
         'nearbeach_title': 'Customer Information %s' % customer_id,
         'organisation_results': serializers.serialize('json', organisation_results),
-        'title_list': serializers.serialize('json',title_list),
+        'title_list': serializers.serialize('json', title_list),
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name='')
+@login_required(login_url='login', redirect_field_name='')
 @check_user_customer_permissions(min_permission_level=2)
-def customer_information_save(request,customer_id, *args, **kwargs):
+def customer_information_save(request, customer_id, *args, **kwargs):
     """
     :param request:
     :param customer_id:
@@ -81,7 +81,7 @@ def customer_information_save(request,customer_id, *args, **kwargs):
     return HttpResponse("Success")
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 @check_user_customer_permissions(min_permission_level=3)
 def new_customer(request, *args, **kwargs):
     """
@@ -101,14 +101,14 @@ def new_customer(request, *args, **kwargs):
     # Get Context
     c = {
         'nearbeach_title': 'New Customer',
-        'title_list': serializers.serialize('json',title_list),
+        'title_list': serializers.serialize('json', title_list),
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 @check_user_customer_permissions(min_permission_level=2)
 def new_customer_save(request, *args, **kwargs):
     """
