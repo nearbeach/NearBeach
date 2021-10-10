@@ -112,7 +112,7 @@ def organisation_information(request, organisation_id, *args, **kwargs):
     c = {
         'customer_results': serializers.serialize('json', customer_results),
         'organisation_id': organisation_id,
-        'organisation_results': serializers.serialize('json', organisation_results),
+        'organisation_results': serializers.serialize('json', [organisation_results]),
         'nearbeach_title': 'Organisation Information %s' % organisation_id,
         'title_list': serializers.serialize('json', title_list),
     }
