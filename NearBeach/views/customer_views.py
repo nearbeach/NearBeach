@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import login_required, login_required
+from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Sum, Q, Min
@@ -115,7 +115,6 @@ def new_customer_save(request, *args, **kwargs):
     :param reqeust:
     :return:
     """
-
     # CHECK USER PERMISSIONS -- NEED TO ADD THIS IN!
 
     # Get Form data

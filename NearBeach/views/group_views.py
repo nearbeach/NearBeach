@@ -19,7 +19,6 @@ def check_group_name(request):
     :param request:
     :return:
     """
-
     # Check user form
     form = SearchForm(request.POST)
     if not form.is_valid():
@@ -42,7 +41,6 @@ def group_information(request, group_id):
     :param group_id:
     :return:
     """
-
     # Get the template
     t = loader.get_template('NearBeach/groups/group_information.html')
 
@@ -93,7 +91,6 @@ def group_information_save(request, group_id):
     :param group_id:
     :return:
     """
-
     # Check user permissions
 
     # Get Form Data
@@ -118,7 +115,6 @@ def new_group(request):
     :param request:
     :return:
     """
-
     # CHeck user permissions
 
     # Get the template
@@ -148,7 +144,6 @@ def new_group_save(request):
     :param request:
     :return:
     """
-
     # Check user permissions
 
     # Get form data

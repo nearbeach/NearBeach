@@ -18,7 +18,6 @@ def new_user(request):
     :param request:
     :return:
     """
-
     # Add in user permissions
 
     # Get template
@@ -39,7 +38,6 @@ def new_user_save(request):
     :param request:
     :return:
     """
-
     # CHECK USER PERMISSSIONS
 
     # Get form data
@@ -94,7 +92,6 @@ def user_information(request, username):
     :param permission_set_id:
     :return:
     """
-
     # check user permissions
 
     # Import template
@@ -141,7 +138,6 @@ def user_information_save(request, username):
     :param username:
     :return:
     """
-
     # Add in user permissions
 
     # Get form

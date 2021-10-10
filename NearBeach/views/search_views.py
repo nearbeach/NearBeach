@@ -57,7 +57,7 @@ def get_object_search_data(search_form):
     # If we are NOT including closed - then we will limit to those with status is_deleted=False
     if not include_closed:
         rfc_results = rfc_results.exclude(
-           rfc_status__in=(5, 6), 
+           rfc_status__in=(5, 6),
         )
 
         requirement_results = requirement_results.exclude(
@@ -281,7 +281,6 @@ def search_group_data(request):
     :param request:
     :return:
     """
-
     # Obtain form data
     search_form = SearchForm(request.POST)
     if not search_form.is_valid():
@@ -362,7 +361,6 @@ def search_permission_set(request):
     :param request:
     :return:
     """
-
     # Add permissions
 
     # Get template
@@ -389,7 +387,6 @@ def search_permission_set_data(request):
     :param request:
     :return:
     """
-
     # Check user permission
 
     # Get form data
@@ -428,7 +425,7 @@ def search_tag(request):
 
     #Context
     c = {
-        'tag_results': serializers.serialize('json', tag_results),   
+        'tag_results': serializers.serialize('json', tag_results),
     }
 
     #Send back json data
@@ -441,7 +438,6 @@ def search_user(request):
     :param request:
     :return:
     """
-
     # Add permissions
 
     # Get template

@@ -54,7 +54,6 @@ def new_project_save(request, *args, **kwargs):
     :param request:
     :return:
     """
-
     # Get the form data
     form = NewProjectForm(request.POST)
     if not form.is_valid():
@@ -137,7 +136,6 @@ def project_information_save(request, project_id, *args, **kwargs):
     :param project_id:
     :return:
     """
-
     # Get the form data
     form = ProjectForm(request.POST)
     if not form.is_valid():

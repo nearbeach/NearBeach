@@ -18,7 +18,6 @@ def new_permission_set(request):
     :param request:
     :return:
     """
-
     # Check user permissions
 
     # Get template
@@ -39,7 +38,6 @@ def new_permission_set_save(request):
     :param request:
     :return:
     """
-
     # Check user permissions
 
     # Get form data
@@ -66,7 +64,6 @@ def permission_set_information(request, permission_set_id):
     :param permission_set_id:
     :return:
     """
-
     # Add in permission checks
 
     # Import template
@@ -115,7 +112,6 @@ def permission_set_information_save(request, permission_set_id):
     :param permission_set_id:
     :return:
     """
-
     # ADD IN USER PERMISSIONS LATER
 
     # Check to make sure nothing changes for the administration permissions

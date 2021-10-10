@@ -14,7 +14,6 @@ def add_user(request):
     :param request:
     :return:
     """
-
     # Add in user permissions
 
     # Check the form data

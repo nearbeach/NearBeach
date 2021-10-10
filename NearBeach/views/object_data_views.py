@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import login_required, login_required
+from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Sum, Q, Min, CharField, Value as V
@@ -116,7 +116,6 @@ def add_link(request, destination, location_id):
     :param location_id:
     :return:
     """
-
     # ADD IN CHECKER FOR USER PERMISSIONS
 
     # Get the data
@@ -315,7 +314,6 @@ def associated_objects(request, destination, location_id):
     :param location_id:
     :return:
     """
-
     # Organisations have a special method. We will return the results directly from this method to the user.
     if destination == 'organisation':
         return associated_objects_organisations(location_id)

@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import login_required, login_required
+from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Sum, Q, Min
@@ -64,7 +64,6 @@ def get_requirement_item_links_list(request, requirement_item_id, *args, **kwarg
     :param requirement_item_id:
     :return:
     """
-
     # Use object_assignment to get the requirme
     link_results = object_assignment.objects.filter(
         Q(
@@ -195,7 +194,6 @@ def requirement_information_save(request, requirement_item_id, *args, **kwargs):
     :param requirement_id:
     :return:
     """
-
     # Get form data
     form = UpdateRequirementItemForm(request.POST)
     if not form.is_valid():

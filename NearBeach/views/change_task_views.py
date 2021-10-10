@@ -69,7 +69,6 @@ def update_status(request, change_task_id):
     :param change_task_id:
     :return:
     """
-
     # Get form data
     form = ChangeTaskStatusForm(request.POST)
     if not form.is_valid():

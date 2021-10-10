@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import login_required, login_required
+from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Sum, Q, Min
@@ -67,7 +67,6 @@ def organisation_duplicates(request, *args, **kwargs):
     :param request:
     :return:
     """
-
     # ADD IN USER PERMISSION CHECKS
 
     # Extract data from POST
@@ -113,7 +112,7 @@ def organisation_information(request, organisation_id, *args, **kwargs):
     c = {
         'customer_results': serializers.serialize('json', customer_results),
         'organisation_id': organisation_id,
-        'organisation_results': serializers.serialize('json', organisation_results]),
+        'organisation_results': serializers.serialize('json', organisation_results),
         'nearbeach_title': 'Organisation Information %s' % organisation_id,
         'title_list': serializers.serialize('json', title_list),
     }

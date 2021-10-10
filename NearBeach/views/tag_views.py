@@ -1,5 +1,5 @@
 import urllib
-from django.contrib.auth.decorators import login_required, login_required
+from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Sum, Q, Min
@@ -35,7 +35,6 @@ def new_tag(request, *args, **kwargs):
     :param request:
     :return:
     """
-
     # Get form data
     form = NewTagForm(request.POST)
     if not form.is_valid():
@@ -64,7 +63,6 @@ def save_tag(request, *args, **kwargs):
     :param task_id:
     :return:
     """
-
     # Get form data
     form = TagForm(request.POST)
     if not form.is_valid():

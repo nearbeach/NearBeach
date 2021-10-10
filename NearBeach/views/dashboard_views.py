@@ -59,7 +59,6 @@ def get_my_objects(request):
     :param request:
     :return:
     """
-
     # Get the user data
     project_results = project.objects.filter(
         is_deleted=False,
@@ -258,7 +257,6 @@ def rfc_approvals(request):
     :param request:
     :return:
     """
-
     # Get a list of RFC's that are awaiting approval
     rfc_results = request_for_change.objects.filter(
         is_deleted=False,

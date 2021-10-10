@@ -11,7 +11,6 @@ def error_403(request, exception):
     :param location_id:
     :return:
     """
-
     t = loader.get_template('403.html')
 
     c = {
@@ -29,7 +28,6 @@ def error_404(request, exception):
     :param location_id:
     :return:
     """
-
     t = loader.get_template('404.html')
 
     c = {
@@ -47,7 +45,6 @@ def error_500(request):
     :param location_id:
     :return:
     """
-
     t = loader.get_template('500.html')
 
     c = {

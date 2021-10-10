@@ -1,5 +1,5 @@
 import urllib
-from django.contrib.auth.decorators import login_required, login_required
+from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Sum, Q, Min
@@ -58,7 +58,6 @@ def new_task_save(request, *args, **kwargs):
     :param request:
     :return:
     """
-
     # ADD IN USER PERMISSIONS
 
     # Get form data
@@ -143,7 +142,6 @@ def task_information_save(request, task_id, *args, **kwargs):
     :param task_id:
     :return:
     """
-
     # Form
     form = TaskInformationForm(request.POST)
     if not form.is_valid():

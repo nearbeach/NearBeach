@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import login_required, login_required
+from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Max, Min, Q, Sum
@@ -24,7 +24,6 @@ def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
     :param location_id:
     :return:
     """
-
     # CHECK USER PERMISSION LATER
 
     # Get form data and check
@@ -69,7 +68,6 @@ def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
 def archive_kanban_cards(request, *args, **kwargs):
     """
     """
-
     # Get the form data
     form = KanbanCardArchiveForm(request.POST)
     if not form.is_valid():
@@ -99,7 +97,6 @@ def check_kanban_board_name(request, *args, **kwargs):
     :param request:
     :return:
     """
-
     # Get the form data
     form = CheckKanbanBoardName(request.POST)
     if not form.is_valid():
@@ -240,7 +237,6 @@ def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
     :param kanban_board_id:
     :return:
     """
-
     # CHECK USER PERMISSIONS
 
     # Get a list of all existing cards
@@ -283,7 +279,6 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     :param kanban_board_id:
     :return:
     """
-
     # CHECK USER PERMISSIONS
 
     # Get the kanban card instance
@@ -380,7 +375,6 @@ def new_kanban(request, *args, **kwargs):
     :param request:
     :return:
     """
-
     # Check user permissions
 
     # Get data
@@ -415,7 +409,6 @@ def new_kanban(request, *args, **kwargs):
 def new_kanban_card(request, kanban_board_id, *args, **kwargs):
     """
     """
-
     # CHECK USER PERMISSIONS
 
     # Get the kanban instance
@@ -520,7 +513,6 @@ def update_card(request, *args, **kwargs):
     """
     The following function will update the card information sent through the form in POST
     """
-    
     # ADD IN CHECKING USER PERMISSIONS
 
     # Get data and validate in the form

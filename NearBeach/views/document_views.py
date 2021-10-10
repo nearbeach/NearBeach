@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
-from django.conf import settings, settings
+from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, FileResponse, JsonResponse
 from django.db.models import Q
 from django.utils.encoding import smart_str
@@ -26,7 +26,6 @@ def document_add_folder(request, destination, location_id):
     :param location_id:
     :return:
     """
-
     # Check users PERMISSION - NEED TO ADD
 
     # Obtain the data and verify against the form
@@ -194,7 +193,6 @@ def document_upload(request, destination, location_id):
     :param folder_id: Which folder we will associate this with
     :return:
     """
-
     # WRITE CODE TO CHECK THE USER'S PERMISSION
 
     form = DocumentUploadForm(request.POST, request.FILES)
