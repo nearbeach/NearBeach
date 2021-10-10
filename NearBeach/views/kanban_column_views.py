@@ -92,7 +92,7 @@ def new_column(request, kanban_board_id, *args, **kwargs):
         kanban_column_id = kanban_column_submit.kanban_column_id,
     )
      
-    return HttpResponse(serializers.serialize('json',[kanban_column_submit]), content_type='application/json')
+    return HttpResponse(serializers.serialize('json', [kanban_column_submit]), content_type='application/json')
 
 
 @login_required(login_url='login', redirect_field_name="")

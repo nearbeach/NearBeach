@@ -15,8 +15,8 @@ from NearBeach.views.tools.internal_functions import *
 import json, urllib, urllib3
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def add_bug(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def add_bug(request, destination, location_id):
     #ADD IN CHECK PERMISSIONS THAT USES THE DESTINATION AND LOCATION!
 
     # Get data from form
@@ -34,7 +34,7 @@ def add_bug(request,destination,location_id):
     )
 
     # Connect to the correct destination
-    submit_bug = set_object_from_destination(submit_bug,destination,location_id)
+    submit_bug = set_object_from_destination(submit_bug, destination, location_id)
 
     # Save
     submit_bug.save()
@@ -43,12 +43,12 @@ def add_bug(request,destination,location_id):
     bug_results = bug.objects.filter(bug_id=submit_bug.bug_id)
 
     # Return the JSON data
-    return HttpResponse(serializers.serialize('json',bug_results),content_type='application/json')
+    return HttpResponse(serializers.serialize('json', bug_results), content_type='application/json')
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def add_customer(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def add_customer(request, destination, location_id):
     #ADD IN CHECK PERMISSIONS THAT USES THE DESTINATION AND LOCATION!
 
     # Get data from form
@@ -76,8 +76,8 @@ def add_customer(request,destination,location_id):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def add_group(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def add_group(request, destination, location_id):
     # ADD IN CHECK PERMISSIONS THAT USES THE DESTINATION AND LOCATION!
 
     # Get data from form
@@ -97,26 +97,25 @@ def add_group(request,destination,location_id):
             group_id=group_instance,
             change_user=request.user,
         )
-        submit_object_assignment = set_object_from_destination(submit_object_assignment,destination,location_id)
+        submit_object_assignment = set_object_from_destination(submit_object_assignment, destination, location_id)
 
         # Save the data
         submit_object_assignment.save()
 
     # Get the new group list data
-    group_results = get_group_list(destination,location_id)
+    group_results = get_group_list(destination, location_id)
 
-    return HttpResponse(serializers.serialize('json',group_results),content_type='application/json')
+    return HttpResponse(serializers.serialize('json', group_results), content_type='application/json')
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def add_link(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def add_link(request, destination, location_id):
     """
     :param request:
     :param destination:
     :param location_id:
     :return:
     """
-
     # ADD IN CHECKER FOR USER PERMISSIONS
 
     # Get the data
@@ -130,7 +129,7 @@ def add_link(request,destination,location_id):
     )
 
     # Add the destination/location_id to the object
-    object_assignment_submit = link_object(object_assignment_submit,destination,location_id)
+    object_assignment_submit = link_object(object_assignment_submit, destination, location_id)
 
     # Loop through the results and add them in.
     for row in request.POST.getlist("project"):
@@ -138,7 +137,7 @@ def add_link(request,destination,location_id):
             project=project.objects.get(project_id=row),
             change_user=request.user,
         )
-        set_object_from_destination(submit_object_assignment,destination,location_id)
+        set_object_from_destination(submit_object_assignment, destination, location_id)
         submit_object_assignment.save()
 
     for row in request.POST.getlist("task"):
@@ -169,8 +168,8 @@ def add_link(request,destination,location_id):
     return HttpResponse("Success")
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def add_notes(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def add_notes(request, destination, location_id):
     # ADD IN PERMISSIONS HERE!
 
     # Fill out the form
@@ -194,11 +193,11 @@ def add_notes(request,destination,location_id):
     # Get data to send back to user
     note_resuts = object_note.objects.filter(object_note_id=submit_object_note.object_note_id)
 
-    return HttpResponse(serializers.serialize('json',note_resuts),content_type='application.json')
+    return HttpResponse(serializers.serialize('json', note_resuts), content_type='application.json')
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def add_tags(request, destination, location_id):
     #Check the data against the form
     form = AddTagsForm(request.POST)
@@ -237,8 +236,8 @@ def add_tags(request, destination, location_id):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def add_user(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def add_user(request, destination, location_id):
     # ADD IN A CHECK TO CHECK USER'S PERMISSION!
 
     # Check the data against the form
@@ -259,18 +258,18 @@ def add_user(request,destination,location_id):
             change_user=request.user,
             assigned_user=user_instance,
         )
-        submit_object_assignment = set_object_from_destination(submit_object_assignment,destination,location_id)
+        submit_object_assignment = set_object_from_destination(submit_object_assignment, destination, location_id)
 
         # Save
         submit_object_assignment.save()
 
     # Get the data to return to the user
-    user_results = get_user_list(destination,location_id)
+    user_results = get_user_list(destination, location_id)
 
-    return HttpResponse(user_results,content_type='application/json')
+    return HttpResponse(user_results, content_type='application/json')
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def admin_add_user(request):
     """
     :param request:
@@ -307,15 +306,14 @@ def admin_add_user(request):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def associated_objects(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def associated_objects(request, destination, location_id):
     """
     :param request:
     :param destination:
     :param location_id:
     :return:
     """
-
     # Organisations have a special method. We will return the results directly from this method to the user.
     if destination == 'organisation':
         return associated_objects_organisations(location_id)
@@ -411,22 +409,22 @@ def associated_objects_organisations(location_id):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def bug_client_list(request):
     bug_client_results = bug_client.objects.filter(
         is_deleted=False,
     )
 
-    return HttpResponse(serializers.serialize('json',bug_client_results), content_type='application/json')
+    return HttpResponse(serializers.serialize('json', bug_client_results), content_type='application/json')
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def bug_list(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def bug_list(request, destination, location_id):
     # Obtain the data dependent on the destination
     bug_list = bug.objects.filter(
         is_deleted=False,
     )
-    bug_list = get_object_from_destination(bug_list,destination,location_id)
+    bug_list = get_object_from_destination(bug_list, destination, location_id)
 
     # Limit to certain values
     bug_list = bug_list.values(
@@ -456,16 +454,16 @@ def bug_list(request,destination,location_id):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def customer_list(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def customer_list(request, destination, location_id):
     customer_results = get_customer_list(destination, location_id)
 
     return HttpResponse(serializers.serialize('json', customer_results), content_type='application/json')
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def customer_list_all(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def customer_list_all(request, destination, location_id):
     # Get the organisation dependant on the destination source
     if destination == "requirement":
         organisation_results = organisation.objects.get(
@@ -506,11 +504,11 @@ def customer_list_all(request,destination,location_id):
         organisation_id=organisation_results.organisation_id
     )
 
-    return HttpResponse(serializers.serialize('json',customer_results), content_type='application/json')
+    return HttpResponse(serializers.serialize('json', customer_results), content_type='application/json')
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def delete_tag(request):
     # Get form data
     form = DeleteTagForm(request.POST)
@@ -532,13 +530,13 @@ def delete_tag(request):
 
 
 # Internal function
-def get_customer_list(destination,location_id):
+def get_customer_list(destination, location_id):
     # Get a list of all objects assignments dependant on the destination
     object_customers = object_assignment.objects.filter(
         is_deleted=False,
         customer_id__isnull=False,
     )
-    object_customers = get_object_from_destination(object_customers,destination,location_id)
+    object_customers = get_object_from_destination(object_customers, destination, location_id)
 
     return customer.objects.filter(
         is_deleted=False,
@@ -546,7 +544,7 @@ def get_customer_list(destination,location_id):
     )
 
 # Internal function
-def get_group_list(destination,location_id):
+def get_group_list(destination, location_id):
     object_results = object_assignment.objects.filter(
         is_deleted=False,
     )
@@ -564,7 +562,7 @@ def get_group_list(destination,location_id):
 
 
 # Internal Function
-def get_user_list(destination,location_id):
+def get_user_list(destination, location_id):
     # Get the data we want
     object_results = object_assignment.objects.filter(
         is_deleted=False,
@@ -591,7 +589,7 @@ def get_user_list(destination,location_id):
 
 
 # Internal Function
-def get_user_list_all(destination,location_id):
+def get_user_list_all(destination, location_id):
     # Get a list of users we want to exclude
     object_results = object_assignment.objects.filter(
         is_deleted=False,
@@ -608,7 +606,7 @@ def get_user_list_all(destination,location_id):
         is_deleted=False,
         group_id__isnull=False,
     )
-    group_results = get_object_from_destination(group_results,destination,location_id)
+    group_results = get_object_from_destination(group_results, destination, location_id)
 
     # Get a list of users who are associated with these groups & not in the excluded list
     user_results = User.objects.filter(
@@ -626,18 +624,18 @@ def get_user_list_all(destination,location_id):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def group_list(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def group_list(request, destination, location_id):
     # Get the data dependant on the object lookup
-    group_results = get_group_list(destination,location_id)
+    group_results = get_group_list(destination, location_id)
 
     # Return the data
-    return HttpResponse(serializers.serialize('json',group_results),content_type='application/json')
+    return HttpResponse(serializers.serialize('json', group_results), content_type='application/json')
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def group_list_all(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def group_list_all(request, destination, location_id):
     # ADD CHECKS FOR USER PERMISSIONS!
 
     # Obtain data
@@ -645,7 +643,7 @@ def group_list_all(request,destination,location_id):
         is_deleted=False,
         group_id__isnull=False,
     )
-    group_existing_results = get_object_from_destination(group_existing_results,destination,location_id)
+    group_existing_results = get_object_from_destination(group_existing_results, destination, location_id)
 
     group_results = group.objects.filter(
         is_deleted=False,
@@ -654,11 +652,11 @@ def group_list_all(request,destination,location_id):
     )
 
     # Return data as json
-    return HttpResponse(serializers.serialize('json',group_results),content_type='application/json')
+    return HttpResponse(serializers.serialize('json', group_results), content_type='application/json')
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def lead_user_list(request):
     """
     :param request:
@@ -692,8 +690,8 @@ def lead_user_list(request):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def link_list(request,destination,location_id,object_lookup):
+@login_required(login_url='login', redirect_field_name="")
+def link_list(request, destination, location_id, object_lookup):
     # Get the data dependent on the object lookup
     if object_lookup == 'project':
         data_results = project.objects.filter(
@@ -735,11 +733,11 @@ def link_list(request,destination,location_id,object_lookup):
         return HttpResponseBadRequest("Sorry - but that object lookup does not exist")
 
     # Send the data to the user
-    return HttpResponse(serializers.serialize('json',data_results), content_type='application/json')
+    return HttpResponse(serializers.serialize('json', data_results), content_type='application/json')
 
 
 # Internal function
-def link_object(object_assignment_submit,destination,location_id):
+def link_object(object_assignment_submit, destination, location_id):
     """
     This is an internal function - depending on the destination, depends on what we are linking in the
     object_association_submit
@@ -762,8 +760,8 @@ def link_object(object_assignment_submit,destination,location_id):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def note_list(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def note_list(request, destination, location_id):
     # Everyone should have access to the notes section.
 
     # Get the notes dependent on the user destination and location
@@ -772,15 +770,15 @@ def note_list(request,destination,location_id):
     )
 
     # Filter by destination and location_id
-    note_results = get_object_from_destination(note_results,destination,location_id)
+    note_results = get_object_from_destination(note_results, destination, location_id)
 
     # Return JSON results
-    return HttpResponse(serializers.serialize('json',note_results),content_type='application/json')
+    return HttpResponse(serializers.serialize('json', note_results), content_type='application/json')
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def object_link_list(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def object_link_list(request, destination, location_id):
     """
     :param request:
     :param destination:
@@ -790,7 +788,7 @@ def object_link_list(request,destination,location_id):
     object_assignment_results = object_assignment.objects.filter(
         is_deleted=False,
     )
-    object_assignment_results = get_object_from_destination(object_assignment_results,destination,location_id)
+    object_assignment_results = get_object_from_destination(object_assignment_results, destination, location_id)
 
     object_assignment_results = object_assignment_results.filter(
         Q(project__isnull=False) |
@@ -825,8 +823,8 @@ def object_link_list(request,destination,location_id):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def query_bug_client(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def query_bug_client(request, destination, location_id):
     # Insert data into form
     form = QueryBugClientForm(request.POST)
 
@@ -843,7 +841,7 @@ def query_bug_client(request,destination,location_id):
         is_deleted=False,
         bug_client_id=bug_client_instance.bug_client_id,
     )
-    existing_bugs = get_object_from_destination(existing_bugs,destination,location_id)
+    existing_bugs = get_object_from_destination(existing_bugs, destination, location_id)
 
     # The values in the URL
     f_bugs = ''
@@ -879,7 +877,7 @@ def query_bug_client(request,destination,location_id):
         http = urllib3.PoolManager()
 
         # Plug in the url
-        r = http.request('GET',url)
+        r = http.request('GET', url)
 
         # Extract the data
         json_data = json.loads(r.data.decode('utf-8'))
@@ -891,7 +889,7 @@ def query_bug_client(request,destination,location_id):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def tag_list(request, destination, location_id):
     # Get the data we want
     tag_results = tag.objects.filter(
@@ -910,7 +908,7 @@ def tag_list(request, destination, location_id):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def tag_list_all(request):
     # Get the data we want
     tag_results = tag.objects.filter(
@@ -924,20 +922,20 @@ def tag_list_all(request):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def user_list(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def user_list(request, destination, location_id):
     # Get the data we want
-    user_results = get_user_list(destination,location_id)
+    user_results = get_user_list(destination, location_id)
 
-    return HttpResponse(user_results,content_type='application/json')
+    return HttpResponse(user_results, content_type='application/json')
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def user_list_all(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def user_list_all(request, destination, location_id):
     # ADD IN PERMISSIONS LATER
 
     # Get Data we want
-    user_results = get_user_list_all(destination,location_id)
+    user_results = get_user_list_all(destination, location_id)
 
-    return HttpResponse(serializers.serialize('json',user_results),content_type='application/json')
+    return HttpResponse(serializers.serialize('json', user_results), content_type='application/json')

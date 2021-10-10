@@ -272,7 +272,7 @@ urlpatterns = [
     path('user_information/<int:username>/save/', user_views.user_information_save, name='user_information_save'),
     path('user_information/update_user_password/', user_views.update_password, name='update_password'),
 
-    path('test/permission_denied/', authentication_views.test_permission_denied,name='test_permission_denied'),
+    path('test/permission_denied/', authentication_views.test_permission_denied, name='test_permission_denied'),
     # Changing and Resetting Passwords
     # path('change-password/', auth_views.PasswordChangeView.as_view()),
     path(

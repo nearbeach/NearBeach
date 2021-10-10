@@ -94,7 +94,7 @@ def new_level(request, kanban_board_id, *args, **kwargs):
         kanban_level_id = kanban_level_submit.kanban_level_id,
     )
      
-    return HttpResponse(serializers.serialize('json',[kanban_level_submit]), content_type='application/json')
+    return HttpResponse(serializers.serialize('json', [kanban_level_submit]), content_type='application/json')
 
 
 @login_required(login_url='login', redirect_field_name="")

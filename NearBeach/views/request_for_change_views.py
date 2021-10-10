@@ -52,7 +52,6 @@ def new_request_for_change(request, *args, **kwargs):
     :param request:
     :return:
     """
-
     # CHECK USER PERMISSIONS
 
     # Get template
@@ -95,7 +94,6 @@ def new_request_for_change_save(request, *args, **kwargs):
     :param request:
     :return:
     """
-
     # Check the user's permission
 
     # Get the form data
@@ -194,7 +192,6 @@ def rfc_new_change_task(request, rfc_id, *args, **kwargs):
     :param rfc_id:
     :return:
     """
-
     # ADD IN USER PERMISSIONS
 
     # Place data into forms for validation
@@ -247,7 +244,6 @@ def rfc_information(request, rfc_id, *args, **kwargs):
     :param rfc_id:
     :return:
     """
-
     # If rfc is not in draft mode - send user away
     rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
     if not rfc_results.rfc_status == 1:  # Draft
@@ -271,7 +267,6 @@ def rfc_information_save(request, rfc_id, *args, **kwargs):
     :param rfc_id:
     :return:
     """
-
     # PROGRAM IN PERMISSIONS
 
     # Get the form data
@@ -306,7 +301,6 @@ def rfc_readonly(request, rfc_id, *args, **kwargs):
     :param rfc_id:
     :return:
     """
-
     # Get template
     t = loader.get_template('NearBeach/request_for_change/rfc_readonly.html')
 
@@ -338,7 +332,6 @@ def rfc_save_backout(request, rfc_id, *args, **kwargs):
     :param request:
     :return:
     """
-
     # Get the form data
     form = RfcModuleForm(request.POST)
     if not form.is_valid():
@@ -594,7 +587,6 @@ def rfc_update_status(request, rfc_id, *args, **kwargs):
     :param rfc_id:
     :return:
     """
-
     # Add in user permissions
 
     # Get the form data

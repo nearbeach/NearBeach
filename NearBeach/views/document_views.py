@@ -17,8 +17,8 @@ import json, os
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def document_add_folder(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def document_add_folder(request, destination, location_id):
     """
     This will add a folder to the user's destination and location_id
     :param request:
@@ -26,7 +26,6 @@ def document_add_folder(request,destination,location_id):
     :param location_id:
     :return:
     """
-
     # Check users PERMISSION - NEED TO ADD
 
     # Obtain the data and verify against the form
@@ -40,18 +39,18 @@ def document_add_folder(request,destination,location_id):
         folder_description=form.cleaned_data['folder_description'],
         parent_folder=form.cleaned_data['parent_folder'],
     )
-    folder_submit = set_object_from_destination(folder_submit,destination,location_id)
+    folder_submit = set_object_from_destination(folder_submit, destination, location_id)
     folder_submit.save()
 
     # Return the data back
     folder_results = folder.objects.filter(folder_id=folder_submit.folder_id)
 
-    return HttpResponse(serializers.serialize('json',folder_results),content_type='application/json')
+    return HttpResponse(serializers.serialize('json', folder_results), content_type='application/json')
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def document_add_link(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def document_add_link(request, destination, location_id):
     """
     :param request:
     :param destination:
@@ -106,8 +105,8 @@ def document_add_link(request,destination,location_id):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def document_list_files(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def document_list_files(request, destination, location_id):
     """
     Get the documents that are associated with the destination and location id
 
@@ -154,8 +153,8 @@ def document_list_files(request,destination,location_id):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def document_list_folders(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def document_list_folders(request, destination, location_id):
     """
     Get the folders that are associated with the destination and location id
 
@@ -173,14 +172,14 @@ def document_list_folders(request,destination,location_id):
     folder_results = folder.objects.filter(
         is_deleted=False,
     )
-    folder_results = get_object_from_destination(folder_results,destination,location_id)
+    folder_results = get_object_from_destination(folder_results, destination, location_id)
 
-    return HttpResponse(serializers.serialize('json',folder_results),content_type='application/json')
+    return HttpResponse(serializers.serialize('json', folder_results), content_type='application/json')
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
-def document_upload(request,destination,location_id):
+@login_required(login_url='login', redirect_field_name="")
+def document_upload(request, destination, location_id):
     """
     The following function will deal with the uploaded document. It will first;
     1. Check user's permission
@@ -194,10 +193,9 @@ def document_upload(request,destination,location_id):
     :param folder_id: Which folder we will associate this with
     :return:
     """
-
     # WRITE CODE TO CHECK THE USER'S PERMISSION
 
-    form = DocumentUploadForm(request.POST,request.FILES)
+    form = DocumentUploadForm(request.POST, request.FILES)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
@@ -262,7 +260,7 @@ def document_upload(request,destination,location_id):
             'private/%s/%s' % (document_submit.document_key, file)
         )
     else:
-        handle_file_upload(request.FILES['document'],document_results,file)
+        handle_file_upload(request.FILES['document'], document_results, file)
 
     # Send back json data
     json_results = json.dumps(list(document_results), cls=DjangoJSONEncoder)
@@ -271,7 +269,7 @@ def document_upload(request,destination,location_id):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def get_max_upload(request):
     """
     This function will query the settings file for the variable "max_upload_size". If it does not exist it will send back
@@ -287,8 +285,8 @@ def get_max_upload(request):
     return JsonResponse(max_upload_size)
 
 
-@login_required(login_url='login',redirect_field_name="")
-def private_download_file(request,document_key):
+@login_required(login_url='login', redirect_field_name="")
+def private_download_file(request, document_key):
     """
     The following function will check;
     1. The user's permission to the document
@@ -405,7 +403,7 @@ def private_download_file(request,document_key):
 
 
 #Internal Function
-def handle_file_upload(upload_document,document_results,file):
+def handle_file_upload(upload_document, document_results, file):
     """
     This function will upload the file and store it in the private folder destination under a subfolder that contains
     the same document_key value.
@@ -428,6 +426,6 @@ def handle_file_upload(upload_document,document_results,file):
     )
 
     #Save the upload document in the location
-    with open(storage_location,'wb+') as destination:
+    with open(storage_location, 'wb+') as destination:
         for chunk in upload_document.chunks():
             destination.write(chunk)
