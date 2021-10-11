@@ -114,6 +114,7 @@
                 ).then(response => {
                     //Place all the data into the "CustomerList" array.
                     this.customerList = response['data'];
+                    //console.log("CUSTOMER LIST: ",this.customerList);
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 })

@@ -51,7 +51,6 @@ def update_data(request):
 
     # Extract out the user results
     user_update = request.user
-    user_update.email = form.cleaned_data['email']
     user_update.first_name = form.cleaned_data['first_name']
     user_update.last_name = form.cleaned_data['last_name']
     user_update.save()
