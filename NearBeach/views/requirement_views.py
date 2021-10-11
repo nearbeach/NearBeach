@@ -7,9 +7,9 @@ from django.shortcuts import get_object_or_404
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from NearBeach.models import *
 from NearBeach.decorators.check_user_permissions import check_user_permissions
-from NearBeach.forms import *
+from NearBeach.forms import AddRequirementLinkForm, requirement, object_assignment, project, task, opportunity, requirement_item, list_of_requirement_item_status, list_of_requirement_item_type, list_of_requirement_status, list_of_requirement_type, group, user_group, NewRequirementForm, organisation, UpdateRequirementForm
+# from NearBeach.models import *
 
 import json
 

@@ -1,12 +1,12 @@
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 from django.template import loader
-from NearBeach.forms import *
-from NearBeach.views.tools.internal_functions import *
+from NearBeach.forms import group, user_group, NewProjectForm, object_assignment, ProjectForm
+from NearBeach.views.tools.internal_functions import project, organisation
 from NearBeach.decorators.check_user_permissions import check_user_permissions
 import json
 

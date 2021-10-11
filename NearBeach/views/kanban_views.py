@@ -6,10 +6,10 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedire
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from NearBeach.models import *
 from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_kanban_permissions
-from NearBeach.forms import *
-from NearBeach.views.tools.internal_functions import *
+from NearBeach.forms import AddKanbanLinkForm, KanbanCardArchiveForm, CheckKanbanBoardName, kanban_column, kanban_level, object_assignment, MoveKanbanCardForm, group, user_group, NewKanbanCardForm, NewKanbanForm, KanbanCardForm
+from NearBeach.views.tools.internal_functions import kanban_card, kanban_board, project, requirement, task
+# from NearBeach.models import *
 
 import json, urllib3
 

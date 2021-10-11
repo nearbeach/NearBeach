@@ -7,10 +7,11 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedire
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from NearBeach.models import *
 from NearBeach.decorators.check_user_permissions import check_user_permissions
-from NearBeach.forms import *
-from NearBeach.views.tools.internal_functions import *
+from NearBeach.forms import group, user_group, NewTaskForm, object_assignment, TaskInformationForm
+from NearBeach.views.tools.internal_functions import task, organisation
+# from NearBeach.models import *
+
 import json, urllib3
 
 
