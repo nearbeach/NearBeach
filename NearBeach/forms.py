@@ -786,10 +786,15 @@ class UpdateUserForm(forms.ModelForm):
         max_length=255,
         required=True,
     )
+    email = forms.EmailField(
+        max_length=255,
+        required=False,
+    )
     # Basic Meta Data
     class Meta:
         model = User
         fields = [
+            'email',
             'first_name',
             'last_name',
             'is_active',
