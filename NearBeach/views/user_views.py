@@ -7,8 +7,8 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import User
 
-from NearBeach.forms import NewUserForm, PasswordResetForm, user_group, UpdateUserForm
-# from NearBeach.models import *
+from NearBeach.forms import NewUserForm, PasswordResetForm, UpdateUserForm
+from NearBeach.models import user_group
 
 import json
 

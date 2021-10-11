@@ -8,9 +8,9 @@ from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions
-from NearBeach.forms import group, user_group, NewTaskForm, object_assignment, TaskInformationForm
+from NearBeach.forms import NewTaskForm, TaskInformationForm
+from NearBeach.models import group, user_group, object_assignment 
 from NearBeach.views.tools.internal_functions import task, organisation
-# from NearBeach.models import *
 
 import json, urllib3
 

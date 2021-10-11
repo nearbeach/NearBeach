@@ -5,9 +5,11 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 from django.template import loader
-from NearBeach.forms import group, user_group, NewProjectForm, object_assignment, ProjectForm
+from NearBeach.forms import NewProjectForm, ProjectForm
+from NearBeach.models import group, user_group, object_assignment
 from NearBeach.views.tools.internal_functions import project, organisation
 from NearBeach.decorators.check_user_permissions import check_user_permissions
+
 import json
 
 @login_required(login_url='login', redirect_field_name="")

@@ -7,8 +7,8 @@ from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_organisation_permissions
-from NearBeach.forms import OrganisationForm, organisation, customer, list_of_title
-# from NearBeach.models import *
+from NearBeach.forms import OrganisationForm
+from NearBeach.models import organisation, customer, list_of_title
 
 
 import json

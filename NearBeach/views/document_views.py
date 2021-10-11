@@ -9,7 +9,8 @@ from django.template import loader
 from django.core.serializers.json import DjangoJSONEncoder
 
 from NearBeach.views.tools.internal_functions import set_object_from_destination, get_object_from_destination
-from ..forms import AddFolderForm, folder, AddLinkForm, document, document_permission, DocumentUploadForm, user_group, object_assignment, requirement_item
+from ..forms import AddFolderForm, folder, AddLinkForm, document, DocumentUploadForm, requirement_item
+from ..models import document_permission, user_group, object_assignment
 
 import boto3
 from botocore.exceptions import NoCredentialsError
