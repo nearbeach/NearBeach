@@ -118,9 +118,7 @@ class Check_Permissions(object):
         if not has_permission[0][0] >= 1:
             # User have permission to view the file
             return True
-        else:
-            return False
-
+        return False
 
 """
 Left unchanged
