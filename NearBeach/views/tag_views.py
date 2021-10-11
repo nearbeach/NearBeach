@@ -74,9 +74,9 @@ def save_tag(request, *args, **kwargs):
     update_tag = tag.objects.get(tag_id=form.cleaned_data['tag_id'])
 
     # Update the required fields
-    update_tag.tag_name=form.cleaned_data['tag_name']
-    update_tag.tag_colour=form.cleaned_data['tag_colour']
-    update_tag.change_user=request.user
+    update_tag.tag_name = form.cleaned_data['tag_name']
+    update_tag.tag_colour = form.cleaned_data['tag_colour']
+    update_tag.change_user = request.user
 
     # Save data
     update_tag.save()

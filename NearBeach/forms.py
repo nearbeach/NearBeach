@@ -5,6 +5,7 @@ from django.forms import ModelForm
 # Import from Models
 from .models import folder, group, tag, User, change_task, customer, kanban_column, kanban_level, tag_assignment, kanban_card, kanban_board, permission_set, project, request_for_change, requirement_item, requirement, task, organisation, bug_client, document
 
+
 class AddBugForm(forms.Form):
     bug_client = forms.ModelChoiceField(
         required=True,

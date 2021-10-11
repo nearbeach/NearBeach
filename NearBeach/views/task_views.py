@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.forms import NewTaskForm, TaskInformationForm
-from NearBeach.models import group, user_group, object_assignment 
+from NearBeach.models import group, user_group, object_assignment
 from NearBeach.views.tools.internal_functions import task, organisation
 
 import json, urllib3
