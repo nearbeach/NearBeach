@@ -166,7 +166,12 @@
             <hr>
 
             <div class="tab-content" id="misc_module_content">
-                <div class="tab-pane fade show active" id="group-and-users" role="tabpanel" aria-labelledby="contact-tab">
+                <div v-if="destination !== 'requirement_item'"
+                     class="tab-pane fade show active" 
+                     id="group-and-users" 
+                     role="tabpanel" 
+                     aria-labelledby="contact-tab"
+                >
                     <groups-and-users-module v-bind:location-id="locationId"
                                              v-bind:destination="destination"
                     ></groups-and-users-module>
