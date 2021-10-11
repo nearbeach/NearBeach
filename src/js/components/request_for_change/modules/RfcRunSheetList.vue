@@ -194,26 +194,26 @@
                 switch(status_id) {
                     case 1:
                         return 'Draft';
-                        break;
+                        
                     case 2:
                         return 'Waiting for approval';
-                        break;
+                        
                     case 3:
                         return 'Waiting to start';
-                        break;
+                        
                     case 4:
                         return 'Task Started';
-                        break;
+                        
                     case 5:
                         return 'Task Finished';
-                        break;
+                        
                     case 6:
                         return 'Task FAILED';
-                        break;
+                        
                     default:
                         return '---';
                 }
-                return '---';
+                
             },
             getUserName: function(user_id) {
                 //Filter for the user by using the user_id

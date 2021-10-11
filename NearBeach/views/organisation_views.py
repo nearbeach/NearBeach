@@ -1,25 +1,23 @@
 from django.contrib.auth.decorators import login_required
-from NearBeach.models import *
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
-from django.urls import reverse
-from django.template import loader
 from django.db.models import Sum, Q, Min
-from NearBeach.forms import *
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.template import loader
+from django.urls import reverse
 from django.views.decorators.http import require_http_methods
+from NearBeach.models import *
 from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_organisation_permissions
+from NearBeach.forms import *
 
 
 import json
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 @check_user_organisation_permissions(min_permission_level=3)
 def new_organisation(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
@@ -33,15 +31,14 @@ def new_organisation(request, *args, **kwargs):
         'nearbeach_title': 'New Organisation',
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name='')
+@login_required(login_url='login', redirect_field_name='')
 @check_user_organisation_permissions(min_permission_level=3)
 def new_organisation_save(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
@@ -59,19 +56,17 @@ def new_organisation_save(request, *args, **kwargs):
     )
     organisation_submit.save()
 
-    return HttpResponse(reverse('organisation_information',args={organisation_submit.organisation_id}))
+    return HttpResponse(reverse('organisation_information', args={organisation_submit.organisation_id}))
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 @check_user_organisation_permissions(min_permission_level=3)
 def organisation_duplicates(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
-
     # ADD IN USER PERMISSION CHECKS
 
     # Extract data from POST
@@ -90,14 +85,13 @@ def organisation_duplicates(request, *args, **kwargs):
         )
     )
 
-    return HttpResponse(serializers.serialize('json',organisation_results),content_type='application/json')
+    return HttpResponse(serializers.serialize('json', organisation_results), content_type='application/json')
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 @check_user_organisation_permissions(min_permission_level=1)
-def organisation_information(request,organisation_id, *args, **kwargs):
+def organisation_information(request, organisation_id, *args, **kwargs):
     """
-
     :param request:
     :param organisation_id:
     :return:
@@ -116,22 +110,21 @@ def organisation_information(request,organisation_id, *args, **kwargs):
     t = loader.get_template('NearBeach/organisations/organisation_information.html')
 
     c = {
-        'customer_results': serializers.serialize('json',customer_results),
+        'customer_results': serializers.serialize('json', customer_results),
         'organisation_id': organisation_id,
-        'organisation_results': serializers.serialize('json',[organisation_results]),
+        'organisation_results': serializers.serialize('json', [organisation_results]),
         'nearbeach_title': 'Organisation Information %s' % organisation_id,
-        'title_list': serializers.serialize('json',title_list),
+        'title_list': serializers.serialize('json', title_list),
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 @check_user_organisation_permissions(min_permission_level=2)
-def organisation_information_save(request,organisation_id, *args, **kwargs):
+def organisation_information_save(request, organisation_id, *args, **kwargs):
     """
-
     :param request:
     :param organisation_id:
     :return:
@@ -155,11 +148,10 @@ def organisation_information_save(request,organisation_id, *args, **kwargs):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 @check_user_organisation_permissions(min_permission_level=2)
-def organisation_update_profile(request,organisation_id, *args, **kwargs):
+def organisation_update_profile(request, organisation_id, *args, **kwargs):
     """
-
     :param request:
     :param organisation_id:
     :return:

@@ -49,11 +49,9 @@ def get_rfc_context(rfc_id):
 @check_rfc_permissions(min_permission_level=3)
 def new_request_for_change(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
-
     # CHECK USER PERMISSIONS
 
     # Get template
@@ -93,11 +91,9 @@ def new_request_for_change(request, *args, **kwargs):
 @check_rfc_permissions(min_permission_level=3)
 def new_request_for_change_save(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
-
     # Check the user's permission
 
     # Get the form data
@@ -168,7 +164,6 @@ def rfc_change_task_list(request, rfc_id, *args, **kwargs):
 @check_rfc_permissions(min_permission_level=2)
 def rfc_deployment(request, rfc_id, *args, **kwargs):
     """
-
     :param request:
     :param rfc_id:
     :return:
@@ -193,12 +188,10 @@ def rfc_deployment(request, rfc_id, *args, **kwargs):
 @check_rfc_permissions(min_permission_level=2)
 def rfc_new_change_task(request, rfc_id, *args, **kwargs):
     """
-
     :param request:
     :param rfc_id:
     :return:
     """
-
     # ADD IN USER PERMISSIONS
 
     # Place data into forms for validation
@@ -247,12 +240,10 @@ def rfc_new_change_task(request, rfc_id, *args, **kwargs):
 @check_rfc_permissions(min_permission_level=1)
 def rfc_information(request, rfc_id, *args, **kwargs):
     """
-
     :param request:
     :param rfc_id:
     :return:
     """
-
     # If rfc is not in draft mode - send user away
     rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
     if not rfc_results.rfc_status == 1:  # Draft
@@ -272,12 +263,10 @@ def rfc_information(request, rfc_id, *args, **kwargs):
 @check_rfc_permissions(min_permission_level=2)
 def rfc_information_save(request, rfc_id, *args, **kwargs):
     """
-
     :param request:
     :param rfc_id:
     :return:
     """
-
     # PROGRAM IN PERMISSIONS
 
     # Get the form data
@@ -308,12 +297,10 @@ def rfc_information_save(request, rfc_id, *args, **kwargs):
 @check_rfc_permissions(min_permission_level=1)
 def rfc_readonly(request, rfc_id, *args, **kwargs):
     """
-
     :param request:
     :param rfc_id:
     :return:
     """
-
     # Get template
     t = loader.get_template('NearBeach/request_for_change/rfc_readonly.html')
 
@@ -342,11 +329,9 @@ def rfc_readonly(request, rfc_id, *args, **kwargs):
 @check_rfc_permissions(min_permission_level=2)
 def rfc_save_backout(request, rfc_id, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
-
     # Get the form data
     form = RfcModuleForm(request.POST)
     if not form.is_valid():
@@ -370,7 +355,6 @@ def rfc_save_backout(request, rfc_id, *args, **kwargs):
 def rfc_save_implementation(request, rfc_id, *args, **kwargs):
     """
     """
-
     # Check user permissions
 
     # Get the form data
@@ -396,7 +380,6 @@ def rfc_save_implementation(request, rfc_id, *args, **kwargs):
 def rfc_save_risk(request, rfc_id, *args, **kwargs):
     """
     """
-
     # CHECK USER PERMISSIONS
 
     # Get the form data
@@ -426,9 +409,7 @@ def rfc_save_risk(request, rfc_id, *args, **kwargs):
 def rfc_save_test(request, rfc_id, *args, **kwargs):
     """
     """
-
     # Check user permissions
-
     # Get the form data
     form = RfcModuleForm(request.POST)
     if not form.is_valid():
@@ -480,7 +461,6 @@ def rfc_status_approved(rfc_id, rfc_results, request):
 # Internal function
 def rfc_status_check_approval_status(rfc_id, rfc_results, group_results):
     """
-
     :param group_results:
     :param rfc_results:
     :param rfc_id:
@@ -513,7 +493,6 @@ def rfc_status_check_approval_status(rfc_id, rfc_results, group_results):
 # Internal function
 def rfc_status_rejected(rfc_id, rfc_results):
     """
-
     :param rfc_results:
     :param rfc_id:
     :return:
@@ -608,7 +587,6 @@ def rfc_update_status(request, rfc_id, *args, **kwargs):
     :param rfc_id:
     :return:
     """
-
     # Add in user permissions
 
     # Get the form data

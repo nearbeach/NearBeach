@@ -160,8 +160,8 @@ def check_user_permissions(min_permission_level, object_lookup=''):
 
             # Get the max permission value from user_group_results
             user_level = user_group_results.aggregate(
-                Max('permission_set__%s' % object_lookup.replace('_id',''))
-            )['permission_set__%s__max' % object_lookup.replace('_id','')]
+                Max('permission_set__%s' % object_lookup.replace('_id', ''))
+            )['permission_set__%s__max' % object_lookup.replace('_id', '')]
 
             if user_level >= min_permission_level:
                 # Everything is fine - continue on
@@ -276,7 +276,7 @@ def check_rfc_permissions(min_permission_level):
     return decorator
 
 
-def check_permission_denied(min_permission_level):
+def check_permission_denied():
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):

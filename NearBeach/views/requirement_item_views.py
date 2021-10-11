@@ -1,16 +1,15 @@
 from django.contrib.auth.decorators import login_required
-from NearBeach.models import *
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
-from django.urls import reverse
-from django.template import loader
 from django.db.models import Sum, Q, Min
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.template import loader
+from django.urls import reverse
+from django.views.decorators.http import require_http_methods
+from NearBeach.models import *
+from NearBeach.decorators.check_user_permissions import check_user_requirement_item_permissions
 from NearBeach.forms import *
 from NearBeach.views.requirement_views import get_requirement_items
-from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import check_user_requirement_item_permissions
 
 import json
 
@@ -59,14 +58,12 @@ def add_requirement_item_link(request, requirement_item_id, *args, **kwargs):
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
 @check_user_requirement_item_permissions(min_permission_level=1)
-def get_requirement_item_links_list(request,requirement_item_id, *args, **kwargs):
+def get_requirement_item_links_list(request, requirement_item_id, *args, **kwargs):
     """
-
     :param request:
     :param requirement_item_id:
     :return:
     """
-
     # Use object_assignment to get the requirme
     link_results = object_assignment.objects.filter(
         Q(
@@ -138,7 +135,7 @@ def new_requirement_item(request, requirement_id, *args, **kwargs):
 
 @login_required(login_url='login', redirect_field_name="")
 @check_user_requirement_item_permissions(min_permission_level=1)
-def requirement_item_information(request, requirement_item_id,*args,**kwargs):
+def requirement_item_information(request, requirement_item_id, *args, **kwargs):
     """
         Loads the requirement item information.
         :param request:
@@ -197,7 +194,6 @@ def requirement_information_save(request, requirement_item_id, *args, **kwargs):
     :param requirement_id:
     :return:
     """
-
     # Get form data
     form = UpdateRequirementItemForm(request.POST)
     if not form.is_valid():

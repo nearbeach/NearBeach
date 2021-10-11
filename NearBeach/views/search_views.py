@@ -1,4 +1,5 @@
 from NearBeach.models import *
+from NearBeach.forms import *
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
@@ -6,9 +7,6 @@ from django.template import loader
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse, HttpResponseNotFound
 from django.views.decorators.http import require_http_methods
 from django.db.models import Q
-
-# Import Forms
-from NearBeach.forms import *
 
 import json
 
@@ -59,7 +57,7 @@ def get_object_search_data(search_form):
     # If we are NOT including closed - then we will limit to those with status is_deleted=False
     if not include_closed:
         rfc_results = rfc_results.exclude(
-           rfc_status__in=(5,6), 
+           rfc_status__in=(5, 6),
         )
 
         requirement_results = requirement_results.exclude(
@@ -133,7 +131,7 @@ def get_object_search_data(search_form):
     1. Apply serialisation
     2. Apply a json.loads function
     3. Compile data and send back.
-    
+
     Note to Django developers - there has to be a better way
     """
     rfc_results = json.dumps(list(rfc_results), cls=DjangoJSONEncoder)
@@ -152,10 +150,9 @@ def get_object_search_data(search_form):
     }
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def search(request):
     """
-
     :param request:
     :return:
     """
@@ -180,14 +177,13 @@ def search(request):
         'search_results': get_object_search_data(form),
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def search_data(request):
     """
-
     :param request:
     :return:
     """
@@ -200,10 +196,9 @@ def search_data(request):
     return JsonResponse(get_object_search_data(form))
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def search_customer(request):
     """
-
     :param request:
     :return:
     """
@@ -212,18 +207,18 @@ def search_customer(request):
     # Get the first 50 customers
     customer_results = customer.objects.filter(
         is_deleted=False,
-    ).order_by('customer_last_name','customer_first_name')[:50]
+    ).order_by('customer_last_name', 'customer_first_name')[:50]
 
     c = {
-        'customer_results': serializers.serialize('json',customer_results),
+        'customer_results': serializers.serialize('json', customer_results),
         'nearbeach_title': 'Search Customers',
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def search_customer_data(request):
     # Get the data from request
     search_form = SearchForm(request.POST)
@@ -245,7 +240,7 @@ def search_customer_data(request):
         )
 
     # Only have 50 results and order by alphabetical order
-    customer_results.order_by('customer_last_name','customer_first_name')[:50]
+    customer_results.order_by('customer_last_name', 'customer_first_name')[:50]
 
     # Send back json data
     json_results = serializers.serialize('json', customer_results)
@@ -253,10 +248,9 @@ def search_customer_data(request):
     return HttpResponse(json_results, content_type='application/json')
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def search_group(request):
     """
-
     :param request:
     :return:
     """
@@ -281,14 +275,12 @@ def search_group(request):
 
 
 # @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def search_group_data(request):
     """
-
     :param request:
     :return:
     """
-
     # Obtain form data
     search_form = SearchForm(request.POST)
     if not search_form.is_valid():
@@ -313,10 +305,9 @@ def search_group_data(request):
     return HttpResponse(json_results, content_type='application/json')
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def search_organisation(request):
     """
-
     :param request:
     :return:
     """
@@ -329,14 +320,14 @@ def search_organisation(request):
 
     c = {
         'nearbeach_title': 'Search Organisations',
-        'organisation_results': serializers.serialize('json',organisation_results),
+        'organisation_results': serializers.serialize('json', organisation_results),
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def search_organisation_data(request):
     # Get the data from request
     search_form = SearchForm(request.POST)
@@ -364,14 +355,12 @@ def search_organisation_data(request):
     return HttpResponse(json_results, content_type='application/json')
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def search_permission_set(request):
     """
-
     :param request:
     :return:
     """
-
     # Add permissions
 
     # Get template
@@ -392,14 +381,12 @@ def search_permission_set(request):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def search_permission_set_data(request):
     """
-
     :param request:
     :return:
     """
-
     # Check user permission
 
     # Get form data
@@ -426,7 +413,7 @@ def search_permission_set_data(request):
     return HttpResponse(json_results, content_type='application/json')
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def search_tag(request):
     # Get template
     t = loader.get_template('NearBeach/search/search_tags.html')
@@ -438,21 +425,19 @@ def search_tag(request):
 
     #Context
     c = {
-        'tag_results': serializers.serialize('json', tag_results),   
+        'tag_results': serializers.serialize('json', tag_results),
     }
 
     #Send back json data
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def search_user(request):
     """
-
     :param request:
     :return:
     """
-
     # Add permissions
 
     # Get template
@@ -460,7 +445,7 @@ def search_user(request):
 
     # Get Data
     user_results = User.objects.filter(
-    ).order_by('last_name','first_name')[:50]
+    ).order_by('last_name', 'first_name')[:50]
 
     # Context
     c = {
@@ -472,7 +457,7 @@ def search_user(request):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def search_user_data(request):
     # Get the data from request
     search_form = SearchForm(request.POST)
@@ -495,7 +480,7 @@ def search_user_data(request):
         )
 
     # Only have 50 results and order by alphabetical order
-    user_results.order_by('last_name','first_name')[:50]
+    user_results.order_by('last_name', 'first_name')[:50]
 
     # Send back json data
     json_results = serializers.serialize('json', user_results)

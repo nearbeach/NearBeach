@@ -16,18 +16,18 @@ def initialise_data(apps, schema_editor):
     # List of amount types
     list_of_amount_type = apps.get_model("NearBeach", "list_of_amount_type")
     list_of_amount_type.objects.using(db_alias).bulk_create([
-        list_of_amount_type(amount_type_description="Fixed",list_order=0),
-        list_of_amount_type(amount_type_description="Per Contract",list_order=1),
-        list_of_amount_type(amount_type_description="Per Year",list_order=2),
-        list_of_amount_type(amount_type_description="Per Month",list_order=3),
-        list_of_amount_type(amount_type_description="Per Fortnight",list_order=4),
-        list_of_amount_type(amount_type_description="Per Day",list_order=5),
-        list_of_amount_type(amount_type_description="Per Hour",list_order=6),
+        list_of_amount_type(amount_type_description="Fixed", list_order=0),
+        list_of_amount_type(amount_type_description="Per Contract", list_order=1),
+        list_of_amount_type(amount_type_description="Per Year", list_order=2),
+        list_of_amount_type(amount_type_description="Per Month", list_order=3),
+        list_of_amount_type(amount_type_description="Per Fortnight", list_order=4),
+        list_of_amount_type(amount_type_description="Per Day", list_order=5),
+        list_of_amount_type(amount_type_description="Per Hour", list_order=6),
     ])
 
 
     # List of bug clients
-    list_of_bug_client = apps.get_model("NearBeach","list_of_bug_client")
+    list_of_bug_client = apps.get_model("NearBeach", "list_of_bug_client")
     list_of_bug_client.objects.using(db_alias).bulk_create([
         list_of_bug_client(
             bug_client_name="Bugzilla",
@@ -38,7 +38,7 @@ def initialise_data(apps, schema_editor):
         )
     ])
 
-    list_of_currency=apps.get_model("NearBeach","list_of_currency")
+    list_of_currency=apps.get_model("NearBeach", "list_of_currency")
     list_of_currency.objects.using(db_alias).bulk_create([
         list_of_currency(currency_description='Australian dollar', currency_short_description='AUD', list_order='1'),
         list_of_currency(currency_description='Brazilian real', currency_short_description='BRL', list_order='2'),
@@ -59,10 +59,10 @@ def initialise_data(apps, schema_editor):
         list_of_currency(currency_description='Swedish krona', currency_short_description='SEK', list_order='17'),
         list_of_currency(currency_description='Swiss franc', currency_short_description='CHF', list_order='18'),
         list_of_currency(currency_description='Turkish lira', currency_short_description='TRY', list_order='19'),
-        list_of_currency(currency_description='United States dollar', currency_short_description='USD',list_order='20'),
+        list_of_currency(currency_description='United States dollar', currency_short_description='USD', list_order='20'),
     ])
 
-    list_of_lead_source=apps.get_model("NearBeach","list_of_lead_source")
+    list_of_lead_source=apps.get_model("NearBeach", "list_of_lead_source")
     list_of_lead_source.objects.using(db_alias).bulk_create([
         list_of_lead_source(lead_source_description='Campaign', list_order='1'),
         list_of_lead_source(lead_source_description='Cold Call', list_order='2'),
@@ -92,20 +92,20 @@ def initialise_data(apps, schema_editor):
 
     list_of_opportunity_stage = apps.get_model("NearBeach", "list_of_opportunity_stage")
     list_of_opportunity_stage.objects.using(db_alias).bulk_create([
-        list_of_opportunity_stage(list_order="1",opportunity_stage_description="Prospecting",probability_success="10"),
-        list_of_opportunity_stage(list_order="2", opportunity_stage_description="Qualification",probability_success="20"),
-        list_of_opportunity_stage(list_order="3", opportunity_stage_description="Needs Analysis",probability_success="30"),
-        list_of_opportunity_stage(list_order="4", opportunity_stage_description="Value Proposition",probability_success="40"),
-        list_of_opportunity_stage(list_order="5", opportunity_stage_description="Identifying Decision Makers",probability_success="50"),
-        list_of_opportunity_stage(list_order="6", opportunity_stage_description="Perception Analysis",probability_success="60"),
-        list_of_opportunity_stage(list_order="7", opportunity_stage_description="Proposal/Price Quote",probability_success="70"),
-        list_of_opportunity_stage(list_order="8", opportunity_stage_description="Negotiation/Review",probability_success="80"),
-        list_of_opportunity_stage(list_order="9", opportunity_stage_description="Closed Won",probability_success="100",opportunity_closed=True),
-        list_of_opportunity_stage(list_order="10", opportunity_stage_description="Closed Lost",probability_success="0",opportunity_closed=True),
+        list_of_opportunity_stage(list_order="1", opportunity_stage_description="Prospecting", probability_success="10"),
+        list_of_opportunity_stage(list_order="2", opportunity_stage_description="Qualification", probability_success="20"),
+        list_of_opportunity_stage(list_order="3", opportunity_stage_description="Needs Analysis", probability_success="30"),
+        list_of_opportunity_stage(list_order="4", opportunity_stage_description="Value Proposition", probability_success="40"),
+        list_of_opportunity_stage(list_order="5", opportunity_stage_description="Identifying Decision Makers", probability_success="50"),
+        list_of_opportunity_stage(list_order="6", opportunity_stage_description="Perception Analysis", probability_success="60"),
+        list_of_opportunity_stage(list_order="7", opportunity_stage_description="Proposal/Price Quote", probability_success="70"),
+        list_of_opportunity_stage(list_order="8", opportunity_stage_description="Negotiation/Review", probability_success="80"),
+        list_of_opportunity_stage(list_order="9", opportunity_stage_description="Closed Won", probability_success="100", opportunity_closed=True),
+        list_of_opportunity_stage(list_order="10", opportunity_stage_description="Closed Lost", probability_success="0", opportunity_closed=True),
     ])
 
     #List of requirement items status
-    list_of_requirement_item_status = apps.get_model("NearBeach","list_of_requirement_item_status")
+    list_of_requirement_item_status = apps.get_model("NearBeach", "list_of_requirement_item_status")
     list_of_requirement_item_status.objects.using(db_alias).bulk_create([
         list_of_requirement_item_status(requirement_item_status="Draft"),
         list_of_requirement_item_status(requirement_item_status="Review"),
@@ -120,7 +120,7 @@ def initialise_data(apps, schema_editor):
     ])
 
     #List of requirement items type
-    list_of_requirement_item_type = apps.get_model("NearBeach","list_of_requirement_item_type")
+    list_of_requirement_item_type = apps.get_model("NearBeach", "list_of_requirement_item_type")
     list_of_requirement_item_type.objects.using(db_alias).bulk_create([
         list_of_requirement_item_type(requirement_item_type="Informational"),
         list_of_requirement_item_type(requirement_item_type="Feature"),
@@ -134,17 +134,17 @@ def initialise_data(apps, schema_editor):
 
 
     #List of requirement  status
-    list_of_requirement_status = apps.get_model("NearBeach","list_of_requirement_status")
+    list_of_requirement_status = apps.get_model("NearBeach", "list_of_requirement_status")
     list_of_requirement_status.objects.using(db_alias).bulk_create([
         list_of_requirement_status(requirement_status="Backlog"),
         list_of_requirement_status(requirement_status="Blocked"),
         list_of_requirement_status(requirement_status="In Progress"),
         list_of_requirement_status(requirement_status="Testing/Review"),
-        list_of_requirement_status(requirement_status="Closed",requirement_status_is_closed=True),
+        list_of_requirement_status(requirement_status="Closed", requirement_status_is_closed=True),
     ])
 
     #List of requirement type
-    list_of_requirement_type = apps.get_model("NearBeach","list_of_requirement_type")
+    list_of_requirement_type = apps.get_model("NearBeach", "list_of_requirement_type")
     list_of_requirement_type.objects.using(db_alias).bulk_create([
         list_of_requirement_type(requirement_type="Non Specific"),
         list_of_requirement_type(requirement_type="Customer Requirements"),
@@ -167,31 +167,31 @@ def initialise_data(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     list_of_quote_stages.objects.using(db_alias).bulk_create([
         #Quote Stage
-        list_of_quote_stages(quote_stage="Quote Draft",is_invoice=False,sort_order=1),
-        list_of_quote_stages(quote_stage="Quote Negotiation",is_invoice=False,sort_order=2),
-        list_of_quote_stages(quote_stage="Quote Delivered",is_invoice=False,sort_order=3),
-        list_of_quote_stages(quote_stage="Quote On Hold",is_invoice=False,sort_order=4),
-        list_of_quote_stages(quote_stage="Quote Confirmed",is_invoice=False,sort_order=5),
-        list_of_quote_stages(quote_stage="Quote Close Accepted",is_invoice=False,sort_order=6,quote_closed=True),
-        list_of_quote_stages(quote_stage="Quote Close Rejected",is_invoice=False,sort_order=7,quote_closed=True),
-        list_of_quote_stages(quote_stage="Quote Close Lost",is_invoice=False,sort_order=8,quote_closed=True),
-        list_of_quote_stages(quote_stage="Quote Close Dead",is_invoice=False,sort_order=9,quote_closed=True),
+        list_of_quote_stages(quote_stage="Quote Draft", is_invoice=False, sort_order=1),
+        list_of_quote_stages(quote_stage="Quote Negotiation", is_invoice=False, sort_order=2),
+        list_of_quote_stages(quote_stage="Quote Delivered", is_invoice=False, sort_order=3),
+        list_of_quote_stages(quote_stage="Quote On Hold", is_invoice=False, sort_order=4),
+        list_of_quote_stages(quote_stage="Quote Confirmed", is_invoice=False, sort_order=5),
+        list_of_quote_stages(quote_stage="Quote Close Accepted", is_invoice=False, sort_order=6, quote_closed=True),
+        list_of_quote_stages(quote_stage="Quote Close Rejected", is_invoice=False, sort_order=7, quote_closed=True),
+        list_of_quote_stages(quote_stage="Quote Close Lost", is_invoice=False, sort_order=8, quote_closed=True),
+        list_of_quote_stages(quote_stage="Quote Close Dead", is_invoice=False, sort_order=9, quote_closed=True),
         #Invoice Stage
-        list_of_quote_stages(quote_stage="Invoice Draft",is_invoice=True,sort_order=10),
-        list_of_quote_stages(quote_stage="Invoice Negotiation",is_invoice=True,sort_order=11),
-        list_of_quote_stages(quote_stage="Invoice Delivered",is_invoice=True,sort_order=12),
-        list_of_quote_stages(quote_stage="Invoice On Hold",is_invoice=True,sort_order=13),
-        list_of_quote_stages(quote_stage="Invoice Confirmed",is_invoice=True,sort_order=14),
-        list_of_quote_stages(quote_stage="Invoice Close Accepted",is_invoice=True,sort_order=15,quote_closed=True),
-        list_of_quote_stages(quote_stage="Invoice Close Rejected",is_invoice=True,sort_order=16,quote_closed=True),
-        list_of_quote_stages(quote_stage="Invoice Close Lost",is_invoice=True,sort_order=17,quote_closed=True),
-        list_of_quote_stages(quote_stage="Invoice Close Dead",is_invoice=True,sort_order=18,quote_closed=True),
+        list_of_quote_stages(quote_stage="Invoice Draft", is_invoice=True, sort_order=10),
+        list_of_quote_stages(quote_stage="Invoice Negotiation", is_invoice=True, sort_order=11),
+        list_of_quote_stages(quote_stage="Invoice Delivered", is_invoice=True, sort_order=12),
+        list_of_quote_stages(quote_stage="Invoice On Hold", is_invoice=True, sort_order=13),
+        list_of_quote_stages(quote_stage="Invoice Confirmed", is_invoice=True, sort_order=14),
+        list_of_quote_stages(quote_stage="Invoice Close Accepted", is_invoice=True, sort_order=15, quote_closed=True),
+        list_of_quote_stages(quote_stage="Invoice Close Rejected", is_invoice=True, sort_order=16, quote_closed=True),
+        list_of_quote_stages(quote_stage="Invoice Close Lost", is_invoice=True, sort_order=17, quote_closed=True),
+        list_of_quote_stages(quote_stage="Invoice Close Dead", is_invoice=True, sort_order=18, quote_closed=True),
     ])
 
-    nearbeach_option = apps.get_model("NearBeach","nearbeach_option")
+    nearbeach_option = apps.get_model("NearBeach", "nearbeach_option")
     db_alias = schema_editor.connection.alias
     nearbeach_option.objects.using(db_alias).bulk_create([
-        nearbeach_option(story_point_hour_min=4,story_point_hour_max=10),
+        nearbeach_option(story_point_hour_min=4, story_point_hour_max=10),
     ])
 
 

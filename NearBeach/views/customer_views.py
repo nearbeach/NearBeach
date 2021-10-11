@@ -1,24 +1,22 @@
 from django.contrib.auth.decorators import login_required
-from NearBeach.models import *
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
-from django.urls import reverse
-from django.template import loader
 from django.db.models import Sum, Q, Min
-from NearBeach.forms import *
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.template import loader
+from django.urls import reverse
 from django.views.decorators.http import require_http_methods
+from NearBeach.models import *
 from NearBeach.decorators.check_user_permissions import check_user_customer_permissions
+from NearBeach.forms import *
 
 import json
 
 
-@login_required(login_url='login',redirect_field_name='')
+@login_required(login_url='login', redirect_field_name='')
 @check_user_customer_permissions(min_permission_level=1)
-def customer_information(request,customer_id, *args, **kwargs):
+def customer_information(request, customer_id, *args, **kwargs):
     """
-
     :param request:
     :param customer_id:
     :return:
@@ -41,21 +39,20 @@ def customer_information(request,customer_id, *args, **kwargs):
 
     # Context
     c = {
-        'customer_results': serializers.serialize('json',[customer_results]),
+        'customer_results': serializers.serialize('json', [customer_results]),
         'nearbeach_title': 'Customer Information %s' % customer_id,
         'organisation_results': serializers.serialize('json', organisation_results),
-        'title_list': serializers.serialize('json',title_list),
+        'title_list': serializers.serialize('json', title_list),
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name='')
+@login_required(login_url='login', redirect_field_name='')
 @check_user_customer_permissions(min_permission_level=2)
-def customer_information_save(request,customer_id, *args, **kwargs):
+def customer_information_save(request, customer_id, *args, **kwargs):
     """
-
     :param request:
     :param customer_id:
     :return:
@@ -84,11 +81,10 @@ def customer_information_save(request,customer_id, *args, **kwargs):
     return HttpResponse("Success")
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 @check_user_customer_permissions(min_permission_level=3)
 def new_customer(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
@@ -105,22 +101,20 @@ def new_customer(request, *args, **kwargs):
     # Get Context
     c = {
         'nearbeach_title': 'New Customer',
-        'title_list': serializers.serialize('json',title_list),
+        'title_list': serializers.serialize('json', title_list),
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 @check_user_customer_permissions(min_permission_level=2)
 def new_customer_save(request, *args, **kwargs):
     """
-
     :param reqeust:
     :return:
     """
-
     # CHECK USER PERMISSIONS -- NEED TO ADD THIS IN!
 
     # Get Form data
