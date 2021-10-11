@@ -21,7 +21,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="link in itemLinkResults">
+                    <tr v-for="link in itemLinkResults"
+                        :key="link['pk']"
+                    >
                         <td v-html="extractObjectDescription(link)"></td>
                         <td>{{extractObjectStatus(link)}}</td>
                     </tr>
@@ -151,7 +153,7 @@
             },
             newRequirementItemLink: function() {
                 //Open up the modal
-                var elem_modal = new Modal(document.getElementById('newLinkModal'));
+                var elem_modal = new Modal(document.getElementById('newRequirementLinkModal'));
                 elem_modal.show();
             },
             updateModel: function() {},
