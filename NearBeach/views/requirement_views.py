@@ -289,6 +289,8 @@ def requirement_information(request, requirement_id, *args, **kwargs):
     # TODO: Check if I need to have a separate read only tempalte now.
     requirement_results = requirement.objects.get(requirement_id=requirement_id)
 
+    requirement_is_closed = requirement_results.requirement_status.requirement_status_is_closed
+
     # If the requirement has been closed - send user to the read only section
     if requirement_results.requirement_status.requirement_status == "Completed":
         return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_id}))
@@ -303,7 +305,7 @@ def requirement_information(request, requirement_id, *args, **kwargs):
 
     status_list = list_of_requirement_status.objects.filter(
         is_deleted=False,
-        requirement_status_is_closed=False,
+        #requirement_status_is_closed=False,
     )
 
     type_list = list_of_requirement_type.objects.filter(
@@ -326,6 +328,7 @@ def requirement_information(request, requirement_id, *args, **kwargs):
         'organisation_results': serializers.serialize("json", [organisation_results]),
         'requirement_results': serializers.serialize("json", [requirement_results]),
         'requirement_id': requirement_id,
+        'requirement_is_closed': requirement_is_closed,
         'requirement_item_results': serializers.serialize("json", requirement_item_results),
         'status_list': serializers.serialize("json", status_list),
         'type_list': serializers.serialize("json", type_list),
