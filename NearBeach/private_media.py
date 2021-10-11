@@ -120,6 +120,7 @@ class Check_Permissions(object):
             return True
         return False
 
+
 """
 Left unchanged
 """
