@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from NearBeach.decorators.check_user_permissions import check_user_permissions, check_rfc_permissions
-from NearBeach.models import *
+from NearBeach.models import request_for_change, User, user_group, object_assignment, group, change_task, request_for_change_group_approval, RFC_STATUS
 from NearBeach.forms import NewRequestForChangeForm, RfcModuleForm, RfcInformationSaveForm, NewChangeTaskForm, \
     UpdateRFCStatus
 
@@ -182,7 +182,6 @@ def rfc_deployment(request, rfc_id, *args, **kwargs):
     return HttpResponse(t.render(c, request))
 
 
-
 @require_http_methods(["POST"])
 @login_required(login_url='login', redirect_field_name="")
 @check_rfc_permissions(min_permission_level=2)
@@ -221,10 +220,10 @@ def rfc_new_change_task(request, rfc_id, *args, **kwargs):
     submit_change_task.save()
 
     # Send back all the RFC change items
-    change_item_results = change_task.objects.filter(
-        is_deleted=False,
-        request_for_change_id=rfc_id,
-    )
+    # change_item_results = change_task.objects.filter(
+    #     is_deleted=False,
+    #     request_for_change_id=rfc_id,
+    # )
 
     # Get all the change task results and send it back
     change_task_results = change_task.objects.filter(
@@ -433,7 +432,8 @@ def rfc_status_approved(rfc_id, rfc_results, request):
     Method
     ~~~~~~
     1. Gather all User's rfc_group_rfc_approvals - and approve
-    2. Check if there are any waiting rfc_group_rfc_approvals left - if none, approve rfc
+    2. Check if there are any waiting rfc_group_rfc_approvals left -
+    if none, approve rfc
     :param request:
     :param rfc_results:
     :param rfc_id:
@@ -455,8 +455,6 @@ def rfc_status_approved(rfc_id, rfc_results, request):
     # Send off to check to make sure that the rfc status needs updating
     rfc_status_check_approval_status(rfc_id, rfc_results, group_results)
 
-    return
-
 
 # Internal function
 def rfc_status_check_approval_status(rfc_id, rfc_results, group_results):
@@ -466,8 +464,8 @@ def rfc_status_check_approval_status(rfc_id, rfc_results, group_results):
     :param rfc_id:
     :return:
     """
-
-    # Check all submitted group approvals to make sure that they are all approved - if they are, update the status.
+    # Check all submitted group approvals to make sure that they are all approved -
+    # if they are, update the status.
     non_approved_group_approvals = request_for_change_group_approval.objects.filter(
         is_deleted=False,
         group_id__in=group_results.values('group_id'),
@@ -486,8 +484,6 @@ def rfc_status_check_approval_status(rfc_id, rfc_results, group_results):
             request_for_change_id=rfc_id,
             change_task_status=2,
         ).update(change_task_status=3)
-
-    return
 
 
 # Internal function
@@ -513,8 +509,6 @@ def rfc_status_rejected(rfc_id, rfc_results):
         rfc_id=rfc_id,
     ).update(change_task_status=6)
 
-    return
-
 
 # Internal function
 def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
@@ -530,7 +524,6 @@ def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
     :param rfc_id:
     :return:
     """
-
     # Get the group results
     group_results = group.objects.filter(
         is_deleted=False,
@@ -548,7 +541,8 @@ def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
         change_task_status=1,
     ).update(change_task_status=2)
 
-    # Loop through the groups, create the group approval, and see if there are ANY group leaders
+    # Loop through the groups, create the group approval,
+    # and see if there are ANY group leaders
     for single_group in group_results:
         # Create the group_approval
         submit_group_approval = request_for_change_group_approval(
@@ -574,15 +568,14 @@ def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
 
     rfc_status_check_approval_status(rfc_id, rfc_results, group_results)
 
-    return
-
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
 @check_rfc_permissions(min_permission_level=2)
 def rfc_update_status(request, rfc_id, *args, **kwargs):
     """
-    Using a simple form, we determine which status we are going to update to - and apply the correct status.
+    Using a simple form, we determine which status we are going to update to
+    and apply the correct status.
     :param request:
     :param rfc_id:
     :return:

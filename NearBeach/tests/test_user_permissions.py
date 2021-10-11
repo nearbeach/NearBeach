@@ -5,7 +5,7 @@ from django.db.models import Q, Max
 
 import unittest
 import json
-from NearBeach.models import *
+from NearBeach.models import user_group, group, object_assignment
 
 def login_user(c: object, self: object) -> object:
     response = c.post(

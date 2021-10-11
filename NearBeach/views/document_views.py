@@ -7,12 +7,13 @@ from django.utils.encoding import smart_str
 from django.views.decorators.http import require_http_methods
 from django.template import loader
 from django.core.serializers.json import DjangoJSONEncoder
-from NearBeach.views.tools.internal_functions import *
+
+from NearBeach.views.tools.internal_functions import set_object_from_destination, get_object_from_destination
+from ..forms import AddFolderForm, folder, AddLinkForm, document, DocumentUploadForm, requirement_item
+from ..models import document_permission, user_group, object_assignment
+
 import boto3
 from botocore.exceptions import NoCredentialsError
-
-from ..forms import *
-
 import json, os
 
 
