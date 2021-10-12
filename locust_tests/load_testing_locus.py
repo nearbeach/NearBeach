@@ -17,7 +17,6 @@ class QuickstartUser(HttpUser):
     @task
     def dashboard(self):
         self.client.get("/")
-        
     @task(3)
     def requirement_information(self):
         for item_id in range(10):

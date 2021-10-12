@@ -231,5 +231,5 @@ class CheckObjects(TestCase):
             c.post(reverse('lead_user_list')),
         ]
 
-        # Cheeck the array
+        # Check the array
         assertRedirectsToLogin(response_array, self)

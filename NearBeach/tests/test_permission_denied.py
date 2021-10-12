@@ -33,7 +33,6 @@ class TestPermissionDenied(TestCase):
         # User will be logged in
         login_user(c, self)
 
-
         # Make sure the admin user can open up the project
         response = c.get(reverse('test_permission_denied'))
         self.assertEqual(response.status_code, 403)

@@ -59,7 +59,6 @@ class TeamLeaderSearchTest(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-
         # Use the search bar to search for closed items
         response = c.post(
             reverse('search'),
