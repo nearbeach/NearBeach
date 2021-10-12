@@ -414,7 +414,7 @@ def handle_file_upload(upload_document, document_results, file):
     :return:
     """
     # Make the directory we want to save the file in. The directory will have the document_key
-    file_permissions = 0o755 #Look at these permissions later
+    file_permissions = 0o755 # Look at these permissions later
     path = os.path.join(
         settings.PRIVATE_MEDIA_ROOT,
         '%s' % (document_results[0]['document_key_id'],),
