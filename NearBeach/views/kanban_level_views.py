@@ -17,7 +17,7 @@ import urllib3
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
-#@check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
+# @check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
 def edit_level(request, kanban_level_id, *args, **kwargs):
     """
     """
@@ -33,7 +33,8 @@ def edit_level(request, kanban_level_id, *args, **kwargs):
 
     # Update the data
     kanban_level_results.kanban_level_name = form.cleaned_data['kanban_level_name']
-    kanban_level_results.kanban_level_sort_number = form.cleaned_data['kanban_level_sort_number']
+    kanban_level_results.kanban_level_sort_number = form.cleaned_data[
+        'kanban_level_sort_number']
 
     # Save the data
     kanban_level_results.save()
@@ -65,7 +66,7 @@ def delete_level(request, kanban_board_id, *args, **kwargs):
     deleted_level = kanban_level.objects.get(
         kanban_level_id=form.cleaned_data['delete_item_id'].kanban_level_id,
     )
-    deleted_level.is_deleted=True
+    deleted_level.is_deleted = True
     deleted_level.save()
 
     return HttpResponse("")
@@ -92,10 +93,10 @@ def new_level(request, kanban_board_id, *args, **kwargs):
     kanban_level_submit.save()
 
     # Get the information and return as json results
-    kanban_level_results = kanban_level.objects.filter(
-        kanban_level_id = kanban_level_submit.kanban_level_id,
+    _ = kanban_level.objects.filter(
+        kanban_level_id=kanban_level_submit.kanban_level_id,
     )
-     
+
     return HttpResponse(serializers.serialize('json', [kanban_level_submit]), content_type='application/json')
 
 
@@ -109,7 +110,7 @@ def resort_level(request, kanban_board_id, *args, **kwargs):
     form = ResortLevelForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-    
+
     # Extract the data
     items = request.POST.getlist('item')
 
@@ -120,5 +121,3 @@ def resort_level(request, kanban_board_id, *args, **kwargs):
         kanban_level_update.save()
 
     return HttpResponse("")
-
-

@@ -16,10 +16,11 @@ import json
 import urllib
 import urllib3
 
+
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
 def add_bug(request, destination, location_id):
-    #ADD IN CHECK PERMISSIONS THAT USES THE DESTINATION AND LOCATION!
+    # ADD IN CHECK PERMISSIONS THAT USES THE DESTINATION AND LOCATION!
 
     # Get data from form
     form = AddBugForm(request.POST)
@@ -36,7 +37,8 @@ def add_bug(request, destination, location_id):
     )
 
     # Connect to the correct destination
-    submit_bug = set_object_from_destination(submit_bug, destination, location_id)
+    submit_bug = set_object_from_destination(
+        submit_bug, destination, location_id)
 
     # Save
     submit_bug.save()
@@ -51,7 +53,7 @@ def add_bug(request, destination, location_id):
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
 def add_customer(request, destination, location_id):
-    #ADD IN CHECK PERMISSIONS THAT USES THE DESTINATION AND LOCATION!
+    # ADD IN CHECK PERMISSIONS THAT USES THE DESTINATION AND LOCATION!
 
     # Get data from form
     form = AddCustomerForm(request.POST)
@@ -99,7 +101,8 @@ def add_group(request, destination, location_id):
             group_id=group_instance,
             change_user=request.user,
         )
-        submit_object_assignment = set_object_from_destination(submit_object_assignment, destination, location_id)
+        submit_object_assignment = set_object_from_destination(
+            submit_object_assignment, destination, location_id)
 
         # Save the data
         submit_object_assignment.save()
@@ -108,6 +111,7 @@ def add_group(request, destination, location_id):
     group_results = get_group_list(destination, location_id)
 
     return HttpResponse(serializers.serialize('json', group_results), content_type='application/json')
+
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
@@ -131,7 +135,8 @@ def add_link(request, destination, location_id):
     )
 
     # Add the destination/location_id to the object
-    object_assignment_submit = link_object(object_assignment_submit, destination, location_id)
+    object_assignment_submit = link_object(
+        object_assignment_submit, destination, location_id)
 
     # Loop through the results and add them in.
     for row in request.POST.getlist("project"):
@@ -139,7 +144,8 @@ def add_link(request, destination, location_id):
             project=project.objects.get(project_id=row),
             change_user=request.user,
         )
-        set_object_from_destination(submit_object_assignment, destination, location_id)
+        set_object_from_destination(
+            submit_object_assignment, destination, location_id)
         submit_object_assignment.save()
 
     for row in request.POST.getlist("task"):
@@ -147,7 +153,8 @@ def add_link(request, destination, location_id):
             task=task.objects.get(task_id=row),
             change_user=request.user,
         )
-        set_object_from_destination(submit_object_assignment, destination, location_id)
+        set_object_from_destination(
+            submit_object_assignment, destination, location_id)
         submit_object_assignment.save()
 
     for row in request.POST.getlist("requirement"):
@@ -155,19 +162,22 @@ def add_link(request, destination, location_id):
             requirement=requirement.objects.get(requirement_id=row),
             change_user=request.user,
         )
-        set_object_from_destination(submit_object_assignment, destination, location_id)
+        set_object_from_destination(
+            submit_object_assignment, destination, location_id)
         submit_object_assignment.save()
 
     for row in request.POST.getlist("requirement_item"):
         submit_object_assignment = object_assignment(
-            requirement_item=requirement_item.objects.get(requirement_item_id=row),
+            requirement_item=requirement_item.objects.get(
+                requirement_item_id=row),
             change_user=request.user,
         )
-        set_object_from_destination(submit_object_assignment, destination, location_id)
+        set_object_from_destination(
+            submit_object_assignment, destination, location_id)
         submit_object_assignment.save()
 
-
     return HttpResponse("Success")
+
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
@@ -181,8 +191,8 @@ def add_notes(request, destination, location_id):
 
     # SAVE DATA
     submit_object_note = object_note(
-        change_user = request.user,
-        object_note = form.cleaned_data['note']
+        change_user=request.user,
+        object_note=form.cleaned_data['note']
     )
     submit_object_note = set_object_from_destination(
         submit_object_note,
@@ -193,7 +203,8 @@ def add_notes(request, destination, location_id):
     submit_object_note.save()
 
     # Get data to send back to user
-    note_resuts = object_note.objects.filter(object_note_id=submit_object_note.object_note_id)
+    note_resuts = object_note.objects.filter(
+        object_note_id=submit_object_note.object_note_id)
 
     return HttpResponse(serializers.serialize('json', note_resuts), content_type='application.json')
 
@@ -201,7 +212,7 @@ def add_notes(request, destination, location_id):
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
 def add_tags(request, destination, location_id):
-    #Check the data against the form
+    # Check the data against the form
     form = AddTagsForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -260,7 +271,8 @@ def add_user(request, destination, location_id):
             change_user=request.user,
             assigned_user=user_instance,
         )
-        submit_object_assignment = set_object_from_destination(submit_object_assignment, destination, location_id)
+        submit_object_assignment = set_object_from_destination(
+            submit_object_assignment, destination, location_id)
 
         # Save
         submit_object_assignment.save()
@@ -269,6 +281,7 @@ def add_user(request, destination, location_id):
     user_results = get_user_list(destination, location_id)
 
     return HttpResponse(user_results, content_type='application/json')
+
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
@@ -295,7 +308,8 @@ def admin_add_user(request):
 
     # Convert data to json format
     group_results = json.dumps(list(group_results), cls=DjangoJSONEncoder)
-    permission_set_results = json.dumps(list(permission_set_results), cls=DjangoJSONEncoder)
+    permission_set_results = json.dumps(
+        list(permission_set_results), cls=DjangoJSONEncoder)
     user_results = json.dumps(list(user_results), cls=DjangoJSONEncoder)
 
     return_data = {
@@ -324,7 +338,8 @@ def associated_objects(request, destination, location_id):
     object_assignment_results = object_assignment.objects.filter(
         is_deleted=False,
     )
-    object_assignment_results = get_object_from_destination(object_assignment_results, destination, location_id)
+    object_assignment_results = get_object_from_destination(
+        object_assignment_results, destination, location_id)
 
     opportunity_results = opportunity.objects.filter(
         is_deleted=False,
@@ -418,6 +433,7 @@ def bug_client_list(request):
     )
 
     return HttpResponse(serializers.serialize('json', bug_client_results), content_type='application/json')
+
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
@@ -538,7 +554,8 @@ def get_customer_list(destination, location_id):
         is_deleted=False,
         customer_id__isnull=False,
     )
-    object_customers = get_object_from_destination(object_customers, destination, location_id)
+    object_customers = get_object_from_destination(
+        object_customers, destination, location_id)
 
     return customer.objects.filter(
         is_deleted=False,
@@ -546,6 +563,8 @@ def get_customer_list(destination, location_id):
     )
 
 # Internal function
+
+
 def get_group_list(destination, location_id):
     object_results = object_assignment.objects.filter(
         is_deleted=False,
@@ -608,7 +627,8 @@ def get_user_list_all(destination, location_id):
         is_deleted=False,
         group_id__isnull=False,
     )
-    group_results = get_object_from_destination(group_results, destination, location_id)
+    group_results = get_object_from_destination(
+        group_results, destination, location_id)
 
     # Get a list of users who are associated with these groups & not in the excluded list
     user_results = User.objects.filter(
@@ -645,7 +665,8 @@ def group_list_all(request, destination, location_id):
         is_deleted=False,
         group_id__isnull=False,
     )
-    group_existing_results = get_object_from_destination(group_existing_results, destination, location_id)
+    group_existing_results = get_object_from_destination(
+        group_existing_results, destination, location_id)
 
     group_results = group.objects.filter(
         is_deleted=False,
@@ -673,7 +694,8 @@ def lead_user_list(request):
     # First we create a search string and annotate it onto our results
     user_results = User.objects.annotate(
         search_string=Concat(
-            'username', V(' '), 'first_name', V(' '), 'last_name', V(' '), 'email',
+            'username', V(' '), 'first_name', V(
+                ' '), 'last_name', V(' '), 'email',
             output_field=CharField()
         )
     ).filter(
@@ -749,11 +771,14 @@ def link_object(object_assignment_submit, destination, location_id):
     :return:
     """
     if destination == "project":
-        object_assignment_submit.project = project.objects.get(project_id=location_id)
+        object_assignment_submit.project = project.objects.get(
+            project_id=location_id)
     elif destination == "requirement":
-        object_assignment_submit.requirement = requirement.objects.get(requirement_id=location_id)
+        object_assignment_submit.requirement = requirement.objects.get(
+            requirement_id=location_id)
     elif destination == "requirement_item":
-        object_assignment_submit.requirement_item = requirement_item.objects.get(requirement_item_id=location_id)
+        object_assignment_submit.requirement_item = requirement_item.objects.get(
+            requirement_item_id=location_id)
     elif destination == "task":
         object_assignment_submit.task = task.objects.get(task_id=location_id)
 
@@ -772,7 +797,8 @@ def note_list(request, destination, location_id):
     )
 
     # Filter by destination and location_id
-    note_results = get_object_from_destination(note_results, destination, location_id)
+    note_results = get_object_from_destination(
+        note_results, destination, location_id)
 
     # Return JSON results
     return HttpResponse(serializers.serialize('json', note_results), content_type='application/json')
@@ -790,7 +816,8 @@ def object_link_list(request, destination, location_id):
     object_assignment_results = object_assignment.objects.filter(
         is_deleted=False,
     )
-    object_assignment_results = get_object_from_destination(object_assignment_results, destination, location_id)
+    object_assignment_results = get_object_from_destination(
+        object_assignment_results, destination, location_id)
 
     object_assignment_results = object_assignment_results.filter(
         Q(project__isnull=False) |
@@ -819,7 +846,8 @@ def object_link_list(request, destination, location_id):
     """
 
     # Send back json data
-    json_results = json.dumps(list(object_assignment_results), cls=DjangoJSONEncoder)
+    json_results = json.dumps(
+        list(object_assignment_results), cls=DjangoJSONEncoder)
 
     return HttpResponse(json_results, content_type='application/json')
 
@@ -836,14 +864,15 @@ def query_bug_client(request, destination, location_id):
 
     # Extract the information from the form
     bug_client_instance = form.cleaned_data['bug_client_id']
-    search_terms = form.cleaned_data['search']
+    _ = form.cleaned_data['search']
 
     # Get existing bugs that we want to extract out
     existing_bugs = bug.objects.filter(
         is_deleted=False,
         bug_client_id=bug_client_instance.bug_client_id,
     )
-    existing_bugs = get_object_from_destination(existing_bugs, destination, location_id)
+    existing_bugs = get_object_from_destination(
+        existing_bugs, destination, location_id)
 
     # The values in the URL
     f_bugs = ''
@@ -860,10 +889,10 @@ def query_bug_client(request, destination, location_id):
     exclude_url = f_bugs + o_notequals + v_values
 
     url = bug_client_instance.bug_client_url \
-          + bug_client_instance.list_of_bug_client.bug_client_api_url \
-          + bug_client_instance.list_of_bug_client.api_search_bugs \
-          + urllib.parse.quote(form.cleaned_data['search']) \
-          + exclude_url
+        + bug_client_instance.list_of_bug_client.bug_client_api_url \
+        + bug_client_instance.list_of_bug_client.api_search_bugs \
+        + urllib.parse.quote(form.cleaned_data['search']) \
+        + exclude_url
 
     """
     SECURITY ISSUE

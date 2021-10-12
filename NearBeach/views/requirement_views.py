@@ -24,7 +24,8 @@ def add_requirement_link(request, requirement_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the requirement instnace
-    requirement_instance = requirement.objects.get(requirement_id=requirement_id)
+    requirement_instance = requirement.objects.get(
+        requirement_id=requirement_id)
 
     # Get the project list from the form
     for row in request.POST.getlist("project"):
@@ -59,7 +60,8 @@ def add_requirement_link(request, requirement_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
 def get_requirement_item_links(request, requirement_id, *args, **kwargs):
     # Get the requirement information
-    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    _ = requirement.objects.get(
+        requirement_id=requirement_id)
 
     # Use object_assignment to get the requirme
     link_results = object_assignment.objects.filter(
@@ -151,7 +153,7 @@ def get_requirement_items(request, requirement_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
 def get_requirement_links_list(request, requirement_id, *args, **kwargs):
     # Get the requirement information
-    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    _ = requirement.objects.get(requirement_id=requirement_id)
 
     # Use object_assignment to get the requirme
     link_results = object_assignment.objects.filter(
@@ -287,14 +289,16 @@ def requirement_information(request, requirement_id, *args, **kwargs):
     :return:
     """
     # TODO: Check if I need to have a separate read only tempalte now.
-    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    requirement_results = requirement.objects.get(
+        requirement_id=requirement_id)
 
     # If the requirement has been closed - send user to the read only section
     if requirement_results.requirement_status.requirement_status == "Completed":
         return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_id}))
 
     # Load template
-    t = loader.get_template('NearBeach/requirements/requirement_information.html')
+    t = loader.get_template(
+        'NearBeach/requirements/requirement_information.html')
 
     # Get any extra data required
     organisation_results = organisation.objects.get(
