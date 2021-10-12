@@ -116,7 +116,6 @@ def get_object_search_data(search_form):
                 Q(kanban_board_id=split_row)
             )
 
-
     # Only have 25 results and order by alphabetical order
     rfc_results.order_by('rfc_title')[:25]
     requirement_results.order_by('requirement_title')[:25]
@@ -164,7 +163,7 @@ def search(request):
     t = loader.get_template('NearBeach/search/search.html')
 
     # Translate the include closed, from Python Boolean to JavaScript boolean
-    if form.cleaned_data['include_closed']: #If exists and true
+    if form.cleaned_data['include_closed']: # If exists and true
         include_closed = 'true'
     else:
         include_closed = 'false'
