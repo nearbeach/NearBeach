@@ -144,7 +144,6 @@ def document_list_files(request, destination, location_id):
 
     return HttpResponse(json_results, content_type='application/json')
 
-
     # # Get the document information
     # document_results = document.objects.filter(
     #     is_deleted=False,
