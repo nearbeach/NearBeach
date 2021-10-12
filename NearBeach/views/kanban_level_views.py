@@ -92,7 +92,7 @@ def new_level(request, kanban_board_id, *args, **kwargs):
     kanban_level_submit.save()
 
     # Get the information and return as json results
-    kanban_level_results = kanban_level.objects.filter(
+    _ = kanban_level.objects.filter(
         kanban_level_id = kanban_level_submit.kanban_level_id,
     )
      
