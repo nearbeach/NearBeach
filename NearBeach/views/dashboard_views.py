@@ -13,7 +13,9 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Count, Q
 
 # Import Python Libraries
-import json, urllib.parse, random
+import json
+import urllib.parse
+import random
 
 @login_required(login_url='login', redirect_field_name="")
 def dashboard(request):

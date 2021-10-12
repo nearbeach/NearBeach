@@ -11,7 +11,8 @@ from NearBeach.forms import AddKanbanLinkForm, KanbanCardArchiveForm, CheckKanba
 from NearBeach.views.tools.internal_functions import kanban_card, kanban_board, project, requirement, task
 from NearBeach.models import kanban_column, kanban_level, object_assignment, group, user_group
 
-import json, urllib3
+import json
+import urllib3
 
 
 @login_required(login_url='login', redirect_field_name="")
