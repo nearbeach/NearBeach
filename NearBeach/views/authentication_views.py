@@ -18,10 +18,6 @@ import json
 import urllib.parse
 import random
 
-
-
-
-
 def check_first_time_login(request):
     """
     The following function will check if it is the first time logged in by user. i.e. There are no permission sets.

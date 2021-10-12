@@ -50,7 +50,6 @@ class TeamLeaderSearchTest(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-
         # Use the search bar to search a number
         response = c.post(
             reverse('search'),
@@ -71,7 +70,6 @@ class TeamLeaderSearchTest(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-
         # Use the search bar to search for a string that is > 250 character.
         # This test should fail
         # response = c.post(
@@ -81,7 +79,6 @@ class TeamLeaderSearchTest(TestCase):
         #     }
         # )
         # self.assertEqual(response.status_code, 400)
-
 
     def test_team_leader_searches_api(self):
         c = Client()
@@ -102,7 +99,6 @@ class TeamLeaderSearchTest(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-
         # Use the search bar to search a number
         response = c.post(
             reverse('search_data'),
@@ -111,7 +107,6 @@ class TeamLeaderSearchTest(TestCase):
             }
         )
         self.assertEqual(response.status_code, 200)
-
 
         # Use the search bar to search for closed items
         response = c.post(
@@ -123,7 +118,6 @@ class TeamLeaderSearchTest(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-
         # Use the search bar to search for a string that is > 250 character.
         # This test should fail
         response = c.post(
@@ -133,7 +127,6 @@ class TeamLeaderSearchTest(TestCase):
             }
         )
         self.assertEqual(response.status_code, 400)
-
 
     def test_team_leader_searches_customers(self):
         c = Client()
@@ -155,7 +148,6 @@ class TeamLeaderSearchTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # TODO: Add in the UNIT TESTS for testing data in produces certain data out
-
 
     def test_team_leader_searches_organisations(self):
         c = Client()

@@ -144,7 +144,6 @@ def document_list_files(request, destination, location_id):
 
     return HttpResponse(json_results, content_type='application/json')
 
-
     # # Get the document information
     # document_results = document.objects.filter(
     #     is_deleted=False,
@@ -152,7 +151,6 @@ def document_list_files(request, destination, location_id):
     # )
     #
     # return HttpResponse(serializers.serialize('json',document_results),content_type='application/json')
-
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")

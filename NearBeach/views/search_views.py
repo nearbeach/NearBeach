@@ -115,8 +115,6 @@ def get_object_search_data(search_form):
             kanban_results = kanban_results.filter(
                 Q(kanban_board_id=split_row)
             )
-
-
     # Only have 25 results and order by alphabetical order
     rfc_results.order_by('rfc_title')[:25]
     requirement_results.order_by('requirement_title')[:25]
