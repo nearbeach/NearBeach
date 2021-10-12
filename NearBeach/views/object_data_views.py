@@ -166,7 +166,6 @@ def add_link(request, destination, location_id):
         set_object_from_destination(submit_object_assignment, destination, location_id)
         submit_object_assignment.save()
 
-
     return HttpResponse("Success")
 
 @require_http_methods(['POST'])

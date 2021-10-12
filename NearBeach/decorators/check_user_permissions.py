@@ -120,7 +120,6 @@ def check_user_organisation_permissions(min_permission_level):
     return decorator
 
 
-
 def check_user_permissions(min_permission_level, object_lookup=''):
     def decorator(func):
         @wraps(func)
