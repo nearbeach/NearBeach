@@ -12,7 +12,8 @@ from NearBeach.forms import tag, NewTagForm, TagForm
 # from NearBeach.views.tools.internal_functions import *
 # from NearBeach.models import *
 
-import json, urllib3
+import json
+import urllib3
 
 
 @require_http_methods(['POST'])

@@ -2,7 +2,8 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
-import json, time
+import json
+import time
 
 #Get login details
 with open('config.py') as json_file:

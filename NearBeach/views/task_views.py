@@ -12,7 +12,8 @@ from NearBeach.forms import NewTaskForm, TaskInformationForm
 from NearBeach.models import group, user_group, object_assignment
 from NearBeach.views.tools.internal_functions import task, organisation
 
-import json, urllib3
+import json
+import urllib3
 
 
 @login_required(login_url='login', redirect_field_name="")

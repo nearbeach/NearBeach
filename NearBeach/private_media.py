@@ -15,7 +15,9 @@ from django.http import Http404, HttpResponseNotModified, HttpResponse
 from django.utils.http import http_date
 from django.views.static import was_modified_since
 
-import mimetypes, os, stat
+import mimetypes
+import os
+import stat
 
 """
 FUNCTION DESCRIPTION

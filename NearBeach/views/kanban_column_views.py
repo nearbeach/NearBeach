@@ -10,7 +10,8 @@ from NearBeach.decorators.check_user_permissions import check_user_permissions, 
 from NearBeach.forms import NewColumnForm, kanban_column, DeleteColumnForm, ResortColumnForm
 from NearBeach.views.tools.internal_functions import kanban_card
 
-import json, urllib3
+import json
+import urllib3
 
 
 @login_required(login_url='login', redirect_field_name="")

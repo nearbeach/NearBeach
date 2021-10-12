@@ -14,7 +14,8 @@ from ..models import document_permission, user_group, object_assignment
 
 import boto3
 from botocore.exceptions import NoCredentialsError
-import json, os
+import json
+import os
 
 
 @require_http_methods(['POST'])

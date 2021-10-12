@@ -11,7 +11,8 @@ from NearBeach.forms import NewLevelForm, kanban_level, DeleteLevelForm, ResortL
 from NearBeach.views.tools.internal_functions import kanban_card
 # from NearBeach.models import *
 
-import json, urllib3
+import json
+import urllib3
 
 
 @login_required(login_url='login', redirect_field_name="")

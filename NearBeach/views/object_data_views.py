@@ -12,7 +12,9 @@ from NearBeach.views.tools.internal_functions import set_object_from_destination
 from NearBeach.models import bug, object_assignment, group, object_note, tag, tag_assignment, permission_set, bug_client, customer, user_group, list_of_requirement_status, list_of_requirement_item_status
 
 
-import json, urllib, urllib3
+import json
+import urllib
+import urllib3
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")

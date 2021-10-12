@@ -1,5 +1,6 @@
 # Import the locust libraries
-import time, getpass
+import time
+import getpass
 from locust import HttpUser, task, between
 
 #Request the username and password to login into NearBeach
