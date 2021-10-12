@@ -82,7 +82,7 @@
                     //Clear the card note model
                     this.cardNoteModel = '';
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    
                 });
             },
             closeModal: function() {

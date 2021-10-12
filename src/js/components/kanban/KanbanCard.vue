@@ -132,7 +132,7 @@
                 ).then(response => {
                     document.location.reload(true)
                 }).catch(error => {
-                    console.log("ERROR: ",error); 
+                     
                 })
             },
             checkCardOrder: function() {
@@ -208,8 +208,8 @@
                     return row['pk'] == data['target']['dataset']['cardId'];
                 })[0];
 
-                console.log("Data: ",data['target']['dataset']['cardId']);
-                console.log("FILTERED DATA: ",this.masterList);
+                
+                
 
                 //Setup data to send upstream
                 this.sendDataUpstream(filtered_data);
@@ -316,7 +316,7 @@
 
                 //Loop through the filtered data, and apply the changes required
                 filtered_data.forEach(row => {
-                    console.log("Row: ",row['pk']);
+                    
                     if (row['pk'] == card_id) {
                         //Make sure this card has the new sort number
                         return_array.push({
@@ -380,11 +380,11 @@
                     if ((new_card_column == old_card_column) && 
                         (new_card_level == old_card_level)) {
                         //The card stayed in the same place.
-                        console.log("Drag Same Column");
+                        
                         cards_to_change = this.dragSameColumn(data_to_send);
                     } else {
                         //The card move to a different place
-                        console.log("Drag Different Column");
+                        
                         cards_to_change = this.dragDifferentColumn(data_to_send);
                     }
 
@@ -399,7 +399,7 @@
                         })
                     })
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    
                 })
             },
             sendDataUpstream: function(filtered_data) {

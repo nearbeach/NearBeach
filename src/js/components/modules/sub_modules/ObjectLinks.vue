@@ -129,11 +129,11 @@
             },
             newLink: function() {
                 //Open up the modal
-                console.log("Starting the modal stuff");
+                
                 var elem_modal = new Modal(document.getElementById('newLinkModal'));
-                console.log("The object: ",elem_modal);
+                
                 elem_modal.show();
-                console.log("FINISHED");
+                
             },
             updateLinkResults: function() {
                 //Get the data from the database

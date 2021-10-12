@@ -109,7 +109,7 @@
                 //Passwords can not be less than 8 character
                 let condition_2 = this.password1Model.length >= 8
 
-                console.log("Conditions: ",condition_1, condition_2);
+                
 
                 //If all conditions are true, send back false (to enable the button)
                 return !(condition_1 && condition_2 == true);

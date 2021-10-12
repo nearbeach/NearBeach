@@ -234,7 +234,7 @@
                     //Extract the required JSON data
                     var extracted_data = response['data'];
 
-                    console.log("RESULTS: ",response);
+                    
 
                     //Look through the extracted data - and map the required fields into stakeholder fix list
                     extracted_data.forEach((row) => {

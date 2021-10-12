@@ -78,7 +78,7 @@
                 ).then(response => {
                     this.tagList = response['data'];
                 }).catch(error => {
-                    console.log("ERROR WITH DATA: ",error);
+                    
                 })
             },
             removeTag: function(tag_id) {
@@ -98,7 +98,7 @@
                         return row['pk'] !== tag_id;
                     });
                 }).catch(error => {
-                    console.log("ERROR: ",error);
+                    
                 });
             },
         },

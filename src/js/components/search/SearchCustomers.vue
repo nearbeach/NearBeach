@@ -71,7 +71,7 @@
                 ).then(response => {
                     this.localCustomerResults = response['data'];
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    
                 });
             },
         },

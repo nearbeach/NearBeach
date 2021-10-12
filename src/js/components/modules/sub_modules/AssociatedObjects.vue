@@ -165,7 +165,7 @@
                     this.requirementResults = response['data']['requirement'];
                     this.taskResults = response['data']['task'];
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    
                 })
             },
             getFriendlyDate: function(input_date) {

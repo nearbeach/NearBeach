@@ -230,7 +230,7 @@
                     //Go to the url sent back
                     window.location.href = response['data'];
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    
                 });
             }
 
