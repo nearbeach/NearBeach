@@ -177,7 +177,7 @@
                     window.location.href = `/rfc_information/${this.changeTaskResults[0]['fields']['request_for_change']}/`;
                 }).catch(error => {
                     //this.showErrorModal(error, 'Change Task');
-                    console.log("ERROR: ",error);
+                    
                 })
             },
             updateStatus: function(new_status) {
@@ -193,7 +193,7 @@
                     //Reload the page
                     window.location.reload(true);
                 }).catch(error => {
-                    console.log("ERROR: ",error);
+                    
                 })
             },
             updateDates: function(data) {

@@ -124,7 +124,7 @@
                 edit_tag_modal.show();
             },
             newTag: function(data) {
-                console.log("Data: ",data);
+                
                 this.localTagResults.push(data[0]);
             },
             updateTags: function(data) {

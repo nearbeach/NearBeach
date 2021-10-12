@@ -125,7 +125,7 @@
                     //Go to the new customer page
                     window.location.href = response['data'];
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    
                 })
             },
             updateCustomerData: function(data) {

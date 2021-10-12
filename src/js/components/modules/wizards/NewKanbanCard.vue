@@ -127,7 +127,7 @@
                     //Close the modal
                     document.getElementById('addKanbanCardCloseButton').click();
                 }).catch(error => {
-                    console.log("ERROR: ",error);
+                    
                 });
             },
         },

@@ -398,9 +398,9 @@
                         url,
                         data_to_send,
                     ).then(response => {
-                        console.log("Response");
+                        
                     }).catch(error => {
-                        console.log("ERROR: ",error);
+                        
                     })
                 }
             }

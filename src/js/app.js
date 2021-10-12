@@ -49,7 +49,7 @@ const moduleCard = {
                 //Save the data into noteHistoryResults
                 state.cardNotes = response['data'];
             }).catch(error => {
-                console.log("Error: ",error);
+                
             });
         },
         updateField,
