@@ -131,8 +131,7 @@ def check_recaptcha(post_data):
         # Check to see if the user is a robot. Success = human
     if result['success']:
         return True
-    else:
-        return False
+    return False
 
 def login(request):
     """
