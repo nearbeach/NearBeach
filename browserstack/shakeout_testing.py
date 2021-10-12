@@ -38,7 +38,7 @@ driver.find_element_by_id("id_username").send_keys(login_data['login']['administ
 driver.find_element_by_id("id_password").send_keys(login_data['login']['administrator']['password'])
 driver.find_element_by_id("id_password").submit()
 
-time.sleep(5) #Sleep to allow login
+time.sleep(5) # Sleep to allow login
 #Save Login Screenshot
 driver.save_screenshot('dashboard.png')
 

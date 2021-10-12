@@ -164,7 +164,7 @@ def search(request):
     t = loader.get_template('NearBeach/search/search.html')
 
     # Translate the include closed, from Python Boolean to JavaScript boolean
-    if form.cleaned_data['include_closed']: #If exists and true
+    if form.cleaned_data['include_closed']: # If exists and true
         include_closed = 'true'
     else:
         include_closed = 'false'
