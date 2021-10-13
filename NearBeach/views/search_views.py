@@ -1,5 +1,5 @@
-from NearBeach.models import *
-from NearBeach.forms import *
+from NearBeach.models import request_for_change, requirement, project, task, kanban_board, list_of_requirement_status, customer, group, organisation, permission_set, User, tag
+from NearBeach.forms import SearchObjectsForm, SearchForm
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
@@ -116,7 +116,6 @@ def get_object_search_data(search_form):
                 Q(kanban_board_id=split_row)
             )
 
-
     # Only have 25 results and order by alphabetical order
     rfc_results.order_by('rfc_title')[:25]
     requirement_results.order_by('requirement_title')[:25]
@@ -164,7 +163,7 @@ def search(request):
     t = loader.get_template('NearBeach/search/search.html')
 
     # Translate the include closed, from Python Boolean to JavaScript boolean
-    if form.cleaned_data['include_closed']: #If exists and true
+    if form.cleaned_data['include_closed']: # If exists and true
         include_closed = 'true'
     else:
         include_closed = 'false'
@@ -392,7 +391,7 @@ def search_permission_set_data(request):
     # Get form data
     search_form = SearchForm(request.POST)
     if not search_form.is_valid():
-        return HttpResponseBadRequest(form.errors)
+        return HttpResponseBadRequest(search_form.errors)
 
     # Get base data
     permission_set_results = permission_set.objects.filter(

@@ -213,7 +213,7 @@
                     //Go to that webpage
                     window.location.href = response['data'];
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    
                 });
             },
             checkKanbanBoardName: function() {
@@ -232,7 +232,7 @@
                     //Checking kanban board name is finished
                     this.checkingKanbanBoardName = false;
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    
                 })
             },
             updateGroupModel: function(data) {

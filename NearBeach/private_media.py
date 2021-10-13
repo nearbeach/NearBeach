@@ -15,7 +15,9 @@ from django.http import Http404, HttpResponseNotModified, HttpResponse
 from django.utils.http import http_date
 from django.views.static import was_modified_since
 
-import mimetypes, os, stat
+import mimetypes
+import os
+import stat
 
 """
 FUNCTION DESCRIPTION
@@ -118,8 +120,7 @@ class Check_Permissions(object):
         if not has_permission[0][0] >= 1:
             # User have permission to view the file
             return True
-        else:
-            return False
+        return False
 
 
 """

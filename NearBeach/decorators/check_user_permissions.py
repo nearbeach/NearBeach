@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Q, Max
 from functools import wraps
 
-from NearBeach.models import *
+from NearBeach.models import user_group, group, object_assignment, kanban_card, requirement_item, requirement
 
 def check_user_customer_permissions(min_permission_level):
     #Function is only used when checking user permissions against customers - as they are different
@@ -118,7 +118,6 @@ def check_user_organisation_permissions(min_permission_level):
             raise PermissionDenied
         return inner
     return decorator
-
 
 
 def check_user_permissions(min_permission_level, object_lookup=''):

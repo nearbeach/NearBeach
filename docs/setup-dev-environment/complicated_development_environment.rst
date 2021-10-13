@@ -6,6 +6,8 @@ Setup Development Environment
 
   .. attention:: If you would like any help setting up these environments, why not join our discord - https://discord.gg/64uhRztS6n
 
+  .. attention:: This environment setup is designed for UAT/DEV environments on server environments. The settings.py file will have a unique secret_key, and the settings.py file can be customized without any chance of an accidently upload into source.
+
 
 These instructions will help you install a development environment. Setup is
 slightly different to a production environment.

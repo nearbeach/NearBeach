@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from .function_tests import *
+from .function_tests import assertRedirectsToLogin, assertEqual405
 
 """
 The following test will;
@@ -100,7 +100,6 @@ class CheckDocumentation(TestCase):
         assertRedirectsToLogin(response_post_array, self)
 
 
-
 class CheckKanban(TestCase):
     def test_kanban_information(self):
         # Make sure the user gets redirected to the login page
@@ -121,7 +120,6 @@ class CheckKanban(TestCase):
         assertRedirectsToLogin(response_array, self)
 
 
-
 class CheckPrivateDocument(TestCase):
     def test_private_document(self):
         # Make sure the user gets redirected to the login page
@@ -136,7 +134,6 @@ class CheckPrivateDocument(TestCase):
             msg_prefix='',
             fetch_redirect_response=True
         )
-
 
 
 class CheckNew(TestCase):
@@ -157,7 +154,6 @@ class CheckNew(TestCase):
 
         # Check the array
         assertEqual405(response_array, self)
-
 
     def new_save(self):
         # Make sure the user gets redirected to the login page
@@ -239,5 +235,5 @@ class CheckObjects(TestCase):
             c.post(reverse('lead_user_list')),
         ]
 
-        # Cheeck the array
+        # Check the array
         assertRedirectsToLogin(response_array, self)

@@ -6,10 +6,10 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedire
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from NearBeach.models import *
-from NearBeach.decorators.check_user_permissions import check_user_requirement_item_permissions, check_user_permissions
-from NearBeach.forms import *
+from NearBeach.decorators.check_user_permissions import check_user_requirement_item_permissions
+from NearBeach.forms import AddRequirementLinkForm, NewRequirementItemForm, UpdateRequirementItemForm
 from NearBeach.views.requirement_views import get_requirement_items
+from NearBeach.models import requirement_item, object_assignment, project, task, opportunity, requirement, organisation, list_of_requirement_item_status, list_of_requirement_item_type, group
 
 import json
 

@@ -7,13 +7,15 @@ from django.utils.encoding import smart_str
 from django.views.decorators.http import require_http_methods
 from django.template import loader
 from django.core.serializers.json import DjangoJSONEncoder
-from NearBeach.views.tools.internal_functions import *
+
+from NearBeach.views.tools.internal_functions import set_object_from_destination, get_object_from_destination
+from ..forms import AddFolderForm, folder, AddLinkForm, document, DocumentUploadForm, requirement_item
+from ..models import document_permission, user_group, object_assignment
+
 import boto3
 from botocore.exceptions import NoCredentialsError
-
-from ..forms import *
-
-import json, os
+import json
+import os
 
 
 @require_http_methods(['POST'])
@@ -141,7 +143,6 @@ def document_list_files(request, destination, location_id):
     json_results = json.dumps(list(document_permission_results), cls=DjangoJSONEncoder)
 
     return HttpResponse(json_results, content_type='application/json')
-
 
     # # Get the document information
     # document_results = document.objects.filter(
@@ -412,7 +413,7 @@ def handle_file_upload(upload_document, document_results, file):
     :return:
     """
     # Make the directory we want to save the file in. The directory will have the document_key
-    file_permissions = 0o755 #Look at these permissions later
+    file_permissions = 0o755 # Look at these permissions later
     path = os.path.join(
         settings.PRIVATE_MEDIA_ROOT,
         '%s' % (document_results[0]['document_key_id'],),

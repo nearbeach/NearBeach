@@ -1,5 +1,6 @@
 # Import the locust libraries
-import time, getpass
+import time
+import getpass
 from locust import HttpUser, task, between
 
 #Request the username and password to login into NearBeach
@@ -16,7 +17,6 @@ class QuickstartUser(HttpUser):
     @task
     def dashboard(self):
         self.client.get("/")
-       
 
     @task(3)
     def requirement_information(self):

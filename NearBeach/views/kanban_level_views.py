@@ -6,11 +6,13 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedire
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from NearBeach.models import *
 from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_kanban_permissions
-from NearBeach.forms import *
-from NearBeach.views.tools.internal_functions import *
-import json, urllib3
+from NearBeach.forms import NewLevelForm, kanban_level, DeleteLevelForm, ResortLevelForm
+from NearBeach.views.tools.internal_functions import kanban_card
+# from NearBeach.models import *
+
+import json
+import urllib3
 
 
 @login_required(login_url='login', redirect_field_name="")

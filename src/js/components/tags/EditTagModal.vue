@@ -143,7 +143,7 @@
                     //Close the modal
                     document.getElementById("editTagCloseModal").click();
                 }).catch(error => {
-                    console.log("ERROR: ",error);
+                    
                 })
             },
             getClasses: function(colour) {

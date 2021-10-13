@@ -7,11 +7,13 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedire
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from NearBeach.models import *
 from NearBeach.decorators.check_user_permissions import check_user_permissions
-from NearBeach.forms import *
-from NearBeach.views.tools.internal_functions import *
-import json, urllib3
+from NearBeach.forms import tag, NewTagForm, TagForm
+# from NearBeach.views.tools.internal_functions import *
+# from NearBeach.models import *
+
+import json
+import urllib3
 
 
 @require_http_methods(['POST'])
@@ -73,9 +75,9 @@ def save_tag(request, *args, **kwargs):
     update_tag = tag.objects.get(tag_id=form.cleaned_data['tag_id'])
 
     # Update the required fields
-    update_tag.tag_name=form.cleaned_data['tag_name']
-    update_tag.tag_colour=form.cleaned_data['tag_colour']
-    update_tag.change_user=request.user
+    update_tag.tag_name = form.cleaned_data['tag_name']
+    update_tag.tag_colour = form.cleaned_data['tag_colour']
+    update_tag.change_user = request.user
 
     # Save data
     update_tag.save()

@@ -100,7 +100,7 @@
                         return 1;
                     })
                     .attr("y",(d) => {
-                        console.log("Y: ",y(d['bug_status__count']))
+                        
                         return y(d['bug_status__count']);
                     })
                     .attr("height",(d) => {

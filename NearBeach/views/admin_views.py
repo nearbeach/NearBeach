@@ -3,8 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 
 from NearBeach.forms import AdminAddUserForm, PasswordResetForm
-
-from NearBeach.models import *
+from NearBeach.models import user_group
 
 
 @require_http_methods(['POST'])

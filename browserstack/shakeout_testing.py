@@ -2,7 +2,8 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
-import json, time
+import json
+import time
 
 #Get login details
 with open('config.py') as json_file:
@@ -37,7 +38,7 @@ driver.find_element_by_id("id_username").send_keys(login_data['login']['administ
 driver.find_element_by_id("id_password").send_keys(login_data['login']['administrator']['password'])
 driver.find_element_by_id("id_password").submit()
 
-time.sleep(5) #Sleep to allow login
+time.sleep(5) # Sleep to allow login
 #Save Login Screenshot
 driver.save_screenshot('dashboard.png')
 

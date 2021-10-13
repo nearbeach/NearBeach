@@ -7,11 +7,13 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedire
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from NearBeach.models import *
 from NearBeach.decorators.check_user_permissions import check_user_permissions
-from NearBeach.forms import *
-from NearBeach.views.tools.internal_functions import *
-import json, urllib3
+from NearBeach.forms import NewTaskForm, TaskInformationForm
+from NearBeach.models import group, user_group, object_assignment
+from NearBeach.views.tools.internal_functions import task, organisation
+
+import json
+import urllib3
 
 
 @login_required(login_url='login', redirect_field_name="")

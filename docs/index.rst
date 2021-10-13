@@ -13,6 +13,8 @@ framework. `NearBeach.org <https://nearbeach.org/>`_
 
 .. note:: NearBeach is licensed under the MIT license
 
+.. note:: If you want to setup a local development environment, please view our :ref:`easy_development_environment`.
+
 ====================
 Minimum requirements
 ====================
