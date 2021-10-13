@@ -18,6 +18,7 @@ import json
 import urllib.parse
 import random
 
+
 def check_first_time_login(request):
     """
     The following function will check if it is the first time logged in by user. i.e. There are no permission sets.
@@ -84,7 +85,7 @@ def check_recaptcha(post_data):
     if hasattr(settings, 'RECAPTCHA_PUBLIC_KEY') and hasattr(settings, 'RECAPTCHA_PRIVATE_KEY'):
         RECAPTCHA_PRIVATE_KEY = settings.RECAPTCHA_PRIVATE_KEY
     else:
-        #User has not setup recaptcha - return true
+        # User has not setup recaptcha - return true
         return True
 
     """
@@ -129,6 +130,7 @@ def check_recaptcha(post_data):
         return True
     return False
 
+
 def login(request):
     """
     For some reason I can not use the varable "LoginForm" here as it is already being used.
@@ -147,7 +149,7 @@ def login(request):
     if request.method == 'POST':
         if form.is_valid():
             # Check if user passes recaptcha
-            if check_recaptcha(request.POST) == True:
+            if check_recaptcha(request.POST) is True:
                 # Looks like we can authenticate the user
                 username = form.cleaned_data.get("username")
                 password = form.cleaned_data.get("password")
@@ -159,7 +161,7 @@ def login(request):
 
             # Just double checking. :)
             if request.user.is_authenticated:
-                #Check to make sure it isn't first time login -> need to setup functionalities
+                # Check to make sure it isn't first time login -> need to setup functionalities
                 check_first_time_login(request)
 
                 # Check how many groups user is in

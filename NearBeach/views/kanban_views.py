@@ -58,7 +58,8 @@ def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
     kanban_card_submit.save()
 
     # Send back the data we just created
-    kanban_card_results = kanban_card.objects.get(kanban_card_id=kanban_card_submit.kanban_card_id)
+    kanban_card_results = kanban_card.objects.get(
+        kanban_card_id=kanban_card_submit.kanban_card_id)
 
     return HttpResponse(serializers.serialize('json', [kanban_card_results]), content_type='application/json')
 
@@ -76,7 +77,7 @@ def archive_kanban_cards(request, *args, **kwargs):
 
     # Get all cards from POST
     card_list = request.POST.getlist('kanban_card_id')
-    
+
     # Update all cards
     kanban_card.objects.filter(
         kanban_card_id__in=card_list,
@@ -86,7 +87,7 @@ def archive_kanban_cards(request, *args, **kwargs):
 
     # Return success
     return HttpResponse("")
-    
+
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
@@ -115,7 +116,8 @@ def check_kanban_board_name(request, *args, **kwargs):
 # Internal function
 def get_context(kanban_board_id):
     # Get the kanban data
-    kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+    kanban_board_results = kanban_board.objects.get(
+        kanban_board_id=kanban_board_id)
 
     column_results = kanban_column.objects.filter(
         is_deleted=False,
@@ -154,7 +156,7 @@ def get_max_sort_id(kanban_board_id, form):
     ).aggregate(Max('kanban_card_sort_number'))
 
     # If the card is new in that particular column & row - then we need to implement a sort number of 0
-    if kanban_card_sort_number['kanban_card_sort_number__max'] == None:
+    if kanban_card_sort_number['kanban_card_sort_number__max'] is None:
         kanban_card_sort_number['kanban_card_sort_number__max'] = 0
 
     return kanban_card_sort_number['kanban_card_sort_number__max']
@@ -220,8 +222,9 @@ def kanban_information(request, kanban_board_id, *args, **kwargs):
 
     # Get context
     c = get_context(kanban_board_id)
-    c['user_level'] = user_level 
-    c['kanban_card_results'] = serializers.serialize('json', kanban_card_results)
+    c['user_level'] = user_level
+    c['kanban_card_results'] = serializers.serialize(
+        'json', kanban_card_results)
 
     # Get the template
     t = loader.get_template('NearBeach/kanban/kanban_information.html')
@@ -330,7 +333,8 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
 
         # Determine if we are using a positive or negative delta - using math
         delta = (-1) * (form.cleaned_data['new_card_sort_number'] > form.cleaned_data['old_card_sort_number']) + \
-                (form.cleaned_data['new_card_sort_number'] < form.cleaned_data['old_card_sort_number'])
+                (form.cleaned_data['new_card_sort_number'] <
+                 form.cleaned_data['old_card_sort_number'])
 
         # Send the data away to get manipulated
         update_sort_number(resort_array, delta)
@@ -338,9 +342,9 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
         """
         The cards have been moved outside the origianl column/level. We need to update both the old and new location's
         sort orders.
-        
+
         The old location will have a delta -1, to move the higher cards into the place left by the card
-        
+
         The new location will have a delta +1, to move the higher cards away, to create a space for the card
         """
         old_resort_array = kanban_card.objects.filter(
@@ -436,7 +440,8 @@ def new_kanban_card(request, kanban_board_id, *args, **kwargs):
     submit_kanban_card.save()
 
     # Send back the kanban card data
-    kanban_card_results = kanban_card.objects.get(kanban_card_id=submit_kanban_card.kanban_card_id)
+    kanban_card_results = kanban_card.objects.get(
+        kanban_card_id=submit_kanban_card.kanban_card_id)
     return HttpResponse(serializers.serialize('json', [kanban_card_results]), content_type='application/json')
 
 

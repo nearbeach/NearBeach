@@ -210,7 +210,8 @@ class bug(models.Model):
         'bug_client',
         on_delete=models.CASCADE,
     )
-    bug_code = models.CharField(max_length=255)  # Just stores the code of the bug
+    # Just stores the code of the bug
+    bug_code = models.CharField(max_length=255)
     bug_description = models.TextField()
     bug_status = models.CharField(max_length=50)  # Updated manually?
     project = models.ForeignKey(
@@ -233,11 +234,10 @@ class bug(models.Model):
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey \
-        (User,
-         on_delete=models.CASCADE,
-         related_name='%(class)s_change_user',
-         )
+    change_user = models.ForeignKey(User,
+                                    on_delete=models.CASCADE,
+                                    related_name='%(class)s_change_user',
+                                    )
     is_deleted = models.BooleanField(
         default=False,
     )
@@ -259,11 +259,10 @@ class bug_client(models.Model):
     bug_client_url = models.URLField()
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey \
-        (User,
-         on_delete=models.CASCADE,
-         related_name='%(class)s_change_user',
-         )
+    change_user = models.ForeignKey(User,
+                                    on_delete=models.CASCADE,
+                                    related_name='%(class)s_change_user',
+                                    )
     is_deleted = models.BooleanField(
         default=False,
     )
@@ -1195,7 +1194,8 @@ class list_of_bug_client(models.Model):
     # The different API commands
     api_open_bugs = models.CharField(max_length=255)  # Find all open bugs
     api_search_bugs = models.CharField(max_length=255)  # Search command
-    api_bug = models.CharField(max_length=255)  # Get that particular bug information - direct link to bug
+    # Get that particular bug information - direct link to bug
+    api_bug = models.CharField(max_length=255)
 
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -1551,7 +1551,8 @@ class list_of_tax(models.Model):
     )
 
     def __str__(self):
-        return str(self.tax_amount)  # No need to encode as it is a decimal point
+        # No need to encode as it is a decimal point
+        return str(self.tax_amount)
 
     class Meta:
         db_table = "list_of_tax"
