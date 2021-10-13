@@ -227,7 +227,7 @@
                 this.linkModel = [];
 
                 //User has chosen an object.
-                if (this.objectModel == null) {
+                if (this.objectModel === null) {
                     //Ok - then removed the objects. We don't need to do anything
                     this.isSearching = false;
                     return;
