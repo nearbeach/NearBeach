@@ -247,11 +247,7 @@ def document_upload(request, destination, location_id):
     # Handle the document upload
     if hasattr(settings, 'AWS_ACCESS_KEY_ID'):
         # Use boto to upload the file
-        s3 = boto3.client(
-            's3', 
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
-        )
+        s3 = boto3.client('s3', aws_access_key_id=settings.AWS_ACCESS_KEY_ID,aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
 
         # Upload a new file
         s3.upload_fileobj(
