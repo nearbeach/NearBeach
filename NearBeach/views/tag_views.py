@@ -22,7 +22,7 @@ import urllib3
 def delete_tag(request, tag_id, *args, **kwargs):
     # Delete Tag
     update_tag = tag.objects.get(tag_id=tag_id)
-    update_tag.is_deleted=True
+    update_tag.is_deleted = True
     update_tag.save()
 
     # Return blank
