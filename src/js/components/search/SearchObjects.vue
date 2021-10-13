@@ -158,7 +158,7 @@
                     //Update the localSearchResults with the data
                     this.localSearchResults = response['data'];
                 }).catch(error => {
-                    console.log("ERROR: ",error);
+                    
                 })
             },
         },

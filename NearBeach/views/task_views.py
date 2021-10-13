@@ -1,26 +1,25 @@
 import urllib
-
 from django.contrib.auth.decorators import login_required
-from NearBeach.models import *
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_http_methods
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
-from django.urls import reverse
-from django.template import loader
 from django.db.models import Sum, Q, Min
-from NearBeach.forms import *
-from NearBeach.views.tools.internal_functions import *
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.template import loader
+from django.urls import reverse
+from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions
-import json, urllib3
+from NearBeach.forms import NewTaskForm, TaskInformationForm
+from NearBeach.models import group, user_group, object_assignment
+from NearBeach.views.tools.internal_functions import task, organisation
+
+import json
+import urllib3
 
 
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=3, object_lookup='task_id')
 def new_task(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
@@ -58,11 +57,9 @@ def new_task(request, *args, **kwargs):
 @check_user_permissions(min_permission_level=3, object_lookup='task_id')
 def new_task_save(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
-
     # ADD IN USER PERMISSIONS
 
     # Get form data
@@ -107,7 +104,6 @@ def new_task_save(request, *args, **kwargs):
 @check_user_permissions(min_permission_level=1, object_lookup='task_id')
 def task_information(request, task_id, *args, **kwargs):
     """
-
     :param request:
     :param task_id:
     :return:
@@ -144,12 +140,10 @@ def task_information(request, task_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=2, object_lookup='task_id')
 def task_information_save(request, task_id, *args, **kwargs):
     """
-
     :param request:
     :param task_id:
     :return:
     """
-
     # Form
     form = TaskInformationForm(request.POST)
     if not form.is_valid():

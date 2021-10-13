@@ -30,7 +30,7 @@
   "dependencies": {
     "@popperjs/core": "^2.9.1",
     "@tinymce/tinymce-vue": "^3.2.8",
-    "axios": "^0.21.1",
+    "axios": "^0.21.3",
     "bootstrap": "^5.0.2",
     "luxon": "^1.28.0",
     "vue-datetime": "^1.0.0-beta.14",
@@ -74,7 +74,7 @@
     "sass": "^1.35.2",
     "sass-loader": "^8.0.2",
     "style-loader": "^1.2.1",
-    "tar": ">=6.1.2",
+    "tar": ">=6.1.9",
     "tinymce": "^5.8.2",
     "vue": "^2.6.14",
     "vue-loader": "^15.9.3",
@@ -84,6 +84,10 @@
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
     "webpack-merge": "^4.2.2",
-    "ws": ">=6.2.2"
+    "ws": ">=6.2.2",
+    "trim-newlines": ">=3.0.1",
+    "set-value": ">=4.0.1",
+    "ansi-regex": ">=5.0.1",
+    "url-parse": ">=1.5.2"
   }
 }

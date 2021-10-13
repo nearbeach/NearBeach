@@ -1,8 +1,8 @@
-from NearBeach.models import *
+from NearBeach.models import kanban_board, kanban_card, opportunity, organisation, quote, project, request_for_change, requirement, requirement_item, task, whiteboard
 
 
 # Internal function
-def get_object_from_destination(input_object,destination,location_id):
+def get_object_from_destination(input_object, destination, location_id):
     """
     To stop the repeat code of finding specific objects using destination and location_id - we will import
     the object filter for it here - before returning it.
@@ -61,7 +61,7 @@ def get_object_from_destination(input_object,destination,location_id):
 
 
 # Internal function
-def set_object_from_destination(input_object,destination,location_id):
+def set_object_from_destination(input_object, destination, location_id):
     """
     This function is used to set data against an object using the destination and location data.
     :param input_object: The input object that we are setting data for

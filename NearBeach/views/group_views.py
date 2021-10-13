@@ -7,7 +7,7 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 
 from NearBeach.forms import SearchForm, NewGroupForm
-from NearBeach.models import *
+from NearBeach.models import group, user_group
 
 import json
 
@@ -16,11 +16,9 @@ import json
 @require_http_methods(['POST'])
 def check_group_name(request):
     """
-
     :param request:
     :return:
     """
-
     # Check user form
     form = SearchForm(request.POST)
     if not form.is_valid():
@@ -36,15 +34,13 @@ def check_group_name(request):
     return HttpResponse(serializers.serialize('json', group_name_results), content_type='application/json')
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def group_information(request, group_id):
     """
-
     :param request:
     :param group_id:
     :return:
     """
-
     # Get the template
     t = loader.get_template('NearBeach/groups/group_information.html')
 
@@ -91,12 +87,10 @@ def group_information(request, group_id):
 @login_required(login_url='login', redirect_field_name='')
 def group_information_save(request, group_id):
     """
-
     :param request:
     :param group_id:
     :return:
     """
-
     # Check user permissions
 
     # Get Form Data
@@ -115,14 +109,12 @@ def group_information_save(request, group_id):
     return HttpResponse("")
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def new_group(request):
     """
-
     :param request:
     :return:
     """
-
     # CHeck user permissions
 
     # Get the template
@@ -149,11 +141,9 @@ def new_group(request):
 @login_required(login_url='login', redirect_field_name='')
 def new_group_save(request):
     """
-
     :param request:
     :return:
     """
-
     # Check user permissions
 
     # Get form data
@@ -170,4 +160,4 @@ def new_group_save(request):
     group_submit.save()
 
     # Send back the URL for the group
-    return HttpResponse(reverse('group_information',args={group_submit.group_id}))
+    return HttpResponse(reverse('group_information', args={group_submit.group_id}))

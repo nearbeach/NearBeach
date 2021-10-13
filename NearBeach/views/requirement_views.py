@@ -1,16 +1,15 @@
 from django.contrib.auth.decorators import login_required
-from NearBeach.models import *
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
-from django.urls import reverse
-from django.template import loader
 from django.db.models import Sum, Q, Min
-from NearBeach.forms import *
-from django.views.decorators.http import require_http_methods
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
+from django.template import loader
+from django.urls import reverse
+from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions
+from NearBeach.forms import AddRequirementLinkForm, NewRequirementForm, organisation, UpdateRequirementForm
+from NearBeach.models import requirement, object_assignment, project, task, opportunity, requirement_item, list_of_requirement_item_status, list_of_requirement_item_type, list_of_requirement_status, list_of_requirement_type, group, user_group
 
 import json
 
@@ -340,7 +339,6 @@ def requirement_information(request, requirement_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=2, object_lookup='requirement_id')
 def requirement_information_save(request, requirement_id, *args, **kwargs):
     """
-
     :param request:
     :param requirement_id:
     :return:

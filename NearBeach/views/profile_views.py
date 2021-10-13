@@ -6,13 +6,13 @@ from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 
-from NearBeach.models import *
-from NearBeach.forms import *
+from NearBeach.forms import User, UpdateUserForm
+# from NearBeach.models import *
 
 import json
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def profile_information(request):
     """
     """
@@ -36,7 +36,7 @@ def profile_information(request):
         'username': request.user.id,
     }
 
-    return HttpResponse(t.render(c,request))
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(['POST'])

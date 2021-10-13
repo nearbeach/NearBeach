@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 from django.db import models, connection
-from .private_media import *
+from .private_media import File_Storage
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import gettext_lazy as _

@@ -3,18 +3,16 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 
 from NearBeach.forms import AdminAddUserForm, PasswordResetForm
-
-from NearBeach.models import *
+from NearBeach.models import user_group
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def add_user(request):
     """
     :param request:
     :return:
     """
-
     # Add in user permissions
 
     # Check the form data
@@ -51,7 +49,7 @@ def add_user(request):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def update_user_password(request):
     """
     """

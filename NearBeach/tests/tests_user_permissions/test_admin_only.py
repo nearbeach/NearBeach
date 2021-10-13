@@ -226,7 +226,6 @@ class AdministrationTest(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-
     def test_bad_user_information_forms(self):
         c = Client()
 
@@ -293,7 +292,6 @@ class AdministrationTest(TestCase):
         #    }
         #)
         #self.assertEqual(response.status_code, 400)
-
 
     def test_admin_new_user(self):
         c = Client()

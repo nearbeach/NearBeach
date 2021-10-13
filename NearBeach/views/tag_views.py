@@ -1,19 +1,19 @@
 import urllib
-
 from django.contrib.auth.decorators import login_required
-from NearBeach.models import *
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_http_methods
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
-from django.urls import reverse
-from django.template import loader
 from django.db.models import Sum, Q, Min
-from NearBeach.forms import *
-from NearBeach.views.tools.internal_functions import *
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.template import loader
+from django.urls import reverse
+from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions
-import json, urllib3
+from NearBeach.forms import tag, NewTagForm, TagForm
+# from NearBeach.views.tools.internal_functions import *
+# from NearBeach.models import *
+
+import json
+import urllib3
 
 
 @require_http_methods(['POST'])
@@ -34,11 +34,9 @@ def delete_tag(request, tag_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=3, object_lookup='tag')
 def new_tag(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
-
     # Get form data
     form = NewTagForm(request.POST)
     if not form.is_valid():
@@ -63,12 +61,10 @@ def new_tag(request, *args, **kwargs):
 @check_user_permissions(min_permission_level=2, object_lookup='tag')
 def save_tag(request, *args, **kwargs):
     """
-
     :param request:
     :param task_id:
     :return:
     """
-
     # Get form data
     form = TagForm(request.POST)
     if not form.is_valid():
@@ -79,9 +75,9 @@ def save_tag(request, *args, **kwargs):
     update_tag = tag.objects.get(tag_id=form.cleaned_data['tag_id'])
 
     # Update the required fields
-    update_tag.tag_name=form.cleaned_data['tag_name']
-    update_tag.tag_colour=form.cleaned_data['tag_colour']
-    update_tag.change_user=request.user
+    update_tag.tag_name = form.cleaned_data['tag_name']
+    update_tag.tag_colour = form.cleaned_data['tag_colour']
+    update_tag.change_user = request.user
 
     # Save data
     update_tag.save()

@@ -7,19 +7,17 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import User
 
-from NearBeach.models import *
-from NearBeach.forms import *
+from NearBeach.forms import NewUserForm, PasswordResetForm, UpdateUserForm
+from NearBeach.models import user_group
 
 import json
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def new_user(request):
     """
-
     :param request:
     :return:
     """
-
     # Add in user permissions
 
     # Get template
@@ -34,14 +32,12 @@ def new_user(request):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def new_user_save(request):
     """
-
     :param request:
     :return:
     """
-
     # CHECK USER PERMISSSIONS
 
     # Get form data
@@ -68,7 +64,7 @@ def new_user_save(request):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def update_password(request):
     """
     """
@@ -89,15 +85,13 @@ def update_password(request):
     return HttpResponse("")
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def user_information(request, username):
     """
-
     :param request:
     :param permission_set_id:
     :return:
     """
-
     # check user permissions
 
     # Import template
@@ -137,15 +131,13 @@ def user_information(request, username):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def user_information_save(request, username):
     """
-
     :param request:
     :param username:
     :return:
     """
-
     # Add in user permissions
 
     # Get form

@@ -1,9 +1,10 @@
 # Import Forms
-from ..forms import *
+from ..forms import permission_set, group, LoginForm, User
+from ..models import user_group
 
 # Import Django Libraries
 from django.contrib import auth
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
 from django.template import loader
@@ -13,11 +14,9 @@ from django.db.models import Count
 from NearBeach.decorators.check_user_permissions import check_permission_denied
 
 # Import Python Libraries
-import json, urllib.parse, random
-
-
-
-
+import json
+import urllib.parse
+import random
 
 def check_first_time_login(request):
     """
@@ -128,21 +127,20 @@ def check_recaptcha(post_data):
         # Check to see if the user is a robot. Success = human
     if result['success']:
         return True
-    else:
-        return False
+    return False
 
 def login(request):
     """
-	For some reason I can not use the varable "LoginForm" here as it is already being used.
-	Instead I will use the work form.
+    For some reason I can not use the varable "LoginForm" here as it is already being used.
+    Instead I will use the work form.
 
-	The form is declared at the start and filled with either the POST data OR nothing. If this
-	process is called in POST, then the form will be checked and if it passes the checks, the
-	user will be logged in.
+    The form is declared at the start and filled with either the POST data OR nothing. If this
+    process is called in POST, then the form will be checked and if it passes the checks, the
+    user will be logged in.
 
-	If the form is not in POST (aka GET) OR fails the checks, then it will create the form with
-	the relevant errors.
-	"""
+    If the form is not in POST (aka GET) OR fails the checks, then it will create the form with
+    the relevant errors.
+    """
     form = LoginForm(request.POST or None)
 
     # POST
@@ -192,7 +190,7 @@ def login(request):
         'LoginForm': form,
         'nearbeach_title': 'NearBeach Login',
         'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
-        'image_number': '%(number)03d' % {'number': 1 + cryptogen.randrange(1,19)},
+        'image_number': '%(number)03d' % {'number': 1 + cryptogen.randrange(1, 19)},
     }
 
     return HttpResponse(t.render(c, request))
@@ -204,7 +202,7 @@ def logout(request):
     return HttpResponseRedirect(reverse('login'))
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def permission_denied(request):
     # Load the template
     t = loader.get_template('NearBeach/authentication/permission_denied.html')
@@ -217,7 +215,7 @@ def permission_denied(request):
     return HttpResponse(t.render(c, request))
 
 
-@check_permission_denied(min_permission_level=1)
+@check_permission_denied()
 def test_permission_denied(request):
     """
     This is a simple test - it will ALWAYS respond with permission denied

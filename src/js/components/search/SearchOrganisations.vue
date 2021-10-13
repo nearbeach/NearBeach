@@ -71,7 +71,7 @@
                 ).then(response => {
                     this.localOrganisationResults = response['data'];
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    
                 });
             },
         },

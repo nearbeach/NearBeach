@@ -13,7 +13,9 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Count, Q
 
 # Import Python Libraries
-import json, urllib.parse, random
+import json
+import urllib.parse
+import random
 
 @login_required(login_url='login', redirect_field_name="")
 def dashboard(request):
@@ -38,7 +40,6 @@ def dashboard(request):
 @require_http_methods(['POST'])
 def get_bug_list(request):
     """
-
     :param request:
     :return:
     """
@@ -57,11 +58,9 @@ def get_bug_list(request):
 @require_http_methods(['POST'])
 def get_my_objects(request):
     """
-    
     :param request:
     :return:
     """
-
     # Get the user data
     project_results = project.objects.filter(
         is_deleted=False,
@@ -139,7 +138,6 @@ def get_my_objects(request):
 @require_http_methods(['POST'])
 def get_unassigned_objects(request):
     """
-    
     :param request:
     :return:
     """
@@ -222,7 +220,6 @@ def get_unassigned_objects(request):
         'task_status',
     )
 
-
     # Only have 25 results and order by alphabetical order
     # requirement_results.order_by('requirement_title')[:25]
     # project_results.order_by('project_name')[:25]
@@ -252,17 +249,13 @@ def get_unassigned_objects(request):
         'task': json.loads(task_results),
     })
 
-
-
 @login_required(login_url='login', redirect_field_name='')
 @require_http_methods(['POST'])
 def rfc_approvals(request):
     """
-
     :param request:
     :return:
     """
-
     # Get a list of RFC's that are awaiting approval
     rfc_results = request_for_change.objects.filter(
         is_deleted=False,
@@ -287,7 +280,7 @@ def rfc_approvals(request):
         ).values('request_for_change_id')
     )
 
-    return HttpResponse(serializers.serialize('json',rfc_results), content_type='application/json')
+    return HttpResponse(serializers.serialize('json', rfc_results), content_type='application/json')
 
 
 @login_required(login_url='login', redirect_field_name='')

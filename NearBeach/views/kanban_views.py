@@ -1,33 +1,30 @@
 from django.contrib.auth.decorators import login_required
-from NearBeach.models import *
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_http_methods
+from django.db.models import Max, Min, Q, Sum
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
-from django.urls import reverse
 from django.template import loader
-from django.db.models import Sum, Q, Min
-from NearBeach.forms import *
-from NearBeach.views.tools.internal_functions import *
-from django.db.models import Max
+from django.urls import reverse
+from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_kanban_permissions
+from NearBeach.forms import AddKanbanLinkForm, KanbanCardArchiveForm, CheckKanbanBoardName, MoveKanbanCardForm, NewKanbanCardForm, NewKanbanForm, KanbanCardForm
+from NearBeach.views.tools.internal_functions import kanban_card, kanban_board, project, requirement, task
+from NearBeach.models import kanban_column, kanban_level, object_assignment, group, user_group
 
-import json, urllib3
+import json
+import urllib3
 
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
 @check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
-def add_kanban_link(request,kanban_board_id,object_lookup, *args, **kwargs):
+def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
     """
-
     :param request:
     :param destination:
     :param location_id:
     :return:
     """
-
     # CHECK USER PERMISSION LATER
 
     # Get form data and check
@@ -63,7 +60,7 @@ def add_kanban_link(request,kanban_board_id,object_lookup, *args, **kwargs):
     # Send back the data we just created
     kanban_card_results = kanban_card.objects.get(kanban_card_id=kanban_card_submit.kanban_card_id)
 
-    return HttpResponse(serializers.serialize('json',[kanban_card_results]),content_type='application/json')
+    return HttpResponse(serializers.serialize('json', [kanban_card_results]), content_type='application/json')
 
 
 @login_required(login_url='login', redirect_field_name="")
@@ -72,7 +69,6 @@ def add_kanban_link(request,kanban_board_id,object_lookup, *args, **kwargs):
 def archive_kanban_cards(request, *args, **kwargs):
     """
     """
-
     # Get the form data
     form = KanbanCardArchiveForm(request.POST)
     if not form.is_valid():
@@ -102,7 +98,6 @@ def check_kanban_board_name(request, *args, **kwargs):
     :param request:
     :return:
     """
-
     # Get the form data
     form = CheckKanbanBoardName(request.POST)
     if not form.is_valid():
@@ -149,7 +144,7 @@ def get_context(kanban_board_id):
 
 
 # Internal function
-def get_max_sort_id(kanban_board_id,form):
+def get_max_sort_id(kanban_board_id, form):
     # Get the newest card number id
     kanban_card_sort_number = kanban_card.objects.filter(
         is_deleted=False,
@@ -210,7 +205,6 @@ def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=1, object_lookup='kanban_board_id')
 def kanban_information(request, kanban_board_id, *args, **kwargs):
     """
-
     :param request:
     :param kanban_board_id:
     :return:
@@ -240,12 +234,10 @@ def kanban_information(request, kanban_board_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=1, object_lookup='kanban_board_id')
 def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
     """
-
     :param request:
     :param kanban_board_id:
     :return:
     """
-
     # CHECK USER PERMISSIONS
 
     # Get a list of all existing cards
@@ -284,12 +276,10 @@ def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
 @check_user_kanban_permissions(min_permission_level=2)
 def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     """
-
     :param request:
     :param kanban_board_id:
     :return:
     """
-
     # CHECK USER PERMISSIONS
 
     # Get the kanban card instance
@@ -383,11 +373,9 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
 def new_kanban(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
-
     # Check user permissions
 
     # Get data
@@ -422,7 +410,6 @@ def new_kanban(request, *args, **kwargs):
 def new_kanban_card(request, kanban_board_id, *args, **kwargs):
     """
     """
-
     # CHECK USER PERMISSIONS
 
     # Get the kanban instance
@@ -434,7 +421,7 @@ def new_kanban_card(request, kanban_board_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the newest card number id
-    kanban_card_sort_number = get_max_sort_id(kanban_board_id,form)
+    kanban_card_sort_number = get_max_sort_id(kanban_board_id, form)
 
     # Save the data
     submit_kanban_card = kanban_card(
@@ -458,7 +445,6 @@ def new_kanban_card(request, kanban_board_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
 def new_kanban_save(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
@@ -528,7 +514,6 @@ def update_card(request, *args, **kwargs):
     """
     The following function will update the card information sent through the form in POST
     """
-    
     # ADD IN CHECKING USER PERMISSIONS
 
     # Get data and validate in the form

@@ -1,19 +1,18 @@
 from django.contrib.auth.decorators import login_required
-from NearBeach.models import *
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_http_methods
+from django.db.models import Max, Min, Q, Sum
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
-from django.urls import reverse
 from django.template import loader
-from django.db.models import Sum, Q, Min
-from NearBeach.forms import *
-from NearBeach.views.tools.internal_functions import *
-from django.db.models import Max
+from django.urls import reverse
+from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_kanban_permissions
-from NearBeach.forms import NewLevelForm, DeleteLevelForm
-import json, urllib3
+from NearBeach.forms import NewLevelForm, kanban_level, DeleteLevelForm, ResortLevelForm
+from NearBeach.views.tools.internal_functions import kanban_card
+# from NearBeach.models import *
+
+import json
+import urllib3
 
 
 @login_required(login_url='login', redirect_field_name="")
@@ -69,7 +68,7 @@ def delete_level(request, kanban_board_id, *args, **kwargs):
     deleted_level.is_deleted=True
     deleted_level.save()
 
-    return HttpResponse("");
+    return HttpResponse("")
 
 
 @login_required(login_url='login', redirect_field_name="")
@@ -97,7 +96,7 @@ def new_level(request, kanban_board_id, *args, **kwargs):
         kanban_level_id = kanban_level_submit.kanban_level_id,
     )
      
-    return HttpResponse(serializers.serialize('json',[kanban_level_submit]), content_type='application/json')
+    return HttpResponse(serializers.serialize('json', [kanban_level_submit]), content_type='application/json')
 
 
 @login_required(login_url='login', redirect_field_name="")

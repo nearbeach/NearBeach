@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Q, Max
 from functools import wraps
 
-from NearBeach.models import *
+from NearBeach.models import user_group, group, object_assignment, kanban_card, requirement_item, requirement
 
 def check_user_customer_permissions(min_permission_level):
     #Function is only used when checking user permissions against customers - as they are different
@@ -120,7 +120,6 @@ def check_user_organisation_permissions(min_permission_level):
     return decorator
 
 
-
 def check_user_permissions(min_permission_level, object_lookup=''):
     def decorator(func):
         @wraps(func)
@@ -155,15 +154,13 @@ def check_user_permissions(min_permission_level, object_lookup=''):
 
                 # Check to make sure the user groups intersect
                 if len(group_results) == 0:
-                    print("USER PERMISSION DENIED - Raise Permission Denied: 403")
-                    print("USER: %s" % request.user.username)
                     # There are no matching groups - i.e. the user does not have any permission
                     raise PermissionDenied
 
             # Get the max permission value from user_group_results
             user_level = user_group_results.aggregate(
-                Max('permission_set__%s' % object_lookup.replace('_id',''))
-            )['permission_set__%s__max' % object_lookup.replace('_id','')]
+                Max('permission_set__%s' % object_lookup.replace('_id', ''))
+            )['permission_set__%s__max' % object_lookup.replace('_id', '')]
 
             if user_level >= min_permission_level:
                 # Everything is fine - continue on
@@ -278,7 +275,7 @@ def check_rfc_permissions(min_permission_level):
     return decorator
 
 
-def check_permission_denied(min_permission_level):
+def check_permission_denied():
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):

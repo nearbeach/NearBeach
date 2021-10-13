@@ -1,20 +1,21 @@
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 from django.template import loader
-from NearBeach.forms import *
-from NearBeach.views.tools.internal_functions import *
+from NearBeach.forms import NewProjectForm, ProjectForm
+from NearBeach.models import group, user_group, object_assignment
+from NearBeach.views.tools.internal_functions import project, organisation
 from NearBeach.decorators.check_user_permissions import check_user_permissions
+
 import json
 
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=3, object_lookup='project_id')
 def new_project(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
@@ -52,11 +53,9 @@ def new_project(request, *args, **kwargs):
 @check_user_permissions(min_permission_level=3, object_lookup='project_id')
 def new_project_save(request, *args, **kwargs):
     """
-
     :param request:
     :return:
     """
-
     # Get the form data
     form = NewProjectForm(request.POST)
     if not form.is_valid():
@@ -99,7 +98,6 @@ def new_project_save(request, *args, **kwargs):
 @check_user_permissions(min_permission_level=1, object_lookup='project_id')
 def project_information(request, project_id, *args, **kwargs):
     """
-
     :param request:
     :param project_id:
     :return:
@@ -136,12 +134,10 @@ def project_information(request, project_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=2, object_lookup='project_id')
 def project_information_save(request, project_id, *args, **kwargs):
     """
-
     :param request:
     :param project_id:
     :return:
     """
-
     # Get the form data
     form = ProjectForm(request.POST)
     if not form.is_valid():

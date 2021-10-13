@@ -137,7 +137,7 @@
 
                     document.getElementById("cardInformationModalCloseButton").click();
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    
                 })
             }
         }

@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from .function_tests import *
+from .function_tests import assertRedirectsToLogin, assertEqual405
 
 """
 The following test will;
@@ -26,7 +26,7 @@ class CheckCustomerInformation(TestCase):
         # Make sure the customer information page redirects
         c = Client()
         response_get = c.get(reverse('customer_information', args=[1]))
-        response_post = c.post(reverse('customer_information_save',args=[1]))
+        response_post = c.post(reverse('customer_information_save', args=[1]))
 
         # Check
         self.assertRedirects(
@@ -100,7 +100,6 @@ class CheckDocumentation(TestCase):
         assertRedirectsToLogin(response_post_array, self)
 
 
-
 class CheckKanban(TestCase):
     def test_kanban_information(self):
         # Make sure the user gets redirected to the login page
@@ -121,7 +120,6 @@ class CheckKanban(TestCase):
         assertRedirectsToLogin(response_array, self)
 
 
-
 class CheckPrivateDocument(TestCase):
     def test_private_document(self):
         # Make sure the user gets redirected to the login page
@@ -136,7 +134,6 @@ class CheckPrivateDocument(TestCase):
             msg_prefix='',
             fetch_redirect_response=True
         )
-
 
 
 class CheckNew(TestCase):
@@ -157,7 +154,6 @@ class CheckNew(TestCase):
 
         # Check the array
         assertEqual405(response_array, self)
-
 
     def new_save(self):
         # Make sure the user gets redirected to the login page
@@ -185,25 +181,25 @@ class CheckObjects(TestCase):
 
         # Setup the request array
         response_array = [
-            c.get(reverse('add_bug', args=['project',1])),
-            c.get(reverse('add_customer', args=['project',1])),
-            c.get(reverse('add_group', args=['project',1])),
-            c.get(reverse('add_link', args=['project',1])),
-            c.get(reverse('add_notes', args=['project',1])),
-            c.get(reverse('add_user', args=['project',1])),
-            c.get(reverse('associated_objects', args=['project',1])),
+            c.get(reverse('add_bug', args=['project', 1])),
+            c.get(reverse('add_customer', args=['project', 1])),
+            c.get(reverse('add_group', args=['project', 1])),
+            c.get(reverse('add_link', args=['project', 1])),
+            c.get(reverse('add_notes', args=['project', 1])),
+            c.get(reverse('add_user', args=['project', 1])),
+            c.get(reverse('associated_objects', args=['project', 1])),
             c.get(reverse('bug_client_list')),
-            c.get(reverse('bug_list', args=['project',1])),
-            c.get(reverse('customer_list', args=['project',1])),
-            c.get(reverse('customer_list_all', args=['project',1])),
-            c.get(reverse('group_list', args=['project',1])),
-            c.get(reverse('group_list_all', args=['project',1])),
-            c.get(reverse('link_list', args=['project',1,'task'])),
-            c.get(reverse('note_list', args=['project',1])),
-            c.get(reverse('object_link_list', args=['project',1])),
-            c.get(reverse('query_bug_client', args=['project',1])),
-            c.get(reverse('user_list', args=['project',1])),
-            c.get(reverse('user_list_all', args=['project',1])),
+            c.get(reverse('bug_list', args=['project', 1])),
+            c.get(reverse('customer_list', args=['project', 1])),
+            c.get(reverse('customer_list_all', args=['project', 1])),
+            c.get(reverse('group_list', args=['project', 1])),
+            c.get(reverse('group_list_all', args=['project', 1])),
+            c.get(reverse('link_list', args=['project', 1, 'task'])),
+            c.get(reverse('note_list', args=['project', 1])),
+            c.get(reverse('object_link_list', args=['project', 1])),
+            c.get(reverse('query_bug_client', args=['project', 1])),
+            c.get(reverse('user_list', args=['project', 1])),
+            c.get(reverse('user_list_all', args=['project', 1])),
             c.get(reverse('lead_user_list')),
         ]
 
@@ -239,5 +235,5 @@ class CheckObjects(TestCase):
             c.post(reverse('lead_user_list')),
         ]
 
-        # Cheeck the array
+        # Check the array
         assertRedirectsToLogin(response_array, self)

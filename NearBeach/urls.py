@@ -272,7 +272,7 @@ urlpatterns = [
     path('user_information/<int:username>/save/', user_views.user_information_save, name='user_information_save'),
     path('user_information/update_user_password/', user_views.update_password, name='update_password'),
 
-    path('test/permission_denied/', authentication_views.test_permission_denied,name='test_permission_denied'),
+    path('test/permission_denied/', authentication_views.test_permission_denied, name='test_permission_denied'),
     # Changing and Resetting Passwords
     # path('change-password/', auth_views.PasswordChangeView.as_view()),
     path(
@@ -312,41 +312,3 @@ urlpatterns = [
 handler403 = error_views.error_403
 handler404 = error_views.error_404
 handler500 = error_views.error_500
-
-"""
-	path('change-password/', auth_views.PasswordChangeView.as_view()),
-	path(
-		'password_reset/',
-		auth_views.PasswordResetView.as_view(
-			template_name='NearBeach/password_reset.html',
-		),
-		name='password_reset',
-	),
-	path(
-		'password_reset/done/',
-		auth_views.PasswordResetDoneView.as_view(
-			template_name='NearBeach/password_reset_done.html',
-		),
-		name='password_reset_done',
-	),
-	path(
-		'reset/<uidb64>/<token>/',
-		auth_views.PasswordResetConfirmView.as_view(
-			template_name='NearBeach/reset.html',
-		),
-		name='password_reset_confirm',
-	),
-	path(
-		'reset/done',
-		auth_views.PasswordResetCompleteView.as_view(
-			template_name='NearBeach/reset_done.html',
-		),
-		name='password_reset_complete'
-	),
-
-
-
-]
-
-
-"""

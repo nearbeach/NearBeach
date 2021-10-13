@@ -15,7 +15,9 @@ from django.http import Http404, HttpResponseNotModified, HttpResponse
 from django.utils.http import http_date
 from django.views.static import was_modified_since
 
-import mimetypes, os, stat
+import mimetypes
+import os
+import stat
 
 """
 FUNCTION DESCRIPTION
@@ -60,7 +62,8 @@ METHOD
 
 
 class Check_Permissions(object):
-    def has_read_permission(self, request, path):
+    @staticmethod
+    def has_read_permission(request, path):
         # Is user logged in
         user = request.user
         if not user.is_authenticated():
@@ -111,14 +114,13 @@ class Check_Permissions(object):
 
         -- Make sure the doc is not deleted
         AND document_permission.is_deleted = 'FALSE'
-       	""", [current_user.id, object])
+        """, [current_user.id, object])
         has_permission = cursor.fetchall()
 
         if not has_permission[0][0] >= 1:
             # User have permission to view the file
             return True
-        else:
-            return False
+        return False
 
 
 """
@@ -127,7 +129,8 @@ Left unchanged
 
 
 class NginxXAccelRedirectServer(object):
-    def serve(self, request, path):
+    @staticmethod
+    def serve(request, path):
         response = HttpResponse()
         fullpath = os.path.join(settings.PRIVATE_MEDIA_ROOT, path)
         response['X-Accel-Redirect'] = fullpath
@@ -141,7 +144,8 @@ Left unchanged
 
 
 class ApacheXSendfileServer(object):
-    def serve(self, request, path):
+    @staticmethod
+    def serve(request, path):
         fullpath = os.path.join(settings.PRIVATE_MEDIA_ROOT, path)
         response = HttpResponse()
         response['X-Sendfile'] = fullpath
@@ -171,7 +175,8 @@ class DefaultServer(object):
     This will only work for files that can be accessed in the local filesystem.
     """
 
-    def serve(self, request, path):
+    @staticmethod
+    def serve(request, path):
         # the following code is largely borrowed from `django.views.static.serve`
         # and django-filetransfers: filetransfers.backends.default
         fullpath = os.path.join(settings.PRIVATE_MEDIA_ROOT, path)
@@ -183,11 +188,14 @@ class DefaultServer(object):
         if not was_modified_since(request.META.get('HTTP_IF_MODIFIED_SINCE'),
                                   statobj[stat.ST_MTIME], statobj[stat.ST_SIZE]):
             return HttpResponseNotModified(content_type=content_type)
-        response = HttpResponse(open(fullpath, 'rb').read(), content_type=content_type)
-        response["Last-Modified"] = http_date(statobj[stat.ST_MTIME])
+
+        with open(fullpath, 'rb') as f:
+            response = HttpResponse(f.read(), content_type=content_type)
+            response["Last-Modified"] = http_date(statobj[stat.ST_MTIME])
+            return response
+
         # filename = os.path.basename(path)
         # response['Content-Disposition'] = smart_str(u'attachment; filename={0}'.format(filename))
-        return response
 
 
 """

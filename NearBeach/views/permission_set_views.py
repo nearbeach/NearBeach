@@ -6,20 +6,18 @@ from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 
-from NearBeach.models import *
-from NearBeach.forms import *
+from NearBeach.forms import NewPermissionSetForm, PermissionSetForm
+from NearBeach.models import permission_set, user_group, PERMISSION_BOOLEAN, PERMISSION_LEVEL
 
 import json
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def new_permission_set(request):
     """
-
     :param request:
     :return:
     """
-
     # Check user permissions
 
     # Get template
@@ -34,14 +32,12 @@ def new_permission_set(request):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def new_permission_set_save(request):
     """
-
     :param request:
     :return:
     """
-
     # Check user permissions
 
     # Get form data
@@ -58,18 +54,16 @@ def new_permission_set_save(request):
     submit_permission_set.save()
 
     # Return back the permission set information URL
-    return HttpResponse(reverse('permission_set_information',args={submit_permission_set.permission_set_id}))
+    return HttpResponse(reverse('permission_set_information', args={submit_permission_set.permission_set_id}))
 
 
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def permission_set_information(request, permission_set_id):
     """
-
     :param request:
     :param permission_set_id:
     :return:
     """
-
     # Add in permission checks
 
     # Import template
@@ -111,15 +105,13 @@ def permission_set_information(request, permission_set_id):
 
 
 @require_http_methods(['POST'])
-@login_required(login_url='login',redirect_field_name="")
+@login_required(login_url='login', redirect_field_name="")
 def permission_set_information_save(request, permission_set_id):
     """
-
     :param request:
     :param permission_set_id:
     :return:
     """
-
     # ADD IN USER PERMISSIONS LATER
 
     # Check to make sure nothing changes for the administration permissions

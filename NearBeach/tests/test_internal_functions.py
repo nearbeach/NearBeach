@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
 from django.test import TestCase, Client, TransactionTestCase
 from django.urls import reverse
-from NearBeach.views.tools.internal_functions import *
-from NearBeach.models import *
+from NearBeach.views.tools.internal_functions import get_object_from_destination
+from NearBeach.models import object_assignment
 
 class TestInternalFunctions(TestCase):
     """
@@ -26,7 +26,8 @@ class TestInternalFunctions(TestCase):
         # Make sure there are no groups for second response
         self.assertEqual(len(response_kanban_board_2), 0)
 
-    def test_organisation(self):
+    @staticmethod
+    def test_organisation():
         # Get basic input object
         input_object = object_assignment.objects.filter(
             is_deleted=False,

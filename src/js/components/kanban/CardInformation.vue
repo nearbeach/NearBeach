@@ -138,7 +138,7 @@
         },
         watch: {
             cardInformation: function() {
-                console.log("Card Information Changed");
+                
                 //Update the local information
                 this.cardId = this.cardInformation['cardId'];
                 this.cardTitleModel = this.cardInformation['cardTitle'];
@@ -173,7 +173,7 @@
                     //Clear the card note model
                     this.cardNoteModel = '';
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    
                 })
             },
             getCardNotes: function() {
@@ -187,7 +187,7 @@
                     //Save the data into noteHistoryResults
                     this.noteHistoryResults = response['data'];
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    
                 })
             },
             updateCard: function() {
@@ -211,7 +211,7 @@
                     //Close the modal
                     document.getElementById("cardInformationModal").click();
                 }).catch(error => {
-                    console.log("Error: ",error);
+                    
                 })
             },
         }
