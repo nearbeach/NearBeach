@@ -441,8 +441,7 @@ def bug_list(request, destination, location_id):
 
     """
     As explained on stack overflow here - https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
-    We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard 
-    json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
+    We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
     """
 
     # Send back json data
@@ -809,8 +808,7 @@ def object_link_list(request, destination, location_id):
 
     """
     As explained on stack overflow here - https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
-    We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard 
-    json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
+    We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
     """
 
     # Send back json data
@@ -866,8 +864,7 @@ def query_bug_client(request, destination, location_id):
     The URL could contain a file. Which we do not want executed by mistake. So we just make sure that the URL starts
     with a http instead of ftp or file.
 
-    We place the  at the end of the json_data because we have checked the field. This should be just a json 
-    response. If it is not at this point then it will produce a server issue.
+    We place the  at the end of the json_data because we have checked the field. This should be just a json response. If it is not at this point then it will produce a server issue.
     """
     if url.lower().startswith('http'):
         # setup the pool manager for urllib3
