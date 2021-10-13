@@ -89,7 +89,7 @@ def new_column(request, kanban_board_id, *args, **kwargs):
     kanban_column_submit.save()
 
     # Get the information and return as json results
-    kanban_column_results = kanban_column.objects.filter(
+    _ = kanban_column.objects.filter(
         kanban_column_id = kanban_column_submit.kanban_column_id,
     )
      

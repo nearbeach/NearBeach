@@ -835,7 +835,7 @@ def query_bug_client(request, destination, location_id):
 
     # Extract the information from the form
     bug_client_instance = form.cleaned_data['bug_client_id']
-    search_terms = form.cleaned_data['search']
+    _ = form.cleaned_data['search']
 
     # Get existing bugs that we want to extract out
     existing_bugs = bug.objects.filter(
