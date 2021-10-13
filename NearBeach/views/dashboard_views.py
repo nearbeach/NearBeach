@@ -17,6 +17,9 @@ import json
 import urllib.parse
 import random
 
+# Import NearBeach Models
+from NearBeach.models import object_assignment, user_group
+
 @login_required(login_url='login', redirect_field_name="")
 def dashboard(request):
     """

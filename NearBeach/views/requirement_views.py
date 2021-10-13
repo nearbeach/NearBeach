@@ -286,6 +286,8 @@ def requirement_information(request, requirement_id, *args, **kwargs):
     :param requirement_id:
     :return:
     """
+    user_level = kwargs['user_level']
+
     # TODO: Check if I need to have a separate read only tempalte now.
     requirement_results = requirement.objects.get(requirement_id=requirement_id)
 
@@ -332,6 +334,7 @@ def requirement_information(request, requirement_id, *args, **kwargs):
         'requirement_item_results': serializers.serialize("json", requirement_item_results),
         'status_list': serializers.serialize("json", status_list),
         'type_list': serializers.serialize("json", type_list),
+        'user_level': user_level,
     }
 
     return HttpResponse(t.render(c, request))

@@ -70,7 +70,7 @@
                 </div>
                 <div class="col-md-8">
                     <div class="col-md-12"
-                         v-if="!isReadOnly"
+                         v-if="!statusModel['status_closed']"
                     >
                         <div class="row">
                             <div class="col-md-6">
@@ -122,7 +122,9 @@
 
             <!-- Submit Button -->
             <hr>
-            <div class="row submit-row">
+            <div class="row submit-row"
+                 v-if="userLevel > 1"
+            >
                 <div class="col-md-12">
                     <a href="javascript:void(0)"
                        class="btn btn-primary save-changes"
@@ -156,6 +158,7 @@
             'requirementResults',
             'statusList',
             'typeList',
+            'userLevel',
         ],
         mixins: [
             errorModalMixin,
@@ -263,7 +266,7 @@
             })[0];
 
             //Check for the read only
-            if (this.statusModel['status_closed']) {
+            if (this.statusModel['status_closed'] || this.userLevel === 1) {
                 this.isReadOnly = true;
             }
         }

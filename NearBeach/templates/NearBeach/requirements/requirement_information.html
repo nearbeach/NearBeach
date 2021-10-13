@@ -9,6 +9,7 @@
                              v-bind:default-stakeholder-image="`{% static 'NearBeach/images/placeholder/product_tour.svg' %}`"
                              v-bind:status-list="{{status_list}}"
                              v-bind:type-list="{{type_list}}"
+                             v-bind:user-level="{{user_level}}"
     ></requirement-information>
     {% if requirement_is_closed or user_level == 1 %}
         </fieldset>
@@ -20,5 +21,6 @@
                     v-bind:group-list="{{group_results}}"
                     v-bind:destination="'requirement'"
                     v-bind:location-id="{{requirement_id}}"
+                    v-bind:user-level="{{user_level}}"
     ></parent-modules>
 {% endblock %}
