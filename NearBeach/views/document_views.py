@@ -381,11 +381,7 @@ def private_download_file(request, document_key):
 
         print(response['Body'])
 
-        return FileResponse(
-            response['Body'], 
-            as_attachment=True,
-            filename=document_results.document_description,
-        )
+        return FileResponse(response['Body'], as_attachment=True,filename=document_results.document_description,)
 
     # Normal setup - find document on server and serve
     # Get the Document path information
