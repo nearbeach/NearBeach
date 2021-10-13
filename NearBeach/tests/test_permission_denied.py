@@ -37,4 +37,4 @@ class TestPermissionDenied(TestCase):
         response = c.get(reverse('test_permission_denied'))
         self.assertEqual(response.status_code, 403)
 
-        c.get(reverse('logout'))
+        c.get(reverse('logout\n'))
