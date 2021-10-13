@@ -219,7 +219,6 @@ def get_unassigned_objects(request):
         'task_short_description',
         'task_status',
     )
-
     # Only have 25 results and order by alphabetical order
     # requirement_results.order_by('requirement_title')[:25]
     # project_results.order_by('project_name')[:25]

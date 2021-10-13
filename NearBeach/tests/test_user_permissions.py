@@ -34,7 +34,6 @@ class AdminUserPermissionTest(TestCase):
 
         # User will be logged in
         login_user(c, self)
-
         # Make sure the admin user can open up the project
         response = c.get(reverse('project_information', args=['1']))
         self.assertEqual(response.status_code, 200)

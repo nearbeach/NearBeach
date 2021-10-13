@@ -99,7 +99,6 @@ class CheckDocumentation(TestCase):
         #Check the array
         assertRedirectsToLogin(response_post_array, self)
 
-
 class CheckKanban(TestCase):
     def test_kanban_information(self):
         # Make sure the user gets redirected to the login page
@@ -119,7 +118,6 @@ class CheckKanban(TestCase):
         # Check the array
         assertRedirectsToLogin(response_array, self)
 
-
 class CheckPrivateDocument(TestCase):
     def test_private_document(self):
         # Make sure the user gets redirected to the login page
@@ -134,7 +132,6 @@ class CheckPrivateDocument(TestCase):
             msg_prefix='',
             fetch_redirect_response=True
         )
-
 
 class CheckNew(TestCase):
     def new(self):
@@ -205,7 +202,6 @@ class CheckObjects(TestCase):
 
         # Cheeck the array
         assertEqual405(response_array, self)
-
 
     def test_objects_post(self):
         # Setup the client

@@ -25,7 +25,6 @@ def initialise_data(apps, schema_editor):
         list_of_amount_type(amount_type_description="Per Hour", list_order=6),
     ])
 
-
     # List of bug clients
     list_of_bug_client = apps.get_model("NearBeach", "list_of_bug_client")
     list_of_bug_client.objects.using(db_alias).bulk_create([
@@ -132,7 +131,6 @@ def initialise_data(apps, schema_editor):
 
     ])
 
-
     #List of requirement  status
     list_of_requirement_status = apps.get_model("NearBeach", "list_of_requirement_status")
     list_of_requirement_status.objects.using(db_alias).bulk_create([
@@ -151,8 +149,6 @@ def initialise_data(apps, schema_editor):
         list_of_requirement_type(requirement_type="System Requirements"),
     ])
 
-
-
     # List of titles
     list_of_titles = apps.get_model("NearBeach", "list_of_title")
     list_of_titles.objects.using(db_alias).bulk_create([
@@ -161,7 +157,6 @@ def initialise_data(apps, schema_editor):
         list_of_titles(title="Mrs"),
         list_of_titles(title="Mx"),
     ])
-
 
     list_of_quote_stages = apps.get_model("NearBeach", "list_of_quote_stage")
     db_alias = schema_editor.connection.alias
