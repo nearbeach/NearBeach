@@ -251,9 +251,7 @@ def search_group(request):
     :param request:
     :return:
     """
-
     # ADD IN PERMISSIONS
-
     # Get template
     t = loader.get_template('NearBeach/search/search_groups.html')
 

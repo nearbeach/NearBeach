@@ -275,9 +275,7 @@ def admin_add_user(request):
     :param request:
     :return:
     """
-
     # Make sure user has permissions
-
     # Get data
     group_results = group.objects.filter(
         is_deleted=False,
@@ -662,7 +660,6 @@ def lead_user_list(request):
     :param request:
     :return:
     """
-
     # Get the data
     search_form = SearchForm(request.POST)
     if not search_form.is_valid():
