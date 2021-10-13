@@ -185,7 +185,7 @@
                 data_to_send.set('document_description',this.documentDescriptionModel);
 
                 //If there is a current/partent folder - then add it to the data to send
-                if (this.currentFolder != '' && this.currentFolder != null) {
+                if (this.currentFolder != '' && this.currentFolder !== null) {
                     data_to_send.set('parent_folder',this.currentFolder);
                 }
 
