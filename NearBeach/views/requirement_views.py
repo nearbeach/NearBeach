@@ -24,7 +24,8 @@ def add_requirement_link(request, requirement_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the requirement instnace
-    requirement_instance = requirement.objects.get(requirement_id=requirement_id)
+    requirement_instance = requirement.objects.get(
+        requirement_id=requirement_id)
 
     # Get the project list from the form
     for row in request.POST.getlist("project"):
@@ -92,10 +93,8 @@ def get_requirement_item_links(request, requirement_id, *args, **kwargs):
         'requirement_item_id__requirement_item_title',
     )
 
-    """
-    As explained on stack overflow here - https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
-    We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard 
-    json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
+    """ 
+    As explained on stack overflow here - https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176 We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
     """
 
     # Send back json data
@@ -175,9 +174,7 @@ def get_requirement_links_list(request, requirement_id, *args, **kwargs):
     )
 
     """
-    As explained on stack overflow here - https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
-    We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard 
-    json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
+    As explained on stack overflow here - https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176 We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
     """
 
     # Send back json data
@@ -287,14 +284,16 @@ def requirement_information(request, requirement_id, *args, **kwargs):
     :return:
     """
     # TODO: Check if I need to have a separate read only tempalte now.
-    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    requirement_results = requirement.objects.get(
+        requirement_id=requirement_id)
 
     # If the requirement has been closed - send user to the read only section
     if requirement_results.requirement_status.requirement_status == "Completed":
         return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_id}))
 
     # Load template
-    t = loader.get_template('NearBeach/requirements/requirement_information.html')
+    t = loader.get_template(
+        'NearBeach/requirements/requirement_information.html')
 
     # Get any extra data required
     organisation_results = organisation.objects.get(

@@ -9,6 +9,7 @@ I have modified some of the code, however most of the recognition should be for 
 I have placed this code into one file for convenience.
 """
 
+from importlib import import_module
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.http import Http404, HttpResponseNotModified, HttpResponse
@@ -51,8 +52,7 @@ METHOD
 ~~~~~~
 1.) Check to make sure a user is logged in
 2.) Download the permission rows for the file
-3.) Determine if the user meets either 1 of the 
-    following permissions;@login_required(login_url='login')
+3.) Determine if the user meets either 1 of the following permissions;@login_required(login_url='login')
     -- No restrictions on file
     -- User is in group allocated permission to file
     -- User has been allocated permission
@@ -82,7 +82,7 @@ class Check_Permissions(object):
         cursor = connection.cursor()
 
         cursor.execute("""
-        SELECT 
+        SELECT
         count(project_group.groups_id_id)
         + CASE WHEN document_permission.organisations_id_id IS NULL THEN 0 ELSE 1 END
         + CASE WHEN document_permission.customer_id_id IS NULL THEN 0 ELSE 1 END
@@ -134,7 +134,8 @@ class NginxXAccelRedirectServer(object):
         response = HttpResponse()
         fullpath = os.path.join(settings.PRIVATE_MEDIA_ROOT, path)
         response['X-Accel-Redirect'] = fullpath
-        response['Content-Type'] = mimetypes.guess_type(path)[0] or 'application/octet-stream'
+        response['Content-Type'] = mimetypes.guess_type(
+            path)[0] or 'application/octet-stream'
         return response
 
 
@@ -154,7 +155,8 @@ class ApacheXSendfileServer(object):
         # This is needed for lighttpd, hopefully this will
         # not be needed after this is fixed:
         # http://redmine.lighttpd.net/issues/2076
-        response['Content-Type'] = mimetypes.guess_type(path)[0] or 'application/octet-stream'
+        response['Content-Type'] = mimetypes.guess_type(
+            path)[0] or 'application/octet-stream'
 
         # filename = os.path.basename(path)
         # response['Content-Disposition'] = smart_str(u'attachment; filename={0}'.format(filename))
@@ -184,7 +186,8 @@ class DefaultServer(object):
             raise Http404('"{0}" does not exist'.format(fullpath))
         # Respect the If-Modified-Since header.
         statobj = os.stat(fullpath)
-        content_type = mimetypes.guess_type(fullpath)[0] or 'application/octet-stream'
+        content_type = mimetypes.guess_type(
+            fullpath)[0] or 'application/octet-stream'
         if not was_modified_since(request.META.get('HTTP_IF_MODIFIED_SINCE'),
                                   statobj[stat.ST_MTIME], statobj[stat.ST_SIZE]):
             return HttpResponseNotModified(content_type=content_type)
@@ -201,7 +204,6 @@ class DefaultServer(object):
 """
 Left unchanged
 """
-from importlib import import_module
 
 
 def get_class(import_path=None):
@@ -219,23 +221,26 @@ def get_class(import_path=None):
     try:
         mod = import_module(module)
     except ImportError as e:
-        raise ImproperlyConfigured('Error importing module %s: "%s"' % (module, e))
+        raise ImproperlyConfigured(
+            'Error importing module %s: "%s"' % (module, e))
     try:
         return getattr(mod, classname)
     except AttributeError:
-        raise ImproperlyConfigured('Module "%s" does not define a "%s" class.' % (module, classname))
+        raise ImproperlyConfigured(
+            'Module "%s" does not define a "%s" class.' % (module, classname))
 
 
 """
 Mostly left unchanged
 """
 if settings.DEBUG == True:
-    server = DefaultServer(**getattr(settings, 'PRIVATE_MEDIA_SERVER_OPTIONS', {}))
+    server = DefaultServer(
+        **getattr(settings, 'PRIVATE_MEDIA_SERVER_OPTIONS', {}))
 else:
-    server = ApacheXSendfileServer(**getattr(settings, 'PRIVATE_MEDIA_SERVER_OPTIONS', {}))
+    server = ApacheXSendfileServer(
+        **getattr(settings, 'PRIVATE_MEDIA_SERVER_OPTIONS', {}))
 if hasattr(settings, 'PRIVATE_MEDIA_PERMISSIONS'):
     permissions = get_class(settings.PRIVATE_MEDIA_PERMISSIONS)(
         **getattr(settings, 'PRIVATE_MEDIA_PERMISSIONS_OPTIONS', {}))
 else:
     permissions = Check_Permissions()
-

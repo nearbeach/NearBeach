@@ -25,7 +25,8 @@ def add_requirement_item_link(request, requirement_item_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the requirement instnace
-    requirement_item_instance = requirement_item.objects.get(requirement_item_id=requirement_item_id)
+    requirement_item_instance = requirement_item.objects.get(
+        requirement_item_id=requirement_item_id)
 
     # Get the project list from the form
     for row in request.POST.getlist("project"):
@@ -93,9 +94,7 @@ def get_requirement_item_links_list(request, requirement_item_id, *args, **kwarg
     )
 
     """
-    As explained on stack overflow here - https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
-    We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard 
-    json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
+    As explained on stack overflow here - https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176 We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
     """
 
     # Send back json data
@@ -143,14 +142,16 @@ def requirement_item_information(request, requirement_item_id, *args, **kwargs):
         :return:
         """
     # Get the requirement information
-    requirement_item_results = requirement_item.objects.get(requirement_item_id=requirement_item_id)
+    requirement_item_results = requirement_item.objects.get(
+        requirement_item_id=requirement_item_id)
 
     # If the requirement has been closed - send user to the read only section
     if requirement_item_results.requirement_item_status.status_is_closed:
         return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_item_id}))
 
     # Load template
-    t = loader.get_template('NearBeach/requirement_items/requirement_item_information.html')
+    t = loader.get_template(
+        'NearBeach/requirement_items/requirement_item_information.html')
 
     # Get any extra data required
     organisation_results = organisation.objects.get(
@@ -200,11 +201,13 @@ def requirement_information_save(request, requirement_item_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Save the data
-    requirement_item_submit = requirement_item.objects.get(requirement_item_id=requirement_item_id)
+    requirement_item_submit = requirement_item.objects.get(
+        requirement_item_id=requirement_item_id)
     requirement_item_submit.change_user = request.user
     requirement_item_submit.requirement_item_title = form.cleaned_data['requirement_item_title']
     requirement_item_submit.requirement_item_scope = form.cleaned_data['requirement_item_scope']
-    requirement_item_submit.requirement_item_status = form.cleaned_data['requirement_item_status']
+    requirement_item_submit.requirement_item_status = form.cleaned_data[
+        'requirement_item_status']
     requirement_item_submit.requirement_item_type = form.cleaned_data['requirement_item_type']
     requirement_item_submit.save()
 
