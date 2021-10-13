@@ -23,7 +23,6 @@ def get_object_search_data(search_form):
     :param form: Contains all the data we require.
     :return:
     """
-
     # Get instance data for all objects
     rfc_results = request_for_change.objects.filter(is_deleted=False).values(
         'rfc_id',

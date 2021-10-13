@@ -129,9 +129,7 @@ def organisation_information_save(request, organisation_id, *args, **kwargs):
     :param organisation_id:
     :return:
     """
-
     # ADD IN PERMISSION CHECKING
-
     # Get the form data
     form = OrganisationForm(request.POST)
     if not form.is_valid():
