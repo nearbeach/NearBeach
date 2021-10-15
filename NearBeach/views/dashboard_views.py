@@ -142,7 +142,7 @@ def get_unassigned_objects(request):
     :return:
     """
     # We only want to look at groups User is connected to
-    object_assignment_results=object_assignment.objects.filter(
+    object_assignment_results = object_assignment.objects.filter(
         is_deleted=False,
         group_id__in=user_group.objects.filter(
             is_deleted=False,

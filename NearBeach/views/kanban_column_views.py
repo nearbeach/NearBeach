@@ -62,7 +62,7 @@ def delete_column(request, kanban_board_id, *args, **kwargs):
     deleted_column = kanban_column.objects.get(
         kanban_column_id=form.cleaned_data['delete_item_id'].kanban_column_id,
     )
-    deleted_column.is_deleted=True
+    deleted_column.is_deleted = True
     deleted_column.save()
 
     return HttpResponse("")
