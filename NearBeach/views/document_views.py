@@ -359,7 +359,7 @@ def private_download_file(request, document_key):
     )
 
     # If the object_assignment_results.count() == 0, then user does not have permissions
-    if object_assignment_results.count() == 0 & request.user.is_superuser == False:
+    if object_assignment_results.count() == 0 & request.user.is_superuser is False:
         return HttpResponseBadRequest("Sorry - there is no document")
 
     # Get Document information
