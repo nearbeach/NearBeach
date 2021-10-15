@@ -50,17 +50,11 @@
                         <div class="col-md-6">
                             <label>
                                 Email:
-                                <span class="error" 
-                                      v-if="!$v.emailModel.required && $v.emailModel.$dirty"
-                                > Please suppy an email.</span>
-                                <span class="error"
-                                      v-if="!$v.emailModel.email"
-                                >Please supply an proper email address.</span>
-                                <br/>
                             </label>
                             <input type="email"
                                    v-model="emailModel"
                                    class="form-control"
+                                   disabled="true"
                             >
                         </div>
                     </div>
@@ -111,11 +105,6 @@
             loadingModalMixin,
         ],
         validations: {
-            emailModel: {
-                required,
-                maxLength: maxLength(255),
-                email,
-            },
             lastNameModel: {
                 required,
                 maxLength: maxLength(255),
@@ -140,7 +129,6 @@
                 //Create data_to_send
                 const data_to_send = new FormData();
                 data_to_send.set('username', this.userResults[0]['id']);
-                data_to_send.set('email', this.emailModel);
                 data_to_send.set('first_name', this.firstNameModel);
                 data_to_send.set('last_name', this.lastNameModel);
 

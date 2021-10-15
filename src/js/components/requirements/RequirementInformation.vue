@@ -48,6 +48,7 @@
                           'alignright alignjustify | bullist numlist outdent indent | ',
                        }"
                        v-bind:content_css="false"
+                       v-bind:disabled="isReadOnly"
                        v-bind:skin="false"
                        v-model="requirementScopeModel"
                     />
@@ -67,34 +68,63 @@
                     <h2>Status</h2>
                     <p class="text-instructions">Set the Requirement Status and Type here.</p>
                 </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Requirement Status
-                            <span class="error" v-if="!$v.statusModel.required && $v.statusModel.$dirty"> Please select a status.</span>
-                        </label>
-                        <v-select :options="statusFixList"
-                                  label="status"
-                                  v-model="statusModel"
-                        ></v-select>
+                <div class="col-md-8">
+                    <div class="col-md-12"
+                         v-if="!statusModel['status_closed']"
+                    >
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Requirement Status
+                                        <span class="error" v-if="!$v.statusModel.required && $v.statusModel.$dirty"> Please select a status.</span>
+                                    </label>
+                                    <v-select :options="statusFixList"
+                                              v-bind:clearable="false"
+                                              label="status"
+                                              v-model="statusModel"
+                                    ></v-select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="alert alert-danger"
+                                     v-if="statusModel['status_closed']"
+                                >
+                                    Please note - saving the requirement with this status will 
+                                    close the requirement.
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Requirement Type
-                            <span class="error" v-if="!$v.typeModel.required && $v.typeModel.$dirty"> Please select a type.</span>
-                        </label>
-                        <v-select :options="typeFixList"
-                                  label="type"
-                                  v-model="typeModel"
-                        ></v-select>
+                    <div class="col-md-12"
+                         v-else
+                    >
+                        <div class="alert alert-info">
+                            Please note - this requirement is closed.
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Requirement Type
+                                    <span class="error" v-if="!$v.typeModel.required && $v.typeModel.$dirty"> Please select a type.</span>
+                                </label>
+                                <v-select :options="typeFixList"
+                                          v-bind:disabled="isReadOnly"
+                                          v-bind:clearable="false"
+                                          label="type"
+                                          v-model="typeModel"
+                                ></v-select>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Submit Button -->
             <hr>
-            <div class="row submit-row">
+            <div class="row submit-row"
+                 v-if="userLevel > 1"
+            >
                 <div class="col-md-12">
                     <a href="javascript:void(0)"
                        class="btn btn-primary save-changes"
@@ -128,6 +158,7 @@
             'requirementResults',
             'statusList',
             'typeList',
+            'userLevel',
         ],
         mixins: [
             errorModalMixin,
@@ -135,6 +166,7 @@
         ],
         data() {
             return {
+                isReadOnly: false,
                 requirementScopeModel: '',
                 requirementTitleModel: '',
                 stakeholderModel: '',
@@ -186,6 +218,11 @@
                     data_to_send
                 ).then(response => {
                     this.closeLoadingModal();
+
+                    //If the status is closed - refresh the page
+                    if (this.statusModel['status_closed']) {
+                        window.location.reload();
+                    }
                 }).catch((error) => {
                     this.showErrorModal(error, this.destination);
                 });
@@ -199,15 +236,13 @@
             this.requirementTitleModel = requirement_results['requirement_title'];
 
             //We need to extract "fields" array from the statusList/typeList json data
-            this.statusList.forEach((row) => {
+            this.statusFixList = this.statusList.map((row) => {
                 //Construct the object
-                var construction_object = {
+                return {
                     'value': row['pk'],
                     'status': row['fields']['requirement_status'],
+                    'status_closed': row['fields']['requirement_status_is_closed'],
                 };
-
-                //Push the object to status fix list
-                this.statusFixList.push(construction_object);
             });
             this.typeList.forEach((row) => {
                 //Construct the object
@@ -229,6 +264,11 @@
             this.typeModel = this.typeFixList.filter((row) => {
                 return row['value'] == requirement_results['requirement_type'];
             })[0];
+
+            //Check for the read only
+            if (this.statusModel['status_closed'] || this.userLevel === 1) {
+                this.isReadOnly = true;
+            }
         }
     }
 </script>

@@ -20,9 +20,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="bug in bugList">
+                    <tr v-for="bug in bugList"
+                        :key="bug.pk"
+                    >
                         <td>
-                            <a v-bind:href="getBugHyperLink(bug)" target="_blank">
+                            <a v-bind:href="getBugHyperLink(bug)" 
+                               rel="noopener noreferrer"
+                               target="_blank"
+                            >
                                 <p>
                                     {{bug['bug_description']}}
                                 </p>

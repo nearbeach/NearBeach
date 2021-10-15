@@ -6,7 +6,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedire
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import check_user_requirement_item_permissions
+from NearBeach.decorators.check_user_permissions import check_user_requirement_item_permissions, check_user_permissions
 from NearBeach.forms import AddRequirementLinkForm, NewRequirementItemForm, UpdateRequirementItemForm
 from NearBeach.views.requirement_views import get_requirement_items
 from NearBeach.models import requirement_item, object_assignment, project, task, opportunity, requirement, organisation, list_of_requirement_item_status, list_of_requirement_item_type, group
@@ -105,7 +105,8 @@ def get_requirement_item_links_list(request, requirement_item_id, *args, **kwarg
 
 
 @login_required(login_url='login', redirect_field_name="")
-@check_user_requirement_item_permissions(min_permission_level=3)
+#@check_user_requirement_item_permissions(min_permission_level=3) # Function won't work without requirmeent_item_id
+@check_user_permissions(min_permission_level=3, object_lookup='requirement_id')
 def new_requirement_item(request, requirement_id, *args, **kwargs):
     # Check to see if POST
     if not request.method == "POST":
@@ -137,11 +138,13 @@ def new_requirement_item(request, requirement_id, *args, **kwargs):
 @check_user_requirement_item_permissions(min_permission_level=1)
 def requirement_item_information(request, requirement_item_id, *args, **kwargs):
     """
-        Loads the requirement item information.
-        :param request:
-        :param requirement_item_id:
-        :return:
-        """
+    Loads the requirement item information.
+    :param request:
+    :param requirement_item_id:
+    :return:
+    """
+    user_level = kwargs['user_level']
+
     # Get the requirement information
     requirement_item_results = requirement_item.objects.get(requirement_item_id=requirement_item_id)
 
