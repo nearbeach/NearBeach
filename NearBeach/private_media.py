@@ -229,7 +229,7 @@ def get_class(import_path=None):
 """
 Mostly left unchanged
 """
-if settings.DEBUG == True:
+if settings.DEBUG is True:
     server = DefaultServer(**getattr(settings, 'PRIVATE_MEDIA_SERVER_OPTIONS', {}))
 else:
     server = ApacheXSendfileServer(**getattr(settings, 'PRIVATE_MEDIA_SERVER_OPTIONS', {}))
