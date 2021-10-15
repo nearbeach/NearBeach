@@ -34,8 +34,8 @@ class TestInternalFunctions(TestCase):
         )
 
         # Get the objects
-        response_kanban_board_1 = get_object_from_destination(input_object, 'organisation', 1)
-        response_kanban_board_2 = get_object_from_destination(input_object, 'organisation', 2)
+        _ = get_object_from_destination(input_object, 'organisation', 1)
+        _ = get_object_from_destination(input_object, 'organisation', 2)
 
         # Make sure the first response is for QA Team
         # self.assertEqual(response_kanban_board_1[0].group_id.group_name, 'QA Team')

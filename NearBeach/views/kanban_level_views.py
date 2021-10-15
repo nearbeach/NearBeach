@@ -65,7 +65,7 @@ def delete_level(request, kanban_board_id, *args, **kwargs):
     deleted_level = kanban_level.objects.get(
         kanban_level_id=form.cleaned_data['delete_item_id'].kanban_level_id,
     )
-    deleted_level.is_deleted=True
+    deleted_level.is_deleted = True
     deleted_level.save()
 
     return HttpResponse("")
@@ -92,7 +92,7 @@ def new_level(request, kanban_board_id, *args, **kwargs):
     kanban_level_submit.save()
 
     # Get the information and return as json results
-    kanban_level_results = kanban_level.objects.filter(
+    _ = kanban_level.objects.filter(
         kanban_level_id = kanban_level_submit.kanban_level_id,
     )
      

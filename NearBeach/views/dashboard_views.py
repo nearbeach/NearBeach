@@ -145,7 +145,7 @@ def get_unassigned_objects(request):
     :return:
     """
     # We only want to look at groups User is connected to
-    object_assignment_results=object_assignment.objects.filter(
+    object_assignment_results = object_assignment.objects.filter(
         is_deleted=False,
         group_id__in=user_group.objects.filter(
             is_deleted=False,
@@ -222,7 +222,6 @@ def get_unassigned_objects(request):
         'task_short_description',
         'task_status',
     )
-
     # Only have 25 results and order by alphabetical order
     # requirement_results.order_by('requirement_title')[:25]
     # project_results.order_by('project_name')[:25]

@@ -121,7 +121,7 @@
                 data_to_send.set('document_url_location',this.documentUrlLocationModel);
 
                 //Only set the parent folder variable if there exists a variable in current folder
-                if (this.currentFolder != null && this.currentFolder != '') {
+                if (this.currentFolder !== null && this.currentFolder != '') {
                     data_to_send.set('parent_folder',this.currentFolder);
                 }
 

@@ -59,7 +59,7 @@ def add_requirement_link(request, requirement_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
 def get_requirement_item_links(request, requirement_id, *args, **kwargs):
     # Get the requirement information
-    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    _ = requirement.objects.get(requirement_id=requirement_id)
 
     # Use object_assignment to get the requirme
     link_results = object_assignment.objects.filter(
@@ -151,7 +151,7 @@ def get_requirement_items(request, requirement_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
 def get_requirement_links_list(request, requirement_id, *args, **kwargs):
     # Get the requirement information
-    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    _ = requirement.objects.get(requirement_id=requirement_id)
 
     # Use object_assignment to get the requirme
     link_results = object_assignment.objects.filter(

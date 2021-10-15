@@ -165,7 +165,6 @@ def add_link(request, destination, location_id):
         )
         set_object_from_destination(submit_object_assignment, destination, location_id)
         submit_object_assignment.save()
-
     return HttpResponse("Success")
 
 @require_http_methods(['POST'])
@@ -276,9 +275,7 @@ def admin_add_user(request):
     :param request:
     :return:
     """
-
     # Make sure user has permissions
-
     # Get data
     group_results = group.objects.filter(
         is_deleted=False,
@@ -663,7 +660,6 @@ def lead_user_list(request):
     :param request:
     :return:
     """
-
     # Get the data
     search_form = SearchForm(request.POST)
     if not search_form.is_valid():
@@ -835,7 +831,7 @@ def query_bug_client(request, destination, location_id):
 
     # Extract the information from the form
     bug_client_instance = form.cleaned_data['bug_client_id']
-    search_terms = form.cleaned_data['search']
+    _ = form.cleaned_data['search']
 
     # Get existing bugs that we want to extract out
     existing_bugs = bug.objects.filter(

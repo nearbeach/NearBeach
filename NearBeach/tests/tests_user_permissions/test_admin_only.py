@@ -233,7 +233,7 @@ class AdministrationTest(TestCase):
         login_user(c, self)
 
         # Make sure the admin user can go to the user/1
-        response = c.get(reverse('user_information', args=[2]))
+        _ = c.get(reverse('user_information', args=[2]))
 
         # The following tests will make sure the user can't submit bad forms
         # Blank First name

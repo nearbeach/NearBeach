@@ -79,25 +79,25 @@
                     link_text = '',
                     link_location = '';
 
-                if (link['project_id'] != null && this.destination !== 'project') {
+                if (link['project_id'] !== null && this.destination !== 'project') {
                     // The link is a project link
                     link_title = link['project_id__project_name'];
                     link_id = link['project_id'];
                     link_text = `Project ${link['project_id']}`;
                     link_location = '/project_information/';
-                } else if (link['requirement_id'] != null) {
+                } else if (link['requirement_id'] !== null) {
                     // The link is a requirement link
                     link_title = link['requirement_id__requirement_title'];
                     link_id = link['requirement_id'];
                     link_text = `Requirement ${link['requirement_id']}`;
                     link_location = '/requirement_information/';
-                } else if (link['requirement_item_id'] != null) {
+                } else if (link['requirement_item_id'] !== null) {
                     // The link is a requirement item link
                     link_title = link['requirement_item_id__requirement_item_title'];
                     link_id = link['requirement_item_id'];
                     link_text = `Requirement Item ${link['requirement_item_id']}`;
                     link_location = '/requirement_item_information/';
-                } else if (link['task_id'] != null && this.destination !== 'task') {
+                } else if (link['task_id'] !== null && this.destination !== 'task') {
                     // The link is a requirement item link
                     link_title = link['task_id__task_short_description'];
                     link_id = link['task_id'];
@@ -111,16 +111,16 @@
                 //Declare some variables
                 var link_status = '';
 
-                if (link['project_id'] != null && this.destination !== 'project') {
+                if (link['project_id'] !== null && this.destination !== 'project') {
                     // The link is a project link
                     link_status = link['project_id__project_status'];
-                } else if (link['requirement_id'] != null) {
+                } else if (link['requirement_id'] !== null) {
                     // The link is a requirement link
                     link_status = link['requirement_id__requirement_status__requirement_status'];
-                } else if (link['requirement_item_id'] != null) {
+                } else if (link['requirement_item_id'] !== null) {
                     // The link is a requirement item link
                     link_status = link['requirement_item_id__requirement_item_status__requirement_item_status'];
-                } else if (link['task_id'] != null && this.destination !== 'task') {
+                } else if (link['task_id'] !== null && this.destination !== 'task') {
                     // The link is a requirement item link
                     link_status = link['task_id__task_status'];
                 }

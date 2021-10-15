@@ -82,7 +82,7 @@
                 const data_to_send = new FormData();
                 data_to_send.set('folder_description',this.folderDescriptionModel);
 
-                if (this.currentFolder != null && this.currentFolder != '') {
+                if (this.currentFolder !== null && this.currentFolder != '') {
                     data_to_send.set('parent_folder',this.currentFolder);
                 }
 

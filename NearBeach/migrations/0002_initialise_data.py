@@ -25,7 +25,6 @@ def initialise_data(apps, schema_editor):
         list_of_amount_type(amount_type_description="Per Hour", list_order=6),
     ])
 
-
     # List of bug clients
     list_of_bug_client = apps.get_model("NearBeach", "list_of_bug_client")
     list_of_bug_client.objects.using(db_alias).bulk_create([
@@ -38,7 +37,7 @@ def initialise_data(apps, schema_editor):
         )
     ])
 
-    list_of_currency=apps.get_model("NearBeach", "list_of_currency")
+    list_of_currency = apps.get_model("NearBeach", "list_of_currency")
     list_of_currency.objects.using(db_alias).bulk_create([
         list_of_currency(currency_description='Australian dollar', currency_short_description='AUD', list_order='1'),
         list_of_currency(currency_description='Brazilian real', currency_short_description='BRL', list_order='2'),
@@ -62,7 +61,7 @@ def initialise_data(apps, schema_editor):
         list_of_currency(currency_description='United States dollar', currency_short_description='USD', list_order='20'),
     ])
 
-    list_of_lead_source=apps.get_model("NearBeach", "list_of_lead_source")
+    list_of_lead_source = apps.get_model("NearBeach", "list_of_lead_source")
     list_of_lead_source.objects.using(db_alias).bulk_create([
         list_of_lead_source(lead_source_description='Campaign', list_order='1'),
         list_of_lead_source(lead_source_description='Cold Call', list_order='2'),
@@ -132,7 +131,6 @@ def initialise_data(apps, schema_editor):
 
     ])
 
-
     #List of requirement  status
     list_of_requirement_status = apps.get_model("NearBeach", "list_of_requirement_status")
     list_of_requirement_status.objects.using(db_alias).bulk_create([
@@ -151,8 +149,6 @@ def initialise_data(apps, schema_editor):
         list_of_requirement_type(requirement_type="System Requirements"),
     ])
 
-
-
     # List of titles
     list_of_titles = apps.get_model("NearBeach", "list_of_title")
     list_of_titles.objects.using(db_alias).bulk_create([
@@ -161,7 +157,6 @@ def initialise_data(apps, schema_editor):
         list_of_titles(title="Mrs"),
         list_of_titles(title="Mx"),
     ])
-
 
     list_of_quote_stages = apps.get_model("NearBeach", "list_of_quote_stage")
     db_alias = schema_editor.connection.alias
