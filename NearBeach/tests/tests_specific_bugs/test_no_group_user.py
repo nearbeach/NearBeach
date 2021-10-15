@@ -23,7 +23,7 @@ def login_user(c: object, self: object) -> object:
         self.credentials,
         follow=True,
     )
-    self.assertTrue(response.context['user'].is_active == False)
+    self.assertTrue(response.context['user'].is_active is False)
 
 
 class NewInstanceLoginTest(TestCase):

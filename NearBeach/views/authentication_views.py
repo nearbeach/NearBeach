@@ -147,7 +147,7 @@ def login(request):
     if request.method == 'POST':
         if form.is_valid():
             # Check if user passes recaptcha
-            if check_recaptcha(request.POST) == True:
+            if check_recaptcha(request.POST) is True:
                 # Looks like we can authenticate the user
                 username = form.cleaned_data.get("username")
                 password = form.cleaned_data.get("password")

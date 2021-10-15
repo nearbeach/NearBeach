@@ -154,7 +154,7 @@ def get_max_sort_id(kanban_board_id, form):
     ).aggregate(Max('kanban_card_sort_number'))
 
     # If the card is new in that particular column & row - then we need to implement a sort number of 0
-    if kanban_card_sort_number['kanban_card_sort_number__max'] == None:
+    if kanban_card_sort_number['kanban_card_sort_number__max'] is None:
         kanban_card_sort_number['kanban_card_sort_number__max'] = 0
 
     return kanban_card_sort_number['kanban_card_sort_number__max']
