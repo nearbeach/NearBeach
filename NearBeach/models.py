@@ -153,7 +153,7 @@ class about_user(models.Model):
 Contact History is a simple form that user will fill out every time they
 have some form of contact with the customer. This table will store both
 contact history for customer and Organisations. The customer field in
-this instance is not required, and implies that the contact history is 
+this instance is not required, and implies that the contact history is
 applied to the organisation. The organisation field will fill out automatically
 when a user applies it to a customer. :)
 """
@@ -2024,7 +2024,7 @@ class permission_set(models.Model):
     ADDITIVE permission
     ~~~~~~~~~~~~~~~~~~~~
     Designed to add on extra abilities to those user who have "READ ONLY" for certain modules.
-    If a user has the ability to "EDIT" for any of these modules, then this section does not 
+    If a user has the ability to "EDIT" for any of these modules, then this section does not
     need to be populated with data.
     """
     document = models.IntegerField(
