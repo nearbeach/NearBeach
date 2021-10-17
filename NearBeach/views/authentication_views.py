@@ -113,7 +113,7 @@ def check_recaptcha(post_data):
     The URL could contain a file. Which we do not want executed by mistake. So we just make sure that the URL starts
     with a http instead of ftp or file.
 
-    We place the  at the end of the json_data because we have checked the field. This should be just a json 
+    We place the  at the end of the json_data because we have checked the field. This should be just a json
     response. If it is not at this point then it will produce a server issue.
     """
     if url.lower().startswith('http'):

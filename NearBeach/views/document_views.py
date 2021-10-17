@@ -248,7 +248,7 @@ def document_upload(request, destination, location_id):
     if hasattr(settings, 'AWS_ACCESS_KEY_ID'):
         # Use boto to upload the file
         s3 = boto3.client(
-            's3', 
+            's3',
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
         )
@@ -373,7 +373,7 @@ def private_download_file(request, document_key):
     if hasattr(settings, 'AWS_ACCESS_KEY_ID'):
         # Use boto3 to download
         s3 = boto3.client(
-            's3', 
+            's3',
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
         )
@@ -386,7 +386,7 @@ def private_download_file(request, document_key):
         print(response['Body'])
 
         return FileResponse(
-            response['Body'], 
+            response['Body'],
             as_attachment=True,
             filename=document_results.document_description,
         )

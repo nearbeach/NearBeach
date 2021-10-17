@@ -220,7 +220,7 @@ def kanban_information(request, kanban_board_id, *args, **kwargs):
 
     # Get context
     c = get_context(kanban_board_id)
-    c['user_level'] = user_level 
+    c['user_level'] = user_level
     c['kanban_card_results'] = serializers.serialize('json', kanban_card_results)
 
     # Get the template
