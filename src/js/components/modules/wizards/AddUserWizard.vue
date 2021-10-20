@@ -130,18 +130,11 @@
                     `/object_data/${this.destination}/${this.locationId}/user_list_all/`,
                 ).then(response => {
                     //Clear the user fix list
-                    this.userFixList = [];
-
-                    //Loop through the response data and add each result to the userFixList
-                    response['data'].forEach(row => {
-                        //Construct object array
-                        var construction_object = {
-                            'value': row['pk'],
-                            'label': `${row['fields']['username']}: ${row['fields']['first_name']} ${row['fields']['last_name']}`
-                        };
-
-                        //Push the changes
-                        this.userFixList.push(construction_object);
+                    this.userFixList = response['data'].map(row => {
+                        return {
+                            'value': row['id'],
+                            'label': `${row['username']}: ${row['first_name']} ${row['last_name']}`
+                        }
                     });
                 });
             }
