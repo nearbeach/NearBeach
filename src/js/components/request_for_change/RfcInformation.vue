@@ -112,10 +112,10 @@
                                     <img src="/static/NearBeach/images/placeholder/people_tax.svg" alt="default profile" class="default-user-profile" />
                                 </td>
                                 <td>
-                                    <strong>{{rfcChangeLead[0]['fields']['username']}}: </strong>{{rfcChangeLead[0]['fields']['first_name']}} {{rfcChangeLead[0]['fields']['last_name']}}
+                                    <strong>{{rfcChangeLead[0]['username']}}: </strong>{{rfcChangeLead[0]['first_name']}} {{rfcChangeLead[0]['last_name']}}
                                     <div class="spacer"></div>
                                     <p class="user-card-email">
-                                        {{rfcChangeLead[0]['fields']['email']}}
+                                        {{rfcChangeLead[0]['email']}}
                                     </p>
                                 </td>
                             </tr>

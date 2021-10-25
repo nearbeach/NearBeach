@@ -16,6 +16,18 @@ import json
 import urllib
 import urllib3
 
+OBJECT_ARRAY = [
+    'customer',
+    'kanban',
+    'requirement',
+    'requirement_item',
+    'request_for_change',
+    'organisation',
+    'project',
+    'task',
+]
+
+
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
 def add_bug(request, destination, location_id):
@@ -287,7 +299,13 @@ def admin_add_user(request):
 
     user_results = User.objects.filter(
         is_active=True,
-    ).values()
+    ).values(
+        'id',
+        'username',
+        'first_name',
+        'last_name',
+        'email',
+    )
 
     # Convert data to json format
     group_results = json.dumps(list(group_results), cls=DjangoJSONEncoder)
@@ -315,6 +333,9 @@ def associated_objects(request, destination, location_id):
     # Organisations have a special method. We will return the results directly from this method to the user.
     if destination == 'organisation':
         return associated_objects_organisations(location_id)
+
+    if not destination in OBJECT_ARRAY:
+        return HttpResponseBadRequest("Object does not exist")
 
     # Get the data
     object_assignment_results = object_assignment.objects.filter(
@@ -613,6 +634,12 @@ def get_user_list_all(destination, location_id):
             group_id__in=group_results.values('group_id'),
         ).values('username_id'),
         is_active=True,
+    ).values(
+        'id',
+        'username',
+        'first_name',
+        'last_name',
+        'email',
     ).exclude(
         id__in=object_results.values('assigned_user_id')
     )
@@ -935,4 +962,7 @@ def user_list_all(request, destination, location_id):
     # Get Data we want
     user_results = get_user_list_all(destination, location_id)
 
-    return HttpResponse(serializers.serialize('json', user_results), content_type='application/json')
+    # Send back json data
+    json_results = json.dumps(list(user_results), cls=DjangoJSONEncoder)
+
+    return HttpResponse(json_results, content_type='application/json')

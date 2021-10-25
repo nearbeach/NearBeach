@@ -440,12 +440,18 @@ def search_user(request):
 
     # Get Data
     user_results = User.objects.filter(
+    ).values(
+        'id',
+        'email',
+        'first_name',
+        'last_name',
+        'username',
     ).order_by('last_name', 'first_name')[:50]
 
     # Context
     c = {
         'nearbeach_title': 'Search User',
-        'user_results': serializers.serialize('json', user_results),
+        'user_results': json.dumps(list(user_results), cls=DjangoJSONEncoder),
     }
 
     return HttpResponse(t.render(c, request))
@@ -475,9 +481,18 @@ def search_user_data(request):
         )
 
     # Only have 50 results and order by alphabetical order
-    user_results.order_by('last_name', 'first_name')[:50]
+    user_results = user_results.values(
+        'id',
+        'email',
+        'first_name',
+        'last_name',
+        'username',
+    ).order_by(
+        'last_name',
+        'first_name'
+    )[:50]
 
     # Send back json data
-    json_results = serializers.serialize('json', user_results)
+    json_results = json.dumps(list(user_results), cls=DjangoJSONEncoder)
 
     return HttpResponse(json_results, content_type='application/json')

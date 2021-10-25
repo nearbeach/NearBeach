@@ -218,7 +218,7 @@
             getUserName: function(user_id) {
                 //Filter for the user by using the user_id
                 var single_user = this.userList.filter(row => {
-                    return row['pk'] == user_id;
+                    return row['id'] == user_id;
                 });
                 
                 //If there are no results - default to ---
@@ -227,7 +227,7 @@
                 }
                 
                 //User was filtered out - return their name
-                return `${single_user[0]['fields']['username']}: ${single_user[0]['fields']['first_name']} ${single_user[0]['fields']['last_name']}`;
+                return `${single_user[0]['username']}: ${single_user[0]['first_name']} ${single_user[0]['last_name']}`;
             },
             updateChangeTaskList: function(data) {
                 //Update change task list

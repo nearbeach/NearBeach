@@ -143,7 +143,6 @@
                     return [];
                 },
             },
-            userResults: Array,
         },
         mixins: [
             searchMixin
