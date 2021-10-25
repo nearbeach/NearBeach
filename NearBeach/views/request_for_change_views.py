@@ -21,7 +21,15 @@ def get_rfc_context(rfc_id):
     """
     # Get data
     rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
-    rfc_change_lead = User.objects.get(id=rfc_results.rfc_lead.id)
+    rfc_change_lead = User.objects.filter(
+        id=rfc_results.rfc_lead.id
+    ).values(
+        'id',
+        'email',
+        'first_name',
+        'last_name',
+        'username',
+    )
     user_list = User.objects.filter(
         is_active=True,
         id__in=user_group.objects.filter(
@@ -31,15 +39,25 @@ def get_rfc_context(rfc_id):
                 request_for_change_id=rfc_id,
             ).values('group_id')
         ).values('username_id')
+    ).values(
+        'id',
+        'email',
+        'first_name',
+        'last_name',
+        'username',
     )
+
+    # Convert from ORM to JSON
+    rfc_change_lead = json.dumps(list(rfc_change_lead), cls=DjangoJSONEncoder)
+    user_list = json.dumps(list(user_list), cls=DjangoJSONEncoder)
 
     # Context
     c = {
         'nearbeach_title': 'RFC %s' % rfc_id,
         'rfc_id': rfc_id,
         'rfc_results': serializers.serialize('json', [rfc_results]),
-        'rfc_change_lead': serializers.serialize('json', [rfc_change_lead]),
-        'user_list': serializers.serialize('json', user_list),
+        'rfc_change_lead': rfc_change_lead,
+        'user_list': user_list,
     }
 
     return c
@@ -52,7 +70,6 @@ def new_request_for_change(request, *args, **kwargs):
     :param request:
     :return:
     """
-    # CHECK USER PERMISSIONS
 
     # Get template
     t = loader.get_template('NearBeach/request_for_change/new_request_for_change.html')
@@ -71,16 +88,14 @@ def new_request_for_change(request, *args, **kwargs):
         'group__group_name',
     ).distinct()
 
-    user_results = User.objects.filter(  # This should only be group leaders
-        is_active=True,
-    )
+    # Convert ORM to JSON
+    user_group_results = json.dumps(list(user_group_results), cls=DjangoJSONEncoder)
 
     # Context
     c = {
         'group_results': serializers.serialize('json', group_results),
         'nearbeach_title': 'New RFC',
-        'user_group_results': json.dumps(list(user_group_results), cls=DjangoJSONEncoder),
-        'user_results': serializers.serialize('json', user_results),
+        'user_group_results': user_group_results,
     }
 
     return HttpResponse(t.render(c, request))

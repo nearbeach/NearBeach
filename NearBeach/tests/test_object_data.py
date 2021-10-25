@@ -40,10 +40,7 @@ class TestObjectData(TestCase):
 
         # Get data of wrong location
         response = c.post(reverse('associated_objects', args=['taks', 1]))
-        self.assertEqual(response.status_code, 200)
-        print("\n\n")
-        print(response.content)
-        print("\n\n")
+        self.assertEqual(response.status_code, 400)
 
     def test_team_leader_searches(self):
         c = Client()

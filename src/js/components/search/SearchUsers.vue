@@ -21,10 +21,10 @@
                    v-bind:href="`/user_information/${user['pk']}/`"
                 >
                     <strong>
-                        {{user['fields']['username']}}: {{user['fields']['first_name']}} {{user['fields']['last_name']}}
+                        {{user['username']}}: {{user['first_name']}} {{user['last_name']}}
                     </strong>
                     <div class="spacer"></div>
-                    <p class="small-text">{{user['fields']['email']}}</p>
+                    <p class="small-text">{{user['email']}}</p>
                 </a>
             </div>
 

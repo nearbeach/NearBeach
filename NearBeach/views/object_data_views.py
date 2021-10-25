@@ -299,7 +299,13 @@ def admin_add_user(request):
 
     user_results = User.objects.filter(
         is_active=True,
-    ).values()
+    ).values(
+        'id',
+        'username',
+        'first_name',
+        'last_name',
+        'email',
+    )
 
     # Convert data to json format
     group_results = json.dumps(list(group_results), cls=DjangoJSONEncoder)
