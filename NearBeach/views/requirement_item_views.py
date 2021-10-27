@@ -1,3 +1,4 @@
+import json
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
@@ -9,9 +10,8 @@ from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_requirement_item_permissions, check_user_permissions
 from NearBeach.forms import AddRequirementLinkForm, NewRequirementItemForm, UpdateRequirementItemForm
 from NearBeach.views.requirement_views import get_requirement_items
-from NearBeach.models import requirement_item, object_assignment, project, task, opportunity, requirement, organisation, list_of_requirement_item_status, list_of_requirement_item_type, group
-
-import json
+from NearBeach.models import requirement_item, object_assignment, project, task, opportunity, requirement, organisation
+list_of_requirement_item_status, list_of_requirement_item_type, group
 
 
 @require_http_methods(['POST'])
@@ -94,7 +94,8 @@ def get_requirement_item_links_list(request, requirement_item_id, *args, **kwarg
     )
 
     """
-    As explained on stack overflow here - https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
+    As explained on stack overflow here - 
+    https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
     We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard
     json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
     """

@@ -1,14 +1,14 @@
-from NearBeach.models import request_for_change, requirement, project, task, kanban_board, list_of_requirement_status, customer, group, organisation, permission_set, User, tag
-from NearBeach.forms import SearchObjectsForm, SearchForm
-from django.core import serializers
-from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.auth.decorators import login_required
-from django.template import loader
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse, HttpResponseNotFound
-from django.views.decorators.http import require_http_methods
-from django.db.models import Q
-
 import json
+from django.db.models import Q
+from django.views.decorators.http import require_http_methods
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse, HttpResponseNotFound
+from django.template import loader
+from django.contrib.auth.decorators import login_required
+from django.core.serializers.json import DjangoJSONEncoder
+from django.core import serializers
+from NearBeach.forms import SearchObjectsForm, SearchForm
+from NearBeach.models import request_for_change, requirement, project, task, kanban_board, list_of_requirement_status
+customer, group, organisation, permission_set, User, tag
 
 
 # Internal Function

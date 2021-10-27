@@ -20,7 +20,8 @@ desired_cap = {
 
 
 driver = webdriver.Remote(
-    command_executor=f"http://{login_data['browserstack_username']}:{login_data['browserstack_apikey']}@hub.browserstack.com:80/wd/hub",
+    command_executor=
+    f"http://{login_data['browserstack_username']}:{login_data['browserstack_apikey']}@hub.browserstack.com:80/wd/hub",
     desired_capabilities=desired_cap)
 
 # Loads the login page for NearBeach

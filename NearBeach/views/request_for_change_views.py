@@ -1,3 +1,6 @@
+import json
+from NearBeach.forms import NewRequestForChangeForm, RfcModuleForm, RfcInformationSaveForm, NewChangeTaskForm, \
+    UpdateRFCStatus
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, Http404
 from django.urls import reverse
 from django.template import loader
@@ -6,13 +9,13 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from NearBeach.decorators.check_user_permissions import check_user_permissions, check_rfc_permissions
-from NearBeach.models import request_for_change, User, user_group, object_assignment, group, change_task, request_for_change_group_approval, RFC_STATUS
-from NearBeach.forms import NewRequestForChangeForm, RfcModuleForm, RfcInformationSaveForm, NewChangeTaskForm, \
-    UpdateRFCStatus
+from NearBeach.models import request_for_change, User, user_group, object_assignment, group, change_task
+request_for_change_group_approval, RFC_STATUS
 
-import json
 
 # Internal function
+
+
 def get_rfc_context(rfc_id):
     """
     Using the rfc ID, it will extract the required context for the rfc_information and rfc_readonly
@@ -72,7 +75,8 @@ def new_request_for_change(request, *args, **kwargs):
     """
 
     # Get template
-    t = loader.get_template('NearBeach/request_for_change/new_request_for_change.html')
+    t = loader.get_template(
+        'NearBeach/request_for_change/new_request_for_change.html')
 
     # Get data
     group_results = group.objects.filter(
@@ -89,7 +93,8 @@ def new_request_for_change(request, *args, **kwargs):
     ).distinct()
 
     # Convert ORM to JSON
-    user_group_results = json.dumps(list(user_group_results), cls=DjangoJSONEncoder)
+    user_group_results = json.dumps(
+        list(user_group_results), cls=DjangoJSONEncoder)
 
     # Context
     c = {
@@ -264,7 +269,8 @@ def rfc_information(request, rfc_id, *args, **kwargs):
         return HttpResponseRedirect(reverse('rfc_readonly', args={rfc_id}))
 
     # Get template
-    t = loader.get_template('NearBeach/request_for_change/rfc_information.html')
+    t = loader.get_template(
+        'NearBeach/request_for_change/rfc_information.html')
 
     # Get context
     c = get_rfc_context(rfc_id)
@@ -298,7 +304,8 @@ def rfc_information_save(request, rfc_id, *args, **kwargs):
     update_rfc.rfc_version_number = form.cleaned_data['rfc_version_number']
     update_rfc.rfc_implementation_start_date = form.cleaned_data['rfc_implementation_start_date']
     update_rfc.rfc_implementation_end_date = form.cleaned_data['rfc_implementation_end_date']
-    update_rfc.rfc_implementation_release_date = form.cleaned_data['rfc_implementation_release_date']
+    update_rfc.rfc_implementation_release_date = form.cleaned_data[
+        'rfc_implementation_release_date']
 
     # Save the data
     update_rfc.save()

@@ -39,7 +39,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='tag_assignment',
             name='object_enum',
-            field=models.CharField(choices=[('requirement', 'Requirement'), ('requirement_item', 'Requirement Item'), ('project', 'Project'), ('task', 'Task'), ('kanban_board', 'Kanban Board'), ('kanban_card', 'Kanban Card'), ('request_for_change', 'Reuqest for Change'), ('customer', 'Customer'), ('organisation', 'Organisation')], default='requirement', max_length=40),
+            field=models.CharField(choices=[('requirement', 'Requirement'), ('requirement_item', 'Requirement Item'),
+                                            ('project', 'Project'),
+                                            ('task', 'Task'), ('kanban_board', 'Kanban Board'),
+                                            ( 'kanban_card', 'Kanban Card'), 
+                                            ('request_for_change', 'Reuqest for Change'),
+                                            ('customer', 'Customer'), ('organisation', 'Organisation')],
+                                            default='requirement', max_length=40),
         ),
         migrations.AddField(
             model_name='tag_assignment',

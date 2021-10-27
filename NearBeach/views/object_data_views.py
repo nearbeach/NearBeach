@@ -1,3 +1,8 @@
+import urllib3
+import urllib
+import json
+from NearBeach.models import bug, object_assignment, group, object_note, tag, tag_assignment, permission_set
+from NearBeach.views.tools.internal_functions import set_object_from_destination, project, task, requirement
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
@@ -7,14 +12,11 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedire
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from NearBeach.forms import AddBugForm, AddCustomerForm, AddGroupForm, AddObjectLinkForm, AddNoteForm, AddTagsForm, AddUserForm, User, DeleteTagForm, SearchForm, QueryBugClientForm
-from NearBeach.views.tools.internal_functions import set_object_from_destination, project, task, requirement, requirement_item, get_object_from_destination, opportunity, organisation
-from NearBeach.models import bug, object_assignment, group, object_note, tag, tag_assignment, permission_set, bug_client, customer, user_group, list_of_requirement_status, list_of_requirement_item_status
+from NearBeach.forms import AddBugForm, AddCustomerForm, AddGroupForm, AddObjectLinkForm, AddNoteForm, AddTagsForm
+AddUserForm, User, DeleteTagForm, SearchForm, QueryBugClientForm
+requirement_item, get_object_from_destination, opportunity, organisation
+bug_client, customer, user_group, list_of_requirement_status, list_of_requirement_item_status
 
-
-import json
-import urllib
-import urllib3
 
 OBJECT_ARRAY = [
     'customer',
@@ -477,7 +479,8 @@ def bug_list(request, destination, location_id):
     )
 
     """
-    As explained on stack overflow here - https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
+    As explained on stack overflow here - 
+    https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
     We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard
     json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
     """
@@ -862,7 +865,8 @@ def object_link_list(request, destination, location_id):
     )
 
     """
-    As explained on stack overflow here - https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
+    As explained on stack overflow here - 
+    https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
     We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard
     json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
     """
