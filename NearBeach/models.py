@@ -2405,7 +2405,8 @@ class quote(models.Model):
 
 class request_for_change(models.Model):
     """
-    Due to the long and complicated name, request for change will be shortened to rfc for ALL fields.
+    Due to the long and complicated name,
+    request for change will be shortened to rfc for ALL fields.
     """
     rfc_id = models.AutoField(primary_key=True)
     rfc_title = models.CharField(
