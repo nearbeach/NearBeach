@@ -115,11 +115,11 @@ def get_object_search_data(search_form):
                 Q(kanban_board_id=split_row)
             )
     # Only have 25 results and order by alphabetical order
-    rfc_results.order_by('rfc_title')[:25]
-    requirement_results.order_by('requirement_title')[:25]
-    project_results.order_by('project_name')[:25]
-    task_results.order_by('task_short_description').values()[:25]
-    kanban_results.order_by('kanban_board_name').values()[:25]
+    rfc_results = rfc_results.order_by('rfc_title')[:25]
+    requirement_results = requirement_results.order_by('requirement_title')[:25]
+    project_results = project_results.order_by('project_name')[:25]
+    task_results = task_results.order_by('task_short_description').values()[:25]
+    kanban_results = kanban_results.order_by('kanban_board_name').values()[:25]
 
     """
     The pain point
@@ -237,7 +237,8 @@ def search_customer_data(request):
         )
 
     # Only have 50 results and order by alphabetical order
-    customer_results.order_by('customer_last_name', 'customer_first_name')[:50]
+    customer_results = customer_results.order_by(
+        'customer_last_name', 'customer_first_name')[:50]
 
     # Send back json data
     json_results = serializers.serialize('json', customer_results)
@@ -292,7 +293,7 @@ def search_group_data(request):
             group_name__icontains=split_row,
         )
 
-    group_results.order_by('group_name')[:25]
+    group_results = group_results.order_by('group_name')[:25]
 
     # Send back json data
     json_results = serializers.serialize('json', group_results)
@@ -400,7 +401,8 @@ def search_permission_set_data(request):
             permission_set_name__icontains=split_row,
         )
 
-    permission_set_results.order_by('permission_set_name')[:25]
+    permission_set_results = permission_set_results.order_by('permission_set_name')[
+        :25]
 
     # Send back json data
     json_results = serializers.serialize('json', permission_set_results)
