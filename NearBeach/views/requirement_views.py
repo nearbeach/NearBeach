@@ -24,7 +24,8 @@ def add_requirement_link(request, requirement_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the requirement instnace
-    requirement_instance = requirement.objects.get(requirement_id=requirement_id)
+    requirement_instance = requirement.objects.get(
+        requirement_id=requirement_id)
 
     # Get the project list from the form
     for row in request.POST.getlist("project"):
@@ -289,7 +290,8 @@ def requirement_information(request, requirement_id, *args, **kwargs):
     user_level = kwargs['user_level']
 
     # TODO: Check if I need to have a separate read only tempalte now.
-    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    requirement_results = requirement.objects.get(
+        requirement_id=requirement_id)
 
     requirement_is_closed = requirement_results.requirement_status.requirement_status_is_closed
 
@@ -298,7 +300,8 @@ def requirement_information(request, requirement_id, *args, **kwargs):
         return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_id}))
 
     # Load template
-    t = loader.get_template('NearBeach/requirements/requirement_information.html')
+    t = loader.get_template(
+        'NearBeach/requirements/requirement_information.html')
 
     # Get any extra data required
     organisation_results = organisation.objects.get(
@@ -307,7 +310,7 @@ def requirement_information(request, requirement_id, *args, **kwargs):
 
     status_list = list_of_requirement_status.objects.filter(
         is_deleted=False,
-        #requirement_status_is_closed=False,
+        # requirement_status_is_closed=False,
     )
 
     type_list = list_of_requirement_type.objects.filter(

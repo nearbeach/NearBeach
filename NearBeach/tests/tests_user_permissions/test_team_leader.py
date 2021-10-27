@@ -25,7 +25,7 @@ class CustomerPermissionTest(TestCase):
             'password': password
         }
 
-    #def test_customer_permissions(self):
+    # def test_customer_permissions(self):
     #    c = Client()
 #
 #        # User will be logged in

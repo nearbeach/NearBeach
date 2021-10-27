@@ -6,12 +6,13 @@ from functools import wraps
 
 from NearBeach.models import user_group, group, object_assignment, kanban_card, requirement_item, requirement
 
+
 def check_user_customer_permissions(min_permission_level):
-    #Function is only used when checking user permissions against customers - as they are different
+    # Function is only used when checking user permissions against customers - as they are different
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
-            #if user is admin -grant them all permissions
+            # if user is admin -grant them all permissions
             if request.user.is_superuser:
                 # Return the function with a user_level of 4
                 return func(request, *args, **kwargs, user_level=4)
@@ -35,6 +36,7 @@ def check_user_customer_permissions(min_permission_level):
             raise PermissionDenied
         return inner
     return decorator
+
 
 def check_user_kanban_permissions(min_permission_level):
     def decorator(func):
@@ -87,12 +89,13 @@ def check_user_kanban_permissions(min_permission_level):
         return inner
     return decorator
 
+
 def check_user_organisation_permissions(min_permission_level):
-    #Function is only used when checking user permissions against customers - as they are different
+    # Function is only used when checking user permissions against customers - as they are different
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
-            #if user is admin -grant them all permissions
+            # if user is admin -grant them all permissions
             if request.user.is_superuser:
                 # Return the function with a user_level of 4
                 return func(request, *args, **kwargs, user_level=4)
@@ -116,6 +119,7 @@ def check_user_organisation_permissions(min_permission_level):
             raise PermissionDenied
         return inner
     return decorator
+
 
 def check_user_permissions(min_permission_level, object_lookup=''):
     def decorator(func):
@@ -168,12 +172,13 @@ def check_user_permissions(min_permission_level, object_lookup=''):
         return inner
     return decorator
 
+
 def check_user_requirement_item_permissions(min_permission_level):
-    #Function is only used when checking user permissions against customers - as they are different
+    # Function is only used when checking user permissions against customers - as they are different
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
-            #if user is admin -grant them all permissions
+            # if user is admin -grant them all permissions
             if request.user.is_superuser:
                 # Return the function with a user_level of 4
                 return func(request, *args, **kwargs, user_level=4)
@@ -187,10 +192,10 @@ def check_user_requirement_item_permissions(min_permission_level):
             requirement_results = requirement.objects.get(
                 requirement_id=requirement_item_results.requirement_id,
             )
-            
+
             # Get the requirement groups
             user_group_results = user_group.objects.filter(
-                Q (
+                Q(
                     is_deleted=False,
                     group_id__in=object_assignment.objects.filter(
                         is_deleted=False,
@@ -198,7 +203,7 @@ def check_user_requirement_item_permissions(min_permission_level):
                         requirement_id=requirement_results.requirement_id,
                     ).values('group_id'),
                 ) &
-                Q (
+                Q(
                     username=request.user,
                 )
             )
@@ -216,6 +221,7 @@ def check_user_requirement_item_permissions(min_permission_level):
             raise PermissionDenied
         return inner
     return decorator
+
 
 def check_rfc_permissions(min_permission_level):
     def decorator(func):
@@ -242,7 +248,7 @@ def check_rfc_permissions(min_permission_level):
                         group_id__in=object_assignment.objects.filter(
                             is_deleted=False,
                             # **{object_lookup: kwargs[object_lookup]},
-                            request_for_change_id = kwargs['rfc_id'],
+                            request_for_change_id=kwargs['rfc_id'],
                         ).values('group_id'),
                     ) &
                     Q(
@@ -268,6 +274,7 @@ def check_rfc_permissions(min_permission_level):
             raise PermissionDenied
         return inner
     return decorator
+
 
 def check_permission_denied():
     def decorator(func):

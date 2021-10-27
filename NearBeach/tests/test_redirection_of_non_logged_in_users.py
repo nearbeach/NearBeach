@@ -96,8 +96,9 @@ class CheckDocumentation(TestCase):
             c.post(reverse('document_get_max_upload')),
         ]
 
-        #Check the array
+        # Check the array
         assertRedirectsToLogin(response_post_array, self)
+
 
 class CheckKanban(TestCase):
     def test_kanban_information(self):
@@ -118,11 +119,13 @@ class CheckKanban(TestCase):
         # Check the array
         assertRedirectsToLogin(response_array, self)
 
+
 class CheckPrivateDocument(TestCase):
     def test_private_document(self):
         # Make sure the user gets redirected to the login page
         c = Client()
-        response_get = c.get(reverse('private_download_file', args=['12345678-1234-5678-1234-567812345678']))
+        response_get = c.get(reverse('private_download_file', args=[
+                             '12345678-1234-5678-1234-567812345678']))
 
         self.assertRedirects(
             response_get,
@@ -132,6 +135,7 @@ class CheckPrivateDocument(TestCase):
             msg_prefix='',
             fetch_redirect_response=True
         )
+
 
 class CheckNew(TestCase):
     def new(self):

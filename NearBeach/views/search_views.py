@@ -56,7 +56,7 @@ def get_object_search_data(search_form):
     # If we are NOT including closed - then we will limit to those with status is_deleted=False
     if not include_closed:
         rfc_results = rfc_results.exclude(
-           rfc_status__in=(5, 6),
+            rfc_status__in=(5, 6),
         )
 
         requirement_results = requirement_results.exclude(
@@ -116,9 +116,11 @@ def get_object_search_data(search_form):
             )
     # Only have 25 results and order by alphabetical order
     rfc_results = rfc_results.order_by('rfc_title')[:25]
-    requirement_results = requirement_results.order_by('requirement_title')[:25]
+    requirement_results = requirement_results.order_by('requirement_title')[
+        :25]
     project_results = project_results.order_by('project_name')[:25]
-    task_results = task_results.order_by('task_short_description').values()[:25]
+    task_results = task_results.order_by(
+        'task_short_description').values()[:25]
     kanban_results = kanban_results.order_by('kanban_board_name').values()[:25]
 
     """
@@ -132,7 +134,8 @@ def get_object_search_data(search_form):
     Note to Django developers - there has to be a better way
     """
     rfc_results = json.dumps(list(rfc_results), cls=DjangoJSONEncoder)
-    requirement_results = json.dumps(list(requirement_results), cls=DjangoJSONEncoder)
+    requirement_results = json.dumps(
+        list(requirement_results), cls=DjangoJSONEncoder)
     project_results = json.dumps(list(project_results), cls=DjangoJSONEncoder)
     task_results = json.dumps(list(task_results), cls=DjangoJSONEncoder)
     kanban_results = json.dumps(list(kanban_results), cls=DjangoJSONEncoder)
@@ -161,7 +164,7 @@ def search(request):
     t = loader.get_template('NearBeach/search/search.html')
 
     # Translate the include closed, from Python Boolean to JavaScript boolean
-    if form.cleaned_data['include_closed']: # If exists and true
+    if form.cleaned_data['include_closed']:  # If exists and true
         include_closed = 'true'
     else:
         include_closed = 'false'
@@ -233,7 +236,8 @@ def search_customer_data(request):
         customer_results = customer_results.filter(
             Q(customer_first_name__icontains=split_row) |
             Q(customer_last_name__icontains=split_row) |
-            Q(organisation__organisation_name__icontains=split_row) # Might not work for freelancers
+            # Might not work for freelancers
+            Q(organisation__organisation_name__icontains=split_row)
         )
 
     # Only have 50 results and order by alphabetical order
@@ -343,7 +347,8 @@ def search_organisation_data(request):
         )
 
     # Only have 25 results and order by alphabetical order
-    organisation_results = organisation_results.order_by('organisation_name')[:25]
+    organisation_results = organisation_results.order_by('organisation_name')[
+        :25]
 
     # Send back json data
     json_results = serializers.serialize('json', organisation_results)
@@ -420,12 +425,12 @@ def search_tag(request):
         is_deleted=False,
     ).order_by('tag_name')
 
-    #Context
+    # Context
     c = {
         'tag_results': serializers.serialize('json', tag_results),
     }
 
-    #Send back json data
+    # Send back json data
     return HttpResponse(t.render(c, request))
 
 

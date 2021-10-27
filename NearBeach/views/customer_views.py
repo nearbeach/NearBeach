@@ -31,7 +31,7 @@ def customer_information(request, customer_id, *args, **kwargs):
     )
 
     title_list = list_of_title.objects.filter(
-        #is_deleted=False, # NEED TO RECONSTRUCT DATABASE TO GET THIS TO WORK!
+        # is_deleted=False, # NEED TO RECONSTRUCT DATABASE TO GET THIS TO WORK!
     )
 
     # Get tempalte
