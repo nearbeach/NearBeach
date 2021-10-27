@@ -21,8 +21,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="link in linkResults">
-                        <td v-html="extractObjectDescription(link)"></td>
+                    <tr v-for="(link, i) in linkResults">
+                        <a :href="linkResultsDescriptions[i].object_link">
+                            <p>
+                                {{linkResultsDescriptions[i].object_description}}
+                            </p>
+                            <div class="spacer"></div>
+                            <p v-if="linkResultsDescriptions[i].requirement_item_description" class="requirement-item-link-type">
+                                {{linkResultsDescriptions[i].requirement_item_description}}
+                            </p>
+                            <p class="requirement-link-type">
+                                {{linkResultsDescriptions[i].object_id}}
+                            </p>
+                        </a>
                         <td>{{extractObjectStatus(link)}}</td>
                     </tr>
                 </tbody>
@@ -62,8 +73,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="link in itemLinkResults">
-                        <td v-html="extractObjectDescription(link)"></td>
+                    <tr v-for="(link, i) in itemLinkResults">
+                        <a :href="itemLinkResultsDescriptions[i].object_link">
+                            <p>
+                                {{itemLinkResultsDescriptions[i].object_description}}
+                            </p>
+                            <div class="spacer"></div>
+                            <p v-if="itemLinkResultsDescriptions[i].requirement_item_description" class="requirement-item-link-type">
+                                {{itemLinkResultsDescriptions[i].requirement_item_description}}
+                            </p>
+                            <p class="requirement-link-type">
+                                {{itemLinkResultsDescriptions[i].object_id}}
+                            </p>
+                        </a>
                         <td>{{extractObjectStatus(link)}}</td>
                     </tr>
                 </tbody>
@@ -107,6 +129,14 @@
                 linkModel: [],
             };
         },
+        computed:{
+            linkResultsDescriptions(){
+                return this.linkResults.map(this.extractObjectDescription);
+            },
+            itemLinkResultsDescriptions(){
+                return this.itemLinkResults.map(this.extractObjectDescription);
+            }
+        },
         methods: {
             extractObjectDescription: function(link) {
                 /*
@@ -138,23 +168,24 @@
 
                 //Check to see if we need to inser the requirement item description.
                 if (link['requirement_id'] !== null) {
-                    requirement_item_description = `<p class="requirement-item-link-type">${link['requirement_item_id__requirement_item_title']}</p>`;
+                    requirement_item_description = link['requirement_item_id__requirement_item_title'];
                     object_id = `${object_id} / Item ${link['requirement_id']}`;
                 }
 
+                return { object_description, object_id, object_link, requirement_item_description }
                 //Return the HTML
-                return `
-                    <a href="${object_link}">
-                        <p>
-                            ${object_description}
-                        </p>
-                        <div class="spacer"></div>
-                        ${requirement_item_description}
-                        <p class="requirement-link-type">
-                            ${object_id}
-                        </p>
-                    </a>
-                `;
+                // return `
+                // <a href="${object_link}">
+                //     <p>
+                //         ${object_description}
+                //     </p>
+                //     <div class="spacer"></div>
+                //     ${requirement_item_description}
+                //     <p class="requirement-link-type">
+                //         ${object_id}
+                //     </p>
+                // </a>
+                // `;
             },
             extractObjectStatus: function(link) {
                 /*

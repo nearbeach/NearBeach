@@ -21,10 +21,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="link in itemLinkResults"
+                    <tr v-for="(link, i) in itemLinkResults"
                         :key="link['pk']"
                     >
-                        <td v-html="extractObjectDescription(link)"></td>
+                        <a :href="objectDescriptions[i].object_link">
+                            <p>{{objectDescriptions[i].object_description}}</p>
+                            <div class="spacer"></div>
+                            <p v-if="objectDescriptions[i].requirement_item_description" class="requirement-item-link-type">
+                                {{objectDescriptions[i].requirement_item_description}}
+                            </p>
+                            <p class="requirement-link-type">
+                                {{objectDescriptions[i].object_id}}
+                            </p>
+                        </a>
                         <td>{{extractObjectStatus(link)}}</td>
                     </tr>
                 </tbody>
@@ -74,6 +83,11 @@
                 itemLinkResults: [],
             }
         },
+        computed:{
+            objectDescriptions(){
+                return this.itemLinkResults.map(this.extractObjectDescription)
+            }
+        },
         methods: {
             extractObjectDescription: function(link) {
                 /*
@@ -105,23 +119,11 @@
 
                 //Check to see if we need to inser the requirement item description.
                 if (link['requirement_id'] !== null) {
-                    requirement_item_description = `<p class="requirement-item-link-type">${link['requirement_item_id__requirement_item_title']}</p>`;
+                    requirement_item_description = link['requirement_item_id__requirement_item_title'];
                     object_id = `${object_id} / Item ${link['requirement_id']}`;
                 }
 
-                //Return the HTML
-                return `
-                    <a href="${object_link}">
-                        <p>
-                            ${object_description}
-                        </p>
-                        <div class="spacer"></div>
-                        ${requirement_item_description}
-                        <p class="requirement-link-type">
-                            ${object_id}
-                        </p>
-                    </a>
-                `;
+                return { object_link, object_description, requirement_item_description, object_id };
             },
             extractObjectStatus: function(link) {
                 /*

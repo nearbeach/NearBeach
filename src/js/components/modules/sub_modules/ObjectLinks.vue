@@ -21,8 +21,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="link in linkResults">
-                        <td v-html="extractObjectDescription(link)"></td>
+                    <tr v-for="(link, i) in linkResults">
+                        <td>
+                            <a :href="objectDescriptions[i].link_location + objectDescriptions[i].link_id">
+                                <p>{{objectDescriptions[i].link_title}}</p>
+                                <div class="spacer"></div>
+                                <p class="small-text">{{objectDescriptions[i].link_text}}</p>
+                            </a>
+                        </td>
                         <td>{{extractObjectStatus(link)}}</td>
                     </tr>
                 </tbody>
@@ -71,6 +77,11 @@
                 linkResults: [],
             }
         },
+        computed: {
+            objectDescriptions() {
+                return this.linkResults.map(this.extractObjectDescription);
+            }
+        },
         methods: {
             extractObjectDescription: function(link) {
                 //Declare some variables
@@ -105,7 +116,7 @@
                     link_location = '/task_information/';
                 }
 
-                return `<a href="${link_location}${link_id}/"><p>${link_title}</p><div class="spacer"></div><p class="small-text">${link_text}</p></a>`;
+                return { link_title, link_id, link_text, link_location };
             },
             extractObjectStatus: function(link) {
                 //Declare some variables
@@ -163,8 +174,7 @@
         mounted() {
             //Get data
             this.updateLinkResults();
-        }
-
+        },
     }
 </script>
 
