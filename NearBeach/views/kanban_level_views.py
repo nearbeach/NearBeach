@@ -93,7 +93,7 @@ def new_level(request, kanban_board_id, *args, **kwargs):
 
     # Get the information and return as json results
     _ = kanban_level.objects.filter(
-        kanban_level_id = kanban_level_submit.kanban_level_id,
+        kanban_level_id=kanban_level_submit.kanban_level_id,
     )
      
     return HttpResponse(serializers.serialize('json', [kanban_level_submit]), content_type='application/json')

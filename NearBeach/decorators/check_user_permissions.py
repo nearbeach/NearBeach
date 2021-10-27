@@ -242,7 +242,7 @@ def check_rfc_permissions(min_permission_level):
                         group_id__in=object_assignment.objects.filter(
                             is_deleted=False,
                             # **{object_lookup: kwargs[object_lookup]},
-                            request_for_change_id = kwargs['rfc_id'],
+                            request_for_change_id kwargs['rfc_id'],
                         ).values('group_id'),
                     ) &
                     Q(

@@ -191,8 +191,8 @@ def add_notes(request, destination, location_id):
 
     # SAVE DATA
     submit_object_note = object_note(
-        change_user = request.user,
-        object_note = form.cleaned_data['note']
+        change_user=request.user,
+        object_note=form.cleaned_data['note']
     )
     submit_object_note = set_object_from_destination(
         submit_object_note,
