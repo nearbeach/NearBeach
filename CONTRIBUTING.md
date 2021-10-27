@@ -20,7 +20,7 @@ If you would like to join our community, please join our [fun and exciting disco
 
 ## Code of Conduct
 
-Please read our [code of conduct here].
+Please read our [code of conduct here](https://github.com/robotichead/NearBeach/blob/main/CODE_OF_CONDUCT.md).
 
 
 ## NearBeach Overview
