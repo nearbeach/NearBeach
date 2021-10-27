@@ -117,4 +117,3 @@ def resort_column(request, kanban_board_id, *args, **kwargs):
         kanban_column_update.save()
 
     return HttpResponse("")
-

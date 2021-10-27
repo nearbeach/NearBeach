@@ -174,4 +174,3 @@ class TaskPermissionTest(TestCase):
         # Make sure the admin user can open up the project
         # response = c.get(reverse('task_information', args=['2']))
         # self.assertEqual(response.status_code, 403)
-
