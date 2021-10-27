@@ -97,9 +97,11 @@ class AdminUserPermissionTest(TestCase):
 
 class TeamLeaderPermissionTest(TestCase):
     """
-    The team leader will only have access to objects that have at least one cross over group with that
+    The team leader will only have access to objects
+    that have at least one cross over group with that
     particular team leader.
     """
+
     fixtures = ['NearBeach_basic_setup.json']
 
     def setUp(self):
@@ -199,9 +201,11 @@ class TeamLeaderPermissionTest(TestCase):
 
 class TeamMemberPermissionTest(TestCase):
     """
-    The team MEMBER will only have access to objects that have at least one cross over group with that
+    The team MEMBER will only have access to objects
+    that have at least one cross over group with that
     particular team leader.
     """
+
     fixtures = ['NearBeach_basic_setup.json']
 
     def setUp(self):
@@ -244,9 +248,11 @@ class TeamMemberPermissionTest(TestCase):
 
 class TeamInternPermissionTest(TestCase):
     """
-    The team leader will only have access to objects that have at least one cross over group with that
+    The team leader will only have access to objects
+    that have at least one cross over group with that
     particular team leader.
     """
+
     fixtures = ['NearBeach_basic_setup.json']
 
     def setUp(self):

@@ -1582,9 +1582,11 @@ class list_of_title(models.Model):
 
 class nearbeach_option(models.Model):
     """
-    This table will store the options for NearBeach. These options will have a new row each time a new option is created
+    This table will store the options for NearBeach.
+    These options will have a new row each time a new option is created
     There does not need to be a is_deleted function
     """
+
     nearbeach_option_id = models.AutoField(primary_key=True)
     story_point_hour_min = models.IntegerField(
         default=4,
@@ -1620,9 +1622,11 @@ class object_assignment(models.Model):
     - Kanban board
     - Request for change
 
-    These permission are only "ACCESS" permissions. The user/group's over riding permissions determine if the user
-    can add, edit etc.
+    These permission are only "ACCESS" permissions.
+    The user/group's over riding permissions determine if
+    the user can add, edit etc.
     """
+
     object_assignment_id = models.AutoField(primary_key=True)
     assigned_user = models.ForeignKey(
         User,
@@ -2405,8 +2409,10 @@ class quote(models.Model):
 
 class request_for_change(models.Model):
     """
-    Due to the long and complicated name, request for change will be shortened to rfc for ALL fields.
+    Due to the long and complicated name,
+    request for change will be shortened to rfc for ALL fields.
     """
+
     rfc_id = models.AutoField(primary_key=True)
     rfc_title = models.CharField(
         max_length=255,
