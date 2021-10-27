@@ -21,7 +21,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(link, i) in linkResults">
+                    <tr v-for="(link, i) in linkResults" :key="i">
                         <td>
                             <a :href="objectDescriptions[i].link_location + objectDescriptions[i].link_id">
                                 <p>{{objectDescriptions[i].link_title}}</p>
