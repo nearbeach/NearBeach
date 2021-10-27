@@ -7,7 +7,7 @@ import time
 
 #Get login details
 with open('config.py') as json_file:
-	login_data = json.load(json_file)
+    login_data = json.load(json_file)
 
 desired_cap = {
  'browser': 'Edge',
