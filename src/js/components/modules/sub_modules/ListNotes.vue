@@ -20,7 +20,7 @@
                         <td>
                             <div>
                                 <!-- This assumes that the object_note is always a single <p> tag -->
-                                <p>{{noteHistory['fields']['object_note'].replace(/<p>/g, '').substr(0, 400)}}</p>
+                                <p>{{noteHistory['fields']['object_note'].replace(/<p>|<\/p>/g, '').substr(0, 400)}}</p>
                             </div>
                             <div class="spacer"></div>
                             <p class="small-text">
