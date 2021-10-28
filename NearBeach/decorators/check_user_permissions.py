@@ -190,7 +190,7 @@ def check_user_requirement_item_permissions(min_permission_level):
             
             # Get the requirement groups
             user_group_results = user_group.objects.filter(
-                Q (
+                Q(
                     is_deleted=False,
                     group_id__in=object_assignment.objects.filter(
                         is_deleted=False,
@@ -198,7 +198,7 @@ def check_user_requirement_item_permissions(min_permission_level):
                         requirement_id=requirement_results.requirement_id,
                     ).values('group_id'),
                 ) &
-                Q (
+                Q(
                     username=request.user,
                 )
             )

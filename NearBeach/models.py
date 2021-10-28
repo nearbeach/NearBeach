@@ -233,7 +233,7 @@ class bug(models.Model):
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey \
+    change_user = models.ForeignKey\
         (User,
          on_delete=models.CASCADE,
          related_name='%(class)s_change_user',
@@ -259,7 +259,7 @@ class bug_client(models.Model):
     bug_client_url = models.URLField()
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey \
+    change_user = models.ForeignKey\
         (User,
          on_delete=models.CASCADE,
          related_name='%(class)s_change_user',
