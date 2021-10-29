@@ -16,7 +16,7 @@ import urllib3
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
-#@check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
+# @check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
 def edit_column(request, kanban_column_id, *args, **kwargs):
     """
     """
@@ -26,15 +26,17 @@ def edit_column(request, kanban_column_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the kanban_column
-    kanban_column_update = kanban_column.objects.get(kanban_column_id=kanban_column_id)
+    kanban_column_update = kanban_column.objects.get(
+        kanban_column_id=kanban_column_id)
 
     # Update data
     kanban_column_update.kanban_column_name = form.cleaned_data['kanban_column_name']
-    kanban_column_update.kanban_column_sort_number = form.cleaned_data['kanban_column_sort_number']
+    kanban_column_update.kanban_column_sort_number = form.cleaned_data[
+        'kanban_column_sort_number']
 
     # Save
     kanban_column_update.save()
-    
+
     # Return data
     return HttpResponse(serializers.serialize('json', [kanban_column_update]), content_type='application/json')
 
@@ -92,7 +94,7 @@ def new_column(request, kanban_board_id, *args, **kwargs):
     _ = kanban_column.objects.filter(
         kanban_column_id=kanban_column_submit.kanban_column_id,
     )
-     
+
     return HttpResponse(serializers.serialize('json', [kanban_column_submit]), content_type='application/json')
 
 
@@ -106,7 +108,7 @@ def resort_column(request, kanban_board_id, *args, **kwargs):
     form = ResortColumnForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-    
+
     # Extract the data
     items = request.POST.getlist('item')
 

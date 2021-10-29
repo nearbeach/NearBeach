@@ -7,6 +7,7 @@ import unittest
 import json
 from NearBeach.models import user_group, group, object_assignment
 
+
 def login_user(c: object, self: object) -> object:
     response = c.post(
         reverse('login'),
@@ -241,10 +242,11 @@ class TeamMemberPermissionTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the task
-        #response = c.get(reverse('task_information', args=['2']))
-        #self.assertEqual(response.status_code, 403)
+        # response = c.get(reverse('task_information', args=['2']))
+        # self.assertEqual(response.status_code, 403)
 
         c.get(reverse('logout'))
+
 
 class TeamInternPermissionTest(TestCase):
     """
@@ -272,8 +274,8 @@ class TeamInternPermissionTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the project
-        #response = c.get(reverse('project_information', args=['2']))
-        #self.assertEqual(response.status_code, 403)
+        # response = c.get(reverse('project_information', args=['2']))
+        # self.assertEqual(response.status_code, 403)
 
         c.get(reverse('logout'))
 
@@ -288,7 +290,7 @@ class TeamInternPermissionTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the task
-        #response = c.get(reverse('task_information', args=['2']))
-        #self.assertEqual(response.status_code, 403)
+        # response = c.get(reverse('task_information', args=['2']))
+        # self.assertEqual(response.status_code, 403)
 
         c.get(reverse('logout'))
