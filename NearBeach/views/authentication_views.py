@@ -217,8 +217,6 @@ def permission_denied(request):
 
 @check_permission_denied()
 def test_permission_denied(request):
-    """
-    This is a simple test - it will ALWAYS respond with permission denied
-    """
+    """A simple test - ALWAYS respond with permission denied"""
     print("Got here.")
     return HttpResponse("Hello World")
