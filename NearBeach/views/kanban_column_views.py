@@ -90,7 +90,7 @@ def new_column(request, kanban_board_id, *args, **kwargs):
 
     # Get the information and return as json results
     _ = kanban_column.objects.filter(
-        kanban_column_id = kanban_column_submit.kanban_column_id,
+        kanban_column_id=kanban_column_submit.kanban_column_id,
     )
      
     return HttpResponse(serializers.serialize('json', [kanban_column_submit]), content_type='application/json')
