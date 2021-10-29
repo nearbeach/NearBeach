@@ -4,6 +4,7 @@ from django.urls import reverse
 from NearBeach.views.tools.internal_functions import get_object_from_destination
 from NearBeach.models import object_assignment
 
+
 class TestInternalFunctions(TestCase):
     """
     Just testing the internal functions

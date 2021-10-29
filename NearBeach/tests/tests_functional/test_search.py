@@ -13,6 +13,7 @@ long_string = """
     does like to every now and then meow into the microphone.
 """
 
+
 def login_user(c: object, self: object) -> object:
     response = c.post(
         reverse('login'),

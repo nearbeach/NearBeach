@@ -5,6 +5,7 @@ from django.urls import reverse
 import unittest
 import json
 
+
 def login_user(c: object, self: object) -> object:
     response = c.post(
         reverse('login'),

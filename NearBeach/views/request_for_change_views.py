@@ -12,6 +12,7 @@ from NearBeach.forms import NewRequestForChangeForm, RfcModuleForm, RfcInformati
 
 import json
 
+
 # Internal function
 def get_rfc_context(rfc_id):
     """

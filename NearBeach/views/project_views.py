@@ -12,6 +12,7 @@ from NearBeach.decorators.check_user_permissions import check_user_permissions
 
 import json
 
+
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=3, object_lookup='project_id')
 def new_project(request, *args, **kwargs):
