@@ -6,6 +6,7 @@ from NearBeach.models import object_assignment
 
 class TestInternalFunctions(TestCase):
     """Just testing the internal functions"""
+
     fixtures = ['NearBeach_basic_setup.json']
 
     def test_kanban_board(self):
