@@ -292,4 +292,3 @@ class TeamInternPermissionTest(TestCase):
         #self.assertEqual(response.status_code, 403)
 
         c.get(reverse('logout'))
-

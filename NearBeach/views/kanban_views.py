@@ -512,7 +512,8 @@ def new_kanban_save(request, *args, **kwargs):
 @check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
 def update_card(request, *args, **kwargs):
     """
-    The following function will update the card information sent through the form in POST
+    The following function will update the card information
+    from which is sent through the form in POST
     """
     # ADD IN CHECKING USER PERMISSIONS
 
