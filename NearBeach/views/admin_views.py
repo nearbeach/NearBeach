@@ -64,5 +64,3 @@ def update_user_password(request):
     user_update.save()
 
     return HttpResponse("")
-
-

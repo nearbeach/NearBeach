@@ -21,6 +21,3 @@ class QuickstartUser(HttpUser):
     def requirement_information(self):
         for _ in range(10):
             self.client.get(f"/requirement_information/1")
-
-
-

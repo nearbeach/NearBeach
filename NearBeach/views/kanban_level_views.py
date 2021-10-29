@@ -120,5 +120,3 @@ def resort_level(request, kanban_board_id, *args, **kwargs):
         kanban_level_update.save()
 
     return HttpResponse("")
-
-
