@@ -10,9 +10,9 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.forms import AddRequirementLinkForm, NewRequirementForm, organisation, UpdateRequirementForm
-from NearBeach.models import requirement, object_assignment, project, task, opportunity, requirement_item
-list_of_requirement_item_status, list_of_requirement_item_type, list_of_requirement_status
-list_of_requirement_type, group, user_group
+from NearBeach.models import requirement, object_assignment, project, task, opportunity, requirement_item,\
+    list_of_requirement_item_status, list_of_requirement_item_type, list_of_requirement_status,\
+    list_of_requirement_type, group, user_group
 
 
 @require_http_methods(['POST'])

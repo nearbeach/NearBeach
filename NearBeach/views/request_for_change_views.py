@@ -1,5 +1,5 @@
 import json
-from NearBeach.forms import NewRequestForChangeForm, RfcModuleForm, RfcInformationSaveForm, NewChangeTaskForm, \
+from NearBeach.forms import NewRequestForChangeForm, RfcModuleForm, RfcInformationSaveForm, NewChangeTaskForm,\
     UpdateRFCStatus
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, Http404
 from django.urls import reverse
@@ -9,8 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from NearBeach.decorators.check_user_permissions import check_user_permissions, check_rfc_permissions
-from NearBeach.models import request_for_change, User, user_group, object_assignment, group, change_task
-request_for_change_group_approval, RFC_STATUS
+from NearBeach.models import request_for_change, User, user_group, object_assignment, group, change_task,\
+    request_for_change_group_approval, RFC_STATUS
 
 
 # Internal function
