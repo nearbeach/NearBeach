@@ -5,7 +5,9 @@ from .models import about_user, bug, bug_client, campus, change_task, change_tas
     customer, customer_campus, document, document_permission, email_content, email_contact, folder,\
     group_permission, group, kanban_board, kanban_card, kanban_column, kanban_level, kudos, list_of_amount_type,\
     list_of_bug_client, list_of_currency, list_of_contact_type, list_of_country_region, list_of_country,\
-    list_of_lead_source, list_of_opportunity_stage, list_of_quote_stage, list_of_requirement_item_status, list_of_requirement_item_type, list_of_requirement_status, list_of_requirement_type, list_of_tax,\
+    list_of_lead_source, list_of_opportunity_stage,\
+    list_of_quote_stage, list_of_requirement_item_status,\
+    list_of_requirement_item_type, list_of_requirement_status, list_of_requirement_type, list_of_tax,\
     list_of_title, nearbeach_option, object_assignment,\
     object_note, opportunity, organisation, permission_set, project_customer, project, quote, request_for_change,\
     request_for_change_group_approval, request_for_change_stakeholder, requirement, requirement_customer,\

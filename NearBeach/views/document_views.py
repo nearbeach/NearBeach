@@ -277,7 +277,7 @@ def document_upload(request, destination, location_id):
 @login_required(login_url='login', redirect_field_name="")
 def get_max_upload(request):
     """
-    This function will query the settings file for the variable "max_upload_size". 
+    This function will query the settings file for the variable "max_upload_size".
     If it does not exist it will send back
     a simple 0. If it does exist it will send back itself
     :param request:

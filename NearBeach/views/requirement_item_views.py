@@ -94,7 +94,7 @@ def get_requirement_item_links_list(request, requirement_item_id, *args, **kwarg
     )
 
     """
-    As explained on stack overflow here - 
+    As explained on stack overflow here -
     https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
     We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard
     json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
