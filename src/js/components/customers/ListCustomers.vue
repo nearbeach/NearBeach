@@ -35,7 +35,12 @@
     export default {
         name: "ListCustomers",
         props: {
-            customerResults: Array,
+            customerResults: {
+                type: Array,
+                default: function() {
+                    return [];
+                },
+            },
             staticUrl: {
                 type: String,
                 default: "/",

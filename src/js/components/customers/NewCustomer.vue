@@ -64,12 +64,20 @@
     export default {
         name: "NewCustomer",
         props: {
-            organisationName: String,
+            organisationName: {
+                type: String,
+                default: "",
+            },
             rootUrl: {
                 type: String,
                 default: "/",
             },
-            titleList: Array,
+            titleList: {
+                type: Array,
+                default: function () {
+                    return [];
+                }
+            },
         },
         mixins: [
             searchMixin,
