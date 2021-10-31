@@ -54,8 +54,18 @@
     export default {
         name: "GroupInformation",
         props: {
-            groupResults: Array,
-            parentGroupResults: Array,
+            groupResults: {
+                type: Array,
+                default: function() {
+                    return [];
+                },
+            },
+            parentGroupResults: {
+                type: Array,
+                default: function() {
+                    return [];
+                },
+            },
         },
         data() {
             return {

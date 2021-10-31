@@ -68,7 +68,12 @@
     export default {
         name: "NewGroup",
         props: {
-            groupResults: Array,
+            groupResults: {
+                type: Array,
+                default: function() {
+                    return [];
+                },
+            },
         },
         data() {
             return {
