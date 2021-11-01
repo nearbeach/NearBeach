@@ -14,8 +14,13 @@
   export default {
       name: "DashboardKanbanList",
       props: {
-          kanbanResults: Array,
-      }
+          kanbanResults: {
+            type: Array,
+            default: function() {
+                return [];
+            },
+          },
+      },
   }
 </script>
 

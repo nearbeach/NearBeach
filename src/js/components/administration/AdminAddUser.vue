@@ -86,8 +86,14 @@
     export default {
         name: "AdminAddUser",
         props: {
-            destination: String,
-            locationId: Number,
+            destination: {
+                type: String,
+                default: "",
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
         },
         data() {
             return {

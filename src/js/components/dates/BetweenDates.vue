@@ -47,7 +47,10 @@
     export default {
         name: "BetweenDates",
         props: {
-            destination: String,
+            destination: {
+                type: String,
+                default: "",
+            },
             endDateModel: {
                 type: [Object,String],
                 default() {

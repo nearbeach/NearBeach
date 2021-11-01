@@ -58,9 +58,20 @@
     export default {
         name: "UserList",
         props: {
-            destination: String,
-            locationId: Number,
-            userListResults: Array,
+            destination: {
+                type: String,
+                default: "",
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+            userListResults: {
+                type: Array, 
+                default: function() { 
+                    return []; 
+                }, 
+            },
         },
         data() {
             return {

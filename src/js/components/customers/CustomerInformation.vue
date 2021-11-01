@@ -108,10 +108,28 @@
     export default {
         name: "CustomerInformation",
         props: {
-            customerResults: Array,
-            defaultStakeholderImage: String,
-            organisationResults: Array,
-            titleList: Array,
+            customerResults: {
+                type: Array,
+                default: function() {
+                    return [];
+                },
+            },
+            defaultStakeholderImage: {
+                type: String,
+                default: "",
+            },
+            organisationResults: {
+                type: Array,
+                default: function() {
+                    return [];
+                },
+            },
+            titleList: {
+                type: Array,
+                default: function() {
+                    return [];
+                },
+            },
         },
         data() {
             return {
