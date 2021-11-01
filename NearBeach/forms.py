@@ -3,7 +3,9 @@ from django import forms
 from django.forms import ModelForm
 
 # Import from Models
-from .models import folder, group, tag, User, change_task, customer, kanban_column, kanban_level, tag_assignment, kanban_card, kanban_board, permission_set, project, request_for_change, requirement_item, requirement, task, organisation, bug_client, document
+from .models import folder, group, tag, User, change_task, customer, kanban_column, kanban_level, tag_assignment,\
+    kanban_card, kanban_board, permission_set, project, request_for_change, requirement_item, requirement, task,\
+    organisation, bug_client, document
 
 
 class AddBugForm(forms.Form):
@@ -440,6 +442,7 @@ class NewPermissionSetForm(forms.ModelForm):
             'permission_set_name',
         ]
 
+
 class NewProjectForm(forms.ModelForm):
     project_start_date = forms.DateTimeField(
         input_formats=['c'],
@@ -791,6 +794,7 @@ class UpdateUserForm(forms.ModelForm):
         required=False,
     )
     # Basic Meta Data
+
     class Meta:
         model = User
         fields = [

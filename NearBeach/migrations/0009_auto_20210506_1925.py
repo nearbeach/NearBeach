@@ -13,11 +13,15 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='project_status',
-            field=models.CharField(choices=[('New', 'New'), ('Backlog', 'Backlog'), ('Blocked', 'Blocked'), ('In Progress', 'In Progress'), ('Test/Review', 'Test/Review'), ('Closed', 'Closed')], default='New', max_length=15),
+            field=models.CharField(choices=[('New', 'New'), ('Backlog', 'Backlog'), ('Blocked', 'Blocked'),
+                                            ('In Progress', 'In Progress'), ('Test/Review', 'Test/Review'),
+                                            ('Closed', 'Closed')], default='New', max_length=15),
         ),
         migrations.AlterField(
             model_name='task',
             name='task_status',
-            field=models.CharField(choices=[('New', 'New'), ('Backlog', 'Backlog'), ('Blocked', 'Blocked'), ('In Progress', 'In Progress'), ('Test/Review', 'Test/Review'), ('Closed', 'Closed')], default='New', max_length=15),
+            field=models.CharField(choices=[('New', 'New'), ('Backlog', 'Backlog'), ('Blocked', 'Blocked'),
+                                            ('In Progress', 'In Progress'), ('Test/Review', 'Test/Review'),
+                                            ('Closed', 'Closed')], default='New', max_length=15),
         ),
     ]

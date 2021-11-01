@@ -12,7 +12,7 @@ class QuickstartUser(HttpUser):
     wait_time = between(1, 2)
 
     def on_start(self):
-        """ on_start is called when a Locust start before any task is scheduled """
+        """on_start is called when a Locust start before any task is scheduled"""
         self.client.post(
             "/login", json={"id_username": username, "id_password": password})
 

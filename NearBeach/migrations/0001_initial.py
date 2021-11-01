@@ -28,9 +28,12 @@ class Migration(migrations.Migration):
                 ('campus_address2', models.CharField(max_length=255, null=True)),
                 ('campus_address3', models.CharField(max_length=255, null=True)),
                 ('campus_suburb', models.CharField(max_length=50)),
-                ('campus_postcode', models.CharField(blank=True, max_length=10, null=True)),
-                ('campus_longitude', models.DecimalField(blank=True, decimal_places=13, max_digits=16, null=True)),
-                ('campus_latitude', models.DecimalField(blank=True, decimal_places=13, max_digits=16, null=True)),
+                ('campus_postcode', models.CharField(
+                    blank=True, max_length=10, null=True)),
+                ('campus_longitude', models.DecimalField(
+                    blank=True, decimal_places=13, max_digits=16, null=True)),
+                ('campus_latitude', models.DecimalField(
+                    blank=True, decimal_places=13, max_digits=16, null=True)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
@@ -42,15 +45,18 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='customer',
             fields=[
-                ('customer_id', models.AutoField(primary_key=True, serialize=False)),
+                ('customer_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('customer_first_name', models.CharField(max_length=50)),
                 ('customer_last_name', models.CharField(max_length=50)),
                 ('customer_email', models.CharField(max_length=200)),
-                ('customer_profile_picture', models.ImageField(blank=True, null=True, upload_to='profile_pictures')),
+                ('customer_profile_picture', models.ImageField(
+                    blank=True, null=True, upload_to='profile_pictures')),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='customer_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='customer_change_user', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'customer',
@@ -59,14 +65,17 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='document',
             fields=[
-                ('document_key', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ('document_key', models.UUIDField(default=uuid.uuid4, editable=False,
+                                                  primary_key=True, serialize=False)),
                 ('document_description', models.CharField(max_length=255)),
                 ('document_url_location', models.TextField(blank=True, null=True)),
-                ('document', models.FileField(blank=True, null=True, storage=NearBeach.private_media.File_Storage(), upload_to='')),
+                ('document', models.FileField(blank=True, null=True,
+                                              storage=NearBeach.private_media.File_Storage(), upload_to='')),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default='FALSE')),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='document_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='document_change_user', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'document',
@@ -80,8 +89,10 @@ class Migration(migrations.Migration):
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='group_change_user', to=settings.AUTH_USER_MODEL)),
-                ('parent_group', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.group')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='group_change_user', to=settings.AUTH_USER_MODEL)),
+                ('parent_group', models.ForeignKey(blank=True, null=True,
+                                                   on_delete=django.db.models.deletion.CASCADE, to='NearBeach.group')),
             ],
             options={
                 'db_table': 'group',
@@ -90,14 +101,20 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='kanban_board',
             fields=[
-                ('kanban_board_id', models.AutoField(primary_key=True, serialize=False)),
+                ('kanban_board_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('kanban_board_name', models.CharField(max_length=255)),
-                ('kanban_board_status', models.CharField(choices=[('Open', 'Open'), ('Closed', 'Closed')], default='Open', max_length=10)),
+                ('kanban_board_status', models.CharField(choices=[
+                 ('Open', 'Open'), ('Closed', 'Closed')], default='Open', max_length=10)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default='FALSE')),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='kanban_board_change_user', to=settings.AUTH_USER_MODEL)),
-                ('creation_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='kanban_board_creation_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='kanban_board_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('creation_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                    related_name='kanban_board_creation_user',
+                                                    to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'kanban_board',
@@ -106,14 +123,17 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='kanban_card',
             fields=[
-                ('kanban_card_id', models.AutoField(primary_key=True, serialize=False)),
+                ('kanban_card_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('kanban_card_text', models.CharField(max_length=255)),
                 ('kanban_card_sort_number', models.IntegerField()),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default='FALSE')),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='kanban_card_change_user', to=settings.AUTH_USER_MODEL)),
-                ('kanban_board', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.kanban_board')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='kanban_card_change_user', to=settings.AUTH_USER_MODEL)),
+                ('kanban_board', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.kanban_board')),
             ],
             options={
                 'db_table': 'kanban_card',
@@ -122,13 +142,16 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='list_of_amount_type',
             fields=[
-                ('amount_type_id', models.AutoField(primary_key=True, serialize=False)),
+                ('amount_type_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('amount_type_description', models.CharField(max_length=20)),
                 ('list_order', models.IntegerField(unique=True)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='list_of_amount_type_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='list_of_amount_type_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'list_of_amount_type',
@@ -138,12 +161,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='list_of_country',
             fields=[
-                ('country_id', models.CharField(max_length=2, primary_key=True, serialize=False)),
+                ('country_id', models.CharField(
+                    max_length=2, primary_key=True, serialize=False)),
                 ('country_name', models.CharField(max_length=50)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='list_of_country_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='list_of_country_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'list_of_country',
@@ -152,14 +178,17 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='list_of_currency',
             fields=[
-                ('currency_id', models.AutoField(primary_key=True, serialize=False)),
+                ('currency_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('currency_description', models.CharField(max_length=20)),
                 ('currency_short_description', models.CharField(max_length=4)),
                 ('list_order', models.IntegerField(unique=True)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='list_of_currency_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='list_of_currency_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'list_of_currency',
@@ -168,13 +197,16 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='list_of_lead_source',
             fields=[
-                ('lead_source_id', models.AutoField(primary_key=True, serialize=False)),
+                ('lead_source_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('lead_source_description', models.CharField(max_length=20)),
                 ('list_order', models.IntegerField(unique=True)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='list_of_lead_source_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='list_of_lead_source_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'list_of_lead_source',
@@ -183,16 +215,21 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='list_of_opportunity_stage',
             fields=[
-                ('opportunity_stage_id', models.AutoField(primary_key=True, serialize=False)),
+                ('opportunity_stage_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('opportunity_stage_description', models.CharField(max_length=50)),
-                ('probability_success', models.DecimalField(decimal_places=0, max_digits=3)),
+                ('probability_success', models.DecimalField(
+                    decimal_places=0, max_digits=3)),
                 ('list_order', models.IntegerField(unique=True)),
                 ('opportunity_closed', models.BooleanField(default=False)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='list_of_opportunity_stage_change_user', to=settings.AUTH_USER_MODEL)),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='list_of_opportunity_stage_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(blank=True, null=True,
+                                           on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'list_of_opportunity_stage',
@@ -202,15 +239,19 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='list_of_quote_stage',
             fields=[
-                ('sort_order', models.IntegerField(auto_created=True, unique=True)),
-                ('quote_stage_id', models.AutoField(primary_key=True, serialize=False)),
+                ('sort_order', models.IntegerField(
+                    auto_created=True, unique=True)),
+                ('quote_stage_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('quote_stage', models.CharField(max_length=50, unique=True)),
                 ('is_invoice', models.BooleanField(default=False)),
                 ('quote_closed', models.BooleanField(default=False)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='list_of_quote_stage_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='list_of_quote_stage_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'list_of_quote_stage',
@@ -219,13 +260,16 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='list_of_requirement_item_status',
             fields=[
-                ('requirement_item_status_id', models.AutoField(primary_key=True, serialize=False)),
+                ('requirement_item_status_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('requirement_item_status', models.CharField(max_length=100)),
                 ('status_is_closed', models.BooleanField(default=False)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='list_of_requirement_item_status_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='list_of_requirement_item_status_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'list_of_requirement_item_status',
@@ -234,12 +278,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='list_of_requirement_item_type',
             fields=[
-                ('requirement_item_type_id', models.AutoField(primary_key=True, serialize=False)),
+                ('requirement_item_type_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('requirement_item_type', models.CharField(max_length=100)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='list_of_requirement_item_type_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='list_of_requirement_item_type_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'list_of_requirement_item_type',
@@ -248,13 +295,17 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='list_of_requirement_status',
             fields=[
-                ('requirement_status_id', models.AutoField(primary_key=True, serialize=False)),
+                ('requirement_status_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('requirement_status', models.CharField(max_length=50)),
-                ('requirement_status_is_closed', models.BooleanField(default=False)),
+                ('requirement_status_is_closed',
+                 models.BooleanField(default=False)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='list_of_requirement_status_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='list_of_requirement_status_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'list_of_requirement_status',
@@ -263,12 +314,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='list_of_requirement_type',
             fields=[
-                ('requirement_type_id', models.AutoField(primary_key=True, serialize=False)),
+                ('requirement_type_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('requirement_type', models.CharField(max_length=100)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='list_of_requirement_type_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='list_of_requirement_type_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'list_of_requirement_type',
@@ -278,12 +332,16 @@ class Migration(migrations.Migration):
             name='list_of_tax',
             fields=[
                 ('tax_id', models.AutoField(primary_key=True, serialize=False)),
-                ('tax_amount', models.DecimalField(decimal_places=4, max_digits=6)),
-                ('tax_description', models.CharField(blank=True, max_length=50, null=True)),
+                ('tax_amount', models.DecimalField(
+                    decimal_places=4, max_digits=6)),
+                ('tax_description', models.CharField(
+                    blank=True, max_length=50, null=True)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='list_of_tax_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='list_of_tax_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'list_of_tax',
@@ -292,22 +350,34 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='opportunity',
             fields=[
-                ('opportunity_id', models.AutoField(primary_key=True, serialize=False)),
+                ('opportunity_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('opportunity_name', models.CharField(max_length=255)),
-                ('opportunity_description', models.TextField(verbose_name='oppertunity_description')),
-                ('opportunity_amount', models.DecimalField(decimal_places=2, max_digits=12)),
+                ('opportunity_description', models.TextField(
+                    verbose_name='oppertunity_description')),
+                ('opportunity_amount', models.DecimalField(
+                    decimal_places=2, max_digits=12)),
                 ('opportunity_expected_close_date', models.DateTimeField()),
                 ('opportunity_success_probability', models.IntegerField()),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('amount_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_amount_type')),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='opportunity_change_user', to=settings.AUTH_USER_MODEL)),
-                ('creation_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='opportunity_creation_user', to=settings.AUTH_USER_MODEL)),
-                ('currency', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_currency')),
-                ('lead_source', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_lead_source')),
-                ('opportunity_stage', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_opportunity_stage')),
-                ('user_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('amount_type', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_amount_type')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='opportunity_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('creation_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                    related_name='opportunity_creation_user',
+                                                    to=settings.AUTH_USER_MODEL)),
+                ('currency', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_currency')),
+                ('lead_source', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_lead_source')),
+                ('opportunity_stage', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_opportunity_stage')),
+                ('user_id', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'opportunities',
@@ -316,15 +386,19 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='organisation',
             fields=[
-                ('organisation_id', models.AutoField(primary_key=True, serialize=False)),
+                ('organisation_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('organisation_name', models.CharField(max_length=255)),
                 ('organisation_website', models.CharField(max_length=50)),
                 ('organisation_email', models.CharField(max_length=100)),
-                ('organisation_profile_picture', models.ImageField(blank=True, null=True, upload_to='')),
+                ('organisation_profile_picture', models.ImageField(
+                    blank=True, null=True, upload_to='')),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='organisation_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='organisation_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'organisation',
@@ -333,44 +407,79 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='permission_set',
             fields=[
-                ('permission_set_id', models.AutoField(primary_key=True, serialize=False)),
+                ('permission_set_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('permission_set_name', models.CharField(max_length=255)),
-                ('administration_assign_user_to_group', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('administration_create_group', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('administration_create_permission_set', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('administration_create_user', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('assign_campus_to_customer', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('associate_project_and_task', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('bug', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('bug_client', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('email', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('invoice', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('invoice_product', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('customer', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('kanban', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('kanban_card', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('opportunity', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('organisation', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('organisation_campus', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('project', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('quote', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('request_for_change', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('requirement', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('requirement_link', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('tag', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('task', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('tax', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('template', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('whiteboard', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
-                ('document', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Has Permission')], default=0)),
-                ('contact_history', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Has Permission')], default=0)),
-                ('kanban_comment', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Has Permission')], default=0)),
-                ('project_history', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Has Permission')], default=0)),
-                ('task_history', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Has Permission')], default=0)),
+                ('administration_assign_user_to_group', models.IntegerField(choices=[(0, 'No Permission'), (
+                    1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('administration_create_group', models.IntegerField(choices=[(0, 'No Permission'), (
+                    1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('administration_create_permission_set', models.IntegerField(choices=[(0, 'No Permission'), (
+                    1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('administration_create_user', models.IntegerField(choices=[(0, 'No Permission'), (
+                    1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('assign_campus_to_customer', models.IntegerField(choices=[(0, 'No Permission'), (
+                    1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('associate_project_and_task', models.IntegerField(choices=[(0, 'No Permission'), (
+                    1, 'Read Only'), (2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('bug', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('bug_client', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('email', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('invoice', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('invoice_product', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('customer', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('kanban', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('kanban_card', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('opportunity', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('organisation', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('organisation_campus', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('project', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('quote', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('request_for_change', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('requirement', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('requirement_link', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('tag', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('task', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('tax', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('template', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('whiteboard', models.IntegerField(choices=[(0, 'No Permission'), (1, 'Read Only'), (
+                    2, 'Edit Only'), (3, 'Add and Edit'), (4, 'Full Permission')], default=0)),
+                ('document', models.IntegerField(choices=[
+                 (0, 'No Permission'), (1, 'Has Permission')], default=0)),
+                ('contact_history', models.IntegerField(choices=[
+                 (0, 'No Permission'), (1, 'Has Permission')], default=0)),
+                ('kanban_comment', models.IntegerField(choices=[
+                 (0, 'No Permission'), (1, 'Has Permission')], default=0)),
+                ('project_history', models.IntegerField(choices=[
+                 (0, 'No Permission'), (1, 'Has Permission')], default=0)),
+                ('task_history', models.IntegerField(choices=[
+                 (0, 'No Permission'), (1, 'Has Permission')], default=0)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='permission_set_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='permission_set_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'permission_set',
@@ -380,16 +489,22 @@ class Migration(migrations.Migration):
             name='product_and_service',
             fields=[
                 ('product_id', models.AutoField(primary_key=True, serialize=False)),
-                ('product_or_service', models.CharField(choices=[('Product', 'Product'), ('Service', 'Service')], max_length=7)),
+                ('product_or_service', models.CharField(choices=[
+                 ('Product', 'Product'), ('Service', 'Service')], max_length=7)),
                 ('product_name', models.CharField(max_length=100, unique=True)),
-                ('product_part_number', models.CharField(blank=True, max_length=100, null=True)),
-                ('product_cost', models.DecimalField(decimal_places=2, max_digits=19)),
-                ('product_price', models.DecimalField(decimal_places=2, max_digits=19)),
+                ('product_part_number', models.CharField(
+                    blank=True, max_length=100, null=True)),
+                ('product_cost', models.DecimalField(
+                    decimal_places=2, max_digits=19)),
+                ('product_price', models.DecimalField(
+                    decimal_places=2, max_digits=19)),
                 ('product_description', models.TextField(blank=True, null=True)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='product_and_service_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='product_and_service_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'product_and_service',
@@ -400,19 +515,27 @@ class Migration(migrations.Migration):
             fields=[
                 ('project_id', models.AutoField(primary_key=True, serialize=False)),
                 ('project_name', models.CharField(max_length=255)),
-                ('project_description', models.TextField(verbose_name='project_description')),
+                ('project_description', models.TextField(
+                    verbose_name='project_description')),
                 ('project_start_date', models.DateTimeField()),
                 ('project_end_date', models.DateTimeField()),
-                ('project_status', models.CharField(choices=[('Backlog', 'Backlog'), ('Blocked', 'Blocked'), ('In Progress', 'In Progress'), ('Test/Review', 'Test/Review'), ('Closed', 'Closed')], default='New', max_length=15)),
+                ('project_status', models.CharField(choices=[('Backlog', 'Backlog'), ('Blocked', 'Blocked'), (
+                    'In Progress', 'In Progress'), ('Test/Review', 'Test/Review'), ('Closed', 'Closed')],
+                    default='New', max_length=15)),
                 ('project_story_point_min', models.IntegerField(default=1)),
                 ('project_story_point_max', models.IntegerField(default=4)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_change_user', to=settings.AUTH_USER_MODEL)),
-                ('creation_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_creation_user', to=settings.AUTH_USER_MODEL)),
-                ('customer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
-                ('organisation', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.organisation')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='project_change_user', to=settings.AUTH_USER_MODEL)),
+                ('creation_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                    related_name='project_creation_user', to=settings.AUTH_USER_MODEL)),
+                ('customer', models.ForeignKey(blank=True, null=True,
+                                               on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
+                ('organisation', models.ForeignKey(blank=True, null=True,
+                                                   on_delete=django.db.models.deletion.CASCADE,
+                                                   to='NearBeach.organisation')),
             ],
             options={
                 'db_table': 'project',
@@ -422,7 +545,8 @@ class Migration(migrations.Migration):
             name='quote',
             fields=[
                 ('quote_id', models.AutoField(primary_key=True, serialize=False)),
-                ('quote_uuid', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
+                ('quote_uuid', models.UUIDField(
+                    default=uuid.uuid4, editable=False, unique=True)),
                 ('quote_title', models.CharField(max_length=255)),
                 ('quote_valid_till', models.DateTimeField()),
                 ('is_invoice', models.BooleanField(default=False)),
@@ -431,14 +555,25 @@ class Migration(migrations.Migration):
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='quote_change_user', to=settings.AUTH_USER_MODEL)),
-                ('creation_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='quote_creation_user', to=settings.AUTH_USER_MODEL)),
-                ('customer', models.ForeignKey(blank=True, db_column='customer_id', null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
-                ('opportunity', models.ForeignKey(blank=True, db_column='opportunity_id', null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.opportunity')),
-                ('organisation', models.ForeignKey(blank=True, db_column='organisation_id', null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.organisation')),
-                ('project', models.ForeignKey(blank=True, db_column='project_id', null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
-                ('quote_billing_address', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.campus')),
-                ('quote_stage', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_quote_stage')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='quote_change_user', to=settings.AUTH_USER_MODEL)),
+                ('creation_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                    related_name='quote_creation_user', to=settings.AUTH_USER_MODEL)),
+                ('customer', models.ForeignKey(blank=True, db_column='customer_id', null=True,
+                                               on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
+                ('opportunity', models.ForeignKey(blank=True, db_column='opportunity_id', null=True,
+                                                  on_delete=django.db.models.deletion.CASCADE,
+                                                  to='NearBeach.opportunity')),
+                ('organisation', models.ForeignKey(blank=True, db_column='organisation_id', null=True,
+                                                   on_delete=django.db.models.deletion.CASCADE,
+                                                   to='NearBeach.organisation')),
+                ('project', models.ForeignKey(blank=True, db_column='project_id', null=True,
+                                              on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
+                ('quote_billing_address', models.ForeignKey(blank=True, null=True,
+                                                            on_delete=django.db.models.deletion.CASCADE,
+                                                            to='NearBeach.campus')),
+                ('quote_stage', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_quote_stage')),
             ],
             options={
                 'db_table': 'quote',
@@ -450,25 +585,39 @@ class Migration(migrations.Migration):
                 ('rfc_id', models.AutoField(primary_key=True, serialize=False)),
                 ('rfc_title', models.CharField(max_length=255)),
                 ('rfc_summary', models.TextField(verbose_name='rfc_summary')),
-                ('rfc_type', models.IntegerField(choices=[(4, 'Emergency'), (3, 'High'), (2, 'Medium'), (1, 'Low')])),
+                ('rfc_type', models.IntegerField(choices=[
+                 (4, 'Emergency'), (3, 'High'), (2, 'Medium'), (1, 'Low')])),
                 ('rfc_implementation_start_date', models.DateTimeField()),
                 ('rfc_implementation_end_date', models.DateTimeField()),
                 ('rfc_implementation_release_date', models.DateTimeField()),
-                ('rfc_version_number', models.CharField(blank=True, max_length=25, null=True)),
-                ('rfc_status', models.IntegerField(choices=[(1, 'Draft'), (2, 'Waiting for approval'), (3, 'Approved'), (4, 'Started'), (5, 'Finished'), (6, 'Rejected')])),
-                ('rfc_priority', models.IntegerField(choices=[(4, 'Critical'), (3, 'High'), (2, 'Medium'), (1, 'Low')], default=1)),
-                ('rfc_risk', models.IntegerField(choices=[(5, 'Very High'), (4, 'High'), (3, 'Moderate'), (2, 'Low'), (1, 'None')], default=1)),
-                ('rfc_impact', models.IntegerField(choices=[(3, 'High'), (2, 'Medium'), (1, 'Low')], default=1)),
-                ('rfc_risk_and_impact_analysis', models.TextField(verbose_name='rfc_risk_and_impact_analysis')),
-                ('rfc_implementation_plan', models.TextField(verbose_name='rfc_implementation_plan')),
-                ('rfc_backout_plan', models.TextField(verbose_name='rfc_backout_plan')),
+                ('rfc_version_number', models.CharField(
+                    blank=True, max_length=25, null=True)),
+                ('rfc_status', models.IntegerField(choices=[(1, 'Draft'), (2, 'Waiting for approval'), (
+                    3, 'Approved'), (4, 'Started'), (5, 'Finished'), (6, 'Rejected')])),
+                ('rfc_priority', models.IntegerField(choices=[
+                 (4, 'Critical'), (3, 'High'), (2, 'Medium'), (1, 'Low')], default=1)),
+                ('rfc_risk', models.IntegerField(choices=[
+                 (5, 'Very High'), (4, 'High'), (3, 'Moderate'), (2, 'Low'), (1, 'None')], default=1)),
+                ('rfc_impact', models.IntegerField(choices=[
+                 (3, 'High'), (2, 'Medium'), (1, 'Low')], default=1)),
+                ('rfc_risk_and_impact_analysis', models.TextField(
+                    verbose_name='rfc_risk_and_impact_analysis')),
+                ('rfc_implementation_plan', models.TextField(
+                    verbose_name='rfc_implementation_plan')),
+                ('rfc_backout_plan', models.TextField(
+                    verbose_name='rfc_backout_plan')),
                 ('rfc_test_plan', models.TextField(verbose_name='rfc_test_plan')),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='request_for_change_change_user', to=settings.AUTH_USER_MODEL)),
-                ('creation_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='request_for_change_creation_user', to=settings.AUTH_USER_MODEL)),
-                ('rfc_lead', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='rfc_lead', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='request_for_change_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('creation_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                    related_name='request_for_change_creation_user',
+                                                    to=settings.AUTH_USER_MODEL)),
+                ('rfc_lead', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                               related_name='rfc_lead', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'request_for_change',
@@ -477,7 +626,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='requirement',
             fields=[
-                ('requirement_id', models.AutoField(primary_key=True, serialize=False)),
+                ('requirement_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('requirement_title', models.CharField(max_length=255)),
                 ('requirement_scope', models.TextField(blank=True, null=True)),
                 ('requirement_story_point_min', models.IntegerField(default=1)),
@@ -485,11 +635,19 @@ class Migration(migrations.Migration):
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='requirement_change_user', to=settings.AUTH_USER_MODEL)),
-                ('creation_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='requirement_creation_user', to=settings.AUTH_USER_MODEL)),
-                ('organisation', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.organisation')),
-                ('requirement_status', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_requirement_status')),
-                ('requirement_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_requirement_type')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='requirement_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('creation_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                    related_name='requirement_creation_user',
+                                                    to=settings.AUTH_USER_MODEL)),
+                ('organisation', models.ForeignKey(blank=True, null=True,
+                                                   on_delete=django.db.models.deletion.CASCADE,
+                                                   to='NearBeach.organisation')),
+                ('requirement_status', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_requirement_status')),
+                ('requirement_type', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_requirement_type')),
             ],
             options={
                 'db_table': 'requirement',
@@ -498,7 +656,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='requirement_item',
             fields=[
-                ('requirement_item_id', models.AutoField(primary_key=True, serialize=False)),
+                ('requirement_item_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('requirement_item_title', models.CharField(max_length=255)),
                 ('requirement_item_scope', models.TextField(blank=True, null=True)),
                 ('ri_story_point_min', models.IntegerField(default=4)),
@@ -506,10 +665,15 @@ class Migration(migrations.Migration):
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='requirement_item_change_user', to=settings.AUTH_USER_MODEL)),
-                ('requirement', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.requirement')),
-                ('requirement_item_status', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_requirement_item_status')),
-                ('requirement_item_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_requirement_item_type')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='requirement_item_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('requirement', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.requirement')),
+                ('requirement_item_status', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_requirement_item_status')),
+                ('requirement_item_type', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_requirement_item_type')),
             ],
             options={
                 'db_table': 'requirement_item',
@@ -523,7 +687,8 @@ class Migration(migrations.Migration):
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tag_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='tag_change_user', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'tag',
@@ -537,16 +702,24 @@ class Migration(migrations.Migration):
                 ('task_long_description', models.TextField()),
                 ('task_start_date', models.DateTimeField()),
                 ('task_end_date', models.DateTimeField()),
-                ('task_status', models.CharField(choices=[('Backlog', 'Backlog'), ('Blocked', 'Blocked'), ('In Progress', 'In Progress'), ('Test/Review', 'Test/Review'), ('Closed', 'Closed')], default='New', max_length=15)),
+                ('task_status', models.CharField(choices=[('Backlog', 'Backlog'), ('Blocked', 'Blocked'), (
+                    'In Progress', 'In Progress'), ('Test/Review', 'Test/Review'), ('Closed', 'Closed')],
+                    default='New', max_length=15)),
                 ('task_story_point_min', models.IntegerField(default=4)),
                 ('task_story_point_max', models.IntegerField(default=10)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='task_change_user', to=settings.AUTH_USER_MODEL)),
-                ('creation_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='task_creation_user', to=settings.AUTH_USER_MODEL)),
-                ('organisation', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.organisation')),
-                ('task_assigned_to', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='task_change_user', to=settings.AUTH_USER_MODEL)),
+                ('creation_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                    related_name='task_creation_user', to=settings.AUTH_USER_MODEL)),
+                ('organisation', models.ForeignKey(blank=True, null=True,
+                                                   on_delete=django.db.models.deletion.CASCADE,
+                                                   to='NearBeach.organisation')),
+                ('task_assigned_to', models.ForeignKey(blank=True, null=True,
+                                                       on_delete=django.db.models.deletion.CASCADE,
+                                                       to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'task',
@@ -555,13 +728,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='whiteboard',
             fields=[
-                ('whiteboard_id', models.AutoField(primary_key=True, serialize=False)),
+                ('whiteboard_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('whiteboard_title', models.CharField(max_length=255)),
                 ('whiteboard_xml', models.TextField(blank=True, null=True)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='whiteboard_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='whiteboard_change_user', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'whiteboard',
@@ -570,13 +745,20 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='user_weblink',
             fields=[
-                ('user_weblink_id', models.AutoField(primary_key=True, serialize=False)),
+                ('user_weblink_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('user_weblink_url', models.URLField(max_length=255)),
-                ('user_weblink_source', models.CharField(choices=[('Twitter', 'Twitter'), ('Facebook', 'Facebook'), ('Github', 'Github'), ('Gitlab', 'Gitlab'), ('Website', 'Website'), ('LinkedIn', 'LinkedIn'), ('Staff Page', 'Staff page'), ('Other', 'Other')], max_length=50)),
+                ('user_weblink_source', models.CharField(choices=[('Twitter', 'Twitter'), ('Facebook', 'Facebook'),
+                                                                  ('Github', 'Github'), ('Gitlab', 'Gitlab'), (
+                                                                      'Website', 'Website'), ('LinkedIn', 'LinkedIn'),
+                                                                  ('Staff Page', 'Staff page'), ('Other', 'Other')],
+                                                         max_length=50)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='user_weblink_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='user_weblink_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'user_weblink',
@@ -585,14 +767,18 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='user_want',
             fields=[
-                ('user_want_id', models.AutoField(primary_key=True, serialize=False)),
-                ('want_choice', models.CharField(choices=[('0', 'Do not want to do'), ('1', 'Want to do')], max_length=50)),
+                ('user_want_id', models.AutoField(
+                    primary_key=True, serialize=False)),
+                ('want_choice', models.CharField(choices=[
+                 ('0', 'Do not want to do'), ('1', 'Want to do')], max_length=50)),
                 ('want_choice_text', models.CharField(max_length=50)),
-                ('want_skill', models.CharField(choices=[('0', 'Can not do'), ('1', 'Willing to learn'), ('2', 'Knows a little'), ('3', 'Knows a lot'), ('4', 'Proficient')], max_length=50)),
+                ('want_skill', models.CharField(choices=[('0', 'Can not do'), ('1', 'Willing to learn'), (
+                    '2', 'Knows a little'), ('3', 'Knows a lot'), ('4', 'Proficient')], max_length=50)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='user_want_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='user_want_change_user', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'user_want',
@@ -601,16 +787,22 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='user_group',
             fields=[
-                ('user_group_id', models.AutoField(primary_key=True, serialize=False)),
+                ('user_group_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('group_leader', models.BooleanField(default=False)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='user_group_change_user', to=settings.AUTH_USER_MODEL)),
-                ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.group')),
-                ('permission_set', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.permission_set')),
-                ('report_to', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='report_to', to=settings.AUTH_USER_MODEL)),
-                ('username', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='user_group_change_user', to=settings.AUTH_USER_MODEL)),
+                ('group', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.group')),
+                ('permission_set', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.permission_set')),
+                ('report_to', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                related_name='report_to', to=settings.AUTH_USER_MODEL)),
+                ('username', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'user_group',
@@ -625,10 +817,15 @@ class Migration(migrations.Migration):
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='to_do_change_user', to=settings.AUTH_USER_MODEL)),
-                ('opportunity', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.opportunity')),
-                ('project', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
-                ('task', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='to_do_change_user', to=settings.AUTH_USER_MODEL)),
+                ('opportunity', models.ForeignKey(blank=True, null=True,
+                                                  on_delete=django.db.models.deletion.CASCADE,
+                                                  to='NearBeach.opportunity')),
+                ('project', models.ForeignKey(blank=True, null=True,
+                                              on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
+                ('task', models.ForeignKey(blank=True, null=True,
+                                           on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
             ],
             options={
                 'db_table': 'to_do',
@@ -637,18 +834,25 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='timesheet',
             fields=[
-                ('timesheet_id', models.AutoField(primary_key=True, serialize=False)),
-                ('timesheet_description', models.CharField(blank=True, max_length=255, null=True)),
+                ('timesheet_id', models.AutoField(
+                    primary_key=True, serialize=False)),
+                ('timesheet_description', models.CharField(
+                    blank=True, max_length=255, null=True)),
                 ('timesheet_date', models.DateField()),
                 ('timesheet_start_time', models.TimeField()),
                 ('timesheet_end_time', models.TimeField()),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='timesheet_change_user', to=settings.AUTH_USER_MODEL)),
-                ('project', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
-                ('requirement_item', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.requirement_item')),
-                ('task', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='timesheet_change_user', to=settings.AUTH_USER_MODEL)),
+                ('project', models.ForeignKey(blank=True, null=True,
+                                              on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
+                ('requirement_item', models.ForeignKey(blank=True, null=True,
+                                                       on_delete=django.db.models.deletion.CASCADE,
+                                                       to='NearBeach.requirement_item')),
+                ('task', models.ForeignKey(blank=True, null=True,
+                                           on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
             ],
             options={
                 'db_table': 'timesheet',
@@ -657,14 +861,20 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='task_customer',
             fields=[
-                ('task_customer_id', models.AutoField(primary_key=True, serialize=False)),
-                ('customer_description', models.CharField(blank=True, max_length=155, null=True)),
+                ('task_customer_id', models.AutoField(
+                    primary_key=True, serialize=False)),
+                ('customer_description', models.CharField(
+                    blank=True, max_length=155, null=True)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='task_customer_change_user', to=settings.AUTH_USER_MODEL)),
-                ('customer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
-                ('task', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='task_customer_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('customer', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
+                ('task', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
             ],
             options={
                 'db_table': 'task_customer',
@@ -673,14 +883,19 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='task_action',
             fields=[
-                ('task_action_id', models.AutoField(primary_key=True, serialize=False)),
+                ('task_action_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('task_action', models.TextField()),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='task_action_change_user', to=settings.AUTH_USER_MODEL)),
-                ('submitted_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('task', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='task_action_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('submitted_by', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('task', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
             ],
             options={
                 'db_table': 'task_action',
@@ -689,16 +904,28 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='tag_assignment',
             fields=[
-                ('tag_assignment_id', models.AutoField(primary_key=True, serialize=False)),
+                ('tag_assignment_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tag_assignment_change_user', to=settings.AUTH_USER_MODEL)),
-                ('opportunity', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.opportunity')),
-                ('project', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
-                ('requirement', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.requirement')),
-                ('tag', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.tag')),
-                ('task', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='tag_assignment_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('opportunity', models.ForeignKey(blank=True, null=True,
+                                                  on_delete=django.db.models.deletion.CASCADE,
+                                                  to='NearBeach.opportunity')),
+                ('project', models.ForeignKey(blank=True, null=True,
+                                              on_delete=django.db.models.deletion.CASCADE,
+                                              to='NearBeach.project')),
+                ('requirement', models.ForeignKey(blank=True, null=True,
+                                                  on_delete=django.db.models.deletion.CASCADE,
+                                                  to='NearBeach.requirement')),
+                ('tag', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.tag')),
+                ('task', models.ForeignKey(blank=True, null=True,
+                                           on_delete=django.db.models.deletion.CASCADE,
+                                           to='NearBeach.task')),
             ],
             options={
                 'db_table': 'tag_assignment',
@@ -707,13 +934,18 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='requirement_customer',
             fields=[
-                ('requirement_customer_id', models.AutoField(primary_key=True, serialize=False)),
+                ('requirement_customer_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='requirement_customer_change_user', to=settings.AUTH_USER_MODEL)),
-                ('customer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
-                ('requirement', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.requirement')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='requirement_customer_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('customer', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
+                ('requirement', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.requirement')),
             ],
             options={
                 'db_table': 'requirement_customer',
@@ -722,14 +954,21 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='request_for_change_stakeholder',
             fields=[
-                ('rfc_stakeholder_id', models.AutoField(primary_key=True, serialize=False)),
+                ('rfc_stakeholder_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='request_for_change_stakeholder_change_user', to=settings.AUTH_USER_MODEL)),
-                ('customer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
-                ('organisation', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.organisation')),
-                ('request_for_change', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.request_for_change')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='request_for_change_stakeholder_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('customer', models.ForeignKey(blank=True, null=True,
+                                               on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
+                ('organisation', models.ForeignKey(blank=True, null=True,
+                                                   on_delete=django.db.models.deletion.CASCADE,
+                                                   to='NearBeach.organisation')),
+                ('request_for_change', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.request_for_change')),
             ],
             options={
                 'db_table': 'request_for_change_stakeholder',
@@ -738,12 +977,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='request_for_change_note',
             fields=[
-                ('rfc_note_id', models.AutoField(primary_key=True, serialize=False)),
+                ('rfc_note_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('rfc_note', models.TextField(blank=True, null=True)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='request_for_change_note_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='request_for_change_note_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'request_for_change_note',
@@ -752,14 +994,20 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='request_for_change_group_approval',
             fields=[
-                ('rfc_group_approval_id', models.AutoField(primary_key=True, serialize=False)),
-                ('approval', models.IntegerField(choices=[(1, 'Waiting'), (2, 'Approved'), (3, 'Rejected'), (4, 'Cancel')], default=1)),
+                ('rfc_group_approval_id', models.AutoField(
+                    primary_key=True, serialize=False)),
+                ('approval', models.IntegerField(choices=[
+                 (1, 'Waiting'), (2, 'Approved'), (3, 'Rejected'), (4, 'Cancel')], default=1)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='request_for_change_group_approval_change_user', to=settings.AUTH_USER_MODEL)),
-                ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.group')),
-                ('rfc', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.request_for_change')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='request_for_change_group_approval_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('group', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.group')),
+                ('rfc', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.request_for_change')),
             ],
             options={
                 'db_table': 'request_for_change_group_approval',
@@ -768,19 +1016,22 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='quote_template',
             fields=[
-                ('quote_template_id', models.AutoField(primary_key=True, serialize=False)),
+                ('quote_template_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('quote_template_description', models.CharField(max_length=255)),
                 ('template_css', models.TextField(blank=True, null=True)),
                 ('header', models.TextField(blank=True, null=True)),
                 ('company_letter_head', models.TextField(blank=True, null=True)),
-                ('payment_terms', models.CharField(blank=True, max_length=255, null=True)),
+                ('payment_terms', models.CharField(
+                    blank=True, max_length=255, null=True)),
                 ('notes', models.CharField(blank=True, max_length=255, null=True)),
                 ('organisation_details', models.TextField(blank=True, null=True)),
                 ('product_line', models.TextField()),
                 ('service_line', models.TextField()),
                 ('payment_method', models.TextField(blank=True, null=True)),
                 ('footer', models.TextField(blank=True, null=True)),
-                ('page_layout', models.CharField(choices=[('Landscape', 'Landscape'), ('Portrait', 'Portrait')], default='Landscape', max_length=50)),
+                ('page_layout', models.CharField(choices=[
+                 ('Landscape', 'Landscape'), ('Portrait', 'Portrait')], default='Landscape', max_length=50)),
                 ('margin_left', models.IntegerField(default=1)),
                 ('margin_right', models.IntegerField(default=1)),
                 ('margin_top', models.IntegerField(default=1)),
@@ -790,7 +1041,9 @@ class Migration(migrations.Migration):
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='quote_template_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='quote_template_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'quote_template',
@@ -799,13 +1052,18 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='quote_responsible_customer',
             fields=[
-                ('quote_responsible_customer_id', models.AutoField(primary_key=True, serialize=False)),
+                ('quote_responsible_customer_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='quote_responsible_customer_change_user', to=settings.AUTH_USER_MODEL)),
-                ('customer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
-                ('quote', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.quote')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='quote_responsible_customer_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('customer', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
+                ('quote', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.quote')),
             ],
             options={
                 'db_table': 'quote_responsible_customer',
@@ -814,25 +1072,44 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='quote_product_and_service',
             fields=[
-                ('quotes_product_and_service_id', models.AutoField(primary_key=True, serialize=False)),
-                ('product_price', models.DecimalField(decimal_places=2, max_digits=19)),
+                ('quotes_product_and_service_id', models.AutoField(
+                    primary_key=True, serialize=False)),
+                ('product_price', models.DecimalField(
+                    decimal_places=2, max_digits=19)),
                 ('quantity', models.IntegerField()),
-                ('product_description', models.CharField(blank=True, max_length=255, null=True)),
-                ('product_cost', models.DecimalField(decimal_places=2, max_digits=19)),
-                ('discount_choice', models.CharField(choices=[('Percentage', 'Percentage'), ('Amount', 'Amount')], default='PERCENTAGE', max_length=10)),
-                ('discount_percent', models.DecimalField(decimal_places=2, default=0, max_digits=5, validators=[django.core.validators.MaxValueValidator(100), django.core.validators.MinValueValidator(0)])),
-                ('discount_amount', models.DecimalField(decimal_places=2, default=0, max_digits=19, validators=[django.core.validators.MaxValueValidator(1000000000), django.core.validators.MinValueValidator(0)])),
-                ('sales_price', models.DecimalField(decimal_places=2, default=0, max_digits=19, validators=[django.core.validators.MaxValueValidator(1000000000), django.core.validators.MinValueValidator(0)])),
-                ('tax_amount', models.DecimalField(decimal_places=2, default=0, max_digits=19)),
-                ('total', models.DecimalField(decimal_places=2, max_digits=19, validators=[django.core.validators.MaxValueValidator(99999999999999999999), django.core.validators.MinValueValidator(-99999999999999999999)])),
-                ('product_note', models.CharField(blank=True, max_length=255, null=True)),
+                ('product_description', models.CharField(
+                    blank=True, max_length=255, null=True)),
+                ('product_cost', models.DecimalField(
+                    decimal_places=2, max_digits=19)),
+                ('discount_choice', models.CharField(choices=[
+                 ('Percentage', 'Percentage'), ('Amount', 'Amount')], default='PERCENTAGE', max_length=10)),
+                ('discount_percent', models.DecimalField(decimal_places=2, default=0, max_digits=5, validators=[
+                 django.core.validators.MaxValueValidator(100), django.core.validators.MinValueValidator(0)])),
+                ('discount_amount', models.DecimalField(decimal_places=2, default=0, max_digits=19, validators=[
+                 django.core.validators.MaxValueValidator(1000000000), django.core.validators.MinValueValidator(0)])),
+                ('sales_price', models.DecimalField(decimal_places=2, default=0, max_digits=19, validators=[
+                 django.core.validators.MaxValueValidator(1000000000), django.core.validators.MinValueValidator(0)])),
+                ('tax_amount', models.DecimalField(
+                    decimal_places=2, default=0, max_digits=19)),
+                ('total', models.DecimalField(decimal_places=2, max_digits=19,
+                                              validators=[
+                                                  django.core.validators.MaxValueValidator(
+                                                      99999999999999999999),
+                                                  django.core.validators.MinValueValidator(-99999999999999999999)])),
+                ('product_note', models.CharField(
+                    blank=True, max_length=255, null=True)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='quote_product_and_service_change_user', to=settings.AUTH_USER_MODEL)),
-                ('product_and_service', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.product_and_service')),
-                ('quote', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.quote')),
-                ('tax', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_tax')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='quote_product_and_service_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('product_and_service', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.product_and_service')),
+                ('quote', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.quote')),
+                ('tax', models.ForeignKey(blank=True, null=True,
+                                          on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_tax')),
             ],
             options={
                 'db_table': 'quote_product_and_service',
@@ -841,19 +1118,26 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='quote',
             name='task',
-            field=models.ForeignKey(blank=True, db_column='task_id', null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task'),
+            field=models.ForeignKey(blank=True, db_column='task_id', null=True,
+                                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task'),
         ),
         migrations.CreateModel(
             name='project_customer',
             fields=[
-                ('project_customer_id', models.AutoField(primary_key=True, serialize=False)),
-                ('customer_description', models.CharField(blank=True, max_length=255, null=True)),
+                ('project_customer_id', models.AutoField(
+                    primary_key=True, serialize=False)),
+                ('customer_description', models.CharField(
+                    blank=True, max_length=255, null=True)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_customer_change_user', to=settings.AUTH_USER_MODEL)),
-                ('customer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='project_customer_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('customer', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
+                ('project', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
             ],
             options={
                 'db_table': 'project_customer',
@@ -862,20 +1146,38 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='object_note',
             fields=[
-                ('object_note_id', models.AutoField(primary_key=True, serialize=False)),
+                ('object_note_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('object_note', models.TextField()),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='object_note_change_user', to=settings.AUTH_USER_MODEL)),
-                ('opportunity', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.opportunity')),
-                ('organisation', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.organisation')),
-                ('project', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
-                ('quote', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.quote')),
-                ('request_for_change', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.request_for_change')),
-                ('requirement', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.requirement')),
-                ('requirement_item', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.requirement_item')),
-                ('task', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='object_note_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('opportunity', models.ForeignKey(blank=True, null=True,
+                                                  on_delete=django.db.models.deletion.CASCADE,
+                                                  to='NearBeach.opportunity')),
+                ('organisation', models.ForeignKey(blank=True, null=True,
+                                                   on_delete=django.db.models.deletion.CASCADE,
+                                                   to='NearBeach.organisation')),
+                ('project', models.ForeignKey(blank=True, null=True,
+                                              on_delete=django.db.models.deletion.CASCADE,
+                                              to='NearBeach.project')),
+                ('quote', models.ForeignKey(blank=True, null=True,
+                                            on_delete=django.db.models.deletion.CASCADE,
+                                            to='NearBeach.quote')),
+                ('request_for_change', models.ForeignKey(blank=True, null=True,
+                                                         on_delete=django.db.models.deletion.CASCADE,
+                                                         to='NearBeach.request_for_change')),
+                ('requirement', models.ForeignKey(blank=True, null=True,
+                                                  on_delete=django.db.models.deletion.CASCADE,
+                                                  to='NearBeach.requirement')),
+                ('requirement_item', models.ForeignKey(blank=True, null=True,
+                                                       on_delete=django.db.models.deletion.CASCADE,
+                                                       to='NearBeach.requirement_item')),
+                ('task', models.ForeignKey(blank=True, null=True,
+                                           on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
             ],
             options={
                 'db_table': 'object_note',
@@ -884,24 +1186,48 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='object_assignment',
             fields=[
-                ('object_assignment_id', models.AutoField(primary_key=True, serialize=False)),
+                ('object_assignment_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('assigned_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='object_assignment_assigned_user', to=settings.AUTH_USER_MODEL)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='object_assignment_change_user', to=settings.AUTH_USER_MODEL)),
-                ('customer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
-                ('group_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.group')),
-                ('kanban_board', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.kanban_board')),
-                ('opportunity', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.opportunity')),
-                ('organisation', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.organisation')),
-                ('project', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
-                ('quote', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.quote')),
-                ('request_for_change', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.request_for_change')),
-                ('requirement', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.requirement')),
-                ('requirement_item', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.requirement_item')),
-                ('task', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
-                ('whiteboard', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.whiteboard')),
+                ('assigned_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                    related_name='object_assignment_assigned_user',
+                                                    to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='object_assignment_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('customer', models.ForeignKey(blank=True, null=True,
+                                               on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
+                ('group_id', models.ForeignKey(blank=True, null=True,
+                                               on_delete=django.db.models.deletion.CASCADE, to='NearBeach.group')),
+                ('kanban_board', models.ForeignKey(blank=True, null=True,
+                                                   on_delete=django.db.models.deletion.CASCADE,
+                                                   to='NearBeach.kanban_board')),
+                ('opportunity', models.ForeignKey(blank=True, null=True,
+                                                  on_delete=django.db.models.deletion.CASCADE,
+                                                  to='NearBeach.opportunity')),
+                ('organisation', models.ForeignKey(blank=True, null=True,
+                                                   on_delete=django.db.models.deletion.CASCADE,
+                                                   to='NearBeach.organisation')),
+                ('project', models.ForeignKey(blank=True, null=True,
+                                              on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
+                ('quote', models.ForeignKey(blank=True, null=True,
+                                            on_delete=django.db.models.deletion.CASCADE, to='NearBeach.quote')),
+                ('request_for_change', models.ForeignKey(blank=True, null=True,
+                                                         on_delete=django.db.models.deletion.CASCADE,
+                                                         to='NearBeach.request_for_change')),
+                ('requirement', models.ForeignKey(blank=True, null=True,
+                                                  on_delete=django.db.models.deletion.CASCADE,
+                                                  to='NearBeach.requirement')),
+                ('requirement_item', models.ForeignKey(blank=True, null=True,
+                                                       on_delete=django.db.models.deletion.CASCADE,
+                                                       to='NearBeach.requirement_item')),
+                ('task', models.ForeignKey(blank=True, null=True,
+                                           on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
+                ('whiteboard', models.ForeignKey(blank=True, null=True,
+                                                 on_delete=django.db.models.deletion.CASCADE,
+                                                 to='NearBeach.whiteboard')),
             ],
             options={
                 'db_table': 'object_assignment',
@@ -910,12 +1236,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='nearbeach_option',
             fields=[
-                ('nearbeach_option_id', models.AutoField(primary_key=True, serialize=False)),
+                ('nearbeach_option_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('story_point_hour_min', models.IntegerField(default=4)),
                 ('story_point_hour_max', models.IntegerField(default=10)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='nearbeach_option_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='nearbeach_option_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'nearbeach_option',
@@ -929,7 +1258,9 @@ class Migration(migrations.Migration):
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='list_of_title_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='list_of_title_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'list_of_title',
@@ -944,8 +1275,11 @@ class Migration(migrations.Migration):
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='list_of_country_region_change_user', to=settings.AUTH_USER_MODEL)),
-                ('country', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_country')),
+                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='list_of_country_region_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('country', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_country')),
             ],
             options={
                 'db_table': 'list_of_country_region',
@@ -954,12 +1288,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='list_of_contact_type',
             fields=[
-                ('contact_type_id', models.AutoField(primary_key=True, serialize=False)),
+                ('contact_type_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('contact_type', models.CharField(max_length=50)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='list_of_contact_type_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='list_of_contact_type_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'list_of_contact_type',
@@ -968,7 +1305,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='list_of_bug_client',
             fields=[
-                ('list_of_bug_client_id', models.AutoField(primary_key=True, serialize=False)),
+                ('list_of_bug_client_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('bug_client_name', models.CharField(max_length=50)),
                 ('bug_client_api_url', models.CharField(max_length=255)),
                 ('api_open_bugs', models.CharField(max_length=255)),
@@ -977,7 +1315,9 @@ class Migration(migrations.Migration):
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='list_of_bug_client_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='list_of_bug_client_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'list_of_bug_client',
@@ -986,18 +1326,25 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='kudos',
             fields=[
-                ('kudos_key', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('kudos_rating', models.IntegerField(choices=[(1, '1 Star'), (2, '2 Star'), (3, '3 Star'), (4, '4 Star'), (5, '5 Star')], default=0)),
+                ('kudos_key', models.UUIDField(default=uuid.uuid4,
+                                               editable=False, primary_key=True, serialize=False)),
+                ('kudos_rating', models.IntegerField(choices=[
+                 (1, '1 Star'), (2, '2 Star'), (3, '3 Star'), (4, '4 Star'), (5, '5 Star')], default=0)),
                 ('improvement_note', models.TextField(blank=True, null=True)),
                 ('liked_note', models.TextField(blank=True, null=True)),
                 ('submitted_kudos', models.BooleanField(default=False)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='kudos_change_user', to=settings.AUTH_USER_MODEL)),
-                ('customer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
-                ('extra_kudos', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
+                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='kudos_change_user', to=settings.AUTH_USER_MODEL)),
+                ('customer', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
+                ('extra_kudos', models.ForeignKey(blank=True, null=True,
+                                                  on_delete=django.db.models.deletion.CASCADE,
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('project', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
             ],
             options={
                 'db_table': 'kudos',
@@ -1006,14 +1353,18 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='kanban_level',
             fields=[
-                ('kanban_level_id', models.AutoField(primary_key=True, serialize=False)),
+                ('kanban_level_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('kanban_level_name', models.CharField(max_length=255)),
                 ('kanban_level_sort_number', models.IntegerField()),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default='FALSE')),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='kanban_level_change_user', to=settings.AUTH_USER_MODEL)),
-                ('kanban_board', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.kanban_board')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='kanban_level_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('kanban_board', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.kanban_board')),
             ],
             options={
                 'db_table': 'kanban_level',
@@ -1022,16 +1373,24 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='kanban_comment',
             fields=[
-                ('kanban_comment_id', models.AutoField(primary_key=True, serialize=False)),
+                ('kanban_comment_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('kanban_comment', models.TextField()),
                 ('user_infomation', models.CharField(max_length=255)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default='FALSE')),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='kanban_comment_change_user', to=settings.AUTH_USER_MODEL)),
-                ('kanban_board', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.kanban_board')),
-                ('kanban_card', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.kanban_card')),
-                ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='kanban_comment_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('kanban_board', models.ForeignKey(blank=True, null=True,
+                                                   on_delete=django.db.models.deletion.CASCADE,
+                                                   to='NearBeach.kanban_board')),
+                ('kanban_card', models.ForeignKey(blank=True, null=True,
+                                                  on_delete=django.db.models.deletion.CASCADE,
+                                                  to='NearBeach.kanban_card')),
+                ('user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'kanban_comment',
@@ -1040,14 +1399,18 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='kanban_column',
             fields=[
-                ('kanban_column_id', models.AutoField(primary_key=True, serialize=False)),
+                ('kanban_column_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('kanban_column_name', models.CharField(max_length=255)),
                 ('kanban_column_sort_number', models.IntegerField()),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default='FALSE')),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='kanban_column_change_user', to=settings.AUTH_USER_MODEL)),
-                ('kanban_board', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.kanban_board')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='kanban_column_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('kanban_board', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.kanban_board')),
             ],
             options={
                 'db_table': 'kanban_column',
@@ -1056,43 +1419,54 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='kanban_card',
             name='kanban_column',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.kanban_column'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='NearBeach.kanban_column'),
         ),
         migrations.AddField(
             model_name='kanban_card',
             name='kanban_level',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.kanban_level'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='NearBeach.kanban_level'),
         ),
         migrations.AddField(
             model_name='kanban_card',
             name='project',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project'),
+            field=models.ForeignKey(
+                blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project'),
         ),
         migrations.AddField(
             model_name='kanban_card',
             name='requirement',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.requirement'),
+            field=models.ForeignKey(
+                blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.requirement'),
         ),
         migrations.AddField(
             model_name='kanban_card',
             name='task',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task'),
+            field=models.ForeignKey(
+                blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task'),
         ),
         migrations.AddField(
             model_name='kanban_board',
             name='requirement',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.requirement'),
+            field=models.ForeignKey(
+                blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.requirement'),
         ),
         migrations.CreateModel(
             name='group_permission',
             fields=[
-                ('group_permission_id', models.AutoField(primary_key=True, serialize=False)),
+                ('group_permission_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default='FALSE')),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='group_permission_change_user', to=settings.AUTH_USER_MODEL)),
-                ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.group')),
-                ('permission_set', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.permission_set')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='group_permission_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('group', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.group')),
+                ('permission_set', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.permission_set')),
             ],
             options={
                 'db_table': 'group_permission',
@@ -1106,15 +1480,31 @@ class Migration(migrations.Migration):
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='folder_change_user', to=settings.AUTH_USER_MODEL)),
-                ('customer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
-                ('organisation', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.organisation')),
-                ('parent_folder', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.folder')),
-                ('project', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
-                ('request_for_change', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.request_for_change')),
-                ('requirement', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.requirement')),
-                ('requirement_item', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.requirement_item')),
-                ('task', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='folder_change_user', to=settings.AUTH_USER_MODEL)),
+                ('customer', models.ForeignKey(blank=True, null=True,
+                                               on_delete=django.db.models.deletion.CASCADE,
+                                               to='NearBeach.customer')),
+                ('organisation', models.ForeignKey(blank=True, null=True,
+                                                   on_delete=django.db.models.deletion.CASCADE,
+                                                   to='NearBeach.organisation')),
+                ('parent_folder', models.ForeignKey(blank=True, null=True,
+                                                    on_delete=django.db.models.deletion.CASCADE,
+                                                    to='NearBeach.folder')),
+                ('project', models.ForeignKey(blank=True, null=True,
+                                              on_delete=django.db.models.deletion.CASCADE,
+                                              to='NearBeach.project')),
+                ('request_for_change', models.ForeignKey(blank=True, null=True,
+                                                         on_delete=django.db.models.deletion.CASCADE,
+                                                         to='NearBeach.request_for_change')),
+                ('requirement', models.ForeignKey(blank=True, null=True,
+                                                  on_delete=django.db.models.deletion.CASCADE,
+                                                  to='NearBeach.requirement')),
+                ('requirement_item', models.ForeignKey(blank=True, null=True,
+                                                       on_delete=django.db.models.deletion.CASCADE,
+                                                       to='NearBeach.requirement_item')),
+                ('task', models.ForeignKey(blank=True, null=True,
+                                           on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
             ],
             options={
                 'db_table': 'folder',
@@ -1123,14 +1513,17 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='email_content',
             fields=[
-                ('email_content_id', models.AutoField(primary_key=True, serialize=False)),
+                ('email_content_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('email_subject', models.CharField(max_length=255)),
                 ('email_content', models.TextField(verbose_name='email_content')),
                 ('is_private', models.BooleanField(default=False)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='email_content_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='email_content_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'email_content',
@@ -1139,21 +1532,39 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='email_contact',
             fields=[
-                ('email_contact_id', models.AutoField(primary_key=True, serialize=False)),
+                ('email_contact_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('is_private', models.BooleanField(default=False)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('bcc_customer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='email_contact_bcc_customer', to='NearBeach.customer')),
-                ('cc_customer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='email_contact_cc_customer', to='NearBeach.customer')),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='email_contact_change_user', to=settings.AUTH_USER_MODEL)),
-                ('email_content', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.email_content')),
-                ('opportunity', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.opportunity')),
-                ('organisation', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.organisation')),
-                ('project', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
-                ('quotes', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.quote')),
-                ('task', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
-                ('to_customer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='email_contact_to_customer', to='NearBeach.customer')),
+                ('bcc_customer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                   related_name='email_contact_bcc_customer',
+                                                   to='NearBeach.customer')),
+                ('cc_customer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='email_contact_cc_customer',
+                                                  to='NearBeach.customer')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='email_contact_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('email_content', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.email_content')),
+                ('opportunity', models.ForeignKey(blank=True, null=True,
+                                                  on_delete=django.db.models.deletion.CASCADE,
+                                                  to='NearBeach.opportunity')),
+                ('organisation', models.ForeignKey(blank=True, null=True,
+                                                   on_delete=django.db.models.deletion.CASCADE,
+                                                   to='NearBeach.organisation')),
+                ('project', models.ForeignKey(blank=True, null=True,
+                                              on_delete=django.db.models.deletion.CASCADE,
+                                              to='NearBeach.project')),
+                ('quotes', models.ForeignKey(blank=True, null=True,
+                                             on_delete=django.db.models.deletion.CASCADE, to='NearBeach.quote')),
+                ('task', models.ForeignKey(blank=True, null=True,
+                                           on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
+                ('to_customer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='email_contact_to_customer',
+                                                  to='NearBeach.customer')),
             ],
             options={
                 'db_table': 'email_contact',
@@ -1162,23 +1573,47 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='document_permission',
             fields=[
-                ('document_permisssion_id', models.AutoField(primary_key=True, serialize=False)),
+                ('document_permisssion_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='document_permission_change_user', to=settings.AUTH_USER_MODEL)),
-                ('customer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
-                ('document_key', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.document')),
-                ('folder', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.folder')),
-                ('opportunity', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.opportunity')),
-                ('organisation', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.organisation')),
-                ('project', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
-                ('request_for_change', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.request_for_change')),
-                ('requirement', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.requirement')),
-                ('requirement_item', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.requirement_item')),
-                ('task', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('whiteboard', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.whiteboard')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='document_permission_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('customer', models.ForeignKey(blank=True, null=True,
+                                               on_delete=django.db.models.deletion.CASCADE,
+                                               to='NearBeach.customer')),
+                ('document_key', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.document')),
+                ('folder', models.ForeignKey(blank=True, null=True,
+                                             on_delete=django.db.models.deletion.CASCADE, to='NearBeach.folder')),
+                ('opportunity', models.ForeignKey(blank=True, null=True,
+                                                  on_delete=django.db.models.deletion.CASCADE,
+                                                  to='NearBeach.opportunity')),
+                ('organisation', models.ForeignKey(blank=True, null=True,
+                                                   on_delete=django.db.models.deletion.CASCADE,
+                                                   to='NearBeach.organisation')),
+                ('project', models.ForeignKey(blank=True, null=True,
+                                              on_delete=django.db.models.deletion.CASCADE,
+                                              to='NearBeach.project')),
+                ('request_for_change', models.ForeignKey(blank=True, null=True,
+                                                         on_delete=django.db.models.deletion.CASCADE,
+                                                         to='NearBeach.request_for_change')),
+                ('requirement', models.ForeignKey(blank=True, null=True,
+                                                  on_delete=django.db.models.deletion.CASCADE,
+                                                  to='NearBeach.requirement')),
+                ('requirement_item', models.ForeignKey(blank=True, null=True,
+                                                       on_delete=django.db.models.deletion.CASCADE,
+                                                       to='NearBeach.requirement_item')),
+                ('task', models.ForeignKey(blank=True, null=True,
+                                           on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
+                ('user', models.ForeignKey(blank=True, null=True,
+                                           on_delete=django.db.models.deletion.CASCADE,
+                                           to=settings.AUTH_USER_MODEL)),
+                ('whiteboard', models.ForeignKey(blank=True, null=True,
+                                                 on_delete=django.db.models.deletion.CASCADE,
+                                                 to='NearBeach.whiteboard')),
             ],
             options={
                 'db_table': 'document_permission',
@@ -1187,20 +1622,26 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document',
             name='whiteboard',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.whiteboard'),
+            field=models.ForeignKey(
+                blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.whiteboard'),
         ),
         migrations.CreateModel(
             name='customer_campus',
             fields=[
-                ('customer_campus_id', models.AutoField(primary_key=True, serialize=False)),
+                ('customer_campus_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('customer_phone', models.CharField(max_length=20)),
                 ('customer_fax', models.CharField(max_length=20)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('campus', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.campus')),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='customer_campus_change_user', to=settings.AUTH_USER_MODEL)),
-                ('customer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
+                ('campus', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.campus')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='customer_campus_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('customer', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
             ],
             options={
                 'db_table': 'customer_campus',
@@ -1209,25 +1650,31 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='customer',
             name='customer_title',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_title'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_title'),
         ),
         migrations.AddField(
             model_name='customer',
             name='organisation',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.organisation'),
+            field=models.ForeignKey(
+                blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.organisation'),
         ),
         migrations.CreateModel(
             name='cost',
             fields=[
                 ('cost_id', models.AutoField(primary_key=True, serialize=False)),
                 ('cost_description', models.CharField(max_length=255)),
-                ('cost_amount', models.DecimalField(decimal_places=2, max_digits=19)),
+                ('cost_amount', models.DecimalField(
+                    decimal_places=2, max_digits=19)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cost_change_user', to=settings.AUTH_USER_MODEL)),
-                ('project', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
-                ('task', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='cost_change_user', to=settings.AUTH_USER_MODEL)),
+                ('project', models.ForeignKey(blank=True, null=True,
+                                              on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
+                ('task', models.ForeignKey(blank=True, null=True,
+                                           on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
             ],
             options={
                 'db_table': 'cost',
@@ -1236,18 +1683,30 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='contact_history',
             fields=[
-                ('contact_history_id', models.AutoField(primary_key=True, serialize=False)),
+                ('contact_history_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('contact_date', models.DateTimeField()),
-                ('contact_history', models.TextField(verbose_name='contact_history')),
+                ('contact_history', models.TextField(
+                    verbose_name='contact_history')),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='contact_history_change_user', to=settings.AUTH_USER_MODEL)),
-                ('contact_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_contact_type')),
-                ('customer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer')),
-                ('document_key', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.document')),
-                ('organisation', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.organisation')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='contact_history_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('contact_type', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_contact_type')),
+                ('customer', models.ForeignKey(blank=True, null=True,
+                                               on_delete=django.db.models.deletion.CASCADE,
+                                               to='NearBeach.customer')),
+                ('document_key', models.ForeignKey(blank=True, null=True,
+                                                   on_delete=django.db.models.deletion.CASCADE,
+                                                   to='NearBeach.document')),
+                ('organisation', models.ForeignKey(blank=True, null=True,
+                                                   on_delete=django.db.models.deletion.CASCADE,
+                                                   to='NearBeach.organisation')),
+                ('user', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'contact_history',
@@ -1256,22 +1715,37 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='change_task',
             fields=[
-                ('change_task_id', models.AutoField(primary_key=True, serialize=False)),
+                ('change_task_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('change_task_title', models.CharField(max_length=255)),
-                ('change_task_description', models.TextField(verbose_name='change_task_description')),
+                ('change_task_description', models.TextField(
+                    verbose_name='change_task_description')),
                 ('change_task_start_date', models.DateTimeField()),
                 ('change_task_end_date', models.DateTimeField()),
                 ('change_task_seconds', models.BigIntegerField(default=0)),
-                ('change_task_required_by', models.CharField(default='Stakeholder(s)', max_length=255)),
-                ('change_task_status', models.IntegerField(choices=[(1, 'Draft'), (2, 'Waiting for approval'), (3, 'Approved'), (4, 'Started'), (5, 'Finished'), (6, 'Rejected')])),
+                ('change_task_required_by', models.CharField(
+                    default='Stakeholder(s)', max_length=255)),
+                ('change_task_status', models.IntegerField(choices=[
+                 (1, 'Draft'), (2, 'Waiting for approval'), (3,
+                                                             'Approved'), (4, 'Started'),
+                 (5, 'Finished'), (6, 'Rejected')])),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_task_assigned_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='change_assigned_user', to=settings.AUTH_USER_MODEL)),
-                ('change_task_qa_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='change_qa_user', to=settings.AUTH_USER_MODEL)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='change_task_change_user', to=settings.AUTH_USER_MODEL)),
-                ('creation_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='change_task_creation_user', to=settings.AUTH_USER_MODEL)),
-                ('request_for_change', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.request_for_change')),
+                ('change_task_assigned_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                                related_name='change_assigned_user',
+                                                                to=settings.AUTH_USER_MODEL)),
+                ('change_task_qa_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                          related_name='change_qa_user',
+                                                          to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='change_task_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('creation_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                    related_name='change_task_creation_user',
+                                                    to=settings.AUTH_USER_MODEL)),
+                ('request_for_change', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.request_for_change')),
             ],
             options={
                 'db_table': 'change_task',
@@ -1280,39 +1754,48 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='campus',
             name='campus_country',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_country'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_country'),
         ),
         migrations.AddField(
             model_name='campus',
             name='campus_region',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_country_region'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_country_region'),
         ),
         migrations.AddField(
             model_name='campus',
             name='change_user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='campus_change_user', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                    related_name='campus_change_user', to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
             model_name='campus',
             name='customer',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer'),
+            field=models.ForeignKey(
+                blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.customer'),
         ),
         migrations.AddField(
             model_name='campus',
             name='organisation',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.organisation'),
+            field=models.ForeignKey(
+                blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.organisation'),
         ),
         migrations.CreateModel(
             name='bug_client',
             fields=[
-                ('bug_client_id', models.AutoField(primary_key=True, serialize=False)),
+                ('bug_client_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('bug_client_name', models.CharField(max_length=50)),
                 ('bug_client_url', models.URLField()),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='bug_client_change_user', to=settings.AUTH_USER_MODEL)),
-                ('list_of_bug_client', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_bug_client')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='bug_client_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('list_of_bug_client', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_bug_client')),
             ],
             options={
                 'db_table': 'bug_client',
@@ -1328,11 +1811,19 @@ class Migration(migrations.Migration):
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('bug_client', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.bug_client')),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='bug_change_user', to=settings.AUTH_USER_MODEL)),
-                ('project', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.project')),
-                ('requirement', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.requirement')),
-                ('task', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.task')),
+                ('bug_client', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.bug_client')),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='bug_change_user', to=settings.AUTH_USER_MODEL)),
+                ('project', models.ForeignKey(blank=True, null=True,
+                                              on_delete=django.db.models.deletion.CASCADE,
+                                              to='NearBeach.project')),
+                ('requirement', models.ForeignKey(blank=True, null=True,
+                                                  on_delete=django.db.models.deletion.CASCADE,
+                                                  to='NearBeach.requirement')),
+                ('task', models.ForeignKey(blank=True, null=True,
+                                           on_delete=django.db.models.deletion.CASCADE,
+                                           to='NearBeach.task')),
             ],
             options={
                 'db_table': 'bug',
@@ -1341,13 +1832,17 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='about_user',
             fields=[
-                ('about_user_id', models.AutoField(primary_key=True, serialize=False)),
+                ('about_user_id', models.AutoField(
+                    primary_key=True, serialize=False)),
                 ('about_user_text', models.TextField()),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default='FALSE')),
-                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='about_user_change_user', to=settings.AUTH_USER_MODEL)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='about_user_change_user',
+                                                  to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'about_user',
