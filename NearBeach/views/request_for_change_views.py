@@ -13,6 +13,7 @@ from NearBeach.models import request_for_change, User, user_group, object_assign
     request_for_change_group_approval, RFC_STATUS
 
 
+
 # Internal function
 
 

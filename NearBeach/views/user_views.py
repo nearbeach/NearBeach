@@ -12,6 +12,7 @@ from NearBeach.models import user_group
 
 import json
 
+
 @login_required(login_url='login', redirect_field_name="")
 def new_user(request):
     """
