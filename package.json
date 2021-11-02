@@ -75,7 +75,7 @@
     "sass-loader": "^8.0.2",
     "style-loader": "^1.2.1",
     "tar": ">=6.1.9",
-    "tinymce": "^5.8.2",
+    "tinymce": "^5.10.0",
     "vue": "^2.6.14",
     "vue-loader": "^15.9.3",
     "vue-select": "^3.10.5",
