@@ -38,9 +38,9 @@ class TestObjectData(TestCase):
         # User wil be logged in
         login_user(c, self)
 
-        # Get data of wrong location
+        # Get data of wrong location - gets a 403
         response = c.post(reverse('associated_objects', args=['taks', 1]))
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
 
     def test_team_leader_searches(self):
         c = Client()
