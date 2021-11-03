@@ -107,8 +107,6 @@
                 const data_to_send = new FormData();
                 data_to_send.set('kanban_card_text',this.kanbanCardTextModel);
                 data_to_send.set('kanban_card_description',this.kanbanCardDescriptionModel);
-                //data_to_send.set('kanban_level',this.levelResults[0]['pk']);
-                //data_to_send.set('kanban_column',this.columnResults[0]['p
                 data_to_send.set('kanban_level',self_modal['dataset']['kanbanLevel']);
                 data_to_send.set('kanban_column',self_modal['dataset']['kanbanColumn']);
 

@@ -62,7 +62,12 @@
                 this.cardInformation = data;
             },
             newCard: function(data) {
-                this.newCardInfo = data;
+                //this.newCardInfo = data;
+                console.log("Data: ",data);
+                this.$store.commit({
+                    type: 'addCard',
+                    newCard: data,
+                });
             },
             updateCard: function(data) {
                 //Loop through the results - when the id's match. Update the data.
@@ -78,11 +83,7 @@
         },
         mounted() {
             //Send columns and levels into the VueX
-            this.$store.commit({
-                type: 'updateLists',
-                columnResults: this.columnResults,
-                levelResults: this.levelResults,
-            });
+            `1`
         }
     }
 </script>

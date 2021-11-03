@@ -118,7 +118,9 @@ const moduleKanban = {
   }),
   mutations: {
     //CUD Operations
-    creationCard(state, payload) {},
+    addCard(state, payload) {
+      state.kanbanCardResults.push(payload.newCard[0]);
+    },
     updateKanbanCard(state, payload) {
       //Get the index location
       const index_location = state.kanbanCardResults.findIndex((row) => {
