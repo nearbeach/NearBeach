@@ -80,8 +80,8 @@
             masterList: function() {
                 //Filter the data
                 let return_array = this.allCards.filter(card => {
-                    return card['fields']['kanban_column'] == this.columnId &&
-                           card['fields']['kanban_level'] == this.levelId;
+                    return parseInt(card['fields']['kanban_column']) === this.columnId &&
+                           parseInt(card['fields']['kanban_level']) === this.levelId;
                 })
 
                 //Make sure it is sorted
@@ -231,8 +231,8 @@
                 //Filter for all data effected in the new column
                 let filter_new_column = this.allCards.filter(row => {
                     //return where column = new_card_column, and sort level >= new sort level
-                    return row['fields']['kanban_column'] == new_card_column &&
-                           row['fields']['kanban_level'] == new_card_level &&
+                    return parseInt(row['fields']['kanban_column']) === new_card_column &&
+                           parseInt(row['fields']['kanban_level']) === new_card_level &&
                            row['fields']['kanban_card_sort_number'] >= new_card_sort_number;
                 });
 
@@ -250,8 +250,8 @@
                 //Filter for all data effected in old column
                 let filter_old_column = this.allCards.filter(row => {
                     //Return where column = old_card_column, and the sort level >= old sort level
-                    return row['fields']['kanban_column'] == old_card_column &&
-                           row['fields']['kanban_level'] == old_card_level &&
+                    return parseInt(row['fields']['kanban_column']) === old_card_column &&
+                           parseInt(row['fields']['kanban_level']) === old_card_level &&
                            row['fields']['kanban_card_sort_number'] >= old_card_sort_number;
                 })
 
