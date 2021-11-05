@@ -12,7 +12,9 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedire
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.cache import never_cache
 from NearBeach.decorators.check_destination import check_destination
+
 
 
 from NearBeach.forms import AddBugForm,\
@@ -608,9 +610,8 @@ def get_customer_list(destination, location_id):
         customer_id__in=object_customers.values('customer_id')
     )
 
+
 # Internal function
-
-
 def get_group_list(destination, location_id):
     object_results = object_assignment.objects.filter(
         is_deleted=False,

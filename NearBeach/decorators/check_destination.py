@@ -7,6 +7,7 @@ from functools import wraps
 OBJECT_ARRAY = [
     'customer',
     'kanban',
+    'kanban_board',
     'requirement',
     'requirement_item',
     'request_for_change',
