@@ -130,7 +130,12 @@
                     `/kanban_information/archive_kanban_cards/`,
                     data_to_send,
                 ).then(response => {
-                    document.location.reload(true)
+                    //Mutate the data to exclude the archived cards
+                    this.$store.commit({
+                        type: 'archiveCards',
+                        'column': this.columnId,
+                        'level': this.levelId,
+                    });
                 }).catch(error => {
                      
                 })
@@ -208,9 +213,6 @@
                     return row['pk'] == data['target']['dataset']['cardId'];
                 })[0];
 
-                
-                
-
                 //Setup data to send upstream
                 this.sendDataUpstream(filtered_data);
             },
@@ -231,8 +233,8 @@
                 //Filter for all data effected in the new column
                 let filter_new_column = this.allCards.filter(row => {
                     //return where column = new_card_column, and sort level >= new sort level
-                    return parseInt(row['fields']['kanban_column']) === new_card_column &&
-                           parseInt(row['fields']['kanban_level']) === new_card_level &&
+                    return row['fields']['kanban_column'] == new_card_column &&
+                           row['fields']['kanban_level'] == new_card_level &&
                            row['fields']['kanban_card_sort_number'] >= new_card_sort_number;
                 });
 
@@ -250,8 +252,8 @@
                 //Filter for all data effected in old column
                 let filter_old_column = this.allCards.filter(row => {
                     //Return where column = old_card_column, and the sort level >= old sort level
-                    return parseInt(row['fields']['kanban_column']) === old_card_column &&
-                           parseInt(row['fields']['kanban_level']) === old_card_level &&
+                    return row['fields']['kanban_column'] == old_card_column &&
+                           row['fields']['kanban_level'] == old_card_level &&
                            row['fields']['kanban_card_sort_number'] >= old_card_sort_number;
                 })
 

@@ -121,6 +121,17 @@ const moduleKanban = {
     addCard(state, payload) {
       state.kanbanCardResults.push(payload.newCard[0]);
     },
+    archiveCards(state, payload) {
+        //payload will contain both column and level values
+        const column = payload.column,
+            level = payload.level;
+
+        //Filter out the column/level cards - and update the kanban card results
+        state.kanbanCardResults = state.kanbanCardResults.filter(row => {
+            return parseInt(row['fields']['kanban_column']) !== column &&
+                parseInt(row['fields']['kanban_level']) !== level
+        });
+    },
     updateKanbanCard(state, payload) {
       //Get the index location
       const index_location = state.kanbanCardResults.findIndex((row) => {
