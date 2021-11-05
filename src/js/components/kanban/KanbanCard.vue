@@ -298,15 +298,15 @@
                     smallest = (new_sort >= old_sort)*old_sort + (new_sort < old_sort)*new_sort;
 
                 //If they are the same (i.e. drag and dropped in same place) - return
-                if (largest == smallest) {
+                if (largest === smallest) {
                     return [];
                 }
 
                 //Filter for the data we need
                 let filtered_data = this.allCards.filter(row => {
                     //Return when same column and level, whilst also in range of smallest and largest
-                    return row['fields']['kanban_column'] === column &&
-                           row['fields']['kanban_level'] === level &&
+                    return parseInt(row['fields']['kanban_column']) === column &&
+                           parseInt(row['fields']['kanban_level']) === level &&
                            row['fields']['kanban_card_sort_number'] >= smallest &&
                            row['fields']['kanban_card_sort_number'] <= largest;
                 })
@@ -377,10 +377,10 @@
                     let cards_to_change = [];
 
                     //Depending if the card moves columns depends what we do
-                    if ((new_card_column == old_card_column) && 
-                        (new_card_level == old_card_level)) {
+                    if ((new_card_column === old_card_column) &&
+                        (new_card_level === old_card_level)) {
                         //The card stayed in the same place.
-                        
+
                         cards_to_change = this.dragSameColumn(data_to_send);
                     } else {
                         //The card move to a different place
