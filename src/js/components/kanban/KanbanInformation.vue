@@ -83,7 +83,11 @@
         },
         mounted() {
             //Send columns and levels into the VueX
-            `1`
+            this.$store.commit({
+                type: 'updateLists',
+                'columnResults': this.columnResults,
+                'levelResults': this.levelResults,
+            })
         }
     }
 </script>
