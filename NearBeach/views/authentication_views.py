@@ -143,6 +143,8 @@ def login(request):
     If the form is not in POST (aka GET) OR fails the checks, then it will create the form with
     the relevant errors.
     """
+    error_message = ""
+
     form = LoginForm(request.POST or None)
 
     # POST
@@ -170,10 +172,15 @@ def login(request):
                     username_id=User.objects.get(username=username).id,
                 ))
 
-                if user_group_count == 0:
-                    return HttpResponseRedirect(reverse('logout'))
+                # if user_group_count == 0:
+                #     return HttpResponseRedirect(reverse('logout'))
+                if user_group_count > 0:
+                    return HttpResponseRedirect(reverse('dashboard'))
 
-                return HttpResponseRedirect(reverse('dashboard'))
+                # User has actually failed to log in. We will purposly log them out
+                # And make sure we tell them why
+                auth.logout(request)
+                error_message = "Please contact your System Administrator. You do not have any associated Groups"
 
     # Get recaptcha public key
     if hasattr(settings, 'RECAPTCHA_PUBLIC_KEY') and hasattr(settings, 'RECAPTCHA_PRIVATE_KEY'):
@@ -189,6 +196,7 @@ def login(request):
 
     # context
     c = {
+        'error_message': error_message,
         'LoginForm': form,
         'nearbeach_title': 'NearBeach Login',
         'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,

@@ -20,6 +20,11 @@
     <div class="background">
         <div class="login-dialog">
             <h1>NearBeach Login</h1>
+            
+            {% if error_message %}
+                <div class="login-alert">{{ error_message }}</div>
+            {% endif %}
+
             <form action="{%  url 'login' %}" method="post" id="login-form">
                 {% csrf_token %}
 
