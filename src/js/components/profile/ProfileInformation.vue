@@ -82,7 +82,7 @@
     import { Modal } from "bootstrap";
 
     //Validations
-    import { required, maxLength, email } from 'vuelidate/lib/validators';
+    import { required, maxLength } from 'vuelidate/lib/validators';
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
