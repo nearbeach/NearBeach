@@ -18,7 +18,7 @@
             >
                 <a class="list-group-item list-group-item-action"
                    v-for="user in userList"
-                   v-bind:href="`/user_information/${user['pk']}/`"
+                   v-bind:href="`/user_information/${user['id']}/`"
                 >
                     <strong>
                         {{user['username']}}: {{user['first_name']}} {{user['last_name']}}

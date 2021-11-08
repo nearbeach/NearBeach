@@ -143,23 +143,32 @@ def get_my_objects(request):
 @require_http_methods(['POST'])
 def get_unassigned_objects(request):
     """
+    Function returns an json array with data from;
+    - Projects
+    - Requirements
+    - Tasks
+
+    Please note - a user who does not have project/task/requirement access for a
+    certain group, will not have said object return. Hence the partial checks like;
+    `permission_set__project__gt=0,`
+    Where we make sure the user has at least read only access.
     :param request:
     :return:
     """
-    # We only want to look at groups User is connected to
-    object_assignment_results = object_assignment.objects.filter(
-        is_deleted=False,
-        group_id__in=user_group.objects.filter(
-            is_deleted=False,
-            username=request.user,
-        ).values('group_id'),
-    )
-
-    # Get the user data
     project_results = project.objects.filter(
         is_deleted=False,
-        project_id__in=object_assignment_results.filter(
-            project_id__isnull=False,
+        # project_id__in=object_assignment_results.filter(
+        #     project_id__isnull=False,
+        # ).values('project_id')
+        project_id__in=object_assignment.objects.filter(
+            is_deleted=False,
+            group_id__in=user_group.objects.filter(
+                is_deleted=False,
+                username=request.user,
+                # We want to make sure the user's permissions for this particular
+                # Project, is greater than zero.
+                permission_set__project__gt=0,
+            ).values('group_id'),
         ).values('project_id')
     ).exclude(
         Q(
@@ -178,11 +187,17 @@ def get_unassigned_objects(request):
         'project_name',
         'project_status',
     )
-
     requirement_results = requirement.objects.filter(
         is_deleted=False,
-        requirement_id__in=object_assignment_results.filter(
-            requirement_id__isnull=False,
+        requirement_id__in=object_assignment.objects.filter(
+            is_deleted=False,
+            group_id__in=user_group.objects.filter(
+                is_deleted=False,
+                username=request.user,
+                # We want to make sure the user's permissions for this particular
+                # Requirements, is greater than zero.
+                permission_set__requirement__gt=0,
+            ).values('group_id'),
         ).values('requirement_id'),
     ).exclude(
         Q(
@@ -204,8 +219,15 @@ def get_unassigned_objects(request):
 
     task_results = task.objects.filter(
         is_deleted=False,
-        task_id__in=object_assignment_results.filter(
-            task_id__isnull=False,
+        task_id__in=object_assignment.objects.filter(
+            is_deleted=False,
+            group_id__in=user_group.objects.filter(
+                is_deleted=False,
+                username=request.user,
+                # We want to make sure the user's permissions for this particular
+                # Tasks, is greater than zero.
+                permission_set__task__gt=0,
+            ).values('group_id'),
         ).values('task_id'),
     ).exclude(
         Q(
