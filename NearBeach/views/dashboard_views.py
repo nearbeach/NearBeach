@@ -79,6 +79,7 @@ def get_my_objects(request):
         'project_id',
         'project_name',
         'project_status',
+        'project_end_date',
     )
 
     requirement_results = requirement.objects.filter(
@@ -109,6 +110,7 @@ def get_my_objects(request):
         'task_id',
         'task_short_description',
         'task_status',
+        'task_end_date',
     )
 
     # Only have 25 results and order by alphabetical order
@@ -186,6 +188,7 @@ def get_unassigned_objects(request):
         'project_id',
         'project_name',
         'project_status',
+        'project_end_date',
     )
     requirement_results = requirement.objects.filter(
         is_deleted=False,
@@ -245,6 +248,7 @@ def get_unassigned_objects(request):
         'task_id',
         'task_short_description',
         'task_status',
+        'task_end_date',
     )
     # Only have 25 results and order by alphabetical order
     # requirement_results.order_by('requirement_title')[:25]

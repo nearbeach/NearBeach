@@ -4,6 +4,8 @@ import Vuex from 'vuex';
 
 import { getField, updateField } from 'vuex-map-fields';
 
+const { DateTime } = require("luxon");
+
 Vue.use(Vuex);
 
 const moduleCard = {
