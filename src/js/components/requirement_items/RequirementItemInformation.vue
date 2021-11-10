@@ -40,7 +40,7 @@
                             <span class="error" v-if="!$v.requirementItemScopeModel.required"> Please supply a scope.</span>
                             <span class="error" v-if="!$v.requirementItemScopeModel.maxLength"> Sorry - too many characters.</span>
                         </label><br/>
-                        <img src="/static/NearBeach/images/placeholder/body_text.svg"
+                        <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                              class="loader-image"
                              alt="loading image for Tinymce"
                         />
@@ -143,6 +143,9 @@
 
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
 
@@ -158,6 +161,19 @@
             'statusList',
             'typeList',
         ],
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
+            getStakeholderImage: function() {
+                if (this.stakeholderModel['organisation_profile_picture'] == '') {
+                    //There is no image - return the default image
+                    return this.defaultStakeholderImage;
+                }
+                return this.stakeholderModel['organisation_profile_picture']
+            },
+        },
         mixins: [
             iconMixin,
         ],
@@ -187,15 +203,6 @@
             typeModel: {
                 required
             },
-        },
-        computed: {
-            getStakeholderImage: function() {
-                if (this.stakeholderModel['organisation_profile_picture'] == '') {
-                    //There is no image - return the default image
-                    return this.defaultStakeholderImage;
-                }
-                return this.stakeholderModel['organisation_profile_picture']
-            }
         },
         methods: {
             updateRequirementItem: function() {

@@ -51,26 +51,26 @@
                                 <a href="javascript:void(0)"
                                    class="btn btn-primary change-task-button"
                                    v-on:click="updateChangeTaskStatus(changeTask['pk'],4)"
-                                   v-if="changeTask['fields']['change_task_status']==3"
+                                   v-if="changeTask['fields']['change_task_status']==3 && userLevel > 1"
                                 >Start Task</a>
 
                                 <!-- FINISH BUTTON -->
                                 <a href="javascript:void(0)"
                                    class="btn btn-warning change-task-button"
                                    v-on:click="updateChangeTaskStatus(changeTask['pk'],5)"
-                                   v-if="changeTask['fields']['change_task_status']==4"
+                                   v-if="changeTask['fields']['change_task_status']==4 && userLevel > 1"
                                 >Finish Task</a>
 
                                 <!-- SUCCESS BUTTON -->
                                 <a href="javascript:void(0)"
                                    class="btn btn-success change-task-button"
-                                   v-if="changeTask['fields']['change_task_status']==5"
+                                   v-if="changeTask['fields']['change_task_status']==5 && userLevel > 1"
                                 >Successful</a>
 
                                 <!-- FAILED BUTTON -->
                                 <a href="javascript:void(0)"
                                    class="btn btn-danger change-task-button"
-                                   v-if="changeTask['fields']['change_task_status']==6"
+                                   v-if="changeTask['fields']['change_task_status']==6 && userLevel > 1"
                                 >Failed</a>
                             </div>
                         </td>
@@ -95,6 +95,7 @@
                 <a href="javascript:void(0)"
                    class="btn btn-primary save-changes"
                    v-on:click="addNewChangeItem"
+                   v-if="userLevel > 1"
                 >New Change Item</a>
             </div>
         </div>
@@ -107,6 +108,7 @@
                 <a href="javascript:void(0)"
                    class="btn btn-warning save-changes"
                    v-on:click="closeRfc"
+                   v-if="userLevel > 1"
                 >Close Request for Change</a>
             </div>
         </div>
@@ -126,6 +128,9 @@
     // Mixins
     import datetimeMixins from "../../../mixins/datetimeMixins";
     import errorModalMixin from "../../../mixins/errorModalMixin";
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "RfcRunSheetList",
@@ -150,6 +155,9 @@
             changeTaskList: [],
         }),
         computed: {
+            ...mapGetters({
+                userLevel: "getUserLevel",
+            }),
             isCompleted: function() {
                 var count_of_uncompleted_tasks = this.changeTaskList.filter(changeTask => {
                     const change_task_status = changeTask['fields']['change_task_status'];

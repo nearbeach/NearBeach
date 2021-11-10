@@ -275,6 +275,7 @@ def rfc_information(request, rfc_id, *args, **kwargs):
 
     # Get context
     c = get_rfc_context(rfc_id)
+    c['user_level'] = kwargs['user_level']
 
     return HttpResponse(t.render(c, request))
 

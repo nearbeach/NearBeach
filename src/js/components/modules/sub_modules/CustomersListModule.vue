@@ -23,22 +23,31 @@
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "CustomersListModule",
         props: [
             'customerResults',
         ],
+        computed: {
+            ...mapGetters({
+                staticUrl: "getStaticUrl",
+            }),
+            defaultCustomerImage: function() {
+                return `${this.staticUrl}/NearBeach/images/placeholder/people_tax.svg`;
+            }
+        },
         mixins: [
             iconMixin,
         ],
         data() {
-            return {
-                defaultCustomerImage: '/static/NearBeach/images/placeholder/people_tax.svg',
-            }
+            return {}
         },
         methods: {
             getCustomerImage: function(customer) {
-                if (customer['fields']['customer_profile_picture'] == '') {
+                if (customer['fields']['customer_profile_picture'] === '') {
                     //There is no image - return the default image
                     return this.defaultCustomerImage;
                 }

@@ -15,7 +15,7 @@
                     </p>
                 </div>
                 <div class="col-md-3">
-                    <img src="/static/NearBeach/images/placeholder/product_tour.svg"
+                    <img v-bind:src="`${staticUrl}/NearBeach/images/placeholder/product_tour.svg`"
                          alt="No Profile Picture"
                          class="organisation-profile-image"
                     />
@@ -102,6 +102,9 @@
 <script>
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Validation
     import { email, maxLength, required , url } from 'vuelidate/lib/validators';
 
@@ -118,6 +121,12 @@
             errorModalMixin,
             loadingModalMixin,
         ],
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
+        },
         data() {
             return {
                 organisationNameModel: this.organisationResults[0]['fields']['organisation_name'],

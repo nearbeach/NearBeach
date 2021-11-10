@@ -6,7 +6,7 @@
         >
             <div class="organisation-details">
                 <img v-if="organisation['fields']['organisation_profile_picture'] == ''"
-                     v-bind:src="`${staticUrl}static/NearBeach/images/placeholder/product_tour.svg`"
+                     v-bind:src="`${staticUrl}/NearBeach/images/placeholder/product_tour.svg`"
                      alt="Stakeholder Logo"
                      class="organisation-image"
                 >
@@ -41,6 +41,9 @@
 </template>
 
 <script>
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
 
@@ -48,14 +51,12 @@
         name: "ListOrganisations",
         props: {
             organisationResults: Array,
-            rootUrl: {
-                type: String,
-                default: "/",
-            },
-            staticUrl: {
-                type: String,
-                default: "/",
-            },
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
         },
         mixins: [
             iconMixin,

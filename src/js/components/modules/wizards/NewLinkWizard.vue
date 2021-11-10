@@ -55,7 +55,9 @@
                             <div id="link_wizard_results"
                                  v-if="isSearching || objectModel == null"
                             >
-                                <img src="/static/NearBeach/images/placeholder/search.svg" alt="Searching..." />
+                                <img v-bind:src="`${staticUrl}/NearBeach/images/placeholder/search.svg`"
+                                     alt="Searching..."
+                                />
                             </div>
 
                             <div v-if="objectResults.length == 0 && objectModel != null"
@@ -200,11 +202,26 @@
 
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "NewLinkWizard",
         props: {
-            destination: String,
-            locationId: Number,
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
         },
         mixins: [
             errorModalMixin,

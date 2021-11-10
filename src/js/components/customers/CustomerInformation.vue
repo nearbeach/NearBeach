@@ -17,7 +17,7 @@
                 <div class="col-md-8">
                     <div class="row customer-profile-image">
                         <!-- PROFILE IMAGE -->
-                        <img src="/static/NearBeach/images/placeholder/product_tour.svg"
+                        <img v-bind:src="`${staticUrl}/NearBeach/images/placeholder/product_tour.svg`"
                              alt="No Profile Picture"
                              class="customer-profile-image"
                         />
@@ -98,6 +98,9 @@
     const axios = require('axios');
     import { Modal } from "bootstrap";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Validation
     import { email, required } from 'vuelidate/lib/validators';
 
@@ -130,6 +133,12 @@
                     return [];
                 },
             },
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
         },
         data() {
             return {

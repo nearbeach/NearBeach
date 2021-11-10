@@ -17,8 +17,6 @@
             <!-- LIST OUT SEARCH RESULTS -->
             <hr>
             <list-organisations v-bind:organisation-results="localOrganisationResults"
-                                v-bind:root-url="rootUrl"
-                                v-bind:static-url="staticUrl"
             ></list-organisations>
 
             <!-- SHOW IF NO RESULTS -->
@@ -39,14 +37,6 @@
         name: "SearchOrganisations",
         props: {
             organisationResults: Array,
-            staticUrl: {
-                type: String,
-                default: "/",
-            },
-            rootUrl: {
-                type: String,
-                default: "/",
-            },
         },
         mixins: [
             searchMixin,

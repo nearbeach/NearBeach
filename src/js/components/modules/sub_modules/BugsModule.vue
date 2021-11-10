@@ -52,6 +52,7 @@
             <div class="col-md-12">
                 <button class="btn btn-primary save-changes"
                         v-on:click="addNewBug"
+                        v-if="userLevel > 1"
                 >
                     Add Bug
                 </button>
@@ -75,6 +76,9 @@
     import errorModalMixin from '../../../mixins/errorModalMixin';
     import iconMixin from "../../../mixins/iconMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "BugsModule",
         props: [
@@ -89,6 +93,11 @@
             return {
                 bugList: [],
             }
+        },
+        computed: {
+            ...mapGetters({
+                userLevel: "getUserLevel",
+            }),
         },
         methods: {
             addNewBug: function() {

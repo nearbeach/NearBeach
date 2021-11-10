@@ -243,11 +243,20 @@
 </template>
 
 <script>
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "ParentModules",
         props: {
-            destination: String, //Which object we are looking at, i.e. requirement
-            locationId: Number, //The ID of the object we are looking at.
+            destination: {
+                type: String,
+                default: '',
+            }, //Which object we are looking at, i.e. requirement
+            locationId: {
+                type: Number,
+                default: 0,
+            }, //The ID of the object we are looking at.
             rootUrl: {
                 type: String,
                 default: '/',
@@ -255,6 +264,10 @@
             staticUrl: {
                 type: String,
                 default: '/',
+            },
+            userLevel: {
+                type: Number,
+                default: 0,
             },
         },
         data() {
@@ -272,7 +285,11 @@
                 type: 'updateUrl',
                 rootUrl: this.rootUrl,
                 staticUrl: this.staticUrl,
-            })
+            });
+            this.$store.commit({
+                type: 'updateUserLevel',
+                userLevel: this.userLevel,
+            });
         }
     }
 </script>

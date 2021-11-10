@@ -53,7 +53,7 @@
                                  class="no-search"
                             >
                                 <strong>Currently Searching for Bugs</strong><br/>
-                                <img src="/static/NearBeach/images/placeholder/online_connection.svg"
+                                <img :src="`${staticUrl}/NearBeach/images/placeholder/online_connection.svg`"
                                      alt="Placeholder Search Image"
                                 />
                             </div>
@@ -61,7 +61,7 @@
                                  class="no-search"
                             >
                                 <strong>No Search Results Sorry</strong><br/>
-                                <img src="/static/NearBeach/images/placeholder/road_to_knowledge.svg"
+                                <img :src="`${staticUrl}/NearBeach/images/placeholder/road_to_knowledge.svg`"
                                      alt="Placeholder Search Image"
                                 />
                             </div>
@@ -115,12 +115,27 @@
 
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "AddBugWizard",
-        props: [
-            'destination',
-            'locationId',
-        ],
+        props: {
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
+        },
         mixins: [
             errorModalMixin,
             iconMixin,

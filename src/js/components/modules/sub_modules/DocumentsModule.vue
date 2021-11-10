@@ -68,6 +68,7 @@
                     type="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
+                    v-if="userLevel > 1"
             >
                 New Document/File
             </button>
@@ -133,6 +134,9 @@
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "DocumentsModule",
         props: [
@@ -151,11 +155,15 @@
         mixins: [
             iconMixin,
         ],
+        computed: {
+            ...mapGetters({
+                userLevel: "getUserLevel",
+            }),
+        },
         methods: {
             addFolder: function() {
                 var addFolderModal = new Modal(document.getElementById('addFolderModal'));
                 addFolderModal.show();
-
             },
             addLink: function() {
                 var addLinkModal = new Modal(document.getElementById("addLinkModal"));

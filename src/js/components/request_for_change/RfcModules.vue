@@ -100,6 +100,7 @@
                             <a href="javascript:void(0)"
                                class="btn btn-primary save-changes"
                                v-on:click="updateRisk"
+                               v-if="userLevel > 1"
                             >Update Risks</a>
                         </div>
                     </div>
@@ -125,6 +126,7 @@
                             <a href="javascript:void(0)"
                                class="btn btn-primary save-changes"
                                v-on:click="updateImplementation"
+                               v-if="userLevel > 1"
                             >Update Implementation Plan</a>
                         </div>
                     </div>
@@ -150,6 +152,7 @@
                             <a href="javascript:void(0)"
                                class="btn btn-primary save-changes"
                                v-on:click="updateBackoutPlan"
+                               v-if="userLevel > 1"
                             >Update Backout Plan</a>
                         </div>
                     </div>
@@ -175,6 +178,7 @@
                             <a href="javascript:void(0)"
                                class="btn btn-primary save-changes"
                                v-on:click="updateTestPlan"
+                               v-if="userLevel > 1"
                             >Update Test Plan</a>
                         </div>
                     </div>
@@ -200,6 +204,9 @@
 
 <script>
     const axios = require('axios');
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -242,6 +249,11 @@
                 'tab_5': true,
             }
         }),
+        computed: {
+            ...mapGetters({
+                userLevel: "getUserLevel",
+            }),
+        },
         methods: {
             sendData: function(data_to_send,url) {
                 //Open up the loading modal

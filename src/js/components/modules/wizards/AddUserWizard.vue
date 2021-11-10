@@ -50,7 +50,7 @@
                             </p>
                         </div>
                         <div class="col-md-6 no-search">
-                            <img src="/static/NearBeach/images/placeholder/questions.svg" alt="Sorry - there are no results" />
+                            <img v-bind:src="`${staticURL}NearBeach/images/placeholder/questions.svg`" alt="Sorry - there are no results" />
                         </div>
                     </div>
                 </div>
@@ -61,7 +61,7 @@
                     >Close</button>
                     <button type="button"
                             class="btn btn-primary"
-                            v-bind:disabled="userModel.length==0"
+                            v-bind:disabled="userModel.length===0"
                             v-on:click="addUser"
                     >Add User(s)</button>
                 </div>
@@ -72,6 +72,9 @@
 
 <script>
     const axios = require('axios');
+
+    //VueX
+    import { mapGetters } from 'vuex'
 
     //Mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
@@ -88,6 +91,12 @@
             errorModalMixin,
             iconMixin,
         ],
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticURL: "getStaticUrl",
+            }),
+        },
         data() {
             return {
                 userFixList: [],
@@ -127,7 +136,7 @@
             },
             getUserList: function() {
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/user_list_all/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/user_list_all/`,
                 ).then(response => {
                     //Clear the user fix list
                     this.userFixList = response['data'].map(row => {

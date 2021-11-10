@@ -13,6 +13,9 @@
     import iconMixin from "../../../mixins/iconMixin";
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "MiscModule",
         components: {},
@@ -24,6 +27,11 @@
             errorModalMixin,
             iconMixin,
         ],
+        computed: {
+            ...mapGetters({
+                userLevel: "getUserLevel",
+            }),
+        },
         data() {
             return {
                 noteHistoryResults: [],

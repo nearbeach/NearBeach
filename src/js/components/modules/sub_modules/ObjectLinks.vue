@@ -36,6 +36,7 @@
                 <a href="javascript:void(0)"
                    class="btn btn-primary save-changes"
                    v-on:click="newLink"
+                   v-if="userLevel > 1"
                 >Create new Link</a>
             </div>
         </div>
@@ -57,6 +58,9 @@
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "ObjectLinks",
         props: {
@@ -70,6 +74,11 @@
             return {
                 linkResults: [],
             }
+        },
+        computed: {
+            ...mapGetters({
+                userLevel: "getUserLevel",
+            }),
         },
         methods: {
             extractObjectDescription: function(link) {

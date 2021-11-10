@@ -27,7 +27,7 @@
                 <span class="error" v-if="!$v.rfcSummaryModel.required && $v.rfcSummaryModel.$dirty"> Please supply a description.</span>
                 <span class="error" v-if="!$v.rfcSummaryModel.maxLength"> Sorry - too many characters.</span>
             </label><br>
-            <img v-bind:src="`${staticUrl}static/NearBeach/images/placeholder/body_text.svg`"
+            <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                  class="loader-image"
                  alt="loading image for Tinymce"
             />
@@ -49,7 +49,7 @@
 </template>
 
 <script>
-    import { required, maxLength } from 'vuelidate/lib/validators'
+    import { required, maxLength } from 'vuelidate/lib/validators';
 
     export default {
         name: "RfcDescription",

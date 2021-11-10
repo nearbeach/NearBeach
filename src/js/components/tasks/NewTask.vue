@@ -33,7 +33,7 @@
                         <span class="error" v-if="!$v.taskDescriptionModel.required && $v.taskDescriptionModel.$dirty"> Please supply a description.</span>
                         <span class="error" v-if="!$v.taskDescriptionModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
-                    <img v-bind:src="`${staticUrl}static/NearBeach/images/placeholder/body_text.svg`"
+                    <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
                          alt="loading image for Tinymce"
                     />

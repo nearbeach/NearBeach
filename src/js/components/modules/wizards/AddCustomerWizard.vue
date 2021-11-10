@@ -42,7 +42,9 @@
                             </p>
                         </div>
                         <div class="col-md-6 no-search">
-                            <img src="/static/NearBeach/images/placeholder/questions.svg" alt="Sorry - there are no results" />
+                            <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/questions.svg`"
+                                 alt="Sorry - there are no results"
+                            />
                         </div>
                     </div>
                 </div>
@@ -68,13 +70,33 @@
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "AddCustomerWizard",
-        props: [
-            'destination',
-            'locationId',
-            'excludeCustomers',
-        ],
+        props: {
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+            excludeCustomers: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            })
+        },
         mixins: [
             errorModalMixin,
             iconMixin,

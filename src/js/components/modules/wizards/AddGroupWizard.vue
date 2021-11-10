@@ -47,7 +47,9 @@
                             </p>
                         </div>
                         <div class="col-md-6 no-search">
-                            <img src="/static/NearBeach/images/placeholder/questions.svg" alt="Sorry - there are no results" />
+                            <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/questions.svg`"
+                                 alt="Sorry - there are no results"
+                            />
                         </div>
                     </div>
                 </div>
@@ -74,12 +76,27 @@
 
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "AddGroupWizard",
-        props: [
-            'destination',
-            'locationId',
-        ],
+        props: {
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
+        },
         mixins: [
             errorModalMixin,
             iconMixin,

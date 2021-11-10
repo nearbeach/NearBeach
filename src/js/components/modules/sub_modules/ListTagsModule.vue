@@ -13,6 +13,7 @@
             >
                 {{tag['fields']['tag_name']}}
                 <span v-on:click="removeTag(tag['pk'])"
+                      v-if="userLevel > 1"
                 >
                     <IconifyIcon v-bind:icon="icons.xCircle"></IconifyIcon>
                 </span>
@@ -26,6 +27,7 @@
                 <a href="javascript:void(0)"
                    class="btn btn-primary save-changes"
                    v-on:click="createNewTag"
+                   v-if="userLevel > 1"
                 >Add Tag to {{destination}}</a>
             </div>
         </div>
@@ -48,6 +50,9 @@
     import iconMixin from "../../../mixins/iconMixin";
     import AddTagWizard from '../wizards/AddTagWizard.vue';
 
+    //VueX
+    import { mapGetters } from 'vuex'
+
     export default {
         components: { AddTagWizard },
         name: "ListTagsModule",
@@ -63,6 +68,11 @@
         mixins: [
             iconMixin,
         ],
+        computed: {
+            ...mapGetters({
+                userLevel: "getUserLevel",
+            }),
+        },
         methods: {
             addTags: function(data) {
                 this.tagList = data;

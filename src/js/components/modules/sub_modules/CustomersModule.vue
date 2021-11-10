@@ -25,6 +25,7 @@
             <div class="col-md-12">
                 <button class="btn btn-primary save-changes"
                         v-on:click="addNewCustomer"
+                        v-if="userLevel > 1"
                 >
                     Add Customer
                 </button>
@@ -45,6 +46,9 @@
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     const axios = require('axios');
     import {Modal} from "bootstrap";
 
@@ -62,6 +66,11 @@
             return {
                 customerResults: [],
             }
+        },
+        computed: {
+            ...mapGetters({
+                userLevel: "getUserLevel",
+            })
         },
         methods: {
             addNewCustomer: function() {

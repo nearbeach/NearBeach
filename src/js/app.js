@@ -3,7 +3,6 @@ import Vue from 'vue/dist/vue.js';
 import Vuex from 'vuex';
 
 import { getField, updateField } from 'vuex-map-fields';
-
 const { DateTime } = require("luxon");
 
 Vue.use(Vuex);
@@ -193,7 +192,7 @@ const moduleLocationId = {
 const moduleUrl = {
   state: () => ({
     rootUrl: '/',
-    staticUrl: '/',
+    staticUrl: '/static/',
   }),
   mutations: {
     updateUrl(state, payload) {
@@ -211,6 +210,23 @@ const moduleUrl = {
     },
   },
 };
+
+const moduleUserLevel = {
+  state: () => ({
+    userLevel: 0,
+  }),
+  mutations: {
+    updateUserLevel(state, payload) {
+      state.userLevel = payload.userLevel;
+    },
+  },
+  action: {},
+  getters: {
+    getUserLevel: (state) => {
+      return state.userLevel;
+    },
+  },
+}
 
 /*
 const moduleStaticUrl = {
@@ -235,11 +251,9 @@ const store = new Vuex.Store({
   modules: {
     card: moduleCard,
     destination: moduleDestination,
-    //location: moduleLocationId,
-    //rootUrl: moduleRootUrl,
-    //staticUrl: moduleStaticUrl,
     kanban: moduleKanban,
     url: moduleUrl,
+    userLevel: moduleUserLevel,
   },
 });
 

@@ -35,7 +35,7 @@
                         <span class="error" v-if="!$v.requirementScopeModel.required"> Please supply a scope.</span>
                         <span class="error" v-if="!$v.requirementScopeModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
-                    <img src="/static/NearBeach/images/placeholder/body_text.svg"
+                    <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
                          alt="loading image for Tinymce"
                     />
@@ -142,6 +142,9 @@
 
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Validation
     import { required, maxLength } from 'vuelidate/lib/validators';
 
@@ -160,6 +163,12 @@
             'typeList',
             'userLevel',
         ],
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
+        },
         mixins: [
             errorModalMixin,
             loadingModalMixin

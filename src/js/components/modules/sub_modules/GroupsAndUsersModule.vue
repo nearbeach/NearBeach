@@ -26,6 +26,7 @@
                 <a href="javascript:void(0)"
                    class="btn btn-primary save-changes"
                    v-on:click="addNewGroup"
+                   v-if="userLevel > 1"
                 >Add Group to {{destination}}</a>
             </div>
         </div>
@@ -45,7 +46,10 @@
         >
             <div v-for="user in userList" 
                  class="user-card">
-                <img src="/static/NearBeach/images/placeholder/people_tax.svg" alt="default profile" class="default-user-profile" />
+                <img v-bind:src="`${staticUrl}/NearBeach/images/placeholder/people_tax.svg`"
+                     alt="default profile"
+                     class="default-user-profile"
+                />
                 <div class="user-details">
                     <strong>{{user['first_name']}} {{user['last_name']}}</strong><br/>
                     {{user['username']}}
@@ -61,6 +65,7 @@
                 <a href="javascript:void(0)"
                    class="btn btn-primary save-changes"
                    v-on:click="addNewUser"
+                   v-if="userLevel > 1"
                 >Add User to {{destination}}</a>
             </div>
         </div>
@@ -91,12 +96,28 @@
     const axios = require('axios');
     import {Modal} from "bootstrap";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "GroupsAndUsersModule",
-        props: [
-            'destination',
-            'locationId',
-        ],
+        props: {
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+                userLevel: "getUserLevel",
+            }),
+        },
         mixins: [
             errorModalMixin,
             iconMixin,
