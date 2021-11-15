@@ -228,7 +228,7 @@
                     this.dataToSend(),
                 ).then(response => {
                     //Go to the url sent back
-                    window.location.href = response['data'];
+                    window.location.href = `/organisation_information/${response.data[0]['pk']}/`;
                 }).catch(error => {
                     
                 });

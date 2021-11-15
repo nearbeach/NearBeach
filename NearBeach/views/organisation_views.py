@@ -56,7 +56,12 @@ def new_organisation_save(request, *args, **kwargs):
     )
     organisation_submit.save()
 
-    return HttpResponse(reverse('organisation_information', args={organisation_submit.organisation_id}))
+    # Get the data and send it back as json
+    organisation_results = organisation.objects.get(
+        organisation_id=organisation_submit.organisation_id,
+    )
+
+    return HttpResponse(serializers.serialize('json', [organisation_results]), content_type='application/json')
 
 
 @require_http_methods(['POST'])

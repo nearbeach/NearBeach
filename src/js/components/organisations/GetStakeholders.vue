@@ -5,6 +5,14 @@
             <p class="text-instructions">
                 Please search for your stakeholder's organisation in the dropdown box. Once found, please select.
             </p>
+            <p class="text-instructions">
+              If you can not find your organisation, please
+              <a href="javascript:void(0)"
+                 v-on:click="openNewOrganisationModal"
+              >
+                click here to create it.
+              </a>
+            </p>
         </div>
         <div class="col-md-8">
             <div class="form-group">
@@ -19,13 +27,18 @@
                 />
             </div>
         </div>
+
+        <!-- MODAL -->
+        <new-organisation-modal v-on:created_new_organisation="createdNewOrganisation($event)"
+        ></new-organisation-modal>
     </div>
 </template>
 
 <script>
     //JavaScript Libraries
     const axios = require('axios');
-    import bootstrap from 'bootstrap'
+    import bootstrap from 'bootstrap';
+    import { Modal } from 'bootstrap';
 
     //Validation
     import { required } from 'vuelidate/lib/validators'
@@ -58,6 +71,14 @@
             },
         },
         methods: {
+            createdNewOrganisation: function(data) {
+                //We have recieved a new organisation that the user has created.
+                //Place them into the model
+                this.stakeholderModel = data;
+
+                //Close the modal
+                document.getElementById("newOrganisationModalCloseButton").click();
+            },
             fetchOptions: function(search, loading) {
                 this.searchTrigger({
                    'return_function': this.getOrganisationData,
@@ -113,6 +134,16 @@
                     var loader_element = document.getElementById("loader");
                     loader_element.style.display = "none";
                 });
+            },
+            openNewOrganisationModal: function() {
+                var newModal = new Modal(document.getElementById('newOrganisationModal'));
+
+                newModal.show();
+                // var newModal = new bootstrap.Modal(
+                //     document.getElementById("newOrganisationModal"), {
+                //         keyboard: false
+                //     })
+                // newModal.show();
             },
         },
         watch: {

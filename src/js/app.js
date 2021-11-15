@@ -358,6 +358,7 @@ import NotesModule from './components/modules/sub_modules/NotesModule.vue';
 import ListTagsModule from './components/modules/sub_modules/ListTagsModule.vue';
 import AddTagWizard from './components/modules/wizards/AddTagWizard.vue';
 import EditTagModal from './components/tags/EditTagModal.vue';
+import NewOrganisationModal from './components/organisations/NewOrganisationModal.vue';
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -499,6 +500,7 @@ Vue.component('ListTagsModule', ListTagsModule);
 Vue.component('AddTagWizard', AddTagWizard);
 Vue.component('SearchTags', SearchTags);
 Vue.component('EditTagModal', EditTagModal);
+Vue.component('NewOrganisationModal', NewOrganisationModal);
 
 import Vuelidate from 'vuelidate';
 Vue.use(Vuelidate);
