@@ -231,7 +231,7 @@
                     data_to_send,
                 ).then(response => {
                     //Data has been successfully saved. Time to update the requirement links
-                    this.$emit('update_module',{});
+                    this.$emit('update_module', response.data);
 
                     //Click on the close button - a hack, but it should close the modal
                     document.getElementById("requirementLinkCloseButton").click();

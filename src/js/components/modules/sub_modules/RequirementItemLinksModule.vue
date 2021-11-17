@@ -6,7 +6,7 @@
         </p>
 
         <!-- ITEM LINKS -->
-        <div v-if="itemLinkResults.length == 0"
+        <div v-if="itemLinkResults.length === 0"
         >
             <div class="alert alert-dark">
                 Sorry - there are no Item Links. Please navigate to the Item you wish to add a link too.
@@ -48,7 +48,7 @@
         <!-- need to build something that resets the requirement links when adding links -->
         <new-requirement-link-wizard v-bind:location-id="locationId"
                                      v-bind:destination="destination"
-                                     v-on:update_module="updateModel"
+                                     v-on:update_module="updateModel($event)"
         ></new-requirement-link-wizard>
     </div>
 </template>
@@ -156,7 +156,9 @@
                 var elem_modal = new Modal(document.getElementById('newRequirementLinkModal'));
                 elem_modal.show();
             },
-            updateModel: function() {},
+            updateModel: function(data) {
+                this.itemLinkResults = data;
+            },
         },
         mounted() {
             //Get the required data we need
