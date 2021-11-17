@@ -5,7 +5,7 @@
              aria-labelledby="requirementItemModal"
              aria-hidden="true"
     >
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2><IconifyIcon v-bind:icon="icons.clipboardIcon"></IconifyIcon> New Requirement Item Wizard</h2>
