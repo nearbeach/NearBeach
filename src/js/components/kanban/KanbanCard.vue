@@ -42,6 +42,7 @@
             <a class="kanban-link btn btn-danger"
                href="javascript:void(0)"
                v-on:click="archiveCards"
+               v-if="masterList.length > 0"
             >
                 Archive Cards
             </a>
