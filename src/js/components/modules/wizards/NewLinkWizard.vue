@@ -259,6 +259,9 @@
                     //Data has been successfully saved. Time to update the requirement links
                     this.$emit('update_link_results',{});
 
+                    //Clear the data
+                    this.objectModel = null;
+
                     //Click on the close button - a hack, but it should close the modal
                     document.getElementById("linkCloseButton").click();
                 });

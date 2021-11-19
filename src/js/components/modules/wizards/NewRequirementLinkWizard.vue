@@ -235,6 +235,9 @@
 
                     //Click on the close button - a hack, but it should close the modal
                     document.getElementById("requirementLinkCloseButton").click();
+
+                    //Clear results
+                    this.objectModel = null;
                 });
             }
         },

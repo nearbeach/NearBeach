@@ -15,39 +15,37 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import never_cache
 from NearBeach.decorators.check_destination import check_destination
 
-
-
-from NearBeach.forms import AddBugForm,\
-    AddCustomerForm,\
-    AddGroupForm,\
-    AddObjectLinkForm,\
-    AddNoteForm,\
-    AddTagsForm,\
-    AddUserForm,\
+from NearBeach.forms import AddBugForm, \
+    AddCustomerForm, \
+    AddGroupForm, \
+    AddObjectLinkForm, \
+    AddNoteForm, \
+    AddTagsForm, \
+    AddUserForm, \
     User, \
     DeleteLinkForm, \
     DeleteTagForm, \
     SearchForm, \
     QueryBugClientForm
-from NearBeach.views.tools.internal_functions import set_object_from_destination,\
-    project,\
-    task,\
-    requirement,\
-    requirement_item,\
-    get_object_from_destination,\
-    opportunity,\
+from NearBeach.views.tools.internal_functions import set_object_from_destination, \
+    project, \
+    task, \
+    requirement, \
+    requirement_item, \
+    get_object_from_destination, \
+    opportunity, \
     organisation
-from NearBeach.models import bug,\
-    object_assignment,\
-    group,\
-    object_note,\
-    tag,\
-    tag_assignment,\
-    permission_set,\
-    bug_client,\
-    customer,\
-    user_group,\
-    list_of_requirement_status,\
+from NearBeach.models import bug, \
+    object_assignment, \
+    group, \
+    object_note, \
+    tag, \
+    tag_assignment, \
+    permission_set, \
+    bug_client, \
+    customer, \
+    user_group, \
+    list_of_requirement_status, \
     list_of_requirement_item_status
 
 
@@ -801,13 +799,31 @@ def link_list(request, destination, location_id, object_lookup):
         data_results = project.objects.filter(
             is_deleted=False,
         ).exclude(
-            project_status='Closed',
+            Q(
+                project_status='Closed',
+            ) |
+            Q(
+                project_id__in=object_assignment.objects.filter(
+                    is_deleted=False,
+                    project_id__isnull=False,
+                    **{destination: location_id}
+                ).values('project_id')
+            )
         )
     elif object_lookup == "task":
         data_results = task.objects.filter(
             is_deleted=False,
         ).exclude(
-            task_status='Closed',
+            Q(
+                task_status='Closed',
+            ) |
+            Q(
+                task_id__in=object_assignment.objects.filter(
+                    is_deleted=False,
+                    task_id__isnull=False,
+                    **{destination: location_id},
+                ).values('task_id')
+            )
         )
     elif object_lookup == "requirement":
         data_results = requirement.objects.filter(
@@ -973,10 +989,10 @@ def query_bug_client(request, destination, location_id):
     exclude_url = f_bugs + o_notequals + v_values
 
     url = bug_client_instance.bug_client_url \
-        + bug_client_instance.list_of_bug_client.bug_client_api_url \
-        + bug_client_instance.list_of_bug_client.api_search_bugs \
-        + urllib.parse.quote(form.cleaned_data['search']) \
-        + exclude_url
+          + bug_client_instance.list_of_bug_client.bug_client_api_url \
+          + bug_client_instance.list_of_bug_client.api_search_bugs \
+          + urllib.parse.quote(form.cleaned_data['search']) \
+          + exclude_url
 
     """
     SECURITY ISSUE

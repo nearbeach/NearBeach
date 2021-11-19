@@ -82,11 +82,20 @@
 
     export default {
         name: "AddUserWizard",
-        props: [
-            'destination',
-            'locationId',
-            'refreshUserList'
-        ],
+        props: {
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+            refreshUserList: {
+                type: Boolean,
+                default: false,
+            },
+        },
         mixins: [
             errorModalMixin,
             iconMixin,
