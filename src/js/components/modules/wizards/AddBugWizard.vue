@@ -1,6 +1,6 @@
 <template>
     <div class="modal fade" id="addBugModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2><IconifyIcon v-bind:icon="icons.usersIcon"></IconifyIcon> Add Bugs Wizard</h2>

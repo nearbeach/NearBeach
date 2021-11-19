@@ -23,6 +23,7 @@ from NearBeach.forms import AddBugForm, \
     AddTagsForm, \
     AddUserForm, \
     User, \
+    DeleteBugForm, \
     DeleteLinkForm, \
     DeleteTagForm, \
     SearchForm, \
@@ -490,6 +491,7 @@ def bug_list(request, destination, location_id):
 
     # Limit to certain values
     bug_list = bug_list.values(
+        'bug_id',
         'bug_client',
         'bug_client__list_of_bug_client',
         'bug_client__list_of_bug_client__bug_client_name',
@@ -570,6 +572,27 @@ def customer_list_all(request, destination, location_id):
     )
 
     return HttpResponse(serializers.serialize('json', customer_results), content_type='application/json')
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name="")
+def delete_bug(request):
+    """
+    Function will delete a bug - this will remove it from the link tab.
+
+    Function will need to pass the bug id through a form (for checking).
+    :param request:
+    :return:
+    """
+    form = DeleteBugForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    update_bug = form.cleaned_data['bug_id']
+    update_bug.is_deleted = True
+    update_bug.save()
+
+    return HttpResponse("")
 
 
 @require_http_methods(['POST'])
