@@ -129,8 +129,14 @@ const moduleKanban = {
 
         //Filter out the column/level cards - and update the kanban card results
         state.kanbanCardResults = state.kanbanCardResults.filter(row => {
-            return parseInt(row['fields']['kanban_column']) !== column &&
-                parseInt(row['fields']['kanban_level']) !== level
+            //Check to see if the column and level match
+            const boolean_column = parseInt(row['fields']['kanban_column']) === column,
+                boolean_level = parseInt(row['fields']['kanban_level']) === level;
+
+            console.log(`Column: ${boolean_column} | Level: ${boolean_level}`);
+
+            //If they both match - exclude them from the data;
+            return !(boolean_column && boolean_level);
         });
     },
     updateKanbanCard(state, payload) {
