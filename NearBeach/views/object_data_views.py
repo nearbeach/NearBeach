@@ -25,6 +25,7 @@ from NearBeach.forms import AddBugForm,\
     AddTagsForm,\
     AddUserForm,\
     User, \
+    DeleteLinkForm, \
     DeleteTagForm, \
     SearchForm, \
     QueryBugClientForm
@@ -571,6 +572,30 @@ def customer_list_all(request, destination, location_id):
     )
 
     return HttpResponse(serializers.serialize('json', customer_results), content_type='application/json')
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name="")
+def delete_link(request):
+    """
+    Function will delete a link - this will remove it from the link tab.
+
+    Function will need to pass the link through a form (for checking).
+    :param request:
+    :return:
+    """
+    form = DeleteLinkForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # update_object_assignment = object_assignment.objects.get(
+    #     object_assignment_id=form.cleaned_data['object_assignment_id'],
+    # )
+    update_object_assignment = form.cleaned_data['object_assignment_id']
+    update_object_assignment.is_deleted = True
+    update_object_assignment.save()
+
+    return HttpResponse("")
 
 
 @require_http_methods(['POST'])

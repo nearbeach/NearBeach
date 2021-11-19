@@ -167,6 +167,7 @@ def get_requirement_links_list(request, requirement_id, *args, **kwargs):
             Q(task_id__isnull=False)
         )
     ).values(
+        'object_assignment_id',
         'project_id',
         'project_id__project_name',
         'project_id__project_status',
@@ -175,6 +176,7 @@ def get_requirement_links_list(request, requirement_id, *args, **kwargs):
         'task_id__task_status',
         'requirement_item_id',
         'requirement_item_id__requirement_item_title',
+        'requirement_id',
     )
 
     """
