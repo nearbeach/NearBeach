@@ -126,6 +126,10 @@
         name: "RfcNewRunItem",
         props: {
             locationId: Number,
+            rootUrl: {
+                type: String,
+                default: '/',
+            }
         },
         mixins: [
             errorModalMixin,
@@ -165,7 +169,7 @@
                 data_to_send.set('is_downtime', this.changeIsDowntimeModel);
 
                 axios.post(
-                    `/rfc_information/${this.locationId}/new_change_task/`,
+                    `${this.rootUrl}rfc_information/${this.locationId}/new_change_task/`,
                     data_to_send,
                 ).then(response => {
                     //Update the runsheet variables

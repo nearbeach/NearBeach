@@ -115,7 +115,7 @@
                 data_to_send.set('customer', this.customerModel['value']);
 
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/add_customer/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_customer/`,
                     data_to_send,
                 ).then((response) => {
                     //Send the new data up stream
@@ -132,7 +132,7 @@
             },
             getCustomerList: function() {
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/customer_list_all/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/customer_list_all/`,
                 ).then(response => {
                     //Place all the data into the "CustomerList" array.
                     this.customerList = response['data'];

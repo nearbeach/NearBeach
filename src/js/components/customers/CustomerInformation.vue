@@ -185,7 +185,7 @@
 
                 //Use axios to send the data
                 axios.post(
-                    `/customer_information/${this.customerResults[0]['pk']}/save/`,
+                    `${this.rootUrl}customer_information/${this.customerResults[0]['pk']}/save/`,
                     data_to_send,
                 ).then(response => {
                     //Close the loading screen

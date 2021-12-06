@@ -59,6 +59,7 @@
         computed: {
             ...mapGetters({
                 userLevel: "getUserLevel",
+                rootUrl: "getRootUrl",
             }),
         },
         methods: {
@@ -68,7 +69,7 @@
             },
             getNoteHistoryResults: function() {
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/note_list/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/note_list/`,
                 ).then(response => {
                     this.noteHistoryResults = response['data'];
                 }).catch(error => {

@@ -229,7 +229,7 @@
 
                 //Send data to backend
                 axios.post(
-                    `/task_information/${this.taskResults[0]['pk']}/save/`,
+                    `${this.rootUrl}task_information/${this.taskResults[0]['pk']}/save/`,
                     data_to_send
                 ).then(response => {
                     //Hide the loading modal

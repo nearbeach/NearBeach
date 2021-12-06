@@ -224,7 +224,7 @@
 
                 // Now that the timer has run out, lets use AJAX to get the organisations.
                 axios.post(
-                    '/object_data/lead_user_list/',
+                    `${this.rootUrl}object_data/lead_user_list/`,
                     data_to_send
                 ).then(response => {
                     //Clear the stakeholderFixList

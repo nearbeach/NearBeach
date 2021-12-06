@@ -77,6 +77,7 @@
         computed: {
             ...mapGetters({
                 allCards: 'getCards',
+                rootUrl: 'getRootUrl',
             }),
             masterList: function() {
                 //Filter the data
@@ -128,7 +129,7 @@
 
                 // Use axios to contact backend
                 axios.post(
-                    `/kanban_information/archive_kanban_cards/`,
+                    `${this.rootUrl}kanban_information/archive_kanban_cards/`,
                     data_to_send,
                 ).then(response => {
                     //Mutate the data to exclude the archived cards
@@ -192,7 +193,7 @@
 
                     //Use axios to send the data to the database
                     axios.post(
-                        `/kanban_information/${row['pk']}/move_card/`,
+                        `${this.rootUrl}kanban_information/${row['pk']}/move_card/`,
                         data_to_send,
                     ).then(response => {
                         this.$store.commit({
@@ -373,7 +374,7 @@
 
                 //Use axios to send the data to the database
                 axios.post(
-                    `/kanban_information/${card_id}/move_card/`,
+                    `${this.rootUrl}kanban_information/${card_id}/move_card/`,
                     data_to_send,
                 ).then(response => {
                     //Define cards_to_change

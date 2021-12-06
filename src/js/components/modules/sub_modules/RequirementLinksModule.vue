@@ -183,7 +183,7 @@
 
                 //Tell the backend to remove the data.
                 axios.post(
-                    '/object_data/delete_link/',
+                    `${this.rootUrl}object_data/delete_link/`,
                     data_to_send,
                 ).then(response => {
                     //Remove the old link_id from the linkResults

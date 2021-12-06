@@ -258,7 +258,7 @@
 
                 //Now to use axios to get the data we require
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
                 ).then(response => {
                     //Load the data into the array
                     this.objectResults = response['data'];

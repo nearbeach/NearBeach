@@ -158,6 +158,7 @@
         computed: {
             ...mapGetters({
                 userLevel: "getUserLevel",
+                rootUrl: "getRootUrl",
             }),
         },
         methods: {
@@ -171,7 +172,7 @@
             },
             getDocumentList: function() {
                 axios.post(
-                    `/documentation/${this.destination}/${this.locationId}/list/files/`,
+                    `${this.rootUrl}documentation/${this.destination}/${this.locationId}/list/files/`,
                 ).then(response => {
                     this.documentList = response['data'];
 
@@ -180,7 +181,7 @@
             },
             getFolderList: function() {
                 axios.post(
-                    `/documentation/${this.destination}/${this.locationId}/list/folders/`,
+                    `${this.rootUrl}documentation/${this.destination}/${this.locationId}/list/folders/`,
                 ).then(response => {
                     this.folderList = response['data'];
 

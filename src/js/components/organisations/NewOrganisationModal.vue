@@ -171,7 +171,12 @@
 
     export default {
         name: "NewOrganisationModal",
-        props: {},
+        props: {
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
+        },
         mixins: [
             errorModalMixin,
             loadingModalMixin,
@@ -245,7 +250,7 @@
                 //Use Axios to send the data
                 //Get the data to send
                 axios.post(
-                    `/new_organisation/save/`,
+                    `${this.rootUrl}new_organisation/save/`,
                     this.dataToSend(),
                 ).then(response => {
                     //Simplication of variables

@@ -253,7 +253,7 @@
 
                 // Use axios to send data
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/add_link/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_link/`,
                     data_to_send,
                 ).then(response => {
                     //Data has been successfully saved. Time to update the requirement links
@@ -284,7 +284,7 @@
 
                 //Now to use axios to get the data we require
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
                 ).then(response => {
                     //Load the data into the array
                     this.objectResults = response['data'];

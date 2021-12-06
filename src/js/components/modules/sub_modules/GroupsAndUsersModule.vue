@@ -141,7 +141,7 @@
             getGroupList: function() {
                 //Get the data from the database
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/group_list/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/group_list/`,
                 ).then(response => {
                     this.groupList = response['data'];
                 }).catch(error => {
@@ -151,7 +151,7 @@
             getUserList: function() {
                 //Get the data from the database
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/user_list/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/user_list/`,
                 ).then(response => {
                     this.userList = response['data'];
                 }).catch(error => {

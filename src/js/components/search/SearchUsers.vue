@@ -56,6 +56,10 @@
         name: "SearchUsers",
         props: {
             userResults: Array,
+            rootUrl: {
+                type: String,
+                default: '/',
+            }
         },
         mixins: [
             errorModalMixin,
@@ -76,7 +80,7 @@
 
                 //Use Axios to send data
                 axios.post(
-                    `/search/user/data/`,
+                    `${this.rootUrl}search/user/data/`,
                     data_to_send,
                 ).then(response => {
                     this.userList = response['data'];

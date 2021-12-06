@@ -100,7 +100,7 @@
             },
             closeKanban: function() {
                 axios.post(
-                    `/kanban_information/${this.kanbanBoardResults[0]['pk']}/close_board/`
+                    `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0]['pk']}/close_board/`
                 ).then(response => {
                     window.location.href = "/";
                 }).catch(error => {

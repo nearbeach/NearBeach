@@ -199,7 +199,7 @@
 
                 //Use axios to send it to the backend
                 axios.post(
-                    `/documentation/${this.destination}/${this.locationId}/upload/`,
+                    `${this.rootUrl}documentation/${this.destination}/${this.locationId}/upload/`,
                     data_to_send,
                     config,
                 ).then(response => {

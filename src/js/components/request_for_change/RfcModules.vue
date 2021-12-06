@@ -252,6 +252,7 @@
         computed: {
             ...mapGetters({
                 userLevel: "getUserLevel",
+                rootUrl: "getRootUrl",
             }),
         },
         methods: {

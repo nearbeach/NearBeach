@@ -78,6 +78,7 @@
         computed: {
             ...mapGetters({
                 userLevel: "getUserLevel",
+                rootUrl: "getRootUrl",
             }),
         },
         methods: {
@@ -147,7 +148,7 @@
             updateLinkResults: function() {
                 //Get the data from the database
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/object_link_list/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/object_link_list/`,
                 ).then((response) => {
                     this.linkResults = response['data'].filter(row => {
                         /*

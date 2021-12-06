@@ -40,6 +40,9 @@
     import bootstrap from 'bootstrap';
     import { Modal } from 'bootstrap';
 
+    //VueX
+    import { mapGetters} from 'vuex';
+
     //Validation
     import { required } from 'vuelidate/lib/validators'
 
@@ -55,9 +58,12 @@
         mixins: [
             searchMixin
         ],
-        props: [
-            'isDirty', //Passes the value from the template above where the checking is done
-        ],
+        props: {
+            isDirty: { //Passes the value from the template above where the checking is done
+                type: Boolean,
+                default: false,
+            }
+        },
         data() {
             return {
                 searchTimeout: '',
@@ -69,6 +75,11 @@
             stakeholderModel: {
                 required
             },
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            }),
         },
         methods: {
             createdNewOrganisation: function(data) {
@@ -94,7 +105,7 @@
 
                 // Now that the timer has run out, lets use AJAX to get the organisations.
                 axios.post(
-                    '/search/organisation/data/',
+                    `${this.rootUrl}search/organisation/data/`,
                     data_to_send
                 ).then(response => {
                     //Clear the stakeholderFixList

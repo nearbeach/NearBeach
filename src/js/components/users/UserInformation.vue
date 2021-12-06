@@ -141,6 +141,7 @@
         name: "UserInformation",
         props: {
             userResults: Array,
+            rootUrl: String,
         },
         data() {
             return {
@@ -194,7 +195,7 @@
                 data_to_send.set('last_name', this.lastNameModel);
 
                 axios.post(
-                    `/user_information/${this.userResults[0]['pk']}/save/`,
+                    `${this.rootUrl}user_information/${this.userResults[0]['pk']}/save/`,
                     data_to_send,
                 ).then(response => {
                     //Hide the loading modal

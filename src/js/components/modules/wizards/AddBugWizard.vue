@@ -153,7 +153,7 @@
         methods: {
             loadBugClientList: function() {
                 axios.post(
-                    '/object_data/bug_client_list/'
+                    `${this.rootUrl}object_data/bug_client_list/`,
                 ).then(response => {
                     //Clear out the bug list
                     this.bugClientList = [];
@@ -195,7 +195,7 @@
 
                 //Send the data - then wait for a response
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/query_bug_client/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/query_bug_client/`,
                     data_to_send,
                 ).then(response => {
                     //Update the bug results
@@ -226,7 +226,7 @@
 
                 //Send data to the backend
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/add_bug/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_bug/`,
                     data_to_send,
                 ).then(response => {
                     //Send the updated bug list up

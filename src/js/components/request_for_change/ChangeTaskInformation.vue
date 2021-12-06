@@ -135,6 +135,10 @@
         name: "ChangeTaskInformation",
         props: {
             changeTaskResults: Array,
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
         },
         data() {
             return {
@@ -170,7 +174,7 @@
                 data_to_send.set('is_downtime', this.changeIsDowntimeModel);
 
                 axios.post(
-                    `/change_task_information/${this.changeTaskResults[0]['pk']}/save/`,
+                    `${this.rootUrl}change_task_information/${this.changeTaskResults[0]['pk']}/save/`,
                     data_to_send,
                 ).then(response => {
                     //If successful, go back
@@ -187,7 +191,7 @@
 
                 //Use axios to send the data
                 axios.post(
-                    `/change_task_update_status/${this.changeTaskResults[0]['pk']}/`,
+                    `${rootUrl}change_task_update_status/${this.changeTaskResults[0]['pk']}/`,
                     data_to_send,
                 ).then(response => {
                     //Reload the page

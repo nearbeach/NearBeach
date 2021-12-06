@@ -233,7 +233,7 @@
 
                 //Use axios to send data
                 axios.post(
-                    `/project_information/${this.projectResults[0]['pk']}/save/`,
+                    `${this.rootUrl}project_information/${this.projectResults[0]['pk']}/save/`,
                     data_to_send
                 ).then(response => {
                     //Notify user of success update

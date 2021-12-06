@@ -100,7 +100,7 @@
             getMyObjects: function() {
                 //Use axios to get the objects assigned to me
                 axios.post(
-                    `/dashboard/get/unassigned_objects/`,
+                    `${this.rootUrl}dashboard/get/unassigned_objects/`,
                 ).then(response => {
                     this.objectResults = response['data'];
 

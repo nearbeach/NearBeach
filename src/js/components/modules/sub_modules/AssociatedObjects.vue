@@ -135,6 +135,9 @@
 <script>
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
 
@@ -155,10 +158,15 @@
                 taskResults: [],
             }
         },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            })
+        },
         methods: {
             getAssociatedObjectResults: function() {
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/associated_objects/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/associated_objects/`,
                 ).then(response => {
                     this.opportunityResults = response['data']['opportunity'];
                     this.projectResults = response['data']['project'];

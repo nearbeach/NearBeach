@@ -56,6 +56,10 @@
         name: "SearchGroups",
         props: {
             groupResults: Array,
+            rootUrl: {
+                type: String,
+                default: '/',
+            }
         },
         mixins: [
             errorModalMixin,
@@ -76,7 +80,7 @@
 
                 //Use Axios to send data
                 axios.post(
-                    `/search/group/data/`,
+                    `${this.rootUrl}search/group/data/`,
                     data_to_send,
                 ).then(response => {
                     this.groupList = response['data'];

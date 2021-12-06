@@ -37,6 +37,7 @@
         name: "SearchOrganisations",
         props: {
             organisationResults: Array,
+
         },
         mixins: [
             searchMixin,
@@ -56,7 +57,7 @@
 
                 //Use axios to obtain the data we require
                 axios.post(
-                    '/search/organisation/data/',
+                    `${this.rootUrl}search/organisation/data/`,
                     data_to_send
                 ).then(response => {
                     this.localOrganisationResults = response['data'];

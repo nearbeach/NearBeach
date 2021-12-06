@@ -91,7 +91,16 @@
     export default {
         name: "ProfileInformation",
         props: {
-            userResults: Array,
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
+            userResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
         },
         data() {
             return {
@@ -137,7 +146,7 @@
 
                 //Send data via axios
                 axios.post(
-                    `/profile_information/update_data/`,
+                    `${this.rootUrl}profile_information/update_data/`,
                     data_to_send,
                 ).then(response => {
                     //Notify user of success update

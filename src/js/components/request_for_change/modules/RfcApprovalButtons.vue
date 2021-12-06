@@ -37,6 +37,9 @@
 <script>
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Import mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import loadingModalMixin from "../../../mixins/loadingModalMixin";
@@ -52,6 +55,9 @@
             loadingModalMixin,
         ],
         computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            }),
             showApprovalButton: function() {
                 // Only show this section when;
                 // - RFC Status is waiting for approval
@@ -80,7 +86,7 @@
 
                 //Use axios to send the status update to the backend
                 axios.post(
-                    `/rfc_information/${this.rfcResults[0]['pk']}/update_status/`,
+                    `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/update_status/`,
                     data_to_send,
                 ).then(response => {
                     //Notify user of success update

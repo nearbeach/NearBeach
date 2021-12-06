@@ -64,6 +64,9 @@
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     const axios = require('axios');
 
     export default {
@@ -81,6 +84,11 @@
                 newNoteModel: '',
             }
         },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            })
+        },
         methods: {
             submitNote: function() {
                 //Construct the form data to send
@@ -91,7 +99,7 @@
 
                 //Add the data to data_to_send
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/add_notes/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_notes/`,
                     data_to_send,
                 ).then((response) => {
                     //Submit the note up

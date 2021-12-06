@@ -51,6 +51,9 @@
     import errorModalMixin from "../../mixins/errorModalMixin";
     import loadingModalMixin from "../../mixins/loadingModalMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "GroupInformation",
         props: {
@@ -78,6 +81,11 @@
             errorModalMixin,
             loadingModalMixin,
         ],
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            })
+        },
         methods: {
             updateGroup: function() {
                 //Construct data to send
@@ -94,7 +102,7 @@
 
                 //User axios to send data
                 axios.post(
-                    `/group_information/${this.groupResults[0]['pk']}/save/`,
+                    `${this.rootUrl}group_information/${this.groupResults[0]['pk']}/save/`,
                     data_to_send,
                 ).then(response => {
                     this.closeLoadingModal();

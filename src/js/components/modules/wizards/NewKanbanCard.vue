@@ -77,6 +77,9 @@
 <script>
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
 
@@ -98,6 +101,11 @@
                 kanbanCardTextModel: '',
             }
         },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            })
+        },
         methods: {
             addKanbanCard: function() {
                 //Get the modal to extract data from
@@ -112,7 +120,7 @@
 
                 //Send the data
                 axios.post(
-                    `/kanban_information/${this.kanbanBoardResults[0]['pk']}/new_card/`,
+                    `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0]['pk']}/new_card/`,
                     data_to_send,
                 ).then(response => {
                     //Emit the data upstream

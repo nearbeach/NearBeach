@@ -76,6 +76,9 @@
 <script>
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
@@ -85,12 +88,26 @@
 
     export default {
         name: "AddLinkWizard",
-        props: [
-            'currentFolder',
-            'destination',
-            'excludeDocuments',
-            'locationId',
-        ],
+        props: {
+            currentFolder: {
+                type: String,
+                default: '/',
+            },
+            destination: {
+                type: String,
+                default: '/',
+            },
+            existingFolders: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+        },
         mixins: [
             errorModalMixin,
             iconMixin,
@@ -114,6 +131,11 @@
                 url,
             },
         },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            }),
+        },
         methods: {
             addLink: function() {
                 const data_to_send = new FormData();
@@ -126,7 +148,7 @@
                 }
 
                 axios.post(
-                    `/documentation/${this.destination}/${this.locationId}/add_link/`,
+                    `${this.rootUrl}documentation/${this.destination}/${this.locationId}/add_link/`,
                     data_to_send,
                 ).then(response => {
                     //Emit the results up stream

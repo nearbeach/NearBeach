@@ -186,6 +186,10 @@
                     return [];
                 },
             },
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
             userLevel: {
                 type: Number,
                 default: 0,
@@ -287,7 +291,7 @@
 
                 //Use Axios to send the data
                 axios.post(
-                    `/rfc_information/${this.rfcResults[0]['pk']}/save/`,
+                    `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/`,
                     data_to_send,
                 ).then(response => {
                     //Notify user of success update
@@ -301,7 +305,7 @@
                 data_to_send.set('rfc_status','2'); //Value 2: Waiting for Approval
 
                 axios.post(
-                    `/rfc_information/${this.rfcResults[0]['pk']}/update_status/`,
+                    `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/update_status/`,
                     data_to_send,
                 ).then(response => {
                     //Reload the page to get redirected to the correct place

@@ -70,6 +70,7 @@
         computed: {
             ...mapGetters({
                 userLevel: "getUserLevel",
+                rootUrl: "getRootUrl",
             })
         },
         methods: {
@@ -79,7 +80,7 @@
             },
             loadCustomerResults: function() {
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/customer_list/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/customer_list/`,
                 ).then((response) => {
                     this.customerResults = response['data'];
                 }).catch((error) => {

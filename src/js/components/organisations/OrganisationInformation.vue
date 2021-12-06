@@ -171,7 +171,7 @@
 
                 //Use axios to send the data
                 axios.post(
-                    `/organisation_information/${this.organisationResults[0]['pk']}/save/`,
+                    `${this.rootUrl}organisation_information/${this.organisationResults[0]['pk']}/save/`,
                     data_to_send,
                 ).then(response => {
                     this.closeLoadingModal();

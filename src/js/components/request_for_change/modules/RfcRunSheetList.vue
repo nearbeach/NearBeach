@@ -157,6 +157,7 @@
         computed: {
             ...mapGetters({
                 userLevel: "getUserLevel",
+                rootUrl: "getRootUrl",
             }),
             isCompleted: function() {
                 var count_of_uncompleted_tasks = this.changeTaskList.filter(changeTask => {
@@ -179,7 +180,7 @@
                 data_to_send.set('rfc_status', 5);
 
                 axios.post(
-                    `/rfc_information/${this.rfcId}/update_status/`,
+                    `${this.rootUrl}rfc_information/${this.rfcId}/update_status/`,
                     data_to_send,
                 ).then(response => {
                     //Refresh Page
@@ -190,7 +191,7 @@
             },
             getRunSheetList: function() {
                 axios.post(
-                    `/rfc_information/${this.locationId}/change_task_list/`,
+                    `${this.rootUrl}rfc_information/${this.locationId}/change_task_list/`,
                 ).then(response => {
                     // Update the changeTaskList
                     this.changeTaskList = response['data'];
@@ -247,7 +248,7 @@
                 data_to_send.set('change_task_status',change_task_status)
 
                 axios.post(
-                    `/change_task_update_status/${change_task_id}/`,
+                    `${this.rootUrl}change_task_update_status/${change_task_id}/`,
                     data_to_send,
                 ).then(response => {
                     /*

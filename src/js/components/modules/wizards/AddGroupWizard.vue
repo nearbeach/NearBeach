@@ -120,7 +120,7 @@
 
                 //user axios
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/add_group/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_group/`,
                     data_to_send,
                 ).then(response => {
                     //Send the data upstream
@@ -137,7 +137,7 @@
             },
             getGroupList: function() {
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/group_list_all/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/group_list_all/`,
                 ).then(response => {
                     //Clear the groupFixList
                     this.groupFixList = [];

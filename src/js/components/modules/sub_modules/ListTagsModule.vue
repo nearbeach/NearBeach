@@ -70,6 +70,7 @@
         ],
         computed: {
             ...mapGetters({
+                rootUrl: "getRootUrl",
                 userLevel: "getUserLevel",
             }),
         },
@@ -84,7 +85,7 @@
             },
             getAssignedTags: function() {
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/tag_list/`
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/tag_list/`
                 ).then(response => {
                     this.tagList = response['data'];
                 }).catch(error => {
@@ -100,7 +101,7 @@
 
                 //Send data using axios
                 axios.post(
-                    `/object_data/delete_tag/`,
+                    `${this.rootUrl}object_data/delete_tag/`,
                     data_to_send,
                 ).then(response => {
                     //Remove data from tagList

@@ -53,6 +53,9 @@
 <script>
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
@@ -60,12 +63,26 @@
     export default {
 
         name: "AddFolderWizard",
-        props: [
-            'currentFolder',
-            'destination',
-            'existingFolders',
-            'locationId',
-        ],
+        props: {
+            currentFolder: {
+                type: String,
+                default: '/',
+            },
+            destination: {
+                type: String,
+                default: '/',
+            },
+            existingFolders: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+        },
         mixins: [
             errorModalMixin,
             iconMixin,
@@ -75,6 +92,11 @@
                 disableAddFolderButton: true,
                 folderDescriptionModel: '',
             };
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            })
         },
         methods: {
             addFolder: function() {
@@ -88,7 +110,7 @@
 
                 //Send the data in POST
                 axios.post(
-                    `/documentation/${this.destination}/${this.locationId}/add_folder/`,
+                    `${this.rootUrl}documentation/${this.destination}/${this.locationId}/add_folder/`,
                     data_to_send,
                 ).then(response => {
                     //Send the data up stream to get appended

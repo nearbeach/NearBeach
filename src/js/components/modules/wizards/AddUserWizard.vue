@@ -124,7 +124,7 @@
 
                 //User axios to send the data to the backend
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/add_user/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_user/`,
                     data_to_send
                 ).then(response => {
                     //Emit the data up

@@ -90,6 +90,7 @@
         props: {
             location: String,
             username: Number,
+            rootUrl: String,
         },
         mixins: [
             errorModalMixin,
@@ -137,7 +138,7 @@
                 
                 //Setup Axios to send data
                 axios.post(
-                    `/${this.location}/update_user_password/`,
+                    `${this.rootUrl}${this.location}/update_user_password/`,
                     data_to_send,
                 ).then(response => {
                     this.closeModal();

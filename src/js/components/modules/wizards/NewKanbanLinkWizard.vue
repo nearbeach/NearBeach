@@ -244,7 +244,7 @@
 
                 // Use axios to send data
                 axios.post(
-                    `/kanban_information/${this.locationId}/${this.objectModel.toLowerCase()}/add_link/`,
+                    `${this.rootUrl}kanban_information/${this.locationId}/${this.objectModel.toLowerCase()}/add_link/`,
                     data_to_send,
                 ).then(response => {
                     //Data has been successfully saved. Time to add the card to the board

@@ -223,7 +223,7 @@
                 data_to_send.set('destination_item_id',this.destinationItemId['id']);
 
                 // URL
-                const url = `/kanban_${this.propertyName.toLowerCase()}/${this.kanbanBoardId}/delete/`
+                const url = `${this.rootUrl}kanban_${this.propertyName.toLowerCase()}/${this.kanbanBoardId}/delete/`
 
                 //Use axios to send data to backend
                 axios.post(

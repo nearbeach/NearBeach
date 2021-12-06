@@ -110,6 +110,7 @@
         computed: {
             ...mapGetters({
                 userLevel: "getUserLevel",
+                rootUrl: "getRootUrl",
             }),
         },
         methods: {
@@ -136,7 +137,7 @@
                 }
 
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/bug_list/`
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/bug_list/`
                 ).then((response) => {
                     //Clear the current list
                     this.bugList = [];
@@ -156,7 +157,7 @@
 
                 //Use Axios to send data to backend
                 axios.post(
-                    `/object_data/delete_bug/`,
+                    `${this.rootUrl}object_data/delete_bug/`,
                     data_to_send,
                 ).then(() => {
                     //Remove the bug from the model
