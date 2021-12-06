@@ -1,5 +1,5 @@
 {% extends 'NearBeach/template.html' %}
 {% load static %}
 {% block content %}
-    <new-permission-set></new-permission-set>
+    <new-permission-set v-bind:root-url="`{% url 'dashboard' %}`"></new-permission-set>
 {% endblock %}

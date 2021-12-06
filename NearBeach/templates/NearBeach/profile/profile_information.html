@@ -1,8 +1,9 @@
-
 {% extends 'NearBeach/template.html' %}
 {% load static %}
 {% block content %}
-    <profile-information v-bind:user-results="{{user_results}}"></profile-information>
+    <profile-information v-bind:user-results="{{user_results}}"
+                         v-bind:root-url="`{% url 'dashboard' %}`"
+    ></profile-information>
     <br/>
 
     <reset-user-password v-bind:location="'user_information'"

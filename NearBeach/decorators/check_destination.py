@@ -8,6 +8,7 @@ OBJECT_ARRAY = [
     'customer',
     'kanban',
     'kanban_board',
+    'kanban_card',
     'requirement',
     'requirement_item',
     'request_for_change',

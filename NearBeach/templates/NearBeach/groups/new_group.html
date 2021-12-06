@@ -2,5 +2,6 @@
 {% load static %}
 {% block content %}
     <new-group v-bind:group-results="{{group_results}}"
+               v-bind:root-url="`{% url 'dashboard' %}`"
     ></new-group>
 {% endblock %}
