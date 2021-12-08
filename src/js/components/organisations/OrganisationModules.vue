@@ -158,6 +158,14 @@
                 type: Number,
                 default: 0,
             },
+            staticUrl: {
+                type: String,
+                default: '/',
+            },
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
             titleList: {
                 type: Array,
                 default: () => {
@@ -184,6 +192,13 @@
                 type: 'updateUserLevel',
                 userLevel: this.userLevel,
             });
+
+            //Send the ROOT URL and STATIC URL upstream
+            this.$store.commit({
+                type: 'updateUrl',
+                staticUrl: this.staticUrl,
+                rootUrl: this.rootUrl,
+            })
         },
     }
 </script>

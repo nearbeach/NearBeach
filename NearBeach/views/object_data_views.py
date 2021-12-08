@@ -428,41 +428,29 @@ def associated_objects_organisations(location_id):
     Due to organisation's links being connected to the objects directly. We will need to query all the objects that
     can be related to an organisation, and combine them into one JSON output.
 
-    Please note - opportunities are the exception here - hence they are utilising the object assignment table.
-
     To make it JSON friendly, we have to add .values() to each object lookup, and then simple list them in the JSON
     return function below.
     :param location_id:
     :return:
     """
     # Get the data
-    opportunity_results = opportunity.objects.filter(
-        is_deleted=False,
-        opportunity_id__in=object_assignment.objects.filter(
-            is_deleted=False,
-            opportunity_id__isnull=False,
-            organisation_id=location_id,
-        ).values('opportunity_id')
-    ).values()
-
     project_results = project.objects.filter(
         is_deleted=False,
-        organisation__in=location_id,
+        organisation=location_id,
     ).values()
 
     requirement_results = requirement.objects.filter(
         is_deleted=False,
-        organisation__in=location_id,
+        organisation=location_id,
     ).values()
 
     task_results = task.objects.filter(
         is_deleted=False,
-        organisation__in=location_id,
+        organisation=location_id,
     ).values()
 
     # Return the JSON Response back - which will return strait to the user
     return JsonResponse({
-        'opportunity': list(opportunity_results),
         'project': list(project_results),
         'requirement': list(requirement_results),
         'task': list(task_results),
