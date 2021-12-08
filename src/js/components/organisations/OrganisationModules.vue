@@ -144,10 +144,30 @@
     export default {
         name: "OrganisationModules",
         props: {
-            customerResults: Array,
-            destination: String,
-            locationId: Number,
-            titleList: Array,
+            customerResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+            titleList: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
+            userLevel: {
+                type: Number,
+                default: 0,
+            },
         },
         mixins: [
             iconMixin,
@@ -157,7 +177,14 @@
                 var new_customer_modal = new Modal(document.getElementById('addCustomerModal'));
                 new_customer_modal.show();
             }
-        }
+        },
+        mounted() {
+            //Send the user permissions to VUEX
+            this.$store.commit({
+                type: 'updateUserLevel',
+                userLevel: this.userLevel,
+            });
+        },
     }
 </script>
 
