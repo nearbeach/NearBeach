@@ -171,12 +171,7 @@
 
     export default {
         name: "NewOrganisationModal",
-        props: {
-            rootUrl: {
-                type: String,
-                default: '/',
-            },
-        },
+        props: {},
         mixins: [
             errorModalMixin,
             loadingModalMixin,

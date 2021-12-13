@@ -55,10 +55,12 @@
                :init="{
                  height: 500,
                  menubar: false,
-                 toolbar: 'undo redo | formatselect | ' +
-                  'bold italic backcolor | alignleft aligncenter ' +
-                  'alignright alignjustify | bullist numlist outdent indent | ',
-               }"
+                 plugins: 'lists',
+                  toolbar: [
+                     'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                     'bold italic strikethrough underline backcolor | ' +
+                     'bullist numlist outdent indent | removeformat'
+                  ]}"
                v-bind:content_css="false"
                v-bind:skin="false"
                v-bind:disabled="isReadOnly"
