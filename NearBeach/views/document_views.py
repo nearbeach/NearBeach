@@ -425,11 +425,11 @@ def handle_file_upload(upload_document, document_results, file):
     file_permissions = 0o755  # Look at these permissions later
     path = os.path.join(
         settings.PRIVATE_MEDIA_ROOT,
-        '%s' % (document_results[0]['document_key_id'],),
+        'private/%s' % (document_results[0]['document_key_id'],),
     )
     os.mkdir(path, file_permissions)
 
-    storage_location = '%s/%s/%s' % (
+    storage_location = '%s/private/%s/%s' % (
         settings.PRIVATE_MEDIA_ROOT,
         document_results[0]['document_key_id'],
         file
