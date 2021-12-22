@@ -94,6 +94,9 @@
     import {Modal} from "bootstrap";
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
 
@@ -113,6 +116,11 @@
                 itemLinkResults: [],
                 linkModel: [],
             };
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: 'getRootUrl',
+            }),
         },
         methods: {
             extractObjectDescription: function(link) {

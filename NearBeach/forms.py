@@ -687,6 +687,12 @@ class QueryBugClientForm(forms.Form):
     )
 
 
+class RemoveUserForm(forms.Form):
+    username = forms.CharField(
+        required=True,
+    )
+
+
 class RfcModuleForm(forms.Form):
     # This form is for all the sub modules that need to be saved separately.
     text_input = forms.CharField(

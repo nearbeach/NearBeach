@@ -1,0 +1,8 @@
+.remove-user {
+  color: red;
+  transform: translateX(-12px);
+
+  &:hover {
+    color: darkred;
+  }
+}

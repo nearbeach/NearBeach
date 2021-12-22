@@ -26,6 +26,7 @@ from NearBeach.forms import AddBugForm, \
     DeleteBugForm, \
     DeleteLinkForm, \
     DeleteTagForm, \
+    RemoveUserForm, \
     SearchForm, \
     QueryBugClientForm
 from NearBeach.views.tools.internal_functions import set_object_from_destination, \
@@ -879,15 +880,20 @@ def link_object(object_assignment_submit, destination, location_id):
     """
     if destination == "project":
         object_assignment_submit.project = project.objects.get(
-            project_id=location_id)
+            project_id=location_id
+        )
     elif destination == "requirement":
         object_assignment_submit.requirement = requirement.objects.get(
-            requirement_id=location_id)
+            requirement_id=location_id
+        )
     elif destination == "requirement_item":
         object_assignment_submit.requirement_item = requirement_item.objects.get(
-            requirement_item_id=location_id)
+            requirement_item_id=location_id
+        )
     elif destination == "task":
-        object_assignment_submit.task = task.objects.get(task_id=location_id)
+        object_assignment_submit.task = task.objects.get(
+            task_id=location_id
+        )
 
     # Return the results
     return object_assignment_submit
@@ -1028,6 +1034,40 @@ def query_bug_client(request, destination, location_id):
 
     # Send back the JSON data
     return JsonResponse(json_data['bugs'], safe=False)
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name="")
+@check_destination()
+def remove_user(request, destination, location_id):
+    # Get the form data
+    form = RemoveUserForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get the user instance
+    user_instance = User.objects.get(
+        username=form.cleaned_data['username']
+    )
+
+    # Delete user from object assignment for destination and location_id
+    update_object_assignment = object_assignment.objects.filter(
+        assigned_user=user_instance,
+    )
+
+    # Using internal functions - get the relevant data
+    update_object_assignment = link_object(
+        update_object_assignment,
+        destination,
+        location_id
+    )
+
+    # Update and save data
+    update_object_assignment.update(
+        is_deleted=True,
+    )
+
+    return HttpResponse("")
 
 
 @require_http_methods(['POST'])

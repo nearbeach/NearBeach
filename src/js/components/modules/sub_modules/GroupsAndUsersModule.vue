@@ -45,7 +45,8 @@
              class="user-card-layouts"
         >
             <div v-for="user in userList" 
-                 class="user-card">
+                 class="user-card"
+            >
                 <img v-bind:src="`${staticUrl}/NearBeach/images/placeholder/people_tax.svg`"
                      alt="default profile"
                      class="default-user-profile"
@@ -55,6 +56,13 @@
                     {{user['username']}}
                     <div class="spacer"></div>
                     {{user['email']}}
+                </div>
+                <div class="remove-user"
+                     v-if="userLevel>=3"
+                >
+                    <IconifyIcon v-bind:icon="icons.trashCan"
+                                 v-on:click="removeUser(user['username'])"
+                    />
                 </div>
             </div>
         </div>
@@ -155,6 +163,25 @@
                 ).then(response => {
                     this.userList = response['data'];
                 }).catch(error => {
+                    this.showErrorModal(error, this.destination);
+                });
+            },
+            removeUser: function(username) {
+                //Optimistic Update - we assume everything is going to be ok
+                //Remove the user from the list
+                this.userList = this.userList.filter(row => {
+                    return row['username'] !== username;
+                });
+
+                //Setup data to send
+                const data_to_send = new FormData();
+                data_to_send.set('username', username);
+
+                //Tell the backend we no longer want this user attached
+                axios.post(
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_user/`,
+                    data_to_send,
+                ).catch(error => {
                     this.showErrorModal(error, this.destination);
                 });
             },
