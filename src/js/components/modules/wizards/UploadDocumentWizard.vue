@@ -253,7 +253,7 @@
         mounted() {
             //Get the max file upload size
             axios.post(
-                `/documentation/get/max_upload/`,
+                `${this.rootUrl}documentation/get/max_upload/`,
             ).then(response => {
                 //Set the value
                 this.maxUploadSize = response['data']['max_upload_size'];
