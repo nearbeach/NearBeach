@@ -161,18 +161,16 @@
     //Validation
     import { email, maxLength, required , url } from 'vuelidate/lib/validators';
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
     import loadingModalMixin from "../../mixins/loadingModalMixin";
 
     export default {
         name: "NewOrganisationModal",
-        props: {
-            rootUrl: {
-                type: 'String',
-                default: '/',
-            },
-        },
+        props: {},
         mixins: [
             errorModalMixin,
             loadingModalMixin,
@@ -184,6 +182,11 @@
                 organisationWebsiteModel: '',
                 organisationEmailModel: '',
             }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: 'getRootUrl',
+            }),
         },
         watch: {
             organisationNameModel: function() {
