@@ -51,9 +51,6 @@
     import errorModalMixin from "../../mixins/errorModalMixin";
     import loadingModalMixin from "../../mixins/loadingModalMixin";
 
-    //VueX
-    import { mapGetters } from 'vuex';
-
     export default {
         name: "GroupInformation",
         props: {
@@ -69,6 +66,10 @@
                     return [];
                 },
             },
+            rootUrl: {
+                type: String,
+                default: '/',
+            }
         },
         data() {
             return {
@@ -81,11 +82,6 @@
             errorModalMixin,
             loadingModalMixin,
         ],
-        computed: {
-            ...mapGetters({
-                rootUrl: "getRootUrl",
-            })
-        },
         methods: {
             updateGroup: function() {
                 //Construct data to send
@@ -132,6 +128,12 @@
             if (parent_group.length > 0) {
                 this.parentGroupModel = parent_group[0];
             }
+
+            //Send the rootUrl to VueX
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+            });
         }
     }
 </script>
