@@ -35,7 +35,7 @@
             <hr>
             <div class="row submit-row">
                 <div class="col-md-12">
-                    <a href="/new_group/"
+                    <a v-bind:href="`${rootUrl}new_group/`"
                        class="btn btn-primary save-changes">
                         Add new Group
                     </a>
