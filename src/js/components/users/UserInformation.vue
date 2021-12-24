@@ -140,8 +140,16 @@
     export default {
         name: "UserInformation",
         props: {
-            userResults: Array,
-            rootUrl: String,
+            userResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
         },
         data() {
             return {
@@ -204,6 +212,12 @@
                     this.showErrorModal(error, "Update User", this.userResults[0]['pk']);
                 });
             },
+        },
+        mounted() {
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+            })
         }
     }
 </script>
