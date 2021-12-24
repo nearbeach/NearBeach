@@ -317,8 +317,9 @@
             },
         },
         mounted() {
+
             this.$store.commit({
-                type: 'setRootUrl',
+                type: 'updateUrl',
                 rootUrl: this.rootUrl,
             })
         },
