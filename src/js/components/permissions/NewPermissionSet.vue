@@ -64,7 +64,7 @@
                 data_to_send.set('permission_set_name', this.permissionSetNameModel);
 
                 axios.post(
-                    `${rootUrl}new_permission_set/save/`,
+                    `${this.rootUrl}new_permission_set/save/`,
                     data_to_send,
                 ).then(response => {
                     //Go to the new location
