@@ -35,7 +35,7 @@
             <hr>
             <div class="row submit-row">
                 <div class="col-md-12">
-                    <a href="/new_user/"
+                    <a v-bind:href="`${rootUrl}new_user/`"
                        class="btn btn-primary save-changes">
                         Add new User
                     </a>
