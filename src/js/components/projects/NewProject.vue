@@ -212,6 +212,11 @@
                 });
             },100);
             */
+
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+            });
         },
     }
 </script>
