@@ -316,6 +316,12 @@
                 this._data[data['property']] = data['value']
             },
         },
+        mounted() {
+            this.$store.commit({
+                type: 'setRootUrl',
+                rootUrl: this.rootUrl,
+            })
+        },
     }
 </script>
 
