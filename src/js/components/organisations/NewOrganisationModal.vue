@@ -157,13 +157,9 @@
 <script>
     //JavaScript Libraries
     const axios = require('axios');
-    import { Modal } from 'bootstrap';
 
     //Validation
     import { email, maxLength, required , url } from 'vuelidate/lib/validators';
-
-    //VueX
-    import { mapGetters } from 'vuex';
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -171,7 +167,12 @@
 
     export default {
         name: "NewOrganisationModal",
-        props: {},
+        props: {
+            rootUrl: {
+                type: 'String',
+                default: '/',
+            },
+        },
         mixins: [
             errorModalMixin,
             loadingModalMixin,
@@ -183,11 +184,6 @@
                 organisationWebsiteModel: '',
                 organisationEmailModel: '',
             }
-        },
-        computed: {
-            ...mapGetters({
-                rootUrl: "getRootUrl",
-            })
         },
         watch: {
             organisationNameModel: function() {
