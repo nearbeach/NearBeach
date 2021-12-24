@@ -2,12 +2,12 @@
 {% load static %}
 {% block content %}
     <user-information v-bind:user-results="{{user_results}}"
+                      v-bind:root-url="`{% url 'dashboard' %}`"
     ></user-information>
 
     <br/>
     <reset-user-password v-bind:location="'admin'"
                          v-bind:username="{{username}}"
-                         v-bind:root-url="`{% url 'dashboard' %}`"
     ></reset-user-password>
 
     <br/>
