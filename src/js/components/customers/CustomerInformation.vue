@@ -98,9 +98,6 @@
     const axios = require('axios');
     import { Modal } from "bootstrap";
 
-    //VueX
-    import { mapGetters } from 'vuex';
-
     //Validation
     import { email, required } from 'vuelidate/lib/validators';
 
@@ -127,18 +124,20 @@
                     return [];
                 },
             },
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
+            staticUrl: {
+                type: String,
+                default: '/',
+            },
             titleList: {
                 type: Array,
                 default: function() {
                     return [];
                 },
             },
-        },
-        computed: {
-            ...mapGetters({
-                rootUrl: "getRootUrl",
-                staticUrl: "getStaticUrl",
-            }),
         },
         data() {
             return {
