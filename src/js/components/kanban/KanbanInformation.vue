@@ -42,12 +42,42 @@
     export default {
         name: "KanbanInformation",
         props: {
-            columnResults: Array,
-            kanbanBoardResults: Array,
-            kanbanCardResults: Array,
-            levelResults: Array,
-            locationId: Number,
-            userLevel: Number,
+            columnResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
+            kanbanBoardResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
+            kanbanCardResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
+            levelResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
+            userLevel: {
+                type: Number,
+                default: 0,
+            },
         },
         data() {
             return {
@@ -82,6 +112,12 @@
             },
         },
         mounted() {
+            //Send the urls upstream
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+            })
+
             //Send columns and levels into the VueX
             this.$store.commit({
                 type: 'updateLists',
