@@ -54,9 +54,6 @@
         mixins: [
             iconMixin
         ],
-        methods: {
-
-        }
     }
 </script>
 

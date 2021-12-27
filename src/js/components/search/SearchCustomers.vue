@@ -17,8 +17,6 @@
             <!-- LIST OUT RESULTS -->
             <hr>
             <list-customers v-bind:customer-results="localCustomerResults"
-                            v-bind:root-url="rootUrl"
-                            v-bind:static-url="staticUrl"
             ></list-customers>
 
             <!-- SHOW IF NO RESULTS -->
@@ -82,6 +80,14 @@
                    'searchTimeout': this.searchTimeout,
                 });
             },
+        },
+        mounted() {
+            //Send data to VueX
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
+            });
         }
     }
 </script>
