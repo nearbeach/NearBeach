@@ -159,7 +159,10 @@
             }
         },
         mounted() {
-            this.getGroupList();
+            //Wait 200ms
+            setTimeout(() => {
+                this.getGroupList();
+            }, 200);
         },
     }
 </script>

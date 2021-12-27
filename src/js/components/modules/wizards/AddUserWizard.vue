@@ -169,7 +169,10 @@
             },
         },
         mounted() {
-            this.getUserList();
+            //Wait 200ms
+            setTimeout(() => {
+                this.getUserList();
+            }, 200);
         },
     }
 </script>

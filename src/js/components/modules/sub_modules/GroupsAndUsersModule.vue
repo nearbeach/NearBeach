@@ -205,8 +205,11 @@
 
         },
         mounted() {
-            this.getGroupList();
-            this.getUserList();
+            //Wait 200ms
+            setTimeout(() => {
+                this.getGroupList();
+                this.getUserList();
+            }, 200)
         }
     }
 </script>
