@@ -112,6 +112,12 @@
             },
         },
         mounted() {
+            //Send the rootURL to the vuex
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+            })
+
             //Map the variables into a useable format
             this.columnModel = this.columnResults.map(row => {
                 return {
