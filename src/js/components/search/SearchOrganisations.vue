@@ -21,7 +21,7 @@
 
             <!-- SHOW IF NO RESULTS -->
             <div class="alert alert-warning"
-                 v-if="localOrganisationResults.length == 0"
+                 v-if="localOrganisationResults.length === 0"
             >There are no organisations with the search parameters used. Please try again.</div>
         </div>
     </div>
@@ -36,8 +36,16 @@
     export default {
         name: "SearchOrganisations",
         props: {
-            organisationResults: Array,
-
+            organisationResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
         },
         mixins: [
             searchMixin,
@@ -73,6 +81,12 @@
                    'searchTimeout': this.searchTimeout,
                 });
             },
+        },
+        mounted() {
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+            });
         }
     }
 </script>
