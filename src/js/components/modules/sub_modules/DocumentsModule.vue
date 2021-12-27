@@ -285,8 +285,11 @@
             },
         },
         mounted() {
-            this.getDocumentList();
-            this.getFolderList();
+            //Wait 200ms
+            setTimeout(() => {
+                this.getDocumentList();
+                this.getFolderList();
+            }, 200);
         },
     }
 </script>

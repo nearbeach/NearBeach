@@ -58,9 +58,11 @@
             }
         },
         mounted() {
-            this.getNoteHistoryResults();
+            //Wait 200ms before getting the data
+            setTimeout(() => {
+                this.getNoteHistoryResults();
+            }, 200);
         }
-
     }
 </script>
 

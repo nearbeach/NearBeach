@@ -114,7 +114,10 @@
             },
         },
         mounted() {
-            this.getAssignedTags();
+            //Wait 200ms before getting the data
+            setTimeout(() => {
+                this.getAssignedTags();
+            }, 200);
         }
     }
 </script>

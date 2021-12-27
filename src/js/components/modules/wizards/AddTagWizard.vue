@@ -132,8 +132,11 @@
             },
         },
         mounted() {
-            //Get the tag list
-            this.getTagList();
+            //Wait 200ms before getting data
+            setTimeout(() => {
+                //Get the tag list
+                this.getTagList();
+            }, 200);
         }
     }
 </script>

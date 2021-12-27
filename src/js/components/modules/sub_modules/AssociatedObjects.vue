@@ -184,7 +184,10 @@
             }
         },
         mounted() {
-            this.getAssociatedObjectResults();
+            //Wait 200ms
+            setTimeout(() => {
+                this.getAssociatedObjectResults();
+            }, 200);
         }
     }
 </script>
