@@ -196,6 +196,13 @@
             },
         },
         mounted() {
+            //Send up root and static url
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
+            })
+
             //Get the title list data and convert it so the v-select can use it
             this.titleList.forEach(row => {
                 this.titleFixList.push({
