@@ -82,9 +82,10 @@
             }
         },
         mounted() {
-            this.getNoteHistoryResults();
+            setTimeout(() => {
+                this.getNoteHistoryResults();
+            }, 200);
         }
-
     }
 </script>
 
