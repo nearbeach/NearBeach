@@ -275,7 +275,7 @@
 
                 //Now to use axios to get the data we require
                 axios.post(
-                    `/kanban_information/${this.locationId}/${this.objectModel}/link_list/`
+                    `${this.rootUrl}kanban_information/${this.locationId}/${this.objectModel}/link_list/`
                 ).then(response => {
                     //Load the data into the array
                     this.objectResults = response['data'];
