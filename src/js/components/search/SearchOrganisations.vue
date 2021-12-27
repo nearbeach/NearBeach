@@ -46,6 +46,10 @@
                 type: String,
                 default: '/',
             },
+            staticUrl: {
+                type: String,
+                default: '/',
+            },
         },
         mixins: [
             searchMixin,
@@ -86,6 +90,7 @@
             this.$store.commit({
                 type: 'updateUrl',
                 rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
             });
         }
     }

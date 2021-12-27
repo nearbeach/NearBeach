@@ -3,5 +3,6 @@
 {% block content %}
     <search-organisations v-bind:organisation-results="{{organisation_results}}"
                           v-bind:root-url="`{% url 'dashboard' %}`"
+                          v-bind:static-url="`{% static '/' %}`"
     ></search-organisations>
 {% endblock %}
