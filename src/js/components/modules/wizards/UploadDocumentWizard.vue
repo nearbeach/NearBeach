@@ -251,15 +251,18 @@
                     match.length > 0;
         },
         mounted() {
-            //Get the max file upload size
-            axios.post(
-                `${this.rootUrl}documentation/get/max_upload/`,
-            ).then(response => {
-                //Set the value
-                this.maxUploadSize = response['data']['max_upload_size'];
-            }).catch(error => {
-                this.showErrorModal(error,this.destination);
-            })
+            //Wait a few seconds before getting the max file upload size
+            setTimeout(() => {
+              //Get the max file upload size
+              axios.post(
+                  `${this.rootUrl}documentation/get/max_upload/`,
+              ).then(response => {
+                  //Set the value
+                  this.maxUploadSize = response['data']['max_upload_size'];
+              }).catch(error => {
+                  this.showErrorModal(error,this.destination);
+              })
+            }, 200);
         }
     }
 </script>

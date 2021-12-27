@@ -211,18 +211,18 @@
             }
         },
         mounted() {
-            //Send the user permissions to VUEX
-            this.$store.commit({
-                type: 'updateUserLevel',
-                userLevel: this.userLevel,
-            });
-
             //Send the ROOT URL and STATIC URL upstream
             this.$store.commit({
                 type: 'updateUrl',
                 staticUrl: this.staticUrl,
                 rootUrl: this.rootUrl,
-            })
+            });
+
+            //Send the user permissions to VUEX
+            this.$store.commit({
+                type: 'updateUserLevel',
+                userLevel: this.userLevel,
+            });
         },
     }
 </script>
