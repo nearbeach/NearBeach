@@ -170,7 +170,10 @@
             },
         },
         mounted() {
-            this.getCustomerList();
+            //Wait 200ms before getting data
+            setTimeout(() => {
+                this.getCustomerList();
+            }, 200);
         },
         watch: {
             excludeCustomers: function(){

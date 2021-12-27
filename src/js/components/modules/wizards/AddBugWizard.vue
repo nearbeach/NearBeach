@@ -240,9 +240,11 @@
             }
         },
         mounted() {
-            this.loadBugClientList();
+            //Wait 200ms before getting data
+            setTimeout(() => {
+                this.loadBugClientList();
+            }, 200);
         }
-
     }
 </script>
 

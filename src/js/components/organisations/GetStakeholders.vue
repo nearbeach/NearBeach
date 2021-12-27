@@ -164,8 +164,11 @@
             }
         },
         mounted() {
-            //Get a default list when mounted
-            this.getOrganisationData('','');
+            //Wait 200ms
+            setTimeout(() => {
+                //Get a default list when mounted
+                this.getOrganisationData('','');
+            }, 200);
         }
     }
 </script>

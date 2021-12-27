@@ -168,7 +168,10 @@
             },
         },
         mounted() {
-            this.getBugList();
+            //Wait 200ms before getting data
+            setTimeout(() => {
+                this.getBugList();
+            }, 200);
         }
     }
 </script>

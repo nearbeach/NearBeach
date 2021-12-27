@@ -92,7 +92,10 @@
             },
         },
         mounted() {
-            this.loadCustomerResults();
+            //Wait 200ms before getting data
+            setTimeout(() => {
+                this.loadCustomerResults();
+            }, 200);
         }
     }
 </script>

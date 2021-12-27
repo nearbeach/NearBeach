@@ -235,8 +235,8 @@
         mounted() {
             //Get a default list when mounted
             setTimeout(() => {
-              this.getOrganisationData('','');
-            }, 100);
+                this.getOrganisationData('','');
+            }, 200);
         }
     }
 </script>

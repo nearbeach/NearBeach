@@ -171,10 +171,11 @@
             },
         },
         mounted() {
-            //Get data
-            this.updateLinkResults();
+            //Wait 200ms before getting data
+            setTimeout(() => {
+                this.updateLinkResults();
+            }, 200);
         }
-
     }
 </script>
 
