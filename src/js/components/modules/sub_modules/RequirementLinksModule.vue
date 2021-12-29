@@ -130,17 +130,17 @@
                  */
                 var object_description = 'ERROR',
                     object_id = 'ERROR',
-                    object_link = '/',
+                    object_link = `${rootUrl}`,
                     requirement_item_description = '';
 
                 if (link['project_id'] !== null) {
                     object_description = link['project_id__project_name'];
                     object_id = `Project ${link['project_id']}`;
-                    object_link = `/project_information/${link['project_id']}`;
+                    object_link = `${rootUrl}project_information/${link['project_id']}`;
                 } else if (link['task_id'] !== null) {
                     object_description = link['task_id__task_short_description'];
                     object_id = `Task ${link['task_id']}`;
-                    object_link = `/task_information/${link['task_id']}`;
+                    object_link = `${rootUrl}task_information/${link['task_id']}`;
                 }
 
                 //Check to see if we need to insert the requirement item description.
