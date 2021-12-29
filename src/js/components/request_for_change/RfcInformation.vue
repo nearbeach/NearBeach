@@ -157,9 +157,6 @@
     import errorModalMixin from "../../mixins/errorModalMixin";
     import loadingModalMixin from "../../mixins/loadingModalMixin";
 
-    //VueX
-    import { mapGetters } from 'vuex'
-
     //Validation
     import { required, maxLength } from 'vuelidate/lib/validators';
 
@@ -190,16 +187,16 @@
                 type: String,
                 default: '/',
             },
+            staticUrl: {
+                type: String,
+                default: '/',
+            },
             userLevel: {
                 type: Number,
                 default: 0,
             },
         },
         computed: {
-            ...mapGetters({
-                staticUrl: 'getStaticUrl',
-                rootUrl: 'getRootUrl',
-            }),
             checkDateValidation: function() {
                 //Check the validation for each date
                 const start_date = !this.$v.rfcImplementationStartModel.required && this.$v.rfcImplementationStartModel.$dirty,
@@ -327,11 +324,18 @@
                 return row['value'] == this.rfcResults[0]['fields']['rfc_type'];
             })[0];
 
+            //Send root and static url to VueX
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
+            });
+
             //Send user level to VueX
             this.$store.commit({
                 type: 'updateUserLevel',
                 userLevel: this.userLevel,
-            })
+            });
         }
     }
 </script>

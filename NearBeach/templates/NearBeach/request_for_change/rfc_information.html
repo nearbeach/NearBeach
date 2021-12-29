@@ -4,6 +4,8 @@
     <rfc-information v-bind:rfc-results="{{rfc_results}}"
                      v-bind:rfc-change-lead="{{rfc_change_lead}}"
                      v-bind:user-level="{{ user_level }}"
+                     v-bind:root-url="`{% url 'dashboard' %}`"
+                     v-bind:static-url="`{% static '/' %}`"
     ></rfc-information>
     <br/>
 
