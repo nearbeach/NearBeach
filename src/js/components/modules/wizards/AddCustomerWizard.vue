@@ -136,14 +136,16 @@
                 ).then(response => {
                     //Place all the data into the "CustomerList" array.
                     this.customerList = response['data'];
-                    //console.log("CUSTOMER LIST: ",this.customerList);
+
+                    //Update the fixed list
+                    this.updateCustomerFixList();
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 })
             },
             updateCustomerFixList: function() {
                 //If no customer list result - just exit
-                if (this.customerList.length == 0) return;
+                if (this.customerList.length === 0) return;
 
                 //Create an array of ids we should be excluding
                 var exclude_array = [];
