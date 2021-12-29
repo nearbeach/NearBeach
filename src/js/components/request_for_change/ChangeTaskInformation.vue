@@ -94,7 +94,7 @@
             <!-- GO BACK -->
             <hr>
             <!-- CANCEL -->
-            <a v-bind:href="`/rfc_information/${changeTaskResults[0]['fields']['request_for_change']}/`"
+            <a v-bind:href="`${rootUrl}rfc_information/${changeTaskResults[0]['fields']['request_for_change']}/`"
                class="btn btn-secondary"
             >Cancel</a>
 
@@ -180,7 +180,7 @@
                     data_to_send,
                 ).then(response => {
                     //If successful, go back
-                    window.location.href = `/rfc_information/${this.changeTaskResults[0]['fields']['request_for_change']}/`;
+                    window.location.href = `${this.rootUrl}rfc_information/${this.changeTaskResults[0]['fields']['request_for_change']}/`;
                 }).catch(error => {
                     //this.showErrorModal(error, 'Change Task');
                     
