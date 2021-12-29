@@ -175,8 +175,7 @@
     //JavaScript components
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
-
-    const axios = require('axios');
+    import axios from 'axios';
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -227,7 +226,7 @@
 
                 // Use axios to send data
                 axios.post(
-                    `/${this.destination}_information/${this.locationId}/add_link/`,
+                    `${this.rootUrl}${this.destination}_information/${this.locationId}/add_link/`,
                     data_to_send,
                 ).then(response => {
                     //Data has been successfully saved. Time to update the requirement links
