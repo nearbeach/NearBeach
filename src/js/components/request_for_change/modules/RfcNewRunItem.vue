@@ -131,10 +131,6 @@
         name: "RfcNewRunItem",
         props: {
             locationId: Number,
-            rootUrl: {
-                type: String,
-                default: '/',
-            }
         },
         mixins: [
             errorModalMixin,
