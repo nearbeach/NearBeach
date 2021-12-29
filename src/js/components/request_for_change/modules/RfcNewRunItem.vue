@@ -124,6 +124,9 @@
     //Import mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "RfcNewRunItem",
         props: {
@@ -144,6 +147,11 @@
             changeStartDateModel: '',
             changeTitleModel: '',
         }),
+        computed: {
+            ...mapGetters({
+                rootUrl: 'getRootUrl',
+            })
+        },
         methods: {
             isDowntime: function() {
                 if (this.changeIsDowntimeModel) {

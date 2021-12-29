@@ -284,7 +284,7 @@
                 data_to_send.set('text_input', this.rfcData['rfcBackoutPlan']);
 
                 //Send data
-                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/backout/`)
+                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/backout/`)
             },
             updateImplementation: function() {
                 if (this.validationData['tab_3'] === false) {
@@ -299,7 +299,7 @@
                 data_to_send.set('text_input', this.rfcData['rfcImplementationPlanModel']);
                 
                 //Send data
-                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/implementation/`);
+                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/implementation/`);
             },
             updateRisk: function() {
                 if (this.validationData['tab_2'] === false) {
@@ -318,7 +318,7 @@
                 data_to_send.set('text_input', this.rfcData['rfcRiskSummaryModel']);
 
                 //Send the data
-                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/risk/`)
+                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/risk/`)
             },
             updateValidation: function(data) {
                 //Update the value
@@ -337,7 +337,7 @@
                 data_to_send.set('text_input', this.rfcData['rfcTestPlanModel']);
 
                 //Send data
-                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/test/`);
+                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/test/`);
             },
             updateValues: function(data) {
                 //Update the value
