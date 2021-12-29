@@ -3,7 +3,7 @@
         <div class="card-body">
             <h1>Requirement Item Information</h1>
             <br/>
-            <a v-bind:href="`/requirement_information/${requirementItemResults[0]['fields']['requirement']}/`">
+            <a v-bind:href="`${rootUrl}requirement_information/${requirementItemResults[0]['fields']['requirement']}/`">
                 Go Back to requirement
             </a>
             <hr>
