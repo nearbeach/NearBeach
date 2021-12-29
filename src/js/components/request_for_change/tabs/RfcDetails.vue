@@ -130,6 +130,9 @@
     //Mixins
     import searchMixin from "../../../mixins/searchMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Validation
     import { required, maxLength } from 'vuelidate/lib/validators';
 
@@ -198,6 +201,10 @@
             },
         },
         computed: {
+            ...mapGetters({
+                rootUrl: 'getRootUrl',
+                staticUrl: 'getStaticUrl',
+            }),
             checkDateValidation: function() {
                 //Check the validation for each date
                 const start_date = !this.$v.rfcImplementationStartModel.required && this.$v.rfcImplementationStartModel.$dirty,
@@ -322,7 +329,9 @@
         },
         mounted() {
             //Get the lead user data
-            this.getChangeLeadData()
+            setTimeout(() => {
+                this.getChangeLeadData();
+            }, 200);
 
             //Just run the validations to show the error messages
             this.$v.$touch();
