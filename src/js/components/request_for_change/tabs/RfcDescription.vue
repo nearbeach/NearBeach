@@ -51,7 +51,11 @@
 </template>
 
 <script>
+    //Validations
     import { required, maxLength } from 'vuelidate/lib/validators';
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "RfcDescription",
@@ -66,15 +70,16 @@
                     return [];
                 }
             },
-            staticUrl: {
-                type: String,
-                default: "/",
-            },
         },
         data: () => ({
             rfcSummaryModel: '',
             rfcTitleModel: '',
         }),
+        computed: {
+            ...mapGetters({
+               staticUrl: 'getStaticUrl',
+            }),
+        },
         validations: {
             rfcSummaryModel: {
                 required,
