@@ -125,6 +125,9 @@
     //Validation
     import { required, maxLength } from 'vuelidate/lib/validators';
 
+    //Vuex
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "NewRequirementItemWizard",
         props: [
@@ -145,6 +148,11 @@
                 typeItemFixList: [],
                 typeItemModel: '',
             }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: 'getRootUrl',
+            })
         },
         validations: {
             requirementItemScopeModel: {
@@ -178,7 +186,7 @@
                 data_to_send.set('requirement_item_type',this.typeItemModel['value']);
 
                 axios.post(
-                    `/new_requirement_item/save/${this.locationId}/`,
+                    `${this.rootUrl}new_requirement_item/save/${this.locationId}/`,
                     data_to_send,
                 ).then((response) => {
                     //Data saved successfully - clear all models
