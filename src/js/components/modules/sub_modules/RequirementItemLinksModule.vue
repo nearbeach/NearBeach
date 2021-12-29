@@ -57,6 +57,9 @@
     const axios = require('axios');
     import {Modal} from "bootstrap";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
 
@@ -74,6 +77,11 @@
                 itemLinkResults: [],
             }
         },
+        computed: {
+            ...mapGetters({
+                rootUrl: 'getRootUrl',
+            })
+        },
         methods: {
             extractObjectDescription: function(link) {
                 /*
@@ -88,19 +96,19 @@
                 if (link['opportunity_id'] !== null) {
                     object_description = link['opportunity_id__opportunity_name'];
                     object_id = `Opportunity ${link['opportunity_id']}`;
-                    object_link = `/opportunity_information/${link['opportunity_id']}`;
+                    object_link = `${this.rootUrl}opportunity_information/${link['opportunity_id']}`;
                 } else if (link['project_id'] !== null) {
                     object_description = link['project_id__project_name'];
                     object_id = `Project ${link['project_id']}`;
-                    object_link = `/project_information/${link['project_id']}`;
+                    object_link = `${this.rootUrl}project_information/${link['project_id']}`;
                 } else if (link['quote_id'] !== null) {
                     object_description = link['quote_id__quote_title'];
                     object_id = `Quote ${link['quote_id']}`;
-                    object_link = `/quote_information/${link['quote_id']}`;
+                    object_link = `${this.rootUrl}quote_information/${link['quote_id']}`;
                 } else if (link['task_id'] !== null) {
                     object_description = link['task_id__task_short_description'];
                     object_id = `Task ${link['task_id']}`;
-                    object_link = `/task_information/${link['task_id']}`;
+                    object_link = `${this.rootUrl}task_information/${link['task_id']}`;
                 }
 
                 //Check to see if we need to inser the requirement item description.
