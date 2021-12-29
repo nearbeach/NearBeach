@@ -130,6 +130,10 @@
         },
         props: {
             groupResults: Array,
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
             staticUrl: {
                 type: String,
                 default: "/",
@@ -242,6 +246,13 @@
             }
         },
         mounted() {
+            //VueX
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
+            })
+
             //We need to extract "fields" array from the statusList/typeList json data
             this.statusList.forEach((row) => {
                 //Construct the object
