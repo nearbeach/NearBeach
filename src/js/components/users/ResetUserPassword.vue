@@ -81,6 +81,9 @@
     const axios = require('axios');
     import {Modal} from "bootstrap";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import errorModalMixin from '../../mixins/errorModalMixin';
     import iconMixin from "../../mixins/iconMixin";
@@ -90,7 +93,6 @@
         props: {
             location: String,
             username: Number,
-            rootUrl: String,
         },
         mixins: [
             errorModalMixin,
@@ -103,6 +105,9 @@
             }
         },
         computed: {
+            ...mapGetters({
+                rootUrl: 'getRootUrl',
+            }),
             disableButton: function() {
                 //Both passwords have to be the same
                 let condition_1 = this.password1Model == this.password2Model;

@@ -157,6 +157,13 @@
                 })
             },
         },
+        mounted() {
+            //Send Root URL to VueX
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+            });
+        }
     }
 </script>
 
