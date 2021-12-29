@@ -103,21 +103,25 @@
         name: "NewTask",
         props: {
             groupResults: Array,
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
+            staticUrl: {
+                type: String,
+                default: '/',
+            },
             userGroupResults: {
                 type: Array,
                 default: () => {
                     return [];
                 },
-            }
+            },
         },
         data() {
             return {
                 groupModel: {},
                 stakeholderModel: '',
-                staticUrl: {
-                    type: String,
-                    default: "/",
-                },
                 taskDescriptionModel: '',
                 taskEndDateModel: '',
                 taskShortDescriptionModel: '',
@@ -195,7 +199,14 @@
             updateStakeholderModel: function(data) {
                 this.stakeholderModel = data;
             }
-        }
+        },
+        mounted() {
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
+            })
+        },
     }
 </script>
 
