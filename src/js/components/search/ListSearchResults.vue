@@ -16,7 +16,7 @@
                     <tr v-for="result in searchResults">
                         <td>
                             <!-- LINK -->
-                            <a v-bind:href="`/${destination}_information/${result[importVariables['id']]}/`">
+                            <a v-bind:href="`${rootUrl}${destination}_information/${result[importVariables['id']]}/`">
                                 <p>{{result[importVariables['title']]}}</p>
                                 <div class="spacer"></div>
                                 <p class="small-text">
@@ -36,12 +36,20 @@
 </template>
 
 <script>
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "ListSearchResults",
         props: {
             destination: String,
             importVariables: Object,  // {header, prefix,id, title, status}
             searchResults: Array,
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: 'getRootUrl',
+            }),
         }
     }
 </script>
