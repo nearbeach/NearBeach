@@ -224,9 +224,28 @@
     export default {
         name: "PermissionInformation",
         props: {
-            permissionBoolean: Array,
-            permissionLevel: Array,
-            permissionSetResults: Array,
+            permissionBoolean: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            permissionLevel: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            permissionSetResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            rootUrl: {
+                type: String,
+                default: '/',
+            }
         },
         data() {
             return {
@@ -283,7 +302,7 @@
 
                 //Send data
                 axios.post(
-                    `/permission_set_information/${this.permissionSetResults[0]['pk']}/save/`,
+                    `${this.rootUrl}permission_set_information/${this.permissionSetResults[0]['pk']}/save/`,
                     data_to_send
                 ).then(response => {
                     //Hide loading modal mixing
@@ -296,6 +315,13 @@
                 //Update the property with what we require
                 this._data[data['property']] = data['value']
             },
+        },
+        mounted() {
+
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+            })
         },
     }
 </script>

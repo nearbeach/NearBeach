@@ -3,7 +3,7 @@
         <div v-for="customer in customerResults" class="row">
             <div class="organisation-details">
                 <img v-if="customer['fields']['customer_profile_picture'] == ''"
-                     v-bind:src="`${staticUrl}static/NearBeach/images/placeholder/product_tour.svg`"
+                     v-bind:src="`${staticUrl}/NearBeach/images/placeholder/product_tour.svg`"
                      alt="Stakeholder Logo"
                      class="organisation-image"
                 >
@@ -32,6 +32,9 @@
     //Mixin
     import iconMixin from "../../mixins/iconMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "ListCustomers",
         props: {
@@ -41,21 +44,16 @@
                     return [];
                 },
             },
-            staticUrl: {
-                type: String,
-                default: "/",
-            },
-            rootUrl: {
-                type: String,
-                default: "/",
-            },
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
         },
         mixins: [
             iconMixin
         ],
-        methods: {
-
-        }
     }
 </script>
 

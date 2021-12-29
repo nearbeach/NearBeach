@@ -87,7 +87,7 @@
                 type: String,
                 default: "/",
             },
-            statusUrl: {
+            staticUrl: {
                 type: String,
                 default: "/",
             },
@@ -189,6 +189,14 @@
                 //Update the value
                 this.rfcData[data['modelName']] = data['modelValue'];
             }
+        },
+        mounted() {
+            //Send the Root and Static URL to VueX
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
+            });
         }
     }
 </script>

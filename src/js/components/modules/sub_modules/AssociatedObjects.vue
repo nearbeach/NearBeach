@@ -24,7 +24,7 @@
                     <tbody>
                         <tr v-for="project in projectResults">
                             <td>
-                                <a v-bind:href="`/project_information/${project['project_id']}/`">
+                                <a v-bind:href="`${rootUrl}project_information/${project['project_id']}/`">
                                     <p>{{project['project_name']}}</p>
                                     <div class="spacer"></div>
                                     <p class="small-text">
@@ -63,7 +63,7 @@
                     <tbody>
                         <tr v-for="requirement in requirementResults">
                             <td>
-                                <a v-bind:href="`/requirement_information/${requirement['requirement_id']}/`">
+                                <a v-bind:href="`${rootUrl}requirement_information/${requirement['requirement_id']}/`">
                                     <p>{{requirement['requirement_title']}}</p>
                                     <div class="spacer"></div>
                                     <p class="small-text">
@@ -100,7 +100,7 @@
                     <tbody>
                         <tr v-for="task in taskResults">
                             <td>
-                                <a v-bind:href="`/task_information/${task['task_id']}/`">
+                                <a v-bind:href="`${rootUrl}task_information/${task['task_id']}/`">
                                     <p>{{task['task_short_description']}}</p>
                                     <div class="spacer"></div>
                                     <p class="small-text">
@@ -135,6 +135,9 @@
 <script>
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
 
@@ -155,10 +158,15 @@
                 taskResults: [],
             }
         },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            })
+        },
         methods: {
             getAssociatedObjectResults: function() {
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/associated_objects/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/associated_objects/`,
                 ).then(response => {
                     this.opportunityResults = response['data']['opportunity'];
                     this.projectResults = response['data']['project'];
@@ -176,7 +184,10 @@
             }
         },
         mounted() {
-            this.getAssociatedObjectResults();
+            //Wait 200ms
+            setTimeout(() => {
+                this.getAssociatedObjectResults();
+            }, 200);
         }
     }
 </script>

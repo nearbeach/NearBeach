@@ -5,6 +5,14 @@
             <p class="text-instructions">
                 Please search for your stakeholder's organisation in the dropdown box. Once found, please select.
             </p>
+            <p class="text-instructions">
+              If you can not find your organisation, please
+              <a href="javascript:void(0)"
+                 v-on:click="openNewOrganisationModal"
+              >
+                click here to create it.
+              </a>
+            </p>
         </div>
         <div class="col-md-8">
             <div class="form-group">
@@ -19,13 +27,21 @@
                 />
             </div>
         </div>
+
+        <!-- MODAL -->
+        <new-organisation-modal v-on:created_new_organisation="createdNewOrganisation($event)"
+        ></new-organisation-modal>
     </div>
 </template>
 
 <script>
     //JavaScript Libraries
     const axios = require('axios');
-    import bootstrap from 'bootstrap'
+    import bootstrap from 'bootstrap';
+    import { Modal } from 'bootstrap';
+
+    //VueX
+    import { mapGetters} from 'vuex';
 
     //Validation
     import { required } from 'vuelidate/lib/validators'
@@ -42,9 +58,12 @@
         mixins: [
             searchMixin
         ],
-        props: [
-            'isDirty', //Passes the value from the template above where the checking is done
-        ],
+        props: {
+            isDirty: { //Passes the value from the template above where the checking is done
+                type: Boolean,
+                default: false,
+            }
+        },
         data() {
             return {
                 searchTimeout: '',
@@ -57,7 +76,20 @@
                 required
             },
         },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            }),
+        },
         methods: {
+            createdNewOrganisation: function(data) {
+                //We have recieved a new organisation that the user has created.
+                //Place them into the model
+                this.stakeholderModel = data;
+
+                //Close the modal
+                document.getElementById("newOrganisationModalCloseButton").click();
+            },
             fetchOptions: function(search, loading) {
                 this.searchTrigger({
                    'return_function': this.getOrganisationData,
@@ -73,7 +105,7 @@
 
                 // Now that the timer has run out, lets use AJAX to get the organisations.
                 axios.post(
-                    '/search/organisation/data/',
+                    `${this.rootUrl}search/organisation/data/`,
                     data_to_send
                 ).then(response => {
                     //Clear the stakeholderFixList
@@ -114,6 +146,16 @@
                     loader_element.style.display = "none";
                 });
             },
+            openNewOrganisationModal: function() {
+                var newModal = new Modal(document.getElementById('newOrganisationModal'));
+
+                newModal.show();
+                // var newModal = new bootstrap.Modal(
+                //     document.getElementById("newOrganisationModal"), {
+                //         keyboard: false
+                //     })
+                // newModal.show();
+            },
         },
         watch: {
             stakeholderModel: function() {
@@ -122,8 +164,11 @@
             }
         },
         mounted() {
-            //Get a default list when mounted
-            this.getOrganisationData('','');
+            //Wait 200ms
+            setTimeout(() => {
+                //Get a default list when mounted
+                this.getOrganisationData('','');
+            }, 200);
         }
     }
 </script>

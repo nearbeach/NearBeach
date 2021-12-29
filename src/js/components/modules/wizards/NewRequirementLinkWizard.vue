@@ -55,7 +55,9 @@
                             <div id="link_wizard_results"
                                  v-if="isSearching || objectModel == null"
                             >
-                                <img src="/static/NearBeach/images/placeholder/search.svg" alt="Searching..." />
+                                <img v-bind:src="`${staticUrl}/NearBeach/images/placeholder/search.svg`"
+                                     alt="Searching..."
+                                />
                             </div>
 
                             <div v-if="objectResults.length == 0 && objectModel != null"
@@ -173,15 +175,29 @@
     //JavaScript components
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
+    import axios from 'axios';
 
-    const axios = require('axios');
+    //VueX
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "NewRequirementLinkWizard",
-        props: [
-            'destination',
-            'locationId',
-        ],
+        props: {
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
+        },
         mixins: [
             errorModalMixin,
             iconMixin,
@@ -210,14 +226,17 @@
 
                 // Use axios to send data
                 axios.post(
-                    `/${this.destination}_information/${this.locationId}/add_link/`,
+                    `${this.rootUrl}${this.destination}_information/${this.locationId}/add_link/`,
                     data_to_send,
                 ).then(response => {
                     //Data has been successfully saved. Time to update the requirement links
-                    this.$emit('update_module',{});
+                    this.$emit('update_module', response.data);
 
                     //Click on the close button - a hack, but it should close the modal
                     document.getElementById("requirementLinkCloseButton").click();
+
+                    //Clear results
+                    this.objectModel = null;
                 });
             }
         },
@@ -238,7 +257,7 @@
 
                 //Now to use axios to get the data we require
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
                 ).then(response => {
                     //Load the data into the array
                     this.objectResults = response['data'];

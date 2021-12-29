@@ -109,7 +109,10 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <img src="/static/NearBeach/images/placeholder/people_tax.svg" alt="default profile" class="default-user-profile" />
+                                    <img v-bind:src="`${staticUrl}/NearBeach/images/placeholder/people_tax.svg`"
+                                         alt="default profile"
+                                         class="default-user-profile"
+                                    />
                                 </td>
                                 <td>
                                     <strong>{{rfcChangeLead[0]['username']}}: </strong>{{rfcChangeLead[0]['first_name']}} {{rfcChangeLead[0]['last_name']}}
@@ -133,11 +136,13 @@
                     <a href="javascript:void(0)"
                        class="btn btn-dark"
                        v-on:click="updateRFCStatus"
+                       v-if="userLevel > 1"
                     >Submit RFC for Approval</a>
 
                     <a href="javascript:void(0)"
                        class="btn btn-primary save-changes"
                        v-on:click="updateRFC"
+                       v-if="userLevel > 1"
                     >Update Request for Change</a>
                 </div>
             </div>
@@ -166,8 +171,41 @@
                 type: Boolean,
                 default: false,
             },
-            rfcChangeLead: Array,
-            rfcResults: Array,
+            rfcChangeLead: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            rfcResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
+            staticUrl: {
+                type: String,
+                default: '/',
+            },
+            userLevel: {
+                type: Number,
+                default: 0,
+            },
+        },
+        computed: {
+            checkDateValidation: function() {
+                //Check the validation for each date
+                const start_date = !this.$v.rfcImplementationStartModel.required && this.$v.rfcImplementationStartModel.$dirty,
+                    end_date = !this.$v.rfcImplementationEndModel.required && this.$v.rfcImplementationEndModel.$dirty,
+                    release_date = !this.$v.rfcReleaseModel.required && this.$v.rfcReleaseModel.$dirty;
+
+                //If there is ONE invalidation, we send back true => invalid
+                return start_date || end_date || release_date;
+            }
         },
         mixins: [
             errorModalMixin,
@@ -224,17 +262,6 @@
                 maxLength: maxLength(25),
             },
         },
-        computed: {
-            checkDateValidation: function() {
-                //Check the validation for each date
-                const start_date = !this.$v.rfcImplementationStartModel.required && this.$v.rfcImplementationStartModel.$dirty,
-                    end_date = !this.$v.rfcImplementationEndModel.required && this.$v.rfcImplementationEndModel.$dirty,
-                    release_date = !this.$v.rfcReleaseModel.required && this.$v.rfcReleaseModel.$dirty;
-
-                //If there is ONE invalidation, we send back true => invalid
-                return start_date || end_date || release_date;
-            }
-        },
         methods: {
             updateRFC: function() {
                 //Check form validation
@@ -261,7 +288,7 @@
 
                 //Use Axios to send the data
                 axios.post(
-                    `/rfc_information/${this.rfcResults[0]['pk']}/save/`,
+                    `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/`,
                     data_to_send,
                 ).then(response => {
                     //Notify user of success update
@@ -275,7 +302,7 @@
                 data_to_send.set('rfc_status','2'); //Value 2: Waiting for Approval
 
                 axios.post(
-                    `/rfc_information/${this.rfcResults[0]['pk']}/update_status/`,
+                    `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/update_status/`,
                     data_to_send,
                 ).then(response => {
                     //Reload the page to get redirected to the correct place
@@ -296,6 +323,19 @@
                 //Filter for just the one value result
                 return row['value'] == this.rfcResults[0]['fields']['rfc_type'];
             })[0];
+
+            //Send root and static url to VueX
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
+            });
+
+            //Send user level to VueX
+            this.$store.commit({
+                type: 'updateUserLevel',
+                userLevel: this.userLevel,
+            });
         }
     }
 </script>

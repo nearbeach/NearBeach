@@ -34,7 +34,7 @@
                         <span class="error" v-if="!$v.projectDescriptionModel.required && $v.projectDescriptionModel.$dirty"> Please supply a description.</span>
                         <span class="error" v-if="!$v.projectDescriptionModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
-                    <img src="/static/NearBeach/images/placeholder/body_text.svg"
+                    <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
                          alt="loading image for Tinymce"
                     />
@@ -42,10 +42,12 @@
                        :init="{
                          height: 500,
                          menubar: false,
-                         toolbar: 'undo redo | formatselect | ' +
-                          'bold italic backcolor | alignleft aligncenter ' +
-                          'alignright alignjustify | bullist numlist outdent indent | ',
-                       }"
+                         plugins: 'lists',
+                        toolbar: [
+                           'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                           'bold italic strikethrough underline backcolor | ' +
+                           'bullist numlist outdent indent | removeformat'
+                        ]}"
                        v-bind:content_css="false"
                        v-bind:skin="false"
                        v-bind:disabled="isReadOnly"
@@ -133,8 +135,10 @@
 
 <script>
     const axios = require('axios');
-    import { Modal } from "bootstrap";
     import { DateTime } from "luxon";
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     //Validations
     import { required, maxLength } from 'vuelidate/lib/validators';
@@ -153,6 +157,12 @@
               type: Number,
               default: 1,
             },
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
         },
         mixins: [
             errorModalMixin,
@@ -225,7 +235,7 @@
 
                 //Use axios to send data
                 axios.post(
-                    `/project_information/${this.projectResults[0]['pk']}/save/`,
+                    `${this.rootUrl}project_information/${this.projectResults[0]['pk']}/save/`,
                     data_to_send
                 ).then(response => {
                     //Notify user of success update

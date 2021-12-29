@@ -47,7 +47,9 @@
                             </p>
                         </div>
                         <div class="col-md-6 no-search">
-                            <img src="/static/NearBeach/images/placeholder/questions.svg" alt="Sorry - there are no results" />
+                            <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/questions.svg`"
+                                 alt="Sorry - there are no results"
+                            />
                         </div>
                     </div>
                 </div>
@@ -74,12 +76,27 @@
 
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "AddGroupWizard",
-        props: [
-            'destination',
-            'locationId',
-        ],
+        props: {
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
+        },
         mixins: [
             errorModalMixin,
             iconMixin,
@@ -103,7 +120,7 @@
 
                 //user axios
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/add_group/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_group/`,
                     data_to_send,
                 ).then(response => {
                     //Send the data upstream
@@ -120,7 +137,7 @@
             },
             getGroupList: function() {
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/group_list_all/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/group_list_all/`,
                 ).then(response => {
                     //Clear the groupFixList
                     this.groupFixList = [];
@@ -142,7 +159,10 @@
             }
         },
         mounted() {
-            this.getGroupList();
+            //Wait 200ms
+            setTimeout(() => {
+                this.getGroupList();
+            }, 200);
         },
     }
 </script>

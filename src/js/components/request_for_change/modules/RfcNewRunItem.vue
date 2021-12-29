@@ -53,10 +53,12 @@
                            :init="{
                              height: 300,
                              menubar: false,
-                             toolbar: 'undo redo | formatselect | ' +
-                              'bold italic backcolor | alignleft aligncenter ' +
-                              'alignright alignjustify | bullist numlist outdent indent | ',
-                           }"
+                             plugins: 'lists',
+                            toolbar: [
+                               'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                               'bold italic strikethrough underline backcolor | ' +
+                               'bullist numlist outdent indent | removeformat'
+                            ]}"
                            v-bind:content_css="false"
                            v-bind:skin="false"
                            v-model="changeDescriptionModel"
@@ -122,6 +124,9 @@
     //Import mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "RfcNewRunItem",
         props: {
@@ -138,6 +143,11 @@
             changeStartDateModel: '',
             changeTitleModel: '',
         }),
+        computed: {
+            ...mapGetters({
+                rootUrl: 'getRootUrl',
+            })
+        },
         methods: {
             isDowntime: function() {
                 if (this.changeIsDowntimeModel) {
@@ -165,7 +175,7 @@
                 data_to_send.set('is_downtime', this.changeIsDowntimeModel);
 
                 axios.post(
-                    `/rfc_information/${this.locationId}/new_change_task/`,
+                    `${this.rootUrl}rfc_information/${this.locationId}/new_change_task/`,
                     data_to_send,
                 ).then(response => {
                     //Update the runsheet variables

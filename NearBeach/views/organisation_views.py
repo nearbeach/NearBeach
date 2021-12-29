@@ -56,7 +56,12 @@ def new_organisation_save(request, *args, **kwargs):
     )
     organisation_submit.save()
 
-    return HttpResponse(reverse('organisation_information', args={organisation_submit.organisation_id}))
+    # Get the data and send it back as json
+    organisation_results = organisation.objects.get(
+        organisation_id=organisation_submit.organisation_id,
+    )
+
+    return HttpResponse(serializers.serialize('json', [organisation_results]), content_type='application/json')
 
 
 @require_http_methods(['POST'])
@@ -96,6 +101,8 @@ def organisation_information(request, organisation_id, *args, **kwargs):
     :param organisation_id:
     :return:
     """
+    user_level = kwargs['user_level']
+
     organisation_results = organisation.objects.get(organisation_id=organisation_id)
 
     customer_results = customer.objects.filter(
@@ -115,6 +122,7 @@ def organisation_information(request, organisation_id, *args, **kwargs):
         'organisation_results': serializers.serialize('json', [organisation_results]),
         'nearbeach_title': 'Organisation Information %s' % organisation_id,
         'title_list': serializers.serialize('json', title_list),
+        'user_level': user_level,
     }
 
     return HttpResponse(t.render(c, request))

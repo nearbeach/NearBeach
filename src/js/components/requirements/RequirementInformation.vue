@@ -35,7 +35,7 @@
                         <span class="error" v-if="!$v.requirementScopeModel.required"> Please supply a scope.</span>
                         <span class="error" v-if="!$v.requirementScopeModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
-                    <img src="/static/NearBeach/images/placeholder/body_text.svg"
+                    <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
                          alt="loading image for Tinymce"
                     />
@@ -43,10 +43,12 @@
                        :init="{
                          height: 500,
                          menubar: false,
-                         toolbar: 'undo redo | formatselect | ' +
-                          'bold italic backcolor | alignleft aligncenter ' +
-                          'alignright alignjustify | bullist numlist outdent indent | ',
-                       }"
+                         plugins: 'lists',
+                        toolbar: [
+                           'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                           'bold italic strikethrough underline backcolor | ' +
+                           'bullist numlist outdent indent | removeformat'
+                        ]}"
                        v-bind:content_css="false"
                        v-bind:disabled="isReadOnly"
                        v-bind:skin="false"
@@ -142,6 +144,9 @@
 
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Validation
     import { required, maxLength } from 'vuelidate/lib/validators';
 
@@ -160,6 +165,12 @@
             'typeList',
             'userLevel',
         ],
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
+        },
         mixins: [
             errorModalMixin,
             loadingModalMixin

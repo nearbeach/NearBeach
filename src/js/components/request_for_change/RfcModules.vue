@@ -100,6 +100,7 @@
                             <a href="javascript:void(0)"
                                class="btn btn-primary save-changes"
                                v-on:click="updateRisk"
+                               v-if="userLevel > 1"
                             >Update Risks</a>
                         </div>
                     </div>
@@ -125,6 +126,7 @@
                             <a href="javascript:void(0)"
                                class="btn btn-primary save-changes"
                                v-on:click="updateImplementation"
+                               v-if="userLevel > 1"
                             >Update Implementation Plan</a>
                         </div>
                     </div>
@@ -150,6 +152,7 @@
                             <a href="javascript:void(0)"
                                class="btn btn-primary save-changes"
                                v-on:click="updateBackoutPlan"
+                               v-if="userLevel > 1"
                             >Update Backout Plan</a>
                         </div>
                     </div>
@@ -175,6 +178,7 @@
                             <a href="javascript:void(0)"
                                class="btn btn-primary save-changes"
                                v-on:click="updateTestPlan"
+                               v-if="userLevel > 1"
                             >Update Test Plan</a>
                         </div>
                     </div>
@@ -200,6 +204,9 @@
 
 <script>
     const axios = require('axios');
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -242,6 +249,12 @@
                 'tab_5': true,
             }
         }),
+        computed: {
+            ...mapGetters({
+                userLevel: "getUserLevel",
+                rootUrl: "getRootUrl",
+            }),
+        },
         methods: {
             sendData: function(data_to_send,url) {
                 //Open up the loading modal
@@ -271,7 +284,7 @@
                 data_to_send.set('text_input', this.rfcData['rfcBackoutPlan']);
 
                 //Send data
-                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/backout/`)
+                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/backout/`)
             },
             updateImplementation: function() {
                 if (this.validationData['tab_3'] === false) {
@@ -286,7 +299,7 @@
                 data_to_send.set('text_input', this.rfcData['rfcImplementationPlanModel']);
                 
                 //Send data
-                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/implementation/`);
+                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/implementation/`);
             },
             updateRisk: function() {
                 if (this.validationData['tab_2'] === false) {
@@ -305,7 +318,7 @@
                 data_to_send.set('text_input', this.rfcData['rfcRiskSummaryModel']);
 
                 //Send the data
-                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/risk/`)
+                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/risk/`)
             },
             updateValidation: function(data) {
                 //Update the value
@@ -324,7 +337,7 @@
                 data_to_send.set('text_input', this.rfcData['rfcTestPlanModel']);
 
                 //Send data
-                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/test/`);
+                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/test/`);
             },
             updateValues: function(data) {
                 //Update the value

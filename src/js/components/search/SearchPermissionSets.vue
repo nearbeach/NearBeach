@@ -32,7 +32,7 @@
             <hr>
             <div class="row submit-row">
                 <div class="col-md-12">
-                    <a href="/new_permission_set/"
+                    <a v-bind:href="`${rootUrl}new_permission_set/`"
                        class="btn btn-primary save-changes">
                         Add new Permission Set
                     </a>
@@ -53,6 +53,10 @@
         name: "SearchPermissionSets",
         props: {
             permissionSetResults: Array,
+            rootUrl: {
+                type: String,
+                default: '/',
+            }
         },
         mixins: [
             errorModalMixin,
@@ -73,7 +77,7 @@
 
                 //Use Axios to send data
                 axios.post(
-                    `/search/permission_set/data/`,
+                    `${this.rootUrl}search/permission_set/data/`,
                     data_to_send,
                 ).then(response => {
                     this.permissionSetList = response['data'];

@@ -21,7 +21,11 @@
                 </td>
                 <td>
                     <!-- STATUS -->
-                    {{result[importVariables['status']]}}
+                    <p>{{result[importVariables['status']]}}</p>
+                    <div class="spacer"></div>
+                    <p class="small-text">
+                      {{formatDates(result[importVariables['end_date']])}}
+                    </p>
                 </td>
             </tr>
         </tbody>
@@ -29,6 +33,8 @@
 </template>
 
 <script>
+    const { DateTime } = require("luxon");
+
     export default {
         name: "RenderObjectTable",
         props: {
@@ -43,6 +49,15 @@
         data() {
             return {}
         },
-        methods: {}
+        methods: {
+            formatDates(date) {
+                //Escape if date is undefined
+                if (date === undefined) return "";
+
+                //Convert the date from string to ISO standard
+                let convert_date = DateTime.fromISO(date);
+                return convert_date.toHTTP();
+            }
+        }
     }
 </script>

@@ -1,6 +1,6 @@
 {
   "name": "nearbeach",
-  "version": "0.28.15",
+  "version": "0.28.16",
   "description": "NearBeach - an Open Source project management system built with Django web framework",
   "main": "/src/js/app.js",
   "directories": {
@@ -49,15 +49,17 @@
     "@iconify-icons/feather": "^1.1.0",
     "@iconify-icons/mdi": "^1.1.16",
     "@iconify-icons/typcn": "^1.1.0",
-    "@iconify/icons-akar-icons": "^1.1.17",
+    "@iconify/icons-akar-icons": "^1.1.27",
     "@iconify/icons-bi": "^1.1.2",
     "@iconify/icons-bx": "^1.1.2",
     "@iconify/icons-carbon": "^1.1.4",
     "@iconify/icons-cil": "^1.1.0",
     "@iconify/icons-feather": "^1.1.0",
     "@iconify/vue": "^1.0.6",
+    "@iconify/vue2": "^1.1.0",
     "@vue/cli-plugin-babel": "^4.5.13",
     "@vue/test-utils": "^1.2.1",
+    "ansi-regex": ">=5.0.1",
     "clean-webpack-plugin": "^3.0.0",
     "compression-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^6.0.2",
@@ -73,9 +75,12 @@
     "precss": "^4.0.0",
     "sass": "^1.35.2",
     "sass-loader": "^8.0.2",
+    "set-value": ">=4.0.1",
     "style-loader": "^1.2.1",
     "tar": ">=6.1.9",
     "tinymce": "^5.10.0",
+    "trim-newlines": ">=3.0.1",
+    "url-parse": ">=1.5.2",
     "vue": "^2.6.14",
     "vue-loader": "^15.9.3",
     "vue-select": "^3.10.5",
@@ -84,10 +89,6 @@
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
     "webpack-merge": "^4.2.2",
-    "ws": ">=6.2.2",
-    "trim-newlines": ">=3.0.1",
-    "set-value": ">=4.0.1",
-    "ansi-regex": ">=5.0.1",
-    "url-parse": ">=1.5.2"
+    "ws": ">=6.2.2"
   }
 }

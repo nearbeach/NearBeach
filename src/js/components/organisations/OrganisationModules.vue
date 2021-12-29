@@ -68,6 +68,21 @@
                             aria-selected="true">Misc
                     </button>
                 </li>
+
+                <!-- Notes Modules -->
+                <li class="nav-item"
+                    role="presentation"
+                >
+                    <button class="nav-link"
+                            id="notes-modules-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#notes-modules"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true">Notes
+                    </button>
+                </li>
             </ul>
             <hr>
 
@@ -125,6 +140,15 @@
                                  v-bind:location-id="locationId"
                     ></misc-module>
                 </div>
+                <div class="tab-pane fade"
+                     id="notes-modules"
+                     role="tabpanel"
+                     aria-labelledby="profile-tab"
+                >
+                    <notes-module v-bind:location-id="locationId"
+                                 v-bind:destination="destination"
+                    ></notes-module>
+                </div>
             </div>
         </div>
 
@@ -144,10 +168,38 @@
     export default {
         name: "OrganisationModules",
         props: {
-            customerResults: Array,
-            destination: String,
-            locationId: Number,
-            titleList: Array,
+            customerResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+            staticUrl: {
+                type: String,
+                default: '/',
+            },
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
+            titleList: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
+            userLevel: {
+                type: Number,
+                default: 0,
+            },
         },
         mixins: [
             iconMixin,
@@ -157,7 +209,21 @@
                 var new_customer_modal = new Modal(document.getElementById('addCustomerModal'));
                 new_customer_modal.show();
             }
-        }
+        },
+        mounted() {
+            //Send the ROOT URL and STATIC URL upstream
+            this.$store.commit({
+                type: 'updateUrl',
+                staticUrl: this.staticUrl,
+                rootUrl: this.rootUrl,
+            });
+
+            //Send the user permissions to VUEX
+            this.$store.commit({
+                type: 'updateUserLevel',
+                userLevel: this.userLevel,
+            });
+        },
     }
 </script>
 

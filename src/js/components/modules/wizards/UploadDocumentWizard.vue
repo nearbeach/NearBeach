@@ -21,10 +21,10 @@
                                 You will be able to upload a file against this {{destination}}. It will appear in the
                                 current folder.
                             </p>
-                            <p v-if="documentModel.length == 0">
+                            <p v-if="documentModel.length === 0">
                                 1. Please click on "Upload File" button to upload a file
                             </p>
-                            <p v-else-if="uploadPercentage == ''">
+                            <p v-else-if="uploadPercentage === ''">
                                 2. Please modify the document descript to be more human readable. Or click the "Reset"
                                 button to remove the uploaded file.
                             </p>
@@ -34,7 +34,7 @@
                         </div>
                         <div class="col-md-8">
                             <div class="form-file"
-                                 v-if="documentModel.length ==0"
+                                 v-if="documentModel.length === 0"
                             >
                                 <div class="mb-3">
                                     <label for="document" 
@@ -117,6 +117,9 @@
 <script>
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
@@ -150,6 +153,12 @@
                 maxUploadString: "No Upload Limit",
                 maxUploadWarning: false,
             };
+        },
+        computed: {
+            ...mapGetters({
+                staticUrl: "getStaticUrl",
+                rootUrl: "getRootUrl",
+            })
         },
         methods: {
             handleFileUploads: function(fileList) {
@@ -199,7 +208,7 @@
 
                 //Use axios to send it to the backend
                 axios.post(
-                    `/documentation/${this.destination}/${this.locationId}/upload/`,
+                    `${this.rootUrl}documentation/${this.destination}/${this.locationId}/upload/`,
                     data_to_send,
                     config,
                 ).then(response => {
@@ -242,15 +251,18 @@
                     match.length > 0;
         },
         mounted() {
-            //Get the max file upload size
-            axios.post(
-                `/documentation/get/max_upload/`,
-            ).then(response => {
-                //Set the value
-                this.maxUploadSize = response['data']['max_upload_size'];
-            }).catch(error => {
-                this.showErrorModal(error,this.destination);
-            })
+            //Wait a few seconds before getting the max file upload size
+            setTimeout(() => {
+              //Get the max file upload size
+              axios.post(
+                  `${this.rootUrl}documentation/get/max_upload/`,
+              ).then(response => {
+                  //Set the value
+                  this.maxUploadSize = response['data']['max_upload_size'];
+              }).catch(error => {
+                  this.showErrorModal(error,this.destination);
+              })
+            }, 200);
         }
     }
 </script>

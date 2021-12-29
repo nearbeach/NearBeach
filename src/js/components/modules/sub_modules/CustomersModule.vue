@@ -25,6 +25,7 @@
             <div class="col-md-12">
                 <button class="btn btn-primary save-changes"
                         v-on:click="addNewCustomer"
+                        v-if="userLevel > 1"
                 >
                     Add Customer
                 </button>
@@ -45,6 +46,9 @@
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     const axios = require('axios');
     import {Modal} from "bootstrap";
 
@@ -63,6 +67,12 @@
                 customerResults: [],
             }
         },
+        computed: {
+            ...mapGetters({
+                userLevel: "getUserLevel",
+                rootUrl: "getRootUrl",
+            })
+        },
         methods: {
             addNewCustomer: function() {
                 var addCustomerModal = new Modal(document.getElementById('addCustomerModal'));
@@ -70,7 +80,7 @@
             },
             loadCustomerResults: function() {
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/customer_list/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/customer_list/`,
                 ).then((response) => {
                     this.customerResults = response['data'];
                 }).catch((error) => {
@@ -82,7 +92,10 @@
             },
         },
         mounted() {
-            this.loadCustomerResults();
+            //Wait 200ms before getting data
+            setTimeout(() => {
+                this.loadCustomerResults();
+            }, 200);
         }
     }
 </script>

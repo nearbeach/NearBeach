@@ -55,7 +55,9 @@
                             <div id="link_wizard_results"
                                  v-if="isSearching || objectModel == null"
                             >
-                                <img src="/static/NearBeach/images/placeholder/search.svg" alt="Searching..." />
+                                <img v-bind:src="`${staticUrl}/NearBeach/images/placeholder/search.svg`"
+                                     alt="Searching..."
+                                />
                             </div>
 
                             <div v-if="objectResults.length == 0 && objectModel != null"
@@ -200,11 +202,26 @@
 
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "NewLinkWizard",
         props: {
-            destination: String,
-            locationId: Number,
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
         },
         mixins: [
             errorModalMixin,
@@ -236,11 +253,14 @@
 
                 // Use axios to send data
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/add_link/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_link/`,
                     data_to_send,
                 ).then(response => {
                     //Data has been successfully saved. Time to update the requirement links
                     this.$emit('update_link_results',{});
+
+                    //Clear the data
+                    this.objectModel = null;
 
                     //Click on the close button - a hack, but it should close the modal
                     document.getElementById("linkCloseButton").click();
@@ -264,7 +284,7 @@
 
                 //Now to use axios to get the data we require
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
                 ).then(response => {
                     //Load the data into the array
                     this.objectResults = response['data'];

@@ -92,6 +92,9 @@
 <script>
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
 
@@ -109,6 +112,11 @@
                 noteHistoryResults: [],
             }
         },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            })
+        },
         methods: {
             updateCard: function() {
                 //Get all data from VueX
@@ -124,7 +132,7 @@
 
                 //Use Axios to send data to backend
                 axios.post(
-                    `/kanban_information/update_card/`,
+                    `${this.rootUrl}kanban_information/update_card/`,
                     data_to_send,
                 ).then(response => {
                     //Send the new data upstream

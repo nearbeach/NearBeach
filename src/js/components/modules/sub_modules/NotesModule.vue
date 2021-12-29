@@ -17,6 +17,7 @@
                 <a href="javascript:void(0)"
                    class="btn btn-primary save-changes"
                    v-on:click="createNewNote"
+                   v-if="userLevel > 1"
                 >Add Note to {{destination}}</a>
             </div>
         </div>
@@ -36,6 +37,9 @@
     import iconMixin from "../../../mixins/iconMixin";
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "NotesModule",
         components: {},
@@ -52,6 +56,12 @@
                 noteHistoryResults: [],
             };
         },
+        computed: {
+            ...mapGetters({
+                userLevel: "getUserLevel",
+                rootUrl: "getRootUrl",
+            }),
+        },
         methods: {
             createNewNote: function() {
                 var newNoteModal = new Modal(document.getElementById('newNoteModal'));
@@ -59,7 +69,7 @@
             },
             getNoteHistoryResults: function() {
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/note_list/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/note_list/`,
                 ).then(response => {
                     this.noteHistoryResults = response['data'];
                 }).catch(error => {
@@ -72,9 +82,10 @@
             }
         },
         mounted() {
-            this.getNoteHistoryResults();
+            setTimeout(() => {
+                this.getNoteHistoryResults();
+            }, 200);
         }
-
     }
 </script>
 

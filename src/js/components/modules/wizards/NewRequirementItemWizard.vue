@@ -5,7 +5,7 @@
              aria-labelledby="requirementItemModal"
              aria-hidden="true"
     >
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2><IconifyIcon v-bind:icon="icons.clipboardIcon"></IconifyIcon> New Requirement Item Wizard</h2>
@@ -49,10 +49,12 @@
                                :init="{
                                  height: 500,
                                  menubar: false,
-                                 toolbar: 'undo redo | formatselect | ' +
-                                  'bold italic backcolor | alignleft aligncenter ' +
-                                  'alignright alignjustify | bullist numlist outdent indent | ',
-                               }"
+                                 plugins: 'lists',
+                                  toolbar: [
+                                     'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                                     'bold italic strikethrough underline backcolor | ' +
+                                     'bullist numlist outdent indent | removeformat'
+                                  ]}"
                                v-bind:content_css="false"
                                v-bind:skin="false"
                                v-model="requirementItemScopeModel"
@@ -123,6 +125,9 @@
     //Validation
     import { required, maxLength } from 'vuelidate/lib/validators';
 
+    //Vuex
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "NewRequirementItemWizard",
         props: [
@@ -143,6 +148,11 @@
                 typeItemFixList: [],
                 typeItemModel: '',
             }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: 'getRootUrl',
+            })
         },
         validations: {
             requirementItemScopeModel: {
@@ -176,7 +186,7 @@
                 data_to_send.set('requirement_item_type',this.typeItemModel['value']);
 
                 axios.post(
-                    `/new_requirement_item/save/${this.locationId}/`,
+                    `${this.rootUrl}new_requirement_item/save/${this.locationId}/`,
                     data_to_send,
                 ).then((response) => {
                     //Data saved successfully - clear all models

@@ -57,7 +57,9 @@
                             <div id="link_wizard_results"
                                  v-if="isSearching || objectModel == null"
                             >
-                                <img src="/static/NearBeach/images/placeholder/search.svg" alt="Searching..." />
+                                <img v-bind:src="`${staticUrl}/NearBeach/images/placeholder/search.svg`"
+                                     alt="Searching..."
+                                />
                             </div>
 
                             <div v-if="objectResults.length == 0 && objectModel != null"
@@ -180,12 +182,34 @@
     import iconMixin from "../../../mixins/iconMixin";
     import errorModalMixin from "../../../mixins/errorModalMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "NewKanbanLinkWizard",
         props: {
-            columnResults: Array,
-            levelResults: Array,
-            locationId: Number,
+            columnResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
+            levelResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
         },
         mixins: [
             errorModalMixin,
@@ -220,7 +244,7 @@
 
                 // Use axios to send data
                 axios.post(
-                    `/kanban_information/${this.locationId}/${this.objectModel.toLowerCase()}/add_link/`,
+                    `${this.rootUrl}kanban_information/${this.locationId}/${this.objectModel.toLowerCase()}/add_link/`,
                     data_to_send,
                 ).then(response => {
                     //Data has been successfully saved. Time to add the card to the board
@@ -251,7 +275,7 @@
 
                 //Now to use axios to get the data we require
                 axios.post(
-                    `/kanban_information/${this.locationId}/${this.objectModel}/link_list/`
+                    `${this.rootUrl}kanban_information/${this.locationId}/${this.objectModel}/link_list/`
                 ).then(response => {
                     //Load the data into the array
                     this.objectResults = response['data'];

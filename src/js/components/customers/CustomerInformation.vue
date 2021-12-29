@@ -17,7 +17,7 @@
                 <div class="col-md-8">
                     <div class="row customer-profile-image">
                         <!-- PROFILE IMAGE -->
-                        <img src="/static/NearBeach/images/placeholder/product_tour.svg"
+                        <img v-bind:src="`${staticUrl}/NearBeach/images/placeholder/product_tour.svg`"
                              alt="No Profile Picture"
                              class="customer-profile-image"
                         />
@@ -124,6 +124,14 @@
                     return [];
                 },
             },
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
+            staticUrl: {
+                type: String,
+                default: '/',
+            },
             titleList: {
                 type: Array,
                 default: function() {
@@ -176,7 +184,7 @@
 
                 //Use axios to send the data
                 axios.post(
-                    `/customer_information/${this.customerResults[0]['pk']}/save/`,
+                    `${this.rootUrl}customer_information/${this.customerResults[0]['pk']}/save/`,
                     data_to_send,
                 ).then(response => {
                     //Close the loading screen
@@ -188,6 +196,13 @@
             },
         },
         mounted() {
+            //Send up root and static url
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
+            })
+
             //Get the title list data and convert it so the v-select can use it
             this.titleList.forEach(row => {
                 this.titleFixList.push({

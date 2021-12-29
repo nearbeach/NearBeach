@@ -1,5 +1,7 @@
 {% extends 'NearBeach/template.html' %}
 {% load static %}
 {% block content %}
-    <search-users v-bind:user-results="{{user_results}}"></search-users>
+    <search-users v-bind:user-results="{{user_results}}"
+                  v-bind:root-url="`{% url 'dashboard' %}`"
+    ></search-users>
 {% endblock %}

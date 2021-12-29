@@ -36,6 +36,7 @@
                 <a href="javascript:void(0)"
                    class="btn btn-primary save-changes"
                    v-on:click="newLink"
+                   v-if="userLevel > 1"
                 >Create new Link</a>
             </div>
         </div>
@@ -57,6 +58,9 @@
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "ObjectLinks",
         props: {
@@ -70,6 +74,12 @@
             return {
                 linkResults: [],
             }
+        },
+        computed: {
+            ...mapGetters({
+                userLevel: "getUserLevel",
+                rootUrl: "getRootUrl",
+            }),
         },
         methods: {
             extractObjectDescription: function(link) {
@@ -138,7 +148,7 @@
             updateLinkResults: function() {
                 //Get the data from the database
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/object_link_list/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/object_link_list/`,
                 ).then((response) => {
                     this.linkResults = response['data'].filter(row => {
                         /*
@@ -161,10 +171,11 @@
             },
         },
         mounted() {
-            //Get data
-            this.updateLinkResults();
+            //Wait 200ms before getting data
+            setTimeout(() => {
+                this.updateLinkResults();
+            }, 200);
         }
-
     }
 </script>
 

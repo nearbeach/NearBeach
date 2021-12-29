@@ -43,7 +43,12 @@
 
     export default {
         name: "NewPermissionSet",
-        props: {},
+        props: {
+            rootUrl: {
+                type: String,
+                default: '/',
+            }
+        },
         data() {
             return {
                 permissionSetNameModel: '',
@@ -59,7 +64,7 @@
                 data_to_send.set('permission_set_name', this.permissionSetNameModel);
 
                 axios.post(
-                    `/new_permission_set/save/`,
+                    `${this.rootUrl}new_permission_set/save/`,
                     data_to_send,
                 ).then(response => {
                     //Go to the new location

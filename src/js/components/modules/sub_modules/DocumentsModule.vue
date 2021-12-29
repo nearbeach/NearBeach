@@ -68,6 +68,7 @@
                     type="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
+                    v-if="userLevel > 1"
             >
                 New Document/File
             </button>
@@ -133,6 +134,9 @@
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "DocumentsModule",
         props: [
@@ -151,11 +155,16 @@
         mixins: [
             iconMixin,
         ],
+        computed: {
+            ...mapGetters({
+                userLevel: "getUserLevel",
+                rootUrl: "getRootUrl",
+            }),
+        },
         methods: {
             addFolder: function() {
                 var addFolderModal = new Modal(document.getElementById('addFolderModal'));
                 addFolderModal.show();
-
             },
             addLink: function() {
                 var addLinkModal = new Modal(document.getElementById("addLinkModal"));
@@ -163,7 +172,7 @@
             },
             getDocumentList: function() {
                 axios.post(
-                    `/documentation/${this.destination}/${this.locationId}/list/files/`,
+                    `${this.rootUrl}documentation/${this.destination}/${this.locationId}/list/files/`,
                 ).then(response => {
                     this.documentList = response['data'];
 
@@ -172,7 +181,7 @@
             },
             getFolderList: function() {
                 axios.post(
-                    `/documentation/${this.destination}/${this.locationId}/list/folders/`,
+                    `${this.rootUrl}documentation/${this.destination}/${this.locationId}/list/folders/`,
                 ).then(response => {
                     this.folderList = response['data'];
 
@@ -276,8 +285,11 @@
             },
         },
         mounted() {
-            this.getDocumentList();
-            this.getFolderList();
+            //Wait 200ms
+            setTimeout(() => {
+                this.getDocumentList();
+                this.getFolderList();
+            }, 200);
         },
     }
 </script>

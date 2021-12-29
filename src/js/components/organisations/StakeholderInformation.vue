@@ -7,7 +7,7 @@
         <div class="col-md-8 organisation-details">
             <img v-bind:src="getStakeholderImage" alt="Stakeholder Logo" class="organisation-image">
             <div class="organisation-name">
-                <a v-bind:href="`/organisation_information/${organisationResults[0]['pk']}/`">
+                <a v-bind:href="`${rootUrl}organisation_information/${organisationResults[0]['pk']}/`">
                     {{stakeholderModel['organisation_name']}}
                 </a>
             </div>
@@ -34,6 +34,9 @@
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "StakeholderInformation",
         props: {
@@ -49,6 +52,10 @@
             iconMixin,
         ],
         computed: {
+            ...mapGetters({
+                rootUrl: 'getRootUrl',
+                staticUrl: 'getStaticUrl',
+            }),
             getStakeholderImage: function() {
                 if (this.stakeholderModel['organisation_profile_picture'] === '') {
                     //There is no image - return the default image
@@ -56,9 +63,6 @@
                 }
                 return this.stakeholderModel['organisation_profile_picture']
             }
-        },
-        methods: {
-
         },
     }
 </script>

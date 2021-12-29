@@ -100,9 +100,9 @@
             },
             closeKanban: function() {
                 axios.post(
-                    `/kanban_information/${this.kanbanBoardResults[0]['pk']}/close_board/`
+                    `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0]['pk']}/close_board/`
                 ).then(response => {
-                    window.location.href = "/";
+                    window.location.href = `${this.rootUrl}`;
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 })
@@ -112,6 +112,12 @@
             },
         },
         mounted() {
+            //Send the rootURL to the vuex
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+            })
+
             //Map the variables into a useable format
             this.columnModel = this.columnResults.map(row => {
                 return {

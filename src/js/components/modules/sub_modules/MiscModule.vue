@@ -13,6 +13,9 @@
     import iconMixin from "../../../mixins/iconMixin";
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "MiscModule",
         components: {},
@@ -24,6 +27,12 @@
             errorModalMixin,
             iconMixin,
         ],
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                userLevel: "getUserLevel",
+            }),
+        },
         data() {
             return {
                 noteHistoryResults: [],
@@ -36,7 +45,7 @@
             },
             getNoteHistoryResults: function() {
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/note_list/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/note_list/`,
                 ).then(response => {
                     this.noteHistoryResults = response['data'];
                 }).catch(error => {
@@ -49,9 +58,11 @@
             }
         },
         mounted() {
-            this.getNoteHistoryResults();
+            //Wait 200ms before getting the data
+            setTimeout(() => {
+                this.getNoteHistoryResults();
+            }, 200);
         }
-
     }
 </script>
 

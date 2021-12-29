@@ -94,7 +94,7 @@
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
-    import searchMixin from "../../mixins/searchMixin";
+    // import searchMixin from "../../mixins/searchMixin";
 
     export default {
         name: "NewKanban",
@@ -113,7 +113,7 @@
         },
         mixins: [
             errorModalMixin,
-            searchMixin,
+            // searchMixin,
         ],
         data() {
             return {
@@ -167,12 +167,30 @@
                 //Apply checking flag
                 this.checkingKanbanBoardName = true;
 
-                this.searchTrigger({
-                    'return_function': this.checkKanbanBoardName,
-                    'searchTimeout': this.searchTimeout,
-                    'search': this.kanbanBoardNameModel,
-                    'loading': null,
-                });
+                //Reset the timer if it exists
+                if (this.searchTimeout != '') {
+                  //Stop the clock!
+                  clearTimeout(this.searchTimeout);
+                }
+
+                // If the obj['search'] is defined, we want to use the search Defined. Otherwise search undefined
+                if (this.kanbanBoardNameModel === undefined) {
+                    // Reset the clock, to only search if there is an uninterupted 0.5s of no typing.
+                    this.searchTimeout = setTimeout(
+                        this.checkKanbanBoardName,
+                        500
+                    );
+                } else {
+                    // Reset the clock, to only search if there is an uninterupted 0.5s of no typing.
+                    if (this.kanbanBoardNameModel.length >= 3) {
+                        this.searchTimeout = setTimeout(
+                            this.checkKanbanBoardName,
+                            500,
+                            this.kanbanBoardNameModel,
+                            null
+                        );
+                    }
+                }
             }
         },
         methods: {

@@ -74,6 +74,10 @@
                     return [];
                 },
             },
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
         },
         data() {
             return {
@@ -128,7 +132,7 @@
 
                 //Use Axios to send data
                 axios.post(
-                    `/new_group/save/`,
+                    `${this.rootUrl}new_group/save/`,
                     data_to_send,
                 ).then(response => {
                     //Go to that webpage
@@ -144,7 +148,7 @@
 
                 //User Axios to send data
                 axios.post(
-                    `/group_information/check_group_name/`,
+                    `${this.rootUrl}group_information/check_group_name/`,
                     data_to_send,
                 ).then(response => {
                     // Update the uniqueGroupName

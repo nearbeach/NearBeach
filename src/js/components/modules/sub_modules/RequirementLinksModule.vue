@@ -23,7 +23,14 @@
                 <tbody>
                     <tr v-for="link in linkResults">
                         <td v-html="extractObjectDescription(link)"></td>
-                        <td>{{extractObjectStatus(link)}}</td>
+                        <td>
+                            {{extractObjectStatus(link)}}
+                            <span class="remove-link">
+                                <IconifyIcon v-bind:icon="icons.trashCan"
+                                             v-on:click="removeLink(link.object_assignment_id)"
+                                />
+                            </span>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -87,6 +94,9 @@
     import {Modal} from "bootstrap";
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
 
@@ -107,6 +117,11 @@
                 linkModel: [],
             };
         },
+        computed: {
+            ...mapGetters({
+                rootUrl: 'getRootUrl',
+            }),
+        },
         methods: {
             extractObjectDescription: function(link) {
                 /*
@@ -115,31 +130,23 @@
                  */
                 var object_description = 'ERROR',
                     object_id = 'ERROR',
-                    object_link = '/',
+                    object_link = `${this.rootUrl}`,
                     requirement_item_description = '';
 
-                if (link['opportunity_id'] !== null) {
-                    object_description = link['opportunity_id__opportunity_name'];
-                    object_id = `Opportunity ${link['opportunity_id']}`;
-                    object_link = `/opportunity_information/${link['opportunity_id']}`;
-                } else if (link['project_id'] !== null) {
+                if (link['project_id'] !== null) {
                     object_description = link['project_id__project_name'];
                     object_id = `Project ${link['project_id']}`;
-                    object_link = `/project_information/${link['project_id']}`;
-                } else if (link['quote_id'] !== null) {
-                    object_description = link['quote_id__quote_title'];
-                    object_id = `Quote ${link['quote_id']}`;
-                    object_link = `/quote_information/${link['quote_id']}`;
+                    object_link = `${this.rootUrl}project_information/${link['project_id']}`;
                 } else if (link['task_id'] !== null) {
                     object_description = link['task_id__task_short_description'];
                     object_id = `Task ${link['task_id']}`;
-                    object_link = `/task_information/${link['task_id']}`;
+                    object_link = `${this.rootUrl}task_information/${link['task_id']}`;
                 }
 
-                //Check to see if we need to inser the requirement item description.
-                if (link['requirement_id'] !== null) {
+                //Check to see if we need to insert the requirement item description.
+                if (link['requirement_item_id'] !== null) {
                     requirement_item_description = `<p class="requirement-item-link-type">${link['requirement_item_id__requirement_item_title']}</p>`;
-                    object_id = `${object_id} / Item ${link['requirement_id']}`;
+                    object_id = `${object_id} / Item ${link['requirement_item_id']}`;
                 }
 
                 //Return the HTML
@@ -163,12 +170,8 @@
                  */
                 var object_status = 'ERROR';
 
-                if (link['opportunity_id'] !== null) {
-                    object_status = link['opportunity_id__opportunity_stage_id__opportunity_stage_description'];
-                } else if (link['project_id'] !== null) {
+                if (link['project_id'] !== null) {
                     object_status = link['project_id__project_status'];
-                } else if (link['quote_id'] !== null) {
-                    object_status = link['quote_id__quote_title'];
                 } else if (link['task_id'] !== null) {
                     object_status = link['task_id__task_status'];
                 }
@@ -180,6 +183,22 @@
                 //Open up the modal
                 var elem_modal = new Modal(document.getElementById('newRequirementLinkModal'));
                 elem_modal.show();
+            },
+            removeLink: function(link_id) {
+                //Use Axios to send data to the backend
+                const data_to_send = new FormData();
+                data_to_send.set('object_assignment_id', link_id);
+
+                //Tell the backend to remove the data.
+                axios.post(
+                    `${this.rootUrl}object_data/delete_link/`,
+                    data_to_send,
+                ).then(response => {
+                    //Remove the old link_id from the linkResults
+                    this.linkResults = this.linkResults.filter(row => {
+                        return row.object_assignment_id !== link_id;
+                    });
+                })
             },
             updateItemLinkResults: function() {
                 //Get the data from the database

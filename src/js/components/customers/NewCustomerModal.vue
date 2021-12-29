@@ -39,6 +39,9 @@
     const axios = require('axios');
     import { Modal } from "bootstrap";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Validation
     import { email, required } from 'vuelidate/lib/validators';
 
@@ -78,6 +81,11 @@
             titleModel: {
                 required,
             },
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            })
         },
         methods: {
             submitNewCustomer: function() {
@@ -119,7 +127,7 @@
 
                 //Send the data using axios
                 axios.post(
-                    '/new_customer/save/',
+                    `${this.rootUrl}new_customer/save/`,
                     data_to_send,
                 ).then(response => {
                     //Go to the new customer page

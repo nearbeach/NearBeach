@@ -51,6 +51,9 @@
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     const axios = require('axios');
 
     export default {
@@ -76,6 +79,9 @@
             }
         },
         computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            }),
             tagList: function() {
                 return this.allTagList.filter(row => {
                     return this.assignedTags.findIndex(tag => {
@@ -96,7 +102,7 @@
 
                 //Use Axios to send data to backend
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/add_tags/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_tags/`,
                     data_to_send
                 ).then(response => {
                     //Emit data up
@@ -111,7 +117,7 @@
             },
             getTagList: function() {
                 axios.post(
-                    `/object_data/tag_list_all/`
+                    `${this.rootUrl}object_data/tag_list_all/`
                 ).then(response => {
                     //Map data to the preferred data format for vue-select
                     this.allTagList = response['data'].map(row => {
@@ -126,8 +132,11 @@
             },
         },
         mounted() {
-            //Get the tag list
-            this.getTagList();
+            //Wait 200ms before getting data
+            setTimeout(() => {
+                //Get the tag list
+                this.getTagList();
+            }, 200);
         }
     }
 </script>

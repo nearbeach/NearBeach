@@ -27,7 +27,7 @@
                 <span class="error" v-if="!$v.rfcSummaryModel.required && $v.rfcSummaryModel.$dirty"> Please supply a description.</span>
                 <span class="error" v-if="!$v.rfcSummaryModel.maxLength"> Sorry - too many characters.</span>
             </label><br>
-            <img v-bind:src="`${staticUrl}static/NearBeach/images/placeholder/body_text.svg`"
+            <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                  class="loader-image"
                  alt="loading image for Tinymce"
             />
@@ -35,10 +35,12 @@
                :init="{
                  height: 500,
                  menubar: false,
-                 toolbar: 'undo redo | formatselect | ' +
-                  'bold italic backcolor | alignleft aligncenter ' +
-                  'alignright alignjustify | bullist numlist outdent indent | ',
-               }"
+                 plugins: 'lists',
+                  toolbar: [
+                     'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                     'bold italic strikethrough underline backcolor | ' +
+                     'bullist numlist outdent indent | removeformat'
+                  ]}"
                v-bind:content_css="false"
                v-bind:skin="false"
                v-bind:disabled="isReadOnly"
@@ -49,7 +51,11 @@
 </template>
 
 <script>
-    import { required, maxLength } from 'vuelidate/lib/validators'
+    //Validations
+    import { required, maxLength } from 'vuelidate/lib/validators';
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "RfcDescription",
@@ -64,15 +70,16 @@
                     return [];
                 }
             },
-            staticUrl: {
-                type: String,
-                default: "/",
-            },
         },
         data: () => ({
             rfcSummaryModel: '',
             rfcTitleModel: '',
         }),
+        computed: {
+            ...mapGetters({
+               staticUrl: 'getStaticUrl',
+            }),
+        },
         validations: {
             rfcSummaryModel: {
                 required,

@@ -17,13 +17,11 @@
             <!-- LIST OUT SEARCH RESULTS -->
             <hr>
             <list-organisations v-bind:organisation-results="localOrganisationResults"
-                                v-bind:root-url="rootUrl"
-                                v-bind:static-url="staticUrl"
             ></list-organisations>
 
             <!-- SHOW IF NO RESULTS -->
             <div class="alert alert-warning"
-                 v-if="localOrganisationResults.length == 0"
+                 v-if="localOrganisationResults.length === 0"
             >There are no organisations with the search parameters used. Please try again.</div>
         </div>
     </div>
@@ -38,14 +36,19 @@
     export default {
         name: "SearchOrganisations",
         props: {
-            organisationResults: Array,
-            staticUrl: {
-                type: String,
-                default: "/",
+            organisationResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
             },
             rootUrl: {
                 type: String,
-                default: "/",
+                default: '/',
+            },
+            staticUrl: {
+                type: String,
+                default: '/',
             },
         },
         mixins: [
@@ -66,7 +69,7 @@
 
                 //Use axios to obtain the data we require
                 axios.post(
-                    '/search/organisation/data/',
+                    `${this.rootUrl}search/organisation/data/`,
                     data_to_send
                 ).then(response => {
                     this.localOrganisationResults = response['data'];
@@ -82,6 +85,13 @@
                    'searchTimeout': this.searchTimeout,
                 });
             },
+        },
+        mounted() {
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
+            });
         }
     }
 </script>

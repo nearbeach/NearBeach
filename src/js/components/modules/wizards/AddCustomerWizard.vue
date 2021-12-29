@@ -42,7 +42,9 @@
                             </p>
                         </div>
                         <div class="col-md-6 no-search">
-                            <img src="/static/NearBeach/images/placeholder/questions.svg" alt="Sorry - there are no results" />
+                            <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/questions.svg`"
+                                 alt="Sorry - there are no results"
+                            />
                         </div>
                     </div>
                 </div>
@@ -68,13 +70,33 @@
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "AddCustomerWizard",
-        props: [
-            'destination',
-            'locationId',
-            'excludeCustomers',
-        ],
+        props: {
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+            excludeCustomers: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            })
+        },
         mixins: [
             errorModalMixin,
             iconMixin,
@@ -93,7 +115,7 @@
                 data_to_send.set('customer', this.customerModel['value']);
 
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/add_customer/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_customer/`,
                     data_to_send,
                 ).then((response) => {
                     //Send the new data up stream
@@ -110,18 +132,20 @@
             },
             getCustomerList: function() {
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/customer_list_all/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/customer_list_all/`,
                 ).then(response => {
                     //Place all the data into the "CustomerList" array.
                     this.customerList = response['data'];
-                    //console.log("CUSTOMER LIST: ",this.customerList);
+
+                    //Update the fixed list
+                    this.updateCustomerFixList();
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 })
             },
             updateCustomerFixList: function() {
                 //If no customer list result - just exit
-                if (this.customerList.length == 0) return;
+                if (this.customerList.length === 0) return;
 
                 //Create an array of ids we should be excluding
                 var exclude_array = [];
@@ -148,7 +172,10 @@
             },
         },
         mounted() {
-            this.getCustomerList();
+            //Wait 200ms before getting data
+            setTimeout(() => {
+                this.getCustomerList();
+            }, 200);
         },
         watch: {
             excludeCustomers: function(){

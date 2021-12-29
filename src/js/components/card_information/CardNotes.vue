@@ -14,10 +14,12 @@
                     :init="{
                         height: 250,
                         menubar: false,
-                        toolbar: 'undo redo | formatselect | ' +
-                        'bold italic backcolor | alignleft aligncenter ' +
-                        'alignright alignjustify | bullist numlist outdent indent | ',
-                    }"
+                        plugins: 'lists',
+                        toolbar: [
+                           'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                           'bold italic strikethrough underline backcolor | ' +
+                           'bullist numlist outdent indent | removeformat'
+                        ]}"
                     v-bind:content_css="false"
                     v-bind:skin="false"
                     v-model="cardNoteModel"
@@ -43,24 +45,32 @@
         <hr>
 
         <!-- NOTE HISTORY -->
-        <list-notes v-bind:note-history-results="getCardNotes()"
+        <list-notes v-bind:note-history-results="cardNotes"
                     v-bind:destination="'card'"
         ></list-notes>
     </div>
 </template>
 
 <script>
-    import { mapGetters } from 'vuex'
     const axios = require('axios');
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     export default {
         name: 'CardNotes',
         props: {},
         data() {
             return {
-                ...mapGetters(['getCardNotes']),
+                // ...mapGetters(['getCardNotes']),
                 cardNoteModel: '',
             }
+        },
+        computed: {
+            ...mapGetters({
+                cardNotes: "getCardNotes",
+                rootUrl: "getRootUrl",
+            })
         },
         methods: {
             addNote: function() {
@@ -70,7 +80,7 @@
 
                 //Use axios to send the data
                 axios.post(
-                    `/object_data/kanban_card/${this.$store.state.card.cardId}/add_notes/`,
+                    `${this.rootUrl}object_data/kanban_card/${this.$store.state.card.cardId}/add_notes/`,
                     data_to_send,
                 ).then(response => {
                     //Add the response to the end of the noteHistoryResults

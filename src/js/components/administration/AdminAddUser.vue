@@ -80,6 +80,9 @@
 <script>
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Import Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
 
@@ -105,6 +108,12 @@
                 userResults: [],
             }
         },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                userLevel: "getUserLevel",
+            }),
+        },
         mixins: [
             errorModalMixin,
         ],
@@ -125,7 +134,7 @@
                 });
 
                 axios.post(
-                    `/admin_add_user/`,
+                    `${this.rootUrl}admin_add_user/`,
                     data_to_send,
                 ).then(response => {
                     //Just refresh the page (for now)
@@ -137,7 +146,7 @@
             getData: function() {
                 //Use Axios to obtain all the group, permission-set, and user results
                 axios.post(
-                    `/object_data/admin_add_user/`,
+                    `${this.rootUrl}object_data/admin_add_user/`,
                 ).then(response => {
                     //Assign it to the appropriate variable
                     this.groupResults = response['data']['group_results'].map(data => {

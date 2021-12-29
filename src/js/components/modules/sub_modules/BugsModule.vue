@@ -39,6 +39,13 @@
                         </td>
                         <td>
                             {{bug['bug_status']}}
+                            <span class="remove-link"
+                                  v-if="userLevel >= 2"
+                            >
+                                <IconifyIcon v-bind:icon="icons.trashCan"
+                                             v-on:click="removeBug(bug['bug_id'])"
+                                />
+                            </span>
                         </td>
                     </tr>
                 </tbody>
@@ -52,6 +59,7 @@
             <div class="col-md-12">
                 <button class="btn btn-primary save-changes"
                         v-on:click="addNewBug"
+                        v-if="userLevel > 1"
                 >
                     Add Bug
                 </button>
@@ -75,12 +83,21 @@
     import errorModalMixin from '../../../mixins/errorModalMixin';
     import iconMixin from "../../../mixins/iconMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "BugsModule",
-        props: [
-            'destination',
-            'locationId',
-        ],
+        props: {
+            destination: {
+                type: String,
+                default: "",
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            }
+        },
         mixins: [
             errorModalMixin,
             iconMixin,
@@ -89,6 +106,12 @@
             return {
                 bugList: [],
             }
+        },
+        computed: {
+            ...mapGetters({
+                userLevel: "getUserLevel",
+                rootUrl: "getRootUrl",
+            }),
         },
         methods: {
             addNewBug: function() {
@@ -114,7 +137,7 @@
                 }
 
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/bug_list/`
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/bug_list/`
                 ).then((response) => {
                     //Clear the current list
                     this.bugList = [];
@@ -127,9 +150,28 @@
                     this.showErrorModal(error, this.destination);
                 })
             },
+            removeBug: function(bug_id) {
+                //Create data_to_send
+                const data_to_send = new FormData();
+                data_to_send.set('bug_id', bug_id);
+
+                //Use Axios to send data to backend
+                axios.post(
+                    `${this.rootUrl}object_data/delete_bug/`,
+                    data_to_send,
+                ).then(() => {
+                    //Remove the bug from the model
+                    this.bugList = this.bugList.filter(row => {
+                        return row.bug_id !== bug_id;
+                    });
+                })
+            },
         },
         mounted() {
-            this.getBugList();
+            //Wait 200ms before getting data
+            setTimeout(() => {
+                this.getBugList();
+            }, 200);
         }
     }
 </script>

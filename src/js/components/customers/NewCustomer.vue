@@ -234,7 +234,9 @@
         },
         mounted() {
             //Get a default list when mounted
-            this.getOrganisationData('','');
+            setTimeout(() => {
+                this.getOrganisationData('','');
+            }, 200);
         }
     }
 </script>

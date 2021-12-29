@@ -181,6 +181,13 @@
             },
         },
         mounted() {
+            //Send RootURL upstream
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
+            });
+
             //If the include closed is undefined - then we want to define it
             if (this.includeClosed == undefined) {
                 this.includeClosedObjectsModel = false;

@@ -42,6 +42,7 @@
             <a class="kanban-link btn btn-danger"
                href="javascript:void(0)"
                v-on:click="archiveCards"
+               v-if="masterList.length > 0"
             >
                 Archive Cards
             </a>
@@ -76,12 +77,13 @@
         computed: {
             ...mapGetters({
                 allCards: 'getCards',
+                rootUrl: 'getRootUrl',
             }),
             masterList: function() {
                 //Filter the data
                 let return_array = this.allCards.filter(card => {
-                    return card['fields']['kanban_column'] == this.columnId &&
-                           card['fields']['kanban_level'] == this.levelId;
+                    return parseInt(card['fields']['kanban_column']) === this.columnId &&
+                           parseInt(card['fields']['kanban_level']) === this.levelId;
                 })
 
                 //Make sure it is sorted
@@ -127,10 +129,15 @@
 
                 // Use axios to contact backend
                 axios.post(
-                    `/kanban_information/archive_kanban_cards/`,
+                    `${this.rootUrl}kanban_information/archive_kanban_cards/`,
                     data_to_send,
                 ).then(response => {
-                    document.location.reload(true)
+                    //Mutate the data to exclude the archived cards
+                    this.$store.commit({
+                        type: 'archiveCards',
+                        'column': this.columnId,
+                        'level': this.levelId,
+                    });
                 }).catch(error => {
                      
                 })
@@ -186,7 +193,7 @@
 
                     //Use axios to send the data to the database
                     axios.post(
-                        `/kanban_information/${row['pk']}/move_card/`,
+                        `${this.rootUrl}kanban_information/${row['pk']}/move_card/`,
                         data_to_send,
                     ).then(response => {
                         this.$store.commit({
@@ -207,9 +214,6 @@
                 const filtered_data = this.masterList.filter(row => {
                     return row['pk'] == data['target']['dataset']['cardId'];
                 })[0];
-
-                
-                
 
                 //Setup data to send upstream
                 this.sendDataUpstream(filtered_data);
@@ -298,15 +302,15 @@
                     smallest = (new_sort >= old_sort)*old_sort + (new_sort < old_sort)*new_sort;
 
                 //If they are the same (i.e. drag and dropped in same place) - return
-                if (largest == smallest) {
+                if (largest === smallest) {
                     return [];
                 }
 
                 //Filter for the data we need
                 let filtered_data = this.allCards.filter(row => {
                     //Return when same column and level, whilst also in range of smallest and largest
-                    return row['fields']['kanban_column'] === column &&
-                           row['fields']['kanban_level'] === level &&
+                    return parseInt(row['fields']['kanban_column']) === column &&
+                           parseInt(row['fields']['kanban_level']) === level &&
                            row['fields']['kanban_card_sort_number'] >= smallest &&
                            row['fields']['kanban_card_sort_number'] <= largest;
                 })
@@ -370,17 +374,17 @@
 
                 //Use axios to send the data to the database
                 axios.post(
-                    `/kanban_information/${card_id}/move_card/`,
+                    `${this.rootUrl}kanban_information/${card_id}/move_card/`,
                     data_to_send,
                 ).then(response => {
                     //Define cards_to_change
                     let cards_to_change = [];
 
                     //Depending if the card moves columns depends what we do
-                    if ((new_card_column == old_card_column) && 
-                        (new_card_level == old_card_level)) {
+                    if ((new_card_column === old_card_column) &&
+                        (new_card_level === old_card_level)) {
                         //The card stayed in the same place.
-                        
+
                         cards_to_change = this.dragSameColumn(data_to_send);
                     } else {
                         //The card move to a different place

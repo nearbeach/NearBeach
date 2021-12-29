@@ -81,6 +81,9 @@
     const axios = require('axios');
     import {Modal} from "bootstrap";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import errorModalMixin from '../../mixins/errorModalMixin';
     import iconMixin from "../../mixins/iconMixin";
@@ -102,6 +105,9 @@
             }
         },
         computed: {
+            ...mapGetters({
+                rootUrl: 'getRootUrl',
+            }),
             disableButton: function() {
                 //Both passwords have to be the same
                 let condition_1 = this.password1Model == this.password2Model;
@@ -137,7 +143,7 @@
                 
                 //Setup Axios to send data
                 axios.post(
-                    `/${this.location}/update_user_password/`,
+                    `${this.rootUrl}${this.location}/update_user_password/`,
                     data_to_send,
                 ).then(response => {
                     this.closeModal();

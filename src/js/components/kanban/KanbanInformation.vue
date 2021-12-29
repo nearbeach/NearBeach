@@ -42,12 +42,42 @@
     export default {
         name: "KanbanInformation",
         props: {
-            columnResults: Array,
-            kanbanBoardResults: Array,
-            kanbanCardResults: Array,
-            levelResults: Array,
-            locationId: Number,
-            userLevel: Number,
+            columnResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
+            kanbanBoardResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
+            kanbanCardResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
+            levelResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
+            userLevel: {
+                type: Number,
+                default: 0,
+            },
         },
         data() {
             return {
@@ -62,7 +92,12 @@
                 this.cardInformation = data;
             },
             newCard: function(data) {
-                this.newCardInfo = data;
+                //this.newCardInfo = data;
+                console.log("Data: ",data);
+                this.$store.commit({
+                    type: 'addCard',
+                    newCard: data,
+                });
             },
             updateCard: function(data) {
                 //Loop through the results - when the id's match. Update the data.
@@ -77,12 +112,18 @@
             },
         },
         mounted() {
+            //Send the urls upstream
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+            })
+
             //Send columns and levels into the VueX
             this.$store.commit({
                 type: 'updateLists',
-                columnResults: this.columnResults,
-                levelResults: this.levelResults,
-            });
+                'columnResults': this.columnResults,
+                'levelResults': this.levelResults,
+            })
         }
     }
 </script>

@@ -3,7 +3,7 @@
         <div class="card-body">
             <h1>Requirement Item Information</h1>
             <br/>
-            <a v-bind:href="`/requirement_information/${requirementItemResults[0]['fields']['requirement']}/`">
+            <a v-bind:href="`${rootUrl}requirement_information/${requirementItemResults[0]['fields']['requirement']}/`">
                 Go Back to requirement
             </a>
             <hr>
@@ -40,7 +40,7 @@
                             <span class="error" v-if="!$v.requirementItemScopeModel.required"> Please supply a scope.</span>
                             <span class="error" v-if="!$v.requirementItemScopeModel.maxLength"> Sorry - too many characters.</span>
                         </label><br/>
-                        <img src="/static/NearBeach/images/placeholder/body_text.svg"
+                        <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                              class="loader-image"
                              alt="loading image for Tinymce"
                         />
@@ -48,10 +48,12 @@
                            :init="{
                              height: 500,
                              menubar: false,
-                             toolbar: 'undo redo | formatselect | ' +
-                              'bold italic backcolor | alignleft aligncenter ' +
-                              'alignright alignjustify | bullist numlist outdent indent | ',
-                           }"
+                             plugins: 'lists',
+                            toolbar: [
+                               'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                               'bold italic strikethrough underline backcolor | ' +
+                               'bullist numlist outdent indent | removeformat'
+                            ]}"
                            v-bind:content_css="false"
                            v-bind:skin="false"
                            v-model="requirementItemScopeModel"
@@ -143,6 +145,9 @@
 
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
 
@@ -158,6 +163,19 @@
             'statusList',
             'typeList',
         ],
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
+            getStakeholderImage: function() {
+                if (this.stakeholderModel['organisation_profile_picture'] == '') {
+                    //There is no image - return the default image
+                    return this.defaultStakeholderImage;
+                }
+                return this.stakeholderModel['organisation_profile_picture']
+            },
+        },
         mixins: [
             iconMixin,
         ],
@@ -187,15 +205,6 @@
             typeModel: {
                 required
             },
-        },
-        computed: {
-            getStakeholderImage: function() {
-                if (this.stakeholderModel['organisation_profile_picture'] == '') {
-                    //There is no image - return the default image
-                    return this.defaultStakeholderImage;
-                }
-                return this.stakeholderModel['organisation_profile_picture']
-            }
         },
         methods: {
             updateRequirementItem: function() {

@@ -50,10 +50,12 @@
                                :init="{
                                  height: 300,
                                  menubar: false,
-                                 toolbar: 'undo redo | formatselect | ' +
-                                  'bold italic backcolor | alignleft aligncenter ' +
-                                  'alignright alignjustify | bullist numlist outdent indent | ',
-                               }"
+                                 plugins: 'lists',
+                                  toolbar: [
+                                     'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                                     'bold italic strikethrough underline backcolor | ' +
+                                     'bullist numlist outdent indent | removeformat'
+                                  ]}"
                                v-bind:content_css="false"
                                v-bind:skin="false"
                                v-model="cardDescriptionModel"
@@ -76,10 +78,12 @@
                                :init="{
                                  height: 250,
                                  menubar: false,
-                                 toolbar: 'undo redo | formatselect | ' +
-                                  'bold italic backcolor | alignleft aligncenter ' +
-                                  'alignright alignjustify | bullist numlist outdent indent | ',
-                               }"
+                                 plugins: 'lists',
+                                toolbar: [
+                                   'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                                   'bold italic strikethrough underline backcolor | ' +
+                                   'bullist numlist outdent indent | removeformat'
+                                ]}"
                                v-bind:content_css="false"
                                v-bind:skin="false"
                                v-model="cardNoteModel"
@@ -116,6 +120,9 @@
 <script>
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
 
@@ -135,6 +142,11 @@
                 cardTitleModel: '',
                 noteHistoryResults: [],
             }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            })
         },
         watch: {
             cardInformation: function() {
@@ -164,7 +176,7 @@
 
                 //Use axios to send the data
                 axios.post(
-                    `/object_data/kanban_card/${this.cardId}/add_notes/`,
+                    `${this.rootUrl}object_data/kanban_card/${this.cardId}/add_notes/`,
                     data_to_send,
                 ).then(response => {
                     //Add the response to the end of the noteHistoryResults
@@ -182,7 +194,7 @@
 
                 //Use axios to get the card list
                 axios.post(
-                    `/object_data/kanban_card/${this.cardId}/note_list/`
+                    `${this.rootUrl}object_data/kanban_card/${this.cardId}/note_list/`
                 ).then(response => {
                     //Save the data into noteHistoryResults
                     this.noteHistoryResults = response['data'];
@@ -199,7 +211,7 @@
 
                 //Use Axios to send data
                 axios.post(
-                    `/kanban_information/update_card/`,
+                    `${this.rootUrl}kanban_information/update_card/`,
                     data_to_send,
                 ).then(response => {
                     //Send the new data upstream

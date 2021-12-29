@@ -31,7 +31,7 @@
                             <div class="small-text">{{getNiceDate(changeTask['fields']['change_task_end_date'])}}</div>
                         </td>
                         <td>
-                            <a v-bind:href="`/change_task_information/${changeTask['pk']}/`">{{changeTask['fields']['change_task_title']}}</a>
+                            <a v-bind:href="`${rootUrl}change_task_information/${changeTask['pk']}/`">{{changeTask['fields']['change_task_title']}}</a>
                         </td>
                         <td>
                             <div>Assigned User:</div>
@@ -51,26 +51,26 @@
                                 <a href="javascript:void(0)"
                                    class="btn btn-primary change-task-button"
                                    v-on:click="updateChangeTaskStatus(changeTask['pk'],4)"
-                                   v-if="changeTask['fields']['change_task_status']==3"
+                                   v-if="changeTask['fields']['change_task_status']==3 && userLevel > 1"
                                 >Start Task</a>
 
                                 <!-- FINISH BUTTON -->
                                 <a href="javascript:void(0)"
                                    class="btn btn-warning change-task-button"
                                    v-on:click="updateChangeTaskStatus(changeTask['pk'],5)"
-                                   v-if="changeTask['fields']['change_task_status']==4"
+                                   v-if="changeTask['fields']['change_task_status']==4 && userLevel > 1"
                                 >Finish Task</a>
 
                                 <!-- SUCCESS BUTTON -->
                                 <a href="javascript:void(0)"
                                    class="btn btn-success change-task-button"
-                                   v-if="changeTask['fields']['change_task_status']==5"
+                                   v-if="changeTask['fields']['change_task_status']==5 && userLevel > 1"
                                 >Successful</a>
 
                                 <!-- FAILED BUTTON -->
                                 <a href="javascript:void(0)"
                                    class="btn btn-danger change-task-button"
-                                   v-if="changeTask['fields']['change_task_status']==6"
+                                   v-if="changeTask['fields']['change_task_status']==6 && userLevel > 1"
                                 >Failed</a>
                             </div>
                         </td>
@@ -95,6 +95,7 @@
                 <a href="javascript:void(0)"
                    class="btn btn-primary save-changes"
                    v-on:click="addNewChangeItem"
+                   v-if="userLevel > 1"
                 >New Change Item</a>
             </div>
         </div>
@@ -107,6 +108,7 @@
                 <a href="javascript:void(0)"
                    class="btn btn-warning save-changes"
                    v-on:click="closeRfc"
+                   v-if="userLevel > 1"
                 >Close Request for Change</a>
             </div>
         </div>
@@ -126,6 +128,9 @@
     // Mixins
     import datetimeMixins from "../../../mixins/datetimeMixins";
     import errorModalMixin from "../../../mixins/errorModalMixin";
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "RfcRunSheetList",
@@ -150,6 +155,10 @@
             changeTaskList: [],
         }),
         computed: {
+            ...mapGetters({
+                userLevel: "getUserLevel",
+                rootUrl: "getRootUrl",
+            }),
             isCompleted: function() {
                 var count_of_uncompleted_tasks = this.changeTaskList.filter(changeTask => {
                     const change_task_status = changeTask['fields']['change_task_status'];
@@ -171,7 +180,7 @@
                 data_to_send.set('rfc_status', 5);
 
                 axios.post(
-                    `/rfc_information/${this.rfcId}/update_status/`,
+                    `${this.rootUrl}rfc_information/${this.rfcId}/update_status/`,
                     data_to_send,
                 ).then(response => {
                     //Refresh Page
@@ -182,7 +191,7 @@
             },
             getRunSheetList: function() {
                 axios.post(
-                    `/rfc_information/${this.locationId}/change_task_list/`,
+                    `${this.rootUrl}rfc_information/${this.locationId}/change_task_list/`,
                 ).then(response => {
                     // Update the changeTaskList
                     this.changeTaskList = response['data'];
@@ -239,7 +248,7 @@
                 data_to_send.set('change_task_status',change_task_status)
 
                 axios.post(
-                    `/change_task_update_status/${change_task_id}/`,
+                    `${this.rootUrl}change_task_update_status/${change_task_id}/`,
                     data_to_send,
                 ).then(response => {
                     /*

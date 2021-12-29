@@ -17,5 +17,8 @@
 
     <parent-modules v-bind:destination="'task'"
                     v-bind:location-id="{{task_id}}"
+                    v-bind:user-level="{{ user_level }}"
+                    v-bind:root-url="`{% url 'dashboard' %}`"
+                    v-bind:static-url="`{% static '/' %}`"
     ></parent-modules>
 {% endblock %}

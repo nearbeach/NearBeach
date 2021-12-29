@@ -69,6 +69,10 @@
     export default {
         name: 'SearchTags',
         props: {
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
             tagResults: {
                 type: Array,
                 default: () => {
@@ -137,6 +141,12 @@
                 this.localTagResults[index]['fields']['tag_name'] = data['tag_name'];
                 this.localTagResults[index]['fields']['tag_colour'] = data['tag_colour'];
             }
+        },
+        mounted() {
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+            });
         }
     }
 </script>

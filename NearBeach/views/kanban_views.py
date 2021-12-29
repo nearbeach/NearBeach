@@ -13,6 +13,7 @@ from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_kanban_permissions
 from NearBeach.forms import AddKanbanLinkForm, KanbanCardArchiveForm, CheckKanbanBoardName, MoveKanbanCardForm,\
     NewKanbanCardForm, NewKanbanForm, KanbanCardForm
+from django.views.decorators.cache import never_cache
 
 
 @login_required(login_url='login', redirect_field_name="")
@@ -177,6 +178,7 @@ def kanban_close_board(request, kanban_board_id, *args, **kwargs):
     return HttpResponse("")
 
 
+@never_cache
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
 def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
@@ -203,6 +205,7 @@ def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
     return HttpResponse(t.render(c, request))
 
 
+@never_cache
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup='kanban_board_id')
 def kanban_information(request, kanban_board_id, *args, **kwargs):

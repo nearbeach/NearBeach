@@ -66,6 +66,10 @@
                     return [];
                 },
             },
+            rootUrl: {
+                type: String,
+                default: '/',
+            }
         },
         data() {
             return {
@@ -94,7 +98,7 @@
 
                 //User axios to send data
                 axios.post(
-                    `/group_information/${this.groupResults[0]['pk']}/save/`,
+                    `${this.rootUrl}group_information/${this.groupResults[0]['pk']}/save/`,
                     data_to_send,
                 ).then(response => {
                     this.closeLoadingModal();
@@ -124,6 +128,12 @@
             if (parent_group.length > 0) {
                 this.parentGroupModel = parent_group[0];
             }
+
+            //Send the rootUrl to VueX
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+            });
         }
     }
 </script>

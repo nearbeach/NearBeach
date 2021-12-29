@@ -48,10 +48,12 @@
                                :init="{
                                  height: 300,
                                  menubar: false,
-                                 toolbar: 'undo redo | formatselect | ' +
-                                  'bold italic backcolor | alignleft aligncenter ' +
-                                  'alignright alignjustify | bullist numlist outdent indent | ',
-                               }"
+                                 plugins: 'lists',
+                                  toolbar: [
+                                     'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                                     'bold italic strikethrough underline backcolor | ' +
+                                     'bullist numlist outdent indent | removeformat'
+                                  ]}"
                                v-bind:content_css="false"
                                v-bind:skin="false"
                                v-model="kanbanCardDescriptionModel"
@@ -77,6 +79,9 @@
 <script>
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
 
@@ -98,6 +103,11 @@
                 kanbanCardTextModel: '',
             }
         },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            })
+        },
         methods: {
             addKanbanCard: function() {
                 //Get the modal to extract data from
@@ -107,14 +117,12 @@
                 const data_to_send = new FormData();
                 data_to_send.set('kanban_card_text',this.kanbanCardTextModel);
                 data_to_send.set('kanban_card_description',this.kanbanCardDescriptionModel);
-                //data_to_send.set('kanban_level',this.levelResults[0]['pk']);
-                //data_to_send.set('kanban_column',this.columnResults[0]['p
                 data_to_send.set('kanban_level',self_modal['dataset']['kanbanLevel']);
                 data_to_send.set('kanban_column',self_modal['dataset']['kanbanColumn']);
 
                 //Send the data
                 axios.post(
-                    `/kanban_information/${this.kanbanBoardResults[0]['pk']}/new_card/`,
+                    `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0]['pk']}/new_card/`,
                     data_to_send,
                 ).then(response => {
                     //Emit the data upstream

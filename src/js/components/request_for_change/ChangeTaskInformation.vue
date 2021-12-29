@@ -43,10 +43,12 @@
                        :init="{
                          height: 300,
                          menubar: false,
-                         toolbar: 'undo redo | formatselect | ' +
-                          'bold italic backcolor | alignleft aligncenter ' +
-                          'alignright alignjustify | bullist numlist outdent indent | ',
-                       }"
+                         plugins: 'lists',
+                        toolbar: [
+                           'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                           'bold italic strikethrough underline backcolor | ' +
+                           'bullist numlist outdent indent | removeformat'
+                        ]}"
                        v-bind:content_css="false"
                        v-bind:skin="false"
                        v-model="changeDescriptionModel"
@@ -92,7 +94,7 @@
             <!-- GO BACK -->
             <hr>
             <!-- CANCEL -->
-            <a v-bind:href="`/rfc_information/${changeTaskResults[0]['fields']['request_for_change']}/`"
+            <a v-bind:href="`${rootUrl}rfc_information/${changeTaskResults[0]['fields']['request_for_change']}/`"
                class="btn btn-secondary"
             >Cancel</a>
 
@@ -135,6 +137,10 @@
         name: "ChangeTaskInformation",
         props: {
             changeTaskResults: Array,
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
         },
         data() {
             return {
@@ -170,11 +176,11 @@
                 data_to_send.set('is_downtime', this.changeIsDowntimeModel);
 
                 axios.post(
-                    `/change_task_information/${this.changeTaskResults[0]['pk']}/save/`,
+                    `${this.rootUrl}change_task_information/${this.changeTaskResults[0]['pk']}/save/`,
                     data_to_send,
                 ).then(response => {
                     //If successful, go back
-                    window.location.href = `/rfc_information/${this.changeTaskResults[0]['fields']['request_for_change']}/`;
+                    window.location.href = `${this.rootUrl}rfc_information/${this.changeTaskResults[0]['fields']['request_for_change']}/`;
                 }).catch(error => {
                     //this.showErrorModal(error, 'Change Task');
                     
@@ -187,7 +193,7 @@
 
                 //Use axios to send the data
                 axios.post(
-                    `/change_task_update_status/${this.changeTaskResults[0]['pk']}/`,
+                    `${rootUrl}change_task_update_status/${this.changeTaskResults[0]['pk']}/`,
                     data_to_send,
                 ).then(response => {
                     //Reload the page

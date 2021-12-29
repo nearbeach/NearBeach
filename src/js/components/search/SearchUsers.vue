@@ -18,7 +18,7 @@
             >
                 <a class="list-group-item list-group-item-action"
                    v-for="user in userList"
-                   v-bind:href="`/user_information/${user['pk']}/`"
+                   v-bind:href="`/user_information/${user['id']}/`"
                 >
                     <strong>
                         {{user['username']}}: {{user['first_name']}} {{user['last_name']}}
@@ -35,7 +35,7 @@
             <hr>
             <div class="row submit-row">
                 <div class="col-md-12">
-                    <a href="/new_user/"
+                    <a v-bind:href="`${rootUrl}new_user/`"
                        class="btn btn-primary save-changes">
                         Add new User
                     </a>
@@ -56,6 +56,10 @@
         name: "SearchUsers",
         props: {
             userResults: Array,
+            rootUrl: {
+                type: String,
+                default: '/',
+            }
         },
         mixins: [
             errorModalMixin,
@@ -76,7 +80,7 @@
 
                 //Use Axios to send data
                 axios.post(
-                    `/search/user/data/`,
+                    `${this.rootUrl}search/user/data/`,
                     data_to_send,
                 ).then(response => {
                     this.userList = response['data'];

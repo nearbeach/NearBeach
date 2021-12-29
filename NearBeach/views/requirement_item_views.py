@@ -45,28 +45,19 @@ def add_requirement_item_link(request, requirement_item_id, *args, **kwargs):
         )
         submit_object_assignment.save()
 
-    for row in request.POST.getlist("opportunity"):
-        submit_object_assignment = object_assignment(
-            requirement_item=requirement_item_instance,
-            opportunity=opportunity.objects.get(opportunity_id=row),
-            change_user=request.user,
-        )
-        submit_object_assignment.save()
+    # Now return back a complete list of new links
+    link_results = get_requirement_item_links(requirement_item_id)
 
-    return HttpResponse("Success")
+    # Send back json data
+    json_results = json.dumps(list(link_results), cls=DjangoJSONEncoder)
+
+    return HttpResponse(json_results, content_type='application/json')
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
-@check_user_requirement_item_permissions(min_permission_level=1)
-def get_requirement_item_links_list(request, requirement_item_id, *args, **kwargs):
-    """
-    :param request:
-    :param requirement_item_id:
-    :return:
-    """
-    # Use object_assignment to get the requirme
-    link_results = object_assignment.objects.filter(
+#Internal Code
+def get_requirement_item_links(requirement_item_id):
+    # Use object_assignment to get the requirments
+    return object_assignment.objects.filter(
         Q(
             is_deleted=False,
             requirement_item_id=requirement_item_id
@@ -93,12 +84,17 @@ def get_requirement_item_links_list(request, requirement_item_id, *args, **kwarg
         'requirement_item_id__requirement_item_title',
     )
 
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name="")
+@check_user_requirement_item_permissions(min_permission_level=1)
+def get_requirement_item_links_list(request, requirement_item_id, *args, **kwargs):
     """
-    As explained on stack overflow here -
-    https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
-    We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard
-    json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
+    :param request:
+    :param requirement_item_id:
+    :return:
     """
+    # Use object_assignment to get the requirments
+    link_results = get_requirement_item_links(requirement_item_id)
 
     # Send back json data
     json_results = json.dumps(list(link_results), cls=DjangoJSONEncoder)
@@ -186,6 +182,7 @@ def requirement_item_information(request, requirement_item_id, *args, **kwargs):
         'requirement_item_results': serializers.serialize("json", [requirement_item_results]),
         'status_list': serializers.serialize("json", status_list),
         'type_list': serializers.serialize("json", type_list),
+        'user_level': user_level,
     }
 
     return HttpResponse(t.render(c, request))

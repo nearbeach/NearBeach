@@ -33,7 +33,7 @@
                         <span class="error" v-if="!$v.taskDescriptionModel.required && $v.taskDescriptionModel.$dirty"> Please supply a description.</span>
                         <span class="error" v-if="!$v.taskDescriptionModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
-                    <img src="/static/NearBeach/images/placeholder/body_text.svg"
+                    <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
                          alt="loading image for Tinymce"
                     />
@@ -41,10 +41,12 @@
                        :init="{
                          height: 500,
                          menubar: false,
-                         toolbar: 'undo redo | formatselect | ' +
-                          'bold italic backcolor | alignleft aligncenter ' +
-                          'alignright alignjustify | bullist numlist outdent indent | ',
-                       }"
+                         plugins: 'lists',
+                        toolbar: [
+                           'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                           'bold italic strikethrough underline backcolor | ' +
+                           'bullist numlist outdent indent | removeformat'
+                        ]}"
                        v-bind:content_css="false"
                        v-bind:skin="false"
                        v-model="taskDescriptionModel"
@@ -135,6 +137,9 @@
     import { required, maxLength } from 'vuelidate/lib/validators';
     import { DateTime } from "luxon";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
     import loadingModalMixin from "../../mixins/loadingModalMixin";
@@ -151,6 +156,12 @@
               type: Number,
               default: 1,
             },
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
         },
         data() {
             return {
@@ -220,7 +231,7 @@
 
                 //Send data to backend
                 axios.post(
-                    `/task_information/${this.taskResults[0]['pk']}/save/`,
+                    `${this.rootUrl}task_information/${this.taskResults[0]['pk']}/save/`,
                     data_to_send
                 ).then(response => {
                     //Hide the loading modal

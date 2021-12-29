@@ -72,6 +72,7 @@
                     id: 'project_id',
                     title: 'project_name',
                     status: 'project_status',
+                    end_date: 'project_end_date',
 
                 },
                 requirementVariables: {
@@ -80,6 +81,7 @@
                     id: 'requirement_id',
                     title: 'requirement_title',
                     status: 'requirement_status__requirement_status',
+                    end_date: '',
                 },
                 taskVariables: {
                     header: 'Tasks',
@@ -87,6 +89,7 @@
                     id: 'task_id',
                     title: 'task_short_description',
                     status: 'task_status',
+                    end_date: 'task_end_date',
                 },
             }
         },
@@ -97,7 +100,7 @@
             getMyObjects: function() {
                 //Use axios to get the objects assigned to me
                 axios.post(
-                    `/dashboard/get/unassigned_objects/`,
+                    `${this.rootUrl}dashboard/get/unassigned_objects/`,
                 ).then(response => {
                     this.objectResults = response['data'];
 

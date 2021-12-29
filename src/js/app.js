@@ -3,6 +3,7 @@ import Vue from 'vue/dist/vue.js';
 import Vuex from 'vuex';
 
 import { getField, updateField } from 'vuex-map-fields';
+const { DateTime } = require("luxon");
 
 Vue.use(Vuex);
 
@@ -118,7 +119,26 @@ const moduleKanban = {
   }),
   mutations: {
     //CUD Operations
-    creationCard(state, payload) {},
+    addCard(state, payload) {
+      state.kanbanCardResults.push(payload.newCard[0]);
+    },
+    archiveCards(state, payload) {
+        //payload will contain both column and level values
+        const column = payload.column,
+            level = payload.level;
+
+        //Filter out the column/level cards - and update the kanban card results
+        state.kanbanCardResults = state.kanbanCardResults.filter(row => {
+            //Check to see if the column and level match
+            const boolean_column = parseInt(row['fields']['kanban_column']) === column,
+                boolean_level = parseInt(row['fields']['kanban_level']) === level;
+
+            console.log(`Column: ${boolean_column} | Level: ${boolean_level}`);
+
+            //If they both match - exclude them from the data;
+            return !(boolean_column && boolean_level);
+        });
+    },
     updateKanbanCard(state, payload) {
       //Get the index location
       const index_location = state.kanbanCardResults.findIndex((row) => {
@@ -178,7 +198,7 @@ const moduleLocationId = {
 const moduleUrl = {
   state: () => ({
     rootUrl: '/',
-    staticUrl: '/',
+    staticUrl: '/static/',
   }),
   mutations: {
     updateUrl(state, payload) {
@@ -196,6 +216,23 @@ const moduleUrl = {
     },
   },
 };
+
+const moduleUserLevel = {
+  state: () => ({
+    userLevel: 0,
+  }),
+  mutations: {
+    updateUserLevel(state, payload) {
+      state.userLevel = payload.userLevel;
+    },
+  },
+  action: {},
+  getters: {
+    getUserLevel: (state) => {
+      return state.userLevel;
+    },
+  },
+}
 
 /*
 const moduleStaticUrl = {
@@ -220,11 +257,9 @@ const store = new Vuex.Store({
   modules: {
     card: moduleCard,
     destination: moduleDestination,
-    //location: moduleLocationId,
-    //rootUrl: moduleRootUrl,
-    //staticUrl: moduleStaticUrl,
     kanban: moduleKanban,
     url: moduleUrl,
+    userLevel: moduleUserLevel,
   },
 });
 
@@ -329,6 +364,7 @@ import NotesModule from './components/modules/sub_modules/NotesModule.vue';
 import ListTagsModule from './components/modules/sub_modules/ListTagsModule.vue';
 import AddTagWizard from './components/modules/wizards/AddTagWizard.vue';
 import EditTagModal from './components/tags/EditTagModal.vue';
+import NewOrganisationModal from './components/organisations/NewOrganisationModal.vue';
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -470,6 +506,7 @@ Vue.component('ListTagsModule', ListTagsModule);
 Vue.component('AddTagWizard', AddTagWizard);
 Vue.component('SearchTags', SearchTags);
 Vue.component('EditTagModal', EditTagModal);
+Vue.component('NewOrganisationModal', NewOrganisationModal);
 
 import Vuelidate from 'vuelidate';
 Vue.use(Vuelidate);

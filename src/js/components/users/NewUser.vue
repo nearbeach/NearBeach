@@ -109,7 +109,12 @@
 
     export default {
         name: "NewUser",
-        props: {},
+        props: {
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
+        },
         data() {
             return {
                 emailModel: '',
@@ -135,7 +140,7 @@
                 data_to_send.set('password2', this.password2Model);
 
                 axios.post(
-                    `/new_user/save/`,
+                    `${this.rootUrl}new_user/save/`,
                     data_to_send,
                 ).then(response => {
                     //Send user to the user information page
