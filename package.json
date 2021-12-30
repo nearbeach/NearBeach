@@ -36,7 +36,7 @@
     "vue-datetime": "^1.0.0-beta.14",
     "vue-form-wizard": "^0.8.4",
     "vuedraggable": "^2.24.3",
-    "vuelidate": "^0.7.6",
+    "vuelidate": "^0.7.7",
     "vuex": "^3.6.2",
     "vuex-map-fields": "^1.4.1"
   },
