@@ -1,5 +1,15 @@
 version = 1
 
+test_patterns = [
+    "NearBeach/tests/**",
+    "test_*.py"
+]
+
+exclude_patterns = [
+    "NearBeach/static/**",
+    "Nearbeach/migrations/**"
+]
+
 [[analyzers]]
 name = "javascript"
 enabled = true
