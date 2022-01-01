@@ -133,7 +133,7 @@ const moduleKanban = {
             const boolean_column = parseInt(row['fields']['kanban_column']) === column,
                 boolean_level = parseInt(row['fields']['kanban_level']) === level;
 
-            console.log(`Column: ${boolean_column} | Level: ${boolean_level}`);
+            
 
             //If they both match - exclude them from the data;
             return !(boolean_column && boolean_level);
