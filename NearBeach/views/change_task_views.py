@@ -29,7 +29,7 @@ def change_task_information(request, change_task_id, *args, **kwargs):
     c = {
         'change_task_results': serializers.serialize('json', change_task_results),
     }
-    
+
     return HttpResponse(t.render(c, request))
 
 
@@ -42,7 +42,7 @@ def change_task_save(request, change_task_id):
     form  = ChangeTaskForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-    
+
     # Get the instance
     change_task_update = change_task.objects.get(change_task_id=change_task_id)
 

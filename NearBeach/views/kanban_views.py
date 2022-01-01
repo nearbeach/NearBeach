@@ -305,7 +305,7 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     """
     Update the sort order
     ~~~~~~~~~~~~~~~~~~~~~
-    
+
     If both the old and new level/column destination are the same, we take the difference between the two values
     Otherwise we apply two sort orders to both the old and the new
     """
