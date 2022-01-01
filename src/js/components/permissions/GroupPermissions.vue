@@ -31,9 +31,20 @@
         name: "GroupPermissions",
         components: {},
         props: {
-            destination: String,
-            groupResults: Array,
-            isDirty: Boolean, //Passes the value from the template above where the checking is done
+            destination: {
+                type: String,
+                default: '',
+            },
+            groupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            isDirty: {
+                type: Boolean,
+                default: true,
+            }, //Passes the value from the template above where the checking is done
             userGroupResults: {
                 type: Array,
                 default: () => {

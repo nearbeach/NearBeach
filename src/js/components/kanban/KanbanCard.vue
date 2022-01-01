@@ -64,10 +64,20 @@
     export default {
         name: "KanbanCard",
         props: {
-            columnId: Number,
-            levelId: Number,
-            //masterList: Array,
-            newCardInfo: Array,
+            columnId: {
+                type: Number,
+                default: 0,
+            },
+            levelId: {
+                type: Number,
+                default: 0,
+            },
+            newCardInfo: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
         },
         data() {
             return {

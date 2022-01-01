@@ -150,9 +150,22 @@
     export default {
         name: "ProjectInformation",
         props: {
-            defaultStakeholderImage: String,
-            organisationResults: Array,
-            projectResults: Array,
+            defaultStakeholderImage: {
+                type: String,
+                default: '',
+            },
+            organisationResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            projectResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
             userLevel: {
               type: Number,
               default: 1,

@@ -50,7 +50,12 @@
     export default {
         name: "ListOrganisations",
         props: {
-            organisationResults: Array,
+            organisationResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
         },
         computed: {
             ...mapGetters({

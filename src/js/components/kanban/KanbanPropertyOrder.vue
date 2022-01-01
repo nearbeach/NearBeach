@@ -155,7 +155,10 @@
     export default {
         name: "KanbanPropertyOrder",
         props: {
-            isDirty: Boolean, //Passes the value from the template above where the checking is done
+            isDirty: {
+                type: Boolean,
+                default: true,
+            }, //Passes the value from the template above where the checking is done
             isNewMode: {
                 type: Boolean,
                 default: true,
@@ -164,9 +167,20 @@
                 type: Number,
                 default: 0,
             },
-            propertyList: Array,
-            propertyName: String,
-            source: String,
+            propertyList: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            propertyName: {
+                type: String,
+                default: '',
+            },
+            source: {
+                type: String,
+                default: '',
+            },
         },
         data() {
             return {

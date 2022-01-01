@@ -21,7 +21,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="link in linkResults">
+                    <tr v-for="link in linkResults"
+                        v-bind:key="link['pk']"
+                    >
                         <td v-html="extractObjectDescription(link)"></td>
                         <td>{{extractObjectStatus(link)}}</td>
                     </tr>
@@ -64,8 +66,14 @@
     export default {
         name: "ObjectLinks",
         props: {
-            destination: String,
-            locationId: Number,
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
         },
         mixins: [
             iconMixin,

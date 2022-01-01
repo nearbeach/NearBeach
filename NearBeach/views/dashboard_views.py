@@ -18,7 +18,13 @@ import urllib.parse
 import random
 
 # Import NearBeach Models
-from NearBeach.models import object_assignment, user_group
+from NearBeach.models import object_assignment, \
+    user_group, \
+    task, \
+    request_for_change, \
+    project, \
+    bug, \
+    requirement
 
 
 @login_required(login_url='login', redirect_field_name="")

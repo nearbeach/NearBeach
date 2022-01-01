@@ -215,8 +215,14 @@
     export default {
         name: "RfcModules",
         props: {
-            locationId: Number,
-            destination: String,
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+            destination: {
+                type: String,
+                default: '/',
+            },
             isReadOnly: {
                 type: Boolean,
                 default: false,
@@ -225,7 +231,12 @@
                 type: Array,
                 default: [],
             },
-            userList: Array,
+            userList: {
+                type: Array,
+                return: () => {
+                    return [];
+                },
+            },
         },
         mixins: [
             errorModalMixin,

@@ -36,14 +36,19 @@
     export default {
         name: "SearchCustomers",
         props: {
-            customerResults: Array,
+            customerResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
             staticUrl: {
                 type: String,
                 default: "/",
             },
             rootUrl: {
                 type: String,
-                root: "/",
+                default: '/',
             },
         },
         mixins: [

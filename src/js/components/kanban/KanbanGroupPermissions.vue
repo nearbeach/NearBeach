@@ -13,7 +13,10 @@
     export default {
         name: "KanbanGroupPermissions",
         props: {
-            locationId: Number,
+            locationId: {
+                type: Number,
+                default: 0,
+            },
         }
     }
 </script>

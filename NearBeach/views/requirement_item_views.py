@@ -56,7 +56,8 @@ def add_requirement_item_link(request, requirement_item_id, *args, **kwargs):
 
 #Internal Code
 def get_requirement_item_links(requirement_item_id):
-    # Use object_assignment to get the requirments
+    """
+    Use object_assignment to get the requirments"""
     return object_assignment.objects.filter(
         Q(
             is_deleted=False,
@@ -83,6 +84,7 @@ def get_requirement_item_links(requirement_item_id):
         'requirement_item_id',
         'requirement_item_id__requirement_item_title',
     )
+
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")

@@ -47,11 +47,36 @@
     export default {
         name: "KanbanBoard",
         props: {
-            columnResults: Array,
-            kanbanBoardResults: Array,
-            kanbanCardResults: Array,
-            levelResults: Array,
-            newCardInfo: Array,
+            columnResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            kanbanBoardResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            kanbanCardResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            levelResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            newCardInfo: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
         },
         mixins: [
             iconMixin,

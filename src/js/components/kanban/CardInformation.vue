@@ -129,7 +129,12 @@
     export default {
         name: "CardInformation",
         props: {
-            cardInformation: Object,
+            cardInformation: {
+                type: Object,
+                default: () => {
+                    return {},
+                }
+            },
         },
         mixins: [
             iconMixin,

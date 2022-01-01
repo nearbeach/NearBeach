@@ -81,19 +81,24 @@
         name: "SearchObjects",
         props: {
             includeClosed: {
-                Boolean,
+                type: Boolean,
+                default: false,
             },
             rootUrl: {
                 type: String,
                 default: "/",
             },
             searchInput: {
-                String,
+                type: String,
                 required: false,
+                default: '',
             },
             searchResults: {
-                Array,
+                type: Array,
                 required: true,
+                default: () => {
+                    return [];
+                },
             },
         },
         mixins: [

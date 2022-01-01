@@ -15,10 +15,16 @@
     export default {
         name: "KanbanRow",
         props: {
-            //columnResults: Array,
-            //kanbanRowModel: Object,
-            levelId: Number,
-            newCardInfo: Array,
+            levelId: {
+                type: Number,
+                default: 0,
+            },
+            newCardInfo: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
         },
         computed: {
             ...mapGetters({

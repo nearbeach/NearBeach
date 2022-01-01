@@ -66,8 +66,14 @@
     export default {
         name: "RequirementItemLinksModule",
         props: {
-            destination: String,
-            locationId: Number,
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
         },
         mixins: [
             iconMixin,

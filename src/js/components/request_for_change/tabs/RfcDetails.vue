@@ -139,7 +139,12 @@
     export default {
         name: "RfcDetails",
         props: {
-            groupResults: Array,
+            groupResults:{
+                type: Array,
+                return: () => {
+                    return [];
+                },
+            },
             userGroupResults: {
                 type: Array,
                 default: () => {

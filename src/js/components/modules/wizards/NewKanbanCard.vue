@@ -88,10 +88,30 @@
     export default {
         name: "NewKanbanCard",
         props: {
-            columnResults: Array,
-            kanbanCardResults: Array,
-            levelResults: Array,
-            kanbanBoardResults: Array,
+            columnResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            kanbanCardResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            levelResults:  {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            kanbanBoardResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
         },
         mixins: [
             iconMixin,

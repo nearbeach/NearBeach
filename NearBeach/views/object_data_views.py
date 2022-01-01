@@ -29,14 +29,7 @@ from NearBeach.forms import AddBugForm, \
     RemoveUserForm, \
     SearchForm, \
     QueryBugClientForm
-from NearBeach.views.tools.internal_functions import set_object_from_destination, \
-    project, \
-    task, \
-    requirement, \
-    requirement_item, \
-    get_object_from_destination, \
-    opportunity, \
-    organisation
+from NearBeach.views.tools.internal_functions import set_object_from_destination
 from NearBeach.models import bug, \
     object_assignment, \
     group, \
@@ -1006,10 +999,10 @@ def query_bug_client(request, destination, location_id):
     exclude_url = f_bugs + o_notequals + v_values
 
     url = bug_client_instance.bug_client_url \
-          + bug_client_instance.list_of_bug_client.bug_client_api_url \
-          + bug_client_instance.list_of_bug_client.api_search_bugs \
-          + urllib.parse.quote(form.cleaned_data['search']) \
-          + exclude_url
+        + bug_client_instance.list_of_bug_client.bug_client_api_url \
+        + bug_client_instance.list_of_bug_client.api_search_bugs \
+        + urllib.parse.quote(form.cleaned_data['search']) \
+        + exclude_url
 
     """
     SECURITY ISSUE

@@ -18,6 +18,7 @@
             >
                 <a class="list-group-item list-group-item-action"
                    v-for="permissionSet in permissionSetList"
+                   v-bind:key="permissionSet['pk']"
                    v-bind:href="`/permission_set_information/${permissionSet['pk']}/`"
                 >
                     <strong>{{permissionSet['fields']['permission_set_name']}}</strong>

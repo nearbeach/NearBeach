@@ -12,13 +12,24 @@
 export default {
     name: "SinglePermissionProperties",
     props: {
-        property: String,
-        propertyLabel: String,
+        property: {
+            type: String,
+            default: '',
+        },
+        propertyLabel: {
+            type: String,
+            default: '',
+        },
         propertyValue: {
             Type: Number,
             default: 0
         },
-        listOfChoices: Array,
+        listOfChoices: {
+            type: Array,
+            default: () => {
+                return [];
+            },
+        },
     },
     data() {
         return {

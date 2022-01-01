@@ -131,13 +131,22 @@
                 type: String,
                 default: "image/*,text/*,.pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             },
-            currentFolder: String,
-            destination: String,
+            currentFolder: {
+                type: String,
+                default: '',
+            },
+            destination: {
+                type: String,
+                default: '',
+            },
             excludeDocuments: {
                 type: Array,
                 default: [],
             },
-            locationId: Number,
+            locationId: {
+                type: Number,
+                default: 0,
+            },
         },
         mixins: [
             errorModalMixin,

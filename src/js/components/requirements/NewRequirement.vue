@@ -129,7 +129,12 @@
             axios,
         },
         props: {
-            groupResults: Array,
+            groupResults: {
+                type: Array,
+                return: () => {
+                    return [];
+                },
+            },
             rootUrl: {
                 type: String,
                 default: '/',
@@ -138,8 +143,18 @@
                 type: String,
                 default: "/",
             },
-            statusList: Array,
-            typeList: Array,
+            statusList: {
+                type: Array,
+                return: () => {
+                    return [];
+                },
+            },
+            typeList: {
+                type: Array,
+                return: () => {
+                    return [];
+                },
+            },
             userGroupResults: {
                 type: Array,
                 default: () => {

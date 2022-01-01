@@ -115,7 +115,12 @@
     export default {
         name: "OrganisationInformation",
         props: {
-            organisationResults: Array,
+            organisationResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
         },
         mixins: [
             errorModalMixin,

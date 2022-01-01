@@ -84,10 +84,24 @@
     export default {
         name: 'EditTagModal',
         props: {
-            existingTags: Array,
-            tagColour: String,
-            tagId: Number,
-            tagName: String,
+            existingTags: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            tagColour: {
+                type: String,
+                default: '/',
+            },
+            tagId: {
+                type: Number,
+                default: 0,
+            },
+            tagName: {
+                type: String,
+                default: '',
+            },
         },
         data() {
             return {

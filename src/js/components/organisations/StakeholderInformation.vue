@@ -40,8 +40,16 @@
     export default {
         name: "StakeholderInformation",
         props: {
-            defaultStakeholderImage: String,
-            organisationResults: Array
+            defaultStakeholderImage: {
+                type: String,
+                default: '',
+            },
+            organisationResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
         },
         data() {
             return {

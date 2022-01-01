@@ -130,7 +130,10 @@
     export default {
         name: "RfcNewRunItem",
         props: {
-            locationId: Number,
+            locationId: {
+                type: Number,
+                default: 0,
+            },
         },
         mixins: [
             errorModalMixin,

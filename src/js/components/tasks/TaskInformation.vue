@@ -147,11 +147,34 @@
     export default {
         name: "TaskInformation",
         props: {
-            defaultStakeholderImage: String,
-            groupResults: Array,
-            stakeholderModel: Array,
-            taskResults: Array,
-            organisationResults: Array,
+            defaultStakeholderImage: {
+                type: String,
+                default: '/',
+            },
+            groupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            stakeholderModel: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            taskResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            organisationResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
             userLevel: {
               type: Number,
               default: 1,

@@ -99,7 +99,12 @@
     export default {
         name: "NewKanban",
         props: {
-            groupResults: Array,
+            groupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
             rootUrl: {
                 type: String,
                 default: "/",

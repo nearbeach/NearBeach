@@ -22,7 +22,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="changeTask in changeTaskList">
+                    <tr v-for="changeTask in changeTaskList"
+                        v-bind:key="changeTask['pk']"
+                    >
                         <td>
                             <div>Start Time:</div>
                             <div class="small-text">{{getNiceDate(changeTask['fields']['change_task_start_date'])}}</div>
@@ -139,13 +141,24 @@
                 type: Boolean,
                 default: false,
             },
-            locationId: Number,
-            rfcId: Number,
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+            rfcId: {
+                type: Number,
+                default: 0,
+            },
             rfcStatus: {
                 type: Number,
                 default: 0,
             },
-            userList: Array,
+            userList: {
+                type: Array,
+                return: () => {
+                    return [];
+                },
+            },
         },
         mixins: [
             errorModalMixin,

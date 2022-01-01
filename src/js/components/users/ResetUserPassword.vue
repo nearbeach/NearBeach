@@ -91,8 +91,14 @@
     export default {
         name: "ResetUserPassword",
         props: {
-            location: String,
-            username: Number,
+            location: {
+                type: String,
+                default: '/',
+            },
+            username: {
+                type: Number,
+                default: 0,
+            },
         },
         mixins: [
             errorModalMixin,

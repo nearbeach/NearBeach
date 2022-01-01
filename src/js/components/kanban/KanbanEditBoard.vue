@@ -68,9 +68,24 @@
     export default {
         name: "KanbanEditBoard",
         props: {
-            columnResults: Array,
-            kanbanBoardResults: Array,
-            levelResults: Array,
+            columnResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            kanbanBoardResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            levelResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
             rootUrl: {
                 type: String,
                 default: "/",

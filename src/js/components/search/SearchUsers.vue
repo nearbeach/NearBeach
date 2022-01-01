@@ -18,6 +18,7 @@
             >
                 <a class="list-group-item list-group-item-action"
                    v-for="user in userList"
+                   v-bind:key="user['username']"
                    v-bind:href="`/user_information/${user['id']}/`"
                 >
                     <strong>
@@ -55,7 +56,12 @@
     export default {
         name: "SearchUsers",
         props: {
-            userResults: Array,
+            userResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
             rootUrl: {
                 type: String,
                 default: '/',

@@ -42,9 +42,28 @@
     export default {
         name: "ListSearchResults",
         props: {
-            destination: String,
-            importVariables: Object,  // {header, prefix,id, title, status}
-            searchResults: Array,
+            destination: {
+                type: String,
+                default: '',
+            },
+            importVariables: {
+                type: Object,
+                default: () => {
+                    return {
+                        header: '',
+                        prefix: '',
+                        id: 0,
+                        title: '',
+                        status: '',
+                    };
+                },
+            },  // {header, prefix,id, title, status}
+            searchResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
         },
         computed: {
             ...mapGetters({
