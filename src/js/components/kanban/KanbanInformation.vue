@@ -93,7 +93,7 @@
             },
             newCard: function(data) {
                 //this.newCardInfo = data;
-                console.log("Data: ",data);
+                
                 this.$store.commit({
                     type: 'addCard',
                     newCard: data,
