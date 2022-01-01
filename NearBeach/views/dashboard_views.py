@@ -131,7 +131,7 @@ def get_my_objects(request):
     1. Apply serialisation
     2. Apply a json.loads function
     3. Compile data and send back.
- 
+
     Note to Django developers - there has to be a better way
     """
     requirement_results = json.dumps(
@@ -268,7 +268,7 @@ def get_unassigned_objects(request):
     1. Apply serialisation
     2. Apply a json.loads function
     3. Compile data and send back.
- 
+
     Note to Django developers - there has to be a better way
     """
     # requirement_results = serializers.serialize('json', requirement_results)

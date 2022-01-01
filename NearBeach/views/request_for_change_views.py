@@ -84,7 +84,6 @@ def new_request_for_change(request, *args, **kwargs):
     :param request:
     :return:
     """
-
     # Get template
     t = loader.get_template(
         'NearBeach/request_for_change/new_request_for_change.html')
