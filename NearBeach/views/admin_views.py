@@ -25,7 +25,7 @@ def add_user(request):
     - Single User
     - Multiple Groups
     - Multiple Permission Sets
-    
+
     We need to loop through these permutations, and add them into the database
     """
     # print("Permission Sets %s" % form.cleaned_data['permission_set'])
