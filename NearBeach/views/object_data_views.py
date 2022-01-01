@@ -29,15 +29,7 @@ from NearBeach.forms import AddBugForm, \
     RemoveUserForm, \
     SearchForm, \
     QueryBugClientForm
-from NearBeach.views.tools.internal_functions import set_object_from_destination
-from NearBeach.models import bug, \
-    object_assignment, \
-    group, \
-    object_note, \
-    tag, \
-    tag_assignment, \
-    permission_set, \
-    bug_client, \
+from NearBeach.models import bug_client, \
     customer, \
     user_group, \
     list_of_requirement_status, \
