@@ -2,15 +2,20 @@
 {% load static %}
 {% block content %}
     {% if user.is_superuser %}
+        <!-- Dashboard - Users with Groups -->
         <dashboard-users-with-no-groups v-bind:root-url="`{% url 'dashboard' %}`"
                                         v-bind:static-url="`{% static '' %}`"
         ></dashboard-users-with-no-groups>
         <br/>
     {% endif %}
+    <!-- Dashboard - RFC Approvals -->
     <dashboard-rfc-approvals v-bind:root-url="`{% url 'dashboard' %}`"></dashboard-rfc-approvals>
+
+    <!-- Dashboard - My Objects -->
     <dashboard-my-objects v-bind:root-url="`{% url 'dashboard' %}`"></dashboard-my-objects>
 
     <br/>
+    <!-- Dashboard -- Unassigned Objects -->
     <dashboard-unassigned-objects v-bind:root-url="`{% url 'dashboard' %}`"></dashboard-unassigned-objects>
     <!--<dashboard-bug-list></dashboard-bug-list>-->
 

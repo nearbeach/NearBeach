@@ -1,8 +1,9 @@
 //Vue
-import { createApp, defineAsyncComponent } from 'vue';
+import { createApp } from 'vue/dist/vue.esm-bundler';
 
 //VueX
-import { createStore } from 'vuex';
+// import { createStore } from 'vuex';
+import { store } from './vuex-store';
 
 //Import Bootstrap
 import { createPopper } from '@popperjs/core';
@@ -20,16 +21,48 @@ axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN';
 axios.defaults.xsrfCookieName = 'csrftoken';
 
 //Lazy Load Parent Components
-// const HelloWorld = defineAsyncComponent(() =>
-//     import('./components/HelloWorld.vue')
-// )
-
-import HelloWorld from './components/HelloWorld.vue';
+import {
+    DashboardMyObjects,
+    DashboardRfcApprovals,
+    DashboardUnassignedObjects,
+    DashboardUsersWithNoGroups,
+    ListSearchResults,
+    SearchCustomers,
+    SearchGroups,
+    SearchObjects,
+    SearchOrganisations,
+    SearchPermissionSets,
+    SearchTags,
+    SearchUsers,
+} from './components';
 
 //Construction of the VUE App
-let app = new createApp({
-  components: {
-    HelloWorld,
-  }
+const app = createApp({
+    components: {
+        DashboardMyObjects,
+        DashboardRfcApprovals,
+        DashboardUnassignedObjects,
+        DashboardUsersWithNoGroups,
+        ListSearchResults,
+        SearchCustomers,
+        SearchGroups,
+        SearchObjects,
+        SearchOrganisations,
+        SearchPermissionSets,
+        SearchTags,
+        SearchUsers,
+    },
+    mounted() {
+        //Remove the loader
+        var loader_elem = document.getElementById('loader');
+        loader_elem.style.transform = 'translateY(-100vh)';
+
+        //Remove the element when we are finished with it
+        setTimeout(() => {
+            //Destroy the evidance
+            loader_elem.remove();
+        }, 500);
+    },
 })
+app.use(store)
 app.mount("#app")

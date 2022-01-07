@@ -50,8 +50,14 @@
     // Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
 
+    //Components
+    import RenderObjectTable from "../render/RenderObjectTable.vue";
+
     export default {
         name: "DashboardUnassignedObjects",
+        components: {
+            RenderObjectTable,
+        },
         props: {
             rootUrl: {
                 type: String,

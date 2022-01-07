@@ -5,7 +5,7 @@
             <h1>New Customer</h1>
             <hr>
 
-            <!-- New Customer Form -->
+             New Customer Form
             <new-customer-form v-bind:organisation-name="organisationName"
                                v-bind:title-list="titleList"
                                v-bind:flag-validation-check="flagValidationCheck"
