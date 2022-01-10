@@ -25,6 +25,12 @@ export const
             './components/dashboard/DashboardUsersWithNoGroups.vue'
         )
     ),
+    GroupInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "group-information" */
+            './components/groups/GroupInformation.vue'
+        )
+    ),
     ListSearchResults = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "list-search-results" */
@@ -43,6 +49,18 @@ export const
     //         './components/organisations/NewOrganisation.vue'
     //     )
     // )
+    ProfileInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "profile-information" */
+            './components/profile/ProfileInformation.vue'
+        )
+    ),
+    ResetUserPassword = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "reset-user-password" */
+            './components/users/ResetUserPassword.vue'
+        )
+    ),
     SearchCustomers = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "search-customers" */
@@ -83,5 +101,11 @@ export const
         import(
             /* webpackChunkName: "search-users" */
             './components/search/SearchUsers.vue'
+        )
+    ),
+    UserList = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "user-list" */
+            './components/administration/UserList.vue'
         )
     )

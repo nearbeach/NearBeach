@@ -33,8 +33,14 @@
     //Import mixins
     import searchMixin from "../../mixins/searchMixin";
 
+    //Vue Components
+    import ListOrganisations from "../organisations/ListOrganisations.vue";
+
     export default {
         name: "SearchOrganisations",
+        components: {
+            ListOrganisations,
+        },
         props: {
             organisationResults: {
                 type: Array,

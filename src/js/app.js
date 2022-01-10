@@ -26,7 +26,10 @@ import {
     DashboardRfcApprovals,
     DashboardUnassignedObjects,
     DashboardUsersWithNoGroups,
+    GroupInformation,
     ListSearchResults,
+    ProfileInformation,
+    ResetUserPassword,
     SearchCustomers,
     SearchGroups,
     SearchObjects,
@@ -34,6 +37,7 @@ import {
     SearchPermissionSets,
     SearchTags,
     SearchUsers,
+    UserList,
 } from './components';
 
 //Construction of the VUE App
@@ -43,7 +47,10 @@ const app = createApp({
         DashboardRfcApprovals,
         DashboardUnassignedObjects,
         DashboardUsersWithNoGroups,
+        GroupInformation,
         ListSearchResults,
+        ProfileInformation,
+        ResetUserPassword,
         SearchCustomers,
         SearchGroups,
         SearchObjects,
@@ -51,6 +58,7 @@ const app = createApp({
         SearchPermissionSets,
         SearchTags,
         SearchUsers,
+        UserList,
     },
     mounted() {
         //Remove the loader
