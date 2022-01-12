@@ -215,7 +215,8 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
+    import SinglePermissionProperties from "./SinglePermissionProperties.vue";
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -223,6 +224,9 @@
 
     export default {
         name: "PermissionInformation",
+        components: {
+            SinglePermissionProperties,
+        },
         props: {
             permissionBoolean: {
                 type: Array,
@@ -313,11 +317,10 @@
             },
             updatePropertyValue: function(data) {
                 //Update the property with what we require
-                this._data[data['property']] = data['value']
+                this[data['property']] = data['value'];
             },
         },
         mounted() {
-
             this.$store.commit({
                 type: 'updateUrl',
                 rootUrl: this.rootUrl,

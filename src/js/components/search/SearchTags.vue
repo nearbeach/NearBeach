@@ -12,7 +12,7 @@
                     </p>
 
                     <p class="text-instructions">
-                        Click on the icon <IconifyIcon v-bind:icon="icons.infoCircle"></IconifyIcon>
+                        Click on the icon <Icon v-bind:icon="icons.infoCircle"></Icon>
                         to edit the tag.
                     </p>
 
@@ -31,7 +31,7 @@
                         {{tag['fields']['tag_name']}}
                         <span v-on:click="editTag(tag['pk'])"
                         >
-                            <IconifyIcon v-bind:icon="icons.infoCircle"></IconifyIcon>
+                            <Icon v-bind:icon="icons.infoCircle"></Icon>
                         </span>
                     </div>
                 </div>
@@ -65,9 +65,15 @@
     //MIXINS
     import iconMixin from '../../mixins/iconMixin';
     import { Modal } from 'bootstrap';
+    import { Icon } from '@iconify/vue';
+    import EditTagModal from "../tags/EditTagModal.vue";
 
     export default {
         name: 'SearchTags',
+        components: {
+            EditTagModal,
+            Icon,
+        },
         props: {
             rootUrl: {
                 type: String,

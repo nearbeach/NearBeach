@@ -49,6 +49,12 @@ export const
     //         './components/organisations/NewOrganisation.vue'
     //     )
     // )
+    PermissionInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "permission-information" */
+            './components/permissions/PermissionInformation.vue'
+        )
+    ),
     ProfileInformation = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "profile-information" */

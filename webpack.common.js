@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const { VueLoaderPlugin } = require('vue-loader')
 const MiniCssExtractplugin = require('mini-css-extract-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
@@ -67,6 +68,10 @@ module.exports = {
                 { from: './node_modules/tinymce/icons/default/icons.min.js', to: './tinymce/icons/default/icons.min.js' },
                 { from: './node_modules/tinymce/plugins/lists/', to: './tinymce/plugins/lists/' },
             ],
+        }),
+        new webpack.DefinePlugin({
+            __VUE_OPTIONS_API__: true,
+            __VUE_PROD_DEVTOOLS__: false,
         }),
         // new HtmlWebpackPlugin({
         //     title: 'Production',
