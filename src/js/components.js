@@ -1,6 +1,12 @@
 import { defineAsyncComponent } from 'vue/dist/vue.esm-bundler';
 
 export const
+    ChangeTaskInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "change-task-information" */
+            './components/request_for_change/ChangeTaskInformation.vue'
+        )
+    ),
     DashboardMyObjects = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "dashboard-my-objects" */
@@ -31,6 +37,12 @@ export const
             './components/groups/GroupInformation.vue'
         )
     ),
+    KanbanInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "kanban-information" */
+            './components/kanban/KanbanInformation.vue'
+        )
+    ),
     ListSearchResults = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "list-search-results" */
@@ -49,10 +61,82 @@ export const
     //         './components/organisations/NewOrganisation.vue'
     //     )
     // )
+    NewCustomer = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "new-customer" */
+            './components/customers/NewCustomer.vue'
+        )
+    ),
+    NewGroup = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "new-group" */
+            './components/groups/NewGroup.vue'
+        )
+    ),
+    NewKanban = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "new-kanban" */
+            './components/kanban/NewKanban.vue'
+        )
+    ),
+    NewPermissionSet = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "new-permission-set" */
+            './components/permissions/NewPermissionSet.vue'
+        )
+    ),
+    NewOrganisation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "new-permission-set" */
+            './components/organisations/NewOrganisation.vue'
+        )
+    ),
+    NewProject = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "new-project" */
+            './components/projects/NewProject.vue'
+        )
+    ),
+    NewRequestForChange = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "new-request-for-change" */
+            './components/request_for_change/NewRequestForChange.vue'
+        )
+    ),
+    NewRequirement = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "new-requirement" */
+            './components/requirements/NewRequirement.vue'
+        )
+    ),
+    NewTask = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "new-task" */
+            './components/tasks/NewTask.vue'
+        )
+    ),
+    OrganisationInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "organisation-information" */
+            './components/organisations/OrganisationInformation.vue'
+        )
+    ),
+    OrganisationModules = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "organisation-modules" */
+            './components/organisations/OrganisationModules.vue'
+        )
+    ),
     PermissionInformation = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "permission-information" */
             './components/permissions/PermissionInformation.vue'
+        )
+    ),
+    ProjectInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "project-information" */
+            './components/projects/ProjectInformation.vue'
         )
     ),
     ProfileInformation = defineAsyncComponent(() =>
@@ -65,6 +149,24 @@ export const
         import(
             /* webpackChunkName: "reset-user-password" */
             './components/users/ResetUserPassword.vue'
+        )
+    ),
+    RfcInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "rfc-Information" */
+            './components/request_for_change/RfcInformation.vue'
+        )
+    ),
+     RequirementInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "requirement-information" */
+            './components/requirements/RequirementInformation.vue'
+        )
+    ),
+    RequirementItemInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "requirement-item-information" */
+            './components/requirement_items/RequirementItemInformation.vue'
         )
     ),
     SearchCustomers = defineAsyncComponent(() =>
@@ -107,6 +209,18 @@ export const
         import(
             /* webpackChunkName: "search-users" */
             './components/search/SearchUsers.vue'
+        )
+    ),
+    TaskInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "task-information" */
+            './components/tasks/TaskInformation.vue'
+        )
+    ),
+    UserInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "user-information" */
+            './components/users/UserInformation.vue'
         )
     ),
     UserList = defineAsyncComponent(() =>

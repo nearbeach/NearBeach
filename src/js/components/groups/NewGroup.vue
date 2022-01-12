@@ -16,7 +16,7 @@
                         <label>
                             Group Name
                             <span class="error"
-                                  v-if="!$v.groupNameModel.required && $v.groupNameModel.$dirty"
+                                  v-if="v$.groupNameModel.$errors.length > 0"
                             >
                                 Please suppy a title.
                             </span>
@@ -32,8 +32,8 @@
                         <label>
                             Parent Group (optional)
                         </label>
-                        <v-select :options="groupResultsFixList"
-                                  v-model="parentGroupModel"
+                        <n-select :options="groupResultsFixList"
+                                  v-model:value="parentGroupModel"
                                   label="group_name"
                                   class="form-control"
                         />
@@ -56,10 +56,12 @@
 </template>
 
 <script>
-    const axios = require('axios')
+    import axios from 'axios'
+    import { NSelect } from 'naive-ui';
 
     // Validation
-    import { required } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required } from '@vuelidate/validators';
 
     // Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -67,6 +69,12 @@
 
     export default {
         name: "NewGroup",
+        setup() {
+            return { v$: useVuelidate() }
+        },
+        components: {
+            NSelect,
+        },
         props: {
             groupResults: {
                 type: Array,
@@ -112,9 +120,9 @@
         methods: {
             addNewGroup: function() {
                 //Check to make sure everythign is validated
-                this.$v.$touch();
+                this.v$.$touch();
 
-                if (this.$v.$invalid || !this.uniqueGroupName) {
+                if (this.v$.$invalid || !this.uniqueGroupName) {
                     //The group name is not valid, or is not unique. Show error and return
                     this.showValidationErrorModal();
 
@@ -126,8 +134,8 @@
                 const data_to_send = new FormData();
                 data_to_send.set('group_name', this.groupNameModel);
 
-                if (this.parentGroupModel['value'] !== undefined) {
-                    data_to_send.set('parent_group', this.parentGroupModel['value']);
+                if (this.parentGroupModel !== undefined) {
+                    data_to_send.set('parent_group', this.parentGroupModel);
                 }
 
                 //Use Axios to send data
@@ -165,7 +173,7 @@
             //This will map reconstruct the JSON data into a V-SELECT friendly data
             this.groupResultsFixList = this.groupResults.map(row => {
                 return {
-                    'group_name': row['fields']['group_name'],
+                    'label': row['fields']['group_name'],
                     'value': row['pk'],
                 }
             });

@@ -18,7 +18,7 @@
                     <label>
                         Title:
                         <span class="error"
-                              v-if="!$v.titleModel.required && $v.titleModel.$dirty"
+                              v-if="!v$.titleModel.required && v$.titleModel.$dirty"
                               > Please supply
                         </span>
                     </label>
@@ -31,7 +31,7 @@
                     <label>
                         First Name:
                         <span class="error"
-                              v-if="!$v.customerFirstNameModel.required && $v.customerFirstNameModel.$dirty"
+                              v-if="!v$.customerFirstNameModel.required && v$.customerFirstNameModel.$dirty"
                               > Please supply
                         </span>
                     </label>
@@ -44,7 +44,7 @@
                     <label>
                         Last Name:
                         <span class="error"
-                              v-if="!$v.customerLastNameModel.required && $v.customerLastNameModel.$dirty"
+                              v-if="!v$.customerLastNameModel.required && v$.customerLastNameModel.$dirty"
                               > Please supply
                         </span>
                     </label>
@@ -61,11 +61,11 @@
                 <label>
                     Email:
                     <span class="error"
-                          v-if="!$v.customerEmailModel.required && $v.customerEmailModel.$dirty"
+                          v-if="!v$.customerEmailModel.required && v$.customerEmailModel.$dirty"
                           > Please supply
                     </span>
                     <span class="error"
-                          v-if="!$v.customerEmailModel.email && $v.customerEmailModel.$dirty"
+                          v-if="!v$.customerEmailModel.email && v$.customerEmailModel.$dirty"
                           > Please format as Email
                     </span>
                 </label>
@@ -84,10 +84,14 @@
     import { Modal } from "bootstrap";
 
     //Validation
-    import { email, required } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, email } from '@vuelidate/validators'
 
     export default {
         name: "NewCustomerForm",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         props: [
             'flagValidationCheck',
             'organisationName',
@@ -161,7 +165,7 @@
                 if (!this.flagValidationCheck) return;
 
                 //Touch the validation
-                this.$v.$touch();
+                this.v$.$touch();
             },
             // organisationModel: function() {
             //     //Emit up this function's data

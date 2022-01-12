@@ -93,7 +93,7 @@
                      role="tabpanel"
                      aria-labelledby="profile-tab"
                 >
-                    <h2><IconifyIcon v-bind:icon="icons.userIcon"></IconifyIcon> Contacts</h2>
+                    <h2><Icon v-bind:icon="icons.userIcon"></Icon> Contacts</h2>
                     <p class="text-instructions">
                         Below are a list of contacts who are connected to this organisation.
                     </p>
@@ -161,12 +161,28 @@
 
 <script>
     import { Modal } from "bootstrap";
+    import { Icon } from '@iconify/vue';
+    import CustomersListModule from "../modules/sub_modules/CustomersListModule.vue";
+    import NewCustomerModal from "../customers/NewCustomerModal.vue";
+    import NotesModule from "../modules/sub_modules/NotesModule.vue";
+    import MiscModule from "../modules/sub_modules/MiscModule.vue";
+    import AssociatedObjects from "../modules/sub_modules/AssociatedObjects.vue";
+    import DocumentsModule from "../modules/sub_modules/DocumentsModule.vue";
 
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
 
     export default {
         name: "OrganisationModules",
+        components: {
+            AssociatedObjects,
+            CustomersListModule,
+            DocumentsModule,
+            Icon,
+            MiscModule,
+            NewCustomerModal,
+            NotesModule,
+        },
         props: {
             customerResults: {
                 type: Array,

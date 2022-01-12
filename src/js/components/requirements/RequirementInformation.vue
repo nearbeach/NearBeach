@@ -18,7 +18,7 @@
                 <div class="col-md-8" style="min-height: 610px;">
                     <div class="form-group">
                         <label for="id_requirement_title">Requirement Title:
-                            <span class="error" v-if="!$v.requirementTitleModel.required"> Please suppy a title.</span>
+                            <span class="error" v-if="!v$.requirementTitleModel.required"> Please suppy a title.</span>
                         </label>
                         <input id="id_requirement_title"
                                class="form-control"
@@ -32,8 +32,8 @@
 
                     <br/>
                     <label>Requirement Scope:
-                        <span class="error" v-if="!$v.requirementScopeModel.required"> Please supply a scope.</span>
-                        <span class="error" v-if="!$v.requirementScopeModel.maxLength"> Sorry - too many characters.</span>
+                        <span class="error" v-if="!v$.requirementScopeModel.required"> Please supply a scope.</span>
+                        <span class="error" v-if="!v$.requirementScopeModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
                     <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
@@ -78,7 +78,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Requirement Status
-                                        <span class="error" v-if="!$v.statusModel.required && $v.statusModel.$dirty"> Please select a status.</span>
+                                        <span class="error" v-if="!v$.statusModel.required && v$.statusModel.$dirty"> Please select a status.</span>
                                     </label>
                                     <v-select :options="statusFixList"
                                               v-bind:clearable="false"
@@ -108,7 +108,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Requirement Type
-                                    <span class="error" v-if="!$v.typeModel.required && $v.typeModel.$dirty"> Please select a type.</span>
+                                    <span class="error" v-if="!v$.typeModel.required && v$.typeModel.$dirty"> Please select a type.</span>
                                 </label>
                                 <v-select :options="typeFixList"
                                           v-bind:disabled="isReadOnly"
@@ -148,7 +148,8 @@
     import { mapGetters } from 'vuex';
 
     //Validation
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin.js";
@@ -156,6 +157,9 @@
 
     export default {
         name: "RequirementInformation",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         components: {},
         props: [
             'defaultStakeholderImage',
@@ -205,9 +209,9 @@
         methods: {
             updateRequirement: function() {
                 // Check the validation first
-                this.$v.$touch();
+                this.v$.$touch();
 
-                if (this.$v.$invalid) {
+                if (this.v$.$invalid) {
                     this.showValidationErrorModal();
 
                     //Just return - as we do not need to do the rest of this function

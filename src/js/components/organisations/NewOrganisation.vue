@@ -20,7 +20,7 @@
                         <label for="id_organisation_name">
                             Organisation Name:
                             <span class="error"
-                                  v-if="!$v.organisationNameModel.required && $v.organisationNameModel.$dirty"
+                                  v-if="!v$.organisationNameModel.required && v$.organisationNameModel.$dirty"
                                 > Please suppy a title.
                             </span>
                         </label>
@@ -39,11 +39,11 @@
                             <label for="id_organisation_website">
                                 Organisation Website:
                                 <span class="error"
-                                      v-if="!$v.organisationWebsiteModel.required && $v.organisationWebsiteModel.$dirty"
+                                      v-if="!v$.organisationWebsiteModel.required && v$.organisationWebsiteModel.$dirty"
                                       > Please supply
                                 </span>
                                 <span class="error"
-                                      v-if="!$v.organisationWebsiteModel.url && $v.organisationWebsiteModel.$dirty"
+                                      v-if="!v$.organisationWebsiteModel.url && v$.organisationWebsiteModel.$dirty"
                                       > Please format at URL
                                 </span>
                             </label>
@@ -60,11 +60,11 @@
                             <label for="id_organisation_email">
                                 Organisation Email:
                                 <span class="error"
-                                      v-if="!$v.organisationEmailModel.required && $v.organisationEmailModel.$dirty"
+                                      v-if="!v$.organisationEmailModel.required && v$.organisationEmailModel.$dirty"
                                       > Please supply
                                 </span>
                                 <span class="error"
-                                      v-if="!$v.organisationEmailModel.email && $v.organisationEmailModel.$dirty"
+                                      v-if="!v$.organisationEmailModel.email && v$.organisationEmailModel.$dirty"
                                       > Please format as Email
                                 </span>
                             </label>
@@ -142,7 +142,8 @@
     import { Modal } from 'bootstrap';
 
     //Validation
-    import { email, maxLength, required , url } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { email, maxLength, required , url } from '@vuelidate/validators'
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -150,6 +151,9 @@
 
     export default {
         name: "NewOrganisation",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         props: {
             rootUrl: {
                 type: String,
@@ -185,9 +189,9 @@
         methods: {
             addOrganisation: function() {
                 // Check the validation first
-                this.$v.$touch();
+                this.v$.$touch();
 
-                if (this.$v.$invalid) {
+                if (this.v$.$invalid) {
                     this.showValidationErrorModal();
                     //Just return - as we do not need to do the rest of this function
                     return;

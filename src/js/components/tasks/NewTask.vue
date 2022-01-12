@@ -18,7 +18,7 @@
                     <!-- TASK NAME -->
                     <div class="form-group">
                         <label>Task Short Description:
-                            <span class="error" v-if="!$v.taskShortDescriptionModel.required && $v.taskShortDescriptionModel.$dirty"
+                            <span class="error" v-if="!v$.taskShortDescriptionModel.required && v$.taskShortDescriptionModel.$dirty"
                             > Please supply a title.</span>
                         </label>
                         <input type="text"
@@ -30,8 +30,8 @@
 
                     <!-- TASK DESCRIPTION -->
                     <label>Task Long Description:
-                        <span class="error" v-if="!$v.taskDescriptionModel.required && $v.taskDescriptionModel.$dirty"> Please supply a description.</span>
-                        <span class="error" v-if="!$v.taskDescriptionModel.maxLength"> Sorry - too many characters.</span>
+                        <span class="error" v-if="!v$.taskDescriptionModel.required && v$.taskDescriptionModel.$dirty"> Please supply a description.</span>
+                        <span class="error" v-if="!v$.taskDescriptionModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
                     <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
@@ -59,14 +59,14 @@
             <!-- STAKEHOLDER ORGANISATION -->
             <hr>
             <get-stakeholders v-on:update_stakeholder_model="updateStakeholderModel($event)"
-                              v-bind:is-dirty="$v.stakeholderModel.$dirty"
+                              v-bind:is-dirty="v$.stakeholderModel.$dirty"
             ></get-stakeholders>
 
             <!-- START DATE & END DATE -->
             <hr>
             <between-dates destination="task"
                            v-on:update_dates="updateDates($event)"
-                           v-bind:is-dirty-end="$v.taskEndDateModel.$dirty || $v.taskStartDateModel.$dirty"
+                           v-bind:is-dirty-end="v$.taskEndDateModel.$dirty || v$.taskStartDateModel.$dirty"
             ></between-dates>
 
             <!-- Group Permissions -->
@@ -75,7 +75,7 @@
                                v-bind:destination="'task'"
                                v-bind:user-group-results="userGroupResults"
                                v-on:update_group_model="updateGroupModel($event)"
-                               v-bind:is-dirty="$v.groupModel.$dirty"
+                               v-bind:is-dirty="v$.groupModel.$dirty"
             ></group-permissions>
 
             <!-- Submit Button -->
@@ -94,13 +94,17 @@
 
 <script>
     const axios = require('axios');
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
 
     export default {
         name: "NewTask",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         props: {
             groupResults: {
                 type: Array,
@@ -160,10 +164,10 @@
         methods: {
             submitNewTask: function() {
                 //Check validation
-                this.$v.$touch();
+                this.v$.$touch();
 
                 //If the form is not validated
-                if (this.$v.$invalid) {
+                if (this.v$.$invalid) {
                     this.showValidationErrorModal();
 
                     //User does not need to do anything else

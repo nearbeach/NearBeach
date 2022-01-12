@@ -16,7 +16,7 @@
                     <kanban-property-order v-bind:property-name="'Column'"
                                            v-bind:property-list="columnModel"
                                            v-bind:source="'columnModel'"
-                                           v-bind:is-dirty="$v.columnModel.$dirty"
+                                           v-bind:is-dirty="v$.columnModel.$dirty"
                                            v-bind:is-new-mode="false"
                                            v-bind:kanban-board-id="kanbanBoardResults[0]['pk']"
                                            v-on:update_property_list="updatePropertyList($event)"
@@ -26,7 +26,7 @@
                     <kanban-property-order v-bind:property-name="'Level'"
                                            v-bind:property-list="levelModel"
                                            v-bind:source="'levelModel'"
-                                           v-bind:is-dirty="$v.columnModel.$dirty"
+                                           v-bind:is-dirty="v$.columnModel.$dirty"
                                            v-bind:is-new-mode="false"
                                            v-bind:kanban-board-id="kanbanBoardResults[0]['pk']"
                                            v-on:update_property_list="updatePropertyList($event)"
@@ -59,7 +59,8 @@
     const axios = require('axios');
 
     // Validation
-    import { required } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required } from '@vuelidate/validators'
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -67,6 +68,9 @@
 
     export default {
         name: "KanbanEditBoard",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         props: {
             columnResults: {
                 type: Array,

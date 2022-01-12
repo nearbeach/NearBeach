@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><IconifyIcon v-bind:icon="icons.linkIcon2"></IconifyIcon> Requirement Item Links</h2>
+        <h2><Icon v-bind:icon="icons.linkIcon2"></Icon> Requirement Item Links</h2>
         <p class="text-instructions">
             The following are links for the Items to other projects/tasks.
         </p>
@@ -54,8 +54,9 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
     import {Modal} from "bootstrap";
+    import { Icon } from '@iconify/vue';
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -65,6 +66,9 @@
 
     export default {
         name: "RequirementItemLinksModule",
+        components: {
+            Icon,
+        },
         props: {
             destination: {
                 type: String,

@@ -1,7 +1,7 @@
 <template>
     <div>
         <strong>{{propertyName}}</strong>
-        <span class="error" v-if="!$v.localPropertyList.required && isDirty"> Please create at least one {{propertyName}}.</span>
+        <span class="error" v-if="!v$.localPropertyList.required && isDirty"> Please create at least one {{propertyName}}.</span>
         <br/>
 
         <!-- The column of data where you can sort the properties -->
@@ -28,7 +28,7 @@
                     <span v-on:click="removeItem(item['id'])"
                           v-if="localPropertyList.length > 1"
                     >
-                        <IconifyIcon v-bind:icon="icons.xCircle"></IconifyIcon>
+                        <Icon v-bind:icon="icons.xCircle"></Icon>
                     </span>
                 </div>
             </transition-group>
@@ -140,13 +140,13 @@
 </template>
 
 <script>
+    import axios from 'axios';
     import { Modal } from "bootstrap";
-
-    //axios
-    const axios = require('axios');
+    import { Icon } from '@iconify/vue';
 
     //Validation
-    import { required } from 'vuelidate/lib/validators'
+    import useVuelidate from '@vuelidate/core'
+    import { required } from '@vuelidate/validators'
 
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
@@ -154,6 +154,12 @@
 
     export default {
         name: "KanbanPropertyOrder",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            Icon,
+        },
         props: {
             isDirty: {
                 type: Boolean,

@@ -28,7 +28,7 @@
                         <label for="id_organisation_name">
                             Organisation Name
                             <span class="error"
-                                  v-if="!$v.organisationNameModel.required && $v.organisationNameModel.$dirty"
+                                  v-if="v$.organisationNameModel.$error.length > 0"
                                 > Please suppy a title.
                             </span>
                         </label>
@@ -45,12 +45,8 @@
                         <label for="id_organisation_website">
                             Organisation Website
                             <span class="error"
-                                  v-if="!$v.organisationWebsiteModel.required && $v.organisationWebsiteModel.$dirty"
-                                  > Please supply
-                            </span>
-                            <span class="error"
-                                  v-if="!$v.organisationWebsiteModel.url && $v.organisationWebsiteModel.$dirty"
-                                  > Please format at URL
+                                  v-if="v$.organisationWebsiteModel.$error.length > 0"
+                                  > Please supply a properly formatted URL
                             </span>
                         </label>
                         <input id="id_organisation_website"
@@ -66,12 +62,8 @@
                         <label for="id_organisation_email">
                             Organisation Email
                             <span class="error"
-                                  v-if="!$v.organisationEmailModel.required && $v.organisationEmailModel.$dirty"
-                                  > Please supply
-                            </span>
-                            <span class="error"
-                                  v-if="!$v.organisationEmailModel.email && $v.organisationEmailModel.$dirty"
-                                  > Please format as Email
+                                  v-if="v$.organisationEmailModel.$error.length > 0"
+                                  > Please supply a valid Email
                             </span>
                         </label>
                         <input id="id_organisation_email"
@@ -100,13 +92,14 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
 
     //VueX
     import { mapGetters } from 'vuex';
 
     //Validation
-    import { email, maxLength, required , url } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { email, maxLength, required , url } from '@vuelidate/validators';
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -114,6 +107,9 @@
 
     export default {
         name: "OrganisationInformation",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         props: {
             organisationResults: {
                 type: Array,
@@ -156,9 +152,9 @@
         methods: {
             updateOrganisation: function() {
                 //Check validation
-                this.$v.$touch();
+                this.v$.$touch();
 
-                if (this.$v.$invalid) {
+                if (this.v$.$invalid) {
                     this.showValidationErrorModal();
 
                     //Just return - as we do not need to do the rest of this function

@@ -18,7 +18,7 @@
                     </a>
                 </div>
                 <div class="organisation-email">
-                    <IconifyIcon v-bind:icon="icons.mailIcon"></IconifyIcon> Email:
+                    <Icon v-bind:icon="icons.mailIcon"></Icon> Email:
                     <a v-bind:href="`mailto:${customer['fields']['customer_email']}`">
                         {{customer['fields']['customer_email']}}
                     </a>
@@ -31,12 +31,16 @@
 <script>
     //Mixin
     import iconMixin from "../../mixins/iconMixin";
+    import { Icon } from '@iconify/vue';
 
     //VueX
     import { mapGetters } from 'vuex';
 
     export default {
         name: "ListCustomers",
+        components: {
+            Icon,
+        },
         props: {
             customerResults: {
                 type: Array,

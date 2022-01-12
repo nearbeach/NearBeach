@@ -10,7 +10,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> New Kanban Link Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.linkOut"></Icon> New Kanban Link Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -176,7 +176,8 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
 
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
@@ -187,6 +188,9 @@
 
     export default {
         name: "NewKanbanLinkWizard",
+        components: {
+            Icon,
+        },
         props: {
             columnResults: {
                 type: Array,

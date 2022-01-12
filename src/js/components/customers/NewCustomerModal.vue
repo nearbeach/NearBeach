@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.userIcon"></IconifyIcon> Add Customer Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.userIcon"></Icon> Add Customer Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -36,24 +36,42 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
     import { Modal } from "bootstrap";
+    import { Icon } from '@iconify/vue';
+    import NewCustomerForm from "./NewCustomerForm.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
 
     //Validation
-    import { email, required } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, email } from '@vuelidate/validators'
 
     //Mixin
     import iconMixin from "../../mixins/iconMixin";
 
     export default {
         name: "NewCustomerModal",
-        props: [
-                'organisationId',
-                'titleList',
-        ],
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            Icon,
+            NewCustomerForm,
+        },
+        props: {
+            organisationId: {
+                type: Number,
+                default: 0,
+            },
+            titleList: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+        },
         mixins: [
             iconMixin,
         ],
@@ -98,10 +116,10 @@
                 },100);
 
                 // Check the validation at this level
-                this.$v.$touch();
+                this.v$.$touch();
 
                 //NEED TO USE MIXIN FOR THIS SECTION
-                if (this.$v.$invalid) {
+                if (this.v$.$invalid) {
                     //Show the error dialog and notify to the user that there were field missing.
                     var elem_cont = document.getElementById("errorModalContent");
 

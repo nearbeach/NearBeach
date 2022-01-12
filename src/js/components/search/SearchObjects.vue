@@ -100,10 +100,10 @@
                 default: '',
             },
             searchResults: {
-                type: Array,
+                type: Object,
                 required: true,
                 default: () => {
-                    return [];
+                    return {};
                 },
             },
         },

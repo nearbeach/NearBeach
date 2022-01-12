@@ -18,7 +18,7 @@
                     <!-- TASK NAME -->
                     <div class="form-group">
                         <label>Task Short Description:
-                            <span class="error" v-if="!$v.taskShortDescriptionModel.required && $v.taskShortDescriptionModel.$dirty"
+                            <span class="error" v-if="!v$.taskShortDescriptionModel.required && v$.taskShortDescriptionModel.$dirty"
                             > Please supply a title.</span>
                         </label>
                         <input type="text"
@@ -30,8 +30,8 @@
 
                     <!-- TASK DESCRIPTION -->
                     <label>Task Long Description:
-                        <span class="error" v-if="!$v.taskDescriptionModel.required && $v.taskDescriptionModel.$dirty"> Please supply a description.</span>
-                        <span class="error" v-if="!$v.taskDescriptionModel.maxLength"> Sorry - too many characters.</span>
+                        <span class="error" v-if="!v$.taskDescriptionModel.required && v$.taskDescriptionModel.$dirty"> Please supply a description.</span>
+                        <span class="error" v-if="!v$.taskDescriptionModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
                     <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
@@ -102,7 +102,7 @@
             <hr>
             <between-dates destination="task"
                            v-on:update_dates="updateDates($event)"
-                           v-bind:is-dirty-end="$v.taskEndDateModel.$dirty || $v.taskStartDateModel.$dirty"
+                           v-bind:is-dirty-end="v$.taskEndDateModel.$dirty || v$.taskStartDateModel.$dirty"
                            v-bind:start-date-model="taskStartDateModel"
                            v-bind:end-date-model="taskEndDateModel"
             ></between-dates>
@@ -134,7 +134,8 @@
 
 <script>
     const axios = require('axios');
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
     import { DateTime } from "luxon";
 
     //VueX
@@ -146,6 +147,9 @@
 
     export default {
         name: "TaskInformation",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         props: {
             defaultStakeholderImage: {
                 type: String,
@@ -231,10 +235,10 @@
             },
             updateTask: function() {
                 //Check validation
-                this.$v.$touch();
+                this.v$.$touch();
 
                 //If the form is not validated
-                if (this.$v.$invalid) {
+                if (this.v$.$invalid) {
                     this.showValidationErrorModal();
 
                     //User does not need to do anything else

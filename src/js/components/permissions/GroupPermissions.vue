@@ -12,7 +12,7 @@
         </div>
         <div class="col-md-8">
             <label>Group List
-                <span class="error" v-if="!$v.groupModel.required && isDirty"> Please select at least one group.</span>
+                <span class="error" v-if="!v$.groupModel.required && isDirty"> Please select at least one group.</span>
             </label>
             <v-select :options="groupFixResults"
                       label="group"
@@ -25,10 +25,14 @@
 
 <script>
     //Validation
-    import { required } from 'vuelidate/lib/validators'
+    import useVuelidate from '@vuelidate/core'
+    import { required } from '@vuelidate/validators'
 
     export default {
         name: "GroupPermissions",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         components: {},
         props: {
             destination: {

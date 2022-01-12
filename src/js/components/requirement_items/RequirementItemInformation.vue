@@ -23,7 +23,7 @@
                     <div class="form-group">
                         <label for="requirement_item_title">
                             Requirement Item Title:
-                            <span class="error" v-if="!$v.requirementItemTitleModel.required">
+                            <span class="error" v-if="!v$.requirementItemTitleModel.required">
                                 Please suppy a title.
                             </span>
                         </label>
@@ -37,8 +37,8 @@
                     </div>
                     <div class="form-group">
                         <label>Requirement Item Scope:
-                            <span class="error" v-if="!$v.requirementItemScopeModel.required"> Please supply a scope.</span>
-                            <span class="error" v-if="!$v.requirementItemScopeModel.maxLength"> Sorry - too many characters.</span>
+                            <span class="error" v-if="!v$.requirementItemScopeModel.required"> Please supply a scope.</span>
+                            <span class="error" v-if="!v$.requirementItemScopeModel.maxLength"> Sorry - too many characters.</span>
                         </label><br/>
                         <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                              class="loader-image"
@@ -76,7 +76,7 @@
                         {{stakeholderModel['organisation_name']}}
                     </div>
                     <div class="organisation-link">
-                        <IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> Website:
+                        <Icon v-bind:icon="icons.linkOut"></Icon> Website:
                         <a v-bind:href="stakeholderModel['organisation_website']" 
                            target="_blank"
                            rel="noopener noreferrer"
@@ -85,7 +85,7 @@
                         </a>
                     </div>
                     <div class="organisation-email">
-                        <IconifyIcon v-bind:icon="icons.mailIcon"></IconifyIcon> Email:
+                        <Icon v-bind:icon="icons.mailIcon"></Icon> Email:
                         <a v-bind:href="`mailto:${stakeholderModel['organisation_email']}`">
                             {{stakeholderModel['organisation_email']}}
                         </a>
@@ -103,7 +103,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Requirement Status
-                            <span class="error" v-if="!$v.statusModel.required && $v.statusModel.$dirty"> Please select a status.</span>
+                            <span class="error" v-if="!v$.statusModel.required && v$.statusModel.$dirty"> Please select a status.</span>
                         </label>
                         <v-select :options="statusFixList"
                                   label="status"
@@ -115,7 +115,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Requirement Type
-                            <span class="error" v-if="!$v.typeModel.required && $v.typeModel.$dirty"> Please select a type.</span>
+                            <span class="error" v-if="!v$.typeModel.required && v$.typeModel.$dirty"> Please select a type.</span>
                         </label>
                         <v-select :options="typeFixList"
                                   label="type"
@@ -142,8 +142,8 @@
 <script>
     //JavaScript Libraries
     import {Modal} from "bootstrap";
-
-    const axios = require('axios');
+    import { Icon } from '@iconify/vue';
+    import axios from 'axios';
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -152,17 +152,47 @@
     import iconMixin from "../../mixins/iconMixin";
 
     //Validation
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
 
     export default {
         name: "RequirementItemInformation.vue",
-        props: [
-            'requirementItemResults',
-            'organisationResults',
-            'defaultStakeholderImage',
-            'statusList',
-            'typeList',
-        ],
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            Icon,
+        },
+        props: {
+            requirementItemResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            organisationResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            defaultStakeholderImage: {
+                type: String,
+                default: "/",
+            },
+            statusList: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            typeList: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+        },
         computed: {
             ...mapGetters({
                 rootUrl: "getRootUrl",
@@ -209,9 +239,9 @@
         methods: {
             updateRequirementItem: function() {
                 // Check the validation first
-                this.$v.$touch();
+                this.v$.$touch();
 
-                if (this.$v.$invalid) {
+                if (this.v$.$invalid) {
                     //Show the error dialog and notify to the user that there were field missing.
                     var elem_cont = document.getElementById("errorModalContent");
 

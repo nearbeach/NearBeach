@@ -12,7 +12,7 @@
                 </a>
             </div>
             <div class="organisation-link">
-                <IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> Website:
+                <Icon v-bind:icon="icons.linkOut"></Icon> Website:
                 <a v-bind:href="stakeholderModel['organisation_website']" 
                    target="_blank"
                    rel="noopener noreferrer"
@@ -21,7 +21,7 @@
                 </a>
             </div>
             <div class="organisation-email">
-                <IconifyIcon v-bind:icon="icons.mailIcon"></IconifyIcon> Email:
+                <Icon v-bind:icon="icons.mailIcon"></Icon> Email:
                 <a v-bind:href="`mailto:${stakeholderModel['organisation_email']}`">
                     {{stakeholderModel['organisation_email']}}
                 </a>
@@ -31,6 +31,8 @@
 </template>
 
 <script>
+    import { Icon } from '@iconify/vue';
+
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
 
@@ -39,6 +41,9 @@
 
     export default {
         name: "StakeholderInformation",
+        components: {
+            Icon,
+        },
         props: {
             defaultStakeholderImage: {
                 type: String,

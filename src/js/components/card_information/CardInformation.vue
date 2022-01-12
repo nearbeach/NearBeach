@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.usersIcon"></IconifyIcon> Card Information</h2>
+                    <h2><Icon v-bind:icon="icons.usersIcon"></Icon> Card Information</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -90,7 +90,8 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -100,6 +101,9 @@
 
     export default {
         name: 'CardInformation',
+        components: {
+            Icon,
+        },
         mixins: [
             iconMixin,
         ],

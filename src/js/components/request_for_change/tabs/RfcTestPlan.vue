@@ -8,8 +8,8 @@
         </div>
         <div class="col-md-8" style="min-height: 610px;">
             <label>Test Plan:
-                <span class="error" v-if="!$v.rfcTestPlanModel.required && $v.rfcTestPlanModel.$dirty"> Please supply a description.</span>
-                <span class="error" v-if="!$v.rfcTestPlanModel.maxLength"> Sorry - too many characters.</span>
+                <span class="error" v-if="!v$.rfcTestPlanModel.required && v$.rfcTestPlanModel.$dirty"> Please supply a description.</span>
+                <span class="error" v-if="!v$.rfcTestPlanModel.maxLength"> Sorry - too many characters.</span>
             </label><br>
             <editor
                :init="{
@@ -31,10 +31,14 @@
 </template>
 
 <script>
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
 
     export default {
         name: "RfcTestPlan",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         props: {
             isReadOnly: {
                 type: Boolean,
@@ -58,11 +62,11 @@
         },
         methods: {
             updateValidation: function() {
-                this.$v.$touch();
+                this.v$.$touch();
 
                 this.$emit('update_validation', {
                     'tab': 'tab_5',
-                    'value': !this.$v.$invalid,
+                    'value': !this.v$.$invalid,
                 });
             },
             updateValues: function(modelName,modelValue) {

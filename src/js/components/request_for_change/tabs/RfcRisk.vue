@@ -13,7 +13,7 @@
                 <div class="col-md-4">
                     <label>
                         Priority of Change
-                        <span class="error" v-if="!$v.rfcPriorityModel.required && $v.rfcPriorityModel.$dirty"
+                        <span class="error" v-if="!v$.rfcPriorityModel.required && v$.rfcPriorityModel.$dirty"
                         > Please select a Change Type.</span>
                     </label>
                     <v-select v-bind:options="rfcPriority"
@@ -24,7 +24,7 @@
                 <div class="col-md-4">
                     <label>
                         Risk of Change
-                        <span class="error" v-if="!$v.rfcRiskModel.required && $v.rfcRiskModel.$dirty"
+                        <span class="error" v-if="!v$.rfcRiskModel.required && v$.rfcRiskModel.$dirty"
                         > Please select a Change Type.</span>
                     </label>
                     <v-select v-bind:options="rfcRisk"
@@ -35,7 +35,7 @@
                 <div class="col-md-4">
                     <label>
                         Impact of Change
-                        <span class="error" v-if="!$v.rfcImpactModel.required && $v.rfcImpactModel.$dirty"
+                        <span class="error" v-if="!v$.rfcImpactModel.required && v$.rfcImpactModel.$dirty"
                         > Please select a Change Type.</span>
                     </label>
                     <v-select v-bind:options="rfcImpact"
@@ -48,8 +48,8 @@
 
             <!-- RFC SUMMARY -->
             <label>Risk Association:
-                <span class="error" v-if="!$v.rfcRiskSummaryModel.required && $v.rfcRiskSummaryModel.$dirty"> Please supply a description.</span>
-                <span class="error" v-if="!$v.rfcRiskSummaryModel.maxLength"> Sorry - too many characters.</span>
+                <span class="error" v-if="!v$.rfcRiskSummaryModel.required && v$.rfcRiskSummaryModel.$dirty"> Please supply a description.</span>
+                <span class="error" v-if="!v$.rfcRiskSummaryModel.maxLength"> Sorry - too many characters.</span>
             </label><br>
             <editor
                :init="{
@@ -71,10 +71,14 @@
 </template>
 
 <script>
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
 
     export default {
         name: "RfcRisk",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         props: {
             isReadOnly: {
                 type: Boolean,
@@ -128,11 +132,11 @@
         },
         methods: {
             updateValidation: function() {
-                this.$v.$touch();
+                this.v$.$touch();
 
                 this.$emit('update_validation', {
                     'tab': 'tab_2',
-                    'value': !this.$v.$invalid,
+                    'value': !this.v$.$invalid,
                 });
             },
             updateValues: function(modelName,modelValue) {
@@ -194,7 +198,7 @@
             }
 
             //Just run the validations to show the error messages
-            this.$v.$touch();
+            this.v$.$touch();
         }
     }
 </script>

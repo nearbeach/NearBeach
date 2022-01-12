@@ -21,7 +21,7 @@
                     </a>
                 </div>
                 <div class="organisation-link">
-                    <IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> Website:
+                    <Icon v-bind:icon="icons.linkOut"></Icon> Website:
                     <a v-bind:href="organisation['fields']['organisation_website']" 
                        target="_blank"
                        rel="noopener noreferrer"
@@ -30,7 +30,7 @@
                     </a>
                 </div>
                 <div class="organisation-email">
-                    <IconifyIcon v-bind:icon="icons.mailIcon"></IconifyIcon> Email:
+                    <Icon v-bind:icon="icons.mailIcon"></Icon> Email:
                     <a v-bind:href="`mailto:${organisation['fields']['organisation_email']}`">
                         {{organisation['fields']['organisation_email']}}
                     </a>
@@ -43,12 +43,16 @@
 <script>
     //VueX
     import { mapGetters } from 'vuex';
+    import { Icon } from '@iconify/vue';
 
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
 
     export default {
         name: "ListOrganisations",
+        components: {
+            Icon,
+        },
         props: {
             organisationResults: {
                 type: Array,

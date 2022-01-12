@@ -31,7 +31,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h2><IconifyIcon v-bind:icon="icons.passwordIcon"></IconifyIcon> Reset User Password</h2>
+                        <h2><Icon v-bind:icon="icons.passwordIcon"></Icon> Reset User Password</h2>
                         <button type="button"
                                 class="btn-close"
                                 data-bs-dismiss="modal"
@@ -78,8 +78,9 @@
 
 <script>
     //JavaScript components
-    const axios = require('axios');
+    import axios from 'axios';
     import {Modal} from "bootstrap";
+    import { Icon } from '@iconify/vue';
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -90,6 +91,9 @@
 
     export default {
         name: "ResetUserPassword",
+        components: {
+            Icon,
+        },
         props: {
             location: {
                 type: String,
@@ -149,7 +153,7 @@
                 
                 //Setup Axios to send data
                 axios.post(
-                    `${this.rootUrl}${this.location}/update_user_password/`,
+                    `${this.rootUrl}${this.location}update_user_password/`,
                     data_to_send,
                 ).then(response => {
                     this.closeModal();

@@ -11,7 +11,7 @@
             <div class="form-group">
                 <label>{{destination}} Start Date:
                     <span class="error"
-                          v-if="!$v.localStartDateModel.required && isDirty"
+                          v-if="!v$.localStartDateModel.required && isDirty"
                     > Please select a date.</span>
                 </label>
                 <datetime type="datetime"
@@ -25,7 +25,7 @@
             <div class="form-group">
                 <label>{{destination}} End Date:
                     <span class="error"
-                          v-if="!$v.localEndDateModel.required && isDirty"
+                          v-if="!v$.localEndDateModel.required && isDirty"
                     > Please select a date.</span>
                 </label>
                 <datetime type="datetime"
@@ -42,10 +42,14 @@
     import { DateTime } from "luxon";
 
     //Validation
-    import { required } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required } from '@vuelidate/validators'
 
     export default {
         name: "BetweenDates",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         props: {
             destination: {
                 type: String,

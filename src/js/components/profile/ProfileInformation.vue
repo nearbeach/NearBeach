@@ -82,7 +82,6 @@
     import { Modal } from "bootstrap";
 
     //Validations
-    // import { required, maxLength } from 'vuelidate/lib/validators';
     import useVuelidate from '@vuelidate/core'
     import { required, maxLength } from '@vuelidate/validators'
 
@@ -92,6 +91,9 @@
     
     export default {
         name: "ProfileInformation",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         props: {
             rootUrl: {
                 type: String,

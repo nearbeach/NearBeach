@@ -32,7 +32,7 @@
                             <label>
                                 Title:
                                 <span class="error"
-                                      v-if="!$v.customerTitleModel.required && $v.customerTitleModel.$dirty"
+                                      v-if="!v$.customerTitleModel.required && v$.customerTitleModel.$dirty"
                                       > Please supply
                                 </span>
                             </label>
@@ -45,7 +45,7 @@
                             <label>
                                 First Name:
                                 <span class="error"
-                                      v-if="!$v.customerFirstNameModel.required && $v.customerFirstNameModel.$dirty"
+                                      v-if="!v$.customerFirstNameModel.required && v$.customerFirstNameModel.$dirty"
                                       > Please supply
                                 </span>
                             </label>
@@ -58,7 +58,7 @@
                             <label>
                                 Last Name:
                                 <span class="error"
-                                      v-if="!$v.customerLastNameModel.required && $v.customerLastNameModel.$dirty"
+                                      v-if="!v$.customerLastNameModel.required && v$.customerLastNameModel.$dirty"
                                       > Please supply
                                 </span>
                             </label>
@@ -99,7 +99,8 @@
     import { Modal } from "bootstrap";
 
     //Validation
-    import { email, required } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, email } from '@vuelidate/validators'
 
     //Import Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -107,6 +108,9 @@
 
     export default {
         name: "CustomerInformation",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         props: {
             customerResults: {
                 type: Array,

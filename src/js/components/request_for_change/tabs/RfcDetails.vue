@@ -14,7 +14,7 @@
                 <div class="form-group">
                     <label>
                         Request for Change Type:
-                        <span class="error" v-if="!$v.rfcTypeModel.required && $v.rfcTypeModel.$dirty"
+                        <span class="error" v-if="!v$.rfcTypeModel.required && v$.rfcTypeModel.$dirty"
                         > Please select a Change Type.</span>
                     </label>
                     <v-select v-bind:options="rfcType"
@@ -26,7 +26,7 @@
                 <div class="form-group">
                     <label>
                         Version/Release Number
-                        <span class="error" v-if="!$v.rfcVersionModel.maxLength"> Sorry - too many characters.</span>
+                        <span class="error" v-if="!v$.rfcVersionModel.maxLength"> Sorry - too many characters.</span>
                     </label>
                     <input type="text"
                            maxlength="25"
@@ -101,7 +101,7 @@
                 <div class="form-group">
                     <label>
                         LEAD:
-                        <span class="error" v-if="!$v.rfcChangeLeadModel.required && $v.rfcChangeLeadModel.$dirty"
+                        <span class="error" v-if="!v$.rfcChangeLeadModel.required && v$.rfcChangeLeadModel.$dirty"
                         > Please select a Change Lead.</span>
                     </label>
                     <v-select :options="rfcChangeLeadFixList"
@@ -117,7 +117,7 @@
         <hr>
         <group-permissions v-bind:group-results="groupResults"
                            v-bind:destination="'request_for_change'"
-                           v-bind:is-dirty="$v.groupModel.$dirty"
+                           v-bind:is-dirty="v$.groupModel.$dirty"
                            v-bind:user-group-results="userGroupResults"
                            v-on:update_group_model="updateGroupModel($event)"
         ></group-permissions>
@@ -134,10 +134,14 @@
     import { mapGetters } from 'vuex';
 
     //Validation
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
 
     export default {
         name: "RfcDetails",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         props: {
             groupResults:{
                 type: Array,
@@ -212,9 +216,9 @@
             }),
             checkDateValidation: function() {
                 //Check the validation for each date
-                const start_date = !this.$v.rfcImplementationStartModel.required && this.$v.rfcImplementationStartModel.$dirty,
-                    end_date = !this.$v.rfcImplementationEndModel.required && this.$v.rfcImplementationEndModel.$dirty,
-                    release_date = !this.$v.rfcReleaseModel.required && this.$v.rfcReleaseModel.$dirty;
+                const start_date = !this.v$.rfcImplementationStartModel.required && this.v$.rfcImplementationStartModel.$dirty,
+                    end_date = !this.v$.rfcImplementationEndModel.required && this.v$.rfcImplementationEndModel.$dirty,
+                    release_date = !this.v$.rfcReleaseModel.required && this.v$.rfcReleaseModel.$dirty;
 
                 //If there is ONE invalidation, we send back true => invalid
                 return start_date || end_date || release_date;
@@ -284,11 +288,11 @@
                 this.updateValidation();
             },
             updateValidation: function() {
-                this.$v.$touch();
+                this.v$.$touch();
 
                 this.$emit('update_validation', {
                     'tab': 'tab_1',
-                    'value': !this.$v.$invalid,
+                    'value': !this.v$.$invalid,
                 });
             },
             updateValues: function(modelName,modelValue) {
@@ -339,7 +343,7 @@
             }, 200);
 
             //Just run the validations to show the error messages
-            this.$v.$touch();
+            this.v$.$touch();
         }
     }
 </script>

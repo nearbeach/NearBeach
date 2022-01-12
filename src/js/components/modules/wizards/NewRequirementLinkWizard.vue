@@ -8,7 +8,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> New Requirement Link Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.linkOut"></Icon> New Requirement Link Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -176,12 +176,16 @@
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
     import axios from 'axios';
+    import { Icon } from '@iconify/vue';
 
     //VueX
     import { mapGetters } from 'vuex';
 
     export default {
         name: "NewRequirementLinkWizard",
+        components: {
+            Icon,
+        },
         props: {
             destination: {
                 type: String,

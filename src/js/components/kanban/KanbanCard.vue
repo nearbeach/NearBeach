@@ -18,11 +18,11 @@
         >
             <b>#{{card['pk']}}</b><br/>
             {{card['fields']['kanban_card_text']}}
-            <IconifyIcon class="kanban-card-info-icon"
+            <Icon class="kanban-card-info-icon"
                          v-bind:icon="icons.infoCircle"
                          v-on:click="singleClickCard(card['pk'])"
                          v-on:dblclick="singleClickCard(card['pk'])"
-            ></IconifyIcon>
+            ></Icon>
         </div>
 
         <!-- ADD NEW CARDS + LINK OBJECTS -->
@@ -51,7 +51,8 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
 
     import { Modal } from "bootstrap";
 
@@ -63,6 +64,9 @@
 
     export default {
         name: "KanbanCard",
+        components: {
+            Icon,
+        },
         props: {
             columnId: {
                 type: Number,

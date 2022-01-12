@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.usersIcon"></IconifyIcon> Add Bugs Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.usersIcon"></Icon> Add Bugs Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -112,14 +112,17 @@
     //JavaScript extras
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
-
-    const axios = require('axios');
+    import { Icon } from '@iconify/vue';
+    import axios from 'axios';
 
     //VueX
     import { mapGetters } from 'vuex';
 
     export default {
         name: "AddBugWizard",
+        components: {
+            Icon,
+        },
         props: {
             destination: {
                 type: String,

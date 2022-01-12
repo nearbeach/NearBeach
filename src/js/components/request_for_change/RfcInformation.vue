@@ -23,7 +23,7 @@
                     <div class="form-group">
                         <label>
                             Request for Change Type:
-                            <span class="error" v-if="!$v.rfcTypeModel.required && $v.rfcTypeModel.$dirty"
+                            <span class="error" v-if="!v$.rfcTypeModel.required && v$.rfcTypeModel.$dirty"
                             > Please suppy a title.</span>
                         </label>
                         <v-select v-bind:options="rfcType"
@@ -158,10 +158,14 @@
     import loadingModalMixin from "../../mixins/loadingModalMixin";
 
     //Validation
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
 
     export default {
         name: "RfcInformation",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         props: {
             groupLeaderCount: {
                 type: Number,
@@ -199,9 +203,9 @@
         computed: {
             checkDateValidation: function() {
                 //Check the validation for each date
-                const start_date = !this.$v.rfcImplementationStartModel.required && this.$v.rfcImplementationStartModel.$dirty,
-                    end_date = !this.$v.rfcImplementationEndModel.required && this.$v.rfcImplementationEndModel.$dirty,
-                    release_date = !this.$v.rfcReleaseModel.required && this.$v.rfcReleaseModel.$dirty;
+                const start_date = !this.v$.rfcImplementationStartModel.required && this.v$.rfcImplementationStartModel.$dirty,
+                    end_date = !this.v$.rfcImplementationEndModel.required && this.v$.rfcImplementationEndModel.$dirty,
+                    release_date = !this.v$.rfcReleaseModel.required && this.v$.rfcReleaseModel.$dirty;
 
                 //If there is ONE invalidation, we send back true => invalid
                 return start_date || end_date || release_date;
@@ -265,9 +269,9 @@
         methods: {
             updateRFC: function() {
                 //Check form validation
-                this.$v.$touch();
+                this.v$.$touch();
 
-                if (this.$v.$invalid) {
+                if (this.v$.$invalid) {
                     this.showValidationErrorModal();
 
                     //Just return - as we do not need to do the rest of this function

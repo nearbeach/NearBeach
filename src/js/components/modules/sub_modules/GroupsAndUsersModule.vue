@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- GROUPS -->
-        <h2><IconifyIcon v-bind:icon="icons.groupPresentation"></IconifyIcon> Groups</h2>
+        <h2><Icon v-bind:icon="icons.groupPresentation"></Icon> Groups</h2>
         <p class="text-instructions">
             The following list are all the Groups connected to this {{destination}}. Users will have to be included
             in these groups to be added to this {{destination}}
@@ -33,7 +33,7 @@
         <hr>
 
         <!-- USERS -->
-        <h2><IconifyIcon v-bind:icon="icons.userIcon"></IconifyIcon> Users</h2>
+        <h2><Icon v-bind:icon="icons.userIcon"></Icon> Users</h2>
         <p class="text-instructions">
             The following are a list of users who are connected to this {{destination}}. Please note - users have to be
             a part of the groups list above.
@@ -60,7 +60,7 @@
                 <div class="remove-user"
                      v-if="userLevel>=3"
                 >
-                    <IconifyIcon v-bind:icon="icons.trashCan"
+                    <Icon v-bind:icon="icons.trashCan"
                                  v-on:click="removeUser(user['username'])"
                     />
                 </div>
@@ -100,8 +100,8 @@
     //JavaScript extras
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
-
-    const axios = require('axios');
+    import { Icon } from '@iconify/vue';
+    import axios from 'axios';
     import {Modal} from "bootstrap";
 
     //VueX
@@ -109,6 +109,9 @@
 
     export default {
         name: "GroupsAndUsersModule",
+        components: {
+            Icon,
+        },
         props: {
             destination: {
                 type: String,

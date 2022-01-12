@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.groupPresentation"></IconifyIcon> Add Group Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.groupPresentation"></Icon> Add Group Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -70,6 +70,8 @@
 </template>
 
 <script>
+    import { Icon } from '@iconify/vue';
+
     //Mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
@@ -81,6 +83,9 @@
 
     export default {
         name: "AddGroupWizard",
+        components: {
+            Icon,
+        },
         props: {
             destination: {
                 type: String,

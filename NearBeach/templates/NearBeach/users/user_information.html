@@ -5,8 +5,10 @@
                       v-bind:root-url="`{% url 'dashboard' %}`"
     ></user-information>
 
+    <!-- The location required the suffix _, this is used for the URL to
+    reset the password -->
     <br/>
-    <reset-user-password v-bind:location="'admin'"
+    <reset-user-password v-bind:location="'admin_'"
                          v-bind:username="{{username}}"
     ></reset-user-password>
 

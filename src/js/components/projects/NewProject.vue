@@ -18,7 +18,7 @@
                     <!-- PROJECT NAME -->
                     <div class="form-group">
                         <label>Project Name
-                            <span class="error" v-if="!$v.projectNameModel.required && $v.projectNameModel.$dirty"
+                            <span class="error" v-if="!v$.projectNameModel.required && v$.projectNameModel.$dirty"
                             > Please suppy a title.</span>
                         </label>
                         <input type="text"
@@ -30,8 +30,8 @@
 
                     <!-- PROJECT DESCRIPTION -->
                     <label>Project Description:
-                        <span class="error" v-if="!$v.projectDescriptionModel.required && $v.projectDescriptionModel.$dirty"> Please supply a description.</span>
-                        <span class="error" v-if="!$v.projectDescriptionModel.maxLength"> Sorry - too many characters.</span>
+                        <span class="error" v-if="!v$.projectDescriptionModel.required && v$.projectDescriptionModel.$dirty"> Please supply a description.</span>
+                        <span class="error" v-if="!v$.projectDescriptionModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
                     <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
@@ -59,14 +59,14 @@
             <!-- STAKEHOLDER ORGANISATION -->
             <hr>
             <get-stakeholders v-on:update_stakeholder_model="updateStakeholderModel($event)"
-                              v-bind:is-dirty="$v.stakeholderModel.$dirty"
+                              v-bind:is-dirty="v$.stakeholderModel.$dirty"
             ></get-stakeholders>
 
             <!-- START DATE & END DATE -->
             <hr>
             <between-dates destination="project"
                            v-on:update_dates="updateDates($event)"
-                           v-bind:is-dirty-end="$v.projectEndDateModel.$dirty || $v.projectStartDateModel.$dirty"
+                           v-bind:is-dirty-end="v$.projectEndDateModel.$dirty || v$.projectStartDateModel.$dirty"
             ></between-dates>
 
             <!-- Group Permissions -->
@@ -75,7 +75,7 @@
                                v-bind:destination="'project'"
                                v-bind:user-group-results="userGroupResults"
                                v-on:update_group_model="updateGroupModel($event)"
-                               v-bind:is-dirty="$v.groupModel.$dirty"
+                               v-bind:is-dirty="v$.groupModel.$dirty"
             ></group-permissions>
 
             <!-- Submit Button -->
@@ -94,13 +94,17 @@
 
 <script>
     const axios = require('axios');
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
 
     export default {
         name: "NewProject",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         props: {
             groupResults: Array,
             rootUrl: {
@@ -155,9 +159,9 @@
         methods: {
             submitNewProject: function() {
                 //Check form validation
-                this.$v.$touch();
+                this.v$.$touch();
 
-                if (this.$v.$invalid) {
+                if (this.v$.$invalid) {
                     this.showValidationErrorModal();
 
                     //Just return - as we do not need to do the rest of this function

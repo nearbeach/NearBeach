@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><IconifyIcon v-bind:icon="icons.clipboardIcon"></IconifyIcon> Requirement Items</h2>
+        <h2><Icon v-bind:icon="icons.clipboardIcon"></Icon> Requirement Items</h2>
         <p class="text-instructions">
             Requirements should be broken down into smaller components called Requirement Items.
         </p>
@@ -62,8 +62,7 @@
 <script>
     //JavaScript Libraries
     import { Modal } from "bootstrap";
-
-    // const axios = require('axios');
+    import { Icon } from '@iconify/vue';
     import axios from 'axios';
 
     //VueX
@@ -74,6 +73,9 @@
 
     export default {
         name: "RequirementItemsModule",
+        components: {
+            Icon,
+        },
         props: {
             locationId: {
                 type: Number,
@@ -83,9 +85,6 @@
         mixins: [
             iconMixin,
         ],
-        components: {
-            axios,
-        },
         data() {
             return {
                 itemResults: [],

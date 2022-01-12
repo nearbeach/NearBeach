@@ -3,7 +3,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.usersIcon"></IconifyIcon> Add Tags Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.usersIcon"></Icon> Add Tags Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -50,14 +50,17 @@
     //JavaScript extras
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
+    import { Icon } from '@iconify/vue';
+    import axios from 'axios';
 
     //VueX
     import { mapGetters } from 'vuex';
 
-    const axios = require('axios');
-
     export default {
         name: "AddTagWizard",
+        components: {
+            Icon,
+        },
         props: {
             assignedTags: {
                 type: Array,

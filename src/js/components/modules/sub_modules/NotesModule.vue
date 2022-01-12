@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><IconifyIcon v-bind:icon="icons.noteAdd"></IconifyIcon> Note History</h2>
+        <h2><Icon v-bind:icon="icons.noteAdd"></Icon> Note History</h2>
         <p class="text-instructions">
             The following are saved notes against this {{destination}}. Add notes by clicking on the button below.
         </p>
@@ -35,14 +35,21 @@
     import {Modal} from "bootstrap";
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
-    const axios = require('axios');
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
+    import ListNotes from "./ListNotes.vue";
+    import NewHistoryNoteWizard from "../wizards/NewHistoryNoteWizard.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
 
     export default {
         name: "NotesModule",
-        components: {},
+        components: {
+            Icon,
+            ListNotes,
+            NewHistoryNoteWizard,
+        },
         props: [
             'destination',
             'locationId',

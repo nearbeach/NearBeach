@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><IconifyIcon v-bind:icon="icons.bugIcon"></IconifyIcon> Bugs List</h2>
+        <h2><Icon v-bind:icon="icons.bugIcon"></Icon> Bugs List</h2>
         <p class="text-instructions">
             The following is a list of bugs associated with this {{destination}}
         </p>
@@ -42,7 +42,7 @@
                             <span class="remove-link"
                                   v-if="userLevel >= 2"
                             >
-                                <IconifyIcon v-bind:icon="icons.trashCan"
+                                <Icon v-bind:icon="icons.trashCan"
                                              v-on:click="removeBug(bug['bug_id'])"
                                 />
                             </span>
@@ -76,8 +76,9 @@
 
 <script>
     //JavaScript components
-    const axios = require('axios');
+    import axios from 'axios';
     import {Modal} from "bootstrap";
+    import { Icon } from '@iconify/vue';
 
     //Mixins
     import errorModalMixin from '../../../mixins/errorModalMixin';
@@ -88,6 +89,9 @@
 
     export default {
         name: "BugsModule",
+        components: {
+            Icon,
+        },
         props: {
             destination: {
                 type: String,

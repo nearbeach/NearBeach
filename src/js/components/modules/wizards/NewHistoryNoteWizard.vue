@@ -12,7 +12,7 @@
         >
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.noteAdd"></IconifyIcon> New Note</h2>
+                    <h2><Icon v-bind:icon="icons.noteAdd"></Icon> New Note</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -65,14 +65,19 @@
     //JavaScript components
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
+    import { Icon } from '@iconify/vue';
+    import axios from 'axios';
+    import Editor from '@tinymce/tinymce-vue'
 
     //VueX
     import { mapGetters } from 'vuex';
 
-    const axios = require('axios');
-
     export default {
         name: "NewHistoryNoteWizard",
+        components: {
+            'editor': Editor,
+            Icon,
+        },
         props: [
             'locationId',
             'destination',

@@ -11,7 +11,7 @@
             <div class="form-group">
                 <label>
                     Request for Change Title:
-                    <span class="error" v-if="!$v.rfcTitleModel.required && $v.rfcTitleModel.$dirty"
+                    <span class="error" v-if="!v$.rfcTitleModel.required && v$.rfcTitleModel.$dirty"
                     > Please suppy a title.</span>
                 </label>
                 <input type="text"
@@ -24,8 +24,8 @@
 
             <!-- RFC SUMMARY -->
             <label>Request for Change Summary:
-                <span class="error" v-if="!$v.rfcSummaryModel.required && $v.rfcSummaryModel.$dirty"> Please supply a description.</span>
-                <span class="error" v-if="!$v.rfcSummaryModel.maxLength"> Sorry - too many characters.</span>
+                <span class="error" v-if="!v$.rfcSummaryModel.required && v$.rfcSummaryModel.$dirty"> Please supply a description.</span>
+                <span class="error" v-if="!v$.rfcSummaryModel.maxLength"> Sorry - too many characters.</span>
             </label><br>
             <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                  class="loader-image"
@@ -52,13 +52,17 @@
 
 <script>
     //Validations
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
 
     //VueX
     import { mapGetters } from 'vuex';
 
     export default {
         name: "RfcDescription",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         props: {
             isReadOnly: {
                 type: Boolean,
@@ -107,11 +111,11 @@
             },
         },
         updated() {
-            this.$v.$touch();
+            this.v$.$touch();
 
             this.$emit('update_validation', {
                 'tab': 'tab_0',
-                'value': !this.$v.$invalid,
+                'value': !this.v$.$invalid,
             });
         },
         mounted() {
@@ -122,7 +126,7 @@
             }
 
             //Just run the validations to show the error messages
-            this.$v.$touch();
+            this.v$.$touch();
         }
     }
 </script>

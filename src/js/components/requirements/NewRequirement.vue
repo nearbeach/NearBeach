@@ -16,7 +16,7 @@
                 <div class="col-md-8" style="min-height: 610px;">
                     <div class="form-group">
                         <label for="id_requirement_title">Requirement Title:
-                            <span class="error" v-if="!$v.requirementTitleModel.required && $v.requirementTitleModel.$dirty"> Please suppy a title.</span>
+                            <span class="error" v-if="!v$.requirementTitleModel.required && v$.requirementTitleModel.$dirty"> Please suppy a title.</span>
                         </label>
                         <input id="id_requirement_title"
                                class="form-control"
@@ -30,8 +30,8 @@
 
                     <br/>
                     <label>Requirement Scope:
-                        <span class="error" v-if="!$v.requirementScopeModel.required && $v.requirementScopeModel.$dirty"> Please supply a scope.</span>
-                        <span class="error" v-if="!$v.requirementScopeModel.maxLength"> Sorry - too many characters.</span>
+                        <span class="error" v-if="!v$.requirementScopeModel.required && v$.requirementScopeModel.$dirty"> Please supply a scope.</span>
+                        <span class="error" v-if="!v$.requirementScopeModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
                     <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
@@ -57,7 +57,7 @@
             <!-- Stakeholder Organisation -->
             <hr>
             <get-stakeholders v-on:update_stakeholder_model="updateStakeholderModel($event)"
-                              v-bind:is-dirty="$v.stakeholderModel.$dirty"
+                              v-bind:is-dirty="v$.stakeholderModel.$dirty"
             ></get-stakeholders>
 
             <!-- Status -->
@@ -70,7 +70,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Requirement Status
-                            <span class="error" v-if="!$v.statusModel.required && $v.statusModel.$dirty"> Please select a status.</span>
+                            <span class="error" v-if="!v$.statusModel.required && v$.statusModel.$dirty"> Please select a status.</span>
                         </label>
                         <v-select :options="statusFixList"
                                   label="status"
@@ -82,7 +82,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Requirement Type
-                            <span class="error" v-if="!$v.typeModel.required && $v.typeModel.$dirty"> Please select a type.</span>
+                            <span class="error" v-if="!v$.typeModel.required && v$.typeModel.$dirty"> Please select a type.</span>
                         </label>
                         <v-select :options="typeFixList"
                                   label="type"
@@ -98,7 +98,7 @@
                                v-bind:destination="'requirement'"
                                v-bind:user-group-results="userGroupResults"
                                v-on:update_group_model="updateGroupModel($event)"
-                               v-bind:is-dirty="$v.groupModel.$dirty"
+                               v-bind:is-dirty="v$.groupModel.$dirty"
             ></group-permissions>
 
             <!-- Submit Button -->
@@ -121,10 +121,14 @@
     import { Modal } from 'bootstrap';
 
     //Validation
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
 
     export default {
         name: "NewRequirement",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         components: {
             axios,
         },
@@ -198,9 +202,9 @@
         methods: {
             submitNewRequirement: function() {
                 // Check the validation first
-                this.$v.$touch();
+                this.v$.$touch();
 
-                if (this.$v.$invalid) {
+                if (this.v$.$invalid) {
                     //Show the error dialog and notify to the user that there were field missing.
                     var elem_cont = document.getElementById("errorModalContent");
 

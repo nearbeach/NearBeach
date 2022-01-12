@@ -37,7 +37,7 @@
                             <label>
                               First Name:
                               <span class="error"
-                                    v-if="!$v.firstNameModel.required && $v.firstNameModel.$dirty"
+                                    v-if="v$.firstNameModel.$errors.length > 0"
                               > Please suppy a first name.</span>
                               <br/>
                             </label>
@@ -50,7 +50,7 @@
                             <label>
                               Last Name:
                               <span class="error"
-                                    v-if="!$v.lastNameModel.required && $v.lastNameModel.$dirty"
+                                    v-if="v$.lastNameModel.$errors.length > 0"
                               > Please suppy a last name.</span>
                               <br/>
                             </label>
@@ -63,7 +63,7 @@
                             <label>
                               Email:
                               <span class="error"
-                                    v-if="!$v.emailModel.required && $v.emailModel.$dirty"
+                                    v-if="v$.emailModel.$errors.length > 0"
                               > Please suppy an email.</span>
                               <br/>
                             </label>
@@ -128,6 +128,7 @@
 </template>
 
 <script>
+    //Vue is like "I wanna write JS in my HTML" and React is like "I wanna write my HTML as JS"
     const axios = require('axios');
 
     //Import mixins
@@ -135,10 +136,14 @@
     import loadingModalMixin from "../../mixins/loadingModalMixin";
 
     //Validation
-    import { required, maxLength, email } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength, email } from '@vuelidate/validators'
 
     export default {
         name: "UserInformation",
+        setup() {
+            return { v$: useVuelidate() }
+        },
         props: {
             userResults: {
                 type: Array,
@@ -182,9 +187,9 @@
         methods: {
             updateUser: function() {
                 //Check form validation
-                this.$v.$touch();
+                this.v$.$touch();
 
-                if (this.$v.$invalid) {
+                if (this.v$.$invalid) {
                     this.showValidationErrorModal();
 
                     //Just return - as we do not need to do the rest of this function

@@ -1,8 +1,10 @@
 import urllib3
 import urllib
 import json
-from NearBeach.models import bug, object_assignment, group, object_note, tag, tag_assignment, permission_set
-from NearBeach.views.tools.internal_functions import set_object_from_destination, project, task, requirement
+from NearBeach.models import bug, object_assignment, group, object_note, tag, tag_assignment, permission_set, \
+    requirement_item, organisation
+from NearBeach.views.tools.internal_functions import set_object_from_destination, project, task, requirement, \
+    get_object_from_destination
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder

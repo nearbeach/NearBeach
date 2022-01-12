@@ -17,7 +17,7 @@
         <div class="col-md-8">
             <div class="form-group">
                 <label>Stakeholder Organisation
-                    <span class="error" v-if="!$v.stakeholderModel.required && isDirty"> Please search for a Stakeholder.</span>
+                    <span class="error" v-if="!v$.stakeholderModel.required && isDirty"> Please search for a Stakeholder.</span>
                 </label>
                 <v-select :options="stakeholderFixList"
                           @search="fetchOptions"
@@ -44,13 +44,17 @@
     import { mapGetters} from 'vuex';
 
     //Validation
-    import { required } from 'vuelidate/lib/validators'
+    import useVuelidate from '@vuelidate/core'
+    import { required } from '@vuelidate/validators'
 
     //Mixins
     import searchMixin from "../../mixins/searchMixin";
 
     export default {
         name: "GetStakeholders",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         components: {
             axios,
             bootstrap,
