@@ -120,6 +120,10 @@
 <script>
     import axios from 'axios';
     import { Icon } from '@iconify/vue';
+    import Editor from '@tinymce/tinymce-vue'
+    import CardDetails from "../card_information/CardDetails.vue";
+    import ListNotes from "../modules/sub_modules/ListNotes.vue";
+    import CardNotes from "../card_information/CardNotes.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -130,7 +134,11 @@
     export default {
         name: "CardInformation",
         components: {
+            CardDetails,
+            CardNotes,
+            'editor': Editor,
             Icon,
+            ListNotes,
         },
         props: {
             cardInformation: {

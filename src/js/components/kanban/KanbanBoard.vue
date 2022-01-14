@@ -43,9 +43,13 @@
 <script>
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
+    import KanbanRow from "./KanbanRow.vue"
 
     export default {
         name: "KanbanBoard",
+        components: {
+            KanbanRow,
+        },
         props: {
             columnResults: {
                 type: Array,

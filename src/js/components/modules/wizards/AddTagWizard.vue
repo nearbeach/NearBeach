@@ -23,11 +23,11 @@
                         </div>
                         <div class="col-md-8">
                             <label>All Tag List</label>
-                            <v-select label="tag" 
+                            <n-select label="tag"
                                       multiple
                                       :options="tagList"
-                                      v-model="tagModel"
-                            ></v-select>
+                                      v-model:value="tagModel"
+                            ></n-select>
                         </div>
                     </div>
                 </div>
@@ -52,6 +52,7 @@
     import iconMixin from "../../../mixins/iconMixin";
     import { Icon } from '@iconify/vue';
     import axios from 'axios';
+    import { NSelect } from 'naive-ui'
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -60,6 +61,7 @@
         name: "AddTagWizard",
         components: {
             Icon,
+            NSelect,
         },
         props: {
             assignedTags: {
@@ -100,7 +102,7 @@
 
                 //Loop through all the models results
                 this.tagModel.forEach(row => {
-                    data_to_send.append('tag_id', row['value']);
+                    data_to_send.append('tag_id', row);
                 });
 
                 //Use Axios to send data to backend
@@ -126,7 +128,7 @@
                     this.allTagList = response['data'].map(row => {
                         return {
                             value: row['pk'],
-                            tag: row['fields']['tag_name'],
+                            label: row['fields']['tag_name'],
                         }
                     });
                 }).catch(error => {

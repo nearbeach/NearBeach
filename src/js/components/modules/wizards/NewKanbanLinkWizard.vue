@@ -30,11 +30,11 @@
                             </p>
                         </div>
                         <div class="col-md-8">
-                            <v-select :options="objectSelection"
-                                      v-model="objectModel"
+                            <n-select :options="objectSelection"
+                                      v-model:value="objectModel"
                                       class="object-selection"
                                       v-if="!isSearching"
-                            ></v-select>
+                            ></n-select>
                             <div v-else
                                  class="alert alert-success"
                             >
@@ -178,6 +178,7 @@
 <script>
     import axios from 'axios';
     import { Icon } from '@iconify/vue';
+    import { NSelect } from 'naive-ui';
 
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
@@ -190,6 +191,7 @@
         name: "NewKanbanLinkWizard",
         components: {
             Icon,
+            NSelect,
         },
         props: {
             columnResults: {

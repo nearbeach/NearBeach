@@ -11,9 +11,13 @@
 
 <script>
     import { mapGetters } from 'vuex';
+    import KanbanCard from "./KanbanCard.vue";
     
     export default {
         name: "KanbanRow",
+        components: {
+            KanbanCard,
+        },
         props: {
             levelId: {
                 type: Number,

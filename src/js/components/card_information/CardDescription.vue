@@ -45,19 +45,30 @@
 </template>
 
 <script>
-    import {mapFields} from 'vuex-map-fields';
     const axios = require('axios');
+    import Editor from '@tinymce/tinymce-vue'
 
     export default {
         name: 'CardDescription',
+        components: {
+            'editor': Editor,
+        },
         props: {},
         data() {
             return {}
         },
         computed: {
-            ...mapFields([
-                'cardDescription',
-            ])
+            cardDescription: {
+                get () {
+                    return this.$store.cardDescription;
+                },
+                set (value) {
+                    this.$store.commit('updateValue', {
+                        field: 'cardDescription',
+                        value: value,
+                    });
+                },
+            },
         },
         methods: {
             closeModal: function() {

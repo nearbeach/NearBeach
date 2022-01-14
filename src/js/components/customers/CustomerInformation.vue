@@ -36,10 +36,9 @@
                                       > Please supply
                                 </span>
                             </label>
-                            <v-select :options="titleFixList"
-                                      label="title"
-                                      v-model="customerTitleModel"
-                            ></v-select>
+                            <n-select :options="titleFixList"
+                                      v-model:value="customerTitleModel"
+                            ></n-select>
                         </div>
                         <div class="form-group col-sm-4">
                             <label>
@@ -97,6 +96,8 @@
 <script>
     const axios = require('axios');
     import { Modal } from "bootstrap";
+    import { NSelect } from 'naive-ui'
+    import StakeholderInformation from "../organisations/StakeholderInformation.vue";
 
     //Validation
     import useVuelidate from '@vuelidate/core'
@@ -110,6 +111,10 @@
         name: "CustomerInformation",
         setup() {
             return { v$: useVuelidate(), }
+        },
+        components: {
+            NSelect,
+            StakeholderInformation
         },
         props: {
             customerResults: {
@@ -167,9 +172,6 @@
             customerLastNameModel: {
                 required,
             },
-            organisationModel: {
-                required,
-            },
             customerTitleModel: {
                 required,
             },
@@ -181,7 +183,7 @@
                 data_to_send.set('customer_email',this.customerEmailModel);
                 data_to_send.set('customer_first_name',this.customerFirstNameModel);
                 data_to_send.set('customer_last_name',this.customerLastNameModel);
-                data_to_send.set('customer_title',this.customerTitleModel['value']);
+                data_to_send.set('customer_title',this.customerTitleModel);
 
                 //Show loading screen
                 this.showLoadingModal('Customer Information');
@@ -207,19 +209,11 @@
                 staticUrl: this.staticUrl,
             })
 
-            //Get the title list data and convert it so the v-select can use it
-            this.titleList.forEach(row => {
-                this.titleFixList.push({
-                    'value': row['pk'],
-                    'title': row['fields']['title'],
-                });
-
-                //If the primary key is the same as the customerTitleModel - update customerTitleModel with this object
-                if (row['pk'] == this.customerTitleModel) {
-                    this.customerTitleModel = {
-                        'value': row['pk'],
-                        'title': row['fields']['title'],
-                    }
+            //Convert the title list data into a format NSelect can use
+            this.titleFixList = this.titleList.map(row => {
+                return {
+                    value: row['pk'],
+                    label: row['fields']['title'],
                 }
             });
         }

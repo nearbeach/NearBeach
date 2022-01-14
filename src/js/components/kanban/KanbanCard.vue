@@ -2,31 +2,35 @@
     <draggable class="list-group kanban-cell"
                group="tasks"
                :list="masterList"
+               item-key="pk"
                @end="onEnd($event)"
                v-bind:id="`kanban_cell_${levelId}_${columnId}`"
                v-bind:data-level="levelId"
                v-bind:data-column="columnId"
     >
         <!-- SINGLE CARDS -->
-        <div class="list-group-item"
-             v-for="card in masterList"
-             :key="card['pk']"
-             :id="card['pk']"
-             v-bind:data-sort-number="card['fields']['kanban_card_sort_number']"
-             v-bind:data-card-id="card['pk']"
-             v-on:dblclick="doubleClickCard($event)"
-        >
-            <b>#{{card['pk']}}</b><br/>
-            {{card['fields']['kanban_card_text']}}
-            <Icon class="kanban-card-info-icon"
-                         v-bind:icon="icons.infoCircle"
-                         v-on:click="singleClickCard(card['pk'])"
-                         v-on:dblclick="singleClickCard(card['pk'])"
-            ></Icon>
-        </div>
+<!--        <template #item="{element}"-->
+<!--                  class="list-group-item"-->
+<!--                  v-for="card in masterList"-->
+<!--                  :key="card['pk']"-->
+<!--                  :id="card['pk']"-->
+<!--                  v-bind:data-sort-number="card['fields']['kanban_card_sort_number']"-->
+<!--                  v-bind:data-card-id="card['pk']"-->
+<!--                  v-on:dblclick="doubleClickCard($event)"-->
+<!--        >-->
+<!--            <b>#{{card['pk']}}</b><br/>-->
+<!--            {{card['fields']['kanban_card_text']}}-->
+<!--            <Icon class="kanban-card-info-icon"-->
+<!--                         v-bind:icon="icons.infoCircle"-->
+<!--                         v-on:click="singleClickCard(card['pk'])"-->
+<!--                         v-on:dblclick="singleClickCard(card['pk'])"-->
+<!--            ></Icon>-->
+<!--        </template>-->
 
         <!-- ADD NEW CARDS + LINK OBJECTS -->
-        <div class="kanban-add-new-cards">
+        <template class="kanban-add-new-cards"
+            #footer
+        >
             <a class="kanban-link btn btn-primary"
                href="javascript:void(0)"
                v-on:click="addNewKanbanCard"
@@ -46,13 +50,14 @@
             >
                 Archive Cards
             </a>
-        </div>
+        </template>
     </draggable>
 </template>
 
 <script>
     import axios from 'axios';
     import { Icon } from '@iconify/vue';
+    import draggable from 'vuedraggable'
 
     import { Modal } from "bootstrap";
 
@@ -66,6 +71,7 @@
         name: "KanbanCard",
         components: {
             Icon,
+            draggable,
         },
         props: {
             columnId: {
@@ -86,6 +92,7 @@
         data() {
             return {
                 //masterList: [],
+                drag: false,
             }
         },
         computed: {

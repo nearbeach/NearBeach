@@ -30,20 +30,18 @@
                 <div class="row">
                     <div class="col-md-12 mt-4">
                         <label>Card Column</label>
-                        <v-select v-bind:options="listColumns"
-                                  v-bind:label="'column'"
-                                  v-bind:clearable="false"
-                                  v-model="cardColumn"
-                        ></v-select>
+                        <n-select v-bind:options="listColumns"
+                                  label="column"
+                                  v-model:value="cardColumn"
+                        ></n-select>
                     </div>
 
                     <div class="col-md-12 mt-4">
                         <label>Card Level</label>
-                        <v-select v-bind:options="listLevels"
-                                  v-bind:label="'level'"
-                                  v-bind:clearable="false"
-                                  v-model="cardLevel"
-                        ></v-select>
+                        <n-select v-bind:options="listLevels"
+                                  label="level"
+                                  v-model:value="cardLevel"
+                        ></n-select>
                     </div>
                 </div>
             </div>
@@ -68,26 +66,86 @@
 </template>
 
 <script>
-    import { mapFields } from 'vuex-map-fields';
     const axios = require('axios');
+    import { NSelect } from 'naive-ui';
 
     export default {
         name: 'CardDetails',
-        props: {},
+        components: {
+            NSelect,
+        },
         data() {
             return {
                 tempModel: '',
             }
         },
         computed: {
-            ...mapFields([
-                'cardId',
-                'cardTitle',
-                'cardColumn',
-                'cardLevel',
-                'listColumns',
-                'listLevels',
-            ]),
+            cardId: {
+                get () {
+                    return this.$store.cardId;
+                },
+                set (value) {
+                    this.$store.commit('updateValue', {
+                        field: 'cardId',
+                        value: value,
+                    });
+                },
+            },
+            cardTitle: {
+                get () {
+                    return this.$store.cardTitle;
+                },
+                set (value) {
+                    this.$store.commit('updateValue', {
+                        field: 'cardTitle',
+                        value: value,
+                    });
+                },
+            },
+            cardColumn: {
+                get () {
+                    return this.$store.cardColumn;
+                },
+                set (value) {
+                    this.$store.commit('updateValue', {
+                        field: 'cardColumn',
+                        value: value,
+                    });
+                },
+            },
+            cardLevel: {
+                get () {
+                    return this.$store.cardLevel;
+                },
+                set (value) {
+                    this.$store.commit('updateValue', {
+                        field: 'cardLevel',
+                        value: value,
+                    });
+                },
+            },
+            listColumns: {
+                get () {
+                    return this.$store.listColumns;
+                },
+                set (value) {
+                    this.$store.commit('updateValue', {
+                        field: 'listColumns',
+                        value: value,
+                    });
+                },
+            },
+            listLevels: {
+                get () {
+                    return this.$store.listLevels;
+                },
+                set (value) {
+                    this.$store.commit('updateValue', {
+                        field: 'listLevels',
+                        value: value,
+                    });
+                },
+            },
         },
         methods: {
             closeModal: function() {

@@ -38,9 +38,19 @@
 
 <script>
     import { Modal } from "bootstrap";
+    import KanbanBoard from "./KanbanBoard.vue";
+    import NewKanbanCard from "../modules/wizards/NewKanbanCard.vue";
+    import CardInformation from "../card_information/CardInformation.vue"
+    import NewKanbanLinkWizard from "../modules/wizards/NewKanbanLinkWizard.vue";
 
     export default {
         name: "KanbanInformation",
+        components: {
+            CardInformation,
+            KanbanBoard,
+            NewKanbanCard,
+            NewKanbanLinkWizard,
+        },
         props: {
             columnResults: {
                 type: Array,

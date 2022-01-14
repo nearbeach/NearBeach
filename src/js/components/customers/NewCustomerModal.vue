@@ -106,7 +106,7 @@
             })
         },
         methods: {
-            submitNewCustomer: function() {
+            submitNewCustomer: async function() {
                 //Flag downstream to check validation
                 this.flagValidationCheck = true;
 
@@ -116,10 +116,10 @@
                 },100);
 
                 // Check the validation at this level
-                this.v$.$touch();
+                const isFormCorrect = await this.v$.$validate()
 
                 //NEED TO USE MIXIN FOR THIS SECTION
-                if (this.v$.$invalid) {
+                if (isFormCorrect) {
                     //Show the error dialog and notify to the user that there were field missing.
                     var elem_cont = document.getElementById("errorModalContent");
 
@@ -137,7 +137,7 @@
 
                 //Create the data_to_send
                 const data_to_send = new FormData();
-                data_to_send.set('customer_title',this.titleModel['value']);
+                data_to_send.set('customer_title',this.titleModel);
                 data_to_send.set('customer_first_name',this.customerFirstNameModel);
                 data_to_send.set('customer_last_name',this.customerLastNameModel);
                 data_to_send.set('customer_email',this.customerEmailModel);

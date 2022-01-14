@@ -79,6 +79,7 @@
 <script>
     import axios from 'axios';
     import { Icon } from '@iconify/vue';
+    import Editor from '@tinymce/tinymce-vue'
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -89,6 +90,7 @@
     export default {
         name: "NewKanbanCard",
         components: {
+            'editor': Editor,
             Icon,
         },
         props: {

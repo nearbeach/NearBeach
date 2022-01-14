@@ -53,12 +53,18 @@
 
 <script>
     const axios = require('axios');
+    import Editor from '@tinymce/tinymce-vue'
+    import ListNotes from "../modules/sub_modules/ListNotes.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
 
     export default {
         name: 'CardNotes',
+        components: {
+            'editor': Editor,
+            ListNotes,
+        },
         props: {},
         data() {
             return {

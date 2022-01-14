@@ -7,6 +7,12 @@ export const
             './components/request_for_change/ChangeTaskInformation.vue'
         )
     ),
+    CustomerInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "customer-information" */
+            './components/customers/CustomerInformation.vue'
+        )
+    ),
     DashboardMyObjects = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "dashboard-my-objects" */

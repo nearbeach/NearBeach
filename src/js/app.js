@@ -23,6 +23,7 @@ axios.defaults.xsrfCookieName = 'csrftoken';
 //Lazy Load Parent Components
 import {
     ChangeTaskInformation,
+    CustomerInformation,
     DashboardMyObjects,
     DashboardRfcApprovals,
     DashboardUnassignedObjects,
@@ -64,6 +65,7 @@ import {
 const app = createApp({
     components: {
         ChangeTaskInformation,
+        CustomerInformation,
         DashboardMyObjects,
         DashboardRfcApprovals,
         DashboardUnassignedObjects,

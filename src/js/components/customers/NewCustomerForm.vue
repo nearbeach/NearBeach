@@ -22,10 +22,11 @@
                               > Please supply
                         </span>
                     </label>
-                    <v-select :options="titleFixList"
+                    <n-select :options="titleFixList"
                               label="title"
-                              v-model="titleModel"
-                    ></v-select>
+                              placeholder=""
+                              v-model:value="titleModel"
+                    ></n-select>
                 </div>
                 <div class="form-group col-sm-4">
                     <label>
@@ -82,6 +83,7 @@
 <script>
     const axios = require('axios');
     import { Modal } from "bootstrap";
+    import { NSelect } from 'naive-ui';
 
     //Validation
     import useVuelidate from '@vuelidate/core'
@@ -91,6 +93,9 @@
         name: "NewCustomerForm",
         setup() {
             return { v$: useVuelidate(), }
+        },
+        components: {
+            NSelect,
         },
         props: [
             'flagValidationCheck',
@@ -189,12 +194,12 @@
             },
         },
         mounted() {
-            //Get the title list data and convert it so the v-select can use it
-            this.titleList.forEach(row => {
-                this.titleFixList.push({
-                    'value': row['pk'],
-                    'title': row['fields']['title'],
-                });
+            //Get the data formatted how the NSelect wants
+            this.titleFixList = this.titleList.map(row => {
+                return {
+                    value: row['pk'],
+                    label: row['fields']['title'],
+                }
             });
         },
     }

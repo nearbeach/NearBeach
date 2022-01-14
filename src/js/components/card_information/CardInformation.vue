@@ -92,6 +92,9 @@
 <script>
     import axios from 'axios';
     import { Icon } from '@iconify/vue';
+    import CardDetails from "./CardDetails.vue";
+    import CardNotes from "./CardNotes.vue";
+    import CardDescription from "./CardDescription.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -102,6 +105,9 @@
     export default {
         name: 'CardInformation',
         components: {
+            CardDescription,
+            CardDetails,
+            CardNotes,
             Icon,
         },
         mixins: [

@@ -46,6 +46,9 @@ const moduleCard = {
         })
         .catch((error) => {});
     },
+    updateValue(state, payload) {
+      state.payload.field = payload.value;
+    },
     updateLists(state, payload) {
       state.listColumns = payload.columnResults.map((row) => {
         return {
