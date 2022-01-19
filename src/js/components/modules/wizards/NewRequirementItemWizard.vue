@@ -76,10 +76,10 @@
                                 <label>Requirement Status
                                     <span class="error" v-if="!v$.statusItemModel.required && v$.statusItemModel.$dirty"> Please select a status.</span>
                                 </label>
-                                <v-select :options="statusItemFixList"
+                                <n-select :options="statusItemFixList"
                                           label="status"
-                                          v-model="statusItemModel"
-                                ></v-select>
+                                          v-model:value="statusItemModel"
+                                ></n-select>
                             </div>
 
                         </div>
@@ -88,10 +88,10 @@
                                 <label>Requirement Type
                                     <span class="error" v-if="!v$.typeItemModel.required && v$.typeItemModel.$dirty"> Please select a type.</span>
                                 </label>
-                                <v-select :options="typeItemFixList"
+                                <n-select :options="typeItemFixList"
                                           label="type"
-                                          v-model="typeItemModel"
-                                ></v-select>
+                                          v-model:value="typeItemModel"
+                                ></n-select>
                             </div>
                         </div>
                     </div>
@@ -118,6 +118,8 @@
 <script>
     import axios from 'axios';
     import { Icon } from '@iconify/vue';
+    import { NSelect } from 'naive-ui';
+    import Editor from '@tinymce/tinymce-vue'
 
     //Mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
@@ -136,7 +138,9 @@
             return { v$: useVuelidate(), }
         },
         components: {
+            'editor': Editor,
             Icon,
+            NSelect,
         },
         props: {
             itemStatusList: {
@@ -203,8 +207,8 @@
                 const data_to_send = new FormData();
                 data_to_send.set('requirement_item_title', this.requirementItemTitleModel);
                 data_to_send.set('requirement_item_scope',this.requirementItemScopeModel);
-                data_to_send.set('requirement_item_status',this.statusItemModel['value']);
-                data_to_send.set('requirement_item_type',this.typeItemModel['value']);
+                data_to_send.set('requirement_item_status',this.statusItemModel);
+                data_to_send.set('requirement_item_type',this.typeItemModel);
 
                 axios.post(
                     `${this.rootUrl}new_requirement_item/save/${this.locationId}/`,
@@ -230,27 +234,19 @@
         watch: {
             itemStatusList: function() {
                 //We need to transform the data from the JSON array given to one vue-select can read
-                this.itemStatusList.forEach((row) => {
-                    //Construct the object
-                    var construction_object = {
-                        'value': row['pk'],
-                        'status': row['fields']['requirement_item_status'],
+                this.statusItemFixList = this.itemStatusList.map((row) => {
+                    return {
+                        value: row['pk'],
+                        label: row['fields']['requirement_item_status'],
                     };
-
-                    //Push the object to status fix list
-                    this.statusItemFixList.push(construction_object);
                 });
             },
             itemTypeList: function() {
-                this.itemTypeList.forEach((row) => {
-                    //Construct the object
-                    var construction_object = {
+                this.typeItemFixList = this.itemTypeList.map((row) => {
+                    return {
                         'value': row['pk'],
                         'type': row['fields']['requirement_item_type'],
-                    }
-
-                    //Push the object to type fix list
-                    this.typeItemFixList.push(construction_object);
+                    };
                 });
             },
         },

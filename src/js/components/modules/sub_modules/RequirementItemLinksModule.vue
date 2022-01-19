@@ -57,6 +57,7 @@
     import axios from 'axios';
     import {Modal} from "bootstrap";
     import { Icon } from '@iconify/vue';
+    import NewRequirementLinkWizard from "../wizards/NewRequirementLinkWizard.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -68,6 +69,7 @@
         name: "RequirementItemLinksModule",
         components: {
             Icon,
+            NewRequirementLinkWizard,
         },
         props: {
             destination: {

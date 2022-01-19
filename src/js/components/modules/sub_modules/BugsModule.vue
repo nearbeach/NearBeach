@@ -79,6 +79,7 @@
     import axios from 'axios';
     import {Modal} from "bootstrap";
     import { Icon } from '@iconify/vue';
+    import AddBugWizard from "../wizards/AddBugWizard.vue";
 
     //Mixins
     import errorModalMixin from '../../../mixins/errorModalMixin';
@@ -90,6 +91,7 @@
     export default {
         name: "BugsModule",
         components: {
+            AddBugWizard,
             Icon,
         },
         props: {

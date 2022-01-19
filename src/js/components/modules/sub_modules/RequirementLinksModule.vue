@@ -54,7 +54,7 @@
         </p>
 
         <!-- ITEM LINKS -->
-        <div v-if="itemLinkResults.length == 0"
+        <div v-if="itemLinkResults.length === 0"
         >
             <div class="alert alert-dark">
                 Sorry - there are no Item Links. Please navigate to the Item you wish to add a link too.
@@ -94,6 +94,7 @@
     import {Modal} from "bootstrap";
     import axios from 'axios';
     import { Icon } from '@iconify/vue';
+    import NewRequirementLinkWizard from "../wizards/NewRequirementLinkWizard.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -105,6 +106,7 @@
         name: "RequirementLinksModule",
         components: {
             Icon,
+            NewRequirementLinkWizard,
         },
         props: {
             activateLazyLoading: {

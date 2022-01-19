@@ -37,7 +37,6 @@
 <script>
     //JavaScript Libraries
     const axios = require('axios');
-    import bootstrap from 'bootstrap';
     import { Modal } from 'bootstrap';
 
     //VueX

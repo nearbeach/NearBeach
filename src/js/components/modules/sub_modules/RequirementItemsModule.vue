@@ -64,6 +64,7 @@
     import { Modal } from "bootstrap";
     import { Icon } from '@iconify/vue';
     import axios from 'axios';
+    import NewRequirementItemWizard from "../wizards/NewRequirementItemWizard.vue";
 
     //VueX
     import { mapGetters} from 'vuex';
@@ -75,6 +76,7 @@
         name: "RequirementItemsModule",
         components: {
             Icon,
+            NewRequirementItemWizard,
         },
         props: {
             locationId: {

@@ -56,6 +56,7 @@
     import { Modal } from "bootstrap";
     import { Icon } from '@iconify/vue';
     import axios from 'axios';
+    import NewLinkWizard from "../wizards/NewLinkWizard.vue";
 
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
@@ -67,6 +68,7 @@
         name: "ObjectLinks",
         components: {
             Icon,
+            NewLinkWizard,
         },
         props: {
             destination: {

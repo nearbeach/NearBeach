@@ -14,11 +14,11 @@
                           v-if="!v$.localStartDateModel.required && isDirty"
                     > Please select a date.</span>
                 </label>
-                <datetime type="datetime"
-                          v-model="localStartDateModel"
-                          input-class="form-control"
-                          v-bind:minute-step="5"
-                ></datetime>
+                <n-date-picker type="datetime"
+                               default-time="9:00:00"
+                               v-model="localStartDateModel"
+                               class="form-control"
+                ></n-date-picker>
             </div>
         </div>
         <div class="col-md-4">
@@ -28,11 +28,11 @@
                           v-if="!v$.localEndDateModel.required && isDirty"
                     > Please select a date.</span>
                 </label>
-                <datetime type="datetime"
-                          v-model="localEndDateModel"
-                          input-class="form-control"
-                          v-bind:minute-step="5"
-                ></datetime>
+                <n-date-picker type="datetime"
+                               default-time="16:00:00"
+                               v-model="localEndDateModel"
+                               class="form-control"
+                ></n-date-picker>
             </div>
         </div>
     </div>
@@ -40,6 +40,7 @@
 
 <script>
     import { DateTime } from "luxon";
+    import { NDatePicker } from 'naive-ui';
 
     //Validation
     import useVuelidate from '@vuelidate/core'
@@ -49,6 +50,9 @@
         name: "BetweenDates",
         setup() {
             return { v$: useVuelidate(), }
+        },
+        components: {
+            NDatePicker,
         },
         props: {
             destination: {

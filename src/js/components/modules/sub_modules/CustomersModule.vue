@@ -46,6 +46,8 @@
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
     import { Icon } from '@iconify/vue';
+    import CustomersListModule from "./CustomersListModule.vue";
+    import AddCustomerWizard from "../wizards/AddCustomerWizard.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -56,6 +58,8 @@
     export default {
         name: "CustomersModule",
         components: {
+            AddCustomerWizard,
+            CustomersListModule,
             Icon,
         },
         props: {

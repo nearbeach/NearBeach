@@ -28,11 +28,11 @@
                             </p>
                         </div>
                         <div class="col-md-8">
-                            <v-select :options="objectSelection"
-                                      v-model="objectModel"
+                            <n-select :options="objectSelection"
+                                      v-model:value="objectModel"
                                       class="object-selection"
                                       v-if="!isSearching"
-                            ></v-select>
+                            ></n-select>
                             <div v-else
                                  class="alert alert-success"
                             >
@@ -177,6 +177,7 @@
     import iconMixin from "../../../mixins/iconMixin";
     import axios from 'axios';
     import { Icon } from '@iconify/vue';
+    import { NSelect } from 'naive-ui';
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -185,6 +186,7 @@
         name: "NewRequirementLinkWizard",
         components: {
             Icon,
+            NSelect,
         },
         props: {
             destination: {
@@ -212,8 +214,8 @@
                 objectModel: null,
                 objectResults: [],
                 objectSelection: [
-                    'Project',
-                    'Task',
+                    { value: 'Project', label: 'Project'},
+                    { value: 'Task', label: 'Task'},
                 ],
                 linkModel: [],
             }

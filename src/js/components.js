@@ -145,6 +145,12 @@ export const
             './components/organisations/OrganisationModules.vue'
         )
     ),
+    ParentModules = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "parent-modules" */
+            './components/modules/ParentModules.vue'
+        )
+    ),
     PermissionInformation = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "permission-information" */

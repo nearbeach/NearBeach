@@ -69,9 +69,9 @@
                 <div class="col-md-4"
                      v-if="!isReadOnly"
                 >
-                    <v-select v-bind:options="statusOptions"
-                              v-model="taskStatusModel"
-                    ></v-select>
+                    <n-select v-bind:options="statusOptions"
+                              v-model:value="taskStatusModel"
+                    ></n-select>
                 </div>
                 <div class="col-md-4"
                      v-if="!isReadOnly"
@@ -137,6 +137,11 @@
     import useVuelidate from '@vuelidate/core'
     import { required, maxLength } from '@vuelidate/validators'
     import { DateTime } from "luxon";
+    import Editor from '@tinymce/tinymce-vue'
+    import { NSelect } from 'naive-ui';
+    import StakeholderInformation from "../organisations/StakeholderInformation.vue";
+    import BetweenDates from "../dates/BetweenDates.vue";
+
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -149,6 +154,12 @@
         name: "TaskInformation",
         setup() {
             return { v$: useVuelidate(), }
+        },
+        components: {
+            BetweenDates,
+            'editor': Editor,
+            NSelect,
+            StakeholderInformation,
         },
         props: {
             defaultStakeholderImage: {
@@ -194,10 +205,10 @@
             return {
                 isReadOnly: false,
                 statusOptions: [
-                    'Backlog',
-                    'Blocked',
-                    'In Progress',
-                    'Test/Review',
+                    { value: 'Backlog', label: 'Backlog'},
+                    { value: 'Blocked', label: 'Blocked'},
+                    { value: 'In Progress', label: 'In Progress'},
+                    { value: 'Test/Review', label: 'Test/Review'},
                 ],
                 taskDescriptionModel: this.taskResults[0]['fields']['task_long_description'],
                 taskEndDateModel: DateTime.fromISO(this.taskResults[0]['fields']['task_end_date']),
