@@ -136,8 +136,8 @@
                 const data_to_send = new FormData()
                 data_to_send.set('kanban_card_text', all_data.cardTitle);
                 data_to_send.set('kanban_card_description', all_data.cardDescription);
-                data_to_send.set('kanban_level', all_data.cardLevel.value);
-                data_to_send.set('kanban_column', all_data.cardColumn.value);
+                data_to_send.set('kanban_level', all_data.cardLevel);
+                data_to_send.set('kanban_column', all_data.cardColumn);
                 data_to_send.set('kanban_card_id', all_data.cardId);
 
                 //Use Axios to send data to backend

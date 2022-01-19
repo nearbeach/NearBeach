@@ -1,5 +1,6 @@
 // import Vuex from 'vuex';
 import { createStore } from 'vuex'
+import axios from 'axios';
 
 const moduleCard = {
   state: () => ({
@@ -20,22 +21,8 @@ const moduleCard = {
       state.cardId = payload.cardId;
       state.cardTitle = payload.cardTitle;
       state.cardDescription = payload.cardDescription;
-      try {
-        //Filter for the correct column data from the list columns
-        state.cardColumn = state.listColumns.filter((row) => {
-          return payload.cardColumn == row.value;
-        })[0];
-
-        //Filter for the correct level data from the list level
-        state.cardLevel = state.listLevels.filter((row) => {
-          return payload.cardLevel == row.value;
-        })[0];
-      } catch {
-        state.cardColumn = 0;
-        state.cardLevel = 0;
-      }
-      //state.cardLevel = payload.cardLevel;
-      //state.cardColumn = payload.cardColumn;
+      state.cardLevel = payload.cardLevel;
+      state.cardColumn = payload.cardColumn;
 
       //Get data for the notes
       axios
@@ -47,19 +34,19 @@ const moduleCard = {
         .catch((error) => {});
     },
     updateValue(state, payload) {
-      state.payload.field = payload.value;
+      state[payload.field] = payload.value;
     },
     updateLists(state, payload) {
       state.listColumns = payload.columnResults.map((row) => {
         return {
           value: row.pk,
-          column: row.fields.kanban_column_name,
+          label: row.fields.kanban_column_name,
         };
       });
       state.listLevels = payload.levelResults.map((row) => {
         return {
           value: row.pk,
-          level: row.fields.kanban_level_name,
+          label: row.fields.kanban_level_name,
         };
       });
     },
@@ -77,6 +64,21 @@ const moduleCard = {
     },
     getCardId: (state) => {
       return state.cardId;
+    },
+    getCardColumn: (state) => {
+      return state.cardColumn;
+    },
+    getCardLevel: (state) => {
+      return state.cardLevel;
+    },
+    getCardTitle: (state) => {
+      return state.cardTitle;
+    },
+    getListColumns: (state) => {
+      return state.listColumns;
+    },
+    getListLevels: (state) => {
+      return state.listLevels;
     },
     getCardNotes: (state) => {
       return state.cardNotes;

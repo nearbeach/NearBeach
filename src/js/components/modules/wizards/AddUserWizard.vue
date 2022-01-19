@@ -28,10 +28,10 @@
                             </p>
                         </div>
                         <div class="col-md-8">
-                            <v-select :options="userFixList"
-                                      v-model="userModel"
+                            <n-select :options="userFixList"
+                                      v-model:value="userModel"
                                       multiple
-                            ></v-select>
+                            ></n-select>
                         </div>
                     </div>
                     <div v-else
@@ -73,6 +73,7 @@
 <script>
     import axios from 'axios';
     import { Icon } from '@iconify/vue';
+    import { NSelect } from 'naive-ui';
 
     //VueX
     import { mapGetters } from 'vuex'
@@ -85,6 +86,7 @@
         name: "AddUserWizard",
         components: {
             Icon,
+            NSelect,
         },
         props: {
             destination: {
@@ -123,7 +125,7 @@
 
                 //Look through all of the results in user model and append
                 this.userModel.forEach(row => {
-                    data_to_send.append('user_list',row['value']);
+                    data_to_send.append('user_list',row);
                 });
 
                 //User axios to send the data to the backend

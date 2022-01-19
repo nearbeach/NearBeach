@@ -57,6 +57,7 @@
 
 <script>
     const axios = require('axios');
+    import KanbanPropertyOrder from "./KanbanPropertyOrder.vue";
 
     // Validation
     import useVuelidate from '@vuelidate/core'
@@ -70,6 +71,9 @@
         name: "KanbanEditBoard",
         setup() {
             return { v$: useVuelidate(), }
+        },
+        components: {
+            KanbanPropertyOrder,
         },
         props: {
             columnResults: {
@@ -93,6 +97,14 @@
             rootUrl: {
                 type: String,
                 default: "/",
+            },
+            staticUrl: {
+                type: String,
+                default: "/",
+            },
+            userLevel: {
+                type: Number,
+                default: 0,
             },
         },
         mixins: [
@@ -135,13 +147,19 @@
             this.$store.commit({
                 type: 'updateUrl',
                 rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
+            })
+
+            this.$store.commit({
+                type: 'updateUserLevel',
+                userLevel: this.userLevel,
             })
 
             //Map the variables into a useable format
             this.columnModel = this.columnResults.map(row => {
                 return {
                     'id': row['pk'],
-                    'title': row['fields']['kanban_column_name'], 
+                    'title': row['fields']['kanban_column_name'],
                 };
             });
 

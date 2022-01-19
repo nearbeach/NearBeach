@@ -43,6 +43,18 @@ export const
             './components/groups/GroupInformation.vue'
         )
     ),
+    KanbanEditBoard = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "kanban-edit-board" */
+            './components/kanban/KanbanEditBoard.vue'
+        )
+    ),
+    KanbanGroupPermissions = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "kanban-group-permissions" */
+            './components/kanban/KanbanGroupPermissions.vue'
+        )
+    ),
     KanbanInformation = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "kanban-information" */

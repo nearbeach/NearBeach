@@ -60,7 +60,7 @@
         computed: {
             cardDescription: {
                 get () {
-                    return this.$store.cardDescription;
+                    return this.$store.state.card.cardDescription;
                 },
                 set (value) {
                     this.$store.commit('updateValue', {

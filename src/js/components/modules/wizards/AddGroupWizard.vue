@@ -28,10 +28,10 @@
                             </p>
                         </div>
                         <div class="col-md-8">
-                            <v-select :options="groupFixList"
-                                      v-model="groupModel"
+                            <n-select :options="groupFixList"
+                                      v-model:value="groupModel"
                                       multiple
-                            ></v-select>
+                            ></n-select>
                         </div>
                     </div>
                     <div v-else
@@ -71,6 +71,7 @@
 
 <script>
     import { Icon } from '@iconify/vue';
+    import { NSelect } from 'naive-ui';
 
     //Mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
@@ -85,6 +86,7 @@
         name: "AddGroupWizard",
         components: {
             Icon,
+            NSelect,
         },
         props: {
             destination: {
@@ -120,7 +122,7 @@
 
                 //Loop through the model and append the results
                 this.groupModel.forEach(row => {
-                    data_to_send.append('group_list',row['value']);
+                    data_to_send.append('group_list',row);
                 });
 
                 //user axios
@@ -145,18 +147,11 @@
                     `${this.rootUrl}object_data/${this.destination}/${this.locationId}/group_list_all/`,
                 ).then(response => {
                     //Clear the groupFixList
-                    this.groupFixList = [];
-
-                    //Loop through the response's data and add the fixed rows to groupFixList
-                    response['data'].forEach(row => {
-                        //Create object array
-                        var construction_object = {
+                    this.groupFixList = response['data'].map(row => {
+                        return {
                             'value': row['pk'],
                             'label': row['fields']['group_name'],
                         };
-
-                        //Add construction_object to groupFixList
-                        this.groupFixList.push(construction_object);
                     });
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);

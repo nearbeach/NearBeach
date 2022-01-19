@@ -227,9 +227,16 @@
                 objectModel: null,
                 objectResults: [],
                 objectSelection: [
-                    'Project',
-                    'Requirement',
-                    'Task',
+                    {
+                        value: 'Project',
+                        label: 'Project',
+                    }, {
+                        value: 'Requirement',
+                        label: 'Requirement',
+                    }, {
+                        value: 'Task',
+                        label: 'Task',
+                    },
                 ],
                 linkModel: [],
             }

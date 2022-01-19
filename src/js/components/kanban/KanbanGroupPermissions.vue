@@ -10,8 +10,13 @@
 </template>
 
 <script>
+    import GroupsAndUsersModule from "../modules/sub_modules/GroupsAndUsersModule.vue";
+
     export default {
         name: "KanbanGroupPermissions",
+        components: {
+            GroupsAndUsersModule,
+        },
         props: {
             locationId: {
                 type: Number,

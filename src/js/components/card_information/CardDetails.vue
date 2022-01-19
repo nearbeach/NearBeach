@@ -68,10 +68,12 @@
 <script>
     const axios = require('axios');
     import { NSelect } from 'naive-ui';
+    import { mapGetters } from 'vuex';
 
     export default {
         name: 'CardDetails',
         components: {
+            mapGetters,
             NSelect,
         },
         data() {
@@ -80,68 +82,22 @@
             }
         },
         computed: {
-            cardId: {
-                get () {
-                    return this.$store.cardId;
-                },
-                set (value) {
-                    this.$store.commit('updateValue', {
-                        field: 'cardId',
-                        value: value,
-                    });
-                },
-            },
-            cardTitle: {
-                get () {
-                    return this.$store.cardTitle;
-                },
-                set (value) {
-                    this.$store.commit('updateValue', {
-                        field: 'cardTitle',
-                        value: value,
-                    });
-                },
-            },
+            ...mapGetters({
+                cardId: 'getCardId',
+                // cardColumn: 'getCardColumn',
+                cardLevel: 'getCardLevel',
+                cardTitle: 'getCardTitle',
+                listColumns: 'getListColumns',
+                listLevels: 'getListLevels',
+            }),
             cardColumn: {
-                get () {
-                    return this.$store.cardColumn;
+                get() {
+                    return this.$store.state.card.cardColumn;
                 },
-                set (value) {
-                    this.$store.commit('updateValue', {
+                set(value) {
+                    this.$store.commit({
+                        type: 'updateValue',
                         field: 'cardColumn',
-                        value: value,
-                    });
-                },
-            },
-            cardLevel: {
-                get () {
-                    return this.$store.cardLevel;
-                },
-                set (value) {
-                    this.$store.commit('updateValue', {
-                        field: 'cardLevel',
-                        value: value,
-                    });
-                },
-            },
-            listColumns: {
-                get () {
-                    return this.$store.listColumns;
-                },
-                set (value) {
-                    this.$store.commit('updateValue', {
-                        field: 'listColumns',
-                        value: value,
-                    });
-                },
-            },
-            listLevels: {
-                get () {
-                    return this.$store.listLevels;
-                },
-                set (value) {
-                    this.$store.commit('updateValue', {
-                        field: 'listLevels',
                         value: value,
                     });
                 },

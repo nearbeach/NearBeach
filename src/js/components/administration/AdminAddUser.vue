@@ -129,15 +129,12 @@
                 data_to_send.set('username', this.userModel);
 
                 //Loop through all the groups
-                console.log("groupModel: ", this.groupModel);
                 this.groupModel.forEach(row => {
-                    console.log("ROW: ", row);
                     data_to_send.append('group', row);
                 });
 
                 //Loop through all the permission_sets
                 this.permissionSetModel.forEach(row => {
-                    console.log("ROW: ", row);
                     data_to_send.append('permission_set', row);
                 });
 

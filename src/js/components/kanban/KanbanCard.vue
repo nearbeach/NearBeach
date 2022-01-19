@@ -1,55 +1,54 @@
 <template>
     <draggable class="list-group kanban-cell"
-               group="tasks"
-               :list="masterList"
-               item-key="pk"
-               @end="onEnd($event)"
                v-bind:id="`kanban_cell_${levelId}_${columnId}`"
                v-bind:data-level="levelId"
                v-bind:data-column="columnId"
+               group="tasks"
+               @end="onEnd($event)"
+               v-model="masterList"
+               item-key="pk"
     >
-        <!-- SINGLE CARDS -->
-<!--        <template #item="{element}"-->
-<!--                  class="list-group-item"-->
-<!--                  v-for="card in masterList"-->
-<!--                  :key="card['pk']"-->
-<!--                  :id="card['pk']"-->
-<!--                  v-bind:data-sort-number="card['fields']['kanban_card_sort_number']"-->
-<!--                  v-bind:data-card-id="card['pk']"-->
-<!--                  v-on:dblclick="doubleClickCard($event)"-->
-<!--        >-->
-<!--            <b>#{{card['pk']}}</b><br/>-->
-<!--            {{card['fields']['kanban_card_text']}}-->
-<!--            <Icon class="kanban-card-info-icon"-->
-<!--                         v-bind:icon="icons.infoCircle"-->
-<!--                         v-on:click="singleClickCard(card['pk'])"-->
-<!--                         v-on:dblclick="singleClickCard(card['pk'])"-->
-<!--            ></Icon>-->
-<!--        </template>-->
+        <template #item="{element}">
+            <div class="list-group-item"
+                 :key="element['pk']"
+                 :id="element['pk']"
+                 v-bind:data-sort-number="element['fields']['kanban_card_sort_number']"
+                 v-bind:data-card-id="element['pk']"
+                 v-on:dblclick="doubleClickCard($event)"
+            >
+                <b>#{{element['pk']}}</b><br/>
+                {{element['fields']['kanban_card_text']}}
+                <Icon class="kanban-card-info-icon"
+                             v-bind:icon="icons.infoCircle"
+                             v-on:click="singleClickCard(element['pk'])"
+                             v-on:dblclick="singleClickCard(element['pk'])"
+                ></Icon>
+            </div>
+        </template>
 
-        <!-- ADD NEW CARDS + LINK OBJECTS -->
-        <template class="kanban-add-new-cards"
-            #footer
-        >
-            <a class="kanban-link btn btn-primary"
-               href="javascript:void(0)"
-               v-on:click="addNewKanbanCard"
-            >
-                New Card
-            </a>
-            <a class="kanban-link btn btn-warning"
-               href="javascript:void(0)"
-               v-on:click="addNewLink"
-            >
-                Link Object
-            </a>
-            <a class="kanban-link btn btn-danger"
-               href="javascript:void(0)"
-               v-on:click="archiveCards"
-               v-if="masterList.length > 0"
-            >
-                Archive Cards
-            </a>
+<!--         ADD NEW CARDS + LINK OBJECTS -->
+        <template #footer>
+            <div class="kanban-add-new-cards">
+                <a class="kanban-link btn btn-primary"
+                   href="javascript:void(0)"
+                   v-on:click="addNewKanbanCard"
+                >
+                    New Card
+                </a>
+                <a class="kanban-link btn btn-warning"
+                   href="javascript:void(0)"
+                   v-on:click="addNewLink"
+                >
+                    Link Object
+                </a>
+                <a class="kanban-link btn btn-danger"
+                   href="javascript:void(0)"
+                   v-on:click="archiveCards"
+                   v-if="masterList.length > 0"
+                >
+                    Archive Cards
+                </a>
+            </div>
         </template>
     </draggable>
 </template>

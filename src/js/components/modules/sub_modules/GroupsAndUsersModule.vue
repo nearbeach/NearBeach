@@ -103,6 +103,8 @@
     import { Icon } from '@iconify/vue';
     import axios from 'axios';
     import {Modal} from "bootstrap";
+    import AddGroupWizard from "../wizards/AddGroupWizard.vue";
+    import AddUserWizard from "../wizards/AddUserWizard.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -110,6 +112,8 @@
     export default {
         name: "GroupsAndUsersModule",
         components: {
+            AddGroupWizard,
+            AddUserWizard,
             Icon,
         },
         props: {

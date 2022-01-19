@@ -84,6 +84,10 @@
                 type: String,
                 default: '/',
             },
+            staticUrl: {
+                type: String,
+                default: '/',
+            },
             userLevel: {
                 type: Number,
                 default: 0,
@@ -115,8 +119,8 @@
                     //Check to see if the primary keys match - if they do update the data
                     if (row['pk'] == data['kanban_card_id']) {
                         row['fields']['kanban_card_text'] = data['kanban_card_text'];
-                        row['fields']['kanban_column'] = data['kanban_column']['value'];
-                        row['fields']['kanban_level'] = data['kanban_level']['value'];
+                        row['fields']['kanban_column'] = data['kanban_column'];
+                        row['fields']['kanban_level'] = data['kanban_level'];
                     }
                 }) 
             },
@@ -126,6 +130,7 @@
             this.$store.commit({
                 type: 'updateUrl',
                 rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
             })
 
             //Send columns and levels into the VueX
