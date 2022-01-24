@@ -157,6 +157,7 @@
 <script>
     //JavaScript Libraries
     const axios = require('axios');
+    import ListOrganisations from "./ListOrganisations.vue";
 
     //Validation
     import useVuelidate from '@vuelidate/core'
@@ -173,6 +174,9 @@
         name: "NewOrganisationModal",
         setup() {
             return { v$: useVuelidate(), }
+        },
+        components: {
+            ListOrganisations,
         },
         props: {},
         mixins: [

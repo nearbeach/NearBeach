@@ -69,9 +69,9 @@
                 <div class="col-md-4"
                      v-if="!isReadOnly"
                 >
-                    <v-select v-bind:options="statusOptions"
-                              v-model="projectStatusModel"
-                    ></v-select>
+                    <n-select v-bind:options="statusOptions"
+                              v-model:value="projectStatusModel"
+                    ></n-select>
                 </div>
                 <div class="col-md-4"
                      v-if="!isReadOnly"
@@ -136,6 +136,9 @@
 <script>
     const axios = require('axios');
     import { DateTime } from "luxon";
+    import { NSelect } from 'naive-ui';
+    import BetweenDates from "../dates/BetweenDates.vue";
+    import StakeholderInformation from "../organisations/StakeholderInformation.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -152,6 +155,11 @@
         name: "ProjectInformation",
         setup() {
             return { v$: useVuelidate(), }
+        },
+        components: {
+            BetweenDates,
+            NSelect,
+            StakeholderInformation,
         },
         props: {
             defaultStakeholderImage: {
@@ -194,10 +202,10 @@
                 projectStartDateModel: DateTime.fromISO(this.projectResults[0]['fields']['project_start_date']),
                 projectStatusModel: this.projectResults[0]['fields']['project_status'],
                 statusOptions: [
-                    'Backlog',
-                    'Blocked',
-                    'In Progress',
-                    'Test/Review',
+                    { value: 'Backlog', label: 'Backlog'},
+                    { value: 'Blocked', label: 'Blocked'},
+                    { value: 'In Progress', label: 'In Progress'},
+                    { value: 'Test/Review', label: 'Test/Review'},
                 ],
             }
         },

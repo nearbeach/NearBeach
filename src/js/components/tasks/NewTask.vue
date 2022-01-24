@@ -190,7 +190,7 @@
 
                 //Create the data_to_send array
                 const data_to_send = new FormData();
-                data_to_send.set('organisation',this.stakeholderModel['value']);
+                data_to_send.set('organisation',this.stakeholderModel);
                 data_to_send.set('task_long_description',this.taskDescriptionModel);
                 data_to_send.set('task_end_date',this.taskEndDateModel);
                 data_to_send.set('task_short_description',this.taskShortDescriptionModel);

@@ -140,6 +140,7 @@
     //JavaScript Libraries
     const axios = require('axios');
     import { Modal } from 'bootstrap';
+    import ListOrganisations from "./ListOrganisations.vue";
 
     //Validation
     import useVuelidate from '@vuelidate/core'
@@ -153,6 +154,9 @@
         name: "NewOrganisation",
         setup() {
             return { v$: useVuelidate(), }
+        },
+        components: {
+            ListOrganisations,
         },
         props: {
             rootUrl: {

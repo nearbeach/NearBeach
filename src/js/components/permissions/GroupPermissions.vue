@@ -14,11 +14,11 @@
             <label>Group List
                 <span class="error" v-if="!v$.groupModel.required && isDirty"> Please select at least one group.</span>
             </label>
-            <v-select :options="groupFixResults"
+            <n-select :options="groupFixResults"
                       label="group"
-                      v-model="groupModel"
+                      v-model:value="groupModel"
                       multiple
-            ></v-select>
+            ></n-select>
         </div>
     </div>
 </template>
@@ -27,13 +27,16 @@
     //Validation
     import useVuelidate from '@vuelidate/core'
     import { required } from '@vuelidate/validators'
+    import { NSelect } from 'naive-ui';
 
     export default {
         name: "GroupPermissions",
         setup() {
             return { v$: useVuelidate(), }
         },
-        components: {},
+        components: {
+            NSelect,
+        },
         props: {
             destination: {
                 type: String,
@@ -75,15 +78,11 @@
         },
         mounted() {
             //Fix up the list to remove any django nested loops
-            this.groupResults.forEach((row) => {
-                //Construct the object
-                var construction_object = {
+            this.groupFixResults = this.groupResults.filter((row) => {
+                return {
                     'value': row['pk'],
-                    'group': row['fields']['group_name'],
+                    'label': row['fields']['group_name'],
                 }
-
-                //Push the object to type fix list
-                this.groupFixResults.push(construction_object);
             });
 
             //Any User groups are added to the group Model

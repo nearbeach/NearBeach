@@ -19,9 +19,11 @@
                 <label>Stakeholder Organisation
                     <span class="error" v-if="!v$.stakeholderModel.required && isDirty"> Please search for a Stakeholder.</span>
                 </label>
-                <v-select :options="stakeholderFixList"
+                <n-select :options="stakeholderFixList"
+                          filterable
+                          placeholder="Search Stakeholders"
                           @search="fetchOptions"
-                          v-model="stakeholderModel"
+                          v-model:value="stakeholderModel"
                           label="organisation_name"
                           class="get-stakeholders"
                 />
@@ -38,6 +40,8 @@
     //JavaScript Libraries
     const axios = require('axios');
     import { Modal } from 'bootstrap';
+    import { NSelect } from 'naive-ui';
+    import NewOrganisationModal from "./NewOrganisationModal.vue";
 
     //VueX
     import { mapGetters} from 'vuex';
@@ -56,7 +60,8 @@
         },
         components: {
             axios,
-            bootstrap,
+            NewOrganisationModal,
+            NSelect,
         },
         mixins: [
             searchMixin
@@ -111,25 +116,20 @@
                     `${this.rootUrl}search/organisation/data/`,
                     data_to_send
                 ).then(response => {
-                    //Clear the stakeholderFixList
-                    this.stakeholderFixList = [];
-
                     //Extract the required JSON data
                     var extracted_data = response['data'];
 
                     //Look through the extracted data - and map the required fields into stakeholder fix list
-                    extracted_data.forEach((row) => {
+                    this.stakeholderFixList = extracted_data.map((row) => {
                         //Create the creation object
-                        var creation_object = {
-                            'value': row['pk'],
-                            'organisation_name': row['fields']['organisation_name'],
-                            'organisation_website': row['fields']['organisation_website'],
-                            'organisation_email': row['fields']['organisation_email'],
-                            'organisation_profile_picture': row['fields']['organisation_profile_picture'],
+                        return {
+                            value: row['pk'],
+                            label: row['fields']['organisation_name'],
+                            // 'organisation_name': row['fields']['organisation_name'],
+                            // 'organisation_website': row['fields']['organisation_website'],
+                            // 'organisation_email': row['fields']['organisation_email'],
+                            // 'organisation_profile_picture': row['fields']['organisation_profile_picture'],
                         };
-
-                        //Push that object into the stakeholders
-                        this.stakeholderFixList.push(creation_object)
                     });
                 }).catch(function (error) {
                     // Get the error modal
