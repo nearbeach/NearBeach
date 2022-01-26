@@ -103,9 +103,8 @@
             <hr>
             <between-dates destination="project"
                            v-on:update_dates="updateDates($event)"
-                           v-bind:is-dirty-end="v$.projectEndDateModel.$dirty || v$.projectStartDateModel.$dirty"
-                           v-bind:end-date-model="projectEndDateModel"
-                           v-bind:start-date-model="projectStartDateModel"
+                           v-bind:end-date-model="projectEndDateModel.getTime()"
+                           v-bind:start-date-model="projectStartDateModel.getTime()"
             ></between-dates>
 
             <!-- Submit and Close Button -->
@@ -135,10 +134,10 @@
 
 <script>
     const axios = require('axios');
-    import { DateTime } from "luxon";
     import { NSelect } from 'naive-ui';
     import BetweenDates from "../dates/BetweenDates.vue";
     import StakeholderInformation from "../organisations/StakeholderInformation.vue";
+    import Editor from '@tinymce/tinymce-vue';
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -158,6 +157,7 @@
         },
         components: {
             BetweenDates,
+            'editor': Editor,
             NSelect,
             StakeholderInformation,
         },
@@ -197,9 +197,9 @@
             return {
                 isReadOnly: false,
                 projectDescriptionModel: this.projectResults[0]['fields']['project_description'],
-                projectEndDateModel: DateTime.fromISO(this.projectResults[0]['fields']['project_end_date']),
+                projectEndDateModel: new Date(this.projectResults[0]['fields']['project_end_date']),
                 projectNameModel: this.projectResults[0]['fields']['project_name'],
-                projectStartDateModel: DateTime.fromISO(this.projectResults[0]['fields']['project_start_date']),
+                projectStartDateModel: new Date(this.projectResults[0]['fields']['project_start_date']),
                 projectStatusModel: this.projectResults[0]['fields']['project_status'],
                 statusOptions: [
                     { value: 'Backlog', label: 'Backlog'},
@@ -233,8 +233,8 @@
                 this.updateProject();
             },
             updateDates: function(data) {
-                this.projectEndDateModel = data['end_date'];
-                this.projectStartDateModel = data['start_date'];
+                this.projectEndDateModel = new Date(data['end_date']);
+                this.projectStartDateModel = new Date(data['start_date']);
             },
             updateProject: function() {
                 // Check the validation first
@@ -250,9 +250,9 @@
                 //Construct data_to_send to backend
                 const data_to_send = new FormData();
                 data_to_send.set('project_description',this.projectDescriptionModel);
-                data_to_send.set('project_end_date',this.projectEndDateModel);
+                data_to_send.set('project_end_date',this.projectEndDateModel.toISOString());
                 data_to_send.set('project_name',this.projectNameModel);
-                data_to_send.set('project_start_date',this.projectStartDateModel);
+                data_to_send.set('project_start_date',this.projectStartDateModel.toISOString());
                 data_to_send.set('project_status', this.projectStatusModel);
 
                 //Open up the loading modal

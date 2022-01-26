@@ -66,7 +66,6 @@
             <hr>
             <between-dates destination="project"
                            v-on:update_dates="updateDates($event)"
-                           v-bind:is-dirty-end="v$.projectEndDateModel.$dirty || v$.projectStartDateModel.$dirty"
             ></between-dates>
 
             <!-- Group Permissions -->
@@ -95,7 +94,12 @@
 <script>
     const axios = require('axios');
     import useVuelidate from '@vuelidate/core'
-    import { required, maxLength } from '@vuelidate/validators'
+    import { required, maxLength } from '@vuelidate/validators';
+    import BetweenDates from "../dates/BetweenDates.vue";
+    import StakeholderInformation from "../organisations/StakeholderInformation.vue";
+    import Editor from '@tinymce/tinymce-vue';
+    import GroupPermissions from "../permissions/GroupPermissions.vue";
+    import GetStakeholders from "../organisations/GetStakeholders.vue";
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -104,6 +108,13 @@
         name: "NewProject",
         setup() {
             return { v$: useVuelidate(), }
+        },
+        components: {
+            BetweenDates,
+            'editor': Editor,
+            GetStakeholders,
+            GroupPermissions,
+            StakeholderInformation,
         },
         props: {
             groupResults: Array,
@@ -157,11 +168,18 @@
             },
         },
         methods: {
-            submitNewProject: function() {
-                //Check form validation
-                this.v$.$touch();
+            submitNewProject: async function() {
+                //Check validation
+                const isFormCorrect = await this.v$.$validate();
 
-                if (this.v$.$invalid) {
+                if (!isFormCorrect && (
+                    this.v$.groupModel.$error.length > 0 ||
+                    this.v$.stakeholderModel.length > 0 ||
+                    this.v$.projectDescriptionModel.length > 0 ||
+                    this.v$.projectEndDateModel.length > 0 ||
+                    this.v$.projectNameModel.length > 0 ||
+                    this.v$.projectStartDateModel.length > 0
+                )) {
                     this.showValidationErrorModal();
 
                     //Just return - as we do not need to do the rest of this function
@@ -172,13 +190,13 @@
                 const data_to_send = new FormData();
                 data_to_send.set('project_name',this.projectNameModel);
                 data_to_send.set('project_description',this.projectDescriptionModel);
-                data_to_send.set('organisation',this.stakeholderModel['value']);
-                data_to_send.set('project_start_date',this.projectStartDateModel);
-                data_to_send.set('project_end_date',this.projectEndDateModel);
+                data_to_send.set('organisation',this.stakeholderModel);
+                data_to_send.set('project_start_date',this.projectStartDateModel.toISOString());
+                data_to_send.set('project_end_date',this.projectEndDateModel.toISOString());
 
                 // Insert a new row for each group list item
                 this.groupModel.forEach((row,index) => {
-                    data_to_send.append(`group_list`,row['value']);
+                    data_to_send.append(`group_list`,row);
                 });
 
                 //Send data to backend
@@ -194,8 +212,8 @@
             },
             updateDates: function(data) {
                 //Update both the start and end dates
-                this.projectStartDateModel = data['start_date'];
-                this.projectEndDateModel = data['end_date'];
+                this.projectStartDateModel = new Date(data['start_date']);
+                this.projectEndDateModel = new Date(data['end_date']);
             },
             updateGroupModel: function(data) {
                 this.groupModel = data;

@@ -195,8 +195,6 @@
                     return;
                 }
 
-
-
                 //Create the data_to_send array
                 const data_to_send = new FormData();
                 data_to_send.set('organisation',this.stakeholderModel);

@@ -80,11 +80,11 @@
                                     <label>Requirement Status
                                         <span class="error" v-if="!v$.statusModel.required && v$.statusModel.$dirty"> Please select a status.</span>
                                     </label>
-                                    <v-select :options="statusFixList"
+                                    <n-select :options="statusFixList"
                                               v-bind:clearable="false"
                                               label="status"
-                                              v-model="statusModel"
-                                    ></v-select>
+                                              v-model:value="statusModel"
+                                    ></n-select>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -140,9 +140,10 @@
 
 <script>
     //JavaScript Libraries
-    import {Modal} from "bootstrap";
-
     const axios = require('axios');
+    import Editor from '@tinymce/tinymce-vue';
+    import { NSelect } from 'naive-ui';
+    import StakeholderInformation from "../organisations/StakeholderInformation.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -160,7 +161,11 @@
         setup() {
             return { v$: useVuelidate(), }
         },
-        components: {},
+        components: {
+            'editor': Editor,
+            NSelect,
+            StakeholderInformation,
+        },
         props: [
             'defaultStakeholderImage',
             'organisationResults',
@@ -224,8 +229,8 @@
                 const data_to_send = new FormData();
                 data_to_send.set('requirement_title', this.requirementTitleModel);
                 data_to_send.set('requirement_scope',this.requirementScopeModel);
-                data_to_send.set('requirement_status',this.statusModel['value']);
-                data_to_send.set('requirement_type',this.typeModel['value']);
+                data_to_send.set('requirement_status',this.statusModel);
+                data_to_send.set('requirement_type',this.typeModel);
 
                 // Use Axion to send the data
                 axios.post(
@@ -254,7 +259,8 @@
             this.statusFixList = this.statusList.map((row) => {
                 //Construct the object
                 return {
-                    'value': row['pk'],
+                    value: row['pk'],
+                    label: row['fields']['requirement_status'],
                     'status': row['fields']['requirement_status'],
                     'status_closed': row['fields']['requirement_status_is_closed'],
                 };
