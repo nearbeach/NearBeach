@@ -102,9 +102,8 @@
             <hr>
             <between-dates destination="task"
                            v-on:update_dates="updateDates($event)"
-                           v-bind:is-dirty-end="v$.taskEndDateModel.$dirty || v$.taskStartDateModel.$dirty"
-                           v-bind:start-date-model="taskStartDateModel"
-                           v-bind:end-date-model="taskEndDateModel"
+                           v-bind:start-date-model="taskStartDateModel.getTime()"
+                           v-bind:end-date-model="taskEndDateModel.getTime()"
             ></between-dates>
 
             <!-- Submit Button -->
@@ -136,12 +135,10 @@
     const axios = require('axios');
     import useVuelidate from '@vuelidate/core'
     import { required, maxLength } from '@vuelidate/validators'
-    import { DateTime } from "luxon";
     import Editor from '@tinymce/tinymce-vue'
     import { NSelect } from 'naive-ui';
     import StakeholderInformation from "../organisations/StakeholderInformation.vue";
     import BetweenDates from "../dates/BetweenDates.vue";
-
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -211,9 +208,9 @@
                     { value: 'Test/Review', label: 'Test/Review'},
                 ],
                 taskDescriptionModel: this.taskResults[0]['fields']['task_long_description'],
-                taskEndDateModel: DateTime.fromISO(this.taskResults[0]['fields']['task_end_date']),
+                taskEndDateModel: new Date(this.taskResults[0]['fields']['task_end_date']),
                 taskShortDescriptionModel: this.taskResults[0]['fields']['task_short_description'],
-                taskStartDateModel: DateTime.fromISO(this.taskResults[0]['fields']['task_start_date']),
+                taskStartDateModel: new Date(this.taskResults[0]['fields']['task_start_date']),
                 taskStatusModel: this.taskResults[0]['fields']['task_status'],
             }
         },
@@ -262,9 +259,9 @@
                 //Create the data_to_send array
                 const data_to_send = new FormData();
                 data_to_send.set('task_long_description',this.taskDescriptionModel);
-                data_to_send.set('task_end_date',this.taskEndDateModel);
+                data_to_send.set('task_end_date',this.taskEndDateModel.toISOString());
                 data_to_send.set('task_short_description',this.taskShortDescriptionModel);
-                data_to_send.set('task_start_date',this.taskStartDateModel);
+                data_to_send.set('task_start_date',this.taskStartDateModel.toISOString());
                 data_to_send.set('task_status', this.taskStatusModel);
 
                 //Send data to backend
@@ -284,8 +281,8 @@
                 });
             },
             updateDates: function(data) {
-                this.taskEndDateModel = data['end_date'];
-                this.taskStartDateModel = data['start_date'];
+                this.taskEndDateModel = new Date(data['end_date']);
+                this.taskStartDateModel = new Date(data['start_date']);
             },
             updateGroupModel: function(data) {
                 this.groupModel = data;

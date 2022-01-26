@@ -18,7 +18,8 @@
                     <!-- TASK NAME -->
                     <div class="form-group">
                         <label>Task Short Description:
-                            <span class="error" v-if="!v$.taskShortDescriptionModel.required && v$.taskShortDescriptionModel.$dirty"
+                            <span class="error"
+                                  v-if="!v$.taskShortDescriptionModel.$error.length > 0"
                             > Please supply a title.</span>
                         </label>
                         <input type="text"
@@ -30,8 +31,8 @@
 
                     <!-- TASK DESCRIPTION -->
                     <label>Task Long Description:
-                        <span class="error" v-if="!v$.taskDescriptionModel.required && v$.taskDescriptionModel.$dirty"> Please supply a description.</span>
-                        <span class="error" v-if="!v$.taskDescriptionModel.maxLength"> Sorry - too many characters.</span>
+                        <span class="error" v-if="!v$.taskDescriptionModel.$error.length > 0"
+                        > Please supply a description.</span>
                     </label><br>
                     <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
@@ -59,14 +60,13 @@
             <!-- STAKEHOLDER ORGANISATION -->
             <hr>
             <get-stakeholders v-on:update_stakeholder_model="updateStakeholderModel($event)"
-                              v-bind:is-dirty="v$.stakeholderModel.$dirty"
+                              v-bind:is-dirty="v$.stakeholderModel.$error.length > 0"
             ></get-stakeholders>
 
             <!-- START DATE & END DATE -->
             <hr>
             <between-dates destination="task"
                            v-on:update_dates="updateDates($event)"
-                           v-bind:is-dirty-end="v$.taskEndDateModel.$dirty || v$.taskStartDateModel.$dirty"
             ></between-dates>
 
             <!-- Group Permissions -->
@@ -75,7 +75,7 @@
                                v-bind:destination="'task'"
                                v-bind:user-group-results="userGroupResults"
                                v-on:update_group_model="updateGroupModel($event)"
-                               v-bind:is-dirty="v$.groupModel.$dirty"
+                               v-bind:is-dirty="v$.groupModel.$error.length > 0"
             ></group-permissions>
 
             <!-- Submit Button -->
@@ -176,29 +176,38 @@
             },
         },
         methods: {
-            submitNewTask: function() {
+            submitNewTask: async function() {
                 //Check validation
-                this.v$.$touch();
+                const isFormCorrect = await this.v$.$validate();
 
                 //If the form is not validated
-                if (this.v$.$invalid) {
+                if (!isFormCorrect && (
+                    this.v$.groupModel.$error.length > 0 ||
+                    this.v$.stakeholderModel.length > 0 ||
+                    this.v$.taskDescriptionModel.length > 0 ||
+                    this.v$.taskEndDateModel.length > 0 ||
+                    this.v$.taskShortDescriptionModel.length > 0 ||
+                    this.v$.taskStartDateModel.length > 0
+                )) {
                     this.showValidationErrorModal();
 
                     //User does not need to do anything else
                     return;
                 }
 
+
+
                 //Create the data_to_send array
                 const data_to_send = new FormData();
                 data_to_send.set('organisation',this.stakeholderModel);
                 data_to_send.set('task_long_description',this.taskDescriptionModel);
-                data_to_send.set('task_end_date',this.taskEndDateModel);
+                data_to_send.set('task_end_date',this.taskEndDateModel.toISOString());
                 data_to_send.set('task_short_description',this.taskShortDescriptionModel);
-                data_to_send.set('task_start_date',this.taskStartDateModel);
+                data_to_send.set('task_start_date',this.taskStartDateModel.toISOString());
 
                 // Insert a new row for each group list item
                 this.groupModel.forEach((row,index) => {
-                    data_to_send.append(`group_list`,row['value']);
+                    data_to_send.append(`group_list`,row);
                 });
 
                 //Send data to backend
@@ -213,8 +222,8 @@
                 });
             },
             updateDates: function(data) {
-                this.taskEndDateModel = data['end_date'];
-                this.taskStartDateModel = data['start_date'];
+                this.taskEndDateModel = new Date(data['end_date']);
+                this.taskStartDateModel = new Date(data['start_date']);
             },
             updateGroupModel: function(data) {
                 this.groupModel = data;
