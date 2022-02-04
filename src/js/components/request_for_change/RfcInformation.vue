@@ -66,7 +66,7 @@
                         <div class="form-group">
                             <label>Implementation Start: </label>
                             <n-date-picker type="datetime"
-                                      v-model:value="new Date(rfcImplementationStartModel)"
+                                      v-model:value="rfcImplementationStartModel"
                                       input-class="form-control"
                             ></n-date-picker>
                         </div>
@@ -74,19 +74,19 @@
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label>Implementation End: </label>
-<!--                            <n-date-picker type="datetime"-->
-<!--                                      v-model:value="rfcImplementationEndModel"-->
-<!--                                      input-class="form-control"-->
-<!--                            ></n-date-picker>-->
+                            <n-date-picker type="datetime"
+                                      v-model:value="rfcImplementationEndModel"
+                                      input-class="form-control"
+                            ></n-date-picker>
                         </div>
                     </div>
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label>Release Date: </label>
-<!--                            <n-date-picker type="datetime"-->
-<!--                                      v-model:value="rfcReleaseModel"-->
-<!--                                      input-class="form-control"-->
-<!--                            ></n-date-picker>-->
+                            <n-date-picker type="datetime"
+                                      v-model:value="rfcReleaseModel"
+                                      input-class="form-control"
+                            ></n-date-picker>
                         </div>
                     </div>
                 </div>
@@ -225,9 +225,9 @@
                 rfcChangeLeadModel: '',
                 rfcTitleModel: this.rfcResults[0]['fields']['rfc_title'],
                 rfcSummaryModel: this.rfcResults[0]['fields']['rfc_summary'],
-                rfcImplementationStartModel: this.rfcResults[0]['fields']['rfc_implementation_start_date'],
-                rfcImplementationEndModel: this.rfcResults[0]['fields']['rfc_implementation_end_date'],
-                rfcReleaseModel: this.rfcResults[0]['fields']['rfc_implementation_release_date'],
+                rfcImplementationStartModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_start_date']).getTime(),
+                rfcImplementationEndModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_end_date']).getTime(),
+                rfcReleaseModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_release_date']).getTime(),
                 rfcStatus: [
                     { label: 'Draft', value: 1 },
                     { label: 'Waiting for approval', value: 2 },
@@ -271,11 +271,11 @@
             },
         },
         methods: {
-            updateRFC: function() {
+            updateRFC: async function() {
                 //Check form validation
-                this.v$.$touch();
+                const validation_results = await this.v$.$validate()
 
-                if (this.v$.$invalid) {
+                if (!validation_results) {
                     this.showValidationErrorModal();
 
                     //Just return - as we do not need to do the rest of this function
@@ -287,9 +287,9 @@
                 data_to_send.set('rfc_summary', this.rfcSummaryModel);
                 data_to_send.set('rfc_type', this.rfcTypeModel);
                 data_to_send.set('rfc_version_number', this.rfcVersionModel);
-                data_to_send.set('rfc_implementation_start_date', this.rfcImplementationStartModel);
-                data_to_send.set('rfc_implementation_end_date', this.rfcImplementationEndModel);
-                data_to_send.set('rfc_implementation_release_date', this.rfcReleaseModel); 
+                data_to_send.set('rfc_implementation_start_date', new Date(this.rfcImplementationStartModel).toISOString());
+                data_to_send.set('rfc_implementation_end_date', new Date(this.rfcImplementationEndModel).toISOString());
+                data_to_send.set('rfc_implementation_release_date', new Date(this.rfcReleaseModel).toISOString());
 
                 //Open up the loading modal
                 this.showLoadingModal('Project');

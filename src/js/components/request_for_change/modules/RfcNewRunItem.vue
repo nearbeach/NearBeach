@@ -1,6 +1,6 @@
 <template>
 <div class="modal fade" id="newRunItemModal" tabindex="-1" aria-labelledby="newRunItemModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-fullscreen-lg-down">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title" id="newRunItemModalLabel">New Change Task</h2>
@@ -175,8 +175,8 @@
                 data_to_send.set('request_for_change', this.locationId.toString());
                 data_to_send.set('change_task_title', this.changeTitleModel);
                 data_to_send.set('change_task_description', this.changeDescriptionModel);
-                data_to_send.set('change_task_start_date', this.changeStartDateModel);
-                data_to_send.set('change_task_end_date', this.changeEndDateModel);
+                data_to_send.set('change_task_start_date', new Date(this.changeStartDateModel).toISOString());
+                data_to_send.set('change_task_end_date', new Date(this.changeEndDateModel).toISOString());
                 data_to_send.set('change_task_seconds', change_task_seconds.toString());
                 // data_to_send.set('change_task_assigned_user', );
                 // data_to_send.set('change_task_qa_user', );
