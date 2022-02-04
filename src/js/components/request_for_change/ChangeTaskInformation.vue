@@ -132,9 +132,13 @@
 
 <script>
     const axios = require('axios');
+    import Editor from '@tinymce/tinymce-vue';
 
     export default {
         name: "ChangeTaskInformation",
+        components: {
+            'editor': Editor,
+        },
         props: {
             changeTaskResults: Array,
             rootUrl: {

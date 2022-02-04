@@ -204,6 +204,13 @@
 
 <script>
     const axios = require('axios');
+    import RfcBackoutPlan from "./tabs/RfcBackoutPlan.vue";
+    import RfcDescription from "./tabs/RfcDescription.vue";
+    import RfcDetails from "./tabs/RfcDetails.vue";
+    import RfcImplementationPlan from "./tabs/RfcImplementationPlan.vue";
+    import RfcRisk from "./tabs/RfcRisk.vue";
+    import RfcRunSheetList from "./modules/RfcRunSheetList.vue";
+    import RfcTestPlan from "./tabs/RfcTestPlan.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -214,6 +221,15 @@
 
     export default {
         name: "RfcModules",
+        components: {
+            RfcBackoutPlan,
+            RfcDescription,
+            RfcDetails,
+            RfcImplementationPlan,
+            RfcRisk,
+            RfcRunSheetList,
+            RfcTestPlan,
+        },
         props: {
             locationId: {
                 type: Number,

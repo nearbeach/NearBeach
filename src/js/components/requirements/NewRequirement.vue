@@ -72,10 +72,10 @@
                         <label>Requirement Status
                             <span class="error" v-if="!v$.statusModel.required && v$.statusModel.$dirty"> Please select a status.</span>
                         </label>
-                        <v-select :options="statusFixList"
+                        <n-select :options="statusFixList"
                                   label="status"
-                                  v-model="statusModel"
-                        ></v-select>
+                                  v-model:value="statusModel"
+                        ></n-select>
                     </div>
 
                 </div>
@@ -84,10 +84,10 @@
                         <label>Requirement Type
                             <span class="error" v-if="!v$.typeModel.required && v$.typeModel.$dirty"> Please select a type.</span>
                         </label>
-                        <v-select :options="typeFixList"
+                        <n-select :options="typeFixList"
                                   label="type"
-                                  v-model="typeModel"
-                        ></v-select>
+                                  v-model:value="typeModel"
+                        ></n-select>
                     </div>
                 </div>
             </div>
@@ -119,6 +119,10 @@
     //JavaScript Libraries
     const axios = require('axios');
     import { Modal } from 'bootstrap';
+    import Editor from '@tinymce/tinymce-vue';
+    import GetStakeholders from "../organisations/GetStakeholders.vue";
+    import GroupPermissions from "../permissions/GroupPermissions.vue";
+    import { NSelect } from 'naive-ui';
 
     //Validation
     import useVuelidate from '@vuelidate/core'
@@ -131,6 +135,10 @@
         },
         components: {
             axios,
+            'editor': Editor,
+            GetStakeholders,
+            GroupPermissions,
+            NSelect,
         },
         props: {
             groupResults: {
@@ -200,11 +208,18 @@
             },
         },
         methods: {
-            submitNewRequirement: function() {
+            submitNewRequirement: async function() {
                 // Check the validation first
-                this.v$.$touch();
+                const isFormCorrect = await this.v$.$validate();
 
-                if (this.v$.$invalid) {
+                if (!isFormCorrect && (
+                    this.v$.groupModel.$error.length > 0 ||
+                    this.v$.stakeholderModel.length > 0 ||
+                    this.v$.requirementTitleModel.length > 0 ||
+                    this.v$.requirementScopeModel.length > 0 ||
+                    this.v$.statusModel.length > 0 ||
+                    this.v$.typeModel.length > 0
+                )) {
                     //Show the error dialog and notify to the user that there were field missing.
                     var elem_cont = document.getElementById("errorModalContent");
 
@@ -224,13 +239,13 @@
                 const data_to_send = new FormData();
                 data_to_send.set('requirement_title', this.requirementTitleModel);
                 data_to_send.set('requirement_scope',this.requirementScopeModel);
-                data_to_send.set('organisation',this.stakeholderModel['value']);
-                data_to_send.set('requirement_status',this.statusModel['value']);
-                data_to_send.set('requirement_type',this.typeModel['value']);
+                data_to_send.set('organisation',this.stakeholderModel);
+                data_to_send.set('requirement_status',this.statusModel);
+                data_to_send.set('requirement_type',this.typeModel);
 
                 // Insert a new row for each group list item
                 this.groupModel.forEach((row,index) => {
-                    data_to_send.append(`group_list`,row['value']);
+                    data_to_send.append(`group_list`,row);
                 });
 
                 // Use Axion to send the data
@@ -251,9 +266,6 @@
                     //var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
                     var errorModal = new Modal(document.getElementById('errorModal'));
                     errorModal.show();
-
-                    // Hide the loader
-                    loader_elem.style.transform = "translateY(-100vh)";
                 });
             },
             updateGroupModel: function(newGroupModel) {
@@ -272,26 +284,19 @@
                 staticUrl: this.staticUrl,
             })
 
-            //We need to extract "fields" array from the statusList/typeList json data
-            this.statusList.forEach((row) => {
-                //Construct the object
-                var construction_object = {
-                    'value': row['pk'],
-                    'status': row['fields']['requirement_status'],
+            //We need to map "fields" array from the statusList/typeList json data
+            this.statusFixList = this.statusList.map((row) => {
+                return {
+                    value: row['pk'],
+                    label: row['fields']['requirement_status'],
                 };
-
-                //Push the object to status fix list
-                this.statusFixList.push(construction_object);
             });
-            this.typeList.forEach((row) => {
-                //Construct the object
-                var construction_object = {
-                    'value': row['pk'],
-                    'type': row['fields']['requirement_type'],
-                }
 
-                //Push the object to type fix list
-                this.typeFixList.push(construction_object);
+            this.typeFixList = this.typeList.map((row) => {
+                return {
+                    value: row['pk'],
+                    label: row['fields']['requirement_type'],
+                }
             });
         },
     }

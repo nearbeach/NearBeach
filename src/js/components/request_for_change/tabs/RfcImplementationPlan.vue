@@ -33,11 +33,15 @@
 <script>
     import useVuelidate from '@vuelidate/core'
     import { required, maxLength } from '@vuelidate/validators'
+    import Editor from '@tinymce/tinymce-vue';
 
     export default {
         name: "RfcImplementationPlan",
         setup() {
             return { v$: useVuelidate(), }
+        },
+        components: {
+            'editor': Editor,
         },
         props: {
             isReadOnly: {

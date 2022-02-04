@@ -53,7 +53,8 @@
 <script>
     //Validations
     import useVuelidate from '@vuelidate/core'
-    import { required, maxLength } from '@vuelidate/validators'
+    import { required, maxLength } from '@vuelidate/validators';
+    import Editor from '@tinymce/tinymce-vue';
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -62,6 +63,9 @@
         name: "RfcDescription",
         setup() {
             return { v$: useVuelidate(), }
+        },
+        components: {
+            'editor': Editor,
         },
         props: {
             isReadOnly: {

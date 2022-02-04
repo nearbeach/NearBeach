@@ -24,7 +24,7 @@
                     <p>{{result[importVariables['status']]}}</p>
                     <div class="spacer"></div>
                     <p class="small-text">
-                      {{formatDates(result[importVariables['end_date']])}}
+                      {{getNiceDate(result[importVariables['end_date']])}}
                     </p>
                 </td>
             </tr>
@@ -33,7 +33,8 @@
 </template>
 
 <script>
-    const { DateTime } = require("luxon");
+    //Mixins
+    import datetimeMixins from "../../mixins/datetimeMixins";
 
     export default {
         name: "RenderObjectTable",
@@ -68,15 +69,8 @@
         data() {
             return {}
         },
-        methods: {
-            formatDates(date) {
-                //Escape if date is undefined
-                if (date === undefined) return "";
-
-                //Convert the date from string to ISO standard
-                let convert_date = DateTime.fromISO(date);
-                return convert_date.toHTTP();
-            }
-        }
+        mixins: [
+            datetimeMixins,
+        ],
     }
 </script>

@@ -26,10 +26,10 @@
                             <span class="error" v-if="!v$.rfcTypeModel.required && v$.rfcTypeModel.$dirty"
                             > Please suppy a title.</span>
                         </label>
-                        <v-select v-bind:options="rfcType"
+                        <n-select v-bind:options="rfcType"
                                   v-bind:disabled="isReadOnly"
-                                  v-model="rfcTypeModel"
-                        ></v-select>
+                                  v-model:value="rfcTypeModel"
+                        ></n-select>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -65,31 +65,28 @@
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label>Implementation Start: </label>
-                            <datetime type="datetime"
-                                      v-model="rfcImplementationStartModel"
+                            <n-date-picker type="datetime"
+                                      v-model:value="new Date(rfcImplementationStartModel)"
                                       input-class="form-control"
-                                      v-bind:minute-step="5"
-                            ></datetime>
+                            ></n-date-picker>
                         </div>
                     </div>
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label>Implementation End: </label>
-                            <datetime type="datetime"
-                                      v-model="rfcImplementationEndModel"
-                                      input-class="form-control"
-                                      v-bind:minute-step="5"
-                            ></datetime>
+<!--                            <n-date-picker type="datetime"-->
+<!--                                      v-model:value="rfcImplementationEndModel"-->
+<!--                                      input-class="form-control"-->
+<!--                            ></n-date-picker>-->
                         </div>
                     </div>
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label>Release Date: </label>
-                            <datetime type="datetime"
-                                      v-model="rfcReleaseModel"
-                                      input-class="form-control"
-                                      v-bind:minute-step="5"
-                            ></datetime>
+<!--                            <n-date-picker type="datetime"-->
+<!--                                      v-model:value="rfcReleaseModel"-->
+<!--                                      input-class="form-control"-->
+<!--                            ></n-date-picker>-->
                         </div>
                     </div>
                 </div>
@@ -152,6 +149,8 @@
 
 <script>
     const axios = require('axios');
+    import RfcDescription from "./tabs/RfcDescription.vue";
+    import { NSelect, NDatePicker } from 'naive-ui';
     
     //Import mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -165,6 +164,11 @@
         name: "RfcInformation",
         setup() {
             return { v$: useVuelidate(), }
+        },
+        components: {
+            NDatePicker,
+            NSelect,
+            RfcDescription,
         },
         props: {
             groupLeaderCount: {
@@ -281,7 +285,7 @@
                 const data_to_send = new FormData();
                 data_to_send.set('rfc_title',this.rfcTitleModel);
                 data_to_send.set('rfc_summary', this.rfcSummaryModel);
-                data_to_send.set('rfc_type', this.rfcTypeModel['value']);
+                data_to_send.set('rfc_type', this.rfcTypeModel);
                 data_to_send.set('rfc_version_number', this.rfcVersionModel);
                 data_to_send.set('rfc_implementation_start_date', this.rfcImplementationStartModel);
                 data_to_send.set('rfc_implementation_end_date', this.rfcImplementationEndModel);
@@ -318,15 +322,12 @@
             },
             updateValues: function(data) {
                 //Update the value
-                this['_data'][data['modelName']] = data['modelValue'];
+                this[data['modelName']] = data['modelValue'];
             },
         },
         mounted() {
             //Set the type model
-            this.rfcTypeModel = this.rfcType.filter(row => {
-                //Filter for just the one value result
-                return row['value'] == this.rfcResults[0]['fields']['rfc_type'];
-            })[0];
+            this.rfcTypeModel = this.rfcResults[0]['fields']['rfc_type'];
 
             //Send root and static url to VueX
             this.$store.commit({

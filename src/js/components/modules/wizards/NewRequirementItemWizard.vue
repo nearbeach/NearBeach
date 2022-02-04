@@ -244,8 +244,8 @@
             itemTypeList: function() {
                 this.typeItemFixList = this.itemTypeList.map((row) => {
                     return {
-                        'value': row['pk'],
-                        'type': row['fields']['requirement_item_type'],
+                        value: row['pk'],
+                        label: row['fields']['requirement_item_type'],
                     };
                 });
             },

@@ -16,10 +16,10 @@
                         <span class="error" v-if="!v$.rfcPriorityModel.required && v$.rfcPriorityModel.$dirty"
                         > Please select a Change Type.</span>
                     </label>
-                    <v-select v-bind:options="rfcPriority"
+                    <n-select v-bind:options="rfcPriority"
                               v-bind:disabled="isReadOnly"
-                              v-model="rfcPriorityModel"
-                    ></v-select>
+                              v-model:value="rfcPriorityModel"
+                    ></n-select>
                 </div>
                 <div class="col-md-4">
                     <label>
@@ -27,10 +27,10 @@
                         <span class="error" v-if="!v$.rfcRiskModel.required && v$.rfcRiskModel.$dirty"
                         > Please select a Change Type.</span>
                     </label>
-                    <v-select v-bind:options="rfcRisk"
+                    <n-select v-bind:options="rfcRisk"
                               v-bind:disabled="isReadOnly"
-                              v-model="rfcRiskModel"
-                    ></v-select>
+                              v-model:value="rfcRiskModel"
+                    ></n-select>
                 </div>
                 <div class="col-md-4">
                     <label>
@@ -38,10 +38,10 @@
                         <span class="error" v-if="!v$.rfcImpactModel.required && v$.rfcImpactModel.$dirty"
                         > Please select a Change Type.</span>
                     </label>
-                    <v-select v-bind:options="rfcImpact"
+                    <n-select v-bind:options="rfcImpact"
                               v-bind:disabled="isReadOnly"
-                              v-model="rfcImpactModel"
-                    ></v-select>
+                              v-model:value="rfcImpactModel"
+                    ></n-select>
                 </div>
             </div>
             <br/>
@@ -73,11 +73,17 @@
 <script>
     import useVuelidate from '@vuelidate/core'
     import { required, maxLength } from '@vuelidate/validators'
+    import { NSelect } from 'naive-ui';
+    import Editor from '@tinymce/tinymce-vue';
 
     export default {
         name: "RfcRisk",
         setup() {
             return { v$: useVuelidate(), }
+        },
+        components: {
+            'editor': Editor,
+            NSelect,
         },
         props: {
             isReadOnly: {
@@ -180,21 +186,15 @@
             //When template loads - check to see if there is any data within the rfcResults. If so -> update all models
             if (this.rfcResults.length > 0) {
                 // Filter for the correct rfcPriority
-                this.rfcPriorityModel = this.rfcPriority.filter(row => {
-                    return row['value'] === this.rfcResults[0]['fields']['rfc_priority'];
-                })[0];
+                this.rfcPriorityModel = this.rfcResults[0]['fields']['rfc_priority'];
 
                 //Filter for the correct rfcRisk
-                this.rfcRiskModel = this.rfcRisk.filter(row => {
-                    return row['value'] === this.rfcResults[0]['fields']['rfc_risk'];
-                })[0];
+                this.rfcRiskModel = this.rfcResults[0]['fields']['rfc_risk'];
 
                 this.rfcRiskSummaryModel = this.rfcResults[0]['fields']['rfc_risk_and_impact_analysis'];
 
                 //Filter for the correct rfc Impact
-                this.rfcImpactModel = this.rfcImpact.filter(row => {
-                    return row['value'] === this.rfcResults[0]['fields']['rfc_impact'];
-                })[0];
+                this.rfcImpactModel = this.rfcResults[0]['fields']['rfc_impact'];
             }
 
             //Just run the validations to show the error messages

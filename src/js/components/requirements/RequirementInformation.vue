@@ -108,14 +108,14 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Requirement Type
-                                    <span class="error" v-if="!v$.typeModel.required && v$.typeModel.$dirty"> Please select a type.</span>
+                                    <span class="error" v-if="!v$.typeModel.$error.length > 0"> Please select a type.</span>
                                 </label>
-                                <v-select :options="typeFixList"
+                                <n-select :options="typeFixList"
                                           v-bind:disabled="isReadOnly"
                                           v-bind:clearable="false"
                                           label="type"
-                                          v-model="typeModel"
-                                ></v-select>
+                                          v-model:value="typeModel"
+                                ></n-select>
                             </div>
                         </div>
                     </div>
@@ -261,30 +261,20 @@
                 return {
                     value: row['pk'],
                     label: row['fields']['requirement_status'],
-                    'status': row['fields']['requirement_status'],
-                    'status_closed': row['fields']['requirement_status_is_closed'],
                 };
             });
-            this.typeList.forEach((row) => {
-                //Construct the object
-                var construction_object = {
-                    'value': row['pk'],
-                    'type': row['fields']['requirement_type'],
+            this.typeFixList = this.typeList.map((row) => {
+                return {
+                    value: row['pk'],
+                    label: row['fields']['requirement_type'],
                 }
-
-                //Push the object to type fix list
-                this.typeFixList.push(construction_object);
             });
 
+            //Get the requirement status id from the requirement results
+            this.statusModel = requirement_results['requirement_status'];
 
-            //Filter the status fix list to get the current model version
-            this.statusModel = this.statusFixList.filter((row) => {
-                return row['value'] == requirement_results['requirement_status'];
-            })[0];
-
-            this.typeModel = this.typeFixList.filter((row) => {
-                return row['value'] == requirement_results['requirement_type'];
-            })[0];
+            //Update type model
+            this.typeModel = requirement_results['requirement_type'];
 
             //Check for the read only
             if (this.statusModel['status_closed'] || this.userLevel === 1) {

@@ -181,6 +181,12 @@ export const
             './components/request_for_change/RfcInformation.vue'
         )
     ),
+    RfcModules = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "rfc-modules" */
+            './components/request_for_change/RfcModules.vue'
+        )
+    ),
      RequirementInformation = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "requirement-information" */

@@ -119,7 +119,9 @@
 </template>
 
 <script>
-    const axios = require('axios')
+    const axios = require('axios');
+    import Editor from '@tinymce/tinymce-vue';
+    import BetweenDates from "../../dates/BetweenDates.vue";
 
     //Import mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
@@ -129,6 +131,10 @@
 
     export default {
         name: "RfcNewRunItem",
+        components: {
+            BetweenDates,
+            'editor': Editor,
+        },
         props: {
             locationId: {
                 type: Number,

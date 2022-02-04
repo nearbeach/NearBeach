@@ -105,10 +105,10 @@
                         <label>Requirement Status
                             <span class="error" v-if="!v$.statusModel.required && v$.statusModel.$dirty"> Please select a status.</span>
                         </label>
-                        <v-select :options="statusFixList"
+                        <n-select :options="statusFixList"
                                   label="status"
-                                  v-model="statusModel"
-                        ></v-select>
+                                  v-model:value="statusModel"
+                        ></n-select>
                     </div>
 
                 </div>
@@ -117,10 +117,10 @@
                         <label>Requirement Type
                             <span class="error" v-if="!v$.typeModel.required && v$.typeModel.$dirty"> Please select a type.</span>
                         </label>
-                        <v-select :options="typeFixList"
+                        <n-select :options="typeFixList"
                                   label="type"
-                                  v-model="typeModel"
-                        ></v-select>
+                                  v-model:value="typeModel"
+                        ></n-select>
                     </div>
                 </div>
             </div>
@@ -144,6 +144,8 @@
     import {Modal} from "bootstrap";
     import { Icon } from '@iconify/vue';
     import axios from 'axios';
+    import Editor from '@tinymce/tinymce-vue'
+    import { NSelect } from 'naive-ui';
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -161,7 +163,9 @@
             return { v$: useVuelidate(), }
         },
         components: {
+            'editor': Editor,
             Icon,
+            NSelect,
         },
         props: {
             requirementItemResults: {
@@ -268,8 +272,8 @@
                 const data_to_send = new FormData();
                 data_to_send.set('requirement_item_title', this.requirementItemTitleModel);
                 data_to_send.set('requirement_item_scope',this.requirementItemScopeModel);
-                data_to_send.set('requirement_item_status',this.statusModel['value']);
-                data_to_send.set('requirement_item_type',this.typeModel['value']);
+                data_to_send.set('requirement_item_status',this.statusModel);
+                data_to_send.set('requirement_item_type',this.typeModel);
 
                 // Use Axion to send the data
                 axios.post(
@@ -309,37 +313,24 @@
             //Extract the organisation results directly
             this.stakeholderModel = this.organisationResults[0]['fields'];
 
-            //We need to extract "fields" array from the statusList/typeList json data
-            this.statusList.forEach((row) => {
-                //Construct the object
-                var construction_object = {
-                    'value': row['pk'],
-                    'status': row['fields']['requirement_item_status'],
+            //Map the original lists to something NSelect can read
+            this.statusFixList = this.statusList.map((row) => {
+                return {
+                    value: row['pk'],
+                    label: row['fields']['requirement_item_status'],
                 };
-
-                //Push the object to status fix list
-                this.statusFixList.push(construction_object);
             });
-            this.typeList.forEach((row) => {
-                //Construct the object
-                var construction_object = {
-                    'value': row['pk'],
-                    'type': row['fields']['requirement_item_type'],
+
+            this.typeFixList = this.typeList.map((row) => {
+                return {
+                    value: row['pk'],
+                    label: row['fields']['requirement_item_type'],
                 }
-
-                //Push the object to type fix list
-                this.typeFixList.push(construction_object);
             });
 
-
-            //Filter the status fix list to get the current model version
-            this.statusModel = this.statusFixList.filter((row) => {
-                return row['value'] == requirement_item_results['requirement_item_status'];
-            })[0];
-
-            this.typeModel = this.typeFixList.filter((row) => {
-                return row['value'] == requirement_item_results['requirement_item_type'];
-            })[0];
+            //Set the status and type models
+            this.statusModel = requirement_item_results['requirement_item_status'];
+            this.typeModel = requirement_item_results['requirement_item_type'];
         },
     }
 </script>

@@ -73,6 +73,7 @@
 
 <script>
     const axios = require('axios');
+    import RfcDescription from "./tabs/RfcDescription.vue";
 
     import {FormWizard, TabContent} from 'vue-form-wizard';
 
@@ -81,6 +82,11 @@
 
     export default {
         name: "NewRequestForChange",
+        components: {
+            FormWizard,
+            RfcDescription,
+            TabContent,
+        },
         props: {
             groupResults: Array,
             rootUrl: {
@@ -97,10 +103,6 @@
                     return [];
                 },
             },
-        },
-        components: {
-            FormWizard,
-            TabContent,
         },
         mixins: [
             errorModalMixin,
