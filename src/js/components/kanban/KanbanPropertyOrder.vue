@@ -28,7 +28,7 @@
                     >
                         {{element['title']}}
                     </strong>
-                    <span v-on:click="removeItem(item['id'])"
+                    <span v-on:click="removeItem(element['id'])"
                           v-if="localPropertyList.length > 1"
                     >
                         <Icon v-bind:icon="icons.xCircle"></Icon>

@@ -147,18 +147,18 @@
                     data_to_send.append('kanban_card_id', row['pk']);
                 });
 
+                //Mutate the data to exclude the archived cards
+                this.$store.commit({
+                    type: 'archiveCards',
+                    'column': this.columnId,
+                    'level': this.levelId,
+                });
+
                 // Use axios to contact backend
                 axios.post(
                     `${this.rootUrl}kanban_information/archive_kanban_cards/`,
                     data_to_send,
-                ).then(response => {
-                    //Mutate the data to exclude the archived cards
-                    this.$store.commit({
-                        type: 'archiveCards',
-                        'column': this.columnId,
-                        'level': this.levelId,
-                    });
-                }).catch(error => {
+                ).catch(error => {
                      
                 })
             },
@@ -211,19 +211,20 @@
                     data_to_send.set('old_card_sort_number', row['fields']['kanban_card_sort_number']);
                     data_to_send.set('card_id', row['pk']);
 
+                    //Update kanban card
+                    this.$store.commit({
+                        type: 'updateKanbanCard',
+                        card_id: row['pk'],
+                        kanban_column: this.columnId,
+                        kanban_level: this.levelId,
+                        kanban_card_sort_number: index,
+                    })
+
                     //Use axios to send the data to the database
                     axios.post(
                         `${this.rootUrl}kanban_information/${row['pk']}/move_card/`,
                         data_to_send,
-                    ).then(response => {
-                        this.$store.commit({
-                            type: 'updateKanbanCard',
-                            card_id: row['pk'],
-                            kanban_column: this.columnId,
-                            kanban_level: this.levelId,
-                            kanban_card_sort_number: index,
-                        })
-                    });
+                    );
                 });
 
                 //Done - hide the error screen
@@ -392,39 +393,37 @@
                 data_to_send.set('old_card_sort_number', old_card_sort_number);
                 data_to_send.set('card_id', card_id);
 
+                //Define cards_to_change
+                let cards_to_change = [];
+
+                //Depending if the card moves columns depends what we do
+                if ((new_card_column === old_card_column) &&
+                    (new_card_level === old_card_level)) {
+                    //The card stayed in the same place.
+
+                    cards_to_change = this.dragSameColumn(data_to_send);
+                } else {
+                    //The card move to a different place
+
+                    cards_to_change = this.dragDifferentColumn(data_to_send);
+                }
+
+                //ADD CODE - loop through the cards to change
+                cards_to_change.forEach(row => {
+                    this.$store.commit({
+                        type: 'updateKanbanCard',
+                        card_id: row['card_id'],
+                        kanban_column: row['kanban_column'],
+                        kanban_level: row['kanban_level'],
+                        kanban_card_sort_number: row['kanban_card_sort_number'],
+                    })
+                })
+
                 //Use axios to send the data to the database
                 axios.post(
                     `${this.rootUrl}kanban_information/${card_id}/move_card/`,
                     data_to_send,
-                ).then(response => {
-                    //Define cards_to_change
-                    let cards_to_change = [];
-
-                    //Depending if the card moves columns depends what we do
-                    if ((new_card_column === old_card_column) &&
-                        (new_card_level === old_card_level)) {
-                        //The card stayed in the same place.
-
-                        cards_to_change = this.dragSameColumn(data_to_send);
-                    } else {
-                        //The card move to a different place
-                        
-                        cards_to_change = this.dragDifferentColumn(data_to_send);
-                    }
-
-                    //ADD CODE - loop through the cards to change
-                    cards_to_change.forEach(row => {
-                        this.$store.commit({
-                            type: 'updateKanbanCard',
-                            card_id: row['card_id'],
-                            kanban_column: row['kanban_column'], 
-                            kanban_level: row['kanban_level'],
-                            kanban_card_sort_number: row['kanban_card_sort_number'],
-                        })
-                    })
-                }).catch(error => {
-                    
-                })
+                );
             },
             sendDataUpstream: function(filtered_data) {
                 // Update VueX
