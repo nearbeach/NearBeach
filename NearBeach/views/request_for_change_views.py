@@ -228,8 +228,6 @@ def rfc_new_change_task(request, rfc_id, *args, **kwargs):
         change_task_start_date=form.cleaned_data['change_task_start_date'],
         change_task_end_date=form.cleaned_data['change_task_end_date'],
         change_task_seconds=form.cleaned_data['change_task_seconds'],
-        # change_task_assigned_user = form.cleaned_data['change_task_assigned_user'],
-        # change_task_qa_user = form.cleaned_data['change_task_qa_user'],
         change_task_assigned_user=request.user,
         change_task_qa_user=request.user,
         change_task_required_by=form.cleaned_data['change_task_required_by'],
