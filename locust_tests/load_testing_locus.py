@@ -23,4 +23,4 @@ class QuickstartUser(HttpUser):
     @task(3)
     def requirement_information(self):
         for _ in range(10):
-            self.client.get(f"/requirement_information/1")
+            self.client.get("/requirement_information/1")
