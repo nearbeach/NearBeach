@@ -1,5 +1,4 @@
 # Import the locust libraries
-import time
 import getpass
 from locust import HttpUser, task, between
 
