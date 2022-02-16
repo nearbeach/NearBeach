@@ -8,13 +8,10 @@ from NearBeach.forms import AddBugForm, AddCustomerForm, AddGroupForm, AddObject
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Sum, Q, Min, CharField, Value as V
+from django.db.models import Q, CharField, Value as V
 from django.db.models.functions import Concat
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
-from django.template import loader
-from django.urls import reverse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.views.decorators.http import require_http_methods
-from django.views.decorators.cache import never_cache
 
 
 @require_http_methods(['POST'])
