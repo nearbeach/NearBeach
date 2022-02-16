@@ -352,12 +352,6 @@ def associated_objects(request, destination, location_id):
     object_assignment_results = get_object_from_destination(
         object_assignment_results, destination, location_id)
 
-    # opportunity_results = opportunity.objects.filter(
-    #     is_deleted=False,
-    #     opportunity_id__in=object_assignment_results.filter(
-    #         opportunity_id__isnull=False
-    #     ).values('opportunity_id')
-    # ).values()
 
     project_results = project.objects.filter(
         is_deleted=False,
@@ -564,9 +558,6 @@ def delete_link(request):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
-    # update_object_assignment = object_assignment.objects.get(
-    #     object_assignment_id=form.cleaned_data['object_assignment_id'],
-    # )
     update_object_assignment = form.cleaned_data['object_assignment_id']
     update_object_assignment.is_deleted = True
     update_object_assignment.save()
