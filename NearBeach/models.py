@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 from django.db import models, connection
-from .private_media import File_Storage
+from .private_media import FileStorage
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import gettext_lazy as _
@@ -572,7 +572,7 @@ class document(models.Model):
     document = models.FileField(
         blank=True,
         null=True,
-        storage=File_Storage(),
+        storage=FileStorage(),
     )
     whiteboard = models.ForeignKey(
         'whiteboard',
