@@ -55,8 +55,14 @@
     //Import mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
 
+    //Vue Components
+    import AdminAddUser from "./AdminAddUser.vue";
+
     export default {
         name: "UserList",
+        components: {
+            AdminAddUser,
+        },
         props: {
             destination: {
                 type: String,

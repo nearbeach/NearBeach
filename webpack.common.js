@@ -1,10 +1,10 @@
 const path = require('path');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const webpack = require('webpack');
+const { VueLoaderPlugin } = require('vue-loader')
 const MiniCssExtractplugin = require('mini-css-extract-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+// const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     module: {
@@ -17,11 +17,13 @@ module.exports = {
                 }, {
                     loader: 'postcss-loader', // Run post css actions
                     options: {
-                        plugins: function () { // post css plugins, can be exported to postcss.config.js
-                            return [
-                                require('precss'),
-                                require('autoprefixer')
-                            ];
+                        postcssOptions: {
+                            plugins: function () { // post css plugins, can be exported to postcss.config.js
+                                return [
+                                    require('precss'),
+                                    require('autoprefixer')
+                                ];
+                            }
                         }
                     }
                 }, {
@@ -49,7 +51,6 @@ module.exports = {
     plugins: [
         new VueLoaderPlugin(),
         new MiniCssExtractplugin(),
-        // new CleanWebpackPlugin(),
         new CompressionPlugin(),
         new CopyPlugin({
             patterns: [
@@ -66,23 +67,24 @@ module.exports = {
                 { from: './node_modules/tinymce/themes/silver/theme.min.js', to: './tinymce/themes/silver/theme.min.js' },
                 { from: './node_modules/tinymce/icons/default/icons.min.js', to: './tinymce/icons/default/icons.min.js' },
                 { from: './node_modules/tinymce/plugins/lists/', to: './tinymce/plugins/lists/' },
+                { from: './node_modules/tinymce/plugins/table/', to: './tinymce/plugins/table/' },
             ],
         }),
-        new HtmlWebpackPlugin({
-            title: 'Production',
+        new webpack.DefinePlugin({
+            __VUE_OPTIONS_API__: true,
+            __VUE_PROD_DEVTOOLS__: false,
         }),
+        // new HtmlWebpackPlugin({
+        //     title: 'Production',
+        // }),
     ],
     entry: {
         'NearBeach': './src/js/app.js',
         'login': './src/js/login.js',
-        // 'whiteboard': './src/js/whiteboard.js',
         'loader': './src/js/loader.js',
     },
     output: {
         path: path.resolve(__dirname, 'NearBeach/static/NearBeach'),
         filename: '[name].min.js'
     },
-    // optimization: {
-    //     runtimeChunk: 'single',
-    // }
 };

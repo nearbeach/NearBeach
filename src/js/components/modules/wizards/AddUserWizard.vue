@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.userIcon"></IconifyIcon> Add User Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.userIcon"></Icon> Add User Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -28,10 +28,10 @@
                             </p>
                         </div>
                         <div class="col-md-8">
-                            <v-select :options="userFixList"
-                                      v-model="userModel"
+                            <n-select :options="userFixList"
+                                      v-model:value="userModel"
                                       multiple
-                            ></v-select>
+                            ></n-select>
                         </div>
                     </div>
                     <div v-else
@@ -71,7 +71,9 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
+    import { NSelect } from 'naive-ui';
 
     //VueX
     import { mapGetters } from 'vuex'
@@ -82,6 +84,10 @@
 
     export default {
         name: "AddUserWizard",
+        components: {
+            Icon,
+            NSelect,
+        },
         props: {
             destination: {
                 type: String,
@@ -119,7 +125,7 @@
 
                 //Look through all of the results in user model and append
                 this.userModel.forEach(row => {
-                    data_to_send.append('user_list',row['value']);
+                    data_to_send.append('user_list',row);
                 });
 
                 //User axios to send the data to the backend

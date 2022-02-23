@@ -77,8 +77,14 @@
     //Import mixins
     import searchMixin from "../../mixins/searchMixin";
 
+    //Vue Components
+    import ListSearchResults from './ListSearchResults.vue';
+
     export default {
         name: "SearchObjects",
+        components: {
+            ListSearchResults
+        },
         props: {
             includeClosed: {
                 type: Boolean,
@@ -94,10 +100,10 @@
                 default: '',
             },
             searchResults: {
-                type: Array,
+                type: Object,
                 required: true,
                 default: () => {
-                    return [];
+                    return {};
                 },
             },
         },

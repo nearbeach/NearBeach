@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> {{destination}} Links</h2>
+        <h2><Icon v-bind:icon="icons.linkOut"></Icon> {{destination}} Links</h2>
         <p class="text-instructions">
             The following are links to other objects like projects/tasks/requirements. You can link a {{destination}}
             to these other objects to symbolise a connection between the two.
@@ -54,8 +54,9 @@
 
 <script>
     import { Modal } from "bootstrap";
-
-    const axios = require('axios');
+    import { Icon } from '@iconify/vue';
+    import axios from 'axios';
+    import NewLinkWizard from "../wizards/NewLinkWizard.vue";
 
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
@@ -65,6 +66,10 @@
 
     export default {
         name: "ObjectLinks",
+        components: {
+            Icon,
+            NewLinkWizard,
+        },
         props: {
             destination: {
                 type: String,

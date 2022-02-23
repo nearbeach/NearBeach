@@ -204,6 +204,13 @@
 
 <script>
     const axios = require('axios');
+    import RfcBackoutPlan from "./tabs/RfcBackoutPlan.vue";
+    import RfcDescription from "./tabs/RfcDescription.vue";
+    import RfcDetails from "./tabs/RfcDetails.vue";
+    import RfcImplementationPlan from "./tabs/RfcImplementationPlan.vue";
+    import RfcRisk from "./tabs/RfcRisk.vue";
+    import RfcRunSheetList from "./modules/RfcRunSheetList.vue";
+    import RfcTestPlan from "./tabs/RfcTestPlan.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -214,6 +221,15 @@
 
     export default {
         name: "RfcModules",
+        components: {
+            RfcBackoutPlan,
+            RfcDescription,
+            RfcDetails,
+            RfcImplementationPlan,
+            RfcRisk,
+            RfcRunSheetList,
+            RfcTestPlan,
+        },
         props: {
             locationId: {
                 type: Number,
@@ -323,9 +339,9 @@
 
                 //Create the data to send
                 const data_to_send = new FormData();
-                data_to_send.set('priority_of_change', this.rfcData['rfcPriorityModel']['value']);
-                data_to_send.set('risk_of_change', this.rfcData['rfcRiskModel']['value']);
-                data_to_send.set('impact_of_change', this.rfcData['rfcImpactModel']['value']);
+                data_to_send.set('priority_of_change', this.rfcData['rfcPriorityModel']);
+                data_to_send.set('risk_of_change', this.rfcData['rfcRiskModel']);
+                data_to_send.set('impact_of_change', this.rfcData['rfcImpactModel']);
                 data_to_send.set('text_input', this.rfcData['rfcRiskSummaryModel']);
 
                 //Send the data

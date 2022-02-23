@@ -11,66 +11,77 @@
             <div class="form-group">
                 <label>{{destination}} Start Date:
                     <span class="error"
-                          v-if="!$v.localStartDateModel.required && isDirty"
+                          v-if="!v$.localStartDateModel.$error.length > 0"
                     > Please select a date.</span>
                 </label>
-                <datetime type="datetime"
-                          v-model="localStartDateModel"
-                          input-class="form-control"
-                          v-bind:minute-step="5"
-                ></datetime>
+                <n-date-picker type="datetime"
+                               v-model:value="localStartDateModel"
+                               class="form-control"
+                ></n-date-picker>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-group">
                 <label>{{destination}} End Date:
                     <span class="error"
-                          v-if="!$v.localEndDateModel.required && isDirty"
+                          v-if="!v$.localEndDateModel.$error.length > 0"
                     > Please select a date.</span>
                 </label>
-                <datetime type="datetime"
-                          v-model="localEndDateModel"
-                          input-class="form-control"
-                          v-bind:minute-step="5"
-                ></datetime>
+                <n-date-picker type="datetime"
+                               v-model:value="localEndDateModel"
+                               class="form-control"
+                ></n-date-picker>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-    import { DateTime } from "luxon";
+    import { NDatePicker } from 'naive-ui';
 
     //Validation
-    import { required } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required } from '@vuelidate/validators'
 
     export default {
         name: "BetweenDates",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            NDatePicker,
+        },
         props: {
             destination: {
                 type: String,
                 default: "",
             },
             endDateModel: {
-                type: [Object,String],
-                default() {
-                    //Define a date variable
-                    var date = DateTime.local();
+                type: Number,
+                default: () => {
+                    let temp_date = new Date();
+                    temp_date.setHours(16);
+                    temp_date.setMinutes(0);
+                    temp_date.setSeconds(0);
+                    temp_date.setMilliseconds(0);
 
-                    //Add 28 days (4 weeks) to the date
-                    date = date.plus({ days: 28 })
+                    //Add on 14 days
+                    new Date(temp_date.setDate(temp_date.getDate() + 14));
 
-                    //Return the data
-                    return date;
-                }
+                    return temp_date.getTime();
+                },
             },
-            isDirty: Boolean,
             startDateModel: {
-                type: [Object,String],
-                default() {
-                    //Just return today's date
-                    return DateTime.local();
-                }
+                type: Number,
+                default: () => {
+                    let temp_date = new Date();
+                    temp_date.setHours(9);
+                    temp_date.setMinutes(0);
+                    temp_date.setSeconds(0);
+                    temp_date.setMilliseconds(0);
+
+                    return temp_date.getTime();
+                },
             },
         },
         validations: {
@@ -83,8 +94,8 @@
         },
         data() {
             return {
-                localEndDateModel: '',
-                localStartDateModel: '',
+                localEndDateModel: this.endDateModel,
+                localStartDateModel: this.startDateModel,
             }
         },
         methods: {
@@ -98,11 +109,9 @@
         },
         watch: {
             localEndDateModel: function() {
-                var end_date = DateTime.local(this.localEndDateModel),
-                    start_date = DateTime.local(this.localStartDateModel);
-
-                //Makes sure the end date is not less than the start date - if it is, turn it into the start date
-                if (end_date.toMillis() - start_date.toMillis() < 0) {
+                //Makes sure the end date is not less than the start date
+                // - if it is, turn it into the start date
+                if (this.localEndDateModel < this.localStartDateModel) {
                     //The Start date is larger than the end date - make it the same
                     this.localEndDateModel = this.localStartDateModel();
                 }
@@ -111,11 +120,9 @@
                 this.emitDates();
             },
             localStartDateModel: function() {
-                var end_date = DateTime.local(this.localEndDateModel),
-                    start_date = DateTime.local(this.localStartDateModel);
-
-                //Makes sure the start date is not greater than the end date - if it is, turn it into the end date
-                if (end_date.toMillis() - start_date.toMillis() < 0) {
+                //Makes sure the start date is not greater than the end date
+                // - if it is, turn it into the end date
+                if (this.localEndDateModel < this.localStartDateModel) {
                     //The Start date is larger than the end date - make it the same
                     this.localStartDateModel = this.localEndDateModel();
                 }
@@ -125,10 +132,9 @@
             },
         },
         mounted() {
-            //Update local variables with imported data
-            this.localEndDateModel = this.endDateModel.toISO();
-            this.localStartDateModel = this.startDateModel.toISO();
-        }
+            //In case the dates fall on default - send up stream
+            this.emitDates();
+        },
     }
 </script>
 

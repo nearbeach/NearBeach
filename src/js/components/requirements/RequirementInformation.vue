@@ -18,7 +18,7 @@
                 <div class="col-md-8" style="min-height: 610px;">
                     <div class="form-group">
                         <label for="id_requirement_title">Requirement Title:
-                            <span class="error" v-if="!$v.requirementTitleModel.required"> Please suppy a title.</span>
+                            <span class="error" v-if="!v$.requirementTitleModel.required"> Please suppy a title.</span>
                         </label>
                         <input id="id_requirement_title"
                                class="form-control"
@@ -32,8 +32,8 @@
 
                     <br/>
                     <label>Requirement Scope:
-                        <span class="error" v-if="!$v.requirementScopeModel.required"> Please supply a scope.</span>
-                        <span class="error" v-if="!$v.requirementScopeModel.maxLength"> Sorry - too many characters.</span>
+                        <span class="error" v-if="!v$.requirementScopeModel.required"> Please supply a scope.</span>
+                        <span class="error" v-if="!v$.requirementScopeModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
                     <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
@@ -43,10 +43,10 @@
                        :init="{
                          height: 500,
                          menubar: false,
-                         plugins: 'lists',
+                         plugins: ['lists','table'],
                         toolbar: [
                            'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
-                           'bold italic strikethrough underline backcolor | ' +
+                           'bold italic strikethrough underline backcolor | table | ' +
                            'bullist numlist outdent indent | removeformat'
                         ]}"
                        v-bind:content_css="false"
@@ -78,13 +78,13 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Requirement Status
-                                        <span class="error" v-if="!$v.statusModel.required && $v.statusModel.$dirty"> Please select a status.</span>
+                                        <span class="error" v-if="!v$.statusModel.required && v$.statusModel.$dirty"> Please select a status.</span>
                                     </label>
-                                    <v-select :options="statusFixList"
+                                    <n-select :options="statusFixList"
                                               v-bind:clearable="false"
                                               label="status"
-                                              v-model="statusModel"
-                                    ></v-select>
+                                              v-model:value="statusModel"
+                                    ></n-select>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -108,14 +108,14 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Requirement Type
-                                    <span class="error" v-if="!$v.typeModel.required && $v.typeModel.$dirty"> Please select a type.</span>
+                                    <span class="error" v-if="!v$.typeModel.$error.length > 0"> Please select a type.</span>
                                 </label>
-                                <v-select :options="typeFixList"
+                                <n-select :options="typeFixList"
                                           v-bind:disabled="isReadOnly"
                                           v-bind:clearable="false"
                                           label="type"
-                                          v-model="typeModel"
-                                ></v-select>
+                                          v-model:value="typeModel"
+                                ></n-select>
                             </div>
                         </div>
                     </div>
@@ -140,15 +140,17 @@
 
 <script>
     //JavaScript Libraries
-    import {Modal} from "bootstrap";
-
     const axios = require('axios');
+    import Editor from '@tinymce/tinymce-vue';
+    import { NSelect } from 'naive-ui';
+    import StakeholderInformation from "../organisations/StakeholderInformation.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
 
     //Validation
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin.js";
@@ -156,7 +158,14 @@
 
     export default {
         name: "RequirementInformation",
-        components: {},
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            'editor': Editor,
+            NSelect,
+            StakeholderInformation,
+        },
         props: [
             'defaultStakeholderImage',
             'organisationResults',
@@ -205,9 +214,9 @@
         methods: {
             updateRequirement: function() {
                 // Check the validation first
-                this.$v.$touch();
+                this.v$.$touch();
 
-                if (this.$v.$invalid) {
+                if (this.v$.$invalid) {
                     this.showValidationErrorModal();
 
                     //Just return - as we do not need to do the rest of this function
@@ -220,8 +229,8 @@
                 const data_to_send = new FormData();
                 data_to_send.set('requirement_title', this.requirementTitleModel);
                 data_to_send.set('requirement_scope',this.requirementScopeModel);
-                data_to_send.set('requirement_status',this.statusModel['value']);
-                data_to_send.set('requirement_type',this.typeModel['value']);
+                data_to_send.set('requirement_status',this.statusModel);
+                data_to_send.set('requirement_type',this.typeModel);
 
                 // Use Axion to send the data
                 axios.post(
@@ -250,31 +259,22 @@
             this.statusFixList = this.statusList.map((row) => {
                 //Construct the object
                 return {
-                    'value': row['pk'],
-                    'status': row['fields']['requirement_status'],
-                    'status_closed': row['fields']['requirement_status_is_closed'],
+                    value: row['pk'],
+                    label: row['fields']['requirement_status'],
                 };
             });
-            this.typeList.forEach((row) => {
-                //Construct the object
-                var construction_object = {
-                    'value': row['pk'],
-                    'type': row['fields']['requirement_type'],
+            this.typeFixList = this.typeList.map((row) => {
+                return {
+                    value: row['pk'],
+                    label: row['fields']['requirement_type'],
                 }
-
-                //Push the object to type fix list
-                this.typeFixList.push(construction_object);
             });
 
+            //Get the requirement status id from the requirement results
+            this.statusModel = requirement_results['requirement_status'];
 
-            //Filter the status fix list to get the current model version
-            this.statusModel = this.statusFixList.filter((row) => {
-                return row['value'] == requirement_results['requirement_status'];
-            })[0];
-
-            this.typeModel = this.typeFixList.filter((row) => {
-                return row['value'] == requirement_results['requirement_type'];
-            })[0];
+            //Update type model
+            this.typeModel = requirement_results['requirement_type'];
 
             //Check for the read only
             if (this.statusModel['status_closed'] || this.userLevel === 1) {

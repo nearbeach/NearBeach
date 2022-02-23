@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.userIcon"></IconifyIcon> Add Customer Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.userIcon"></Icon> Add Customer Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -36,24 +36,42 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
     import { Modal } from "bootstrap";
+    import { Icon } from '@iconify/vue';
+    import NewCustomerForm from "./NewCustomerForm.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
 
     //Validation
-    import { email, required } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, email } from '@vuelidate/validators'
 
     //Mixin
     import iconMixin from "../../mixins/iconMixin";
 
     export default {
         name: "NewCustomerModal",
-        props: [
-                'organisationId',
-                'titleList',
-        ],
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            Icon,
+            NewCustomerForm,
+        },
+        props: {
+            organisationId: {
+                type: Number,
+                default: 0,
+            },
+            titleList: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+        },
         mixins: [
             iconMixin,
         ],
@@ -88,7 +106,7 @@
             })
         },
         methods: {
-            submitNewCustomer: function() {
+            submitNewCustomer: async function() {
                 //Flag downstream to check validation
                 this.flagValidationCheck = true;
 
@@ -98,10 +116,10 @@
                 },100);
 
                 // Check the validation at this level
-                this.$v.$touch();
+                const isFormCorrect = await this.v$.$validate()
 
                 //NEED TO USE MIXIN FOR THIS SECTION
-                if (this.$v.$invalid) {
+                if (isFormCorrect) {
                     //Show the error dialog and notify to the user that there were field missing.
                     var elem_cont = document.getElementById("errorModalContent");
 
@@ -119,7 +137,7 @@
 
                 //Create the data_to_send
                 const data_to_send = new FormData();
-                data_to_send.set('customer_title',this.titleModel['value']);
+                data_to_send.set('customer_title',this.titleModel);
                 data_to_send.set('customer_first_name',this.customerFirstNameModel);
                 data_to_send.set('customer_last_name',this.customerLastNameModel);
                 data_to_send.set('customer_email',this.customerEmailModel);

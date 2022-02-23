@@ -12,7 +12,7 @@
         >
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.noteAdd"></IconifyIcon> New Note</h2>
+                    <h2><Icon v-bind:icon="icons.noteAdd"></Icon> New Note</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -30,10 +30,10 @@
                        :init="{
                          height: 300,
                          menubar: false,
-                         plugins: 'lists',
+                         plugins: ['lists','table'],
                           toolbar: [
                              'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
-                             'bold italic strikethrough underline backcolor | ' +
+                             'bold italic strikethrough underline backcolor | table | ' +
                              'bullist numlist outdent indent | removeformat'
                           ]}"
                        v-bind:content_css="false"
@@ -65,14 +65,19 @@
     //JavaScript components
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
+    import { Icon } from '@iconify/vue';
+    import axios from 'axios';
+    import Editor from '@tinymce/tinymce-vue'
 
     //VueX
     import { mapGetters } from 'vuex';
 
-    const axios = require('axios');
-
     export default {
         name: "NewHistoryNoteWizard",
+        components: {
+            'editor': Editor,
+            Icon,
+        },
         props: [
             'locationId',
             'destination',

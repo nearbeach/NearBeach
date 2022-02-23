@@ -10,7 +10,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> New Kanban Link Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.linkOut"></Icon> New Kanban Link Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -30,11 +30,11 @@
                             </p>
                         </div>
                         <div class="col-md-8">
-                            <v-select :options="objectSelection"
-                                      v-model="objectModel"
+                            <n-select :options="objectSelection"
+                                      v-model:value="objectModel"
                                       class="object-selection"
                                       v-if="!isSearching"
-                            ></v-select>
+                            ></n-select>
                             <div v-else
                                  class="alert alert-success"
                             >
@@ -176,7 +176,9 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
+    import { NSelect } from 'naive-ui';
 
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
@@ -187,6 +189,10 @@
 
     export default {
         name: "NewKanbanLinkWizard",
+        components: {
+            Icon,
+            NSelect,
+        },
         props: {
             columnResults: {
                 type: Array,
@@ -221,9 +227,16 @@
                 objectModel: null,
                 objectResults: [],
                 objectSelection: [
-                    'Project',
-                    'Requirement',
-                    'Task',
+                    {
+                        value: 'Project',
+                        label: 'Project',
+                    }, {
+                        value: 'Requirement',
+                        label: 'Requirement',
+                    }, {
+                        value: 'Task',
+                        label: 'Task',
+                    },
                 ],
                 linkModel: [],
             }

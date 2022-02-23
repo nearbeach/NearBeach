@@ -8,7 +8,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> New Requirement Link Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.linkOut"></Icon> New Requirement Link Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -28,11 +28,11 @@
                             </p>
                         </div>
                         <div class="col-md-8">
-                            <v-select :options="objectSelection"
-                                      v-model="objectModel"
+                            <n-select :options="objectSelection"
+                                      v-model:value="objectModel"
                                       class="object-selection"
                                       v-if="!isSearching"
-                            ></v-select>
+                            ></n-select>
                             <div v-else
                                  class="alert alert-success"
                             >
@@ -176,12 +176,18 @@
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
     import axios from 'axios';
+    import { Icon } from '@iconify/vue';
+    import { NSelect } from 'naive-ui';
 
     //VueX
     import { mapGetters } from 'vuex';
 
     export default {
         name: "NewRequirementLinkWizard",
+        components: {
+            Icon,
+            NSelect,
+        },
         props: {
             destination: {
                 type: String,
@@ -208,8 +214,8 @@
                 objectModel: null,
                 objectResults: [],
                 objectSelection: [
-                    'Project',
-                    'Task',
+                    { value: 'Project', label: 'Project'},
+                    { value: 'Task', label: 'Task'},
                 ],
                 linkModel: [],
             }

@@ -8,7 +8,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> New {{destination}} Link Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.linkOut"></Icon> New {{destination}} Link Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -28,11 +28,11 @@
                             </p>
                         </div>
                         <div class="col-md-8">
-                            <v-select :options="objectSelection"
-                                      v-model="objectModel"
+                            <n-select :options="objectSelection"
+                                      v-model:value="objectModel"
                                       class="object-selection"
                                       v-if="!isSearching"
-                            ></v-select>
+                            ></n-select>
                             <div v-else
                                  class="alert alert-success"
                             >
@@ -60,7 +60,7 @@
                                 />
                             </div>
 
-                            <div v-if="objectResults.length == 0 && objectModel != null"
+                            <div v-if="objectResults.length === 0 && objectModel != null"
                                  class="alert alert-warning"
                             >
                                 Sorry - there are no results.
@@ -78,7 +78,7 @@
                                 </thead>
 
                                 <!-- PROJECTS -->
-                                <tbody v-if="objectModel == 'Project'">
+                                <tbody v-if="objectModel === 'Project'">
                                     <tr v-for="result in objectResults">
                                         <td>
                                             <div class="form-check">
@@ -102,7 +102,7 @@
                                 </tbody>
 
                                 <!-- TASKS -->
-                                <tbody v-if="objectModel == 'Task'">
+                                <tbody v-if="objectModel === 'Task'">
                                     <tr v-for="result in objectResults">
                                         <td>
                                             <div class="form-check">
@@ -126,7 +126,7 @@
                                 </tbody>
 
                                 <!-- REQUIREMENTS -->
-                                <tbody v-if="objectModel== 'Requirement'">
+                                <tbody v-if="objectModel === 'Requirement'">
                                     <tr v-for="result in objectResults">
                                         <td>
                                             <div class="form-check">
@@ -150,7 +150,7 @@
                                 </tbody>
 
                                 <!-- REQUIREMENT ITEMS -->
-                                <tbody v-if="objectModel== 'Requirement_Item'">
+                                <tbody v-if="objectModel === 'Requirement_Item'">
                                     <tr v-for="result in objectResults">
                                         <td>
                                             <div class="form-check">
@@ -199,14 +199,19 @@
     //JavaScript components
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
-
-    const axios = require('axios');
+    import { Icon } from '@iconify/vue';
+    import axios from 'axios';
+    import { NSelect } from 'naive-ui';
 
     //VueX
     import { mapGetters } from 'vuex';
 
     export default {
         name: "NewLinkWizard",
+        components: {
+            Icon,
+            NSelect,
+        },
         props: {
             destination: {
                 type: String,
@@ -233,10 +238,10 @@
                 objectModel: null,
                 objectResults: [],
                 objectSelection: [
-                    'Project',
-                    'Requirement',
-                    'Requirement_Item',
-                    'Task',
+                    { value: 'Project', label: 'Project'},
+                    { value: 'Requirement', label: 'Requirement'},
+                    { value: 'Requirement_Item', label: 'Requirement_Item'},
+                    { value: 'Task', label: 'Task'},
                 ],
                 linkModel: [],
             }

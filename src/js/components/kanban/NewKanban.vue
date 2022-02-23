@@ -19,7 +19,7 @@
                     <div class="form-group">
                         <label>Kanban Board Name
                             <span class="error"
-                                  v-if="!$v.kanbanBoardNameModel.required && $v.kanbanBoardNameModel.$dirty"
+                                  v-if="!v$.kanbanBoardNameModel.required && v$.kanbanBoardNameModel.$dirty"
                             >
                                 Please suppy a title.
                             </span>
@@ -47,7 +47,7 @@
                     <kanban-property-order v-bind:property-name="'Columns'"
                                            v-bind:property-list="columnModel"
                                            v-bind:source="'columnModel'"
-                                           v-bind:is-dirty="$v.columnModel.$dirty"
+                                           v-bind:is-dirty="v$.columnModel.$dirty"
                                            v-on:update_property_list="updatePropertyList($event)"
                     ></kanban-property-order>
                 </div>
@@ -55,7 +55,7 @@
                     <kanban-property-order v-bind:property-name="'Levels'"
                                            v-bind:property-list="levelModel"
                                            v-bind:source="'levelModel'"
-                                           v-bind:is-dirty="$v.columnModel.$dirty"
+                                           v-bind:is-dirty="v$.columnModel.$dirty"
                                            v-on:update_property_list="updatePropertyList($event)"
                     ></kanban-property-order>
                 </div>
@@ -68,7 +68,7 @@
                                v-bind:destination="'kanban_board'"
                                v-bind:user-group-results="userGroupResults"
                                v-on:update_group_model="updateGroupModel($event)"
-                               v-bind:is-dirty="$v.groupModel.$dirty"
+                               v-bind:is-dirty="v$.groupModel.$dirty"
             ></group-permissions>
 
             <!-- SAVE -->
@@ -88,9 +88,12 @@
 
 <script>
     const axios = require('axios');
+    import KanbanPropertyOrder from "./KanbanPropertyOrder.vue";
+    import GroupPermissions from "../permissions/GroupPermissions.vue";
 
     // Validation
-    import { required } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required } from '@vuelidate/validators'
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -98,6 +101,13 @@
 
     export default {
         name: "NewKanban",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            GroupPermissions,
+            KanbanPropertyOrder,
+        },
         props: {
             groupResults: {
                 type: Array,
@@ -201,9 +211,9 @@
         methods: {
             addNewKanban: function() {
                 //Check form validation
-                this.$v.$touch();
+                this.v$.$touch();
 
-                if (this.$v.$invalid || !this.uniqueKanbanBoardName || this.checkingKanbanBoardName) {
+                if (this.v$.$invalid || !this.uniqueKanbanBoardName || this.checkingKanbanBoardName) {
                     this.showValidationErrorModal();
 
                     //Just return - as we do not need to do the rest of this function
@@ -225,7 +235,7 @@
                 });
 
                 this.groupModel.forEach(single_group => {
-                    data_to_send.append('group_list',single_group['value']);
+                    data_to_send.append('group_list',single_group);
                 })
 
                 //Use axios to send the data

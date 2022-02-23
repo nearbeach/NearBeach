@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.userIcon"></IconifyIcon> Upload Document Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.userIcon"></Icon> Upload Document Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -115,7 +115,8 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -126,6 +127,9 @@
 
     export default {
         name: "UploadDocumentWizard",
+        components: {
+            Icon,
+        },
         props: {
             acceptedDocuments: {
                 type: String,
@@ -141,7 +145,9 @@
             },
             excludeDocuments: {
                 type: Array,
-                default: [],
+                default: () => {
+                    return [];
+                },
             },
             locationId: {
                 type: Number,

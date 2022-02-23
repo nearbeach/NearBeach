@@ -15,7 +15,7 @@
                 <span v-on:click="removeTag(tag['pk'])"
                       v-if="userLevel > 1"
                 >
-                    <IconifyIcon v-bind:icon="icons.xCircle"></IconifyIcon>
+                    <Icon v-bind:icon="icons.xCircle"></Icon>
                 </span>
             </div>
         </div>
@@ -45,6 +45,7 @@
 <script>
     const axios = require('axios');
     import {Modal} from "bootstrap";
+    import { Icon } from '@iconify/vue';
     
     //Mixin
     import iconMixin from "../../../mixins/iconMixin";
@@ -54,8 +55,11 @@
     import { mapGetters } from 'vuex'
 
     export default {
-        components: { AddTagWizard },
         name: "ListTagsModule",
+        components: {
+            AddTagWizard,
+            Icon,
+        },
         props: {
             destination: {
                 type: String,

@@ -19,8 +19,8 @@
                         </div>
                         <div class="col-md-8">
                             <label>Search User</label>
-                            <v-select :options="userResults"
-                                      v-model="userModel"
+                            <n-select :options="userResults"
+                                      v-model:value="userModel"
                                       class="form-control"
                             />
                         </div>
@@ -39,8 +39,8 @@
                         </div>
                         <div class="col-md-8">
                             <label>Search Groups</label>
-                            <v-select :options="groupResults"
-                                      v-model="groupModel"
+                            <n-select :options="groupResults"
+                                      v-model:value="groupModel"
                                       class="form-control"
                                       multiple
                             />
@@ -60,8 +60,8 @@
                         </div>
                         <div class="col-md-8">
                             <label>Search Permission Sets</label>
-                            <v-select :options="permissionSetResults"
-                                      v-model="permissionSetModel"
+                            <n-select :options="permissionSetResults"
+                                      v-model:value="permissionSetModel"
                                       class="form-control"
                                       multiple
                             />
@@ -78,7 +78,9 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    // const axios = require('axios');
+    import axios from 'axios';
+    import { NSelect } from 'naive-ui'
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -88,6 +90,9 @@
 
     export default {
         name: "AdminAddUser",
+        components: {
+            NSelect,
+        },
         props: {
             destination: {
                 type: String,
@@ -121,16 +126,16 @@
             addUser: function() {
                 //Create the data_to_send
                 const data_to_send = new FormData();
-                data_to_send.set('username', this.userModel['value']);
+                data_to_send.set('username', this.userModel);
 
                 //Loop through all the groups
                 this.groupModel.forEach(row => {
-                    data_to_send.append('group', row['value']);
+                    data_to_send.append('group', row);
                 });
 
                 //Loop through all the permission_sets
                 this.permissionSetModel.forEach(row => {
-                    data_to_send.append('permission_set', row['value']);
+                    data_to_send.append('permission_set', row);
                 });
 
                 axios.post(
@@ -175,21 +180,15 @@
                     switch(this.destination) {
                         case "group":
                             //Filter group model data from group results
-                            this.groupModel = this.groupResults.filter(row => {
-                                return row['value'] === this.locationId;
-                            });
+                            this.groupModel = [this.locationId];
                             break;
                         case "permission_set":
                             //Filter permission set model data from permission set results
-                            this.permissionSetModel = this.permissionSetResults.filter(row => {
-                                return row['value'] === this.locationId;
-                            });
+                            this.permissionSetModel = [this.locationId];
                             break;
                         case "user":
                             //Filter user model data from user results
-                            this.userModel = this.userResults.filter(row => {
-                                return row['value'] === this.locationId;
-                            })[0];
+                            this.userModel = this.locationId;
                             break;
                         default:
                             break;

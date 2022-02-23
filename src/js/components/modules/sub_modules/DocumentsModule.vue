@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><IconifyIcon :icon="icons.bxBriefcase" /> Documents</h2>
+        <h2><Icon :icon="icons.bxBriefcase" /> Documents</h2>
         <p class="text-instructions">
             The following is a folder structure of all documents uploaded to this {{destination}}
         </p>
@@ -17,7 +17,7 @@
                  v-on:click="goToParentDirectory()"
                  class="document-child"
             >
-                <IconifyIcon v-bind:icon="icons.arrowUp"
+                <Icon v-bind:icon="icons.arrowUp"
                              width="80px"
                              height="80px"
                 />
@@ -32,7 +32,7 @@
                  v-on:click="updateCurrentFolder(folder['pk'])"
                  class="document-child"
             >
-                <IconifyIcon v-bind:icon="icons.folderIcon"
+                <Icon v-bind:icon="icons.folderIcon"
                              width="80px"
                              height="80px"
                 />
@@ -50,7 +50,7 @@
                    rel="noopener noreferrer"
                    target="_blank"
                 >
-                    <IconifyIcon v-bind:icon="getIcon(document)"
+                    <Icon v-bind:icon="getIcon(document)"
                                  width="80px"
                                  height="80px"
                     />
@@ -128,8 +128,12 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
     import {Modal} from "bootstrap";
+    import { Icon } from '@iconify/vue';
+    import AddFolderWizard from "../wizards/AddFolderWizard.vue";
+    import AddLinkWizard from "../wizards/AddLinkWizard.vue";
+    import UploadDocumentWizard from "../wizards/UploadDocumentWizard.vue";
 
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
@@ -139,10 +143,22 @@
 
     export default {
         name: "DocumentsModule",
-        props: [
-            'destination',
-            'locationId',
-        ],
+        components: {
+            AddFolderWizard,
+            AddLinkWizard,
+            Icon,
+            UploadDocumentWizard,
+        },
+        props: {
+            destination: {
+                type: String,
+                default: "",
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+        },
         data() {
             return {
                 currentFolder: null,

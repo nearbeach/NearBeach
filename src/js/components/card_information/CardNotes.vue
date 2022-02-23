@@ -14,10 +14,10 @@
                     :init="{
                         height: 250,
                         menubar: false,
-                        plugins: 'lists',
+                        plugins: ['lists','table'],
                         toolbar: [
                            'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
-                           'bold italic strikethrough underline backcolor | ' +
+                           'bold italic strikethrough underline backcolor | table | ' +
                            'bullist numlist outdent indent | removeformat'
                         ]}"
                     v-bind:content_css="false"
@@ -53,12 +53,18 @@
 
 <script>
     const axios = require('axios');
+    import Editor from '@tinymce/tinymce-vue'
+    import ListNotes from "../modules/sub_modules/ListNotes.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
 
     export default {
         name: 'CardNotes',
+        components: {
+            'editor': Editor,
+            ListNotes,
+        },
         props: {},
         data() {
             return {

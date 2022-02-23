@@ -16,7 +16,7 @@
                     <kanban-property-order v-bind:property-name="'Column'"
                                            v-bind:property-list="columnModel"
                                            v-bind:source="'columnModel'"
-                                           v-bind:is-dirty="$v.columnModel.$dirty"
+                                           v-bind:is-dirty="v$.columnModel.$dirty"
                                            v-bind:is-new-mode="false"
                                            v-bind:kanban-board-id="kanbanBoardResults[0]['pk']"
                                            v-on:update_property_list="updatePropertyList($event)"
@@ -26,7 +26,7 @@
                     <kanban-property-order v-bind:property-name="'Level'"
                                            v-bind:property-list="levelModel"
                                            v-bind:source="'levelModel'"
-                                           v-bind:is-dirty="$v.columnModel.$dirty"
+                                           v-bind:is-dirty="v$.columnModel.$dirty"
                                            v-bind:is-new-mode="false"
                                            v-bind:kanban-board-id="kanbanBoardResults[0]['pk']"
                                            v-on:update_property_list="updatePropertyList($event)"
@@ -57,9 +57,11 @@
 
 <script>
     const axios = require('axios');
+    import KanbanPropertyOrder from "./KanbanPropertyOrder.vue";
 
     // Validation
-    import { required } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required } from '@vuelidate/validators'
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -67,6 +69,12 @@
 
     export default {
         name: "KanbanEditBoard",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            KanbanPropertyOrder,
+        },
         props: {
             columnResults: {
                 type: Array,
@@ -89,6 +97,14 @@
             rootUrl: {
                 type: String,
                 default: "/",
+            },
+            staticUrl: {
+                type: String,
+                default: "/",
+            },
+            userLevel: {
+                type: Number,
+                default: 0,
             },
         },
         mixins: [
@@ -131,13 +147,19 @@
             this.$store.commit({
                 type: 'updateUrl',
                 rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
+            })
+
+            this.$store.commit({
+                type: 'updateUserLevel',
+                userLevel: this.userLevel,
             })
 
             //Map the variables into a useable format
             this.columnModel = this.columnResults.map(row => {
                 return {
                     'id': row['pk'],
-                    'title': row['fields']['kanban_column_name'], 
+                    'title': row['fields']['kanban_column_name'],
                 };
             });
 

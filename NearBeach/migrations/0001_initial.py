@@ -70,7 +70,7 @@ class Migration(migrations.Migration):
                 ('document_description', models.CharField(max_length=255)),
                 ('document_url_location', models.TextField(blank=True, null=True)),
                 ('document', models.FileField(blank=True, null=True,
-                                              storage=NearBeach.private_media.File_Storage(), upload_to='')),
+                                              storage=NearBeach.private_media.FileStorage(), upload_to='')),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default='FALSE')),

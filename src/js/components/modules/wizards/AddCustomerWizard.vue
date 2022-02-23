@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.usersIcon"></IconifyIcon> Add Customers Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.usersIcon"></Icon> Add Customers Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -24,10 +24,10 @@
                             </p>
                         </div>
                         <div class="col-md-8">
-                            <v-select :options="customerFixList"
+                            <n-select :options="customerFixList"
                                 label="customerName"
-                                v-model="customerModel"
-                            ></v-select>
+                                v-model:value="customerModel"
+                            ></n-select>
                         </div>
                     </div>
                     <div class="row" v-else>
@@ -65,6 +65,8 @@
 
 <script>
     const axios = require('axios');
+    import { Icon } from '@iconify/vue';
+    import { NSelect } from 'naive-ui';
 
     //Mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
@@ -75,6 +77,10 @@
 
     export default {
         name: "AddCustomerWizard",
+        components: {
+            Icon,
+            NSelect,
+        },
         props: {
             destination: {
                 type: String,
@@ -112,7 +118,7 @@
             addCustomer: function() {
                 // Set up the data object to send
                 const data_to_send = new FormData();
-                data_to_send.set('customer', this.customerModel['value']);
+                data_to_send.set('customer', this.customerModel);
 
                 axios.post(
                     `${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_customer/`,
@@ -153,22 +159,15 @@
                     exclude_array.push(row['pk']);
                 });
 
-                //Clear out the customerFixList
-                this.customerFixList = [];
-
-                //Loop through all the data and extract the fields we want
-                this.customerList.forEach(row => {
-                    //Check to make sure the customer id is not in the exclusion array
-                    if (!exclude_array.includes(row['pk'])) {
-                        //Add the customer to the FixList
-                        this.customerFixList.push({
-                            'value': row['pk'],
-                            'customerName': `${row['fields']['customer_first_name']} ${row['fields']['customer_last_name']}`,
-                        });
+                //Set the customerFixList
+                this.customerFixList = this.customerList.filter(row => {
+                    return !exclude_array.includes(row['pk']);
+                }).map(row => {
+                    return {
+                        value: row['pk'],
+                        label: `${row['fields']['customer_first_name']} ${row['fields']['customer_last_name']}`,
                     }
                 });
-
-                //Done
             },
         },
         mounted() {

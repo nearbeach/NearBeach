@@ -8,7 +8,7 @@
         <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.clipboardIcon"></IconifyIcon> New Requirement Item Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.clipboardIcon"></Icon> New Requirement Item Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -29,7 +29,7 @@
                         </div>
                         <div class="col-md-8">
                             <label for="id_requirement_item_title">Requirement Item Title:
-                                <span class="error" v-if="!$v.requirementItemTitleModel.required"> Please suppy a title.</span>
+                                <span class="error" v-if="!v$.requirementItemTitleModel.required"> Please suppy a title.</span>
                             </label>
                             <input id="id_requirement_item_title"
                                    class="form-control"
@@ -42,17 +42,17 @@
 
                             <br/>
                             <label>Requirement Item Scope:
-                                <span class="error" v-if="!$v.requirementItemScopeModel.required && $v.requirementItemScopeModel.$dirty"> Please supply a scope.</span>
-                                <span class="error" v-if="!$v.requirementItemScopeModel.maxLength"> Sorry - too many characters.</span>
+                                <span class="error" v-if="!v$.requirementItemScopeModel.required && v$.requirementItemScopeModel.$dirty"> Please supply a scope.</span>
+                                <span class="error" v-if="!v$.requirementItemScopeModel.maxLength"> Sorry - too many characters.</span>
                             </label><br>
                             <editor
                                :init="{
                                  height: 500,
                                  menubar: false,
-                                 plugins: 'lists',
+                                 plugins: ['lists','table'],
                                   toolbar: [
                                      'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
-                                     'bold italic strikethrough underline backcolor | ' +
+                                     'bold italic strikethrough underline backcolor | table | ' +
                                      'bullist numlist outdent indent | removeformat'
                                   ]}"
                                v-bind:content_css="false"
@@ -74,24 +74,24 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Requirement Status
-                                    <span class="error" v-if="!$v.statusItemModel.required && $v.statusItemModel.$dirty"> Please select a status.</span>
+                                    <span class="error" v-if="!v$.statusItemModel.required && v$.statusItemModel.$dirty"> Please select a status.</span>
                                 </label>
-                                <v-select :options="statusItemFixList"
+                                <n-select :options="statusItemFixList"
                                           label="status"
-                                          v-model="statusItemModel"
-                                ></v-select>
+                                          v-model:value="statusItemModel"
+                                ></n-select>
                             </div>
 
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Requirement Type
-                                    <span class="error" v-if="!$v.typeItemModel.required && $v.typeItemModel.$dirty"> Please select a type.</span>
+                                    <span class="error" v-if="!v$.typeItemModel.required && v$.typeItemModel.$dirty"> Please select a type.</span>
                                 </label>
-                                <v-select :options="typeItemFixList"
+                                <n-select :options="typeItemFixList"
                                           label="type"
-                                          v-model="typeItemModel"
-                                ></v-select>
+                                          v-model:value="typeItemModel"
+                                ></n-select>
                             </div>
                         </div>
                     </div>
@@ -116,25 +116,50 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
+    import { NSelect } from 'naive-ui';
+    import Editor from '@tinymce/tinymce-vue'
 
     //Mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
 
     //Validation
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
 
     //Vuex
     import { mapGetters } from 'vuex';
 
     export default {
         name: "NewRequirementItemWizard",
-        props: [
-            'itemStatusList',
-            'itemTypeList',
-            'locationId',
-        ],
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            'editor': Editor,
+            Icon,
+            NSelect,
+        },
+        props: {
+            itemStatusList: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            itemTypeList: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+        },
         mixins: [
             errorModalMixin,
             iconMixin,
@@ -172,9 +197,9 @@
         methods: {
             saveItem: function() {
                 // Check the validation first
-                this.$v.$touch();
+                this.v$.$touch();
 
-                if (this.$v.$invalid) {
+                if (this.v$.$invalid) {
                     //Just return - as we do not need to do the rest of this function
                     return;
                 }
@@ -182,8 +207,8 @@
                 const data_to_send = new FormData();
                 data_to_send.set('requirement_item_title', this.requirementItemTitleModel);
                 data_to_send.set('requirement_item_scope',this.requirementItemScopeModel);
-                data_to_send.set('requirement_item_status',this.statusItemModel['value']);
-                data_to_send.set('requirement_item_type',this.typeItemModel['value']);
+                data_to_send.set('requirement_item_status',this.statusItemModel);
+                data_to_send.set('requirement_item_type',this.typeItemModel);
 
                 axios.post(
                     `${this.rootUrl}new_requirement_item/save/${this.locationId}/`,
@@ -209,27 +234,19 @@
         watch: {
             itemStatusList: function() {
                 //We need to transform the data from the JSON array given to one vue-select can read
-                this.itemStatusList.forEach((row) => {
-                    //Construct the object
-                    var construction_object = {
-                        'value': row['pk'],
-                        'status': row['fields']['requirement_item_status'],
+                this.statusItemFixList = this.itemStatusList.map((row) => {
+                    return {
+                        value: row['pk'],
+                        label: row['fields']['requirement_item_status'],
                     };
-
-                    //Push the object to status fix list
-                    this.statusItemFixList.push(construction_object);
                 });
             },
             itemTypeList: function() {
-                this.itemTypeList.forEach((row) => {
-                    //Construct the object
-                    var construction_object = {
-                        'value': row['pk'],
-                        'type': row['fields']['requirement_item_type'],
-                    }
-
-                    //Push the object to type fix list
-                    this.typeItemFixList.push(construction_object);
+                this.typeItemFixList = this.itemTypeList.map((row) => {
+                    return {
+                        value: row['pk'],
+                        label: row['fields']['requirement_item_type'],
+                    };
                 });
             },
         },

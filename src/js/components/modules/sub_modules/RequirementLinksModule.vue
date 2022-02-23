@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><IconifyIcon v-bind:icon="icons.linkIcon"></IconifyIcon> Requirement Links</h2>
+        <h2><Icon v-bind:icon="icons.linkIcon"></Icon> Requirement Links</h2>
         <p class="text-instructions">
             The following are links to other projects/tasks. You can link a Requirement to these other objects to
             symbolise a connection between the two.
@@ -26,7 +26,7 @@
                         <td>
                             {{extractObjectStatus(link)}}
                             <span class="remove-link">
-                                <IconifyIcon v-bind:icon="icons.trashCan"
+                                <Icon v-bind:icon="icons.trashCan"
                                              v-on:click="removeLink(link.object_assignment_id)"
                                 />
                             </span>
@@ -48,13 +48,13 @@
         </div>
         <hr>
 
-        <h2><IconifyIcon v-bind:icon="icons.linkIcon2"></IconifyIcon> Requirement Item Links</h2>
+        <h2><Icon v-bind:icon="icons.linkIcon2"></Icon> Requirement Item Links</h2>
         <p class="text-instructions">
             The following are links for the Items to other projects/tasks.
         </p>
 
         <!-- ITEM LINKS -->
-        <div v-if="itemLinkResults.length == 0"
+        <div v-if="itemLinkResults.length === 0"
         >
             <div class="alert alert-dark">
                 Sorry - there are no Item Links. Please navigate to the Item you wish to add a link too.
@@ -92,7 +92,9 @@
 <script>
     //JavaScript components
     import {Modal} from "bootstrap";
-    const axios = require('axios');
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
+    import NewRequirementLinkWizard from "../wizards/NewRequirementLinkWizard.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -102,11 +104,24 @@
 
     export default {
         name: "RequirementLinksModule",
-        props: [
-            'activateLazyLoading',
-            'destination',
-            'locationId',
-        ],
+        components: {
+            Icon,
+            NewRequirementLinkWizard,
+        },
+        props: {
+            activateLazyLoading: {
+                type: Boolean,
+                default: false,
+            },
+            destination: {
+                type: String,
+                default: '/',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+        },
         mixins: [
             iconMixin,
         ],

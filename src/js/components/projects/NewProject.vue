@@ -18,7 +18,7 @@
                     <!-- PROJECT NAME -->
                     <div class="form-group">
                         <label>Project Name
-                            <span class="error" v-if="!$v.projectNameModel.required && $v.projectNameModel.$dirty"
+                            <span class="error" v-if="!v$.projectNameModel.required && v$.projectNameModel.$dirty"
                             > Please suppy a title.</span>
                         </label>
                         <input type="text"
@@ -30,8 +30,8 @@
 
                     <!-- PROJECT DESCRIPTION -->
                     <label>Project Description:
-                        <span class="error" v-if="!$v.projectDescriptionModel.required && $v.projectDescriptionModel.$dirty"> Please supply a description.</span>
-                        <span class="error" v-if="!$v.projectDescriptionModel.maxLength"> Sorry - too many characters.</span>
+                        <span class="error" v-if="!v$.projectDescriptionModel.required && v$.projectDescriptionModel.$dirty"> Please supply a description.</span>
+                        <span class="error" v-if="!v$.projectDescriptionModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
                     <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
@@ -41,10 +41,10 @@
                        :init="{
                          height: 500,
                          menubar: false,
-                         plugins: 'lists',
+                         plugins: ['lists','table'],
                          toolbar: [
                              'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
-                             'bold italic strikethrough underline backcolor | ' +
+                             'bold italic strikethrough underline backcolor | table | ' +
                              'bullist numlist outdent indent | removeformat'
                         ]}"
                        v-bind:content_css="false"
@@ -59,14 +59,13 @@
             <!-- STAKEHOLDER ORGANISATION -->
             <hr>
             <get-stakeholders v-on:update_stakeholder_model="updateStakeholderModel($event)"
-                              v-bind:is-dirty="$v.stakeholderModel.$dirty"
+                              v-bind:is-dirty="v$.stakeholderModel.$dirty"
             ></get-stakeholders>
 
             <!-- START DATE & END DATE -->
             <hr>
             <between-dates destination="project"
                            v-on:update_dates="updateDates($event)"
-                           v-bind:is-dirty-end="$v.projectEndDateModel.$dirty || $v.projectStartDateModel.$dirty"
             ></between-dates>
 
             <!-- Group Permissions -->
@@ -75,7 +74,7 @@
                                v-bind:destination="'project'"
                                v-bind:user-group-results="userGroupResults"
                                v-on:update_group_model="updateGroupModel($event)"
-                               v-bind:is-dirty="$v.groupModel.$dirty"
+                               v-bind:is-dirty="v$.groupModel.$dirty"
             ></group-permissions>
 
             <!-- Submit Button -->
@@ -94,13 +93,29 @@
 
 <script>
     const axios = require('axios');
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators';
+    import BetweenDates from "../dates/BetweenDates.vue";
+    import StakeholderInformation from "../organisations/StakeholderInformation.vue";
+    import Editor from '@tinymce/tinymce-vue';
+    import GroupPermissions from "../permissions/GroupPermissions.vue";
+    import GetStakeholders from "../organisations/GetStakeholders.vue";
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
 
     export default {
         name: "NewProject",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            BetweenDates,
+            'editor': Editor,
+            GetStakeholders,
+            GroupPermissions,
+            StakeholderInformation,
+        },
         props: {
             groupResults: Array,
             rootUrl: {
@@ -153,11 +168,18 @@
             },
         },
         methods: {
-            submitNewProject: function() {
-                //Check form validation
-                this.$v.$touch();
+            submitNewProject: async function() {
+                //Check validation
+                const isFormCorrect = await this.v$.$validate();
 
-                if (this.$v.$invalid) {
+                if (!isFormCorrect && (
+                    this.v$.groupModel.$error.length > 0 ||
+                    this.v$.stakeholderModel.length > 0 ||
+                    this.v$.projectDescriptionModel.length > 0 ||
+                    this.v$.projectEndDateModel.length > 0 ||
+                    this.v$.projectNameModel.length > 0 ||
+                    this.v$.projectStartDateModel.length > 0
+                )) {
                     this.showValidationErrorModal();
 
                     //Just return - as we do not need to do the rest of this function
@@ -168,13 +190,13 @@
                 const data_to_send = new FormData();
                 data_to_send.set('project_name',this.projectNameModel);
                 data_to_send.set('project_description',this.projectDescriptionModel);
-                data_to_send.set('organisation',this.stakeholderModel['value']);
-                data_to_send.set('project_start_date',this.projectStartDateModel);
-                data_to_send.set('project_end_date',this.projectEndDateModel);
+                data_to_send.set('organisation',this.stakeholderModel);
+                data_to_send.set('project_start_date',this.projectStartDateModel.toISOString());
+                data_to_send.set('project_end_date',this.projectEndDateModel.toISOString());
 
                 // Insert a new row for each group list item
                 this.groupModel.forEach((row,index) => {
-                    data_to_send.append(`group_list`,row['value']);
+                    data_to_send.append(`group_list`,row);
                 });
 
                 //Send data to backend
@@ -190,8 +212,8 @@
             },
             updateDates: function(data) {
                 //Update both the start and end dates
-                this.projectStartDateModel = data['start_date'];
-                this.projectEndDateModel = data['end_date'];
+                this.projectStartDateModel = new Date(data['start_date']);
+                this.projectEndDateModel = new Date(data['end_date']);
             },
             updateGroupModel: function(data) {
                 this.groupModel = data;

@@ -11,14 +11,17 @@
     import {Modal} from "bootstrap";
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
-    const axios = require('axios');
+    import axios from 'axios';
+    import ListTagsModule from "./ListTagsModule.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
 
     export default {
         name: "MiscModule",
-        components: {},
+        components: {
+            ListTagsModule,
+        },
         props: [
             'destination',
             'locationId',

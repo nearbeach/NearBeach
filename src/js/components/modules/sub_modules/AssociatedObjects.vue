@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><IconifyIcon v-bind:icon="icons.objectStorage"></IconifyIcon> Associated Objects</h2>
+        <h2><Icon v-bind:icon="icons.objectStorage"></Icon> Associated Objects</h2>
         <hr v-if="projectResults.length + taskResults.length > 0">
 
         <!-- Project Results -->
@@ -133,7 +133,8 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -143,10 +144,19 @@
 
     export default {
         name: "AssociatedObjects",
-        props: [
-            'destination',
-            'locationId',
-        ],
+        components: {
+            Icon,
+        },
+        props: {
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+        },
         mixins: [
             iconMixin,
         ],

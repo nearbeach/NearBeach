@@ -13,10 +13,10 @@
                     :init="{
                         height: 300,
                         menubar: false,
-                        plugins: 'lists',
+                        plugins: ['lists','table'],
                         toolbar: [
                            'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
-                           'bold italic strikethrough underline backcolor | ' +
+                           'bold italic strikethrough underline backcolor | table | ' +
                            'bullist numlist outdent indent | removeformat'
                         ]}"
                     v-bind:content_css="false"
@@ -45,19 +45,30 @@
 </template>
 
 <script>
-    import {mapFields} from 'vuex-map-fields';
     const axios = require('axios');
+    import Editor from '@tinymce/tinymce-vue'
 
     export default {
         name: 'CardDescription',
+        components: {
+            'editor': Editor,
+        },
         props: {},
         data() {
             return {}
         },
         computed: {
-            ...mapFields([
-                'cardDescription',
-            ])
+            cardDescription: {
+                get () {
+                    return this.$store.state.card.cardDescription;
+                },
+                set (value) {
+                    this.$store.commit('updateValue', {
+                        field: 'cardDescription',
+                        value: value,
+                    });
+                },
+            },
         },
         methods: {
             closeModal: function() {

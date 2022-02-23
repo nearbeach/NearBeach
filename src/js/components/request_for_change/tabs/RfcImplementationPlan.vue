@@ -8,17 +8,17 @@
         </div>
         <div class="col-md-8" style="min-height: 610px;">
             <label>Implementation Plan:
-                <span class="error" v-if="!$v.rfcImplementationPlanModel.required && $v.rfcImplementationPlanModel.$dirty"> Please supply a description.</span>
-                <span class="error" v-if="!$v.rfcImplementationPlanModel.maxLength"> Sorry - too many characters.</span>
+                <span class="error" v-if="!v$.rfcImplementationPlanModel.required && v$.rfcImplementationPlanModel.$dirty"> Please supply a description.</span>
+                <span class="error" v-if="!v$.rfcImplementationPlanModel.maxLength"> Sorry - too many characters.</span>
             </label><br>
             <editor
                :init="{
                  height: 500,
                  menubar: false,
-                 plugins: 'lists',
+                 plugins: ['lists','table'],
                   toolbar: [
                      'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
-                     'bold italic strikethrough underline backcolor | ' +
+                     'bold italic strikethrough underline backcolor | table | ' +
                      'bullist numlist outdent indent | removeformat'
                   ]}"
                v-bind:content_css="false"
@@ -31,10 +31,18 @@
 </template>
 
 <script>
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
+    import Editor from '@tinymce/tinymce-vue';
 
     export default {
         name: "RfcImplementationPlan",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            'editor': Editor,
+        },
         props: {
             isReadOnly: {
                 type: Boolean,
@@ -58,11 +66,11 @@
         },
         methods: {
             updateValidation: function() {
-                this.$v.$touch();
+                this.v$.$touch();
 
                 this.$emit('update_validation', {
                     'tab': 'tab_3',
-                    'value': !this.$v.$invalid,
+                    'value': !this.v$.$invalid,
                 });
             },
             updateValues: function(modelName,modelValue) {

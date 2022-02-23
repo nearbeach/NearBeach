@@ -25,6 +25,8 @@
             <!-- START DATE & END DATE -->
             <hr>
             <between-dates destination="Change Task"
+                           v-bind:start-date-model="changeStartDateModel"
+                           v-bind:end-date-model="changeEndDateModel"
                            v-on:update_dates="updateDates($event)"
             ></between-dates>
 
@@ -43,10 +45,10 @@
                        :init="{
                          height: 300,
                          menubar: false,
-                         plugins: 'lists',
+                         plugins: ['lists','table'],
                         toolbar: [
                            'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
-                           'bold italic strikethrough underline backcolor | ' +
+                           'bold italic strikethrough underline backcolor | table | ' +
                            'bullist numlist outdent indent | removeformat'
                         ]}"
                        v-bind:content_css="false"
@@ -132,9 +134,15 @@
 
 <script>
     const axios = require('axios');
+    import Editor from '@tinymce/tinymce-vue';
+    import BetweenDates from "../dates/BetweenDates.vue";
 
     export default {
         name: "ChangeTaskInformation",
+        components: {
+            BetweenDates,
+            'editor': Editor,
+        },
         props: {
             changeTaskResults: Array,
             rootUrl: {
@@ -148,6 +156,8 @@
                 changeDescriptionModel: this.changeTaskResults[0]['fields']['change_task_description'],
                 changeStakeholderModel: this.changeTaskResults[0]['fields']['change_task_required_by'],
                 changeIsDowntimeModel: this.changeTaskResults[0]['fields']['is_downtime'],
+                changeStartDateModel: new Date(this.changeTaskResults[0]['fields']['change_task_start_date']).getTime(),
+                changeEndDateModel: new Date(this.changeTaskResults[0]['fields']['change_task_end_date']).getTime(),
             }
         },
         methods: {
@@ -161,14 +171,14 @@
                 //Stop the usual stuff
                 event.preventDefault();
 
-                var change_task_seconds = parseInt(this.changeEndDateModel) - parseInt(this.changeStartDateModel)
+                var change_task_seconds = this.changeEndDateModel - this.changeStartDateModel
 
                 // Create data_to_send
                 const data_to_send = new FormData();
                 data_to_send.set('change_task_title', this.changeTitleModel);
                 data_to_send.set('change_task_description', this.changeDescriptionModel);
-                data_to_send.set('change_task_start_date', this.changeStartDateModel);
-                data_to_send.set('change_task_end_date', this.changeEndDateModel);
+                data_to_send.set('change_task_start_date', new Date(this.changeStartDateModel).toISOString());
+                data_to_send.set('change_task_end_date', new Date(this.changeEndDateModel).toISOString());
                 data_to_send.set('change_task_seconds', change_task_seconds.toString());
                 // data_to_send.set('change_task_assigned_user', );
                 // data_to_send.set('change_task_qa_user', );

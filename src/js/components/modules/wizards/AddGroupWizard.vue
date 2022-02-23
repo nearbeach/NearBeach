@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.groupPresentation"></IconifyIcon> Add Group Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.groupPresentation"></Icon> Add Group Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -28,10 +28,10 @@
                             </p>
                         </div>
                         <div class="col-md-8">
-                            <v-select :options="groupFixList"
-                                      v-model="groupModel"
+                            <n-select :options="groupFixList"
+                                      v-model:value="groupModel"
                                       multiple
-                            ></v-select>
+                            ></n-select>
                         </div>
                     </div>
                     <div v-else
@@ -70,6 +70,9 @@
 </template>
 
 <script>
+    import { Icon } from '@iconify/vue';
+    import { NSelect } from 'naive-ui';
+
     //Mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
@@ -81,6 +84,10 @@
 
     export default {
         name: "AddGroupWizard",
+        components: {
+            Icon,
+            NSelect,
+        },
         props: {
             destination: {
                 type: String,
@@ -115,7 +122,7 @@
 
                 //Loop through the model and append the results
                 this.groupModel.forEach(row => {
-                    data_to_send.append('group_list',row['value']);
+                    data_to_send.append('group_list',row);
                 });
 
                 //user axios
@@ -140,18 +147,11 @@
                     `${this.rootUrl}object_data/${this.destination}/${this.locationId}/group_list_all/`,
                 ).then(response => {
                     //Clear the groupFixList
-                    this.groupFixList = [];
-
-                    //Loop through the response's data and add the fixed rows to groupFixList
-                    response['data'].forEach(row => {
-                        //Create object array
-                        var construction_object = {
+                    this.groupFixList = response['data'].map(row => {
+                        return {
                             'value': row['pk'],
                             'label': row['fields']['group_name'],
                         };
-
-                        //Add construction_object to groupFixList
-                        this.groupFixList.push(construction_object);
                     });
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);

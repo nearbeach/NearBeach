@@ -21,10 +21,10 @@
                     </div>
                     <div class="form-group">
                         <label>Parent Group</label>
-                        <v-select :options="parentGroupFixList"
-                                  v-model="parentGroupModel"
-                                  label="group_name"
-                                  class="form-control"
+                        <n-select v-model:value="parentGroupModel"
+                                  filterable
+                                  :options="parentGroupFixList"
+                                  clearable
                         />
                     </div>
                 </div>
@@ -46,6 +46,7 @@
 
 <script>
     const axios = require('axios');
+    import { NSelect } from 'naive-ui'
 
     //Load mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -53,6 +54,9 @@
 
     export default {
         name: "GroupInformation",
+        components: {
+            NSelect,
+        },
         props: {
             groupResults: {
                 type: Array,
@@ -75,7 +79,7 @@
             return {
                 groupNameModel: this.groupResults[0]['fields']['group_name'],
                 parentGroupFixList: [],
-                parentGroupModel: '',
+                parentGroupModel: this.groupResults[0]['fields']['parent_group'],
             }
         },
         mixins: [
@@ -87,11 +91,7 @@
                 //Construct data to send
                 const data_to_send = new FormData();
                 data_to_send.set('group_name', this.groupNameModel);
-
-                //If there is a value in parent group - setup the data
-                if (this.parentGroupModel['value'] !== undefined) {
-                    data_to_send.set('parent_group', this.parentGroupModel['value']);
-                }
+                data_to_send.set('parent_group', this.parentGroupModel);
 
                 //Show the loading mixin
                 this.showLoadingModal("Group Information")
@@ -112,22 +112,23 @@
             const parent_group_fix_list = this.parentGroupResults.map(row => {
                 return {
                     'group_name': row['fields']['group_name'],
+                    'label': row['fields']['group_name'],
                     'value': row['pk'],
                 }
             });
 
 
             // Get the parent object from the parent group fix list
-            const parent_group = parent_group_fix_list.filter(row => {
-                return row['value'] === this.groupResults[0]['fields']['parent_group'];
-            });
+            // const parent_group = parent_group_fix_list.filter(row => {
+            //     return row['value'] === this.groupResults[0]['fields']['parent_group'];
+            // });
 
             //Set the variables
             this.parentGroupFixList = parent_group_fix_list;
-            this.parentGroupModel = '';
-            if (parent_group.length > 0) {
-                this.parentGroupModel = parent_group[0];
-            }
+            // this.parentGroupModel = '';
+            // if (parent_group.length > 0) {
+            //     this.parentGroupModel = parent_group[0];
+            // }
 
             //Send the rootUrl to VueX
             this.$store.commit({

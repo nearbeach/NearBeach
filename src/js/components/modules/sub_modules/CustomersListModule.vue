@@ -14,7 +14,7 @@
                         </a>
                     </div>
                     <div class="customer-card-email">
-                        <IconifyIcon v-bind:icon="icons.mailIcon"></IconifyIcon>
+                        <Icon v-bind:icon="icons.mailIcon"></Icon>
                         {{customer['fields']['customer_email']}}
                     </div>
                 </div>
@@ -24,6 +24,8 @@
 </template>
 
 <script>
+    import { Icon } from '@iconify/vue';
+
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
 
@@ -32,9 +34,17 @@
 
     export default {
         name: "CustomersListModule",
-        props: [
-            'customerResults',
-        ],
+        components: {
+            Icon,
+        },
+        props: {
+            customerResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+        },
         computed: {
             ...mapGetters({
                 rootUrl: "getRootUrl",

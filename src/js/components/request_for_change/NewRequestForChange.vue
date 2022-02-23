@@ -4,83 +4,85 @@
             <h1>New Request for Change</h1>
             <hr>
 
-            <!-- FORM WIZARD -->
-            <form-wizard @on-complete="onComplete"
-                         @on-change="onChange"
-                         title=""
-                         subtitle=""
-            >
-                <!-- Description -->
-                <tab-content title="Description"
-                             :before-change="beforeChange"
-                >
-                    <rfc-description v-on:update_values="updateValues($event)"
+            <!-- DESCRIPTION -->
+            <rfc-description v-on:update_values="updateValues($event)"
+                             v-on:update_validation="updateValidation($event)"
+                             v-bind:static-url="staticUrl"
+            ></rfc-description>
+            <hr>
+
+            <!-- Details -->
+            <rfc-details v-bind:group-results="groupResults"
+                         v-bind:user-group-results="userGroupResults"
+                         v-on:update_validation="updateValidation($event)"
+                         v-on:update_values="updateValues($event)"
+            ></rfc-details>
+            <hr>
+
+            <!-- Risk -->
+            <rfc-risk v-on:update_values="updateValues($event)"
+                      v-on:update_validation="updateValidation($event)"
+            ></rfc-risk>
+            <hr>
+
+            <!-- Implementation Plan -->
+            <rfc-implementation-plan v-on:update_values="updateValues($event)"
                                      v-on:update_validation="updateValidation($event)"
-                                     v-bind:static-url="staticUrl"
-                    ></rfc-description>
-                </tab-content>
+            ></rfc-implementation-plan>
+            <hr>
 
-                <!-- Details -->
-                <tab-content title="Details"
-                             :before-change="beforeChange"
-                >
-                    <rfc-details v-bind:group-results="groupResults"
-                                 v-bind:user-group-results="userGroupResults"
-                                 v-on:update_validation="updateValidation($event)"
-                                 v-on:update_values="updateValues($event)"
-                    ></rfc-details>
-                </tab-content>
-
-                <!-- Risk -->
-                <tab-content title="Risk"
-                             :before-change="beforeChange"
-                >
-                    <rfc-risk v-on:update_values="updateValues($event)"
+            <!-- Backout Plan -->
+            <rfc-backout-plan v-on:update_values="updateValues($event)"
                               v-on:update_validation="updateValidation($event)"
-                    ></rfc-risk>
-                </tab-content>
+            ></rfc-backout-plan>
+            <hr>
 
-                <!-- Implementation Plan -->
-                <tab-content title="Implementation Plan"
-                             :before-change="beforeChange"
-                >
-                    <rfc-implementation-plan v-on:update_values="updateValues($event)"
-                                             v-on:update_validation="updateValidation($event)"
-                    ></rfc-implementation-plan>
-                </tab-content>
+            <!-- Test Plan -->
+            <rfc-test-plan v-on:update_values="updateValues($event)"
+                           v-on:update_validation="updateValidation($event)"
+            ></rfc-test-plan>
 
-                <!-- Backout Plan -->
-                <tab-content title="Backout Plan"
-                             :before-change="beforeChange"
-                >
-                    <rfc-backout-plan v-on:update_values="updateValues($event)"
-                                      v-on:update_validation="updateValidation($event)"
-                    ></rfc-backout-plan>
-                </tab-content>
-
-                <!-- Test Plan -->
-                <tab-content title="Test Plan"
-                             :before-change="beforeChange"
-                >
-                    <rfc-test-plan v-on:update_values="updateValues($event)"
-                                   v-on:update_validation="updateValidation($event)"
-                    ></rfc-test-plan>
-                </tab-content>
-            </form-wizard>
+            <!-- Submit Button -->
+            <hr>
+            <div class="row submit-row">
+                <div class="col-md-12">
+                    <a href="javascript:void(0)"
+                       class="btn btn-primary save-changes"
+                       v-on:click="onComplete"
+                    >Create new Request for Change</a>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
     const axios = require('axios');
+    import RfcDescription from "./tabs/RfcDescription.vue";
+    import RfcDetails from "./tabs/RfcDetails.vue";
+    import RfcRisk from "./tabs/RfcRisk.vue";
+    import RfcTestPlan from "./tabs/RfcTestPlan.vue";
+    import RfcBackoutPlan from "./tabs/RfcBackoutPlan.vue";
+    import RfcImplementationPlan from "./tabs/RfcImplementationPlan.vue";
+    import {FormWizard, TabContent} from "../../vue-form-wizard";
 
-    import {FormWizard, TabContent} from 'vue-form-wizard';
+    // import {FormWizard, TabContent} from 'vue-form-wizard';
 
     // Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
 
     export default {
         name: "NewRequestForChange",
+        components: {
+            FormWizard,
+            RfcBackoutPlan,
+            RfcDescription,
+            RfcDetails,
+            RfcImplementationPlan,
+            RfcRisk,
+            RfcTestPlan,
+            TabContent,
+        },
         props: {
             groupResults: Array,
             rootUrl: {
@@ -98,10 +100,9 @@
                 },
             },
         },
-        components: {
-            FormWizard,
-            TabContent,
-        },
+        emits: [
+            "onComplete"
+        ],
         mixins: [
             errorModalMixin,
         ],
@@ -152,15 +153,15 @@
 
                 data_to_send.set('rfc_title', data.rfcTitleModel);
                 data_to_send.set('rfc_summary', data.rfcSummaryModel);
-                data_to_send.set('rfc_type', data.rfcTypeModel['value']);
-                data_to_send.set('rfc_implementation_start_date', data.rfcImplementationStartModel);
-                data_to_send.set('rfc_implementation_end_date', data.rfcImplementationEndModel);
-                data_to_send.set('rfc_implementation_release_date', data.rfcReleaseModel);
+                data_to_send.set('rfc_type', data.rfcTypeModel);
+                data_to_send.set('rfc_implementation_start_date', new Date(data.rfcImplementationStartModel).toISOString());
+                data_to_send.set('rfc_implementation_end_date', new Date(data.rfcImplementationEndModel).toISOString());
+                data_to_send.set('rfc_implementation_release_date', new Date(data.rfcReleaseModel).toISOString());
                 data_to_send.set('rfc_version_number', data.rfcVersionModel);
-                data_to_send.set('rfc_lead', data.rfcChangeLeadModel['value']);
-                data_to_send.set('rfc_priority', data.rfcPriorityModel['value']);
-                data_to_send.set('rfc_risk', data.rfcRiskModel['value']);
-                data_to_send.set('rfc_impact', data.rfcImpactModel['value']);
+                data_to_send.set('rfc_lead', data.rfcChangeLeadModel);
+                data_to_send.set('rfc_priority', data.rfcPriorityModel);
+                data_to_send.set('rfc_risk', data.rfcRiskModel);
+                data_to_send.set('rfc_impact', data.rfcImpactModel);
                 data_to_send.set('rfc_risk_and_impact_analysis', data.rfcRiskSummaryModel);
                 data_to_send.set('rfc_implementation_plan', data.rfcImplementationPlanModel);
                 data_to_send.set('rfc_backout_plan', data.rfcBackoutPlan);
@@ -168,7 +169,7 @@
 
                 // Insert a new row for each group list item
                 data.groupModel.forEach((row,index) => {
-                    data_to_send.append(`group_list`,row['value']);
+                    data_to_send.append(`group_list`,row);
                 });
 
                 axios.post(

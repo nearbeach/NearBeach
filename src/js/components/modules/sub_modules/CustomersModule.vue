@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><IconifyIcon v-bind:icon="icons.userIcon"></IconifyIcon> Customers</h2>
+        <h2><Icon v-bind:icon="icons.userIcon"></Icon> Customers</h2>
         <p class="text-instructions">
             Below are a list of customers who are stakeholders to this {{destination}}.
         </p>
@@ -45,6 +45,9 @@
     //JavaScript components
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
+    import { Icon } from '@iconify/vue';
+    import CustomersListModule from "./CustomersListModule.vue";
+    import AddCustomerWizard from "../wizards/AddCustomerWizard.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -54,10 +57,21 @@
 
     export default {
         name: "CustomersModule",
-        props: [
-            'destination',
-            'locationId',
-        ],
+        components: {
+            AddCustomerWizard,
+            CustomersListModule,
+            Icon,
+        },
+        props: {
+            destination: {
+                type: String,
+                default: "",
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+        },
         mixins: [
             errorModalMixin,
             iconMixin,

@@ -3,7 +3,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.usersIcon"></IconifyIcon> Add Tags Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.usersIcon"></Icon> Add Tags Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -23,11 +23,11 @@
                         </div>
                         <div class="col-md-8">
                             <label>All Tag List</label>
-                            <v-select label="tag" 
+                            <n-select label="tag"
                                       multiple
                                       :options="tagList"
-                                      v-model="tagModel"
-                            ></v-select>
+                                      v-model:value="tagModel"
+                            ></n-select>
                         </div>
                     </div>
                 </div>
@@ -50,14 +50,19 @@
     //JavaScript extras
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
+    import { Icon } from '@iconify/vue';
+    import axios from 'axios';
+    import { NSelect } from 'naive-ui'
 
     //VueX
     import { mapGetters } from 'vuex';
 
-    const axios = require('axios');
-
     export default {
         name: "AddTagWizard",
+        components: {
+            Icon,
+            NSelect,
+        },
         props: {
             assignedTags: {
                 type: Array,
@@ -97,7 +102,7 @@
 
                 //Loop through all the models results
                 this.tagModel.forEach(row => {
-                    data_to_send.append('tag_id', row['value']);
+                    data_to_send.append('tag_id', row);
                 });
 
                 //Use Axios to send data to backend
@@ -123,7 +128,7 @@
                     this.allTagList = response['data'].map(row => {
                         return {
                             value: row['pk'],
-                            tag: row['fields']['tag_name'],
+                            label: row['fields']['tag_name'],
                         }
                     });
                 }).catch(error => {

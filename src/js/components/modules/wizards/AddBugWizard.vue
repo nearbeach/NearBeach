@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.usersIcon"></IconifyIcon> Add Bugs Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.usersIcon"></Icon> Add Bugs Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -27,11 +27,11 @@
                             <!-- Bug Client List -->
                             <div class="form-group">
                                 <label>Bug Client</label>
-                                <v-select :options="bugClientList"
+                                <n-select :options="bugClientList"
                                           label="bug_client_name"
                                           :option="'bug_client_id'"
-                                          v-model="bugClientModel"
-                                ></v-select>
+                                          v-model:value="bugClientModel"
+                                ></n-select>
                             </div>
                             <br>
 
@@ -112,14 +112,19 @@
     //JavaScript extras
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
-
-    const axios = require('axios');
+    import { Icon } from '@iconify/vue';
+    import axios from 'axios';
+    import { NSelect } from 'naive-ui'
 
     //VueX
     import { mapGetters } from 'vuex';
 
     export default {
         name: "AddBugWizard",
+        components: {
+            Icon,
+            NSelect,
+        },
         props: {
             destination: {
                 type: String,
@@ -156,15 +161,11 @@
                     `${this.rootUrl}object_data/bug_client_list/`,
                 ).then(response => {
                     //Clear out the bug list
-                    this.bugClientList = [];
-
-                    //Go through the data response and add the response to bug client list
-                    response['data'].forEach(row => {
-                        //Add the data to the array
-                        this.bugClientList.push({
-                            'bug_client_id': row['pk'],
-                            'bug_client_name': row['fields']['bug_client_name'],
-                        });
+                    this.bugClientList = response['data'].map(row => {
+                        return {
+                            value: row['pk'],
+                            label: row['fields']['bug_client_name'],
+                        }
                     });
                 });
             },
@@ -190,7 +191,7 @@
 
                 //Prepare for the data we are sending
                 const data_to_send = new FormData();
-                data_to_send.set('bug_client_id', this.bugClientModel['bug_client_id']);
+                data_to_send.set('bug_client_id', this.bugClientModel);
                 data_to_send.set('search',this.searchModel);
 
                 //Send the data - then wait for a response
@@ -219,7 +220,7 @@
 
                 //Setup data
                 const data_to_send = new FormData();
-                data_to_send.set('bug_client',this.bugClientModel['bug_client_id'])
+                data_to_send.set('bug_client',this.bugClientModel)
                 data_to_send.set('bug_id',bug_id);
                 data_to_send.set('bug_description', filted_bug_results[0]['summary']);
                 data_to_send.set('bug_status', filted_bug_results[0]['status']);

@@ -18,20 +18,21 @@
                     <label>
                         Title:
                         <span class="error"
-                              v-if="!$v.titleModel.required && $v.titleModel.$dirty"
+                              v-if="!v$.titleModel.required && v$.titleModel.$dirty"
                               > Please supply
                         </span>
                     </label>
-                    <v-select :options="titleFixList"
+                    <n-select :options="titleFixList"
                               label="title"
-                              v-model="titleModel"
-                    ></v-select>
+                              placeholder=""
+                              v-model:value="titleModel"
+                    ></n-select>
                 </div>
                 <div class="form-group col-sm-4">
                     <label>
                         First Name:
                         <span class="error"
-                              v-if="!$v.customerFirstNameModel.required && $v.customerFirstNameModel.$dirty"
+                              v-if="!v$.customerFirstNameModel.required && v$.customerFirstNameModel.$dirty"
                               > Please supply
                         </span>
                     </label>
@@ -44,7 +45,7 @@
                     <label>
                         Last Name:
                         <span class="error"
-                              v-if="!$v.customerLastNameModel.required && $v.customerLastNameModel.$dirty"
+                              v-if="!v$.customerLastNameModel.required && v$.customerLastNameModel.$dirty"
                               > Please supply
                         </span>
                     </label>
@@ -61,11 +62,11 @@
                 <label>
                     Email:
                     <span class="error"
-                          v-if="!$v.customerEmailModel.required && $v.customerEmailModel.$dirty"
+                          v-if="!v$.customerEmailModel.required && v$.customerEmailModel.$dirty"
                           > Please supply
                     </span>
                     <span class="error"
-                          v-if="!$v.customerEmailModel.email && $v.customerEmailModel.$dirty"
+                          v-if="!v$.customerEmailModel.email && v$.customerEmailModel.$dirty"
                           > Please format as Email
                     </span>
                 </label>
@@ -82,12 +83,20 @@
 <script>
     const axios = require('axios');
     import { Modal } from "bootstrap";
+    import { NSelect } from 'naive-ui';
 
     //Validation
-    import { email, required } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, email } from '@vuelidate/validators'
 
     export default {
         name: "NewCustomerForm",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            NSelect,
+        },
         props: [
             'flagValidationCheck',
             'organisationName',
@@ -161,7 +170,7 @@
                 if (!this.flagValidationCheck) return;
 
                 //Touch the validation
-                this.$v.$touch();
+                this.v$.$touch();
             },
             // organisationModel: function() {
             //     //Emit up this function's data
@@ -185,12 +194,12 @@
             },
         },
         mounted() {
-            //Get the title list data and convert it so the v-select can use it
-            this.titleList.forEach(row => {
-                this.titleFixList.push({
-                    'value': row['pk'],
-                    'title': row['fields']['title'],
-                });
+            //Get the data formatted how the NSelect wants
+            this.titleFixList = this.titleList.map(row => {
+                return {
+                    value: row['pk'],
+                    label: row['fields']['title'],
+                }
             });
         },
     }

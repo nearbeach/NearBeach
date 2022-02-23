@@ -5,7 +5,7 @@
             <h1>New Customer</h1>
             <hr>
 
-            <!-- New Customer Form -->
+             New Customer Form
             <new-customer-form v-bind:organisation-name="organisationName"
                                v-bind:title-list="titleList"
                                v-bind:flag-validation-check="flagValidationCheck"
@@ -52,17 +52,21 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
     import { Modal } from "bootstrap";
 
     //Validation
-    import { email, required } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, email } from '@vuelidate/validators'
 
     //Mixins
     import searchMixin from "../../mixins/searchMixin";
 
     export default {
         name: "NewCustomer",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         props: {
             organisationName: {
                 type: String,
@@ -185,10 +189,10 @@
                 },100);
 
                 // Check the validation at this level
-                this.$v.$touch();
+                this.v$.$touch();
 
                 //NEED TO USE MIXIN FOR THIS SECTION
-                if (this.$v.$invalid) {
+                if (this.v$.$invalid) {
                     //Show the error dialog and notify to the user that there were field missing.
                     var elem_cont = document.getElementById("errorModalContent");
 

@@ -19,7 +19,7 @@
                     <!-- PROJECT NAME -->
                     <div class="form-group">
                         <label>Project Name
-                            <span class="error" v-if="!$v.projectNameModel.required && $v.projectNameModel.$dirty"
+                            <span class="error" v-if="!v$.projectNameModel.required && v$.projectNameModel.$dirty"
                             > Please supply a title.</span>
                         </label>
                         <input type="text"
@@ -31,8 +31,8 @@
 
                     <!-- PROJECT DESCRIPTION -->
                     <label>Project Description:
-                        <span class="error" v-if="!$v.projectDescriptionModel.required && $v.projectDescriptionModel.$dirty"> Please supply a description.</span>
-                        <span class="error" v-if="!$v.projectDescriptionModel.maxLength"> Sorry - too many characters.</span>
+                        <span class="error" v-if="!v$.projectDescriptionModel.required && v$.projectDescriptionModel.$dirty"> Please supply a description.</span>
+                        <span class="error" v-if="!v$.projectDescriptionModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
                     <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
@@ -42,10 +42,10 @@
                        :init="{
                          height: 500,
                          menubar: false,
-                         plugins: 'lists',
+                         plugins: ['lists','table'],
                         toolbar: [
                            'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
-                           'bold italic strikethrough underline backcolor | ' +
+                           'bold italic strikethrough underline backcolor | table | ' +
                            'bullist numlist outdent indent | removeformat'
                         ]}"
                        v-bind:content_css="false"
@@ -69,9 +69,9 @@
                 <div class="col-md-4"
                      v-if="!isReadOnly"
                 >
-                    <v-select v-bind:options="statusOptions"
-                              v-model="projectStatusModel"
-                    ></v-select>
+                    <n-select v-bind:options="statusOptions"
+                              v-model:value="projectStatusModel"
+                    ></n-select>
                 </div>
                 <div class="col-md-4"
                      v-if="!isReadOnly"
@@ -103,9 +103,8 @@
             <hr>
             <between-dates destination="project"
                            v-on:update_dates="updateDates($event)"
-                           v-bind:is-dirty-end="$v.projectEndDateModel.$dirty || $v.projectStartDateModel.$dirty"
-                           v-bind:end-date-model="projectEndDateModel"
-                           v-bind:start-date-model="projectStartDateModel"
+                           v-bind:end-date-model="projectEndDateModel.getTime()"
+                           v-bind:start-date-model="projectStartDateModel.getTime()"
             ></between-dates>
 
             <!-- Submit and Close Button -->
@@ -135,13 +134,17 @@
 
 <script>
     const axios = require('axios');
-    import { DateTime } from "luxon";
+    import { NSelect } from 'naive-ui';
+    import BetweenDates from "../dates/BetweenDates.vue";
+    import StakeholderInformation from "../organisations/StakeholderInformation.vue";
+    import Editor from '@tinymce/tinymce-vue';
 
     //VueX
     import { mapGetters } from 'vuex';
 
     //Validations
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -149,6 +152,15 @@
 
     export default {
         name: "ProjectInformation",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            BetweenDates,
+            'editor': Editor,
+            NSelect,
+            StakeholderInformation,
+        },
         props: {
             defaultStakeholderImage: {
                 type: String,
@@ -185,15 +197,15 @@
             return {
                 isReadOnly: false,
                 projectDescriptionModel: this.projectResults[0]['fields']['project_description'],
-                projectEndDateModel: DateTime.fromISO(this.projectResults[0]['fields']['project_end_date']),
+                projectEndDateModel: new Date(this.projectResults[0]['fields']['project_end_date']),
                 projectNameModel: this.projectResults[0]['fields']['project_name'],
-                projectStartDateModel: DateTime.fromISO(this.projectResults[0]['fields']['project_start_date']),
+                projectStartDateModel: new Date(this.projectResults[0]['fields']['project_start_date']),
                 projectStatusModel: this.projectResults[0]['fields']['project_status'],
                 statusOptions: [
-                    'Backlog',
-                    'Blocked',
-                    'In Progress',
-                    'Test/Review',
+                    { value: 'Backlog', label: 'Backlog'},
+                    { value: 'Blocked', label: 'Blocked'},
+                    { value: 'In Progress', label: 'In Progress'},
+                    { value: 'Test/Review', label: 'Test/Review'},
                 ],
             }
         },
@@ -221,14 +233,14 @@
                 this.updateProject();
             },
             updateDates: function(data) {
-                this.projectEndDateModel = data['end_date'];
-                this.projectStartDateModel = data['start_date'];
+                this.projectEndDateModel = new Date(data['end_date']);
+                this.projectStartDateModel = new Date(data['start_date']);
             },
             updateProject: function() {
                 // Check the validation first
-                this.$v.$touch();
+                this.v$.$touch();
 
-                if (this.$v.$invalid) {
+                if (this.v$.$invalid) {
                     this.showValidationErrorModal();
 
                     //Just return - as we do not need to do the rest of this function
@@ -238,9 +250,9 @@
                 //Construct data_to_send to backend
                 const data_to_send = new FormData();
                 data_to_send.set('project_description',this.projectDescriptionModel);
-                data_to_send.set('project_end_date',this.projectEndDateModel);
+                data_to_send.set('project_end_date',this.projectEndDateModel.toISOString());
                 data_to_send.set('project_name',this.projectNameModel);
-                data_to_send.set('project_start_date',this.projectStartDateModel);
+                data_to_send.set('project_start_date',this.projectStartDateModel.toISOString());
                 data_to_send.set('project_status', this.projectStatusModel);
 
                 //Open up the loading modal

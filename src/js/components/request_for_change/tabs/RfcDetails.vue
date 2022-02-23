@@ -14,19 +14,19 @@
                 <div class="form-group">
                     <label>
                         Request for Change Type:
-                        <span class="error" v-if="!$v.rfcTypeModel.required && $v.rfcTypeModel.$dirty"
+                        <span class="error" v-if="!v$.rfcTypeModel.required && v$.rfcTypeModel.$dirty"
                         > Please select a Change Type.</span>
                     </label>
-                    <v-select v-bind:options="rfcType"
-                              v-model="rfcTypeModel"
-                    ></v-select>
+                    <n-select v-bind:options="rfcType"
+                              v-model:value="rfcTypeModel"
+                    ></n-select>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <label>
                         Version/Release Number
-                        <span class="error" v-if="!$v.rfcVersionModel.maxLength"> Sorry - too many characters.</span>
+                        <span class="error" v-if="!v$.rfcVersionModel.maxLength"> Sorry - too many characters.</span>
                     </label>
                     <input type="text"
                            maxlength="25"
@@ -58,31 +58,28 @@
                 <div class="col-sm-4">
                     <div class="form-group">
                         <label>Implementation Start: </label>
-                        <datetime type="datetime"
-                                  v-model="rfcImplementationStartModel"
+                        <n-date-picker type="datetime"
+                                  v-model:value="rfcImplementationStartModel"
                                   input-class="form-control"
-                                  v-bind:minute-step="5"
-                        ></datetime>
+                        ></n-date-picker>
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
                         <label>Implementation End: </label>
-                        <datetime type="datetime"
-                                  v-model="rfcImplementationEndModel"
+                        <n-date-picker type="datetime"
+                                  v-model:value="rfcImplementationEndModel"
                                   input-class="form-control"
-                                  v-bind:minute-step="5"
-                        ></datetime>
+                        ></n-date-picker>
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
                         <label>Release Date: </label>
-                        <datetime type="datetime"
-                                  v-model="rfcReleaseModel"
+                        <n-date-picker type="datetime"
+                                  v-model:value="rfcReleaseModel"
                                   input-class="form-control"
-                                  v-bind:minute-step="5"
-                        ></datetime>
+                        ></n-date-picker>
                     </div>
                 </div>
             </div>
@@ -101,13 +98,13 @@
                 <div class="form-group">
                     <label>
                         LEAD:
-                        <span class="error" v-if="!$v.rfcChangeLeadModel.required && $v.rfcChangeLeadModel.$dirty"
+                        <span class="error" v-if="!v$.rfcChangeLeadModel.required && v$.rfcChangeLeadModel.$dirty"
                         > Please select a Change Lead.</span>
                     </label>
-                    <v-select :options="rfcChangeLeadFixList"
+                    <n-select :options="rfcChangeLeadFixList"
                               @search="fetchOptions"
-                              v-model="rfcChangeLeadModel"
-                    ></v-select> <!-- TO DO FIX THIS -->
+                              v-model:value="rfcChangeLeadModel"
+                    ></n-select> <!-- TO DO FIX THIS -->
                 </div>
             </div>
         </div>
@@ -117,7 +114,7 @@
         <hr>
         <group-permissions v-bind:group-results="groupResults"
                            v-bind:destination="'request_for_change'"
-                           v-bind:is-dirty="$v.groupModel.$dirty"
+                           v-bind:is-dirty="v$.groupModel.$dirty"
                            v-bind:user-group-results="userGroupResults"
                            v-on:update_group_model="updateGroupModel($event)"
         ></group-permissions>
@@ -126,6 +123,8 @@
 
 <script>
     const axios = require('axios');
+    import { NSelect, NDatePicker } from 'naive-ui';
+    import GroupPermissions from "../../permissions/GroupPermissions.vue";
 
     //Mixins
     import searchMixin from "../../../mixins/searchMixin";
@@ -134,10 +133,19 @@
     import { mapGetters } from 'vuex';
 
     //Validation
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
 
     export default {
         name: "RfcDetails",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            GroupPermissions,
+            NDatePicker,
+            NSelect,
+        },
         props: {
             groupResults:{
                 type: Array,
@@ -160,9 +168,9 @@
                 groupModel: [],
                 rfcChangeLeadFixList: [],
                 rfcChangeLeadModel: '',
-                rfcImplementationStartModel: '',
-                rfcImplementationEndModel: '',
-                rfcReleaseModel: '',
+                rfcImplementationStartModel: this.defaultStartDate(),
+                rfcImplementationEndModel: this.defaultEndDate(),
+                rfcReleaseModel: this.defaultReleaseDate(),
                 rfcStatus: [
                     { label: 'Draft', value: 1 },
                     { label: 'Waiting for approval', value: 2 },
@@ -212,15 +220,46 @@
             }),
             checkDateValidation: function() {
                 //Check the validation for each date
-                const start_date = !this.$v.rfcImplementationStartModel.required && this.$v.rfcImplementationStartModel.$dirty,
-                    end_date = !this.$v.rfcImplementationEndModel.required && this.$v.rfcImplementationEndModel.$dirty,
-                    release_date = !this.$v.rfcReleaseModel.required && this.$v.rfcReleaseModel.$dirty;
+                const start_date = !this.v$.rfcImplementationStartModel.required && this.v$.rfcImplementationStartModel.$dirty,
+                    end_date = !this.v$.rfcImplementationEndModel.required && this.v$.rfcImplementationEndModel.$dirty,
+                    release_date = !this.v$.rfcReleaseModel.required && this.v$.rfcReleaseModel.$dirty;
 
                 //If there is ONE invalidation, we send back true => invalid
                 return start_date || end_date || release_date;
             }
         },
         methods: {
+            defaultStartDate: () => {
+                let start_date = new Date();
+                start_date.setHours(9);
+                start_date.setMinutes(0);
+                start_date.setSeconds(0);
+                start_date.setMilliseconds(0);
+
+                return start_date.getTime();
+            },
+            defaultEndDate: () => {
+                let end_date = new Date();
+                end_date.setHours(16);
+                end_date.setMinutes(0);
+                end_date.setSeconds(0);
+                end_date.setMilliseconds(0);
+
+                new Date(end_date.setDate(end_date.getDate() + 14));
+
+                return end_date.getTime();
+            },
+            defaultReleaseDate: () => {
+                let end_date = new Date();
+                end_date.setHours(17);
+                end_date.setMinutes(0);
+                end_date.setSeconds(0);
+                end_date.setMilliseconds(0);
+
+                new Date(end_date.setDate(end_date.getDate() + 14));
+
+                return end_date.getTime();
+            },
             fetchOptions: function(search, loading) {
                 this.searchTrigger({
                    'return_function': this.getChangeLeadData,
@@ -284,11 +323,11 @@
                 this.updateValidation();
             },
             updateValidation: function() {
-                this.$v.$touch();
+                this.v$.$touch();
 
                 this.$emit('update_validation', {
                     'tab': 'tab_1',
-                    'value': !this.$v.$invalid,
+                    'value': !this.v$.$invalid,
                 });
             },
             updateValues: function(modelName,modelValue) {
@@ -338,8 +377,14 @@
                 this.getChangeLeadData();
             }, 200);
 
+            //Send the default date time up stream
+            this.updateValues('rfcImplementationEndModel',this.rfcImplementationEndModel);
+            this.updateValues('rfcReleaseModel',this.rfcReleaseModel);
+            this.updateValues('rfcImplementationStartModel',this.rfcImplementationStartModel);
+
+
             //Just run the validations to show the error messages
-            this.$v.$touch();
+            this.v$.$touch();
         }
     }
 </script>

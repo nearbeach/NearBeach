@@ -33,8 +33,14 @@
     //Import mixins
     import searchMixin from "../../mixins/searchMixin";
 
+    //Vue Components
+    import ListCustomers from "../customers/ListCustomers.vue"
+
     export default {
         name: "SearchCustomers",
+        components: {
+            ListCustomers,
+        },
         props: {
             customerResults: {
                 type: Array,

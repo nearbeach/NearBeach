@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.userIcon"></IconifyIcon> Add Folder Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.userIcon"></Icon> Add Folder Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -51,7 +51,8 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -61,8 +62,10 @@
     import iconMixin from "../../../mixins/iconMixin";
 
     export default {
-
         name: "AddFolderWizard",
+        components: {
+            Icon,
+        },
         props: {
             currentFolder: {
                 type: String,

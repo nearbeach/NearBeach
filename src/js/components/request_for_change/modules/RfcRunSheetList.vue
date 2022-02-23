@@ -126,6 +126,7 @@
 <script>
     const axios = require('axios');
     import { Modal } from "bootstrap";
+    import RfcNewRunItem from "./RfcNewRunItem.vue";
 
     // Mixins
     import datetimeMixins from "../../../mixins/datetimeMixins";
@@ -136,6 +137,9 @@
 
     export default {
         name: "RfcRunSheetList",
+        components: {
+            RfcNewRunItem,
+        },
         props: {
             isReadOnly: {
                 type: Boolean,

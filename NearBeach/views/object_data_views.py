@@ -1,8 +1,22 @@
 import urllib3
 import urllib
 import json
-from NearBeach.models import bug, bug_client, customer, group, list_of_requirement_item_status, list_of_requirement_status, object_assignment, object_note, permission_set, tag, tag_assignment, user_group
-from NearBeach.views.tools.internal_functions import set_object_from_destination, project, task, requirement
+from NearBeach.models import bug, \
+    bug_client, \
+    customer, \
+    group, \
+    list_of_requirement_item_status, \
+    list_of_requirement_status, \
+    object_assignment, \
+    object_note, \
+    organisation, \
+    permission_set, \
+    requirement_item, \
+    tag, \
+    tag_assignment, \
+    user_group
+from NearBeach.views.tools.internal_functions import set_object_from_destination, project, task, requirement, \
+    get_object_from_destination
 from NearBeach.decorators.check_destination import check_destination
 from NearBeach.forms import AddBugForm, AddCustomerForm, AddGroupForm, AddObjectLinkForm, AddNoteForm, AddTagsForm, AddUserForm, User, DeleteBugForm, DeleteLinkForm, DeleteTagForm, RemoveUserForm, SearchForm, QueryBugClientForm
 from django.contrib.auth.decorators import login_required
@@ -430,13 +444,13 @@ def bug_client_list(request):
 @check_destination()
 def bug_list(request, destination, location_id):
     # Obtain the data dependent on the destination
-    bug_list = bug.objects.filter(
+    bug_list_results = bug.objects.filter(
         is_deleted=False,
     )
-    bug_list = get_object_from_destination(bug_list, destination, location_id)
+    bug_list_results = get_object_from_destination(bug_list_results, destination, location_id)
 
     # Limit to certain values
-    bug_list = bug_list.values(
+    bug_list_results = bug_list_results.values(
         'bug_id',
         'bug_client',
         'bug_client__list_of_bug_client',
@@ -459,7 +473,7 @@ def bug_list(request, destination, location_id):
     """
 
     # Send back json data
-    json_results = json.dumps(list(bug_list), cls=DjangoJSONEncoder)
+    json_results = json.dumps(list(bug_list_results), cls=DjangoJSONEncoder)
 
     return HttpResponse(json_results, content_type='application/json')
 
