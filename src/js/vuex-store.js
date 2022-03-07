@@ -174,6 +174,63 @@ const moduleKanban = {
   },
 };
 
+const moduleRfc = {
+  state: () => ({
+    endDateModel: () => { 
+      let date = new Date();
+      date.setHours(16);
+      date.setMinutes(0);
+      date.setMilliseconds(0);
+      
+      //Add on 7 days
+      new Date(date.setDate(date.getDate() + 7));
+
+      return date; 
+    },
+    releaseDateModel: () => {
+      let date = new Date();
+      date.setHours(17);
+      date.setMinutes(0);
+      date.setMilliseconds(0);
+
+      //Add on 7 days
+      new Date(date.setDate(date.getDate() + 7));
+
+      return date;
+    },
+    startDateModel: () => {
+      let date = new Date();
+      date.setHours(9);
+      date.setMinutes(0);
+      date.setMilliseconds(0);
+
+      //Add on 7 days
+      new Date(date.setDate(date.getDate() + 7));
+
+      return date;
+    },
+  }),
+  mutations: {
+    updateRfcDates(state, payload) {
+      state.endDateModel = payload.endDateModel;
+      state.releaseDateModel = payload.releaseDateModel;
+      state.startDateModel = payload.startDateModel;
+    }
+  },
+  actions: {},
+  getters: {
+    getEndDate: (state) => {
+      return state.endDateModel;
+    },
+    getReleaseDateModel: (state) => {
+      return state.releaseDateModel;
+    },
+    getStartDate: (state) => {
+      return state.startDateModel;
+    }
+  },
+};
+
 const moduleUrl = {
   state: () => ({
     rootUrl: '/',
@@ -218,6 +275,7 @@ export const store = createStore({
     card: moduleCard,
     destination: moduleDestination,
     kanban: moduleKanban,
+    rfc: moduleRfc,
     url: moduleUrl,
     userLevel: moduleUserLevel,
   },
