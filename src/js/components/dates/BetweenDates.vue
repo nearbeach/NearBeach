@@ -131,6 +131,10 @@
                 this.emitDates();
             },
         },
+        mounted() {
+            //In case the dates fall on default - send up stream
+            this.emitDates();
+        },
     }
 </script>
 

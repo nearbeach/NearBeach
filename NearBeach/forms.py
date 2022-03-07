@@ -5,7 +5,7 @@ from django.forms import ModelForm
 # Import from Models
 from .models import bug, folder, group, tag, User, change_task, customer, kanban_column, kanban_level, tag_assignment,\
     kanban_card, kanban_board, permission_set, project, request_for_change, requirement_item, requirement, task,\
-    organisation, bug_client, document, object_assignment
+    organisation, bug_client, document, object_assignment, user_group
 
 
 class AddBugForm(forms.Form):
@@ -764,6 +764,27 @@ class TaskInformationForm(forms.ModelForm):
             'task_start_date',
             'task_end_date',
             'task_status',
+        ]
+
+
+class UpdateGroupLeaderStatusForm(forms.ModelForm):
+    group = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=group.objects.all(),
+    )
+    permission_set = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=permission_set.objects.all(),
+    )
+
+    # Basic Meta data
+    class Meta:
+        model = user_group
+        fields = [
+            'username',
+            'group',
+            'permission_set',
+            'group_leader',
         ]
 
 

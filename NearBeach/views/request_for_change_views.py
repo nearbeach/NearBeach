@@ -4,26 +4,17 @@ from NearBeach.forms import NewRequestForChangeForm, \
     RfcInformationSaveForm, \
     NewChangeTaskForm,\
     UpdateRFCStatus
+from NearBeach.decorators.check_user_permissions import check_rfc_permissions
+from NearBeach.models import request_for_change, User, user_group, object_assignment, group, change_task, request_for_change_group_approval, RFC_STATUS
 from django.http import HttpResponse, \
     HttpResponseBadRequest, \
-    HttpResponseRedirect, \
-    Http404
+    HttpResponseRedirect
 from django.urls import reverse
 from django.template import loader
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
-from NearBeach.decorators.check_user_permissions import check_user_permissions, \
-    check_rfc_permissions
-from NearBeach.models import request_for_change, \
-    User, \
-    user_group, \
-    object_assignment, \
-    group, \
-    change_task,\
-    request_for_change_group_approval, \
-    RFC_STATUS
 
 
 # Internal function
@@ -237,8 +228,6 @@ def rfc_new_change_task(request, rfc_id, *args, **kwargs):
         change_task_start_date=form.cleaned_data['change_task_start_date'],
         change_task_end_date=form.cleaned_data['change_task_end_date'],
         change_task_seconds=form.cleaned_data['change_task_seconds'],
-        # change_task_assigned_user = form.cleaned_data['change_task_assigned_user'],
-        # change_task_qa_user = form.cleaned_data['change_task_qa_user'],
         change_task_assigned_user=request.user,
         change_task_qa_user=request.user,
         change_task_required_by=form.cleaned_data['change_task_required_by'],

@@ -1,41 +1,31 @@
 import urllib3
 import urllib
 import json
-from NearBeach.models import bug, object_assignment, group, object_note, tag, tag_assignment, permission_set, \
-    requirement_item, organisation
+from NearBeach.models import bug, \
+    bug_client, \
+    customer, \
+    group, \
+    list_of_requirement_item_status, \
+    list_of_requirement_status, \
+    object_assignment, \
+    object_note, \
+    organisation, \
+    permission_set, \
+    requirement_item, \
+    tag, \
+    tag_assignment, \
+    user_group
 from NearBeach.views.tools.internal_functions import set_object_from_destination, project, task, requirement, \
     get_object_from_destination
+from NearBeach.decorators.check_destination import check_destination
+from NearBeach.forms import AddBugForm, AddCustomerForm, AddGroupForm, AddObjectLinkForm, AddNoteForm, AddTagsForm, AddUserForm, User, DeleteBugForm, DeleteLinkForm, DeleteTagForm, RemoveUserForm, SearchForm, QueryBugClientForm
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Sum, Q, Min, CharField, Value as V
+from django.db.models import Q, CharField, Value as V
 from django.db.models.functions import Concat
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
-from django.template import loader
-from django.urls import reverse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.views.decorators.http import require_http_methods
-from django.views.decorators.cache import never_cache
-from NearBeach.decorators.check_destination import check_destination
-
-from NearBeach.forms import AddBugForm, \
-    AddCustomerForm, \
-    AddGroupForm, \
-    AddObjectLinkForm, \
-    AddNoteForm, \
-    AddTagsForm, \
-    AddUserForm, \
-    User, \
-    DeleteBugForm, \
-    DeleteLinkForm, \
-    DeleteTagForm, \
-    RemoveUserForm, \
-    SearchForm, \
-    QueryBugClientForm
-from NearBeach.models import bug_client, \
-    customer, \
-    user_group, \
-    list_of_requirement_status, \
-    list_of_requirement_item_status
 
 
 @require_http_methods(['POST'])
@@ -373,12 +363,6 @@ def associated_objects(request, destination, location_id):
     object_assignment_results = get_object_from_destination(
         object_assignment_results, destination, location_id)
 
-    # opportunity_results = opportunity.objects.filter(
-    #     is_deleted=False,
-    #     opportunity_id__in=object_assignment_results.filter(
-    #         opportunity_id__isnull=False
-    #     ).values('opportunity_id')
-    # ).values()
 
     project_results = project.objects.filter(
         is_deleted=False,
@@ -460,13 +444,13 @@ def bug_client_list(request):
 @check_destination()
 def bug_list(request, destination, location_id):
     # Obtain the data dependent on the destination
-    bug_list = bug.objects.filter(
+    bug_list_results = bug.objects.filter(
         is_deleted=False,
     )
-    bug_list = get_object_from_destination(bug_list, destination, location_id)
+    bug_list_results = get_object_from_destination(bug_list_results, destination, location_id)
 
     # Limit to certain values
-    bug_list = bug_list.values(
+    bug_list_results = bug_list_results.values(
         'bug_id',
         'bug_client',
         'bug_client__list_of_bug_client',
@@ -489,7 +473,7 @@ def bug_list(request, destination, location_id):
     """
 
     # Send back json data
-    json_results = json.dumps(list(bug_list), cls=DjangoJSONEncoder)
+    json_results = json.dumps(list(bug_list_results), cls=DjangoJSONEncoder)
 
     return HttpResponse(json_results, content_type='application/json')
 
@@ -585,9 +569,6 @@ def delete_link(request):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
-    # update_object_assignment = object_assignment.objects.get(
-    #     object_assignment_id=form.cleaned_data['object_assignment_id'],
-    # )
     update_object_assignment = form.cleaned_data['object_assignment_id']
     update_object_assignment.is_deleted = True
     update_object_assignment.save()

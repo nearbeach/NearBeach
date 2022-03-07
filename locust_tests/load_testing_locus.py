@@ -1,5 +1,4 @@
 # Import the locust libraries
-import time
 import getpass
 from locust import HttpUser, task, between
 
@@ -23,4 +22,4 @@ class QuickstartUser(HttpUser):
     @task(3)
     def requirement_information(self):
         for _ in range(10):
-            self.client.get(f"/requirement_information/1")
+            self.client.get("/requirement_information/1")

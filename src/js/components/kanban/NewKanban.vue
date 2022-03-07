@@ -88,6 +88,8 @@
 
 <script>
     const axios = require('axios');
+    import KanbanPropertyOrder from "./KanbanPropertyOrder.vue";
+    import GroupPermissions from "../permissions/GroupPermissions.vue";
 
     // Validation
     import useVuelidate from '@vuelidate/core'
@@ -101,6 +103,10 @@
         name: "NewKanban",
         setup() {
             return { v$: useVuelidate(), }
+        },
+        components: {
+            GroupPermissions,
+            KanbanPropertyOrder,
         },
         props: {
             groupResults: {
@@ -229,7 +235,7 @@
                 });
 
                 this.groupModel.forEach(single_group => {
-                    data_to_send.append('group_list',single_group['value']);
+                    data_to_send.append('group_list',single_group);
                 })
 
                 //Use axios to send the data

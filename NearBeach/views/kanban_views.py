@@ -1,18 +1,16 @@
-import urllib3
 import json
 from NearBeach.models import kanban_column, kanban_level, object_assignment, group, user_group
 from NearBeach.views.tools.internal_functions import kanban_card, kanban_board, project, requirement, task
+from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_kanban_permissions
+from NearBeach.forms import AddKanbanLinkForm, KanbanCardArchiveForm, CheckKanbanBoardName, MoveKanbanCardForm, NewKanbanCardForm, NewKanbanForm, KanbanCardForm
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Max, Min, Q, Sum
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.db.models import Max, Q
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_kanban_permissions
-from NearBeach.forms import AddKanbanLinkForm, KanbanCardArchiveForm, CheckKanbanBoardName, MoveKanbanCardForm,\
-    NewKanbanCardForm, NewKanbanForm, KanbanCardForm
 from django.views.decorators.cache import never_cache
 
 

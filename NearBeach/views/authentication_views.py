@@ -148,39 +148,38 @@ def login(request):
     form = LoginForm(request.POST or None)
 
     # POST
-    if request.method == 'POST':
-        if form.is_valid():
-            # Check if user passes recaptcha
-            if check_recaptcha(request.POST) is True:
-                # Looks like we can authenticate the user
-                username = form.cleaned_data.get("username")
-                password = form.cleaned_data.get("password")
+    if request.method == 'POST' and form.is_valid():
+        # Check if user passes recaptcha
+        if check_recaptcha(request.POST) is True:
+            # Looks like we can authenticate the user
+            username = form.cleaned_data.get("username")
+            password = form.cleaned_data.get("password")
 
-                # Check to see if user exists AND has more than one group assigned
-                user = auth.authenticate(username=username, password=password)
-                if user is not None:
-                    auth.login(request, user)
+            # Check to see if user exists AND has more than one group assigned
+            user = auth.authenticate(username=username, password=password)
+            if user is not None:
+                auth.login(request, user)
 
-            # Just double checking. :)
-            if request.user.is_authenticated:
-                # Check to make sure it isn't first time login -> need to setup functionalities
-                check_first_time_login(request)
+        # Just double checking. :)
+        if request.user.is_authenticated:
+            # Check to make sure it isn't first time login -> need to setup functionalities
+            check_first_time_login(request)
 
-                # Check how many groups user is in
-                user_group_count = len(user_group.objects.filter(
-                    is_deleted=False,
-                    username_id=User.objects.get(username=username).id,
-                ))
+            # Check how many groups user is in
+            user_group_count = len(user_group.objects.filter(
+                is_deleted=False,
+                username_id=User.objects.get(username=username).id,
+            ))
 
-                # if user_group_count == 0:
-                #     return HttpResponseRedirect(reverse('logout'))
-                if user_group_count > 0:
-                    return HttpResponseRedirect(reverse('dashboard'))
+            # if user_group_count == 0:
+            #     return HttpResponseRedirect(reverse('logout'))
+            if user_group_count > 0:
+                return HttpResponseRedirect(reverse('dashboard'))
 
-                # User has actually failed to log in. We will purposly log them out
-                # And make sure we tell them why
-                auth.logout(request)
-                error_message = "Please contact your System Administrator. You do not have any associated Groups"
+            # User has actually failed to log in. We will purposly log them out
+            # And make sure we tell them why
+            auth.logout(request)
+            error_message = "Please contact your System Administrator. You do not have any associated Groups"
 
     # Get recaptcha public key
     if hasattr(settings, 'RECAPTCHA_PUBLIC_KEY') and hasattr(settings, 'RECAPTCHA_PRIVATE_KEY'):
