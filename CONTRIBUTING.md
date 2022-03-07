@@ -23,6 +23,7 @@ If you would like to join our community, please join our [fun and exciting disco
 
 We are always looking for new contributors. There are many different ways to contribute to NearBeach, for example;
 
+- Donating via [github sponsorships](https://github.com/sponsors/robotichead) or [our patreon](https://www.patreon.com/NearBeach)
 - Bug testing
 - Bug fixing
 - Writing Documentation
@@ -58,6 +59,18 @@ Each different module/componet in NearBeach are called Objects. The following ob
 - Kanban Boards
 
 Each object shall have it's own folder structure within the respected location, i.e. `/views/projects`.
+
+
+## Donating
+
+Like most projects, there are some overhead costs. Every single dollar that we get will go towards;
+
+- Cloud hosting costs
+- Software costs
+- Administration costs
+- Freelance costs (i.e. hiring help like designers)
+
+We are being transparent with all our costs and will try and provide a yearly cost breakdown every 6 months.
 
 
 ## Bug Reporting
