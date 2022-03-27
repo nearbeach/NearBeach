@@ -352,6 +352,10 @@ urlpatterns = [
 
     path('test/permission_denied/', authentication_views.test_permission_denied,
          name='test_permission_denied'),
+
+    path('update_group_leader_status/<destination>/',
+         admin_views.update_group_leader_status,
+         name='update_group_leader_status'),
     # Changing and Resetting Passwords
     # path('change-password/', auth_views.PasswordChangeView.as_view()),
     path(

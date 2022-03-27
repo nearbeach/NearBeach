@@ -151,14 +151,16 @@
     const axios = require('axios');
     import RfcDescription from "./tabs/RfcDescription.vue";
     import { NSelect, NDatePicker } from 'naive-ui';
-    
+    import { mapGetters } from 'vuex';
+
     //Import mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
     import loadingModalMixin from "../../mixins/loadingModalMixin";
 
     //Validation
     import useVuelidate from '@vuelidate/core'
-    import { required, maxLength } from '@vuelidate/validators'
+    import { required, maxLength } from '@vuelidate/validators';
+
 
     export default {
         name: "RfcInformation",
@@ -215,6 +217,13 @@
                 return start_date || end_date || release_date;
             }
         },
+        watch: {
+            ...mapGetters({
+                rfcImplementationEndModel: 'getEndDate',
+                rfcImplementationStartModel: 'getStartDate',
+                rfcReleaseModel: 'getReleaseDateModel'
+            }),
+        },
         mixins: [
             errorModalMixin,
             loadingModalMixin,
@@ -225,9 +234,9 @@
                 rfcChangeLeadModel: '',
                 rfcTitleModel: this.rfcResults[0]['fields']['rfc_title'],
                 rfcSummaryModel: this.rfcResults[0]['fields']['rfc_summary'],
-                rfcImplementationStartModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_start_date']).getTime(),
-                rfcImplementationEndModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_end_date']).getTime(),
-                rfcReleaseModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_release_date']).getTime(),
+                //rfcImplementationStartModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_start_date']).getTime(),
+                //rfcImplementationEndModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_end_date']).getTime(),
+                //rfcReleaseModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_release_date']).getTime(),
                 rfcStatus: [
                     { label: 'Draft', value: 1 },
                     { label: 'Waiting for approval', value: 2 },
@@ -341,6 +350,14 @@
                 type: 'updateUserLevel',
                 userLevel: this.userLevel,
             });
+
+            //Send release dates up
+            this.$store.commit({
+                type: updateRfcDate,
+                endDateModel: this.endDateModel,
+                releaseDateModel: this.releaseDateModel,
+                startDateModel: this.startDateModel,
+            })
         }
     }
 </script>

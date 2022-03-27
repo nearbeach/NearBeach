@@ -2,7 +2,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 
-from NearBeach.forms import AdminAddUserForm, PasswordResetForm
+from NearBeach.forms import AdminAddUserForm, PasswordResetForm, UpdateGroupLeaderStatusForm
 from NearBeach.models import user_group
 
 
@@ -44,6 +44,36 @@ def add_user(request):
                 change_user=request.user,
             )
             submit_user.save()
+
+    return HttpResponse("")
+
+
+@require_http_methods(['POST'])
+def update_group_leader_status(request, destination):
+    """
+    This function will update the user's group leader status against a particular group.
+    :param request: Normal stuff.
+    :return:
+    """
+    form = UpdateGroupLeaderStatusForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Start filtering the user_group
+    user_group_update = user_group.objects.filter(
+        is_deleted=False,
+        username=form.cleaned_data['username'],
+    )
+
+    # Depending on the destination - depends what else we filter on
+    if destination == 'group':
+        user_group_update.filter(
+            group=form.cleaned_data['group'].first(),
+        ).update(group_leader=form.cleaned_data['group_leader'])
+    elif destination == 'permission_set':
+        user_group_update.filter(
+            permission_set=form.cleaned_data['permission_set'].first(),
+        ).update(group_leader=form.cleaned_data['group_leader'])
 
     return HttpResponse("")
 
