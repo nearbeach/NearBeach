@@ -767,25 +767,22 @@ class TaskInformationForm(forms.ModelForm):
         ]
 
 
-class UpdateGroupLeaderStatusForm(forms.ModelForm):
-    group = forms.ModelMultipleChoiceField(
+class UpdateGroupLeaderStatusForm(forms.Form):
+    username = forms.ModelChoiceField(
+        queryset=User.objects.all(),
         required=False,
+    )
+    group = forms.ModelMultipleChoiceField(
         queryset=group.objects.all(),
+        required=False,
     )
     permission_set = forms.ModelMultipleChoiceField(
-        required=False,
         queryset=permission_set.objects.all(),
+        required=False,
     )
-
-    # Basic Meta data
-    class Meta:
-        model = user_group
-        fields = [
-            'username',
-            'group',
-            'permission_set',
-            'group_leader',
-        ]
+    group_leader=forms.BooleanField(
+        required=False,
+    )
 
 
 class UpdateRequirementForm(forms.ModelForm):

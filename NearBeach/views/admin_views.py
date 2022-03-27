@@ -68,11 +68,11 @@ def update_group_leader_status(request, destination):
     # Depending on the destination - depends what else we filter on
     if destination == 'group':
         user_group_update.filter(
-            group=form.cleaned_data['group'],
+            group=form.cleaned_data['group'].first(),
         ).update(group_leader=form.cleaned_data['group_leader'])
     elif destination == 'permission_set':
         user_group_update.filter(
-            permission_set=form.cleaned_data['permission_set'],
+            permission_set=form.cleaned_data['permission_set'].first(),
         ).update(group_leader=form.cleaned_data['group_leader'])
 
     return HttpResponse("")

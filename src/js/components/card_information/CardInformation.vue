@@ -149,6 +149,7 @@
                     this.$emit('update_card',{
                         'kanban_card_id': all_data.cardId,
                         'kanban_card_text': all_data.cardTitle,
+                        'kanban_card_description': all_data.cardDescriptionModel,
                         'kanban_column': all_data.cardColumn,
                         'kanban_level': all_data.cardLevel,
                     });

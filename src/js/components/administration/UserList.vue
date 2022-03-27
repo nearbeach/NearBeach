@@ -22,7 +22,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="user in uniqueListOfUsers">
+                            <tr v-for="user in uniqueListOfUsers"
+                                :key="user.username"
+                            >
                                 <td v-if="destination !== 'user'">
                                     {{user['first_name']}} {{user['last_name']}}
                                 </td>
@@ -171,10 +173,10 @@
                 //If the destination is groups - we want to get the current group status
                 //If the destination is permission sets - we want to get the current permission set status
                 if (this.destination === "group") {
-                    let group_data = this.getList(username,'group__group_name')
+                    let group_data = this.getList(username,'group')
                     data_to_send.set('group', group_data[0]);
                 } else if(this.destination === "permission_set") {
-                    let permission_set = this.getList(username, 'permission_set__permission_set_name');
+                    let permission_set = this.getList(username, 'permission_set');
                     data_to_send.set('permission_set', permission_set[0]);
                 }
 
