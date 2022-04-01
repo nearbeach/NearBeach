@@ -207,6 +207,11 @@
             },
         },
         computed: {
+            ...mapGetters({
+                rfcImplementationEndModel: 'getEndDate',
+                rfcImplementationStartModel: 'getStartDate',
+                rfcReleaseModel: 'getReleaseDateModel'
+            }),
             checkDateValidation: function() {
                 //Check the validation for each date
                 const start_date = !this.v$.rfcImplementationStartModel.required && this.v$.rfcImplementationStartModel.$dirty,
@@ -216,13 +221,6 @@
                 //If there is ONE invalidation, we send back true => invalid
                 return start_date || end_date || release_date;
             }
-        },
-        watch: {
-            ...mapGetters({
-                rfcImplementationEndModel: 'getEndDate',
-                rfcImplementationStartModel: 'getStartDate',
-                rfcReleaseModel: 'getReleaseDateModel'
-            }),
         },
         mixins: [
             errorModalMixin,
@@ -234,9 +232,9 @@
                 rfcChangeLeadModel: '',
                 rfcTitleModel: this.rfcResults[0]['fields']['rfc_title'],
                 rfcSummaryModel: this.rfcResults[0]['fields']['rfc_summary'],
-                //rfcImplementationStartModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_start_date']).getTime(),
-                //rfcImplementationEndModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_end_date']).getTime(),
-                //rfcReleaseModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_release_date']).getTime(),
+                // rfcImplementationStartModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_start_date']).getTime(),
+                // rfcImplementationEndModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_end_date']).getTime(),
+                // rfcReleaseModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_release_date']).getTime(),
                 rfcStatus: [
                     { label: 'Draft', value: 1 },
                     { label: 'Waiting for approval', value: 2 },
@@ -352,12 +350,16 @@
             });
 
             //Send release dates up
+            const end_date = new Date(this.rfcResults[0].fields.rfc_implementation_end_date);
+            const release_date = new Date(this.rfcResults[0].fields.rfc_implementation_release_date);
+            const start_date = new Date(this.rfcResults[0].fields.rfc_implementation_start_date);
+
             this.$store.commit({
-                type: updateRfcDate,
-                endDateModel: this.endDateModel,
-                releaseDateModel: this.releaseDateModel,
-                startDateModel: this.startDateModel,
-            })
+                type: 'updateRfcDates',
+                endDateModel: end_date.getTime(),
+                releaseDateModel: release_date.getTime(),
+                startDateModel: start_date.getTime(),
+            });
         }
     }
 </script>

@@ -2,6 +2,28 @@
 import { createStore } from 'vuex'
 import axios from 'axios';
 
+//GLOBAL VARIABLES
+var GLOBAL_DATE = new Date();
+var GLOBAL_END_DATE = new Date(GLOBAL_DATE.setDate(GLOBAL_DATE.getDate() + 7));
+var GLOBAL_RELEASE_DATE = new Date(GLOBAL_DATE.setDate(GLOBAL_DATE.getDate() + 7));
+var GLOBAL_START_DATE = new Date(GLOBAL_DATE.setDate(GLOBAL_DATE.getDate() + 7));
+
+//Modify the global times.
+GLOBAL_END_DATE.setHours(16);
+GLOBAL_END_DATE.setMinutes(0);
+GLOBAL_END_DATE.setSeconds(0);
+GLOBAL_END_DATE.setMilliseconds(0);
+
+GLOBAL_RELEASE_DATE.setHours(17);
+GLOBAL_RELEASE_DATE.setMinutes(30);
+GLOBAL_RELEASE_DATE.setSeconds(0);
+GLOBAL_RELEASE_DATE.setMilliseconds(0);
+
+GLOBAL_START_DATE.setHours(9);
+GLOBAL_START_DATE.setMinutes(0);
+GLOBAL_START_DATE.setSeconds(0);
+GLOBAL_START_DATE.setMilliseconds(0);
+
 const moduleCard = {
   state: () => ({
     cardId: 0,
@@ -176,41 +198,25 @@ const moduleKanban = {
 
 const moduleRfc = {
   state: () => ({
-    endDateModel: () => { 
-      let date = new Date();
-      date.setHours(16);
-      date.setMinutes(0);
-      date.setMilliseconds(0);
-      
-      //Add on 7 days
-      new Date(date.setDate(date.getDate() + 7));
-
-      return date; 
-    },
-    releaseDateModel: () => {
-      let date = new Date();
-      date.setHours(17);
-      date.setMinutes(0);
-      date.setMilliseconds(0);
-
-      //Add on 7 days
-      new Date(date.setDate(date.getDate() + 7));
-
-      return date;
-    },
-    startDateModel: () => {
-      let date = new Date();
-      date.setHours(9);
-      date.setMinutes(0);
-      date.setMilliseconds(0);
-
-      //Add on 7 days
-      new Date(date.setDate(date.getDate() + 7));
-
-      return date;
-    },
+    endDateModel: GLOBAL_END_DATE.getTime(),
+    groupListModel: [],
+    releaseDateModel: GLOBAL_RELEASE_DATE.getTime(),
+    startDateModel: GLOBAL_START_DATE.getTime(),
+    userListModel: [],
   }),
   mutations: {
+    updateGroupList(state, payload) {
+      //Update the group list model
+      state.groupListModel = payload.groupList;
+
+      //Contact the API to get the list of users connected to this group
+      //'object_data/request_for_change/<location_id>/user_list_all/',
+      axios.post(
+        `/object_data/request_for_change/${this.state.locationId}/user_list_all/`
+      ).then(response => {
+        console.log("Response Data: ", response['data'])
+      })
+    },
     updateRfcDates(state, payload) {
       state.endDateModel = payload.endDateModel;
       state.releaseDateModel = payload.releaseDateModel;

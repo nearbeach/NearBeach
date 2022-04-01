@@ -66,7 +66,7 @@
                 <li class="nav-item"
                     role="presentation"
                 >
-                    <button class="nav-link"
+                    <button class="nav-link active"
                             id="rfc-run-sheet-tab"
                             data-bs-toggle="tab"
                             data-bs-target="#rfc-run-sheet"
@@ -184,7 +184,7 @@
                     </div>
                 </div>
 
-                <div class="tab-pane fade"
+                <div class="tab-pane fade active show"
                      id="rfc-run-sheet"
                      role="tabpanel"
                      aria-labelledby="home-tab"

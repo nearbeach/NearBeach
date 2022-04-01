@@ -117,6 +117,7 @@
 
         <!-- Modal -->
         <rfc-new-run-item v-bind:location-id="locationId"
+                          v-bind:user-list="userList"
                           v-on:update_change_task_list="updateChangeTaskList($event)"
                           v-if="!isReadOnly"
         ></rfc-new-run-item>
