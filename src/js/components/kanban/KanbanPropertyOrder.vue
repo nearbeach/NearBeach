@@ -145,7 +145,8 @@
     import { Modal } from "bootstrap";
     import { Icon } from '@iconify/vue';
     import { NSelect } from 'naive-ui';
-    import draggable from 'vuedraggable'
+    import draggable from 'vuedraggable';
+    import { mapGetters } from 'vuex';
 
     //Validation
     import useVuelidate from '@vuelidate/core'
@@ -217,6 +218,11 @@
                 this.localPropertyList = this.propertyList;
             },
         },
+        computed: {
+            ...mapGetters({
+                rootUrl: 'getRootUrl',
+            })
+        },
         methods: {
             addItem: function() {
                 //Check to make sure it isn't blank
@@ -245,7 +251,7 @@
                 //Construct the data_to_send
                 const data_to_send = new FormData();
                 data_to_send.set('delete_item_id',this.deleteItemId);
-                data_to_send.set('destination_item_id',this.destinationItemId['id']);
+                data_to_send.set('destination_item_id',this.destinationItemId);
 
                 // URL
                 const url = `${this.rootUrl}kanban_${this.propertyName.toLowerCase()}/${this.kanbanBoardId}/delete/`

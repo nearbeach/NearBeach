@@ -32,7 +32,7 @@
                 <button class="btn btn-secondary"
                         v-on:click="closeModal"
                 >
-                    Close Modal
+                    Close
                 </button>
                 <button class="btn btn-primary save-changes"
                         v-on:click="addNote"

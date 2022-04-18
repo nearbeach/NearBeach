@@ -133,6 +133,12 @@ export const
             './components/tasks/NewTask.vue'
         )
     ),
+    NewUser = defineAsyncComponent(() => 
+        import(
+            /* webpackChunkName: "new-user" */
+            './components/users/NewUser.vue'
+        )
+    ),
     OrganisationInformation = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "organisation-information" */

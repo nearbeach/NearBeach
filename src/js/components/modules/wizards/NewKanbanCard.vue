@@ -68,7 +68,7 @@
                             v-on:click="addKanbanCard"
                             v-bind:disabled="disableAddButton"
                     >
-                        Add Link
+                        Add Card
                     </button>
                 </div>
             </div>
