@@ -30,6 +30,37 @@
                            v-on:update_dates="updateDates($event)"
             ></between-dates>
 
+            <!-- IMPLEMENTATION USER & QA USER -->
+            <hr>
+            <div class="row">
+                <div class="col-md-4">
+                    <strong>Implementation & QA User</strong>
+                    <p class="text-instructions">
+                        Please indicate which user will be implementing the work, and the user who will QA.
+                    </p>
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <lable>Implementation User</lable>
+                                <n-select v-bind:options="userListFixed"
+                                            v-model:value="assignedUserModel"
+                                ></n-select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <lable>QA User</lable>
+                                <n-select v-model:value="qaUserModel" 
+                                            v-bind:options="userListFixed" 
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- DESCRIPTION OPTIONAL -->
             <hr>
             <div class="row">
@@ -136,12 +167,14 @@
     const axios = require('axios');
     import Editor from '@tinymce/tinymce-vue';
     import BetweenDates from "../dates/BetweenDates.vue";
+    import { NSelect } from 'naive-ui';
 
     export default {
         name: "ChangeTaskInformation",
         components: {
             BetweenDates,
             'editor': Editor,
+            NSelect,
         },
         props: {
             changeTaskResults: Array,
@@ -149,15 +182,29 @@
                 type: String,
                 default: '/',
             },
+            userList: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
         },
         data() {
             return {
+                assignedUserModel: this.changeTaskResults[0]['fields']['change_task_assigned_user'],
                 changeTitleModel: this.changeTaskResults[0]['fields']['change_task_title'],
                 changeDescriptionModel: this.changeTaskResults[0]['fields']['change_task_description'],
                 changeStakeholderModel: this.changeTaskResults[0]['fields']['change_task_required_by'],
                 changeIsDowntimeModel: this.changeTaskResults[0]['fields']['is_downtime'],
                 changeStartDateModel: new Date(this.changeTaskResults[0]['fields']['change_task_start_date']).getTime(),
                 changeEndDateModel: new Date(this.changeTaskResults[0]['fields']['change_task_end_date']).getTime(),
+                qaUserModel: this.changeTaskResults[0]['fields']['change_task_qa_user'],
+                userListFixed: this.userList.map((row) => {
+                    return {
+                        label: `${row.username}: ${row.first_name} ${row.last_name}`,
+                        value: row.id,
+                    };
+                })
             }
         },
         methods: {
@@ -180,8 +227,8 @@
                 data_to_send.set('change_task_start_date', new Date(this.changeStartDateModel).toISOString());
                 data_to_send.set('change_task_end_date', new Date(this.changeEndDateModel).toISOString());
                 data_to_send.set('change_task_seconds', change_task_seconds.toString());
-                // data_to_send.set('change_task_assigned_user', );
-                // data_to_send.set('change_task_qa_user', );
+                data_to_send.set('change_task_assigned_user', this.assignedUserModel);
+                data_to_send.set('change_task_qa_user', this.qaUserModel);
                 data_to_send.set('change_task_required_by', this.changeStakeholderModel);
                 data_to_send.set('is_downtime', this.changeIsDowntimeModel);
 

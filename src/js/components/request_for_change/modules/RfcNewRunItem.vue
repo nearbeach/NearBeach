@@ -1,6 +1,6 @@
 <template>
 <div class="modal fade" id="newRunItemModal" tabindex="-1" aria-labelledby="newRunItemModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen-lg-down">
+    <div class="modal-dialog modal-xl modal-fullscreen-xl-down">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title" id="newRunItemModalLabel">New Change Task</h2>
@@ -37,6 +37,37 @@
                 <between-dates destination="Change Task"
                                v-on:update_dates="updateDates($event)"
                 ></between-dates>
+
+                <!-- IMPLEMENTATION USER & QA USER -->
+                <hr>
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Implementation & QA User</strong>
+                        <p class="text-instructions">
+                            Please indicate which user will be implementing the work, and the user who will QA.
+                        </p>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <lable>Implementation User</lable>
+                                    <n-select v-bind:options="userListFixed"
+                                              v-model:value="assignedUserModel"
+                                    ></n-select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <lable>QA User</lable>
+                                    <n-select v-model:value="qaUserModel" 
+                                              v-bind:options="userListFixed" 
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- DESCRIPTION OPTIONAL -->
                 <hr>
@@ -122,6 +153,7 @@
     const axios = require('axios');
     import Editor from '@tinymce/tinymce-vue';
     import BetweenDates from "../../dates/BetweenDates.vue";
+    import { NSelect } from "naive-ui";
 
     //Import mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
@@ -134,23 +166,33 @@
         components: {
             BetweenDates,
             'editor': Editor,
+            NSelect,
         },
         props: {
             locationId: {
                 type: Number,
                 default: 0,
             },
+            userList: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
         },
         mixins: [
             errorModalMixin,
         ],
         data: () => ({
+            assignedUserModel: '',
             changeDescriptionModel: '',
             changeEndDateModel: '',
             changeIsDowntimeModel: false,
             changeStakeholderModel: 'Stakeholder(s)',
             changeStartDateModel: '',
             changeTitleModel: '',
+            qaUserModel: '',
+            userListFixed: [],
         }),
         computed: {
             ...mapGetters({
@@ -178,8 +220,8 @@
                 data_to_send.set('change_task_start_date', new Date(this.changeStartDateModel).toISOString());
                 data_to_send.set('change_task_end_date', new Date(this.changeEndDateModel).toISOString());
                 data_to_send.set('change_task_seconds', change_task_seconds.toString());
-                // data_to_send.set('change_task_assigned_user', );
-                // data_to_send.set('change_task_qa_user', );
+                data_to_send.set('change_task_assigned_user', this.assignedUserModel);
+                data_to_send.set('change_task_qa_user', this.qaUserModel);
                 data_to_send.set('change_task_required_by', this.changeStakeholderModel);
                 data_to_send.set('is_downtime', this.changeIsDowntimeModel);
 
@@ -210,7 +252,14 @@
                 this.changeStartDateModel = data['start_date'];
                 this.changeEndDateModel = data['end_date'];
             },
-
+        },
+        mounted() {
+            this.userListFixed = this.userList.map((row) => {
+                return {
+                    label: `${row.username}: ${row.first_name} ${row.last_name}`,
+                    value: row.id,
+                };
+            })
         }
     }
 </script>
