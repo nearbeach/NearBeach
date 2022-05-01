@@ -643,6 +643,11 @@ class PermissionSetForm(forms.ModelForm):
         ]
 
 
+class ProfilePictureForm(forms.Form):
+    #profile_picture = forms.ImageField()
+    file = forms.ImageField()
+
+
 class ProjectForm(forms.ModelForm):
     project_start_date = forms.DateTimeField(
         input_formats=['c'],

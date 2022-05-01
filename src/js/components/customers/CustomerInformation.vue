@@ -22,7 +22,15 @@
                              class="customer-profile-image"
                         />
                         <br/>
-                        <button class="btn btn-primary">Update Profile...</button>
+                        <n-upload
+                            :action="`${rootUrl}customer_information/${customerResults[0]['pk']}/update_profile/`"
+                            :headers="{
+                                'X-CSRFTOKEN': getToken('csrftoken'),
+                            }"
+                            :data="{}"
+                        >
+                            <n-button>Update Profile Picture</n-button>
+                        </n-upload>
                     </div>
                     <br/>
 
@@ -96,7 +104,7 @@
 <script>
     const axios = require('axios');
     import { Modal } from "bootstrap";
-    import { NSelect } from 'naive-ui'
+    import { NButton, NSelect, NUpload } from 'naive-ui'
     import StakeholderInformation from "../organisations/StakeholderInformation.vue";
 
     //Validation
@@ -106,6 +114,7 @@
     //Import Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
     import loadingModalMixin from "../../mixins/loadingModalMixin";
+    import getToken from "../../mixins/getTokenMixin";
 
     export default {
         name: "CustomerInformation",
@@ -113,7 +122,9 @@
             return { v$: useVuelidate(), }
         },
         components: {
+            NButton,
             NSelect,
+            NUpload,
             StakeholderInformation
         },
         props: {
@@ -159,6 +170,7 @@
         },
         mixins: [
             errorModalMixin,
+            getToken,
             loadingModalMixin,
         ],
         validations: {

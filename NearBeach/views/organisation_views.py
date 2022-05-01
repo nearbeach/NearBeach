@@ -1,3 +1,4 @@
+from this import d
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
@@ -7,7 +8,7 @@ from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_organisation_permissions
-from NearBeach.forms import OrganisationForm
+from NearBeach.forms import OrganisationForm, ProfilePictureForm
 from NearBeach.models import organisation, customer, list_of_title
 
 
@@ -162,4 +163,15 @@ def organisation_update_profile(request, organisation_id, *args, **kwargs):
     :param organisation_id:
     :return:
     """
+    form = ProfilePictureForm(request.POST, request.FILES)
+    if not form.is_valid():
+        print("\n\n%s\n\n" % form.errors)
+        return HttpResponseBadRequest(form.errors)
+    
+    # Get the organisation object
+    update_organisation = organisation.objects.get(organisation_id=organisation_id)
+    update_organisation.organisation_profile_picture = form.cleaned_data['file']
+    update_organisation.save()
+
+    #Return success
     return HttpResponse('')

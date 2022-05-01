@@ -48,6 +48,8 @@ urlpatterns = [
     # Customer
     path('customer_information/<int:customer_id>/',
          customer_views.customer_information, name='customer_information'),
+    path('customer_information/<int:customer_id>/update_profile/',
+         customer_views.customer_update_profile, name='customer_update_profile'),
     path('customer_information/<int:customer_id>/save/', customer_views.customer_information_save,
          name='customer_information_save'),
 
