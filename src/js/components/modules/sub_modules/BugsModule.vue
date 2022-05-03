@@ -173,6 +173,12 @@
             },
         },
         mounted() {
+            //If the location is inside the array - don't bother getting the data
+            var escape_array = [
+                'requirement_item',
+            ]
+            if (escape_array.indexOf(this.locationId) < 0) return;
+
             //Wait 200ms before getting data
             setTimeout(() => {
                 this.getBugList();
