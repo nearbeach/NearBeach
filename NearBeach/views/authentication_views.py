@@ -180,6 +180,9 @@ def login(request):
             # And make sure we tell them why
             auth.logout(request)
             error_message = "Please contact your System Administrator. You do not have any associated Groups"
+        else:
+            # User is not logged in - tell the front end
+            error_message = "Username or Password is incorrect. Please try again"
 
     # Get recaptcha public key
     if hasattr(settings, 'RECAPTCHA_PUBLIC_KEY') and hasattr(settings, 'RECAPTCHA_PRIVATE_KEY'):
