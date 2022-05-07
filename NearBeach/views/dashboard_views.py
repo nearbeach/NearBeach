@@ -218,7 +218,7 @@ def get_unassigned_objects(request):
                 is_deleted=False,
                 requirement_id__isnull=False,
                 assigned_user__isnull=False,
-            )
+            ).values('requirement_id')
         )
     ).values(
         'requirement_id',
