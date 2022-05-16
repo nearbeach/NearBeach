@@ -264,7 +264,7 @@ def rfc_information(request, rfc_id, *args, **kwargs):
     """
     # If rfc is not in draft mode - send user away
     rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
-    if not rfc_results.rfc_status == 1:  # Draft
+    if not rfc_results.rfc_status == 1 or kwargs['user_level'] == 1:  # Draft
         return HttpResponseRedirect(reverse('rfc_readonly', args={rfc_id}))
 
     # Get template
