@@ -1,12 +1,12 @@
 import { defineAsyncComponent } from 'vue/dist/vue.esm-bundler';
 
 export const
-    BugsModule = defineAsyncComponent(() => 
-        import(
-            /* webpackChunkName: "bugs-module" */
-            './components/modules/sub_modules/BugsModule.vue'
-        )
-    ),
+    // BugsModule = defineAsyncComponent(() => 
+    //     import(
+    //         /* webpackChunkName: "bugs-module" */
+    //         './components/modules/sub_modules/BugsModule.vue'
+    //     )
+    // ),
     ChangeTaskInformation = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "change-task-information" */
