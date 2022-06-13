@@ -12,6 +12,7 @@
                     >
                         <span aria-hidden="true"></span>
                     </button>
+                    <br/>
                 </div>
                 <div class="modal-body">
                     <!-- TAB MENU -->
