@@ -426,6 +426,28 @@
                 );
             },
             sendDataUpstream: function(filtered_data) {
+                // Determine if the card has a link
+                let card_link = {};
+                if (filtered_data.fields.project !== undefined) {
+                    card_link = {
+                        id: filtered_data.fields.project,
+                        hyperlink: `${this.rootUrl}project_information/${filtered_data.fields.project}/`,
+                        type: "Project"
+                    };
+                } else if (filtered_data.fields.task !== undefined) {
+                    card_link = {
+                        id: filtered_data.fields.task,
+                        hyperlink: `${this.rootUrl}task_information/${filtered_data.fields.task}/`,
+                        type: "Task"
+                    };
+                } else if (filtered_data.fields.requirement) {
+                    card_link = {
+                        id: filtered_data.fields.requirement,
+                        hyperlink: `${this.rootUrl}requirement_information/${filtered_data.fields.requirement}/`,
+                        type: "Requirement"
+                    };
+                }
+
                 // Update VueX
                 this.$store.commit({
                     type: 'updateCard',
@@ -434,6 +456,7 @@
                     'cardDescription': filtered_data['fields']['kanban_card_description'],
                     'cardColumn': filtered_data['fields']['kanban_column'],
                     'cardLevel': filtered_data['fields']['kanban_level'],
+                    'cardLink': card_link,
                 })
 
                 //Emit the current card information

@@ -13,6 +13,7 @@
                         <input type="text"
                                class="form-control search-organisation"
                                v-model="searchModel"
+                               maxlength="250"
                         >
                     </div>
                     <div class="form-group">

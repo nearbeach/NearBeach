@@ -3,6 +3,10 @@ body {
   padding-top: 55px;
 }
 
+main {
+  min-height: calc(100vh - 169px);
+}
+
 .container {
   margin: 70px auto;
   max-width: 1020px;

@@ -20,7 +20,16 @@
                          class="organisation-profile-image"
                     />
                     <br/>
-                    <button class="btn btn-primary">Update Profile...</button>
+                    <!--<button class="btn btn-primary">Update Profile...</button>-->
+                    <n-upload
+                        :action="`${rootUrl}organisation_information/${organisationResults[0]['pk']}/update_profile/`"
+                        :headers="{
+                            'X-CSRFTOKEN': getToken('csrftoken'),
+                        }"
+                        :data="{}"
+                    >
+                        <n-button>Update Profile Picture</n-button>
+                    </n-upload>
                 </div>
                 <div class="col-md-5">
                     <!-- ORGANISATION NAME -->
@@ -93,6 +102,8 @@
 
 <script>
     import axios from 'axios';
+    //import { NButton, NUpload } from 'naive-ui';
+    import { NButton, NUpload } from 'naive-ui';
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -104,11 +115,16 @@
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
     import loadingModalMixin from "../../mixins/loadingModalMixin";
+    import getToken from "../../mixins/getTokenMixin";
 
     export default {
         name: "OrganisationInformation",
         setup() {
             return { v$: useVuelidate(), }
+        },
+        components: {
+            NButton,
+            NUpload,
         },
         props: {
             organisationResults: {
@@ -120,6 +136,7 @@
         },
         mixins: [
             errorModalMixin,
+            getToken,
             loadingModalMixin,
         ],
         computed: {

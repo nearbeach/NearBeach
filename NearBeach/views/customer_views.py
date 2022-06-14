@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_customer_permissions
 from NearBeach.models import customer, list_of_title, organisation
-from NearBeach.forms import CustomerForm, NewCustomerForm
+from NearBeach.forms import CustomerForm, NewCustomerForm, ProfilePictureForm
 
 import json
 
@@ -79,6 +79,23 @@ def customer_information_save(request, customer_id, *args, **kwargs):
 
     # Return back a sucessful statement
     return HttpResponse("Success")
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name='')
+@check_user_customer_permissions(min_permission_level=2)
+def customer_update_profile(request, customer_id, *args, **kwargs):
+    """
+    """
+    form = ProfilePictureForm(request.POST, request.FILES)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+    
+    update_customer = customer.objects.get(customer_id=customer_id)
+    update_customer.customer_profile_picture = form.cleaned_data['file']
+    update_customer.save()
+
+    return HttpResponse("")
 
 
 @login_required(login_url='login', redirect_field_name="")

@@ -30,6 +30,7 @@ const moduleCard = {
     cardTitle: '',
     cardColumn: 0,
     cardLevel: 0,
+    cardLink: {},
     cardDescription: '',
     cardNotes: [],
     listColumns: [],
@@ -45,6 +46,7 @@ const moduleCard = {
       state.cardDescription = payload.cardDescription;
       state.cardLevel = payload.cardLevel;
       state.cardColumn = payload.cardColumn;
+      state.cardLink = payload.cardLink;
 
       //Get data for the notes
       axios
@@ -92,6 +94,9 @@ const moduleCard = {
     },
     getCardLevel: (state) => {
       return state.cardLevel;
+    },
+    getCardLink: (state) => {
+      return state.cardLink;
     },
     getCardTitle: (state) => {
       return state.cardTitle;

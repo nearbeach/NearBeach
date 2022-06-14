@@ -22,6 +22,7 @@ axios.defaults.xsrfCookieName = 'csrftoken';
 
 //Lazy Load Parent Components
 import {
+    //BugsModule,
     ChangeTaskInformation,
     CustomerInformation,
     DashboardMyObjects,
@@ -69,6 +70,7 @@ import {
 //Construction of the VUE App
 const app = createApp({
     components: {
+        //BugsModule,
         ChangeTaskInformation,
         CustomerInformation,
         DashboardMyObjects,

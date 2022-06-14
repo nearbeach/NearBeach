@@ -1,5 +1,17 @@
 <template>
     <div>
+        <div v-if="cardLink.id !== undefined && cardLink.id !== null"
+             class="row link-to-object"
+        >
+            <strong>Object Link: </strong>
+            <a :href="cardLink.hyperlink" 
+                target="_blank"
+            >
+                {{cardLink.type}} - {{cardLink.id}}
+            </a>
+        </div>
+        <hr v-if="cardLink.id !== undefined && cardLink.id !== null" />
+
         <!-- Card Text -->
         <div class="row">
             <div class="col-md-4">
@@ -86,6 +98,7 @@
                 cardId: 'getCardId',
                 // cardColumn: 'getCardColumn',
                 cardLevel: 'getCardLevel',
+                cardLink: 'getCardLink',
                 cardTitle: 'getCardTitle',
                 listColumns: 'getListColumns',
                 listLevels: 'getListLevels',

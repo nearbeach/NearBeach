@@ -7,14 +7,15 @@ from django.contrib.auth.decorators import login_required
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 from NearBeach.forms import SearchObjectsForm, SearchForm
-from NearBeach.models import request_for_change, requirement, project, task, kanban_board, list_of_requirement_status,\
-    customer, group, organisation, permission_set, User, tag
+from NearBeach.models import object_assignment, request_for_change, requirement, project, task, kanban_board, list_of_requirement_status,\
+    customer, group, organisation, permission_set, User, tag, user_group
 
 
 # Internal Function
-def get_object_search_data(search_form):
+def get_object_search_data(search_form, request):
     """
     The following internal function will search the following objects using the form's data;
+    - Kanban boards
     - Request for Change
     - Requirements
     - Projects
@@ -24,31 +25,81 @@ def get_object_search_data(search_form):
     :return:
     """
     # Get instance data for all objects
-    rfc_results = request_for_change.objects.filter(is_deleted=False).values(
+    rfc_results = request_for_change.objects.filter(
+        is_deleted=False,
+    ).values(
         'rfc_id',
         'rfc_title',
         'rfc_status',
     )
-    requirement_results = requirement.objects.filter(is_deleted=False).values(
+    requirement_results = requirement.objects.filter(
+        is_deleted=False,
+    ).values(
         'requirement_id',
         'requirement_title',
         'requirement_status__requirement_status',
     )
-    project_results = project.objects.filter(is_deleted=False).values(
+    project_results = project.objects.filter(
+        is_deleted=False,
+    ).values(
         'project_id',
         'project_name',
         'project_status',
     )
-    task_results = task.objects.filter(is_deleted=False).values(
+    task_results = task.objects.filter(
+        is_deleted=False,
+    ).values(
         'task_id',
         'task_short_description',
         'task_status',
     )
-    kanban_results = kanban_board.objects.filter(is_deleted=False).values(
+    kanban_results = kanban_board.objects.filter(
+        is_deleted=False,
+    ).values(
         'kanban_board_id',
         'kanban_board_name',
         'kanban_board_status',
     )
+
+    # Check to see if not superuser - if not we limit to user's own groups
+    if not request.user.is_superuser:
+        object_assignment_results = object_assignment.objects.filter(
+            is_deleted=False,
+            group_id__in=user_group.objects.filter(
+                is_deleted=False,
+                username=request.user,
+            ).values('group_id')
+        )
+
+        rfc_results = rfc_results.filter(
+            rfc_id__in=object_assignment_results.filter(
+                request_for_change_id__isnull=False,
+            ).values('request_for_change_id'),
+        )
+
+        requirement_results = requirement_results.filter(
+            requirement_id__in=object_assignment_results.filter(
+                requirement_id__isnull=False,
+            ).values('requirement_id'),
+        )
+
+        project_results = project_results.filter(
+            project_id__in=object_assignment_results.filter(
+                project_id__isnull=False,
+            ).values('project_id'),
+        )
+
+        task_results = task_results.filter(
+            task_id__in=object_assignment_results.filter(
+                task_id__isnull=False,
+            ).values('task_id'),
+        )
+
+        kanban_results = kanban_results.filter(
+            kanban_board_id__in=object_assignment_results.filter(
+                kanban_board_id__isnull=False,
+            ).values('kanban_board_id'),
+        )
 
     # Check to see if we are searching for closed objects
     include_closed = search_form.cleaned_data['include_closed']
@@ -174,7 +225,7 @@ def search(request):
         'include_closed': include_closed,
         'nearbeach_title': 'Search',
         'search_input': form.cleaned_data['search'],
-        'search_results': get_object_search_data(form),
+        'search_results': get_object_search_data(form, request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -193,7 +244,7 @@ def search_data(request):
         return HttpResponseBadRequest(form.errors)
 
     # Return the JSON data
-    return JsonResponse(get_object_search_data(form))
+    return JsonResponse(get_object_search_data(form, request))
 
 
 @login_required(login_url='login', redirect_field_name="")

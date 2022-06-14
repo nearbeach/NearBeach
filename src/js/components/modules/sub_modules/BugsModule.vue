@@ -125,8 +125,14 @@
                     addBugModal.show();
             },
             appendBugList: function(data) {
+                //Create object for the data
+                let data_object = data[0]['fields'];
+
+                //Add the bug id
+                data_object.bug_id = data[0]['pk'];
+
                 //Append the data
-                this.bugList.push(data[0]['fields']);
+                this.bugList.push(data_object);
             },
             getBugHyperLink: function(bug) {
                 if (bug['bug_client__list_of_bug_client__bug_client_name'] == 'Bugzilla') {
@@ -173,6 +179,12 @@
             },
         },
         mounted() {
+            //If the location is inside the array - don't bother getting the data
+            var escape_array = [
+                'requirement_item',
+            ]
+            if (escape_array.indexOf(this.destination) >= 0) return;
+
             //Wait 200ms before getting data
             setTimeout(() => {
                 this.getBugList();
