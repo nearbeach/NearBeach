@@ -103,7 +103,6 @@ def project_information(request, project_id, *args, **kwargs):
     :param project_id:
     :return:
     """
-    user_level = kwargs['user_level']
 
     # Template
     t = loader.get_template('NearBeach/projects/project_information.html')
@@ -111,11 +110,16 @@ def project_information(request, project_id, *args, **kwargs):
     # Get data
     project_results = project.objects.get(project_id=project_id)
     project_status = project_results.project_status
+    user_level = kwargs['user_level']
 
     organisation_results = organisation.objects.filter(
         is_deleted=False,
         organisation_id=project_results.organisation_id,
     )
+
+    # Update user level if currently read only
+    if project_status == "Closed":
+        user_level = 1
 
     # Context
     c = {
