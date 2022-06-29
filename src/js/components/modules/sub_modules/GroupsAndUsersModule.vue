@@ -9,12 +9,24 @@
         <table class="table group-and-user-table">
             <thead>
                 <tr>
-                    <td>Group Name</td>
+                    <td colspan="2">Group Name</td>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="group in groupList">
+                <tr v-for="group in groupList" 
+                    v-bind:key="group.pk"
+                >
                     <td>{{ group['fields']['group_name'] }}</td>
+                    <td>
+                        <span class="remove-link" 
+                              v-if="userLevel >= 2"
+                        >
+                            <Icon v-bind:icon="icons.trashCan"
+                                  v-on:click="removeGroup(group.pk)"
+                                  v-if="groupList.length > 1"
+                            />
+                        </span>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -45,6 +57,7 @@
              class="user-card-layouts"
         >
             <div v-for="user in userList" 
+                 v-bind:key="user.username"
                  class="user-card"
             >
                 <img v-bind:src="`${staticUrl}/NearBeach/images/placeholder/people_tax.svg`"
@@ -172,6 +185,25 @@
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 });
+            },
+            removeGroup: function(group_id) {
+                //Setup data to send
+                const data_to_send = new FormData();
+                data_to_send.set('group_id', group_id);
+
+                //Tell the backend to remove this group
+                axios.post(
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_group/`,
+                    data_to_send,
+                ).then(() => {
+                    //HACK - for some strange reason, the groupList is behind a proxy. This is a hack around that BS
+                    let group_list = JSON.parse(JSON.stringify(this.groupList));
+                    this.groupList = group_list.filter(row => {
+                        return row.pk !== group_id
+                    })
+                }).catch(error => {
+                    this.showErrorModal(error, this.destination);
+                })
             },
             removeUser: function(username) {
                 //Optimistic Update - we assume everything is going to be ok

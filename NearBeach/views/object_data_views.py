@@ -18,7 +18,7 @@ from NearBeach.models import bug, \
 from NearBeach.views.tools.internal_functions import set_object_from_destination, project, task, requirement, \
     get_object_from_destination
 from NearBeach.decorators.check_destination import check_destination
-from NearBeach.forms import AddBugForm, AddCustomerForm, AddGroupForm, AddObjectLinkForm, AddNoteForm, AddTagsForm, AddUserForm, User, DeleteBugForm, DeleteLinkForm, DeleteTagForm, RemoveUserForm, SearchForm, QueryBugClientForm
+from NearBeach.forms import AddBugForm, AddCustomerForm, AddGroupForm, AddObjectLinkForm, AddNoteForm, AddTagsForm, AddUserForm, RemoveGroupForm, User, DeleteBugForm, DeleteLinkForm, DeleteTagForm, RemoveUserForm, SearchForm, QueryBugClientForm
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
@@ -1003,6 +1003,33 @@ def query_bug_client(request, destination, location_id):
     # Send back the JSON data
     return JsonResponse(json_data['bugs'], safe=False)
 
+
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name="")
+@check_destination()
+def remove_group(request, destination, location_id):
+    # Get the form data
+    form = RemoveGroupForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+    
+    update_object_assignment = object_assignment.objects.filter(
+        group_id=form.cleaned_data['group_id'],
+    )
+
+    # Using internal functions - get the relevant data
+    update_object_assignment = link_object(
+        update_object_assignment,
+        destination,
+        location_id
+    )   
+
+    # Update and save data
+    update_object_assignment.update(
+        is_deleted=True,
+    )
+
+    return HttpResponse("")
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")

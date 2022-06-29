@@ -225,6 +225,7 @@ urlpatterns = [
          name='object_link_list'),  # WTF - Please check to make sure we need this function?
     path('object_data/<destination>/<location_id>/query_bug_client/', object_data_views.query_bug_client,
          name='query_bug_client'),
+    path('object_data/<destination>/<location_id>/remove_group/', object_data_views.remove_group, name='remove_group'),
     path('object_data/<destination>/<location_id>/remove_user/', object_data_views.remove_user, name='remove_user'),
     path('object_data/<destination>/<location_id>/tag_list/',
          object_data_views.tag_list, name='tag_list'),
