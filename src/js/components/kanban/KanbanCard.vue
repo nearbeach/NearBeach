@@ -3,6 +3,7 @@
                v-bind:id="`kanban_cell_${levelId}_${columnId}`"
                v-bind:data-level="levelId"
                v-bind:data-column="columnId"
+               :disabled="kanbanStatus==='Closed'"
                group="tasks"
                @end="onEnd($event)"
                v-model="masterList"
@@ -97,6 +98,7 @@
         computed: {
             ...mapGetters({
                 allCards: 'getCards',
+                kanbanStatus: 'getKanbanStatus',
                 rootUrl: 'getRootUrl',
             }),
             masterList: function() {

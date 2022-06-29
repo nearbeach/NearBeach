@@ -22,6 +22,7 @@
                     v-bind:content_css="false"
                     v-bind:skin="false"
                     v-model="cardDescription"
+                    v-bind:disabled="kanbanStatus === 'Closed'"
                 />
             </div>
         </div>
@@ -36,6 +37,7 @@
                 </button>
                 <button class="btn btn-primary save-changes"
                         v-on:click="updateCard"
+                        v-if="kanbanStatus !== 'Closed'"
                 >
                     Update Card
                 </button>
@@ -47,6 +49,7 @@
 <script>
     const axios = require('axios');
     import Editor from '@tinymce/tinymce-vue'
+    import { mapGetters } from 'vuex';
 
     export default {
         name: 'CardDescription',
@@ -58,6 +61,9 @@
             return {}
         },
         computed: {
+            ...mapGetters({
+                kanbanStatus: 'getKanbanStatus',
+            }),
             cardDescription: {
                 get () {
                     return this.$store.state.card.cardDescription;

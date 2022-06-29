@@ -23,6 +23,7 @@
                     v-bind:content_css="false"
                     v-bind:skin="false"
                     v-model="cardNoteModel"
+                    v-bind:disabled="kanbanStatus === 'Closed'"
                 />
             </div>
         </div>
@@ -75,6 +76,7 @@
         computed: {
             ...mapGetters({
                 cardNotes: "getCardNotes",
+                kanbanStatus: "getKanbanStatus",
                 rootUrl: "getRootUrl",
             })
         },

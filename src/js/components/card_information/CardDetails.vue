@@ -45,6 +45,7 @@
                         <n-select v-bind:options="listColumns"
                                   label="column"
                                   v-model:value="cardColumn"
+                                  :disabled="kanbanStatus === 'Closed'"
                         ></n-select>
                     </div>
 
@@ -53,6 +54,7 @@
                         <n-select v-bind:options="listLevels"
                                   label="level"
                                   v-model:value="cardLevel"
+                                  :disabled="kanbanStatus === 'Closed'"
                         ></n-select>
                     </div>
                 </div>
@@ -69,6 +71,7 @@
                 </button>
                 <button class="btn btn-primary save-changes"
                         v-on:click="updateCard"
+                        v-if="kanbanStatus !== 'Closed'"
                 >
                     Update Card
                 </button>
@@ -100,6 +103,7 @@
                 cardLevel: 'getCardLevel',
                 cardLink: 'getCardLink',
                 cardTitle: 'getCardTitle',
+                kanbanStatus: 'getKanbanStatus',
                 listColumns: 'getListColumns',
                 listLevels: 'getListLevels',
             }),
