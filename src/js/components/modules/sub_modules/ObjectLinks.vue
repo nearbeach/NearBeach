@@ -126,6 +126,11 @@
                     link_id = link['task_id'];
                     link_text = `Task ${link['task_id']}`;
                     link_location = '/task_information/';
+                } else if (link['meta_object'] !== null) {
+                    link_title = link['meta_object_title'];
+                    link_id = link['meta_object'];
+                    link_text = `${this.destination} ${link['meta_object']}`;
+                    link_location = `/${this.destination}_information/`
                 }
 
                 return `<a href="${link_location}${link_id}/"><p>${link_title}</p><div class="spacer"></div><p class="small-text">${link_text}</p></a>`;
@@ -146,6 +151,8 @@
                 } else if (link['task_id'] !== null && this.destination !== 'task') {
                     // The link is a requirement item link
                     link_status = link['task_id__task_status'];
+                } else if (link['meta_object'] !== null) {
+                    link_status = link['meta_object_status'];
                 }
 
                 return `${link_status}`;
@@ -176,8 +183,9 @@
                          */
 
                         var sum = parseInt(0 + row['project_id']) + parseInt(0 + row['requirement_id']) +
-                            parseInt(0 + row['requirement_item_id']) + parseInt(0 + row['task_id']);
-
+                            parseInt(0 + row['requirement_item_id']) + parseInt(0 + row['task_id']) +
+                            parseInt(0 + row['meta_object']);
+                        
                         return sum > this.locationId;
                     });
                 });
