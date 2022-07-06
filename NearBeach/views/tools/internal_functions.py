@@ -1,4 +1,3 @@
-from requests import request
 from NearBeach.models import kanban_board, kanban_card, opportunity, organisation, quote, project,\
     request_for_change, requirement, requirement_item, task, whiteboard
 
