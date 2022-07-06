@@ -43,7 +43,7 @@
                                   v-if="userLevel >= 2"
                             >
                                 <Icon v-bind:icon="icons.trashCan"
-                                             v-on:click="removeBug(bug['bug_id'])"
+                                      v-on:click="removeBug(bug['bug_id'])"
                                 />
                             </span>
                         </td>
