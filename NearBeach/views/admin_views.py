@@ -5,6 +5,7 @@ from django.views.decorators.http import require_http_methods
 from NearBeach.forms import AdminAddUserForm, PasswordResetForm, UpdateGroupLeaderStatusForm
 from NearBeach.models import user_group
 
+import itertools
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
@@ -35,15 +36,26 @@ def add_user(request):
     user_results = form.cleaned_data['username']
 
     # Simple double for loops
-    for single_group in group_results:
-        for single_permission_set in permission_set_results:
-            submit_user = user_group(
-                username=user_results,
-                permission_set=single_permission_set,
-                group=single_group,
-                change_user=request.user,
-            )
-            submit_user.save()
+    # ((x,y) for x in A for y in B)
+    # itertools
+    for row in itertools.product(group_results, permission_set_results):
+        submit_user = user_group(
+            username=user_results,
+            permission_set=row[1],
+            group=row[0],
+            change_user=request.user,
+        )
+        submit_user.save()
+
+    # for single_group in group_results:
+    #     for single_permission_set in permission_set_results:
+    #         submit_user = user_group(
+    #             username=user_results,
+    #             permission_set=single_permission_set,
+    #             group=single_group,
+    #             change_user=request.user,
+    #         )
+    #         submit_user.save()
 
     return HttpResponse("")
 
