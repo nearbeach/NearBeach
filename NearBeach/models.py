@@ -1614,8 +1614,6 @@ class nearbeach_option(models.Model):
 class object_assignment(models.Model):
     """
     Object permissions is the centralised permissions for all objects
-    - Opportunity
-    - Quote
     - Requirement
     - Project
     - Task
@@ -1704,6 +1702,20 @@ class object_assignment(models.Model):
     organisation = models.ForeignKey(
         'organisation',
         on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    meta_object = models.BigIntegerField(
+        blank=True,
+        null=True,
+    )
+    meta_object_title = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+    )
+    meta_object_status = models.CharField(
+        max_length=255,
         blank=True,
         null=True,
     )

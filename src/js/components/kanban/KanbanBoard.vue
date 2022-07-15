@@ -156,6 +156,11 @@
                 levelResults: this.levelResults,
                 columnResults: this.columnResults,
             })
+
+            this.$store.commit({
+                type: 'updateKanbanStatus',
+                kanbanStatus: this.kanbanBoardResults[0].fields.kanban_board_status,
+            })
         },
     }
 </script>

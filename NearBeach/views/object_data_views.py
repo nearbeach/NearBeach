@@ -18,7 +18,7 @@ from NearBeach.models import bug, \
 from NearBeach.views.tools.internal_functions import set_object_from_destination, project, task, requirement, \
     get_object_from_destination
 from NearBeach.decorators.check_destination import check_destination
-from NearBeach.forms import AddBugForm, AddCustomerForm, AddGroupForm, AddObjectLinkForm, AddNoteForm, AddTagsForm, AddUserForm, User, DeleteBugForm, DeleteLinkForm, DeleteTagForm, RemoveUserForm, SearchForm, QueryBugClientForm
+from NearBeach.forms import AddBugForm, AddCustomerForm, AddGroupForm, AddObjectLinkForm, AddNoteForm, AddTagsForm, AddUserForm, RemoveGroupForm, User, DeleteBugForm, DeleteLinkForm, DeleteTagForm, RemoveUserForm, SearchForm, QueryBugClientForm, RemoveLinkForm
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
@@ -151,45 +151,72 @@ def add_link(request, destination, location_id):
 
     # Add the destination/location_id to the object
     object_assignment_submit = link_object(
-        object_assignment_submit, destination, location_id)
+        object_assignment_submit, 
+        destination, 
+        location_id
+    )
+
+    # Declaring the dict used in the for loop below
+    object_dict = {
+        'project': project.objects,
+        'task': task.objects,
+        'requirement': requirement.objects,
+        'requirement_item': requirement_item.objects,
+    }
+
+    object_title = {
+        'project': 'project_name',
+        'task': 'task_short_description',
+        'requirement': 'requirement_title',
+        'requirement_item': 'requirement_item_title',
+    }
+
+    object_status = {
+        'project': 'project_status',
+        'task': 'task_status',
+        'requirement': 'requirement_status',
+        'requirement_item': 'requirement_item_status',
+    }
 
     # Loop through the results and add them in.
-    for row in request.POST.getlist("project"):
-        submit_object_assignment = object_assignment(
-            project=project.objects.get(project_id=row),
-            change_user=request.user,
-        )
-        set_object_from_destination(
-            submit_object_assignment, destination, location_id)
-        submit_object_assignment.save()
+    # We will loop through each object type, and add them in accordinly
+    for object_type in ['project','task','requirement','requirement_item']:
+        # Get the results of each object type and add them
+        for row in request.POST.getlist(object_type):
+            single_object = object_dict[object_type].get(pk=row)
 
-    for row in request.POST.getlist("task"):
-        submit_object_assignment = object_assignment(
-            task=task.objects.get(task_id=row),
-            change_user=request.user,
-        )
-        set_object_from_destination(
-            submit_object_assignment, destination, location_id)
-        submit_object_assignment.save()
+            submit_object_assignment = object_assignment(
+                change_user=request.user,
+                **{ object_type: single_object }
+            )
 
-    for row in request.POST.getlist("requirement"):
-        submit_object_assignment = object_assignment(
-            requirement=requirement.objects.get(requirement_id=row),
-            change_user=request.user,
-        )
-        set_object_from_destination(
-            submit_object_assignment, destination, location_id)
-        submit_object_assignment.save()
+            # Set the object destination
+            set_object_from_destination(submit_object_assignment, destination, location_id)
 
-    for row in request.POST.getlist("requirement_item"):
-        submit_object_assignment = object_assignment(
-            requirement_item=requirement_item.objects.get(
-                requirement_item_id=row),
-            change_user=request.user,
-        )
-        set_object_from_destination(
-            submit_object_assignment, destination, location_id)
-        submit_object_assignment.save()
+            # If object destination is the same as the object type, add the meta_object value
+            if destination == object_type:
+                # We need to set the meta object
+                setattr(
+                    submit_object_assignment,
+                    'meta_object',
+                    row
+                )
+
+                # Update the status and the title with the correct data
+                setattr(
+                    submit_object_assignment, 
+                    'meta_object_title', 
+                    getattr(single_object, object_title[object_type])
+                )
+                
+                setattr(
+                    submit_object_assignment, 
+                    'meta_object_status', 
+                    getattr(single_object, object_status[object_type])
+                )
+            
+            submit_object_assignment.save()
+
     return HttpResponse("Success")
 
 
@@ -899,14 +926,24 @@ def object_link_list(request, destination, location_id):
     object_assignment_results = object_assignment.objects.filter(
         is_deleted=False,
     )
-    object_assignment_results = get_object_from_destination(
-        object_assignment_results, destination, location_id)
 
+    # object_assignment_results = get_object_from_destination(
+    #     object_assignment_results, 
+    #     destination, 
+    #     location_id
+    # )
+
+    # Check objects that match the destination and location id
+    # Also make sure we get any meta data where the destination is not null
     object_assignment_results = object_assignment_results.filter(
-        Q(project__isnull=False) |
-        Q(requirement__isnull=False) |
-        Q(requirement_item__isnull=False) |
-        Q(task__isnull=False)
+        Q(
+            # Where destination and location id match
+            **{ destination: location_id },
+        ) |
+        Q(
+            **{ destination + '__isnull': False},
+            meta_object = location_id,
+        )
     ).values(
         'project_id',
         'project_id__project_name',
@@ -920,6 +957,9 @@ def object_link_list(request, destination, location_id):
         'requirement_item_id',
         'requirement_item_id__requirement_item_title',
         'requirement_item_id__requirement_item_status__requirement_item_status',
+        'meta_object',
+        'meta_object_title',
+        'meta_object_status',
     )
 
     """
@@ -931,7 +971,9 @@ def object_link_list(request, destination, location_id):
 
     # Send back json data
     json_results = json.dumps(
-        list(object_assignment_results), cls=DjangoJSONEncoder)
+        list(object_assignment_results), 
+        cls=DjangoJSONEncoder
+    )
 
     return HttpResponse(json_results, content_type='application/json')
 
@@ -1002,6 +1044,54 @@ def query_bug_client(request, destination, location_id):
 
     # Send back the JSON data
     return JsonResponse(json_data['bugs'], safe=False)
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name="")
+@check_destination()
+def remove_group(request, destination, location_id):
+    # Get the form data
+    form = RemoveGroupForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+    
+    update_object_assignment = object_assignment.objects.filter(
+        group_id=form.cleaned_data['group_id'],
+    )
+
+    # Using internal functions - get the relevant data
+    update_object_assignment = link_object(
+        update_object_assignment,
+        destination,
+        location_id
+    )   
+
+    # Update and save data
+    update_object_assignment.update(
+        is_deleted=True,
+    )
+
+    return HttpResponse("")
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name="")
+@check_destination()
+def remove_link(request, destination, location_id):
+    form = RemoveLinkForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Now we limit the data to what we want, and then soft delete it
+    update_object_assignment = object_assignment.objects.filter(
+        is_deleted=False,
+        **{destination: location_id},
+        **{form.cleaned_data['link_connection']: form.cleaned_data['link_id']}
+    ).update(
+        is_deleted=True
+    )
+
+    return HttpResponse("")
 
 
 @require_http_methods(['POST'])

@@ -6,7 +6,7 @@
             to these other objects to symbolise a connection between the two.
         </p>
 
-        <!-- REQUIREMENT LINKS -->
+        <!-- OBJECT LINKS -->
         <div v-if="linkResults.length == 0"
              class="requirement-item-spacer"
         >
@@ -25,7 +25,16 @@
                         v-bind:key="link['pk']"
                     >
                         <td v-html="extractObjectDescription(link)"></td>
-                        <td>{{extractObjectStatus(link)}}</td>
+                        <td>
+                            {{extractObjectStatus(link)}}
+                            <span class="remove-link"
+                                  v-if="userLevel >= 2"
+                            >
+                                <Icon v-bind:icon="icons.trashCan"
+                                    v-on:click="removeLink(link)"
+                                />
+                            </span>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -126,6 +135,11 @@
                     link_id = link['task_id'];
                     link_text = `Task ${link['task_id']}`;
                     link_location = '/task_information/';
+                } else if (link['meta_object'] !== null) {
+                    link_title = link['meta_object_title'];
+                    link_id = link['meta_object'];
+                    link_text = `${this.destination} ${link['meta_object']}`;
+                    link_location = `/${this.destination}_information/`
                 }
 
                 return `<a href="${link_location}${link_id}/"><p>${link_title}</p><div class="spacer"></div><p class="small-text">${link_text}</p></a>`;
@@ -137,15 +151,17 @@
                 if (link['project_id'] !== null && this.destination !== 'project') {
                     // The link is a project link
                     link_status = link['project_id__project_status'];
-                } else if (link['requirement_id'] !== null) {
+                } else if (link['requirement_id'] !== null && this.destination !== 'requirement') {
                     // The link is a requirement link
                     link_status = link['requirement_id__requirement_status__requirement_status'];
-                } else if (link['requirement_item_id'] !== null) {
+                } else if (link['requirement_item_id'] !== null && this.destination !== 'requirement_item') {
                     // The link is a requirement item link
                     link_status = link['requirement_item_id__requirement_item_status__requirement_item_status'];
                 } else if (link['task_id'] !== null && this.destination !== 'task') {
                     // The link is a requirement item link
                     link_status = link['task_id__task_status'];
+                } else if (link['meta_object'] !== null) {
+                    link_status = link['meta_object_status'];
                 }
 
                 return `${link_status}`;
@@ -157,6 +173,47 @@
                 
                 elem_modal.show();
                 
+            },
+            removeLink: function(link) {
+                // Determine the link connection
+                let link_connection = "";
+                let link_id = 0;
+
+                //Apply the correct values depending on teh conditions
+                if (link['project_id'] !== null && this.destination !== 'project') {
+                    link_connection = "project";
+                    link_id = link['project_id'];
+                } else if (link['requirement_id'] !== null && this.destination !== 'requirement') {
+                    link_connection = "requirement";
+                    link_id = link['requirement_id'];
+                } else if (link['requirement_item_id'] !== null && this.destination !== 'requirement_item') {
+                    link_connection = "requirement_item"
+                    link_id = link['requirement_item_id'];
+                } else if (link['task_id'] !== null && this.destination !== 'task') {
+                    link_connection = "task";
+                    link_id = link['task_id'];
+                } else if (link['meta_object'] !== null) {
+                    link_connection = "meta_object";
+                    link_id = link['meta_object'];
+                }
+
+                //Get the data to send into the backend
+                console.log("Link: ", link, " | Link Id: ", link_id, " | Link Connection: ", link_connection);
+                let data_to_send = new FormData();
+                data_to_send.set('link_id', link_id);
+                data_to_send.set('link_connection', link_connection);
+
+                //Send the data to the backend
+                axios.post(
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_link/`,
+                    data_to_send
+                ).then(() => {
+                    //Clear the data
+                    this.linkResults = [];
+                    
+                    //Update the data
+                    this.updateLinkResults();
+                })
             },
             updateLinkResults: function() {
                 //Get the data from the database
@@ -176,8 +233,9 @@
                          */
 
                         var sum = parseInt(0 + row['project_id']) + parseInt(0 + row['requirement_id']) +
-                            parseInt(0 + row['requirement_item_id']) + parseInt(0 + row['task_id']);
-
+                            parseInt(0 + row['requirement_item_id']) + parseInt(0 + row['task_id']) +
+                            parseInt(0 + row['meta_object']);
+                        
                         return sum > this.locationId;
                     });
                 });

@@ -694,6 +694,22 @@ class QueryBugClientForm(forms.Form):
     )
 
 
+class RemoveGroupForm(forms.Form):
+    group_id = forms.ModelChoiceField(
+        required=True,
+        queryset=group.objects.all()
+    )
+
+
+class RemoveLinkForm(forms.Form):
+    link_id = forms.IntegerField(
+        required=True,
+    )
+    link_connection = forms.CharField(
+        max_length=255,
+    )
+
+
 class RemoveUserForm(forms.Form):
     username = forms.CharField(
         required=True,

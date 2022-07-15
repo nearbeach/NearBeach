@@ -33,6 +33,7 @@ const moduleCard = {
     cardLink: {},
     cardDescription: '',
     cardNotes: [],
+    kanbanStatus: "Open",
     listColumns: [],
     listLevels: [],
   }),
@@ -56,6 +57,9 @@ const moduleCard = {
           state.cardNotes = response.data;
         })
         .catch((error) => {});
+    },
+    updateKanbanStatus(state, payload) {
+      state.kanbanStatus = payload.kanbanStatus;
     },
     updateValue(state, payload) {
       state[payload.field] = payload.value;
@@ -100,6 +104,9 @@ const moduleCard = {
     },
     getCardTitle: (state) => {
       return state.cardTitle;
+    },
+    getKanbanStatus: (state) => {
+      return state.kanbanStatus;
     },
     getListColumns: (state) => {
       return state.listColumns;

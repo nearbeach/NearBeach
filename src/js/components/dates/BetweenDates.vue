@@ -11,12 +11,14 @@
             <div class="form-group">
                 <label>{{destination}} Start Date:
                     <span class="error"
-                          v-if="!v$.localStartDateModel.$error.length > 0"
+                          v-if="v$.localStartDateModel.$error.length > 0"
                     > Please select a date.</span>
                 </label>
                 <n-date-picker type="datetime"
                                v-model:value="localStartDateModel"
                                class="form-control"
+                               :is-date-disabled="startDateDisabled"
+                               :is-time-disabled="startDateDisabled"
                 ></n-date-picker>
             </div>
         </div>
@@ -24,12 +26,14 @@
             <div class="form-group">
                 <label>{{destination}} End Date:
                     <span class="error"
-                          v-if="!v$.localEndDateModel.$error.length > 0"
+                          v-if="v$.localEndDateModel.$error.length > 0"
                     > Please select a date.</span>
                 </label>
                 <n-date-picker type="datetime"
                                v-model:value="localEndDateModel"
                                class="form-control"
+                               :is-date-disabled="endDateDisabled"
+                               :is-time-disabled="endDateDisabled"
                 ></n-date-picker>
             </div>
         </div>
@@ -105,6 +109,12 @@
                     'start_date': this.localStartDateModel,
                     'end_date': this.localEndDateModel
                 })
+            },
+            endDateDisabled: function(endDate) {
+                return endDate < this.startDateModel;
+            },
+            startDateDisabled: function(startDate) {
+                return startDate > this.endDateModel;
             },
         },
         watch: {
