@@ -314,7 +314,6 @@ def requirement_information(request, requirement_id, *args, **kwargs):
 
     status_list = list_of_requirement_status.objects.filter(
         is_deleted=False,
-        # requirement_status_is_closed=False,
     )
 
     type_list = list_of_requirement_type.objects.filter(

@@ -5,7 +5,6 @@ from django.views.decorators.http import require_http_methods
 from django.core.serializers.json import DjangoJSONEncoder
 
 from NearBeach.forms import User, UpdateUserForm
-# from NearBeach.models import *
 
 import json
 

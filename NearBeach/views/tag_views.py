@@ -5,6 +5,7 @@ from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.forms import tag, NewTagForm, TagForm
 
+import json
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name='')
