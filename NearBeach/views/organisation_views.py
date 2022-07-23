@@ -161,7 +161,7 @@ def organisation_update_profile(request, organisation_id, *args, **kwargs):
     if not form.is_valid():
         print("\n\n%s\n\n" % form.errors)
         return HttpResponseBadRequest(form.errors)
-    
+
     # Get the organisation object
     update_organisation = organisation.objects.get(organisation_id=organisation_id)
     update_organisation.organisation_profile_picture = form.cleaned_data['file']
