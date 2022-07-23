@@ -1,9 +1,7 @@
-import urllib
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Sum, Q, Min
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
@@ -13,7 +11,6 @@ from NearBeach.models import group, user_group, object_assignment
 from NearBeach.views.tools.internal_functions import task, organisation
 
 import json
-import urllib3
 
 
 @login_required(login_url='login', redirect_field_name="")
