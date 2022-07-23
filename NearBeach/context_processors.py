@@ -1,4 +1,5 @@
-import django, NearBeach
+import django
+import NearBeach
 
 def django_version(request):
     return {
