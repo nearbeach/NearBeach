@@ -9,8 +9,6 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.forms import tag, NewTagForm, TagForm
-# from NearBeach.views.tools.internal_functions import *
-# from NearBeach.models import *
 
 import json
 import urllib3

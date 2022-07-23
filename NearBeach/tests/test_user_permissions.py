@@ -122,8 +122,6 @@ class TeamLeaderPermissionTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the project
-        # response = c.get(reverse('project_information', args=['2']))
-        # self.assertEqual(response.status_code, 403)
 
         c.get(reverse('logout'))
 
@@ -138,8 +136,6 @@ class TeamLeaderPermissionTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the project
-        # response = c.get(reverse('task_information', args=['2']))
-        # self.assertEqual(response.status_code, 403)
 
         c.get(reverse('logout'))
 
@@ -226,8 +222,6 @@ class TeamMemberPermissionTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the project
-        # response = c.get(reverse('project_information', args=['2']))
-        # self.assertEqual(response.status_code, 403)
 
         c.get(reverse('logout'))
 
@@ -242,8 +236,6 @@ class TeamMemberPermissionTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the task
-        # response = c.get(reverse('task_information', args=['2']))
-        # self.assertEqual(response.status_code, 403)
 
         c.get(reverse('logout'))
 
@@ -274,8 +266,6 @@ class TeamInternPermissionTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the project
-        # response = c.get(reverse('project_information', args=['2']))
-        # self.assertEqual(response.status_code, 403)
 
         c.get(reverse('logout'))
 
@@ -290,7 +280,5 @@ class TeamInternPermissionTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the task
-        # response = c.get(reverse('task_information', args=['2']))
-        # self.assertEqual(response.status_code, 403)
 
         c.get(reverse('logout'))

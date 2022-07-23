@@ -214,7 +214,6 @@ def document_upload(request, destination, location_id):
     document_submit = document(
         change_user=request.user,
         document_description=document_description,
-        # document=file,
     )
     document_submit.save()
 
