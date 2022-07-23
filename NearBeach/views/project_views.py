@@ -103,7 +103,6 @@ def project_information(request, project_id, *args, **kwargs):
     :param project_id:
     :return:
     """
-
     # Template
     t = loader.get_template('NearBeach/projects/project_information.html')
 
