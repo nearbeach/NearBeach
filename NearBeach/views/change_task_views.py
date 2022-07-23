@@ -30,13 +30,6 @@ def change_task_information(request, change_task_id, *args, **kwargs):
 
     user_list = User.objects.filter(
         is_active=True,
-        # id__in=user_group.objects.filter(
-        #     is_deleted=False,
-        #     group_id__in=object_assignment.objects.filter(
-        #         is_deleted=False,
-        #         request_for_change_id=rfc_id,
-        #     ).values('group_id')
-        # ).values('username_id')
     ).values(
         'id',
         'email',

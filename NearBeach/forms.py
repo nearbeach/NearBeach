@@ -644,7 +644,6 @@ class PermissionSetForm(forms.ModelForm):
 
 
 class ProfilePictureForm(forms.Form):
-    #profile_picture = forms.ImageField()
     file = forms.ImageField()
 
 

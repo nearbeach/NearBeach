@@ -165,9 +165,6 @@ def get_unassigned_objects(request):
     """
     project_results = project.objects.filter(
         is_deleted=False,
-        # project_id__in=object_assignment_results.filter(
-        #     project_id__isnull=False,
-        # ).values('project_id')
         project_id__in=object_assignment.objects.filter(
             is_deleted=False,
             group_id__in=user_group.objects.filter(
@@ -271,12 +268,9 @@ def get_unassigned_objects(request):
 
     Note to Django developers - there has to be a better way
     """
-    # requirement_results = serializers.serialize('json', requirement_results)
     requirement_results = json.dumps(
         list(requirement_results), cls=DjangoJSONEncoder)
-    # project_results = serializers.serialize('json', project_results)
     project_results = json.dumps(list(project_results), cls=DjangoJSONEncoder)
-    # task_results = serializers.serialize('json', task_results)
     task_results = json.dumps(list(task_results), cls=DjangoJSONEncoder)
 
     # Send back a JSON array with JSON arrays inside

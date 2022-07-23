@@ -31,7 +31,6 @@ def customer_information(request, customer_id, *args, **kwargs):
     )
 
     title_list = list_of_title.objects.filter(
-        # is_deleted=False, # NEED TO RECONSTRUCT DATABASE TO GET THIS TO WORK!
     )
 
     # Get tempalte
@@ -72,7 +71,6 @@ def customer_information_save(request, customer_id, *args, **kwargs):
     customer_results.customer_first_name = form.cleaned_data['customer_first_name']
     customer_results.customer_last_name = form.cleaned_data['customer_last_name']
     customer_results.customer_email = form.cleaned_data['customer_email']
-    # customer_results.organisation = form.cleaned_data['organisation'] # Does not need updating!
 
     # Save
     customer_results.save()
