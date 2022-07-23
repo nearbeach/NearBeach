@@ -1,11 +1,10 @@
 from __future__ import unicode_literals
 from django import forms
-from django.forms import ModelForm
 
 # Import from Models
 from .models import bug, folder, group, tag, User, change_task, customer, kanban_column, kanban_level, tag_assignment,\
     kanban_card, kanban_board, permission_set, project, request_for_change, requirement_item, requirement, task,\
-    organisation, bug_client, document, object_assignment, user_group
+    organisation, bug_client, document, object_assignment
 
 
 class AddBugForm(forms.Form):

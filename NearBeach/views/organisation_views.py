@@ -1,18 +1,12 @@
-from this import d
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
-from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Sum, Q, Min
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.db.models import Q
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
-from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_organisation_permissions
+from NearBeach.decorators.check_user_permissions import check_user_organisation_permissions
 from NearBeach.forms import OrganisationForm, ProfilePictureForm
 from NearBeach.models import organisation, customer, list_of_title
-
-
-import json
 
 
 @login_required(login_url='login', redirect_field_name="")

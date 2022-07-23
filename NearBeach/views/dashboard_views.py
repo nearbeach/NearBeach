@@ -1,12 +1,8 @@
 # Import Forms
 from ..forms import *
-
-# Import Django Libraries
-from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.template import loader
-from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
@@ -14,8 +10,6 @@ from django.db.models import Count, Q
 
 # Import Python Libraries
 import json
-import urllib.parse
-import random
 
 # Import NearBeach Models
 from NearBeach.models import object_assignment, \

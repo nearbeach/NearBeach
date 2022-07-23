@@ -1,7 +1,7 @@
 import json
 from django.db.models import Q
 from django.views.decorators.http import require_http_methods
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.core.serializers.json import DjangoJSONEncoder
