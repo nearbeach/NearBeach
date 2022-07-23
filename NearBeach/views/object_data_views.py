@@ -208,13 +208,13 @@ def add_link(request, destination, location_id):
                     'meta_object_title', 
                     getattr(single_object, object_title[object_type])
                 )
-                
+
                 setattr(
                     submit_object_assignment, 
                     'meta_object_status', 
                     getattr(single_object, object_status[object_type])
                 )
-            
+
             submit_object_assignment.save()
 
     return HttpResponse("Success")
@@ -1049,7 +1049,7 @@ def remove_group(request, destination, location_id):
     form = RemoveGroupForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-    
+
     update_object_assignment = object_assignment.objects.filter(
         group_id=form.cleaned_data['group_id'],
     )

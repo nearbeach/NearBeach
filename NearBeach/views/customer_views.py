@@ -84,7 +84,7 @@ def customer_update_profile(request, customer_id, *args, **kwargs):
     form = ProfilePictureForm(request.POST, request.FILES)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-    
+
     update_customer = customer.objects.get(customer_id=customer_id)
     update_customer.customer_profile_picture = form.cleaned_data['file']
     update_customer.save()
