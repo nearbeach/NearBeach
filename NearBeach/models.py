@@ -1044,43 +1044,6 @@ class kanban_column(models.Model):
         return str(self.kanban_column_name)
 
 
-# class kanban_comment(models.Model):
-#     kanban_comment_id = models.AutoField(primary_key=True)
-#     kanban_comment = models.TextField()
-#     kanban_board = models.ForeignKey(
-#         'kanban_board',
-#         on_delete=models.CASCADE,
-#         null=True,
-#         blank=True,
-#     )
-#     kanban_card = models.ForeignKey(
-#         'kanban_card',
-#         on_delete=models.CASCADE,
-#         null=True,
-#         blank=True,
-#     )
-#     user = models.ForeignKey(
-#         User,
-#         on_delete=models.CASCADE,
-#         null=True
-#     )
-#     user_infomation = models.CharField(max_length=255)
-#     date_created = models.DateTimeField(auto_now_add=True)
-#     date_modified = models.DateTimeField(auto_now=True)
-#     change_user = models.ForeignKey(
-#         User,
-#         on_delete=models.CASCADE,
-#         related_name='%(class)s_change_user'
-#     )
-#     is_deleted = models.BooleanField(
-#         default=False,
-#     )
-#
-#     class Meta:
-#         db_table = "kanban_comment"
-#
-#     def __str__(self):
-#         return str(self.kanban_comment)
 
 
 class kanban_level(models.Model):
@@ -1981,7 +1944,6 @@ class permission_set(models.Model):
     permission_set_id = models.AutoField(primary_key=True)
     permission_set_name = models.CharField(
         max_length=255,
-        # unique=True, #issue when we delete previous permission sets
     )
     # ADMINISTRATION PERMISSIONS
     administration_assign_user_to_group = models.IntegerField(

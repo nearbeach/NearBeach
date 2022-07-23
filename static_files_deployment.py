@@ -10,7 +10,6 @@ parser.add_argument("account_id", help="The Account Id for the R2")
 parser.add_argument("access_key_id", help="The Access Key required for logging in")
 parser.add_argument("access_key_secret", help="The Secret Key, required for logging in")
 args = parser.parse_args()
-# print(args.access_key_id)
 
 # Obtain the current NearBeach version
 current_version = NearBeach.__version__
