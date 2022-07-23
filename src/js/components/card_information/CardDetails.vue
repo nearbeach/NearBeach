@@ -6,6 +6,7 @@
             <strong>Object Link: </strong>
             <a :href="cardLink.hyperlink" 
                 target="_blank"
+                rel="noopener noreferrer"
             >
                 {{cardLink.type}} - {{cardLink.id}}
             </a>
