@@ -199,7 +199,7 @@ def login(request):
         'LoginForm': form,
         'nearbeach_title': 'NearBeach Login',
         'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
-        'image_number': '%(number)03d' % {'number': 1 + cryptogen.randrange(1, 19)},
+        'image_number': f"{1 + cryptogen.randrange(1, 19):03.0f}"
     }
 
     return HttpResponse(t.render(c, request))

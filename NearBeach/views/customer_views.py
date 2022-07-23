@@ -35,7 +35,7 @@ def customer_information(request, customer_id, *args, **kwargs):
     # Context
     c = {
         'customer_results': serializers.serialize('json', [customer_results]),
-        'nearbeach_title': 'Customer Information %s' % customer_id,
+        'nearbeach_title': f"Customer Information {customer_id}",
         'organisation_results': serializers.serialize('json', organisation_results),
         'title_list': serializers.serialize('json', title_list),
     }

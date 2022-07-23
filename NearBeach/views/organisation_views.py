@@ -115,7 +115,7 @@ def organisation_information(request, organisation_id, *args, **kwargs):
         'customer_results': serializers.serialize('json', customer_results),
         'organisation_id': organisation_id,
         'organisation_results': serializers.serialize('json', [organisation_results]),
-        'nearbeach_title': 'Organisation Information %s' % organisation_id,
+        'nearbeach_title': f"Organisation Information {organisation_id}",
         'title_list': serializers.serialize('json', title_list),
         'user_level': user_level,
     }
@@ -159,7 +159,6 @@ def organisation_update_profile(request, organisation_id, *args, **kwargs):
     """
     form = ProfilePictureForm(request.POST, request.FILES)
     if not form.is_valid():
-        print("\n\n%s\n\n" % form.errors)
         return HttpResponseBadRequest(form.errors)
 
     # Get the organisation object
