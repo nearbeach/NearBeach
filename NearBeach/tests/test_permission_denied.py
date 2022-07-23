@@ -1,9 +1,5 @@
-from django.contrib.auth.models import User
-from django.test import TestCase, Client, TransactionTestCase
+from django.test import TestCase, Client
 from django.urls import reverse
-
-import unittest
-import json
 
 
 def login_user(c: object, self: object) -> object:
