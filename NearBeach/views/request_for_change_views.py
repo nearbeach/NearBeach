@@ -5,7 +5,14 @@ from NearBeach.forms import NewRequestForChangeForm, \
     NewChangeTaskForm,\
     UpdateRFCStatus
 from NearBeach.decorators.check_user_permissions import check_rfc_permissions
-from NearBeach.models import request_for_change, User, user_group, object_assignment, group, change_task, request_for_change_group_approval, RFC_STATUS
+from NearBeach.models import request_for_change, \
+    User, \
+    user_group, \
+    object_assignment, \
+    group, \
+    change_task, \
+    request_for_change_group_approval, \
+    RFC_STATUS
 from django.http import HttpResponse, \
     HttpResponseBadRequest, \
     HttpResponseRedirect

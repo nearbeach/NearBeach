@@ -15,10 +15,26 @@ from NearBeach.models import bug, \
     tag, \
     tag_assignment, \
     user_group
-from NearBeach.views.tools.internal_functions import set_object_from_destination, project, task, requirement, \
+from NearBeach.views.tools.internal_functions import set_object_from_destination, \
+    project, task, requirement, \
     get_object_from_destination
 from NearBeach.decorators.check_destination import check_destination
-from NearBeach.forms import AddBugForm, AddCustomerForm, AddGroupForm, AddObjectLinkForm, AddNoteForm, AddTagsForm, AddUserForm, RemoveGroupForm, User, DeleteBugForm, DeleteLinkForm, DeleteTagForm, RemoveUserForm, SearchForm, QueryBugClientForm, RemoveLinkForm
+from NearBeach.forms import AddBugForm, \
+    AddCustomerForm, \
+    AddGroupForm, \
+    AddObjectLinkForm, \
+    AddNoteForm, \
+    AddTagsForm, \
+    AddUserForm, \
+    RemoveGroupForm, \
+    User, \
+    DeleteBugForm, \
+    DeleteLinkForm, \
+    DeleteTagForm, \
+    RemoveUserForm, \
+    SearchForm, \
+    QueryBugClientForm, \
+    RemoveLinkForm
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder

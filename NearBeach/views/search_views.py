@@ -7,8 +7,20 @@ from django.contrib.auth.decorators import login_required
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 from NearBeach.forms import SearchObjectsForm, SearchForm
-from NearBeach.models import object_assignment, request_for_change, requirement, project, task, kanban_board, list_of_requirement_status,\
-    customer, group, organisation, permission_set, User, tag, user_group
+from NearBeach.models import object_assignment, \
+    request_for_change, \
+    requirement, \
+    project, \
+    task, \
+    kanban_board, \
+    list_of_requirement_status,\
+    customer, \
+    group, \
+    organisation, \
+    permission_set, \
+    User, \
+    tag, \
+    user_group
 
 
 # Internal Function
