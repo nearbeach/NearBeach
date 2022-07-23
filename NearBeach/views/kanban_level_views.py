@@ -1,18 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
-from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Max, Min, Q, Sum
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
-from django.template import loader
-from django.urls import reverse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_kanban_permissions
+from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.forms import NewLevelForm, kanban_level, DeleteLevelForm, ResortLevelForm
 from NearBeach.views.tools.internal_functions import kanban_card
-# from NearBeach.models import *
-
-import json
-import urllib3
 
 
 @login_required(login_url='login', redirect_field_name="")

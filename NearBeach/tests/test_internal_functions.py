@@ -1,6 +1,4 @@
-from django.contrib.auth.models import User
-from django.test import TestCase, Client, TransactionTestCase
-from django.urls import reverse
+from django.test import TestCase
 from NearBeach.views.tools.internal_functions import get_object_from_destination
 from NearBeach.models import object_assignment
 

@@ -1,10 +1,6 @@
-from django.contrib.auth.models import User
-from django.test import TestCase, Client, TransactionTestCase
+from django.test import TestCase, Client
 from django.urls import reverse
-from django.db.models import Q, Max
-
-import unittest
-import json
+from django.db.models import Q
 from NearBeach.models import user_group, group, object_assignment
 
 
