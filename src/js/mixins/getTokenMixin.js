@@ -4,7 +4,7 @@ export default {
             //Use regex to extract out the require token
             var regEx = new RegExp(TokenName + "=([^;]+)");
             var value = regEx.exec(document.cookie);
-            return (value != null) ? encodeURIComponent(value[1]) : null;
+            return (value !== null) ? encodeURIComponent(value[1]) : null;
         }
     }
 }

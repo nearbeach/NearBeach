@@ -226,7 +226,6 @@ const moduleRfc = {
       axios.post(
         `/object_data/request_for_change/${this.state.locationId}/user_list_all/`
       ).then(response => {
-        console.log("Response Data: ", response['data'])
       })
     },
     updateRfcDates(state, payload) {
