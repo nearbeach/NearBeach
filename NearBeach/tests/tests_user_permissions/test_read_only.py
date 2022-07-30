@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.test import TestCase, Client
 from django.urls import reverse
 
@@ -33,7 +32,6 @@ class CustomerPermissionTest(TestCase):
 
         # Go to an existing customer -> user should have access
         _ = c.get(reverse('customer_information', args=['1']))
-        # self.assertEqual(response.status_code, 200)
 
     def test_customer_save_permissions(self):
         c = Client()
@@ -52,7 +50,6 @@ class CustomerPermissionTest(TestCase):
                 'organisation': 1,
             },
         )
-        # self.assertEqual(response.status_code, 403)
 
     def test_new_customer_permission(self):
         c = Client()
@@ -62,7 +59,6 @@ class CustomerPermissionTest(TestCase):
 
         # Go to create a new customer -> user should NOT have access
         _ = c.get(reverse('new_customer'))
-        # self.assertEqual(response.status_code, 403)
 
 
 class KanbanPermissionTest(TestCase):
@@ -86,7 +82,6 @@ class KanbanPermissionTest(TestCase):
 
         # Go to an existing kanban board where user is not in group -> permission denied
         response = c.get(reverse('kanban_information', args=['2']))
-        # self.assertEqual(response.status_code, 403)
 
 
 class OrganisationPermissionTest(TestCase):
@@ -170,7 +165,6 @@ class TaskPermissionTest(TestCase):
 
         # Make sure the admin user can open up the task
         _ = c.get(reverse('task_information', args=['1']))
-        # self.assertEqual(response.status_code, 200)
 
         # Make sure the admin user can open up the project
         # response = c.get(reverse('task_information', args=['2']))

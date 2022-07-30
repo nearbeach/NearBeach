@@ -1,19 +1,25 @@
-from this import d
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
-from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Sum, Q, Min
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.db.models import Q
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
-from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_organisation_permissions
+from NearBeach.decorators.check_user_permissions import check_user_organisation_permissions
 from NearBeach.forms import OrganisationForm, ProfilePictureForm
 from NearBeach.models import organisation, customer, list_of_title
 
 
-import json
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name='')
+def get_profile_picture(request, organisation_id):
+    """
+    :param request:
+    :return:
+    """
+    organisation_results = organisation.objects.get(organisation_id=organisation_id)
 
+    return HttpResponse(organisation_results.organisation_profile_picture.url);
+    
 
 @login_required(login_url='login', redirect_field_name="")
 @check_user_organisation_permissions(min_permission_level=3)
@@ -121,7 +127,7 @@ def organisation_information(request, organisation_id, *args, **kwargs):
         'customer_results': serializers.serialize('json', customer_results),
         'organisation_id': organisation_id,
         'organisation_results': serializers.serialize('json', [organisation_results]),
-        'nearbeach_title': 'Organisation Information %s' % organisation_id,
+        'nearbeach_title': f"Organisation Information {organisation_id}",
         'title_list': serializers.serialize('json', title_list),
         'user_level': user_level,
     }
@@ -165,9 +171,8 @@ def organisation_update_profile(request, organisation_id, *args, **kwargs):
     """
     form = ProfilePictureForm(request.POST, request.FILES)
     if not form.is_valid():
-        print("\n\n%s\n\n" % form.errors)
         return HttpResponseBadRequest(form.errors)
-    
+
     # Get the organisation object
     update_organisation = organisation.objects.get(organisation_id=organisation_id)
     update_organisation.organisation_profile_picture = form.cleaned_data['file']

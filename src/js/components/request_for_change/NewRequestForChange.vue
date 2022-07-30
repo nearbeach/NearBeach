@@ -64,7 +64,7 @@
     import RfcTestPlan from "./tabs/RfcTestPlan.vue";
     import RfcBackoutPlan from "./tabs/RfcBackoutPlan.vue";
     import RfcImplementationPlan from "./tabs/RfcImplementationPlan.vue";
-    import {FormWizard, TabContent} from "../../vue-form-wizard";
+    // import {FormWizard, TabContent} from "../../vue-form-wizard";
 
     // import {FormWizard, TabContent} from 'vue-form-wizard';
 

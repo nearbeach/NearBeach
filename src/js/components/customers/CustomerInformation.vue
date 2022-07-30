@@ -17,8 +17,8 @@
                 <div class="col-md-8">
                     <div class="row customer-profile-image">
                         <!-- PROFILE IMAGE -->
-                        <img v-bind:src="`${staticUrl}/NearBeach/images/placeholder/product_tour.svg`"
-                             alt="No Profile Picture"
+                        <img v-bind:src="profilePicture"
+                             alt="User Profile Picture"
                              class="customer-profile-image"
                         />
                         <br/>
@@ -28,6 +28,7 @@
                                 'X-CSRFTOKEN': getToken('csrftoken'),
                             }"
                             :data="{}"
+                            @finish="updateProfilePicture"
                         >
                             <n-button>Update Profile Picture</n-button>
                         </n-upload>
@@ -165,6 +166,7 @@
                 customerFirstNameModel: this.customerResults[0]['fields']['customer_first_name'],
                 customerLastNameModel: this.customerResults[0]['fields']['customer_last_name'],
                 customerTitleModel: this.customerResults[0]['fields']['customer_title'],
+                profilePicture: `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`,
                 titleFixList: [],
             }
         },
@@ -189,6 +191,17 @@
             },
         },
         methods: {
+            setProfilePicture: function() {
+                //If there is a profile picture/image, update. Otherwise use default
+                let profile_picture = this.customerResults[0].fields.customer_profile_picture;
+                if (profile_picture !== undefined && profile_picture !== null && profile_picture !== "") {
+                    //There exists a profile image for the user
+                    this.profilePicture = `/media/${this.rootUrl}${this.customerResults[0].fields.customer_profile_picture}`;
+                } else {
+                    //Go back to default
+                    this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg` 
+                }
+            },
             updateCustomer: function() {
                 //Construct the data_to_send
                 const data_to_send = new FormData();
@@ -207,9 +220,23 @@
                 ).then(response => {
                     //Close the loading screen
                     this.closeLoadingModal();
+
+                    //Check to see if we are updating the profile picture
+                    this.updateProfilePicture();
                 }).catch(error => {
                     //Show the error modal
                     this.showErrorModal(error, 'customer',this.customerResults[0]['pk']);
+                })
+            },
+            updateProfilePicture: function() {
+                //Contact the API to get the location of the new image
+                axios.post(
+                    `${this.rootUrl}customer_information/${this.customerResults[0]['pk']}/get_profile_picture/`,
+                    {},
+                ).then(response => {
+                    this.profilePicture = response.data;
+                }).catch(() => {
+                    this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg` 
                 })
             },
         },
@@ -228,6 +255,9 @@
                     label: row['fields']['title'],
                 }
             });
+
+            //See if there is a profile picture
+            this.setProfilePicture();
         }
     }
 </script>

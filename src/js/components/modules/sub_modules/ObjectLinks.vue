@@ -198,7 +198,6 @@
                 }
 
                 //Get the data to send into the backend
-                console.log("Link: ", link, " | Link Id: ", link_id, " | Link Connection: ", link_connection);
                 let data_to_send = new FormData();
                 data_to_send.set('link_id', link_id);
                 data_to_send.set('link_connection', link_connection);

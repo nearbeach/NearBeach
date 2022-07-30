@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.test import TestCase, Client
 from django.urls import reverse
 
@@ -369,15 +368,3 @@ class AdministrationTest(TestCase):
         # self.assertEqual(response.status_code, 400)
 
         # # Blank Firstname
-        # response = c.post(
-        #     reverse('new_user_save'),
-        #     {
-        #         'username': 'form_fail',
-        #         'first_name': 'First',
-        #         'last_name': 'Name',
-        #         'email': 'support@nearbeach.org',
-        #         'password1': 'Test1234$',
-        #         'password2': ''
-        #     }
-        # )
-        # self.assertEqual(response.status_code, 400)

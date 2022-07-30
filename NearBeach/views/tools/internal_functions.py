@@ -1,4 +1,4 @@
-from NearBeach.models import kanban_board, kanban_card, opportunity, organisation, quote, project,\
+from NearBeach.models import kanban_board, kanban_card, organisation, project,\
     request_for_change, requirement, requirement_item, task, whiteboard
 
 OBJECT_DICT = {
@@ -23,7 +23,6 @@ def get_object_from_destination(input_object, destination, location_id):
     :param location_id: The location_id
     :return:
     """
-
     input_object = input_object.filter(
         **{ destination: location_id }
     )
@@ -41,7 +40,6 @@ def set_object_from_destination(input_object, destination, location_id):
     :param location_id: The location we are interested in
     :return:
     """
-
     setattr(input_object, destination, OBJECT_DICT[destination].get(pk=location_id) )
 
     return input_object

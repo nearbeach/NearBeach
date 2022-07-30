@@ -15,10 +15,26 @@ from NearBeach.models import bug, \
     tag, \
     tag_assignment, \
     user_group
-from NearBeach.views.tools.internal_functions import set_object_from_destination, project, task, requirement, \
+from NearBeach.views.tools.internal_functions import set_object_from_destination, \
+    project, task, requirement, \
     get_object_from_destination
 from NearBeach.decorators.check_destination import check_destination
-from NearBeach.forms import AddBugForm, AddCustomerForm, AddGroupForm, AddObjectLinkForm, AddNoteForm, AddTagsForm, AddUserForm, RemoveGroupForm, User, DeleteBugForm, DeleteLinkForm, DeleteTagForm, RemoveUserForm, SearchForm, QueryBugClientForm, RemoveLinkForm
+from NearBeach.forms import AddBugForm, \
+    AddCustomerForm, \
+    AddGroupForm, \
+    AddObjectLinkForm, \
+    AddNoteForm, \
+    AddTagsForm, \
+    AddUserForm, \
+    RemoveGroupForm, \
+    User, \
+    DeleteBugForm, \
+    DeleteLinkForm, \
+    DeleteTagForm, \
+    RemoveUserForm, \
+    SearchForm, \
+    QueryBugClientForm, \
+    RemoveLinkForm
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
@@ -208,13 +224,13 @@ def add_link(request, destination, location_id):
                     'meta_object_title', 
                     getattr(single_object, object_title[object_type])
                 )
-                
+
                 setattr(
                     submit_object_assignment, 
                     'meta_object_status', 
                     getattr(single_object, object_status[object_type])
                 )
-            
+
             submit_object_assignment.save()
 
     return HttpResponse("Success")
@@ -927,11 +943,6 @@ def object_link_list(request, destination, location_id):
         is_deleted=False,
     )
 
-    # object_assignment_results = get_object_from_destination(
-    #     object_assignment_results, 
-    #     destination, 
-    #     location_id
-    # )
 
     # Check objects that match the destination and location id
     # Also make sure we get any meta data where the destination is not null
@@ -1054,7 +1065,7 @@ def remove_group(request, destination, location_id):
     form = RemoveGroupForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-    
+
     update_object_assignment = object_assignment.objects.filter(
         group_id=form.cleaned_data['group_id'],
     )

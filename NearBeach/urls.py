@@ -48,6 +48,7 @@ urlpatterns = [
     # Customer
     path('customer_information/<int:customer_id>/',
          customer_views.customer_information, name='customer_information'),
+    path('customer_information/<int:customer_id>/get_profile_picture/', customer_views.get_profile_picture, name='customer_get_profile_image'),
     path('customer_information/<int:customer_id>/update_profile/',
          customer_views.customer_update_profile, name='customer_update_profile'),
     path('customer_information/<int:customer_id>/save/', customer_views.customer_information_save,
@@ -248,6 +249,7 @@ urlpatterns = [
          name='organisation_duplicates'),
     path('organisation_information/<int:organisation_id>/', organisation_views.organisation_information,
          name='organisation_information'),
+     path('organisation_information/<int:organisation_id>/get_profile_picture/', organisation_views.get_profile_picture, name='organisation_get_profile_picture'),
     path('organisation_information/<int:organisation_id>/save/', organisation_views.organisation_information_save,
          name='organisation_information_save'),
     path('organisation_information/<int:organisation_id>/update_profile/',

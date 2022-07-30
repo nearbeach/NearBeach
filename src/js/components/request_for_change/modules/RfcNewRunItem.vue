@@ -248,7 +248,6 @@
 
             },
             updateDates: function(data) {
-                console.log("Updating Dates: ", data);
                 this.changeStartDateModel = data['start_date'];
                 this.changeEndDateModel = data['end_date'];
             },

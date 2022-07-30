@@ -1,8 +1,5 @@
-from django.contrib.auth.models import User
 from django.test import TestCase, Client
 from django.urls import reverse
-
-from NearBeach.views.search_views import search
 
 # Declaration of Username and Password
 username = 'team_leader'

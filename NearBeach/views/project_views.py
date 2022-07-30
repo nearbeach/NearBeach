@@ -103,7 +103,6 @@ def project_information(request, project_id, *args, **kwargs):
     :param project_id:
     :return:
     """
-
     # Template
     t = loader.get_template('NearBeach/projects/project_information.html')
 
@@ -123,7 +122,7 @@ def project_information(request, project_id, *args, **kwargs):
 
     # Context
     c = {
-        'nearbeach_title': 'Project Information %s' % project_id,
+        'nearbeach_title': f"Project Information {project_id}",
         'organisation_results': serializers.serialize('json', organisation_results),
         'project_id': project_id,
         'project_results': serializers.serialize('json', [project_results]),

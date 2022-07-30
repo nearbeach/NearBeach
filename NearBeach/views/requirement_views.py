@@ -2,9 +2,8 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Sum, Q, Min
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404
+from django.db.models import Q
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
@@ -315,7 +314,6 @@ def requirement_information(request, requirement_id, *args, **kwargs):
 
     status_list = list_of_requirement_status.objects.filter(
         is_deleted=False,
-        # requirement_status_is_closed=False,
     )
 
     type_list = list_of_requirement_type.objects.filter(

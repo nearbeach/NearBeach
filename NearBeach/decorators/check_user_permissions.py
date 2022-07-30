@@ -1,6 +1,4 @@
-from django.http import HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
-from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Q, Max
 from functools import wraps
 

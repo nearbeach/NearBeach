@@ -1,20 +1,9 @@
-import urllib
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
-from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Sum, Q, Min
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
-from django.template import loader
-from django.urls import reverse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.forms import tag, NewTagForm, TagForm
-# from NearBeach.views.tools.internal_functions import *
-# from NearBeach.models import *
-
-import json
-import urllib3
-
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name='')
