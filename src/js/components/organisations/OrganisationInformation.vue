@@ -15,8 +15,8 @@
                     </p>
                 </div>
                 <div class="col-md-3">
-                    <img v-bind:src="`${staticUrl}/NearBeach/images/placeholder/product_tour.svg`"
-                         alt="No Profile Picture"
+                    <img v-bind:src="profilePicture"
+                         alt="Profile Picture"
                          class="organisation-profile-image"
                     />
                     <br/>
@@ -27,6 +27,7 @@
                             'X-CSRFTOKEN': getToken('csrftoken'),
                         }"
                         :data="{}"
+                        @finish="updateProfilePicture"
                     >
                         <n-button>Update Profile Picture</n-button>
                     </n-upload>
@@ -150,6 +151,7 @@
                 organisationNameModel: this.organisationResults[0]['fields']['organisation_name'],
                 organisationEmailModel: this.organisationResults[0]['fields']['organisation_email'],
                 organisationWebsiteModel: this.organisationResults[0]['fields']['organisation_website'],
+                profilePicture: "",    
             }
         },
         validations: {
@@ -167,6 +169,16 @@
             },
         },
         methods: {
+            setProfilePicture: function() {
+                let profile_picture = this.organisationResults[0].fields.organisation_profile_picture;
+
+                if (profile_picture !== undefined && profile_picture !== null && profile_picture !== "") {
+                    //There is a profile image
+                    this.profilePicture = `/media/${this.rootUrl}${profile_picture}`;
+                } else {
+                    this.profilePicture = `${staticUrl}/NearBeach/images/placeholder/product_tour.svg`
+                }
+            },
             updateOrganisation: function() {
                 //Check validation
                 this.v$.$touch();
@@ -197,6 +209,21 @@
                     this.showErrorModal(error,'organisation',this.organisationResults[0]['pk']);
                 })
             },
+            updateProfilePicture: function() {
+                //Contact the API to get the location of the new image
+                axios.post(
+                    `${this.rootUrl}organisation_information/${this.organisationResults[0]['pk']}/get_profile_picture/`,
+                    {},
+                ).then(response => {
+                    this.profilePicture = response.data;
+                }).catch(() => {
+                    this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg` 
+                })
+            },
+        },
+        mounted() {
+            //Set profile picture
+            this.setProfilePicture();
         }
     }
 </script>

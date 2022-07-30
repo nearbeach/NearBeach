@@ -9,6 +9,18 @@ from NearBeach.forms import OrganisationForm, ProfilePictureForm
 from NearBeach.models import organisation, customer, list_of_title
 
 
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name='')
+def get_profile_picture(request, organisation_id):
+    """
+    :param request:
+    :return:
+    """
+    organisation_results = organisation.objects.get(organisation_id=organisation_id)
+
+    return HttpResponse(organisation_results.organisation_profile_picture.url);
+    
+
 @login_required(login_url='login', redirect_field_name="")
 @check_user_organisation_permissions(min_permission_level=3)
 def new_organisation(request, *args, **kwargs):

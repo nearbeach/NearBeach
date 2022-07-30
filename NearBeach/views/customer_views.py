@@ -92,6 +92,20 @@ def customer_update_profile(request, customer_id, *args, **kwargs):
     return HttpResponse("")
 
 
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name='')
+def get_profile_picture(request, customer_id):
+    """
+    :param request:
+    :param customer_id:
+    :return:
+    """
+    customer_results = customer.objects.get(customer_id=customer_id)
+
+    # Just return the customer profile picture
+    return HttpResponse(customer_results.customer_profile_picture.url)
+
+
 @login_required(login_url='login', redirect_field_name="")
 @check_user_customer_permissions(min_permission_level=3)
 def new_customer(request, *args, **kwargs):
