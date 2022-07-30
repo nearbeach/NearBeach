@@ -6,8 +6,6 @@ from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.forms import NewLevelForm, kanban_level, DeleteLevelForm, ResortLevelForm
 from NearBeach.views.tools.internal_functions import kanban_card
 
-import json
-
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
