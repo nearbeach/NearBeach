@@ -210,6 +210,7 @@ const moduleKanban = {
 
 const moduleRfc = {
   state: () => ({
+    changeTaskCount: 0,
     endDateModel: GLOBAL_END_DATE.getTime(),
     groupListModel: [],
     releaseDateModel: GLOBAL_RELEASE_DATE.getTime(),
@@ -217,6 +218,10 @@ const moduleRfc = {
     userListModel: [],
   }),
   mutations: {
+    updateChangeTaskCount(state, payload) {
+      //Update the count
+      state.changeTaskCount = payload.changeTaskCount;
+    },
     updateGroupList(state, payload) {
       //Update the group list model
       state.groupListModel = payload.groupList;
@@ -236,6 +241,9 @@ const moduleRfc = {
   },
   actions: {},
   getters: {
+    getChangeTaskCount: (state) => {
+      return state.changeTaskCount;
+    },
     getEndDate: (state) => {
       return state.endDateModel;
     },

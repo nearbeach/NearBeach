@@ -6,6 +6,7 @@ from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import User
+from django.contrib.auth import update_session_auth_hash
 
 from NearBeach.forms import NewUserForm, PasswordResetForm, UpdateUserForm
 from NearBeach.models import user_group
@@ -82,6 +83,9 @@ def update_password(request):
     user_update = form.cleaned_data['username']
     user_update.set_password(form.cleaned_data['password'])
     user_update.save()
+
+    # Refresh user's hash
+    update_session_auth_hash(request, form.cleaned_data['username'])
 
     return HttpResponse("")
 

@@ -74,14 +74,14 @@
     export default {
         name: "NewRequestForChange",
         components: {
-            FormWizard,
+            // FormWizard,
             RfcBackoutPlan,
             RfcDescription,
             RfcDetails,
             RfcImplementationPlan,
             RfcRisk,
             RfcTestPlan,
-            TabContent,
+            // TabContent,
         },
         props: {
             groupResults: Array,

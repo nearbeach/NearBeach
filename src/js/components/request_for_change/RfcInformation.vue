@@ -133,7 +133,7 @@
                     <a href="javascript:void(0)"
                        class="btn btn-dark"
                        v-on:click="updateRFCStatus"
-                       v-if="userLevel > 1"
+                       v-if="userLevel > 1 && changeTaskCount > 0"
                     >Submit RFC for Approval</a>
 
                     <a href="javascript:void(0)"
@@ -208,6 +208,7 @@
         },
         computed: {
             ...mapGetters({
+                changeTaskCount: 'getChangeTaskCount',
                 rfcImplementationEndModel: 'getEndDate',
                 rfcImplementationStartModel: 'getStartDate',
                 rfcReleaseModel: 'getReleaseDateModel'

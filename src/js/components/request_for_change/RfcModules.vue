@@ -2,6 +2,21 @@
     <div class="card">
         <div class="card-body">
             <ul class="nav nav-tabs" id="misc_module_tabs" role="tablist">
+                <!-- GROUPS AND USERS -->
+                <li class="nav-item"
+                    role="presentation"
+                >
+                    <button class="nav-link"
+                            id="group-and-users-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#group-and-users"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >Group and Users</button>
+                </li>
+                
                 <!-- RISK -->
                 <li class="nav-item"
                     role="presentation"
@@ -80,6 +95,15 @@
             <hr>
 
             <div class="tab-content" id="misc_module_content">
+                <div class="tab-pane fade" 
+                     id="group-and-users" 
+                     role="tabpanel" 
+                     aria-labelledby="contact-tab"
+                >
+                    <groups-and-users-module v-bind:location-id="locationId"
+                                             v-bind:destination="destination"
+                    ></groups-and-users-module>
+                </div>
                 <div class="tab-pane fade"
                      id="rfc-risk"
                      role="tabpanel"
@@ -211,6 +235,7 @@
     import RfcRisk from "./tabs/RfcRisk.vue";
     import RfcRunSheetList from "./modules/RfcRunSheetList.vue";
     import RfcTestPlan from "./tabs/RfcTestPlan.vue";
+    import GroupsAndUsersModule from "../modules/sub_modules/GroupsAndUsersModule.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -222,6 +247,7 @@
     export default {
         name: "RfcModules",
         components: {
+            GroupsAndUsersModule,
             RfcBackoutPlan,
             RfcDescription,
             RfcDetails,
@@ -278,8 +304,8 @@
         }),
         computed: {
             ...mapGetters({
-                userLevel: "getUserLevel",
                 rootUrl: "getRootUrl",
+                userLevel: "getUserLevel",
             }),
         },
         methods: {
@@ -370,6 +396,14 @@
                 //Update the value
                 this.rfcData[data['modelName']] = data['modelValue'];
             }
+        },
+        mounted() {
+            //Send data to required VueX states
+            this.$store.commit({
+                type: 'updateDestination',
+                destination: this.destination,
+                locationId: this.locationId,
+            });
         }
     }
 </script>

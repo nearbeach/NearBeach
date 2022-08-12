@@ -51,7 +51,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <lable>Implementation User</lable>
+                                    <label>Implementation User</label>
                                     <n-select v-bind:options="userListFixed"
                                               v-model:value="assignedUserModel"
                                     ></n-select>
@@ -59,7 +59,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <lable>QA User</lable>
+                                    <label>QA User</label>
                                     <n-select v-model:value="qaUserModel" 
                                               v-bind:options="userListFixed" 
                                     />

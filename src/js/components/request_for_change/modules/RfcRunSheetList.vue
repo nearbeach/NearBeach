@@ -213,6 +213,12 @@
                 ).then(response => {
                     // Update the changeTaskList
                     this.changeTaskList = response['data'];
+
+                    // Update the changeTaskCount in statemanagement
+                    this.$store.commit({
+                        type: "updateChangeTaskCount",
+                        changeTaskCount: response.data.length
+                    })
                 }).catch(error => {
                     this.showErrorModal(error, 'request_for_change');
                 });    
@@ -259,6 +265,12 @@
             updateChangeTaskList: function(data) {
                 //Update change task list
                 this.changeTaskList = data;
+
+                //Send the new count upstream
+                this.$store.commit({
+                    type: "updateChangeTaskCount",
+                    changeTaskCount: data.length,
+                });
             },
             updateChangeTaskStatus: function(change_task_id,change_task_status) {
                 //Construct data to send
