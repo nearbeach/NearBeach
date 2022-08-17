@@ -141,28 +141,12 @@
                 newLinkModal.show();
             },
             archiveCards: function() {
-                // Create data_to_send
-                const data_to_send = new FormData();
-
-                // Loop through the master list and get all card ids
-                this.masterList.forEach(row => {
-                    data_to_send.append('kanban_card_id', row['pk']);
-                });
-
-                //Mutate the data to exclude the archived cards
+                //Send the archive destination to state - it will trigger the modal
                 this.$store.commit({
-                    type: 'archiveCards',
+                    type: 'updateArchiveDestination',
                     'column': this.columnId,
                     'level': this.levelId,
                 });
-
-                // Use axios to contact backend
-                axios.post(
-                    `${this.rootUrl}kanban_information/archive_kanban_cards/`,
-                    data_to_send,
-                ).catch(error => {
-                     
-                })
             },
             checkCardOrder: function() {
                 /* Due to an issue - sometimes some of the cards will contain a -1 for the sort order. This sadly

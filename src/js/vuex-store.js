@@ -24,6 +24,36 @@ GLOBAL_START_DATE.setMinutes(0);
 GLOBAL_START_DATE.setSeconds(0);
 GLOBAL_START_DATE.setMilliseconds(0);
 
+const moduleArchiveCards = {
+  state: () => ({
+    archiveDestination: {
+      column: '',
+      level: '',
+    },
+  }),
+  mutations: {
+    updateArchiveDestination(state, payload) {
+      state.archiveDestination.column = payload.column;
+      state.archiveDestination.level = payload.level;
+    }
+  },
+  actions: {},
+  getters: {
+    getArchiveDestination: (state) => {
+      return state.archiveDestination;
+    },
+    getArchiveDestinationString: (state) => {
+      //If there is an empty state - return undefined
+      if (state.archiveDestination.column === '' || state.archiveDestination.level === '') {
+        return undefined;
+      }
+
+      //All is good
+      return `${state.archiveDestination.column}|${state.archiveDestination.level}`
+    },
+  }
+}
+
 const moduleCard = {
   state: () => ({
     cardId: 0,
@@ -297,6 +327,7 @@ const moduleUserLevel = {
 
 export const store = createStore({
   modules: {
+    archiveCards: moduleArchiveCards,
     card: moduleCard,
     destination: moduleDestination,
     kanban: moduleKanban,

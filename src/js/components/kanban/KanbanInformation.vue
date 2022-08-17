@@ -17,6 +17,8 @@
         ></kanban-board>
 
         <!-- MODALS -->
+        <archive-cards></archive-cards>
+
         <new-kanban-card v-bind:kanban-card-results="kanbanCardResults"
                          v-bind:column-results="columnResults"
                          v-bind:level-results="levelResults"
@@ -33,11 +35,13 @@
                                 v-bind:level-results="levelResults"
                                 v-on:new_card="newCard($event)"
         ></new-kanban-link-wizard>
+
     </div>
 </template>
 
 <script>
     import { Modal } from "bootstrap";
+    import ArchiveCards from "./ArchiveCards.vue"; 
     import KanbanBoard from "./KanbanBoard.vue";
     import NewKanbanCard from "../modules/wizards/NewKanbanCard.vue";
     import CardInformation from "../card_information/CardInformation.vue"
@@ -46,6 +50,7 @@
     export default {
         name: "KanbanInformation",
         components: {
+            ArchiveCards,
             CardInformation,
             KanbanBoard,
             NewKanbanCard,
