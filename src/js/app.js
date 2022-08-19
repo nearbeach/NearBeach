@@ -116,7 +116,7 @@ const app = createApp({
     },
     mounted() {
         //Remove the loader
-        var loader_elem = document.getElementById('loader');
+        let loader_elem = document.getElementById('loader');
         loader_elem.style.transform = 'translateY(-100vh)';
 
         //Remove the element when we are finished with it
