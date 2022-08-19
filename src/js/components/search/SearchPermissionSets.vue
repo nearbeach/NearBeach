@@ -53,7 +53,12 @@
     export default {
         name: "SearchPermissionSets",
         props: {
-            permissionSetResults: Array,
+            permissionSetResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
             rootUrl: {
                 type: String,
                 default: '/',

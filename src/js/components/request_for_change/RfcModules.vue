@@ -229,8 +229,6 @@
 <script>
     const axios = require('axios');
     import RfcBackoutPlan from "./tabs/RfcBackoutPlan.vue";
-    import RfcDescription from "./tabs/RfcDescription.vue";
-    import RfcDetails from "./tabs/RfcDetails.vue";
     import RfcImplementationPlan from "./tabs/RfcImplementationPlan.vue";
     import RfcRisk from "./tabs/RfcRisk.vue";
     import RfcRunSheetList from "./modules/RfcRunSheetList.vue";
@@ -249,8 +247,6 @@
         components: {
             GroupsAndUsersModule,
             RfcBackoutPlan,
-            RfcDescription,
-            RfcDetails,
             RfcImplementationPlan,
             RfcRisk,
             RfcRunSheetList,
@@ -275,7 +271,7 @@
             },
             userList: {
                 type: Array,
-                return: () => {
+                default: () => {
                     return [];
                 },
             },

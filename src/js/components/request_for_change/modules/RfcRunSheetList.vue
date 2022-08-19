@@ -160,7 +160,7 @@
             },
             userList: {
                 type: Array,
-                return: () => {
+                default: () => {
                     return [];
                 },
             },

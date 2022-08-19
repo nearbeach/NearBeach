@@ -86,7 +86,6 @@ const moduleCard = {
           //Save the data into noteHistoryResults
           state.cardNotes = response.data;
         })
-        .catch((error) => {});
     },
     updateKanbanStatus(state, payload) {
       state.kanbanStatus = payload.kanbanStatus;
@@ -218,8 +217,6 @@ const moduleKanban = {
         state.kanbanCardResults[index_location].fields[key] = payload[key];
       });
     },
-    deletedCard(state, payload) {},
-
     //The initial payload of kanban card results
     initPayload(state, payload) {
       state.kanbanCardResults = payload.kanbanCardResults;
@@ -255,13 +252,6 @@ const moduleRfc = {
     updateGroupList(state, payload) {
       //Update the group list model
       state.groupListModel = payload.groupList;
-
-      //Contact the API to get the list of users connected to this group
-      //'object_data/request_for_change/<location_id>/user_list_all/',
-      axios.post(
-        `/object_data/request_for_change/${this.state.locationId}/user_list_all/`
-      ).then(response => {
-      })
     },
     updateRfcDates(state, payload) {
       state.endDateModel = payload.endDateModel;

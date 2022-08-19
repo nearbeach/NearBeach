@@ -18,6 +18,7 @@
             >
                 <a class="list-group-item list-group-item-action"
                    v-for="group in groupList"
+                   :key="group.pk"
                    v-bind:href="`/group_information/${group['pk']}/`"
                 >
                     <strong>{{group['fields']['group_name']}}</strong>
@@ -55,7 +56,12 @@
     export default {
         name: "SearchGroups",
         props: {
-            groupResults: Array,
+            groupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
             rootUrl: {
                 type: String,
                 default: '/',

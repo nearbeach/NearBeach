@@ -97,8 +97,6 @@
     import useVuelidate from '@vuelidate/core'
     import { required, maxLength } from '@vuelidate/validators'
     import Editor from '@tinymce/tinymce-vue'
-    import { NSelect } from 'naive-ui';
-    import StakeholderInformation from "../organisations/StakeholderInformation.vue";
     import BetweenDates from "../dates/BetweenDates.vue";
     import GroupPermissions from "../permissions/GroupPermissions.vue";
     import GetStakeholders from "../organisations/GetStakeholders.vue";
@@ -116,8 +114,6 @@
             GetStakeholders,
             GroupPermissions,
             'editor': Editor,
-            NSelect,
-            StakeholderInformation,
         },
         props: {
             groupResults: {

@@ -177,7 +177,12 @@
             NSelect,
         },
         props: {
-            changeTaskResults: Array,
+            changeTaskResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
             rootUrl: {
                 type: String,
                 default: '/',

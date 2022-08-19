@@ -21,7 +21,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="link in linkResults">
+                    <tr v-for="link in linkResults"
+                        :key="link.object_assignment_id"
+                    >
                         <td v-html="extractObjectDescription(link)"></td>
                         <td>
                             {{extractObjectStatus(link)}}
@@ -69,7 +71,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="link in itemLinkResults">
+                    <tr v-for="(link, index) in itemLinkResults"
+                        :key="index"
+                    >
                         <td v-html="extractObjectDescription(link)"></td>
                         <td>{{extractObjectStatus(link)}}</td>
                     </tr>
