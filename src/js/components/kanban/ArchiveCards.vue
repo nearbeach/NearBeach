@@ -13,8 +13,8 @@
                     <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
                     <button type="button" 
                             class="btn-close" 
-                            data-bs-dismiss="modal" 
                             aria-label="Close"
+                            v-on:click="closeModal"
                     ></button>
                 </div>
                 <div class="modal-body">
@@ -23,10 +23,11 @@
                 <div class="modal-footer">
                     <button type="button" 
                             class="btn btn-secondary" 
-                            data-bs-dismiss="modal"
+                            v-on:click="closeModal"
                     >No</button>
                     <button type="button" 
                             class="btn btn-primary"
+                            v-on:click="archiveCards"
                     >Yes</button>
                 </div>
             </div>
@@ -37,12 +38,13 @@
 <script>
     import { mapGetters } from 'vuex';
     import { Modal } from 'bootstrap';
+    import axios from 'axios';
 
     export default {
         name: "ArchiveCards",
         data() {
             return {
-                archiveCardsModal: [],
+                archiveCardsModal: {},
             }
         },
         computed: {
@@ -50,6 +52,7 @@
                 allCards: 'getCards',
                 archiveDestination: 'getArchiveDestination',
                 archiveDestinationString: 'getArchiveDestinationString',
+                rootUrl: 'getRootUrl',
             }),
         },
         watch: {
@@ -60,42 +63,63 @@
                 //Open the modal
                 this.archiveCardsModal = new Modal('#archiveCardsModal');
                 this.archiveCardsModal.show();
-            }
+            },
         },
-        method: {
+        methods: {
             archiveCards: function() {
-                // //Simplify the variables
-                // let column = this.archiveDestination.column;
-                // let level = this.archiveDestination.level;
+                //Simplify the variables
+                let column = this.archiveDestination.column;
+                let level = this.archiveDestination.level;
 
-                // // Create data_to_send
-                // const data_to_send = new FormData();
+                // Create data_to_send
+                const data_to_send = new FormData();
 
-                // // Loop through the master list and get all card ids
-                // // this.masterList.forEach(row => {
-                // //     data_to_send.append('kanban_card_id', row['pk']);
-                // // });
-                // this.allCards.filter((card) => {
-                //     return parseInt(card['fields']['kanban_column']) === column &&
-                //         parseInt(card['fields']['kanban_level']) === level;
-                // }).forEach((row) => {
+                // Loop through the master list and get all card ids
+                // this.masterList.forEach(row => {
                 //     data_to_send.append('kanban_card_id', row['pk']);
-                // })
-
-                // //Mutate the data to exclude the archived cards
-                // this.$store.commit({
-                //     type: 'archiveCards',
-                //     'column': this.columnId,
-                //     'level': this.levelId,
                 // });
+                this.allCards.filter((card) => {
+                    return parseInt(card['fields']['kanban_column']) === column &&
+                        parseInt(card['fields']['kanban_level']) === level;
+                }).forEach((card) => {
+                    data_to_send.append('kanban_card_id', card.pk);
+                })
 
-                // // Use axios to contact backend
-                // axios.post(
-                //     `${this.rootUrl}kanban_information/archive_kanban_cards/`,
-                //     data_to_send,
-                // ).catch(error => {
-                        
-                // })
+                //Mutate the data to exclude the archived cards
+                this.$store.commit({
+                    type: 'archiveCards',
+                    'column': column,
+                    'level': level,
+                });
+
+                //Close the modal
+                this.archiveCardsModal.hide();
+
+                //Reset the state
+                this.$store.commit({
+                    'type': 'updateArchiveDestination',
+                    'column': '',
+                    'level': '',
+                });
+
+                // Use axios to contact backend
+                axios.post(
+                    `${this.rootUrl}kanban_information/archive_kanban_cards/`,
+                    data_to_send,
+                ).catch(error => {
+                    //TODO: Return cards back into state management. They errored out.  
+                })
+            },
+            closeModal: function() {
+                //Close the modal
+                this.archiveCardsModal.hide();
+
+                //Reset the state
+                this.$store.commit({
+                    'type': 'updateArchiveDestination',
+                    'column': '',
+                    'level': '',
+                });
             }
         }
     }
