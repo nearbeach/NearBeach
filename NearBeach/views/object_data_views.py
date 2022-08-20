@@ -167,8 +167,8 @@ def add_link(request, destination, location_id):
 
     # Add the destination/location_id to the object
     object_assignment_submit = link_object(
-        object_assignment_submit, 
-        destination, 
+        object_assignment_submit,
+        destination,
         location_id
     )
 
@@ -220,14 +220,14 @@ def add_link(request, destination, location_id):
 
                 # Update the status and the title with the correct data
                 setattr(
-                    submit_object_assignment, 
-                    'meta_object_title', 
+                    submit_object_assignment,
+                    'meta_object_title',
                     getattr(single_object, object_title[object_type])
                 )
 
                 setattr(
-                    submit_object_assignment, 
-                    'meta_object_status', 
+                    submit_object_assignment,
+                    'meta_object_status',
                     getattr(single_object, object_status[object_type])
                 )
 
@@ -982,7 +982,7 @@ def object_link_list(request, destination, location_id):
 
     # Send back json data
     json_results = json.dumps(
-        list(object_assignment_results), 
+        list(object_assignment_results),
         cls=DjangoJSONEncoder
     )
 
@@ -1075,7 +1075,7 @@ def remove_group(request, destination, location_id):
         update_object_assignment,
         destination,
         location_id
-    )   
+    )
 
     # Update and save data
     update_object_assignment.update(
