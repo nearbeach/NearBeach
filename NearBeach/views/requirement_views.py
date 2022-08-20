@@ -18,7 +18,9 @@ from NearBeach.models import requirement, object_assignment, project, task, oppo
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=2, object_lookup='requirement_id')
 def add_requirement_link(request, requirement_id, *args, **kwargs):
-    # Check user form is valid
+    """
+    Check user form is valid
+    """
     form = AddRequirementLinkForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -59,10 +61,9 @@ def add_requirement_link(request, requirement_id, *args, **kwargs):
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
 def get_requirement_item_links(request, requirement_id, *args, **kwargs):
-    # Get the requirement information
-    _ = requirement.objects.get(requirement_id=requirement_id)
-
-    # Use object_assignment to get the requirme
+    """
+    Get the requirement informatio
+    """
     link_results = object_assignment.objects.filter(
         Q(
             is_deleted=False,
@@ -110,7 +111,9 @@ def get_requirement_item_links(request, requirement_id, *args, **kwargs):
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
 def get_requirement_item_status_list(request, requirement_id, *args, **kwargs):
-    # Get all status - even deleted ones.
+    """
+    Get all status - even deleted ones.
+    """
     status_list = list_of_requirement_item_status.objects.all()
 
     # Send back json data
@@ -123,7 +126,9 @@ def get_requirement_item_status_list(request, requirement_id, *args, **kwargs):
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
 def get_requirement_item_type_list(request, requirement_id, *args, **kwargs):
-    # Get all status - even deleted ones.
+    """
+    Get all status - even deleted ones.
+    """
     type_list = list_of_requirement_item_type.objects.all()
 
     # Send back json data
@@ -136,7 +141,9 @@ def get_requirement_item_type_list(request, requirement_id, *args, **kwargs):
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
 def get_requirement_items(request, requirement_id, *args, **kwargs):
-    # Get all the requirement items assigned to the requirement
+    """
+    Get all the requirement items assigned to the requirement
+    """
     requirement_item_results = requirement_item.objects.filter(
         is_deleted=False,
         requirement_id=requirement_id,
@@ -152,10 +159,9 @@ def get_requirement_items(request, requirement_id, *args, **kwargs):
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
 def get_requirement_links_list(request, requirement_id, *args, **kwargs):
-    # Get the requirement information
-    _ = requirement.objects.get(requirement_id=requirement_id)
-
-    # Use object_assignment to get the requirme
+    """
+    Get the requirement information
+    """
     link_results = object_assignment.objects.filter(
         Q(
             is_deleted=False,
@@ -201,7 +207,6 @@ def new_requirement(request, *args, **kwargs):
     :param destination:
     :return:
     """
-    # Extract Data
     status_list = list_of_requirement_status.objects.filter(
         is_deleted=False,
         requirement_status_is_closed=False,
@@ -243,7 +248,9 @@ def new_requirement(request, *args, **kwargs):
 @login_required(login_url='login', redirect_field_name='')
 @check_user_permissions(min_permission_level=3, object_lookup='requirement_id')
 def new_requirement_save(request, *args, **kwargs):
-    # Get the data and place into the form
+    """
+    Get the data and place into the form
+    """
     form = NewRequirementForm(request.POST)
     if not form.is_valid():
         # Something went wrong with the form.
@@ -355,7 +362,6 @@ def requirement_information_save(request, requirement_id, *args, **kwargs):
     :param requirement_id:
     :return:
     """
-    # Insert POST into form
     form = UpdateRequirementForm(request.POST)
 
     # If there is an error - notify the user

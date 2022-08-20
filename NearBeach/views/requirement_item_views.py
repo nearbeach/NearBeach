@@ -18,7 +18,9 @@ from NearBeach.models import requirement_item, object_assignment, project, task,
 @login_required(login_url='login', redirect_field_name="")
 @check_user_requirement_item_permissions(min_permission_level=2)
 def add_requirement_item_link(request, requirement_item_id, *args, **kwargs):
-    # Obtain form data and validate
+    """
+    Obtain form data and validate
+    """
     form = AddRequirementLinkForm(request.POST)
 
     if not form.is_valid():
@@ -56,7 +58,9 @@ def add_requirement_item_link(request, requirement_item_id, *args, **kwargs):
 
 #Internal Code
 def get_requirement_item_links(requirement_item_id):
-    """Use object_assignment to get the requirments"""
+    """
+    Use object_assignment to get the requirments
+    """
     return object_assignment.objects.filter(
         Q(
             is_deleted=False,
@@ -107,7 +111,9 @@ def get_requirement_item_links_list(request, requirement_item_id, *args, **kwarg
 # @check_user_requirement_item_permissions(min_permission_level=3) # Function won't work without requirmeent_item_id
 @check_user_permissions(min_permission_level=3, object_lookup='requirement_id')
 def new_requirement_item(request, requirement_id, *args, **kwargs):
-    # Check to see if POST
+    """
+    Check to see if POST
+    """
     if not request.method == "POST":
         return HttpResponseBadRequest("Sorry - needs to be in POST")
 

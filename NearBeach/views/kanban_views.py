@@ -82,8 +82,8 @@ def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
 @check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
 def archive_kanban_cards(request, *args, **kwargs):
     """
+    Archive the kanban cards.
     """
-    # Get the form data
     form = KanbanCardArchiveForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -160,7 +160,9 @@ def get_context(kanban_board_id):
 
 # Internal function
 def get_max_sort_id(kanban_board_id, form):
-    # Get the newest card number id
+    """
+    Get the newest card number id
+    """
     kanban_card_sort_number = kanban_card.objects.filter(
         is_deleted=False,
         kanban_board_id=kanban_board_id,
@@ -180,6 +182,7 @@ def get_max_sort_id(kanban_board_id, form):
 @check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
 def kanban_close_board(request, kanban_board_id, *args, **kwargs):
     """
+    Close the kanban board
     """
     # Close the kanban board
     kanban_update = kanban_board.objects.get(kanban_board_id=kanban_board_id)
@@ -195,6 +198,7 @@ def kanban_close_board(request, kanban_board_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
 def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
     """
+    Edit the permissions of the kanban board
     """
     user_level = kwargs['user_level']
 
@@ -298,9 +302,6 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     :param kanban_board_id:
     :return:
     """
-    # CHECK USER PERMISSIONS
-
-    # Get the kanban card instance
     kanban_card_update = kanban_card.objects.get(kanban_card_id=kanban_card_id)
 
     # Get the form data
@@ -428,10 +429,8 @@ def new_kanban(request, *args, **kwargs):
 @check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
 def new_kanban_card(request, kanban_board_id, *args, **kwargs):
     """
+    Add a new kanban card
     """
-    # CHECK USER PERMISSIONS
-
-    # Get the kanban instance
     kanban_instance = kanban_board.objects.get(kanban_board_id=kanban_board_id)
 
     # Get the form data
@@ -535,9 +534,6 @@ def update_card(request, *args, **kwargs):
     The following function will update the card information
     from which is sent through the form in POST
     """
-    # ADD IN CHECKING USER PERMISSIONS
-
-    # Get data and validate in the form
     form = KanbanCardForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)

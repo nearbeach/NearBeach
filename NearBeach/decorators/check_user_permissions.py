@@ -6,7 +6,10 @@ from NearBeach.models import user_group, group, object_assignment, kanban_card, 
 
 
 def check_user_customer_permissions(min_permission_level):
-    # Function is only used when checking user permissions against customers - as they are different
+    """
+    Function is only used when checking user permissions against customers
+     - as they are different
+    """
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
@@ -89,7 +92,10 @@ def check_user_kanban_permissions(min_permission_level):
 
 
 def check_user_organisation_permissions(min_permission_level):
-    # Function is only used when checking user permissions against customers - as they are different
+    """
+    Function is only used when checking user permissions against 
+    customers - as they are different
+    """
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
@@ -120,6 +126,10 @@ def check_user_organisation_permissions(min_permission_level):
 
 
 def check_user_permissions(min_permission_level, object_lookup=''):
+    """
+    Check the user permissions - if they pass they can implement the function.
+    Otherwise send them to the permission denied page
+    """
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
@@ -172,7 +182,10 @@ def check_user_permissions(min_permission_level, object_lookup=''):
 
 
 def check_user_requirement_item_permissions(min_permission_level):
-    # Function is only used when checking user permissions against customers - as they are different
+    """
+    Function is only used when checking user permissions against 
+    customers - as they are different
+    """
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
@@ -222,6 +235,9 @@ def check_user_requirement_item_permissions(min_permission_level):
 
 
 def check_rfc_permissions(min_permission_level):
+    """
+    Check the user's RFC permissions
+    """
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
@@ -275,6 +291,9 @@ def check_rfc_permissions(min_permission_level):
 
 
 def check_permission_denied():
+    """
+    Just a test function - don't worry about it
+    """
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
