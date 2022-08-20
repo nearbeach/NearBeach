@@ -190,8 +190,8 @@ const moduleKanban = {
         //Filter out the column/level cards - and update the kanban card results
         state.kanbanCardResults = state.kanbanCardResults.filter(row => {
             //Check to see if the column and level match
-            const boolean_column = parseInt(row['fields']['kanban_column'], 10) === column,
-                boolean_level = parseInt(row['fields']['kanban_level'], 10) === level;
+            const boolean_column = parseInt(row.fields.kanban_column, 10) === column,
+                boolean_level = parseInt(row.fields.kanban_level, 10) === level;
 
 
 
