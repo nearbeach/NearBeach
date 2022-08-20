@@ -235,9 +235,7 @@ def check_user_requirement_item_permissions(min_permission_level):
 
 
 def check_rfc_permissions(min_permission_level):
-    """
-    Check the user's RFC permissions
-    """
+    """Check the user's RFC permissions"""
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
@@ -291,9 +289,7 @@ def check_rfc_permissions(min_permission_level):
 
 
 def check_permission_denied():
-    """
-    Just a test function - don't worry about it
-    """
+    """Just a test function - don't worry about it"""
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
