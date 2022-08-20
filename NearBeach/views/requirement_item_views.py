@@ -177,7 +177,7 @@ def requirement_item_information(request, requirement_item_id, *args, **kwargs):
     # context
     c = {
         'group_results': serializers.serialize("json", group_results),
-        'nearbeach_title': 'Requirement Item %s' % requirement_item_id,
+        'nearbeach_title': f"Requirement Item {requirement_item_id}",
         'organisation_results': serializers.serialize("json", [organisation_results]),
         'requirement_item_id': requirement_item_id,
         'requirement_item_results': serializers.serialize("json", [requirement_item_results]),

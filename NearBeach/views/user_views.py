@@ -126,7 +126,7 @@ def user_information(request, username):
 
     # Create the context
     c = {
-        'nearbeach_title': 'User Information %s' % username,
+        'nearbeach_title': f"User Information {username}",
         'user_list_results': user_list_results,
         'user_results': serializers.serialize('json', [user_results]),
         'username': username,

@@ -332,7 +332,7 @@ def requirement_information(request, requirement_id, *args, **kwargs):
     # context
     c = {
         'group_results': serializers.serialize("json", group_results),
-        'nearbeach_title': 'Requirement Information %s' % requirement_id,
+        'nearbeach_title': f"Requirement Information {requirement_id}",
         'organisation_results': serializers.serialize("json", [organisation_results]),
         'requirement_results': serializers.serialize("json", [requirement_results]),
         'requirement_id': requirement_id,
@@ -360,7 +360,7 @@ def requirement_information_save(request, requirement_id, *args, **kwargs):
 
     # If there is an error - notify the user
     if not form.is_valid():
-        return HttpResponseBadRequest("Sorry, there is an error with the form: %s" % form.errors)
+        return HttpResponseBadRequest(f"Sorry, there is an error with the form: {form.errors}")
 
     # Get the requirement
     requirement_result = requirement.objects.get(requirement_id=requirement_id)

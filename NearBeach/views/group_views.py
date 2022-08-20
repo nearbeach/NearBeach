@@ -76,7 +76,7 @@ def group_information(request, group_id):
     c = {
         'group_id': group_id,
         'group_results': serializers.serialize('json', [group_results]),
-        'nearbeach_title': 'Group Information %s' % group_id,
+        'nearbeach_title': f"Group Information {group_id}",
         'parent_group_results': serializers.serialize('json', parent_group_results),
         'user_list_results': user_list_results,
     }

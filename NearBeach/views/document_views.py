@@ -215,8 +215,7 @@ def document_upload(request, destination, location_id):
     document_submit.save()
 
     # Add the document location
-    document_submit.document = 'private/%s/%s' % (
-        document_submit.document_key, file)
+    document_submit.document = f"private/{document_submit.document_key}/{file}"
     document_submit.save()
 
     # Add the document permission row
@@ -258,7 +257,7 @@ def document_upload(request, destination, location_id):
         s3.upload_fileobj(
             file,
             settings.AWS_STORAGE_BUCKET_NAME,
-            'private/%s/%s' % (document_submit.document_key, file)
+            f"private/{document_submit.document_key}/{file}"
         )
     else:
         handle_file_upload(request.FILES['document'], document_results, file)
@@ -386,7 +385,7 @@ def private_download_file(request, document_key):
 
         response = s3.get_object(
             Bucket=settings.AWS_STORAGE_BUCKET_NAME,
-            Key="%s" % document_results.document,
+            Key=f"{document_results.document}",
         )
 
         print(response['Body'])
@@ -399,10 +398,7 @@ def private_download_file(request, document_key):
 
     # Normal setup - find document on server and serve
     # Get the Document path information
-    path = '%s/%s' % (
-        settings.PRIVATE_MEDIA_ROOT,
-        document_results.document
-    )
+    path = f"{settings.PRIVATE_MEDIA_ROOT}/{document_results.document}"
 
     # Send file to user
     return FileResponse(open(path, 'rb'))
@@ -421,15 +417,11 @@ def handle_file_upload(upload_document, document_results, file):
     file_permissions = 0o755  # Look at these permissions later
     path = os.path.join(
         settings.PRIVATE_MEDIA_ROOT,
-        'private/%s' % (document_results[0]['document_key_id'],),
+        f"private/{document_results[0]['document_key_id']}",
     )
     os.mkdir(path, file_permissions)
 
-    storage_location = '%s/private/%s/%s' % (
-        settings.PRIVATE_MEDIA_ROOT,
-        document_results[0]['document_key_id'],
-        file
-    )
+    storage_location = f"{settings.PRIVATE_MEDIA_ROOT}/private/{document_results[0]['document_key_id']}/{file}" 
 
     # Save the upload document in the location
     with open(storage_location, 'wb+') as destination:

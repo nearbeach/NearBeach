@@ -152,7 +152,7 @@ def get_context(kanban_board_id):
         'column_results': serializers.serialize('json', column_results),
         'kanban_board_id': kanban_board_id,
         'level_results': serializers.serialize('json', level_results),
-        'nearbeach_title': 'Kanban Information %s' % kanban_board_id,
+        'nearbeach_title': f"Kanban Information {kanban_board_id}",
     }
 
     return c

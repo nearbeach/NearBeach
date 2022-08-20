@@ -165,7 +165,7 @@ class TeamLeaderPermissionTest(TestCase):
             )
         )
 
-        print("Group Results Length: %s" % len(group_results))
+        print(f"Group Results Length: {len(group_results)}")
 
         # Make sure the admin user can open the kanban
         response_2 = c.get(reverse('kanban_information', args=[2]))
