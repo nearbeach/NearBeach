@@ -953,7 +953,7 @@ def object_link_list(request, destination, location_id):
         ) |
         Q(
             **{ destination + '__isnull': False},
-            meta_object = location_id,
+            meta_object=location_id,
         )
     ).values(
         'project_id',
