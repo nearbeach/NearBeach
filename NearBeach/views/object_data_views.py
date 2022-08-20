@@ -1101,6 +1101,7 @@ def remove_link(request, destination, location_id):
     ).update(
         is_deleted=True
     )
+    update_object_assignment.save()
 
     return HttpResponse("")
 
