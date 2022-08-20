@@ -421,7 +421,7 @@ def handle_file_upload(upload_document, document_results, file):
     )
     os.mkdir(path, file_permissions)
 
-    storage_location = f"{settings.PRIVATE_MEDIA_ROOT}/private/{document_results[0]['document_key_id']}/{file}" 
+    storage_location = f"{settings.PRIVATE_MEDIA_ROOT}/private/{document_results[0]['document_key_id']}/{file}"
 
     # Save the upload document in the location
     with open(storage_location, 'wb+') as destination:
