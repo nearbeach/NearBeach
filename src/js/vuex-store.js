@@ -3,10 +3,10 @@ import { createStore } from 'vuex'
 import axios from 'axios';
 
 //GLOBAL VARIABLES
-let GLOBAL_DATE = new Date();
-let GLOBAL_END_DATE = new Date(GLOBAL_DATE.setDate(GLOBAL_DATE.getDate() + 7));
-let GLOBAL_RELEASE_DATE = new Date(GLOBAL_DATE.setDate(GLOBAL_DATE.getDate() + 7));
-let GLOBAL_START_DATE = new Date(GLOBAL_DATE.setDate(GLOBAL_DATE.getDate() + 7));
+const GLOBAL_DATE = new Date();
+const GLOBAL_END_DATE = new Date(GLOBAL_DATE.setDate(GLOBAL_DATE.getDate() + 7));
+const GLOBAL_RELEASE_DATE = new Date(GLOBAL_DATE.setDate(GLOBAL_DATE.getDate() + 7));
+const GLOBAL_START_DATE = new Date(GLOBAL_DATE.setDate(GLOBAL_DATE.getDate() + 7));
 
 //Modify the global times.
 GLOBAL_END_DATE.setHours(16);

@@ -16,7 +16,7 @@ export default {
         },
         showLoadingModal: function(destination) {
             //Open up the loading modal
-            let loadingModal = new Modal(document.getElementById('loadingModal'));
+            const loadingModal = new Modal(document.getElementById('loadingModal'));
             loadingModal.show();
 
             //Update message in loading modal

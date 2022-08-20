@@ -5,7 +5,7 @@ import '../sass/login.scss';
 const image_number = Math.floor(Math.random() * 19 + 1);
 
 //Get the background element
-let elem = document.getElementsByClassName('background')[0]; //Always the first element
+const elem = document.getElementsByClassName('background')[0]; //Always the first element
 
 //Get the static directory location
 const static_elem = document.getElementById('login_script').dataset.static;

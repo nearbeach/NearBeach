@@ -9,6 +9,7 @@
 ![GitHub Sponsors](https://img.shields.io/github/sponsors/robotichead?style=plastic)
 ![Website](https://img.shields.io/website/https/nearbeach.org.svg)
 ![Twitter Follow](https://img.shields.io/twitter/follow/robotichead.svg?style=social)
+[![DeepSource](https://deepsource.io/gh/robotichead/NearBeach.svg/?label=active+issues&show_trend=true&token=cWkQ-pVgAD4EX2rsqV2kEZRq)](https://deepsource.io/gh/robotichead/NearBeach/?ref=repository-badge)
 
 
 NearBeach is currently in alpha development. If you find any issues, or require any help, please do not hesitate to 
