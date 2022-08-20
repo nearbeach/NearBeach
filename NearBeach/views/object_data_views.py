@@ -196,7 +196,7 @@ def add_link(request, destination, location_id):
 
     # Loop through the results and add them in.
     # We will loop through each object type, and add them in accordinly
-    for object_type in ['project','task','requirement','requirement_item']:
+    for object_type in ['project', 'task', 'requirement', 'requirement_item']:
         # Get the results of each object type and add them
         for row in request.POST.getlist(object_type):
             single_object = object_dict[object_type].get(pk=row)
