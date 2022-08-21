@@ -134,7 +134,6 @@
             return { v$: useVuelidate(), }
         },
         components: {
-            axios,
             'editor': Editor,
             GetStakeholders,
             GroupPermissions,
@@ -143,7 +142,7 @@
         props: {
             groupResults: {
                 type: Array,
-                return: () => {
+                default: () => {
                     return [];
                 },
             },
@@ -157,13 +156,13 @@
             },
             statusList: {
                 type: Array,
-                return: () => {
+                default: () => {
                     return [];
                 },
             },
             typeList: {
                 type: Array,
-                return: () => {
+                default: () => {
                     return [];
                 },
             },

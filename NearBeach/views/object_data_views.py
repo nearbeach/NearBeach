@@ -167,8 +167,8 @@ def add_link(request, destination, location_id):
 
     # Add the destination/location_id to the object
     object_assignment_submit = link_object(
-        object_assignment_submit, 
-        destination, 
+        object_assignment_submit,
+        destination,
         location_id
     )
 
@@ -196,7 +196,7 @@ def add_link(request, destination, location_id):
 
     # Loop through the results and add them in.
     # We will loop through each object type, and add them in accordinly
-    for object_type in ['project','task','requirement','requirement_item']:
+    for object_type in ['project', 'task', 'requirement', 'requirement_item']:
         # Get the results of each object type and add them
         for row in request.POST.getlist(object_type):
             single_object = object_dict[object_type].get(pk=row)
@@ -220,14 +220,14 @@ def add_link(request, destination, location_id):
 
                 # Update the status and the title with the correct data
                 setattr(
-                    submit_object_assignment, 
-                    'meta_object_title', 
+                    submit_object_assignment,
+                    'meta_object_title',
                     getattr(single_object, object_title[object_type])
                 )
 
                 setattr(
-                    submit_object_assignment, 
-                    'meta_object_status', 
+                    submit_object_assignment,
+                    'meta_object_status',
                     getattr(single_object, object_status[object_type])
                 )
 
@@ -953,7 +953,7 @@ def object_link_list(request, destination, location_id):
         ) |
         Q(
             **{ destination + '__isnull': False},
-            meta_object = location_id,
+            meta_object=location_id,
         )
     ).values(
         'project_id',
@@ -982,7 +982,7 @@ def object_link_list(request, destination, location_id):
 
     # Send back json data
     json_results = json.dumps(
-        list(object_assignment_results), 
+        list(object_assignment_results),
         cls=DjangoJSONEncoder
     )
 
@@ -1075,7 +1075,7 @@ def remove_group(request, destination, location_id):
         update_object_assignment,
         destination,
         location_id
-    )   
+    )
 
     # Update and save data
     update_object_assignment.update(
@@ -1101,6 +1101,7 @@ def remove_link(request, destination, location_id):
     ).update(
         is_deleted=True
     )
+    update_object_assignment.save()
 
     return HttpResponse("")
 

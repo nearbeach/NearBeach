@@ -7,6 +7,7 @@ from NearBeach.models import user_group
 
 import itertools
 
+
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
 def add_user(request):

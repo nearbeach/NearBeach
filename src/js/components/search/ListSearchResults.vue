@@ -13,7 +13,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="result in searchResults">
+                    <tr v-for="result in searchResults"
+                        :key="result[importVariables['id']]"
+                    >
                         <td>
                             <!-- LINK -->
                             <a v-bind:href="`${rootUrl}${destination}_information/${result[importVariables['id']]}/`">

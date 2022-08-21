@@ -2,13 +2,13 @@
 import '../sass/login.scss';
 
 //Get an image number
-var image_number = Math.floor(Math.random() * 19 + 1);
+const image_number = Math.floor(Math.random() * 19 + 1);
 
 //Get the background element
-var elem = document.getElementsByClassName('background')[0]; //Always the first element
+const elem = document.getElementsByClassName('background')[0]; //Always the first element
 
 //Get the static directory location
-var static_elem = document.getElementById('login_script').dataset.static;
+const static_elem = document.getElementById('login_script').dataset.static;
 
 //Apply WebP image
 elem.style[

@@ -59,7 +59,6 @@
             return { v$: useVuelidate(), }
         },
         components: {
-            axios,
             NewOrganisationModal,
             NSelect,
         },

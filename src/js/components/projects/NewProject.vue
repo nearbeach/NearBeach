@@ -96,7 +96,6 @@
     import useVuelidate from '@vuelidate/core'
     import { required, maxLength } from '@vuelidate/validators';
     import BetweenDates from "../dates/BetweenDates.vue";
-    import StakeholderInformation from "../organisations/StakeholderInformation.vue";
     import Editor from '@tinymce/tinymce-vue';
     import GroupPermissions from "../permissions/GroupPermissions.vue";
     import GetStakeholders from "../organisations/GetStakeholders.vue";
@@ -114,10 +113,14 @@
             'editor': Editor,
             GetStakeholders,
             GroupPermissions,
-            StakeholderInformation,
         },
         props: {
-            groupResults: Array,
+            groupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
             rootUrl: {
                 type: String,
                 default: "/",

@@ -22,7 +22,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="project in projectResults">
+                        <tr v-for="project in projectResults"
+                            :key="project.project_id"
+                        >
                             <td>
                                 <a v-bind:href="`${rootUrl}project_information/${project['project_id']}/`">
                                     <p>{{project['project_name']}}</p>
@@ -61,7 +63,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="requirement in requirementResults">
+                        <tr v-for="requirement in requirementResults"
+                            :key="requirement.requirement_id"
+                        >
                             <td>
                                 <a v-bind:href="`${rootUrl}requirement_information/${requirement['requirement_id']}/`">
                                     <p>{{requirement['requirement_title']}}</p>
@@ -98,7 +102,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="task in taskResults">
+                        <tr v-for="task in taskResults"
+                            :key="task.task_id"
+                        >
                             <td>
                                 <a v-bind:href="`${rootUrl}task_information/${task['task_id']}/`">
                                     <p>{{task['task_short_description']}}</p>

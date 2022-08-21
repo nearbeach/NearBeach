@@ -3,10 +3,10 @@ import { createStore } from 'vuex'
 import axios from 'axios';
 
 //GLOBAL VARIABLES
-var GLOBAL_DATE = new Date();
-var GLOBAL_END_DATE = new Date(GLOBAL_DATE.setDate(GLOBAL_DATE.getDate() + 7));
-var GLOBAL_RELEASE_DATE = new Date(GLOBAL_DATE.setDate(GLOBAL_DATE.getDate() + 7));
-var GLOBAL_START_DATE = new Date(GLOBAL_DATE.setDate(GLOBAL_DATE.getDate() + 7));
+const GLOBAL_DATE = new Date();
+const GLOBAL_END_DATE = new Date(GLOBAL_DATE.setDate(GLOBAL_DATE.getDate() + 7));
+const GLOBAL_RELEASE_DATE = new Date(GLOBAL_DATE.setDate(GLOBAL_DATE.getDate() + 7));
+const GLOBAL_START_DATE = new Date(GLOBAL_DATE.setDate(GLOBAL_DATE.getDate() + 7));
 
 //Modify the global times.
 GLOBAL_END_DATE.setHours(16);
@@ -23,6 +23,36 @@ GLOBAL_START_DATE.setHours(9);
 GLOBAL_START_DATE.setMinutes(0);
 GLOBAL_START_DATE.setSeconds(0);
 GLOBAL_START_DATE.setMilliseconds(0);
+
+const moduleArchiveCards = {
+  state: () => ({
+    archiveDestination: {
+      column: '',
+      level: '',
+    },
+  }),
+  mutations: {
+    updateArchiveDestination(state, payload) {
+      state.archiveDestination.column = payload.column;
+      state.archiveDestination.level = payload.level;
+    }
+  },
+  actions: {},
+  getters: {
+    getArchiveDestination: (state) => {
+      return state.archiveDestination;
+    },
+    getArchiveDestinationString: (state) => {
+      //If there is an empty state - return undefined
+      if (state.archiveDestination.column === '' || state.archiveDestination.level === '') {
+        return undefined;
+      }
+
+      //All is good
+      return `${state.archiveDestination.column}|${state.archiveDestination.level}`
+    },
+  }
+}
 
 const moduleCard = {
   state: () => ({
@@ -56,7 +86,6 @@ const moduleCard = {
           //Save the data into noteHistoryResults
           state.cardNotes = response.data;
         })
-        .catch((error) => {});
     },
     updateKanbanStatus(state, payload) {
       state.kanbanStatus = payload.kanbanStatus;
@@ -161,8 +190,8 @@ const moduleKanban = {
         //Filter out the column/level cards - and update the kanban card results
         state.kanbanCardResults = state.kanbanCardResults.filter(row => {
             //Check to see if the column and level match
-            const boolean_column = parseInt(row['fields']['kanban_column'], 10) === column,
-                boolean_level = parseInt(row['fields']['kanban_level'], 10) === level;
+            const boolean_column = parseInt(row.fields.kanban_column, 10) === column,
+                boolean_level = parseInt(row.fields.kanban_level, 10) === level;
 
 
 
@@ -188,8 +217,6 @@ const moduleKanban = {
         state.kanbanCardResults[index_location].fields[key] = payload[key];
       });
     },
-    deletedCard(state, payload) {},
-
     //The initial payload of kanban card results
     initPayload(state, payload) {
       state.kanbanCardResults = payload.kanbanCardResults;
@@ -210,6 +237,7 @@ const moduleKanban = {
 
 const moduleRfc = {
   state: () => ({
+    changeTaskCount: 0,
     endDateModel: GLOBAL_END_DATE.getTime(),
     groupListModel: [],
     releaseDateModel: GLOBAL_RELEASE_DATE.getTime(),
@@ -217,16 +245,13 @@ const moduleRfc = {
     userListModel: [],
   }),
   mutations: {
+    updateChangeTaskCount(state, payload) {
+      //Update the count
+      state.changeTaskCount = payload.changeTaskCount;
+    },
     updateGroupList(state, payload) {
       //Update the group list model
       state.groupListModel = payload.groupList;
-
-      //Contact the API to get the list of users connected to this group
-      //'object_data/request_for_change/<location_id>/user_list_all/',
-      axios.post(
-        `/object_data/request_for_change/${this.state.locationId}/user_list_all/`
-      ).then(response => {
-      })
     },
     updateRfcDates(state, payload) {
       state.endDateModel = payload.endDateModel;
@@ -236,6 +261,9 @@ const moduleRfc = {
   },
   actions: {},
   getters: {
+    getChangeTaskCount: (state) => {
+      return state.changeTaskCount;
+    },
     getEndDate: (state) => {
       return state.endDateModel;
     },
@@ -289,6 +317,7 @@ const moduleUserLevel = {
 
 export const store = createStore({
   modules: {
+    archiveCards: moduleArchiveCards,
     card: moduleCard,
     destination: moduleDestination,
     kanban: moduleKanban,

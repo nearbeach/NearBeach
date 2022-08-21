@@ -47,8 +47,16 @@
     export default {
         name: "RfcApprovalButtons",
         props: {
-            rfcResults: Array,
-            groupLeaderCount: Number,
+            rfcResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            groupLeaderCount: {
+                type: Number,
+                default: 0,
+            },
         },
         mixins: [
             errorModalMixin,

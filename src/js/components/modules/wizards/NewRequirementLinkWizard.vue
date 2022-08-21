@@ -79,7 +79,9 @@
 
                                 <!-- PROJECTS -->
                                 <tbody v-if="objectModel == 'Project'">
-                                    <tr v-for="result in objectResults">
+                                    <tr v-for="result in objectResults"
+                                        :key="result.pk"
+                                    >
                                         <td>
                                             <div class="form-check">
                                                 <input class="form-check-input"
@@ -127,7 +129,9 @@
 
                                 <!-- OPPORTUNITY -->
                                 <tbody v-if="objectModel == 'Opportunity'">
-                                    <tr v-for="result in objectResults">
+                                    <tr v-for="result in objectResults"
+                                        :key="result.pk"
+                                    >
                                         <td>
                                             <div class="form-check">
                                                 <input class="form-check-input"

@@ -8,14 +8,7 @@
 
 <script>
     // JavaScript Libraries
-    import {Modal} from "bootstrap";
-    import errorModalMixin from "../../../mixins/errorModalMixin";
-    import iconMixin from "../../../mixins/iconMixin";
-    import axios from 'axios';
     import ListTagsModule from "./ListTagsModule.vue";
-
-    //VueX
-    import { mapGetters } from 'vuex';
 
     export default {
         name: "MiscModule",
@@ -27,14 +20,8 @@
             'locationId',
         ],
         mixins: [
-            errorModalMixin,
-            iconMixin,
         ],
         computed: {
-            ...mapGetters({
-                rootUrl: "getRootUrl",
-                userLevel: "getUserLevel",
-            }),
         },
         data() {
             return {
@@ -42,29 +29,8 @@
             };
         },
         methods: {
-            createNewNote: function() {
-                var newNoteModal = new Modal(document.getElementById('newNoteModal'));
-                    newNoteModal.show();
-            },
-            getNoteHistoryResults: function() {
-                axios.post(
-                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/note_list/`,
-                ).then(response => {
-                    this.noteHistoryResults = response['data'];
-                }).catch(error => {
-                    this.showErrorModal(error, this.destination);
-                })
-            },
-            updateNoteHistoryResults: function(data) {
-                //Add the extra data
-                this.noteHistoryResults.push(data[0]);
-            }
         },
         mounted() {
-            //Wait 200ms before getting the data
-            setTimeout(() => {
-                this.getNoteHistoryResults();
-            }, 200);
         }
     }
 </script>

@@ -4,7 +4,7 @@ export default {
     methods: {
         closeLoadingModal: function() {
             //Get loader modal
-            var loadingModal = new Modal(document.getElementById('loadingModal'));
+            let loadingModal = new Modal(document.getElementById('loadingModal'));
 
             //Update the message in the loading modal
             document.getElementById("loadingModalContent").innerHTML = `UPDATED SUCCESSFULLY`;
@@ -16,7 +16,7 @@ export default {
         },
         showLoadingModal: function(destination) {
             //Open up the loading modal
-            var loadingModal = new Modal(document.getElementById('loadingModal'));
+            const loadingModal = new Modal(document.getElementById('loadingModal'));
             loadingModal.show();
 
             //Update message in loading modal
