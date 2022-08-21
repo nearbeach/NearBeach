@@ -259,7 +259,7 @@
             },
             destination: {
                 type: String,
-                default: '/',
+                default: 'request_for_change',
             },
             isReadOnly: {
                 type: Boolean,
