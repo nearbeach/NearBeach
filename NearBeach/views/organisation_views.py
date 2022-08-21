@@ -18,8 +18,8 @@ def get_profile_picture(request, organisation_id):
     """
     organisation_results = organisation.objects.get(organisation_id=organisation_id)
 
-    return HttpResponse(organisation_results.organisation_profile_picture.url);
-    
+    return HttpResponse(organisation_results.organisation_profile_picture.url)
+
 
 @login_required(login_url='login', redirect_field_name="")
 @check_user_organisation_permissions(min_permission_level=3)

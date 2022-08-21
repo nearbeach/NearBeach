@@ -287,9 +287,6 @@
             updateGroupModel: function(data) {
                 this.groupModel = data;
             },
-            updateStakeholderModel: function(data) {
-                this.stakeholderModel = data;
-            }
         },
         mounted() {
             //If users have enough permissions add in the "Closed" functionaly

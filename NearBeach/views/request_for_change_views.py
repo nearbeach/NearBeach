@@ -65,7 +65,7 @@ def get_rfc_context(rfc_id):
 
     # Context
     c = {
-        'nearbeach_title': 'RFC %s' % rfc_id,
+        'nearbeach_title': f"RFC {rfc_id}",
         'rfc_id': rfc_id,
         'rfc_results': serializers.serialize('json', [rfc_results]),
         'rfc_change_lead': rfc_change_lead,

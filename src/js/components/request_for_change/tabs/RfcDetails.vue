@@ -149,7 +149,7 @@
         props: {
             groupResults:{
                 type: Array,
-                return: () => {
+                default: () => {
                     return [];
                 },
             },

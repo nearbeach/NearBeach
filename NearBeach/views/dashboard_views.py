@@ -7,6 +7,7 @@ from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Count, Q
+from django.contrib.auth.models import User
 
 # Import Python Libraries
 import json

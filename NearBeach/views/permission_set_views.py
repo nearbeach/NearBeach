@@ -93,7 +93,7 @@ def permission_set_information(request, permission_set_id):
 
     # Create the context
     c = {
-        'nearbeach_title': 'Permission Set %s' % permission_set_id,
+        'nearbeach_title': f"Permission Set {permission_set_id}",
         'permission_set_results': serializers.serialize('json', [permission_set_results]),
         'permission_set_id': permission_set_id,
         'permission_boolean': json.dumps(PERMISSION_BOOLEAN),

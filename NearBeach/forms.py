@@ -801,7 +801,7 @@ class UpdateGroupLeaderStatusForm(forms.Form):
         queryset=permission_set.objects.all(),
         required=False,
     )
-    group_leader=forms.BooleanField(
+    group_leader = forms.BooleanField(
         required=False,
     )
 

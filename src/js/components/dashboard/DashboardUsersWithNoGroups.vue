@@ -15,6 +15,7 @@
               </div>
               <div class="col-md-8 user-card-layouts">
                 <div v-for="user in userList" 
+                     :key="user.id"
                      class="user-card"
                      v-on:click="goToUser(user['id'])"
                 >
@@ -38,14 +39,8 @@
 <script>
   const axios = require('axios');
 
-  //Components
-    import RenderObjectTable from "../render/RenderObjectTable.vue";
-
   export default {
     name: "DashboardUsersWithNoGroups",
-      components: {
-        RenderObjectTable
-      },
     props: {
       rootUrl: {
         type: String,

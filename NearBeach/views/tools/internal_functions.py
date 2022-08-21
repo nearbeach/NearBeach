@@ -13,6 +13,7 @@ OBJECT_DICT = {
     'whiteboard': whiteboard.objects,
 }
 
+
 # Internal function
 def get_object_from_destination(input_object, destination, location_id):
     """

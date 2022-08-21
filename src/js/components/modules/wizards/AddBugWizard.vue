@@ -77,7 +77,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="bug in bugResults">
+                                        <tr v-for="bug in bugResults"
+                                            :key="bug.id"
+                                        >
                                             <td v-bind:id="`bug_no_${bug['id']}`">
                                                 <a href="javascript:void(0)" v-on:click="submitBug(bug['id'])">
                                                     Add Bug

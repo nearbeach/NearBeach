@@ -1,6 +1,8 @@
 <template>
     <div>
-        <div v-for="customer in customerResults" class="row">
+        <div v-for="customer in customerResults" class="row"
+             :key="customer.pk"
+        >
             <div class="organisation-details">
                 <img v-if="customer['fields']['customer_profile_picture'] == ''"
                      v-bind:src="`${staticUrl}/NearBeach/images/placeholder/product_tour.svg`"

@@ -121,7 +121,7 @@ def task_information(request, task_id, *args, **kwargs):
 
     # Context
     c = {
-        'nearbeach_title': 'Task Information %s' % task_id,
+        'nearbeach_title': f"Task Information {task_id}",
         'organisation_results': serializers.serialize('json', organisation_results),
         'user_level': user_level,
         'task_id': task_id,

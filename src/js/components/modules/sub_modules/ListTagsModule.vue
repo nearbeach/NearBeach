@@ -128,7 +128,7 @@
             var escape_array = [
                 'requirement_item',
             ]
-            if (escape_array.indexOf(this.locationId) < 0) return;
+            if (escape_array.indexOf(this.destination) >= 0) return;
 
             //Wait 200ms before getting the data
             setTimeout(() => {

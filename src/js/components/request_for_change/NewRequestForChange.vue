@@ -74,17 +74,22 @@
     export default {
         name: "NewRequestForChange",
         components: {
-            FormWizard,
+            // FormWizard,
             RfcBackoutPlan,
             RfcDescription,
             RfcDetails,
             RfcImplementationPlan,
             RfcRisk,
             RfcTestPlan,
-            TabContent,
+            // TabContent,
         },
         props: {
-            groupResults: Array,
+            groupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
             rootUrl: {
                 type: String,
                 default: "/",

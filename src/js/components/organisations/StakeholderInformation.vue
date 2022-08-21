@@ -74,7 +74,7 @@
                     //There is no image - return the default image
                     return this.defaultStakeholderImage;
                 }
-                return this.stakeholderModel['organisation_profile_picture']
+                return "/media/" + this.stakeholderModel['organisation_profile_picture']
             }
         },
     }
