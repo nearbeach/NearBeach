@@ -10,7 +10,7 @@ Welcome to NearBeach, we are super glad you are here. In the following month of 
 - Increase our code coverage for both Django and VueJS
 - Increase our E2E testing with Cypress.io
 - Bug test whole application
-- Fix bugs listed in both the Issues and our [bugzilla repository](https://bugzilla.nearbeach.org)
+- Fix bugs listed in the [Github Issues](https://github.com/robotichead/NearBeach/issues).
 - Improve user documentation
 - Start working on Docker installation process
 

@@ -24,7 +24,6 @@ NearBeach is an open source project management system, built using Django and Vu
 
 - [Discord](https://discord.gg/64uhRztS6n)
 - [Documentation](https://nearbeach.readthedocs.io)
-- [Bugzilla](https://bugzilla.nearbeach.org)
 - [NearBeach Homepage](https://nearbeach.org)
 - [NearBeach Demo](https://demo.nearbeach.org)
 
