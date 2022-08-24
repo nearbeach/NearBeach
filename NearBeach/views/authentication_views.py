@@ -1,6 +1,6 @@
 # Import Forms
 from ..forms import permission_set, group, LoginForm, User
-from ..models import user_group
+from ..models import user_group, notification
 
 # Import Django Libraries
 from django.contrib import auth
@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required, settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
+from django.db.models import Q
 from random import SystemRandom
 from NearBeach.decorators.check_user_permissions import check_permission_denied
 
@@ -190,6 +191,17 @@ def login(request):
     # load template
     t = loader.get_template('NearBeach/authentication/login.html')
 
+    # Get notification results
+    notification_results = notification.objects.filter(
+        Q(
+            # is_deleted=False,
+            # ADD IN DATES LOGIC HERE
+        ) & Q(
+            Q(notification_location = 'All') |
+            Q(notification_location = 'Login Page')
+        )
+    )
+
     # Get random number
     cryptogen = SystemRandom()
 
@@ -198,6 +210,7 @@ def login(request):
         'error_message': error_message,
         'LoginForm': form,
         'nearbeach_title': 'NearBeach Login',
+        'notification_results': notification_results, 
         'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
         'image_number': f"{1 + cryptogen.randrange(1, 19):03.0f}"
     }

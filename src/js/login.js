@@ -1,6 +1,10 @@
 //SCSS Library
 import '../sass/login.scss';
 
+// Import all of Bootstrap's JS
+// import * as bootstrap from 'bootstrap'
+import { Carousel } from 'bootstrap';
+
 //Get an image number
 const image_number = Math.floor(Math.random() * 19 + 1);
 

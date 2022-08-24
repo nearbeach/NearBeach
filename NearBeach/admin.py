@@ -9,7 +9,7 @@ from .models import about_user, bug, bug_client, campus, change_task, change_tas
     list_of_quote_stage, list_of_requirement_item_status,\
     list_of_requirement_item_type, list_of_requirement_status, list_of_requirement_type, list_of_tax,\
     list_of_title, nearbeach_option, object_assignment,\
-    object_note, opportunity, organisation, permission_set, project_customer, project, quote, request_for_change,\
+    object_note, opportunity, organisation, notification, permission_set, project_customer, project, quote, request_for_change,\
     request_for_change_group_approval, request_for_change_stakeholder, requirement, requirement_customer,\
     requirement_item, tag, tag_assignment, task_action, task_customer, task, timesheet, to_do, user_group,\
     user_want, user_weblink, whiteboard
@@ -52,6 +52,7 @@ admin.site.register(list_of_requirement_type)
 admin.site.register(list_of_tax)
 admin.site.register(list_of_title)
 admin.site.register(nearbeach_option)
+admin.site.register(notification)
 admin.site.register(object_assignment)
 admin.site.register(object_note)
 admin.site.register(opportunity)
